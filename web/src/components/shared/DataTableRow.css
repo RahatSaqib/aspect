@@ -56,6 +56,14 @@
   visibility: hidden;
 }
 
+.ColoredButton--micro {
+  padding: 0 4px;
+  height: 18px;
+  min-height: 18px;
+  line-height: 18px;
+  font-size: 12px;
+}
+
 @media screen and (--xs-viewport) {
   .TableCell--xs {
     display: table-cell;
@@ -82,4 +90,32 @@
     display: table-cell;
     visibility: visible;
   }
+}
+
+.TableCell__tag {
+  margin-right: 10px;
+}
+
+.ok {
+  color: var(--aspect-color-mantis);
+  margin-left: 18px;
+  font-size: 24px;
+}
+
+.alert {
+  color: var(--aspect-color-mandy);
+  margin-left: 18px;
+  font-size: 24px;
+}
+
+.na {
+  color: var(--aspect-color-grey-5);
+  margin-left: 18px;
+  font-size: 24px;
+}
+
+.warning {
+  color: var(--aspect-color-supernova);
+  margin-left: 18px;
+  font-size: 24px;
 }

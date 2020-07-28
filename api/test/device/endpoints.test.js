@@ -55,6 +55,27 @@ describe('auth endpoints', () => {
           .execute()
       })
     })
+    describe('/device/performance/{deviceId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/device/performance/{deviceId}', {
+          async getDevicePerformance() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
 
     describe('/device/status-types', () => {
       let endpoint
@@ -77,29 +98,6 @@ describe('auth endpoints', () => {
           .execute()
       })
     })
-
-    describe('/device/export', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/device/export', {
-          async exportDevices() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
     describe('/device/select-list', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
@@ -136,6 +134,30 @@ describe('auth endpoints', () => {
         })
       })
       it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
+
+  describe('POST', () => {
+    describe('/device/maintenance/{deviceId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected auth token' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/device/maintenance/{deviceId}', {
+          async updateDeviceMaintenance() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with "Expected auth token" from the service, meaning such endpoint exists', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {

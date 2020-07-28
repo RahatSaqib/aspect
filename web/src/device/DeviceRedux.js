@@ -3,8 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-
-import { aspectFetch } from '../shared/utils/fetch'
+import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
@@ -12,19 +11,19 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
-
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
+import { getDateObject } from '../components/shared/DateTimeInput/utils/date'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
-
+  REJECTED_DEVICES: 'REJECTED_DEVICES',
   REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
 
@@ -33,6 +32,14 @@ export const types = {
 
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
+
+  REQUEST_DEVICES_FOR_PERFORMANCE_REPORT:
+    'REQUEST_DEVICES_FOR_PERFORMANCE_REPORT',
+  RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
+    'RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT',
+
+  DEVICE_MAINTENANCE_FORM_SHOW: 'DEVICE_MAINTENANCE_FORM_SHOW',
+  DEVICE_MAINTENANCE_FORM_HIDE: 'DEVICE_MAINTENANCE_FORM_HIDE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -53,6 +60,12 @@ function receiveDevices(json) {
     type: types.RECEIVE_DEVICES,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectDevices() {
+  return {
+    type: types.REJECTED_DEVICES,
   }
 }
 
@@ -105,7 +118,9 @@ export function fetchDevices(
           ),
         },
       }
-    ).then(json => dispatch(receiveDevices(json)))
+    )
+      .then(json => dispatch(receiveDevices(json)))
+      .catch(() => dispatch(rejectDevices()))
   }
 }
 
@@ -253,19 +268,21 @@ export function exportDevices(
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  fileFormat,
+  reportName
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
 
-    return aspectFetch(
+    return aspectFetchFile(
       `/device/export?${stringify({
         sortCol,
         sortDir,
         page,
         size: pageSize,
-        format,
+        format: fileFormat,
         ...filters,
       })}`,
       {
@@ -296,9 +313,107 @@ export function exportDevices(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(async elem => {
+      const file = await elem.blob
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
+  }
+}
+
+export function showDialog(externalId, data) {
+  return dispatch => {
+    dispatch({
+      type: types.DEVICE_MAINTENANCE_FORM_SHOW,
+      externalId,
+      data,
+    })
+  }
+}
+export function hideDialog() {
+  return dispatch => {
+    dispatch({
+      type: types.DEVICE_MAINTENANCE_FORM_HIDE,
+    })
+  }
+}
+
+export function updateDeviceMaintenance({
+  externalId,
+  device,
+  values,
+  requestedAt = new Date(),
+}) {
+  const deviceId = device.get('id')
+  const i18nErrorTitleDescriptor =
+    externalId === 'calibration'
+      ? defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title',
+            defaultMessage: 'Setting Device Calibration Date Failed',
+          },
+        })
+      : defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
+            defaultMessage: 'Setting Device Warranty Due Date Failed',
+          },
+        })
+  return dispatch =>
+    aspectFetch(`/device/maintenance/${deviceId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        ...values,
+        externalId,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...i18nErrorTitleDescriptor,
+          onClose: () => dispatch(showDialog(externalId, values)),
+        }),
+      },
+    })
+      .then(json => {
+        dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
+        dispatch(hideDialog())
+      })
+      .catch(err => {
+        dispatch(hideDialog())
+        throw err
+      })
+}
+
+export function fetchPerformanceReport(deviceId) {
+  return dispatch => {
+    dispatch(requestPerformanceReport(deviceId))
+
+    return aspectFetch(`/device/performance/${deviceId}`, {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchPerformanceReport.GET.default.title',
+              defaultMessage: 'Error Loading Device profile performance report',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePerformanceReport(json)))
+  }
+}
+function requestPerformanceReport(deviceId) {
+  return {
+    type: types.REQUEST_DEVICES_FOR_PERFORMANCE_REPORT,
+    deviceId,
+  }
+}
+
+function receivePerformanceReport(data) {
+  return {
+    type: types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT,
+    data,
   }
 }
 
@@ -315,6 +430,11 @@ const Device = Immutable.Record({
   items: new Items(),
   table: new Table(),
   selectList: new SelectListItems(),
+  activeDialog: Immutable.Map({
+    name: undefined,
+    data: undefined,
+  }),
+  performanceReport: Immutable.Map(),
 })
 
 const initialState = new Device()
@@ -333,6 +453,11 @@ export default function deviceReducer(state = initialState, action) {
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
+    case types.REJECTED_DEVICES:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
     case types.REQUEST_SINGLE_DEVICE:
     case types.REQUEST_UPDATING_SINGLE_DEVICE:
       return state.set('requestedAt', action.requestedAt)
@@ -340,6 +465,13 @@ export default function deviceReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_SINGLE_DEVICE:
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
+        const { calibrationDate, warrantyDueDate } = action.item
+        if (calibrationDate) {
+          action.item.calibrationDate = getDateObject(calibrationDate)
+        }
+        if (warrantyDueDate) {
+          action.item.warrantyDueDate = getDateObject(warrantyDueDate)
+        }
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
@@ -349,7 +481,18 @@ export default function deviceReducer(state = initialState, action) {
       return state.mergeIn(['selectList'], {
         loading: false,
         lastRefreshed: action.lastRefreshed,
-        items: new Immutable.fromJS(action.items),
+        items: Immutable.fromJS(action.items),
+      })
+    case types.DEVICE_MAINTENANCE_FORM_SHOW:
+      return state.mergeIn(['activeDialog'], {
+        name: action.externalId,
+        data: action.data,
+      })
+    case types.DEVICE_MAINTENANCE_FORM_HIDE:
+      return state.setIn(['activeDialog', 'name'], undefined)
+    case types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
+      return state.withMutations(mutState => {
+        mutState.set('performanceReport', Immutable.fromJS(action.data))
       })
     default:
       return state

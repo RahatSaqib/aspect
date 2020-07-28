@@ -2,11 +2,16 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -22,16 +27,18 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchSites } from '../SiteRedux'
+import { fetchSites, exportSites } from '../SiteRedux'
 import {
   SiteDataTable,
   SiteDataTableHead,
   SiteDataTableRow,
 } from './SiteDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
-const messages = defineMessages({
+export const messages = defineMessages({
+  ...commonDefinitions,
   sitesTitle: {
     id: 'pages.SiteList.title',
     defaultMessage: 'Sites',
@@ -40,21 +47,33 @@ const messages = defineMessages({
     id: 'pages.SiteList.siteName',
     defaultMessage: 'Name',
   },
-  state: {
-    id: 'pages.SiteList.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.SiteList.lga',
-    defaultMessage: 'County',
-  },
   totalDevices: {
     id: 'pages.SiteList.totalDevices',
     defaultMessage: 'Number of Devices',
   },
   externalId: {
     id: 'pages.SiteList.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
+  },
+  siteIssues: {
+    id: 'pages.SiteList.siteIssues',
+    defaultMessage: 'Issues',
+  },
+  issueCategoryDeviceHealth: {
+    id: 'pages.SiteList.issueCategoryDeviceHealth',
+    defaultMessage: 'Device',
+  },
+  issueCategoryReagentHealth: {
+    id: 'pages.SiteList.issueCategoryReagentHealth',
+    defaultMessage: 'Reagent',
+  },
+  issueCategoryDataHealth: {
+    id: 'pages.SiteList.issueCategoryDataHealth',
+    defaultMessage: 'Data',
+  },
+  issueCategoryConnectivityHealth: {
+    id: 'pages.SiteList.issueCategoryConnectivityHealth',
+    defaultMessage: 'Connectivity',
   },
   paginatorStatus: {
     id: 'pages.SiteList.paginatorStatus',
@@ -71,7 +90,7 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site'],
   },
   {
     externalId: true,
@@ -92,19 +111,33 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
-    state => ({
-      items: state.site.items,
-      table: state.site.table,
-      userPermissions: state.user.jwt.permissions,
-    }),
+    state => {
+      return {
+        items: state.site.items,
+        table: state.site.table,
+        userPermissions: state.user.jwt.permissions,
+        user: state.user,
+      }
+    },
     bindActionCreators.bind(null, {
       fetchSites,
+      exportSites,
     })
   ),
   withHandlers({
@@ -122,8 +155,44 @@ const enhance = compose(
       }
     },
 
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
-      history.push(`/browse/site/${siteId}`),
+    onAlertClick: ({ history }) => event => {
+      event.stopPropagation()
+      const {
+        currentTarget: {
+          dataset: { siteId },
+        },
+      } = event
+      history.push(`/browse/site/${siteId}/alerts`)
+    },
+
+    onExcelClick: ({
+      location,
+      exportSites,
+      sortCol,
+      sortDir,
+      pageAt,
+      table,
+    }) => formatType => {
+      const format = formatType.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSites(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'sites'
+        )
+      }
+    },
+
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { siteId },
+      },
+    }) => history.push(`/browse/site/${siteId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -170,12 +239,15 @@ export const SiteList = ({
   table,
   items,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
   pageSize,
   onRowClick,
+  onAlertClick,
   reducedFilters,
+  user,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.sitesTitle)} />
@@ -186,11 +258,18 @@ export const SiteList = ({
       intl={intl}
       config={reducedFilters}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="Sites"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <SiteDataTable
           selectable={false}
@@ -209,12 +288,17 @@ export const SiteList = ({
               },
               {
                 key: 'state',
-                label: intl.formatMessage(messages.state),
+                label: getCustomMessage(intl, messages, 'state', user),
                 sortable: true,
               },
               {
                 key: 'lga',
-                label: intl.formatMessage(messages.lga),
+                label: getCustomMessage(intl, messages, 'lga', user),
+                sortable: true,
+              },
+              {
+                key: 'siteId',
+                label: intl.formatMessage(messages.externalId),
                 sortable: true,
               },
               {
@@ -222,19 +306,26 @@ export const SiteList = ({
                 label: intl.formatMessage(messages.totalDevices),
                 sortable: true,
               },
+              {
+                key: 'siteIssues',
+                label: intl.formatMessage(messages.siteIssues),
+              },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(site => (
-              <SiteDataTableRow
-                key={site.get('id')}
-                intl={intl}
-                site={site}
-                onClick={onRowClick}
-                data-site-id={site.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(site => (
+                <SiteDataTableRow
+                  key={site.get('id')}
+                  intl={intl}
+                  site={site}
+                  onClick={onRowClick}
+                  onAlertClick={onAlertClick}
+                  data-site-id={site.get('id')}
+                />
+              ))}
+          </TableBody>
         </SiteDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

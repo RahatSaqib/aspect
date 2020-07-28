@@ -15,18 +15,12 @@ async function up(knex) {
   })
 
   await knex('SmsMessage').update({
-    phoneNumber: knex('Person as p')
-      .whereRaw('p.id = personId')
-      .select('cell'),
+    phoneNumber: knex('Person as p').whereRaw('p.id = personId').select('cell'),
   })
 
   // allow nullable issueId on IssueEvent
   await knex.schema.table('IssueEvent', issueEvent => {
-    issueEvent
-      .integer('issueId')
-      .unsigned()
-      .nullable()
-      .alter()
+    issueEvent.integer('issueId').unsigned().nullable().alter()
   })
 
   await knex.schema.createTable('IssueEventTrigger', issueEventTrigger => {
@@ -71,15 +65,9 @@ async function down(knex) {
     smsMessage.dropColumn('phoneNumber')
   })
 
-  await knex('IssueEvent')
-    .whereNull('issueId')
-    .delete()
+  await knex('IssueEvent').whereNull('issueId').delete()
   await knex.schema.table('IssueEvent', issueEvent => {
-    issueEvent
-      .integer('issueId')
-      .unsigned()
-      .notNullable()
-      .alter()
+    issueEvent.integer('issueId').unsigned().notNullable().alter()
   })
 
   await knex.schema.dropTableIfExists('IssueEventTrigger')

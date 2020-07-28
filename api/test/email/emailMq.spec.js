@@ -1,5 +1,5 @@
 // const chai = require('chai')
-const { assert } = require('chai')
+const { assert, expect } = require('chai')
 
 const { createEmailTestContext } = require('./utils')
 const {
@@ -55,11 +55,22 @@ describe('Sending Email via Message Queue', () => {
       await waitForIdle()
 
       const messageStatusIdSent = await messageStatusToId('Sent')
-      const msg = await knex('EmailMessage')
-        .where('id', messageId)
-        .first()
+      const messageStatusIdError = await messageStatusToId('Error')
+      const msg = await knex('EmailMessage').where('id', messageId).first()
       // check status id
-      assert.equal(msg.messageStatusId, messageStatusIdSent)
+      if (msg.messageStatusId !== messageStatusIdSent) {
+        // if we run out of credits on SendGrid,
+        //   this is what we expect to be returned
+        //   from the API
+        const sendResponse = JSON.parse(msg.sendResponse)
+        assert.equal(msg.messageStatusId, messageStatusIdError)
+        expect(sendResponse).to.containSubset({
+          code: 'EAUTH',
+          response: '451 Authentication failed: Maximum credits exceeded',
+          responseCode: 451,
+          command: 'AUTH PLAIN',
+        })
+      }
       // make sure generated message does not have unprocessed curly braces {{ }}
       assert(
         !msg.subject.includes('{{') && !msg.subject.includes('}}'),

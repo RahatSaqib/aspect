@@ -1,18 +1,28 @@
 const _ = require('lodash')
-const subDays = require('date-fns/sub_days')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
+const {
+  subDays,
+  subMonths,
+  startOfMonth,
+  format,
+  endOfMonth,
+  getDaysInMonth,
+} = require('date-fns')
 
-const { knex, filterParams, sortPageParams } = require('../db')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { deviceStatusToId, resultCategoryToId } = require('../shared/dictionary')
+const { getUser } = require('../auth/service')
 const {
-  getCellsByValue,
-  generateExcelFile,
-  generateCsvFile,
-} = require('../shared/io')
-const {
-  operationalDashboard /* FIXME: actual impl */,
-} = require('../dashboard/service')
+  allResultCategoryToId,
+  deviceStatusToId,
+  resultCategoryToId,
+  deviceMaintenanceTypeToId,
+} = require('../shared/dictionary')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -37,7 +47,6 @@ const SELECT_SHOW_FIELDS = [
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
-  'dt.name as type',
   'ds.name as status',
   'ds.token as statusToken',
   'dc.name as category',
@@ -46,12 +55,25 @@ const SELECT_SHOW_FIELDS = [
   'd.siteId',
   's.name as siteName',
   'd.hostId',
-  // TODO: First Connected
   'd.deviceTypeId',
   'd.deviceStatusId',
   'd.configurationData',
   'd.notes',
   'd.serial',
+  'dt.id as deviceTypeId',
+  'dt.name as deviceTypeName',
+  'dt.externalId as deviceTypeExternalId',
+  'dt.configurationDataSchema',
+  'dt.deviceOperationSchema',
+  'dp.dailyCapacity',
+  'frd30.resultCount as resultCountThisMonth',
+  'frd60.resultCount as resultCount60',
+  knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
+  knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
+  'dmC.contextDate as calibrationDate',
+  'dmC.notes as calibrationNotes',
+  'dmW.contextDate as warrantyDueDate',
+  'dmW.notes as warrantyNotes',
 ]
 
 // ---------------------------------
@@ -68,28 +90,30 @@ async function getListDevices(query, auth) {
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('FactResultsDevice as frd30', function () {
+      this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
+    })
+    .leftJoin('FactResultsDevice as frd60', function () {
+      this.on('d.id', 'frd60.deviceId').andOn('frd60.days', 60)
+    })
+    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
+      this.on('d.id', 'frd30Errors.deviceId')
+        .andOn('frd30Errors.days', 30)
+        .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
+    })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
-    .where(function() {
-      if (!query.deviceIds) {
-        return
-      }
-      this.whereIn('d.id', query.deviceIds.split(','))
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .where(function () {
+      if (query.deviceIds) this.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (!query.assayId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-        .where('a.id', query.assayId)
-
-      if (!query.resultCategoryId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-        .where('rca.resultCategoryId', query.resultCategoryId)
+      if (query.resultCategoryId)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .where('rca.resultCategoryId', query.resultCategoryId)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -97,20 +121,27 @@ async function getListDevices(query, auth) {
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
       deviceStatusId: 'd.deviceStatusId',
+      deviceTypeId: 'd.deviceTypeId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
       category: 'dc.name',
       type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
+      siteId: 's.id',
+      diseaseId: 'dis.id',
+      assayId: 'a.id',
     })
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      device: 'd',
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
+      disease: 'dis',
+    })
   // get total count for paging
-  const getCount = deviceQuery
-    .clone()
-    .count('d.id as count')
-    .first()
+  const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
 
   const last30Day = subDays(new Date(), 30)
   const last60Day = subDays(last30Day, 30)
@@ -121,37 +152,30 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .select([
       ...SELECT_LIST_FIELDS,
-      knex('Result as r')
-        .whereRaw('r.deviceId = d.id')
-        .whereBetween('r.endedOn', [last60Day, last30Day])
-        .countDistinct('r.id')
-        .as('lastMonth'),
-      knex('Result as r')
-        .whereRaw('r.deviceId = d.id')
-        .where('r.endedOn', '>=', last30Day)
-        .countDistinct('r.id')
-        .as('thisMonth'),
-      knex('Result as r')
-        .whereRaw('r.deviceId = d.id')
-        .where('r.endedOn', '>=', last30Day)
-        .where('r.resultCategory1', '=', resultCategoryErrorId)
-        .countDistinct('r.id')
-        .as('thisMonthErrors'),
+      'frd30.resultCount as resultCountThisMonth',
+      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
+      'frd30Errors.resultCount as thisMonthErrors',
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
+        .innerJoin(
+          'ResultWorkflowLog as rl',
+          'r.resultWorkflowStatusLogId',
+          'rl.id'
+        )
         .innerJoin(
           'ResultWorkflowStatus as rw',
           'rl.resultWorkflowStatusId',
           'rw.id'
         )
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
         .countDistinct('r.id')
         .as('deliveredLastMonth'),
-
-      // TODO: Fix this/last month queries so they work for other (non-reporter) devices
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
@@ -160,68 +184,52 @@ async function getListDevices(query, auth) {
           'rl.resultWorkflowStatusId',
           'rw.id'
         )
+        .modify(addConstraints, dataConstraints, {
+          result: 'r',
+          sample: 's',
+        })
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
         .where('rw.externalId', '=', 'Delivered')
         .countDistinct('r.id')
         .as('deliveredThisMonth'),
-      knex('Result as r')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin(
-          'ResultWorkflowStatus as rw',
-          'r.resultWorkflowStatusId',
-          'rw.id'
-        )
-        .whereRaw('s.originSiteId = d.siteId')
-        .select(
-          (() => {
-            const acknowledgedCount =
-              "sum(case when rw.externalId = 'Acknowledged' then 1 else 0 end)"
-            const totalCount = 'count(distinct r.id)'
-
-            return knex.raw(
-              `case when count(r.id) = 0 then 0 else ${acknowledgedCount} / ${totalCount} end`
-            )
-          })()
-        )
-        .as('acknowledgedRatio'),
-      knex('Result as r')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin(
-          'ResultWorkflowStatus as rw',
-          'r.resultWorkflowStatusId',
-          'rw.id'
-        )
-        .whereRaw('s.originSiteId = d.siteId')
-        .where('rw.externalId', '=', 'Flagged')
-        .countDistinct('r.id')
-        .as('totalFlagged'),
+      // get csv of issue types
+      knex('Issue as i1')
+        .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+        .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+        .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+        .whereRaw('i1.deviceId = d.id')
+        // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
+        .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
+        .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
+        .as('issueCategories'),
     ])
+    .distinct()
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   data.forEach(it => {
     // FIXME: Use actual data instead
+    const availabilityCount = _.random(25, 30)
     it.availability = {
-      count: _.random(25, 30),
+      count: availabilityCount,
       total: 30,
+      rate: availabilityCount / 30,
     }
+
     it.error = {
-      count: it.thisMonthErrors,
-      total: it.thisMonth,
+      count: it.thisMonthErrors || 0,
+      total: it.resultCountThisMonth || 0,
+      rate: it.resultCountThisMonth
+        ? it.thisMonthErrors / it.resultCountThisMonth
+        : 0,
     }
-    it.alerts = [
-      {
-        type: 'needs-repair',
-      },
-      {
-        type: 'warranty',
-      },
-      {
-        type: 'quality-control',
-      },
-    ].filter(() => _.random(0, 10) > 7)
+    delete it.thisMonthErrors
+
+    it.issueCategories = it.issueCategories
+      ? it.issueCategories.split(',').map(key => ({ key }))
+      : []
   })
 
   const result = { ok: true, total, length: data.length, data }
@@ -234,100 +242,122 @@ async function getListDevices(query, auth) {
 // ---------------------------------
 async function listDevices(request) {
   const { query, auth } = request
-
   // get dataset for current query params (sorting, filtering and pagination) and auth constraints
+
   const result = await getListDevices(query, auth)
 
   return result
 }
 
-async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
-  const { auth, params } = request
-  const dataConstraints = await getConstraints(auth.credentials)
+async function getDeviceByDeviceId({
+  deviceId,
+  credentials,
+  fields = SELECT_SHOW_FIELDS,
+}) {
+  const dataConstraints = await getConstraints(credentials)
 
-  const devices = await knex('Device as d')
+  const maintenanceCalibrationId = await deviceMaintenanceTypeToId(
+    'calibration'
+  )
+  const maintenanceWarrantyId = await deviceMaintenanceTypeToId('warranty')
+
+  const resultCategoryErrorId = await resultCategoryToId('Error')
+
+  const device = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .where('d.id', +params.deviceId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-    .select(fields)
+    .leftJoin('DeviceCapacity as dp', 'd.deviceCapacityId', 'dp.id')
+    .leftJoin('FactResultsDevice as frd30', function () {
+      this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
+    })
+    .leftJoin('FactResultsDevice as frd60', function () {
+      this.on('d.id', 'frd60.deviceId').andOn('frd60.days', 60)
+    })
+    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
+      this.on('d.id', 'frd30Errors.deviceId')
+        .andOn('frd30Errors.days', 30)
+        .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
+    })
+    .leftJoin('FactResultsDeviceByCategory1 as frd60Errors', function () {
+      this.on('d.id', 'frd60Errors.deviceId')
+        .andOn('frd60Errors.days', 60)
+        .andOn('frd60Errors.resultCategory1', resultCategoryErrorId)
+    })
+    // device calibration
+    .leftOuterJoin('DeviceMaintenance as dmC', function () {
+      this.on('d.id', 'dmC.deviceId')
+        .andOn('dmC.current', 1)
+        .andOn('dmC.deviceMaintenanceTypeId', maintenanceCalibrationId)
+    })
+    // device warranty
+    .leftOuterJoin('DeviceMaintenance as dmW', function () {
+      this.on('d.id', 'dmW.deviceId')
+        .andOn('dmW.current', 1)
+        .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
+    })
+    .where('d.id', +deviceId)
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
+    .first(fields)
 
-  if (devices.length !== 1) {
-    return Boom.notFound()
+  if (!device) {
+    return null
   }
-  const device = devices[0]
-  const deviceType = await knex('DeviceType as dt')
-    .where('dt.id', device.deviceTypeId)
-    .first()
-  const deviceLog = await knex('DeviceStatusLog as dl')
-    .leftOuterJoin('DeviceStatus as ds', 'dl.deviceStatusId', 'ds.id')
-    .leftOuterJoin('User as u', 'dl.createdBy', 'u.id')
-    .where('dl.deviceId', device.id)
-    .select(
-      'ds.name as status',
-      'dl.changedOn',
-      'dl.createdOn',
-      'u.name as changedBy'
-    )
-
-  device.statusLogs = deviceLog
-  deviceType.configurationDataSchema =
-    JSON.parse(deviceType.configurationDataSchema) || {}
-  deviceType.deviceOperationSchema =
-    JSON.parse(deviceType.deviceOperationSchema) || {}
 
   device.configurationData = JSON.parse(device.configurationData) || {}
-  device.deviceType = deviceType
-
-  // Query for total number of results per device
-  const totalTestQuery = knex('Result as r')
-    .count('r.id as count')
-    .leftJoin('Sample as s', 's.id', 'r.sampleId')
-
-  // If the device is not a reporter
-  if (device.siteId == null || device.category !== 'Client') {
-    totalTestQuery.where('r.deviceId', device.id)
-  } else {
-    // TODO: This query would fail if there we had more than one reporter in one site
-    totalTestQuery.where(function() {
-      this.where('r.deviceId', device.id)
-      this.orWhere('s.originSiteId', device.siteId)
-    })
+  device.deviceType = {
+    id: device.deviceTypeId,
+    name: device.deviceTypeName,
+    externalId: device.deviceTypeExternalId,
+    configurationDataSchema: JSON.parse(device.configurationDataSchema) || {},
+    deviceOperationSchema: JSON.parse(device.deviceOperationSchema) || {},
   }
+  delete device.deviceTypeId
+  delete device.deviceTypeName
+  delete device.deviceTypeExternalId
+  delete device.configurationDataSchema
+  delete device.deviceOperationSchema
 
-  const [{ count: totalTests }] = await totalTestQuery
+  device.resultCountLastMonth =
+    device.resultCount60 - device.resultCountThisMonth
+  device.errorCountLastMonth = device.errorCount60 - device.errorCountThisMonth
 
-  device.totalTests = totalTests
+  device.utilizationRateThisMonth = device.dailyCapacity
+    ? device.resultCountThisMonth / (device.dailyCapacity * 30)
+    : null
 
-  const contacts = await knex('Person as p')
-    .select('p.id', 'p.name')
-    .limit(50)
-
-  device.contacts = _.times(
-    3,
-    () => contacts.splice(_.random(0, contacts.length - 1), 1)[0]
-  )
+  device.errorRateThisMonth = device.resultCountThisMonth
+    ? device.errorCountThisMonth / device.resultCountThisMonth
+    : null
 
   return device
 }
 
-async function showDevice(request) {
-  const device = await getDeviceByDeviceId(request)
-
+async function getDeviceByRequest(request, fields = SELECT_SHOW_FIELDS) {
   const {
-    data: { device: operations /* FIXME: actual impl */ },
-  } = await operationalDashboard(request)
+    auth: { credentials },
+    params: { deviceId },
+  } = request
 
-  _.forEach(operations, it => {
-    it.message = undefined
+  return getDeviceByDeviceId({
+    deviceId,
+    credentials,
+    fields,
   })
+}
 
-  device.operations = _.filter(
-    operations,
-    it => it.key !== 'modules-unavailable'
-  )
+async function showDevice(request) {
+  const device = await getDeviceByRequest(request)
+
+  if (!device) {
+    return Boom.notFound()
+  }
 
   const result = {
     ok: true,
@@ -342,7 +372,7 @@ async function updateDevice(request) {
 
   // TODO: check permission
 
-  const device = await getDeviceByDeviceId(request)
+  const device = await getDeviceByRequest(request)
 
   const configurationData = _.assign(
     {},
@@ -363,7 +393,7 @@ async function updateDevice(request) {
   const updatedCount = await knex('Device')
     .where('id', params.deviceId)
     .update({
-      siteId: device.siteId || payload.siteId,
+      siteId: payload.siteId || device.siteId,
       deviceStatusId,
       configurationData: JSON.stringify(configurationData),
     })
@@ -376,108 +406,14 @@ async function updateDevice(request) {
   return result
 }
 
-// ---------------------------------
-// exporting Devices data
-// ---------------------------------
-async function exportDevices(request) {
-  const { query, auth } = request
-
-  // ---------------
-  // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // do not export more than 100.000 records
-  query.size = 1e5
-
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = await getListDevices(query, auth)
-
-  let result = null
-
-  if (query.format === 'excel') {
-    // fill in data into given workbook
-    const populateData = workbook => {
-      // get 1st sheet (1-based)
-      const worksheet = workbook.getWorksheet(1)
-
-      // locate cell(s) with needed value
-      const cells = getCellsByValue(worksheet, '<DeviceListRows>')
-      if (cells.length > 0) {
-        // empty such cells
-        cells.forEach(cell => {
-          cell.value = ''
-        })
-
-        // use 1st cell only (actually, should not be more than one)
-        const patternRowNumber = cells[0].row + 2
-
-        // fill in array 'rows'
-        const rows = []
-        devices.data.forEach(d => {
-          // ------
-          // --->>> order of array elements should match columns order in template file
-          // ------
-          rows.push([d.name, d.status, d.createdOn, d.lastSeen, d.totalTests])
-        })
-
-        // insert rows from patternRowNumber, and remove row number 'patternRowNumber'
-        worksheet.spliceRows(patternRowNumber, 1, ...rows)
-      }
-    }
-
-    result = await generateExcelFile({
-      templateFileName: 'Devices.xlsx',
-      outputFileName: 'devices.xlsx',
-      populateData,
-    })
-  } else if (query.format === 'csv') {
-    const items = devices.data
-    const columnNames = [
-      'Device Name',
-      'Short Name',
-      'Status',
-      'Created On',
-      'Last Seen',
-      'Type',
-      'Category',
-      'Connected',
-      'Total Tests',
-    ]
-    const fieldNames = [
-      'name',
-      'shortName',
-      'status',
-      'createdOn',
-      'lastSeen',
-      'type',
-      'category',
-      'hasConnectivity',
-      'totalTests',
-    ]
-    result = await generateCsvFile(
-      'devices.csv',
-      items,
-      columnNames,
-      fieldNames
-    )
-  }
-
-  return result
-}
-
 async function listStatusTypes() {
   const resultQuery = knex('DeviceStatus as ds')
 
   // get total count for paging
-  const getCount = resultQuery
-    .clone()
-    .count('ds.id as count')
-    .first()
+  const getCount = resultQuery.clone().count('ds.id as count').first()
 
   // get rows
-  const getItems = resultQuery
-    .clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -495,7 +431,7 @@ async function listDevicesForSelectList(request) {
 
   const devices = await knex('Device as d')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',
@@ -508,10 +444,361 @@ async function listDevicesForSelectList(request) {
 }
 
 async function getDevice(deviceId) {
-  const device = await knex('Device as d')
-    .where('d.id', deviceId)
-    .first()
+  const device = await knex('Device as d').where('d.id', deviceId).first()
   return device
+}
+
+async function updateDeviceMaintenance(request) {
+  const {
+    auth: { credentials },
+    params,
+    payload,
+  } = request
+  const dataConstraints = await getConstraints(credentials)
+
+  let device = await knex('Device as d')
+    .where('d.id', +params.deviceId)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .first('d.id')
+
+  if (!device) {
+    return Boom.notFound()
+  }
+  const { id: deviceId } = device
+
+  const currentlyLoggedInUser = await getUser(credentials.name)
+
+  const { externalId, contextDate = new Date(), notes } = payload
+  const { id: deviceMaintenanceTypeId } = await knex('DeviceMaintenanceType')
+    .where({ externalId })
+    .first('id')
+
+  // get currently active maintenance item
+  const item = await knex('DeviceMaintenance')
+    .where({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    })
+    .first()
+  let deviceMaintenanceId
+  if (item && item.contextDate.toDateString() === contextDate.toDateString()) {
+    // update existing record if dates are the same
+    await knex('DeviceMaintenance').where({ id: item.id }).update({
+      contextDate,
+      notes,
+      updatedOn: new Date(),
+      updatedBy: currentlyLoggedInUser.id,
+    })
+    deviceMaintenanceId = item.id
+  } else {
+    // reset 'current' for current maintenance type and device
+    await knex('DeviceMaintenance').update({ current: 0 }).where({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    })
+    // insert new record with last maintenance status
+    ;[deviceMaintenanceId] = await knex('DeviceMaintenance').insert({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+      contextDate,
+      notes,
+      createdOn: new Date(),
+      createdBy: currentlyLoggedInUser.id,
+      updatedOn: new Date(),
+      updatedBy: currentlyLoggedInUser.id,
+    })
+  }
+  // get same 'device' as for Device Details
+  device = await getDeviceByDeviceId({
+    deviceId,
+    credentials,
+  })
+
+  return { ok: true, data: device, deviceMaintenanceId }
+}
+
+async function getDevicePerformance(request) {
+  const { auth, params } = request
+
+  const { deviceId } = params
+
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const endedOn = new Date()
+
+  const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
+
+  const devicePerformance = await knex('Result as r')
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
+    .where('r.deviceId', deviceId)
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
+    .select([
+      knex.raw('count(r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw(`sum(rc1.name = 'Error') as errorCount`),
+      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`),
+    ])
+    .groupBy('monthTested')
+
+  const [deviceCountry] = await knex('Device as d')
+    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .where('d.id', deviceId)
+
+  const [{ countryTotalResult, countryTotalErrorCount }] = await knex(
+    'Result as r'
+  )
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
+    .where('r.endedOn', '>=', startedOn)
+    .where('r.endedOn', '<=', endedOn)
+    .where('c.id', deviceCountry.countryId)
+    .select([
+      knex.raw('count(r.id) as countryTotalResult'),
+      knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
+    ])
+
+  const [deviceCapacity] = await knex('DeviceCapacity as dc')
+    .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
+    .where('d.id', deviceId)
+    .select('dc.dailyCapacity')
+
+  let dt = endedOn
+
+  while (dt >= startedOn) {
+    const monthTested = format(dt, 'yyyy-MM')
+
+    if (!devicePerformance.find(x => x.monthTested === monthTested)) {
+      devicePerformance.push({
+        errorCount: 0,
+        totalResult: 0,
+        monthTested,
+      })
+    }
+
+    dt = endOfMonth(subMonths(dt, 1))
+  }
+
+  let utilizationRateAvg = null
+  const newData = _.map(devicePerformance, x => {
+    if (deviceCapacity) {
+      utilizationRateAvg = 80
+
+      x.utilizationRate = Math.round(
+        (x.totalResult * 100) /
+          (getDaysInMonth(new Date(x.monthTested)) *
+            deviceCapacity.dailyCapacity)
+      )
+    } else {
+      x.utilizationRate = null
+    }
+
+    if (x.totalResult) {
+      x.errorRate = Math.round((x.errorCount * 100) / x.totalResult)
+      return x
+    }
+    x.errorRate = 0
+    return x
+  })
+
+  return {
+    ok: true,
+    length: newData.length,
+    utilizationRateAvg,
+    errorRateAvg: Math.round(
+      (countryTotalErrorCount * 100) / countryTotalResult
+    ),
+    data: _.sortBy(newData, [x => x.monthTested]),
+  }
+}
+
+function getDeviceBaseQuery(query, dataConstraints) {
+  const deviceQuery = knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
+    .where(function () {
+      if (!query.deviceIds) {
+        return
+      }
+      this.whereIn('d.id', query.deviceIds.split(','))
+    })
+    .modify(queryBuilder => {
+      if (!query.assayId) {
+        return
+      }
+      queryBuilder
+        .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+        .where('a.id', query.assayId)
+
+      if (!query.resultCategoryId) {
+        return
+      }
+      queryBuilder
+        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+        .where('rca.resultCategoryId', query.resultCategoryId)
+
+      if (!query.resultCategory2Id) {
+        return
+      }
+      queryBuilder
+        .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
+        .where('rca2.resultCategoryId', query.resultCategory2Id)
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      deviceStatusId: 'd.deviceStatusId',
+      deviceTypeId: 'd.deviceTypeId',
+      hasConnectivity: 'dc.hasConnectivity',
+      hasResults: 'dc.hasResults',
+      category: 'dc.name',
+      type: 'dt.name',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+    })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      device: 'd',
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
+    })
+  return deviceQuery
+}
+
+// ---------------------------------
+// get devices with different aggregations for reports
+// ---------------------------------
+async function getDevicesForReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery.clone().count('d.id as count').first()
+
+  const queryResults = knex('Result as r')
+    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 's',
+    })
+    .whereRaw('s.originSiteId = d.siteId')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      ...SELECT_LIST_FIELDS,
+      'd.serial',
+      queryResults.clone().countDistinct('r.id').as('totalResults'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Error)
+        .countDistinct('r.id')
+        .as('totalErrors'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Invalid)
+        .countDistinct('r.id')
+        .as('totalInvalid'),
+      queryResults
+        .clone()
+        .innerJoin(
+          'ResultWorkflowLog as rl',
+          'r.resultWorkflowStatusLogId',
+          'rl.id'
+        )
+        .max('rl.changedOn')
+        .as('lastUploadOn'),
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // add more fields which depend on aggregations
+  data.forEach(async it => {
+    const errorPercentage = Math.round(
+      100 * (it.totalResults ? it.totalErrors / it.totalResults : 0)
+    )
+    it.errorRate = errorPercentage / 100
+  })
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
+async function getDevicesForRifResistanceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery.clone().count('d.id as count').first()
+
+  const queryResults = knex('Result as r')
+    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 's',
+    })
+    .whereRaw('s.originSiteId = d.siteId')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      'st.name as state',
+      'd.name',
+      'lg.name as county',
+      queryResults.clone().countDistinct('r.id').as('totalResults'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalDetected1'),
+      queryResults
+        .clone()
+        .where('r.resultCategory2', resultCategoryIds.Detected)
+        .countDistinct('r.id')
+        .as('totalDetected2'),
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // add more fields which depend on aggregations
+  data.forEach(async it => {
+    it.rifResistanceRate = it.totalDetected1
+      ? it.totalDetected2 / it.totalDetected1
+      : 0
+  })
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
 }
 
 module.exports = {
@@ -519,7 +806,11 @@ module.exports = {
   showDevice,
   updateDevice,
   listStatusTypes,
-  exportDevices,
   listDevicesForSelectList,
   getDevice,
+  updateDeviceMaintenance,
+  getDevicePerformance,
+  getDevicesForReport,
+  getDevicesForRifResistanceReport,
+  getDeviceByDeviceId,
 }

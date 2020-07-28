@@ -4,12 +4,7 @@
   --notification-icon-size: 36px;
 }
 
-.TableRow {
-  composes: TableRow from '../../../components/shared/DataTableRow.css';
-}
-
 .TableCell {
-  composes: TableCell from '../../../components/shared/DataTableRow.css';
   color: var(--aspect-color-grey-4);
   font-size: var(--aspect-font-size-md);
 }
@@ -53,7 +48,7 @@
 .Button__Acknowledge {
   background-color: var(--aspect-color-grey-5);
   font-weight: var(--lato-font-weight-bold);
-  color: #ffffff;
+  color: var(--aspect-color-white);
 }
 
 .Button__Link {
@@ -133,10 +128,11 @@
 
 .Form__Input {
   padding: 0;
-  margin-right: 5px;
+  margin: 0 5px 0 0;
 }
 
 .Form_InputElement {
   width: 80px;
   text-align: right;
+  font-weight: normal;
 }

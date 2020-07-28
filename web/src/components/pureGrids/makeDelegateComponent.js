@@ -27,7 +27,7 @@ export function makeDelegateComponent(
   keyToClassNameMappings
 ) {
   const propTypes = {
-    className: PropTypes.string,
+    className: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     component: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
     ...pureGridPropTypes,
   }
@@ -42,12 +42,12 @@ export function makeDelegateComponent(
   return class extends PureComponent {
     static displayName = componentName
 
+    static propTypes = propTypes
+
     static defaultProps = {
       className: null,
       component: 'div',
     }
-
-    static propTypes = propTypes
 
     render() {
       const restProps = _.omit(this.props, excludedPropList)

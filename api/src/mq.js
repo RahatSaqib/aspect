@@ -1,9 +1,11 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
-const config = require('./config')
 const amqp = require('amqplib')
-const { run, transact } = require('./db')
 const EventEmitter = require('events')
 const debug = require('debug')('aspect:mq')
+
+const config = require('./config')
+const { run, transact } = require('./db')
 
 const exchange = 'aspect'
 
@@ -21,6 +23,7 @@ class MessageQueue {
     this.queues = []
     this.queueEmitActions = null
     this.messageContextIdx = 0
+    this.unsubscribe = this.unsubscribe.bind(this)
   }
 
   async connect() {
@@ -60,24 +63,23 @@ class MessageQueue {
   /**
    * Dispatch an action created by an action creator
    */
-  dispatch(action) {
+  dispatch(action, bindingKey, options) {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
     const message = JSON.stringify(action)
+    const topic = bindingKey
+      ? `aspect.actions.${action.type}.${bindingKey}`
+      : `aspect.actions.${action.type}`
     debug(`dispatch ${this.name} ${message}`)
-    this.channel.publish(
-      exchange,
-      `aspect.actions.${action.type}`,
-      Buffer.from(message)
-    )
+    this.channel.publish(exchange, topic, Buffer.from(message), options)
   }
 
   /**
    * Subscribes to messages with the named service.
    *
    * This can be a single subscription, an array, a function,
-   * or a promise, or some combination of the obove (e.g an
+   * or a promise, or some combination of the above (e.g an
    * async function returning an array to allow dynamic loading).
    *
    * Eventually accepts an object, with the following properties:
@@ -90,7 +92,7 @@ class MessageQueue {
    *
    *   Can specify multiple action types per subscription.
    */
-  subscribe(name, subscriptions) {
+  subscribe(name, subscriptions, messageTtl) {
     if (_.isFunction(subscriptions)) {
       const subscribeName = `${this.name}_${name}_subscribe`
       const messageContext = this.createMessageContext(subscribeName)
@@ -102,35 +104,82 @@ class MessageQueue {
         this.subscribe(`${name}_${subscriptionIndex}`, subscription)
       })
     } else {
-      _.each(subscriptions.actions, (listener, type) => {
+      _.each(subscriptions.actions, (messageHandler, type) => {
+        let handlerFunction = async () => Promise.resolve()
+        let shouldHandle = () => true
+        let consumeOptions
+        let bindingKey = ''
+        let purgeOnStart = false
+        if (_.isFunction(messageHandler)) {
+          handlerFunction = messageHandler
+        } else {
+          ;({ handlerFunction } = messageHandler)
+          if (messageHandler.shouldHandle) {
+            ;({ shouldHandle } = messageHandler)
+          }
+          if (messageHandler.consumerTag) {
+            consumeOptions = {
+              consumerTag: messageHandler.consumerTag,
+            }
+          }
+          if (messageHandler.allowInfiniteListeners) {
+            const maxListeners = this.emitter.getMaxListeners()
+            if (maxListeners > 0) {
+              this.emitter.setMaxListeners(0)
+            }
+          }
+          if (messageHandler.bindingKey) {
+            bindingKey = `.${messageHandler.bindingKey}`
+          }
+          if (messageHandler.purgeOnStart) {
+            purgeOnStart = true
+          }
+        }
         const { channel, name: queueName } = this
         const subscribeName = `${queueName}_${name}_actions_${type}`
-        const topic = `aspect.actions.${type}`
+        const topic = `aspect.actions.${type}${bindingKey}`
         debug(`subscribe ${subscribeName} ${topic}`)
-        const { queue } = channel.assertQueue(subscribeName, this.queueOptions)
+        const queueOptions = messageTtl ? { messageTtl } : undefined
+        const { queue } = channel.assertQueue(subscribeName, queueOptions)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
-        channel.consume(queue, message => {
-          const content = message.content.toString()
-          const messageContext = this.createMessageContext(subscribeName)
-          const action = JSON.parse(content)
-          debug(`consume ${messageContext.id} ${content}`)
-          Promise.resolve(listener(action, { messageContext }))
-            .then(() => {
-              // Do not ack until listener result resolves
-              // Allows backpressure per consumer, if this is not needed can
-              // return something (or nothing) that resolves immediately
-              debug(`ack ${messageContext.id}`)
-              this.channel.ack(message)
-            })
-            .catch(err => {
-              console.error(err) // eslint-disable-line no-console
-              // TODO nack/dead letter queue?
-              this.channel.ack(message)
-            })
-        })
+        if (purgeOnStart) {
+          channel.purgeQueue(queue)
+        }
+        channel.consume(
+          queue,
+          message => {
+            const content = message.content.toString()
+            const messageContext = this.createMessageContext(subscribeName)
+            const action = JSON.parse(content)
+            debug(`consume ${messageContext.id} ${content}`)
+            if (shouldHandle(action)) {
+              Promise.resolve(handlerFunction(action, { messageContext }))
+                .then(() => {
+                  // Do not ack until handlerFunction result resolves
+                  // Allows backpressure per consumer, if this is not needed can
+                  // return something (or nothing) that resolves immediately
+                  debug(`ack ${messageContext.id}`)
+                  this.channel.ack(message)
+                })
+                .catch(err => {
+                  console.error(err) // eslint-disable-line no-console
+                  // TODO nack/dead letter queue?
+                  this.channel.ack(message)
+                })
+            } else {
+              this.channel.nack(message)
+            }
+          },
+          consumeOptions
+        )
       })
     }
+  }
+
+  unsubscribe(queueName, topic, consumerTag) {
+    this.channel.cancel(consumerTag)
+    this.channel.unbindQueue(queueName, exchange, topic)
   }
 
   async subscribeEmitActions() {
@@ -140,7 +189,7 @@ class MessageQueue {
       const { queue } = await channel.assertQueue('', { exclusive: true })
       this.queueEmitActions = queue
       this.queues.push(queue)
-      await channel.bindQueue(queue, exchange, 'aspect.actions.*')
+      await channel.bindQueue(queue, exchange, 'aspect.actions.#')
       await channel.consume(queue, message => {
         const content = message.content.toString()
         const action = JSON.parse(content)
@@ -182,7 +231,7 @@ class MessageQueue {
    * action creators. This is mainly exposed for
    * testing.
    */
-  async waitForAction(predicate, timeout = null) {
+  async waitForAction(predicate, timeout = null, timeoutMessage = null) {
     await this.subscribeEmitActions()
     return new Promise((resolve, reject) => {
       if (_.isPlainObject(predicate)) {
@@ -205,9 +254,11 @@ class MessageQueue {
         timeoutId = setTimeout(() => {
           if (timeoutId != null) {
             dispose()
-            const rejectMessage = _.isPlainObject(predicate)
-              ? `waitForAction timeout ${JSON.stringify(predicate)}`
-              : 'waitForAction timeout'
+            const rejectMessage =
+              timeoutMessage ||
+              (_.isPlainObject(predicate)
+                ? `waitForAction timeout ${JSON.stringify(predicate)}`
+                : 'waitForAction timeout')
             debug(rejectMessage)
             reject(new Error(rejectMessage))
           }
@@ -269,19 +320,21 @@ class MessageContext {
     this.isFinalState = false
   }
 
-  dispatch(action) {
+  dispatch(action, bindingKey) {
     if (this.isFinalState) {
       throw new Error('Cannot dispatch after final state, create new context')
     }
 
     if (this.transaction) {
       // Queue actions until transaction committed
-      debug(`dispatch delay ${this.id} ${JSON.stringify(action)}`)
-      this.actions.push(action)
+      debug(
+        `dispatch delay ${this.id} ${JSON.stringify(action)} for ${bindingKey}`
+      )
+      this.actions.push({ action, bindingKey })
     } else {
       // transaction complete, dispatch to MQ
-      debug(`dispatch ${this.id} ${JSON.stringify(action)}`)
-      this.queue.dispatch(action)
+      debug(`dispatch ${this.id} ${JSON.stringify(action)} for ${bindingKey}`)
+      this.queue.dispatch(action, bindingKey)
     }
   }
 
@@ -309,7 +362,9 @@ class MessageContext {
     }
     debug(`commit ${this.id}`)
     this.transaction = null
-    this.actions.forEach(action => this.dispatch(action))
+    this.actions.forEach(({ action, bindingKey }) =>
+      this.dispatch(action, bindingKey)
+    )
     this.isFinalState = true
   }
 
@@ -322,9 +377,9 @@ class MessageContext {
     this.isFinalState = true
   }
 
-  bindActionCreators(creators) {
+  bindActionCreators(creators, bindingKey) {
     _.each(creators, (creator, name) => {
-      this[name] = (...args) => this.dispatch(creator(...args))
+      this[name] = (...args) => this.dispatch(creator(...args), bindingKey)
       this[name].bind(this)
     })
     return this

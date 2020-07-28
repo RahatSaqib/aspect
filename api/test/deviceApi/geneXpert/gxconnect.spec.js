@@ -1,14 +1,14 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const addYears = require('date-fns/add_years')
-const subDays = require('date-fns/sub_days')
-const addHours = require('date-fns/add_hours')
-const subHours = require('date-fns/sub_hours')
-const addMinutes = require('date-fns/add_minutes')
-const subMinutes = require('date-fns/sub_minutes')
-const addSeconds = require('date-fns/add_seconds')
-const setMilliseconds = require('date-fns/set_milliseconds')
+const addYears = require('date-fns/addYears')
+const subDays = require('date-fns/subDays')
+const addHours = require('date-fns/addHours')
+const subHours = require('date-fns/subHours')
+const addMinutes = require('date-fns/addMinutes')
+const subMinutes = require('date-fns/subMinutes')
+const addSeconds = require('date-fns/addSeconds')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
@@ -214,7 +214,6 @@ describe('Device API routes for GxConnect Devices', () => {
               .send(
                 _.merge({}, secondContext.basicDevicePayload, {
                   configuration: {
-                    checkpoint: null,
                     data: {
                       country: countryCode,
                       deviceSerialNumber,
@@ -637,9 +636,7 @@ describe('Device API routes for GxConnect Devices', () => {
     it('should update the last seen and last ping time', () =>
       runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device } = context
-        const deviceBefore = await knex('Device')
-          .where('id', device.id)
-          .first()
+        const deviceBefore = await knex('Device').where('id', device.id).first()
 
         const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
         await waitForApproximately(1, 'second')
@@ -655,9 +652,7 @@ describe('Device API routes for GxConnect Devices', () => {
         await waitForDeviceSeen
         await waitForIdle()
 
-        const deviceAfter = await knex('Device')
-          .where('id', device.id)
-          .first()
+        const deviceAfter = await knex('Device').where('id', device.id).first()
         deviceAfter.id.should.equal(deviceBefore.id)
         new Date(deviceAfter.lastSeenOn).should.be.above(
           deviceBefore.lastSeenOn
@@ -674,9 +669,7 @@ describe('Device API routes for GxConnect Devices', () => {
           .where('deviceId', device.id)
           .update({ offline: 1 })
 
-        const deviceBefore = await knex('Device')
-          .where('id', device.id)
-          .first()
+        const deviceBefore = await knex('Device').where('id', device.id).first()
 
         const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
         await waitForApproximately(1, 'second')
@@ -775,7 +768,7 @@ describe('Device API routes for GxConnect Devices', () => {
           geographyId: site.geographyId,
           assay: basicResultPayload.result.assay.id,
           assayVersion: basicResultPayload.result.assay.version,
-          resultWorkflowStatus: 'OK',
+          resultWorkflowStatus: 'Deliverable',
           resultSource: 'DiagnosticDevice',
           resultType: 'Patient',
           resultCategory1: 'Success',
@@ -909,7 +902,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -944,7 +937,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -982,14 +975,14 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
                   serial: 'CEPH-PC-7813',
                 },
                 sample: {
-                  id: "Bryan's Sputum",
+                  id: "Bryan's Sputum 2",
                 },
                 data: { a: 'b' },
                 assay: { id: 'GxHiv1Vl' },
@@ -1026,7 +1019,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -1039,7 +1032,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 sample: {
-                  id: "Bryan's Sputum",
+                  id: "Bryan's Sputum 2",
                   type: {
                     id: 'Plasma',
                   },
@@ -1114,9 +1107,7 @@ describe('Device API routes for GxConnect Devices', () => {
         lastResultId = await getLastResultId(knex, device.id)
         assert.equal(lastResultId, resultIds[1])
 
-        result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
+        result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(initialCount + 2, await countResults())
         expect(JSON.parse(result2.resultData)).to.containSubset({
           a: 'b',
@@ -1190,7 +1181,12 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+          .innerJoin(
+            'ResultWorkflowLog as rwl',
+            'rs.id',
+            'rwl.ResultWorkflowStatusId'
+          )
+          .where('rwl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
@@ -1206,7 +1202,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         assert.notEqual(result2.siteId, result2Sample.originSiteId)
         assert.equal(result2SampleSite.id, result2Sample.originSiteId)
-        assert.equal(result2Sample.externalId, "Bryan's Sputum")
+        assert.equal(result2Sample.externalId, "Bryan's Sputum 2")
 
         const [result2Category1, result2Category2] = await knex(
           'ResultCategory as rt'
@@ -1224,6 +1220,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const sendResult = async (
           resultId,
           assay,
+          sampleId,
           resultText,
           expectedResultCategory1,
           expectedResultCategory2,
@@ -1252,6 +1249,7 @@ describe('Device API routes for GxConnect Devices', () => {
                     assay: _.assign({}, basicResultPayload.result.assay, {
                       id: assay,
                     }),
+                    sample: { id: sampleId },
                     data: _.assign({}, basicResultPayload.result.data, {
                       resultText,
                     }),
@@ -1283,7 +1281,7 @@ describe('Device API routes for GxConnect Devices', () => {
         let runNumber = 1
         await Promise.each(
           Object.keys(resultTextToResultCategoryMapping),
-          async resultText => {
+          async (resultText, index) => {
             if (
               resultText &&
               !_.isEmpty(resultTextToResultCategoryMapping[resultText])
@@ -1298,6 +1296,7 @@ describe('Device API routes for GxConnect Devices', () => {
               await sendResult(
                 resultId,
                 assay,
+                `PKM0833243689-${index}`,
                 resultText,
                 resultCategory1,
                 resultCategory2,
@@ -1312,11 +1311,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(async () =>
+      after(() =>
         run(async knex =>
-          knex('Assay')
-            .where({ externalId: assayName })
-            .delete()
+          knex('Assay').where({ externalId: assayName }).delete()
         )
       )
 
@@ -1396,6 +1393,8 @@ describe('Device API routes for GxConnect Devices', () => {
             siteId: site.id,
             expiresOn: expiryDate,
             quantityOnHand: initialQuantityOnHand,
+            createdOn: subDays(now, 4),
+            updatedOn: subDays(now, 4),
           })
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
@@ -1409,7 +1408,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, basicDevicePayload, basicResultPayload),
                 {
                   result: _.assign({}, basicResultPayload.result, {
-                    id: dateFormat(new Date(), 'x'),
+                    id: dateFormat(new Date(), 'T'),
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
                     sample: { id: 'Existing Sample' },
@@ -1462,7 +1461,7 @@ describe('Device API routes for GxConnect Devices', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
             const { basicDevicePayload, deviceAuth, site, now } = context
-            const uniqueTestId = dateFormat(new Date(), 'x')
+            const uniqueTestId = dateFormat(new Date(), 'T')
 
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
@@ -1485,6 +1484,8 @@ describe('Device API routes for GxConnect Devices', () => {
               siteId: site.id,
               expiresOn: expiryDate,
               quantityOnHand: initialQuantityOnHand,
+              createdOn: subDays(now, 4),
+              updatedOn: subDays(now, 4),
             })
 
             const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
@@ -1722,6 +1723,85 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
+    describe('when no workflow status has been specified in the result payload', () => {
+      it('should default the workflow status to "Deliverable"', () =>
+        runTest(async () => {
+          const { basicDevicePayload, deviceAuth } = context
+
+          const testResultId = 'UNIQUE-ID-WITH-DELIVERABLE-RESULT'
+
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: testResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = await getLastResult()
+          assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
+            resultWorkflowStatus: 'Deliverable',
+          })
+          assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
+        }))
+    })
+
+    describe('when a workflow status has been specified in the result payload', () => {
+      it('should set the workflow status of the result accordingly', () =>
+        runTest(async () => {
+          const { basicDevicePayload, deviceAuth } = context
+
+          const testResultId = 'UNIQUE-ID-WITH-WORKFLOW-RESULT'
+
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: testResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    workflow: { status: { id: 'Acknowledged' } },
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = await getLastResult()
+          assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
+            resultWorkflowStatus: 'Acknowledged',
+          })
+          assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
+        }))
+    })
+
     describe('when the result comes from a site that has location data saved', () => {
       describe('and the result has NO coordinates specified in the payload', () => {
         it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
@@ -1732,7 +1812,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function() {
+              .innerJoin('Geography as g', function () {
                 this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
               })
               .join('Country as c', 'g.countryId', 'c.id')
@@ -1745,12 +1825,8 @@ describe('Device API routes for GxConnect Devices', () => {
               )
             const { id: geographyId } = await knex('Geography')
               .where('countryId', deviceLocationDetails.countryId)
-              .andWhere(function() {
-                this.whereNotNull('stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('lgaId')
-              })
+              .whereNotNull('stateId')
+              .whereNotNull('lgaId')
               .orderBy('id', 'desc')
               .first('id')
             await knex('Site')
@@ -1809,7 +1885,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function() {
+              .innerJoin('Geography as g', function () {
                 this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
               })
               .join('Country as c', 'g.countryId', 'c.id')
@@ -1822,12 +1898,8 @@ describe('Device API routes for GxConnect Devices', () => {
               )
             const { id: geographyId } = await knex('Geography')
               .where('countryId', deviceLocationDetails.countryId)
-              .andWhere(function() {
-                this.whereNotNull('stateId')
-              })
-              .andWhere(function() {
-                this.whereNotNull('lgaId')
-              })
+              .whereNotNull('stateId')
+              .whereNotNull('lgaId')
               .orderBy('id', 'desc')
               .first('id')
             await knex('Site')
@@ -2246,9 +2318,12 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('inventory update', () => {
       const initialQuantityOnHand = 100
-      beforeEach(async () =>
+      beforeEach(() =>
         run(async knex => {
-          const { basicDevicePayload, site: { id: siteId } } = context
+          const {
+            basicDevicePayload,
+            site: { id: siteId },
+          } = context
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')

@@ -1,26 +1,19 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
+import ExportListButton from '../../globals/components/ExportListButton'
 
 describe('Person List module', () => {
   const { PersonList } = require('./PersonList')
 
   describe('PersonList component', () => {
-    const renderer = new ReactShallowRenderer()
     let props
 
     beforeEach(() => {
       props = {
-        intl: {
-          formatMessage: message => message.defaultMessage,
-          formatDate: date => JSON.stringify(date),
-          formatTime: time => JSON.stringify(time),
-          formatRelative: value => JSON.stringify(value),
-          formatNumber: value => JSON.stringify(value),
-          formatPlural: value => JSON.stringify(value),
-          formatHTMLMessage: value => JSON.stringify(value),
-        },
+        intl: createIntl({ locale: 'en' }),
         history: {
           push: () => {},
         },
@@ -35,13 +28,15 @@ describe('Person List module', () => {
         pageSize: 10,
         onHeadColumnClick: () => {},
         onRowClick: () => {},
+        onExcelClick: () => {},
       }
     })
 
     it('should shallow render correctly', () => {
-      const element = renderer.render(<PersonList {...props} />)
+      const element = shallow(<PersonList {...props} />)
 
       expect(element).toMatchSnapshot()
+      expect(element.find(ExportListButton)).toHaveLength(1)
     })
   })
 })

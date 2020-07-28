@@ -2,9 +2,13 @@ const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
 const { assert, expect } = require('chai')
-const { runTest } = require('../utils/generatorFunctionUtils')
-const { formatDateOrDefault } = require('../../src/shared/date')
 const { convertToTimeZone } = require('date-fns-timezone')
+
+const { runTest } = require('../utils/generatorFunctionUtils')
+const {
+  formatDateOrDefault,
+  parseDateOrDefault,
+} = require('../../src/shared/date')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
@@ -122,7 +126,7 @@ describe('stringTemplate', () => {
           offlineOn: '2018-08-01',
         },
         displayPreferences: {
-          dateFormat: 'D/M/YYYY',
+          dateFormat: 'd/M/yyyy',
         },
       }
       return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
@@ -135,9 +139,9 @@ describe('stringTemplate', () => {
 
   describe('processUsingDataSourceQuery', () => {
     const displayPreferences = {
-      dateFormat: 'D/M/YYYY',
+      dateFormat: 'd/M/yyyy',
       timeFormat: 'HH:mm:ss',
-      dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+      dateTimeFormat: 'd/M/yyyy HH:mm:ss',
     }
     const { processUsingDataSourceQuery } = proxyquire(
       '../../src/stringTemplate/service',
@@ -148,6 +152,7 @@ describe('stringTemplate', () => {
       }
     )
 
+    const patientExternalId = 'PATIENT-SYS123655'
     const messageDataSource = {
       siteExternalId: 'RMMCH',
       siteShortName: 'Rahima Moosa RMMCH',
@@ -161,6 +166,13 @@ describe('stringTemplate', () => {
       resultData: `{"id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","errorCode":"18006","timeStamp":"2018-10-05T13:40:46","hiv2Result":"---","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","hiv1OResult":"---","deviceSerial":"NAT-04000925","hiv1MNResult":"---","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
       resultFormData: `{"firstName":"James","surname":"Hetfield","musicalSkills":"","nameOfPatient":"Bryan","surnameOfPatient":"Richards","hospitalNumber":"HS97349","studyID":"ST976","ward":"66","timeSampleTaken":"2018-10-05T13:40:46","sampleType":"study","timeInstrumentResulted":"2018-10-05T14:51:18"}`,
       resultPatientData: `{"id":"ABC-123"}`,
+      resultRawData: `H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312
+P|1|${patientExternalId}|
+O|1|SYS123655|SYS123655^vl110^H12|^^^1mLDBSvOP^HIV1.0mlDBS|||||||||||||||||||||F
+R|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695
+R|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695
+R|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695
+L|1`,
       resultModuleName: null,
       resultModuleSerial: undefined,
       resultErrorCode: null,
@@ -169,19 +181,24 @@ describe('stringTemplate', () => {
       assayExternalId: 'assayAlereQHiv12Detect',
       resultCategory1ExternalId: 'Detected',
       resultCategory2ExternalId: 'NotDetected',
+      createdOn: parseDateOrDefault('2018-08-01T10:38:00.000Z'),
+      consumableSerial: '12345678',
+      senderOperator: 'Dr Foster Went to Gloucestershire',
     }
 
     async function runProcessUsingDataSourceQuery(
       payloadTemplate,
-      changesToMessageDataSource = {}
+      changesToMessageDataSource = {},
+      templateFields = ['payloadTemplate']
     ) {
-      const data = Object.assign(
-        {},
-        messageDataSource,
-        changesToMessageDataSource,
-        { payloadTemplate }
-      )
-      const templateFields = ['payloadTemplate']
+      const data = {
+        ...messageDataSource,
+        ...changesToMessageDataSource,
+        payloadTemplate,
+      }
+      templateFields.forEach(field => {
+        data[field] = payloadTemplate
+      })
       const options = { dynamic: true }
       return processUsingDataSourceQuery(data, templateFields, options)
     }
@@ -201,7 +218,7 @@ describe('stringTemplate', () => {
       })
 
       it('should format date with a specific format is specified', async () => {
-        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const specifiedFormat = 'yyyy-MM-ddHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate device.lastSeenOn formatString='${specifiedFormat}'}}`
         )
@@ -272,7 +289,7 @@ describe('stringTemplate', () => {
       })
 
       it('should not change the date to use an offset if the timezone IS NOT specified', async () => {
-        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const specifiedFormat = 'yyyy-MM-ddHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn) formatString='${specifiedFormat}'}}`
         )
@@ -302,7 +319,7 @@ describe('stringTemplate', () => {
       it('should map the value to something in the value map provided', async () => {
         const valueMap = {
           DNAH: 'D',
-          kalafong: 'K',
+          KPTH: 'K',
           CMJAH: 'J',
           RMMCH: 'R',
           CHBAH: 'B',
@@ -357,6 +374,25 @@ describe('stringTemplate', () => {
           `Device's pants Size is {{defaultTo device.pantsSize}}`
         )
         assert.equal(message.payload, `Device's pants Size is `)
+      })
+    })
+
+    describe('customFieldValueFromLabel helper', () => {
+      it('should return the value from the custom field using the label passed to it to identify which field', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{customFieldValueFromLabel result.data.customFieldData 'TB Case No.(Patient ID)'}}`,
+          {
+            resultData: `{"customFieldData":{"1":{"label":"TB Case No.(Patient ID)","value":"TEST-P_CASE"},"2":{"label":"Name of Requesting Facility","value":"BOSTON Lab"}}}`,
+          }
+        )
+        assert.equal(message.payload, 'Patient Case Number: TEST-P_CASE')
+      })
+
+      it("should return a blank string when the custom fields aren't there", async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{customFieldValueFromLabel result.data.customFieldData 'TB Case No.(Patient ID)'}}`
+        )
+        assert.equal(message.payload, 'Patient Case Number: ')
       })
     })
 
@@ -546,6 +582,13 @@ describe('stringTemplate', () => {
         )
         assert.equal(message.payload, 'Result Numeric Value: ')
       })
+
+      it('should match on start and end of line markers', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{extractValueFromRegexCaptureGroup result.rawData expression='^P\\|\\d*\\|([^\\|;]+)\\|' groupNumber=1}}`
+        )
+        assert.equal(message.payload, patientExternalId)
+      })
     })
 
     describe('eq helper', () => {
@@ -621,7 +664,7 @@ describe('stringTemplate', () => {
 
     describe('chaining helpers', () => {
       it("should pass the result of a helper to it's predecessor", async () => {
-        const specifiedFormat = 'YYYY-MMMM-DD'
+        const specifiedFormat = 'yyyy-MMMM-dd'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{urlEncode (enclose (toLowerCase (formatDate device.lastSeenOn formatString='${specifiedFormat}')) with='"')}}`
         )
@@ -637,9 +680,42 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('coalesce helper', () => {
+      it('should return the first value that is not falsy', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{coalesce result.data.undefinedCaseNumber result.data.caseNumberOne result.data.caseNumberTwo result.data.caseNumberThree result.data.caseNumberFour result.data.caseNumberFive result.data.caseNumberSix}}`,
+          {
+            resultData: JSON.stringify({
+              caseNumberOne: 0,
+              caseNumberTwo: '',
+              caseNumberThree: false,
+              caseNumberFour: 'truth',
+              caseNumberFive: 1,
+              caseNumberSix: true,
+            }),
+          }
+        )
+        assert.equal(message.payload, `Patient Case Number: truth`)
+      })
+
+      it('should return a blank string when none of the supplied values are truthy', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Patient Case Number: {{coalesce result.data.undefinedCaseNumber result.data.caseNumberOne result.data.caseNumberTwo result.data.caseNumberThree}}`,
+          {
+            resultData: JSON.stringify({
+              caseNumberOne: 0,
+              caseNumberTwo: '',
+              caseNumberThree: false,
+            }),
+          }
+        )
+        assert.equal(message.payload, `Patient Case Number: `)
+      })
+    })
+
     describe('use cases for SA NHLS', () => {
       it('should process RedCAP API Payloads', async () => {
-        const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+        const redCapDateTimeFormat = 'yyyy-MM-dd HH:mm'
         const johannesburgTimeZone = 'Africa/Johannesburg'
         const template =
           `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
@@ -648,7 +724,7 @@ describe('stringTemplate', () => {
           `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C%20` +
           `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C%20` +
           `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C%20` +
-          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C%20` +
+          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","KPTH":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C%20` +
           `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C%20` +
           `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C%20` +
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
@@ -703,7 +779,7 @@ describe('stringTemplate', () => {
         }
         const redCapSiteCodes = {
           DNAH: 'D',
-          kalafong: 'K',
+          KPTH: 'K',
           CMJAH: 'J',
           RMMCH: 'R',
           CHBAH: 'B',
@@ -969,7 +1045,7 @@ describe('stringTemplate', () => {
           },
         ]
         await Promise.each(useCases, async useCase => {
-          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const dataSource = { ...messageDataSource, ...useCase }
           const formData = JSON.parse(dataSource.resultFormData)
           const message = await runProcessUsingDataSourceQuery(
             template,
@@ -1034,10 +1110,9 @@ describe('stringTemplate', () => {
               `%22poc_viral_load%22%3A%22${encodeURIComponent(
                 dataSource.expectedPocVl
               )}%22%2C%20` +
-              `%22ct_value%22%3A%22${_.get(resultData, [
-                'probes',
-                'probeCCT',
-              ]) || '0'}%22%2C%20` +
+              `%22ct_value%22%3A%22${
+                _.get(resultData, ['probes', 'probeCCT']) || '0'
+              }%22%2C%20` +
               `%22result_instrument%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   convertToTimeZone(formData.timeInstrumentResulted, {
@@ -1305,7 +1380,7 @@ describe('stringTemplate', () => {
           },
         ]
         await Promise.each(useCases, async useCase => {
-          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const dataSource = { ...messageDataSource, ...useCase }
           const formData = JSON.parse(dataSource.resultFormData)
           const message = await runProcessUsingDataSourceQuery(
             template,
@@ -1314,18 +1389,787 @@ describe('stringTemplate', () => {
           const patientData = JSON.parse(dataSource.resultPatientData)
           assert.equal(
             message.payload,
-            `GxAlert. ${dataSource.expectedTitle} ${
-              dataSource.siteShortName
-            }; ` +
-              `in Ward: ${formData.ward}; Sample ID: ${
-                dataSource.sampleExternalId
-              };  ` +
+            `GxAlert. ${dataSource.expectedTitle} ${dataSource.siteShortName}; ` +
+              `in Ward: ${formData.ward}; Sample ID: ${dataSource.sampleExternalId};  ` +
               `Patient ID: ${patientData.id} on ${formatDateOrDefault(
                 dataSource.resultEndedOn,
                 displayPreferences.dateFormat
               )}` +
               `; Result: ${dataSource.expectedResult}`,
             `Use case failed: ${JSON.stringify(useCase)}`
+          )
+        })
+      })
+    })
+
+    describe('use cases for Cameroon', () => {
+      it('should process Check TB App Payloads', async () => {
+        const checkTbAppAuthKey = '00000-00000-00000-00000'
+        const checkTbAppDateTimeFormat = 'yyyy-MM-dd HH:mm'
+        const template =
+          `{{curly true}}` +
+          `"auth_key":"${checkTbAppAuthKey}",` +
+          `"mtb_result":{{enclose (defaultTo (mapValue result.category1.id '{"Detected":"detected","Trace Detected":"trace","NotDetected":"not_detected","Indeterminate":"error_invalid","Invalid":"error_invalid","NoResult":"not_done","Error":"error_invalid","Negative":"not_detected","Positive1":"not_detected","Positive2":"detected","Positive3":"detected","PositiveMTB":"detected","Positive":"detected"}') '') with='"'}},` +
+          `"mtb_grade":{{enclose (defaultTo (mapValue (extractValueFromRegexCaptureGroup result.data.resultText '(DETECTED HIGH|DÉTECTÉ ÉLEVÉ|DETECTED MEDIUM|DÉTECTÉ MOYEN|DETECTED LOW|DÉTECTÉ BAS|DETECTED VERY LOW|DÉTECTÉ TRÈS BAS)') '{"DETECTED HIGH":"high","DÉTECTÉ ÉLEVÉ":"high","DETECTED MEDIUM":"medium","DÉTECTÉ MOYEN":"medium","DETECTED LOW":"low","DÉTECTÉ BAS":"low","DETECTED VERY LOW":"very_low","DÉTECTÉ TRÈS BAS":"very_low"}') '') with='"'}},` +
+          `{{#if (eq (defaultTo (mapValue result.category1.id '{"NotDetected":"mtbNotDetected","Negative":"mtbNotDetected"}') '') 'mtbNotDetected')}}` +
+          `"rif_result":"not_detected",` +
+          `{{else}}` +
+          `"rif_result":{{enclose (defaultTo (mapValue result.category2.id '{"Detected":"detected","NotDetected":"not_detected","Indeterminate":"indeterminate","Susceptible":"not_detected","Resistant":"detected","Negative":"not_detected","Positive":"detected","Positive1":"detected","Positive2":"detected","Positive3":"detected"}') 'indeterminate') with='"'}},` +
+          `{{/if}}` +
+          `"test_date":{{enclose (defaultTo (formatDate (offsetToTimeZone result.createdOn 'Africa/Douala') '${checkTbAppDateTimeFormat}') '') with='"'}},` +
+          `"deployment_full_name":{{enclose (defaultTo device.name '') with='"'}},` +
+          `"cartridge_serial":{{enclose (defaultTo result.consumableSerial '') with='"'}},` +
+          `"operator":{{enclose (defaultTo result.senderOperator '') with='"'}}` +
+          `{{curly}}`
+        const useCases = [
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            expectedMtbResult: 'error_invalid',
+            expectedMtbGrade: '',
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"ERROR"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"DETECTED LOW|NOT DETECTED|"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRifUltra',
+            resultCategory1ExternalId: 'Trace Detected',
+            resultCategory2ExternalId: 'Indeterminate',
+            expectedMtbResult: 'trace',
+            expectedMtbGrade: '',
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB Trace DETECTED|RIF Resistance INDETERMINATE"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: null,
+            expectedMtbResult: 'not_detected',
+            expectedMtbGrade: '',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB NOT DETECTED"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'medium',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'high',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ"}`,
+          },
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedMtbResult: 'detected',
+            expectedMtbGrade: 'very_low',
+            expectedRifResult: 'not_detected',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"MTB DÉTECTÉ TRÈS BAS|Rif Resistance INDÉTERMINÉ"}`,
+          },
+        ]
+        await Promise.each(useCases, async useCase => {
+          const dataSource = { ...messageDataSource, ...useCase }
+          const message = await runProcessUsingDataSourceQuery(
+            template,
+            useCase
+          )
+          const messagePayload = JSON.parse(message.payload)
+          expect(messagePayload).to.containSubset({
+            auth_key: checkTbAppAuthKey,
+            mtb_result: dataSource.expectedMtbResult,
+            mtb_grade: dataSource.expectedMtbGrade,
+            rif_result: dataSource.expectedRifResult,
+            test_date: dataSource.expectedTestDate,
+            deployment_full_name: dataSource.deviceName,
+            cartridge_serial: dataSource.consumableSerial,
+            operator: dataSource.senderOperator,
+          })
+        })
+      })
+    })
+
+    describe('use cases for Philippines', () => {
+      it('should process ITIS "REST API" urls', async () => {
+        const philippinesITISSystemKey = 't3$+P@s5h!'
+        const philippinesITISWebApiUrl =
+          'http://itisdoh.pbsp.org.ph:3003/pushgxalert/'
+        const philippinesITISDateTimeFormat = 'yyyy-MM-dd'
+        const template =
+          `${philippinesITISWebApiUrl}/${encodeURIComponent(
+            philippinesITISSystemKey
+          )}` +
+          // TODO: Increase size of WebHookTemplate.url from VARCHAR(255) to TEXT
+          // TODO: Ensure that TB Case No.(Patient ID) is mapped to patient.id whe result comes in from GxAlert
+          `/CASE_NUMBER/{{urlEncode result.patient.id}}` +
+          // TODO: Ensure that Specimen Code (Sample ID) is mapped to sample.id whe result comes in from GxAlert
+          `/SPECIMEN_CODE/{{urlEncode (defaultTo result.sample.id 'NULL')}}` +
+          // TODO: Seed ITIS facility list into Site table using hfacility.id as the externalId
+          `/REQUESTING_FACILITY/{{urlEncode (defaultTo result.sample.originSite.id 'NULL')}}` +
+          // TODO: Map GxAlert locations to sites loaded into the Aspect Site table with hfacility.id as the externalId
+          `/LABORATORY/{{urlEncode (defaultTo site.id 'NULL')}}` +
+          // TODO: Ensure that GxConnect custom field values are correctly sanitized & mapped to the result patient data as in this template
+          //       Date of Request -> patient.mrfDateRequested
+          //       Name of Person Requesting Test -> patient.requestingPhysician
+          //       Last Name of Patient -> patient.lastName
+          //       First Name of Patient -> patient.firstName
+          //       Middle Name of Patient -> patient.middleInitialOrName
+          //       Age -> patient.age
+          //       Patient Address -> patient.address
+          //       Gender -> patient.sex
+          //       Specimen Type -> sample.data.type... When Specimen Type from GxConnect comes in as 'Other' it should be saved as 'Others' inline with ITIS and PMDT options
+          //       Repeat Collection? -> sample.data.repeatCollection
+          //       Presumptive DS-TB/DR-TB -> patient.presumptiveDsOrDr
+          //       Date Specimen Collected -> sample.collectedOn
+          //       Visual Appearance -> sample.data.appearance
+          //       Date of Release -> data.dateReleased
+          //       Performed by -> data.examiner
+          //       Repeat Test -> patient.treatmentSchedule
+          `/DATE_REQUESTED/{{defaultTo (formatDate result.patient.mrfDateRequested formatString='${philippinesITISDateTimeFormat}') 'NULL'}}` +
+          `/REQUESTING_PHYSICIAN/{{urlEncode (defaultTo result.patient.requestingPhysician 'NULL')}}` +
+          `/LAST_NAME/{{urlEncode (defaultTo result.patient.lastName 'NULL')}}` +
+          `/FIRST_NAME/{{urlEncode (defaultTo result.patient.firstName 'NULL')}}` +
+          `/MIDDLE_NAME/{{urlEncode (defaultTo result.patient.middleInitialOrName 'NULL')}}` +
+          `/AGE/{{defaultTo (extractValueFromRegexCaptureGroup result.patient.age expression='^(\\d*)(.*)$' groupNumber=1) 'NULL'}}` +
+          `/STREET_ADDRESS/{{urlEncode (defaultTo result.patient.address 'NULL')}}` +
+          // TODO: Find out if GEO_LOCATION refers to the location of the patient or the health facility. If it is the health facility, bring device.data into the device datasource and map geoLocationExternalId with each site
+          `/GEO_LOCATION/NULL` +
+          `/SEX/{{defaultTo (mapValue result.patient.sex '{"Male":"M","Female":"F"}') 'NULL'}}` +
+          // Patient contact details currently come from GxConnect custom fields and are not entered in the NTRL database
+          // The NTRL team would like to add these fields to the MRF in the Access Database
+          `/MOBILE_NUMBER/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient Phone') 'NULL')}}` +
+          `/LANDLINE/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Landline No.') 'NULL')}}` +
+          `/EMAIL/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Email Address') 'NULL')}}` +
+          // Reason for Examination options in:
+          //     NTRL/PMDT database: Treatment Schedule: DIAGNOSIS, BAS, Follow up, Post Treatment
+          //     GxConnect: Repeat Test: 0 - First or second, 1 - Follow-up, 2 - Repeat Baseline
+          // ITIS Data Dictionary:
+          //       - 938492: DIAGNOSIS
+          //       - 938493: BASELINE
+          //       - 938494: BEFORE TREATMENT
+          //       - 938495: 2ND WEEK
+          //       - 938496: 1ST MONTH
+          //       - 938497: 2ND MONTH
+          //       - 938498: 3RD MONTH
+          //       - 938499: 4TH MONTH
+          //       - 938500: 5TH MONTH
+          //       - 938501: 6TH MONTH
+          //       - 938502: 7TH MONTH
+          //       - 938503: 8TH MONTH
+          //       - 938504: 9TH MONTH
+          //       - 938505: 10TH MONTH
+          //       - 938506: 11TH MONTH
+          //       - 938507: 12TH MONTH
+          //       - 938508: 13TH MONTH
+          //       - 938509: 14TH MONTH
+          //       - 938510: 15TH MONTH
+          //       - 938511: 16TH MONTH
+          //       - 938512: 17TH MONTH
+          //       - 938513: 18TH MONTH
+          //       - 938514: 19TH MONTH
+          //       - 938515: 20TH MONTH
+          //       - 938516: 21ST MONTH
+          //       - 938517: 22ND MONTH
+          //       - 938518: 23RD MONTH
+          //       - 938519: 24TH MONTH
+          //       - 938520: 25TH MONTH
+          //       - 938521: 26TH MONTH
+          //       - 938522: 27TH MONTH
+          //       - 938523: 28TH MONTH
+          //       - 938524: 29TH MONTH
+          //       - 938525: 30TH MONTH
+          //       - 938526: 31ST MONTH
+          //       - 938558: 32ND MONTH
+          //       - 938559: 33RD MONTH
+          //       - 938560: 34TH MONTH
+          //       - 938561: 35TH MONTH
+          //       - 938562: 36TH MONTH
+          //       - 938563: 1ST POST FOLLOW-UP
+          //       - 938564: 2ND POST FOLLOW-UP
+          //       - 938565: 3RD POST FOLLOW-UP
+          //       - 938566: 4TH POST FOLLOW-UP
+          //       - 938677: 37TH MONTH
+          //       - 938730: 38TH MONTH
+          //       - 938731: 39TH MONTH
+          //       - 938732: 40TH MONTH
+          // From GxConnect custom fields use patient.treatmentSchedule
+          //    - patient.treatmentSchedule = 'DIAGNOSIS'
+          //        - Send DIAGNOSIS
+          //    - patient.treatmentSchedule = 'BASELINE'
+          //        - Send BASELINE
+          //      TODO: Sanitize GxConnect custom field payload with 'Follow-up' and standardize on 'Follow up'
+          //    - patient.treatmentSchedule = 'Follow up'
+          //        - Send NULL. This is different from when result comes from PMDT database because we are not assuming that the follow up is on the 2ND WEEK
+          // From PMDT database use patient.treatmentSchedule and patient.monthOfTreatment
+          //    - patient.treatmentSchedule = 'DIAGNOSIS'
+          //        - Send DIAGNOSIS
+          //      TODO: Sanitize PMDT payload with 'BAS' or 'BASE LINE' and standardize on 'BASELINE'
+          //    - patient.treatmentSchedule = 'BAS' or 'BASELINE' or 'BASE LINE'
+          //        - Send BASELINE
+          //      TODO: Sanitize PMDT payload with 'Follow-up' and standardize on 'Follow up'
+          //    - patient.treatmentSchedule = 'Follow up' use patient.monthOfTreatment to determine option:
+          //        - Blank = 2ND WEEK
+          //        - 1, 2, 3... = 1ST MONTH, 2ND MONTH, 3RD MONTH...
+          //        - PT1, PT2, 2ND POST TX... = 1ST POST FOLLOW-UP, 2ND POST FOLLOW-UP...
+          //    - patient.treatmentSchedule = 'Post Treatment' use patient.monthOfTreatment to determine option:
+          //        - 1, 2, 3... = 1ST POST FOLLOW-UP, 2ND POST FOLLOW-UP, 3RD POST FOLLOW-UP...
+          // Patient Serial Number DOes Not Exist, this case comes from GxConnect only
+          `{{#if (eq (defaultTo result.patient.serialNumber 'NULL') 'NULL')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue result.patient.treatmentSchedule '{"DIAGNOSIS":"938492","BASELINE":"938493"}') 'NULL'}}` +
+          // Patient Serial Number Exists, this case has been entered into the PMDT database
+          `{{else}}` +
+          `{{#if (eq result.patient.treatmentSchedule 'Follow up')}}` +
+          `{{#if (eq (defaultTo result.patient.monthOfTreatment 'NULL') 'NULL')}}` +
+          // If no Month of Treatment specified, default to 938495: 2ND WEEK
+          `/REASON_FOR_EXAMINATION/938495` +
+          `{{else}}` +
+          `{{#if (isRegexMatch result.patient.monthOfTreatment '^\\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*month?)?\\s*$')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^\\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*month?)?\\s*$' groupNumber=1) '{"1":"938496","2":"938497","3":"938498","4":"938499","5":"938500","6":"938501","7":"938502","8":"938503","9":"938504","10":"938505","11":"938506","12":"938507","13":"938508","14":"938509","15":"938510","16":"938511","17":"938512","18":"938513","19":"938514","20":"938515","21":"938516","22":"938517","23":"938518","24":"938519","25":"938520","26":"938521","27":"938522","28":"938523","29":"938524","30":"938525","31":"938526","32":"938558","33":"938559","34":"938560","35":"938561","36":"938562","37":"938677","38":"938730","39":"938731","40":"938732"}') 'NULL'}}` +
+          `{{else}}` +
+          `{{#if (isRegexMatch result.patient.monthOfTreatment '^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$' groupNumber=2) '{"1":"938563","2":"938564","3":"938565","4":"938566"}') 'NULL'}}` +
+          `{{else}}` +
+          `/REASON_FOR_EXAMINATION/NULL` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{else}}` +
+          `{{#if (eq result.patient.treatmentSchedule 'Post Treatment')}}` +
+          `{{#if (isRegexMatch result.patient.monthOfTreatment '^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$')}}` +
+          `/REASON_FOR_EXAMINATION/{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^\\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\\s*POST\\s*)?(\\s*TX\\s*)?(\\s*month|MONTH|Month\\s*)?\\s*$' groupNumber=2) '{"1":"938563","2":"938564","3":"938565","4":"938566"}') 'NULL'}}` +
+          `{{else}}` +
+          `/REASON_FOR_EXAMINATION/NULL` +
+          `{{/if}}` +
+          `{{else}}` +
+          `/REASON_FOR_EXAMINATION/NULL` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{/if}}` +
+          // PMDT Database Registration Group Options
+          // TODO: Interpret these in patient.registrationGroup as the text that they should be in ITIS (ie: TAF should be saved as TX AFTER FAILURE)
+          //  - RELAPSE
+          //  - TAF
+          //  - TALF
+          //  - PTOU
+          //  - OTHER
+          // TODO: Find out what how  interpret CAT II options
+          //  - CAT II RELAPSE
+          //  - CAT II FAILURE
+          //  - New
+          // GxConnect Unused Registration Group Options
+          //  - 938610: NEW
+          //  - 938611: RELAPSE
+          //  - 938613: TX AFTER LOST TO FF-UP
+          //  - 938614: TX AFTER FAILURE
+          //  - 938615: PREVIOUS TX OUTCOME UNKNOWN
+          //  - 938616: OTHER
+          // ITIS Data Dictionary
+          //  - 938610 = NEW
+          //  - 938611 = RELAPSE
+          //  - 938613 = TX AFTER LOST TO FF-UP
+          //  - 938614 = TX AFTER FAILURE
+          //  - 938615 = PREVIOUS TX OUTCOME UNKNOWN
+          //  - 938616 = OTHER
+          `/REGISTRATION_GROUP/{{defaultTo (mapValue result.patient.registrationGroup '{"NEW":"938610","RELAPSE":"938611","TX AFTER LOST TO FF-UP":"938613","TX AFTER FAILURE":"938614","PREVIOUS TX OUTCOME UNKNOWN":"938615","OTHER":"938616"}') 'NULL'}}` +
+          // TODO: Add JSON data field to the sample table and bring them into the base datasource for string template processing.
+          //       For TB sputum specimens, the data could include type, repeatCollection, appearance & volume keys which are common
+          `/SPECIMEN_TYPE/{{defaultTo (mapValue result.sample.data.type '{"Sputum":"0","Isolates":"1","Others":"1"}') 'NULL'}}` +
+          `/REPEAT_COLLECTION/{{defaultTo (mapValue result.sample.data.repeatCollection '{"Yes":"1","No":"0"}') 'NULL'}}` +
+          // GxConnect Options:
+          //   - Presumptive DS-TB
+          //   - Presumptive DR-TB
+          // PMDT Options:
+          //   - Presumptive DR-TB
+          //   - Presumptive DS-TB
+          `/PRESUMPTIVE_DSDR_TB/{{defaultTo (mapValue result.patient.presumptiveDsOrDr '{"Presumptive DS-TB":"0","Presumptive DR-TB":"1"}') 'NULL'}}` +
+          `/SPECIMEN_COLLECTION_DATE/{{defaultTo (formatDate result.sample.collectedOn formatString='${philippinesITISDateTimeFormat}') 'NULL'}}` +
+          `/VISUAL_APPEARANCE/{{defaultTo (mapValue result.sample.data.appearance '{"Muco-purulent":"938638","Blood-stained":"938639","Salivary":"938640","Mucosalivary":"938672","Purulent":"938891"}') 'NULL'}}` +
+          `/RESULT_MTB/{{defaultTo (mapValue result.category1.id '{"NotDetected":"0","Detected":"1","Trace Detected":"1","Indeterminate":"2","Invalid":"2","Error":"2","NoResult":"2"}') 'NULL'}}` +
+          `/RESULT_RIF/{{defaultTo (mapValue result.category2.id '{"NotDetected":"0","Detected":"1","Invalid":"4","Error":"4","NoResult":"6","Indeterminate":"7"}') 'NULL'}}` +
+          `/RELEASE_DATE/{{defaultTo (formatDate result.data.dateReleased formatString='${philippinesITISDateTimeFormat}') 'NULL'}}` +
+          `/PERFORMED_BY/{{urlEncode (defaultTo result.data.examiner 'NULL')}}`
+        const useCases = [
+          {
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            expectedMtbResult: 'error_invalid',
+            expectedMtbGrade: '',
+            expectedRifResult: 'indeterminate',
+            expectedTestDate: '2018-08-01 11:38',
+            expectedCartridgeSerial: messageDataSource.consumableSerial,
+            expectedOperator: messageDataSource.senderOperator,
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"resultText":"ERROR"}`,
+          },
+          {
+            site: {
+              id: 'NTRL1',
+              name: 'National TB Reference Laboratory',
+              shortName: 'NTRL',
+            },
+            assayExternalId: 'GxMtbRif',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            resultPatientData: JSON.stringify({
+              id: 'P-11234-239',
+              mrfDateRequested: '2018-08-01 11:38',
+              requestingPhysician: 'Dr Gobetz',
+              lastName: 'Betman',
+              firstName: 'Joan',
+              middleInitialOrName: 'M',
+              age: 26,
+              address: '27A, 16th Street, Hatley, Pleasantville, GB66682',
+              sex: 'Female',
+              serialNumber: '123321',
+              treatmentSchedule: 'DIAGNOSIS',
+              monthOfTreatment: '',
+              registrationGroup: 'NEW',
+              presumptiveDsOrDr: 'Presumptive DS-TB',
+            }),
+            sampleExternalId: 'P-11234-239-1',
+            sampleOriginSiteExternalId: 'SITE1234',
+            sampleCollectedOn: null,
+            sampleData: JSON.stringify({
+              type: 'Sputum',
+              repeatCollection: 'Yes',
+              appearance: 'Muco-purulent',
+            }),
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: JSON.stringify({
+              customFieldData: [
+                {
+                  label: 'Patient Phone',
+                  value: '011-678-1234',
+                },
+                {
+                  label: "Patient's Landline No.",
+                  value: '8488-765-1212',
+                },
+                {
+                  label: "Patient's Email Address",
+                  value: 'patient@test.com',
+                },
+              ],
+              dateReleased: '2018-08-01 11:38',
+              examiner: 'James Jenson',
+            }),
+          },
+          {
+            site: {
+              id: 'REMOTE1',
+              name: 'Satellite Treatment Center',
+              shortName: 'STC',
+            },
+            assayExternalId: 'GxMtbRifUltra',
+            resultCategory1ExternalId: 'Trace Detected',
+            resultCategory2ExternalId: 'Indeterminate',
+            resultPatientData: JSON.stringify({
+              id: 'P-293874-292',
+              mrfDateRequested: '2018-06-03 08:13',
+              lastName: 'Mulller',
+              age: '6 Months',
+              address: 'Greater Horwich',
+              sex: 'Male',
+              serialNumber: '92382',
+              treatmentSchedule: 'BASELINE',
+              monthOfTreatment: '6 Months',
+              registrationGroup: 'RELAPSE',
+              presumptiveDsOrDr: 'Presumptive DR-TB',
+            }),
+            sampleExternalId: 'P-293874-292-1',
+            sampleOriginSiteExternalId: 'SITE111',
+            sampleCollectedOn: null,
+            sampleData: JSON.stringify({
+              type: 'Others',
+              repeatCollection: 'No',
+              appearance: 'Blood-stained',
+            }),
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: JSON.stringify({
+              customFieldData: [],
+              dateReleased: '2018-06-03 08:13',
+              examiner: 'James Jenson',
+            }),
+          },
+          {
+            site: {
+              id: 'REMOTE2',
+              name: 'Satellite Treatment Center',
+              shortName: 'STC2',
+            },
+            assayExternalId: 'GxMtbRifUltra',
+            resultCategory1ExternalId: 'Trace Detected',
+            resultCategory2ExternalId: 'Indeterminate',
+            resultPatientData: JSON.stringify({
+              id: 'P-123422-111',
+              mrfDateRequested: '1970-12-16 19:55',
+              lastName: 'Schwartz',
+              firstName: 'Elmarie',
+              age: '22 Years',
+              address: '1 Beckton Avenue, Mulspoort, California, USA',
+              serialNumber: '92382',
+              treatmentSchedule: 'Follow up',
+              monthOfTreatment: '34',
+              registrationGroup: 'TX AFTER LOST TO FF-UP',
+              presumptiveDsOrDr: 'Presumptive DR-TB',
+            }),
+            sampleExternalId: 'P-123422-111',
+            sampleOriginSiteExternalId: 'SITE5',
+            sampleCollectedOn: '1970-12-16',
+            sampleData: JSON.stringify({
+              type: 'Isolates',
+            }),
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: JSON.stringify({
+              customFieldData: [
+                {
+                  label: "Patient's Email Address",
+                  value: 'isolate@history.geocities.com',
+                },
+              ],
+              dateReleased: '2018-06-03 08:13',
+              examiner: 'Bill Visagie',
+            }),
+          },
+        ]
+        await Promise.each(useCases, async useCase => {
+          const dataSource = { ...messageDataSource, ...useCase }
+          const resultData = dataSource.resultData
+            ? JSON.parse(dataSource.resultData)
+            : {}
+          const resultPatientData = dataSource.resultPatientData
+            ? JSON.parse(dataSource.resultPatientData)
+            : {}
+          const resultSample = {
+            id: dataSource.sampleExternalId,
+            originSite: {
+              id: dataSource.sampleOriginSiteExternalId,
+            },
+            collectedOn: dataSource.sampleCollectedOn,
+            data: dataSource.sampleData
+              ? JSON.parse(dataSource.sampleData)
+              : {},
+          }
+          const site = {
+            id: dataSource.siteExternalId,
+            name: dataSource.siteName,
+            shortName: dataSource.siteShortName,
+          }
+          const message = await runProcessUsingDataSourceQuery(
+            template,
+            useCase,
+            ['urlTemplate']
+          )
+          expect(message.url).to.equal(
+            `${philippinesITISWebApiUrl}/${encodeURIComponent(
+              philippinesITISSystemKey
+            )}` +
+              `/CASE_NUMBER/${encodeURIComponent(
+                resultPatientData.id || 'NULL'
+              )}` +
+              `/SPECIMEN_CODE/${encodeURIComponent(
+                resultSample.id || 'NULL'
+              )}` +
+              `/REQUESTING_FACILITY/${encodeURIComponent(
+                resultSample.originSite.id || 'NULL'
+              )}` +
+              `/LABORATORY/${encodeURIComponent(site.id || 'NULL')}` +
+              `/DATE_REQUESTED/${
+                formatDateOrDefault(
+                  parseDateOrDefault(resultPatientData.mrfDateRequested, {
+                    defaultDate: null,
+                  }),
+                  philippinesITISDateTimeFormat
+                ) || 'NULL'
+              }` +
+              `/REQUESTING_PHYSICIAN/${encodeURIComponent(
+                resultPatientData.requestingPhysician || 'NULL'
+              )}` +
+              `/LAST_NAME/${encodeURIComponent(
+                resultPatientData.lastName || 'NULL'
+              )}` +
+              `/FIRST_NAME/${encodeURIComponent(
+                resultPatientData.firstName || 'NULL'
+              )}` +
+              `/MIDDLE_NAME/${encodeURIComponent(
+                resultPatientData.middleInitialOrName || 'NULL'
+              )}` +
+              `/AGE/${
+                _.isNil(resultPatientData.age) ||
+                _.isNil(
+                  resultPatientData.age
+                    .toString()
+                    .match(new RegExp(/^(\d*)(.*)$/, 'g'))
+                )
+                  ? 'NULL'
+                  : new RegExp(/^(\d*)(.*)$/, 'g').exec(
+                      resultPatientData.age.toString()
+                    )[1] || 'NULL'
+              }` +
+              `/STREET_ADDRESS/${encodeURIComponent(
+                resultPatientData.address || 'NULL'
+              )}` +
+              `/GEO_LOCATION/NULL` +
+              `/SEX/${
+                { Male: 'M', Female: 'F' }[resultPatientData.sex] || 'NULL'
+              }` +
+              `/MOBILE_NUMBER/${encodeURIComponent(
+                (
+                  (resultData.customFieldData || []).find(
+                    customField => customField.label === 'Patient Phone'
+                  ) || {}
+                ).value || 'NULL'
+              )}` +
+              `/LANDLINE/${encodeURIComponent(
+                (
+                  (resultData.customFieldData || []).find(
+                    customField =>
+                      customField.label === "Patient's Landline No."
+                  ) || {}
+                ).value || 'NULL'
+              )}` +
+              `/EMAIL/${encodeURIComponent(
+                (
+                  (resultData.customFieldData || []).find(
+                    customField =>
+                      customField.label === "Patient's Email Address"
+                  ) || {}
+                ).value || 'NULL'
+              )}` +
+              `/REASON_FOR_EXAMINATION/${
+                resultPatientData.serialNumber
+                  ? resultPatientData.treatmentSchedule === 'Follow up'
+                    ? !resultPatientData.monthOfTreatment
+                      ? '938495'
+                      : resultPatientData.monthOfTreatment.match(
+                          new RegExp(
+                            /^\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*month?)?\s*$/,
+                            'g'
+                          )
+                        )
+                      ? {
+                          '1': '938496',
+                          '2': '938497',
+                          '3': '938498',
+                          '4': '938499',
+                          '5': '938500',
+                          '6': '938501',
+                          '7': '938502',
+                          '8': '938503',
+                          '9': '938504',
+                          '10': '938505',
+                          '11': '938506',
+                          '12': '938507',
+                          '13': '938508',
+                          '14': '938509',
+                          '15': '938510',
+                          '16': '938511',
+                          '17': '938512',
+                          '18': '938513',
+                          '19': '938514',
+                          '20': '938515',
+                          '21': '938516',
+                          '22': '938517',
+                          '23': '938518',
+                          '24': '938519',
+                          '25': '938520',
+                          '26': '938521',
+                          '27': '938522',
+                          '28': '938523',
+                          '29': '938524',
+                          '30': '938525',
+                          '31': '938526',
+                          '32': '938558',
+                          '33': '938559',
+                          '34': '938560',
+                          '35': '938561',
+                          '36': '938562',
+                          '37': '938677',
+                          '38': '938730',
+                          '39': '938731',
+                          '40': '938732',
+                        }[
+                          new RegExp(
+                            /^\s*([1-3]([0-9])?|[1-9]|40)(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*month?)?\s*$/,
+                            'g'
+                          ).exec(resultPatientData.monthOfTreatment)[1]
+                        ] || 'NULL'
+                      : resultPatientData.monthOfTreatment.match(
+                          new RegExp(
+                            /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                            'g'
+                          )
+                        )
+                      ? {
+                          '1': '938563',
+                          '2': '938564',
+                          '3': '938565',
+                          '4': '938566',
+                        }[
+                          new RegExp(
+                            /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                            'g'
+                          ).exec(resultPatientData.monthOfTreatment)[2]
+                        ] || 'NULL'
+                      : 'NULL'
+                    : resultPatientData.treatmentSchedule === 'Post Treatment'
+                    ? resultPatientData.monthOfTreatment.match(
+                        new RegExp(
+                          /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                          'g'
+                        )
+                      )
+                      ? {
+                          '1': '938563',
+                          '2': '938564',
+                          '3': '938565',
+                          '4': '938566',
+                        }[
+                          new RegExp(
+                            /^\s*(PT)?([1-4])(st|nd|rd|th|St|Nd|Rd|Th|ST|ND|RD|TH)?(\s*POST\s*)?(\s*TX\s*)?(\s*month|MONTH|Month\s*)?\s*$/,
+                            'g'
+                          ).exec(resultPatientData.monthOfTreatment)[2]
+                        ] || 'NULL'
+                      : 'NULL'
+                    : 'NULL'
+                  : { DIAGNOSIS: '938492', BASELINE: '938493' }[
+                      resultPatientData.treatmentSchedule
+                    ] || 'NULL'
+              }` +
+              `/REGISTRATION_GROUP/${
+                {
+                  NEW: '938610',
+                  RELAPSE: '938611',
+                  'TX AFTER LOST TO FF-UP': '938613',
+                  'TX AFTER FAILURE': '938614',
+                  'PREVIOUS TX OUTCOME UNKNOWN': '938615',
+                  OTHER: '938616',
+                }[resultPatientData.registrationGroup] || 'NULL'
+              }` +
+              `/SPECIMEN_TYPE/${
+                { Sputum: '0', Isolates: '1', Others: '1' }[
+                  resultSample.data.type
+                ] || 'NULL'
+              }` +
+              `/REPEAT_COLLECTION/${
+                { Yes: '1', No: '0' }[resultSample.data.repeatCollection] ||
+                'NULL'
+              }` +
+              `/PRESUMPTIVE_DSDR_TB/${
+                {
+                  'Presumptive DS-TB': '0',
+                  'Presumptive DR-TB': '1',
+                }[resultPatientData.presumptiveDsOrDr] || 'NULL'
+              }` +
+              `/SPECIMEN_COLLECTION_DATE/${
+                formatDateOrDefault(
+                  parseDateOrDefault(resultSample.collectedOn, {
+                    defaultDate: null,
+                  }),
+                  philippinesITISDateTimeFormat
+                ) || 'NULL'
+              }` +
+              `/VISUAL_APPEARANCE/${
+                {
+                  'Muco-purulent': '938638',
+                  'Blood-stained': '938639',
+                  Salivary: '938640',
+                  Mucosalivary: '938672',
+                  Purulent: '938891',
+                }[resultSample.data.appearance] || 'NULL'
+              }` +
+              `/RESULT_MTB/${
+                {
+                  NotDetected: '0',
+                  Detected: '1',
+                  'Trace Detected': '1',
+                  Indeterminate: '2',
+                  Invalid: '2',
+                  Error: '2',
+                  NoResult: '2',
+                }[dataSource.resultCategory1ExternalId] || 'NULL'
+              }` +
+              `/RESULT_RIF/${
+                {
+                  NotDetected: '0',
+                  Detected: '1',
+                  Invalid: '4',
+                  Error: '4',
+                  NoResult: '6',
+                  Indeterminate: '7',
+                }[dataSource.resultCategory2ExternalId] || 'NULL'
+              }` +
+              `/RELEASE_DATE/${
+                formatDateOrDefault(
+                  parseDateOrDefault(resultData.dateReleased, {
+                    defaultDate: null,
+                  }),
+                  philippinesITISDateTimeFormat
+                ) || 'NULL'
+              }` +
+              `/PERFORMED_BY/${encodeURIComponent(
+                resultData.examiner || 'NULL'
+              )}`
           )
         })
       })

@@ -16,7 +16,7 @@ export function getSelectedCountry({ countries, countryId }) {
   if (!countryId) {
     return
   }
-  return countries.items.find(c => c.id === countryId)
+  return countries.items.find(c => +c.id === +countryId)
 }
 
 export function getSelectedCountryStates(props) {
@@ -75,12 +75,14 @@ export class StateSelectField extends PureComponent {
       'stateId',
       'fetchStatesForLocationSelector',
     ])
+    const stateselected = getSelectedCountryStates(this.props)
 
     return (
       <SelectField
         {...restProps}
         value={stateId}
         onChange={this.handleSelectFieldChange}
+        disabled={stateselected.size === 0}
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {getSelectedCountryStates(this.props).map(s => (

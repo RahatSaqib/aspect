@@ -3,7 +3,7 @@ import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, pure, setPropTypes } from 'recompose'
-import { defineMessages, intlShape } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 
 // Material-UI
 import Button from '@material-ui/core/Button'
@@ -15,6 +15,7 @@ import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import DeviceSelectField from '../../filter/resource/DeviceSelectField'
 import AspectDialog from '../../components/shared/AspectDialog'
+import PropTypeOf from '../../shared/types'
 
 const messages = defineMessages({
   cancel: {
@@ -48,13 +49,14 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   pure,
   setPropTypes({
     isDialogOpen: PropTypes.bool.isRequired,
     count: PropTypes.number.isRequired,
     onCancel: PropTypes.func,
     values: PropTypes.object.isRequired,
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
   }),
   recomposeForm({
     fields: [
@@ -97,7 +99,6 @@ export function DeviceApiKeyAssignerDialogForm({
   intl,
 }) {
   const { formatMessage } = intl
-
   const actions = [
     <Button type="button" color="secondary" onClick={onCancel}>
       {intl.formatMessage(messages.cancel)}
@@ -155,6 +156,7 @@ export function DeviceApiKeyAssignerDialogForm({
         />
         <SiteSelectField
           name="siteId"
+          emptyId="-1"
           floatingLabelText={formatMessage(messages.siteId)}
           countryId={values.countryId}
           partnerId={values.partnerId}
@@ -171,7 +173,9 @@ export function DeviceApiKeyAssignerDialogForm({
           aria-haspopup
         />
         <DeviceSelectField
+          disabled={values.deviceApiKeyIds.length > 1}
           name="deviceId"
+          emptyId="-1"
           floatingLabelText={formatMessage(messages.deviceId)}
           countryId={values.countryId}
           partnerId={values.partnerId}

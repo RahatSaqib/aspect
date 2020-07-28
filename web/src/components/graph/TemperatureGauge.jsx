@@ -24,8 +24,13 @@ const TemperatureGauge = ({
   const tubeHeight =
     height - tubeY - tubeRadius - margin.bottom + tubeBorderWidth
 
-  const tubeBorderColor = '#91949d'
-  const tubeFillColor = '#fff'
+  const {
+    '--aspect-color-grey-4': colorGrey4,
+    '--aspect-color-white': colorWhite,
+  } = process.env
+
+  const tubeBorderColor = colorGrey4
+  const tubeFillColor = colorWhite
 
   const axisScale = scaleLinear({
     rangeRound: [tubeHeight, 0],
@@ -44,7 +49,9 @@ const TemperatureGauge = ({
 
   const fillColor = hasError
     ? errorColor
-    : Math.round(percentComplete * 100) >= 100 ? achievedColor : normalColor
+    : Math.round(percentComplete * 100) >= 100
+    ? achievedColor
+    : normalColor
 
   return (
     <svg width={width} height={height}>

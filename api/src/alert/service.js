@@ -4,6 +4,7 @@ const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
@@ -12,13 +13,11 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
     const message = await createAlertMessageFromTemplate(knex, alertMessageId)
     const messageStatusId = await messageStatusToId('Sent')
 
-    await knex('AlertMessage')
-      .where({ id: alertMessageId })
-      .update({
-        message,
-        messageStatusId,
-        updatedOn: new Date(),
-      })
+    await knex('AlertMessage').where({ id: alertMessageId }).update({
+      message,
+      messageStatusId,
+      updatedOn: new Date(),
+    })
 
     context.alertMessageSent(alertMessageId)
   })
@@ -47,21 +46,23 @@ function onAlertMessageUpdateAfterIssueDataChanged(
       .where('nt.issueTypeId', issueTypeId)
       .where('n.issueId', issueId)
       .select('n.alertMessageId')
-      .map(async ({ alertMessageId }) => {
-        // generate actual message
-        const message = await createAlertMessageFromTemplate(
-          knex,
-          alertMessageId
-        )
-        // update
-        await knex('AlertMessage')
-          .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
-          .whereNot('message', message) // update only if message text changed
-          .update({
-            message,
-            updatedOn: new Date(),
-          })
-      })
+      .then(async items =>
+        items.map(async ({ alertMessageId }) => {
+          // generate actual message
+          const message = await createAlertMessageFromTemplate(
+            knex,
+            alertMessageId
+          )
+          // update
+          await knex('AlertMessage')
+            .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
+            .whereNot('message', message) // update only if message text changed
+            .update({
+              message,
+              updatedOn: new Date(),
+            })
+        })
+      )
   })
 }
 
@@ -69,13 +70,31 @@ function onAlertMessageUpdateAfterIssueDataChanged(
 // helper functions
 // --------------------------------------
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
+  const { personId } = await knex('AlertMessage')
+    .where('id', alertMessageId)
+    .first('personId')
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.alertMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      partner: 'pr',
+      device: 'd',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
-
   const { message } = await processUsingDataSourceQuery(
     data,
     ['messageTemplate'],

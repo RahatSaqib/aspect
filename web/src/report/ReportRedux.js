@@ -3,35 +3,25 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
-import { aspectFetch } from '../shared/utils/fetch'
+import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
-import { receiveList, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { receivedFileResponse } from '../globals/GlobalsRedux'
 
 export const types = {
   REQUEST_REPORTS: 'REQUEST_REPORTS',
   RECEIVE_REPORTS: 'RECEIVE_REPORTS',
+  REJECTED_REPORTS: 'REJECTED_REPORTS',
 }
-//
-
 /*
  * ---------------- Action Creators -----------------
  */
-function requestReports(sortCol, sortDir, page, size, filters) {
+function requestReports(filters) {
   return {
     type: types.REQUEST_REPORTS,
-    sortCol,
-    sortDir,
-    page,
-    size,
     filters,
   }
 }
@@ -41,20 +31,22 @@ function receiveReports(json) {
     type: types.RECEIVE_REPORTS,
     items: json.data,
     total: json.total,
+    extraColumns: json.extraColumns,
   }
 }
 
-export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
+function rejectReports() {
+  return {
+    type: types.REJECTED_REPORTS,
+  }
+}
+
+export function fetchReports(filtersParams) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
-    dispatch(requestReports(sortCol, sortDir, page, pageSize, filters))
-
+    dispatch(requestReports(filters))
     return aspectFetch(
-      `/report?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
+      `/reports?${stringify({
         ...filters,
       })}`,
       {
@@ -70,7 +62,7 @@ export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
           403: errorInsufficientScope(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                id: 'errorResponseMessages.fetchReports.GET.403.title',
                 defaultMessage: 'Insufficient Permissions',
               },
             })
@@ -85,30 +77,79 @@ export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveReports(json)))
+    )
+      .then(json => dispatch(receiveReports(json)))
+      .catch(() => dispatch(rejectReports()))
   }
 }
+
+export function getReportFile(externalId, filtersParams) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    return aspectFetchFile(
+      `/reports/${externalId}?${stringify({
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.getReportFile.GET.400.title',
+                defaultMessage: 'Getting Report File Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.getReportFile.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.getReportFile.GET.default.title',
+                defaultMessage: 'Getting Report File Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async resp => {
+      const file = await resp.blob
+      dispatch(receivedFileResponse(file, resp.fileName))
+    })
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
-const Report = Immutable.Record({
-  items: new Items(),
-  table: new Table({
-    sortCol: 'deploymentName',
-  }),
+export const InitialStateModel = Immutable.Record({
+  items: Immutable.List([]),
+  loading: true,
 })
 
-const initialState = new Report()
+const initialState = new InitialStateModel()
 
-export default function reportReducer(state = initialState, action) {
+export default function resultReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_REPORTS:
-      return state.set('table', requestTable(state.table, action))
+      return state.merge({
+        loading: true,
+      })
     case types.RECEIVE_REPORTS:
       return state.withMutations(mutState => {
-        const immutList = Immutable.fromJS(action.items)
-        mutState.set('items', receiveList(mutState.items, immutList))
-        mutState.set('table', receiveTableItems(mutState.table, action.total))
+        mutState.set('loading', false)
+        mutState.set('items', Immutable.fromJS(action.items))
+      })
+    case types.REJECTED_REPORTS:
+      return state.withMutations(mutState => {
+        mutState.set('loading', true)
+        mutState.set('items', Immutable.fromJS([]))
       })
     default:
       return state

@@ -27,10 +27,7 @@ async function up(knex) {
       .inTable('PartnerType')
     partner.string('name').notNullable()
     partner.string('plugin')
-    partner
-      .integer('deviceLogHistoryDays')
-      .notNullable()
-      .defaultTo(30)
+    partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
     partner.integer('autoAcknowledgeOlderThanDays')
     partner.integer('numberToLeaveUnacknowledged')
     partner.integer('maxDaysDeviceOffline')
@@ -39,10 +36,7 @@ async function up(knex) {
 
   await knex.schema.createTable('User', user => {
     user.increments('id')
-    user
-      .string('name')
-      .unique()
-      .notNullable()
+    user.string('name').unique().notNullable()
     user.string('password', 128).notNullable()
     user.boolean('approved').notNullable()
     user.dateTime('lastActive')
@@ -50,14 +44,8 @@ async function up(knex) {
     user.dateTime('lastPasswordChange')
     user.dateTime('createdOn').notNullable()
     user.boolean('lockedOut').notNullable()
-    user
-      .integer('failedPasswordAttempts')
-      .unsigned()
-      .notNullable()
-    user
-      .boolean('legacyPassword')
-      .notNullable()
-      .defaultTo(0)
+    user.integer('failedPasswordAttempts').unsigned().notNullable()
+    user.boolean('legacyPassword').notNullable().defaultTo(0)
     user.string('resetPasswordToken', 36)
     user.dateTime('resetPasswordTokenExpires')
     user.charset('utf8')
@@ -128,12 +116,7 @@ async function up(knex) {
 
   await knex.schema.createTable('Person', person => {
     person.increments('id')
-    person
-      .integer('userId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
+    person.integer('userId').unsigned().index().references('id').inTable('User')
     person
       .integer('geographyId')
       .unsigned()
@@ -293,10 +276,7 @@ async function up(knex) {
     refreshToken.string('clientName').notNullable()
     refreshToken.string('token').notNullable()
     refreshToken.dateTime('expires').notNullable()
-    refreshToken
-      .boolean('revoked')
-      .notNullable()
-      .defaultTo(0)
+    refreshToken.boolean('revoked').notNullable().defaultTo(0)
     refreshToken.dateTime('createdOn').notNullable()
     refreshToken.primary(['userId', 'clientId'])
     refreshToken.charset('utf8')
@@ -304,15 +284,8 @@ async function up(knex) {
 
   await knex.schema.createTable('DeviceApiKey', apiKey => {
     apiKey.increments('id')
-    apiKey
-      .string('token')
-      .notNullable()
-      .unique()
-      .index()
-    apiKey
-      .boolean('revoked')
-      .notNullable()
-      .defaultTo(0)
+    apiKey.string('token').notNullable().unique().index()
+    apiKey.boolean('revoked').notNullable().defaultTo(0)
     apiKey
       .integer('partnerId')
       .unsigned()
@@ -325,12 +298,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Geography')
-    apiKey
-      .integer('siteId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
+    apiKey.integer('siteId').unsigned().index().references('id').inTable('Site')
     apiKey
       .integer('deviceId')
       .unsigned()
@@ -345,14 +313,8 @@ async function up(knex) {
   await knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
-    deviceTypeFeature
-      .boolean('hasConnectivity')
-      .notNullable()
-      .defaultTo(0)
-    deviceTypeFeature
-      .boolean('hasResults')
-      .notNullable()
-      .defaultTo(0)
+    deviceTypeFeature.boolean('hasConnectivity').notNullable().defaultTo(0)
+    deviceTypeFeature.boolean('hasResults').notNullable().defaultTo(0)
     deviceTypeFeature.charset('utf8')
   })
 
@@ -501,12 +463,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Geography')
-    device
-      .integer('siteId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
+    device.integer('siteId').unsigned().index().references('id').inTable('Site')
     device
       .integer('deviceTypeId')
       .unsigned()
@@ -582,8 +539,7 @@ async function up(knex) {
 
   await knex.schema.createTable('DeviceOperation', op => {
     op.increments('id')
-    op
-      .integer('deviceId')
+    op.integer('deviceId')
       .unsigned()
       .notNullable()
       .index()
@@ -753,12 +709,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Geography')
-    result
-      .integer('siteId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
+    result.integer('siteId').unsigned().index().references('id').inTable('Site')
     result
       .integer('deviceId')
       .unsigned()
@@ -829,10 +780,7 @@ async function up(knex) {
     result.text('rawData')
     result.string('errorCode')
     result.string('errorNotes', 2000)
-    result
-      .boolean('qcCheck')
-      .notNullable()
-      .defaultTo(0)
+    result.boolean('qcCheck').notNullable().defaultTo(0)
     addCreateFieldsNullable(result)
     addUpdateFieldsNullable(result)
     result.charset('utf8')
@@ -847,17 +795,11 @@ async function up(knex) {
       .references('id')
       .inTable('Device')
     deviceLog.string('source').notNullable() // LIS listener, API...
-    deviceLog
-      .dateTime('createdOn')
-      .notNullable()
-      .index()
+    deviceLog.dateTime('createdOn').notNullable().index()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')
-    deviceLog
-      .boolean('deviceConfigurationUpdated')
-      .notNullable()
-      .defaultTo(0)
+    deviceLog.boolean('deviceConfigurationUpdated').notNullable().defaultTo(0)
     deviceLog
       .integer('resultId')
       .unsigned()
@@ -897,15 +839,9 @@ async function up(knex) {
       .notNullable()
       .references('id')
       .inTable('Unit')
-    consumable
-      .boolean('canExpire')
-      .notNullable()
-      .defaultTo(0)
+    consumable.boolean('canExpire').notNullable().defaultTo(0)
     consumable.text('manufacturer')
-    consumable
-      .boolean('autoInclude')
-      .notNullable()
-      .defaultTo(0)
+    consumable.boolean('autoInclude').notNullable().defaultTo(0)
     consumable.charset('utf8')
   })
 
@@ -913,14 +849,8 @@ async function up(knex) {
     consumableReason.increments('id')
     consumableReason.string('name').notNullable()
     consumableReason.string('i18nKey')
-    consumableReason
-      .boolean('decrease')
-      .notNullable()
-      .defaultTo(0)
-    consumableReason
-      .boolean('reset')
-      .notNullable()
-      .defaultTo(0)
+    consumableReason.boolean('decrease').notNullable().defaultTo(0)
+    consumableReason.boolean('reset').notNullable().defaultTo(0)
     consumableReason.charset('utf8')
   })
 
@@ -1048,10 +978,7 @@ async function up(knex) {
         .unsigned()
         .references('id')
         .inTable('Result')
-      resultQualityControlLog
-        .boolean('qcCheck')
-        .notNullable()
-        .defaultTo(0)
+      resultQualityControlLog.boolean('qcCheck').notNullable().defaultTo(0)
       addCreateFields(resultQualityControlLog)
       resultQualityControlLog.charset('utf8')
     }
@@ -1385,10 +1312,7 @@ async function up(knex) {
       .references('id')
       .inTable('Result')
       .onDelete('SET NULL')
-    issue
-      .integer('level')
-      .notNullable()
-      .defaultTo(1)
+    issue.integer('level').notNullable().defaultTo(1)
     addTimestamps(issue)
     issue.charset('utf8')
   })
@@ -1460,14 +1384,8 @@ async function up(knex) {
       .references('id')
       .inTable('JobFunction')
       .notNullable()
-    notificationType
-      .integer('level')
-      .notNullable()
-      .defaultTo(1)
-    notificationType
-      .boolean('canAcknowledge')
-      .notNullable()
-      .defaultTo(1)
+    notificationType.integer('level').notNullable().defaultTo(1)
+    notificationType.boolean('canAcknowledge').notNullable().defaultTo(1)
     notificationType
       .integer('messageTypeId')
       .unsigned()
@@ -1523,83 +1441,59 @@ async function up(knex) {
 
   // facts-table for result counts by device
   await knex.schema.createTable('FactResultsDevice', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
-      .unsigned()
-      .notNullable()
-    x
-      .integer('resultCount')
-      .unsigned()
-      .notNullable()
+    x.integer('days').unsigned().notNullable()
+    x.integer('resultCount').unsigned().notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(['deviceId', 'days'], 'factresultsdevice_unique')
   })
 
   await knex.schema.createTable('FactResultsDeviceByAssay', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
-      .unsigned()
-      .notNullable()
-    x
-      .integer('assayId')
+    x.integer('days').unsigned().notNullable()
+    x.integer('assayId')
       .unsigned()
       .references('id')
       .inTable('Assay')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCount')
-      .unsigned()
-      .notNullable()
+    x.integer('resultCount').unsigned().notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(['deviceId', 'assayId', 'days'], 'factresultsdevicebyassay_unique')
   })
 
   await knex.schema.createTable('FactResultsDeviceByCategory1', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
-      .unsigned()
-      .notNullable()
-    x
-      .integer('assayId')
+    x.integer('days').unsigned().notNullable()
+    x.integer('assayId')
       .unsigned()
       .references('id')
       .inTable('Assay')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCategory1')
+    x.integer('resultCategory1')
       .unsigned()
       .index()
       .references('id')
       .inTable('ResultCategory')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCount')
-      .unsigned()
-      .notNullable()
+    x.integer('resultCount').unsigned().notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(
       ['deviceId', 'assayId', 'resultCategory1', 'days'],
@@ -1608,44 +1502,34 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactResultsDeviceByCategory1And2', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
-      .unsigned()
-      .notNullable()
-    x
-      .integer('assayId')
+    x.integer('days').unsigned().notNullable()
+    x.integer('assayId')
       .unsigned()
       .references('id')
       .inTable('Assay')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCategory1')
+    x.integer('resultCategory1')
       .unsigned()
       .index()
       .references('id')
       .inTable('ResultCategory')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCategory2')
+    x.integer('resultCategory2')
       .unsigned()
       .index()
       .references('id')
       .inTable('ResultCategory')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCount')
-      .unsigned()
-      .notNullable()
+    x.integer('resultCount').unsigned().notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(
       ['deviceId', 'assayId', 'resultCategory1', 'resultCategory2', 'days'],
@@ -1655,54 +1539,23 @@ async function up(knex) {
 
   // facts-table for device flags
   await knex.schema.createTable('FactDeviceFlag', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .primary()
       .onDelete('CASCADE')
-    x
-      .boolean('offline')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('noResults')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('service')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('calibration')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('errorRate')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('qcProblem')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('lowInventory')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('outOfInventory')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('expiringInventory')
-      .notNullable()
-      .defaultTo(0)
-    x
-      .boolean('expiringWarranty')
-      .notNullable()
-      .defaultTo(0)
+    x.boolean('offline').notNullable().defaultTo(0)
+    x.boolean('noResults').notNullable().defaultTo(0)
+    x.boolean('service').notNullable().defaultTo(0)
+    x.boolean('calibration').notNullable().defaultTo(0)
+    x.boolean('errorRate').notNullable().defaultTo(0)
+    x.boolean('qcProblem').notNullable().defaultTo(0)
+    x.boolean('lowInventory').notNullable().defaultTo(0)
+    x.boolean('outOfInventory').notNullable().defaultTo(0)
+    x.boolean('expiringInventory').notNullable().defaultTo(0)
+    x.boolean('expiringWarranty').notNullable().defaultTo(0)
     x.dateTime('updatedOn').notNullable()
   })
 
@@ -1718,66 +1571,26 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('ResultTag', rt => {
-    rt
-      .integer('resultId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Result')
-    rt
-      .integer('tagId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Tag')
+    rt.integer('resultId').unsigned().index().references('id').inTable('Result')
+    rt.integer('tagId').unsigned().index().references('id').inTable('Tag')
     rt.primary(['resultId', 'tagId'])
   })
 
   await knex.schema.createTable('SiteTag', st => {
-    st
-      .integer('siteId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
-    st
-      .integer('tagId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Tag')
+    st.integer('siteId').unsigned().index().references('id').inTable('Site')
+    st.integer('tagId').unsigned().index().references('id').inTable('Tag')
     st.primary(['siteId', 'tagId'])
   })
 
   await knex.schema.createTable('DeviceTag', dt => {
-    dt
-      .integer('deviceId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Device')
-    dt
-      .integer('tagId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Tag')
+    dt.integer('deviceId').unsigned().index().references('id').inTable('Device')
+    dt.integer('tagId').unsigned().index().references('id').inTable('Tag')
     dt.primary(['deviceId', 'tagId'])
   })
 
   await knex.schema.createTable('PersonTag', pt => {
-    pt
-      .integer('personId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Person')
-    pt
-      .integer('tagId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Tag')
+    pt.integer('personId').unsigned().index().references('id').inTable('Person')
+    pt.integer('tagId').unsigned().index().references('id').inTable('Tag')
     pt.primary(['personId', 'tagId'])
   })
 
@@ -1789,10 +1602,7 @@ async function up(knex) {
     widget.string('subTitleI18nKey')
     widget.string('sqlForIndicator', 2000).notNullable()
     widget.string('link')
-    widget
-      .integer('sortOrder')
-      .unsigned()
-      .notNullable()
+    widget.integer('sortOrder').unsigned().notNullable()
     widget.charset('utf8')
   })
 

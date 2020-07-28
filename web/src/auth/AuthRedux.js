@@ -5,7 +5,11 @@ import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form/immutable'
 
 import config from '../config'
-import { getClientName } from '../shared/utils/browser'
+import {
+  getClientId,
+  getClientName,
+  getClientType as clientType,
+} from '../shared/utils/browser'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   errorPleaseTryAgainInAFewMinutes,
@@ -32,8 +36,12 @@ export const types = {
   RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
     'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 
-  REQUEST_FEATURES: 'REQUEST_FEATURES',
-  RECEIVE_FEATURES: 'RECEIVE_FEATURES',
+  REQUEST_LICENSE: 'REQUEST_LICENSE',
+  RECEIVE_LICENSE: 'RECEIVE_LICENSE',
+
+  ACCEPT_LICENSE_REQUEST: 'ACCEPT_LICENSE_REQUEST',
+  ACCEPT_LICENSE_SUCCESS: 'ACCEPT_LICENSE_SUCCESS',
+  ACCEPT_LICENSE_FAILURE: 'ACCEPT_LICENSE_FAILURE',
 }
 
 /*
@@ -67,8 +75,8 @@ function loginRequest(requestedAt) {
 
 function loginSuccess(requestedAt, data) {
   return {
-    type: types.LOGIN_SUCCESS,
     requestedAt,
+    type: types.LOGIN_SUCCESS,
     data,
   }
 }
@@ -81,24 +89,56 @@ function loginFailure(err) {
 }
 
 export function loginStart({ user, password }) {
-  return function(dispatch, getState) {
+  return function(dispatch) {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
     const requestedAt = Date.now()
     dispatch(loginRequest(requestedAt))
-
-    const state = getState()
-    const { clientId } = state.user
-
+    const clientId = localStorage.getItem('asClientId') || getClientId()
     return aspectFetch('/auth', {
       method: 'POST',
       body: JSON.stringify({
         name: user,
         password,
         clientId,
+        clientType,
         clientName: getClientName(),
       }),
       errorNotifications: {
+        409: {
+          "Couldn't connect to GxAlert": {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
+                defaultMessage: "Couldn't connect to GxAlert",
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
+                defaultMessage:
+                  "If your credentials are from GxAlert, please contact your administrator for support. If they're not, try to login again.",
+              },
+            }),
+          },
+          'There was a conflict with your credentials': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title',
+                defaultMessage: "Couldn't login with your credentials",
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
+                defaultMessage:
+                  'There was a conflict with your credentials. Please, contact an administrator for support.',
+              },
+            }),
+          },
+        },
         401: {
           'Your account is locked.': {
             severity: 'warn',
@@ -162,13 +202,14 @@ export function loginStart({ user, password }) {
             access: json.access,
             refresh: json.refresh,
             clientId: json.clientId,
+            countryId: json.countryId,
             culture: json.culture,
+            countryAbbreviation: json.countryAbbreviation,
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
           })
         )
       )
-      .then(() => dispatch(fetchFeatures()))
       .catch(err => dispatch(loginFailure(err)))
   }
 }
@@ -216,6 +257,7 @@ export function refreshStart() {
       body: JSON.stringify({
         token: refresh,
         clientId,
+        clientType,
       }),
     })
       .then(json =>
@@ -224,10 +266,10 @@ export function refreshStart() {
             access: json.access,
             refresh: json.refresh,
             clientId: json.clientId,
+            countryId: json.countryId,
           })
         )
       )
-      .then(() => dispatch(fetchFeatures()))
       .catch(() => {
         dispatch(refreshFailure())
       })
@@ -302,26 +344,94 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   }
 }
 
-function requestFeatures() {
+function requestLicense() {
   return {
-    type: types.REQUEST_FEATURES,
+    type: types.REQUEST_LICENSE,
   }
 }
 
-function receiveFeatures(data) {
+function receiveLicense(data) {
   return {
-    type: types.RECEIVE_FEATURES,
+    type: types.RECEIVE_LICENSE,
     data,
   }
 }
 
-export function fetchFeatures() {
+export function fetchLicense(licenseId) {
   return dispatch => {
-    dispatch(requestFeatures())
+    dispatch(requestLicense())
 
-    return aspectFetch('/auth/features').then(json =>
-      dispatch(receiveFeatures(json.data))
+    return aspectFetch(`/auth/license?licenseId=${licenseId}`).then(json =>
+      dispatch(receiveLicense(json.data))
     )
+  }
+}
+
+function acceptLicenseRequest(requestedAt) {
+  return {
+    type: types.ACCEPT_LICENSE_REQUEST,
+    requestedAt,
+  }
+}
+
+function acceptLicenseSuccess(requestedAt, data) {
+  return {
+    type: types.ACCEPT_LICENSE_SUCCESS,
+    requestedAt,
+    data,
+  }
+}
+
+function acceptLicenseFailure(err) {
+  return {
+    type: types.ACCEPT_LICENSE_FAILURE,
+    err,
+  }
+}
+
+export function acceptLicenseStart(licenseId) {
+  return function(dispatch, getState) {
+    // First dispatch: the app state is updated to inform
+    // that the API call is starting.
+    const requestedAt = Date.now()
+    dispatch(acceptLicenseRequest(requestedAt))
+
+    const state = getState()
+    const { clientId, refresh } = state.user
+
+    return aspectFetch('/auth/license', {
+      method: 'POST',
+      body: JSON.stringify({
+        licenseId,
+        clientId,
+        token: refresh,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.loginStart.POST.default.title',
+              defaultMessage: 'Login Error',
+            },
+          })
+        ),
+      },
+    })
+      .then(json =>
+        dispatch(
+          acceptLicenseSuccess(requestedAt, {
+            access: json.access,
+            refresh: json.refresh,
+            clientId: json.clientId,
+            culture: json.culture,
+            countryAbbreviation: json.countryAbbreviation,
+            timezoneId: json.timezone,
+            displayPreferences: Immutable.Map(json.displayPreferences),
+            countryId: json.countryId,
+          })
+        )
+      )
+      .catch(err => dispatch(acceptLicenseFailure(err)))
   }
 }
 
@@ -331,6 +441,7 @@ export function fetchFeatures() {
 const JWT = Immutable.Record({
   name: '',
   permissions: Immutable.Set(),
+  hasToAcceptLicenseId: undefined,
   iat: undefined,
   exp: undefined,
   iss: '',
@@ -344,9 +455,11 @@ const User = Immutable.Record({
   culture: 'en-US',
   timezoneId: 'Eastern Standard Time',
   displayPreferences: Immutable.Map(),
+  countryAbbreviation: null,
   drawerOpen: false,
   loggedOutReason: '',
-  features: Immutable.Set(),
+  licenseContent: undefined,
+  countryId: undefined,
 })
 
 const initialState = new User()
@@ -354,6 +467,7 @@ const initialState = new User()
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
     case types.LOGIN_REQUEST:
+    case types.ACCEPT_LICENSE_REQUEST:
       return state.set('requestedAt', action.requestedAt)
 
     case types.HYDRATE_FROM_LOCAL_STORAGE:
@@ -364,8 +478,10 @@ export default function authReducer(state = initialState, action) {
     case types.LOGIN_SUCCESS:
     case types.REFRESH_SUCCESS:
     case accountTypes.RECEIVE_UPDATED_LOGIN_DETAILS:
+    case types.ACCEPT_LICENSE_SUCCESS:
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
+        mutState.delete('licenseContent')
 
         _.forEach(action.data, (v, k) => {
           if (!_.isNil(v)) {
@@ -377,6 +493,7 @@ export default function authReducer(state = initialState, action) {
           _.pick(jwtDecode(action.data.access), [
             'name',
             'permissions',
+            'hasToAcceptLicenseId',
             'iat',
             'exp',
             'iss',
@@ -384,6 +501,7 @@ export default function authReducer(state = initialState, action) {
         )
       })
     case types.LOGIN_FAILURE:
+    case types.ACCEPT_LICENSE_FAILURE:
       return state.delete('requestedAt')
 
     // fallthrough
@@ -404,11 +522,8 @@ export default function authReducer(state = initialState, action) {
 
     case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
       return state
-    case types.RECEIVE_FEATURES:
-      return state.set(
-        'features',
-        Immutable.Set(action.data.map(x => x.module))
-      )
+    case types.RECEIVE_LICENSE:
+      return state.set('licenseContent', action.data.content)
     default:
       return state
   }

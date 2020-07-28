@@ -1,7 +1,12 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
+
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -10,22 +15,11 @@ const cssClasses = classnames.bind(
 const enhance = _.identity
 
 const RouterTableRow = ({ intl, router, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      {router.get('name')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {router.get('status')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(router.get('createdOn'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(router.get('lastSeen'))}
-    </TableCell>
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>{router.get('name')}</TableCell>
+    <TableCell>{router.get('status')}</TableCell>
+    <TableCell>{formatRelative(intl, router.get('createdOn'))}</TableCell>
+    <TableCell>{formatRelative(intl, router.get('lastSeen'))}</TableCell>
   </TableRow>
 )
 

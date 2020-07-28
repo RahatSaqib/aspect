@@ -1,19 +1,13 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
 
-function register(plugin, options, next) {
+function register(plugin) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
-  next()
 }
 
-register.attributes = {
-  name: 'deviceApiKeyAuth',
-  version,
-}
-
-function authenticate(request, reply) {
+function authenticate(request, h) {
   const { query, headers } = request
   let token = ''
   if (query.token) {
@@ -23,15 +17,20 @@ function authenticate(request, reply) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')
   }
-  authToken(token)
-    .then(credentials => reply.continue({ credentials }))
-    .catch(err => reply(err))
+  return authToken(token)
+    .then(credentials => h.authenticated({ credentials }))
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      throw err
+    })
 }
 
-function validateApiKeyAuthBasic(request, username, password, callback) {
-  authToken(password)
-    .then(credentials => callback(null, true, credentials))
-    .catch(err => callback(err, false, null))
+const validateApiKeyAuthBasic = {
+  async validate(request, username, password) {
+    return authToken(password)
+      .then(credentials => ({ isValid: true, credentials }))
+      .catch(() => ({ isValid: false }))
+  },
 }
 
 async function authToken(token) {
@@ -48,7 +47,6 @@ async function authToken(token) {
     .leftJoin('Device as d', 'd.id', 'k.deviceId')
     .where({ 'k.token': token, 'k.revoked': false })
     .first('k.id as keyId', 'd.name as deviceName')
-
   if (key == null) {
     throw Boom.unauthorized('Cannot authorize API Key')
   }
@@ -60,6 +58,10 @@ async function authToken(token) {
 }
 
 module.exports = {
-  register,
+  plugin: {
+    name: 'deviceApiKeyAuth',
+    version,
+    register,
+  },
   validateApiKeyAuthBasic,
 }

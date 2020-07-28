@@ -1,12 +1,16 @@
 .Container {
-  padding: 12px 12px 12px 0;
+  padding: 0;
   display: flex;
   flex: 1;
   flex-wrap: wrap;
 }
 
 .Container label {
-  color: #9e9e9e;
+  color: var(--aspect-color-silver);
+}
+
+.Container___DropDown {
+  flex-wrap: nowrap;
 }
 
 .DropDown {
@@ -22,5 +26,5 @@
 }
 
 .DateTime {
-  width: 320px;
+  width: auto;
 }

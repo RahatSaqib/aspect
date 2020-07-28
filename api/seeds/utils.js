@@ -1,44 +1,162 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const bcrypt = require('bcrypt')
 const { readJson } = require('fs-extra')
+const path = require('path')
+const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
+const relativeObjectsSeeds = require('./relativeObjectsSeeds')
+const { getBaseIssues } = require('./relatedObjects/issues')
+const {
+  allAssayTypeToId,
+  allResultCategoryToId,
+} = require('../src/shared/dictionary')
+const config = require('../src/config')
 
-const { allFeatureToId } = require('../src/shared/dictionary')
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-// Helper for seeed files. Ru
+const tables = [
+  'DeviceApiRawStatus',
+  'FormType',
+  'Disease',
+  'AssayType',
+  'FileContentType',
+  'IssueCategory',
+  'IssueEventStatus',
+  'IssueStatusSeverity',
+  ['IssueStatus', seedStaticDataIssueStatus],
+  'MessageStatus',
+  'MessageSeverity',
+  'ResultCategory',
+  'ResultSource',
+  'ResultStatus',
+  'ResultType',
+  'ResultTreatmentStatus',
+  'ResultWorkflowStatus',
+  'SampleType',
+  'FollowUpType',
+  'ResultNoteType',
+  // TODO ASP-757 Standardize static data key on externalId
+  ['ConsumableReason', 'name'],
+  ['DeviceStatus', 'token'],
+  ['PartnerType', 'name'],
+  ['DeviceTypeCategory', 'name'],
+  ['Unit', 'name'],
+  ['Permission', seedStaticDataPermission],
+]
+
+const uniqueKeys = {
+  NotificationType: [
+    'partnerId',
+    'name',
+    'issueTypeId',
+    'jobFunctionId',
+    'level',
+    'messageTypeId',
+  ],
+  IssueResolutionTrigger: ['issueTypeId', 'partnerId'],
+  IssueEscalationTrigger: ['issueTypeId', 'partnerId', 'escalateToLevel'],
+  MessageType: [
+    'messageSeverityId',
+    'alertTemplateId',
+    'smsTemplateId',
+    'emailTemplateId',
+    'webhookTemplateId',
+  ],
+  IssueType: ['externalId'],
+}
+
+const foreignKeys = {
+  NotificationType: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+    { column: 'messageTypeId', reference: 'MessageType.id' },
+  ],
+  IssueResolutionTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  IssueEscalationTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  MessageType: [
+    { column: 'messageSeverityId', reference: 'MessageSeverity.id' },
+    { column: 'alertTemplateId', reference: 'AlertTemplate.id' },
+    { column: 'smsTemplateId', reference: 'SmsTemplate.id' },
+    { column: 'emailTemplateId', reference: 'EmailTemplate.id' },
+  ],
+}
+
+// Helper for seed files. Ru
 let hasSeededStaticData = false
-function seed(seed) {
+let commonInserts = false
+
+// Set up the file name of the seed with __filename.
+function seed(seed, fileName, overridedSeeds) {
   return {
     seed(knex) {
-      return runSeed(seed, knex).catch(err => {
+      return runSeed(seed, knex, fileName, overridedSeeds).catch(err => {
         console.error(err) // eslint-disable-line no-console
         throw err
       })
     },
   }
 }
-async function runSeed(seed, knex) {
+
+async function runSeed(seed, knex, fileName, overridedSeeds) {
+  const seedsRun = await getSeedsRan(knex)
   if (!hasSeededStaticData) {
-    await seedStaticData(knex)
+    await seedStaticData(knex, overridedSeeds)
     hasSeededStaticData = true
   }
-  return seed(knex)
+  if (fileName) {
+    fileName = path.relative(__filename, fileName).slice(3)
+  }
+  if (fileName && (!seedsRun || !seedsRun[fileName])) {
+    return seed(knex)
+      .catch(async e => {
+        await knex('AspectSeed').insert({
+          fileName,
+          success: false,
+          errorMessage: e.message,
+        })
+        throw e
+      })
+      .then(async () => {
+        if (!commonInserts) {
+          commonInserts = true
+          await Promise.each(Object.keys(relativeObjectsSeeds), async elem => {
+            commonInserts =
+              commonInserts && (await relativeObjectsSeeds[elem](knex))
+          })
+        }
+        await knex('AspectSeed').insert({
+          fileName,
+          success: true,
+        })
+      })
+  }
 }
 
 async function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
+  return knex(table).then(items =>
+    items.reduce((memo, row) => {
+      memo[row[column]] = row
+      return memo
+    }, {})
+  )
 }
 
 async function getDefaultMessageTypes(knex) {
   return knex('MessageType as mt')
     .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
     .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, row) => {
+        memo[row.issueTypeExternalId] = row
+        return memo
+      }, {})
+    )
 }
 
 // -------------------------------------------------------
@@ -99,38 +217,25 @@ async function seedStockIssues(knex) {
   // ---------------------------------
   // Inventory Stockout Issue
   // ---------------------------------
-  const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message:
-          'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      },
-      auditFields
-    )
-  )
+  const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    ...auditFields,
+  })
 
-  const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      },
-      auditFields
-    )
-  )
+  const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert({
+    message:
+      '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    ...auditFields,
+  })
 
-  const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} stockout',
-        body:
-          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-        htmlBody:
-          '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      },
-      auditFields
-    )
-  )
+  const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} stockout',
+    body:
+      '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    htmlBody:
+      '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    ...auditFields,
+  })
 
   // ---------------------------------
   // Inventory Stock Expiring Issue
@@ -154,26 +259,28 @@ async function seedStockIssues(knex) {
     ...auditFields,
   })
 
-  const stockoutMessageTypeId = await knex('MessageType').insert(
+  const { id: stockoutMessageTypeId } = await upsertSingle(
+    knex,
+    'MessageType',
     {
       messageSeverityId: messageSeverities.Alert.id,
       alertTemplateId: stockoutAlertTemplateId,
       smsTemplateId: stockoutSmsTemplateId,
       emailTemplateId: stockoutEmailTemplateId,
-    },
-    'id'
+    }
   )
-  const stockExpiringMessageTypeId = await knex('MessageType').insert(
+  const { id: stockExpiringMessageTypeId } = await upsertSingle(
+    knex,
+    'MessageType',
     {
       messageSeverityId: messageSeverities.Alert.id,
       alertTemplateId: stockExpiringAlertTemplateId,
       smsTemplateId: stockExpiringSmsTemplateId,
       emailTemplateId: stockExpiringEmailTemplateId,
-    },
-    'id'
+    }
   )
 
-  await knex('IssueType').insert([
+  await upsertItems(knex, 'IssueType', uniqueKeys.IssueType, [
     {
       name: 'Inventory Stockout',
       externalId: 'InventoryStockout',
@@ -212,139 +319,119 @@ async function seedStockIssues(knex) {
   // -------------------------------------------
   // Notifications
   // -------------------------------------------
-  await knex('NotificationType').insert([
+  await upsertNotificationTypes(knex, [
     // ------------
     // Stockout
     // ------------
-    Object.assign(
-      {
-        name: 'LU Stockout',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stockout',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stockout - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stockout - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Stockout',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.InventoryStockout.id,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Stockout',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stockout',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stockout - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stockout - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Stockout',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockout.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      ...auditFields,
+    },
     // ------------
     // StockExpiring
     // ------------
-    Object.assign(
-      {
-        name: 'LU Stock Expiring',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stock Expiring',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Stock Expiring - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'LU Escalated Stock Expiring - RO View',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 2,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
-    Object.assign(
-      {
-        name: 'RO Stock Expiring',
-        partnerId,
-        issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 1,
-        canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
-      },
-      auditFields
-    ),
+    {
+      name: 'LU Stock Expiring',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stock Expiring',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stock Expiring - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Stock Expiring - RO View',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Stock Expiring',
+      partnerId,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      ...auditFields,
+    },
   ])
 
   // -------------------------------------------
   // Issue Escalation Triggers
   // -------------------------------------------
-  await knex('IssueEscalationTrigger').insert([
+  await upsertIssueEscalationTrigger(knex, [
     // ------------
     // Inventory Stockout escalation
     // ------------
@@ -399,58 +486,103 @@ async function seedStockIssues(knex) {
 }
 
 async function getPermissionModules(knex) {
-  return knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
+  return knex('Permission').then(items =>
+    items.reduce((memo, row) => {
+      if (!memo[row.module]) {
+        memo[row.module] = {}
+      }
+      memo[row.module][row.activity] = row.id
+      return memo
+    }, {})
+  )
 }
 
-async function seedStaticData(knex) {
-  const tables = [
-    'FileContentType',
-    'IssueCategory',
-    'IssueEventStatus',
-    'IssueStatusSeverity',
-    ['IssueStatus', seedStaticDataIssueStatus],
-    'MessageStatus',
-    'MessageSeverity',
-    'ResultCategory',
-    'ResultSource',
-    'ResultType',
-    'ResultWorkflowStatus',
-    'SampleType',
-    // TODO ASP-757 Standardize static data key on externalId
-    ['AssayType', 'name'],
-    ['ConsumableReason', 'name'],
-    ['DeviceStatus', 'token'],
-    ['PartnerType', 'name'],
-    ['DeviceTypeCategory', 'name'],
-    ['Unit', 'name'],
-    ['Feature', 'module'],
-    ['Permission', seedStaticDataPermission],
-  ]
-  for (const tableItem of tables) {
-    /* eslint-disable no-await-in-loop */
-    // Need to add in order since some old code relies on hardcoded Ids
-    const table = _.isArray(tableItem) ? tableItem[0] : tableItem
-    const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
-    const fixture = await readJson(`./seeds/fixtures/${table}.json`)
-    if (_.isFunction(keyColumn)) {
-      await keyColumn(knex, fixture)
-    } else {
-      for (const datum of fixture.data) {
-        const existingDatum = await knex(table)
-          .where(keyColumn, datum[keyColumn])
-          .first('id')
-        if (existingDatum == null) {
-          await knex(table).insert(datum)
-        }
-      }
+async function getSeedsFolder(table, overridedSeeds) {
+  //  Look for overrided fixture. If exists, sets the seedsFolder (country folder)
+  let folder = ''
+  let i = 0
+  while (i < overridedSeeds.staticDataFiles.length && folder === '') {
+    const overridedTable = overridedSeeds.staticDataFiles[i]
+    if (table === overridedTable) {
+      folder = overridedSeeds.seedsFolder
+      overridedSeeds.staticDataFiles.splice(i)
     }
+    i += 1
   }
+  return folder
+}
+
+async function seedTable(knex, fixtureItem, overridedSeeds) {
+  const table = _.isArray(fixtureItem) ? fixtureItem[0] : fixtureItem
+  const keyColumn = _.isArray(fixtureItem) ? fixtureItem[1] : 'externalId'
+
+  const seedsFolder = await getSeedsFolder(table, overridedSeeds)
+
+  const fixturePath = `./seeds/${
+    seedsFolder && seedsFolder !== '' ? `${seedsFolder}/` : ''
+  }fixtures/${table}.json`
+
+  const fixture = await readJson(fixturePath)
+  if (_.isFunction(keyColumn)) {
+    await keyColumn(knex, fixture)
+  } else {
+    await Promise.each(fixture.data || [], async datum => {
+      const existingDatum = await knex(table)
+        .where(keyColumn, datum[keyColumn])
+        .first('id')
+      if (existingDatum == null) {
+        await knex(table).insert(datum)
+      }
+    })
+    await Promise.each(fixture.relationships || [], async relationship => {
+      const updates = {}
+      const existingDatum = await knex(table)
+        .where(_.pick(relationship, [keyColumn]))
+        .first()
+      await Promise.each(
+        Object.keys(_.omit(relationship, [keyColumn])),
+        async foreignKeyColumnName => {
+          const foreignKey = relationship[foreignKeyColumnName]
+          const existingRelatedDatum =
+            (await knex(foreignKey.table)
+              .where(_.omit(foreignKey, ['table']))
+              .first('id')) || {}
+          if (
+            existingDatum[foreignKeyColumnName] !== existingRelatedDatum.id &&
+            typeof existingRelatedDatum.id !== 'undefined'
+          ) {
+            updates[foreignKeyColumnName] = existingRelatedDatum.id
+          }
+        }
+      )
+      if (!_.isEmpty(updates)) {
+        await knex(table)
+          .where(_.pick(relationship, [keyColumn]))
+          .update(updates)
+      }
+    })
+  }
+}
+
+async function warnNotExistingOverridedSeeds(overridedSeeds) {
+  for (const fileName of overridedSeeds.staticDataFiles) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `IMPORTANT! The overrided file '${fileName}' doesn't exist. Please, make sure that the file name is correct.`
+    )
+  }
+}
+
+async function seedStaticData(knex, overridedSeeds) {
+  if (!overridedSeeds)
+    overridedSeeds = { seedsFolder: null, staticDataFiles: [] }
+
+  for (const tableItem of tables) {
+    // eslint-disable-next-line no-await-in-loop
+    await seedTable(knex, tableItem, overridedSeeds)
+  }
+
+  await warnNotExistingOverridedSeeds(overridedSeeds)
 }
 
 async function seedStaticDataIssueStatus(knex, { data }) {
@@ -465,11 +597,10 @@ async function seedStaticDataIssueStatus(knex, { data }) {
       .where('externalId', status.externalId)
       .first('id')
     if (existingStatus == null) {
-      await knex('IssueStatus').insert(
-        Object.assign({}, _.omit(status, ['issueStatusSeverity']), {
-          issueStatusSeverityId: severities[status.issueStatusSeverity].id,
-        })
-      )
+      await knex('IssueStatus').insert({
+        ..._.omit(status, ['issueStatusSeverity']),
+        issueStatusSeverityId: severities[status.issueStatusSeverity].id,
+      })
     }
   }
 }
@@ -486,6 +617,88 @@ async function seedStaticDataPermission(knex, { modules }) {
         await knex('Permission').insert(permission)
       }
     }
+  }
+}
+
+async function addFollowUps(knex, partnerIds, { data }) {
+  const assaysDb = await knex('Assay').select('id', 'externalId')
+  const typesDb = await knex('FollowUpType').select('id', 'externalId')
+  for (const { type, name, externalId, i18nKey, assays } of data) {
+    const { id: followUpTypeId } = _.find(typesDb, { externalId: type })
+    const followUp = { followUpTypeId, name, externalId, i18nKey }
+    const existingFollowUp = await knex('FollowUp').where(followUp).first('id')
+    let followUpId = null
+    if (existingFollowUp == null) {
+      followUpId = await knex('FollowUp').insert(followUp)
+    } else {
+      followUpId = existingFollowUp.id
+    }
+
+    /* eslint-disable no-await-in-loop */
+    for (const partnerId of partnerIds) {
+      if (assays && assays.length > 0) {
+        for (const assay of assays) {
+          const assayDb = _.find(assaysDb, { externalId: assay })
+          if (!assayDb) continue // eslint-disable-line no-continue
+          const followUpAssay = {
+            partnerId,
+            followUpId,
+            assayId: assayDb.id,
+          }
+          const existingFollowUpAssay = await knex('FollowUpAssay')
+            .where(followUpAssay)
+            .whereNull('resultCategory1')
+            .whereNull('resultCategory2')
+            .first('assayId')
+          if (existingFollowUpAssay == null) {
+            await knex('FollowUpAssay').insert(followUpAssay)
+          }
+        }
+      } else {
+        const followUpAssay = {
+          partnerId,
+          followUpId,
+        }
+        const existingFollowUpAssay = await knex('FollowUpAssay')
+          .where(followUpAssay)
+          .whereNull('assayId')
+          .whereNull('resultCategory1')
+          .whereNull('resultCategory2')
+          .first('assayId')
+        if (existingFollowUpAssay == null) {
+          await knex('FollowUpAssay').insert(followUpAssay)
+        }
+      }
+    }
+  }
+}
+
+async function removeFollowUps(knex, partnerIds, externalId = 'moved') {
+  const followUp = await knex('FollowUp')
+    .select('id')
+    .where('externalId', externalId)
+    .first()
+  if (followUp) {
+    for (const partnerId of partnerIds) {
+      await knex('FollowUpAssay')
+        .where({
+          followUpId: followUp.id,
+          partnerId,
+        })
+        .del()
+    }
+
+    await knex('ResultFollowUp')
+      .where({
+        followUpId: followUp.id,
+      })
+      .del()
+
+    await knex('FollowUp')
+      .where({
+        id: followUp.id,
+      })
+      .del()
   }
 }
 
@@ -512,12 +725,14 @@ async function seedIssueEventTriggersForPartner(
     .where({ 'nt.partnerId': partnerId })
     .orderBy('it.externalId')
     .distinct('it.externalId as issueType')
-    .reduce((memo, { issueType }) => {
-      if (!issueTypeBlacklist.includes(issueType)) {
-        memo[issueType] = true
-      }
-      return memo
-    }, {})
+    .then(items =>
+      items.reduce((memo, { issueType }) => {
+        if (!issueTypeBlacklist.includes(issueType)) {
+          memo[issueType] = true
+        }
+        return memo
+      }, {})
+    )
   issueTypeWhitelist.forEach(issueType => {
     issueTypeConfigured[issueType] = true
   })
@@ -535,53 +750,2427 @@ async function seedIssueEventTriggersForPartner(
           .where(triggerData)
           .first('id')
         if (existingTrigger == null) {
-          await knex('IssueEventTrigger').insert(
-            Object.assign({}, triggerData, {
-              triggerConditions: JSON.stringify(triggerConditions),
-              createdOn: now,
-              updatedOn: now,
-            })
-          )
+          await knex('IssueEventTrigger').insert({
+            ...triggerData,
+            triggerConditions: JSON.stringify(triggerConditions),
+            createdOn: now,
+            updatedOn: now,
+          })
         }
       }
     }
   )
 }
 
-async function assignAllFeaturesToJobFunctionIds(
+// Ensures all escalation triggers for the given partner.
+// This will only seed for escalation triggers that do
+// not already exist for given partner issue type, and level so
+// it can be called multiple times, and can be called after seeding custom triggers
+async function seedIssueEscalationTriggersForPartner(
   knex,
-  jobFunctionIds,
-  featureBlacklist = [
-    // These are currently hardcoded to Myanmar, so skip by default
-    'targetDashboard',
-    'actionDashboard',
-    'reportDashboard',
-    'siteFilterDashboard',
-  ]
+  partnerId,
+  identifiers = []
 ) {
-  const features = _.filter(
-    await allFeatureToId(),
-    (val, key) => !_.includes(featureBlacklist, key)
+  const now = new Date()
+
+  // get escalation triggers limited by the identifiers
+  const { data } = await readJson(
+    './seeds/fixtures/IssueEscalationTrigger.json'
   )
+
+  const [issueTypes] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+  ])
+
+  await Promise.each(
+    data,
+    async ({
+      identifier,
+      issueType,
+      escalateToLevel,
+      escalationConditions,
+    }) => {
+      // only try to insert/update if the issue type exists
+      if (identifiers.indexOf(identifier) >= 0 && issueTypes[issueType]) {
+        const triggerData = {
+          partnerId,
+          issueTypeId: issueTypes[issueType].id,
+          escalateToLevel,
+        }
+        const existingTrigger = await knex('IssueEscalationTrigger')
+          .where(triggerData)
+          .first('id')
+        if (existingTrigger == null) {
+          await knex('IssueEscalationTrigger').insert({
+            ...triggerData,
+            escalationConditions: JSON.stringify(escalationConditions),
+            createdOn: now,
+            updatedOn: now,
+          })
+        }
+      }
+    }
+  )
+}
+
+// ***********************************************************************
+// 'whereKeys' is a string with single field name or array with field names
+async function upsertItems(knex, tableName, whereKeys, items) {
+  if (typeof whereKeys === 'string') {
+    whereKeys = [whereKeys]
+  }
+  if (!_.isArray(items)) {
+    items = [items]
+  }
+  // ---------------------
+  // helper functions whereKeys
+  const findItem = (dbItems, itemToFind, whereKeys) =>
+    dbItems.find(dbItem => {
+      let found = true
+      whereKeys.forEach(key => {
+        found = found && dbItem[key] === itemToFind[key]
+      })
+      return found
+    })
+  const getWhereItem = (item, whereKeys) => {
+    const whereItem = {}
+    whereKeys.forEach(key => {
+      whereItem[key] = item[key]
+    })
+    return whereItem
+  }
+  // ---------------------
+  // get from db items with specified whereKeys
+  const existingItems = await knex(tableName)
+    .where(function () {
+      items.forEach(item => {
+        this.orWhere(getWhereItem(item, whereKeys))
+      })
+    })
+    .select(...whereKeys)
+  // ---------------------
+  // insert missing items
+  const itemsToInsert = items.filter(
+    item => !findItem(existingItems, item, whereKeys)
+  )
+  if (itemsToInsert.length) {
+    await knex(tableName).insert(itemsToInsert)
+  }
+  // ---------------------
+  // update existing items
+  const itemsToUpdate = items.filter(item =>
+    findItem(existingItems, item, whereKeys)
+  )
+  if (itemsToUpdate.length) {
+    const queries = []
+    itemsToUpdate.forEach(item => {
+      if (!_.isEmpty(item)) {
+        const query = knex(tableName)
+          .where(getWhereItem(item, whereKeys))
+          .update(item)
+        queries.push(query)
+      }
+    })
+    if (!_.isEmpty(queries)) {
+      await Promise.all(queries)
+    }
+  }
+}
+
+// ***********************************************************************
+async function upsertSingle(knex, tableName, whereClause, item) {
+  if (typeof whereClause === 'string') {
+    // single field name which is a primary or unique key, 'item' is required param
+    const fieldKey = whereClause
+    whereClause = { [fieldKey]: item[fieldKey] }
+  } else if (_.isArray(whereClause)) {
+    // array of field names, 'item' is required param
+    whereClause = _.pick(item, whereClause)
+  } else {
+    // 'whereClause' is json, if 'item' is missing set it to 'whereClause'
+    item = item || whereClause
+  }
+  const q = knex(tableName).where(whereClause)
+  const existingItem = await q.first()
+  if (!_.isEmpty(item)) {
+    if (existingItem) {
+      await q.clone().update(item)
+    } else {
+      await knex(tableName).insert(item)
+    }
+  }
+  return q.first()
+}
+
+// ***********************************************************************
+async function upsertNotificationTypes(knex, items) {
+  await upsertItems(
+    knex,
+    'NotificationType', // tableName
+    uniqueKeys.NotificationType, // whereKeys
+    items
+  )
+}
+
+// ***********************************************************************
+async function seedNotificationTypes(
+  knex,
+  {
+    partnerId,
+    jobFunctionIds: { jobFunctionIdLabUser, jobFunctionIdRegionalOfficer },
+    auditFields,
+  }
+) {
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+  const defaultMessageTypes = await getDefaultMessageTypes(knex)
+  await upsertNotificationTypes(knex, [
+    {
+      name: 'LU Network',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Network',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated Network',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU No Testing',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO No Testing',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated No Testing',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Failure',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Failure',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Temperature',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Temperature',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Power',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Power',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Temperature',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Temperature',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Power',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Power',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Procedural',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Procedural',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Procedural',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Procedural',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Module',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Machine',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Reagent Health',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Reagent Health',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Reagent Health',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stock Level Update',
+      partnerId,
+      issueTypeId: issueTypes.StockLevelUpdate.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Stock Level Update',
+      partnerId,
+      issueTypeId: issueTypes.StockLevelUpdate.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Data Category Low',
+      partnerId,
+      issueTypeId: issueTypes.DataCategoryLowError.id,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      ...auditFields,
+    },
+    {
+      name: 'RO Data Category Low',
+      partnerId,
+      issueTypeId: issueTypes.DataCategoryLowError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Network - RO View',
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU No Testing - RO View',
+      partnerId,
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Failure - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Failure - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModulePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Temperature - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Power - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachinePowerError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Module Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Machine Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Procedural - RO View',
+      partnerId,
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Reagent Health - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Reagent Health - RO View',
+      partnerId,
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Stock Level Update - RO View',
+      partnerId,
+      issueTypeId: issueTypes.StockLevelUpdate.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      ...auditFields,
+    },
+    {
+      name: 'LU Data Category Low - RO View',
+      partnerId,
+      issueTypeId: issueTypes.DataCategoryLowError.id,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      ...auditFields,
+    },
+  ])
+}
+
+// ***********************************************************************
+async function upsertIssueEscalationTrigger(knex, items) {
+  await upsertItems(
+    knex,
+    'IssueEscalationTrigger', // tableName
+    uniqueKeys.IssueEscalationTrigger, // whereKeys
+    items
+  )
+}
+
+// ***********************************************************************
+async function seedIssueEscalationTrigger(
+  knex,
+  { partnerId, pluginName, auditFields }
+) {
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+  const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
+
+  await upsertIssueEscalationTrigger(knex, [
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: pluginName
+        ? JSON.stringify({
+            evaluationMethod: 'sql-script',
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql`,
+          })
+        : JSON.stringify({
+            evaluationMethod: 'issue-age',
+            evaluationParameter: { days: 30 },
+          }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 7 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: pluginName
+        ? JSON.stringify({
+            evaluationMethod: 'sql-script',
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql`,
+          })
+        : JSON.stringify({
+            evaluationMethod: 'issue-age',
+            evaluationParameter: { days: 7 },
+          }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModulePowerError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 90 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachinePowerError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 90 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+  ])
+}
+
+// ***********************************************************************
+async function upsertIssueResolutionTrigger(knex, items) {
+  await upsertItems(
+    knex,
+    'IssueResolutionTrigger', // tableName
+    uniqueKeys.IssueResolutionTrigger, // whereKeys
+    items
+  )
+}
+
+// ***********************************************************************
+async function seedIssueResolutionTrigger(
+  knex,
+  { partnerId, pluginName, auditFields }
+) {
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+  const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
+
+  await upsertIssueResolutionTrigger(knex, [
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      resolutionConditions: pluginName
+        ? JSON.stringify({
+            evaluationMethod: 'sql-script',
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
+          })
+        : JSON.stringify({
+            evaluationMethod: 'plugin-function',
+            evaluationParameter: 'resolveDeviceOfflineError',
+          }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      resolutionConditions: pluginName
+        ? JSON.stringify({
+            evaluationMethod: 'sql-script',
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldResolveDeviceNoResults.sql`,
+          })
+        : JSON.stringify({
+            evaluationMethod: 'plugin-function',
+            evaluationParameter: 'resolveDeviceNoResultsError',
+          }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleFailureError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleTemperatureError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachineTemperatureError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModulePowerError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModulePowerError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachinePowerError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachinePowerError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleProceduralError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachineProceduralError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ModuleUnknownError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleUnknownError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.MachineUnknownError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachineUnknownError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveReagentHealthError',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.InventoryStockout.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueStockout',
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueStockExpiring',
+      }),
+      ...auditDates,
+    },
+  ])
+}
+
+// ***********************************************************************
+async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
+  const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
+  const [issueCategories, messageSeverities] = await Promise.all([
+    rowsAsObject(knex, 'IssueCategory', 'externalId'),
+    rowsAsObject(knex, 'MessageSeverity'),
+  ])
+
+  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
+    .where({
+      name: 'Regional Officer',
+      partnerId,
+    })
+    .first()
+
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({
+      name: 'Lab User',
+      partnerId,
+    })
+    .first()
+
+  // ------------------------------------------
+  // Module UnknownErrors issue templates
+  // ------------------------------------------
+  const { id: moduleAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    [
+      'message',
+      'hideWhenSiteFilterIsSelected',
+      'hideWhenSiteFilterIsNotSelected',
+    ],
+    {
+      message:
+        'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      ...auditFields,
+    }
+  )
+  const { id: moduleSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      message:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      ...auditFields,
+    }
+  )
+  const { id: moduleEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      subject:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
+      body:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      htmlBody:
+        '{{device.name}}: Errors without code on module <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
+      ...auditFields,
+    }
+  )
+
+  // ------------------------------------------
+  // Machine UnknownErrors issue templates
+  // ------------------------------------------
+  const { id: machineAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    [
+      'message',
+      'hideWhenSiteFilterIsSelected',
+      'hideWhenSiteFilterIsNotSelected',
+    ],
+    {
+      message: 'Errors without code across machine, conduct troubleshooting',
+      ...auditFields,
+    }
+  )
+  const { id: machineSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      message:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      ...auditFields,
+    }
+  )
+  const { id: machineEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      subject: '{{device.name}}: Errors without code across machine',
+      body:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      htmlBody:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      ...auditFields,
+    }
+  )
+
+  // ------------------------------------------
+  // MessageType
+  // ------------------------------------------
+  const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleAlertTemplateId,
+    smsTemplateId: moduleSmsTemplateId,
+    emailTemplateId: moduleEmailTemplateId,
+  })
+  const { id: machineMessageTypeId } = await upsertSingle(knex, 'MessageType', {
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: machineAlertTemplateId,
+    smsTemplateId: machineSmsTemplateId,
+    emailTemplateId: machineEmailTemplateId,
+  })
+
+  // ------------------------------------------
+  // IssueType
+  // ------------------------------------------
+  const { id: moduleIssueTypeId } = await upsertSingle(
+    knex,
+    'IssueType',
+    uniqueKeys.IssueType,
+    {
+      name: 'Module Unknown Error',
+      externalId: 'ModuleUnknownError',
+      i18nKey: 'issueStatusModuleUnknownError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleMessageTypeId,
+    }
+  )
+  const { id: machineIssueTypeId } = await upsertSingle(
+    knex,
+    'IssueType',
+    uniqueKeys.IssueType,
+    {
+      name: 'Machine Unknown Error',
+      externalId: 'MachineUnknownError',
+      i18nKey: 'issueStatusMachineUnknownError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machineMessageTypeId,
+    }
+  )
+
+  // ------------------------------------------
+  // NotificationType
+  // ------------------------------------------
+  await upsertNotificationTypes(knex, [
+    // Module
+    {
+      name: 'LU Module Unknown Error',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Unknown Error',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated Module Unknown Error',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    // Module - RO View
+    {
+      name: 'LU Module Unknown Error - RO View',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Module Unknown Error - RO View',
+      partnerId,
+      issueTypeId: moduleIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: moduleMessageTypeId,
+      ...auditFields,
+    },
+
+    // Machine
+    {
+      name: 'LU Machine Unknown Error',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 1,
+      canAcknowledge: 1,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Unknown Error',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdLabUser,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'RO Escalated Machine Unknown Error',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 3,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    // Machine - RO View
+    {
+      name: 'LU Machine Unknown Error - RO View',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 1,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+    {
+      name: 'LU Escalated Machine Unknown Error - RO View',
+      partnerId,
+      issueTypeId: machineIssueTypeId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      level: 2,
+      canAcknowledge: 0,
+      messageTypeId: machineMessageTypeId,
+      ...auditFields,
+    },
+  ])
+
+  // ------------------------------------------
+  // Issue Escalation Triggers
+  // ------------------------------------------
+  await upsertIssueEscalationTrigger(knex, [
+    // Module
+    {
+      issueTypeId: moduleIssueTypeId,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: moduleIssueTypeId,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 60 },
+      }),
+      ...auditDates,
+    },
+    // Machine
+    {
+      issueTypeId: machineIssueTypeId,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: machineIssueTypeId,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 60 },
+      }),
+      ...auditDates,
+    },
+  ])
+}
+
+// ***********************************************************************
+async function updateUnknownErrorOnModuleMessage(knex) {
+  await knex('AlertTemplate')
+    .where({
+      message:
+        'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+    })
+    .update({
+      message:
+        'Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+    })
+
+  await knex('SmsTemplate')
+    .where({
+      message:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+    })
+    .update({
+      message:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+    })
+
+  await knex('EmailTemplate')
+    .where({
+      subject:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
+    })
+    .update({
+      body:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+      htmlBody:
+        '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
+    })
+}
+
+// ***********************************************************************
+async function seedIssues(
+  knex,
+  {
+    partnerId,
+    pluginName,
+    auditFields,
+    issueTypeBlacklist = [],
+    issueTypeWhitelist = [],
+  }
+) {
+  await seedStockIssues(knex)
+  await seedStockIssuesUpdate(knex, 'Myanmar')
+  await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist,
+    issueTypeBlacklist,
+  })
+
+  // issue triggers
+  await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
+  await seedIssueResolutionTrigger(knex, { partnerId, pluginName, auditFields })
+}
+
+// ***********************************************************************
+async function addUniqueKey(knex, tableName) {
+  await knex.schema.alterTable(tableName, table => {
+    table.unique(uniqueKeys[tableName], `${tableName}_unique`)
+  })
+}
+
+async function dropUniqueKey(knex, tableName) {
   await Promise.all(
-    _.map(features, async featureId => {
-      await knex('JobFunctionFeature').insert(
-        _.map(jobFunctionIds, jobFunctionId => ({
-          featureId,
-          jobFunctionId,
-        }))
-      )
+    _.map(foreignKeys[tableName], async ({ column }) => {
+      await knex.schema.table(tableName, table => {
+        table.dropForeign(column)
+      })
+    })
+  )
+
+  await knex.schema.alterTable(tableName, table => {
+    table.dropUnique(uniqueKeys[tableName], `${tableName}_unique`)
+  })
+
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column, reference }) => {
+      await knex.schema.table(tableName, table => {
+        table.foreign(column).references(reference)
+      })
     })
   )
 }
 
+async function updateCategoryAssay(knex) {
+  const categories = await knex('ResultCategory').select(
+    'id',
+    'name',
+    'externalId'
+  )
+
+  await Promise.each(categories, async ({ id, externalId }) => {
+    let json
+    if (
+      [
+        'Detected',
+        'Trace Detected',
+        'MoreThan40',
+        'MoreThan150',
+        'MoreThan550',
+        'MoreThan1000',
+        'Resistant',
+        'Positive1',
+        'Positive2',
+        'Positive3',
+        'Scanty',
+        'PositiveMTB',
+        'Positive',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: true,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+        'CollectNewSample',
+        'Discordant',
+        'Rejected',
+        'Missing',
+        'Susceptible',
+        'Contaminated',
+        'PositiveMOTT',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Success',
+        'LessThan40',
+        'LessThan150',
+        'LessThan550',
+        'LessThan1000',
+        'Unknown',
+        'NotDetected',
+        'Negative',
+        'Inconclusive',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: false,
+      }
+    }
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
+  })
+}
+
+async function updateAssayResultCategoryTreatmentEmphasize(knex) {
+  const categories = await knex('ResultCategory').select(
+    'id',
+    'name',
+    'externalId'
+  )
+
+  await Promise.each(categories, async ({ id, externalId }) => {
+    let json
+    if (
+      [
+        'Detected',
+        'Trace Detected',
+        'MoreThan40',
+        'MoreThan150',
+        'MoreThan550',
+        'MoreThan1000',
+        'Positive',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: true,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+        'CollectNewSample',
+        'Discordant',
+        'Rejected',
+        'Missing',
+        'Inconclusive',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: true,
+      }
+    } else {
+      json = {
+        requiresTreatment: false,
+        emphasize: false,
+      }
+    }
+    if (!_.isEmpty(json)) {
+      await knex('ResultCategoryAssay')
+        .where('resultCategoryId', id)
+        .update(json)
+    }
+  })
+}
+
+async function addLicenses(knex) {
+  const { data: licensesByPartner } = await readJson(
+    `./seeds/fixtures/License.json`
+  )
+
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
+
+  await Promise.each(
+    licensesByPartner,
+    async ({ partnerNames, createdOn, content }) => {
+      await knex('License').insert(
+        _.map(partnerNames, partnerName => ({
+          partnerId: partnerName ? partners[partnerName].id : null,
+          createdOn: new Date(createdOn),
+          content: content.replace('PARTNERNAME', partnerName),
+        }))
+      )
+    }
+  )
+}
+
+async function addLicensePersons(knex, personNameToExclude = '') {
+  const persons = await knex('Person')
+    .whereNot('name', personNameToExclude)
+    .select('id', 'lastPartnerId', 'name')
+
+  await Promise.all(
+    _.map(persons, async p => {
+      const { id: licenseId } = await knex('License')
+        .where('partnerId', p.lastPartnerId)
+        .orWhere('partnerId', null)
+        .orderBy('partnerId', 'desc')
+        .orderBy('createdOn', 'desc')
+        .first('id')
+      await knex('LicensePerson').insert({
+        personId: p.id,
+        licenseId,
+        ip: '127.0.0.1',
+        acceptedOn: new Date(),
+      })
+    })
+  )
+}
+
+async function addDeviceCapacities(knex) {
+  const { data: deviceCapacitiesByPartner } = await readJson(
+    `./seeds/fixtures/DeviceCapacity.json`
+  )
+
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
+  const [deviceTypes] = await Promise.all([
+    rowsAsObject(knex, 'DeviceType', 'externalId'),
+  ])
+
+  await Promise.each(
+    deviceCapacitiesByPartner,
+    async ({
+      deviceTypeExternalId,
+      defaultForDeviceType,
+      name,
+      dailyCapacity,
+    }) => {
+      if (deviceTypes[deviceTypeExternalId]) {
+        await knex('DeviceCapacity').insert(
+          _.map(partners, partner => ({
+            partnerId: partner.id,
+            deviceTypeId: deviceTypes[deviceTypeExternalId].id,
+            defaultForDeviceType,
+            name,
+            dailyCapacity,
+          }))
+        )
+      } else {
+        await Promise.resolve()
+      }
+    }
+  )
+}
+
+async function setCapacityForExistingDevices(knex) {
+  const devices = await knex('Device')
+    .where('deviceCapacityId', null)
+    .distinct('partnerId', 'deviceTypeId')
+
+  const deviceCapacities = await knex('DeviceCapacity')
+    .where('defaultForDeviceType', 1)
+    .select('id', 'partnerId', 'deviceTypeId')
+  await Promise.each(devices, async ({ partnerId, deviceTypeId }) => {
+    const deviceCapacityByPartnerId = _.find(
+      deviceCapacities,
+      dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
+    )
+    if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
+      await knex('Device')
+        .where({ partnerId })
+        .where({ deviceTypeId })
+        .update({ deviceCapacityId: deviceCapacityByPartnerId.id })
+    }
+  })
+}
+
+async function getSeedsRan(knex) {
+  return knex('AspectSeed as ap')
+    .where({ success: true })
+    .select('ap.fileName')
+    .then(items =>
+      items.reduce((memo, row) => {
+        if (!memo[row.fileName]) {
+          memo[row.fileName] = true
+        }
+        return memo
+      }, {})
+    )
+}
+
+async function seedDeviceMaintenanceType(knex) {
+  const { data: deviceMaintenanceTypes } = await readJson(
+    `./seeds/fixtures/DeviceMaintenanceType.json`
+  )
+
+  await upsertItems(
+    knex,
+    'DeviceMaintenanceType', // tableName
+    'externalId', // whereKeys
+    deviceMaintenanceTypes
+  )
+}
+
+async function insertSites(knex, partnerId, countryId, sites) {
+  const now = new Date()
+  const { id: adminId } = await knex('User').where('name', 'admin').first('id')
+
+  // insert sites from a JSON file. Safe to run multiple times. Will only add sites that don't exist yet (based on externalId)
+  await Promise.each(sites, async site => {
+    let siteId = null
+    const existingSite = await knex('Site')
+      .where('externalId', site.externalId)
+      .first('id')
+
+    if (existingSite) {
+      siteId = existingSite.id
+    } else {
+      const { id: siteGeographyId } = await knex('Geography as g')
+        .join('State as s', 'g.stateId', 's.id')
+        .join('Lga as l', 'g.lgaId', 'l.id')
+        .where({ countryId })
+        .where('s.name', site.stateName)
+        .where('l.name', site.lgaName)
+        .first('g.id')
+      ;[siteId] = await knex('Site').insert({
+        partnerId,
+        geographyId: siteGeographyId,
+        name: site.name,
+        shortName: site.shortName,
+        externalId: site.externalId,
+        notes: site.notes,
+        city: site.city,
+        street1: site.street1,
+        street2: site.street2,
+        zip: site.zip,
+        latitude: site.latitude || null,
+        longitude: site.longitude || null,
+        timezoneId: site.timezoneId,
+        hoursStart: site.hoursStart,
+        hoursEnd: site.hoursEnd,
+        createdOn: now,
+        createdBy: adminId,
+        updatedOn: now,
+        updatedBy: adminId,
+      })
+    }
+
+    await Promise.each(site.tags, async tag => {
+      const tagDetails = { partnerId, title: tag }
+      let tagId = null
+      const existingTag = await knex('Tag').where(tagDetails).first('id')
+      if (existingTag) {
+        tagId = existingTag.id
+      } else {
+        ;[tagId] = await knex('Tag').insert(tagDetails)
+      }
+
+      const siteTagDetails = { tagId, siteId }
+
+      const { siteTagCount } = await knex('SiteTag')
+        .where(siteTagDetails)
+        .count('tagId as siteTagCount')
+
+      if (!siteTagCount) {
+        await knex('SiteTag').insert(siteTagDetails)
+      }
+    })
+  })
+}
+
+async function getPermissonByModuleAndActivity(knex, module, activity) {
+  return knex('Permission').where({ module, activity }).first()
+}
+
+async function getPartnerByName(knex, name) {
+  const partner = await knex('Partner').where({ name }).first()
+  return partner
+}
+
+async function getGeographyId(knex, countryId, stateId, lgaId) {
+  const { geographyId } = await knex('Geography as g')
+    .modify(
+      (queryBuilder, { countryId, stateId, lgaId }) => {
+        if (countryId) {
+          queryBuilder = queryBuilder.where('g.countryId', countryId)
+
+          if (stateId) {
+            queryBuilder = queryBuilder.where('g.stateId', stateId)
+
+            if (lgaId) queryBuilder = queryBuilder.where('g.lgaId', lgaId)
+            else queryBuilder = queryBuilder.where('g.lgaId', null)
+          } else {
+            queryBuilder = queryBuilder.where('g.stateId', null)
+          }
+        }
+      },
+      { countryId, stateId, lgaId }
+    )
+    .first('id as geographyId')
+  return geographyId
+}
+
+async function initDataFromFixture(knex, tableName, keyColumn = 'externalId') {
+  const fixtureData = await readJson(`./seeds/fixtures/${tableName}.json`)
+  const itemsNew = fixtureData.data || fixtureData
+  const itemsOld = await knex(tableName)
+    .whereIn(
+      keyColumn,
+      _.map(itemsNew, item => item[keyColumn])
+    )
+    .select(keyColumn)
+  const oldIds = itemsOld.map(x => x[keyColumn])
+  const itemsToUpdate = itemsNew.filter(x => oldIds.includes(x[keyColumn]))
+  const itemsToInsert = itemsNew.filter(x => !oldIds.includes(x[keyColumn]))
+  if (itemsToUpdate.length > 0) {
+    await Promise.each(itemsToUpdate, async item => {
+      const updatedRecord = _.omit(item, keyColumn)
+      if (!_.isEmpty(updatedRecord)) {
+        await knex(tableName)
+          .update(updatedRecord)
+          .where(keyColumn, item[keyColumn])
+      }
+    })
+  }
+  // insert only items which not exist in the table
+  return knex(tableName).insert(itemsToInsert)
+}
+
+async function updateReportableInResultCategoryAssay(knex) {
+  // result categories with { reportable: 0 }
+  const resultCategory = await allResultCategoryToId()
+  const resultCategoryIds = [
+    resultCategory.Invalid,
+    resultCategory.NoResult,
+    resultCategory.Error,
+    resultCategory.Rejected,
+    resultCategory.Unknown,
+  ].filter(x => !!x)
+
+  if (resultCategoryIds.length > 0) {
+    await knex('ResultCategoryAssay')
+      .update({ reportable: 0 })
+      .whereIn('resultCategoryId', resultCategoryIds)
+  }
+}
+
+async function addReports(knex, countryReports = []) {
+  const countries = await knex('Country').select('id')
+
+  // globally defined reports applicable to all countries/seeds
+  const { getBaseReports } = require('./relatedObjects/reports')
+  const baseReports = (await getBaseReports()) || []
+
+  // add reports for each country
+  await Promise.each(countries, async ({ id: countryId }) => {
+    let geographyId
+    const geography = await knex('Geography')
+      .where({ countryId })
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first('id')
+    if (geography) {
+      geographyId = geography.id
+    } else {
+      ;[geographyId] = await knex('Geography').insert({ countryId })
+    }
+
+    // merge global and country-specific reports
+    const reports = [...baseReports, ...countryReports]
+
+    await Promise.each(
+      reports,
+      async (
+        { name, description, i18nKey, externalId, sheets, fileName },
+        reportIndex
+      ) => {
+        const [reportId] = await knex('Report').insert({
+          name,
+          description,
+          i18nKey,
+          externalId,
+          geographyId,
+          sortOrder: reportIndex + 1,
+          fileName,
+        })
+
+        await Promise.each(sheets, async (sheet, sheetIndex) => {
+          const { moduleName, functionName, query } = sheet
+          await knex('ReportSheet').insert({
+            moduleName,
+            functionName,
+            query: query && JSON.stringify(query),
+            reportId,
+            sortOrder: sheetIndex + 1,
+          })
+        })
+      }
+    )
+  })
+}
+
+const resultTimeFrameInDays = 60
+const now = new Date()
+
+function calculateDateForResult(
+  currentResult,
+  totalResults,
+  randomMillisToAdd
+) {
+  // unlike TB and HIV, we want to generate an exponential curve here
+  const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
+
+  return addMilliseconds(
+    subDays(now, daysToSubtract),
+    _.random(randomMillisToAdd)
+  )
+}
+
+function randomOption(availableOptions, required = false) {
+  if (_.isEmpty(availableOptions)) {
+    return
+  }
+  if (_.isArray(availableOptions)) {
+    if (availableOptions.length === 1 && required) {
+      return availableOptions[0]
+    }
+    availableOptions = availableOptions.reduce(
+      (optionsWithProbability, option) => {
+        optionsWithProbability[option] =
+          100 /
+          (required ? availableOptions.length : availableOptions.length + 1)
+        return optionsWithProbability
+      }
+    )
+  }
+  let maxPercent = _.sum(Object.values(availableOptions))
+  if (maxPercent < 100 && !required) {
+    maxPercent = 100
+  }
+  let lastOptionMaxPercentile = 0
+  const options = Object.keys(availableOptions)
+  options.forEach(option => {
+    const optionProbability = availableOptions[option]
+    availableOptions[option] = [lastOptionMaxPercentile, optionProbability]
+    lastOptionMaxPercentile = optionProbability
+  })
+  const randomPercentile = _.random(0.0001, maxPercent)
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i]
+    const optionPercentileRange = availableOptions[option]
+    if (
+      randomPercentile > optionPercentileRange[0] &&
+      randomPercentile <= optionPercentileRange[1]
+    ) {
+      return option
+    }
+  }
+  if (required) {
+    return options[options.length - 1]
+  }
+}
+
+async function seedPartnerAssay(knex) {
+  const { 'COVID-19 Test': assayTypeCovid19Id } = await allAssayTypeToId()
+
+  const partnerIds = await knex('Partner').pluck('id')
+  const assays = await knex('Assay').select('id', 'assayTypeId')
+
+  // for all Partners ...
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(assays, async ({ id: assayId, assayTypeId }) => {
+      const isCovid19 = assayTypeId === assayTypeCovid19Id
+      // ... upsert entry to PartnerAssay
+      const partnerAssay = await knex('PartnerAssay')
+        .where({ partnerId, assayId })
+        .first()
+      if (!partnerAssay) {
+        await knex('PartnerAssay').insert({
+          partnerId,
+          assayId,
+
+          canCreate: isCovid19,
+          canDelete: isCovid19,
+          canEdit: isCovid19,
+        })
+      }
+    })
+  )
+}
+
+async function seedPartnerDisease(knex) {
+  const partnerIds = await knex('Partner').pluck('id')
+  const diseaseIds = await knex('Disease').pluck('id')
+
+  // for all Partners ...
+  await Promise.each(partnerIds, async partnerId =>
+    Promise.each(diseaseIds, async diseaseId => {
+      // ... upsert entry to PartnerDisease table
+      const partnerDisease = await knex('PartnerDisease')
+        .where({ partnerId, diseaseId })
+        .first()
+      if (!partnerDisease) {
+        await knex('PartnerDisease').insert({
+          partnerId,
+          diseaseId,
+        })
+      }
+    })
+  )
+}
+
+function getUniqueId() {
+  return _.times(6, () => _.toUpper(_.random(36).toString(36))).join('')
+}
+
+/**
+ * Gets a random date for a result linked to the previous one provided.
+ * @param  {[object]} previousResult The previous result
+ * @return {[date]} A random date next to the previous result's endedOn field
+ */
+function getLinkedResultDate(previousResult) {
+  const previousResultDateMillis = Math.max(
+    previousResult.startedOn,
+    previousResult.endedOn
+  )
+
+  const nowUTCMillis = format(
+    addMinutes(new Date(), now.getTimezoneOffset()),
+    'T'
+  )
+
+  if (previousResultDateMillis > nowUTCMillis)
+    throw new Error("Previous result's date can't be greater than today")
+
+  const diffMillis = nowUTCMillis - previousResultDateMillis
+
+  const rndMillis = _.random(1, diffMillis)
+  const newStartDate = new Date(previousResultDateMillis + rndMillis)
+
+  return newStartDate
+}
+
+/**
+ * Gets the randomly generated results fields startedOn, endedOn, createdOn and updatedOn based on the date provided as parameter.
+ * @param  {[object]} startedOn The based on date
+ * @return {[object]} An object containing fields startedOn, endedOn, createdOn and updatedOn.
+ */
+function getDateFields(startedOn) {
+  const necessaryDiffMillis = 120 * 1000
+
+  const now = new Date()
+  const nowMillis = format(addMinutes(now, now.getTimezoneOffset()), 'T')
+  const startedOnMillis = format(
+    addMinutes(startedOn, startedOn.getTimezoneOffset()),
+    'T'
+  )
+  const diffMillis = nowMillis - startedOnMillis
+
+  let endedOn
+  let createdOn
+  let updatedOn = null
+
+  if (diffMillis < necessaryDiffMillis) {
+    // Started On date is close to now, so we calculate the gap's millis
+    const gapMillies = diffMillis / 3
+    const addMillisGap = date => addMilliseconds(date, gapMillies)
+    endedOn = addMillisGap(startedOn)
+    createdOn = addMillisGap(endedOn)
+    updatedOn = addMillisGap(createdOn)
+  } else {
+    // Started On date isn't close to now, so we can use fixed gaps
+    endedOn = addMinutes(startedOn, 100)
+    createdOn = addMinutes(endedOn, 120)
+    updatedOn = addMinutes(createdOn, 180)
+  }
+
+  return {
+    startedOn,
+    endedOn,
+    createdOn,
+    updatedOn,
+  }
+}
+
+async function getResultForms(knex) {
+  return knex('ResultForm')
+    .select()
+    .then(items =>
+      items.map(resultForm => ({
+        ...resultForm,
+        formSchema: JSON.parse(resultForm.formSchema),
+      }))
+    )
+}
+
+async function seedJobFunctionsAndUsersForOperationalData(
+  knex,
+  {
+    auditFields,
+    countryId,
+    culture,
+    geographyId,
+    partnerId,
+    passwords = {},
+    timezone,
+  }
+) {
+  const modules = await getPermissionModules(knex)
+  const now = new Date()
+  const userIds = {}
+  const personIds = {}
+  if (!geographyId) {
+    const geography = await knex('Geography')
+      .where('countryId', countryId)
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first('id')
+    geographyId = geography.id
+  }
+  // -------------------------------------------
+  // Users, Persons
+  await Promise.all(
+    _.map(
+      [
+        'cepheid', // for jobFunction 'Device Maker'
+        'ntp', // for jobFunction 'NTP'
+        'technician', // for jobFunction 'Technician'
+      ],
+      async name => {
+        const { id: userId } = await upsertSingle(
+          knex,
+          'User', // tableName
+          'name', // whereKeys
+          {
+            name: name.toLowerCase(),
+            password: bcrypt.hashSync(passwords[name] || 'test07', saltRounds),
+            legacyPassword: 0,
+            approved: 1,
+            createdOn: now,
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
+          }
+        )
+
+        userIds[name.toLowerCase()] = userId
+
+        const lastPartnerId = partnerId
+        const lastCountryId = countryId
+
+        const { id: personId } = await upsertSingle(
+          knex,
+          'Person', // tableName
+          'userId', // whereKeys
+          {
+            userId,
+            name,
+            lastPartnerId,
+            lastCountryId,
+            timezone,
+            culture,
+            geographyId,
+            ...auditFields,
+          }
+        )
+        personIds[name.toLowerCase()] = personId
+      }
+    )
+  )
+  // -------------------------------------------
+  // Job Functions
+  const { upsertJobFunction } = require('./common')
+  const jobFunctionIdDeviceMaker = await upsertJobFunction(
+    knex,
+    'Device Maker',
+    partnerId,
+    [modules.account.edit, modules.operationalData.admin]
+  )
+  const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
+    modules.account.edit,
+    modules.operationalData.admin,
+  ])
+  const jobFunctionIdTechnician = await upsertJobFunction(
+    knex,
+    'Technician',
+    partnerId,
+    [modules.account.edit, modules.operationalData.view]
+  )
+  // -------------------------------------------
+  // Jobs
+  const initJob = async (personId, jobFunctionId) => {
+    const { id } = await upsertSingle(
+      knex,
+      'Job',
+      ['personId', 'jobFunctionId'],
+      { personId, jobFunctionId }
+    )
+    return id
+  }
+  const jobIdCepheid = await initJob(
+    personIds.cepheid,
+    jobFunctionIdDeviceMaker
+  )
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdNtp)
+  const jobIdTechnician = await initJob(
+    personIds.technician,
+    jobFunctionIdTechnician
+  )
+
+  // -------------------------------------------
+  // Constrain jobs by context
+  await upsertItems(
+    knex,
+    'JobContext',
+    ['jobId', 'geographyId'],
+    [
+      { jobId: jobIdCepheid, geographyId },
+      { jobId: jobIdNtp, geographyId },
+      { jobId: jobIdTechnician, geographyId },
+    ]
+  )
+
+  return {
+    userIds,
+    personIds,
+
+    jobFunctionIdDeviceMaker,
+    jobFunctionIdNtp,
+    jobFunctionIdTechnician,
+
+    jobIdCepheid,
+    jobIdNtp,
+    jobIdTechnician,
+  }
+}
+
+/**
+ * Adds a new JobFunctionPermission row for each permission id at the permissionsTo parameter that will be associated to the job functions that have assigned one of the permissions of the permissionsFrom one
+ * @param {object} knex Knex instance
+ * @param {array} currentPermissions An array of permissions ids
+ * @param {array} additionalPermissions An array of permissions ids that will be associated to the
+ */
+async function mapJobFunctionPermissions(
+  knex,
+  currentPermissions,
+  additionalPermissions
+) {
+  const jobFunctionsIds = await knex('JobFunctionPermission')
+    .whereIn('permissionId', currentPermissions)
+    .distinct('jobFunctionId')
+  let insertJobs = []
+  for (let index = 0; index < jobFunctionsIds.length; index++) {
+    const { jobFunctionId } = jobFunctionsIds[index]
+    insertJobs = [
+      ...insertJobs,
+      ...additionalPermissions.map(permissionId =>
+        knex('JobFunctionPermission')
+          .where({ jobFunctionId, permissionId })
+          .then(rows => {
+            if (rows.length === 0) {
+              return knex('JobFunctionPermission').insert({
+                permissionId,
+                jobFunctionId,
+              })
+            }
+          })
+      ),
+    ]
+  }
+
+  if (insertJobs.length > 0) await Promise.all(insertJobs)
+}
+
+async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
+  // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // but not critical if field dashboards remains null - we handle setting default value of { home: {} } in both API and WEB
+  await knex('DashboardWidget')
+    .whereNull('dashboards')
+    .update({
+      dashboards: JSON.stringify({ home: {} }),
+    })
+
+  await Promise.all(
+    _.map(
+      widgets.filter(({ dashboards }) => _.isPlainObject(dashboards)),
+      ({ dashboards, externalId }) =>
+        knex('DashboardWidget')
+          .where({ externalId })
+          .update({
+            dashboards: JSON.stringify(dashboards),
+          })
+    )
+  )
+}
+
+/**
+ * Removes a permission activity and replaces it for another one
+ * @param  {[object]} knex The knex instance
+ * @param  {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
+ * @param  {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
+ */
+async function removeAndReplaceActivity(
+  knex,
+  activityToRemove,
+  activityToReplaceFor
+) {
+  const modules = await getPermissionModules(knex)
+  const modulesNames = Object.keys(modules)
+
+  await Promise.each(modulesNames, async moduleName => {
+    const activityToRemoveId = modules[moduleName][activityToRemove]
+
+    if (activityToRemoveId) {
+      let activityToReplaceForId = modules[moduleName][activityToReplaceFor]
+
+      // If module has activityToRemove, reassignation should be done
+      if (!activityToReplaceForId) {
+        // If module doesn't have the activityToReplaceFor
+        // Inserts the new permission
+        const [permissionId] = await knex('Permission').insert({
+          module: moduleName,
+          activity: activityToReplaceFor,
+        })
+
+        activityToReplaceForId = permissionId
+      }
+
+      // Assigns the activityToReplaceFor to all the job functions that use the activityToRemove
+      await mapJobFunctionPermissions(
+        knex,
+        [activityToRemoveId],
+        [activityToReplaceForId]
+      )
+
+      await knex('JobFunctionPermission')
+        .where({ permissionId: activityToRemoveId })
+        .delete()
+      await knex('Permission').where({ id: activityToRemoveId }).delete()
+    }
+  })
+}
+
+// ***********************************************************************
+async function seedIssueTypeModuleReplaced(knex, { userName }) {
+  const { id: adminId } = await knex('User')
+    .where({ name: userName })
+    .first('id')
+
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // get previously defined data for ModuleReplaced issue type
+  const {
+    ModuleReplaced: {
+      issueType,
+      MessageType,
+      AlertTemplate,
+      EmailTemplate,
+      SmsTemplate,
+    },
+  } = await getBaseIssues(auditFields)
+
+  // ------------------------------------------
+  // 'Module Replaced' issue templates
+  // ------------------------------------------
+  const { id: moduleAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    ['message'],
+    {
+      ...AlertTemplate,
+      ...auditFields,
+    }
+  )
+  const { id: moduleSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      ...SmsTemplate,
+      ...auditFields,
+    }
+  )
+  const { id: moduleEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      ...EmailTemplate,
+      ...auditFields,
+    }
+  )
+
+  // ------------------------------------------
+  // MessageType
+  // ------------------------------------------
+  const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
+    ...MessageType,
+    alertTemplateId: moduleAlertTemplateId,
+    smsTemplateId: moduleSmsTemplateId,
+    emailTemplateId: moduleEmailTemplateId,
+  })
+
+  // ------------------------------------------
+  // IssueType
+  // ------------------------------------------
+  await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
+    ...issueType,
+    defaultMessageTypeId: moduleMessageTypeId,
+  })
+}
+
 module.exports = {
+  addReports,
+
   seed,
+  seedTable,
+  getSeedsRan,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
   seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
-  assignAllFeaturesToJobFunctionIds,
+  upsertItems,
+  upsertSingle,
+  seedIssues,
+  getGeographyId,
+  getPartnerByName,
+  getPermissonByModuleAndActivity,
+
+  seedNotificationTypes,
+  upsertNotificationTypes,
+
+  seedIssueEscalationTrigger,
+  upsertIssueEscalationTrigger,
+
+  seedIssueResolutionTrigger,
+  upsertIssueResolutionTrigger,
+
+  seedUnknownErrorsIssue,
+  updateUnknownErrorOnModuleMessage,
+
+  uniqueKeys,
+  addUniqueKey,
+  dropUniqueKey,
+
+  addLicenses,
+  addLicensePersons,
+
+  addDeviceCapacities,
+  setCapacityForExistingDevices,
+  seedDeviceMaintenanceType,
+
+  updateCategoryAssay,
+  updateAssayResultCategoryTreatmentEmphasize,
+  insertSites,
+
+  addFollowUps,
+  removeFollowUps,
+
+  initDataFromFixture,
+  updateReportableInResultCategoryAssay,
+
+  calculateDateForResult,
+  randomOption,
+
+  seedPartnerAssay,
+  seedPartnerDisease,
+
+  getUniqueId,
+  getLinkedResultDate,
+  getDateFields,
+
+  getResultForms,
+
+  seedJobFunctionsAndUsersForOperationalData,
+  mapJobFunctionPermissions,
+  seedDashboardsJsonInDashboardWidget,
+  removeAndReplaceActivity,
+
+  seedIssueTypeModuleReplaced,
+  seedIssueEscalationTriggersForPartner,
 }

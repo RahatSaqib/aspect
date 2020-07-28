@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 // Adds all API routes to the server
 function addClientRoutes(server) {
@@ -68,11 +68,31 @@ function addClientRoutes(server) {
     require('./dashboard/endpoints').routes.map(decorateClientAPI('dashboard'))
   )
   server.route(require('./tag/endpoints').routes.map(decorateClientAPI()))
+  server.route(
+    require('./server/endpoints').routes.map(decorateClientAPI('server'))
+  )
+  server.route(
+    require('./disease/endpoints').routes.map(decorateClientAPI('device'))
+  )
+  server.route(
+    require('./forms/endpoints').routes.map(decorateClientAPI('case'))
+  )
+  server.route(
+    require('./case/endpoints').routes.map(decorateClientAPI('case'))
+  )
 }
 
 function addDeviceRoutes(server) {
   server.route(
     require('./deviceApi/endpoints').routes.map(decorateDeviceAPI('device'))
+  )
+}
+
+function addDeviceRawRoutes(server) {
+  server.route(
+    require('./deviceApiRaw/endpoints').routes.map(
+      decorateDeviceAPI('device/raw')
+    )
   )
 }
 
@@ -84,10 +104,11 @@ function decorateClientAPI(module) {
   const strategies = ['clientApi']
 
   if (module) {
-    // If module specified, must have one of admin or `{module}:admin`
+    // If module specified, must have one of admin or `{module}:edit`
     // in addition to any other listed in scope of routes.
-    scope.push('admin', `${module}:admin`)
+    scope.push('edit', `${module}:edit`)
   }
+
   return decorateAPI({ scope, strategies })
 }
 
@@ -149,7 +170,7 @@ function asyncHandler(handler) {
   return (request, reply) =>
     handler(request)
       .then(reply)
-      .then(null, err => {
+      .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
         console.error(err) // eslint-disable-line no-console
         throw err
@@ -159,11 +180,10 @@ function asyncHandler(handler) {
 // extracts and sanitizes the parameters related to sorting and paging
 // from the candidate params and returns them as an object
 function getSortPageParams(params, sortColumnMapping, defaultSort) {
-  return Object.assign(
-    {},
-    getSortParams(params, sortColumnMapping, defaultSort),
-    getPageParams(params)
-  )
+  return {
+    ...getSortParams(params, sortColumnMapping, defaultSort),
+    ...getPageParams(params),
+  }
 }
 
 // extracts and sanitizes the parameters related to sorting from the
@@ -174,7 +194,9 @@ function getSortParams(params, sortColumnMapping, defaultSort) {
   result.sortCol =
     sortColumnMapping && params.sortCol && sortColumnMapping[params.sortCol]
       ? sortColumnMapping[params.sortCol]
-      : params.sortCol ? params.sortCol : defaultSort
+      : params.sortCol
+      ? params.sortCol
+      : defaultSort
   result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
 
   return result
@@ -197,7 +219,7 @@ function validateSortPageParams(...sortColumns) {
     sortCol:
       sortColumns.length > 0
         ? Joi.string()
-            .valid(sortColumns)
+            .valid(...sortColumns)
             .description('Sort on named column')
         : Joi.string().description('Sort on named column'),
     sortDir: Joi.string()
@@ -207,29 +229,21 @@ function validateSortPageParams(...sortColumns) {
       .integer()
       .min(0)
       .description('Page index with 0 as first page'),
-    size: Joi.number()
-      .integer()
-      .positive()
-      .description('Page size'),
+    size: Joi.number().integer().positive().description('Page size'),
   }
 }
 
 function validateDateRangeParams() {
   return {
-    minDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('From Date'),
-    maxDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('To Date'),
+    minDate: Joi.date().iso().allow(null).description('From Date'),
+    maxDate: Joi.date().iso().allow(null).description('To Date'),
   }
 }
 
 module.exports = {
   addClientRoutes,
   addDeviceRoutes,
+  addDeviceRawRoutes,
   asyncHandler,
   getSortParams,
   getPageParams,

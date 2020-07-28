@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaBell from 'react-icons/lib/fa/bell'
+import { FaBell } from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./FaBellZ.css'))
 

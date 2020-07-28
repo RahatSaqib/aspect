@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import _fp from 'lodash/fp'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
@@ -10,37 +11,58 @@ import {
   pure,
 } from 'recompose'
 import { connect } from 'react-redux'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
-import MdAssignmentTurnedIn from 'react-icons/lib/md/assignment-turned-in'
+import Card from '@material-ui/core/Card'
+import Button from '@material-ui/core/Button'
+import { MdAssignmentTurnedIn } from 'react-icons/md'
 
 import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchInventoryItemDashboard } from '../DashboardRedux'
+import { showNewInventoryDialog } from '../../inventory/InventoryRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
-import InventorySiteSummaryBar from './InventorySiteSummaryBar'
 import SummaryItemsBlock from './SummaryItemsBlock'
+import InventoryItems from './InventoryItems'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
+const {
+  '--aspect-color-mandy': colorMandy,
+  '--aspect-color-supernova': colorSupernova,
+  '--aspect-color-mantis': colorMantis,
+} = process.env
+
+const getIssueIdsFromSummaryList = (key, summaryList) =>
+  _fp.pipe(_fp.flatMap(_fp.prop([key])), _fp.uniq)(summaryList)
+
+function getFillColor({ id, activeSiteIds, issueSiteIds }) {
+  if (_.includes(activeSiteIds, id)) {
+    return colorMandy
+  }
+
+  if (_.includes(issueSiteIds, id)) {
+    return colorSupernova
+  }
+
+  return colorMantis
+}
+
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
-    features: ['inventoryDashboard'],
+    permissions: ['dashboard:inventory'],
   }),
   connect(
     state => ({
       siteList: state.dashboard.inventoryItemSiteList,
-      inventorySiteSummaryList: state.dashboard.inventorySiteSummaryList,
       inventoryConsumableSummaryList:
         state.dashboard.inventoryConsumableSummaryList,
     }),
     bindActionCreators.bind(null, {
       fetchInventoryItemDashboard,
+      showNewInventoryDialog,
     })
   ),
   lifecycle({
@@ -53,8 +75,12 @@ const enhance = compose(
       activeSiteIds: [],
     }),
     {
-      onInventoryClick: (state, { history }) => () =>
-        history.push('/browse/inventory'),
+      onInventoryClick: (state, { history, showNewInventoryDialog }) => ({
+        openDialog = false,
+      }) => {
+        history.push('/browse/inventory')
+        if (openDialog) showNewInventoryDialog()
+      },
 
       onSummaryItemClick: (state, { history }) => ({ target }) => {
         const searchParams = new URLSearchParams()
@@ -81,28 +107,30 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, activeSiteIds, inventorySiteSummaryList }) => {
+  withProps(({ siteList, activeSiteIds, inventoryConsumableSummaryList }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
-    const siteById = siteList
-      .toKeyedSeq()
-      .mapEntries(([, it]) => [it.get('id'), it])
+    const issueSiteIds = getIssueIdsFromSummaryList(
+      'affectedSiteIds',
+      inventoryConsumableSummaryList.toJS()
+    ).map(id => String(id))
+
+    const {
+      '--aspect-color-scooter-blue-1': colorScooterBlue1,
+      '--aspect-color-scooter-blue-4': colorScooterBlue4,
+    } = process.env
 
     return {
       fill: ({ properties: { postal } }) =>
-        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
+        siteStateAbbrs.has(postal) ? colorScooterBlue1 : colorScooterBlue4,
       points: siteList
         .map(it => ({
           id: it.get('name'),
-          size: 6,
-          fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
+          size: 5,
+          siteName: it.get('name'),
+          fill: getFillColor({ activeSiteIds, issueSiteIds, id: it.get('id') }),
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))
-        .toJS(),
-      inventorySiteSummaryList: inventorySiteSummaryList
-        .map(it =>
-          it.set('siteName', siteById.getIn([it.get('siteId'), 'name']))
-        )
         .toJS(),
     }
   })
@@ -120,8 +148,8 @@ export const InventoryStatus = ({
   className,
   title,
   fill,
+  history,
   points,
-  inventorySiteSummaryList,
   inventoryConsumableSummaryList,
   onInventoryClick,
   onSummaryItemClick,
@@ -142,10 +170,7 @@ export const InventoryStatus = ({
           points={points}
         />
       </Unit>
-      <Unit sm="1-2" lg="1-4">
-        <InventorySiteSummaryBar data={inventorySiteSummaryList} />
-      </Unit>
-      <Unit sm="1-2" lg="1-4">
+      <Unit sm="1-2">
         <div
           className={cssClasses('SummaryItemsBlocks--horizontal-scrollable')}
         >
@@ -169,28 +194,28 @@ export const InventoryStatus = ({
       <Unit sm="1-2" lg="1-4">
         <div className={cssClasses('ButtonsBlock')}>
           <Button
-            className={cssClasses('Button')}
-            label={intl.formatMessage(messages.receiveConsumablesLabel)}
-            onClick={onInventoryClick}
-            raised
+            className={cssClasses('Button', 'Button--receive')}
+            onClick={() => onInventoryClick({ openDialog: true })}
+            variant="contained"
             theme={themes.Button}
-          />
-          <Button
-            className={cssClasses('Button', 'Button--discard')}
-            label={intl.formatMessage(messages.discardConsumablesLabel)}
-            onClick={onInventoryClick}
-            raised
-            theme={themes.Button}
-          />
+          >
+            {intl.formatMessage(messages.receiveConsumablesLabel)}
+          </Button>
           <Button
             className={cssClasses('Button')}
-            label={intl.formatMessage(messages.manageConsumablesLabel)}
             onClick={onInventoryClick}
-            raised
-          />
+            variant="contained"
+          >
+            {intl.formatMessage(messages.manageConsumablesLabel)}
+          </Button>
         </div>
       </Unit>
     </div>
+    <InventoryItems
+      intl={intl}
+      history={history}
+      className={cssClasses('Section--withDropdown')}
+    />
   </Card>
 )
 

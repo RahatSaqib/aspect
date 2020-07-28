@@ -2,9 +2,10 @@ import _ from 'lodash'
 import subDays from 'date-fns/subDays'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { defineMessages } from 'react-intl'
-import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
+import { defineMessages, injectIntl } from 'react-intl'
+import { Helmet } from 'react-helmet'
+import Card from '@material-ui/core/Card'
+import TableBody from '@material-ui/core/TableBody'
 
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import NotificationDetailBackBar from '../NotificationDetailBackBar'
@@ -26,7 +27,7 @@ const messages = defineMessages({
   },
 })
 
-const enhance = _.identity
+const enhance = _.identity(injectIntl)
 
 const now = new Date()
 
@@ -86,68 +87,70 @@ export const NotificationDetailHistory = ({
               },
             ]}
           />
-          {[
-            {
-              id: 1,
-              date: subDays(now, 2),
-              webCount: 10,
-              emailCount: 10,
-              emailError: 1,
-              smsCount: 6,
-              smsError: 1,
-            },
-            {
-              id: 2,
-              date: subDays(now, 3),
-              webCount: 10,
-              emailCount: 10,
-              emailError: 0,
-              smsCount: 6,
-              smsError: 0,
-            },
-            {
-              id: 3,
-              date: subDays(now, 5),
-              webCount: 9,
-              emailCount: 9,
-              emailError: 0,
-              smsCount: 3,
-              smsError: 0,
-            },
-            {
-              id: 4,
-              date: subDays(now, 6),
-              webCount: 9,
-              emailCount: 9,
-              emailError: 0,
-              smsCount: 3,
-              smsError: 0,
-            },
-            {
-              id: 5,
-              date: subDays(now, 7),
-              webCount: 9,
-              emailCount: 9,
-              emailError: 1,
-              smsCount: 3,
-              smsError: 1,
-            },
-            {
-              id: 6,
-              date: subDays(now, 8),
-              webCount: 9,
-              emailCount: 9,
-              emailError: 0,
-              smsCount: 3,
-              smsError: 0,
-            },
-          ].map(delivery => (
-            <NotificationHistoryDataTableRow
-              key={delivery.id}
-              intl={intl}
-              delivery={delivery}
-            />
-          ))}
+          <TableBody>
+            {[
+              {
+                id: 1,
+                date: subDays(now, 2),
+                webCount: 10,
+                emailCount: 10,
+                emailError: 1,
+                smsCount: 6,
+                smsError: 1,
+              },
+              {
+                id: 2,
+                date: subDays(now, 3),
+                webCount: 10,
+                emailCount: 10,
+                emailError: 0,
+                smsCount: 6,
+                smsError: 0,
+              },
+              {
+                id: 3,
+                date: subDays(now, 5),
+                webCount: 9,
+                emailCount: 9,
+                emailError: 0,
+                smsCount: 3,
+                smsError: 0,
+              },
+              {
+                id: 4,
+                date: subDays(now, 6),
+                webCount: 9,
+                emailCount: 9,
+                emailError: 0,
+                smsCount: 3,
+                smsError: 0,
+              },
+              {
+                id: 5,
+                date: subDays(now, 7),
+                webCount: 9,
+                emailCount: 9,
+                emailError: 1,
+                smsCount: 3,
+                smsError: 1,
+              },
+              {
+                id: 6,
+                date: subDays(now, 8),
+                webCount: 9,
+                emailCount: 9,
+                emailError: 0,
+                smsCount: 3,
+                smsError: 0,
+              },
+            ].map(delivery => (
+              <NotificationHistoryDataTableRow
+                key={delivery.id}
+                intl={intl}
+                delivery={delivery}
+              />
+            ))}
+          </TableBody>
         </NotificationHistoryDataTable>
         <BrowseTablePaginator
           history={history}

@@ -1,15 +1,91 @@
-const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const Joi = require('@hapi/joi')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams,
+} = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
 const {
   listPeople,
+  listRefreshTokens,
+  availableContacts,
   showPerson,
   updatePerson,
+  createPerson,
   updatePersonUserPreferences,
+  updateRefreshToken,
+  assignContact,
+  unAssignContact,
 } = require('./service')
+const { exportContacts } = require('./serviceReports')
+const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
+const { exportReporters } = require('./reporterServiceReports')
 
+function listContactBaseConfig() {
+  return {
+    auth: { scope: ['person:view'] },
+    validate: {
+      query: {
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for person name/email'),
+        siteId: Joi.number().allow('').description('Site ID'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateSortPageParams('name', 'level', 'state', 'lga'),
+      },
+    },
+  }
+}
+
+function listReporterBaseConfig() {
+  return {
+    auth: { scope: ['reporter:view', 'reporter:edit'] },
+    validate: {
+      query: {
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for person name/email'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        assayId: Joi.string().allow('').description('Filter for assay'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('The disease ID'),
+        treatmentStatusId: Joi.string()
+          .allow('')
+          .description('Filter for treatment status'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        revoked: Joi.string()
+          .valid('0', '1')
+          .description('Filter for revoked status'),
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
+          'user',
+          'deviceName',
+          'createdOn',
+          'lastSeen',
+          'delivered',
+          'acknowledgedRatio',
+          'confirmFollowUpRatio',
+          'totalOnTreatment',
+          'revoked',
+          'requiresFollowUp'
+        ),
+      },
+    },
+  }
+}
 const routes = [
   {
     method: 'GET',
@@ -18,17 +94,190 @@ const routes = [
     config: {
       description: 'People List',
       notes: 'Pageable and sortable list of people',
-      auth: { scope: ['person:view', 'person:edit'] },
+      ...listContactBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/export',
+    handler: exportContacts,
+    config: {
+      description: 'Export Contact List into Excel or CSV',
+      notes: 'Filtered and sorted list of Contacts',
+      ...listContactBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/available',
+    handler: asyncHandler(availableContacts),
+    config: {
+      description: 'Available People List',
+      notes: 'List of available users that logged in user can assign to a site',
+      auth: { scope: ['site:view', 'site:edit'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/refresh-token',
+    handler: asyncHandler(listRefreshTokens),
+    config: {
+      description: 'List of all reporter app refresh tokens',
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of refresh tokens that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description(
+              'The number of refresh tokens included in this response'
+            ),
+          data: Joi.array()
+            .required()
+            .description('Reporters')
+            .items(
+              Joi.object().keys({
+                id: Joi.string()
+                  .required()
+                  .description('The Client ID of the refresh token'),
+                user: Joi.string()
+                  .required()
+                  .description(
+                    'The username of the person logged into the reporter app'
+                  ),
+                deviceName: Joi.string()
+                  .required()
+                  .description('The name of the mobile device used'),
+                createdOn: Joi.date()
+                  .required()
+                  .description(
+                    'The data a refresh token was created for the particular device'
+                  ),
+                revoked: Joi.number()
+                  .valid(0, 1)
+                  .required()
+                  .description(
+                    'Indicator of whether or not a token has been revoked'
+                  ),
+                lastSeen: Joi.date()
+                  .required()
+                  .allow(null)
+                  .description('The date when the device was last online'),
+                acknowledgedRatio: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description('The acknowledged ratio'),
+                confirmFollowUpRatio: Joi.number()
+                  .required()
+                  .allow(null)
+                  .description('The confirm follow up ratio'),
+                delivered: Joi.number()
+                  .required()
+                  .description('The total result delivered'),
+                requiresFollowUp: Joi.number()
+                  .required()
+                  .description('The total requires followup'),
+                totalOnTreatment: Joi.number()
+                  .required()
+                  .description('The total result on treatment'),
+              })
+            ),
+        }),
+      },
+      ...listReporterBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reporter/export',
+    handler: exportReporters,
+    config: {
+      description: 'Export Reporter List into Excel or CSV',
+      ...listReporterBaseConfig(),
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/refresh-token/{refreshTokenId}',
+    handler: asyncHandler(updateRefreshToken),
+    config: {
+      description: 'Update a refresh token',
+      auth: { scope: ['reporter:view', 'reporter:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            contactNameOrEmail: Joi.string()
-              .allow('')
-              .description('Filter for person name/email'),
-          },
-          validateAllGeographyFilterParams(),
-          validateSortPageParams('name', 'level', 'state', 'lga')
-        ),
+        params: {
+          refreshTokenId: Joi.string()
+            .description('Refresh token id')
+            .required(),
+        },
+        payload: {
+          revoked: Joi.bool().required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .description('The refresh token that has been updated')
+            .keys({
+              id: Joi.string()
+                .required()
+                .description('The Client ID of the refresh token'),
+              revoked: Joi.boolean()
+                .valid(true, false)
+                .required()
+                .description(
+                  'Indicator of whether or not a token has been revoked'
+                ),
+            }),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/assign/{siteId}',
+    handler: asyncHandler(assignContact),
+    config: {
+      description: 'Assign person as site contact',
+      auth: { scope: ['site:view', 'site:edit'] },
+      validate: {
+        params: {
+          siteId: Joi.string().description('Site ID').required(),
+        },
+        payload: {
+          id: Joi.number().integer().positive().required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/unassign/{siteId}',
+    handler: asyncHandler(unAssignContact),
+    config: {
+      description: "Remove person from site's contacts",
+      auth: { scope: ['site:view', 'site:edit'] },
+      validate: {
+        params: {
+          siteId: Joi.string().description('Site ID').required(),
+        },
+        payload: {
+          id: Joi.number().integer().positive().required(),
+        },
       },
     },
   },
@@ -39,14 +288,13 @@ const routes = [
     config: {
       description: 'Person Detail',
       notes: 'Details of a person',
-      auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
+      auth: { scope: ['person:view'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
       },
+      response: personDetailsResponse,
     },
   },
   {
@@ -56,57 +304,28 @@ const routes = [
     config: {
       description: 'Update Person Details',
       notes: 'Details of a person',
-      auth: { scope: ['person:edit', 'person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
-        payload: {
-          name: Joi.string()
-            .max(500)
-            .required(),
-          title: Joi.string()
-            .max(255)
-            .allow('', null),
-          email: Joi.string()
-            .max(500)
-            .allow('', null),
-          email2: Joi.string()
-            .max(500)
-            .allow('', null),
-          phone: Joi.string()
-            .max(45)
-            .allow('', null),
-          cell: Joi.string()
-            .max(45)
-            .allow('', null),
-          countryId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          stateId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          lgaId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          zip: Joi.string()
-            .max(45)
-            .allow('', null),
-          notes: Joi.string()
-            .optional()
-            .max(1200)
-            .allow('', null),
-          lastPartnerId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-        },
+        payload: contactDetailsPayload,
       },
+      response: personDetailsResponse,
+    },
+  },
+  {
+    method: 'POST',
+    path: '/person',
+    handler: asyncHandler(createPerson),
+    config: {
+      description: 'Create New Person',
+      notes: 'Details of a person',
+      auth: { scope: ['person:edit'] },
+      validate: {
+        payload: contactDetailsPayload,
+      },
+      response: personDetailsResponse,
     },
   },
   {
@@ -116,20 +335,14 @@ const routes = [
     config: {
       description: "Update Person's User Preferences",
       notes: 'Timezone and Language',
-      auth: { scope: ['person:edit', 'person:admin'] },
+      auth: { scope: ['person:edit'] },
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
         payload: {
-          timezone: Joi.string()
-            .max(255)
-            .allow('', null),
-          culture: Joi.string()
-            .max(45)
-            .allow('', null),
+          timezone: Joi.string().max(255).allow('', null),
+          culture: Joi.string().max(45).allow('', null),
         },
       },
     },

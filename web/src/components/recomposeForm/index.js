@@ -13,14 +13,13 @@ export const errorProps = ({ touched, error } = {}) =>
       }
     : {}
 
-const mapFieldNames = _fp.map(
-  fieldNameLike =>
-    _fp.isObject(fieldNameLike)
-      ? fieldNameLike
-      : {
-          fieldName: fieldNameLike,
-          valueFromChangeEvent: normalChangeEventReader,
-        }
+const mapFieldNames = _fp.map(fieldNameLike =>
+  _fp.isObject(fieldNameLike)
+    ? fieldNameLike
+    : {
+        fieldName: fieldNameLike,
+        valueFromChangeEvent: normalChangeEventReader,
+      }
 )
 
 const createFieldListHandlers = _fp.reduce(
@@ -86,12 +85,24 @@ const createFieldListHandlers = _fp.reduce(
         if (!nextState.form.valid) {
           return
         }
-        const result = this.props.onSubmit(this.props.values)
-        if (!isPromise(result)) {
-          return
-        }
         this.handleSubmitting()
-        result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+        try {
+          const result = this.props.onSubmit(this.props.values)
+
+          if (!result) {
+            this.handleSubmitSucceed()
+            return
+          }
+
+          if (isPromise(result)) {
+            result.then(this.handleSubmitSucceed, this.handleSubmitFailed)
+          } else if (result instanceof Function) {
+            result()
+            this.handleSubmitSucceed()
+          }
+        } catch (err) {
+          this.handleSubmitFailed()
+        }
       },
     },
   }

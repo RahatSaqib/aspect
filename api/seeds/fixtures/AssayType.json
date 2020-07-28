@@ -2,59 +2,219 @@
   "data": [
     {
       "name": "MTB/Rif",
-      "i18nKey": "assayTypeMtbRif"
+      "i18nKey": "assayTypeMtbRif",
+      "externalId": "assayTypeMtbRif",
+      "abbreviation":"TB"
     },
     {
       "name": "Ebola",
-      "i18nKey": "assayTypeEbola"
+      "i18nKey": "assayTypeEbola",
+      "externalId": "assayTypeEbola",
+      "abbreviation":"EB"
     },
     {
       "name": "HIV VL",
-      "i18nKey": "assayTypeHivVl"
+      "i18nKey": "assayTypeHivVl",
+      "externalId": "assayTypeHivVl",
+      "abbreviation":"HIV"
+    },
+    {
+      "name": "HBV VL",
+      "i18nKey": "assayTypeHbvVl",
+      "externalId": "assayTypeHbvVl",
+      "abbreviation":"HBV"
     },
     {
       "name": "HIV Qual",
-      "i18nKey": "assayTypeHivQual"
+      "i18nKey": "assayTypeHivQual",
+      "externalId": "assayTypeHivQual",
+      "abbreviation":"HIV"
     },
     {
       "name": "CD4 Count",
-      "i18nKey": "assayTypeCD4"
+      "i18nKey": "assayTypeCD4",
+      "externalId": "assayTypeCD4",
+      "abbreviation":"CD4"
     },
     {
       "name": "EID",
-      "i18nKey": "assayTypeEid"
+      "i18nKey": "assayTypeEid",
+      "externalId": "assayTypeEid",
+      "abbreviation":"EID"
     },
     {
       "name": "HCV",
-      "i18nKey": "assayTypeHcv"
+      "i18nKey": "assayTypeHcv",
+      "externalId": "assayTypeHcv",
+      "abbreviation":"HCV"
+
     },
     {
       "name": "Lipid Panel",
-      "i18nKey": "assayTypeLipidPanel"
+      "i18nKey": "assayTypeLipidPanel",
+      "externalId": "assayTypeLipidPanel",
+      "abbreviation":"LP"
     },
     {
       "name": "Zika",
-      "i18nKey": "assayTypeZika"
+      "i18nKey": "assayTypeZika",
+      "externalId": "assayTypeZika",
+      "abbreviation":"ZK"
     },
     {
       "name": "Dengue",
-      "i18nKey": "assayTypeDengue"
+      "i18nKey": "assayTypeDengue",
+      "externalId": "assayTypeDengue",
+      "abbreviation":"DG"
     },
     {
       "name": "TB AST",
-      "i18nKey": "assayTypeTbAst"
+      "i18nKey": "assayTypeTbAst",
+      "externalId": "assayTypeTbAst",
+      "abbreviation":"TB"
     },
     {
       "name": "TB G&D",
-      "i18nKey": "assayTypeTbGnd"
+      "i18nKey": "assayTypeTbGnd",
+      "externalId": "assayTypeTbGnd",
+      "abbreviation":"TB"
+    },
+    {
+      "name": "Microscopy",
+      "i18nKey": "microscopy",
+      "externalId": "microscopy",
+      "abbreviation":"TB"
     },
     {
       "name": "Unknown",
-      "i18nKey": "assayTypeUnknown"
+      "i18nKey": "assayTypeUnknown",
+      "externalId": "assayTypeUnknown",
+      "abbreviation":"UK"
     },
     {
       "name": "Generic RDT",
-      "i18nKey": "genericRDT"
+      "i18nKey": "genericRDT",
+      "externalId": "genericRDT",
+      "abbreviation":"RDT"
+    },
+    {
+      "name": "GenoType Test Strip",
+      "i18nKey": "genoTypeTestStrip",
+      "externalId": "genoTypeTestStrip",
+      "abbreviation":"GTTS"
+    },
+    {
+      "name": "COVID-19 Test",
+      "i18nKey": "covid19",
+      "externalId": "covid19",
+      "abbreviation":"CV"
+    }
+  ],
+  "relationships": [
+    {
+      "externalId": "assayTypeMtbRif",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeEbola",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "ebola"
+      }
+    },
+    {
+      "externalId": "assayTypeHivVl",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeHbvVl",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hbv"
+      }
+    },
+    {
+      "externalId": "assayTypeHivQual",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeCD4",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeEid",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hiv"
+      }
+    },
+    {
+      "externalId": "assayTypeHcv",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "hcv"
+      }
+    },
+    {
+      "externalId": "assayTypeZika",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "zika"
+      }
+    },
+    {
+      "externalId": "assayTypeDengue",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "dengue"
+      }
+    },
+    {
+      "externalId": "assayTypeTbAst",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeTbGnd",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "microscopy",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "genoTypeTestStrip",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "covid19",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "covid19"
+      }
     }
   ]
 }

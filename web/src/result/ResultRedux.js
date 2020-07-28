@@ -16,18 +16,27 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../filter/FilterRedux'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
+  REJECTED_RESULTS: 'REJECTED_RESULTS',
 
   REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
   RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
 
   REQUEST_UPDATING_SINGLE_RESULT: 'REQUEST_UPDATING_SINGLE_RESULT',
   RECEIVE_UPDATED_SINGLE_RESULT: 'RECEIVE_UPDATED_SINGLE_RESULT',
+
+  REQUEST_CREATING_RESULT_NOTE: 'REQUEST_CREATING_RESULT_NOTE',
+  RECEIVE_CREATING_RESULT_NOTE: 'RECEIVE_CREATING_RESULT_NOTE',
+
+  REQUEST_CREATING_TREATMENT_STATUS_LOG:
+    'REQUEST_CREATING_TREATMENT_STATUS_LOG',
+  RECEIVE_CREATING_TREATMENT_STATUS_LOG:
+    'RECEIVE_CREATING_TREATMENT_STATUS_LOG',
 
   REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
   RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG',
@@ -36,6 +45,7 @@ export const types = {
   RECEIVE_RESULT_LOG: 'RECEIVE_RESULT_LOG',
 
   SAVING_RESULT_FORM_DATA: 'SAVING_RESULT_FORM_DATA',
+  SAVING_RESULT_FORM_DATA_COMPLETE: 'SAVING_RESULT_FORM_DATA_COMPLETE',
   SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
 /*
@@ -61,11 +71,17 @@ function receiveResults(json) {
   }
 }
 
+function rejectResults() {
+  return {
+    type: types.REJECTED_RESULTS,
+  }
+}
+
 export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
-
+    sortCol = sortCol || 'endedOn'
     return aspectFetch(
       `/result?${stringify({
         sortCol,
@@ -102,25 +118,89 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveResults(json)))
+    )
+      .then(json => dispatch(receiveResults(json)))
+      .catch(() => dispatch(rejectResults()))
   }
 }
 
-// loading a single result with given resultId
-function requestSingleResult(resultId) {
+// updating a single result with given resultId and data
+function requestCreatingTreatmentStatusLog(resultId) {
   return {
-    type: types.REQUEST_SINGLE_RESULT,
+    type: types.REQUEST_CREATING_TREATMENT_STATUS_LOG,
     resultId,
   }
 }
 
-// received a single result
-function receiveSingleResult(item) {
+// received a updated single result
+function receiveTreatmentStatusLog(item, resultId) {
   return {
-    type: types.RECEIVE_SINGLE_RESULT,
+    type: types.RECEIVE_CREATING_TREATMENT_STATUS_LOG,
+    resultId,
     item,
   }
 }
+
+// updating a single result with given resultId and data
+function requestCreatingResultNote(resultId) {
+  return {
+    type: types.REQUEST_CREATING_RESULT_NOTE,
+    resultId,
+  }
+}
+
+// received a updated single result
+function receiveResultNote(item, resultId) {
+  return {
+    type: types.RECEIVE_CREATING_RESULT_NOTE,
+    resultId,
+    item,
+  }
+}
+
+export function logTreatmentStatus(resultId, data) {
+  return dispatch => {
+    dispatch(requestCreatingTreatmentStatusLog(resultId, data))
+
+    return aspectFetch(`/result/treatment-status/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Result',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveTreatmentStatusLog(json.data, resultId)))
+  }
+}
+export function addResultNote(resultId, data) {
+  return dispatch => {
+    dispatch(requestCreatingResultNote(resultId))
+
+    return aspectFetch(`/result/result-note/${resultId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Save the Result',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveResultNote(json.data, resultId)))
+  }
+}
+
 // request device log
 function requestDeviceLogs() {
   return {
@@ -135,33 +215,6 @@ function receiveResultLogs(item) {
     item,
   }
 }
-// load a single result with given resultId
-export function fetchSingleResult(resultId) {
-  return dispatch => {
-    dispatch(requestSingleResult(resultId))
-
-    return aspectFetch(`/result/${resultId}`, {
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.404.title',
-              defaultMessage: 'Could Not Find Test Result',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
-              defaultMessage: 'Error Loading Result Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSingleResult(json.data)))
-  }
-}
 
 // load a single result log with given resultId
 export function fetchResultLog(resultId) {
@@ -173,7 +226,7 @@ export function fetchResultLog(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+              id: 'errorResponseMessages.fetchDeviceLog.GET.default.title',
               defaultMessage: 'Error Loading Result Logs',
             },
           })
@@ -259,15 +312,6 @@ export function updateResultWorkflowStatus(resultId) {
   }
 }
 
-// update a single result's QC Check flag
-function updateSingleResultQcCheck(resultId, qcCheck) {
-  return {
-    type: types.REQUEST_SINGLE_RESULT,
-    resultId,
-    qcCheck,
-  }
-}
-
 function setSingleResultFormDataValue(resultId, formFieldKey, value) {
   return {
     type: types.SET_RESULT_FORM_DATA_VALUE,
@@ -284,25 +328,10 @@ function savingSingleResultFormData(resultId) {
   }
 }
 
-export function updateResultQcCheck(resultId, qcCheck) {
-  return dispatch => {
-    dispatch(updateSingleResultQcCheck(resultId, qcCheck))
-
-    return aspectFetch(`/result/qc-check/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ qcCheck }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateResultQcCheck.PUT.default.title',
-              defaultMessage:
-                'An error occurred when trying to update the "QC Check" flag.',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+function savingSingleResultFormDataComplete(resultId) {
+  return {
+    type: types.SAVING_RESULT_FORM_DATA_COMPLETE,
+    resultId,
   }
 }
 
@@ -322,16 +351,32 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
         })
       ),
     },
-  }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+  })
+    .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+    .catch(err => {
+      dispatch(savingSingleResultFormDataComplete(resultId))
+      return err
+    })
 }
 
 export function saveResultFormDataValue(resultId, formFieldKey, value) {
-  return dispatch => {
-    dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
-    dispatch(savingSingleResultFormData(resultId))
-    const formData = {}
-    formData[formFieldKey] = value
-    return sendUpdatedResultFormData(dispatch, resultId, formData)
+  return (dispatch, getState) => {
+    const originalFieldValue =
+      getState().getIn([
+        'result',
+        'items',
+        'byId',
+        resultId,
+        'formData',
+        formFieldKey,
+      ]) || ''
+    if (value !== originalFieldValue) {
+      dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
+      dispatch(savingSingleResultFormData(resultId))
+      const formData = {}
+      formData[formFieldKey] = value
+      return sendUpdatedResultFormData(dispatch, resultId, formData)
+    }
   }
 }
 
@@ -434,7 +479,9 @@ export function exportResults(
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  fileFormat,
+  reportName
 ) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -467,8 +514,9 @@ export function exportResults(
           ),
         },
       }
-    ).then(json => {
-      dispatch(receivedExportResponse(format, json))
+    ).then(async elem => {
+      const file = await elem.blob
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
     })
   }
 }
@@ -493,11 +541,11 @@ export const Result = Immutable.Record({
     sortDir: 'desc',
     pageSize: 10,
     filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
-    extraColumns: new Immutable.List(),
+    extraColumns: Immutable.List(),
   }),
   workflowLog: new WorkflowLogModel(),
-  deviceLogs: new Immutable.List(),
-  screenSchema: new Immutable.fromJS(screenSchema),
+  deviceLogs: Immutable.List(),
+  screenSchema: Immutable.fromJS(screenSchema),
   loading: true,
   formDataSaving: false,
   formDataDirty: false,
@@ -518,21 +566,32 @@ export default function resultReducer(state = initialState, action) {
           receiveTableItems(mutState.table, action.total, action.extraColumns)
         )
       })
-    case types.RECEIVE_SINGLE_RESULT:
-    case types.RECEIVE_UPDATED_SINGLE_RESULT:
+    case types.REJECTED_RESULTS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
+    case types.SET_RESULT_FORM_DATA_VALUE:
       return state
         .withMutations(mutState => {
-          const immutItem = Immutable.fromJS(action.item)
-          mutState.set('items', receiveItem(mutState.items, immutItem))
+          const formData = {}
+          formData[action.formFieldKey] = action.value
+          mutState.set(
+            'items',
+            mutState.items.mergeDeepIn(
+              ['byId', action.resultId],
+              Immutable.fromJS({ formData })
+            )
+          )
         })
-        .merge({
-          loading: false,
-          formDataSaving: false,
-          formDataDirty: false,
-        })
+        .merge({ formDataDirty: true })
     case types.SAVING_RESULT_FORM_DATA:
       return state.merge({
         formDataSaving: true,
+      })
+    case types.SAVING_RESULT_FORM_DATA_COMPLETE:
+      return state.merge({
+        formDataSaving: false,
       })
     case types.REQUEST_RESULT_LOG:
       return state.merge({
@@ -540,7 +599,7 @@ export default function resultReducer(state = initialState, action) {
       })
     case types.RECEIVE_RESULT_LOG:
       return state.merge({
-        deviceLogs: action.item,
+        deviceLogs: Immutable.List(action.item),
         loading: false,
       })
 
@@ -565,17 +624,37 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('workflowLog', workflowLog)
       })
 
-    case types.SET_RESULT_FORM_DATA_VALUE:
-      return state
-        .withMutations(mutState => {
-          const formData = {}
-          formData[action.formFieldKey] = action.value
-          mutState.set(
-            'items',
-            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
+    case types.RECEIVE_CREATING_TREATMENT_STATUS_LOG:
+      return state.withMutations(mutState => {
+        const {
+          resultTreatmentStatus,
+          treatmentStatusInfo,
+          resultTreatmentStatusChangedOn,
+          resultTreatmentStatusCreatedOn,
+        } = action.item
+        mutState.set(
+          'items',
+          mutState.items.mergeDeepIn(
+            ['byId', action.resultId],
+            Immutable.fromJS({
+              resultTreatmentStatus,
+              treatmentStatusInfo,
+              resultTreatmentStatusChangedOn,
+              resultTreatmentStatusCreatedOn,
+            })
           )
-        })
-        .merge({ formDataDirty: true })
+        )
+      })
+    case types.RECEIVE_CREATING_RESULT_NOTE:
+      return state.withMutations(mutState => {
+        const resultNotes = Immutable.fromJS(action.item)
+        mutState.set(
+          'items',
+          mutState.items.mergeDeepIn(['byId', action.resultId], {
+            resultNotes,
+          })
+        )
+      })
     default:
       return state
   }

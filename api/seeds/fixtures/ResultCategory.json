@@ -51,6 +51,36 @@
       "i18nKey": "resultCategoryDiscordant"
     },
     {
+      "name": "< 40",
+      "externalId": "LessThan40",
+      "i18nKey": "resultCategoryLessThan40"
+    },
+    {
+      "name": ">= 40",
+      "externalId": "MoreThan40",
+      "i18nKey": "resultCategoryMoreThan40"
+    },
+    {
+      "name": "< 150",
+      "externalId": "LessThan150",
+      "i18nKey": "resultCategoryLessThan150"
+    },
+    {
+      "name": ">= 150",
+      "externalId": "MoreThan150",
+      "i18nKey": "resultCategoryMoreThan150"
+    },
+    {
+      "name": "< 550",
+      "externalId": "LessThan550",
+      "i18nKey": "resultCategoryLessThan550"
+    },
+    {
+      "name": ">= 550",
+      "externalId": "MoreThan550",
+      "i18nKey": "resultCategoryMoreThan550"
+    },
+    {
       "name": "< 1000",
       "externalId": "LessThan1000",
       "i18nKey": "resultCategoryLessThan1000"
@@ -74,6 +104,66 @@
       "name": "Unknown",
       "externalId": "Unknown",
       "i18nKey": "resultCategoryUnknown"
+    },
+    {
+      "name": "Susceptible",
+      "externalId": "Susceptible",
+      "i18nKey": "resultCategorySusceptible"
+    },
+    {
+      "name": "Resistant",
+      "externalId": "Resistant",
+      "i18nKey": "resultCategoryResistant"
+    },
+    {
+      "name": "Negative",
+      "i18nKey": "resultCategoryNegative",
+      "externalId": "Negative"
+    },
+    {
+      "name": "Positive (+)",
+      "i18nKey": "resultCategoryPositive1",
+      "externalId": "Positive1"
+    },
+    {
+      "name": "Positive (++)",
+      "i18nKey": "resultCategoryPositive2",
+      "externalId": "Positive2"
+    },
+    {
+      "name": "Positive (+++)",
+      "i18nKey": "resultCategoryPositive3",
+      "externalId": "Positive3"
+    },
+    {
+      "name": "Scanty (1-9/100)",
+      "i18nKey": "resultCategoryScanty",
+      "externalId": "Scanty"
+    },
+    {
+      "name": "Contaminated",
+      "i18nKey": "resultCategoryContaminated",
+      "externalId": "Contaminated"
+    },
+    {
+      "name": "Positive MOTT",
+      "i18nKey": "resultCategoryPositiveMOTT",
+      "externalId": "PositiveMOTT"
+    },
+    {
+      "name": "Positive MTB",
+      "i18nKey": "resultCategoryPositiveMTB",
+      "externalId": "PositiveMTB"
+    },
+    {
+      "name": "Inconclusive",
+      "i18nKey": "resultCategoryInconclusive",
+      "externalId": "Inconclusive"
+    },
+    {
+      "name": "Positive",
+      "i18nKey": "resultCategoryPositive",
+      "externalId": "Positive"
     }
   ]
 }

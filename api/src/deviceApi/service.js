@@ -1,12 +1,13 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { knex, transact, run } = require('../db')
+const { knex, transact } = require('../db')
+const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
-
 const {
   resultUpdated,
   resultLogged,
+  resultLoggedProcessed,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
@@ -19,10 +20,8 @@ const {
   createNewDevice,
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
-const { mergeResult, getResult } = require('./result')
+const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
-
-const millisInDay = 1000 * 60 * 60 * 24
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -78,7 +77,9 @@ async function getHandlerOptionsFromRequest(
   let plugins = []
   let partnerPluginName
   let deviceTypePluginName
-  const { credentials: { token: deviceApiKeyToken } } = auth
+  const {
+    credentials: { token: deviceApiKeyToken },
+  } = auth
   if (deviceApiKeyToken) {
     ;({ partnerPluginName, deviceTypePluginName } =
       (await knex
@@ -135,22 +136,19 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
     const { device, now } = context
     const deviceId = device.id
     // TODO Does Hapi Remote address work through proxies? Check headers?
-    const remoteAddress = request.info.remoteAddress || ''
+    const remoteAddress = getRemoteAddress(request)
 
     // Insert Device Log and Update Ping prior to calling handler and
     // in separate transaction so it is recorded even if handler fails
     let deviceLogId = null
     let deviceLogRawMessage = null
     if (updateDeviceLog) {
-      const checkpoint = context.payload && context.payload.checkpoint
-
       // TODO DeviceLog handle non-JSON payloads
       deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
 
       // need to ensure DeviceLog is inserted even if failure below
       ;[deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
-        checkpoint,
         source: _.get(context.payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
@@ -223,9 +221,7 @@ async function updateDeviceTimestamps(
   }
 
   if (!_.isEmpty(deviceUpdates)) {
-    await knex('Device')
-      .where({ id: device.id })
-      .update(deviceUpdates)
+    await knex('Device').where({ id: device.id }).update(deviceUpdates)
   }
 }
 
@@ -249,37 +245,33 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (site) {
-    response = Object.assign(
-      {},
-      response,
-      await updateSiteWithContext(context.withPayload(site))
-    )
+    response = {
+      ...response,
+      ...(await updateSiteWithContext(context.withPayload(site))),
+    }
   }
 
   if (configuration) {
-    response = Object.assign(
-      {},
-      response,
-      await updateDeviceConfigurationWithContext(
+    response = {
+      ...response,
+      ...(await updateDeviceConfigurationWithContext(
         context.withPayload(configuration)
-      )
-    )
+      )),
+    }
   }
 
   if (operation) {
-    response = Object.assign(
-      {},
-      response,
-      await addDeviceOperationWithContext(context.withPayload(operation))
-    )
+    response = {
+      ...response,
+      ...(await addDeviceOperationWithContext(context.withPayload(operation))),
+    }
   }
 
   if (result) {
-    response = Object.assign(
-      {},
-      response,
-      await mergeResultWithContext(context.withPayload(result))
-    )
+    response = {
+      ...response,
+      ...(await mergeResultWithContext(context.withPayload(result))),
+    }
   }
 
   return response
@@ -299,8 +291,6 @@ async function getDeviceDataWithContext(context) {
   const includeOp =
     deviceApproved &&
     (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
-  const includeResult =
-    deviceApproved && (includeAll || deviceLogType === DEVICE_LOG_TYPE_RESULT)
 
   const response = { requestedOn: now.toISOString() }
   if (includeDevice) {
@@ -321,10 +311,6 @@ async function getDeviceDataWithContext(context) {
       response.log.source = deviceLog.source
     }
 
-    if (deviceLog.checkpoint != null) {
-      response.checkpoint = deviceLog.checkpoint
-    }
-
     if (includeConfig) {
       const config = await getDeviceConfigurationFromDeviceLog(
         knex,
@@ -339,13 +325,6 @@ async function getDeviceDataWithContext(context) {
       const op = await getDeviceOperationWithContext(context)
       if (op != null) {
         response.operation = op
-      }
-    }
-
-    if (includeResult) {
-      const result = await getResultWithContext(context)
-      if (result != null) {
-        response.result = result
       }
     }
   }
@@ -395,7 +374,10 @@ async function updateDeviceConfigurationWithContext(context) {
 }
 
 async function getDeviceOperationWithContext(context) {
-  const { knex, deviceLog: { id: deviceLogId } } = context
+  const {
+    knex,
+    deviceLog: { id: deviceLogId },
+  } = context
   const op = await getDeviceOperation(knex, deviceLogId)
   return op
 }
@@ -437,12 +419,10 @@ async function updateSiteWithContext(context) {
     const status = device.siteId == null ? 'approved' : 'assigned'
     const deviceStatusId = await deviceStatusToId(status)
 
-    await knex('Device')
-      .where({ id: device.id })
-      .update({
-        siteId: site.id,
-        deviceStatusId,
-      })
+    await knex('Device').where({ id: device.id }).update({
+      siteId: site.id,
+      deviceStatusId,
+    })
 
     await knex('DeviceStatusLog').insert({
       deviceId: device.id,
@@ -453,11 +433,9 @@ async function updateSiteWithContext(context) {
     })
 
     // Update DeviceApiKey site with the new siteId
-    await knex('DeviceApiKey')
-      .where({ deviceId: device.id })
-      .update({
-        siteId: site.id,
-      })
+    await knex('DeviceApiKey').where({ deviceId: device.id }).update({
+      siteId: site.id,
+    })
 
     await knex('DeviceSiteHistory').insert({
       deviceId: device.id,
@@ -495,7 +473,6 @@ async function mergeResultWithContext(context) {
     payload,
     now,
   }
-
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
 
@@ -504,43 +481,17 @@ async function mergeResultWithContext(context) {
     'transformMergeResultPayload'
   )
   const transformedPayload = await transformPayload(pluginContext)
-
   const {
     processedResult: result,
     existingResult: previousResult,
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
-
   context.addDeviceLogUpdate('resultId', result.id)
-
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(
     pluginContext,
     result,
     previousResult
   )
-  return postProcessResult
-}
-
-async function getResultWithContext(context) {
-  const {
-    knex,
-    actions,
-    deviceLog: { resultId },
-    pluginNames: plugins,
-    query,
-    now,
-  } = context
-
-  const pluginContext = { knex, actions, resultId, query, now }
-
-  const preProcess = await loadPlugin(plugins, 'preProcessGetResult')
-  await preProcess(pluginContext)
-
-  const result = await getResult(knex, resultId)
-
-  const postProcess = await loadPlugin(plugins, 'postProcessGetResult')
-
-  const postProcessResult = await postProcess(pluginContext, result)
   return postProcessResult
 }
 
@@ -571,21 +522,16 @@ async function createDeviceApiContext(
     }
   )
 
-  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
-    const transformInitialPayload = await loadPlugin(
-      [request.params.pluginName],
-      'transformInitialPayload'
-    )
-    request.payload = await transformInitialPayload(originalRequest)
-  }
-
   const { auth } = request
   const now = new Date()
+
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where({
       'dak.token': auth.credentials.token,
@@ -597,6 +543,7 @@ async function createDeviceApiContext(
       'd.siteId',
       'd.geographyId',
       'd.name',
+      'd.shortName',
       'd.serial',
       'd.macAddress',
       'd.configurationData',
@@ -606,8 +553,22 @@ async function createDeviceApiContext(
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
-      'dtc.name as deviceTypeCategory'
+      'dtc.name as deviceTypeCategory',
+      'c.abbreviation as countryAbbreviation'
     )
+  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
+    const transformInitialPayload = await loadPlugin(
+      [request.params.pluginName],
+      'transformInitialPayload'
+    )
+
+    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation)
+      request.payload = await transformInitialPayload(
+        originalRequest,
+        existingDeviceAndData.countryAbbreviation
+      )
+    else request.payload = await transformInitialPayload(originalRequest)
+  }
 
   let device = null
   if (existingDeviceAndData != null) {
@@ -647,87 +608,35 @@ async function createDeviceApiContext(
 
   // Add Device Log if requested
   if (deviceLogType !== DEVICE_LOG_TYPE_NONE) {
-    const { checkpoint, resultId } = request.query
-    const offset = +(request.query.offset || 0)
+    const { resultId } = request.query
 
     if (existingDeviceAndData == null) {
       // We will only have a device log if we already had a device
       return { error: Boom.notFound('Device does not have data.') }
     }
 
-    if (checkpoint == null) {
-      if (offset !== 0) {
-        // must specify checkpoint if using offset
-        return {
-          error: Boom.badRequest('Must specify checkpoint if using offset'),
-        }
+    // return last one for this device
+    const lastDeviceLogQuery = knex('DeviceLog as dl')
+      .where({ 'dl.deviceId': device.id })
+      .orderBy('dl.id', 'desc')
+      .first('dl.id', 'dl.resultId', 'dl.createdOn', 'dl.source')
+    if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
+      lastDeviceLogQuery.modify(addDeviceLogResultConstraints)
+      if (resultId) {
+        lastDeviceLogQuery.where({ 'r.externalId': resultId })
       }
-      // Checkpoint not specified, return last one for this device
-      const lastDeviceLogQuery = knex('DeviceLog as dl')
-        .where({ 'dl.deviceId': device.id })
-        .whereNotNull('dl.checkpoint')
-        .orderBy('dl.id', 'desc')
-        .first(
-          'dl.id',
-          'dl.resultId',
-          'dl.checkpoint',
-          'dl.createdOn',
-          'dl.source'
-        )
-      if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-        lastDeviceLogQuery.modify(addDeviceLogResultConstraints)
-        // if checkpoint not specified but externalId specified
-        if (resultId) {
-          lastDeviceLogQuery.where({ 'r.externalId': resultId })
-        }
-      } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
-        lastDeviceLogQuery.whereNotNull('dl.deviceOperationId')
-      }
-      const lastDeviceLog = await lastDeviceLogQuery
-      context.deviceLog = lastDeviceLog || null
-
-      return {
-        error:
-          lastDeviceLog == null &&
-          Boom.notFound('Cannot find specified resultId'),
-        context,
-      }
+    } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
+      lastDeviceLogQuery.whereNotNull('dl.deviceOperationId')
     }
+    const lastDeviceLog = await lastDeviceLogQuery
+    context.deviceLog = lastDeviceLog || null
 
-    // Calculate min log date configured by Partner
-    const historyCutoff = new Date(
-      +new Date() - partner.deviceLogHistoryDays * millisInDay
-    )
-    const deviceLog = await getDeviceLog(
+    return {
+      error:
+        lastDeviceLog == null &&
+        Boom.notFound('Cannot find Logs records for the specific device'),
       context,
-      checkpoint,
-      offset,
-      resultId,
-      deviceLogType,
-      historyCutoff
-    )
-    if (deviceLog == null) {
-      // See if requested log is forbidden or not found
-      const deviceLogNoHistory = await getDeviceLog(
-        context,
-        checkpoint,
-        offset,
-        resultId,
-        deviceLogType,
-        null
-      )
-      return {
-        error:
-          deviceLogNoHistory == null
-            ? Boom.notFound(
-                'Cannot find specified checkpoint and offset or resultId'
-              )
-            : Boom.forbidden(
-                'Not authorized to view specified checkpoint and offset or resultId'
-              ),
-      }
     }
-    context.deviceLog = deviceLog.deviceLog
   }
 
   // finally, all is well
@@ -816,9 +725,7 @@ class DeviceApiContext {
   }
 
   withPayload(payload) {
-    return new DeviceApiContext(
-      Object.assign({}, this, { payload, parent: this })
-    )
+    return new DeviceApiContext({ ...this, payload, parent: this })
   }
 
   addDeviceLogUpdate(prop, value) {
@@ -855,142 +762,34 @@ class DeviceApiContext {
   }
 }
 
-async function getDeviceLog(
-  context,
-  checkpoint,
-  offset,
-  resultId,
-  deviceLogType,
-  historyCutoff
-) {
-  const { device } = context
-
-  // Find device log at checkpoint or latest
-  const initialDeviceLogQuery = knex('DeviceLog as dl')
-    .where({
-      'dl.deviceId': device.id,
-      'dl.checkpoint': checkpoint,
-    })
-    // If we are querying future data, must use minimum device log for
-    // this device with same checkpoint so we don't miss data interleaving
-    // from other sources while data with checkpoint is being posted
-    .orderBy('id', offset > 0 ? 'asc' : 'desc')
-  if (historyCutoff != null) {
-    initialDeviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
-  }
-  if (resultId) {
-    initialDeviceLogQuery
-      .join('Result as r', 'dl.resultId', 'r.id')
-      .where({ 'r.externalId': resultId })
-  }
-  const initialDeviceLog = await initialDeviceLogQuery.first(
-    'dl.id',
-    'dl.checkpoint',
-    'dl.deviceId',
-    'dl.resultId',
-    'dl.deviceOperationId',
-    'dl.createdOn',
-    'dl.source'
-  )
-
-  if (!initialDeviceLog) {
-    // No log found at checkpoint for this device
-    return null
-  } else if (offset === 0) {
-    // If no offset, return log at checkpoint for this device
-    // as checkpoints are unique per device
-    if (
-      deviceLogType === DEVICE_LOG_TYPE_RESULT &&
-      initialDeviceLog.resultId == null
-    ) {
-      // if we requested a log with result but we don't have one, 404
-      return null
-    }
-
-    if (
-      deviceLogType === DEVICE_LOG_TYPE_OPERATION &&
-      initialDeviceLog.deviceOperationId == null
-    ) {
-      // if we requested a log with operation but we don't have one, 404
-      return null
-    }
-    return { deviceLog: initialDeviceLog }
-  }
-
-  // Find log at specified offset from checkpoint
-  const deviceLogQuery = knex('DeviceLog as dl').where(function() {
-    // do not include logs with same checkpoint for same device
-    // since we are retrieving logs with offset from checkpoint
-    this.where('dl.deviceId', '<>', initialDeviceLog.deviceId)
-      .orWhere('dl.checkpoint', '<>', initialDeviceLog.checkpoint)
-      .orWhereNull('dl.checkpoint')
-  })
-
-  if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
-    deviceLogQuery.modify(addDeviceLogResultConstraints)
-  } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
-    deviceLogQuery.whereNotNull('dl.deviceOperationId')
-  }
-
-  if (offset > 0) {
-    // select result after specified log entry
-    deviceLogQuery
-      .where('dl.id', '>', initialDeviceLog.id)
-      .orderBy('dl.id', 'asc')
-    if (offset > 1) {
-      // specify query offset if immediately after
-      deviceLogQuery.offset(offset - 1)
-    }
-  } else if (offset < 0) {
-    // select result before specified log entry
-    deviceLogQuery
-      .where('dl.id', '<', initialDeviceLog.id)
-      .orderBy('dl.id', 'desc')
-    if (offset < -1) {
-      // specify query offset if immediately before
-      deviceLogQuery.offset(-offset - 1)
-    }
-  }
-
-  deviceLogQuery.where({ 'dl.deviceId': device.id })
-  if (historyCutoff != null) {
-    deviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
-  }
-
-  const deviceLog = await deviceLogQuery.first(
-    'dl.id',
-    'dl.deviceId',
-    'dl.resultId',
-    'dl.checkpoint',
-    'dl.createdOn',
-    'dl.source'
-  )
-  if (deviceLog == null) {
-    return null
-  }
-
-  const response = { deviceLog }
-  // set checkpoint if log changed during query, e.g, due to offset
-  // but do not leak checkpoint from different device
-  if (deviceLog.deviceId === device.id) {
-    response.deviceLog.checkpoint = deviceLog.checkpoint
-  }
-  return response
-}
-
 function addDeviceLogResultConstraints(queryBuilder) {
   queryBuilder
     .join('Result as r', 'dl.resultId', 'r.id')
-    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
-    .where('r.qcCheck', 1)
+    .join(
+      'ResultWorkflowLog as resultworkflowsl',
+      'r.resultWorkflowStatusLogId',
+      'resultworkflowsl.id'
+    )
+    .join(
+      'ResultWorkflowStatus as rws',
+      'resultworkflowsl.resultWorkflowStatusId',
+      'rws.id'
+    )
+    .where('rws.externalId', 'Deliverable')
     .where('rws.externalId', '<>', 'Purged')
 }
 
-async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+async function onResultUpdated(
+  { resultId, deviceLogId, userId },
+  { messageContext }
+) {
+  if (!resultId) {
+    throw new Error('Must specify resultId in Action')
+  }
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId)
+    return context.resultLogged(resultId, deviceLogId, userId)
   }
   return context.transact(async knex => {
     // TODO dispatch from client API using plugin so
@@ -1011,28 +810,34 @@ async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId)
+    context.resultLogged(resultId, deviceLogId, userId)
   })
 }
 
 async function onResultLogged(action, context) {
-  return run(async knex => {
-    const { partnerPluginName, deviceTypePluginName } = await knex(
-      'Result as r'
-    )
-      .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-      .leftJoin('Device as d', 'r.deviceId', 'd.id')
-      .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .where({ 'r.id': action.resultId })
-      .first(
-        'p.plugin as partnerPluginName',
-        'dt.plugin as deviceTypePluginName'
-      )
-    const onResultLogged = await loadPlugin(
+  return context.messageContext.run(async knex => {
+    const { partnerPluginName, deviceTypePluginName } =
+      (await knex('Result as r')
+        .leftJoin('Partner as p', 'r.partnerId', 'p.id')
+        .leftJoin('Device as d', 'r.deviceId', 'd.id')
+        .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .where({ 'r.id': action.resultId })
+        .first(
+          'p.plugin as partnerPluginName',
+          'dt.plugin as deviceTypePluginName'
+        )) || {}
+    const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    return onResultLogged(action, context)
+    await pluginOnResultLogged(action, context)
+    context.messageContext.queue.dispatch(
+      resultLoggedProcessed(action.resultId, action.deviceLogId),
+      undefined,
+      {
+        expiration: 60000,
+      }
+    )
   })
 }
 
@@ -1055,9 +860,96 @@ async function updateLogs(request) {
     resultId: null,
     source: _.get(request.payload, 'log.source', ''),
     createdOn: new Date(),
-    senderIp: (request.info && request.info.remoteAddress) || '',
+    senderIp: getRemoteAddress(request),
     rawMessage: JSON.stringify(request.plugins.rawPayload),
   })
+}
+
+async function getDevicesByCountry(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .select(
+      'c.abbreviation as A2',
+      'c.a3 as A3',
+      'c.name as Country',
+      knex.raw("date(date_format(d.createdOn,'%Y-%m-01')) as Date")
+    )
+    .count('d.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
+    .orderBy('Date', 'asc')
+}
+
+async function getTestByCountry(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Result as r', 'd.id', 'r.deviceId')
+    .select(
+      'c.abbreviation as A2',
+      'c.a3 as A3',
+      'c.name as Country',
+      knex.raw("date(date_format(r.createdOn,'%Y-%m-01')) as Date")
+    )
+    .count('r.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
+    .orderBy('Date', 'asc')
+}
+
+async function getNotificationsByCountry(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Issue as i', 'd.id', 'i.deviceId')
+    .leftJoin('Notification as n', 'i.id', 'n.issueId')
+    .select(
+      'c.abbreviation as a2',
+      'c.a3 as A3',
+      'c.name as Country',
+      knex.raw("date(date_format(n.createdOn,'%Y-%m-01')) as Date"),
+      knex.raw(
+        'sum(case when emailMessageId  is not null then 1 else 0 end) as Email '
+      ),
+      knex.raw(
+        'sum(case when smsMessageId is not null then 1 else 0 end) as Sms '
+      )
+    )
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
+    .orderBy('Date', 'asc')
+}
+
+async function getCountriesHealthStats(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .select('c.abbreviation as a2', 'c.a3 as A3', 'c.name as Country')
+    .min('d.createdOn as Date')
+    .count('d.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name')
+    .orderBy('Date', 'asc')
+}
+const getHealthStatsHandler = deviceApiHandler(getHealthState)
+
+async function getHealthState(context) {
+  const countries = await getCountriesHealthStats(context.knex)
+  const devices = await getDevicesByCountry(context.knex)
+  const tests = await getTestByCountry(context.knex)
+  const notifications = await getNotificationsByCountry(context.knex)
+  const result = {
+    Countries: countries,
+    Devices: devices,
+    Tests: tests,
+    Notifications: _.map(notifications, item => ({
+      Country: item.Country,
+      A2: item.A2,
+      A3: item.A3,
+      Date: item.Date,
+      Sms: item.Sms,
+      Email: item.Email,
+      Total: item.Sms + item.Email,
+    })),
+  }
+  return result
 }
 
 module.exports = {
@@ -1072,4 +964,5 @@ module.exports = {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  getHealthStatsHandler,
 }

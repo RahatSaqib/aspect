@@ -1,13 +1,14 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const _ = require('lodash')
+const Promise = require('bluebird')
 const { rowsAsObject } = require('../utils')
 const { getPermissionModules } = require('../utils')
 
-module.exports = require('../utils').seed(seed)
-
 const geography = require('./fixtures/geography.json')
-const _ = require('lodash')
-const Promise = require('bluebird')
 
 async function seed(knex) {
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
     .where('hideWhenSiteFilterIsSelected', 1)
     .orWhere('hideWhenSiteFilterIsNotSelected', 1)
@@ -16,9 +17,6 @@ async function seed(knex) {
   if (alertTemplateWithHideFlag) {
     return
   }
-
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-
   await knex('AlertTemplate')
     .where({
       message:
@@ -181,7 +179,7 @@ async function seed(knex) {
   const myanmarConsumableIssues = await knex('IssueCategory as ic')
     .join('IssueType as it', 'ic.id', 'it.issueCategoryId')
     .join('Issue as i', 'it.id', 'i.issueTypeId')
-    .where(function() {
+    .where(function () {
       this.whereNull('i.consumableId')
         .andWhere('i.partnerId', partnerId)
         .andWhere('ic.name', 'Reagent Health')
@@ -345,12 +343,6 @@ async function seed(knex) {
       .update({ messageTypeId: newMessageTypeId })
   })
 
-  const { id: actionDashboardInventoryLevelUpdateFeatureId } = await knex(
-    'Feature as f'
-  )
-    .where('f.module', 'actionDashboardInventoryLevelUpdate')
-    .first()
-
   const myanmarJobFunctions = await knex('JobFunction as jf')
     .where('jf.partnerId', partnerId)
     .select()
@@ -358,10 +350,6 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
 
   await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    await knex('JobFunctionFeature').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      featureId: actionDashboardInventoryLevelUpdateFeatureId,
-    })
     await knex('JobFunctionPermission').insert({
       jobFunctionId: myanmarJobFunction.id,
       permissionId:

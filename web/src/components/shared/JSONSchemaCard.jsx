@@ -7,9 +7,14 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
+import classnames from 'classnames/bind'
 
 // Our own imports
 import { Unit } from '../pureGrids'
+
+const cssClasses = classnames.bind(
+  require('./expansionPanel/ExpansionPanel.css')
+)
 
 export const PropertiesSchemaCard = compose(
   pure,
@@ -33,9 +38,11 @@ export const PropertiesSchemaCard = compose(
             key,
             label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
             type: dataSchema.getIn([key, 'type']),
-            value: data.get(key),
+            order: dataSchema.getIn([key, 'order'], 0),
+            value: data && data.get(key),
           }))
           .sortBy(({ label }) => label)
+          .sortBy(({ order }) => order)
           .map(field => (
             <Unit key={field.key} xs="1-2" sm="1-3">
               {renderField(field)}
@@ -69,10 +76,12 @@ export const JSONSchemaCard = ({
         key,
         label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
         type: dataSchema.getIn([key, 'type']),
+        order: dataSchema.getIn([key, 'order'], 0),
         value: data.get(key),
       }))
+      .sortBy(property => property.order)
       .map(field => {
-        if (field.type === 'object') {
+        if (field.type === 'object' && field.value) {
           return (
             <PropertiesSchemaCard
               key={field.key}
@@ -85,9 +94,11 @@ export const JSONSchemaCard = ({
           )
         }
         return (
-          <Unit key={field.key} xs="1-2" sm="1-3">
-            {renderField(field)}
-          </Unit>
+          field.value && (
+            <Unit key={field.key} xs="1-2" sm="1-3">
+              {renderField(field)}
+            </Unit>
+          )
         )
       })}
   </div>

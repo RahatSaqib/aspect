@@ -10,7 +10,13 @@ import { Grid } from '@vx/grid'
 
 const LineGraph = props => {
   // programmed colors
-  const c = ['#7d97bc', '#9874b2', '#3cc0cd', '#f36283']
+  const {
+    '--aspect-color-mountain': colorMountain,
+    '--aspect-color-brink': colorBrink,
+    '--ship-cove': colorShipCove,
+    '--aspect-color-cyan': colorCyan,
+  } = process.env
+  const c = [colorShipCove, colorMountain, colorCyan, colorBrink]
 
   // set graph dimensions
   const width = 600 + props.styleWide * 300

@@ -7,6 +7,7 @@ const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -33,14 +34,12 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
   const messageStatusId = await messageStatusToId('Pending')
 
   // store generated sms message into the same record and set messageStatusId
-  await knex('SmsMessage')
-    .where({ id: smsMessageId })
-    .update({
-      message,
-      phoneNumber,
-      messageStatusId,
-      updatedOn: new Date(),
-    })
+  await knex('SmsMessage').where({ id: smsMessageId }).update({
+    message,
+    phoneNumber,
+    messageStatusId,
+    updatedOn: new Date(),
+  })
 
   // dispatch SMS_MESSAGE_READY_FOR_SENDING to MQ
   context.smsMessageReadyForSending(smsMessageId)
@@ -64,11 +63,11 @@ function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
 // -----------------------------
 async function doSendSmsMessage(context, knex, smsMessageId) {
   // get message and cell phone
-  const d = await knex('SmsMessage as sm')
+  const sms = await knex('SmsMessage as sm')
     .where({ 'sm.id': smsMessageId })
     .first('sm.message', 'sm.phoneNumber as cell')
 
-  const { cell, message } = d || {}
+  const { cell, message } = sms || {}
 
   // sms handler
   const { sendSms } = require('./smsUtil')
@@ -87,22 +86,39 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   })
 
   // store status in db
-  await knex('SmsMessage')
-    .where({ id: smsMessageId })
-    .update({
-      messageStatusId,
-      updatedOn: new Date(),
-    })
+  await knex('SmsMessage').where({ id: smsMessageId }).update({
+    messageStatusId,
+    updatedOn: new Date(),
+  })
 
   // dispatch SMS_MESSAGE_SENT to MQ
   context.smsMessageSent(smsMessageId)
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
+  const { personId } = await knex('SmsMessage')
+    .where('id', smsMessageId)
+    .first('personId')
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      partner: 'pr',
+      device: 'd',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
     .where({ 'm.id': smsMessageId })
     .first(
       'tmpl.message as messageTemplate',

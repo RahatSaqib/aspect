@@ -1,13 +1,14 @@
 const config = require('../config')
 const { parseDateOrDefault } = require('../shared/date')
 const { logCreated } = require('./actions')
+const { getRemoteAddress } = require('../shared/request')
 
 const logConsoleDataKeys = {
   request: ['remoteAddress', 'method', 'path', 'statusCode', 'timeElapsed'],
 }
 
 function addLoggers(server, queue) {
-  server.on('response', request => logRequest(queue, request))
+  server.events.on('response', request => logRequest(queue, request))
 }
 
 function getLoggerSubscriptions() {
@@ -29,8 +30,6 @@ function subscribeOnLogCreated(handler) {
 function logRequest(queue, request) {
   const { info, auth, method, url, response } = request
 
-  const { remoteAddress } = info
-  const { path } = url
   const { statusCode } = response
 
   const userName = auth.isAuthenticated ? auth.credentials.name : ''
@@ -40,10 +39,10 @@ function logRequest(queue, request) {
   const severity = statusCode >= 400 && statusCode <= 599 ? 'error' : 'info'
   const data = {
     method: method.toUpperCase(),
-    path,
+    path: url.pathname,
     statusCode,
     timeElapsed,
-    remoteAddress,
+    remoteAddress: getRemoteAddress(request),
   }
 
   logAction(logCreated('request', severity, data, userName), queue)
@@ -59,8 +58,9 @@ function logAction(action, dispatcher = null) {
 function logConsole({ logKey, severity, data, userName, createdOn }) {
   const dataKeys = logConsoleDataKeys[logKey] || []
   const message = dataKeys.map(key => data[key] || '').join(' ')
-  const logMessage = `${logKey} ${severity} ${message} ${userName ||
-    ''} [${createdOn}]`
+  const logMessage = `${logKey} ${severity} ${message} ${
+    userName || ''
+  } [${createdOn}]`
   console.log(logMessage) // eslint-disable-line no-console
 }
 

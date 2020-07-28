@@ -1,4 +1,5 @@
 import Immutable from 'immutable'
+import _ from 'lodash'
 
 export const types = {
   SHOW_APP_NOTIFICATION: 'SHOW_APP_NOTIFICATION',
@@ -18,7 +19,10 @@ function showNotification(options, messageValues, notificationType) {
       showProceed: false,
       ...options,
     },
-    messageValues: { ...(messageValues || {}), ...options.messageValues },
+    messageValues: {
+      ..._.omit(messageValues, ['constructor']),
+      ...options.messageValues,
+    },
   }
 }
 
@@ -58,23 +62,27 @@ const initialState = new Error()
 export default function appNotificationReducer(state = initialState, action) {
   switch (action.type) {
     case types.SHOW_APP_NOTIFICATION:
-      return state.merge({
-        hasNotification: true,
-        notificationType: action.notificationType,
-        notificationOptions: action.notificationOptions,
-        messageValues: action.messageValues || {},
-        showDetails: action.notificationOptions.showAs === 'interrupt',
-      })
+      return state.merge(
+        Immutable.fromJS({
+          hasNotification: true,
+          notificationType: action.notificationType,
+          notificationOptions: action.notificationOptions,
+          messageValues: action.messageValues || {},
+          showDetails: action.notificationOptions.showAs === 'interrupt',
+        })
+      )
     case types.SHOW_MORE_DETAILS:
       return state.set('showDetails', true)
     case types.HIDE_APP_NOTIFICATION:
-      return state.merge({
-        hasNotification: false,
-        notificationType: null,
-        showDetails: false,
-        notificationOptions: null,
-        messageValues: {},
-      })
+      return state.merge(
+        Immutable.fromJS({
+          hasNotification: false,
+          notificationType: null,
+          showDetails: false,
+          notificationOptions: null,
+          messageValues: {},
+        })
+      )
     default:
       return state
   }

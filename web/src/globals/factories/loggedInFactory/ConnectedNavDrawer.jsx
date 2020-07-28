@@ -2,10 +2,10 @@ import React from 'react'
 import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { NavDrawer } from 'react-toolbox/lib/layout'
-import FaUser from 'react-icons/lib/fa/user'
+import Drawer from '@material-ui/core/Drawer'
 
-import LinkNavigation, { makeThemedLink } from './LinkNavigation'
+import LinkNavigation from './LinkNavigation'
+import ThemedLink from './ThemedLink'
 import { toggleDrawer, closeDrawer } from '../../../auth/AuthRedux'
 
 const enhance = compose(
@@ -23,27 +23,25 @@ const enhance = compose(
 const ConnectedNavDrawer = ({
   history,
   location,
-
   drawerOpen,
   toggleDrawer,
   closeDrawer,
 }) => (
-  <NavDrawer active={drawerOpen} onOverlayClick={toggleDrawer}>
+  <Drawer open={drawerOpen} onClose={toggleDrawer}>
     <LinkNavigation
       history={history}
       location={location}
       type="vertical"
       onClick={closeDrawer}
     >
-      {makeThemedLink({
-        history,
-        location,
-        href: '/account-details/current',
-        label: '',
-        icon: <FaUser />,
-      })}
+      <ThemedLink
+        href="/account-details/current"
+        label="Account"
+        history={history}
+        location={location}
+      />
     </LinkNavigation>
-  </NavDrawer>
+  </Drawer>
 )
 
 export default enhance(ConnectedNavDrawer)

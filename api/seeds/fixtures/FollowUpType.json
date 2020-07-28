@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "name": "Treatment",
+      "externalId": "treatment",
+      "i18nKey": "treatment"
+    },
+    {
+      "name": "Outcome",
+      "externalId": "outcome",
+      "i18nKey": "outcome"
+    }
+  ]
+}

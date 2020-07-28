@@ -1,7 +1,7 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
 const { rowsAsObject } = require('../utils')
 const {
-  featureToId,
   issueCategoryToId,
   messageSeverityToId,
 } = require('../../src/shared/dictionary')
@@ -15,7 +15,6 @@ async function seed(knex) {
   if (issueTypeDeviceMaintenance != null) {
     return
   }
-
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
@@ -117,32 +116,24 @@ async function seed(knex) {
 
   // Add Device Maintenance issue (no notifications for Myanmar, only issue generation)
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Device Maintenance',
-      },
-      auditFields
-    )
+    {
+      message: 'Device Maintenance',
+      ...auditFields,
+    }
   )
 
-  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message: '{{site.name}} maintenance',
-      },
-      auditFields
-    )
-  )
+  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: '{{site.name}} maintenance',
+    ...auditFields,
+  })
 
   const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{site.name}} Maintenance',
-        body: '{{site.name}} maintenance',
-        htmlBody: '{{site.name}} maintenance',
-      },
-      auditFields
-    )
+    {
+      subject: '{{site.name}} Maintenance',
+      body: '{{site.name}} maintenance',
+      htmlBody: '{{site.name}} maintenance',
+      ...auditFields,
+    }
   )
 
   const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
@@ -158,14 +149,5 @@ async function seed(knex) {
     i18nKey: 'issueTypeDeviceMaintenance',
     issueCategoryId: await issueCategoryToId('DeviceHealth'),
     defaultMessageTypeId: deviceMaintenanceMessageTypeId,
-  })
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where({ name: 'Lab User', partnerId })
-    .first('id')
-
-  await knex('JobFunctionFeature').insert({
-    jobFunctionId: jobFunctionIdLabUser,
-    featureId: await featureToId('siteFilterDashboard'),
   })
 }

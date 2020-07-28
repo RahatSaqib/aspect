@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 const { asyncHandler } = require('../routes')
 
@@ -10,7 +10,10 @@ const {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
-  getUserFeatures,
+  clientTypes,
+  getLicense,
+  acceptLicense,
+  getUserJobFunctions,
 } = require('./service')
 
 const routes = [
@@ -28,6 +31,27 @@ const routes = [
           password: Joi.string().required(),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
+          clientType: Joi.string()
+            .lowercase()
+            .valid(...Object.values(clientTypes)),
+          deviceTokenId: Joi.string().allow(null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: {
+          access: Joi.string().required(),
+          refresh: Joi.string().required(),
+          clientId: Joi.string().required(),
+          countryId: Joi.number(),
+          countryAbbreviation: Joi.string(),
+          clientType: Joi.string().required(),
+          culture: Joi.string().required(),
+          timezone: Joi.string().required(),
+          displayPreferences: Joi.object(),
+          deviceTokenId: Joi.string().allow(null),
         },
       },
     },
@@ -53,6 +77,22 @@ const routes = [
         payload: {
           clientId: Joi.string().required(),
           token: Joi.string().required(),
+          clientType: Joi.string()
+            .lowercase()
+            .valid(...Object.values(clientTypes)),
+          deviceTokenId: Joi.string().allow(null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: {
+          access: Joi.string().required(),
+          refresh: Joi.string().required(),
+          clientId: Joi.string().required(),
+          clientType: Joi.string().required(),
+          deviceTokenId: Joi.string().allow(null),
         },
       },
     },
@@ -66,16 +106,13 @@ const routes = [
       notes: 'Returns an array of the fields that were updated',
       validate: {
         payload: {
-          currentPassword: Joi.string()
-            .max(100)
-            .required(),
-          newUsername: Joi.string()
-            .max(255)
-            .allow('', null),
-          newPassword: Joi.string()
-            .max(100)
-            .allow('', null),
+          currentPassword: Joi.string().max(100).required(),
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null),
           clientName: Joi.string().required(),
+          clientType: Joi.string()
+            .lowercase()
+            .valid(...Object.values(clientTypes)),
           clientId: Joi.string(),
         },
       },
@@ -92,9 +129,7 @@ const routes = [
         'Generate a new reset password token and send it to the user via email',
       validate: {
         params: {
-          email: Joi.string()
-            .description('Email address')
-            .required(),
+          email: Joi.string().description('Email address').required(),
         },
       },
     },
@@ -114,9 +149,7 @@ const routes = [
             .required(),
         },
         payload: {
-          newPassword: Joi.string()
-            .max(100)
-            .required(),
+          newPassword: Joi.string().max(100).required(),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
         },
@@ -132,28 +165,57 @@ const routes = [
       notes: 'Returns an array of the fields that were updated',
       validate: {
         params: {
-          personId: Joi.string()
-            .description('Person ID')
-            .required(),
+          personId: Joi.string().description('Person ID').required(),
         },
         payload: {
-          newUsername: Joi.string()
-            .max(255)
-            .allow('', null),
-          newPassword: Joi.string()
-            .max(100)
-            .allow('', null),
+          newUsername: Joi.string().max(255).allow('', null),
+          newPassword: Joi.string().max(100).allow('', null),
+          userLockedOut: Joi.boolean().allow(null),
         },
       },
     },
   },
   {
     method: 'GET',
-    path: '/auth/features',
-    handler: asyncHandler(getUserFeatures),
+    path: '/auth/job-functions',
+    handler: asyncHandler(getUserJobFunctions),
     config: {
-      description: 'Get UI features of the logged in user',
-      notes: 'Returns a list of feature object',
+      description: 'Get the job functions of the logged in user',
+      notes: 'Returns a list of job function names',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/auth/license',
+    handler: asyncHandler(getLicense),
+    config: {
+      description: 'Load license for the user',
+      notes: 'Loads the the license that applies to the current user',
+      validate: {
+        query: {
+          licenseId: Joi.number()
+            .description('License ID')
+            .required()
+            .description('ID of the license'),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/auth/license',
+    handler: asyncHandler(acceptLicense),
+    config: {
+      description: 'Accepts the given license for the current user',
+      notes:
+        'Looks up the license based on the give license ID and marks it as accepted for the current user',
+      validate: {
+        payload: {
+          licenseId: Joi.number().required(),
+          clientId: Joi.string().required(),
+          token: Joi.string().required(),
+        },
+      },
     },
   },
 ]

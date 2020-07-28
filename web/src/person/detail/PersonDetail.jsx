@@ -1,43 +1,48 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
-import { intlShape } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'
-import Tab from '@material-ui/core/Tab'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import MapsPersonPin from '@material-ui/icons/PersonPinRounded'
-import Language from '@material-ui/icons/Language'
-import Lock from '@material-ui/icons/Lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
-import UserPreferencesForm from './UserPreferencesForm'
+import JobAssignmentForm from './JobAssignmentForm'
+import PersonDetailBackBar from './PersonDetailsBackBar'
 
-// Our own imports
-import AspectTabs from '../../components/shared/AspectTabs'
-import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
-import isEditable from '../../shared/selectors/person'
+import isEditable from '../../shared/selectors/isEditable'
 import {
   fetchSinglePerson,
+  createPerson,
   updateSinglePerson,
   updateSinglePersonLoginDetails,
   updateSinglePersonUserPreferences,
   ContactDetails,
   LoginDetails,
   UserPreferences,
+  personCanLogIn,
+  emailValueBlur,
+  addPersonAssignment,
+  fetchPersonAssignments,
+  deletePersonAssignment,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
+import PropTypeOf from '../../shared/types'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -47,15 +52,34 @@ const enhance = compose(
   }),
   connect(
     (state, props) => {
-      const person = state.person.items.byId.get(props.match.params.personId)
+      let { personId } = props.match.params
+      if (personId === 'add') {
+        personId = undefined
+      }
+      const isNew = !personId
+      const { personNew, items } = state.person
+      const person = isNew ? personNew : items.byId.get(personId)
+      const prefillUser = person && person.get('userId') > 0
+
+      const partnersAndJobFunctionsForSelectList = state.jobs.get(
+        'partnersAndJobFunctionsForSelectList'
+      )
+      const jobFunctions = partnersAndJobFunctionsForSelectList.getIn([
+        'partners',
+        0,
+        'jobFunctions',
+      ])
 
       return {
-        editable: isEditable(state.user, person),
+        editable: isEditable(state.user, 'person'),
+        isNew,
         person,
+        canLogIn: person && !!person.get('canLogIn'),
         user: state.user,
-        partnersAndJobFunctionsForSelectList: state.jobs.get(
-          'partnersAndJobFunctionsForSelectList'
-        ),
+        emailValue: person && person.get('email'),
+        prefillUser,
+        partnersAndJobFunctionsForSelectList,
+        jobFunctions,
       }
     },
     dispatch =>
@@ -63,25 +87,35 @@ const enhance = compose(
         {
           showAcknowledgement,
           fetchSinglePerson,
+          createPerson,
           updateSinglePerson,
           updateSinglePersonLoginDetails,
           updateSinglePersonUserPreferences,
           fetchPartnersAndJobFunctionsForSelectList,
+          personCanLogIn,
+          emailValueBlur,
+          addPersonAssignment,
+          fetchPersonAssignments,
+          deletePersonAssignment,
         },
         dispatch
       )
   ),
   setPropTypes({
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
     editable: PropTypes.bool.isRequired,
     user: PropTypes.object.isRequired,
     person: PropTypes.object.isRequired,
     showAcknowledgement: PropTypes.func.isRequired,
     fetchSinglePerson: PropTypes.func.isRequired,
+    createPerson: PropTypes.func.isRequired,
     updateSinglePerson: PropTypes.func.isRequired,
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
     updateSinglePersonUserPreferences: PropTypes.func.isRequired,
     fetchPartnersAndJobFunctionsForSelectList: PropTypes.func.isRequired,
+    isNew: PropTypes.bool.isRequired,
+    addPersonAssignment: PropTypes.func.isRequired,
+    deletePersonAssignment: PropTypes.func.isRequired,
   })
 )
 
@@ -91,14 +125,34 @@ export class PersonDetail extends PureComponent {
     this.handleFetchPerson(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.personId !== nextProps.match.params.personId) {
-      this.handleFetchPerson(nextProps)
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.personId !== prevProps.match.params.personId) {
+      this.handleFetchPerson(this.props)
     }
   }
 
-  handleFetchPerson = ({ match, fetchSinglePerson }) => {
-    fetchSinglePerson(match.params.personId)
+  handleFetchPerson = ({
+    match,
+    fetchSinglePerson,
+    fetchPersonAssignments,
+    isNew,
+  }) => {
+    if (isNew) return
+    fetchSinglePerson(match.params.personId, () => {
+      fetchPersonAssignments(match.params.personId)
+    })
+  }
+
+  handlePersonCanLogIn = canLogin => {
+    const { person } = this.props
+    this.props.personCanLogIn(canLogin, person.get('id'))
+  }
+
+  handleEmailBlur = value => {
+    const { person } = this.props
+    if (person.get('id')) {
+      this.props.emailValueBlur(value, person.get('id'))
+    }
   }
 
   handleFetchPartnersAndJobFunctions = ({
@@ -108,7 +162,18 @@ export class PersonDetail extends PureComponent {
   }
 
   saveContactDetails = values => {
-    const { person, updateSinglePerson } = this.props
+    const { person, updateSinglePerson, isNew, createPerson } = this.props
+
+    if (isNew) {
+      return createPerson(values).then(person => {
+        this.props.showAcknowledgement({
+          title: messages.detailsCreatedSuccessfully,
+          message: messages.contactDetailsCreatedMessage,
+        })
+        // replace current url to show just added contact for editing other tabs
+        this.props.history.replace(`/browse/person/${person.id}`)
+      })
+    }
     const contactDetails = new ContactDetails(person)
     return updateSinglePerson(contactDetails.get('id'), values).then(() => {
       this.props.showAcknowledgement({
@@ -118,12 +183,13 @@ export class PersonDetail extends PureComponent {
     })
   }
 
-  saveLoginDetails = ({ username, newPassword }) => {
+  saveLoginDetails = ({ username, newPassword, userLockedOut }) => {
     const { person, updateSinglePersonLoginDetails } = this.props
     const loginDetails = new LoginDetails(person)
     return updateSinglePersonLoginDetails(loginDetails.get('id'), {
       newUsername: username,
       newPassword,
+      userLockedOut,
     }).then(() => {
       this.props.showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
@@ -146,87 +212,175 @@ export class PersonDetail extends PureComponent {
     })
   }
 
+  addAssignment = values => {
+    const { person, addPersonAssignment } = this.props
+    const data = {
+      personId: person.get('id'),
+      ..._.pick(values, [
+        'jobFunctionId',
+        'countryId',
+        'stateId',
+        'lgaId',
+        'siteId',
+        'diseaseId',
+        'deviceTypeId',
+        'assayTypeId',
+        'assayId',
+      ]),
+    }
+    return addPersonAssignment(data)
+  }
+
+  deleteAssignment = jobContextId => {
+    const { person, deletePersonAssignment } = this.props
+    const data = {
+      personId: person.get('id'),
+      jobContextId,
+    }
+    deletePersonAssignment(data)
+  }
+
   render() {
-    const { intl, person, user, editable } = this.props
+    const {
+      intl,
+      person,
+      user,
+      editable,
+      isNew,
+      jobFunctions,
+      match,
+      history,
+      location,
+    } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
-    const userIsAdmin = user.jwt.permissions.includes('person:admin')
-    const loading = !person || person.get('loaded') !== true
+    const loading = !isNew && (!person || person.get('loaded') !== true)
+    const canLogIn = person && !!person.get('canLogIn')
+    const shouldPrefill = !isNew && person && person.get('userId') == null
+    const emailValue = (person && person.get('email')) || ''
+    const assignments = (person && person.get('assignments')) || []
+    const loadedAssignments = person && !!person.get('loadedAssignments')
 
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
-        <Paper>
-          {editable && (
-            <AspectTabs fullWidth>
-              <Tab
-                icon={<MapsPersonPin fontSize="large" />}
-                label={
-                  <Hidden xs component="span">
-                    {formatMessage(messages.contactDetails)}
-                  </Hidden>
-                }
-              >
-                {!person && <LinearProgress />}
-                {loading && <LinearProgress />}
-                <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.contactDetails)}
-                </Visible>
-                <ContactDetailsForm
-                  intl={intl}
-                  loading={loading}
-                  contactDetails={contactDetails}
-                  showNotesField
-                  userIsAdmin
-                  onSubmit={this.saveContactDetails}
-                />
-              </Tab>
-              {userIsAdmin && (
-                <Tab
-                  icon={<Lock fontSize="large" />}
-                  label={
-                    <Hidden xs component="span">
-                      {formatMessage(messages.systemAccessControl)}
-                    </Hidden>
-                  }
-                >
+        <Switch>
+          <Route
+            exact
+            path={match.path}
+            render={props =>
+              editable ? (
+                <div>
+                  {!isNew && !person && <LinearProgress />}
                   {loading && <LinearProgress />}
-                  <Visible xs component="h2" className={styles.Form__Header}>
-                    {formatMessage(messages.systemAccessControl)}
-                  </Visible>
+                  <PermissionsProvider permissions={['person:edit']}>
+                    <PersonDetailBackBar
+                      formatMessage={formatMessage}
+                      history={history}
+                      location={location}
+                      match={match}
+                      {...props}
+                      isNew={isNew}
+                      title={
+                        isNew ? 'Add Contact' : person && person.get('name')
+                      }
+                      canUserLoggedIn={!isNew && canLogIn}
+                    />
+                    <Paper className={styles.ContactDetailsForm}>
+                      <ContactDetailsForm
+                        intl={intl}
+                        loading={loading}
+                        onEmailBlur={this.handleEmailBlur}
+                        contactDetails={contactDetails}
+                        showNotesField
+                        isUserChange={this.handlePersonCanLogIn}
+                        onSubmit={this.saveContactDetails}
+                        userPreferences={userPreferences}
+                        saveUserPreferences={this.saveUserPreferences}
+                      />
+                    </Paper>
+                  </PermissionsProvider>
+                </div>
+              ) : (
+                <Redirect to={match.url} />
+              )
+            }
+          />
+          <Route
+            exact
+            path={`${match.path}/system-access-control`}
+            render={props => (
+              <div>
+                {loading && <LinearProgress />}
+
+                <PermissionsProvider permissions={['person:edit']}>
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    history={history}
+                    location={location}
+                    match={match}
+                    {...props}
+                    isNew={isNew}
+                    title={person && person.get('name')}
+                    canUserLoggedIn={!isNew && canLogIn}
+                  />
+                </PermissionsProvider>
+
+                <Paper className={styles.ContactDetailsForm}>
                   <LoginDetailsForm
                     intl={intl}
                     loading={loading}
+                    shouldPrefill={shouldPrefill}
+                    emailValue={emailValue}
                     loginDetails={loginDetails}
                     onSubmit={this.saveLoginDetails}
                   />
-                </Tab>
-              )}
-              <Tab
-                icon={<Language fontSize="large" />}
-                label={
-                  <Hidden xs component="span">
-                    {formatMessage(messages.languageAndTimezone)}
-                  </Hidden>
-                }
-              >
+                </Paper>
+              </div>
+            )}
+          />
+          <Route
+            exact
+            path={`${match.path}/job-assignment`}
+            render={props => (
+              <div>
                 {loading && <LinearProgress />}
-                <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.languageAndTimezone)}
-                </Visible>
-                <UserPreferencesForm
-                  intl={intl}
-                  loading={loading}
-                  userPreferences={userPreferences}
-                  onSubmit={this.saveUserPreferences}
-                />
-              </Tab>
-            </AspectTabs>
-          )}
-        </Paper>
+
+                <PermissionsProvider permissions={['person:edit']}>
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    history={history}
+                    location={location}
+                    match={match}
+                    {...props}
+                    isNew={isNew}
+                    title={person && person.get('name')}
+                    canUserLoggedIn={!isNew && canLogIn}
+                  />
+                </PermissionsProvider>
+
+                <Paper className={styles.ContactDetailsForm}>
+                  <JobAssignmentForm
+                    intl={intl}
+                    loading={loading}
+                    contactDetails={contactDetails}
+                    shouldPrefill={shouldPrefill}
+                    emailValue={emailValue}
+                    countryId={user.get('countryId')}
+                    onSubmit={this.addAssignment}
+                    onDeleteAssignment={this.deleteAssignment}
+                    jobFunctions={jobFunctions}
+                    assignments={assignments}
+                    loadedAssignments={loadedAssignments}
+                  />
+                </Paper>
+              </div>
+            )}
+          />
+        </Switch>
       </div>
     )
   }

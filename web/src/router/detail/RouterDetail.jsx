@@ -2,11 +2,11 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 
@@ -25,7 +25,7 @@ import Typography from '@material-ui/core/Typography'
 // Our own imports
 import AspectDialog from '../../components/shared/AspectDialog'
 import { Unit } from '../../components/pureGrids'
-import isEditable from '../../shared/selectors/device'
+import isEditable from '../../shared/selectors/isEditable'
 import { fetchSingleRouter, updateSingleRouter } from '../RouterRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -114,6 +114,7 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({
@@ -126,7 +127,7 @@ const enhance = compose(
       const router = state.router.items.byId.get(props.match.params.routerId)
 
       return {
-        editable: isEditable(state.user, router),
+        editable: isEditable(state.user, 'device'),
         router,
       }
     },
@@ -184,18 +185,22 @@ export class RouterDetail extends PureComponent {
     this.handleFetchRouter()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.routerId !== nextProps.match.params.routerId) {
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.routerId !== prevProps.match.params.routerId) {
       this.handleFetchRouter()
     }
   }
 
   handleToggleEditDialog = () => {
-    this.setState({ isEditDialogOpen: !this.state.isEditDialogOpen })
+    this.setState(prevState => ({
+      isEditDialogOpen: !prevState.isEditDialogOpen,
+    }))
   }
 
   handleToggleDialog = () => {
-    this.setState({ isDemoDialogOpen: !this.state.isDemoDialogOpen })
+    this.setState(prevState => ({
+      isDemoDialogOpen: !prevState.isDemoDialogOpen,
+    }))
   }
 
   handleFetchRouter = () => {
@@ -281,6 +286,7 @@ export class RouterDetail extends PureComponent {
   renderContent() {
     const { router, intl } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
+    const contacts = router.get('contacts')
     if (!router || !router.has('deviceType')) {
       return false
     }
@@ -329,8 +335,8 @@ export class RouterDetail extends PureComponent {
                       {formatRelative(router.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldStatus)}
-                      : {router.get('status')}
+                      {formatMessage(messages.fieldStatus)}:{' '}
+                      {router.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/browse/result">
                         {router.get('totalTests')}{' '}
@@ -403,15 +409,17 @@ export class RouterDetail extends PureComponent {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Typography variant="body2">
-              {router.get('contacts').map(c => (
-                <Link
-                  key={c.get('id')}
-                  to={`/browse/person/${c.get('id')}`}
-                  className={styles.Contact}
-                >
-                  {c.get('name')}
-                </Link>
-              ))}
+              {// temp fix to get router details to display
+              contacts &&
+                contacts.map(c => (
+                  <Link
+                    key={c.get('id')}
+                    to={`/browse/person/${c.get('id')}`}
+                    className={styles.Contact}
+                  >
+                    {c.get('name')}
+                  </Link>
+                ))}
             </Typography>
           </ExpansionPanelDetails>
         </ExpansionPanel>

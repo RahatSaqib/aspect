@@ -1,11 +1,14 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
-import MdModeComment from 'react-icons/lib/md/mode-comment'
+import { FaExclamationTriangle } from 'react-icons/fa'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
@@ -17,56 +20,68 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      <AlertType alertType={task.get('alertType')} />
+      <AlertType alertType={task.get('issueStatus')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       <div className={cssClasses('Message')}>
         <ColoredButton
           className={cssClasses('ColoredButton')}
-          shipCove={task.get('topic') === 'health'}
-          shakespeare={task.get('topic') === 'device'}
-          mountain={task.get('topic') === 'consumable'}
-          brink={task.get('topic') === 'site'}
-          label={task.get('topic')}
+          shipCove={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'devicehealth'
+          }
+          shakespeare={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'reagenthealth'
+          }
+          mountain={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'datahealth'
+          }
+          brink={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'connectivityhealth'
+          }
+          label={task.get('issueCategory')}
         />
         <span className={cssClasses('Message__Subject')}>
-          {task.get('title')}
+          {addEllipsis(task.get('title'))}
         </span>
         <span className={cssClasses('Message__Text')}>
           {task.get('message')}
         </span>
-        {task.get('alertCount') > 0 && (
+        {messages.alertCount && task.get('issueCount') > 1 && (
           <span className={cssClasses('Message__Alert')}>
             <FaExclamationTriangle
               className={cssClasses('FaExclamationTriangle')}
             />
             {intl.formatMessage(messages.alertCount, {
-              alertCount: task.get('alertCount'),
+              alertCount: task.get('issueCount'),
             })}
           </span>
         )}
       </div>
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {task.get('site')}
+      {addEllipsis(task.get('site'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(task.get('time'))}
-    </TableCell>
-    <TableCell
-      className={cssClasses('TableCell', 'TableCell--notificationCount')}
-    >
-      {task.get('notificationCount') > 0 && (
-        <MdModeComment className={cssClasses('MdModeComment')} />
-      )}
-      {task.get('notificationCount') > 0 && (
-        <span className={cssClasses('NotificationCount')}>
-          {task.get('notificationCount')}
-        </span>
-      )}
-      {task.get('notificationCount') === 0 && '…'}
+      {formatRelative(intl, task.get('time'))}
     </TableCell>
   </TableRow>
 )
+function addEllipsis(words) {
+  const wordsArray = words.split(',')
+  if (wordsArray.length > 2) return `${wordsArray[0]}, ${wordsArray[1]} ...`
+  return words
+}
 
 export default enhance(TaskTableRow)

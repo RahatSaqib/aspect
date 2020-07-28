@@ -1,20 +1,13 @@
 {
-  "extends": [
-    "airbnb",
-    "prettier",
-    "prettier/flowtype",
-    "prettier/react"
-  ],
-  "plugins": [
-    "prettier",
-    "react"
-  ],
+  "extends": ["airbnb", "prettier", "prettier/flowtype", "prettier/react"],
+  "plugins": ["prettier", "react", "react-hooks"],
   "parser": "babel-eslint",
   "parserOptions": {
-    "ecmaVersion": 2016,
+    "ecmaVersion": 2019,
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "legacyDecorators": true
     }
   },
   "env": {
@@ -41,7 +34,6 @@
         "specialLink": ["to"]
       }
     ],
-    "linebreak-style": "off",
     "new-cap": [
       "error",
       {
@@ -58,6 +50,7 @@
       }
     ],
     "no-restricted-syntax": "off",
+    "no-return-assign": [2, "except-parens"],
     "no-shadow": "off",
     "no-use-before-define": "off",
     "prettier/prettier": [
@@ -65,7 +58,9 @@
       {
         "semi": false,
         "singleQuote": true,
-        "trailingComma": "es5"
+        "trailingComma": "es5",
+        "eol": "lf",
+        "parser": "babel"
       }
     ],
     "react/no-multi-comp": "off",
@@ -77,6 +72,25 @@
       }
     ],
     "react/forbid-prop-types": "warn",
-    "require-yield": "off"
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    "no-unused-vars": "off",
+    "react/destructuring-assignment": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/static-property-placement": "off",
+    "react/jsx-fragments": "off",
+    "react/state-in-constructor": "off",
+    "react/jsx-curly-newline": "off",
+    "import/no-cycle": "off",
+    "require-yield": "off",
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "function",
+        "next": "function"
+      }
+    ]
   }
 }

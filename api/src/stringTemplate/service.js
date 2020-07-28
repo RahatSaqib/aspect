@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { distanceInWordsStrict } = require('date-fns')
+const { formatDistanceStrict, parseISO } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
@@ -7,6 +7,7 @@ const handlebars = require('handlebars')
 const { knex } = require('../db')
 const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 
+handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
@@ -26,15 +27,20 @@ handlebars.registerHelper(
 handlebars.registerHelper('toInt', toInt)
 handlebars.registerHelper('maxViralLoadValue', maxViralLoadValue)
 handlebars.registerHelper({
-  eq: (v1, v2) => v1 === v2,
-  ne: (v1, v2) => v1 !== v2,
-  lt: (v1, v2) => v1 < v2,
-  gt: (v1, v2) => v1 > v2,
-  lte: (v1, v2) => v1 <= v2,
-  gte: (v1, v2) => v1 >= v2,
+  eq: (v1, v2) => rawValue(v1) === rawValue(v2),
+  ne: (v1, v2) => rawValue(v1) !== rawValue(v2),
+  lt: (v1, v2) => rawValue(v1) < rawValue(v2),
+  gt: (v1, v2) => rawValue(v1) > rawValue(v2),
+  lte: (v1, v2) => rawValue(v1) <= rawValue(v2),
+  gte: (v1, v2) => rawValue(v1) >= rawValue(v2),
   and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
   or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
 })
+handlebars.registerHelper(
+  'customFieldValueFromLabel',
+  customFieldValueFromLabel
+)
+handlebars.registerHelper('coalesce', coalesce)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -64,6 +70,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
+      .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
       .select(
         's.externalId as siteExternalId',
         's.name as siteName',
@@ -81,6 +88,9 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'r.startedOn as resultStartedOn',
         'r.endedOn as resultEndedOn',
         'r.notes as resultNotes',
+        'r.consumableSerial',
+        'r.createdOn',
+        'r.senderOperator',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
@@ -111,22 +121,172 @@ function addDataSourceToQuery(queryBuilder, aliases) {
   return queryBuilder
 }
 
+/**
+ * Processes mustache style templates using a result object for notifications, alerts and other result based string templates
+ * @param  {object} data: the result record with the following known properties (all of which, can be undefined)
+ *  {
+ *    partnerPlugin: string
+ *    siteExternalId: string
+ *    siteName: string
+ *    siteShortName: string
+ *    deviceName: string
+ *    deviceTypeExternalId: string
+ *    deviceLastSeenOn: date/time
+ *    deviceLastPingOn: date/time
+ *    resultData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultRawData: string
+ *    resultFormData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultPatientData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultStartedOn: date/time
+ *    resultEndedOn: date/time
+ *    resultNotes: string
+ *    consumableSerial: string
+ *    createdOn: date/time
+ *    senderOperator: string
+ *    resultModuleName: string
+ *    resultModuleSerial: string
+ *    resultErrorCode: string
+ *    resultErrorNotes: string
+ *    assayExternalId: string
+ *    sampleExternalId: string
+ *    sampleData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    sampleOriginSiteExternalId: string
+ *    sampleCollectedOn: date/time
+ *    resultCategory1ExternalId: string
+ *    resultCategory2ExternalId: string
+ *    personName: string
+ *    personCell: string
+ *    issueCreatedOn: date/time
+ *    issueDueOn: date/time
+ *    issueData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    notificationTypeName: string
+ *  }
+ *   The object may also contain unknown properties
+ *   The object must also contain the template strings that will be processed:
+ * @param  {Array} templateFields: the keys in the data object that contain the string templates to be processed
+ *   EG: [ 'emailSubjectTemplate', 'emailBodyTemplate' ]
+ * @param  {object} options: how the template will be processed
+ *  {
+ *    dynamic: true/false (required ti be tru when using numberOfDays handleBars helper or processing a JSON string template)
+ *  }
+ * @return an object containing the processed string templates as specified in templateFields
+ *   EG: { emailSubject: 'The processed subject string', emailBody: 'The processed body string' }
+ */
 async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   const ds = await getBaseDataSource(data)
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
-    let message
     if (options.dynamic) {
-      message = processUsingDynamicHelpers(template, ds)
+      memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {
-      message = processUsingHandlebarsSyntax(template, ds)
+      memo[fieldName] = processUsingHandlebarsSyntax(template, ds)
     }
-    memo[fieldName] = message
     return memo
   }, {})
 }
 
+/**
+ * Formats a result record into a nested JSON object, with a known schema, so that string templates can be based of of it
+ * @param  {object} data the result record with the following properties:
+ *  {
+ *    partnerPlugin: string
+ *    siteExternalId: string
+ *    siteName: string
+ *    siteShortName: string
+ *    deviceName: string
+ *    deviceTypeExternalId: string
+ *    deviceLastSeenOn: date/time
+ *    deviceLastPingOn: date/time
+ *    resultData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultRawData: string
+ *    resultFormData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultPatientData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    resultStartedOn: date/time
+ *    resultEndedOn: date/time
+ *    resultNotes: string
+ *    consumableSerial: string
+ *    createdOn: date/time
+ *    senderOperator: string
+ *    resultModuleName: string
+ *    resultModuleSerial: string
+ *    resultErrorCode: string
+ *    resultErrorNotes: string
+ *    assayExternalId: string
+ *    sampleExternalId: string
+ *    sampleData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    sampleOriginSiteExternalId: string
+ *    sampleCollectedOn: date/time
+ *    resultCategory1ExternalId: string
+ *    resultCategory2ExternalId: string
+ *    personName: string
+ *    personCell: string
+ *    issueCreatedOn: date/time
+ *    issueDueOn: date/time
+ *    issueData: string (acceptable values are undefined, null, '' or JSON parsable)
+ *    notificationTypeName: string
+ *  }
+ * @return a nested JSON object containing the data from the result record
+ *  {
+      site: {
+        id: siteExternalId,
+        name: siteName,
+        shortName: siteShortName,
+      },
+      device: {
+        name: deviceName,
+        deviceType: deviceTypeExternalId,
+        lastSeenOn: deviceLastSeenOn,
+        lastPingOn: deviceLastPingOn,
+      },
+      result: {
+        data: resultData ? JSON.parse(resultData) : {},
+        rawData: resultRawData,
+        formData: resultFormData ? JSON.parse(resultFormData) : {},
+        patient: resultPatientData ? JSON.parse(resultPatientData) : {},
+        startedOn: resultStartedOn,
+        endedOn: resultEndedOn,
+        notes: resultNotes,
+        consumableSerial: consumableSerial,
+        createdOn: createdOn,
+        senderOperator: senderOperator,
+        moduleName: resultModuleName,
+        moduleSerial: resultModuleSerial,
+        errorCode: resultErrorCode,
+        errorNotes: resultErrorNotes,
+        assay: {
+          id: assayExternalId,
+        },
+        sample: {
+          id: sampleExternalId,
+          data: sampleData ? JSON.parse(sampleData) : {},
+          originSite: {
+            id: sampleOriginSiteExternalId,
+          },
+          collectedOn: sampleCollectedOn,
+        },
+        category1: {
+          id: resultCategory1ExternalId,
+        },
+        category2: {
+          id: resultCategory2ExternalId,
+        },
+      },
+      person: {
+        name: personName,
+        cell: personCell,
+      },
+      issue: {
+        createdOn: issueCreatedOn,
+        dueOn: issueDueOn,
+        data: issueData ? JSON.parse(issueData) : {},
+      },
+      notification: {
+        type: notificationTypeName,
+      },
+      displayPreferences: { <the displayPreferences in the partner's plugin configuration EG: api\src\plugin\partner\Myanmar\settings.js> }
+    }
+ */
 async function getBaseDataSource(data) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/registration')
@@ -147,13 +307,16 @@ async function getBaseDataSource(data) {
       lastPingOn: d.deviceLastPingOn,
     },
     result: {
-      data: d.resultData == null ? {} : JSON.parse(d.resultData),
-      formData: d.resultFormData == null ? {} : JSON.parse(d.resultFormData),
-      patient:
-        d.resultPatientData == null ? {} : JSON.parse(d.resultPatientData),
+      data: d.resultData ? JSON.parse(d.resultData) : {},
+      formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
+      patient: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
+      rawData: d.resultRawData,
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,
+      consumableSerial: d.consumableSerial,
+      createdOn: d.createdOn,
+      senderOperator: d.senderOperator,
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
       errorCode: d.resultErrorCode,
@@ -163,6 +326,13 @@ async function getBaseDataSource(data) {
       },
       sample: {
         id: d.sampleExternalId,
+        data: d.sampleData ? JSON.parse(d.sampleData) : {},
+        originSite: {
+          id: d.sampleOriginSiteExternalId,
+        },
+        collectedOn: d.sampleCollectedOn,
+        // TODO: Add data JSON field to Sample table to include Assay specific sample details duch as type, appearance, volume, repeat collection
+        // TODO: Add Sample Origin Site External ID, Collection Date and Data To Base Query, The ITIS Webhook Notification Needs This
       },
       category1: {
         id: d.resultCategory1ExternalId,
@@ -178,7 +348,7 @@ async function getBaseDataSource(data) {
     issue: {
       createdOn: d.issueCreatedOn,
       dueOn: d.issueDueOn,
-      data: d.issueData == null ? {} : JSON.parse(d.issueData),
+      data: d.issueData ? JSON.parse(d.issueData) : {},
     },
     notification: {
       type: d.notificationTypeName,
@@ -208,13 +378,19 @@ function processUsingDynamicHelpers(template, ds) {
     .replace(/\${closeMustaches}/g, '}}')
 }
 
+function curlyBrace(object, open) {
+  return open ? '{' : '}'
+}
+
 function numberOfDays(date) {
   if (date == null || date === '') {
     return 'days'
   }
-  return distanceInWordsStrict(new Date(), date, {
-    unit: 'd',
-    partialMethod: 'ceil',
+
+  const parsedDate = date instanceof Date ? date : parseISO(date)
+  return formatDistanceStrict(new Date(), parsedDate, {
+    unit: 'day',
+    roundingMethod: 'floor',
   })
 }
 
@@ -236,7 +412,7 @@ function formatDate(date, options) {
   }
   const dateFormat =
     getArgumentFromOptions(options, 'formatString') ||
-    _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
+    _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
   return formatDateOrDefault(date, dateFormat)
 }
 
@@ -261,54 +437,52 @@ function safeString(value) {
   return new handlebars.SafeString(value)
 }
 
-function rawString(value) {
-  let rawValue = value
+function rawValue(value) {
+  let raw = value
   if (value instanceof handlebars.SafeString) {
-    rawValue = value.string
+    raw = value.string
   }
-  return rawValue
+  return raw
 }
 
 function mapValue(value, options) {
-  const rawValue = rawString(value)
+  const raw = rawValue(value)
   const valueMapString = getArgumentFromOptions(options, 'valueMap')
   if (valueMapString) {
-    return safeString(JSON.parse(valueMapString)[rawValue])
+    return safeString(JSON.parse(valueMapString)[raw])
   }
   return safeString(value)
 }
 
 function defaultTo(value, options) {
-  const rawValue = rawString(value)
+  const raw = rawValue(value)
   const defaultValue = getArgumentFromOptions(options, 'value')
-  return safeString(rawValue || defaultValue)
+  return safeString(raw || defaultValue)
 }
 
 function enclose(value, options) {
-  const rawValue = rawString(value)
-  if (_.isNil(rawValue)) {
+  const raw = rawValue(value)
+  if (_.isNil(raw)) {
     return value
   }
   const encloseWith = getArgumentFromOptions(options, 'with')
-  return safeString(`${encloseWith}${rawValue}${encloseWith}`)
+  return safeString(`${encloseWith}${raw}${encloseWith}`)
 }
 
 function escapeLines(value) {
-  const rawValue = rawString(value)
-  if (!rawValue || rawValue.indexOf('\n') < 0) {
+  const raw = rawValue(value)
+  if (!raw || raw.indexOf('\n') < 0) {
     return safeString(value)
   }
-  return safeString(
-    _.map(rawValue.split('\n'), line => line.trim()).join('\\n')
-  )
+  return safeString(_.map(raw.split('\n'), line => line.trim()).join('\\n'))
 }
 
 function urlEncode(value) {
-  const rawValue = rawString(value)
-  if (_.isNil(rawValue)) {
+  const raw = rawValue(value)
+  if (_.isNil(raw)) {
     return value
   }
-  return safeString(encodeURIComponent(rawValue))
+  return safeString(encodeURIComponent(raw))
 }
 
 function priorityResult(resultCategories, resultCategoryId) {
@@ -344,8 +518,8 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
 }
 
 function isRegexMatch(stringValue, options) {
-  const rawValue = rawString(stringValue)
-  if (!_.isNil(rawValue)) {
+  const raw = rawValue(stringValue)
+  if (!_.isNil(raw)) {
     const expression = getArgumentFromOptions(options, 'expression')
     if (expression) {
       const regex = new RegExp(expression, 'g')
@@ -355,12 +529,12 @@ function isRegexMatch(stringValue, options) {
 }
 
 function extractValueFromRegexCaptureGroup(stringValue, options) {
-  const rawValue = rawString(stringValue)
-  if (!_.isNil(rawValue)) {
+  const raw = rawValue(stringValue)
+  if (!_.isNil(raw)) {
     const expression = getArgumentFromOptions(options, 'expression')
     const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
     if (expression) {
-      const regex = new RegExp(expression, 'g')
+      const regex = new RegExp(expression, 'gm')
       const match = regex.exec(stringValue)
       if (match && match.length > groupNumber) {
         return safeString(match[groupNumber])
@@ -370,27 +544,25 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
 }
 
 function toInt(value) {
-  const rawValue = rawString(value)
-  if (!_.isNil(rawValue)) {
-    return parseInt(rawValue, 10)
+  const raw = rawValue(value)
+  if (!_.isNil(raw)) {
+    return parseInt(raw, 10)
   }
 }
 
 function extractNumericViralLoadValue(value) {
-  let rawValue = value
-  if (_.isNil(rawValue)) {
-    rawValue = 0
+  let raw = value
+  if (_.isNil(raw)) {
+    raw = 0
   } else {
-    rawValue = rawString(value)
+    raw = rawValue(value)
   }
-  if (typeof rawValue === 'number') {
-    return { numericValue: rawValue, text: rawValue.toString() }
+  if (typeof raw === 'number') {
+    return { numericValue: raw, text: raw.toString() }
   }
-  if (typeof rawValue === 'string') {
+  if (typeof raw === 'string') {
     const numericStringValue = (
-      rawString(
-        extractValueFromRegexCaptureGroup(rawValue, '([\\d|\\s|\\.]+)')
-      ) || ''
+      rawValue(extractValueFromRegexCaptureGroup(raw, '([\\d|\\s|\\.]+)')) || ''
     ).trim()
     const numericStringValueWithoutWhiteSpace = numericStringValue.replace(
       /\s/,
@@ -398,12 +570,13 @@ function extractNumericViralLoadValue(value) {
     )
     const numericValue = parseFloat(numericStringValueWithoutWhiteSpace)
     if (!Number.isNaN(numericValue)) {
-      if (isRegexMatch(rawValue, '>[\\d|\\s|\\.]+')) {
+      if (isRegexMatch(raw, '>[\\d|\\s|\\.]+')) {
         return {
           numericValue: numericValue + 1,
           text: `> ${numericStringValue}`,
         }
-      } else if (isRegexMatch(rawValue, '<[\\d|\\s|\\.]+')) {
+      }
+      if (isRegexMatch(raw, '<[\\d|\\s|\\.]+')) {
         return {
           numericValue: numericValue - 1,
           text: `< ${numericStringValue}`,
@@ -436,6 +609,19 @@ function offsetToTimeZone(date, options) {
   }
   const timeZone = findTimeZone(timeZoneName)
   return convertToTimeZone(parsedDate, { timeZone: timeZone.name })
+}
+
+function customFieldValueFromLabel(customFieldData, label) {
+  if (!_.isEmpty(customFieldData)) {
+    return _.get(_.find(Object.values(customFieldData), { label }), ['value'])
+  }
+}
+
+function coalesce(...rest) {
+  // Using dropRight here to ignore the last argument
+  //  passed to this call. Handlebars passes the helper
+  //  object, with it's options, as the last arg
+  return _.dropRight(rest).find(arg => !!arg)
 }
 
 module.exports = {

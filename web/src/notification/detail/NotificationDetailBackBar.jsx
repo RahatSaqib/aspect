@@ -1,7 +1,7 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
+import AspectButton from '../../components/shared/AspectButton'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 
 const messages = defineMessages({
@@ -20,13 +20,12 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  injectIntl,
   withHandlers({
     onBackClick: ({ history }) => () => {
       history.goBack()
     },
-    onPathClick: ({ history, match }) => ({
-      target: { dataset: { path } },
-    }) => {
+    onPathClick: ({ history, match }) => path => {
       history.push({
         pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
       })
@@ -34,7 +33,7 @@ const enhance = compose(
   })
 )
 
-const NotificationDetailBackBar = ({
+export const NotificationDetailBackBar = ({
   intl,
   history,
   location,
@@ -43,6 +42,7 @@ const NotificationDetailBackBar = ({
   // --- injected by recompose ---
   onBackClick,
   onPathClick,
+  disabled = true,
 }) => (
   <DetailBackBar
     history={history}
@@ -59,24 +59,28 @@ const NotificationDetailBackBar = ({
       {
         label: intl.formatMessage(messages.edit),
         path: `/browse/notification/:notificationId/edit`,
-        disabled: true,
+        disabled,
       },
       {
         label: intl.formatMessage(messages.history),
         path: `/browse/notification/:notificationId/history`,
       },
     ].map(({ label, path, disabled }) => (
-      <Button
+      <AspectButton
         key={path}
-        onClick={onPathClick}
+        onClick={({
+          currentTarget: {
+            dataset: { path },
+          },
+        }) => onPathClick(path)}
         data-path={path}
-        primary
-        raised
+        color="primary"
+        variant="contained"
         inverse={match.path !== path}
         disabled={disabled}
       >
         {label}
-      </Button>
+      </AspectButton>
     ))}
   </DetailBackBar>
 )

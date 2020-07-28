@@ -1,17 +1,13 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
 
 import PersonTableRow from './PersonTableRow'
 
 describe('PersonTableRow component', () => {
-  const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     person: Immutable.fromJS({
       name: 'Admin',
       level: 'Admin',
@@ -20,9 +16,7 @@ describe('PersonTableRow component', () => {
     }),
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<PersonTableRow {...props} />)
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<PersonTableRow {...props} />)
   })
 })

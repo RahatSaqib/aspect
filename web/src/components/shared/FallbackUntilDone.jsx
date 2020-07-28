@@ -26,6 +26,10 @@ class FallbackUntilDone extends PureComponent {
 
   state = this.initialState()
 
+  handleResize = _.throttle(() => {
+    this.setState(this.initialState)
+  }, 1000)
+
   componentDidMount() {
     window.addEventListener('resize', this.handleResize)
   }
@@ -42,13 +46,6 @@ class FallbackUntilDone extends PureComponent {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  initialState() {
-    return {
-      fallbackIndex: 0,
-      isStable: false,
-    }
-  }
-
   handleRefMount = node => {
     if (this.node) {
       this.erd.removeAllListeners(ReactDOM.findDOMNode(this.node))
@@ -60,24 +57,29 @@ class FallbackUntilDone extends PureComponent {
     this.setState(this.updateState)
   }
 
-  handleResize = _.throttle(() => {
-    this.setState(this.initialState)
-  }, 1000)
-
   updateState = (prevState, props) => {
     if (!this.node || prevState.isStable) {
       return {}
-    } else if (props.isDone(this.node)) {
+    }
+    if (props.isDone(this.node)) {
       return {
         isStable: true,
       }
-    } else if (prevState.fallbackIndex + 1 < props.fallbacks.length) {
+    }
+    if (prevState.fallbackIndex + 1 < props.fallbacks.length) {
       return {
         fallbackIndex: prevState.fallbackIndex + 1,
       }
     }
     return {
       isStable: true,
+    }
+  }
+
+  initialState() {
+    return {
+      fallbackIndex: 0,
+      isStable: false,
     }
   }
 

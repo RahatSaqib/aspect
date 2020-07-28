@@ -86,7 +86,7 @@ function receiveAssays(state, assays, lastRefreshed) {
   return state.merge({
     loading: false,
     lastRefreshed,
-    items: new Immutable.fromJS(assays),
+    items: Immutable.fromJS(assays),
   })
 }
 

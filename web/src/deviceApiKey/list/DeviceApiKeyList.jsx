@@ -9,12 +9,11 @@ import {
   withHandlers,
   lifecycle,
 } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
-
+import { Helmet } from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 import Button from '@material-ui/core/Button'
 
 import {
@@ -32,6 +31,7 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -46,6 +46,8 @@ import {
   DeviceApiKeyDataTableHead,
   DeviceApiKeyDataTableRow,
 } from './DeviceApiKeyDataTable'
+import ExportListButton from '../../globals/components/ExportListButton'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -117,7 +119,7 @@ const FILTERS_CONFIG = [
   { deviceName: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
 ]
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
@@ -145,11 +147,21 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'createdOn',
       sortDir: 'desc',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
@@ -185,18 +197,20 @@ const enhance = compose(
       exportDeviceApiKeys,
       sortCol,
       sortDir,
+      table,
       pageAt,
-      pageSize,
     }) => formatType => {
+      const format = formatType.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportDeviceApiKeys(
           filtersParams,
-          formatType,
+          format,
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          table.get('total') > 0 ? table.get('total') : 1,
+          'deviceApiKey'
         )
       }
     },
@@ -303,7 +317,6 @@ const enhance = compose(
       onChangeDialogState,
     }) => isInputChecked => {
       const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
-
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
@@ -313,28 +326,56 @@ const enhance = compose(
       })
     },
 
-    onSelectedChange: ({ dialogState, onChangeDialogState }) => (
-      isInputChecked,
-      { target: { dataset: { deviceApiKeyId } } }
+    onSelectedChange: ({ dialogState, onChangeDialogState, items }) => (
+      {
+        target: {
+          dataset: { deviceApiKeyId },
+        },
+      },
+      isInputChecked
     ) => {
       const { assignerValues } = dialogState
       const nextDeviceApiKeyIds = isInputChecked
         ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
         : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
-
+      let selectedDDL = {}
+      if (nextDeviceApiKeyIds.length === 1) {
+        const [firstElementId] = nextDeviceApiKeyIds
+        const { siteId, countryId, partnerId } = items.byId
+          .get(firstElementId)
+          .toJS()
+        selectedDDL = {
+          siteId,
+          countryId,
+          partnerId,
+        }
+      } else if (nextDeviceApiKeyIds.length > 1) {
+        const selection = []
+        nextDeviceApiKeyIds.forEach(id => {
+          const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
+          selection.push({ partnerId, siteId, countryId })
+        })
+        const [{ countryId, siteId, partnerId }] = _.intersectionWith(
+          selection,
+          _.isEqual
+        )
+        selectedDDL = { countryId, siteId, partnerId }
+      }
       onChangeDialogState({
         ...dialogState,
         assignerValues: {
-          ...dialogState.assignerValues,
           deviceApiKeyIds: nextDeviceApiKeyIds,
+          ...selectedDDL,
         },
       })
     },
 
-    onRevokedChange: ({ updateSingleDeviceApiKey }) => (
-      revoked,
-      { target: { dataset: { deviceApiKeyId } } }
-    ) => {
+    onRevokedChange: ({ updateSingleDeviceApiKey }) => (event, revoked) => {
+      const {
+        target: {
+          dataset: { deviceApiKeyId },
+        },
+      } = event
       updateSingleDeviceApiKey(deviceApiKeyId, {
         revoked,
       })
@@ -383,17 +424,28 @@ export const DeviceApiKeyList = ({
       intl={intl}
       config={reducedFilters}
       onClickExport={onExportClick}
-    />
-    <div>
-      <Button onClick={onOpenGeneratorDialog}>
+    >
+      <AspectButton
+        onClick={onOpenGeneratorDialog}
+        type="button"
+        color="primary"
+        variant="contained"
+        browseButton
+      >
         {intl.formatMessage(messages.generate)}
-      </Button>
-      <Button
+      </AspectButton>
+      <AspectButton
+        type="button"
+        color="primary"
+        variant="contained"
         onClick={onOpenAssignerDialog}
         disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
+        browseButton
       >
         {intl.formatMessage(messages.assign)}
-      </Button>
+      </AspectButton>
+    </BrowseFilters>
+    <div>
       <DeviceApiKeyGeneratorDialogForm
         isDialogOpen={isGeneratorDialogOpen}
         onChange={onGeneratorFormChange}
@@ -412,8 +464,14 @@ export const DeviceApiKeyList = ({
         intl={intl}
       />
     </div>
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="DeviceApiKey"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
@@ -431,7 +489,7 @@ export const DeviceApiKeyList = ({
               {
                 key: 'id',
                 label: (
-                  <Checkbox
+                  <AspectCheckbox
                     name="selectAll"
                     disabled={selectableIds.isEmpty()}
                     checked={selectableIds.equals(
@@ -478,23 +536,25 @@ export const DeviceApiKeyList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(deviceApiKey => (
-              <DeviceApiKeyDataTableRow
-                key={deviceApiKey.get('id')}
-                intl={intl}
-                deviceApiKey={deviceApiKey}
-                disabled={!selectableIds.includes(deviceApiKey.get('id'))}
-                checked={
-                  assignerValues.deviceApiKeyIds.indexOf(
-                    deviceApiKey.get('id')
-                  ) !== -1
-                }
-                onSelectedChange={onSelectedChange}
-                onRevokedChange={onRevokedChange}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(deviceApiKey => (
+                <DeviceApiKeyDataTableRow
+                  key={deviceApiKey.get('id')}
+                  intl={intl}
+                  deviceApiKey={deviceApiKey}
+                  disabled={!selectableIds.includes(deviceApiKey.get('id'))}
+                  checked={
+                    assignerValues.deviceApiKeyIds.indexOf(
+                      deviceApiKey.get('id')
+                    ) !== -1
+                  }
+                  onSelectedChange={onSelectedChange}
+                  onRevokedChange={onRevokedChange}
+                />
+              ))}
+          </TableBody>
         </DeviceApiKeyDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

@@ -44,8 +44,10 @@ const enhance = compose(
   })),
   withHandlers({
     onSelect: ({ onSiteIdChange, onSiteNameChange }) => chosenRequest => {
-      onSiteNameChange(chosenRequest.text)
-      onSiteIdChange(chosenRequest.value)
+      if (chosenRequest) {
+        onSiteNameChange(chosenRequest.text)
+        onSiteIdChange(chosenRequest.value)
+      }
     },
     onUpdateInput: ({ onSiteNameChange }) => text => {
       onSiteNameChange(text)

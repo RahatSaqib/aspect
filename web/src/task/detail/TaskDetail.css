@@ -38,6 +38,7 @@
 .Summary__Item {
   display: inline-block;
   padding-bottom: 20px;
+  padding-left: 0px !important;
   font-size: 18px;
 }
 
@@ -64,13 +65,18 @@
   font-weight: var(--lato-font-weight-bold);
 }
 
-.Button--primary:not([disabled]).Button--raised.Button--inverse {
-  background-color: var(--aspect-color-grey-7);
+.Button--inverse {
+  background-color: var(--aspect-color-grey-7) !important;
+}
+
+.Input {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  margin: 20px 0;
+  width: 100%;
 }
 
 .Input__inputElement {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
   padding: 8px 12px;
 }
 

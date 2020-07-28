@@ -1,0 +1,109 @@
+{
+  "resultText": {
+    "title": "Result Text",
+    "type": "string"
+  },
+  "probes": {
+    "title": "Probes",
+    "type": "object",
+    "i18nKey": "Probes",
+    "properties": {
+      "probeSpc": {
+        "title": "Probe Spc",
+        "type": "string"
+      },
+      "probeIS1081IS6110": {
+        "title": "Probe IS1081-IS6110",
+        "type": "string"
+      },
+      "probeRpoB1": {
+        "title": "Probe rpoB1",
+        "type": "string"
+      },
+      "probeRpoB2": {
+        "title": "Probe rpoB2",
+        "type": "string"
+      },
+      "probeRpoB3": {
+        "title": "Probe rpoB3",
+        "type": "string"
+      },
+      "probeRpoB4": {
+        "title": "Probe rpoB4",
+        "type": "string"
+      },
+      "qc1": {
+        "title": "QC1",
+        "type": "string"
+      },
+      "qc2": {
+        "title": "QC2",
+        "type": "string"
+      },
+      "probeSpcCt": {
+        "title": "Probe Spc Ct",
+        "type": "number"
+      },
+      "probeIS1081IS6110Ct": {
+        "title": "Probe IS1081-IS6110 Ct",
+        "type": "number"
+      },
+      "probeRpoB1Ct": {
+        "title": "Probe rpoB1 Ct",
+        "type": "number"
+      },
+      "probeRpoB2Ct": {
+        "title": "Probe rpoB2 Ct",
+        "type": "number"
+      },
+      "probeRpoB3Ct": {
+        "title": "Probe rpoB3 Ct",
+        "type": "number"
+      },
+      "probeRpoB4Ct": {
+        "title": "Probe rpoB4 Ct",
+        "type": "number"
+      },
+      "qc1Ct": {
+        "title": "QC1 Ct",
+        "type": "number"
+      },
+      "qc2Ct": {
+        "title": "QC2 Ct",
+        "type": "number"
+      },
+      "probeSpcEndpt": {
+        "title": "Probe Spc Endpt",
+        "type": "number"
+      },
+      "probeIS1081IS6110Endpt": {
+        "title": "Probe IS1081-IS6110 Endpt",
+        "type": "number"
+      },
+      "probeRpoB1Endpt": {
+        "title": "Probe rpoB1 Endpt",
+        "type": "number"
+      },
+      "probeRpoB2Endpt": {
+        "title": "Probe rpoB2 Endpt",
+        "type": "number"
+      },
+      "probeRpoB3Endpt": {
+        "title": "Probe rpoB3 Endpt",
+        "type": "number"
+      },
+      "probeRpoB4Endpt": {
+        "title": "Probe rpoB4 Endpt",
+        "type": "number"
+      },
+      "qc1Endpt": {
+        "title": "QC1 Endpt",
+        "type": "number"
+      },
+      "qc2Endpt": {
+        "title": "QC2 Endpt",
+        "type": "number"
+      }
+    }
+  }
+}

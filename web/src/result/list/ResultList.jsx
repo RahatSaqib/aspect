@@ -3,11 +3,11 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
-
+import { Helmet } from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -27,11 +27,14 @@ import BrowseTablePaginator, {
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchResults, exportResults } from '../ResultRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
+import requirePermissions from '../../components/shared/requirePermissions'
 import {
   ResultDataTable,
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./ResultList.css'))
 
@@ -39,6 +42,10 @@ const messages = defineMessages({
   resultsTitle: {
     id: 'pages.ResultList.title',
     defaultMessage: 'Results',
+  },
+  newResult: {
+    id: 'pages.ResultList.newResult',
+    defaultMessage: 'New Result',
   },
   endedOn: {
     id: 'pages.ResultList.EndedOn',
@@ -50,15 +57,19 @@ const messages = defineMessages({
   },
   sampleOriginSiteName: {
     id: 'pages.ResultList.sampleOriginSiteName',
-    defaultMessage: 'Sample Origin Site',
+    defaultMessage: 'Sample Collection Site',
   },
   sampleId: {
     id: 'pages.ResultList.sampleId',
     defaultMessage: 'Sample ID',
   },
-  sampleGroup: {
-    id: 'pages.ResultList.sampleGroup',
-    defaultMessage: 'Sample Group',
+  assayName: {
+    id: 'pages.ResultList.assayName',
+    defaultMessage: 'Assay',
+  },
+  errorCode: {
+    id: 'pages.ResultList.errorCode',
+    defaultMessage: 'Error Code',
   },
   resultText: {
     id: 'pages.ResultList.resultText',
@@ -66,7 +77,11 @@ const messages = defineMessages({
   },
   resultWorkflowStatus: {
     id: 'pages.ResultList.resultWorkflowStatus',
-    defaultMessage: 'Result Workflow Status',
+    defaultMessage: 'Workflow Status',
+  },
+  resultTreatmentStatus: {
+    id: 'pages.ResultList.resultTreatmentStatus',
+    defaultMessage: 'Treatment Status',
   },
   assayId: {
     id: 'pages.ResultList.assayId',
@@ -92,7 +107,7 @@ const messages = defineMessages({
 const FILTERS_CONFIG = [
   {
     assayAndResultCategory: true,
-    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+    requiredPermissions: ['assay:view'],
   },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
@@ -100,13 +115,14 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { patientOrResearchId: true, requiredPermissions: [] },
   { sampleId: true, requiredPermissions: [] },
-  { sampleGroup: true, requiredPermissions: [] },
+  { errorCode: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -115,8 +131,12 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'deviceName',
     'sampleOriginSiteName',
     'sampleId',
-    'sampleGroup',
+    'errorCode',
     'patientId',
+    'resultText',
+    'resultWorkflowStatus',
+    'treatmentStatusInfo',
+    'assayName',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -137,6 +157,7 @@ const filtersFromLocation = composeSanitizer(
 const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'endedOn',
@@ -168,7 +189,9 @@ const enhance = compose(
         fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-
+    onAddNewButtonClick: ({ history }) => {
+      history.push('/browse/result/add')
+    },
     onExportClick: ({
       location,
       exportResults,
@@ -181,17 +204,21 @@ const enhance = compose(
       if (!sanitized) {
         exportResults(
           filtersParams,
-          formatType,
+          formatType.id,
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          pageSize,
+          formatType.id,
+          'results'
         )
       }
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { resultId } },
+      currentTarget: {
+        dataset: { resultId },
+      },
     }) => history.push(`/browse/result/${resultId}`),
   }),
   lifecycle({
@@ -254,122 +281,158 @@ export const ResultList = ({
   pageAt,
   pageSize,
   onExportClick,
+  onAddNewButtonClick,
   onRowClick,
   reducedFilters,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.resultsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-      onClickExport={onExportClick}
-      askConfirmationForExport={table.total > 1000}
-    />
-    <DataTableCard>
-      <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <ResultDataTable
-          selectable={false}
-          className={cssClasses('ResultDataTable')}
+}) => {
+  const AddNewButton = requirePermissions({
+    permissions: ['result:edit'],
+  })(AspectButton)
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
+      <BrowseFilters
+        history={history}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
+        onClickExport={onExportClick}
+        askConfirmationForExport={table.total > 1000}
+      >
+        <AddNewButton
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
+          onClick={onAddNewButtonClick}
         >
-          <ResultDataTableHead
+          {intl.formatMessage(messages.newResult)}
+        </AddNewButton>
+      </BrowseFilters>
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!table.loading} />
+
+        <ExportListButton
+          onExcelClick={onExportClick}
+          onCsvClick={onExportClick}
+          visible={!items.currentIdList.isEmpty()}
+          reportName="Results"
+        />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList history={history} location={location} intl={intl} />
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <ResultDataTable
+            selectable={false}
+            className={cssClasses('ResultDataTable')}
+          >
+            <ResultDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={Immutable.List([
+                {
+                  key: 'endedOn',
+                  label: intl.formatMessage(messages.endedOn),
+                  sortable: true,
+                },
+                {
+                  key: 'deviceName',
+                  label: intl.formatMessage(messages.deviceName),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'sampleOriginSiteName',
+                  label: intl.formatMessage(messages.sampleOriginSiteName),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'sampleId',
+                  label: intl.formatMessage(messages.sampleId),
+                  sortable: true,
+                },
+                {
+                  key: 'assayName',
+                  label: intl.formatMessage(messages.assayName),
+                  sortable: true,
+                },
+                {
+                  key: 'resultText',
+                  label: intl.formatMessage(messages.resultText),
+                  sortable: true,
+                },
+                {
+                  key: 'errorCode',
+                  label: intl.formatMessage(messages.errorCode),
+                  sortable: true,
+                  hiddenOn: 'md',
+                },
+                {
+                  key: 'resultWorkflowStatus',
+                  label: intl.formatMessage(messages.resultWorkflowStatus),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'treatmentStatusInfo',
+                  label: intl.formatMessage(messages.resultTreatmentStatus),
+                  sortable: true,
+                  hiddenOn: 'sm',
+                },
+                {
+                  key: 'patientId',
+                  label: intl.formatMessage(messages.patiendId),
+                  sortable: true,
+                  hiddenOn: 'xs',
+                },
+              ]).concat(
+                table.extraColumns.map(column => ({
+                  key: column.get('db'),
+                  label: messageByI18nKey(column.get('i18nKey'))(
+                    column.get('title'),
+                    intl
+                  ),
+                  sortable: true,
+                  hiddenOn: 'md',
+                }))
+              )}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(result => (
+                  <ResultDataTableRow
+                    key={result.get('id')}
+                    intl={intl}
+                    extraColumns={table.extraColumns}
+                    result={result}
+                    onClick={onRowClick}
+                    data-result-id={result.get('id')}
+                  />
+                ))}
+            </TableBody>
+          </ResultDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             history={history}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={Immutable.List([
-              {
-                key: 'endedOn',
-                label: intl.formatMessage(messages.endedOn),
-                sortable: true,
-              },
-              {
-                key: 'deviceName',
-                label: intl.formatMessage(messages.deviceName),
-                sortable: true,
-                hiddenOn: 'md',
-              },
-              {
-                key: 'sampleOriginSiteName',
-                label: intl.formatMessage(messages.sampleOriginSiteName),
-                sortable: true,
-                hiddenOn: 'md',
-              },
-              {
-                key: 'sampleId',
-                label: intl.formatMessage(messages.sampleId),
-                sortable: true,
-              },
-              {
-                key: 'sampleGroup',
-                label: intl.formatMessage(messages.sampleGroup),
-                sortable: true,
-                hiddenOn: 'lg',
-              },
-              {
-                key: 'resultText',
-                label: intl.formatMessage(messages.resultText),
-                sortable: true,
-              },
-              {
-                key: 'resultWorkflowStatus',
-                label: intl.formatMessage(messages.resultWorkflowStatus),
-                sortable: true,
-                hiddenOn: 'md',
-              },
-              {
-                key: 'patientId',
-                label: intl.formatMessage(messages.patiendId),
-                sortable: true,
-                hiddenOn: 'xs',
-              },
-            ]).concat(
-              table.extraColumns.map(column => ({
-                key: column.get('db'),
-                label: messageByI18nKey(column.get('i18nKey'))(
-                  column.get('title'),
-                  intl
-                ),
-                sortable: true,
-                hiddenOn: 'lg',
-              }))
-            )}
+            intl={intl}
+            timedMessageUsed={sortCol === 'endedOn'}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
+            pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(result => (
-              <ResultDataTableRow
-                key={result.get('id')}
-                intl={intl}
-                extraColumns={table.extraColumns}
-                result={result}
-                onClick={onRowClick}
-                data-result-id={result.get('id')}
-              />
-            ))}
-        </ResultDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          timedMessageUsed={sortCol === 'endedOn'}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-          pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
-        />
-      )}
-    </DataTableCard>
-  </div>
-)
+        )}
+      </DataTableCard>
+    </div>
+  )
+}
 
 export default enhance(ResultList)

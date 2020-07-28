@@ -6,8 +6,6 @@
       "a3": "MWI",
       "culture": "ny-MW",
       "countryCode": "265",
-      "stateLabel": "District",
-      "lgaLabel": "LGA",
       "timezone": "Central Africa Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
@@ -42,7 +40,10 @@
         { "name": "Phalombe" },
         { "name": "Zomba" },
         { "name": "Neno" }
-      ]
+      ],
+      "tagRegexSampleId":"-([A-Z]){3}$",
+      "tagRegexPatientId":"-([A-Z]){3}$",
+      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "NG",
@@ -50,8 +51,6 @@
       "a3": "NGA",
       "culture": "ig-NG",
       "countryCode": "234",
-      "stateLabel": "State",
-      "lgaLabel": "LGA",
       "timezone": "W. Central Africa Standard Time",
       "portNumber": 2951,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
@@ -66,7 +65,10 @@
           "name": "Ogun",
           "lgas": [{ "name": "Ifo" }, { "name": "Ipokia" }]
         }
-      ]
+      ],
+      "tagRegexSampleId":"-(A-Z){3}$",
+      "tagRegexPatientId":"-(A-Z){3}$",
+      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "US",
@@ -74,8 +76,6 @@
       "a3": "USA",
       "culture": "en-US",
       "countryCode": "1",
-      "stateLabel": "State",
-      "lgaLabel": "County",
       "timezone": "Eastern Standard Time",
       "portNumber": 3000,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
@@ -418,7 +418,10 @@
           "lat": 42.755966,
           "lng": -107.30249
         }
-      ]
+      ],
+      "tagRegexSampleId":"-([A-Z]){3}$",
+      "tagRegexPatientId":"-([0-9]){3}$",
+      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "MM",
@@ -426,8 +429,6 @@
       "a3": "MMR",
       "culture": "en",
       "countryCode": "95",
-      "stateLabel": "State/Region",
-      "lgaLabel": "District",
       "timezone": "Myanmar Standard Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|PatientId|PatientAge|PatientGender|PatientCity|Hiv|PreviouslyTreated|MicroscopyResult|Notes|TestReason|Tag",
@@ -652,5 +653,8 @@
         }
       ]
     }
-  ]
+  ],
+  "tagRegexSampleId":"-([A-Z]){3}$",
+  "tagRegexPatientId":"-([A-Z]){3}$",
+  "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
 }

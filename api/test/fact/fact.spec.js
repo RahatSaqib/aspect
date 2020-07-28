@@ -23,7 +23,7 @@ describe('Fact tables initial data', () => {
       .set('Authorization', deviceAuth)
       .send({
         data: { a: 'b' },
-        assay: { id: 'DaktariHivVl' },
+        assay: { id: 'DaktariHivVL' },
         startedOn: now,
         endedOn: new Date(),
       })

@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaCircle from 'react-icons/lib/fa/circle'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import { Button } from 'react-toolbox/lib/button'
-import ArrowLeft from 'react-icons/lib/ti/arrow-right'
+import { FaCircle, FaArrowRight } from 'react-icons/fa'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../../components/shared/tableBody'
+import AspectButton from '../../../components/shared/AspectButton'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import ActionStatus from './ActionStatus'
 
@@ -13,20 +15,20 @@ const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 const enhance = _.identity
 
 const ActionLinkButton = requirePermissions({
-  permissions: ['browse:view'],
-  features: [
-    'device',
-    'result',
-    'person',
-    'site',
-    'inventory',
-    'router',
-    'reporter',
-    'notification',
-    'report',
-    'deviceApiKey',
+  permissions: [
+    'browse:view',
+    'device:view',
+    'result:view',
+    'person:view',
+    'site:view',
+    'inventory:view',
+    'router:view',
+    'reporter:view',
+    'notification:view',
+    'report:view',
+    'deviceApiKey:view',
   ],
-})(Button)
+})(AspectButton)
 
 const ActionTableRow = ({
   intl,
@@ -36,10 +38,7 @@ const ActionTableRow = ({
   sortingProps,
   ...restProps
 }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell className={cssClasses('TableCell', 'TableCell--actionType')}>
       <FaCircle
         className={cssClasses(
@@ -76,7 +75,7 @@ const ActionTableRow = ({
             data-result-id={action.get('resultId')}
             onClick={onActionListClick}
           >
-            <ArrowLeft className={cssClasses('ArrowLeft')} />
+            <FaArrowRight className={cssClasses('ArrowLeft')} />
           </ActionLinkButton>
         </div>
       </div>

@@ -1,21 +1,25 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import { CountryMap } from './CountryMap'
 import topojson from '../../../map/topo/KE.json'
 
 describe('CountryMap component', () => {
-  const renderer = new ReactShallowRenderer()
+  const { '--aspect-color-white': colorWhite } = process.env
   const props = {
     countryIsoAlpha2Code: 'KE',
-    extent: [[10, 10], [290, 290]],
+    extent: [
+      [10, 10],
+      [290, 290],
+    ],
     loading: false,
+    stroke: () => colorWhite,
+    fill: () => colorWhite,
+    projectionFunc: () => <div />,
     topojson,
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<CountryMap {...props} rightLabel />)
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<CountryMap {...props} rightLabel />)
   })
 })

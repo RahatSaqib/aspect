@@ -1,13 +1,9 @@
 import _ from 'lodash'
 import React from 'react'
 import { compose } from 'recompose'
-import { AppContainer } from 'react-hot-loader'
 import { bindActionCreators } from 'redux'
 import { Provider, connect } from 'react-redux'
-import { addLocaleData, IntlProvider } from 'react-intl'
-
-import en from 'react-intl/locale-data/en'
-import fr from 'react-intl/locale-data/fr'
+import { IntlProvider } from 'react-intl'
 
 import translation from '../../shared/i18n/translation'
 import { getTimezoneById } from '../../shared/utils/timezone'
@@ -19,8 +15,6 @@ import LocalStorage from '../sideEffects/LocalStorage'
 import { actions as idleActions } from '../../idle/IdleRedux'
 import uiProvidersFactory from './uiProvidersFactory'
 import routerFactory from './routerFactory'
-
-addLocaleData([...en, ...fr])
 
 const formatsByTimezoneId = timezoneId => {
   const formats = {}
@@ -73,12 +67,14 @@ const mapStateToProps = state => {
     access: state.user.access,
     refresh: state.user.refresh,
     clientId: state.user.clientId,
+    countryId: state.user.countryId,
     displayPreferences: state.user.displayPreferences,
     drawerOpen: state.user.drawerOpen,
+    countryAbbreviation: state.user.countryAbbreviation,
+    hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,
     // For render()
     isLoggedOut,
     loggedOutReason,
-    features: state.user.features,
     permissions: state.user.jwt.permissions,
   }
 }
@@ -90,11 +86,7 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
 })
 
 export const appFactory = compose(
-  render => ({ store }) => (
-    <AppContainer>
-      <Provider store={store}>{render()}</Provider>
-    </AppContainer>
-  ),
+  render => ({ store }) => <Provider store={store}>{render()}</Provider>,
   uiProvidersFactory,
   render => {
     const App = ({

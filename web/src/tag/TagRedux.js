@@ -171,7 +171,7 @@ export default function tagReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_TAGS:
       return state.setIn(
         ['tags', action.qryType, action.qryId],
-        new Immutable.fromJS(action.items)
+        Immutable.fromJS(action.items)
       )
     case types.REQUEST_POSSIBLE_TAGS:
       return requestPossibleTags(state, action.qryType)
@@ -181,7 +181,7 @@ export default function tagReducer(state = initialState, action) {
         new LazyTagItems({
           loading: false,
           lastRefreshed: action.lastRefreshed,
-          items: new Immutable.fromJS(action.items),
+          items: Immutable.fromJS(action.items),
         })
       )
     default:

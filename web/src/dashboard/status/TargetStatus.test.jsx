@@ -1,16 +1,13 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
+import Card from '@material-ui/core/Card'
 import { TargetStatus } from './TargetStatus'
 
 describe('Target Status component', () => {
-  const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     isShow: true,
     title: 'Progress Indicators',
     className: 'Section--withStatus',
@@ -52,15 +49,25 @@ describe('Target Status component', () => {
         thresholdPercentageDataCollection: 95,
         link: '/browse/result',
         count: 1220,
-        target: 1200,
         dataCollection: '75%',
       },
     ]),
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<TargetStatus {...props} />)
+  it('should shallow render without crash', () => {
+    shallow(<TargetStatus {...props} />)
+  })
 
-    expect(element).toMatchSnapshot()
+  it('should render Cards when the `isShow` prop is set', () => {
+    const wrapper = shallow(<TargetStatus {...props} isShow={false} />)
+    expect(wrapper.find(Card)).toHaveLength(0)
+
+    wrapper.setProps({ isShow: true })
+    expect(wrapper.find(Card)).toHaveLength(1)
+  })
+
+  it('should only render the targret summary cards which contains `target` property', () => {
+    const wrapper = shallow(<TargetStatus {...props} />)
+    expect(wrapper.find('.TargetItemBlockContainer').children()).toHaveLength(3)
   })
 })

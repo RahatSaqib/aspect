@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const subDays = require('date-fns/sub_days')
+const subDays = require('date-fns/subDays')
 const Promise = require('bluebird')
 
 const {
@@ -35,10 +35,8 @@ const { totalWastedInventoryItems } = require('../../../fact/service')
 
 const { isStockEmpty } = require('../../../shared/utilsInventory')
 
-const {
-  getEscalateOrResolveStatusForIssueStockout,
-  getReplacedModuleSerials,
-} = require('./utils')
+const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
+const { getReplacedModuleSerials } = require('../../utils')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
@@ -144,7 +142,7 @@ async function resolveMachineTemperatureError(knex, issue) {
 
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachineTemperatureResolve
   )
 }
@@ -222,9 +220,10 @@ async function resolveMachinePowerError(knex, issue) {
 
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachinePowerResolve &&
-    100 * noResult.resultCount / total.resultCount < maxPrcntMachinePowerErrors
+    (100 * noResult.resultCount) / total.resultCount <
+      maxPrcntMachinePowerErrors
   )
 }
 
@@ -255,7 +254,7 @@ async function resolveModuleProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     module != null &&
-    100 * module.errorCount / total.resultCount <
+    (100 * module.errorCount) / total.resultCount <
       minPrcntModuleProceduralResolve
   )
 }
@@ -283,7 +282,7 @@ async function resolveMachineProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachineProceduralResolve
   )
 }
@@ -324,7 +323,7 @@ async function resolveModuleUnknownError(knex, issue) {
     .where('r.moduleSerial', module.moduleSerial)
     .where('r.deviceId', issue.deviceId)
     .count('r.id as moduleResultCount')
-  const prcntModuleError = module.errorCount / moduleResultCount * 100
+  const prcntModuleError = (module.errorCount / moduleResultCount) * 100
   return (
     prcntModuleError <= maxPrcntErrors ||
     module.errorCount < moduleMaxUnknownErrors
@@ -363,7 +362,7 @@ async function resolveMachineUnknownError(knex, issue) {
       .where('r.deviceId', issue.deviceId)
       .where('r.moduleSerial', module.moduleSerial)
       .count('r.id as moduleResultCount')
-    const prcntModuleError = module.errorCount / moduleResultCount * 100
+    const prcntModuleError = (module.errorCount / moduleResultCount) * 100
     allModulesErr =
       allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
     allModulesTotalErrors += module.errorCount
@@ -484,7 +483,7 @@ async function resolveDataCategoryLow(knex, issue) {
       .innerJoin('Partner as p', 's.partnerId', 'p.id')
       .where('s.id', siteId)
       .first('p.plugin')) || {}
-  const { loadPlugin } = require('../../../plugin/registration')
+  const { loadPlugin } = require('../../registration')
   const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
   const dataCategory = _.find(
     dataCategories,

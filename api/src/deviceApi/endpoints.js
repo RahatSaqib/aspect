@@ -3,7 +3,7 @@
 // also has a corresponding endpoint to a single update, for example,
 // POST /device {result: {}} is equivalent to POST /device/result if
 // only result data is posted.
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -16,17 +16,14 @@ const {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  getHealthStatsHandler,
 } = require('./service')
 
 const errorPayload = Joi.object()
   .allow(null)
   .keys({
-    code: Joi.string()
-      .allow('', null)
-      .description('Error code'),
-    notes: Joi.string()
-      .allow('', null)
-      .description('Description of the error'),
+    code: Joi.string().allow('', null).description('Error code'),
+    notes: Joi.string().allow('', null).description('Description of the error'),
   })
 
 const logPayload = {
@@ -35,23 +32,16 @@ const logPayload = {
     .description('The source of the log, determined by client'),
 }
 
-const logResponse = Object.assign(
-  {},
-  {
-    createdOn: Joi.date()
-      .iso()
-      .description('Date the log was created, in server time.'),
-  },
-  logPayload
-)
+const logResponse = {
+  createdOn: Joi.date()
+    .iso()
+    .description('Date the log was created, in server time.'),
+  ...logPayload,
+}
 
 const devicePayload = {
-  name: Joi.string()
-    .allow('', null)
-    .description('The device name'),
-  serial: Joi.string()
-    .allow('', null)
-    .description('The device serial number'),
+  name: Joi.string().allow('', null).description('The device name'),
+  serial: Joi.string().allow('', null).description('The device serial number'),
   status: Joi.object()
     .allow(null)
     .keys({
@@ -78,9 +68,6 @@ const devicePayload = {
 }
 
 const configurationPayload = {
-  checkpoint: Joi.string()
-    .allow('', null)
-    .description('The client checkpoint'),
   data: Joi.object()
     .required()
     .description(
@@ -89,9 +76,6 @@ const configurationPayload = {
 }
 
 const operationPayload = {
-  checkpoint: Joi.string()
-    .allow('', null)
-    .description('The client checkpoint'),
   startedOn: Joi.date()
     .iso()
     .description(
@@ -115,9 +99,6 @@ const resultPayload = {
         ' multiple result updates with the same ID will merge into the same result.  If no ID is' +
         ' specified, a new result is created with every POST.'
     ),
-  checkpoint: Joi.string()
-    .allow('', null)
-    .description('The client checkpoint'),
   startedOn: Joi.date()
     .allow(null)
     .iso()
@@ -189,15 +170,11 @@ const resultPayload = {
     group: Joi.string()
       .allow('', null)
       .description('The group, collection, or worksheet of a sample'),
-    runNumber: Joi.string()
-      .allow('', null)
-      .description('Sample run number.'),
+    runNumber: Joi.string().allow('', null).description('Sample run number.'),
     type: Joi.object()
       .allow(null)
       .keys({
-        id: Joi.string()
-          .required()
-          .description('ID of the Sample Type'),
+        id: Joi.string().required().description('ID of the Sample Type'),
       }),
     originSite: Joi.object()
       .allow(null)
@@ -205,6 +182,64 @@ const resultPayload = {
         id: Joi.string()
           .required()
           .description('ID of the site where the sample was collected'),
+        name: Joi.string()
+          .allow('', null)
+          .description('Name of the site where the sample was collected'),
+        shortName: Joi.string()
+          .allow('', null)
+          .description('Short name of the site where the sample was collected'),
+        notes: Joi.string()
+          .allow('', null)
+          .description('Notes about the site where the sample was collected'),
+        state: Joi.string()
+          .allow('', null)
+          .description(
+            'Name of the state or province where the sample was collected'
+          ),
+        lga: Joi.string()
+          .allow('', null)
+          .description(
+            'Short name of the LGA or district where the sample was collected'
+          ),
+        city: Joi.string()
+          .allow('', null)
+          .description('City name of the site where the sample was collected'),
+        street1: Joi.string()
+          .allow('', null)
+          .description(
+            'Address (line 1) of the site where the sample was collected'
+          ),
+        street2: Joi.string()
+          .allow('', null)
+          .description(
+            'Address (line 2) of the site where the sample was collected'
+          ),
+        zip: Joi.string()
+          .allow('', null)
+          .description(
+            'Zip/Postal code of the site where the sample was collected'
+          ),
+        location: Joi.object()
+          .allow(null)
+          .keys({
+            latitude: Joi.number().description(
+              'Latitude where the sample was collected. Will default to the site location'
+            ),
+            longitude: Joi.number().description(
+              'Longitude where the sample was collected. Will default to the site location'
+            ),
+          }),
+        timezoneId: Joi.string()
+          .allow('', null)
+          .description(
+            'The timezone for the site (format: Myanmar Standard Time)'
+          ),
+        hoursStart: Joi.number()
+          .allow('', null)
+          .description('The hour that the site opens on a working day'),
+        hoursEnd: Joi.number()
+          .allow('', null)
+          .description('The hour that the site closes on a working day'),
       }),
   }),
   category: Joi.array()
@@ -277,46 +312,22 @@ const resultPayload = {
         ),
     }),
   patient: Joi.object().keys({
-    id: Joi.string()
-      .allow('', null)
-      .description('Patient Identifier'),
-    name: Joi.string()
-      .allow('', null)
-      .description('Patient name'),
-    surname: Joi.string()
-      .allow('', null)
-      .description('Patient surname'),
-    gender: Joi.string()
-      .allow('', null)
-      .description('Patient gender (M/F)'),
-    age: Joi.number()
-      .allow(null)
-      .description('Patient age (years)'),
+    id: Joi.string().allow('', null).description('Patient Identifier'),
+    name: Joi.string().allow('', null).description('Patient name'),
+    surname: Joi.string().allow('', null).description('Patient surname'),
+    gender: Joi.string().allow('', null).description('Patient gender (M/F)'),
+    age: Joi.number().allow(null).description('Patient age (years)'),
     dateOfBirth: Joi.date()
       .iso()
       .allow(null)
       .description('Patient date of birth'),
-    address: Joi.string()
-      .allow('', null)
-      .description('Patient address'),
-    street: Joi.string()
-      .allow('', null)
-      .description('Patient street'),
-    city: Joi.string()
-      .allow('', null)
-      .description('Patient city'),
-    state: Joi.string()
-      .allow('', null)
-      .description('Patient state'),
-    zip: Joi.string()
-      .allow('', null)
-      .description('Patient ZIP/Postal code'),
-    phone: Joi.string()
-      .allow('', null)
-      .description('Patient phone number'),
-    hivStatus: Joi.string()
-      .allow('', null)
-      .description("Patient's HIV Status"),
+    address: Joi.string().allow('', null).description('Patient address'),
+    street: Joi.string().allow('', null).description('Patient street'),
+    city: Joi.string().allow('', null).description('Patient city'),
+    state: Joi.string().allow('', null).description('Patient state'),
+    zip: Joi.string().allow('', null).description('Patient ZIP/Postal code'),
+    phone: Joi.string().allow('', null).description('Patient phone number'),
+    hivStatus: Joi.string().allow('', null).description("Patient's HIV Status"),
     microscopyResult: Joi.string()
       .allow('', null)
       .description("Patient's microscopy result"),
@@ -356,34 +367,15 @@ const routes = [
     config: {
       description: 'Get Device Data',
       notes:
-        'Get device configuration, operational and result data since the specified checkpoint.' +
-        ' If not specified, returns assigned site and last checkpoint posted for device.',
-      validate: {
-        query: {
-          checkpoint: Joi.string().description(
-            'The client checkpoint.  If the checkpoint is specified, will retrieve data uploaded' +
-              ' with that checkpoint.  Otherwise will return data that does not depend on checkpoint.'
-          ),
-          offset: Joi.string().description(
-            'The result offset from the  client checkpoint, default 0. If offset is 0, device data' +
-              ' uploaded with the specified checkpoint will be retrieved. A positive offset will retrieve' +
-              ' the data uploaded after the checkpoint, e.g. to download data updated after the last' +
-              ' Device Checkin from an outside source. A negative offset will retrieve data uploaded' +
-              ' before the checkpoint, e.g. to download historical data'
-          ),
-        },
-      },
+        'Get device configuration, operational and result data' +
+        ' returns assigned site',
       response: {
         options: {
           allowUnknown: true,
         },
-        schema: Object.assign({}, devicePayload, {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
+        schema: {
+          ...devicePayload,
+          log: Joi.object().keys(logResponse).description('Device Log Data'),
           configuration: Joi.object()
             .keys(configurationPayload)
             .description('Device Configuration Data'),
@@ -394,12 +386,12 @@ const routes = [
             .keys(resultPayload)
             .description('Device Result Data.'),
           error: errorPayload,
-        }),
+        },
       },
     },
   },
   {
-    // POST /device { checkpoint, configuration, operation, result }
+    // POST /device {  configuration, operation, result }
     method: 'POST',
     path: '/',
     handler: addDeviceDataHandler,
@@ -411,35 +403,27 @@ const routes = [
         options: {
           allowUnknown: true,
         },
-        payload: Joi.object().keys(
-          Object.assign({}, devicePayload, {
-            name: Joi.string()
-              .allow('', null)
-              .description('The device name'),
-            checkpoint: Joi.string()
-              .allow('', null)
-              .description('The client checkpoint'),
-            log: Joi.object()
-              .allow(null)
-              .keys(logPayload)
-              .description('Device Log Data'),
-            configuration: Joi.object()
-              .allow(null)
-              .keys(configurationPayload)
-              .description('Device Configuration Data'),
-            operation: Joi.object()
-              .allow(null)
-              .keys(operationPayload)
-              .description('Device Operation Data'),
-            result: Joi.object()
-              .allow(null)
-              .keys(resultPayload)
-              .description('Device Result Data.'),
-          })
-        ),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
-        },
+        payload: Joi.object().keys({
+          ...devicePayload,
+          log: Joi.object()
+            .allow(null)
+            .keys(logPayload)
+            .description('Device Log Data'),
+          configuration: Joi.object()
+            .allow(null)
+            .keys(configurationPayload)
+            .description('Device Configuration Data'),
+          operation: Joi.object()
+            .allow(null)
+            .keys(operationPayload)
+            .description('Device Operation Data'),
+          result: Joi.object()
+            .allow(null)
+            .keys(resultPayload)
+            .description('Device Result Data.'),
+        }),
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -459,9 +443,7 @@ const routes = [
       description: 'Deliver data in custom plugin format',
       validate: {
         params: {
-          pluginName: Joi.string()
-            .description('Name of Plugin')
-            .required(),
+          pluginName: Joi.string().description('Name of Plugin').required(),
         },
       },
     },
@@ -477,14 +459,12 @@ const routes = [
         'Device configuration information, such as firmware revision, software versions,' +
         ' serial numbers, etc.',
       validate: {
-        payload: Object.assign({}, configurationPayload, {
-          log: Joi.object()
-            .keys(logPayload)
-            .description('Device Log Data'),
-        }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
+        payload: {
+          ...configurationPayload,
+          log: Joi.object().keys(logPayload).description('Device Log Data'),
         },
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -504,23 +484,13 @@ const routes = [
       notes: 'Get device operational data',
       description:
         'Get last updated operation data for the authenticated device given search constraints',
-      validate: {
-        query: {
-          checkpoint: Joi.string(),
-          offset: Joi.string(),
-        },
-      },
+
       response: {
         options: {
           allowUnknown: true,
         },
         schema: {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logResponse).description('Device Log Data'),
           operation: Joi.object()
             .keys(operationPayload)
             .description('Device Operation Data'),
@@ -540,14 +510,12 @@ const routes = [
         'Devices may deliver operational information to Aspect, such as uptime, communication' +
         ' statistics, status of mechanical systems, calibration information etc. ',
       validate: {
-        payload: Object.assign({}, resultPayload, {
-          log: Joi.object()
-            .keys(logPayload)
-            .description('Device Log Data'),
-        }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
+        payload: {
+          ...resultPayload,
+          log: Joi.object().keys(logPayload).description('Device Log Data'),
         },
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -569,8 +537,6 @@ const routes = [
         'Get last updated result data for the authenticated device given search constraints',
       validate: {
         query: {
-          checkpoint: Joi.string(),
-          offset: Joi.string(),
           resultId: Joi.string(),
         },
       },
@@ -579,12 +545,7 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
+          log: Joi.object().keys(logResponse).description('Device Log Data'),
           result: Joi.object()
             .keys(resultPayload)
             .description('Device Result Data.'),
@@ -608,14 +569,12 @@ const routes = [
         options: {
           allowUnknown: true,
         },
-        payload: Object.assign({}, resultPayload, {
-          log: Joi.object()
-            .keys(logPayload)
-            .description('Device Log Data'),
-        }),
-        failAction(request, reply, source, error) {
-          addDeviceLog(error)(request, reply)
+        payload: {
+          ...resultPayload,
+          log: Joi.object().keys(logPayload).description('Device Log Data'),
         },
+        failAction: async (request, h, error) =>
+          addDeviceLog(error)(request, h),
       },
       response: {
         options: {
@@ -623,6 +582,120 @@ const routes = [
         },
         schema: {
           error: errorPayload,
+        },
+      },
+    },
+  },
+  // GET /device/heath-stats
+  {
+    method: 'GET',
+    path: '/health-stats',
+    handler: getHealthStatsHandler,
+    config: {
+      notes: 'Get health stats',
+      description:
+        'It returns a json object with the summary of the device and country operational data',
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: {
+          Countries: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description('Date of the first device connected'),
+                Total: Joi.number()
+                  .allow(null)
+                  .description('The numbers of devices the country had'),
+              })
+            )
+            .single(true)
+            .description('Countries stats'),
+          Devices: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description('Date of the "Total" devices were connected'),
+                Total: Joi.number()
+                  .allow(null)
+                  .description(
+                    'The numbers of devices that were connected this month'
+                  ),
+              })
+            )
+            .single(true)
+            .description('Device stats'),
+          Tests: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description(
+                    'Date of the "Total" test were conducted in this period'
+                  ),
+                Total: Joi.number()
+                  .allow(null)
+                  .description(
+                    'The numbers of devices that were connected this month'
+                  ),
+              })
+            )
+            .description('Tests stats'),
+          Notifications: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description(
+                    'Date of the "Total" test were maded in this period'
+                  ),
+                Sms: Joi.number()
+                  .allow(null)
+                  .description('The numbers of sms that were sent this period'),
+                Email: Joi.number()
+                  .allow(null)
+                  .description('The numbers of emails were sent this period'),
+                Total: Joi.number()
+                  .allow(null)
+                  .description('The sum of Sms and Emails sent in this period'),
+              })
+            )
+            .description('Notifications stats'),
         },
       },
     },

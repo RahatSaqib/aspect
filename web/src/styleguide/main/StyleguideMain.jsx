@@ -4,8 +4,8 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { compose, setPropTypes, pure } from 'recompose'
-import { injectIntl, defineMessages, intlShape } from 'react-intl'
-import Helmet from 'react-helmet'
+import { injectIntl, defineMessages } from 'react-intl'
+import { Helmet } from 'react-helmet'
 
 // Our own imports
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
@@ -19,6 +19,7 @@ import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
+import PropTypeOf from '../../shared/types'
 
 const messages = defineMessages({
   title: {
@@ -48,7 +49,7 @@ const enhance = compose(
   ),
   injectIntl,
   setPropTypes({
-    intl: intlShape.isRequired,
+    intl: PropTypeOf.intl.isRequired,
   })
 )
 
@@ -88,12 +89,10 @@ export class StyleguideMain extends PureComponent {
   }
 
   handleResultTagChange = (qryId, qryType, tags) => {
-    console.log(qryId, qryType, tags)
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
   handleSiteTagChange = (qryId, qryType, tags) => {
-    console.log(qryId, qryType, tags)
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
@@ -209,7 +208,6 @@ const mockData = Immutable.fromJS({
   lgaName: 'Wayne',
   resultCategory1Name: 'Detected',
   resultCategory2Name: 'Not Detected',
-  resultWorkflowStatusId: 3,
   resultWorkflowStatus: 'Ordered',
   resultWorkflowStatusExternalId: 'Ordered',
   resultData: {
@@ -454,7 +452,7 @@ const mockData = Immutable.fromJS({
     },
   },
   schema: {
-    title: 'Test Result',
+    title: 'Result Details',
     icon: 'document',
     groups: {
       site: {
@@ -466,7 +464,7 @@ const mockData = Immutable.fromJS({
               type: 'string',
               row: 0,
               order: 0,
-              title: 'Deployment Full Name',
+              title: 'Site',
             },
           },
         },
@@ -477,7 +475,7 @@ const mockData = Immutable.fromJS({
               type: 'string',
               row: 0,
               order: 0,
-              title: 'Deployment Full Name',
+              title: 'Site',
               link: '/browse/site/<%= siteId %>',
             },
             countryName: {

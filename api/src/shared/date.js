@@ -1,17 +1,40 @@
 const _ = require('lodash')
-const dateFns = require('date-fns')
+const {
+  addDays,
+  format,
+  parse,
+  parseISO,
+  isValid,
+  toDate,
+  isEqual,
+} = require('date-fns')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
 }
 
-function parseDateOrDefault(date, defaultValue = null) {
+function parseDateOrDefault(
+  date,
+  options = { formatString: null, backupDate: null, defaultDate: null }
+) {
+  const defaultValue = _.isPlainObject(options) ? options.defaultDate : options
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed = dateFns.parse(date)
-  return dateFns.isValid(parsed) ? parsed : defaultValue
+  let parsedDate
+  if (date instanceof Date) {
+    parsedDate = date
+  } else if (options && options.formatString) {
+    parsedDate = parse(
+      date,
+      options.formatString,
+      options.backupDate || getUtcTime()
+    )
+  } else {
+    parsedDate = toDate(parseISO(date))
+  }
+  return isValid(parsedDate) ? parsedDate : defaultValue
 }
 
 function formatDateOrDefault(date, dateFormat, defaultValue = null) {
@@ -21,14 +44,67 @@ function formatDateOrDefault(date, dateFormat, defaultValue = null) {
   }
 
   if (dateFormat != null) {
-    return dateFns.format(date, dateFormat)
+    return format(date, dateFormat)
   }
 
-  return dateFns.format(date, 'YYYY-MM-DD')
+  return format(date, 'yyyy-MM-dd')
+}
+
+function returnIso8601StringWithoutTimeZoneOffset(date) {
+  if (!date) {
+    return null
+  }
+  return `${date.toISOString().split('.')[0]}.000`
+}
+
+// When performing MySQL INSERTS or UPDATES using knex,
+//   the time zone offset seems to be ignored.
+//   This function offsets the hours and minutes of the
+//   date object passed into it to the time as it is at
+//   UTC. This is particularly useful for updating and
+//   inserting into updatedOn and createdOn fields
+function getUtcTime(localTime) {
+  const time = localTime || new Date()
+  return new Date(time.getTime() + time.getTimezoneOffset() * 60000)
+}
+
+function dateEqual(date1, date2) {
+  if ((!date1 && date2) || (date1 && !date2)) {
+    return false
+  }
+  const typeSafeDate1 = date1 instanceof Date ? date1 : parseISO(date1)
+  const typeSafeDate2 = date2 instanceof Date ? date2 : parseISO(date2)
+  return isEqual(typeSafeDate1, typeSafeDate2)
+}
+
+// Returns an array of dates formatted as "yyyy-MM-dd" in the given range
+// If initialProperties is passed in, returns an array of objects with "date" containing
+// the day's date and initial properties set to the passed in object
+function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
+  const dates = []
+  let typeSafeMinDate = getUtcTime(
+    minDate instanceof Date ? minDate : parseISO(minDate)
+  )
+  const typeSafeMaxDate = getUtcTime(
+    maxDate instanceof Date ? maxDate : parseISO(maxDate)
+  )
+  while (typeSafeMinDate <= typeSafeMaxDate) {
+    dates.push(
+      initialProperties
+        ? { date: typeSafeMinDate, ...initialProperties }
+        : typeSafeMinDate
+    )
+    typeSafeMinDate = addDays(typeSafeMinDate, 1)
+  }
+  return dates
 }
 
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
+  returnIso8601StringWithoutTimeZoneOffset,
+  getUtcTime,
+  dateEqual,
+  getArrayOfDaysInRange,
 }

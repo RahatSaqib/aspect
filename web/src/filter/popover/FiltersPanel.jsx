@@ -1,13 +1,17 @@
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
-import React from 'react'
+import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
-import MdKeyboardArrowDown from 'react-icons/lib/md/keyboard-arrow-down'
-import { Overlay } from 'react-toolbox/lib/overlay'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import { MdKeyboardArrowDown } from 'react-icons/md'
+import Modal from '@material-ui/core/Modal'
+import Card from '@material-ui/core/Card'
+import { connect } from 'react-redux'
 
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -15,23 +19,32 @@ import StateSelectField from '../geography/StateSelectField'
 import LgaSelectField from '../geography/LgaSelectField'
 import PartnerSelectField from '../partner/PartnerSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
+import DiseaseSelectField from '../resource/DiseaseSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
+import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
+import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
+import AspectButton from '../../components/shared/AspectButton'
+import RevokedSelectField from '../resource/RevokedSelectField'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
 const enhance = compose(
+  connect(state => ({
+    user: state.user,
+  })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
 
     onAssayChange: ({ onChangeFilters }) => assayId =>
       onChangeFilters({ assayId }),
-
+    onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
+      onChangeFilters({ diseaseId }),
     onDateChange: ({ onChangeFilters }) => dateValues =>
       onChangeFilters(dateValues),
 
@@ -85,14 +98,32 @@ const enhance = compose(
         siteName,
       }),
 
+    onSiteIdChange: ({ onChangeFilters }) => siteId =>
+      onChangeFilters({
+        siteId,
+      }),
+
     onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
       onChangeFilters({
         workflowStatusId,
       }),
 
+    onTreatmentStatusIdChange: ({ onChangeFilters }) => treatmentStatusId =>
+      onChangeFilters({
+        treatmentStatusId,
+      }),
+
     onDeviceStatusIdChange: ({ onChangeFilters }) => deviceStatusId =>
       onChangeFilters({
         deviceStatusId,
+      }),
+    onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
+      onChangeFilters({
+        deviceTypeId,
+      }),
+    onRevokedChange: ({ onChangeFilters }) => revoked =>
+      onChangeFilters({
+        revoked,
       }),
 
     onExcelExport: props => () =>
@@ -132,6 +163,7 @@ const clickExport = (
 }
 
 const messages = defineMessages({
+  ...commonDefinitions,
   moreFilters: {
     id: 'filter.popover.moreFilters',
     defaultMessage: 'More filters',
@@ -160,13 +192,21 @@ const messages = defineMessages({
     id: 'filter.popover.site',
     defaultMessage: 'Site',
   },
+  siteId: {
+    id: 'filter.popover.siteId',
+    defaultMessage: 'Site Id',
+  },
   enterSiteName: {
     id: 'filter.popover.enterSiteName',
     defaultMessage: 'Enter site name...',
   },
+  enterSiteId: {
+    id: 'filter.popover.enterSiteId',
+    defaultMessage: 'Enter site ID...',
+  },
   sampleOriginSite: {
     id: 'filter.popover.sampleOriginSite',
-    defaultMessage: 'Sample origin site',
+    defaultMessage: 'Sample collection site',
   },
   enterSampleOriginSite: {
     id: 'filter.popover.enterSampleOriginSite',
@@ -202,11 +242,19 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.popover.patientOrResearchId',
-    defaultMessage: 'Patient/Study ID',
+    defaultMessage: 'Patient ID',
   },
   enterPatientOrResearchId: {
     id: 'filter.popover.enterPatientOrResearchId',
-    defaultMessage: 'Enter patient/study ID...',
+    defaultMessage: 'Enter patient ID...',
+  },
+  patientOrCaseId: {
+    id: 'filter.popover.patientOrCaseId',
+    defaultMessage: 'Patient/Case ID',
+  },
+  enterPatientOrCaseId: {
+    id: 'filter.popover.enterPatientOrCaseId',
+    defaultMessage: 'Enter patient/case ID...',
   },
   sampleId: {
     id: 'filter.popover.sampleId',
@@ -216,13 +264,13 @@ const messages = defineMessages({
     id: 'filter.popover.enterSampleId',
     defaultMessage: 'Enter sample ID...',
   },
-  sampleGroup: {
-    id: 'filter.popover.sampleGroup',
-    defaultMessage: 'Sample Group',
+  errorCode: {
+    id: 'filter.popover.errorCode',
+    defaultMessage: 'Error Code',
   },
-  enterSampleGroup: {
-    id: 'filter.popover.enterSampleGroup',
-    defaultMessage: 'Enter sample group...',
+  enterErrorCode: {
+    id: 'filter.popover.enterErrorCode',
+    defaultMessage: 'Enter error code...',
   },
   result: {
     id: 'filter.popover.result',
@@ -240,21 +288,13 @@ const messages = defineMessages({
     id: 'filter.popover.selectAssay',
     defaultMessage: 'Select assay...',
   },
-  lga: {
-    id: 'filter.popover.lga',
-    defaultMessage: 'Area',
+  disease: {
+    id: 'filter.popover.disease',
+    defaultMessage: 'Disease',
   },
-  selectLga: {
-    id: 'filter.popover.selectLga',
-    defaultMessage: 'Select area...',
-  },
-  state: {
-    id: 'filter.popover.state',
-    defaultMessage: 'State',
-  },
-  selectState: {
-    id: 'filter.popover.selectState',
-    defaultMessage: 'Select state...',
+  selectDisease: {
+    id: 'filter.popover.selectDisease',
+    defaultMessage: 'Select Disease...',
   },
   country: {
     id: 'filter.popover.country',
@@ -285,21 +325,53 @@ const messages = defineMessages({
     id: 'filter.popover.selectWorkflowStatus',
     defaultMessage: 'Select status...',
   },
+  treatmentStatus: {
+    id: 'filter.popover.treatmentStatus',
+    defaultMessage: 'Treatment Status',
+  },
+  selectTreatmentStatus: {
+    id: 'filter.popover.selectTreatmentStatus',
+    defaultMessage: 'Select status...',
+  },
   deviceStatus: {
     id: 'filter.popover.deviceStatus',
-    defaultMessage: 'Device Status',
+    defaultMessage: 'Status',
   },
   selectDeviceStatus: {
     id: 'filter.popover.selectDeviceStatus',
     defaultMessage: 'Select status...',
   },
+  deviceType: {
+    id: 'filter.popover.deviceType',
+    defaultMessage: 'Device Type',
+  },
+  selectDeviceType: {
+    id: 'filter.popover.selectDeviceType',
+    defaultMessage: 'Select type...',
+  },
   externalId: {
     id: 'filter.popover.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   enterExternalId: {
     id: 'filter.popover.enterExternalId',
-    defaultMessage: 'Enter facility code...',
+    defaultMessage: 'Enter site ID...',
+  },
+  notificationName: {
+    id: 'filter.popover.notificationName',
+    defaultMessage: 'Notification',
+  },
+  selectNotificationName: {
+    id: 'filter.popover.selectNotificationName',
+    defaultMessage: 'Enter notification name...',
+  },
+  revoked: {
+    id: 'filter.popover.revoked',
+    defaultMessage: 'Revoked',
+  },
+  selectRevoked: {
+    id: 'filter.popover.selectRevoked',
+    defaultMessage: 'Select revoked status...',
   },
 })
 
@@ -308,31 +380,37 @@ export const FiltersPanel = ({
   className,
   disabled,
   contentClassName,
-
   filters,
   config,
   dateFilterLabel,
   // --- injected by recompose ---
+  dateFormat,
   onToggleShown,
   isShown,
   onCountryIdChange,
   onStateIdChange,
   onLgaIdChange,
   onAssayChange,
+  onDiseaseChange,
   onResultCategoryChange,
   onConsumableIdChange,
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
+  onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
+  onTreatmentStatusIdChange,
   onDeviceStatusIdChange,
+  onDeviceTypeIdChange,
+  onRevokedChange,
+  user,
 }) => (
   <div className={cssClasses('Container', className)}>
-    <Button
+    <AspectButton
       className={cssClasses('Button')}
-      primary
+      color="primary"
       inverse
       disabled={disabled}
       onClick={onToggleShown}
@@ -358,12 +436,16 @@ export const FiltersPanel = ({
           'Button__icon--shown': isShown,
         })}
       />
-    </Button>
-    <Overlay
-      active={isShown}
-      onClick={onToggleShown}
-      onEscKeyDown={onToggleShown}
-    />
+    </AspectButton>
+
+    <Modal
+      className={cssClasses('Modal')}
+      open={isShown}
+      onClose={onToggleShown}
+    >
+      <Fragment />
+    </Modal>
+
     <div
       className={cssClasses('Popover', {
         'Popover--shown': isShown,
@@ -405,52 +487,84 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.geography &&
-          config.state && (
-            <div className={cssClasses('Control')}>
-              <StateSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onStateIdChange={onStateIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectState)}
-                floatingLabelText={intl.formatMessage(messages.state)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-        {config.geography &&
-          config.state &&
-          config.lga && (
-            <div className={cssClasses('Control')}>
-              <LgaSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onLgaIdChange={onLgaIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                lgaId={filters.lgaId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectLga)}
-                floatingLabelText={intl.formatMessage(messages.lga)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-        {config.assayAndResultCategory && (
+        {config.geography && config.state && (
           <div className={cssClasses('Control')}>
-            <AssaySelectField
+            <StateSelectField
               allItemText={intl.formatMessage(messages.all)}
-              value={filters.assayId}
-              onAssayChange={onAssayChange}
+              onStateIdChange={onStateIdChange}
+              countryId={filters.countryId}
+              stateId={filters.stateId}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectAssay)}
-              floatingLabelText={intl.formatMessage(messages.assay)}
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'state' }
+              )}
+              floatingLabelText={getCustomMessage(
+                intl,
+                messages,
+                'state',
+                user
+              )}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.geography && config.state && config.lga && (
+          <div className={cssClasses('Control')}>
+            <LgaSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              onLgaIdChange={onLgaIdChange}
+              countryId={filters.countryId}
+              stateId={filters.stateId}
+              lgaId={filters.lgaId}
+              floatingLabelFixed
+              hintText={getCustomMessage(
+                intl,
+                messages,
+                'selectPlaceholder',
+                user,
+                { entity: 'lga' }
+              )}
+              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
               style={{ verticalAlign: 'bottom' }}
             />
           </div>
         )}
         {config.assayAndResultCategory && (
+          <div className={cssClasses('Control')}>
+            <DiseaseSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.diseaseId}
+              onDiseaseIdChange={onDiseaseChange}
+              onlyWithResults
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectDisease)}
+              floatingLabelText={intl.formatMessage(messages.disease)}
+              intl={intl}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+
+        {config.assayAndResultCategory && !config.onlyDisease && (
+          <div className={cssClasses('Control')}>
+            <AssaySelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.assayId}
+              onAssayChange={onAssayChange}
+              diseaseId={filters.diseaseId}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectAssay)}
+              floatingLabelText={intl.formatMessage(messages.assay)}
+              intl={intl}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.assayAndResultCategory && !config.onlyDisease && (
           <div className={cssClasses('Control')}>
             <ResultCategorySelectField
               allItemText={intl.formatMessage(messages.all)}
@@ -462,6 +576,21 @@ export const FiltersPanel = ({
               hintText={intl.formatMessage(messages.selectResult)}
               floatingLabelText={intl.formatMessage(messages.result)}
               style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.errorCode && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="errorCode"
+              value={filters.errorCode || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterErrorCode)}
+              label={intl.formatMessage(messages.errorCode)}
+              margin="normal"
             />
           </div>
         )}
@@ -511,6 +640,21 @@ export const FiltersPanel = ({
             />
           </div>
         )}
+        {config.patientOrCaseId && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="patientOrCaseId"
+              value={filters.patientOrCaseId || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterPatientOrCaseId)}
+              label={intl.formatMessage(messages.patientOrCaseId)}
+              margin="normal"
+            />
+          </div>
+        )}
         {config.sampleId && (
           <div className={cssClasses('Control')}>
             <FocusBlurTextField
@@ -522,21 +666,6 @@ export const FiltersPanel = ({
               }}
               placeholder={intl.formatMessage(messages.enterSampleId)}
               label={intl.formatMessage(messages.sampleId)}
-              margin="normal"
-            />
-          </div>
-        )}
-        {config.sampleGroup && (
-          <div className={cssClasses('Control')}>
-            <FocusBlurTextField
-              name="sampleGroup"
-              value={filters.sampleGroup || ''}
-              onCommitValue={onTextFieldCommitValue}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              placeholder={intl.formatMessage(messages.enterSampleGroup)}
-              label={intl.formatMessage(messages.sampleGroup)}
               margin="normal"
             />
           </div>
@@ -573,7 +702,7 @@ export const FiltersPanel = ({
             <SiteAutoCompleteField
               name="sampleOriginSite"
               value={filters.sampleOriginSite || ''}
-              onSiteIdChange={onSampleOriginSiteChange}
+              onSiteNameChange={onSampleOriginSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
@@ -638,6 +767,35 @@ export const FiltersPanel = ({
             />
           </div>
         )}
+        {config.deviceType && (
+          <div className={cssClasses('Control')}>
+            <DeviceTypeSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.deviceTypeId}
+              onDeviceTypeChange={onDeviceTypeIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectDeviceType)}
+              floatingLabelText={intl.formatMessage(messages.deviceType)}
+              style={{ verticalAlign: 'bottom' }}
+              autoWidth
+            />
+          </div>
+        )}
+        {config.notificationName && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="notificationName"
+              value={filters.notificationName || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.selectNotificationName)}
+              label={intl.formatMessage(messages.notificationName)}
+              margin="normal"
+            />
+          </div>
+        )}
         {config.date && (
           <DateRangeSelector
             floatingLabelText={
@@ -647,8 +805,49 @@ export const FiltersPanel = ({
             controlClassName={cssClasses('Control')}
             minDate={filters.minDate}
             maxDate={filters.maxDate}
+            dateFormat={dateFormat}
             autoOk
           />
+        )}
+
+        {config.revoked && (
+          <div className={cssClasses('Control')}>
+            <RevokedSelectField
+              floatingLabelText={intl.formatMessage(messages.revoked)}
+              onRevokedChange={onRevokedChange}
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.revoked}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectRevoked)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.treatmentStatus && (
+          <div className={cssClasses('Control')}>
+            <ResultTreatmentStatusSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.treatmentStatusId}
+              onTreatmentStatusChange={onTreatmentStatusIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectTreatmentStatus)}
+              floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
+              style={{ verticalAlign: 'bottom' }}
+              autoWidth
+            />
+          </div>
+        )}
+        {config.siteId && (
+          <div className={cssClasses('Control')}>
+            <SiteAutoCompleteField
+              name="siteId"
+              value={filters.siteId || ''}
+              onSiteNameChange={onSiteIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.enterSiteId)}
+              floatingLabelText={intl.formatMessage(messages.siteId)}
+            />
+          </div>
         )}
       </FallbackUntilDone>
     </div>

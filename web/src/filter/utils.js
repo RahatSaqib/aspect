@@ -3,7 +3,6 @@ import {
   getPermissions,
   groupByPermissionTypes,
   isPermittedUser,
-  isEnabledFeature,
 } from '../components/shared/requirePermissions'
 import { navigations } from '../globals/components/BrowseFilters'
 
@@ -11,8 +10,8 @@ export function nonEmptyFilterValue(x) {
   return !_.isNull(x) && !_.isUndefined(x) && x !== ''
 }
 
-export const mergeToFiltersParams = (filters, filtersParams) =>
-  _.reduce(
+export const mergeToFiltersParams = (filters, filtersParams) => {
+  return _.reduce(
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
@@ -24,6 +23,7 @@ export const mergeToFiltersParams = (filters, filtersParams) =>
     },
     filtersParams
   )
+}
 
 const defaultSanitizer = (a, k) => {
   const { value } = a
@@ -42,7 +42,11 @@ const makeArraySanitizer = keys => a => keys.reduce(defaultSanitizer, a)
 const makeKeySanitizer = k => a => defaultSanitizer(a, k)
 
 const sanitizerByConfigKey = {
-  assayAndResultCategory: makeArraySanitizer(['assayId', 'resultCategoryId']),
+  assayAndResultCategory: makeArraySanitizer([
+    'assayId',
+    'resultCategoryId',
+    'diseaseId',
+  ]),
   geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
   state: _.identity,
   lga: _.identity,
@@ -50,12 +54,14 @@ const sanitizerByConfigKey = {
   patientOrResearchId: defaultSanitizer,
   partnerId: defaultSanitizer,
   sampleId: defaultSanitizer,
-  sampleGroup: defaultSanitizer,
+  errorCode: defaultSanitizer,
   deviceName: defaultSanitizer,
   siteName: defaultSanitizer,
   sampleOriginSite: defaultSanitizer,
   contactNameOrEmail: defaultSanitizer,
+  notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
+  revoked: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceStatus: makeKeySanitizer('deviceStatusId'),
@@ -77,7 +83,17 @@ export const sanitizeFiltersStringBy = config => filtersString =>
   )
 
 const sanitizeBrowseLink = userPermissions => {
-  const permissions = userPermissions.toJS()
+  const permissions = []
+
+  userPermissions.toJS().forEach(permission => {
+    permissions.push(permission)
+    if (permission.includes(':')) {
+      const splittedPermission = permission.split(':')
+      const permissionModule = splittedPermission[0]
+      permissions.push(permissionModule)
+    }
+  })
+
   const source = _.filter(
     navigations,
     link => _.intersection(link.requiredPermissions, permissions).length >= 1
@@ -85,7 +101,7 @@ const sanitizeBrowseLink = userPermissions => {
   return source.length >= 1 ? source[0] : false
 }
 
-export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
+export const reduceNavLinks = (linkArray, userPermissions) => {
   const reducedNav = _.reduce(
     linkArray,
     (result, source) => {
@@ -95,14 +111,13 @@ export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
       ])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
-      const isEnabled = isEnabledFeature(userFeatures, source.requiredFeatures)
 
-      if (isEnabled && isPermitted && source.value)
+      if (isPermitted && source.value)
         result.push({
           value: source.value,
           label: source.label,
         })
-      else if (isEnabled && isPermitted && source.href) {
+      else if (isPermitted && source.href) {
         if (source.href === '/browse') {
           const filteredSource = sanitizeBrowseLink(userPermissions)
           if (filteredSource) {
@@ -111,12 +126,11 @@ export const reduceNavLinks = (linkArray, userPermissions, userFeatures) => {
               label: source.label,
             })
           }
-        } else {
+        } else
           result.push({
             href: source.href,
             label: source.label,
           })
-        }
       }
       return result
     },
@@ -150,6 +164,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'siteName':
               result.siteName = true
               break
+            case 'siteId':
+              result.siteId = true
+              break
             case 'date':
               result.date = true
               break
@@ -158,6 +175,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'deviceStatus':
               result.deviceStatus = true
+              break
+            case 'deviceType':
+              result.deviceType = true
               break
             case 'externalId':
               result.externalId = true
@@ -168,11 +188,14 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'patientOrResearchId':
               result.patientOrResearchId = true
               break
+            case 'patientOrCaseId':
+              result.patientOrCaseId = true
+              break
             case 'sampleId':
               result.sampleId = true
               break
-            case 'sampleGroup':
-              result.sampleGroup = true
+            case 'errorCode':
+              result.errorCode = true
               break
             case 'sampleOriginSite':
               result.sampleOriginSite = true
@@ -180,8 +203,20 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'workflowStatus':
               result.workflowStatus = true
               break
+            case 'treatmentStatus':
+              result.treatmentStatus = true
+              break
             case 'contactNameOrEmail':
               result.contactNameOrEmail = true
+              break
+            case 'notificationName':
+              result.notificationName = true
+              break
+            case 'revoked':
+              result.revoked = true
+              break
+            case 'onlyDisease':
+              result.onlyDisease = true
               break
             default:
           }

@@ -1,6 +1,10 @@
 function addSubscriptions(queue) {
   queue.subscribe('logger', require('./logger/endpoints').subscriptions)
   queue.subscribe('deviceApi', require('./deviceApi/endpoints').subscriptions)
+  queue.subscribe(
+    'deviceApiRaw',
+    require('./deviceApiRaw/endpoints').subscriptions
+  )
   queue.subscribe('fact', require('./fact/endpoints').subscriptions)
   queue.subscribe('issue', require('./issue/endpoints').subscriptions)
   queue.subscribe(
@@ -12,6 +16,12 @@ function addSubscriptions(queue) {
   queue.subscribe('email', require('./email/endpoints').subscriptions)
   queue.subscribe('sms', require('./sms/endpoints').subscriptions)
   queue.subscribe('webhook', require('./webhook/endpoints').subscriptions)
+  queue.subscribe(
+    'pushNotification',
+    require('./pushNotification/endpoints').subscriptions
+  )
+  queue.subscribe('case', require('./case/endpoints').subscriptions)
+  queue.subscribe('patient', require('./patient/endpoints').subscriptions)
 }
 
 module.exports = { addSubscriptions }

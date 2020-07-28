@@ -1,12 +1,11 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import { OperationalData } from './OperationalData'
+import inventoryItems from '../status/InventoryItems'
 
 describe('OperationData Component', () => {
-  const renderer = new ReactShallowRenderer()
-
   const operational = Immutable.fromJS({
     inventory: [
       {
@@ -28,8 +27,12 @@ describe('OperationData Component', () => {
     onDataReportClick: () => {},
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<OperationalData {...props} />)
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<OperationalData {...props} />)
+  })
+
+  it('should shallow render inventory item without crash', () => {
+    const wrapper = shallow(<OperationalData {...props} />)
+    expect(wrapper.find(inventoryItems)).toHaveLength(1)
   })
 })

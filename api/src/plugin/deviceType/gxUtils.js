@@ -1,7 +1,7 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 
-const setMilliseconds = require('date-fns/set_milliseconds')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const {
   findConsumables,
   findConsumableReason,
@@ -47,6 +47,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     _.every(Object.keys(configurationData), configurationDataKey =>
       [
         'macAddress',
+        'shortName',
         'gxAlertDeviceId',
         'hostId',
         'deviceSerialNumber',
@@ -60,10 +61,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
       now
     )
   }
-  await knex
-    .from('Device')
-    .where({ id: device.id })
-    .update(deviceDetails)
+  await knex.from('Device').where({ id: device.id }).update(deviceDetails)
 }
 
 /*
@@ -114,6 +112,20 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     generatedExternalId
   )
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
+
+  const potentialAssayIds = [_.get(payload, 'assay.id')]
+  if (
+    potentialAssayIds.includes('GxMtbRif') &&
+    !potentialAssayIds.includes('GxMtbRifUltra')
+  ) {
+    potentialAssayIds.push('GxMtbRifUltra')
+  }
+  if (
+    potentialAssayIds.includes('GxMtbRifUltra') &&
+    !potentialAssayIds.includes('GxMtbRif')
+  ) {
+    potentialAssayIds.push('GxMtbRif')
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -121,12 +133,20 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       gxAlertUniqueId,
       cartridgeSerial,
       instrumentSerial,
+      potentialSampleIds: [sampleId],
+      siteId: device.siteId,
+      potentialAssayIds,
     },
     knex
   )
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
+
+    // Only set workflow status to "Deliverable" by default if result is new and not an error
+    if (!_.get(payload, 'workflow.status.id') && !payload.error) {
+      _.set(payload, 'workflow.status.id', 'Deliverable')
+    }
   } else {
     // Are we setting this result to NO RESULT?
     if (
@@ -278,7 +298,7 @@ async function postProcessUpdateDeviceConfiguration({
     if (state || !_.isUndefined(latitude) || !_.isUndefined(latitude)) {
       const currentDeviceGeography = await knex('Device as d')
         .leftJoin('Site as s', 'd.siteId', 's.id')
-        .innerJoin('Geography as g', function() {
+        .innerJoin('Geography as g', function () {
           this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
         })
         .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -394,7 +414,7 @@ async function findDevices(availableDeviceDetails, knex) {
   const deviceQuery = knex
     .from('Device as d')
     .leftJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Geography as g', function() {
+    .innerJoin('Geography as g', function () {
       this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
     })
     .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -403,10 +423,7 @@ async function findDevices(availableDeviceDetails, knex) {
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
   if (deviceId) {
-    return deviceQuery
-      .clone()
-      .where('d.id', deviceId)
-      .select(fields)
+    return deviceQuery.clone().where('d.id', deviceId).select(fields)
   }
   let matchingDevices = []
   if (partnerId) {
@@ -441,18 +458,26 @@ async function findExistingResult(availableResultDetails, knex) {
     gxAlertUniqueId = null, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
     cartridgeSerial = null, // GxAlert -> Aspect: result.consumable.serial
     instrumentSerial = null, // GxAlert -> Aspect: result.instrument.serial
+    potentialSampleIds = [],
+    siteId = null,
+    potentialAssayIds = [],
   } = availableResultDetails
   const selectFields = [
     'r.id',
     'r.externalId',
     'r.resultData',
+    'r.siteId',
     'rc1.externalId as resultCategory1',
     'rc2.externalId as resultCategory2',
+    'a.externalId as assayId',
+    's.externalId as sampleId',
   ]
   const queryStart = knex
     .from('Result as r')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .where('r.partnerId', partnerId)
   let matchingResults = []
   let matchingResult = null
@@ -544,6 +569,68 @@ async function findExistingResult(availableResultDetails, knex) {
       }
     }
   }
+
+  if (
+    _.isEmpty(matchingResult) &&
+    !_.isEmpty(potentialSampleIds) &&
+    siteId &&
+    !_.isEmpty(potentialAssayIds)
+  ) {
+    matchingResults = await queryStart
+      .clone()
+      .whereIn('s.externalId', potentialSampleIds)
+      .andWhere('r.siteId', siteId)
+      .whereIn('a.externalId', potentialAssayIds)
+      .select(selectFields)
+    if (matchingResults.length === 1) {
+      ;[matchingResult] = matchingResults
+    } else if (matchingResults.length > 1) {
+      if (geneXpertTestId) {
+        matchingResults = _.filter(
+          matchingResults,
+          result =>
+            _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
+            geneXpertTestId
+        )
+      }
+      if (matchingResults.length > 1) {
+        if (geneXpertTestId) {
+          matchingResults = _.filter(
+            matchingResults,
+            result => result.externalId === geneXpertTestId
+          )
+        }
+      }
+      if (matchingResults.length > 1) {
+        if (
+          !_.isEmpty(potentialSampleIds) &&
+          siteId &&
+          !_.isEmpty(potentialAssayIds)
+        ) {
+          matchingResults = _.filter(
+            matchingResults,
+            result =>
+              potentialSampleIds.includes(result.sampleId) &&
+              result.siteId === siteId &&
+              potentialAssayIds.includes(result.assayId)
+          )
+        }
+      }
+      if (matchingResults.length > 1) {
+        if (cartridgeSerial && instrumentSerial) {
+          matchingResults = _.filter(
+            matchingResults,
+            result =>
+              result.consumableSerial === cartridgeSerial &&
+              result.instrumentSerial === instrumentSerial
+          )
+        }
+      }
+      if (matchingResults.length === 1) {
+        ;[matchingResult] = matchingResults
+      }
+    }
+  }
   return matchingResult
 }
 
@@ -554,6 +641,7 @@ async function getOrCreateSite(
   now,
   countryCode,
   deviceName,
+  deviceShortName,
   fromGxAlert
 ) {
   let sites = []
@@ -563,7 +651,7 @@ async function getOrCreateSite(
       if (!countryCode && device) {
         ;[countryCode] = await knex('Device as d')
           .leftJoin('Site as s', 's.id', 'd.siteId')
-          .innerJoin('Geography as g', function() {
+          .innerJoin('Geography as g', function () {
             this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
           })
           .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -575,12 +663,12 @@ async function getOrCreateSite(
   if (!deviceName) {
     deviceName = _.get(payload, 'name')
   }
+  if (!deviceShortName) {
+    deviceShortName = _.get(payload, 'configuration.data.shortName')
+  }
   if (deviceName && countryCode) {
     if (device.siteId && !fromGxAlert) {
-      sites = await knex
-        .from('Site as s')
-        .where('s.id', device.siteId)
-        .select()
+      sites = await knex.from('Site as s').where('s.id', device.siteId).select()
     }
     const payloadSiteId = _.get(payload, 'site.id')
     if (_.isEmpty(sites) && payloadSiteId) {
@@ -608,10 +696,17 @@ async function getOrCreateSite(
           's.partnerId': device.partnerId,
           'c.abbreviation': countryCode,
         })
-        .andWhere(function() {
-          this.where({ 's.name': deviceName })
-            .orWhere({ 's.shortName': deviceName })
-            .orWhere({ 's.externalId': deviceName })
+        .andWhere(function () {
+          if (deviceName) {
+            this.where({ 's.name': deviceName })
+              .orWhere({ 's.shortName': deviceName })
+              .orWhere({ 's.externalId': deviceName })
+          }
+          if (deviceShortName) {
+            this.orWhere({ 's.shortName': deviceShortName }).orWhere({
+              's.externalId': deviceShortName,
+            })
+          }
         })
         .select('s.*')
       if (matchingSites.length === 1) {
@@ -647,7 +742,7 @@ async function getOrCreateSite(
 
         const newSite = {
           name: deviceName,
-          shortName: deviceName,
+          shortName: deviceShortName || deviceName,
           externalId: deviceName,
           partnerId: device.partnerId,
           geographyId: geography.id,
@@ -664,10 +759,7 @@ async function getOrCreateSite(
           newSite.externalId = newSite.externalId.substr(0, 255)
         }
         const [newSiteId] = await knex.insert(newSite).into('Site')
-        sites = await knex
-          .from('Site as s')
-          .where('s.id', newSiteId)
-          .select()
+        sites = await knex.from('Site as s').where('s.id', newSiteId).select()
       }
     }
   } else {
@@ -700,6 +792,7 @@ function getResultCategories(payload) {
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
+          .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
@@ -743,6 +836,10 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
+          negative: 'Negative',
+          positive: 'Positive',
+          'presumptive positive': 'Indeterminate',
+          'presumptive pos': 'Indeterminate',
           'null null': 'Success',
         }
         if (assayId === 'GxMtbRifUltra') {

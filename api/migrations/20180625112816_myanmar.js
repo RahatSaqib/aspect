@@ -13,22 +13,17 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactInventoryConsumptionRate', x => {
-    x
-      .integer('siteId')
+    x.integer('siteId')
       .unsigned()
       .notNullable()
       .references('id')
       .inTable('Site')
-    x
-      .integer('consumableId')
+    x.integer('consumableId')
       .unsigned()
       .notNullable()
       .references('id')
       .inTable('Consumable')
-    x
-      .integer('days')
-      .unsigned()
-      .notNullable()
+    x.integer('days').unsigned().notNullable()
     // for 'rate' use float - because daily rate is calculated as "totals for last 10 days with at least 1 test"/10
     x.float('rate').notNullable()
     x.dateTime('updatedOn').notNullable()
@@ -40,10 +35,7 @@ async function up(knex) {
     issueStatusSeverity.string('name').notNullable()
     issueStatusSeverity.string('i18nKey').notNullable()
     issueStatusSeverity.string('externalId').notNullable()
-    issueStatusSeverity
-      .integer('sortOrder')
-      .unsigned()
-      .notNullable()
+    issueStatusSeverity.integer('sortOrder').unsigned().notNullable()
     issueStatusSeverity.charset('utf8')
   })
 
@@ -76,21 +68,13 @@ async function up(knex) {
       .defaultTo(issueStatusSeverityIdLow)
       .references('id')
       .inTable('IssueStatusSeverity')
-    issueStatus
-      .integer('sortOrder')
-      .unsigned()
-      .notNullable()
-      .defaultTo(0)
+    issueStatus.integer('sortOrder').unsigned().notNullable().defaultTo(0)
   })
 
   await knex.schema.createTable('FileContentType', fileContentType => {
     fileContentType.increments('id')
     fileContentType.string('name').notNullable()
-    fileContentType
-      .string('externalId')
-      .notNullable()
-      .index()
-      .unique()
+    fileContentType.string('externalId').notNullable().index().unique()
     // text | image | audio | video | application
     fileContentType.string('mimeType')
     // plain html | png jpeg | mpeg | webm | json octet-stream

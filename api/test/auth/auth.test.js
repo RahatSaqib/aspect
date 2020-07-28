@@ -38,7 +38,7 @@ describe('auth endpoints', () => {
 
   const mockAuthObj = {
     credentials: {
-      permissions: ['site:admin', 'device:admin', 'result:admin'],
+      permissions: ['site:edit', 'device:edit', 'result:edit'],
     },
   }
 
@@ -226,6 +226,55 @@ describe('auth endpoints', () => {
               assert.deepEqual(unsignedToken, {
                 name: britishUser.name,
                 permissions: permissions.map(p => `${p.module}:${p.activity}`),
+                geography: [],
+                hasToAcceptLicenseId: null,
+              })
+            })
+            .thenCall(done)
+            .execute()
+        })
+
+        it('Should indicate that user has to accept license in token if necessary', done => {
+          const userHasToAcceptLicense = {
+            lockedOut: 0,
+            failedPasswordAttempts: 0,
+            id: 123,
+            name: 'admin',
+            password: validHashedPassword,
+            culture: 'en-GB',
+            timezone: 'GMT Standard Time',
+            partnerId: 2,
+            countryId: 3,
+          }
+          dbSpy.query
+            .for('Get basic user details')
+            .resolvesWith(userHasToAcceptLicense)
+
+          const applicableLicense = {
+            id: 99,
+            acceptedOn: null,
+          }
+          dbSpy.query
+            .for('Get latest applicable license and when user accepted it')
+            .resolvesWith(applicableLicense)
+
+          const requestData = {
+            payload: {
+              name: 'admin',
+              password: validPassword,
+              clientId: 'request client id',
+            },
+          }
+          endpointUtils
+            .callHandlerOn(endpoint)
+            .with(requestData)
+            .handleResponseWith(() => {
+              const unsignedToken = jwt.sign.lastCall.args[0]
+              assert.deepEqual(unsignedToken, {
+                name: userHasToAcceptLicense.name,
+                permissions: permissions.map(p => `${p.module}:${p.activity}`),
+                geography: [],
+                hasToAcceptLicenseId: 99,
               })
             })
             .thenCall(done)
@@ -234,12 +283,12 @@ describe('auth endpoints', () => {
       })
     })
 
-    describe('When a user is not found', () => {
+    describe("When a user is not found and GxAlert's is not available", () => {
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith()
       })
 
-      it('Should respond with 401', done => {
+      it('Should respond with 409', done => {
         const requestData = {
           payload: {
             name: 'nonexistant',
@@ -251,7 +300,7 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(responseData => {
-            assert.equal(responseData.output.statusCode, 401)
+            assert.equal(responseData.output.statusCode, 409)
           })
           .thenCall(done)
           .execute()
@@ -486,6 +535,14 @@ describe('auth endpoints', () => {
         },
       }
       dbSpy.query.for('Get permissions for user and partner').resolvesWith([])
+
+      const applicableLicense = {
+        id: 99,
+        acceptedOn: new Date(),
+      }
+      dbSpy.query
+        .for('Get latest applicable license and when user accepted it')
+        .resolvesWith(applicableLicense)
     })
 
     describe('When the user is changing both their username and password', () => {
@@ -800,6 +857,8 @@ describe('auth endpoints', () => {
               assert.deepEqual(unsignedToken, {
                 name: southAfricanUser.name,
                 permissions: permissions.map(p => `${p.module}:${p.activity}`),
+                geography: [],
+                hasToAcceptLicenseId: null,
               })
             })
             .thenCall(done)

@@ -23,20 +23,21 @@ function createDirectory(path) {
 }
 
 // ---------------------------------
-// get directory for export file - with pattern 'temp/YYYY-MM-DD/HH/UUID'
+// get directory for export file - with pattern 'temp/yyyy-MM-dd/HH/UUID'
 // ---------------------------------
 function getExportDirectory() {
   const dt = new Date()
 
-  // pattern for random directory is /temp/YYYY-MM-DD/HH/uuid, using time-based UUID (v1)
-  const relPath = `/temp/${dt.getUTCFullYear()}-${dt.getUTCMonth() +
-    1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
+  // pattern for random directory is /temp/yyyy-MM-dd/HH/uuid, using time-based UUID (v1)
+  const relPath = `/temp/${dt.getUTCFullYear()}-${
+    dt.getUTCMonth() + 1
+  }-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
 
   // export directory is in 'dist/temp' folder of the web site
   const dirFull = `./../web/dist/${relPath}`
 
   // ---memo--------
-  // time part (YYYY-MM-DD/HH) allows auto-deleting old folders by external process - i.e. every
+  // time part (yyyy-MM-dd/HH) allows auto-deleting old folders by external process - i.e. every
   // 2 hours delete folders from 2-hours back. If lots of files are being generated (millions
   // every hour) - may add MM to path for tracking minutes too
   // -----------
@@ -51,13 +52,31 @@ function getExportDirectory() {
 // ---------------------------------
 const getCellsByValue = (sheet, value) => {
   const cells = []
-  sheet.eachRow(row => {
-    row.eachCell(cell => {
-      if (cell.value === value) {
-        cells.push(cell)
-      }
+  if (sheet) {
+    sheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.value === value) {
+          cells.push(cell)
+        }
+      })
     })
-  })
+  }
+  return cells
+}
+// ---------------------------------
+// getCellsBySubstring - getting all cells having requested value as substring
+// ---------------------------------
+const getCellsBySubstring = (sheet, value) => {
+  const cells = []
+  if (sheet) {
+    sheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.text.includes(value)) {
+          cells.push(cell)
+        }
+      })
+    })
+  }
   return cells
 }
 
@@ -74,9 +93,8 @@ async function readTextFile(filePath, encoding = 'utf8') {
 // ---------------------------------
 // read Excel file and return workbook
 async function readExcelFile(fileName) {
-  return await new excel.Workbook().xlsx //eslint-disable-line
-    .readFile(fileName)
-    .then(workbook => workbook)
+  const ExcelWorkbook = new excel.Workbook()
+  return ExcelWorkbook.xlsx.readFile(fileName)
 }
 
 // write workbook into Excel and Csv file
@@ -144,11 +162,43 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   return { ok, url: `${dir.url}/${outputFileName}`, message }
 }
 
+// ----------------------------------------------------------------------------------------------
+function getContentType(fileExt) {
+  if (fileExt[0] === '.') {
+    fileExt = fileExt.substr(1)
+  }
+  switch (fileExt) {
+    case 'pdf':
+      return 'application/pdf'
+    case 'ppt':
+      return 'application/vnd.ms-powerpoint'
+    case 'pptx':
+      return 'application/vnd.openxmlformats-officedocument.preplyentationml.preplyentation'
+    case 'xls':
+      return 'application/vnd.ms-excel'
+    case 'xlsx':
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    case 'doc':
+      return 'application/msword'
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    case 'csv':
+      return 'application/octet-stream'
+    case 'xml':
+      return 'application/xml'
+    default:
+      return ''
+  }
+}
+
 module.exports = {
-  readTextFile,
   createDirectory,
-  getExportDirectory,
-  getCellsByValue,
-  generateExcelFile,
   generateCsvFile,
+  generateExcelFile,
+  getCellsBySubstring,
+  getCellsByValue,
+  getContentType,
+  getExportDirectory,
+  readExcelFile,
+  readTextFile,
 }

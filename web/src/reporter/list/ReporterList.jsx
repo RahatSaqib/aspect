@@ -2,10 +2,11 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -22,7 +23,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchReporters } from '../ReporterRedux'
+import { fetchReporters, exportReporters } from '../ReporterRedux'
+import ExportListButton from '../../globals/components/ExportListButton'
 import {
   ReporterDataTable,
   ReporterDataTableHead,
@@ -36,21 +38,17 @@ const messages = defineMessages({
     id: 'pages.ReporterList.reportersTitle',
     defaultMessage: 'Reporters',
   },
-  reporterName: {
-    id: 'pages.ReporterList.reporterName',
-    defaultMessage: 'Reporter Name',
+  reporterUser: {
+    id: 'pages.ReporterList.user',
+    defaultMessage: 'User',
   },
-  reporterShortName: {
-    id: 'pages.ReporterList.reporterShortName',
-    defaultMessage: 'Reporter',
+  reporterDevice: {
+    id: 'pages.ReporterList.reporterDevice',
+    defaultMessage: 'Device',
   },
-  reporterSite: {
-    id: 'pages.ReporterList.siteName',
-    defaultMessage: 'Site',
-  },
-  status: {
-    id: 'pages.ReporterList.status',
-    defaultMessage: 'Status',
+  revoked: {
+    id: 'pages.ReporterList.revoked',
+    defaultMessage: 'Revoked',
   },
   connectedSince: {
     id: 'pages.ReporterList.connectedSince',
@@ -60,29 +58,29 @@ const messages = defineMessages({
     id: 'pages.ReporterList.lastSeen',
     defaultMessage: 'Last Seen',
   },
-  numberOfTestsLeft: {
+  numberOfTests: {
     id: 'pages.ReporterList.numberOfTestsLeft',
-    defaultMessage: 'Number Of',
+    defaultMessage: 'Number Of Tests Delivered',
   },
-  numberOfTestsRight: {
-    id: 'pages.ReporterList.numberOfTestsRight',
-    defaultMessage: 'Tests Delivered',
+  delivered: {
+    id: 'pages.ReporterList.delivered',
+    defaultMessage: 'Delivered',
   },
-  deliveredLastMonth: {
-    id: 'pages.ReporterList.deliveredLastMonth',
-    defaultMessage: 'Last Month',
+  requiresFollowUp: {
+    id: 'pages.ReporterList.requiresFollowUp',
+    defaultMessage: 'Requires Follow-up',
   },
-  deliveredThisMonth: {
-    id: 'pages.ReporterList.deliveredThisMonth',
-    defaultMessage: 'This Month',
+  comfirmedFollowup: {
+    id: 'pages.ReporterList.followup',
+    defaultMessage: '% Confirmed Follow-up',
   },
   acknowledgedRatio: {
     id: 'pages.ReporterList.acknowledgedRatio',
     defaultMessage: '% Acknowledged',
   },
-  flagged: {
-    id: 'pages.ReporterList.flagged',
-    defaultMessage: 'Flagged',
+  totalOnTreatment: {
+    id: 'pages.ReporterList.totalOnTreatment',
+    defaultMessage: 'On Treatment',
   },
   paginatorStatus: {
     id: 'pages.ReporterList.paginatorStatus',
@@ -98,24 +96,31 @@ const FILTERS_CONFIG = [
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   {
-    siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    contactNameOrEmail: true,
+    requiredPermissions: [],
   },
+  { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  { deviceStatus: true, requiredPermissions: [] },
+  { revoked: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: ['assay:view'],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
-    'siteName',
-    'shortName',
-    'status',
+    'user',
+    'deviceName',
     'createdOn',
     'lastSeen',
-    'deliveredLastMonth',
-    'deliveredThisMonth',
+    'delivered',
+    'confirmFollowUpRatio',
+    'status',
     'acknowledgedRatio',
-    'totalFlagged',
+    'requiresFollowUp',
+    'totalOnTreatment',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -128,9 +133,10 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
-      sortCol: 'name',
+      sortCol: 'user',
     })
   ),
   connect(
@@ -141,6 +147,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchReporters,
+      exportReporters,
     })
   ),
   withHandlers({
@@ -154,20 +161,28 @@ const enhance = compose(
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        fetchReporters(
-          filtersParams,
-          { hasResults: 0, hasConnectivity: 0 },
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
+        fetchReporters(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
 
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { reporterId } },
-    }) => history.push(`/browse/reporter/${reporterId}`),
+    onExportClick: ({
+      location,
+      exportReporters,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportReporters(
+          filtersParams,
+          formatType.id,
+          pageAt,
+          pageSize,
+          formatType.id,
+          'reporters'
+        )
+      }
+    },
   }),
   lifecycle({
     componentWillMount() {
@@ -217,8 +232,8 @@ export const ReporterList = ({
   sortCol,
   sortDir,
   pageAt,
+  onExportClick,
   pageSize,
-  onRowClick,
   reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
@@ -228,10 +243,17 @@ export const ReporterList = ({
       history={history}
       location={location}
       intl={intl}
+      onClickExport={onExportClick}
       config={reducedFilters}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
+      <ExportListButton
+        onExcelClick={onExportClick}
+        onCsvClick={onExportClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="Results"
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
@@ -247,18 +269,13 @@ export const ReporterList = ({
             sortColumnDir={sortDir}
             columns={[
               {
-                key: 'siteName',
-                label: intl.formatMessage(messages.reporterSite),
+                key: 'user',
+                label: intl.formatMessage(messages.reporterUser),
                 sortable: true,
               },
               {
-                key: 'shortName',
-                label: intl.formatMessage(messages.reporterShortName),
-                sortable: true,
-              },
-              {
-                key: 'status',
-                label: intl.formatMessage(messages.status),
+                key: 'deviceName',
+                label: intl.formatMessage(messages.reporterDevice),
                 sortable: true,
               },
               {
@@ -272,28 +289,19 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'deliveredLastMonth',
-                className: cssClasses('ReporterDataTableHead__Tests--left'),
+                key: 'delivered',
+                label: intl.formatMessage(messages.delivered),
                 sortable: true,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsLeft)}
-                    <br />
-                    {intl.formatMessage(messages.deliveredLastMonth)}
-                  </span>
-                ),
               },
               {
-                key: 'deliveredThisMonth',
-                className: cssClasses('ReporterDataTableHead__Tests--right'),
+                key: 'requiresFollowUp',
+                label: intl.formatMessage(messages.requiresFollowUp),
                 sortable: true,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsRight)}
-                    <br />
-                    {intl.formatMessage(messages.deliveredThisMonth)}
-                  </span>
-                ),
+              },
+              {
+                key: 'confirmFollowUpRatio',
+                label: intl.formatMessage(messages.comfirmedFollowup),
+                sortable: true,
               },
               {
                 key: 'acknowledgedRatio',
@@ -301,23 +309,28 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'totalFlagged',
-                label: intl.formatMessage(messages.flagged),
+                key: 'totalOnTreatment',
+                label: intl.formatMessage(messages.totalOnTreatment),
+                sortable: true,
+              },
+              {
+                key: 'revoked',
+                label: intl.formatMessage(messages.revoked),
                 sortable: true,
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(reporter => (
-              <ReporterDataTableRow
-                key={reporter.get('id')}
-                intl={intl}
-                reporter={reporter}
-                onClick={onRowClick}
-                data-reporter-id={reporter.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(reporter => (
+                <ReporterDataTableRow
+                  key={reporter.get('id')}
+                  intl={intl}
+                  reporter={reporter}
+                />
+              ))}
+          </TableBody>
         </ReporterDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

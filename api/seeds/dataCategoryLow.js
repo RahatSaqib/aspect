@@ -62,9 +62,7 @@ async function removeOld(knex) {
     })
     .del()
 
-  await knex('AlertTemplate')
-    .where('id', alertTemplateId)
-    .del()
+  await knex('AlertTemplate').where('id', alertTemplateId).del()
 
   await knex('SmsTemplate')
     .where('id', '>', 0)
@@ -105,16 +103,11 @@ async function seedDataCategory(knex, partnerName) {
     let item = knex(tableName).where(whereClause)
     item = _.isNil(index)
       ? await item.first()
-      : await item
-          .limit(1)
-          .offset(index)
-          .first()
+      : await item.limit(1).offset(index).first()
 
     if (!item) {
       const [id] = await knex(tableName).insert(insertClause || whereClause)
-      item = await knex(tableName)
-        .where({ id })
-        .first()
+      item = await knex(tableName).where({ id }).first()
     }
     return item
   }

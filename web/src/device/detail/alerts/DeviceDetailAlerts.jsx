@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import TaskList from '../../../task/list/TaskList'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -15,23 +15,34 @@ export const DeviceDetailAlerts = ({
   location,
   match,
   device,
+  disabled,
   // --- injected by recompose ---
-}) => (
-  <div>
-    <Helmet title={device.get('name')} />
-    <DeviceDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      title={device.get('name')}
-    />
-    <section className={cssClasses('Section', 'Section--first')}>
-      <div className={cssClasses('Section__Content')}>
-        <Summary title="Alerts" description="TODO" />
-      </div>
-    </section>
-  </div>
-)
+}) => {
+  const deviceName = device.get('name')
+  const { deviceId } = match.params
+  return (
+    <div>
+      <Helmet title={deviceName} />
+      <DeviceDetailBackBar
+        intl={intl}
+        history={history}
+        location={location}
+        match={match}
+        disabled={disabled}
+        title={deviceName}
+      />
+      <section className={cssClasses('Section', 'Section--first')}>
+        <TaskList
+          intl={intl}
+          history={history}
+          location={location}
+          filterOptions={{
+            deviceId,
+          }}
+        />
+      </section>
+    </div>
+  )
+}
 
 export default enhance(DeviceDetailAlerts)

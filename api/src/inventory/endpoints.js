@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -15,62 +15,63 @@ const {
   transferInventory,
   receiveInventory,
   updateInventoryStockLevel,
+  getDaysByLocation,
 } = require('./service')
 
+const { exportSupplies } = require('./serviceReports')
+
 const inventoryFilters = {
-  consumableId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
+  consumableId: Joi.number().integer().positive().allow('', null),
   siteName: Joi.string().allow('', null),
 }
 
 const addRemoveInventoryCommonParams = {
-  inventoryItemId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
+  inventoryItemId: Joi.number().integer().positive().allow('', null),
 }
 
 const transferReceiveInventoryCommonParams = {
-  inventoryItemId: Joi.number()
-    .integer()
-    .positive()
-    .required(),
+  inventoryItemId: Joi.number().integer().positive().required(),
 }
 
 const adjustInventoryCommonPayloadFields = {
-  consumableId: Joi.number()
-    .positive()
-    .required(),
-  lotNumber: Joi.string()
-    .max(255)
-    .allow('', null),
-  expiresOn: Joi.date()
-    .iso()
-    .allow(null),
-  quantity: Joi.number()
-    .positive()
-    .required(),
-  notes: Joi.string()
-    .max(2000)
-    .allow('', null),
+  consumableId: Joi.number().positive().required(),
+  lotNumber: Joi.string().max(255).allow('', null),
+  expiresOn: Joi.date().iso().allow(null),
+  quantity: Joi.number().positive().required(),
+  notes: Joi.string().max(2000).allow('', null),
 }
 
-const removeInventoryCommonPayloadFields = Object.assign(
-  {},
-  adjustInventoryCommonPayloadFields,
-  {
-    fromSiteId: Joi.number()
-      .integer()
-      .positive()
-      .required(),
-    reasonId: Joi.number()
-      .integer()
-      .positive()
-      .required(),
+const removeInventoryCommonPayloadFields = {
+  ...adjustInventoryCommonPayloadFields,
+  fromSiteId: Joi.number().integer().positive().required(),
+  reasonId: Joi.number().integer().positive().required(),
+}
+
+function listSuppliesBaseConfig() {
+  return {
+    auth: { scope: ['inventory:view', 'operationalData:view'] },
+    validate: {
+      query: {
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...inventoryFilters,
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
+          'consumableName',
+          'manufacturer',
+          'siteName',
+          'countryName',
+          'stateName',
+          'lgaName',
+          'quantityOnHand',
+          'expiresOn'
+        ),
+      },
+    },
   }
-)
+}
 
 const routes = [
   {
@@ -82,12 +83,11 @@ const routes = [
       notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(
-          {},
-          inventoryFilters,
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams(
+        query: {
+          ...inventoryFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
             'consumableName',
             'manufacturer',
             'siteName',
@@ -96,8 +96,8 @@ const routes = [
             'lgaName',
             'quantityOnHand',
             'expiresOn'
-          )
-        ),
+          ),
+        },
       },
     },
   },
@@ -108,25 +108,17 @@ const routes = [
     config: {
       description: 'List of Consumables on Hand Grouped by Site',
       notes: 'Pageable and sortable list of inventory items grouped by site',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
-      validate: {
-        query: Object.assign(
-          {},
-          inventoryFilters,
-          validateAllGeographyFilterParams(),
-          validateDateRangeParams(),
-          validateSortPageParams(
-            'consumableName',
-            'manufacturer',
-            'siteName',
-            'countryName',
-            'stateName',
-            'lgaName',
-            'quantityOnHand',
-            'expiresOn'
-          )
-        ),
-      },
+      ...listSuppliesBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/export',
+    handler: exportSupplies,
+    config: {
+      description: 'Export Supplies List into Excel or CSV',
+      notes: 'Filtered and sorted list of supplies',
+      ...listSuppliesBaseConfig(),
     },
   },
   {
@@ -138,14 +130,65 @@ const routes = [
       notes: 'Adds an inventory item at a site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/days-by-location',
+    handler: asyncHandler(getDaysByLocation),
+    config: {
+      description: 'Get inventories availability by location',
+      notes:
+        'Returns list of inventory counts grouped by site/geography/state/lga',
+      ...listSuppliesBaseConfig(),
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          total: Joi.number()
+            .required()
+            .description('The total number of items aggregated by consumable'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                consumableId: Joi.number().description('The consumable id'),
+                consumableName: Joi.string().description('The consumable name'),
+
+                outOfStock: Joi.number().description(
+                  'Number of locations which are out of stock'
+                ),
+                upTo14: Joi.number().description(
+                  'Number of locations with inventories up to 14 days in stock'
+                ),
+                upTo30: Joi.number().description(
+                  'Number of locations with inventories up to 30 days in stock'
+                ),
+                upTo90: Joi.number().description(
+                  'Number of locations with inventories up to 90 days in stock'
+                ),
+                upTo180: Joi.number().description(
+                  'Number of locations with inventories up to 180 days in stock'
+                ),
+                moreThan180: Joi.number().description(
+                  'Number of locations with inventories for more than 180 days in stock'
+                ),
+                notRecorded: Joi.number().description(
+                  'Number of locations with no recorded inventories in stock'
+                ),
+                noConsumption: Joi.number().description(
+                  'Number of locations which have not been consumed inventories so far'
+                ),
+              })
+            ),
         }),
       },
     },
@@ -160,15 +203,11 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: addRemoveInventoryCommonParams,
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
-        }),
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        },
       },
     },
   },
@@ -183,21 +222,15 @@ const routes = [
       validate: {
         params: addRemoveInventoryCommonParams,
         payload: Joi.alternatives().try(
-          Joi.object().keys(
-            Object.assign({}, removeInventoryCommonPayloadFields, {
-              dateAdjusted: Joi.date()
-                .iso()
-                .required(),
-            })
-          ),
-          Object.assign({}, removeInventoryCommonPayloadFields, {
-            dateAdjustedFrom: Joi.date()
-              .iso()
-              .required(),
-            dateAdjustedTo: Joi.date()
-              .iso()
-              .required(),
-          })
+          Joi.object().keys({
+            ...removeInventoryCommonPayloadFields,
+            dateAdjusted: Joi.date().iso().required(),
+          }),
+          {
+            ...removeInventoryCommonPayloadFields,
+            dateAdjustedFrom: Joi.date().iso().required(),
+            dateAdjustedTo: Joi.date().iso().required(),
+          }
         ),
       },
     },
@@ -212,19 +245,12 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: transferReceiveInventoryCommonParams,
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          fromSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
-        }),
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
+          fromSiteId: Joi.number().integer().positive().required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        },
       },
     },
   },
@@ -238,19 +264,12 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: transferReceiveInventoryCommonParams,
-        payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          fromSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          toSiteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          dateAdjusted: Joi.date()
-            .iso()
-            .required(),
-        }),
+        payload: {
+          ...adjustInventoryCommonPayloadFields,
+          fromSiteId: Joi.number().integer().positive().required(),
+          toSiteId: Joi.number().integer().positive().required(),
+          dateAdjusted: Joi.date().iso().required(),
+        },
       },
     },
   },
@@ -264,19 +283,11 @@ const routes = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         params: {
-          siteId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          siteId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
         payload: {
-          quantity: Joi.number()
-            .min(0)
-            .required(),
+          quantity: Joi.number().min(0).required(),
         },
       },
     },

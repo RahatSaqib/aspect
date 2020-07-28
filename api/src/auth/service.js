@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
 const { promisify } = require('util')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
@@ -13,51 +13,62 @@ const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
-const { query } = require('../db')
+const { query, knex } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
+const { getRemoteAddress } = require('../shared/request')
+
+const clientTypes = {
+  app: 'reporter_app',
+  web: 'web',
+}
 
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
 
+const userProps = [
+  'u.lockedOut',
+  'u.failedPasswordAttempts',
+  'u.password',
+  'u.legacyPassword',
+  'u.id',
+  'u.name',
+  'p.name as userName',
+  'p.culture',
+  'p.timezone',
+  'p.id as personId',
+  'p.lastPartnerId as partnerId',
+  'p.lastCountryId as countryId',
+  'p.userId',
+  'p.id as personId',
+  'c.abbreviation as countryAbbreviation',
+]
+
 function getUser(username) {
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.name': username })
-    .first(
-      'u.lockedOut',
-      'u.failedPasswordAttempts',
-      'u.password',
-      'u.legacyPassword',
-      'u.id',
-      'u.name',
-      'p.culture',
-      'p.timezone',
-      'p.id as personId',
-      'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
-    )
+    .first(userProps)
 }
 
 function getUserByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'p.id': personId })
-    .first(
-      'u.lockedOut',
-      'u.failedPasswordAttempts',
-      'u.password',
-      'u.legacyPassword',
-      'u.id',
-      'u.name',
-      'p.culture',
-      'p.timezone',
-      'p.id as personId',
-      'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
-    )
+    .first(userProps)
+}
+
+function getUserByUserId(userId) {
+  return query('Get user details for user')
+    .from('User as u')
+    .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .where({ 'u.id': userId })
+    .first(userProps)
 }
 
 function getUserId(username) {
@@ -67,19 +78,43 @@ function getUserId(username) {
     .first('u.id')
 }
 
+function getTokenExpiry(clientType, currentTime) {
+  const expiresTime =
+    clientType && clientType.includes(clientTypes.app)
+      ? 30 * 86400000
+      : 7 * 86400000
+  return new Date(currentTime.getTime() + expiresTime)
+}
+
 async function authenticate(request) {
   const { payload } = request
-
   let user = await getUser(payload.name)
-
   if (!user) {
-    // no user with such username in Aspect yet - check it in GxAlert
-    user = await validateUserAtGxAlert(payload.name, payload.password)
-    if (!user) {
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+    try {
+      // no user with such username in Aspect yet - check it in GxAlert
+      user = await validateUserAtGxAlert(payload.name, payload.password)
+      if (!user) {
+        return Boom.unauthorized(
+          'Authentication failed. Wrong username or password.'
+        )
+      }
+    } catch (err) {
+      const data = {
+        userName: payload.name,
+        message: err.message,
+      }
+      if (err.isConnectionError !== undefined) {
+        const boomMessage = err.isConnectionError
+          ? "Couldn't connect to GxAlert"
+          : 'There was a conflict with your credentials'
+        return Boom.conflict(boomMessage, data)
+      }
+
+      return Boom.internal(
+        'Authentication failed because an internal server error',
+        data
+      )
     }
-  } else if (user.lockedOut === 1) {
-    return Boom.unauthorized('Your account is locked.')
   }
 
   if (user.lockedOut === 1) {
@@ -98,6 +133,7 @@ async function authenticate(request) {
     // this is for "regular" accounts that were either created in aspect
     // or migrated from GxAlert and updated their password
     const pwResult = await bcryptCompare(payload.password, user.password)
+
     if (!pwResult) {
       const lock =
         user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
@@ -118,15 +154,25 @@ async function authenticate(request) {
 
   const now = new Date()
   const refreshToken = crypto.randomBytes(48).toString('base64')
-  const clientId = payload.clientId || uuid.v4()
+  const { clientType = clientTypes.web, clientName } = payload
+  let { clientId } = payload
+  clientId = clientId || uuid.v4()
+  // handle 'deviceTokenId' only for reporter app
+  let { deviceTokenId = null } = payload
+  if (clientType !== clientTypes.app) {
+    deviceTokenId = null
+  }
 
-  await setRefreshToken(
-    user.id,
-    payload.clientName,
+  await setRefreshToken({
     clientId,
+    clientName,
+    clientType,
+    deviceTokenId,
+    now,
     refreshToken,
-    now
-  )
+    userId: user.id,
+    countryAbbreviation: user.countryAbbreviation,
+  })
 
   await query('Update failed password attempts to 0')
     .from('User')
@@ -137,56 +183,81 @@ async function authenticate(request) {
       lastActive: now,
     })
 
-  const accessToken = await getAccessToken(user)
+  const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
+
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    clientType,
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
+    countryId: user.countryId,
+    countryAbbreviation: user.countryAbbreviation,
+    deviceTokenId,
   }
 }
 
-function setRefreshToken(userId, clientName, clientId, refreshToken, now) {
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+function setRefreshToken({
+  clientId,
+  clientName,
+  clientType = clientTypes.web,
+  deviceTokenId = null,
+  now,
+  refreshToken,
+  userId,
+}) {
+  const expires = getTokenExpiry(clientType, now)
+  deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
+  // Create new refresh token for the user -
   // upsert refresh token
-  return query('Create new refresh token for the user').raw(
-    'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
-    [
-      {
-        userId,
-        clientId,
-        clientName,
-        token: refreshToken,
-        expires,
-        createdOn: now,
-      },
-      {
-        token: refreshToken,
-        expires,
-      },
-    ]
-  )
+  return knex.raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
+    {
+      userId,
+      clientId,
+      clientName,
+      token: refreshToken,
+      expires,
+      createdOn: now,
+      clientType,
+      deviceTokenId,
+    },
+    {
+      token: refreshToken,
+      expires,
+      deviceTokenId,
+    },
+  ])
 }
 
 async function refreshToken(request) {
   // find the token in the db
-  const { clientId, token } = request.payload
+  const { clientId, token, clientType = clientTypes.web } = request.payload
+
+  // handle 'deviceTokenId' only for reporter app
+  let { deviceTokenId = null } = request.payload
+  if (clientType !== clientTypes.app) {
+    deviceTokenId = null
+  }
+
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
     .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({ clientId, token, revoked: 0 })
+    .where({ clientId, token, clientType, revoked: 0 })
     .first(
       'rt.userId as id',
       'rt.expires',
+      'rt.clientName',
+      'rt.clientType',
       'u.name',
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 
   if (!data) {
@@ -201,54 +272,51 @@ async function refreshToken(request) {
   }
 
   // looks like we have a valid refresh token. set new one in db
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  const expires = getTokenExpiry(data.clientType, now)
   const refreshToken = crypto.randomBytes(48).toString('base64')
 
   await query('Update refresh token expiry date')
     .from('RefreshToken')
     .where({ token })
-    .update({ token: refreshToken, expires })
+    .update({
+      token: refreshToken,
+      expires,
+      updatedOn: now,
+      deviceTokenId,
+    })
 
   const accessToken = await getAccessToken(data)
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    clientType,
+    countryId: data.countryId,
+    deviceTokenId,
   }
 }
 
-async function getFeatures(id, name, partnerId) {
-  const modules = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
-    .orderBy(['f.module'])
-    .distinct('f.module')
-  return modules
+async function getJobFunctions(id, name, partnerId) {
+  return query('Get job functions for user and partner')
+    .from('Person as p')
+    .innerJoin('Job as j', 'p.id', 'j.personId') // 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .where({ 'p.userId': id, 'jf.partnerId': partnerId })
+    .orderBy(['jf.name'])
+    .distinct('jf.name')
+    .pluck('jf.name')
 }
 
-async function hasFeature(userId, partnerId, module) {
-  const userFeature = await query('Get features for user and partner')
-    .from('Feature as f')
-    .innerJoin('JobFunctionFeature as jff', 'f.id', 'jff.featureId')
-    .innerJoin('JobFunction as jf', 'jff.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'f.module': module,
-      'ps.userId': userId,
-      'jf.partnerId': partnerId,
-    })
-    .first('f.module')
-  return !_.isEmpty(userFeature)
+async function hasPermissions(auth, modules) {
+  return _.intersection(auth.credentials.permissions, modules).length > 0
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, partnerId }) {
-  return query('Get permissions for user and partner')
+async function getAccessToken(
+  { id, name, partnerId, personId },
+  clientType = 'web'
+) {
+  const permissions = await query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
     .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
@@ -257,21 +325,64 @@ function getAccessToken({ id, name, partnerId }) {
     .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
-    .then(async data => {
-      // create a new token
-      const token = jwt.sign(
-        {
-          name,
-          permissions: data.map(p => `${p.module}:${p.activity}`),
-        },
-        config.secret,
-        {
-          expiresIn: '1 hour',
-          issuer: 'https://www.aspect.id',
-        }
-      )
+    .then(data => data.map(p => `${p.module}:${p.activity}`))
 
-      return token
+  const applicableLicense = await getApplicableLicense(personId, partnerId)
+  const geography = await getGeographyAccess(personId, partnerId)
+
+  // create a new token
+  const token = jwt.sign(
+    {
+      name,
+      permissions,
+      geography,
+      hasToAcceptLicenseId:
+        clientType.includes(clientTypes.app) ||
+        !applicableLicense ||
+        applicableLicense.acceptedOn
+          ? null
+          : applicableLicense.id,
+    },
+    config.secret,
+    {
+      expiresIn: '1 hour',
+      issuer: 'https://www.aspect.id',
+    }
+  )
+
+  return token
+}
+
+function getGeographyAccess(personId, partnerId) {
+  return query('Get list of geographies which user can access')
+    .from('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+    .leftJoin('Geography as gs', 's.geographyId', 'gs.id')
+    .where('j.personId', personId)
+    .where('jf.partnerId', partnerId)
+    .distinct(
+      // country-state-lga when jc.siteId = null and jc.geographyId != null
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      // country-state-lga when jc.siteId != null and jc.geographyId = null
+      'jc.siteId',
+      'gs.countryId as siteCountryId',
+      'gs.stateId as siteStateId',
+      'gs.lgaId as siteLgaId'
+    )
+    .then(function (items) {
+      return items
+        ? items.map(item => ({
+            countryId: item.countryId || item.siteCountryId,
+            stateId: item.stateId || item.siteStateId,
+            lgaId: item.lgaId || item.siteLgaId,
+            siteId: item.siteId,
+          }))
+        : []
     })
 }
 
@@ -331,6 +442,12 @@ async function getChangedFields(payload, existingRecord) {
       }
     }
   }
+  if (
+    _.isBoolean(payload.userLockedOut) &&
+    payload.userLockedOut !== existingRecord.lockedOut
+  ) {
+    changedFields.lockedOut = payload.userLockedOut
+  }
   return changedFields
 }
 
@@ -385,15 +502,19 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   }
 
   const refreshToken = crypto.randomBytes(48).toString('base64')
-  const clientId = payload.clientId || uuid.v4()
+  const { clientType = clientTypes.web, clientName, deviceTokenId } = payload
+  let { clientId } = payload
+  clientId = clientId || uuid.v4()
 
-  await setRefreshToken(
-    loggedInUser.id,
-    payload.clientName,
+  await setRefreshToken({
     clientId,
+    clientName,
+    clientType,
+    deviceTokenId,
+    now,
     refreshToken,
-    now
-  )
+    userId: loggedInUser.id,
+  })
 
   const accessToken = await getAccessToken(loggedInUser)
 
@@ -406,6 +527,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    deviceTokenId,
   }
 }
 
@@ -519,9 +641,13 @@ async function updateUsernameAndPasswordForPerson(request) {
 
   const responseData = {
     personId: params.personId,
+    userLockedOut: payload.userLockedOut,
   }
+  let linkedUserId
   if (userLinkedToPerson) {
     const changedFields = await getChangedFields(payload, userLinkedToPerson)
+    linkedUserId = userLinkedToPerson.id
+
     if (!_.isEmpty(changedFields)) {
       await updateUser(userLinkedToPerson.id, changedFields)
     }
@@ -530,8 +656,9 @@ async function updateUsernameAndPasswordForPerson(request) {
       _.omit(changedFields, ['lastPasswordChange'])
     )
     responseData.username = userLinkedToPerson.name
+    responseData.userId = userLinkedToPerson.userId
   } else {
-    await query('Insert new user details')
+    const [insertedUserId] = await query('Insert new user details')
       .from('User')
       .insert({
         name: payload.newUsername,
@@ -541,30 +668,119 @@ async function updateUsernameAndPasswordForPerson(request) {
         ),
         approved: 1,
         createdOn: new Date(),
-        lockedOut: 0,
+        lockedOut: payload.userLockedOut || 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
       })
-
-    responseData.changedFields = ['name', 'password']
+    linkedUserId = insertedUserId
+    responseData.changedFields = ['name', 'password', 'lockedOut']
     responseData.username = payload.newUsername
+    responseData.userId = insertedUserId
   }
-
+  await query('update person for details')
+    .from('Person')
+    .where('id', params.personId)
+    .update({
+      userId: linkedUserId,
+      canLogIn: true,
+    })
   return {
     ok: true,
     data: responseData,
   }
 }
 
-async function getUserFeatures(request) {
+async function getApplicableLicense(personId, partnerId) {
+  const latestLicense = await query(
+    'Get latest applicable license and when user accepted it'
+  )
+    .from('License as l')
+    .leftOuterJoin('LicensePerson as lp', function () {
+      this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
+    })
+    .where('l.partnerId', partnerId)
+    .orWhere('l.partnerId', null)
+    .orderBy('l.partnerId', 'desc')
+    .orderBy('l.createdOn', 'desc')
+    .first('l.id', 'lp.acceptedOn')
+
+  return latestLicense
+}
+
+async function getLicense(request) {
+  const {
+    query: { licenseId },
+  } = request
+
+  const license = await query('Get license')
+    .from('License')
+    .where('id', licenseId)
+    .first('id', 'createdOn', 'content')
+
+  return { ok: true, data: license }
+}
+
+async function acceptLicense(request) {
+  const {
+    payload: { licenseId },
+  } = request
+
+  const loggedInUser = await getUser(request.auth.credentials.name)
+
+  const licenseUpdates = {
+    acceptedOn: new Date(),
+    ip: getRemoteAddress(request),
+  }
+
+  await query('Insert or update accepted license for user').raw(
+    'INSERT INTO LicensePerson set ? ON DUPLICATE KEY UPDATE ?',
+    [
+      {
+        licenseId,
+        personId: loggedInUser.personId,
+        ...licenseUpdates,
+      },
+      licenseUpdates,
+    ]
+  )
+
+  // need to return a new JWT, now without hasToAcceptLicenseId
+  return refreshToken(request)
+}
+
+// / Revoke/Grantt access to specific user
+async function revokeUsersToken(userId, revoke) {
+  await query(
+    'change revoked state for the specific user in refresh token tables'
+  )
+    .from('RefreshToken')
+    .where({ userId })
+    .update({
+      revoked: revoke,
+    })
+}
+
+// Lockedout and grant access to login to specific user.
+async function lockedOutUser(userId, lockedOut) {
+  await query('change Lockout state for the specific user ')
+    .from('User')
+    .where({ id: userId })
+    .update({
+      lockedOut,
+    })
+}
+
+async function getUserJobFunctions(request) {
   const { auth } = request
   const { id, name, partnerId } = await getUser(auth.credentials.name)
-  const featureModules = await getFeatures(id, name, partnerId)
-  return { ok: true, data: featureModules }
+  const jobFunctions = await getJobFunctions(id, name, partnerId)
+  return { ok: true, data: jobFunctions }
 }
 
 module.exports = {
   getUser,
+  getUserByUserId,
+  getUserByPersonId,
   authenticate,
   checkAuthentication,
   refreshToken,
@@ -572,6 +788,11 @@ module.exports = {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
-  getUserFeatures,
-  hasFeature,
+  getLicense,
+  acceptLicense,
+  revokeUsersToken,
+  lockedOutUser,
+  hasPermissions,
+  clientTypes,
+  getUserJobFunctions,
 }

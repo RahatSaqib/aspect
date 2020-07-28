@@ -1,15 +1,12 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
 import NotificationTableRow from './NotificationTableRow'
 
 describe('NotificationTableRow module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     notification: Immutable.fromJS({
       alertType: 'mine',
       alertName: 'Failed search devices',
@@ -21,11 +18,8 @@ describe('NotificationTableRow module', () => {
   }
 
   describe('NotificationTableRow component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
-
-    it('should render correctly', () => {
-      const element = renderer.render(<NotificationTableRow {...props} />)
-      expect(element).toMatchSnapshot()
+    it('should render without crash', () => {
+      shallow(<NotificationTableRow {...props} />)
     })
   })
 })

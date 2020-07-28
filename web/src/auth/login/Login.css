@@ -16,6 +16,7 @@
 
 .Form__ActionRow {
   padding: 20px 0 0 0;
+  overflow: hidden;
 }
 
 .Form__ActionRow .Right_Align {
@@ -28,8 +29,9 @@
   padding: 10px 0 0 0;
 }
 
-.Form__Input {
-  color: #828282;
+.Form__Input--error {
+  margin-top: 5px;
+  margin-bottom: -10px;
 }
 
 .Logo__Container {
@@ -43,4 +45,9 @@
   height: 85px;
   width: 300px;
   padding: 0 0 0 0;
+  overflow: hidden;
+}
+
+.Progress {
+  width: 100%;
 }

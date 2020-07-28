@@ -1,11 +1,18 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import {
+  compose,
+  withProps,
+  withState,
+  withHandlers,
+  lifecycle,
+} from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
-
+import { Helmet } from 'react-helmet'
+import { injectIntl } from 'react-intl'
+import TableBody from '@material-ui/core/TableBody'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -15,8 +22,10 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
+import ExportListButton from '../../globals/components/ExportListButton'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -34,18 +43,22 @@ const cssClasses = classnames.bind(require('./DeviceList.css'))
 const FILTERS_CONFIG = [
   {
     assayAndResultCategory: true,
-    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+    requiredPermissions: ['assay:view'],
   },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   {
     siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
   {
     deviceName: true,
+    requiredPermissions: [],
+  },
+  {
+    deviceType: true,
     requiredPermissions: [],
   },
   {
@@ -57,16 +70,16 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
-    'state',
     'status',
     'availabilityRate',
     'errorRate',
     'createdOn',
     'lastSeen',
-    'lastMonth',
-    'thisMonth',
+    'resultCountLastMonth',
+    'resultCountThisMonth',
   ],
 })
+
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   _.flowRight(
@@ -77,22 +90,34 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
-    })
+    }),
+    ({ location }) => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+      return {
+        filters: _.fromPairs([...filtersParams.entries()]),
+      }
+    }
   ),
   connect(
     state => ({
       items: state.device.items,
       table: state.device.table,
       userPermissions: state.user.jwt.permissions,
+      displayPreferences: state.user.displayPreferences,
     }),
     bindActionCreators.bind(null, {
       fetchDevices,
       exportDevices,
     })
   ),
+  withState('anchorEl', 'setAnchorEl', false),
   withHandlers({
     onInitialLoad: ({
       location,
@@ -114,14 +139,15 @@ const enhance = compose(
         )
       }
     },
-    onExportClick: ({
+    onExcelClick: ({
       location,
       exportDevices,
       sortCol,
       sortDir,
+      table,
       pageAt,
-      pageSize,
     }) => formatType => {
+      const format = formatType.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportDevices(
@@ -131,17 +157,26 @@ const enhance = compose(
           sortCol,
           sortDir,
           pageAt,
-          pageSize
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'devices'
         )
       }
     },
+
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { deviceId } },
+      currentTarget: {
+        dataset: { deviceId },
+      },
     }) => history.push(`/browse/device/${deviceId}`),
     onAlertClick: ({ history }) => event => {
       event.stopPropagation()
-      const { currentTarget: { dataset: { pathname } } } = event
-      history.push(pathname)
+      const {
+        currentTarget: {
+          dataset: { deviceId },
+        },
+      } = event
+      history.push(`/browse/device/${deviceId}/alerts`)
     },
   }),
   lifecycle({
@@ -188,7 +223,9 @@ export const DeviceList = ({
   location,
   table,
   items,
+  displayPreferences,
   // --- injected by recompose ---
+  onExcelClick,
   sortCol,
   sortDir,
   pageAt,
@@ -209,11 +246,18 @@ export const DeviceList = ({
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="Devices"
+      />
+
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}
@@ -224,7 +268,7 @@ export const DeviceList = ({
             columns={[
               {
                 key: 'empty',
-                colSpan: 8,
+                colSpan: 7,
               },
               {
                 key: 'tests',
@@ -241,12 +285,7 @@ export const DeviceList = ({
             columns={[
               {
                 key: 'name',
-                label: intl.formatMessage(messages.deviceName),
-                sortable: true,
-              },
-              {
-                key: 'state',
-                label: intl.formatMessage(messages.state),
+                label: intl.formatMessage(messages.device),
                 sortable: true,
               },
               {
@@ -265,8 +304,8 @@ export const DeviceList = ({
                 sortable: false,
               },
               {
-                key: 'issues',
-                label: intl.formatMessage(messages.issues),
+                key: 'issueCategory',
+                label: intl.formatMessage(messages.issueCategory),
               },
               {
                 key: 'createdOn',
@@ -279,29 +318,32 @@ export const DeviceList = ({
                 label: intl.formatMessage(messages.lastSeen),
               },
               {
-                key: 'lastMonth',
+                key: 'resultCountLastMonth',
                 sortable: true,
                 label: intl.formatMessage(messages.lastMonth),
               },
               {
-                key: 'thisMonth',
+                key: 'resultCountThisMonth',
                 sortable: true,
                 label: intl.formatMessage(messages.thisMonth),
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(device => (
-              <DeviceDataTableRow
-                key={device.get('id')}
-                intl={intl}
-                device={device}
-                onClick={onRowClick}
-                onAlertClick={onAlertClick}
-                data-device-id={device.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(device => (
+                <DeviceDataTableRow
+                  key={device.get('id')}
+                  intl={intl}
+                  device={device}
+                  onClick={onRowClick}
+                  onAlertClick={onAlertClick}
+                  displayPreferences={displayPreferences}
+                  data-device-id={device.get('id')}
+                />
+              ))}
+          </TableBody>
         </DeviceDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

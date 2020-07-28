@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/sub_days')
+const subDays = require('date-fns/subDays')
 const {
   createTestContext,
   getDeviceConfigurationData,
@@ -170,19 +170,9 @@ describe('Device API routes', () => {
         const { deviceAuth, deviceId } = context
 
         await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.status.id, 'approved')
-          })
-
-        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            checkpoint: '124j',
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'b' } },
           })
@@ -202,8 +192,6 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'checkpoint')
-            assert.equal(res.body.checkpoint, '124j')
             assert.typeOf(res.body.configuration, 'Object')
             assert.deepEqual(res.body.configuration.data, config1)
             assert.typeOf(res.body.operation, 'Object')
@@ -216,15 +204,12 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'checkpoint')
-            assert.equal(res.body.checkpoint, '124j')
           })
 
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            checkpoint: '12313',
             configuration: { data: { a: 'c', c: 2, d: false, e: { f: 'g' } } },
             operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } },
           })
@@ -240,53 +225,6 @@ describe('Device API routes', () => {
           _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } })
         )
         assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
-
-        await server
-          .get(`${devicePath}?checkpoint=12313`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.configuration, 'Object')
-            assert.deepEqual(res.body.configuration.data, config2)
-            assert.typeOf(res.body.operation, 'Object')
-            assert.deepEqual(res.body.operation.data, op2)
-          })
-      }))
-  })
-
-  describe('get result count', () => {
-    it('should return result count from device', () =>
-      runTest(async knex => {
-        const deviceListPath = '/api/device'
-        const { apiKey, deviceId, clientAuth } = context
-        const last30Day = subDays(new Date(), 30)
-        const last60Day = subDays(last30Day, 30)
-        assert.isOk(apiKey)
-
-        const totalResultsLastMonth = await knex('Result as r')
-          .whereBetween('r.endedOn', [last60Day, last30Day])
-          .where({ deviceId })
-          .countDistinct('r.id as total')
-
-        const totalResultsThisMonth = await knex('Result as r')
-          .where({ deviceId })
-          .andWhere('r.endedOn', '>=', last30Day)
-          .countDistinct('r.id as total')
-
-        // get total count of results
-        await server
-          .get(`${deviceListPath}?size=100`)
-          .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            const device = _.find(
-              res.body.data,
-              device => device.id === deviceId
-            )
-            assert.equal(device.lastMonth, totalResultsLastMonth[0].total)
-            assert.equal(device.thisMonth, totalResultsThisMonth[0].total)
-          })
       }))
   })
 
@@ -384,6 +322,58 @@ describe('Device API routes', () => {
         )
         assert.equal(onlineFactDevice.offline, 0)
       }))
+    it('should assign the Device to the default capacity for the device type and partner', () =>
+      runTest(async knex => {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'DaktariInSight' },
+            site: { id: 'CHIZ' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        await waitForIdle()
+
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+        const { id: deviceCapacityId } = await knex('DeviceCapacity')
+          .where({ deviceTypeId: newDevice.deviceTypeId })
+          .where({ partnerId: newDevice.partnerId })
+          .where({ defaultForDeviceType: 1 })
+          .first('id')
+
+        assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
+      }))
+    it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', () =>
+      runTest(async knex => {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'DaktariInSight' },
+            site: { id: 'CHIZ' },
+            name:
+              'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        await waitForIdle()
+
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+        assert.lengthOf(newDevice.shortName, 45)
+      }))
   })
 
   describe('add device Logs', () => {
@@ -412,6 +402,23 @@ describe('Device API routes', () => {
         )
 
         assert.equal(logLength1 + 1, logLength2)
+      }))
+  })
+  describe('return health stats of remote server', () => {
+    it('should return json with the servers stats.', () =>
+      runTest(async () => {
+        const { apiKey, deviceAuth } = context
+        assert.isOk(apiKey)
+        await server
+          .get(`${devicePath}/health-stats`)
+          .set('Authorization', deviceAuth)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body.Countries, 'Array')
+            assert.typeOf(res.body.Devices, 'Array')
+            assert.typeOf(res.body.Tests, 'Array')
+            assert.typeOf(res.body.Notifications, 'Array')
+          })
       }))
   })
 })

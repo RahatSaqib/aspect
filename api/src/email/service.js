@@ -7,6 +7,7 @@ const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -30,18 +31,16 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     knex,
     emailMessageId
   )
-  const messageStatusId = await messageStatusToId('Pending')
+  const pendingMessageStatusId = await messageStatusToId('Pending')
 
   // store generated email message into the same record and set messageStatusId
-  await knex('EmailMessage')
-    .where({ id: emailMessageId })
-    .update({
-      subject,
-      body,
-      htmlBody,
-      messageStatusId,
-      updatedOn: new Date(),
-    })
+  await knex('EmailMessage').where({ id: emailMessageId }).update({
+    subject,
+    body,
+    htmlBody,
+    messageStatusId: pendingMessageStatusId,
+    updatedOn: new Date(),
+  })
 
   // dispatch EMAIL_MESSAGE_READY_FOR_SENDING to MQ
   context.emailMessageReadyForSending(emailMessageId)
@@ -83,16 +82,20 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   let messageStatusId = messageStatusIdSent
 
   // send email
-  await sendEmail(email, subject, htmlBody, body).catch(() => {
-    // set status to 'Error'
-    messageStatusId = messageStatusIdError
-  })
+  const sendResponse = await sendEmail(email, subject, htmlBody, body).catch(
+    err => {
+      // set status to 'Error'
+      messageStatusId = messageStatusIdError
+      return err
+    }
+  )
 
   // store status in db
   await knex('EmailMessage')
     .where({ id: emailMessageId })
     .update({
       messageStatusId,
+      sendResponse: JSON.stringify(sendResponse),
       updatedOn: new Date(),
     })
 
@@ -101,10 +104,29 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
 }
 
 async function createEmailFieldsFromTemplate(knex, emailMessageId) {
+  const { personId } = await knex('EmailMessage')
+    .where('id', emailMessageId)
+    .first('personId')
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      partner: 'pr',
+      device: 'd',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
     .where({ 'm.id': emailMessageId })
     .first(
       'tmpl.subject as subjectTemplate',

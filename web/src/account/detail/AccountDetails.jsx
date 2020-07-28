@@ -2,21 +2,16 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
+import { Switch, Route } from 'react-router-dom'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { injectIntl } from 'react-intl'
 import Paper from '@material-ui/core/Paper'
-import Tab from '@material-ui/core/Tab'
-import MapsPersonPin from '@material-ui/icons/PersonPinRounded'
-import Language from '@material-ui/icons/Language'
-import Lock from '@material-ui/icons/Lock'
 
-import AspectTabs from '../../components/shared/AspectTabs'
-import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
-import UserPreferencesForm from '../../person/detail/UserPreferencesForm'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -32,8 +27,10 @@ import {
   LoginDetails,
   UserPreferences,
 } from '../../person/PersonRedux'
+import AccountDetailsBackBar from './AccountDetailsBackBar'
 
 const enhance = compose(
+  injectIntl,
   setPropTypes({
     location: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line
@@ -73,19 +70,25 @@ const enhance = compose(
 )
 
 export class AccountDetails extends PureComponent {
-  state = {
-    currentPasswordInputDialogOpen: false,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      currentPasswordInputDialogOpen: false,
+    }
   }
 
   componentDidMount() {
     const { fetchAccountDetails } = this.props
     fetchAccountDetails()
+    this.componentDidUpdate()
   }
 
-  componentWillReceiveProps(newProps) {
+  // FIXME: `incorrectCurrentPasswordEntered` is not a valid field in the `loginDetails`
+  componentDidUpdate() {
     if (
-      newProps.accountDetails &&
-      newProps.accountDetails.getIn([
+      this.props.accountDetails &&
+      this.props.accountDetails.getIn([
         'loginDetails',
         'incorrectCurrentPasswordEntered',
       ])
@@ -102,7 +105,7 @@ export class AccountDetails extends PureComponent {
     this.setState({ currentPasswordInputDialogOpen: false })
   }
 
-  handleSaveContactDetails = values =>
+  handleSaveContactDetails = values => {
     this.props.saveContactDetails({
       id: this.props.accountDetails.getIn(['contactDetails', 'id']),
       name: values.name,
@@ -117,7 +120,15 @@ export class AccountDetails extends PureComponent {
       zip: values.zip,
     })
 
-  handleSaveLoginDetails = values => {
+    const value = {
+      timezone: values.timezone,
+      culture: values.culture,
+    }
+
+    return this.handleSaveUserPreferences(value)
+  }
+
+  handleSaveLoginDetails = values =>
     this.props.saveLoginDetails(values).then(
       () => {
         this.closeCurrentPasswordInputDialog()
@@ -132,92 +143,102 @@ export class AccountDetails extends PureComponent {
         }
       }
     )
-  }
 
-  handleSaveUserPreferences = values =>
+  handleSaveUserPreferences = values => {
     this.props.saveUserPreferences({
       id: this.props.accountDetails.getIn(['userPreferences', 'id']),
       ...values,
     })
+  }
 
   render() {
-    const { intl, loading, saving, accountDetails } = this.props
+    const {
+      intl,
+      loading,
+      saving,
+      accountDetails,
+      history,
+      location,
+      match,
+    } = this.props
     const { formatMessage } = intl
 
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(accountDetailsMessages.title)} />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
-        <Paper>
-          <AspectTabs fullWidth>
-            <Tab
-              icon={<MapsPersonPin fontSize="large" />}
-              label={
-                <Hidden xs component="span">
-                  {formatMessage(personDetailsMessages.contactDetails)}
-                </Hidden>
-              }
-            >
-              {(loading || saving) && <LinearProgress />}
-              <Visible xs component="h2" className={styles.Form__Header}>
-                {formatMessage(personDetailsMessages.contactDetails)}
-              </Visible>
-              <ContactDetailsForm
-                intl={intl}
-                loading={loading || saving}
-                contactDetails={accountDetails.get('contactDetails')}
-                onSubmit={this.handleSaveContactDetails}
-              />
-            </Tab>
-            <Tab
-              icon={<Lock fontSize="large" />}
-              label={
-                <Hidden xs component="span">
-                  {formatMessage(accountDetailsMessages.usernameAndPassword)}
-                </Hidden>
-              }
-            >
-              {(loading || saving) && <LinearProgress />}
-              <Visible xs component="h2" className={styles.Form__Header}>
-                {formatMessage(accountDetailsMessages.usernameAndPassword)}
-              </Visible>
-              <LoginDetailsForm
-                intl={intl}
-                loading={loading || saving}
-                loginDetails={accountDetails.get('loginDetails')}
-                currentPasswordInputDialogOpen={
-                  this.state.currentPasswordInputDialogOpen
-                }
-                openCurrentPasswordInputDialog={
-                  this.openCurrentPasswordInputDialog
-                }
-                closeCurrentPasswordInputDialog={
-                  this.closeCurrentPasswordInputDialog
-                }
-                onSubmit={this.handleSaveLoginDetails}
-              />
-            </Tab>
-            <Tab
-              icon={<Language fontSize="large" />}
-              label={
-                <Hidden xs component="span">
-                  {formatMessage(personDetailsMessages.languageAndTimezone)}
-                </Hidden>
-              }
-            >
-              {(loading || saving) && <LinearProgress />}
-              <Visible xs component="h2" className={styles.Form__Header}>
-                {formatMessage(personDetailsMessages.languageAndTimezone)}
-              </Visible>
-              <UserPreferencesForm
-                intl={intl}
-                loading={loading || saving}
-                userPreferences={accountDetails.get('userPreferences')}
-                onSubmit={this.handleSaveUserPreferences}
-              />
-            </Tab>
-          </AspectTabs>
-        </Paper>
+
+        <Switch>
+          <Route
+            exact
+            path={match.path}
+            render={props => (
+              <div>
+                {(loading || saving) && <LinearProgress />}
+                <AccountDetailsBackBar
+                  formatMessage={formatMessage}
+                  history={history}
+                  location={location}
+                  match={match}
+                  title={
+                    accountDetails &&
+                    accountDetails.get('contactDetails').get('name')
+                  }
+                  {...props}
+                />
+                <Paper className={styles.AddMargin}>
+                  <ContactDetailsForm
+                    intl={intl}
+                    canModify={false}
+                    loading={loading || saving}
+                    contactDetails={accountDetails.get('contactDetails')}
+                    onSubmit={this.handleSaveContactDetails}
+                    userPreferences={accountDetails.get('userPreferences')}
+                    saveUserPreferences={this.handleSaveUserPreferences}
+                  />
+                </Paper>
+              </div>
+            )}
+          />
+          <Route
+            exact
+            path={`${match.path}/system-access-control`}
+            render={props => (
+              <div>
+                {(loading || saving) && <LinearProgress />}
+                <AccountDetailsBackBar
+                  formatMessage={formatMessage}
+                  history={history}
+                  location={location}
+                  match={match}
+                  title={
+                    accountDetails &&
+                    accountDetails.get('contactDetails').get('name')
+                  }
+                  {...props}
+                />
+                <Paper className={styles.AddMargin}>
+                  <LoginDetailsForm
+                    intl={intl}
+                    loading={loading || saving}
+                    canModify={false}
+                    loginDetails={accountDetails.get('loginDetails')}
+                    currentPasswordInputDialogOpen={
+                      this.state.currentPasswordInputDialogOpen
+                    }
+                    openCurrentPasswordInputDialog={
+                      this.openCurrentPasswordInputDialog
+                    }
+                    closeCurrentPasswordInputDialog={
+                      this.closeCurrentPasswordInputDialog
+                    }
+                    onSubmit={this.handleSaveLoginDetails}
+                  />
+                </Paper>
+              </div>
+            )}
+          />
+        </Switch>
       </div>
     )
   }

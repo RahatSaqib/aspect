@@ -1,3 +1,6 @@
+/* eslint-disable max-classes-per-file */
+/* eslint-disable no-loop-func */
+/* eslint-env es6 */
 import _ from 'lodash'
 import { createFetch, base, header, accept } from 'http-client'
 import { defineMessages } from 'react-intl'
@@ -6,6 +9,13 @@ import { setLastServerResponseTime } from '../../globals/GlobalsRedux'
 
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
+
+export const aspectFetchFile = createFetch(
+  base(config.aspectApi),
+  header('Content-Type', 'application/octet-stream'),
+  addAuthHeaderMiddleware,
+  handleFetchResponseOrError
+)
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -55,9 +65,30 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
     .then(
       resp => {
         const date = resp.headers.get('date')
+        const contentType = resp.headers.get('Content-Type')
+        const contentDisposition = resp.headers.get('Content-Disposition')
         if (date) {
           const store = require('../../store').default
           store.dispatch(setLastServerResponseTime(new Date(date)))
+        }
+        if (
+          contentDisposition &&
+          contentDisposition.indexOf('attachment;') === 0
+        ) {
+          const str = 'filename='
+          const fileName = _.trim(
+            contentDisposition.substr(
+              contentDisposition.indexOf(str) + str.length
+            ),
+            ' ;'
+          )
+          return {
+            blob: resp.blob(), // <--- blob() returns Promise
+            fileName,
+          }
+        }
+        if (contentType && contentType.indexOf('octet-stream') > 0) {
+          return resp.blob()
         }
         if (resp.ok) {
           // HTTP Status === 2xx
@@ -116,15 +147,14 @@ function isIdLike(key) {
 function changeAllIdsToString(data) {
   if (_.isArray(data)) {
     return data.map(changeAllIdsToString)
-  } else if (_.isObject(data)) {
-    return _.mapValues(
-      data,
-      (value, key) =>
-        isIdLike(key)
-          ? value === null || value === undefined || _.isObject(value)
-            ? value
-            : String(value)
-          : changeAllIdsToString(value)
+  }
+  if (_.isObject(data)) {
+    return _.mapValues(data, (value, key) =>
+      isIdLike(key)
+        ? value === null || value === undefined || _.isObject(value)
+          ? value
+          : String(value)
+        : changeAllIdsToString(value)
     )
   }
   return data

@@ -18,6 +18,17 @@ const { query, transact } = require('../db')
 
 const bcryptHash = promisify(bcrypt.hash)
 
+class GxAlertLoginError extends Error {
+  constructor(message, isConnectionError) {
+    super(message)
+
+    if (isConnectionError === null || isConnectionError === undefined)
+      throw new Error('The parameter isConnectionError cannot be null')
+
+    this.isConnectionError = isConnectionError
+  }
+}
+
 function getUser(username, knex) {
   return knex
     .from('User as u')
@@ -33,9 +44,11 @@ function getUser(username, knex) {
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 }
+
 // --------------------------------------------------------------------------------------------
 // validateUserAtGxAlert
 // --------------------------------------------------------------------------------------------
@@ -54,9 +67,18 @@ async function validateUserAtGxAlert(username, password, user) {
     body(JSON.stringify({ username, password }), 'application/json')
   )
 
-  const resp = await gxFetch('/auth')
+  let resp = null
+  try {
+    resp = await gxFetch('/auth')
+  } catch (err) {
+    throw new GxAlertLoginError("GxAlert service isn't available", true)
+  }
+
   if (resp.status !== 200) {
-    return null
+    throw new GxAlertLoginError(
+      'GxAlert service is available, but an error happened while authenticating',
+      true
+    )
   }
 
   // user profile from GxAlert
@@ -65,7 +87,10 @@ async function validateUserAtGxAlert(username, password, user) {
   // exit if no country found in Aspect
   // 'null' means username and/or password did not match in GxAlert
   if (!countryId) {
-    return null
+    throw new GxAlertLoginError(
+      `Non existent country ${gxUser.country.abbreviation} for user's credentials`,
+      false
+    )
   }
 
   // -------------------------------------------
@@ -80,7 +105,10 @@ async function validateUserAtGxAlert(username, password, user) {
     .distinct('s.partnerId', 'p.plugin')
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
-    return null
+    throw new GxAlertLoginError(
+      `Non existent partner for user's credentials. Please, check that there are sites defined for the country ${gxUser.country.abbreviation} and that they are assigned with geography and partner.`,
+      false
+    )
   }
 
   const { id: partnerId, plugin: partnerPlugin } = partners[0]
@@ -90,28 +118,31 @@ async function validateUserAtGxAlert(username, password, user) {
   const allJobFunctions = await query('Get job functions for this partner')
     .from('JobFunction')
     .where('partnerId', partnerId)
-    .select('id', 'name')
+    .select('id', 'name', 'externalId')
 
   let jobFunction
   // items from 'my_aspnet_roles': readonly, write, inventory, service, report
   // items from 'role': deployment, lga, state, national
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
-    jobFunction = allJobFunctions.find(x => x.name === 'Admin')
+    jobFunction = allJobFunctions.find(x => x.externalId === 'admin')
   }
   if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Regional Officer') ||
-      allJobFunctions.find(x => x.name === 'Manager')
+      allJobFunctions.find(x => x.externalId === 'regionalOfficer') ||
+      allJobFunctions.find(x => x.externalId === 'manager')
   }
   if (!jobFunction) {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Clinician') ||
-      allJobFunctions.find(x => x.name === 'Lab User')
+      allJobFunctions.find(x => x.externalId === 'clinician') ||
+      allJobFunctions.find(x => x.externalId === 'labUser')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
   // exit if no jobFunction found
   if (!jobFunctionId) {
-    return null
+    throw new GxAlertLoginError(
+      `Non existent job function for user's credentials. Please check that there is a partner defined for the country ${gxUser.country.abbreviation}, and that job functions exist for that partner.`,
+      false
+    )
   }
 
   // -------------------------------------------
@@ -150,9 +181,7 @@ async function validateUserAtGxAlert(username, password, user) {
       userId = user.id
 
       // update user with password hash
-      await knex('User')
-        .update(baseUserData)
-        .where({ id: userId })
+      await knex('User').update(baseUserData).where({ id: userId })
     }
 
     // create/update Person in our db
@@ -169,13 +198,11 @@ async function validateUserAtGxAlert(username, password, user) {
     // insert Job if not exists
     if (jobFunctionId) {
       const d = { personId, jobFunctionId }
-      let { id: jobId } =
-        (await knex('Job')
-          .where(d)
-          .first('id')) || {}
+      let { id: jobId } = (await knex('Job').where(d).first('id')) || {}
       if (!jobId) {
         ;[jobId] = await knex('Job').insert(d)
       }
+
       await setJobContext(knex, jobId, gxUser)
     }
 
@@ -191,7 +218,7 @@ async function validateUserAtGxAlert(username, password, user) {
 
     // catch error from setJobContext() if no site found or JobContext defined
     // and return null
-  }).catch(() => null)
+  })
 }
 
 // --------------------------------------------------------------------------------------------
@@ -279,20 +306,22 @@ async function setJobContext(knex, jobId, gxUser) {
   // deployments
   if (_.isArray(gxUser.access.deployments)) {
     await Promise.all(
-      _.map(gxUser.access.deployments, async dep => {
+      _.map(gxUser.access.deployments, async deployment => {
         const options = {
-          countryAbbreviation: dep.countryAbbreviation,
-          stateName: dep.stateName,
-          stateAbbreviation: dep.stateAbbreviation,
-          lgaName: dep.lgaName,
+          countryAbbreviation: deployment.countryAbbreviation,
+          stateName: deployment.stateName,
+          stateAbbreviation: deployment.stateAbbreviation,
+          lgaName: deployment.lgaName,
         }
+
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
-        const shortName = dep.description || dep.hostId
+        const shortName =
+          deployment.shortName || deployment.description || deployment.hostId
 
         let { siteId } =
           (await knex('Device')
-            .where({ geographyId })
-            .where(function() {
+            .where({ geographyId }) // Geography will never be undefined
+            .where(function () {
               this.where({ shortName }).orWhere('name', shortName)
             })
             .first()) || {}
@@ -301,18 +330,14 @@ async function setJobContext(knex, jobId, gxUser) {
           const site =
             (await knex('Site')
               .where({ geographyId })
-              .where(function() {
-                this.where({ shortName }).orWhere('name', shortName)
+              .where(function () {
+                this.where({ shortName }).orWhere('name', shortName) // Shortname shouldn't be undefined, too
               })
               .first()) || {}
           siteId = site.id
         }
 
-        if (!siteId) {
-          throw new Error(
-            `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
-          )
-        }
+        // REVIEWER!!! If the device is not added, Aspect should let the admin to add devices to users
         if (geographyId && siteId) {
           const { id: jobContextId } =
             (await knex('JobContext')
@@ -327,10 +352,9 @@ async function setJobContext(knex, jobId, gxUser) {
       })
     )
   }
-
   // throw error if no JobContext defined - it will be caught and handled by transaction promise
   if (!hasJobContext) {
-    throw new Error('No JobContext defined')
+    throw new Error("The user doesn't have job context.")
   }
 }
 
@@ -344,10 +368,7 @@ async function updateCreatePerson(
 ) {
   const now = new Date()
   let { id: personId } =
-    (await knex
-      .from('Person')
-      .where({ userId })
-      .first('id')) || {}
+    (await knex.from('Person').where({ userId }).first('id')) || {}
 
   const options = {
     countryAbbreviation: gxUser.country.abbreviation,
@@ -382,9 +403,7 @@ async function updateCreatePerson(
       ...basePersonData,
     })
   } else {
-    await knex('Person')
-      .where({ id: personId })
-      .update(basePersonData)
+    await knex('Person').where({ id: personId }).update(basePersonData)
   }
 
   return personId
@@ -399,7 +418,6 @@ async function getCountryIdByAbbr(countryAbbreviation) {
       .from('Country')
       .where('abbreviation', countryAbbreviation)
       .first('id')) || {}
-
   return countryId
 }
 
@@ -417,10 +435,7 @@ async function getCreateGeographyIdByGxGeo(
   // check if geography for country exists
   let d = { countryId, stateId: null, lgaId: null }
   let { id: geographyId } =
-    (await knex
-      .from('Geography')
-      .where(d)
-      .first('id')) || {}
+    (await knex.from('Geography').where(d).first('id')) || {}
   // create if not exist
   if (!geographyId) {
     // we do not need to get geographyId here - will do it after processing state and lga
@@ -433,7 +448,7 @@ async function getCreateGeographyIdByGxGeo(
     // get state which has Geography - inner join
     const state = await knex('State as s')
       .innerJoin('Geography as g', 's.id', 'g.stateId')
-      .where(function() {
+      .where(function () {
         this.where('s.name', stateName).orWhere(
           's.abbreviation',
           stateAbbreviation
@@ -545,4 +560,5 @@ async function updateTagsForPerson(
 
 module.exports = {
   validateUserAtGxAlert,
+  GxAlertLoginError,
 }

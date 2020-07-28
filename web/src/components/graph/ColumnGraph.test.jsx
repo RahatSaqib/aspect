@@ -1,10 +1,13 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import ColumnGraph from './ColumnGraph'
 
 describe('ColumnGraph component', () => {
-  const renderer = new ReactShallowRenderer()
+  const {
+    '--aspect-color-mandy': colorMandy,
+    '--aspect-color-mantis': colorMantis,
+  } = process.env
   const props = {
     data: [
       {
@@ -24,15 +27,13 @@ describe('ColumnGraph component', () => {
         data: [9, 1],
       },
     ],
-    color: ['#e85164', '#fcb124', '#73d449'],
+    color: ['#e85164', '#fcb124', colorMantis],
     spacing: 0.4,
     hideAxes: false,
     hideLabel: false,
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<ColumnGraph {...props} rightLabel />)
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<ColumnGraph {...props} rightLabel />)
   })
 })

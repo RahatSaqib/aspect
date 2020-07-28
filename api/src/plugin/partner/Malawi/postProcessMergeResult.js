@@ -4,8 +4,8 @@ const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
-const EXTERNAL_ID_HIV_VL = 'HivVl'
-const EXTERNAL_ID_EID = 'EID'
+const EXTERNAL_ID_HIV_VL = 'CHAIHivVL'
+const EXTERNAL_ID_EID = 'CHAIEID'
 const DEVICE_TYPE_EXTERNAL_ID = 'CHAILIMS'
 const RESULT_TEXT_LDL = '< LDL'
 
@@ -21,10 +21,12 @@ async function postProcessMergeResult(context, result, previousResult) {
     now
   )
 
-  const deviceTypeExternalId = (await knex('Device as d')
-    .where('d.id', deviceId)
-    .join('DeviceType as dt', 'd.deviceTypeid', 'dt.id')
-    .first('dt.externalId')).externalId
+  const deviceTypeExternalId = (
+    await knex('Device as d')
+      .where('d.id', deviceId)
+      .join('DeviceType as dt', 'd.deviceTypeid', 'dt.id')
+      .first('dt.externalId')
+  ).externalId
 
   if (deviceTypeExternalId === DEVICE_TYPE_EXTERNAL_ID) {
     await checkResultDeliverable(context, result)
@@ -42,9 +44,9 @@ async function addResultCategory(context, result) {
   const { knex, actions } = context
   const { id: resultId, assayId, resultData } = result
   const { resultText, copies } = JSON.parse(resultData)
-  const assayExternalId = (await knex('Assay as a')
-    .where({ 'a.id': assayId })
-    .first('a.externalId')).externalId
+  const assayExternalId = (
+    await knex('Assay as a').where({ 'a.id': assayId }).first('a.externalId')
+  ).externalId
 
   // Add EID categories
   let externalId = ''
@@ -76,9 +78,9 @@ async function addResultCategory(context, result) {
   }
 
   if (externalId) {
-    const resultCategoryId = (await knex('ResultCategory')
-      .where('externalId', externalId)
-      .first('id')).id
+    const resultCategoryId = (
+      await knex('ResultCategory').where('externalId', externalId).first('id')
+    ).id
 
     // Update Result Category
     await knex('Result')
@@ -91,35 +93,38 @@ async function addResultCategory(context, result) {
 async function checkResultDeliverable(context, result) {
   const { knex, actions, now } = context
   const { id: resultId, patientData } = result
-
   // Now's a good time to see if the result is in the
   // status "Validated" and can be promoted to "Deliverable" base on patient data
   if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
-    const resultWorkflowExternalId = (await knex('Result as r')
-      .where('r.id', resultId)
-      .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
-      .first('rw.externalId')).externalId
+    const resultWorkflowExternalId = (
+      await knex('Result as r')
+        .where('r.id', resultId)
+        .join(
+          'ResultWorkflowLog as rwl',
+          'r.resultWorkflowStatusLogId',
+          'rwl.id'
+        )
+        .join(
+          'ResultWorkflowStatus as rw',
+          'rwl.resultWorkflowStatusId',
+          'rw.id'
+        )
+        .first('rw.externalId')
+    ).externalId
 
     // only auto update if not already in deliverable
     // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
+
     if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
       const resultWorkflowDeliverableId = await resultWorkflowStatusToId(
         DELIVERABLE_EXTERNALID
       )
 
-      await knex('Result')
-        .where('id', resultId)
-        .update({
-          resultWorkflowStatusId: resultWorkflowDeliverableId,
-          // auto QC-check Deliverable results RRT-313
-          qcCheck: 1,
-        })
-
       // add a second so this entry shows up after the workflow status log entry
       // that was added as part of the original update
       const logEntryNow = new Date(now.getTime() + 1000)
-      await knex('ResultWorkflowLog').insert({
+      const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: resultWorkflowDeliverableId,
         operator: null,
@@ -127,7 +132,10 @@ async function checkResultDeliverable(context, result) {
         createdOn: logEntryNow,
         reason: 'Validated & Complete Patient Data',
       })
-
+      await knex('Result').where('id', resultId).update({
+        resultWorkflowStatusLogId: lastLogId,
+        // auto QC-check Deliverable results RRT-313
+      })
       actions.resultUpdated(resultId)
     }
   }

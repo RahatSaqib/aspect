@@ -1,16 +1,14 @@
 import _ from 'lodash'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Button from '@material-ui/core/Button'
 import { Login } from './Login'
 
 describe('Login component', () => {
-  const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     onUserChange: _.noop,
     onPasswordChange: _.noop,
     handleSubmit: _.noop,
@@ -24,11 +22,24 @@ describe('Login component', () => {
       submitting: false,
     },
   }
-  const LoginComponent = <Login {...props} />
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(LoginComponent)
+  it('should shallow render without crash', () => {
+    shallow(<Login {...props} />)
+  })
 
-    expect(element).toMatchSnapshot()
+  it('should show `LinearProgress` when the form is submitting', () => {
+    const wrapper = shallow(<Login {...props} />)
+    expect(wrapper.find(LinearProgress)).toHaveLength(0)
+
+    wrapper.setProps({ form: { submitting: true } })
+    expect(wrapper.find(LinearProgress)).toHaveLength(1)
+  })
+
+  it('should disable the button when the form is invalid', () => {
+    const wrapper = shallow(<Login {...props} />)
+    expect(wrapper.find(Button).prop('disabled')).toBeFalsy()
+
+    wrapper.setProps({ form: { valid: false } })
+    expect(wrapper.find(Button).prop('disabled')).toBe(true)
   })
 })

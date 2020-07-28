@@ -1,9 +1,5 @@
 const _ = require('lodash')
-const Boom = require('boom')
-const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
-const { groupToken, randomToken } = require('../deviceApi/apiKey')
-
+const Boom = require('@hapi/boom')
 const {
   createFetch,
   base,
@@ -12,6 +8,10 @@ const {
   method,
   body,
 } = require('http-client')
+
+const { knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
+const { groupToken } = require('../deviceApi/apiKey')
 
 async function getDemoDevice(request) {
   const { auth, params } = request
@@ -23,7 +23,7 @@ async function getDemoDevice(request) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .where('d.id', deviceId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
     .first('d.id', 'd.name', 'd.deviceTypeId')
   if (!device) {
     return Boom.notFound()
@@ -34,6 +34,7 @@ async function getDemoDevice(request) {
 
   const assays = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
+    .modify(addConstraints, dataConstraints, { assay: 'a', deviceType: 'dt' })
     .where({ 'dt.id': device.deviceTypeId })
     .orderBy('a.name')
     .select('a.id', 'a.name')
@@ -44,7 +45,7 @@ async function getDemoDevice(request) {
       const results = await knex('Result as r')
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .where('r.assayId', assay.id)
-        .modify(addConstraints, dataConstraints, { device: 'd' })
+        .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
         .distinct(
           'r.id',
           knex.raw(
@@ -53,38 +54,11 @@ async function getDemoDevice(request) {
         )
         .orderBy('name')
         .limit(1000)
-      result.assays.push(
-        Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay)
-      )
+      result.assays.push({ results: _.sortedUniqBy(results, 'name'), ...assay })
     })
   )
 
   return result
-}
-
-async function createDemoDeviceApiKey(request) {
-  // FIXME Remove demo device api key once key management UI/API available
-  const { auth } = request
-  const now = new Date()
-  const user = await knex('Person as p')
-    .join('User as u', 'u.id', 'p.userId')
-    .where('u.name', auth.credentials.name)
-    .first('u.id', 'p.lastPartnerId as partnerId')
-  if (user == null || user.partnerId == null) {
-    return Boom.badRequest('Cannot find partner for user')
-  }
-
-  const apiKey = { token: randomToken() }
-  await knex('DeviceApiKey').insert({
-    token: apiKey.token,
-    revoked: 0,
-    partnerId: user.partnerId,
-    createdOn: now,
-    createdBy: user.id,
-    updatedOn: now,
-    updatedBy: user.id,
-  })
-  return apiKey
 }
 
 async function getApiKey(deviceId, userConstraints) {
@@ -115,7 +89,23 @@ async function postDemoDeviceResult(request) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .modify(addConstraints, userConstraints, {
+      assay: 'a',
+      device: 'd',
+      result: 'r',
+      sample: 's',
+      site: 'sos',
+    })
     .where({ 'r.id': resultId })
     .first(
       'r.resultData',
@@ -258,6 +248,5 @@ async function postDemoDeviceResult(request) {
 
 module.exports = {
   getDemoDevice,
-  createDemoDeviceApiKey,
   postDemoDeviceResult,
 }

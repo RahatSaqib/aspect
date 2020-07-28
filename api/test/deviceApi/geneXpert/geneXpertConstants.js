@@ -821,11 +821,29 @@ const resultTextToResultCategoryMapping = {
     resultCategory1: 'Trace Detected',
     resultCategory2: 'Indeterminate',
   },
-  '|MTB Trace DETECTED|RIF Resistance INDETERMINATE': {
-    resultId: '816097_516033_4ca9cda7',
-    assay: 'GxMtbRifUltra',
-    resultCategory1: 'Trace Detected',
-    resultCategory2: 'Indeterminate',
+  'SARS-CoV-2 NEGATIVE': {
+    resultId: '804687_206318_3cc5547b',
+    assay: 'assayGXCovid19',
+    resultCategory1: 'Negative',
+    resultCategory2: null,
+  },
+  'SARS-CoV-2 POSITIVE': {
+    resultId: '184687_206318_3cc5457b',
+    assay: 'assayGXCovid19',
+    resultCategory1: 'Positive',
+    resultCategory2: null,
+  },
+  'SARS-CoV-2 PRESUMPTIVE POS': {
+    resultId: '200687_206318_4dd5457b',
+    assay: 'assayGXCovid19',
+    resultCategory1: 'Indeterminate',
+    resultCategory2: null,
+  },
+  'SARS-CoV-2 PRESUMPTIVE POSITIVE': {
+    resultId: '195687_206318_4dd5457b',
+    assay: 'assayGXCovid19',
+    resultCategory1: 'Indeterminate',
+    resultCategory2: null,
   },
 }
 
@@ -856,7 +874,7 @@ const basicResultPayload = {
       gender: 'Female',
       phone: '0833243682',
     },
-    sample: { id: 'PJM0833243682' },
+    sample: { id: 'PKM0833243689' },
     data: {
       probeData: {},
       customFieldData: {

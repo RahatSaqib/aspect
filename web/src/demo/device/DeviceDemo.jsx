@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { Helmet } from 'react-helmet'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -54,14 +54,14 @@ export class DeviceDemo extends PureComponent {
     this.handleFetchDevice()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.deviceId !== nextProps.match.params.deviceId) {
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.deviceId !== prevProps.match.params.deviceId) {
       this.handleFetchDevice()
     }
   }
 
   setPosting = posting => {
-    this.setState(Object.assign({}, this.state, { posting }))
+    this.setState({ posting })
   }
 
   handleFetchDevice = () => {
@@ -69,7 +69,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   handleSelectFieldChange = field => ({ target: { value } }) => {
-    this.setState(Object.assign({}, this.state, { [field]: value }))
+    this.setState({ [field]: value })
   }
 
   handlePostResult = () => {

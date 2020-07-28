@@ -11,7 +11,7 @@ yarn global add topojson
 
 ## How to generate Topojson
 
-Edit `supported.json` with iso_alpha2_code in a JSON array. Then, run:
+Edit `supported.json` with isoAlpha2Code in a JSON array. Then, run:
 
 ```sh
 ./index.sh

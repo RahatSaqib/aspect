@@ -1,0 +1,1916 @@
+const _ = require('lodash')
+const Promise = require('bluebird')
+const bcrypt = require('bcrypt')
+
+const utils = require('./utils')
+const { partnerTypeToId } = require('../src/shared/dictionary')
+const config = require('../src/config')
+const { query } = require('../src/db')
+
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
+
+const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
+const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
+const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
+const geneXpertResultDataSchemaHivVl = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivVl.json')
+const geneXpertResultDataSchemaHivQual = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivQual.json')
+const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHcv.json')
+const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
+const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
+const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
+const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget')
+const {
+  deviceStatusToId,
+  deviceTypeToId,
+  allDeviceTypeCategoryToId,
+  deviceTypeCategoryToId,
+  allAssayTypeToId,
+  allResultSourceToId,
+  resultCategoryToId,
+} = require('../src/shared/dictionary')
+
+/**
+ *
+ * @param {*} knex Knex object
+ * @param {*} partnerId The ID of the partner that will get the upsers applied
+ * @param {*} adminId The ID of the admin user
+ * @param {*} geography The geography definitions
+ * @param {*} countryAbbreviation The country's two letters code
+ * @param {*} deviceApiToken The API token for GxAlert device
+ * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
+ */
+async function commonUpserts(
+  knex,
+  partnerId,
+  adminId,
+  geography,
+  countryAbbreviation,
+  deviceApiToken = null,
+  usersInsertConfig = null
+) {
+  const now = new Date()
+  utils.hasSeededStaticData = true
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // Reuse previously seeded "static" data
+  const modules = await utils.getPermissionModules(knex)
+  const countries = {}
+  await Promise.each(geography.countries, async country => {
+    const countryData = _.pick(country, [
+      'id',
+      'abbreviation',
+      'name',
+      'a3',
+      'culture',
+      'countryCode',
+      'timezone',
+      'portNumber',
+      'exportColumns',
+      'inventoryDaysThreshold',
+      'monthStartsOnDay',
+    ])
+    let { countryId, countryGeographyId } =
+      (await knex('Country as c')
+        .leftJoin('Geography as g', 'c.id', 'g.countryId')
+        .where('c.abbreviation', country.abbreviation)
+        .andWhere(function () {
+          this.whereNull('g.stateId')
+        })
+        .andWhere(function () {
+          this.whereNull('g.lgaId')
+        })
+        .first('c.id as countryId', 'g.id as countryGeographyId')) || {}
+    if (!countryId) {
+      ;[countryId] = await knex('Country').insert(countryData)
+    }
+    if (!countryGeographyId) {
+      ;[countryGeographyId] = await knex('Geography').insert({
+        countryId,
+      })
+    }
+    countryData.id = countryId
+    countries[country.abbreviation] = countryData
+    countryData.states = {}
+    countryData.geographyId = countryGeographyId
+
+    await upsertStatesAndLgas(knex, countryId, country.states)
+  })
+
+  const { culture, timezone, id: countryId, geographyId } = countries[
+    countryAbbreviation
+  ]
+  let { id: adminPersonId } =
+    (await knex('Person')
+      .where({
+        userId: adminId,
+        name: 'Admin',
+        geographyId,
+      })
+      .first('id')) || {}
+  if (!adminPersonId) {
+    ;[adminPersonId] = await knex('Person').insert({
+      userId: adminId,
+      name: 'Admin',
+      lastPartnerId: partnerId,
+      lastCountryId: countryId,
+      geographyId,
+      culture,
+      timezone,
+      ...auditFields,
+    })
+  }
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
+    modules.demo.admin,
+    modules.issue.admin,
+    modules.assay.admin,
+    modules.case.admin,
+    modules.site.admin,
+    modules.result.admin,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.account.admin,
+    modules.device.admin,
+    modules.reporter.admin,
+    modules.browse.view,
+    modules.person.admin,
+  ])
+  let { id: jobIdAdmin } =
+    (await knex('Job')
+      .where({
+        personId: adminPersonId,
+        jobFunctionId: jobFunctionIdAdmin,
+      })
+      .first('id')) || {}
+  if (!jobIdAdmin) {
+    ;[jobIdAdmin] = await knex('Job').insert({
+      personId: adminPersonId,
+      jobFunctionId: jobFunctionIdAdmin,
+    })
+  }
+  const { id: jobContextIdAdmin } =
+    (await knex('JobContext')
+      .where({
+        jobId: jobIdAdmin,
+        geographyId,
+      })
+      .first('id')) || {}
+  if (!jobContextIdAdmin) {
+    await knex('JobContext').insert({
+      jobId: jobIdAdmin,
+      geographyId,
+    })
+  }
+  await upsertJobFunction(knex, 'Regional Officer', partnerId, [
+    modules.browse.view,
+    modules.assay.view,
+    modules.result.edit,
+    modules.device.view,
+    modules.treatmentStatus.view,
+    modules.site.view,
+    modules.person.view,
+    modules.case.edit,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+  ])
+  await upsertJobFunction(knex, 'Lab User', partnerId, [
+    modules.browse.view,
+    modules.result.edit,
+    modules.assay.view,
+    modules.device.view,
+    modules.site.view,
+    modules.treatmentStatus.view,
+    modules.account.view,
+    modules.dashboard.summary,
+    modules.dashboard.result,
+    modules.case.edit,
+    modules.person.view,
+  ])
+  await upsertJobFunction(knex, 'Clinician', partnerId, [
+    modules.site.view,
+    modules.device.view,
+    modules.assay.view,
+    modules.inventory.view,
+    modules.result.edit,
+    modules.browse.view,
+    modules.treatmentStatus.edit,
+    modules.dashboard.result,
+    modules.dashboard.summary,
+    modules.case.edit,
+    modules.account.edit,
+    modules.router.edit,
+    modules.person.view,
+  ])
+
+  if (deviceApiToken) {
+    await upsertGxAlertDevice(
+      knex,
+      countryId,
+      partnerId,
+      auditFields,
+      deviceApiToken
+    )
+  }
+  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
+  await ensureResultTreatmentStatuses(knex)
+
+  if (usersInsertConfig)
+    await upsertDemoUsersPerJobFunction(
+      knex,
+      partnerId,
+      countryId,
+      geographyId,
+      culture,
+      timezone,
+      auditFields,
+      usersInsertConfig
+    )
+}
+
+async function upsertDemoUsersPerJobFunction(
+  knex,
+  partnerId,
+  countryId,
+  geographyId,
+  culture,
+  timezone,
+  auditFields,
+  { password, excludedJobFunctions }
+) {
+  if (!password)
+    throw new Error('You must provide a password for upserting users')
+
+  if (!excludedJobFunctions) excludedJobFunctions = []
+
+  const commonUserFields = {
+    password: bcrypt.hashSync(password, saltRounds),
+    approved: 1,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+    createdOn: auditFields.createdOn,
+  }
+  const commonPersonFields = {
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  }
+
+  const jobFunctions = await knex('JobFunction')
+    .whereNotIn('externalId', [...excludedJobFunctions, 'admin'])
+    .andWhere({
+      partnerId,
+    })
+
+  const insertUsers = jobFunctions.map(async jf => {
+    const { id: jobFunctionId, name: jobFunctionName } = jf
+    const userName = jobFunctionName.toLowerCase().replace(' ', '-')
+    const [userId] = await knex('User').insert({
+      name: userName,
+      ...commonUserFields,
+    })
+    const [personId] = await knex('Person').insert({
+      name: userName,
+      userId,
+      ...commonPersonFields,
+    })
+    const [jobId] = await knex('Job').insert({
+      personId,
+      jobFunctionId,
+    })
+    await knex('JobContext').insert({
+      jobId,
+      geographyId,
+    })
+  })
+  await Promise.all(insertUsers)
+}
+
+async function upsertJobFunction(
+  knex,
+  jobFunctionName,
+  partnerId,
+  permissions
+) {
+  if (!permissions) permissions = []
+  let { id: jobFunctionId } =
+    (await knex('JobFunction')
+      .where({
+        name: jobFunctionName,
+        partnerId,
+      })
+      .first('id')) || {}
+  if (!jobFunctionId) {
+    ;[jobFunctionId] = await knex('JobFunction').insert({
+      name: jobFunctionName,
+      externalId: _.camelCase(jobFunctionName),
+      partnerId,
+    })
+  }
+  await upsertJobFunctionPermission(knex, jobFunctionId, permissions)
+  return jobFunctionId
+}
+
+async function clonePermissions(knex, fromModule, toModule) {
+  const jobFunctionWithExistingPermission = await knex(
+    'JobFunctionPermission as jf'
+  )
+    .join('Permission as p', 'p.id', 'jf.permissionId')
+    .where('p.module', toModule)
+    .pluck('jf.jobFunctionId')
+  await knex.transaction(async function (trx) {
+    await knex
+      .from('JobFunctionPermission')
+      .transacting(trx)
+      .insert(function () {
+        this.from('JobFunction as jf')
+          .innerJoin(
+            'JobFunctionPermission as jfp',
+            'jf.id',
+            'jfp.jobFunctionId'
+          )
+          .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
+          .innerJoin('Permission as pCase', function () {
+            this.on('pCase.module', knex.raw('?', [toModule])).on(
+              'p.activity',
+              'pCase.activity'
+            )
+          })
+          .whereNotIn('jf.id', jobFunctionWithExistingPermission)
+          .where('p.module', knex.raw('?', [fromModule]))
+          .select('jf.id as jobFunctionId', 'pCase.id as permissionId')
+      })
+  })
+}
+
+async function upsertJobFunctionPermission(
+  knex,
+  jobFunctionId,
+  jobPermissions
+) {
+  const existingJobFunctionPermissions = await knex('JobFunctionPermission')
+    .where({ jobFunctionId })
+    .pluck('permissionId')
+  const JobFunctionPermission = _.map(
+    jobPermissions.filter(
+      permissionId => !existingJobFunctionPermissions.includes(permissionId)
+    ),
+    permissionId => ({
+      jobFunctionId,
+      permissionId,
+    })
+  )
+  return knex('JobFunctionPermission').insert(JobFunctionPermission)
+}
+
+async function upsertGxAlertDevice(
+  knex,
+  countryId,
+  partnerId,
+  auditFields,
+  deviceApiToken
+) {
+  const device = await ensureCountryLevelInformationSystemExists(
+    knex,
+    countryId,
+    partnerId,
+    {
+      externalId: 'GxAlert',
+      name: 'GxAlert',
+      manufacturer: 'SystemOne',
+      plugin: 'gxalert',
+    },
+    auditFields
+  )
+  const deviceApiKey = {
+    token: deviceApiToken,
+    revoked: 0,
+    partnerId,
+    geographyId: device.geographyId,
+    deviceId: device.id,
+  }
+  const { id: gxAlertDeviceApiKeyId } =
+    (await knex('DeviceApiKey')
+      .where({
+        token: deviceApiToken,
+        deviceId: device.id,
+      })
+      .first('id')) || {}
+  if (!gxAlertDeviceApiKeyId) {
+    await knex('DeviceApiKey').insert({
+      ...deviceApiKey,
+      ...auditFields,
+    })
+  } else {
+    await knex('DeviceApiKey')
+      .where('id', gxAlertDeviceApiKeyId)
+      .update({
+        ...deviceApiKey,
+        updatedBy: auditFields.updatedBy,
+        updatedOn: auditFields.updatedOn,
+      })
+  }
+}
+
+async function ensureAspectDeviceExists(
+  knex,
+  countryId,
+  partnerId,
+  auditFields
+) {
+  return ensureCountryLevelInformationSystemExists(
+    knex,
+    countryId,
+    partnerId,
+    {
+      externalId: 'Aspect',
+      name: 'Aspect',
+      manufacturer: 'SystemOne',
+      plugin: 'aspectresultentry',
+    },
+    auditFields
+  )
+}
+
+async function ensureCountryLevelInformationSystemExists(
+  knex,
+  countryId,
+  partnerId,
+  deviceType,
+  auditFields
+) {
+  const { externalId, name, manufacturer, plugin } = deviceType
+  let { id: deviceTypeId } =
+    (await knex('DeviceType').where('externalId', externalId).first('id')) || {}
+  if (!deviceTypeId) {
+    const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
+      'Information System'
+    )
+    ;[deviceTypeId] = await knex('DeviceType').insert({
+      externalId,
+      name,
+      manufacturer,
+      plugin,
+      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
+    })
+  }
+  const { countryGeographyId } = await knex('Geography')
+    .where({ countryId })
+    .whereNull('stateId', 'lgaId')
+    .first('id as countryGeographyId')
+  const device =
+    (await knex('Device')
+      .where({
+        deviceTypeId,
+        partnerId,
+        geographyId: countryGeographyId,
+      })
+      .first()) || {}
+  let { siteId } = device
+  if (!siteId) {
+    ;[siteId] = await knex('Site').insert({
+      ...auditFields,
+      name,
+      shortName: name.substr(0, 45),
+      externalId,
+      partnerId,
+      geographyId: countryGeographyId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+  }
+  if (!device.id) {
+    const [deviceId] = await knex('Device').insert({
+      ...auditFields,
+      name,
+      deviceStatusId: await deviceStatusToId('approved'),
+      partnerId,
+      geographyId: countryGeographyId,
+      siteId,
+      lastPingOn: new Date(),
+      lastSeenOn: new Date(),
+      deviceTypeId,
+    })
+    device.id = deviceId
+  }
+  return device
+}
+
+async function upsertGeneXpertDeviceTypeAndAssays(
+  knex,
+  assayExternalIds,
+  overridePatientDataSchema,
+  overrideResultDataSchema
+) {
+  let geneXpertPatientDataSchema
+  if (overridePatientDataSchema)
+    geneXpertPatientDataSchema = overridePatientDataSchema
+  else geneXpertPatientDataSchema = gxPatientDataSchema
+
+  // Add device types
+  const { Lab: deviceTypeCategoryLab } = await allDeviceTypeCategoryToId()
+
+  let { id: deviceTypeGeneXpertId } =
+    (await knex('DeviceType')
+      .where('externalId', 'CepheidGeneXpert')
+      .first()) || {}
+  if (!deviceTypeGeneXpertId) {
+    ;[deviceTypeGeneXpertId] = await knex('DeviceType').insert({
+      externalId: 'CepheidGeneXpert',
+      name: 'GeneXpert',
+      manufacturer: 'Cepheid',
+      plugin: 'gxconnect',
+      deviceTypeCategoryId: deviceTypeCategoryLab,
+    })
+  }
+
+  // Add assays
+  const {
+    DiagnosticDevice: resultSourceDiagnosticId,
+  } = await allResultSourceToId()
+
+  const {
+    'MTB/Rif': assayTypeMTBRifId,
+    Ebola: assayTypeEbolaId,
+    'HIV VL': assayTypeHivVlId,
+    'HIV Qual': assayTypeHivQualId,
+    HCV: assayTypeHcvId,
+    'COVID-19 Test': assayTypeCovid19Id,
+    Unknown: assayTypeUnknownId,
+  } = await allAssayTypeToId()
+
+  if (_.includes(assayExternalIds, 'GxUnknown')) {
+    await createAssay(
+      knex,
+      'GeneXpert Unknown',
+      'assayGeneXpertUnknown',
+      'GxUnknown',
+      assayTypeUnknownId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX UK',
+      geneXpertPatientDataSchema
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxHcv')) {
+    await createAssay(
+      knex,
+      'GeneXpert HCV',
+      'assayGeneXpertHcv',
+      'GxHcv',
+      assayTypeHcvId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX HCV',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaHcv,
+      ['Detected', 'Invalid', 'NoResult', 'Error'],
+      'HCV',
+      'resultCategoryHcv',
+      null,
+      null
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxMtbRif')) {
+    await createAssay(
+      knex,
+      'GeneXpert MTB/Rif',
+      'assayGeneXpertMtbRif',
+      'GxMtbRif',
+      assayTypeMTBRifId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX MTB/Rif',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBRif,
+      [
+        'Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'Rif',
+      'resultCategoryRif'
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
+    await createAssay(
+      knex,
+      'GeneXpert MTB/Rif Ultra',
+      'assayGeneXpertMtbRifUltra',
+      'GxMtbRifUltra',
+      assayTypeMTBRifId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX MTB/ULTRA',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBRifUltra,
+      [
+        'Detected',
+        'Trace Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'Rif',
+      'resultCategoryRif'
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
+    await createAssay(
+      knex,
+      'GeneXpert HIV-1 VL',
+      'assayGeneXpertHiv1Vl',
+      'GxHiv1Vl',
+      assayTypeHivVlId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX HIV VL',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaHivVl,
+      [
+        'LessThan1000',
+        'MoreThan1000',
+        'NotDetected',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'HIV',
+      'resultCategoryHiv'
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
+    await createAssay(
+      knex,
+      'GeneXpert HIV-1 Qual',
+      'assayGeneXpertHiv1Qual',
+      'GxHiv1Qual',
+      assayTypeHivQualId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX HIV Qual',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaHivQual,
+      ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
+      'HIV',
+      'resultCategoryHiv'
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxEbola')) {
+    await createAssay(
+      knex,
+      'GeneXpert Ebola',
+      'assayGeneXpertEbola',
+      'GxEbola',
+      assayTypeEbolaId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX Ebola',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaEbola,
+      ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
+      'GP',
+      'resultCategoryEbolaGp'
+    )
+  }
+  if (_.includes(assayExternalIds, 'assayGXCovid19')) {
+    await createAssay(
+      knex,
+      'GeneXpert COVID-19',
+      'assayGXCovid19',
+      'assayGXCovid19',
+      assayTypeCovid19Id,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX COVID-19',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaSarsCoV2,
+      [
+        'Positive',
+        'Negative',
+        'Inconclusive',
+        'Unknown',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'COVID-19',
+      'resultCategoryCovid19'
+    )
+  }
+
+  await utils.updateAssayResultCategoryTreatmentEmphasize(knex)
+
+  await utils.seedPartnerAssay(knex)
+  await utils.seedPartnerDisease(knex)
+}
+
+async function createAssay(
+  knex,
+  name,
+  i18nKey,
+  externalId,
+  assayTypeId,
+  deviceTypeId,
+  resultSourceId,
+  abbreviation,
+  patientDataSchema,
+  resultDataSchema,
+  categories,
+  resultCategory1Label,
+  resultCategory1i18nKey,
+  resultCategory2Label,
+  resultCategory2i18nKey
+) {
+  const assay = {
+    name,
+    i18nKey,
+    externalId,
+    assayTypeId,
+    deviceTypeId,
+    resultSourceId,
+    resultCategory1Label,
+    resultCategory1i18nKey,
+    resultCategory2Label,
+    resultCategory2i18nKey,
+    resultDataSchema: JSON.stringify(resultDataSchema),
+    patientDataSchema: JSON.stringify(patientDataSchema),
+    abbreviation,
+  }
+  const assayId = await upsertAssay(knex, assay)
+  if (categories && categories.length > 0)
+    await upsertAssayResultCategories(knex, assayId, categories)
+}
+
+async function upsertAssay(knex, assay) {
+  let { id: assayId } =
+    (await knex('Assay').where({ externalId: assay.externalId }).first('id')) ||
+    {}
+  if (!assayId) {
+    ;[assayId] = await knex('Assay').insert(assay)
+  } else {
+    await knex('Assay').where('id', assayId).update(assay)
+  }
+  return assayId
+}
+
+async function upsertStatesAndLgas(knex, countryId, states) {
+  await Promise.all(
+    _.map(states || [], async state => {
+      const stateData = _.pick(state, ['id', 'abbreviation', 'name'])
+      let { stateId, stateGeographyId } =
+        (await knex('State as s')
+          .leftJoin('Geography as g', 's.id', 'g.stateId')
+          .where('g.countryId', countryId)
+          .andWhere('s.name', state.name)
+          .andWhere(function () {
+            this.whereNull('g.lgaId')
+          })
+          .first('s.id as stateId', 'g.id as stateGeographyId')) || {}
+      if (!stateId) {
+        ;[stateId] = await knex('State').insert(stateData)
+      }
+      if (!stateGeographyId) {
+        ;[stateGeographyId] = await knex('Geography').insert({
+          countryId,
+          stateId,
+        })
+      }
+      stateData.id = stateId
+      stateData.lgas = {}
+      stateData.geographyId = stateGeographyId
+      await Promise.all(
+        _.map(state.lgas || [], async lga => {
+          const lgaData = _.pick(lga, ['id', 'name'])
+
+          let { lgaId, lgaGeographyId } =
+            (await knex('Lga as l')
+              .leftJoin('Geography as g', 'l.id', 'g.lgaId')
+              .where('g.stateId', stateId)
+              .andWhere('l.name', lga.name)
+              .first('l.id as lgaId', 'g.id as lgaGeographyId')) || {}
+
+          if (!lgaId) {
+            ;[lgaId] = await knex('Lga').insert(lgaData)
+          }
+          if (!lgaGeographyId) {
+            ;[lgaGeographyId] = await knex('Geography').insert({
+              countryId,
+              stateId,
+              lgaId,
+            })
+          }
+          lgaData.id = lgaId
+          stateData.lgas[lga.name] = lgaData
+          lgaData.sites = {}
+          lgaData.geographyId = lgaGeographyId
+        })
+      )
+    })
+  )
+}
+
+// adds the categories (array of externalIds) to the given assayId
+// safe to execute multiple times - will only add new entires
+async function upsertAssayResultCategories(knex, assayId, categories) {
+  await Promise.all(
+    _.map(categories || [], async category => {
+      const resultCategoryId = await resultCategoryToId(category)
+
+      await query('Insert or update result categories for the assay').raw(
+        'INSERT INTO ResultCategoryAssay set ? ON DUPLICATE KEY UPDATE ?',
+        [
+          {
+            assayId,
+            resultCategoryId,
+          },
+          {
+            assayId,
+            resultCategoryId,
+          },
+        ]
+      )
+    })
+  )
+}
+
+const defaultGxAlertMigrationVariables = {
+  admin: {
+    name: 'admin',
+    password: null, // required
+  },
+  partner: {
+    name: null, // required
+    serverUrl: null, // required
+  },
+  geographyFromGxAlert: {
+    countries: null, // required
+    /* -- Query Country With States & LGAs in GxAlert
+SELECT CONCAT(
+  '{"abbreviation":"', country.Abbreviation,
+  '","name":"', country.Name,
+  '","a3":"', country.A3,
+  '","culture":"', country.Culture,
+  '","countryCode":"', Country.CountryCode,
+  '","timezone":"', Country.TimeZoneId,
+  '","portNumber":', Country.PortNumber,
+  ',"exportColumns":"', Country.ExportColumns,
+  '","inventoryDaysThreshold":', Country.InventoryDaysThreshold,
+  ',"monthStartsOnDay":', IFNULL(Country.MonthStartsOnDay, '1'),
+  ',"states":[') AS countryJSON
+FROM Country
+WHERE Country.Name IS NOT NULL
+AND Country.A3 IS NOT NULL
+UNION
+SELECT CONCAT(
+    '{"name":"', State.Name, '",',
+    IFNULL(CONCAT('"abbreviation":"', State.Abbreviation, '",'), ''),
+    '"lgas":[', IFNULL((SELECT GROUP_CONCAT(CONCAT('{"name":"', Lga.Name, '"}')) FROM Lga WHERE Lga.Name IS NOT NULL AND Lga.StateId = State.StateId), ''), ']',
+    '},') AS countryJSON
+FROM Country
+JOIN State ON State.CountryId = Country.CountryId
+WHERE Country.Name IS NOT NULL
+AND Country.A3 IS NOT NULL
+UNION
+SELECT ']}' AS countryJSON;
+*/
+  },
+  gxAlertDevice: {
+    deviceApiKeyToken: null, // required
+  },
+  sitesFromGxAlert: [],
+  jobFunctions: [],
+  contactsFromGxAlert: [],
+  /* -- Query Contacts in GxAlert
+  TODO: These queries belong is a more comprehensive document that explains how to migrate a customer from GxAlert to Aspect
+        https://ops.systemone.id/browse/ASP-1373
+SELECT CONCAT(
+'{ "personName": "',  person.Name,
+COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
+'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
+'" ], ', COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
+COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
+COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),
+COALESCE(CONCAT('"username": "', my_aspnet_users.name, '", '), ''),
+COALESCE(CONCAT('"timezone": "', person.TimeZoneId, '", '), ''),
+'"hidePatientId": ', COALESCE(CASE WHEN person.HidePatientId = 1 THEN 'true' END, 'false'),
+', "hideSampleId": ', COALESCE(CASE WHEN person.HideSampleId = 1 THEN 'true' END, 'false'),
+', "hideNotes": ', COALESCE(CASE WHEN person.HideNotes = 1 THEN 'true' END, 'false'),
+', "getPasswordFromGxAlert": true',
+COALESCE(CONCAT(', "geographies": [ ', CASE WHEN role.Name = 'National Level' THEN '{}'
+                                          WHEN role.Name = 'State Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personstate_state.Name, '" }'))
+                                          WHEN role.Name = 'LGA Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "stateName": "', personlgastate_state.Name, '", "lgaName": "', personlga_lga.Name, '" }'))
+                                     END, ' ]'), ''),
+COALESCE(CONCAT(', "sites": [ ', CASE WHEN role.Name = 'Lab Level' THEN GROUP_CONCAT(DISTINCT CONCAT('{ "shortName": "', persondeployment_deployment.ShortName, '" }')) END, ' ], '), ''),
+'},') AS jsonObject
+FROM person
+LEFT JOIN my_aspnet_users ON my_aspnet_users.id = person.UserId
+LEFT JOIN state ON state.StateId = person.StateId
+LEFT JOIN lga ON lga.LgaId = person.LgaId
+LEFT JOIN deployment ON deployment.DeploymentId = person.DeploymentId
+LEFT JOIN role ON role.RoleId = person.RoleId
+LEFT JOIN persondeployment ON persondeployment.PersonId = person.PersonId
+LEFT JOIN deployment as persondeployment_deployment ON persondeployment_deployment.DeploymentId = persondeployment.DeploymentId
+LEFT JOIN personlga ON personlga.PersonId = person.PersonId
+LEFT JOIN lga as personlga_lga ON personlga_lga.LgaId = personlga.LgaId
+LEFT JOIN state as personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
+LEFT JOIN personstate ON personstate.PersonId = person.PersonId
+LEFT JOIN state as personstate_state ON personstate_state.StateId = personstate.StateId
+GROUP BY person.PersonId
+*/
+  geneXpertAssayExternalIds: [
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxHiv1Vl',
+    'GxHiv1Qual',
+    'GxEbola',
+    'GxUnknown',
+    'GxHcv',
+    'assayGXCovid19',
+  ],
+  customFieldsFromGxAlert: [],
+}
+
+async function baseGxAlertMigration(
+  variables = defaultGxAlertMigrationVariables,
+  knex
+) {
+  // -----------------------------------------------
+  // Supplement passed variables with default values
+  // -----------------------------------------------
+  const variablesWithDefaults = _.merge(
+    { ...defaultGxAlertMigrationVariables },
+    variables
+  )
+  const {
+    admin,
+    partner,
+    geographyFromGxAlert,
+    gxAlertDevice,
+    sitesFromGxAlert,
+    jobFunctions: jobFunctionsFixture,
+    contactsFromGxAlert,
+    geneXpertAssayExternalIds,
+    customFieldsFromGxAlert,
+  } = variablesWithDefaults
+  const gxAlertAdmin =
+    contactsFromGxAlert.find(contact => contact.username === admin.name) || {}
+  if (gxAlertAdmin.getPasswordFromGxAlert) {
+    admin.legacyPassword = 1
+  }
+  const { countries } = geographyFromGxAlert
+
+  // -------------------------
+  // Validate passed variables
+  // -------------------------
+  const missingVariables = []
+  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert) {
+    missingVariables.push('admin.password')
+  }
+  if (!partner.name) {
+    missingVariables.push('partner.name')
+  }
+  if (!partner.serverUrl) {
+    missingVariables.push('partner.serverUrl')
+  }
+  if (_.isEmpty(countries)) {
+    missingVariables.push('geography.countries')
+  } else {
+    countries.forEach((country, index) => {
+      if (!country.abbreviation) {
+        missingVariables.push(`geography.countries[${index}].abbreviation`)
+      }
+      if (!country.name) {
+        missingVariables.push(`geography.countries[${index}].name`)
+      }
+      if (!country.a3) {
+        missingVariables.push(`geography.countries[${index}].a3`)
+      }
+      if (!country.countryCode) {
+        missingVariables.push(`geography.countries[${index}].countryCode`)
+      }
+      if (!country.timezone) {
+        missingVariables.push(`geography.countries[${index}].timezone`)
+      }
+    })
+  }
+  if (!gxAlertDevice.deviceApiKeyToken) {
+    missingVariables.push('gxAlertDevice.deviceApiKeyToken')
+  }
+  if (!_.isEmpty(missingVariables)) {
+    throw new Error(
+      `The following required variables were not passed: ${missingVariables.join(
+        ','
+      )}`
+    )
+  }
+
+  // ---------------------------
+  // Seed admin user and partner
+  // ---------------------------
+  const now = new Date()
+  let { id: adminId } =
+    (await knex('User').where('name', admin.name).first('id')) || {}
+  if (!adminId) {
+    ;[adminId] = await knex('User').insert({
+      approved: 1,
+      createdOn: now,
+      lockedOut: 0,
+      failedPasswordAttempts: 0,
+      ...admin,
+      password: bcrypt.hashSync(admin.password || '', saltRounds),
+    })
+  }
+  let { id: partnerId } =
+    (await knex('Partner').where('name', partner.name).first('id')) || {}
+  if (!partnerId) {
+    ;[partnerId] = await knex('Partner').insert({
+      partnerTypeId: await partnerTypeToId('Operating'),
+      deviceLogHistoryDays: 365,
+      maxDaysDeviceOffline: 7,
+      maxDaysDeviceNoResults: 14,
+      ...partner,
+    })
+  }
+  const returnValue = {
+    adminId,
+    partnerId,
+  }
+
+  // --------------------
+  // Common general seeds
+  // --------------------
+  await commonUpserts(
+    knex,
+    partnerId,
+    adminId,
+    geographyFromGxAlert,
+    countries[0].abbreviation,
+    gxAlertDevice.deviceApiKeyToken
+  )
+
+  // --------------------------------------------
+  // Country, States & LGAs from GxAlert instance
+  // --------------------------------------------
+  const country = await knex('Country as c')
+    .where('c.abbreviation', countries[0].abbreviation)
+    .first('c.id', 'c.culture', 'c.timezone')
+  const countryGeography = await knex('Geography')
+    .where('countryId', country.id)
+    .whereNull('stateId')
+    .whereNull('lgaId')
+    .first('id')
+  const { id: countryId } = country
+  returnValue.countryId = countryId
+  const states = await knex('Geography as g')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': country.id })
+    .select('g.countryId', 's.id', 's.name')
+  const lgas = await knex('Geography as g')
+    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': country.id })
+    .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
+  const statesByName = states.reduce((stateMemo, state) => {
+    stateMemo[state.name.toLowerCase()] = state
+    const stateLgas = _.filter(lgas, {
+      stateName: state.name,
+    })
+    if (stateLgas) {
+      stateMemo[state.name.toLowerCase()].lgas = stateLgas.reduce(
+        (lgaMemo, lga) => {
+          lgaMemo[lga.name.toLowerCase()] = lga
+          return lgaMemo
+        },
+        {}
+      )
+    }
+    return stateMemo
+  }, {})
+  returnValue.statesByName = statesByName
+
+  // --------------------------------------------------------------------------------
+  // GeneXpert Assays with Patient and Result Data Schemas from GxAlert Custom Fields
+  // --------------------------------------------------------------------------------
+  const patientDbColumns = [
+    'HivStatus',
+    'DrSuspect',
+    'PatientAge',
+    'PatientGender',
+    'PatientCity',
+    'HealthFacility',
+    'PreviouslyTreated',
+    'PatientName',
+    'PatientAddress',
+    'PatientState',
+    'PatientLga',
+    'PatientPhone',
+    'PatientId',
+    'PatientAgeMonths',
+  ]
+  const patientDataCustomFields = _.sortBy(
+    _.uniqBy(
+      customFieldsFromGxAlert
+        .filter(cf => patientDbColumns.includes(cf.dbColumn))
+        .map(cf => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
+      'dbColumn'
+    ),
+    'order'
+  )
+  const patientDataSchema = patientDataCustomFields.length > 0 ? {} : undefined
+  patientDataCustomFields.forEach(cf => {
+    patientDataCustomFields[_.camelCase(cf.dbColumn)] = {
+      title: cf.title,
+      type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
+      order: cf.order,
+    }
+  })
+  await upsertGeneXpertDeviceTypeAndAssays(
+    knex,
+    geneXpertAssayExternalIds,
+    patientDataSchema
+  )
+  const gxAlertAssayDataMappings = {
+    GxMtbRif: 'GeneXpert TB/RIF Result',
+    GxMtbRifUltra: 'GeneXpert MTB-RIF Ultra',
+    GxHiv1Vl: 'GeneXpert HIV-1 Viral Load Result',
+    GxHiv1Qual: 'GeneXpert HIV-1 QUAL Result',
+    GxEbola: 'GeneXpert Ebola Result',
+    GxHcv: 'GeneXpert HCV Viral Load',
+    assayGXCovid19: 'GeneXpert SARS-CoV-2',
+  }
+  await Promise.each(
+    geneXpertAssayExternalIds,
+    async geneXpertAssayExternalId => {
+      if (
+        !gxAlertAssayDataMappings[geneXpertAssayExternalId] &&
+        geneXpertAssayExternalId !== 'GxUnknown'
+      ) {
+        return Promise.resolve()
+      }
+      const resultDataCustomFieldsForAssay = _.sortBy(
+        _.uniqBy(
+          customFieldsFromGxAlert
+            .filter(
+              cf =>
+                (geneXpertAssayExternalId === 'GxUnknown' ||
+                  cf.testType ===
+                    gxAlertAssayDataMappings[geneXpertAssayExternalId] ||
+                  cf.testType === null) &&
+                !patientDbColumns.includes(cf.dbColumn)
+            )
+            .map(cf => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
+          'dbColumn'
+        ),
+        'order'
+      )
+      if (resultDataCustomFieldsForAssay.length === 0) {
+        return Promise.resolve()
+      }
+      const existingAssay = await knex('Assay')
+        .where('externalId', geneXpertAssayExternalId)
+        .first()
+      if (existingAssay) {
+        const resultDataSchema = JSON.parse(
+          existingAssay.resultDataSchema || '{}'
+        )
+        if (!resultDataSchema.gxAlertCustomFields) {
+          resultDataSchema.gxAlertCustomFields = {
+            list: false,
+            order:
+              (_.max(Object.values(resultDataSchema).map(val => val.order)) ||
+                -1) + 1,
+            type: 'object',
+            title: 'GxAlert Custom Fields',
+            properties: {},
+          }
+        }
+        resultDataCustomFieldsForAssay.forEach(cf => {
+          const resultDataSchemaProperty = _.camelCase(cf.dbColumn || cf.title)
+          const existingCustomFieldProperty =
+            resultDataSchema.gxAlertCustomFields.properties[
+              resultDataSchemaProperty
+            ] || {}
+          resultDataSchema.gxAlertCustomFields.properties[
+            resultDataSchemaProperty
+          ] = {
+            ...existingCustomFieldProperty,
+            title: cf.title,
+            type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
+            order: cf.order,
+          }
+        })
+        await knex('Assay')
+          .where('id', existingAssay.id)
+          .update({
+            resultDataSchema: JSON.stringify(resultDataSchema),
+          })
+      }
+    }
+  )
+
+  // -----------------------------------
+  // Seed Sites from GxAlert Deployments
+  // -----------------------------------
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+  await Promise.each(sitesFromGxAlert, async site => {
+    const state = site.stateName
+      ? statesByName[site.stateName.toLowerCase()] || {
+          id: null,
+          lgas: {},
+        }
+      : {
+          id: null,
+          lgas: {},
+        }
+    const district =
+      state.lgas && site.lgaName
+        ? state.lgas[site.lgaName.toLowerCase()] || {
+            id: null,
+          }
+        : {
+            id: null,
+          }
+    const { id: siteGeographyId } = await knex('Geography')
+      .where({
+        countryId: country.id,
+        stateId: state.id,
+        lgaId: district.id,
+      })
+      .first()
+
+    // sites
+    const siteData = {
+      partnerId,
+      geographyId: siteGeographyId,
+      name: site.name,
+      shortName: site.shortName,
+      externalId: site.externalId,
+      latitude: site.latitude,
+      longitude: site.longitude,
+      timezoneId: country.timezone,
+      ...auditFields,
+    }
+    const existingSite = await knex('Site')
+      .where('externalId', site.externalId)
+      .orWhere('name', site.name)
+      .first('id')
+    let siteId = 0
+    if (existingSite) {
+      siteId = existingSite.id
+    } else {
+      ;[siteId] = await knex('Site').insert(siteData)
+    }
+    siteData.id = siteId
+
+    if (site.devices) {
+      await Promise.all(
+        _.map(site.devices, async device => {
+          const existingDevice = await knex('Device')
+            .where({ partnerId, serial: device.serial })
+            .first(
+              'id',
+              'geographyId',
+              'siteId',
+              'deviceTypeId',
+              'name',
+              'shortName',
+              'macAddress',
+              'hostId',
+              'timezone',
+              'configurationData'
+            )
+          const { id: deviceTypeId } = await knex('DeviceType')
+            .where('externalId', device.deviceType || 'CepheidGeneXpert')
+            .first('id')
+          if (!existingDevice) {
+            await knex('Device').insert({
+              partnerId,
+              geographyId: siteGeographyId,
+              siteId,
+              deviceTypeId,
+              deviceStatusId: await deviceStatusToId('approved'),
+              name: device.name,
+              shortName: device.shortName,
+              serial: device.serial,
+              macAddress: device.macAddress,
+              hostId: device.hostId,
+              culture: country.culture,
+              timezone: siteData.timezoneId,
+              configurationData: device.gxAlertDeviceId
+                ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}`
+                : '{}',
+              ...auditFields,
+            })
+          } else {
+            const deviceConfigurationData = JSON.parse(
+              existingDevice.configurationData
+                ? existingDevice.configurationData
+                : '{}'
+            )
+            if (
+              deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId
+            ) {
+              deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
+            }
+            if (
+              existingDevice.geographyId !== siteGeographyId ||
+              existingDevice.siteId !== siteId ||
+              existingDevice.deviceTypeId !== deviceTypeId ||
+              existingDevice.name !== device.name ||
+              existingDevice.shortName !== device.shortName ||
+              existingDevice.macAddress !== device.macAddress ||
+              existingDevice.hostId !== device.hostId ||
+              existingDevice.timezone !== siteData.timezoneId ||
+              existingDevice.configurationData !==
+                JSON.stringify(deviceConfigurationData)
+            ) {
+              await knex('Device')
+                .where('id', existingDevice.id)
+                .update({
+                  geographyId: siteGeographyId,
+                  siteId,
+                  deviceTypeId: await deviceTypeToId(device.deviceType),
+                  name: device.name,
+                  shortName: device.shortName,
+                  serial: device.serial,
+                  macAddress: device.macAddress,
+                  hostId: device.hostId,
+                  culture: country.culture,
+                  timezone: siteData.timezoneId,
+                  configurationData: JSON.stringify(deviceConfigurationData),
+                  updatedOn: now,
+                  updatedBy: adminId,
+                })
+            }
+          }
+        })
+      )
+    }
+  })
+  const siteIds = await knex('Geography as g')
+    .join('Site as s', 'g.id', 's.geographyId')
+    .where('g.countryId', countryId)
+    .select('s.id', 's.shortName')
+    .distinct('s.id', 's.shortName')
+    .then(items =>
+      items.reduce((siteMap, site) => {
+        siteMap[site.shortName] = site.id
+        return siteMap
+      }, {})
+    )
+  returnValue.siteIds = siteIds
+
+  // -----------------------------
+  // Job Functions and Permissions
+  // -----------------------------
+  const { getPermissonByModuleAndActivity } = utils
+  await Promise.each(jobFunctionsFixture, async jf => {
+    const jobFunction = _.omit(jf, ['permissions'])
+    const permissionIds = await Promise.map(
+      jf.permissions || [],
+      async permission => {
+        const { id: permissionId } = await getPermissonByModuleAndActivity(
+          knex,
+          permission.module,
+          permission.activity
+        )
+        return permissionId
+      }
+    )
+    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
+  })
+  const jobFunctions = await knex('JobFunction')
+    .where({ partnerId })
+    .select()
+    .then(items =>
+      items.reduce((jobFunctionMap, jobFunction) => {
+        jobFunctionMap[jobFunction.name] = jobFunction.id
+        return jobFunctionMap
+      }, {})
+    )
+
+  // -------------------------------------
+  // Contacts & User Accounts from GxAlert
+  // -------------------------------------
+  await Promise.each(contactsFromGxAlert, async person => {
+    let userId = null
+    if (person.username) {
+      const existingUser = await knex('User')
+        .where('name', person.username)
+        .first('id')
+      if (existingUser) {
+        userId = existingUser.id
+      } else {
+        const pw = bcrypt.hashSync(
+          person.password || 'WelcomeToAspect',
+          saltRounds
+        )
+        const baseUserData = {
+          password: pw,
+          failedPasswordAttempts: 0,
+          legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
+          lockedOut: 0,
+        }
+        ;[userId] = await knex('User').insert({
+          name: person.username,
+          approved: 1,
+          createdOn: now,
+          ...baseUserData,
+        })
+      }
+    }
+    const state =
+      !_.isEmpty(person.geographies) && person.geographies[0].stateName
+        ? statesByName[person.geographies[0].stateName.toLowerCase()] || {
+            id: null,
+            lgas: {},
+          }
+        : {
+            id: null,
+            lgas: {},
+          }
+    const lga =
+      state.lgas &&
+      !_.isEmpty(person.geographies) &&
+      person.geographies[0].lgaName
+        ? state.lgas[person.geographies[0].lgaName.toLowerCase()] || {
+            id: null,
+          }
+        : {
+            id: null,
+          }
+    const { id: geographyId } = !_.isEmpty(person.geographies)
+      ? await knex('Geography')
+          .where({
+            countryId,
+            stateId: state.id,
+            lgaId: lga.id,
+          })
+          .first()
+      : { id: countryGeography.id }
+    let personId = null
+    const existingPerson = await knex('Person')
+      .where('userId', userId || -1)
+      .orWhere(function () {
+        this.where('name', person.personName)
+        if (person.personEmailAddress) {
+          this.andWhere('email', person.personEmailAddress)
+        }
+      })
+      .first()
+    if (existingPerson) {
+      if (
+        existingPerson.name !== person.personName ||
+        existingPerson.timezone !== person.timezone ||
+        existingPerson.title !== person.title ||
+        existingPerson.geographyId !== geographyId ||
+        existingPerson.email !== person.personEmailAddress ||
+        existingPerson.cell !== person.personCell ||
+        existingPerson.phone !== person.personPhone ||
+        existingPerson.hidePatientId !== person.hidePatientId ||
+        existingPerson.hideSampleId !== person.hideSampleId ||
+        existingPerson.hideNotes !== person.hideNotes
+      ) {
+        await knex('Person')
+          .where('id', existingPerson.id)
+          .update({
+            ...existingPerson,
+            name: person.personName,
+            timezone: person.timezone,
+            title: person.title,
+            geographyId,
+            email: person.personEmailAddress,
+            cell: person.personCell,
+            phone: person.personPhone,
+            hidePatientId: person.hidePatientId,
+            hideSampleId: person.hideSampleId,
+            hideNotes: person.hideNotes,
+            updatedOn: now,
+            updatedBy: adminId,
+          })
+      }
+      personId = existingPerson.id
+    } else {
+      ;[personId] = await knex('Person').insert({
+        name: person.personName,
+        timezone: person.timezone || countries[0].timezone,
+        geographyId,
+        title: person.title,
+        email: person.personEmailAddress,
+        cell: person.personCell,
+        phone: person.personPhone,
+        userId,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        hidePatientId: person.hidePatientId,
+        hideSampleId: person.hideSampleId,
+        hideNotes: person.hideNotes,
+        culture: 'en',
+        ...auditFields,
+      })
+    }
+    if (!_.isEmpty(person.jobFunctions)) {
+      await Promise.each(person.jobFunctions, async jobFunctionName => {
+        const existingJob = await knex('Job')
+          .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
+          .first()
+        if (!existingJob) {
+          const [jobId] = await knex('Job').insert({
+            personId,
+            jobFunctionId: jobFunctions[jobFunctionName],
+          })
+          if (
+            jobFunctionName === 'Lab User' &&
+            person.sites &&
+            person.sites.length > 0 &&
+            siteIds[person.sites[0].shortName]
+          ) {
+            await knex('JobContext').insert({
+              jobId,
+              siteId: siteIds[person.sites[0].shortName],
+            })
+          } else if (!_.isEmpty(person.geographies)) {
+            await Promise.each(person.geographies, async geography => {
+              const jobState = geography.stateName
+                ? statesByName[geography.stateName.toLowerCase()] || {
+                    id: null,
+                    lgas: {},
+                  }
+                : {
+                    id: null,
+                    lgas: {},
+                  }
+              const jobLga =
+                jobState.lgas && geography.lgaName
+                  ? jobState.lgas[geography.lgaName.toLowerCase()] || {
+                      id: null,
+                    }
+                  : {
+                      id: null,
+                    }
+              const { id: jobGeographyId } = await knex('Geography')
+                .where({
+                  countryId,
+                  stateId: jobState.id,
+                  lgaId: jobLga.id,
+                })
+                .first()
+              await knex('JobContext').insert({
+                jobId,
+                geographyId: jobGeographyId,
+              })
+            })
+          }
+        }
+      })
+    }
+  })
+
+  return returnValue
+}
+
+async function seedLabClinicFixture(
+  labClinics,
+  seededData = { adminId: 0, partnerId: 0, countryId: 0, statesByName: {} },
+  knex
+) {
+  const missingSeededData = []
+  if (!seededData.adminId) {
+    missingSeededData.push('seededData.adminId')
+  }
+  if (!seededData.partnerId) {
+    missingSeededData.push('seededData.partnerId')
+  }
+  if (!seededData.countryId) {
+    missingSeededData.push('seededData.countryId')
+  }
+  if (!_.isEmpty(missingSeededData)) {
+    throw new Error(
+      `The following required seeded values were not passed: ${missingSeededData.join(
+        ','
+      )}`
+    )
+  }
+  const now = new Date()
+  const { adminId, partnerId, countryId, statesByName = {} } = seededData
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+  const approvedDeviceStatusId = await deviceStatusToId('approved')
+
+  await Promise.all(
+    _.map(labClinics.clinics || [], async clinic => {
+      const state = clinic.stateName
+        ? statesByName[clinic.stateName.toLowerCase()] || {
+            id: null,
+            lgas: {},
+          }
+        : {
+            id: null,
+            lgas: {},
+          }
+      const district =
+        state.lgas && clinic.lgaName
+          ? state.lgas[clinic.lgaName.toLowerCase()] || {
+              id: null,
+            }
+          : {
+              id: null,
+            }
+      const { id: clinicGeographyId } = await knex('Geography')
+        .where({
+          countryId,
+          stateId: state.id,
+          lgaId: district.id,
+        })
+        .first()
+      const siteData = {
+        partnerId,
+        geographyId: clinicGeographyId,
+        name: clinic.name,
+        shortName: clinic.shortName,
+        externalId: clinic.externalId,
+        latitude: clinic.latitude,
+        longitude: clinic.longitude,
+        ...auditFields,
+      }
+      const existingClinic = await knex('Site as s')
+        .join('Geography as g', 's.geographyId', 'g.id')
+        .where('g.countryId', countryId)
+        .andWhere('s.externalId', clinic.externalId)
+        .first('s.*')
+      if (existingClinic) {
+        await knex('Site')
+          .where('id', existingClinic.id)
+          .update({
+            ...existingClinic,
+            ...siteData,
+          })
+      } else {
+        await knex('Site').insert(siteData)
+      }
+    })
+  )
+
+  await Promise.all(
+    _.map(labClinics.labs || [], async lab => {
+      const state = lab.stateName
+        ? statesByName[lab.stateName.toLowerCase()] || {
+            id: null,
+            lgas: {},
+          }
+        : {
+            id: null,
+            lgas: {},
+          }
+      const district =
+        state.lgas && lab.lgaName
+          ? state.lgas[lab.lgaName.toLowerCase()] || {
+              id: null,
+            }
+          : {
+              id: null,
+            }
+      const { id: labGeographyId } = await knex('Geography')
+        .where({
+          countryId,
+          stateId: state.id,
+          lgaId: district.id,
+        })
+        .first()
+      const siteData = {
+        partnerId,
+        geographyId: labGeographyId,
+        name: lab.name,
+        shortName: lab.shortName,
+        externalId: lab.externalId,
+        latitude: lab.latitude,
+        longitude: lab.longitude,
+        ...auditFields,
+      }
+
+      const existingLab = await knex('Site as s')
+        .join('Geography as g', 's.geographyId', 'g.id')
+        .where('g.countryId', countryId)
+        .andWhere('s.externalId', lab.externalId)
+        .first('s.*')
+      let siteId
+      if (existingLab) {
+        siteId = existingLab.id
+        await knex('Site')
+          .where('id', existingLab.id)
+          .update({
+            ...existingLab,
+            ...siteData,
+          })
+      } else {
+        ;[siteId] = await knex('Site').insert(siteData)
+      }
+      siteData.id = siteId
+
+      if (lab.devices) {
+        await Promise.all(
+          _.map(lab.devices, async device => {
+            const deviceApiKeyToken = device.deviceApiKey
+            const deviceData =
+              (await knex('DeviceApiKey as dak')
+                .join('Device as d', 'dak.deviceId', 'd.id')
+                .where('dak.token', deviceApiKeyToken)
+                .first('d.*')) || {}
+            if (_.isEmpty(deviceData)) {
+              const lastDeviceActivity = now
+              deviceData.partnerId = partnerId
+              deviceData.geographyId = siteData.geographyId
+              deviceData.siteId = siteData.id
+              const { id: deviceTypeId } = await knex('DeviceType')
+                .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
+                .first('id')
+              deviceData.deviceTypeId = deviceTypeId
+              deviceData.deviceStatusId = approvedDeviceStatusId
+              deviceData.name = device.name
+              deviceData.shortName = device.shortName
+              deviceData.macAddress = device.macAddress
+              deviceData.serial = device.deviceSerial
+              deviceData.hostId = device.hostId
+              deviceData.lastSeenOn = lastDeviceActivity
+              deviceData.lastPingOn = lastDeviceActivity
+              deviceData.lastPingFromIp = device.lastPingFromIp
+              deviceData.putInService = now
+              deviceData.putInServiceSource = 'Installed at lab'
+              deviceData.configurationData = '{}'
+              const [deviceId] = await knex('Device').insert({
+                ...deviceData,
+                ...auditFields,
+              })
+              deviceData.id = deviceId
+              await knex('DeviceApiKey').insert({
+                token: deviceApiKeyToken,
+                revoked: 0,
+                partnerId,
+                geographyId: labGeographyId,
+                siteId,
+                deviceId,
+                ...auditFields,
+              })
+            }
+          })
+        )
+      }
+    })
+  )
+}
+
+async function ensureResultTreatmentStatuses(
+  knex,
+  treatmentStatuses = resultTreatmentStatuses
+) {
+  await Promise.each(treatmentStatuses, async resultTreatmentStatus => {
+    const existingResultTreatmentStatus = await knex('ResultTreatmentStatus')
+      .where('externalId', resultTreatmentStatus.externalId)
+      .first()
+    if (!existingResultTreatmentStatus) {
+      await knex('ResultTreatmentStatus').insert(resultTreatmentStatus)
+    }
+  })
+}
+
+async function upsertDashboardWidgets(
+  knex,
+  partnerId,
+  dashboardWidgetJson = dashboardWidgetCommonJson
+) {
+  if (!dashboardWidgetJson) return Promise.resolve()
+
+  await Promise.all(
+    _.map(dashboardWidgetJson.stat, async widget => {
+      // insert or update the widget itself
+      const widgetData = _.pick(widget, [
+        'title',
+        'titleI18nKey',
+        'subTitle',
+        'subTitleI18nKey',
+        'sqlForIndicator',
+        'link',
+        'sortOrder',
+        'externalId',
+        'description',
+        'descriptionI18nKey',
+        'dashboards',
+      ])
+      widgetData.dashboards = JSON.stringify(
+        widgetData.dashboards || { home: {} }
+      )
+
+      let { id: widgetId } =
+        (await knex('DashboardWidget')
+          .where('externalId', widgetData.externalId)
+          .first('id')) || {}
+
+      if (!widgetId) {
+        ;[widgetId] = await knex('DashboardWidget').insert(widgetData)
+      } else {
+        await knex('DashboardWidget').update(widgetData).where('id', widgetId)
+      }
+
+      // insert or update the stat for the widget
+      const statWidgetData = _.pick(widget, [
+        'icon',
+        'sqlForStatUnit',
+        'statUnit',
+        'statUnitI18nKey',
+        'statStatus',
+        'statStatusI18nKey',
+        'sqlForExtra',
+        'extraUnit',
+        'extraUnitI18nKey',
+        'extraLabel',
+        'extraLabelI18nKey',
+      ])
+
+      const { id: widgetStatId } =
+        (await knex('DashboardWidgetStat')
+          .where('dashboardWidgetId', widgetId)
+          .first('id')) || {}
+
+      if (!widgetStatId) {
+        await knex('DashboardWidgetStat').insert({
+          dashboardWidgetId: widgetId,
+          ...statWidgetData,
+        })
+      } else {
+        await knex('DashboardWidgetStat')
+          .update(statWidgetData)
+          .where('id', widgetStatId)
+      }
+
+      // add widget to configured job functions here
+      const jobFunctionsDb = await knex('JobFunction')
+        .where({ partnerId })
+        .where(function () {
+          if (
+            widget.jobFunctions &&
+            widget.jobFunctions !== 'all' &&
+            widget.jobFunctions[0] !== 'all'
+          ) {
+            this.whereIn('externalId', widget.jobFunctions)
+          }
+        })
+        .select('id', 'name')
+
+      jobFunctionsDb.map(async jf => {
+        const { jobFunctionId } =
+          (await knex('JobFunctionDashboardWidget')
+            .where('jobFunctionId', jf.id)
+            .where({ widgetId })
+            .first('jobFunctionId')) || {}
+
+        if (!jobFunctionId) {
+          await knex('JobFunctionDashboardWidget').insert({
+            jobFunctionId: jf.id,
+            widgetId,
+          })
+        }
+      })
+    })
+  )
+}
+
+module.exports = {
+  commonUpserts,
+  upsertGxAlertDevice,
+  ensureAspectDeviceExists,
+  upsertJobFunctionPermission,
+  upsertGeneXpertDeviceTypeAndAssays,
+  upsertStatesAndLgas,
+  upsertAssayResultCategories,
+  upsertJobFunction,
+  clonePermissions,
+  baseGxAlertMigration,
+  seedLabClinicFixture,
+  ensureResultTreatmentStatuses,
+  upsertDashboardWidgets,
+}

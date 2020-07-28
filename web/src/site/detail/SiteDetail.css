@@ -1,7 +1,17 @@
-.Container {
-  padding: 10px 10px 20px 10px;
+@import '../../globals/variables.css';
+
+.Section {
+  padding: 10px var(--aspect-detail-horizontal-padding);
 }
 
-.FieldsContainer {
+.Section--first {
+  padding-top: 20px;
+}
+
+.Section__Content {
   padding: 20px;
+}
+
+.Summary {
+  padding-bottom: 10px;
 }

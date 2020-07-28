@@ -13,29 +13,46 @@ exports[`NotificationList module NotificationList component should render correc
     title="Notifications"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    config={
+      Object {
+        "name": true,
+      }
+    }
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
     intl={
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "formatDate": [Function],
-        "formatHTMLMessage": [Function],
+        "formatDateToParts": [Function],
+        "formatDisplayName": [Function],
+        "formatList": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
+        "formatNumberToParts": [Function],
         "formatPlural": [Function],
-        "formatRelative": [Function],
+        "formatRelativeTime": [Function],
         "formatTime": [Function],
+        "formatTimeToParts": [Function],
         "formats": Object {},
         "formatters": Object {
           "getDateTimeFormat": [Function],
+          "getDisplayNames": [Function],
+          "getListFormat": [Function],
           "getMessageFormat": [Function],
           "getNumberFormat": [Function],
-          "getPluralFormat": [Function],
-          "getRelativeFormat": [Function],
+          "getPluralRules": [Function],
+          "getRelativeTimeFormat": [Function],
         },
         "locale": "en",
         "messages": Object {},
-        "now": [Function],
-        "textComponent": "span",
+        "onError": [Function],
+        "textComponent": Symbol(react.fragment),
+        "timeZone": undefined,
       }
     }
     location={
@@ -44,34 +61,54 @@ exports[`NotificationList module NotificationList component should render correc
       }
     }
   />
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />
+    <Connect(withState(withHandlers(ExportListButton)))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
+      reportName="Notifications"
+      visible={false}
+    />
     <pure(withHandlers(EmptyList))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
       intl={
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "formatDate": [Function],
-          "formatHTMLMessage": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
+          "formatNumberToParts": [Function],
           "formatPlural": [Function],
-          "formatRelative": [Function],
+          "formatRelativeTime": [Function],
           "formatTime": [Function],
+          "formatTimeToParts": [Function],
           "formats": Object {},
           "formatters": Object {
             "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
             "getMessageFormat": [Function],
             "getNumberFormat": [Function],
-            "getPluralFormat": [Function],
-            "getRelativeFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
           },
           "locale": "en",
           "messages": Object {},
-          "now": [Function],
-          "textComponent": "span",
+          "onError": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
         }
       }
       location={

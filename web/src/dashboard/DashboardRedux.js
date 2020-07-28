@@ -1,5 +1,8 @@
+/* eslint-disable linebreak-style */
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import forEach from 'lodash/forEach'
+import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
@@ -8,6 +11,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
+import { receiveList, Items } from '../shared/metaReducers/items'
 
 import { types as inventoryTypes } from '../inventory/InventoryRedux'
 import { types as issueTypes } from '../issue/IssueRedux'
@@ -37,33 +41,44 @@ export const RECEIVE_OPERATIONAL_STATUS = 'RECEIVE_OPERATIONAL_STATUS'
 
 export const REQUEST_ACTION_STATUS = 'REQUEST_ACTION_STATUS'
 export const RECEIVE_ACTION_STATUS = 'RECEIVE_ACTION_STATUS'
+
+export const REQUEST_TREATMENT_DASHBOARD = 'REQUEST_TREATMENT_DASHBOARD'
+export const RECEIVE_TREATMENT_DASHBOARD = 'RECEIVE_TREATMENT_DASHBOARD'
+
+export const RECEIVE_INVENTORY_DASHBOARD = 'RECEIVE_INVENTORY_DASHBOARD'
+export const REQUEST_INVENTORY_DASHBOARD = 'REQUEST_INVENTORY_DASHBOARD'
+
 /*
  * ---------------- Action Creators -----------------
  */
-function requestStatDashboard(requestedAt) {
+function requestStatDashboard(requestedAt, dashboard) {
   return {
     type: REQUEST_STAT_DASHBOARD,
     requestedAt,
+    dashboard,
   }
 }
 
-function receiveStatDashboard(requestedAt, data) {
+function receiveStatDashboard(requestedAt, dashboard, data) {
   return {
     type: RECEIVE_STAT_DASHBOARD,
     requestedAt,
+    dashboard,
     data,
   }
 }
 
-export function fetchStatDashboard(rawFiltersParams) {
+export function fetchStatDashboard(rawFiltersParams, { dashboard = 'home' }) {
   const filtersParams = new URLSearchParams()
   if (rawFiltersParams.has('siteId')) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
+  filtersParams.set('dashboard', dashboard)
+
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `summary_${Date.now()}`
-    dispatch(requestStatDashboard(requestedAt))
+    dispatch(requestStatDashboard(requestedAt, dashboard))
 
     return aspectFetch(`/dashboard/summary?${stringify(filters)}`, {
       errorNotifications: {
@@ -84,7 +99,9 @@ export function fetchStatDashboard(rawFiltersParams) {
           })
         ),
       },
-    }).then(json => dispatch(receiveStatDashboard(requestedAt, json.data)))
+    }).then(json =>
+      dispatch(receiveStatDashboard(requestedAt, dashboard, json.data))
+    )
   }
 }
 
@@ -112,7 +129,7 @@ export function fetchTargetDashboard(rawFiltersParams) {
     filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `target_${Date.now()}`
     dispatch(requestTargetDashboard(requestedAt))
 
@@ -290,56 +307,6 @@ export function fetchSiteDashboard() {
   }
 }
 
-function requestOperationalStatus(requestedAt) {
-  return {
-    type: REQUEST_OPERATIONAL_STATUS,
-    requestedAt,
-  }
-}
-
-function receiveOperationalStatus(requestedAt, data) {
-  return {
-    type: RECEIVE_OPERATIONAL_STATUS,
-    requestedAt,
-    data,
-  }
-}
-
-export function fetchOperationalStatus(filtersParams) {
-  return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
-    const requestedAt = `operational_${Date.now()}`
-    dispatch(requestOperationalStatus(requestedAt))
-
-    return aspectFetch(
-      `/dashboard/operational?${stringify({
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          403: errorInsufficientScope(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.receiveOperationalStatus.GET.default.title',
-                defaultMessage: 'Error Loading Operational Data',
-              },
-            })
-          ),
-        },
-      }
-    ).then(json => dispatch(receiveOperationalStatus(requestedAt, json.data)))
-  }
-}
-
 function requestActionDashboard(requestedAt) {
   return {
     type: REQUEST_ACTION_STATUS,
@@ -361,7 +328,7 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
   }
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const requestedAt = `action_${Date.now()}`
     dispatch(requestActionDashboard(requestedAt))
 
@@ -396,31 +363,86 @@ export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
   }
 }
 
+export function fetchInventoryDashboard() {
+  return dispatch => {
+    const requestedAt = `inventoryItem_${Date.now()}`
+    dispatch(
+      requestInventoryDashboard({
+        requestedAt,
+      })
+    )
+    return aspectFetch('/inventory/days-by-location', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchInventoryDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Inventory',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveInventoryDashboard(requestedAt, json)))
+  }
+}
+
+function requestInventoryDashboard(data) {
+  return {
+    type: REQUEST_INVENTORY_DASHBOARD,
+    data,
+  }
+}
+
+function receiveInventoryDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_INVENTORY_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
-const Summary = Immutable.Record({
+const initialData = Immutable.Record({
   requestedAtSet: Immutable.Set(),
-  summary: Immutable.List(),
+  dashboardsCache: Immutable.Map(),
+  allSummaryItems: new Items(),
+  summary: Immutable.fromJS({
+    currentIdList: [],
+    widgetGroups: {},
+  }),
   targetSummaryList: Immutable.List(),
   resultSiteList: Immutable.List(),
   resultSummaryList: Immutable.List(),
   inventoryItemSiteList: Immutable.List(),
-  inventorySiteSummaryList: Immutable.List(),
   inventoryConsumableSummaryList: Immutable.List(),
   deviceList: Immutable.List(),
   deviceSummaryMap: Immutable.Map(),
   siteList: Immutable.List(),
+  assayResultCategoryList: Immutable.List(),
   siteSummaryMap: Immutable.Map(),
   operational: Immutable.Map(),
   actionSummaryMap: Immutable.Map(),
+  treatmentStatus: Immutable.Map(),
+  clinicalIndicators: Immutable.Map(),
+  inventoryItems: Immutable.List(),
 })
 
-const initialState = new Summary()
+const initialState = initialData()
+const onRequested = (action, mutState, cb) => {
+  if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+    mutState.set(
+      'requestedAtSet',
+      mutState.requestedAtSet.delete(action.requestedAt)
+    )
+    if (cb) cb()
+  }
+}
 
 export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
-    case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
@@ -428,106 +450,144 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_SITE_DASHBOARD:
     case REQUEST_OPERATIONAL_STATUS:
     case REQUEST_ACTION_STATUS:
+    case REQUEST_TREATMENT_DASHBOARD:
       return state.set(
         'requestedAtSet',
         state.requestedAtSet.add(action.requestedAt)
       )
+    case REQUEST_STAT_DASHBOARD:
+      return state.withMutations(mutState => {
+        mutState.set(
+          'requestedAtSet',
+          state.requestedAtSet.add(action.requestedAt)
+        )
+
+        // get previously stored dashboard widgets
+        const dashboardItem =
+          state.getIn(['dashboardsCache', action.dashboard]) ||
+          Immutable.fromJS({ widgetGroups: {}, currentIdList: [] })
+
+        mutState.set('summary', dashboardItem)
+      })
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+        onRequested(action, mutState, () => {
+          const widgetGroups = {}
+          const addWidgetToGroup = (groupName, widgetId) => {
+            widgetGroups[groupName] = widgetGroups[groupName] || []
+            widgetGroups[groupName].push(widgetId)
+          }
+          const widgets = action.data.map(item => {
+            // see base pattern of `dashboards` in `api/seeds/fixtures/dashboardWidgetsBase.js`
+            item.dashboards = JSON.parse(item.dashboards || { home: {} })
+            //
+            forEach(item.dashboards, (dashboardProps, dashboardName) => {
+              // process only items for current dashboard (i.e action.dashboard)
+              if (dashboardName === action.dashboard) {
+                const { groupI18nKey } = dashboardProps
+                if (!groupI18nKey) {
+                  // add item as 'non-grouped'
+                  addWidgetToGroup(' ', item.id)
+                } else {
+                  addWidgetToGroup(groupI18nKey, item.id)
+                }
+              }
+            })
+            return item
+          })
+          const immutList = Immutable.fromJS(widgets)
           mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
+            'allSummaryItems',
+            receiveList(mutState.allSummaryItems, immutList)
           )
-          mutState.set('summary', new Immutable.fromJS(action.data))
-        }
+
+          mutState.setIn(
+            ['dashboardsCache', action.dashboard, 'currentIdList'],
+            mutState.allSummaryItems.currentIdList
+          )
+          mutState.setIn(
+            ['dashboardsCache', action.dashboard, 'widgetGroups'],
+            Immutable.fromJS(widgetGroups)
+          )
+          mutState.set(
+            'summary',
+            mutState.getIn(['dashboardsCache', action.dashboard])
+          )
+        })
       })
     case RECEIVE_TARGET_DASHBOARD:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
-          )
-          mutState.set('targetSummaryList', new Immutable.fromJS(action.data))
-        }
+        onRequested(action, mutState, () => {
+          mutState.set('targetSummaryList', Immutable.fromJS(action.data))
+        })
       })
     case RECEIVE_RESULT_DASHBOARD:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
+        onRequested(action, mutState, () => {
+          mutState.mergeDeepIn(
+            ['resultSiteList'],
+            Immutable.fromJS(action.data.siteList)
           )
-          mutState.mergeDeepIn(['resultSiteList'], action.data.siteList)
           mutState.mergeDeepIn(
             ['resultSummaryList'],
-            action.data.resultSummaryList
+            Immutable.fromJS(action.data.resultSummaryList)
           )
-        }
+        })
       })
     case RECEIVE_DEVICE_DASHBOARD:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
+        onRequested(action, mutState, () => {
+          mutState.mergeDeepIn(
+            ['deviceList'],
+            Immutable.fromJS(action.data.deviceList)
           )
-          mutState.mergeDeepIn(['deviceList'], action.data.deviceList)
           mutState.mergeDeepIn(
             ['deviceSummaryMap'],
-            action.data.deviceSummaryMap
+            Immutable.fromJS(action.data.deviceSummaryMap)
           )
-        }
+        })
       })
     case RECEIVE_SITE_DASHBOARD:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
+        onRequested(action, mutState, () => {
+          mutState.mergeDeepIn(
+            ['siteList'],
+            Immutable.fromJS(action.data.siteList)
           )
-          mutState.mergeDeepIn(['siteList'], action.data.siteList)
-          mutState.mergeDeepIn(['siteSummaryMap'], action.data.siteSummaryMap)
-        }
+          mutState.mergeDeepIn(
+            ['assayResultCategoryList'],
+            Immutable.fromJS(action.data.assayResultCategoryList)
+          )
+          mutState.mergeDeepIn(
+            ['siteSummaryMap'],
+            Immutable.fromJS(action.data.siteSummaryMap)
+          )
+        })
       })
     case RECEIVE_INVENTORY_ITEM_DASHBOARD:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
-          )
-          mutState.mergeDeepIn(['inventoryItemSiteList'], action.data.siteList)
+        onRequested(action, mutState, () => {
           mutState.mergeDeepIn(
-            ['inventorySiteSummaryList'],
-            action.data.inventorySiteSummaryList
+            ['inventoryItemSiteList'],
+            Immutable.fromJS(action.data.siteList)
           )
           mutState.mergeDeepIn(
             ['inventoryConsumableSummaryList'],
-            action.data.inventoryConsumableSummaryList
+            Immutable.fromJS(action.data.inventoryConsumableSummaryList)
           )
-        }
+        })
       })
     case RECEIVE_OPERATIONAL_STATUS:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
-          )
-          mutState.mergeDeepIn(['operational'], action.data)
-        }
+        onRequested(action, mutState, () => {
+          mutState.mergeDeepIn(['operational'], Immutable.fromJS(action.data))
+        })
       })
     case RECEIVE_ACTION_STATUS:
       return state.withMutations(mutState => {
-        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-          mutState.set(
-            'requestedAtSet',
-            mutState.requestedAtSet.delete(action.requestedAt)
-          )
-          mutState.set('actionSummaryMap', new Immutable.fromJS(action.data))
-        }
+        onRequested(action, mutState, () => {
+          mutState.set('actionSummaryMap', Immutable.fromJS(action.data))
+        })
       })
     case inventoryTypes.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
       return state.withMutations(mutState => {
@@ -568,6 +628,12 @@ export default function dashboardReducer(state = initialState, action) {
               })
             mutState.mergeDeepIn(['actionSummaryMap', category], list)
           })
+      })
+    case RECEIVE_INVENTORY_DASHBOARD:
+      return state.withMutations(mutState => {
+        const payload = action.data
+
+        mutState.set('inventoryItems', Immutable.fromJS(payload.data))
       })
     default:
       return state

@@ -1,171 +1,218 @@
 const _ = require('lodash')
-const subDays = require('date-fns/sub_days')
-const subMinutes = require('date-fns/sub_minutes')
+const { knex } = require('../db')
+const setupPaginator = require('../shared/knex-paginator')
+const { getAccountDetailsForUsername } = require('../accountDetails/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
+
+setupPaginator(knex)
+
+const RESOLVED_ISSUE_STATUS = 'Resolved'
+const OK_ISSUE_STATUS = 'Ok'
+
+async function baseAlertMessagesQuery(request, query, queryBuilder) {
+  const loggedUserName = request.auth.credentials.name
+  const accountDetails = await getAccountDetailsForUsername(loggedUserName)
+  const sortColumn = query.sortCol ? query.sortCol : 'time'
+  const dataConstraints = await getConstraints(request.auth.credentials)
+  const result = await knex('AlertMessage as am')
+    .join('Notification as notif', 'am.id', 'notif.alertMessageId')
+    .join('Site as site', 'am.siteId', 'site.id')
+    .leftJoin('Device as d', 'am.deviceId', 'd.id')
+    .leftJoin('Issue as i', 'notif.issueId', 'i.id')
+    .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .where(builder => {
+      if (_.isString(query.issueCategory) && query.issueCategory !== 'all')
+        builder = builder.where(
+          knex.raw('lower(ic.shortName)'),
+          query.issueCategory.toLowerCase()
+        )
+      if (_.isString(query.alertType) && query.alertType !== 'all')
+        builder = builder.where('it.name', query.alertType)
+      if (_.isInteger(query.deviceId))
+        builder = builder.where('am.deviceId', query.deviceId)
+      if (_.isInteger(query.siteId))
+        builder = builder.where('am.siteId', query.siteId)
+
+      return builder
+        .where('am.personId', accountDetails.id)
+        .whereNotIn('is.externalid', [RESOLVED_ISSUE_STATUS, OK_ISSUE_STATUS])
+    })
+    .modify(addConstraints, dataConstraints, { device: 'd', site: 'site' })
+    .modify(queryBuilder)
+    .orderBy(sortColumn, query.sortDir)
+    .paginate(query.size || 10, query.page || 0, true)
+  return result
+}
+
+async function listTasksByStatus(request) {
+  const { query } = request
+  const issueCategoryId = query.categoryId
+  const { date, alertTemplateId } = query
+  const sqlDate = new Date(date).toISOString().split('T')[0] // eslint-disable-line newline-per-chained-call
+  const queryKnex = await baseAlertMessagesQuery(request, query, builder => {
+    builder
+      .where('ic.Id', issueCategoryId)
+      .where('am.alertTemplateId', alertTemplateId)
+      .whereRaw('date(am.createdOn) = ?', [sqlDate])
+      .select(
+        'am.id as id',
+        'site.name as site',
+        'site.id as siteId',
+        'ic.externalId as issueCategoryExternalId',
+        'd.name as device',
+        'd.id as deviceId',
+        'is.name as issueStatus',
+        'is.Id as issueStatusId',
+        'ic.shortname as issueCategory',
+        'ic.Id as issueCategoryId',
+        knex.raw('am.createdOn as time'),
+        'am.message',
+        knex.raw('ifnull(d.name,site.name) as title')
+      )
+  })
+  const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
+
+  return result
+}
 
 async function listTasks(request) {
   const { query } = request
 
-  const now = new Date()
+  const queryKnex = await baseAlertMessagesQuery(
+    request,
+    query,
+    queryBuilder => {
+      queryBuilder
+        .select(
+          knex.raw('max(am.id) as id'),
+          'am.alertTemplateId',
+          knex.raw("group_concat(DISTINCT site.name separator ', ') as site"),
+          'is.name as issueStatus',
+          'am.alertTemplateId',
+          'is.Id as issueStatusId',
+          'ic.shortname as issueCategory',
+          'ic.Id as issueCategoryId',
+          'ic.externalId as issueCategoryExternalId',
+          knex.raw('date(am.createdOn) as time'),
+          'am.message',
+          knex.raw(
+            'sum(case when i.id is null then 0 else 1 end) as issueCount'
+          ),
+          knex.raw(
+            "group_concat(DISTINCT ifnull(d.name,site.name) separator ', ') as title"
+          )
+        )
+        .groupBy(
+          'is.id',
+          'am.alertTemplateId',
+          'ic.name',
+          'ic.id',
+          'ic.externalId',
+          knex.raw('date(am.createdOn)')
+        )
+    }
+  )
 
-  const dataWithFilteredTopic = _.flowRight(
-    _.isString(query.topic) && query.topic !== 'all'
-      ? x => _.filter(x, ['topic', query.topic])
-      : _.identity,
-    query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity),
-    x =>
-      x.map((it, i) => {
-        it.id = i + 1
-        return it
-      })
-  )([
-    {
-      alertType: 'mine',
-      topic: 'health',
-      title: 'TB',
-      message: '15% increase in resistant results',
-      site: 'Kampala Lab',
-      time: subMinutes(now, 5),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'consumable',
-      title: 'MediCo TB',
-      message: 'LOW STOCK (3 days remaining)',
-      site: 'Kampala Lab',
-      time: subMinutes(subDays(now, 1), 5),
-      notificationCount: 3,
-    },
-    {
-      alertType: 'snoozed',
-      topic: 'device',
-      title: 'HealthCo HIV Device',
-      message: 'NEEDS CALIBRATING by April 10',
-      site: 'Mbarara Lab',
-      time: subMinutes(subDays(now, 1), 10),
-      notificationCount: 2,
-    },
-    {
-      alertType: 'normal',
-      topic: 'consumable',
-      title: 'HealthCo HIV',
-      message: 'EXPIRING STOCK (100 units)',
-      site: 'Fort Portal Lab',
-      time: subMinutes(subDays(now, 1), 15),
-      notificationCount: 3,
-    },
-    {
-      alertType: 'normal',
-      topic: 'consumable',
-      title: 'HealthCo HIV',
-      message: 'MOVE CONSUMABLES',
-      site: 'Kampala Lab',
-      time: subMinutes(subDays(now, 2), 5),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'site',
-      title: 'Fort Portal Lab',
-      message: 'TEST QUALITY ISSUES',
-      site: 'Fort Portal Lab',
-      time: subMinutes(subDays(now, 2), 10),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'device',
-      title: 'Aspect Router',
-      message: 'LOW BALANCE',
-      site: 'Fort Portal Lab',
-      time: subMinutes(subDays(now, 3), 5),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'site',
-      title: 'Jinja Lab',
-      message: 'OFFLINE',
-      site: 'Jinja Lab',
-      time: subDays(now, 5),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'health',
-      title: 'TB',
-      message: 'Positive results',
-      alertCount: 22,
-      site: 'Kampala Lab',
-      time: subMinutes(subDays(now, 1), 30),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'device',
-      title: 'HealthCo HIV Device',
-      message: 'FIRMWARE UPDATE REQUIRED',
-      site: 'Fort Portal Lab',
-      time: subDays(now, 7),
-      notificationCount: 0,
-    },
-    // ------ Extra Provided by @stefanbaumg ------
-    {
-      alertType: 'mine',
-      topic: 'consumable',
-      title: 'Cuyahoga',
-      message: 'STOCK EXPIRING (323 cartridges likely to expire October 28)',
-      site: 'Cuyahoga Lab',
-      time: subMinutes(subDays(now, 2), 20),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'device',
-      title: 'GeneXpert',
-      message: '#2 HIGH ERROR RATE (15% in last 30 days)',
-      site: 'Wayne County Lab',
-      time: subMinutes(subDays(now, 3), 10),
-      notificationCount: 0,
-    },
-    {
-      alertType: 'mine',
-      topic: 'device',
-      title: 'Daktari',
-      message: 'OFFLINE (device offline for 8 days)',
-      site: 'Boston Lab',
-      time: subMinutes(now, 10),
-      notificationCount: 0,
-    },
-  ])
+  const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
+  return result
+}
 
-  const countByAlert = _.countBy(dataWithFilteredTopic, 'alertType')
-  countByAlert.total = dataWithFilteredTopic.length
-  const rawData = _.flowRight(
-    _.isString(query.alertType) && query.alertType !== 'all'
-      ? x => _.filter(x, ['alertType', query.alertType])
-      : _.identity
-  )(dataWithFilteredTopic)
-
-  const total = rawData.length
-  const size = parseInt(query.size, 10)
-  const page = parseInt(query.page, 10)
-  const data = _.flowRight(x =>
-    x.slice(size * page, Math.min(total, size * page + size))
-  )(rawData)
+function processTaskResults(dataWithFilteredIssueCategory, total) {
+  const countByAlert = _.countBy(dataWithFilteredIssueCategory, 'issueCategory')
+  countByAlert.total = total
 
   const result = {
     ok: true,
     total,
-    data,
+    data: dataWithFilteredIssueCategory,
     countByAlert,
-    length: data.length,
+    length: dataWithFilteredIssueCategory.length,
   }
 
   return result
 }
 
+async function getTask(request) {
+  const {
+    params: { taskId },
+  } = request
+  const loggedUserName = request.auth.credentials.name
+  const accountDetails = await getAccountDetailsForUsername(loggedUserName)
+
+  const task = await getTaskDetailsQuery(taskId, accountDetails.id)
+  const persons = await getPersonsBySite(task.siteId)
+  if (persons) {
+    task.jobPersons = _.map(persons, person => ({
+      personName: person.jobPersons,
+      personId: person.jobPersonsId,
+    }))
+  } else task.jobPersons = []
+
+  return task
+}
+
+async function getPersonsBySite(siteId) {
+  const query = await knex('JobContext as jb')
+    .leftJoin('Job as job', 'jb.jobId', 'job.Id')
+    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
+    .where('jb.siteId', siteId)
+    .select('jobperson.name as jobPersons', 'jobperson.id as jobPersonsId')
+  return query
+}
+
+async function getTaskDetailsQuery(taskId, userId) {
+  const dataConstraints = await getConstraints({ userId })
+  return knex('AlertMessage as am')
+    .join('Person as p', 'am.personId', 'p.Id')
+    .join('Notification as notif', 'am.id', 'notif.alertMessageId')
+    .join('Site as site', 'am.siteId', 'site.id')
+    .leftJoin('Device as d', 'am.deviceId', 'd.id')
+    .leftJoin('Issue as i', 'notif.issueId', 'i.id')
+    .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 'site',
+    })
+    .where('am.Id', taskId)
+    .where('am.personId', userId)
+    .first(
+      'am.id as id',
+      'site.name as site',
+      'site.id as siteId',
+      'd.name as device',
+      'd.id as deviceId',
+      'is.name as issueStatus',
+      'is.Id as issueStatusId',
+      'ic.name as issueCategory',
+      'p.name as personName',
+      'ic.Id as issueCategoryId',
+      'am.createdOn as time',
+      'am.message',
+      knex.raw('ifnull(d.name,site.name) as title')
+    )
+    .groupBy(
+      'am.id',
+      'site',
+      'site.id',
+      'd.name',
+      'd.id',
+      'issueStatus',
+      'issueStatusId',
+      'issueCategory',
+      'personName',
+      'issueCategoryId',
+      'time',
+      'am.message',
+      'title'
+    )
+}
+
 module.exports = {
   listTasks,
+  listTasksByStatus,
+  getTask,
 }

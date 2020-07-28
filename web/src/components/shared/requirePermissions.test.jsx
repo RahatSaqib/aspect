@@ -11,12 +11,12 @@ describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
     describe('only required', () => {
       it('should parse correctly', () => {
-        const permissionsByTypes = groupByPermissionTypes(['person:admin'])
+        const permissionsByTypes = groupByPermissionTypes(['person:edit'])
 
         expect(permissionsByTypes).toEqual({
           required: [],
           forbidden: [],
-          optional: ['person:admin'],
+          optional: ['person:edit'],
         })
       })
     })
@@ -24,9 +24,29 @@ describe('requirePermissions', () => {
 
   describe('isPermittedUser', () => {
     describe('only required', () => {
-      it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
-          required: ['person:admin'],
+      it('should be valid for edit user', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: ['person:edit'],
+          forbidden: [],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+
+      it('should be valid for edit user when requesting weaker level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: ['person:edit'],
+          forbidden: [],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+
+      it('should be valid for edit user when requesting any level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: ['person'],
           forbidden: [],
           optional: [],
         })
@@ -36,10 +56,30 @@ describe('requirePermissions', () => {
     })
 
     describe('only forbidden', () => {
-      it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+      it('should be invalid for edit user', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
           required: [],
-          forbidden: ['person:admin'],
+          forbidden: ['person:edit'],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(false)
+      })
+
+      it('should be invalid for edit user when denying even weaker level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: [],
+          forbidden: ['person:view'],
+          optional: [],
+        })
+
+        expect(isPermitted).toBe(false)
+      })
+
+      it('should be invalid for edit user when denying any level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: [],
+          forbidden: ['person'],
           optional: [],
         })
 
@@ -48,11 +88,29 @@ describe('requirePermissions', () => {
     })
 
     describe('only optional', () => {
-      it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+      it('should be valid for edit user', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
           required: [],
           forbidden: [],
-          optional: ['person:admin', 'site:admin'],
+          optional: ['person:edit', 'site:edit'],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+      it('should be valid for edit user when requesting any level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: [],
+          forbidden: [],
+          optional: ['person', 'site:edit'],
+        })
+
+        expect(isPermitted).toBe(true)
+      })
+      it('should be valid for edit user when requesting weaker level', () => {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: [],
+          forbidden: [],
+          optional: ['person:view', 'site:edit'],
         })
 
         expect(isPermitted).toBe(true)
@@ -61,8 +119,8 @@ describe('requirePermissions', () => {
 
     describe('required and forbidden', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
-          required: ['person:admin'],
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
+          required: ['person:edit'],
           forbidden: ['site:view'],
           optional: [],
         })
@@ -71,9 +129,9 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
           required: ['site:view'],
-          forbidden: ['person:admin'],
+          forbidden: ['person:edit'],
           optional: [],
         })
 
@@ -84,9 +142,9 @@ describe('requirePermissions', () => {
     describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
         const isPermitted = isPermittedUser(
-          Immutable.Set(['person:admin', 'device:view']),
+          Immutable.Set(['person:edit', 'device:view']),
           {
-            required: ['person:admin'],
+            required: ['person:edit'],
             forbidden: ['site:view'],
             optional: ['device:view'],
           }
@@ -96,9 +154,9 @@ describe('requirePermissions', () => {
       })
 
       it('should be invalid for admin user', () => {
-        const isPermitted = isPermittedUser(Immutable.Set(['person:admin']), {
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit']), {
           required: ['site:view'],
-          forbidden: ['person:admin'],
+          forbidden: ['person:edit'],
           optional: ['device:view'],
         })
 
@@ -110,17 +168,17 @@ describe('requirePermissions', () => {
   const ForbiddenComponent = () => {}
   const WrappedComponent = () => {}
 
-  function makeContext(userPermissions, userFeatures) {
+  function makeContext(userPermissions) {
     return {
       store: {
         subscribe() {},
+        dispatch() {},
         getState() {
           return {
             user: {
               jwt: {
                 permissions: Immutable.Set(userPermissions),
               },
-              features: Immutable.Set(userFeatures),
             },
           }
         },
@@ -130,13 +188,13 @@ describe('requirePermissions', () => {
 
   describe('given right user permissions', () => {
     const DecoratedComponent = requirePermissions({
-      permissions: ['person:admin'],
+      permissions: ['person:edit'],
       ForbiddenComponent,
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin']),
+        context: makeContext(['person:edit']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -145,7 +203,7 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin', 'device:view']),
+        context: makeContext(['person:edit', 'device:view']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -155,7 +213,7 @@ describe('requirePermissions', () => {
 
   describe('given wrong user permissions', () => {
     const DecoratedComponent = requirePermissions({
-      permissions: ['person:admin'],
+      permissions: ['person:edit'],
       ForbiddenComponent,
     })(WrappedComponent)
 
@@ -178,16 +236,15 @@ describe('requirePermissions', () => {
     })
   })
 
-  describe('given right user features', () => {
+  describe('given right user', () => {
     const DecoratedComponent = requirePermissions({
-      permissions: ['person:admin'],
-      features: ['person'],
+      permissions: ['person:edit'],
       ForbiddenComponent,
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin'], ['person']),
+        context: makeContext(['person:edit'], ['person']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -196,28 +253,11 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin'], ['task', 'person']),
+        context: makeContext(['person:edit'], ['task', 'person']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
-    })
-  })
-
-  describe('given wrong user features', () => {
-    const DecoratedComponent = requirePermissions({
-      permissions: ['person:admin'],
-      features: ['person'],
-      ForbiddenComponent,
-    })(WrappedComponent)
-
-    it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin'], ['task']),
-      })
-
-      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
-      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
     })
   })
 })

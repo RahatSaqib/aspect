@@ -1,8 +1,114 @@
-const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listReports, proxyGxReport } = require('./service')
+const Joi = require('@hapi/joi')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams,
+} = require('../routes')
+const { getReports, listReports, proxyGxReport } = require('./service')
+const { createReport, exportReports } = require('./serviceReports')
+const {
+  validateAllGeographyFilterParams,
+} = require('../geography/requestValidation')
+
+function listReportBaseConfig() {
+  return {
+    auth: { scope: ['report:view', 'report:edit'] },
+    validate: {
+      query: {
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+
+        contactNameOrEmail: Joi.string()
+          .allow('')
+          .description('Filter for report name'),
+        ...validateSortPageParams(
+          'name',
+          'deploymentName',
+          'moduleSerial',
+          'dateOfError',
+          'error',
+          'totalTestsRun',
+          'totalErrors'
+        ),
+      },
+    },
+  }
+}
+
+function requestBaseQuery() {
+  return {
+    ...validateAllGeographyFilterParams(),
+    ...validateDateRangeParams(),
+    siteName: Joi.string().allow('').description('Filter for site name'),
+  }
+}
 
 const routes = [
+  {
+    method: 'GET',
+    path: '/reports',
+    handler: asyncHandler(getReports),
+    config: {
+      description: 'List of Reports',
+      notes: 'Reports scoped by user permissions, filterable by geography',
+      auth: { scope: ['report:view', 'report:edit'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number().required(),
+          data: Joi.array()
+            .required()
+            .description('List of reports')
+            .items(
+              Joi.object().keys({
+                name: Joi.string().required().description('Report name'),
+                description: Joi.string()
+                  .required()
+                  .description('Report description'),
+                externalId: Joi.string()
+                  .required()
+                  .description('Report unique externalId'),
+                sortOrder: Joi.number()
+                  .required()
+                  .description('Report sort order'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/{externalId}',
+    handler: createReport,
+    config: {
+      description: 'Report Excel file',
+      notes:
+        'Returns Excel file generated from template corresponding to externalId',
+      auth: { scope: ['report:view', 'report:edit'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+        },
+        params: {
+          externalId: Joi.string()
+            .description('Value of externalId in table Report')
+            .required(),
+        },
+      },
+    },
+  },
   {
     method: 'GET',
     path: '/report',
@@ -10,25 +116,17 @@ const routes = [
     config: {
       description: 'Report List',
       notes: 'Pageable and sortable list of reports',
-      auth: { scope: ['report:view', 'report:edit'] },
-      validate: {
-        query: Object.assign(
-          {
-            contactNameOrEmail: Joi.string()
-              .allow('')
-              .description('Filter for report name'),
-          },
-          validateSortPageParams(
-            'name',
-            'deploymentName',
-            'moduleSerial',
-            'dateOfError',
-            'error',
-            'totalTestsRun',
-            'totalErrors'
-          )
-        ),
-      },
+      ...listReportBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/report/export',
+    handler: exportReports,
+    config: {
+      description: 'Export Report List into Excel or CSV',
+      notes: 'Filtered and sorted list of Report',
+      ...listReportBaseConfig(),
     },
   },
   {
@@ -45,9 +143,7 @@ const routes = [
       auth: false,
       validate: {
         params: {
-          fileName: Joi.string()
-            .description('File name')
-            .required(),
+          fileName: Joi.string().description('File name').required(),
         },
       },
     },
@@ -66,14 +162,10 @@ const routes = [
       },
       validate: {
         params: {
-          reportName: Joi.string()
-            .description('Report name')
-            .required(),
+          reportName: Joi.string().description('Report name').required(),
         },
         query: {
-          siteId: Joi.string()
-            .allow('')
-            .description('Filter for site ID'),
+          siteId: Joi.string().allow('').description('Filter for site ID'),
           dateFrom: Joi.string().allow(''),
           dateTo: Joi.string().allow(''),
         },

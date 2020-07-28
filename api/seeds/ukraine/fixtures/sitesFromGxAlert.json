@@ -1,0 +1,1822 @@
+[
+  {
+    "externalId": "66-й військовий госпіталь (А0233)",
+    "longitude": 23.91753,
+    "latitude": 49.717731,
+    "stateName": "Lviv Oblast",
+    "lgaName": "м. Львів",
+    "name": "66-й військовий госпіталь (А0233)",
+    "shortName": "66-й військовий",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "66-й військовий госпіталь (А0233)",
+        "shortName": "66-й військовий",
+        "macAddress": "MAC48BA4EEBA776",
+        "hostId": "66-й військовий госпіталь (А0233)",
+        "serial": "Cepheid-7391KYX",
+        "gxAlertDeviceId": "2886"
+      }
+    ]
+  },
+  {
+    "externalId": "Chernivtsy Obltub",
+    "longitude": 48.268002,
+    "latitude": 25.978001,
+    "stateName": "Chernivtsi Oblast",
+    "lgaName": null,
+    "name": "Chernivtsy Obltub",
+    "shortName": "Chernivtsy OTBD",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Chernivtsy Obltub",
+        "shortName": "Chernivtsy OTBD",
+        "macAddress": "MAC7446A096E0CF",
+        "hostId": "Chernivtsy Obltub",
+        "serial": "Cepheid-3300V6S",
+        "gxAlertDeviceId": "2018"
+      }
+    ]
+  },
+  {
+    "externalId": "Khmelnickiy",
+    "longitude": 49.507,
+    "latitude": 26.931,
+    "stateName": "Khmelnytskyi Oblast",
+    "lgaName": null,
+    "name": "Khmelnickiy",
+    "shortName": "Khmelnickiy",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Khmelnickiy",
+        "shortName": "Khmelnickiy",
+        "macAddress": "MAC8851FB5D75E2",
+        "hostId": "Khmelnickiy",
+        "serial": "Cepheid-3260LJ6",
+        "gxAlertDeviceId": "2019"
+      }
+    ]
+  },
+  {
+    "externalId": "Kirovograds`kiy Oblasniy Protituberkulyozniy Dispanser",
+    "longitude": 32.083069,
+    "latitude": 48.472481,
+    "stateName": "Kirovohrad Oblast",
+    "lgaName": null,
+    "name": "Kirovograds`kiy Oblasniy Protituberkulyozniy Dispanser",
+    "shortName": "Kirovograds`kiy",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Kirovograds`kiy Oblasniy Protituberkulyozniy Dispanser",
+        "shortName": "Kirovograds`kiy",
+        "macAddress": "MAC7446A096E178",
+        "hostId": "Kirovograds`kiy Oblasniy Protituberkulyozniy Dispanser",
+        "serial": "Cepheid-3300V79",
+        "gxAlertDeviceId": "2045"
+      }
+    ]
+  },
+  {
+    "externalId": "SumyLab",
+    "longitude": 34.125217,
+    "latitude": 51.106453,
+    "stateName": "Sumy Oblast",
+    "lgaName": null,
+    "name": "SumyLab",
+    "shortName": "SumyLab",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "SumyLab",
+        "shortName": "SumyLab",
+        "macAddress": "MAC8851FB58ECE3",
+        "hostId": "SumyLab",
+        "serial": "Cepheid-3260LK1",
+        "gxAlertDeviceId": "2063"
+      }
+    ]
+  },
+  {
+    "externalId": "Ternopil",
+    "longitude": 49.403,
+    "latitude": 25.649,
+    "stateName": "Ternopil Oblast",
+    "lgaName": null,
+    "name": "Ternopil",
+    "shortName": "Ternopil",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Ternopil",
+        "shortName": "Ternopil",
+        "macAddress": "MAC8851FB5D7633",
+        "hostId": "Ternopil",
+        "serial": "Cepheid-3260LJJ",
+        "gxAlertDeviceId": "2017"
+      }
+    ]
+  },
+  {
+    "externalId": "Інститут епідеміологіїта інфекційних хвороб імені Л.В.Громашевського НАМН України",
+    "longitude": 30.524281,
+    "latitude": 50.450562,
+    "stateName": "City of Kiev",
+    "lgaName": null,
+    "name": "Інститут епідеміологіїта інфекційних хвороб імені Л.В.Громашевського НАМН України",
+    "shortName": "Інститут ЕІХ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Інститут епідеміологіїта інфекційних хвороб імені Л.В.Громашевського НАМН України",
+        "shortName": "Інститут ЕІХ",
+        "macAddress": "MACA0369F4A3A04",
+        "hostId": "Інститут епідеміолог",
+        "serial": "Cepheid-4421HL9",
+        "gxAlertDeviceId": "2570"
+      }
+    ]
+  },
+  {
+    "externalId": "Багатопрофільна лікарня №4 (м.Дніпро)",
+    "longitude": 34.935989,
+    "latitude": 48.453522,
+    "stateName": "Dnipropetrovsk Oblast",
+    "lgaName": null,
+    "name": "Багатопрофільна лікарня №4 (м.Дніпро)",
+    "shortName": "Дніпро БЛ №4",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Багатопрофільна лікарня №4 (м.Дніпро)",
+        "shortName": "Дніпро БЛ №4",
+        "macAddress": "MAC48BA4EEB589D",
+        "hostId": "Багатопрофільна лікарня №4 (м.Дніпро)",
+        "serial": "Cepheid-7392CG5",
+        "gxAlertDeviceId": "2869"
+      }
+    ]
+  },
+  {
+    "externalId": "Вінницька міська лікарня № 1",
+    "longitude": 28.68712,
+    "latitude": 48.920589,
+    "stateName": "Vinnytsia Oblast",
+    "lgaName": "м. Вінниця",
+    "name": "Вінницька міська лікарня № 1",
+    "shortName": "м. Вінниця МЛ№ 1",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Вінницька міська лікарня № 1",
+        "shortName": "м. Вінниця МЛ№ 1",
+        "macAddress": "MACA0CEC81477D9",
+        "hostId": "Вінницька міська лікарня № 1",
+        "serial": "Cepheid-83887KZ",
+        "gxAlertDeviceId": "2646"
+      }
+    ]
+  },
+  {
+    "externalId": "Васильківська ЦРЛ",
+    "longitude": 30.313061,
+    "latitude": 50.201359,
+    "stateName": "Kiev Oblast",
+    "lgaName": null,
+    "name": "Васильківська ЦРЛ",
+    "shortName": "м. Васильків ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Васильківська ЦРЛ",
+        "shortName": "м. Васильків ЦРЛ",
+        "macAddress": "MAC",
+        "hostId": "Васильківська ЦРЛ",
+        "serial": "Cepheid-8388BT7",
+        "gxAlertDeviceId": "2826"
+      }
+    ]
+  },
+  {
+    "externalId": "Ватутінська міська лікарня",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Cherkasy Oblast",
+    "lgaName": "Звенигородський",
+    "name": "Ватутінська міська лікарня",
+    "shortName": "Ватутіно ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Ватутінська міська лікарня",
+        "shortName": "Ватутіно ",
+        "macAddress": "MAC98FA9B0A5B19",
+        "hostId": "Звенигородська міська лікарня",
+        "serial": "CPHD-F1PW5QZ",
+        "gxAlertDeviceId": "3294"
+      }
+    ]
+  },
+  {
+    "externalId": "Вишгородська ЦРЛ",
+    "longitude": 30.47699,
+    "latitude": 50.581242,
+    "stateName": "Kiev Oblast",
+    "lgaName": null,
+    "name": "Вишгородська ЦРЛ",
+    "shortName": "м. Вишгород ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Вишгородська ЦРЛ",
+        "shortName": "м. Вишгород ЦРЛ",
+        "macAddress": "MAC84A93E41B7B1",
+        "hostId": "Вишгородська ЦРЛ",
+        "serial": "Cepheid-83967KF",
+        "gxAlertDeviceId": "2835"
+      }
+    ]
+  },
+  {
+    "externalId": "ВСП КЗОЗ ОКПТД м.БАХМУТ",
+    "longitude": 37.675362,
+    "latitude": 48.047741,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "ВСП КЗОЗ ОКПТД м.БАХМУТ",
+    "shortName": "м.Бахмут ОКПТД ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ВСП КЗОЗ ОКПТД м.БАХМУТ",
+        "shortName": "м.Бахмут ОКПТД ",
+        "macAddress": "MAC180373336DF5",
+        "hostId": "ВСП КЗ ОЗ \"ОКПТД\" м.БАХМУТ",
+        "serial": "Cepheid-5YSWDQ1",
+        "gxAlertDeviceId": "2742"
+      }
+    ]
+  },
+  {
+    "externalId": "Гайсинська ЦРЛ",
+    "longitude": 29.392155,
+    "latitude": 48.812397,
+    "stateName": "Vinnytsia Oblast",
+    "lgaName": "Гайсинський",
+    "name": "Гайсинська ЦРЛ",
+    "shortName": "Гайсинська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Гайсинська ЦРЛ",
+        "shortName": "Гайсинська ЦРЛ",
+        "macAddress": "MACF43909E5CDCD",
+        "hostId": "Гайсинська ЦРЛ",
+        "serial": "Cepheid-8388B9N",
+        "gxAlertDeviceId": "2649"
+      }
+    ]
+  },
+  {
+    "externalId": "Днепр ЛПО\"Фтизиатрия\"",
+    "longitude": 34.845322,
+    "latitude": 48.301418,
+    "stateName": "Dnipropetrovsk Oblast",
+    "lgaName": null,
+    "name": "Днепр ЛПО\"Фтизиатрия\"",
+    "shortName": "Днепр",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Днепр ЛПО\"Фтизиатрия\"",
+        "shortName": "Днепр",
+        "macAddress": "MAC18037321912A",
+        "hostId": "Днепр ЛПО\"Фтизиатрия\"",
+        "serial": "Cepheid5YSWDQ1",
+        "gxAlertDeviceId": "2038"
+      }
+    ]
+  },
+  {
+    "externalId": "Донецький обласний центр профілактики та боротьби  із СНІДом",
+    "longitude": 37.675362,
+    "latitude": 48.047741,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "Донецький обласний центр профілактики та боротьби  із СНІДом",
+    "shortName": "Донецький ЦПБС",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Донецький обласний центр профілактики та боротьби  із СНІДом",
+        "shortName": "Донецький ЦПБС",
+        "macAddress": "MAC00BB6024CE3F",
+        "hostId": "Донецький обласний центр профілактики та боротьби  із СНІДом",
+        "serial": "Cepheid-8388FNH",
+        "gxAlertDeviceId": "2738"
+      }
+    ]
+  },
+  {
+    "externalId": "Дрогобицький протитуберкульозний диспансер",
+    "longitude": 23.50433,
+    "latitude": 49.35038,
+    "stateName": "Lviv Oblast",
+    "lgaName": null,
+    "name": "Дрогобицький протитуберкульозний диспансер",
+    "shortName": "Дрогобич ПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Дрогобицький протитуберкульозний диспансер",
+        "shortName": "Дрогобич ПТД",
+        "macAddress": "MACA0369F4A44D6",
+        "hostId": "Дрогобицький протитуберкульозний диспансер",
+        "serial": "Cepheid-44413SB",
+        "gxAlertDeviceId": "3343"
+      }
+    ]
+  },
+  {
+    "externalId": "Житомирський ОПТД",
+    "longitude": 50.639999,
+    "latitude": 28.478001,
+    "stateName": "Zhytomyr Oblast",
+    "lgaName": null,
+    "name": "Житомирський ОПТД",
+    "shortName": "Житомирський ОТД",
+    "timeZoneId": "E. Europe Standard Time",
+    "devices": [
+      {
+        "name": "Житомирський ОПТД",
+        "shortName": "Житомирський ОТД",
+        "macAddress": "MAC8851FB5D6AD6",
+        "hostId": "Житомирский ОПТД",
+        "serial": "Cepheid-32406WS",
+        "gxAlertDeviceId": "1724"
+      }
+    ]
+  },
+  {
+    "externalId": "Збаразька виправна колонія №63 ",
+    "longitude": 25.649323,
+    "latitude": 49.402607,
+    "stateName": "Ternopil Oblast",
+    "lgaName": "Збаразький",
+    "name": "Збаразька виправна колонія №63 ",
+    "shortName": "Збаразька ВК №63",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Збаразька виправна колонія №63 ",
+        "shortName": "Збаразька ВК №63",
+        "macAddress": "MAC2C44FD3291C9",
+        "hostId": "Збаражская колония №63, Тернопольская обл",
+        "serial": "Cepheid-40611XB",
+        "gxAlertDeviceId": "2762"
+      }
+    ]
+  },
+  {
+    "externalId": "КЗ Вінницький обласний клінічний Центр профілактики та боротьби зі СНІДом",
+    "longitude": 28.68712,
+    "latitude": 48.920589,
+    "stateName": "Vinnytsia Oblast",
+    "lgaName": null,
+    "name": "КЗ Вінницький обласний клінічний Центр профілактики та боротьби зі СНІДом",
+    "shortName": "Вінницький ОЦПБС",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КЗ Вінницький обласний клінічний Центр профілактики та боротьби зі СНІДом",
+        "shortName": "Вінницький ОЦПБС",
+        "macAddress": "MACC4346B56BC73",
+        "hostId": "КЗ Вінницький обласний клінічний Центр профілактики та боротьби зі СНІДом",
+        "serial": "Cepheid-4421K65",
+        "gxAlertDeviceId": "2174"
+      }
+    ]
+  },
+  {
+    "externalId": "КЗ ОЗ \"ОЛІЛ\" м.Маріуполь",
+    "longitude": 37.675362,
+    "latitude": 48.047741,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "КЗ ОЗ \"ОЛІЛ\" м.Маріуполь",
+    "shortName": "Маріуполь ОЛІЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КЗ ОЗ \"ОЛІЛ\" м.Маріуполь",
+        "shortName": "Маріуполь ОЛІЛ",
+        "macAddress": "MAC00BB60494837",
+        "hostId": "КЗ ОЗ \"ОЛІЛ\" м.Маріуполь",
+        "serial": "Cepheid-83967M5",
+        "gxAlertDeviceId": "2864"
+      }
+    ]
+  },
+  {
+    "externalId": "КЗ\"ДОКЛПО\"Фтизіатрія\"ДОР\"м.Дніпро КДЛ2",
+    "longitude": 34.845322,
+    "latitude": 48.301418,
+    "stateName": "Dnipropetrovsk Oblast",
+    "lgaName": null,
+    "name": "КЗ\"ДОКЛПО\"Фтизіатрія\"ДОР\"м.Дніпро КДЛ2",
+    "shortName": "КЗ\"ДОКЛПО",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КЗ\"ДОКЛПО\"Фтизіатрія\"ДОР\"м.Дніпро КДЛ2",
+        "shortName": "КЗ\"ДОКЛПО",
+        "macAddress": "MACA0369F4A36CF",
+        "hostId": "КЗ\"ДОКЛПО\"Фтизіатрія\"ДОР\"м.Дніпро КДЛ2",
+        "serial": "Cepheid-44413S8",
+        "gxAlertDeviceId": "2201"
+      }
+    ]
+  },
+  {
+    "externalId": "КЗОЗОКПТД м.Краматорськ",
+    "longitude": 37.590092,
+    "latitude": 48.752571,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "КЗОЗОКПТД м.Краматорськ",
+    "shortName": "ПТД Краматорськ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КЗОЗОКПТД м.Краматорськ",
+        "shortName": "ПТД Краматорськ",
+        "macAddress": "MAC2C44FD2DD33E",
+        "hostId": "КЗОЗОКПТД м.Краматорськ",
+        "serial": "Cepheid-406120X",
+        "gxAlertDeviceId": "2470"
+      }
+    ]
+  },
+  {
+    "externalId": "Київський міський центр профілактики і боротьби зі СНІДом",
+    "longitude": 30.457357,
+    "latitude": 50.298656,
+    "stateName": "City of Kiev",
+    "lgaName": "м. Київ",
+    "name": "Київський міський центр профілактики і боротьби зі СНІДом",
+    "shortName": "КМЦ СНІДу",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Київський міський центр профілактики і боротьби зі СНІДом",
+        "shortName": "КМЦ СНІДу",
+        "macAddress": "MACA0369F4A4466",
+        "hostId": "Київський міський це",
+        "serial": "Cepheid-44413SZ",
+        "gxAlertDeviceId": "2582"
+      }
+    ]
+  },
+  {
+    "externalId": "Київський обласний центр боротьби зі СНІДом",
+    "longitude": 30.3755,
+    "latitude": 50.44986,
+    "stateName": "Kiev Oblast",
+    "lgaName": null,
+    "name": "Київський обласний центр боротьби зі СНІДом",
+    "shortName": "Київський ОЦПБС",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Київський обласний центр боротьби зі СНІДом",
+        "shortName": "Київський ОЦПБС",
+        "macAddress": "MACA0369F4A3FD0",
+        "hostId": "Київський обласний центр боротьби зі СНІДом",
+        "serial": "Cepheid-4421K63",
+        "gxAlertDeviceId": "2519"
+      }
+    ]
+  },
+  {
+    "externalId": "Киевский областной противотуберкулезный диспансер (г.Боярка)",
+    "longitude": 50.299,
+    "latitude": 30.457001,
+    "stateName": "Kiev Oblast",
+    "lgaName": null,
+    "name": "Киевский областной противотуберкулезный диспансер (г.Боярка)",
+    "shortName": "Киевский ОПТД ",
+    "timeZoneId": "E. Europe Standard Time",
+    "devices": [
+      {
+        "name": "Киевский областной противотуберкулезный диспансер (г.Боярка)",
+        "shortName": "Киевский ОПТД ",
+        "macAddress": "MAC1803732178E0",
+        "hostId": "Киевский областной п",
+        "serial": "Cepheid2GYC7V1",
+        "gxAlertDeviceId": "1720"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Березівська ЦРЛ\"",
+    "longitude": 29.935659,
+    "latitude": 48.232311,
+    "stateName": "Odessa Oblast",
+    "lgaName": null,
+    "name": "КНП \"Березівська ЦРЛ\"",
+    "shortName": "Березівська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Березівська ЦРЛ\"",
+        "shortName": "Березівська ЦРЛ",
+        "macAddress": "MAC00BB6023E47F",
+        "hostId": "КНП \"Березівська ЦРЛ\"",
+        "serial": "Cepheid-83886CZ",
+        "gxAlertDeviceId": "2865"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Бориспільська БЛІЛ\"",
+    "longitude": 30.947641,
+    "latitude": 50.347794,
+    "stateName": "Kiev Oblast",
+    "lgaName": null,
+    "name": "КНП \"Бориспільська БЛІЛ\"",
+    "shortName": "Бориспіль БЛІЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Бориспільська БЛІЛ\"",
+        "shortName": "Бориспіль БЛІЛ",
+        "macAddress": "MAC00BB6024BF08",
+        "hostId": "КНП \"Бориспільська БЛІЛ\"",
+        "serial": "Cepheid-8388G8T",
+        "gxAlertDeviceId": "2809"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Золотоніська районна багатопрофільна лікарня\"",
+    "longitude": 32.040001,
+    "latitude": 49.67075,
+    "stateName": "Cherkasy Oblast",
+    "lgaName": null,
+    "name": "КНП \"Золотоніська районна багатопрофільна лікарня\"",
+    "shortName": "Золотоніська РБЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Золотоніська районна багатопрофільна лікарня\"",
+        "shortName": "Золотоніська РБЛ",
+        "macAddress": "MAC4889E79A3B66",
+        "hostId": "КНП \"Золотоніська районна багатопрофільна лікарня\"",
+        "serial": "CPHD-F1PW5RT",
+        "gxAlertDeviceId": "3266"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Міська лікарня №3\" КМР",
+    "longitude": 37.563011,
+    "latitude": 48.724579,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "КНП \"Міська лікарня №3\" КМР",
+    "shortName": "Краматорськ МЛ3",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Міська лікарня №3\" КМР",
+        "shortName": "Краматорськ МЛ3",
+        "macAddress": "MAC98FA9B0A5A86",
+        "hostId": "КНП \"Міська лікарня №3\" КМР",
+        "serial": "CPHD-F1PW4V8",
+        "gxAlertDeviceId": "3331"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Миргородська ЦРЛ\"",
+    "longitude": 33.779911,
+    "latitude": 49.73259,
+    "stateName": "Poltava Oblast",
+    "lgaName": null,
+    "name": "КНП \"Миргородська ЦРЛ\"",
+    "shortName": "Миргородська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Миргородська ЦРЛ\"",
+        "shortName": "Миргородська ЦРЛ",
+        "macAddress": "MAC00BB6023EAD8",
+        "hostId": "КНП \"Миргородська ЦРЛ\"",
+        "serial": "Cepheid-83882BT",
+        "gxAlertDeviceId": "2839"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Одеський центр соціально значущих захворювань\"",
+    "longitude": 30.753731,
+    "latitude": 46.47073,
+    "stateName": "Odessa Oblast",
+    "lgaName": null,
+    "name": "КНП \"Одеський центр соціально значущих захворювань\"",
+    "shortName": "Одеський ЦСЗЗ ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Одеський центр соціально значущих захворювань\"",
+        "shortName": "Одеський ЦСЗЗ ",
+        "macAddress": "MACF43909E59F27",
+        "hostId": "КНП \"Одеський центр соціально значущих захворювань\"",
+        "serial": "Cepheid-838877M",
+        "gxAlertDeviceId": "2848"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Першотравенська міська лікарня\"",
+    "longitude": 34.845322,
+    "latitude": 48.301418,
+    "stateName": "Dnipropetrovsk Oblast",
+    "lgaName": null,
+    "name": "КНП \"Першотравенська міська лікарня\"",
+    "shortName": "Першотравенськ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Першотравенська міська лікарня\"",
+        "shortName": "Першотравенськ",
+        "macAddress": "MAC98FA9B0A5A91",
+        "hostId": "КНП \"Першотравенська міська лікарня\"",
+        "serial": "CPHD-F1PW4VZ",
+        "gxAlertDeviceId": "3340"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Смілянська міська поліклініка\"",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Cherkasy Oblast",
+    "lgaName": null,
+    "name": "КНП \"Смілянська міська поліклініка\"",
+    "shortName": "м. Сміла МП",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Смілянська міська поліклініка\"",
+        "shortName": "м. Сміла МП",
+        "macAddress": "MAC98FA9B0A5BA3",
+        "hostId": "КНП \"Смілянська міська поліклініка\"",
+        "serial": "CPHD-F1PW5SV",
+        "gxAlertDeviceId": "3332"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Уманська міська лікарня\"",
+    "longitude": 30.22316,
+    "latitude": 48.75518,
+    "stateName": "Cherkasy Oblast",
+    "lgaName": null,
+    "name": "КНП \"Уманська міська лікарня\"",
+    "shortName": "Уманська міська",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Уманська міська лікарня\"",
+        "shortName": "Уманська міська",
+        "macAddress": "MAC98FA9B0A5A80",
+        "hostId": "КНП \"Уманська міська лікарня\"",
+        "serial": "CPHD-F1PW4SZ",
+        "gxAlertDeviceId": "3189"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП \"Шосткинська ЦРЛ\" ШМР",
+    "longitude": 33.467381,
+    "latitude": 51.87162,
+    "stateName": "Sumy Oblast",
+    "lgaName": null,
+    "name": "КНП \"Шосткинська ЦРЛ\" ШМР",
+    "shortName": "м.Шостка ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП \"Шосткинська ЦРЛ\" ШМР",
+        "shortName": "м.Шостка ЦРЛ",
+        "macAddress": "MAC98FA9B0A5B3A",
+        "hostId": "КНП \"Шосткинська ЦРЛ\" ШМР",
+        "serial": "CPHD-F1PWADG",
+        "gxAlertDeviceId": "3367"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП «Мукачівська ЦРЛ»",
+    "longitude": 23.27635,
+    "latitude": 48.403881,
+    "stateName": "Zakarpattia Oblast",
+    "lgaName": "м. Мукачево",
+    "name": "КНП «Мукачівська ЦРЛ»",
+    "shortName": "Мукачівська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП «Мукачівська ЦРЛ»",
+        "shortName": "Мукачівська ЦРЛ",
+        "macAddress": "MACF43909E5E8AC",
+        "hostId": "КНП «Мукачівська ЦРЛ»",
+        "serial": "Cepheid-8388FMN",
+        "gxAlertDeviceId": "2673"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП БМР \"Білоцерківська міська лікарня №3\"",
+    "longitude": 30.122549,
+    "latitude": 49.800709,
+    "stateName": "Kiev Oblast",
+    "lgaName": null,
+    "name": "КНП БМР \"Білоцерківська міська лікарня №3\"",
+    "shortName": "Біла Церква МЛ№3",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП БМР \"Білоцерківська міська лікарня №3\"",
+        "shortName": "Біла Церква МЛ№3",
+        "macAddress": "MACF43909E5E647",
+        "hostId": "КНП БМР \"Білоцерківська міська лікарня №3\"",
+        "serial": "Cepheid-8388FMX",
+        "gxAlertDeviceId": "2775"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП Конотопської Міської Ради «Конотопська центральна района лікарня Імені Академика М.Давидова»",
+    "longitude": 33.208832,
+    "latitude": 51.238079,
+    "stateName": "Sumy Oblast",
+    "lgaName": null,
+    "name": "КНП Конотопської Міської Ради «Конотопська центральна района лікарня Імені Академика М.Давидова»",
+    "shortName": "КОНОТОПСЬКА ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП Конотопської Міської Ради «Конотопська центральна района лікарня Імені Академика М.Давидова»",
+        "shortName": "КОНОТОПСЬКА ЦРЛ",
+        "macAddress": "MAC98FA9B0A5B56",
+        "hostId": "Комунальне некомерційне ПідприємствоКонотопської Міської Ради«Конотопська центральна района лікарня Імені Академика М.Давидова»",
+        "serial": "CPHD-F1PWAEQ",
+        "gxAlertDeviceId": "3373"
+      }
+    ]
+  },
+  {
+    "externalId": "КНП ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+    "longitude": 24.0744,
+    "latitude": 49.79361,
+    "stateName": "Lviv Oblast",
+    "lgaName": null,
+    "name": "КНП ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+    "shortName": "КНП ЛФПЛДЦ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КНП ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+        "shortName": "КНП ЛФПЛДЦ",
+        "macAddress": "MACB00CD1C41A51",
+        "hostId": "КНП ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+        "serial": "Cepheid-412BVMR",
+        "gxAlertDeviceId": "3310"
+      }
+    ]
+  },
+  {
+    "externalId": "Комунальний заклад \"Поліклінічне об'єднання м.Кіровограда\"",
+    "longitude": 32.08308,
+    "latitude": 48.472481,
+    "stateName": "Kirovohrad Oblast",
+    "lgaName": null,
+    "name": "Комунальний заклад \"Поліклінічне об'єднання м.Кіровограда\"",
+    "shortName": "м.Кіровоград ПО",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Комунальний заклад \"Поліклінічне об'єднання м.Кіровограда\"",
+        "shortName": "м.Кіровоград ПО",
+        "macAddress": "MAC98FA9B0A5AF3",
+        "hostId": "Комунальний заклад \"Поліклінічне об'єднання м.Кіровограда\"",
+        "serial": "CPHD-F1PW6AH",
+        "gxAlertDeviceId": "3243"
+      }
+    ]
+  },
+  {
+    "externalId": "Корюківська центральна районна лікарня",
+    "longitude": 32.24453,
+    "latitude": 51.776711,
+    "stateName": "Chernihiv Oblast",
+    "lgaName": null,
+    "name": "Корюківська центральна районна лікарня",
+    "shortName": "Корюківська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Корюківська центральна районна лікарня",
+        "shortName": "Корюківська ЦРЛ",
+        "macAddress": "MAC98FA9B0A5A9C",
+        "hostId": "Корюківська центральна районна лікарня",
+        "serial": "CPHD-F1PW5B4",
+        "gxAlertDeviceId": "3366"
+      }
+    ]
+  },
+  {
+    "externalId": "КП \"4-а МКЛ\" ПМР (м.Полтава)",
+    "longitude": 34.524441,
+    "latitude": 49.567299,
+    "stateName": "Poltava Oblast",
+    "lgaName": null,
+    "name": "КП \"4-а МКЛ\" ПМР (м.Полтава)",
+    "shortName": "Полтава 4-а МКЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КП \"4-а МКЛ\" ПМР (м.Полтава)",
+        "shortName": "Полтава 4-а МКЛ",
+        "macAddress": "MACA0CEC8148BF5",
+        "hostId": "КП \"4-а МКЛ\" ПМР (м.Полтава)",
+        "serial": "Cepheid-83885BH",
+        "gxAlertDeviceId": "3312"
+      }
+    ]
+  },
+  {
+    "externalId": "КП «Володимир-Волинське ТМО»",
+    "longitude": 24.318211,
+    "latitude": 50.858978,
+    "stateName": "Volyn Oblast",
+    "lgaName": null,
+    "name": "КП «Володимир-Волинське ТМО»",
+    "shortName": " В.Волинськ ТМО",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КП «Володимир-Волинське ТМО»",
+        "shortName": " В.Волинськ ТМО",
+        "macAddress": "MAC98FA9B0A5AC9",
+        "hostId": "КП «Володимир-Волинське ТМО»",
+        "serial": "CPHD-F1PVG9Y",
+        "gxAlertDeviceId": "3317"
+      }
+    ]
+  },
+  {
+    "externalId": "КП «Маневицька ЦРЛ»",
+    "longitude": 24.871401,
+    "latitude": 51.191078,
+    "stateName": "Volyn Oblast",
+    "lgaName": "Маневицький",
+    "name": "КП «Маневицька ЦРЛ»",
+    "shortName": "Маневицька ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КП «Маневицька ЦРЛ»",
+        "shortName": "Маневицька ЦРЛ",
+        "macAddress": "MAC98FA9B0A5B2F",
+        "hostId": "КП «Маневицька ЦРЛ»",
+        "serial": "CPHD-F1PW5QH",
+        "gxAlertDeviceId": "3288"
+      }
+    ]
+  },
+  {
+    "externalId": "Криворізький протитуберкульозний диспансер №2",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Dnipropetrovsk Oblast",
+    "lgaName": "м. Кривий Ріг",
+    "name": "Криворізький протитуберкульозний диспансер №2",
+    "shortName": "Криворізький",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Криворізький протитуберкульозний диспансер №2",
+        "shortName": "Криворізький",
+        "macAddress": "MAC7446A0B4E6ED",
+        "hostId": "Криворізький протитуберкульозний диспансер №2",
+        "serial": "Cepheid-3381P4R",
+        "gxAlertDeviceId": "2025"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ \"Запорізький ОПТКД\" ЗОР",
+    "longitude": 35.689949,
+    "latitude": 47.249168,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": null,
+    "name": "КУ \"Запорізький ОПТКД\" ЗОР",
+    "shortName": "КУ \"Запорізький",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ \"Запорізький ОПТКД\" ЗОР",
+        "shortName": "КУ \"Запорізький",
+        "macAddress": "MAC180373279302",
+        "hostId": "КУ \"Запорізький ОПТКД\" ЗОР",
+        "serial": "Cepheid2H0F7V1",
+        "gxAlertDeviceId": "2059"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ «Дніпрорудненська міська лікарня Дніпрорудненської міської ради Василівського району Запорізької області»",
+    "longitude": 35.01218,
+    "latitude": 47.387909,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": "Василівський",
+    "name": "КУ «Дніпрорудненська міська лікарня Дніпрорудненської міської ради Василівського району Запорізької області»",
+    "shortName": "Дніпрорудне МЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ «Дніпрорудненська міська лікарня Дніпрорудненської міської ради Василівського району Запорізької області»",
+        "shortName": "Дніпрорудне МЛ",
+        "macAddress": "MAC84A93E415AC2",
+        "hostId": "КУ «Дніпрорудненська міська лікарня Дніпрорудненської міської ради Василівського району Запорізької області»",
+        "serial": "Cepheid-839677D",
+        "gxAlertDeviceId": "2779"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ «Пологівська центральна районна лікарня» Пологівської районної ради Запорізької області",
+    "longitude": 35.689949,
+    "latitude": 47.249168,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": "Пологівський",
+    "name": "КУ «Пологівська центральна районна лікарня» Пологівської районної ради Запорізької області",
+    "shortName": "Пологівська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ «Пологівська центральна районна лікарня» Пологівської районної ради Запорізької області",
+        "shortName": "Пологівська ЦРЛ",
+        "macAddress": "MACF43909E589AC",
+        "hostId": "КУ «Пологівська центральна районна лікарня» Пологівської районної ради Запорізької області",
+        "serial": "Cepheid-83880VM",
+        "gxAlertDeviceId": "2688"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ «Центр Первинної медико-санітарної Допомоги №1» ММР ЗО",
+    "longitude": 35.689949,
+    "latitude": 47.249168,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": "м. Мелітополь",
+    "name": "КУ «Центр Первинної медико-санітарної Допомоги №1» ММР ЗО",
+    "shortName": "Мелітополь ПМСД1",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ «Центр Первинної медико-санітарної Допомоги №1» ММР ЗО",
+        "shortName": "Мелітополь ПМСД1",
+        "macAddress": "MAC84A93E41C6EE",
+        "hostId": "КУ «Центр\nПервинної медико-санітарної\nДопомоги\n№1» ММР ЗО",
+        "serial": "Cepheid-83966LD",
+        "gxAlertDeviceId": "2690"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ БМР «Бердянське територіальне медичне об’єднання»",
+    "longitude": 36.787231,
+    "latitude": 46.760651,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": "м. Бердянськ",
+    "name": "КУ БМР «Бердянське територіальне медичне об’єднання»",
+    "shortName": "м. Бердянськ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ БМР «Бердянське територіальне медичне об’єднання»",
+        "shortName": "м. Бердянськ",
+        "macAddress": "MACF43909E5EF0A",
+        "hostId": "КУ БМР «Бердянське територіальне медичне об’єднання»",
+        "serial": "Cepheid-838846C",
+        "gxAlertDeviceId": "2689"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+    "longitude": 24.025431,
+    "latitude": 49.84441,
+    "stateName": "Lviv Oblast",
+    "lgaName": null,
+    "name": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+    "shortName": "Львів РФПКЛДЦ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+        "shortName": "Львів РФПКЛДЦ",
+        "macAddress": "MAC0050B620FB12",
+        "hostId": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"",
+        "serial": "Cepheid-642629R",
+        "gxAlertDeviceId": "1941"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"(pas)",
+    "longitude": 23.91754,
+    "latitude": 49.717739,
+    "stateName": "Lviv Oblast",
+    "lgaName": null,
+    "name": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"(pas)",
+    "shortName": "КУ ЛОР ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"(pas)",
+        "shortName": "КУ ЛОР ",
+        "macAddress": "MAC98E7F468CF3D",
+        "hostId": "КУ ЛОР \"Львівський регіональний фтизіопульмонологічний клінічний лікувально-діагностичний центр\"(pas)",
+        "serial": "Cepheid-642629S",
+        "gxAlertDeviceId": "2263"
+      }
+    ]
+  },
+  {
+    "externalId": "КУ ЛОР ЛРФПЦ",
+    "longitude": 24.0744,
+    "latitude": 49.79361,
+    "stateName": "Lviv Oblast",
+    "lgaName": null,
+    "name": "КУ ЛОР ЛРФПЦ",
+    "shortName": "КУ ЛОР ЛРФПЦ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "КУ ЛОР ЛРФПЦ",
+        "shortName": "КУ ЛОР ЛРФПЦ",
+        "macAddress": "MAC180373274BE1",
+        "hostId": "КУ ЛОР ЛРФПЦ",
+        "serial": "CepheidGNGB7V1",
+        "gxAlertDeviceId": "2990"
+      }
+    ]
+  },
+  {
+    "externalId": "Лабораторія Вінницьке ОСТМО \"Фтизіатрія\"",
+    "longitude": 28.68712,
+    "latitude": 48.920589,
+    "stateName": "Vinnytsia Oblast",
+    "lgaName": null,
+    "name": "Лабораторія Вінницьке ОСТМО \"Фтизіатрія\"",
+    "shortName": "Вінницьке ОСТМО",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Лабораторія Вінницьке ОСТМО \"Фтизіатрія\"",
+        "shortName": "Вінницьке ОСТМО",
+        "macAddress": "MAC7446A096E16B",
+        "hostId": "Лабораторія Вінницьке ОСТМО \"Фтизіатрія\"",
+        "serial": "Cepheid-3300V73",
+        "gxAlertDeviceId": "2755"
+      }
+    ]
+  },
+  {
+    "externalId": "Луганський обласний протитуберкульозний диспансер",
+    "longitude": 39.018791,
+    "latitude": 48.985649,
+    "stateName": "Luhansk Oblast",
+    "lgaName": null,
+    "name": "Луганський обласний протитуберкульозний диспансер",
+    "shortName": "Луганський ОПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Луганський обласний протитуберкульозний диспансер",
+        "shortName": "Луганський ОПТД",
+        "macAddress": "MACA0369F4A4563",
+        "hostId": "Луганський обласний протитуберкульозний диспансер",
+        "serial": "Cepheid-44413QB",
+        "gxAlertDeviceId": "2505"
+      }
+    ]
+  },
+  {
+    "externalId": "м. Запоріжжя КУ «6-а міська клінічна лікарня»",
+    "longitude": 35.117599,
+    "latitude": 47.83984,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": "м. Запоріжжя",
+    "name": "м. Запоріжжя КУ «6-а міська клінічна лікарня»",
+    "shortName": "м.Запоріжжя МКЛ6",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "м. Запоріжжя КУ «6-а міська клінічна лікарня»",
+        "shortName": "м.Запоріжжя МКЛ6",
+        "macAddress": "MACF43909D9F0A0",
+        "hostId": "КУ «6-а міська клінічна лікарня»",
+        "serial": "Cepheid-8388G71",
+        "gxAlertDeviceId": "2691"
+      }
+    ]
+  },
+  {
+    "externalId": "Міська медична частина №14 м.Кропивницький",
+    "longitude": 32.08308,
+    "latitude": 48.472481,
+    "stateName": "Kirovohrad Oblast",
+    "lgaName": null,
+    "name": "Міська медична частина №14 м.Кропивницький",
+    "shortName": "Кропивницький 14",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Міська медична частина №14 м.Кропивницький",
+        "shortName": "Кропивницький 14",
+        "macAddress": "MAC00BB6024BEFE",
+        "hostId": "Міська медична частина №14 м.Кропивницький",
+        "serial": "Cepheid-8388FC2",
+        "gxAlertDeviceId": "2845"
+      }
+    ]
+  },
+  {
+    "externalId": "Мариуполь , Донецкая область, КЛПЗ  \"Городской противутуберкулезный диспансер\"",
+    "longitude": 37.553791,
+    "latitude": 47.10844,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "Мариуполь , Донецкая область, КЛПЗ  \"Городской противутуберкулезный диспансер\"",
+    "shortName": "м.Маріуполь МПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Мариуполь , Донецкая область, КЛПЗ  \"Городской противутуберкулезный диспансер\"",
+        "shortName": "м.Маріуполь МПТД",
+        "macAddress": "MAC98E7F46B50FA",
+        "hostId": "Мариуполь , Донецкая область, КЛПЗ  \"Городской противутуберкулезный диспансер\"",
+        "serial": "Cepheid-6460K5V",
+        "gxAlertDeviceId": "2746"
+      }
+    ]
+  },
+  {
+    "externalId": "Медична частина №44 (ЦОЗ ДКВС України в Чернігівській області)",
+    "longitude": 32.004879,
+    "latitude": 51.355289,
+    "stateName": "Chernihiv Oblast",
+    "lgaName": null,
+    "name": "Медична частина №44 (ЦОЗ ДКВС України в Чернігівській області)",
+    "shortName": "МЧ №44 ДКВС",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Медична частина №44 (ЦОЗ ДКВС України в Чернігівській області)",
+        "shortName": "МЧ №44 ДКВС",
+        "macAddress": "MACF43909E548CA",
+        "hostId": "Медична частина №44 (ЦОЗ ДКВС України в Чернігівській області)",
+        "serial": "Cepheid-8388FPX",
+        "gxAlertDeviceId": "3346"
+      }
+    ]
+  },
+  {
+    "externalId": "Миколаївський обласний протитуберкульозний диспансер",
+    "longitude": 47.428001,
+    "latitude": 31.780001,
+    "stateName": "Mykolaiv Oblast",
+    "lgaName": null,
+    "name": "Миколаївський обласний протитуберкульозний диспансер",
+    "shortName": "Миколаївський",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Миколаївський обласний протитуберкульозний диспансер",
+        "shortName": "Миколаївський",
+        "macAddress": "MAC98E7F452FC23",
+        "hostId": "Миколаївський обласний протитуберкульозний диспансер",
+        "serial": "Cepheid-64261JK",
+        "gxAlertDeviceId": "1985"
+      }
+    ]
+  },
+  {
+    "externalId": "Могилів-Подільська ОЛІЛ",
+    "longitude": 27.771971,
+    "latitude": 48.458191,
+    "stateName": "Vinnytsia Oblast",
+    "lgaName": "м. Могилів-Подільський",
+    "name": "Могилів-Подільська ОЛІЛ",
+    "shortName": "Могилів-Подільск",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Могилів-Подільська ОЛІЛ",
+        "shortName": "Могилів-Подільск",
+        "macAddress": "MACF43909E5EFE6",
+        "hostId": "Могилев-Подольский ОБИЛ",
+        "serial": "Cepheid-8388560",
+        "gxAlertDeviceId": "2650"
+      }
+    ]
+  },
+  {
+    "externalId": "Національний Інститут фтізіатрії і пульмонології ім. Ф.Г.Яновського НАМН України",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "City of Kiev",
+    "lgaName": null,
+    "name": "Національний Інститут фтізіатрії і пульмонології ім. Ф.Г.Яновського НАМН України",
+    "shortName": "Національний ",
+    "timeZoneId": "E. Europe Standard Time",
+    "devices": [
+      {
+        "name": "Національний Інститут фтізіатрії і пульмонології ім. Ф.Г.Яновського НАМН України",
+        "shortName": "Національний ",
+        "macAddress": "MAC10604B6B3D52",
+        "hostId": "Національний Інститу",
+        "serial": "Cepheid-3031JCY",
+        "gxAlertDeviceId": "1711"
+      }
+    ]
+  },
+  {
+    "externalId": "Новоукраїнська центральна районна лікарня (Кіровоградська область)",
+    "longitude": 32.08308,
+    "latitude": 48.472481,
+    "stateName": "Kirovohrad Oblast",
+    "lgaName": null,
+    "name": "Новоукраїнська центральна районна лікарня (Кіровоградська область)",
+    "shortName": "Новоукраїнка ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Новоукраїнська центральна районна лікарня (Кіровоградська область)",
+        "shortName": "Новоукраїнка ЦРЛ",
+        "macAddress": "MAC98FA9B0A5A99",
+        "hostId": "Новоукраїнська центральна районна лікарня (Кіровоградська область)",
+        "serial": "CPHD-F1PW5A2",
+        "gxAlertDeviceId": "3242"
+      }
+    ]
+  },
+  {
+    "externalId": "Обласний фтизіопульмонологічний центр м. Івано-Франківськ",
+    "longitude": 24.707939,
+    "latitude": 48.911839,
+    "stateName": "Ivano-Frankivsk Oblast",
+    "lgaName": null,
+    "name": "Обласний фтизіопульмонологічний центр м. Івано-Франківськ",
+    "shortName": "ОФПЦ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Обласний фтизіопульмонологічний центр м. Івано-Франківськ",
+        "shortName": "ОФПЦ",
+        "macAddress": "MAC7446A09A9CF1",
+        "hostId": "OFPC",
+        "serial": "Cepheid-3300V70",
+        "gxAlertDeviceId": "2739"
+      }
+    ]
+  },
+  {
+    "externalId": "Областной противотуберкулезный диспансер, Харьков",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Kharkiv Oblast",
+    "lgaName": null,
+    "name": "Областной противотуберкулезный диспансер, Харьков",
+    "shortName": "Харківський ОТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Областной противотуберкулезный диспансер, Харьков",
+        "shortName": "Харківський ОТД",
+        "macAddress": "MAC48BA4E8A6430",
+        "hostId": "Областной противотуб",
+        "serial": "Cepheid-7352VDL",
+        "gxAlertDeviceId": "2013"
+      }
+    ]
+  },
+  {
+    "externalId": "Одеський ОПТД",
+    "longitude": 46.472,
+    "latitude": 30.737,
+    "stateName": "Odessa Oblast",
+    "lgaName": null,
+    "name": "Одеський ОПТД",
+    "shortName": "Одеський",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Одеський ОПТД",
+        "shortName": "Одеський",
+        "macAddress": "MAC7446A0B4E6F9",
+        "hostId": "Odessa",
+        "serial": "Cepheid-3381P38",
+        "gxAlertDeviceId": "1839"
+      }
+    ]
+  },
+  {
+    "externalId": "ОКТМО \"Фтизіатрія\" місто Ужгород",
+    "longitude": 23.27635,
+    "latitude": 48.403881,
+    "stateName": "Zakarpattia Oblast",
+    "lgaName": null,
+    "name": "ОКТМО \"Фтизіатрія\" місто Ужгород",
+    "shortName": "ОКТМО м.Ужгород",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ОКТМО \"Фтизіатрія\" місто Ужгород",
+        "shortName": "ОКТМО м.Ужгород",
+        "macAddress": "MAC8851FB58DD55",
+        "hostId": "ОКТМО \"Фтизіатрія\" місто Ужгород",
+        "serial": "Cepheid-32406WF",
+        "gxAlertDeviceId": "2674"
+      }
+    ]
+  },
+  {
+    "externalId": "Олександрійська центральна районна лікарня (Кіровоградська область)",
+    "longitude": 32.08308,
+    "latitude": 48.472481,
+    "stateName": "Kirovohrad Oblast",
+    "lgaName": null,
+    "name": "Олександрійська центральна районна лікарня (Кіровоградська область)",
+    "shortName": "Олександрія ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Олександрійська центральна районна лікарня (Кіровоградська область)",
+        "shortName": "Олександрія ЦРЛ",
+        "macAddress": "MAC98FA9B0A5B2A",
+        "hostId": "Олександрійська центральна районна лікарня (Кіровоградська область)",
+        "serial": "CPHD-F1PW9X9",
+        "gxAlertDeviceId": "3232"
+      }
+    ]
+  },
+  {
+    "externalId": "ОПТД м. Кременчуг",
+    "longitude": 33.404919,
+    "latitude": 49.06638,
+    "stateName": "Poltava Oblast",
+    "lgaName": null,
+    "name": "ОПТД м. Кременчуг",
+    "shortName": "м. Кременчуг ПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ОПТД м. Кременчуг",
+        "shortName": "м. Кременчуг ПТД",
+        "macAddress": "MACF43909D96231",
+        "hostId": "ОПТД м. Кременчуг",
+        "serial": "Cepheid-8388G0N",
+        "gxAlertDeviceId": "2813"
+      }
+    ]
+  },
+  {
+    "externalId": "ОПТД м.Лубни",
+    "longitude": 33.779911,
+    "latitude": 49.73259,
+    "stateName": "Poltava Oblast",
+    "lgaName": null,
+    "name": "ОПТД м.Лубни",
+    "shortName": "ОПТД м.Лубни",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ОПТД м.Лубни",
+        "shortName": "ОПТД м.Лубни",
+        "macAddress": "MAC84A93E41C6ED",
+        "hostId": "ОПТД м.Лубны",
+        "serial": "Cepheid-83966JN",
+        "gxAlertDeviceId": "2893"
+      }
+    ]
+  },
+  {
+    "externalId": "ОТМПО Волинь",
+    "longitude": 25.29649,
+    "latitude": 50.735668,
+    "stateName": "Volyn Oblast",
+    "lgaName": null,
+    "name": "ОТМПО Волинь",
+    "shortName": "ОТМПО",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ОТМПО Волинь",
+        "shortName": "ОТМПО",
+        "macAddress": "MAC8851FB5E9923",
+        "hostId": "ОТМПО",
+        "serial": "Cepheid-3260LJQ",
+        "gxAlertDeviceId": "2573"
+      }
+    ]
+  },
+  {
+    "externalId": "ОЦГЗ Рівне",
+    "longitude": 26.392509,
+    "latitude": 51.039829,
+    "stateName": "Rivne Oblast",
+    "lgaName": null,
+    "name": "ОЦГЗ Рівне",
+    "shortName": "ОЦГЗ Рівне",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ОЦГЗ Рівне",
+        "shortName": "ОЦГЗ Рівне",
+        "macAddress": "MACA0369F478F10",
+        "hostId": "ОЦГЗ Рівне",
+        "serial": "Cepheid-4421K5L",
+        "gxAlertDeviceId": "2558"
+      }
+    ]
+  },
+  {
+    "externalId": "ОЦПБС м.Івано-Франківськ",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Ivano-Frankivsk Oblast",
+    "lgaName": null,
+    "name": "ОЦПБС м.Івано-Франківськ",
+    "shortName": "ОЦПБС Франківськ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "ОЦПБС м.Івано-Франківськ",
+        "shortName": "ОЦПБС Франківськ",
+        "macAddress": "MACC4346B5E2311",
+        "hostId": "ОЦПБС м.Івано-Франківськ",
+        "serial": "Cepheid-7050W2N",
+        "gxAlertDeviceId": "2478"
+      }
+    ]
+  },
+  {
+    "externalId": "Покровська ЦРЛ",
+    "longitude": 37.177761,
+    "latitude": 48.282421,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "Покровська ЦРЛ",
+    "shortName": "Покровська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Покровська ЦРЛ",
+        "shortName": "Покровська ЦРЛ",
+        "macAddress": "MAC84A93E417958",
+        "hostId": "Покровська ЦРЛ",
+        "serial": "Cepheid-83968F1",
+        "gxAlertDeviceId": "2885"
+      }
+    ]
+  },
+  {
+    "externalId": "Полтавський обласний клінічний протитуберкульозний диспансер",
+    "longitude": 33.779911,
+    "latitude": 49.73259,
+    "stateName": "Poltava Oblast",
+    "lgaName": null,
+    "name": "Полтавський обласний клінічний протитуберкульозний диспансер",
+    "shortName": "Полтавський",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Полтавський обласний клінічний протитуберкульозний диспансер",
+        "shortName": "Полтавський",
+        "macAddress": "MAC6C3BE51688B6",
+        "hostId": "Полтавський обласний клінічний протитуберкульозний диспансер",
+        "serial": "Cepheid-3300V61",
+        "gxAlertDeviceId": "2020"
+      }
+    ]
+  },
+  {
+    "externalId": "Полтавський обласний протитуберкульозний диспансер (тимчасовий сервісний ПК0",
+    "longitude": 34.496201,
+    "latitude": 49.562469,
+    "stateName": "Poltava Oblast",
+    "lgaName": null,
+    "name": "Полтавський обласний протитуберкульозний диспансер (тимчасовий сервісний ПК0",
+    "shortName": "Полтавський ОПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Полтавський обласний протитуберкульозний диспансер (тимчасовий сервісний ПК0",
+        "shortName": "Полтавський ОПТД",
+        "macAddress": "MACF0761CFCCD3A",
+        "hostId": "Полтавський обласний протитуберкульозний диспансер (тимчасовий сервісний ПК0",
+        "serial": "DESKTOP-PSA8B07",
+        "gxAlertDeviceId": "3351"
+      }
+    ]
+  },
+  {
+    "externalId": "Прилуцька центральна міська лікарня",
+    "longitude": 32.350941,
+    "latitude": 50.5979,
+    "stateName": "Chernihiv Oblast",
+    "lgaName": null,
+    "name": "Прилуцька центральна міська лікарня",
+    "shortName": "Прилуцька ЦМЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Прилуцька центральна міська лікарня",
+        "shortName": "Прилуцька ЦМЛ",
+        "macAddress": "MAC98FA9B0A5ABD",
+        "hostId": "Прилуцька центральна міська лікарня",
+        "serial": "CPHD-F1PW5CT",
+        "gxAlertDeviceId": "3369"
+      }
+    ]
+  },
+  {
+    "externalId": "Рівненський ОТД",
+    "longitude": 51.040001,
+    "latitude": 26.393,
+    "stateName": "Rivne Oblast",
+    "lgaName": null,
+    "name": "Рівненський ОТД",
+    "shortName": "Рівненський ОТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Рівненський ОТД",
+        "shortName": "Рівненський ОТД",
+        "macAddress": "MAC7446A096E12F",
+        "hostId": "Рівненський ОТД",
+        "serial": "Cepheid-3300V7F",
+        "gxAlertDeviceId": "1982"
+      }
+    ]
+  },
+  {
+    "externalId": "СИЗО №21, Одесса",
+    "longitude": 30.72788,
+    "latitude": 46.4417,
+    "stateName": "Odessa Oblast",
+    "lgaName": "Одеса",
+    "name": "СИЗО №21, Одесса",
+    "shortName": "СИЗО №21, Одесса",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "СИЗО №21, Одесса",
+        "shortName": "СИЗО №21, Одесса",
+        "macAddress": "MAC48BA4E8BFE20",
+        "hostId": "СИЗО №21, Одесса",
+        "serial": "Cepheid-7352TWR",
+        "gxAlertDeviceId": "2958"
+      }
+    ]
+  },
+  {
+    "externalId": "Слідчий ізолятор м. Хмельницький",
+    "longitude": 26.978861,
+    "latitude": 49.42543,
+    "stateName": "Khmelnytskyi Oblast",
+    "lgaName": null,
+    "name": "Слідчий ізолятор м. Хмельницький",
+    "shortName": "Хмельницький СІ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Слідчий ізолятор м. Хмельницький",
+        "shortName": "Хмельницький СІ",
+        "macAddress": "MAC98FA9B0A5B3C",
+        "hostId": "Слідчий ізолятор м.мельницький",
+        "serial": "CPHD-F1PW8SE",
+        "gxAlertDeviceId": "3283"
+      }
+    ]
+  },
+  {
+    "externalId": "Сумська міська медична частина ДКВС",
+    "longitude": 34.12521,
+    "latitude": 51.106461,
+    "stateName": "Sumy Oblast",
+    "lgaName": null,
+    "name": "Сумська міська медична частина ДКВС",
+    "shortName": "м.Суми МЧ ДКВС",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Сумська міська медична частина ДКВС",
+        "shortName": "м.Суми МЧ ДКВС",
+        "macAddress": "MAC84A93E41668F",
+        "hostId": "Сумьська міська медчна частина ДКВС",
+        "serial": "Cepheid-839675B",
+        "gxAlertDeviceId": "2788"
+      }
+    ]
+  },
+  {
+    "externalId": "ТМО \"ФТИЗІАТРІЯ\" у м.Києві",
+    "longitude": 50.299,
+    "latitude": 30.457001,
+    "stateName": "City of Kiev",
+    "lgaName": "м. Київ",
+    "name": "ТМО \"ФТИЗІАТРІЯ\" у м.Києві",
+    "shortName": "ТМО \"ФТИЗІАТРІЯ\"",
+    "timeZoneId": "E. Europe Standard Time",
+    "devices": [
+      {
+        "name": "ТМО \"ФТИЗІАТРІЯ\" у м.Києві",
+        "shortName": "ТМО \"ФТИЗІАТРІЯ\"",
+        "macAddress": "MAC8851FB58DE97",
+        "hostId": "ТМО \"ФТИЗІАТРІЯ\" у м.Києві",
+        "serial": "Cepheid-32406VK",
+        "gxAlertDeviceId": "1713"
+      }
+    ]
+  },
+  {
+    "externalId": "Тульчинська ЦРЛ",
+    "longitude": 28.841669,
+    "latitude": 48.674068,
+    "stateName": "Vinnytsia Oblast",
+    "lgaName": "Тульчинський",
+    "name": "Тульчинська ЦРЛ",
+    "shortName": "Тульчинська ЦРЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Тульчинська ЦРЛ",
+        "shortName": "Тульчинська ЦРЛ",
+        "macAddress": "MACF43909E50A07",
+        "hostId": "Тульчинська ЦРЛ",
+        "serial": "Cepheid-8388C9K",
+        "gxAlertDeviceId": "2645"
+      }
+    ]
+  },
+  {
+    "externalId": "УВП №6: м.Бахмут",
+    "longitude": 37.999241,
+    "latitude": 48.599072,
+    "stateName": "Donetsk Oblast",
+    "lgaName": null,
+    "name": "УВП №6: м.Бахмут",
+    "shortName": "м.Бахмут УВП 6",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "УВП №6: м.Бахмут",
+        "shortName": "м.Бахмут УВП 6",
+        "macAddress": "MAC2C44FD2DE104",
+        "hostId": "УВП №: м.Бахмут",
+        "serial": "Cepheid-3520VZ4",
+        "gxAlertDeviceId": "2740"
+      }
+    ]
+  },
+  {
+    "externalId": "Ужгородська міська поліклініка",
+    "longitude": 23.27635,
+    "latitude": 48.403881,
+    "stateName": "Zakarpattia Oblast",
+    "lgaName": "м. Ужгород",
+    "name": "Ужгородська міська поліклініка",
+    "shortName": "Ужгородська МП",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Ужгородська міська поліклініка",
+        "shortName": "Ужгородська МП",
+        "macAddress": "MACA0CEC81484C3",
+        "hostId": "Ужгородська міська поліклініка",
+        "serial": "Cepheid-8388GB3",
+        "gxAlertDeviceId": "2672"
+      }
+    ]
+  },
+  {
+    "externalId": "Херсонський обласний протитуберкульозний диспансер",
+    "longitude": 32.577812,
+    "latitude": 46.683941,
+    "stateName": "Kherson Oblast",
+    "lgaName": null,
+    "name": "Херсонський обласний протитуберкульозний диспансер",
+    "shortName": "Херсонський ОПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Херсонський обласний протитуберкульозний диспансер",
+        "shortName": "Херсонський ОПТД",
+        "macAddress": "MAC180373217166",
+        "hostId": "Херсоньский областни",
+        "serial": "Cepheid2H647V1",
+        "gxAlertDeviceId": "1978"
+      }
+    ]
+  },
+  {
+    "externalId": "Хустська районна лікарня",
+    "longitude": 23.42145,
+    "latitude": 48.051048,
+    "stateName": "Zakarpattia Oblast",
+    "lgaName": "Хустський",
+    "name": "Хустська районна лікарня",
+    "shortName": "Хустська РЛ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Хустська районна лікарня",
+        "shortName": "Хустська РЛ",
+        "macAddress": "MACF43909E5AEE3",
+        "hostId": "Хустська районна лікарня",
+        "serial": "Cepheid-8388338",
+        "gxAlertDeviceId": "2671"
+      }
+    ]
+  },
+  {
+    "externalId": "Центр СНІД Запоріжжя",
+    "longitude": 35.097809,
+    "latitude": 47.856331,
+    "stateName": "Zaporizhia Oblast",
+    "lgaName": null,
+    "name": "Центр СНІД Запоріжжя",
+    "shortName": "Запоріжжя ЦСНІД ",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Центр СНІД Запоріжжя",
+        "shortName": "Запоріжжя ЦСНІД ",
+        "macAddress": "MAC2C44FD3291C4",
+        "hostId": "Центр СНІД Запоріжжя",
+        "serial": "Cepheid-2UA40611XK",
+        "gxAlertDeviceId": "2808"
+      }
+    ]
+  },
+  {
+    "externalId": "Черкаський Обласний протитуберкульозний диспансер",
+    "longitude": 49.259998,
+    "latitude": 31.353001,
+    "stateName": "Cherkasy Oblast",
+    "lgaName": null,
+    "name": "Черкаський Обласний протитуберкульозний диспансер",
+    "shortName": "Черкаський ОПТД",
+    "timeZoneId": "FLE Standard Time",
+    "devices": [
+      {
+        "name": "Черкаський Обласний протитуберкульозний диспансер",
+        "shortName": "Черкаський ОПТД",
+        "macAddress": "MAC8851FB5E99F2",
+        "hostId": "Черкаський Обласний протитуберкульозний диспансер",
+        "serial": "Cepheid-3260LK4",
+        "gxAlertDeviceId": "2010"
+      }
+    ]
+  },
+  {
+    "externalId": "Чернігівський ОПТД",
+    "longitude": 51.355,
+    "latitude": 32.005001,
+    "stateName": "Chernihiv Oblast",
+    "lgaName": null,
+    "name": "Чернігівський ОПТД",
+    "shortName": "Чернігівський ",
+    "timeZoneId": "E. Europe Standard Time",
+    "devices": [
+      {
+        "name": "Чернігівський ОПТД",
+        "shortName": "Чернігівський ",
+        "macAddress": "MAC18037327A99F",
+        "hostId": "Чернігівський ОПТД",
+        "serial": "Cepheid2H6C7V1",
+        "gxAlertDeviceId": "1723"
+      }
+    ]
+  }
+]

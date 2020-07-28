@@ -1,0 +1,277 @@
+{
+  "id": {
+    "title": "Patient ID",
+    "type": "string",
+    "order": 0
+  },
+  "serialNumber": {
+    "title": "Serial Code",
+    "type": "string",
+    "order": 1
+  },
+  "mrfDateRequested": {
+    "title": "MRF Date Requested",
+    "type": "date",
+    "order": 2
+  },
+  "referringHealthFacility": {
+    "title": "Referring Health Facility",
+    "type": "string",
+    "order": 3
+  },
+  "requestingPhysician": {
+    "title": "Requesting Physician",
+    "type": "string",
+    "order": 4
+  },
+  "facilityContactNumber": {
+    "title": "Requesting Physician",
+    "type": "string",
+    "order": 5
+  },
+  "lastName": {
+    "title": "Last Name",
+    "type": "string",
+    "order": 6
+  },
+  "firstName": {
+    "title": "First Name",
+    "type": "string",
+    "order": 7
+  },
+  "middleInitialOrName": {
+    "title": "Middle Initial/Name",
+    "type": "string",
+    "order": 8
+  },
+  "dateOfAdmission": {
+    "title": "Date of Admission",
+    "type": "date",
+    "order": 9
+  },
+  "age": {
+    "title": "Age",
+    "type": "number",
+    "order": 10
+  },
+  "sex": {
+    "title": "Sex",
+    "type": "string",
+    "order": 11
+  },
+  "dateOfBirth": {
+    "title": "Date of Birth",
+    "type": "date",
+    "order": 12
+  },
+  "address": {
+    "title": "Address",
+    "type": "string",
+    "order": 13
+  },
+  "phone": {
+    "title": "Patient Phone",
+    "type": "string",
+    "order": 14
+  },
+  "landlineNo": {
+    "title": "Patient's Landline No.",
+    "type": "string",
+    "order": 15
+  },
+  "emailAddress": {
+    "title": "Patient's Email Address",
+    "type": "string",
+    "order": 16
+  },
+  "cultureCenter": {
+    "title": "Culture Center",
+    "type": "string",
+    "order": 17
+  },
+  "dstCenter": {
+    "title": "DST Center",
+    "type": "string",
+    "order": 18
+  },
+  "treatmentCategory": {
+    "title": "Treatment Category",
+    "type": "string",
+    "order": 19
+  },
+  "registrationGroup": {
+    "title": "Registration Group",
+    "type": "string",
+    "order": 20
+  },
+  "treatmentSchedule": {
+    "title": "Treatment Schedule",
+    "type": "string",
+    "order": 21
+  },
+  "monthOfTreatment": {
+    "title": "Month of tx",
+    "type": "string",
+    "order": 22
+  },
+  "typeOfSpecimen": {
+    "title": "Type of Specimen",
+    "type": "string",
+    "order": 23
+  },
+  "ifOthersSpecify": {
+    "title": "(If Others) Specify",
+    "type": "string",
+    "order": 24
+  },
+  "accessionNo": {
+    "title": "Accession No",
+    "type": "string",
+    "order": 25
+  },
+  "site": {
+    "title": "Site",
+    "type": "string",
+    "order": 26
+  },
+  "testRequestedSmear": {
+    "title": "Test Requested Smear",
+    "type": "bool",
+    "order": 27
+  },
+  "testRequestedCulture": {
+    "title": "Test Requested Culture",
+    "type": "bool",
+    "order": 28
+  },
+  "testRequestedDst": {
+    "title": "Test Requested DST",
+    "type": "bool",
+    "order": 29
+  },
+  "testRequestedLpa": {
+    "title": "Test Requested LPA",
+    "type": "bool",
+    "order": 30
+  },
+  "testRequestedGx": {
+    "title": "Test Requested Gx",
+    "type": "bool",
+    "order": 31
+  },
+  "dateTransferedToDst": {
+    "title": "Date transfered to DST",
+    "type": "date",
+    "order": 32
+  },
+  "cultureMethod": {
+    "title": "Culture Method",
+    "type": "string",
+    "order": 33
+  },
+  "presumptiveDsOrDr": {
+    "title": "If for Xpert, DST or LPA",
+    "type": "string",
+    "order": 34
+  },
+  "dateReceived": {
+    "title": "Date Received",
+    "type": "date",
+    "order": 35
+  },
+  "labNo1": {
+    "title": "Lab No",
+    "type": "string",
+    "order": 36
+  },
+  "tbCaseNumber": {
+    "title": "TB Case Number",
+    "type": "string",
+    "order": 37
+  },
+  "dateCollected1": {
+    "title": "Date Collected 1",
+    "type": "date",
+    "order": 38
+  },
+  "dateCollected2": {
+    "title": "Date Collected 2",
+    "type": "date",
+    "order": 39
+  },
+  "dateCollected3": {
+    "title": "Date Collected 3",
+    "type": "date",
+    "order": 40
+  },
+  "dateDispatched": {
+    "title": "Date Dispatched",
+    "type": "date",
+    "order": 41
+  },
+  "volume1": {
+    "title": "Volume 1",
+    "type": "string",
+    "order": 42
+  },
+  "volume2": {
+    "title": "Volume 2",
+    "type": "string",
+    "order": 43
+  },
+  "volume3": {
+    "title": "Volume 3",
+    "type": "string",
+    "order": 44
+  },
+  "consistency1": {
+    "title": "consistency 1",
+    "type": "string",
+    "order": 45
+  },
+  "consistency2": {
+    "title": "consistency 2",
+    "type": "string",
+    "order": 46
+  },
+  "consistency3": {
+    "title": "consistency 3",
+    "type": "string",
+    "order": 47
+  },
+  "opd": {
+    "title": "OPD",
+    "type": "bool",
+    "order": 48
+  },
+  "referral": {
+    "title": "Referral",
+    "type": "bool",
+    "order": 49
+  },
+  "inpatient": {
+    "title": "Inpatient",
+    "type": "bool",
+    "order": 50
+  },
+  "inpatientRemarks": {
+    "title": "Inpatient Remarks",
+    "type": "string",
+    "order": 51
+  },
+  "encodedBy": {
+    "title": "Encoded by",
+    "type": "string",
+    "order": 52
+  },
+  "dateEncoded": {
+    "title": "Date Encoded",
+    "type": "date",
+    "order": 53
+  },
+  "healthCareSystem": {
+    "title": "Health Care System",
+    "type": "string",
+    "order": 54
+  }
+}

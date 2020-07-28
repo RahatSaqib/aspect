@@ -4,10 +4,17 @@ This is the web api for all aspect clients.
 
 Swagger UI is available for testing the UI manually and viewing route documentation at http://localhost:8080/documentation .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
+## Recommended versions
+
+Node v8.13 ([nvm](https://github.com/creationix/nvm) highly recommended)
+
+MySql v8.0
+
+Yarn v1.9.4
+
 ## Quick start
 
 Quick Start for development. Everything is explained in more detail throughout this README.
-
 
 ### New Development Setup
 
@@ -36,6 +43,9 @@ grant all on aspect. * to 'aspectapi'@'localhost';
 flush privileges;
 EOT
 
+# If you are using MySQL 5.7 or have ONLY_FULL_GROUP_BY in your sql_mode by default, add this to my.cnf or my.ini
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+
 # Create an .env file and configure settings for your environment
 # using .env.example as a template
 # Make sure to uncomment following line so that knex could find it's seed directory
@@ -62,7 +72,7 @@ git checkout develop
 git pull origin develop
 
 # If new migrations (but safe to run any time)
-npm run knex migrate:latest
+yarn run knex migrate:latest
 ```
 
 If you would like to start with a fresh database:
@@ -79,8 +89,8 @@ yarn run knex migrate:latest
 yarn run knex seed:run
 ```
 
+## Installation
 
-##Installation
 Clone the repository, then:
 
 ```bash
@@ -88,10 +98,11 @@ Clone the repository, then:
 yarn install
 ```
 
-###Environment Configuration
+### Environment Configuration
+
 Then add a .env file to the root of the application (inline with server.js) and add your environment config to it.  See `.env.example` for reference.
 
-```
+```env
 secret=Any_Random_String
 
 passwordAttempts=5
@@ -112,10 +123,9 @@ amqp.url=amqp://localhost
 
 Optionally, configure the Raven DSN to ship errors to Sentry:
 
-```
+```env
 raven.dsn=https://...
 ```
-
 
 ### Running Server
 
@@ -125,17 +135,15 @@ It's best to install nodemon globally and use that to run the project so that th
 nodemon src/server
 ```
 
-
-##Routes
+## Routes
 
 `GET '/'`: Will return hello! (for testing)
 
-`POST '/api/auth'`: Send name, password, client_id, and client_name in x-www-form-urlencoded format and if credentials are OK returns a JWT.
+`POST '/api/auth'`: Send name, password, clientId, and clientName in x-www-form-urlencoded format and if credentials are OK returns a JWT.
 
 `POST '/api/auth/refresh'`: Post a refresh token in the "x-access-token" header, and this endpoint will return a refreshed JWT.
 
 `GET '/api/auth'`: When valid JWT is in header, returns a welcome-message (for testing that auth works)
-
 
 ### Example
 
@@ -169,36 +177,37 @@ $ curl -H 'Authorization: Bearer ${jwt_token}' -H 'Content-Type: application/jso
 
 ```
 
+## Tests
 
-##Tests
 Tests are in /test and written in Mocha/Chai
-To run tests, `npm test` in the terminal
+To run tests, `yarn test` in the terminal
 
-###Running tests against a local database
+### Running tests against a local database
+
 The test suite makes actual requests to the API which queries a MySQL database. The connection settings are stored as environment variables.
 Environment variables are loaded from a file, called .env, that you need to add to the root of the application.
 See [Environment Configuration](#environment-configuration) in order to change the config, on your machine, to point to a local database
 
-Once your environment is configured run tests using the `npm test` command
+Once your environment is configured run tests using the `yarn test` command
 
 ## Migrations
 
 Migrations are managed with [knex](http://knexjs.org/#Migrations).
 
-To update to latest migration, run `npm run knex migrate:latest`.  Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order.  It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
+To update to latest migration, run `yarn run knex migrate:latest`.  Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order.  It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
 
 ```bash
 # Create a new migration
-$ npm run knex migrate:make migration_name
+$ yarn run knex migrate:make migration_name
 Created migration: ./migrations/{dateTime}_migration_name.js
 
 # Edit created file in migrations using Schema API or Raw Queries
 
 # Update to latest migrate
-$ npm run knex migrate:latest
+$ yarn run knex migrate:latest
 
 # Rollback if migration done in error
-$ npm run knex migrate:rollback
+$ yarn run knex migrate:rollback
 
 ```
 
@@ -224,26 +233,65 @@ delete from knex_migrations where name='20160913144739_permissions.js';
 
 Seed files populate your database with test or development seed data.  They are not configured by default.  If you would like to use them, edit your `.env` file and set your seeds directory containing the scripts that populate your database.
 
-```
+```env
 # in .env
 seeds.directory='./seeds/development'
 ```
+
 Now you can run all seed files within that directory (alphabetical order).
 
 ```bash
-npm run knex seed:run
+yarn run knex seed:run
 ```
 
 Unlike migrations ALL seed files are run every time.  You should structure your seed files to take this into account.  The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run. If a seed file should only be executed once, check for existing data and return early before inserting new seed data.
 
-##Stress test with siege
+## Stress test with siege
+
 Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
 
 To test the auth endpoint, run this command:
 siege --concurrent=25 --content-type="application/json" 'http://localhost:8080/api/auth POST { "name": "sbaumgartner", "password": "test07", "clientName": "SIEGE", "clientId": "1234" }'
 
+### Creating seeds for migrating from GxAlert to Aspect
 
-##Deploying
+We have a function called `baseGxAlertMigration` that sets up all the different bits and pieces we need for migrating a country from GxAlert to Aspect.
+
+It mostly operates on JSON files in the country's fixtures-folder. The files contain data exported from GxAlert using the "migrage_from_gxalert.sql" file in /api/seeds/scripts:
+
+- contactsFromGxAlert.json - Contains all Contacts that were set up in GxAlert. It also contains their level of access and what geographies they have access to. It does NOT include passwords. Aspect will migrate the password from GxAlert automatically when the user first signs in.
+- customFieldsFromGxAlert.json - The custom fields for GxConnect that are configured in GxAlert. This is currently only used for setting up the resultDataSchema for the GeneXpert assays.
+- geography.json - The states and LGAs in the country
+- jobFunctions.json - The job functions (=roles) to set up for the country
+- labClinic.json - This is ONLY for setting devices that use an Aspect API key such as the MGIT or m2000. It does not contain GeneXpert devices
+- sitesFromGxAlert.json - This is the file that contains the GeneXpert devices in GxAlert and the sites that they are located at.
+
+This should be deployed to the Aspect server for the country before data forwarding is set up in GxAlert.
+
+### Testing Issues
+
+You can manually trigger issues using the endpoint /issue/trigger.
+See the `triggerIssue` function in issue/service.js for which issue types are supported.
+You can also see here what data an issue type expects.
+You can use curl or Postman to issue a POST to this endpoint and trigger an issue and any associated notifications.
+For example, to trigger a "Device No Results" issue post to http://localhost:8080/api/issue/trigger with this body:
+
+```json
+{
+    "issueType": "DeviceNoResults",
+    "data": {
+        "deviceId": 18,
+        "lastResultOn": "2020-07-01"
+    }
+}
+```
+
+This will only work if there is an IssueType with the externalId "DeviceNoResults".
+It will also only trigger an issue if IssueEventTrigger contains an entry for that issue type and the partner you're logged in as.
+If you would like to test notifications, make sure you have them set up in the "NotificationType" table (and associated Message tables).
+
+## Deploying
+
 We're serving the API through AWS beanstalk. Install the eb cli tools and commit changes, then:
 
 ```bash
@@ -251,17 +299,16 @@ eb deploy aspect-api-dev
 eb open
 ```
 
-
-##Updating Dependencies
+## Updating Dependencies
 
 To check which dependencies have newer versions available:
 
 ```bash
-npm outdated
+yarn outdated
 ```
 
 To update all to the latest version (this is not the same as the "Wanted" version):
 
 ```bash
-npm update --save
+yarn upgrade
 ```

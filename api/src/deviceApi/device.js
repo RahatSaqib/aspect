@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { deviceStatusToId } = require('../shared/dictionary')
 
@@ -43,9 +43,7 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
         )
     }
   }
-  return knex('Device as d')
-    .where({ 'd.id': deviceId })
-    .first()
+  return knex('Device as d').where({ 'd.id': deviceId }).first()
 }
 
 async function getDeviceConfiguration(knex, deviceId) {
@@ -154,9 +152,17 @@ async function createNewDevice(
     }
   }
 
+  const deviceCapacity = await knex('DeviceCapacity')
+    .where({ deviceTypeId: deviceType.id })
+    .where({ partnerId })
+    .where({ defaultForDeviceType: 1 })
+    .first('id')
+
   // Use or generate device name
   if (!name) {
-    if (serial) {
+    if (shortName) {
+      name = shortName
+    } else if (serial) {
       name = serial
     } else {
       const [deviceCount] = await knex('Device')
@@ -168,12 +174,19 @@ async function createNewDevice(
       name = `${deviceType.name} #${deviceCount.cnt + 1}`
     }
   }
+  if (!shortName && name) {
+    shortName = name
+  }
   const deviceStatusId = await deviceStatusToId(status)
+  if (shortName && shortName.length > 45) {
+    shortName = shortName.substr(0, 45)
+  }
   const [deviceId] = await knex('Device').insert({
     partnerId,
     geographyId,
     siteId,
     deviceTypeId: deviceType.id,
+    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
     deviceStatusId,
     name,
     serial,
@@ -209,6 +222,7 @@ async function createNewDevice(
       'd.siteId',
       'd.geographyId',
       'd.name',
+      'd.shortName',
       'd.serial',
       'd.macAddress',
       'd.configurationData',

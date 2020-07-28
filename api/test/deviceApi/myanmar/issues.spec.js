@@ -1,9 +1,9 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/sub_days')
-const addHours = require('date-fns/add_hours')
-const setMilliseconds = require('date-fns/set_milliseconds')
+const subDays = require('date-fns/subDays')
+const addHours = require('date-fns/addHours')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const { createGxAlertTestContext } = require('../geneXpert/gxalert_utils')
 const { postToDeviceApi } = require('../utils')
 const { basicResultPayload } = require('../geneXpert/geneXpertConstants')
@@ -23,6 +23,7 @@ const {
   resultMachineUnknownError,
   resultModuleReplaced,
 } = require('../../../src/result/actions')
+const { createUniqueIdForResult } = require('../../../src/result/service')
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { resolveIssues } = require('../../../src/issue/actions')
 const {
@@ -47,7 +48,7 @@ describe('Myanmar Issue endpoints', () => {
     afterCleanUp,
   } = context
   let { deviceAuth } = context
-  beforeEach(async () =>
+  beforeEach(() =>
     run(async () => {
       await beforeCreateGxAlertApiKey({
         countryAbbreviation: 'MM',
@@ -177,14 +178,19 @@ describe('Myanmar Issue endpoints', () => {
       const deviceId = response.body.device.id
 
       let moduleTempErrorIssueId = null
+      let sampleId = null
+      let moduleSerial
+      let instrumentSerial = null
+      let testStartedOn = null
+      let testEndedOn = null
       for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
-        const sampleId = `TEM2542552${i}`
-        const moduleSerial = `MOD98765`
-        const instrumentSerial = `CEPH-PC-123${i}`
-        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        sampleId = `TEM2542552${i}`
+        moduleSerial = `MOD98765`
+        instrumentSerial = `CEPH-PC-123${i}`
+        testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
         const payload = _.merge(
           {},
           basicDevicePayload,
@@ -237,12 +243,23 @@ describe('Myanmar Issue endpoints', () => {
         }
       }
 
+      /* -------
+        submit result with changed moduleSerial and __SAME__ 
+        values for instrumentSerial, startedOn, endedOn and sampleId
+        as in one of 5 above results. Otherwise a new entry in 'result' table will be created.
+        Keep in mind that we have to use same values for these 4 fields 
+        because API calls func
+          createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
+        to get unique result externalId.
+        For details what fields are used for uniqueness of result - see
+        plugins 'preProcessMergeResult' or global search for 'createUniqueIdForResult'
+
+        Notice that changing only moduleSerial is needed for issue type ModuleTemperatureError,
+        not for ModuleReplaced.
+      ------- */
       const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-X`
-      const sampleId = `TEM2542552X`
-      const moduleSerial = `MOD98765-X`
-      const instrumentSerial = `CEPH-PC-123X`
-      const testStartedOn = setMilliseconds(subDays(now, 2), 0)
-      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      // new value for module serial
+      moduleSerial = `${moduleSerial}-X`
       const payload = _.merge(
         {},
         basicDevicePayload,
@@ -558,6 +575,7 @@ describe('Myanmar Issue endpoints', () => {
       })
       const deviceId = response.body.device.id
       let machineTempErrorIssueId = null
+      const data = []
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
@@ -591,6 +609,16 @@ describe('Myanmar Issue endpoints', () => {
             },
           }
         )
+        data.push({
+          errorTestResultId,
+          testStartedOn,
+          testEndedOn,
+          errorCode,
+          sampleId,
+          instrumentSerial,
+          moduleSerial,
+          moduleName,
+        })
         if (i === 8) {
           // Should create issue when errors === 8
           const waitForMachineTemperatureError = waitForAction(
@@ -624,43 +652,18 @@ describe('Myanmar Issue endpoints', () => {
         }
       }
 
-      // replace all three modules
-      for (let i = 0; i < 3; i++) {
-        /* eslint-disable no-await-in-loop */
-        const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-X-${i}`
-        const sampleId = `MTEMP2542552-X-${i}`
-        const moduleSerial = `MTEMP1234-X-${i}`
-        const moduleName = `Module A-${i}`
-        const instrumentSerial = `CEPH-PC-123${i}`
-        const testStartedOn = setMilliseconds(subDays(now, i + 2), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: moduleName,
-                },
-              },
-            },
-          }
+      // see func resolveMachineTemperatureError()
+      // in api/src/plugin/partner/Myanmar/issueResolutions.js
+      // To resolve - reset field 'errorCode' directly in table 'result'
+      for (let i = 0; i < 10; i++) {
+        const result = data[i]
+        const externalId = createUniqueIdForResult(
+          result.instrumentSerial,
+          result.testStartedOn,
+          result.testEndedOn,
+          result.sampleId
         )
-
-        // Post the result to aspect
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload,
-        })
+        await knex('Result').where({ externalId }).update({ errorCode: null })
       }
 
       await waitForIdle()
@@ -1510,7 +1513,7 @@ describe('Myanmar Issue endpoints', () => {
     }))
 
   describe('should create a machine power issue and resolve when under percent', () => {
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async () => {
         await beforeCreateGxAlertApiKey({
           countryAbbreviation: 'MM',
@@ -2386,38 +2389,6 @@ describe('Myanmar Issue endpoints', () => {
         }
       )
 
-      resultId = `UNIQUE-ID-2`
-      sampleId = `GENMAC25B2`
-      moduleSerial = `GENMAC123B`
-      instrumentSerial = `CEPH-PC-123`
-      testStartedOn = setMilliseconds(subDays(now, 2), 0)
-      testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-
-      // Post the result with the new module serial
-      result = {
-        id: resultId,
-        startedOn: testStartedOn,
-        endedOn: testEndedOn,
-        sample: { id: sampleId },
-        instrument: {
-          serial: instrumentSerial,
-          module: {
-            serial: moduleSerial,
-            name: 'A1',
-          },
-        },
-      }
-
-      payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
-
       // Should create one module replaced issue
       response = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -2501,7 +2472,7 @@ describe('Myanmar Issue endpoints', () => {
       testStartedOn = setMilliseconds(subDays(now, 2), 0)
       testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
 
-      // Post the result with the new module serial
+      // Post the result with the new module serial AND name
       result = {
         id: resultId,
         startedOn: testStartedOn,

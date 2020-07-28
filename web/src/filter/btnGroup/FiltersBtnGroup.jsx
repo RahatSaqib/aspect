@@ -4,8 +4,8 @@ import React, { Children } from 'react'
 import { compose, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
-import MdClose from 'react-icons/lib/md/close'
+import Button from '@material-ui/core/Button'
+import { MdClose } from 'react-icons/md'
 import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
@@ -28,19 +28,23 @@ const messages = defineMessages({
   },
   patientOrResearchId: {
     id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient/study ID {patientOrResearchId}',
+    defaultMessage: 'patient ID includes {patientOrResearchId}',
+  },
+  patientOrCaseId: {
+    id: 'filter.btnGroup.patientOrCaseId',
+    defaultMessage: 'patient/case ID includes {patientOrCaseId}',
   },
   sampleId: {
     id: 'filter.btnGroup.sampleId',
-    defaultMessage: 'sample {sampleId}',
+    defaultMessage: 'sample includes "{sampleId}"',
   },
-  sampleGroup: {
-    id: 'filter.btnGroup.sampleGroup',
-    defaultMessage: 'sample group {sampleGroup}',
+  errorCode: {
+    id: 'filter.btnGroup.errorCode',
+    defaultMessage: 'error code includes "{errorCode}"',
   },
   whereDeviceNameIncludes: {
     id: 'filter.btnGroup.whereDeviceNameIncludes',
-    defaultMessage: 'where device name includes "{deviceName}"',
+    defaultMessage: 'device name includes "{deviceName}"',
   },
   withResultCategory: {
     id: 'filter.btnGroup.withResultCategory',
@@ -48,38 +52,68 @@ const messages = defineMessages({
   },
   whereSiteNameIncludes: {
     id: 'filter.btnGroup.whereSiteNameIncludes',
-    defaultMessage: 'where site name includes "{siteName}"',
+    defaultMessage: 'site name includes "{siteName}"',
+  },
+  whereSiteIdIncludes: {
+    id: 'filter.btnGroup.whereSiteIdIncludes',
+    defaultMessage: 'site ID includes "{siteId}"',
   },
   sampleOriginSite: {
     id: 'filter.btnGroup.sampleOriginSite',
-    defaultMessage: 'sample origin site is {sampleOriginSiteName}',
+    defaultMessage: 'sample collection site is {sampleOriginSiteName}',
   },
   whoseNameOrEmailIncludes: {
     id: 'filter.btnGroup.whoseNameOrEmailIncludes',
-    defaultMessage: 'whose name/email includes "{contactNameOrEmail}"',
+    defaultMessage: 'name/email includes "{contactNameOrEmail}"',
   },
   withWorkflowStatus: {
     id: 'filter.btnGroup.withWorkflowStatus',
-    defaultMessage: 'with workflow status is {workflowStatusName}',
+    defaultMessage: 'workflow status is {workflowStatusName}',
+  },
+  withTreatmentStatus: {
+    id: 'filter.btnGroup.withTreatmentStatus',
+    defaultMessage: 'treatment status is {treatmentStatusName}',
   },
   withDeviceStatus: {
     id: 'filter.btnGroup.withDeviceStatus',
-    defaultMessage: 'with device status is {deviceStatusName}',
+    defaultMessage: 'status is {deviceStatusName}',
+  },
+  withDeviceType: {
+    id: 'filter.btnGroup.withDeviceType',
+    defaultMessage: 'type is {deviceTypeName}',
   },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
-    defaultMessage: 'where externalId includes "{externalId}"',
+    defaultMessage: 'ID includes "{externalId}"',
   },
   whereDeviceIdIsIn: {
     id: 'filter.btnGroup.whereDeviceIdIsIn',
-    defaultMessage: 'where deviceId is in ({joinedIds})',
+    defaultMessage: 'deviceId is in ({joinedIds})',
   },
   whereSiteIdIsIn: {
     id: 'filter.btnGroup.whereSiteIdIsIn',
-    defaultMessage: 'where siteId is in ({joinedIds})',
+    defaultMessage: 'site ID is in ({joinedIds})',
+  },
+  whereNotificationNameIncludes: {
+    id: 'filter.btnGroup.whereNotificationNameIncludes',
+    defaultMessage: 'notification name includes "{notificationName}"',
+  },
+
+  withRevoked: {
+    id: 'filter.btnGroup.withRevoked',
+    defaultMessage: 'revoked is "{revokedStatus}"',
   },
 })
-
+const revokedOptions = [
+  {
+    id: '0',
+    name: 'false',
+  },
+  {
+    id: '1',
+    name: 'true',
+  },
+]
 const enhance = compose(
   pure,
   connect(
@@ -90,7 +124,10 @@ const enhance = compose(
       assayItems: state.assay.items,
       partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
       workflowStatusItems: state.resultWorkflowStatus.items,
+      treatmentStatusItems: state.resultTreatmentStatus.items,
       deviceStatusItems: state.deviceStatus.items,
+      deviceTypeItems: state.deviceType.selectList.items,
+      diseaseItems: state.disease.diseases.items,
     }),
     null
   )
@@ -99,34 +136,40 @@ const enhance = compose(
 const filtersOrdering = {
   // Manually keep this in sync with the components ordering in FiltersPanel
   assayId: 4,
+  diseaseId: 3,
   countryId: 1,
   stateId: 2,
   lgaId: 3,
   minDate: 18,
   maxDate: 19,
-  partnerId: 7,
-  patientOrResearchId: 8,
+  partnerId: 8,
+  patientOrResearchId: 10,
   sampleId: 9,
-  sampleGroup: 10,
+  errorCode: 6,
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
-  consumableId: 6,
+  consumableId: 7,
   workflowStatusId: 16,
   deviceStatusId: 17,
   externalId: 15,
+  notificationName: 20,
+  revoked: 21,
+  treatmentStatusId: 22,
+  siteId: 23,
   // -1: Special orderings
   siteIds: -1,
+  patientOrCaseId: 23,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
   <Button
     key={filterKey}
     className={cssClasses('Button')}
-    raised
-    accent
+    color="secondary"
+    variant="contained"
     onClick={() => props.onRemoveFilterItem(filterKey)}
   >
     {labelFn(props, props.filters[filterKey])}
@@ -138,6 +181,11 @@ const buttonBy = {
   assayId: makeButton(({ assayItems }, assayId) =>
     assayItems
       .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
+      .get('name')
+  ),
+  diseaseId: makeButton(({ diseaseItems }, diseaseId) =>
+    diseaseItems
+      .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
   countryId: makeButton(({ countryItems }, countryId) =>
@@ -177,15 +225,20 @@ const buttonBy = {
   patientOrResearchId: makeButton(({ intl }, patientOrResearchId) =>
     intl.formatMessage(messages.patientOrResearchId, { patientOrResearchId })
   ),
+  patientOrCaseId: makeButton(({ intl }, patientOrCaseId) =>
+    intl.formatMessage(messages.patientOrCaseId, { patientOrCaseId })
+  ),
   sampleId: makeButton(({ intl }, sampleId) =>
     intl.formatMessage(messages.sampleId, { sampleId })
-  ),
-  sampleGroup: makeButton(({ intl }, sampleGroup) =>
-    intl.formatMessage(messages.sampleGroup, { sampleGroup })
   ),
   deviceName: makeButton(({ intl }, deviceName) =>
     intl.formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
+    })
+  ),
+  siteId: makeButton(({ intl }, siteId) =>
+    intl.formatMessage(messages.whereSiteIdIncludes, {
+      siteId,
     })
   ),
   resultCategoryId: makeButton(
@@ -206,6 +259,9 @@ const buttonBy = {
           .get('name', ''),
       })
   ),
+  errorCode: makeButton(({ intl }, errorCode) =>
+    intl.formatMessage(messages.errorCode, { errorCode })
+  ),
   siteName: makeButton(({ intl }, siteName) =>
     intl.formatMessage(messages.whereSiteNameIncludes, {
       siteName,
@@ -215,7 +271,7 @@ const buttonBy = {
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
         .find(
-          it => it.get('id') === sampleOriginSiteId,
+          it => it.get('name') === sampleOriginSiteId,
           EMPTY_CONTEXT,
           EMPTY_MAP
         )
@@ -244,6 +300,18 @@ const buttonBy = {
           .get('name'),
       })
   ),
+  treatmentStatusId: makeButton(
+    ({ intl, treatmentStatusItems }, treatmentStatusId) =>
+      intl.formatMessage(messages.withTreatmentStatus, {
+        treatmentStatusName: treatmentStatusItems
+          .find(
+            it => it.get('id') === treatmentStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+  ),
   deviceStatusId: makeButton(({ intl, deviceStatusItems }, deviceStatusId) =>
     intl.formatMessage(messages.withDeviceStatus, {
       deviceStatusName: deviceStatusItems
@@ -251,9 +319,31 @@ const buttonBy = {
         .get('name'),
     })
   ),
+  deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
+    intl.formatMessage(messages.withDeviceType, {
+      deviceTypeName: deviceTypeItems
+        .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
+  ),
   externalId: makeButton(({ intl }, externalId) =>
     intl.formatMessage(messages.whereExternalIdIncludes, {
       externalId,
+    })
+  ),
+  notificationName: makeButton(({ intl }, notificationName) =>
+    intl.formatMessage(messages.whereNotificationNameIncludes, {
+      notificationName,
+    })
+  ),
+
+  revoked: makeButton(({ intl }, revoked) =>
+    intl.formatMessage(messages.withRevoked, {
+      revokedStatus: revokedOptions.find(
+        it => it.id === revoked,
+        EMPTY_CONTEXT,
+        EMPTY_MAP
+      ).name,
     })
   ),
   // Special keys
@@ -271,11 +361,12 @@ const buttonBy = {
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => (
   <div className={cssClasses(className, 'FiltersBtnGroup')}>
-    {Children.map(children, child =>
-      React.cloneElement(child, {
-        className: cssClasses('FiltersBtnGroup__Child'),
-      })
-    )}
+    {children &&
+      Children.map(children, child =>
+        React.cloneElement(child, {
+          className: cssClasses('FiltersBtnGroup__Child'),
+        })
+      )}
     {Immutable.Map(restProps.filters)
       .keySeq()
       .sortBy(filterKey => filtersOrdering[filterKey])

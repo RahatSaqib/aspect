@@ -33,28 +33,6 @@ describe('deviceApiKey endpoints', () => {
           .execute()
       })
     })
-
-    describe('/deviceApiKey/export', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/deviceApiKey/export', {
-          async exportDeviceApiKeys() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
   })
 
   describe('PUT', () => {
@@ -104,6 +82,27 @@ describe('deviceApiKey endpoints', () => {
   })
 
   describe('POST', () => {
+    describe('/deviceApiKey/api-key', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/deviceApiKey/api-key', {
+          async createDeviceApiKey() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
     describe('/deviceApiKey/generate', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }

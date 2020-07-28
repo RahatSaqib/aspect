@@ -1,4 +1,10 @@
 const _ = require('lodash')
+const addDays = require('date-fns/addDays')
+const parseISO = require('date-fns/parseISO')
+const subDays = require('date-fns/subDays')
+const isAfter = require('date-fns/isAfter')
+const isWeekend = require('date-fns/isWeekend')
+const differenceInDays = require('date-fns/differenceInDays')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
@@ -9,12 +15,9 @@ const {
   canViewInventories,
   canEditInventories,
 } = require('../auth/constraints')
-const addDays = require('date-fns/add_days')
-const subDays = require('date-fns/sub_days')
-const isAfter = require('date-fns/is_after')
-const differenceInDays = require('date-fns/difference_in_days')
-const { getUser, hasFeature } = require('../auth/service')
+const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
+const { getArrayOfDaysInRange } = require('../shared/date')
 
 const i18nKeys = {
   // Dashboard
@@ -44,10 +47,11 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-function getDashboardWidget({ id, partnerId }, layout) {
+async function getDashboardWidget({ id, partnerId }, options) {
+  const { layout, dashboard = 'home' } = options
   const tableName =
     layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
-  return knex('DashboardWidget as w')
+  const widgets = knex('DashboardWidget as w')
     .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
     .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
     .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
@@ -57,8 +61,15 @@ function getDashboardWidget({ id, partnerId }, layout) {
       'ps.userId': id,
       'jf.partnerId': partnerId,
     })
+    .where(function () {
+      this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
+      if (dashboard === 'home') {
+        this.orWhereNull('w.dashboards')
+      }
+    })
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
+  return widgets
 }
 
 function getTableAlias(sql) {
@@ -77,35 +88,43 @@ function getTableAlias(sql) {
   return tableAlias
 }
 
-function getSqlBuilder(sql) {
-  const sqlRegExp = new RegExp(
+function tryConvertSqlStringToKnexQueryBuilder(sql) {
+  const sqlSelectFromTableNameRegExp = new RegExp(
     /\bselect\s+(.*?)\s?(?:\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?)?$/gi
   )
-  let match
+  const sqlSelectFromTableNameMatch = sqlSelectFromTableNameRegExp.exec(sql)
   let sqlBuilder
-  // eslint-disable-next-line no-cond-assign
-  if ((match = sqlRegExp.exec(sql)) !== null) {
-    if (match.length === 6) {
-      sqlBuilder = knex.select(knex.raw(match[1])).from(match[2])
-      if (match[3]) {
-        sqlBuilder.joinRaw(match[3])
+  if (
+    sqlSelectFromTableNameMatch &&
+    /^[a-zA-Z0-9_\-\s`]*$/.test(sqlSelectFromTableNameMatch[2]) // Does the FROM source look like a table name? Eg: Device or Device as d or `Device` as d
+  ) {
+    if (sqlSelectFromTableNameMatch.length === 6) {
+      sqlBuilder = knex
+        .select(knex.raw(sqlSelectFromTableNameMatch[1]))
+        .from(sqlSelectFromTableNameMatch[2])
+      if (sqlSelectFromTableNameMatch[3]) {
+        sqlBuilder.joinRaw(sqlSelectFromTableNameMatch[3])
       }
-      if (match[4]) {
-        sqlBuilder.whereRaw(match[4])
+      if (sqlSelectFromTableNameMatch[4]) {
+        sqlBuilder.whereRaw(sqlSelectFromTableNameMatch[4])
       }
-      if (match[5]) {
-        sqlBuilder.havingRaw(match[5])
+      if (sqlSelectFromTableNameMatch[5]) {
+        sqlBuilder.havingRaw(sqlSelectFromTableNameMatch[5])
       }
     }
   }
   return sqlBuilder
 }
 
-function queryCount(sql, dataConstraints, query) {
-  const sqlTableAlias = getTableAlias(sql)
-  const sqlBuilder = getSqlBuilder(sql)
-
+async function queryValue(sql, dataConstraints, query) {
+  if (sql) {
+    // get rid of all new-line symbols, if any exist
+    sql = sql.replace(/\n/g, ' ')
+  }
+  let firstResult
+  const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql)
   if (sqlBuilder) {
+    const sqlTableAlias = getTableAlias(sql)
     sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias).first()
     if (sqlTableAlias.result) {
       sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
@@ -113,8 +132,14 @@ function queryCount(sql, dataConstraints, query) {
     if (sqlTableAlias.site) {
       sqlBuilder.modify(filterParams, query, { siteId: 's.id' })
     }
+    firstResult = sqlBuilder
+  } else if (sql) {
+    firstResult = await knex.raw(sql)
   }
-  return sqlBuilder
+  while (_.isArray(firstResult)) {
+    ;[firstResult] = firstResult
+  }
+  return firstResult
 }
 
 async function summaryDashboard(request) {
@@ -123,21 +148,21 @@ async function summaryDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, 'stat')
-
+  const { dashboard } = query
+  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
-      const count = await queryCount(
+      const count = await queryValue(
         widget.sqlForIndicator,
         dataConstraints,
         query
       )
-      const unit = await queryCount(
+      const unit = await queryValue(
         widget.sqlForStatUnit,
         dataConstraints,
         query
       )
-      const extra = await queryCount(widget.sqlForExtra, dataConstraints, query)
+      const extra = await queryValue(widget.sqlForExtra, dataConstraints, query)
       return _.assign(
         _.omit(widget, [
           'sqlForIndicator',
@@ -162,7 +187,7 @@ async function targetDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, 'target')
+  const widgets = await getDashboardWidget(user, { layout: 'target' })
 
   let targetDivide = 1
 
@@ -176,7 +201,7 @@ async function targetDashboard(request) {
 
   const data = await Promise.all(
     widgets.map(async widget => {
-      const count = await queryCount(
+      const count = await queryValue(
         widget.sqlForIndicator,
         dataConstraints,
         query
@@ -191,7 +216,7 @@ async function targetDashboard(request) {
         .sum('t.targetValue as cnt')
         .first()
 
-      const dataCollection = await queryCount(
+      const dataCollection = await queryValue(
         widget.sqlForDataCollection,
         dataConstraints,
         query
@@ -249,6 +274,7 @@ async function resultDashboard(request) {
               device: 'd',
               site: 's',
               geography: 'g',
+              assay: 'a',
             })
             .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
             .select(
@@ -261,6 +287,10 @@ async function resultDashboard(request) {
             .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
             .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
             .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+            .modify(addConstraints, dataConstraints, {
+              assayType: 'at',
+              assay: 'a',
+            })
             .groupBy('at.id')
             .select(
               'at.id',
@@ -376,7 +406,7 @@ async function getInventoryItemList(auth, dataConstraints) {
     )
     if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
-        addDays(it.expiresOn, it.remainingDays),
+        addDays(parseISO(it.expiresOn), it.remainingDays),
         it.expiresOn
       )
     }
@@ -385,49 +415,66 @@ async function getInventoryItemList(auth, dataConstraints) {
   return inventoryItemList
 }
 
+async function getConsumablesList(auth, dataConstraints) {
+  if (!canViewInventories(auth)) {
+    return []
+  }
+
+  const consumables = await knex('Consumable as c')
+    .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+    .innerJoin('Assay as a', 'ca.assayId', 'a.id')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftOuterJoin('Issue as i', function () {
+      this.on('s.id', 'i.siteId').andOn('c.id', 'i.consumableId')
+    })
+    .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      device: 'd',
+      assay: 'a',
+    })
+    .groupBy('c.id', 's.id')
+    .select(
+      's.id as siteId',
+      'c.id as consumableId',
+      'c.name as consumableName',
+      knex.raw(
+        "sum(it.externalId = 'InventoryStockout' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntStockout"
+      ),
+      knex.raw(
+        "sum(it.externalId = 'InventoryStockExpiring' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntExpiring"
+      )
+    )
+
+  return consumables
+}
+
 async function inventoryItemDashboard(request) {
   const { auth } = request
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
   const siteList = await getSiteList(auth, dataConstraints)
-  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
-
-  const inventorySiteSummaryList = _.sortBy(
-    _.reduce(
-      _.groupBy(inventoryItemList, 'siteId'),
-      (acc, list) => {
-        if (!_.isEmpty(list)) {
-          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
-          const { siteId } = list[0]
-
-          acc.push({
-            siteId,
-            minRemainingDays,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    it => -1 * it.minRemainingDays
-  )
+  const consumables = await getConsumablesList(auth, dataConstraints)
 
   const inventoryConsumableSummaryList = _.reduce(
-    _.groupBy(inventoryItemList, 'consumableId'),
+    _.groupBy(consumables, 'consumableId'),
     (acc, list) => {
       if (!_.isEmpty(list)) {
-        const { runningLowCount, expiringCount, affectedSiteIds } = list.reduce(
+        const { stockoutCount, expiringCount, affectedSiteIds } = list.reduce(
           (result, it) => {
-            result.runningLowCount += it.runningLow ? 1 : 0
-            result.expiringCount += it.expiring ? 1 : 0
-            if (it.runningLow || it.expiring) {
+            result.stockoutCount += it.cntStockout ? 1 : 0
+            result.expiringCount += it.cntExpiring ? 1 : 0
+            if (it.cntStockout || it.cntExpiring) {
               result.affectedSiteIds.push(it.siteId)
             }
             return result
           },
           {
-            runningLowCount: 0,
+            stockoutCount: 0,
             expiringCount: 0,
             affectedSiteIds: [],
           }
@@ -435,13 +482,15 @@ async function inventoryItemDashboard(request) {
 
         const result = _.filter(
           [
-            runningLowCount > 0 && {
+            // to show <SummaryItemsBlock> only when there is issue 'Stockout' add 'runningLowCount > 0 && {...'
+            {
               key: 0,
-              count: runningLowCount,
+              count: stockoutCount,
               titleI18nKey: i18nKeys.sitesTitle,
               subI18nKey: i18nKeys.runningLowStatus,
             },
-            expiringCount > 0 && {
+            // to show <SummaryItemsBlock> only when there is issue 'StockExpiring' add 'expiringCount > 0 && {...'
+            {
               key: 1,
               count: expiringCount,
               titleI18nKey: i18nKeys.sitesTitle,
@@ -468,7 +517,6 @@ async function inventoryItemDashboard(request) {
   const result = {
     data: {
       siteList,
-      inventorySiteSummaryList,
       inventoryConsumableSummaryList,
     },
   }
@@ -503,15 +551,72 @@ async function getDeviceList(auth, dataConstraints) {
   }
 
   const deviceList = await knex('Device as d')
-    .innerJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .select('d.id', 'd.siteId', 'fdf.*')
+    .leftOuterJoin('Issue as i', 'd.id', 'i.deviceId')
+    .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
+    .whereIn('dtc.name', ['Lab', 'Integrated'])
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
+      device: 'd',
+      deviceType: 'dt',
     })
+    .groupBy('d.id')
+    .select(
+      'd.id',
+      'd.siteId',
+      'it.externalId as issueType',
+      knex.raw(
+        "sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"
+      ),
+      knex.raw(
+        "sum((it.externalId = 'DeviceNoResults' or it.externalId = 'DeviceOffline') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
+      ),
+      knex.raw(
+        "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
+      )
+    )
+    .then(items =>
+      items.reduce(
+        (memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
+          let device = memo.find(x => x.id === id)
+          if (!device) {
+            device = {
+              id,
+              siteId,
+              // Fully Operational = Devices that don't have any issues or all are OK/Resolved
+              fullyOperational: true,
+              // Not Reporting = Devices that have issue "Device No Results"
+              offline: false,
+              // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
+              errorRate: false,
+            }
+            memo.push(device)
+          }
+
+          if (totalIssues) {
+            device.fullyOperational = false
+          }
+
+          if (cntNoResults) {
+            device.offline = true
+          }
+
+          if (cntErrorRate) {
+            device.errorRate = true
+          }
+
+          return memo
+        },
+        []
+      )
+    )
+
   return deviceList
 }
 
@@ -532,24 +637,14 @@ async function deviceDashboard(request) {
     it.longitude = site.longitude
   })
 
-  const operationalDeviceList = _.filter(deviceList, {
-    offline: 0,
-    service: 0,
-    calibration: 0,
-    errorRate: 0,
-    qcProblem: 0,
-    lowInventory: 0,
-    outOfInventory: 0,
-    expiringInventory: 0,
-  })
-  const warrantyExpiringDeviceList = _.filter(deviceList, 'expiringWarranty')
-  const calibrationDueDeviceList = _.filter(deviceList, 'calibration')
+  const operationalDeviceList = _.filter(deviceList, 'fullyOperational')
   const offlineDeviceList = _.filter(deviceList, 'offline')
   const highErrorRateDeviceList = _.filter(deviceList, 'errorRate')
 
   const deviceSummaryMap = {
     operational: {
       deviceIds: _.map(operationalDeviceList, 'id'),
+      siteIds: _.uniq(_.map(operationalDeviceList, 'siteId')),
       items: [
         {
           key: 0,
@@ -560,30 +655,9 @@ async function deviceDashboard(request) {
         },
       ],
     },
-    warrantyExpiring: {
-      deviceIds: _.map(warrantyExpiringDeviceList, 'id'),
-      items: [
-        {
-          key: 0,
-          count: warrantyExpiringDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.warrantyExpiringStatus,
-        },
-      ],
-    },
-    calibration: {
-      deviceIds: _.map(calibrationDueDeviceList, 'id'),
-      items: [
-        {
-          key: 0,
-          count: calibrationDueDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.needCalibrationStatus,
-        },
-      ],
-    },
     uploadingData: {
       deviceIds: _.map(offlineDeviceList, 'id'),
+      siteIds: _.uniq(_.map(offlineDeviceList, 'siteId')),
       items: [
         {
           key: 0,
@@ -595,6 +669,7 @@ async function deviceDashboard(request) {
     },
     testFailures: {
       deviceIds: _.map(highErrorRateDeviceList, 'id'),
+      siteIds: _.uniq(_.map(highErrorRateDeviceList, 'siteId')),
       items: [
         {
           key: 0,
@@ -623,6 +698,9 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
+  const assayResultCategoryList = await getAssayResultCategoryList(
+    dataConstraints
+  )
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
@@ -636,7 +714,7 @@ async function siteDashboard(request) {
 
   const allDeviceOnlineBySiteId = _.mapValues(
     _.groupBy(deviceList, 'siteId'),
-    list => _.every(list, { offline: 0 })
+    list => _.every(list, { offline: false })
   )
   const allDeviceOnlineSiteIds = _.reduce(
     allDeviceOnlineBySiteId,
@@ -668,6 +746,16 @@ async function siteDashboard(request) {
     []
   )
 
+  const anyDeviceWithIssueBySiteId = _.mapValues(
+    _.groupBy(_.uniqBy(deviceList, 'siteId'), 'siteId'),
+    list => _.every(list, { fullyOperational: false })
+  )
+
+  const sitesWithIssueSiteIds = _.sortedUniq(
+    _.reduce(anyDeviceWithIssueBySiteId, siteIdAccumulator, []),
+    'siteId'
+  )
+
   const siteSummaryMap = {
     onlineNow: {
       siteIds: allDeviceOnlineSiteIds,
@@ -693,11 +781,11 @@ async function siteDashboard(request) {
       ],
     },
     deviceManagement: {
-      siteIds: [undefined /* TODO: ASP-520 */],
+      siteIds: sitesWithIssueSiteIds,
       items: [
         {
           key: 0,
-          count: 1 /* TODO: ASP-520 */,
+          count: sitesWithIssueSiteIds.length /* TODO: ASP-520 */,
           titleI18nKey: i18nKeys.sitesTitle,
           subI18nKey: i18nKeys.withDeviceIssues,
         },
@@ -718,455 +806,13 @@ async function siteDashboard(request) {
 
   const result = {
     data: {
+      assayResultCategoryList,
       siteList,
       siteSummaryMap,
     },
   }
 
   return result
-}
-
-const OPERATIONAL_TAKE_LIMIT = 20
-
-const OPERATIONAL_INVENTORY_MIN_DAYS = 21
-const OPERATIONAL_INVENTORY_MIN_EXPIRING = 0.15
-
-async function inventoryItemOperational(request) {
-  const { auth } = request
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
-
-  const stockOutsInventoryItemList = _.sortBy(
-    _.reduce(
-      _.groupBy(inventoryItemList, 'siteId'),
-      (acc, list, siteId) => {
-        if (!_.isEmpty(list)) {
-          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
-
-          acc.push({
-            id: siteId,
-            value: minRemainingDays,
-            abnormal: minRemainingDays < OPERATIONAL_INVENTORY_MIN_DAYS,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    'value'
-  )
-  const stockOutsAbnormalList = _.filter(stockOutsInventoryItemList, 'abnormal')
-  const expiringInventoryItemList = _.sortBy(
-    _.reduce(
-      _.groupBy(inventoryItemList, 'siteId'),
-      (acc, list, siteId) => {
-        if (!_.isEmpty(list)) {
-          const { totalQuantityOnHand, totalExpiring } = _.reduce(
-            list,
-            (total, it) => {
-              total.totalQuantityOnHand += it.quantityOnHand
-              if (it.expiring) {
-                total.totalExpiring += it.quantityOnHand
-              }
-              return total
-            },
-            { totalQuantityOnHand: 0, totalExpiring: 0 }
-          )
-          const value = totalExpiring / totalQuantityOnHand
-
-          acc.push({
-            id: siteId,
-            value,
-            abnormal: value > OPERATIONAL_INVENTORY_MIN_EXPIRING,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    'value'
-  )
-  const expiringAbnormalList = _.filter(expiringInventoryItemList, 'abnormal')
-
-  return [
-    {
-      key: 'stock-outs',
-      titleI18nKey: i18nKeys.stockOutsTitle,
-      someAbnormal: stockOutsAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.siteWithProblems,
-      messageData: {
-        count: stockOutsAbnormalList.length,
-      },
-      data: _.take(stockOutsInventoryItemList, OPERATIONAL_TAKE_LIMIT),
-      averageValue:
-        _.sumBy(stockOutsInventoryItemList, 'value') /
-        stockOutsInventoryItemList.length,
-    },
-    {
-      key: 'expiring',
-      titleI18nKey: i18nKeys.expiringTitle,
-      someAbnormal: expiringAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.siteWithProblems,
-      messageData: {
-        count: expiringAbnormalList.length,
-      },
-      data: _.take(expiringInventoryItemList, OPERATIONAL_TAKE_LIMIT),
-      averageValue:
-        _.sumBy(expiringInventoryItemList, 'value') /
-        expiringInventoryItemList.length,
-    },
-  ]
-}
-
-async function deviceOperational(request) {
-  const { auth } = request
-  const now = new Date()
-  const OPERATIONAL_DEVICE_TAKE_LIMIT = 10
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const deviceList = await getDeviceList(auth, dataConstraints)
-
-  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 7
-  const MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD = 0.05
-  const MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS = 60
-
-  const offlineDeviceList = _.sortBy(
-    deviceList.map(it => ({
-      id: it.id,
-      value: differenceInDays(now, it.lastSeenOn),
-      abnormal:
-        differenceInDays(now, it.lastSeenOn) >
-        MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS,
-    })),
-    it => -1 * it.value
-  )
-  const offlineDeviceAbnormalList = _.filter(offlineDeviceList, 'abnormal')
-
-  const highErrorRateDeviceList = _.sortBy(
-    deviceList.map(it => {
-      const value = _.random(0, 1, true)
-
-      return {
-        id: it.id,
-        value,
-        abnormal: value > MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD,
-      }
-    }),
-    it => -1 * it.value
-  )
-  const highErrorRateDeviceAbnormalList = _.filter(
-    highErrorRateDeviceList,
-    'abnormal'
-  )
-
-  const calibrationDeviceList = _.sortBy(
-    deviceList.map(it => {
-      const calibrationOn = addDays(now, _.random(55, 120))
-      const value = differenceInDays(calibrationOn, now)
-
-      return {
-        id: it.id,
-        value,
-        abnormal: value < MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS,
-      }
-    }),
-    it => -1 * it.value
-  )
-  const calibrationAbnormalList = _.filter(calibrationDeviceList, 'abnormal')
-
-  return [
-    {
-      key: 'days-unavailable',
-      titleI18nKey: i18nKeys.daysUnavailable,
-      someAbnormal: offlineDeviceAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.deviceWithProblems,
-      messageData: {
-        count: offlineDeviceAbnormalList.length,
-      },
-      data: _.take(offlineDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
-    },
-    {
-      key: 'test-failures',
-      titleI18nKey: i18nKeys.testFailures,
-      titleTooltip: '10% (20/200) 10/27/2017',
-      someAbnormal: highErrorRateDeviceAbnormalList.length > 0,
-      messageI18nKey: i18nKeys.deviceWithProblems,
-      messageData: {
-        count: highErrorRateDeviceAbnormalList.length,
-      },
-      data: _.take(highErrorRateDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
-      averageValue:
-        _.sumBy(highErrorRateDeviceList, 'value') /
-        highErrorRateDeviceList.length,
-    },
-    {
-      key: 'calibration-compliance',
-      titleI18nKey: i18nKeys.calibrationCompliance,
-      someAbnormal: calibrationAbnormalList.length > 0,
-      messageI18nKey:
-        calibrationAbnormalList.length > 0
-          ? i18nKeys.deviceWithProblems
-          : i18nKeys.deviceCalibrationsUpToDate,
-      messageData: {
-        count: calibrationAbnormalList.length,
-      },
-      data: _.take(calibrationAbnormalList, OPERATIONAL_DEVICE_TAKE_LIMIT),
-    },
-  ]
-}
-
-async function operationalDashboard(request) {
-  const { query } = request
-
-  const result = {
-    ok: true,
-    data: {
-      device: [
-        {
-          key: 'modules-unavailable',
-          title: 'modules unavailable',
-          someAbnormal: true,
-          message: '6 site with problems',
-          data: [
-            { id: 1, value: 2, abnormal: false },
-            { id: 2, value: 3, abnormal: false },
-            { id: 3, value: 2, abnormal: false },
-            { id: 4, value: 1, abnormal: false },
-            { id: 5, value: 2.5, abnormal: false },
-            { id: 6, value: 1.5, abnormal: false },
-            { id: 7, value: 1, abnormal: false },
-            { id: 8, value: 0.8, abnormal: false },
-            { id: 9, value: 3, abnormal: false },
-            { id: 10, value: 2, abnormal: false },
-            { id: 11, value: 4, abnormal: false },
-            { id: 12, value: 2, abnormal: true },
-            { id: 13, value: 2.2, abnormal: true },
-            { id: 14, value: 5, abnormal: true },
-            { id: 15, value: 4, abnormal: true },
-            { id: 16, value: 3, abnormal: true },
-            { id: 17, value: 2, abnormal: true },
-          ],
-        },
-        {
-          key: 'maintenance-compliance',
-          title: 'maintenance compliance',
-          someAbnormal: false,
-          message: '0 site with problems',
-          data: [
-            { id: 1, value: 2, abnormal: false },
-            { id: 2, value: 3, abnormal: false },
-            { id: 3, value: 2, abnormal: false },
-            { id: 4, value: 1, abnormal: false },
-            { id: 5, value: 2.5, abnormal: false },
-            { id: 6, value: 1.5, abnormal: false },
-            { id: 7, value: 1, abnormal: false },
-            { id: 8, value: 0.8, abnormal: false },
-            { id: 9, value: 3, abnormal: false },
-            { id: 10, value: 2, abnormal: false },
-            { id: 11, value: 4, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 2.2, abnormal: false },
-            { id: 14, value: 5, abnormal: false },
-            { id: 15, value: 4, abnormal: false },
-            { id: 16, value: 3, abnormal: false },
-            { id: 17, value: 2, abnormal: false },
-          ],
-        },
-        {
-          key: 'data-connectivity',
-          title: 'data connectivity',
-          someAbnormal: true,
-          message: '6 site with problems',
-          data: [
-            { id: 1, value: 5, abnormal: true },
-            { id: 2, value: 7, abnormal: true },
-            { id: 3, value: 8, abnormal: true },
-            { id: 4, value: 9, abnormal: true },
-            { id: 5, value: 6, abnormal: true },
-            { id: 6, value: 6.5, abnormal: true },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 7, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 6, abnormal: false },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 2.2, abnormal: false },
-            { id: 13, value: 3, abnormal: false },
-            { id: 14, value: 5, abnormal: false },
-            { id: 15, value: 2, abnormal: false },
-            { id: 16, value: 4, abnormal: false },
-            { id: 17, value: 6, abnormal: false },
-            { id: 18, value: 5, abnormal: false },
-          ],
-        },
-        {
-          key: 'utilisation',
-          title: 'utilisation',
-          someAbnormal: false,
-          message: '0 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 10, abnormal: false },
-            { id: 3, value: 7, abnormal: false },
-            { id: 4, value: 3, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 6, abnormal: false },
-            { id: 7, value: 4, abnormal: false },
-            { id: 8, value: 3, abnormal: false },
-            { id: 9, value: 9, abnormal: false },
-            { id: 10, value: 7, abnormal: false },
-            { id: 11, value: 11, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 7, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 14, abnormal: false },
-            { id: 16, value: 12, abnormal: false },
-            { id: 17, value: 10, abnormal: false },
-            { id: 18, value: 7, abnormal: false },
-          ],
-        },
-        {
-          key: 'time-to-alert-resolution',
-          title: 'time to alert resolution',
-          someAbnormal: true,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 9, abnormal: false },
-            { id: 3, value: 10, abnormal: false },
-            { id: 4, value: 11, abnormal: true },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 7.5, abnormal: false },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 9.5, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 8, abnormal: false },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 3, abnormal: false },
-            { id: 13, value: 5, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 2, abnormal: false },
-            { id: 16, value: 6, abnormal: false },
-            { id: 17, value: 10, abnormal: false },
-            { id: 18, value: 7, abnormal: false },
-          ],
-        },
-      ],
-      site: [
-        {
-          key: 'high-performing',
-          title: 'high performing',
-          data: [
-            { id: 12, name: 'Site name 12', data: [3, 4, 8] },
-            { id: 74, name: 'Site name 74', data: [1, 4, 7] },
-            { id: 26, name: 'Site name 26', data: [2, 5, 9] },
-            { id: 37, name: 'Site name 37', data: [4, 3, 10] },
-            { id: 69, name: 'Site name 69', data: [3, 4, 6] },
-            { id: 73, name: 'Site name 73', data: [1, 4, 10] },
-            { id: 52, name: 'Site name 52', data: [2, 5, 9] },
-            { id: 34, name: 'Site name 34', data: [4, 3, 8] },
-          ],
-        },
-        {
-          key: 'improving',
-          title: 'improving',
-          data: [
-            { id: 25, name: 'Site name 25', data: [3, 4, 8] },
-            { id: 34, name: 'Site name 34', data: [1, 4, 7] },
-            { id: 93, name: 'Site name 93', data: [2, 5, 9] },
-            { id: 27, name: 'Site name 27', data: [4, 3, 10] },
-          ],
-        },
-        {
-          key: 'worsening',
-          title: 'worsening',
-          data: [
-            { id: 54, name: 'Site name 54', data: [4, 3, 8] },
-            { id: 122, name: 'Site name 122', data: [3, 4, 8] },
-            { id: 87, name: 'Site name 87', data: [1, 4, 7] },
-            { id: 26, name: 'Site name 26', data: [2, 5, 9] },
-            { id: 73, name: 'Site name 73', data: [4, 3, 10] },
-          ],
-        },
-        {
-          key: 'low-performing',
-          title: 'low performing',
-          data: [
-            { id: 34, name: 'Site name 34', data: [4, 3, 8] },
-            { id: 23, name: 'Site name 23', data: [3, 4, 8] },
-            { id: 65, name: 'Site name 65', data: [1, 4, 7] },
-            { id: 3, name: 'Site name 3', data: [2, 5, 9] },
-            { id: 5, name: 'Site name 5', data: [4, 3, 10] },
-            { id: 16, name: 'Site name 16', data: [3, 4, 6] },
-            { id: 84, name: 'Site name 84', data: [1, 4, 10] },
-          ],
-        },
-      ],
-      staff: [
-        {
-          key: 'staff-with-high-error-rates',
-          title: 'staff with high error rates',
-          someAbnormal: true,
-          message: '8 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 10, abnormal: true },
-            { id: 3, value: 7, abnormal: false },
-            { id: 4, value: 3, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 6, abnormal: false },
-            { id: 7, value: 4, abnormal: false },
-            { id: 8, value: 3, abnormal: false },
-            { id: 9, value: 9, abnormal: true },
-            { id: 10, value: 7, abnormal: false },
-            { id: 11, value: 11, abnormal: true },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 7, abnormal: true },
-            { id: 14, value: 8, abnormal: true },
-            { id: 15, value: 14, abnormal: true },
-            { id: 16, value: 12, abnormal: true },
-            { id: 17, value: 10, abnormal: true },
-            { id: 18, value: 7, abnormal: false },
-          ],
-          averageValue: 8.5,
-        },
-      ],
-    },
-  }
-
-  const multiplier =
-    _.sum(
-      require('crypto')
-        .createHash('md5')
-        .update(JSON.stringify(query))
-        .digest('base64')
-        .split()
-        .map(s => s.charCodeAt(0))
-    ) % 29
-
-  if (multiplier > 1) {
-    _.forEach(result.data, v =>
-      _.forEach(v, o =>
-        _.forEach(o.data, it => {
-          if (it.value) {
-            it.value = (it.value * multiplier) % 17
-          }
-        })
-      )
-    )
-  }
-
-  return {
-    ok: true,
-    data: Object.assign(result.data, {
-      inventory: await inventoryItemOperational(request),
-      device: [...(await deviceOperational(request)), ...result.data.device],
-    }),
-  }
 }
 
 async function actionDashboard(request) {
@@ -1176,6 +822,7 @@ async function actionDashboard(request) {
     auth.credentials,
     'actionDashboard'
   )
+
   const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')
@@ -1187,7 +834,7 @@ async function actionDashboard(request) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
     .join('Site as s', 'am.siteId', 's.id')
-    .leftJoin('Device as d', function() {
+    .leftJoin('Device as d', function () {
       this.on('am.deviceId', '=', 'd.id').onNotIn('it.externalId', [
         'StockLevelUpdate',
         'InventoryStockout',
@@ -1195,7 +842,7 @@ async function actionDashboard(request) {
       ])
     })
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
-    .leftJoin('IssueStatusLog as isl', function() {
+    .leftJoin('IssueStatusLog as isl', function () {
       this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
     })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
@@ -1206,7 +853,7 @@ async function actionDashboard(request) {
       jobFunction: 'jf',
       allowAdminThrough: true,
     })
-    .andWhere(function() {
+    .andWhere(function () {
       if (query.siteId) {
         this.where('hideWhenSiteFilterIsSelected', false).andWhere({
           'am.siteId': query.siteId,
@@ -1260,12 +907,10 @@ async function actionDashboard(request) {
       return highestLevelMessage
     }
   )
+  const shouldAddStockLevelUpdateActions = await hasPermissions(auth, [
+    'dashboard:actionInventoryLevelUpdate',
+  ])
 
-  const shouldAddStockLevelUpdateActions = await hasFeature(
-    user.id,
-    user.partnerId,
-    'actionDashboardInventoryLevelUpdate'
-  )
   if (shouldAddStockLevelUpdateActions) {
     await addStockLevelUpdateActions(
       auth,
@@ -1307,7 +952,7 @@ async function addStockLevelUpdateActions(
       .join('ConsumableAssay as ca', 'ca.assayId', assayId)
       .join('Consumable as c', 'c.id', 'ca.consumableId')
       .join('PartnerConsumable as pc', 'ca.consumableId', 'pc.consumableId')
-      .leftJoin('InventoryItem as ii', function() {
+      .leftJoin('InventoryItem as ii', function () {
         this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
       })
       .modify(queryBuilder => {
@@ -1363,7 +1008,6 @@ async function addStockLevelUpdateActions(
         }
       }
     })
-
     // Add consumables by site that aren't in issues
     _.forEach(
       inventoryItemsBySite,
@@ -1400,6 +1044,94 @@ async function addStockLevelUpdateActions(
   }
 }
 
+async function getAssayResultCategoryList(dataConstraints) {
+  const assayResultCategory = await knex('ResultCategoryAssay as rca')
+    .innerJoin('Assay as a', 'a.id', 'rca.assayId')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
+    })
+    .where('rca.requiresTreatment', 1)
+    .groupBy('at.id', 'at.name', 'rc.name')
+    .orderBy('at.name', 'rc.name')
+    .select(
+      knex.raw(`CONCAT(at.id,'-',rc.id) as id`),
+      knex.raw(`CONCAT(at.name,': ',rc.name) as name`)
+    )
+
+  return assayResultCategory
+}
+
+async function operationalDataActivityOverTime(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // build up array of days in date range. makes querying easier:
+  const days = getArrayOfDaysInRange(query.minDate, query.maxDate, {
+    devicesActive: 0,
+    devicesInactive: 0,
+    devicesTotal: 0,
+  })
+
+  // now, get all device IDs that user has access to (much better performance in following queries)
+  const deviceIds = (
+    await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
+      .where('dt.externalId', 'CepheidGeneXpert')
+      .modify(addConstraints, dataConstraints, {
+        site: 's',
+        device: 'd',
+      })
+      .select('d.id')
+  ).map(d => d.id)
+
+  // First, get all devices along with when they conducted their first test
+  // This is so we don't include devices in the activity stats before they were first active
+  const devicesByFirstResult = await knex('Result')
+    .whereIn('deviceId', deviceIds)
+    .groupBy('deviceId')
+    .select(knex.raw('date(min(endedOn)) as minEndedOn'))
+
+  // Get number of devices active (=conducting tests) by day
+  const devicesActiveByDay = await knex('Result')
+    .whereIn('deviceId', deviceIds)
+    .groupBy('endedOnDate')
+    .select(knex.raw('date(endedOn) as endedOnDate'))
+    .countDistinct('deviceId as deviceCount')
+    .modify(qb => {
+      if (query.maxDate) {
+        qb.where('endedOn', '<', addDays(query.maxDate, 1))
+      }
+      if (query.minDate) {
+        qb.where('endedOn', '>=', query.minDate)
+      }
+    })
+  // now we can update the total devices that were in the system per day:
+  days.forEach(day => {
+    const devices = devicesByFirstResult.filter(c => c.minEndedOn <= day.date)
+    const devicesActive = devicesActiveByDay.find(
+      c =>
+        c.endedOnDate.getDate() === day.date.getDate() &&
+        c.endedOnDate.getMonth() === day.date.getMonth() &&
+        c.endedOnDate.getFullYear() === day.date.getFullYear()
+    )
+    day.devicesTotal = devices.length
+    day.devicesActive = devicesActive ? devicesActive.deviceCount : 0
+    day.devicesInactive = day.devicesTotal - day.devicesActive
+    day.isWeekendOrHoliday = isWeekend(day.date)
+  })
+
+  return {
+    ok: true,
+    data: days,
+  }
+}
+
 module.exports = {
   summaryDashboard,
   targetDashboard,
@@ -1407,6 +1139,6 @@ module.exports = {
   inventoryItemDashboard,
   deviceDashboard,
   siteDashboard,
-  operationalDashboard,
   actionDashboard,
+  operationalDataActivityOverTime,
 }

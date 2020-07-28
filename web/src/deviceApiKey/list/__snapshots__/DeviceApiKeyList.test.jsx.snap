@@ -36,20 +36,29 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     }
     onClickExport={[Function]}
-  />
-  <div>
-    <WithStyles(Button)
+  >
+    <AspectButton
+      browseButton={true}
+      color="primary"
       onClick={[Function]}
+      type="button"
+      variant="contained"
     >
       Generate
-    </WithStyles(Button)>
-    <WithStyles(Button)
+    </AspectButton>
+    <AspectButton
+      browseButton={true}
+      color="primary"
       disabled={true}
       onClick={[Function]}
+      type="button"
+      variant="contained"
     >
       Assign
-    </WithStyles(Button)>
-    <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
+    </AspectButton>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
+  <div>
+    <injectIntl(pure(Connect(lifecycle(recomposeForm(DeviceApiKeyGeneratorDialogForm)))))
       intl={
         Object {
           "formatDate": [Function],
@@ -72,7 +81,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         }
       }
     />
-    <pure(recomposeForm(DeviceApiKeyAssignerDialogForm))
+    <injectIntl(pure(recomposeForm(DeviceApiKeyAssignerDialogForm)))
       count={0}
       intl={
         Object {
@@ -97,9 +106,17 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     />
   </div>
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
+    />
+    <Connect(withState(withHandlers(ExportListButton)))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
+      reportName="DeviceApiKey"
+      visible={false}
     />
     <pure(withHandlers(EmptyList))
       history={
@@ -165,20 +182,29 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     }
     onClickExport={[Function]}
-  />
-  <div>
-    <WithStyles(Button)
+  >
+    <AspectButton
+      browseButton={true}
+      color="primary"
       onClick={[Function]}
+      type="button"
+      variant="contained"
     >
       Generate
-    </WithStyles(Button)>
-    <WithStyles(Button)
+    </AspectButton>
+    <AspectButton
+      browseButton={true}
+      color="primary"
       disabled={true}
       onClick={[Function]}
+      type="button"
+      variant="contained"
     >
       Assign
-    </WithStyles(Button)>
-    <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
+    </AspectButton>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
+  <div>
+    <injectIntl(pure(Connect(lifecycle(recomposeForm(DeviceApiKeyGeneratorDialogForm)))))
       intl={
         Object {
           "formatDate": [Function],
@@ -201,7 +227,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         }
       }
     />
-    <pure(recomposeForm(DeviceApiKeyAssignerDialogForm))
+    <injectIntl(pure(recomposeForm(DeviceApiKeyAssignerDialogForm)))
       count={0}
       intl={
         Object {
@@ -226,28 +252,30 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       }
     />
   </div>
-  <DataTableCard>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
     <DataTableProgressBar
       disabled={true}
     />
-    <ThemedTable
+    <Connect(withState(withHandlers(ExportListButton)))
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
+      reportName="DeviceApiKey"
+      visible={true}
+    />
+    <WithStyles(Table)
       className="DeviceApiKeyDataTable"
-      composeTheme="deeply"
-      mapThemrProps={[Function]}
-      multiSelectable={false}
       selectable={false}
     >
-      <pure(withHandlers(withHandlers(DataTableHead)))
+      <BrowseDataTableHead
         columns={
           Array [
             Object {
               "key": "id",
-              "label": <ThemedCheckbox
+              "label": <AspectCheckbox
                 checked={true}
-                className=""
-                composeTheme="deeply"
                 disabled={true}
-                mapThemrProps={[Function]}
                 name="selectAll"
                 onChange={[Function]}
               />,
@@ -302,7 +330,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         sortColumnDir="asc"
         sortColumnKey="createdOn"
       />
-      Immutable.List [
+      <WithStyles(TableBody)>
         <DeviceApiKeyTableRow
           checked={false}
           deviceApiKey={
@@ -330,11 +358,12 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
               "now": [Function],
             }
           }
+          key="1"
           onRevokedChange={[Function]}
           onSelectedChange={[Function]}
-        />,
-      ]
-    </ThemedTable>
+        />
+      </WithStyles(TableBody)>
+    </WithStyles(Table)>
     <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
       history={
         Object {

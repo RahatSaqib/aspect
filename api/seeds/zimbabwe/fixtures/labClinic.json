@@ -1,0 +1,41 @@
+{
+  "labs": [
+    {
+      "externalId": "NMRL",
+      "name": "NMRL Harare",
+      "shortName": "NMRL Harare",
+      "stateName": "Harare",
+      "lgaName": "Harare",
+      "latitude": -17.859121,
+      "longitude": 31.0109402,
+      "devices": [
+        {
+          "deviceTypeId": "BDMGIT",
+          "name": "NMRL BD MGIT GF009366 #2",
+          "shortName": "NMRL MGIT #2",
+          "deviceSerial": "MG3394",
+          "deviceApiKey": "c1d62qva2xbuvk3dgad0"
+        },
+        {
+          "deviceTypeId": "BDMGIT",
+          "name": "NMRL BD MGIT GF009367 #1",
+          "shortName": "NMRL MGIT #1",
+          "deviceSerial": "MG3075",
+          "deviceApiKey": "259xca1mqtf0yhbrz4w0"
+        },
+        {
+          "deviceTypeId": "HainGenoScan",
+          "name": "NMRL Hain GenoScan",
+          "shortName": "NMRL Hain GenoScan",
+          "deviceApiKey": "qptwpk3y5vb662c6g0dg"
+        },
+        {
+          "deviceTypeId": "SenaiteLims",
+          "name": "NMRL Senaite LIMS",
+          "shortName": "NMRL Senaite",
+          "deviceApiKey": "hrt9u1857qyed45tbh30"
+        }
+      ]
+    }
+  ]
+}

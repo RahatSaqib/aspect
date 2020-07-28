@@ -38,7 +38,8 @@ function pageParams(queryBuilder, params) {
 function getWhereArgs(columnName, paramValue) {
   if (_.isString(paramValue)) {
     return [columnName, 'like', `%${paramValue}%`]
-  } else if (_.isArray(paramValue)) {
+  }
+  if (_.isArray(paramValue)) {
     return [columnName, paramValue]
   }
   return [columnName, '=', paramValue]
@@ -52,7 +53,7 @@ function filterParams(queryBuilder, params, filters) {
       return
     }
     if (_.isArray(columnNameOrArray)) {
-      queryBuilder.where(function() {
+      queryBuilder.where(function () {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach(columnName => {
           if (_.isArray(params[paramName])) {

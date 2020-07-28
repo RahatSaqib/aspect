@@ -93,7 +93,7 @@ function receiveDeviceStatuses(state, items, lastRefreshed) {
   return state.merge({
     loading: false,
     lastRefreshed,
-    items: new Immutable.fromJS(items),
+    items: Immutable.fromJS(items),
   })
 }
 

@@ -1,0 +1,62 @@
+{
+	"protocolLength": {
+		"list": false,
+		"order": 2,
+		"type": "number",
+		"title": "Protocol Length"
+	},
+	"instrumentLocation": {
+		"list": false,
+		"order": 3,
+		"type": "string",
+		"title": "Specimen Instrument Location"
+	},
+	"isolateNumber": {
+		"list": false,
+		"order": 4,
+		"type": "number",
+		"title": "Isolate Number"
+	},
+	"senderName": {
+		"list": false,
+		"order": 5,
+		"type": "string",
+		"title": "Sender Name"
+	},
+	"instrumentType": {
+		"list": false,
+		"order": 6,
+		"type": "string",
+		"title": "Instrument Type"
+	},
+	"instrumentNumber": {
+		"list": false,
+		"order": 7,
+		"type": "string",
+		"title": "Instrument Number"
+	},
+	"versionNumber": {
+		"list": false,
+		"order": 8,
+		"type": "string",
+		"title": "Version Number"
+	},
+	"testId": {
+		"list": false,
+		"order": 9,
+		"type": "string",
+		"title": "Test ID"
+	},
+	"resultTypeCode": {
+		"list": false,
+		"order": 10,
+		"type": "string",
+		"title": "Result Type Code"
+	},
+	"preliminaryFinalStatus": {
+		"list": false,
+		"order": 11,
+		"type": "string",
+		"title": "Preliminary/Final"
+	}
+}

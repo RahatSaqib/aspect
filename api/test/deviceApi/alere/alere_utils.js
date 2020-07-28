@@ -18,30 +18,18 @@ async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
-    .map(op => op.id)
+    .pluck('id')
 
-  await knex('DeviceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('DeviceLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
 
-  await knex('DeviceOperation')
-    .whereIn('id', opIds)
-    .delete()
+  await knex('DeviceOperation').whereIn('id', opIds).delete()
 
-  await knex('FactDeviceFlag')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDevice')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByAssay')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDeviceByCategory1')
     .whereIn('deviceId', deviceIds)
@@ -51,24 +39,20 @@ async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .delete()
 
-  await knex('Device')
-    .whereIn('id', deviceIds)
-    .delete()
+  await knex('Device').whereIn('id', deviceIds).delete()
 
-  await knex('RefreshToken')
-    .where({ clientId })
-    .delete()
+  await knex('RefreshToken').where({ clientId }).delete()
 }
 
 async function deleteDeviceSiteDataAndRefreshTokens(
   knex,
   alereDeviceSerialNumbers
 ) {
-  const alereDeviceTypes = ['AlereAfinion', 'AlereQ']
+  const alereDeviceTypes = ['AlereQ']
   const deviceAndSiteIds = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .whereIn('d.serial', alereDeviceSerialNumbers)
-    .andWhere(function() {
+    .andWhere(function () {
       this.whereIn('dt.externalId', alereDeviceTypes)
     })
     .select('d.id', 'd.siteId')
@@ -88,14 +72,12 @@ async function deleteDeviceSiteDataAndRefreshTokens(
     .whereIn('inventoryItemId', inventoryItemIds)
     .delete()
 
-  await knex('InventoryItem')
-    .whereIn('id', inventoryItemIds)
-    .delete()
+  await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
   const resultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
     .pluck('id')
-    .union(function() {
+    .union(function () {
       this.from('ResultGeneratedResult as rgr')
         .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
         .whereIn('r.deviceId', deviceIds)
@@ -104,32 +86,24 @@ async function deleteDeviceSiteDataAndRefreshTokens(
 
   const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
-    .map(op => op.id)
+    .pluck('id')
 
   const issueIds = await knex('Issue')
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)
     .delete()
 
-  await knex('DeviceSiteHistory')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDevice')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByAssay')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDeviceByCategory1')
     .whereIn('deviceId', deviceIds)
@@ -139,55 +113,34 @@ async function deleteDeviceSiteDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .delete()
 
-  await knex('FactDeviceFlag')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 
-  await knex('DeviceSiteHistory')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('IssueEvent')
-    .whereIn('issueId', issueIds)
-    .delete()
-  await knex('Issue')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('InventoryLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+  await knex('IssueEvent').whereIn('issueId', issueIds).delete()
+  await knex('Issue').whereIn('deviceId', deviceIds).delete()
+  await knex('InventoryLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultQualityControlLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultWorkflowLog')
-    .whereIn('resultId', resultIds)
-    .delete()
+  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
+  await knex('ResultTag').delete()
+  await knex('Tag').delete()
+  await knex('Result').whereIn('id', resultIds).delete()
 
-  await knex('Result')
-    .whereIn('id', resultIds)
-    .delete()
-
-  await knex('DeviceOperation')
-    .whereIn('id', opIds)
-    .delete()
+  await knex('DeviceOperation').whereIn('id', opIds).delete()
 
   await knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('deviceId', deviceIds)
     .delete()
-  await knex('Sample')
-    .whereIn('originSiteId', siteIds)
-    .delete()
+  await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
-  await knex('Site')
-    .whereIn('id', siteIds)
-    .delete()
+  await knex('Site').whereIn('id', siteIds).delete()
 }
 
 function createTestContext(server) {
@@ -247,11 +200,17 @@ class DeviceApiTestContext {
         .from('DeviceStatus')
         .where('token', 'approved')
         .first()
+      const deviceCapacity = await knex('DeviceCapacity')
+        .where({ deviceTypeId: alereFtpConnectorDeviceType.id })
+        .where({ partnerId: partner.id })
+        .where({ defaultForDeviceType: 1 })
+        .first('id')
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         geographyId: geography.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
+        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceStatusId: approvedDeviceStatus.id,
         name: 'Some Alere FTP Connector',
         shortName: 'Alere FTP',
@@ -262,10 +221,7 @@ class DeviceApiTestContext {
         updatedOn: now,
       })
       await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
-      const adminUser = await knex
-        .from('User')
-        .where('name', 'admin')
-        .first()
+      const adminUser = await knex.from('User').where('name', 'admin').first()
       this.apiKey = randomToken()
       await knex('DeviceApiKey').insert({
         token: this.apiKey,
@@ -363,8 +319,13 @@ class DeviceApiTestContext {
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -424,8 +385,13 @@ class DeviceApiTestContext {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -484,7 +450,7 @@ class DeviceApiTestContext {
       const device = await knex
         .from('Device as d')
         .leftJoin('Site as s', 's.id', 'd.siteId')
-        .leftJoin('Geography as g', function() {
+        .leftJoin('Geography as g', function () {
           this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
         })
         .leftJoin('Country as c', 'g.countryId', 'c.id')

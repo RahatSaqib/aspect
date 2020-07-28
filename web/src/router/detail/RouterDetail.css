@@ -23,5 +23,5 @@
 
 .DemoLink {
   text-decoration: none;
-  color: #ccc;
+  color: var(--aspect-color-silver-3);
 }

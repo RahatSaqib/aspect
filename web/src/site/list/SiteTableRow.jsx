@@ -1,7 +1,12 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
+import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import { messages } from './SiteList'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -9,20 +14,30 @@ const cssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const SiteTableRow = ({ intl, site, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      {site.get('name')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {site.get('state')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>{site.get('lga')}</TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {site.get('totalDevices')}
+const SiteTableRow = ({ intl, site, onAlertClick, ...restProps }) => (
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>{site.get('name')}</TableCell>
+    <TableCell>{site.get('state')}</TableCell>
+    <TableCell>{site.get('lga')}</TableCell>
+    <TableCell>{site.get('externalId')}</TableCell>
+    <TableCell>{site.get('totalDevices')}</TableCell>
+    <TableCell>
+      {site.get('siteIssues') &&
+        site
+          .get('siteIssues')
+          .map(issue => (
+            <ColoredButton
+              key={issue}
+              className={cssClasses('ColoredButton--micro')}
+              label={intl.formatMessage(messages[issue])}
+              shipCove={issue === 'issueCategoryDeviceHealth'}
+              shakespeare={issue === 'issueCategoryReagentHealth'}
+              brink={issue === 'issueCategoryDataHealth'}
+              mountain={issue === 'issueCategoryConnectivityHealth'}
+              onClick={onAlertClick}
+              data-site-id={site.get('id')}
+            />
+          ))}
     </TableCell>
   </TableRow>
 )

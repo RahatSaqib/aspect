@@ -1,4 +1,4 @@
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 const { isJson, deepMerge } = require('../shared/json')
@@ -9,7 +9,9 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../shared/dictionary')
+const { convertStringToFloat } = require('../shared/string')
 
+const { getDevice } = require('../device/service')
 const inventory = require('../inventory/service')
 
 async function mergeResult(
@@ -43,8 +45,17 @@ async function mergeResult(
 
   const siteQ = knex('Site as s')
     .join('Device as d', 's.id', 'd.siteId')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .where({ 'd.id': deviceId })
-    .first('s.id', 's.partnerId', 's.geographyId', 's.latitude', 's.longitude')
+    .first(
+      's.id',
+      's.partnerId',
+      'g.countryId',
+      's.geographyId',
+      's.latitude',
+      's.longitude',
+      'd.defaultReportableSiteId'
+    )
 
   // Select ResultType if specified, otherwise Patient
   let resultTypeId = null
@@ -65,7 +76,10 @@ async function mergeResult(
   } else if (payload.error) {
     resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
-    ;({ resultWorkflowStatusId } = existingResult)
+    ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(
+      knex,
+      existingResult.id
+    ))
   } else {
     resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   }
@@ -94,7 +108,7 @@ async function mergeResult(
   if (
     !site ||
     !resultTypeId ||
-    !resultWorkflowStatusId ||
+    // !resultWorkflowStatusId ||
     !resultCategory1 ||
     assays.length !== 1
   ) {
@@ -104,11 +118,6 @@ async function mergeResult(
     }
     if (!resultTypeId) {
       requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
-    }
-    if (!resultWorkflowStatusId) {
-      requestErrors.push(
-        `result workflow status id ${_.get(payload, 'workflow.status.id')}`
-      )
     }
     if (!resultCategory1) {
       requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
@@ -146,17 +155,189 @@ async function mergeResult(
   }
 
   let sampleOriginSiteId = site.id
+  let reportableSiteId = site.defaultReportableSiteId || site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
-    const sampleOriginSite = await knex('Site')
+    const originSiteStateName = _.get(payload, 'sample.originSite.state')
+    let { id: originSiteGeographyId } =
+      (await knex('Geography')
+        .where('countryId', site.countryId)
+        .whereNull('stateId')
+        .whereNull('lgaId')
+        .first('id')) || {}
+    if (originSiteStateName) {
+      let { id: originSiteStateId } =
+        (await knex('State as s')
+          .join('Geography as g', 's.id', 'g.stateId')
+          .where({
+            'g.countryId': site.countryId,
+            's.name': originSiteStateName,
+          })
+          .first('s.id')) || {}
+      if (!originSiteStateId) {
+        ;[originSiteStateId] = await knex('State').insert({
+          name: originSiteStateName,
+        })
+      }
+      let { id: originSiteStateGeographyId } =
+        (await knex('Geography')
+          .whereNull('lgaId')
+          .andWhere({
+            countryId: site.countryId,
+            stateId: originSiteStateId,
+          })
+          .first('id')) || {}
+      if (!originSiteStateGeographyId) {
+        ;[originSiteStateGeographyId] = await knex('Geography').insert({
+          countryId: site.countryId,
+          stateId: originSiteStateId,
+        })
+      }
+      originSiteGeographyId = originSiteStateGeographyId
+      const originSiteLgaName = _.get(payload, 'sample.originSite.lga')
+      if (originSiteLgaName) {
+        let { id: originSiteLgaId } =
+          (await knex('Lga as l')
+            .join('Geography as g', 'l.id', 'g.lgaId')
+            .where({
+              'g.stateId': originSiteStateId,
+              'l.name': originSiteLgaName,
+            })
+            .first('l.id')) || {}
+        if (!originSiteLgaId) {
+          ;[originSiteLgaId] = await knex('Lga').insert({
+            name: originSiteLgaName,
+          })
+        }
+        let { id: originSiteLgaGeographyId } =
+          (await knex('Geography')
+            .where({
+              countryId: site.countryId,
+              stateId: originSiteStateId,
+              lgaId: originSiteLgaId,
+            })
+            .first('id')) || {}
+        if (!originSiteLgaGeographyId) {
+          ;[originSiteLgaGeographyId] = await knex('Geography').insert({
+            countryId: site.countryId,
+            stateId: originSiteStateId,
+            lgaId: originSiteLgaId,
+          })
+        }
+        originSiteGeographyId = originSiteLgaGeographyId
+      }
+    }
+    let sampleOriginSite = await knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
-      .first('id')
-    if (sampleOriginSite == null) {
-      throw Boom.badRequest(
-        `Cannot find Sample origin site ${payloadOriginSiteId}`
+      .first()
+    let siteGeography = {}
+    if (sampleOriginSite.geographyId) {
+      siteGeography = await knex('Geography')
+        .where('id', sampleOriginSite.geographyId)
+        .first()
+    }
+    if (originSiteGeographyId) {
+      const originSiteGeography =
+        (await knex('Geography').where('id', originSiteGeographyId).first()) ||
+        {}
+      if (originSiteGeography.countryId && !siteGeography.countryId) {
+        siteGeography.countryId = originSiteGeography.countryId
+      }
+      if (
+        siteGeography.countryId &&
+        originSiteGeography.stateId &&
+        !siteGeography.stateId
+      ) {
+        siteGeography.stateId = originSiteGeography.stateId
+      }
+      if (
+        siteGeography.stateId &&
+        originSiteGeography.lgaId &&
+        !siteGeography.lgaId
+      ) {
+        siteGeography.lgaId = originSiteGeography.lgaId
+      }
+    }
+    if (siteGeography.countryId) {
+      siteGeography =
+        (await knex('Geography')
+          .where('countryId', siteGeography.countryId)
+          .andWhere(function () {
+            if (siteGeography.stateId) {
+              this.where('stateId', siteGeography.stateId)
+            } else {
+              this.whereNull('stateId')
+            }
+          })
+          .andWhere(function () {
+            if (siteGeography.lgaId) {
+              this.where('lgaId', siteGeography.lgaId)
+            } else {
+              this.whereNull('lgaId')
+            }
+          })
+          .first()) || {}
+    }
+    const sampleOriginSiteName = _.get(payload, 'sample.originSite.name')
+    const sampleOriginSiteDetailsInPayload = {
+      name: sampleOriginSiteName,
+      shortName: _.get(payload, 'sample.originSite.shortName'),
+      notes: _.get(payload, 'sample.originSite.notes'),
+      partnerId: site.partnerId,
+      geographyId: siteGeography.id || originSiteGeographyId,
+      city: _.get(payload, 'sample.originSite.city'),
+      street1: _.get(payload, 'sample.originSite.street1'),
+      street2: _.get(payload, 'sample.originSite.street2'),
+      zip: _.get(payload, 'sample.originSite.zip'),
+      longitude: convertStringToFloat(
+        _.get(payload, 'sample.originSite.location.longitude')
+      ),
+      latitude: convertStringToFloat(
+        _.get(payload, 'sample.originSite.location.latitude')
+      ),
+      timezoneId: _.get(payload, 'sample.originSite.timezoneId'),
+      hoursStart: convertStringToFloat(
+        _.get(payload, 'sample.originSite.hoursStart')
+      ),
+      hoursEnd: convertStringToFloat(
+        _.get(payload, 'sample.originSite.hoursEnd')
+      ),
+    }
+    if (!sampleOriginSite) {
+      if (!sampleOriginSiteName) {
+        throw Boom.badRequest(
+          `Cannot find Sample origin site ${payloadOriginSiteId}`
+        )
+      }
+      const newSampleOriginSite = {
+        ...sampleOriginSiteDetailsInPayload,
+        externalId: payloadOriginSiteId,
+        createdOn: now,
+        updatedOn: now,
+      }
+      if (!newSampleOriginSite.shortName) {
+        newSampleOriginSite.shortName = sampleOriginSiteName
+      }
+      if (newSampleOriginSite.shortName.length > 45) {
+        newSampleOriginSite.shortName = newSampleOriginSite.shortName.substr(
+          0,
+          45
+        )
+      }
+      const [newSampleOriginSiteId] = await knex('Site').insert(
+        newSampleOriginSite
       )
+      sampleOriginSite = { id: newSampleOriginSiteId }
+    } else {
+      await knex('Site')
+        .where('id', sampleOriginSite.id)
+        .update({
+          ..._.omit(sampleOriginSite, ['id']),
+          ..._.omitBy(sampleOriginSiteDetailsInPayload, _.isNil),
+        })
     }
     sampleOriginSiteId = sampleOriginSite.id
+    reportableSiteId = sampleOriginSite.id
   }
 
   if (sampleId == null && existingResult == null) {
@@ -243,7 +424,6 @@ async function mergeResult(
     ),
     resultTypeId,
     resultSourceId,
-    resultWorkflowStatusId,
     sampleId,
     sampleRunNumber: _.get(
       payload,
@@ -325,34 +505,46 @@ async function mergeResult(
     ),
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
+    reportableSiteId,
   }
 
   // Processed result contains result with additional fields
   // we want to insert but never update and will be passed to
   // plugins for further processing. It should contain all columns
   // from the Result table
-  const processedResult = Object.assign(
-    {
-      externalId: payload.id,
-      deviceId,
-      partnerId: site.partnerId,
-      geographyId: site.geographyId,
-      siteId: site.id,
-      createdOn: now,
-    },
-    result
-  )
+  const processedResult = {
+    externalId: payload.id,
+    deviceId,
+    partnerId: site.partnerId,
+    geographyId: site.geographyId,
+    siteId: site.id,
+    createdOn: now,
+    ...result,
+  }
 
   let resultId
   if (existingResult) {
     resultId = existingResult.id
-    await knex('Result')
-      .where({ id: resultId })
-      .update(result)
+    await knex('Result').where({ id: resultId }).update(result)
   } else {
     ;[resultId] = await knex('Result').insert(processedResult)
   }
+
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId,
+    createdOn: now,
+    changedOn: now,
+    createdBy: 1,
+  })
+  await knex('Result').where({ id: resultId }).update({
+    resultWorkflowStatusLogId: lastLogId,
+    updatedOn: now,
+  })
+  processedResult.resultWorkflowStatusLogId = lastLogId
+  processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId
+  processedResult.updatedOn = now
   return { processedResult, existingResult }
 }
 
@@ -366,7 +558,16 @@ async function getResult(knex, resultId) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .where('r.id', resultId)
     .first(
       'r.externalId as resultExternalId',
@@ -550,6 +751,7 @@ async function getResult(knex, resultId) {
 
 async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
+
   await addResultWorkflowLogIfChanged(
     knex,
     payload,
@@ -558,6 +760,7 @@ async function postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
+  await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
   await consumeInventoryForResult(knex, payload, result)
@@ -583,6 +786,112 @@ async function consumeInventoryForResult(knex, payload, result) {
     result.endedOn,
     knex
   )
+}
+
+const getTags = (regExp, field) => {
+  const re = new RegExp(regExp, 'g')
+  return field && field !== '' ? field.toString().match(re) : []
+}
+
+async function resolveAutoTagging(knex, result) {
+  const country = await getCountryByDeviceId(knex, result.deviceId)
+
+  // taggingResults is array of strings ['']
+  const taggingResults = getAllResultTags(country, result)
+  // existingTags is array [{ id: number, title: 'string' }]
+  const existingTags = await getExistingTagByPartner(
+    knex,
+    result.partnerId,
+    taggingResults,
+    result.id
+  )
+
+  const tagsToBeAdded = _.uniqBy(
+    _.filter(taggingResults, tag => !includesIgnoreCase(existingTags, tag))
+  )
+
+  const tagsToBeUpdated = _.uniqBy(
+    _.filter(existingTags, tag =>
+      includesIgnoreCase(
+        taggingResults.map(title => ({ title })),
+        tag.title
+      )
+    )
+  )
+
+  _.map(tagsToBeAdded, async tag => {
+    const [tagId] = await knex('Tag').insert({
+      title: tag,
+      partnerId: result.partnerId,
+    })
+    await knex('ResultTag').insert({
+      tagId,
+      resultId: result.id,
+    })
+  })
+  _.map(tagsToBeUpdated, async elem => {
+    await knex('ResultTag').insert({
+      tagId: elem.id,
+      resultId: result.id,
+    })
+  })
+}
+
+function includesIgnoreCase(collection, value) {
+  return _.some(
+    collection,
+    item => item.title.toLowerCase() === value.toLowerCase()
+  )
+}
+
+async function getCountryByDeviceId(knex, deviceId) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('d.id', deviceId)
+    .first()
+}
+
+function getAllResultTags(country, result) {
+  let taggingResults = []
+  let res = []
+  if (country) {
+    if (country.tagRegexSampleId && country.tagRegexSampleId !== '') {
+      res = getTags(country.tagRegexSampleId, result.sampleId)
+
+      if (res) taggingResults = taggingResults.concat(res)
+    }
+
+    if (country.tagRegexNotes && country.tagRegexNotes !== '') {
+      res = getTags(country.tagRegexNotes, result.notes)
+      if (res) taggingResults = taggingResults.concat(res)
+    }
+    const patientdata = JSON.parse(result.patientData)
+    if (
+      patientdata &&
+      country.tagRegexPatientId &&
+      country.tagRegexPatientId !== ''
+    ) {
+      res = getTags(country.tagRegexPatientId, patientdata.id)
+      if (res) taggingResults = taggingResults.concat(res)
+    }
+  }
+  return _.uniqBy(taggingResults)
+}
+
+async function getExistingTagByPartner(
+  knex,
+  partnerId,
+  taggingResults,
+  resultId
+) {
+  return knex('Tag as t')
+    .join('ResultTag as rt', 't.id', 'rt.tagId')
+    .select('t.id', 't.title')
+    .distinct('t.id', 't.title')
+    .where('t.partnerId', partnerId)
+    .whereNot('rt.resultId', resultId)
+    .whereIn('t.title', taggingResults)
 }
 
 async function addResultWorkflowLogIfChanged(
@@ -625,18 +934,23 @@ async function addResultWorkflowLogIfChanged(
       !latestResultWorkflowLog ||
       +changedOn !== +latestResultWorkflowLog.changedOn
   }
-
+  const device = await getDevice(result.deviceId)
   if (resultWorkflowChanged) {
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId: result.id,
-      resultWorkflowStatusId: result.resultWorkflowStatusId,
-      reason,
+      resultWorkflowStatusId:
+        result.resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+      reason: reason || 'Device Api Update',
       operator:
         _.get(payload, 'workflow.operator', null) ||
-        _.get(payload, 'sender.operator', null),
+        _.get(payload, 'sender.operator', null) ||
+        device.name,
       changedOn: _.get(payload, 'workflow.changedOn', changedOn || now),
       createdOn: now,
     })
+    await knex('Result')
+      .where('id', result.id)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
   return resultWorkflowChanged
 }
@@ -658,22 +972,18 @@ async function updateResultWorkflowStatus(
     )
   }
 
-  // update result
-  const rows = await knex('Result as r')
-    .where('r.id', resultId)
-    .update({ resultWorkflowStatusId })
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId:
+      resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+    reason,
+    changedOn: now,
+    createdOn: now,
+  })
 
-  // keep log if update was successful. don't need to check permission again because
-  // rows would be 0 if no permission in query above
-  if (rows) {
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      reason,
-      changedOn: now,
-      createdOn: now,
-    })
-  }
+  await knex('Result')
+    .where('id', resultId)
+    .update({ resultWorkflowStatusLogId: lastLogId })
 
   return {}
 }
@@ -683,7 +993,7 @@ async function getLatestResultWorkflowLog(knex, resultId) {
     .where({ resultId })
     .orderBy('createdOn', 'desc')
     .orderBy('id', 'desc')
-    .first('operator', 'changedOn')
+    .first('operator', 'changedOn', 'resultWorkflowStatusId')
   return latestResultWorkFlowLog
 }
 
@@ -694,4 +1004,5 @@ module.exports = {
   consumeInventoryForResult,
   addResultWorkflowLogIfChanged,
   updateResultWorkflowStatus,
+  getAllResultTags,
 }

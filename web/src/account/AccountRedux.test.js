@@ -28,6 +28,7 @@ describe('AccountRedux module', () => {
     culture: 'fr-FR',
     notes: null,
     lastPartnerId: null,
+    canLogIn: false,
   }
 
   describe('reducer', () => {
@@ -53,6 +54,7 @@ describe('AccountRedux module', () => {
         expect(initialState.get('loading')).toBe(false)
         expect(initialState.get('saving')).toBe(false)
         expect(initialState.getIn(['data', 'contactDetails']).toJS()).toEqual({
+          canLogIn: false,
           id: null,
           lastPartnerId: null,
           name: null,
@@ -73,7 +75,9 @@ describe('AccountRedux module', () => {
           newPassword: null,
           confirmNewPassword: null,
           currentPassword: null,
+          userLockedOut: null,
           partnerId: null,
+          email: null,
           jobFunctions: [],
         })
         expect(initialState.getIn(['data', 'userPreferences']).toJS()).toEqual({
@@ -116,6 +120,8 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
+            userLockedOut: null,
+            email: null,
             jobFunctions: [],
           })
           expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(
@@ -153,6 +159,7 @@ describe('AccountRedux module', () => {
             timezone: 'Eastern Standard Time',
             culture: 'en-GB',
             notes: null,
+            canLogIn: false,
           }
           const state = AccountRedux.default(initialState, {
             type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,
@@ -180,6 +187,8 @@ describe('AccountRedux module', () => {
             currentPassword: null,
             partnerId: null,
             jobFunctions: [],
+            userLockedOut: null,
+            email: null,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
             _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
@@ -218,6 +227,8 @@ describe('AccountRedux module', () => {
             currentPassword: null,
             partnerId: null,
             jobFunctions: [],
+            userLockedOut: null,
+            email: null,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
             _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
@@ -270,6 +281,8 @@ describe('AccountRedux module', () => {
             currentPassword: null,
             partnerId: null,
             jobFunctions: [],
+            userLockedOut: null,
+            email: null,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
             _.pick(newAccountDetailsData, ['id', 'timezone', 'culture'])

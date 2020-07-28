@@ -13,7 +13,6 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
         "search": "",
       }
     }
-    title="TB positive results"
   />
   <section
     className="Section"
@@ -24,24 +23,9 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
       <legend
         className="Summary__Legend"
       >
-        Site
+        Sites
       </legend>
-      <div>
-        <span
-          className="Summary__Item"
-        >
-          Kampala Lab
-          <Link
-            className="Summary__Item__Link"
-            replace={false}
-            to="/browse/site"
-          >
-            <FaArrowUp
-              className="Summary__Item__Link__FaArrowUp"
-            />
-          </Link>
-        </span>
-      </div>
+      <div />
     </Unit>
     <Unit
       lg="1-2"
@@ -51,61 +35,7 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
       >
         Devices
       </legend>
-      <div>
-        <span
-          className="Summary__Item"
-        >
-          TB Device Kampala 1
-          <Link
-            className="Summary__Item__Link"
-            replace={false}
-            to="/browse/device"
-          >
-            <FaArrowUp
-              className="Summary__Item__Link__FaArrowUp"
-            />
-          </Link>
-        </span>
-        <span
-          className="Summary__Item"
-        >
-          TB Device Kampala 2
-          <Link
-            className="Summary__Item__Link"
-            replace={false}
-            to="/browse/device"
-          >
-            <FaArrowUp
-              className="Summary__Item__Link__FaArrowUp"
-            />
-          </Link>
-        </span>
-      </div>
-    </Unit>
-    <Unit
-      lg="1-4"
-    >
-      <legend
-        className="Summary__Legend"
-      >
-        More
-      </legend>
-      <div>
-        <span
-          className="Summary__Item"
-        >
-          Alert settings
-          <Link
-            className="Summary__Item__Link"
-            replace={false}
-            to="/task/detail"
-          >
-            <FaArrowUp
-              className="Summary__Item__Link__FaArrowUp"
-            />
-          </Link>
-        </span>
-      </div>
+      <div />
     </Unit>
   </section>
   <section
@@ -121,24 +51,31 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
             "defaultFormats": Object {},
             "defaultLocale": "en",
             "formatDate": [Function],
-            "formatHTMLMessage": [Function],
+            "formatDateToParts": [Function],
+            "formatDisplayName": [Function],
+            "formatList": [Function],
             "formatMessage": [Function],
             "formatNumber": [Function],
+            "formatNumberToParts": [Function],
             "formatPlural": [Function],
-            "formatRelative": [Function],
+            "formatRelativeTime": [Function],
             "formatTime": [Function],
+            "formatTimeToParts": [Function],
             "formats": Object {},
             "formatters": Object {
               "getDateTimeFormat": [Function],
+              "getDisplayNames": [Function],
+              "getListFormat": [Function],
               "getMessageFormat": [Function],
               "getNumberFormat": [Function],
-              "getPluralFormat": [Function],
-              "getRelativeFormat": [Function],
+              "getPluralRules": [Function],
+              "getRelativeTimeFormat": [Function],
             },
             "locale": "en",
             "messages": Object {},
-            "now": [Function],
-            "textComponent": "span",
+            "onError": [Function],
+            "textComponent": Symbol(react.fragment),
+            "timeZone": undefined,
           }
         }
         location={

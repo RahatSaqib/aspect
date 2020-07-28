@@ -1,8 +1,9 @@
 /* eslint no-await-in-loop: 0 */
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const Promise = require('bluebird')
 const {
   addMilliseconds,
   addHours,
@@ -12,21 +13,20 @@ const {
   subMinutes,
   subMonths,
 } = require('date-fns')
-
+const { upsertJobFunction } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const {
-  getPermissionModules,
-  assignAllFeaturesToJobFunctionIds,
-} = require('../utils')
+const { getPermissionModules } = require('../utils')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
   assayTypeToId,
   partnerTypeToId,
+  deviceTypeToId,
   deviceTypeCategoryToId,
+  deviceStatusToId,
   resultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
@@ -36,8 +36,8 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 180
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultEidNumber = 8 * resultMultiplier
-const resultHivVlNumber = 70 * resultMultiplier
+const resultEidNumber = 0.2 * resultMultiplier
+const resultHivVlNumber = resultMultiplier
 const now = new Date()
 const patientNumber = patients.length - 1
 
@@ -48,7 +48,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -93,118 +93,21 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
-  /* TODO Add configuration schema once UI supports and we synchronize correctly
-  // define configurationData object
-  const reporterConfigurationDataSchema = JSON.stringify({
-    requirePrinter: {
-      title: 'Require printer',
-      type: 'string'
-    },
-    adminPassword: {
-      title: 'Admin password',
-      type: 'string'
-    },
-    firmwareUpdateRequired: {
-      title: 'Firmware update required',
-      type: 'string'
-    },
-    userPins: {
-      title: 'Pins',
-      type: 'object',
-      i18nKey: 'User Pins',
-      properties: {
-        user1Pin: {
-          title: 'user1Pin',
-          type: 'string'
-        },
-        user1Name: {
-          title: 'user1Name',
-          type: 'string'
-        },
-        user1Assays: {
-          title: 'user1Assays',
-          type: 'array'
-        },
-        user2Pin: {
-          title: 'user2Pin',
-          type: 'string'
-        },
-        user2Name: {
-          title: 'user2Name',
-          type: 'string'
-        },
-        user2Assays: {
-          title: 'user2Assays',
-          type: 'array'
-        },
-        user3Pin: {
-          title: 'user3Pin',
-          type: 'string'
-        },
-        user3Name: {
-          title: 'user3Name',
-          type: 'string'
-        },
-        user3Assays: {
-          title: 'user3Assays',
-          type: 'array'
-        },
-        user4Pin: {
-          title: 'user4Pin',
-          type: 'string'
-        },
-        user4Name: {
-          title: 'user4Name',
-          type: 'string'
-        },
-        user4Assays: {
-          title: 'user4Assays',
-          type: 'array'
-        },
-        user5Pin: {
-          title: 'user5Pin',
-          type: 'string'
-        },
-        user5Name: {
-          title: 'user5Name',
-          type: 'string'
-        },
-        user5Assays: {
-          title: 'user5Assays',
-          type: 'array'
-        },
-        adminPin: {
-          title: 'adminPin',
-          type: 'string'
-        },
-        adminName: {
-          title: 'adminName',
-          type: 'string'
-        },
-        adminAssays: {
-          title: 'adminAssays',
-          type: 'array'
-        }
-      }
-    }
-  })
-*/
-
   // Reporter Device Type
   const [deviceTypeIdReporter] = await knex('DeviceType').insert({
     externalId: 'AspectReporter',
     name: 'Aspect Reporter',
     manufacturer: 'SystemOne',
     deviceTypeCategoryId: await deviceTypeCategoryToId('Client'),
-    // configurationDataSchema: reporterConfigurationDataSchema
   })
 
   const resultSourceGeneratedId = await resultSourceToId('Generated')
 
   await knex('Assay').insert({
     name: 'Reporter HIV VL',
+    abbreviation: 'Reporter HIV VL',
     i18nKey: 'AssayReporterHivVl',
-    externalId: 'HivVl',
+    externalId: 'ReporterHivVL',
     assayTypeId: await assayTypeToId('HIV VL'),
     deviceTypeId: deviceTypeIdReporter,
     resultSourceId: resultSourceGeneratedId,
@@ -266,8 +169,9 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter EID',
+    abbreviation: 'Reporter EID',
     i18nKey: 'AssayReporterEid',
-    externalId: 'EID',
+    externalId: 'ReporterEID',
     assayTypeId: await assayTypeToId('EID'),
     deviceTypeId: deviceTypeIdReporter,
     resultSourceId: resultSourceGeneratedId,
@@ -351,35 +255,24 @@ async function seed(knex) {
     .first()
 
   // Permissions for Reporter Admin
-  const [adminPersonId] = await knex('Person').insert(
-    Object.assign(
-      {
-        userId: adminId,
-        name: 'Reporter Admin',
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        geographyId,
-        culture,
-        timezone,
-      },
-      auditFields
-    )
+  const [adminPersonId] = await knex('Person').insert({
+    userId: adminId,
+    name: 'Reporter Admin',
+    lastPartnerId: partnerId,
+    lastCountryId: countryId,
+    geographyId,
+    culture,
+    timezone,
+    ...auditFields,
+  })
+
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
+
+  const jobFunctionIdLabAdmin = await upsertJobFunction(
+    knex,
+    'Lab Admin',
+    partnerId
   )
-
-  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
-    name: 'Admin',
-    partnerId,
-  })
-
-  const [jobFunctionIdLabAdmin] = await knex('JobFunction').insert({
-    name: 'Lab Admin',
-    partnerId,
-  })
-
-  await assignAllFeaturesToJobFunctionIds(knex, [
-    jobFunctionIdLabAdmin,
-    jobFunctionIdAdmin,
-  ])
 
   await knex('JobFunctionPermission').insert([
     {
@@ -419,6 +312,7 @@ async function seed(knex) {
       permissionId: modules.issue.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.taskMenu.view },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
   ])
@@ -475,13 +369,7 @@ async function seed(knex) {
     .where({ externalId: 'MetacomRouter' })
     .first()
 
-  const { id: deviceTypeIdChai } = await knex('DeviceType')
-    .where({ externalId: 'CHAILIMS' })
-    .first()
-
-  const { id: deviceStatusId } = await knex('DeviceStatus')
-    .where({ token: 'approved' })
-    .first()
+  const approvedDeviceStatusId = await deviceStatusToId('approved')
 
   // every clinic has a site and a Reporter device
   await Promise.all(
@@ -496,77 +384,67 @@ async function seed(knex) {
         .first()
 
       // sites
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId: clinicGeographyId,
-          name: clinic.name,
-          shortName: clinic.shortName,
-          externalId: clinic.externalId,
-          latitude: clinic.latitude,
-          longitude: clinic.longitude,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId: clinicGeographyId,
+        name: clinic.name,
+        shortName: clinic.shortName,
+        externalId: clinic.externalId,
+        latitude: clinic.latitude,
+        longitude: clinic.longitude,
+        ...auditFields,
+      }
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
 
       const lastTime = subMinutes(now, _.random(0, 60))
 
       if (clinic.hasReporter) {
-        const [deviceId] = await knex('Device').insert(
-          Object.assign(
-            {
-              partnerId,
-              geographyId,
-              siteId,
-              deviceTypeId: deviceTypeIdReporter,
-              deviceStatusId,
-              name: `${siteData.name} Reporter`,
-              shortName: `R-${_.random(100000, 999999)}`,
-              serial: `S1-R-${_.random(100000, 999999)}`,
-              lastSeenOn: lastTime,
-              lastPingOn: lastTime,
-              lastPingFromIp: '41.70.127.33',
-              putInService: subMonths(now, 22),
-              putInServiceSource: 'Installed at clinic',
-              configurationData: '{}',
-            },
-            auditFields
-          )
-        )
+        const [deviceId] = await knex('Device').insert({
+          partnerId,
+          geographyId,
+          siteId,
+          defaultReportableSiteId: siteId,
+          deviceTypeId: deviceTypeIdReporter,
+          deviceStatusId: approvedDeviceStatusId,
+          name: `${siteData.name} Reporter`,
+          shortName: `R-${_.random(100000, 999999)}`,
+          serial: `S1-R-${_.random(100000, 999999)}`,
+          lastSeenOn: lastTime,
+          lastPingOn: lastTime,
+          lastPingFromIp: '41.70.127.33',
+          putInService: subMonths(now, 22),
+          putInServiceSource: 'Installed at clinic',
+          configurationData: '{}',
+          ...auditFields,
+        })
 
-        await knex('DeviceApiKey').insert(
-          Object.assign(
-            {
-              token:
-                clinic.name === 'Mponela Rural Hospital' // this is the reporter demo site - keep API key  static
-                  ? 'g39ypz0725x1cubf0vq3'
-                  : randomToken(),
-              revoked: 0,
-              partnerId,
-              geographyId,
-              siteId,
-              deviceId,
-            },
-            auditFields
-          )
-        )
+        await knex('DeviceApiKey').insert({
+          token:
+            clinic.name === 'Mponela Rural Hospital' // this is the reporter demo site - keep API key  static
+              ? 'g39ypz0725x1cubf0vq3'
+              : randomToken(),
+          revoked: 0,
+          partnerId,
+          geographyId,
+          siteId,
+          deviceId,
+          ...auditFields,
+        })
 
         // Router
-        await knex('Device').insert(
-          Object.assign({}, auditFields, {
-            name: `Router at ${siteData.name}`,
-            shortName: `RO-${siteData.shortName}`,
-            deviceTypeId: deviceTypeIdRouter,
-            deviceStatusId,
-            partnerId: siteData.partnerId,
-            geographyId: siteData.geographyId,
-            siteId: siteData.id,
-            lastSeenOn: lastTime,
-            lastPingOn: lastTime,
-          })
-        )
+        await knex('Device').insert({
+          ...auditFields,
+          name: `${siteData.name} Router`,
+          shortName: `RO-${siteData.shortName}`,
+          deviceTypeId: deviceTypeIdRouter,
+          deviceStatusId: approvedDeviceStatusId,
+          partnerId: siteData.partnerId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          lastSeenOn: lastTime,
+          lastPingOn: lastTime,
+        })
       }
     })
   )
@@ -575,18 +453,16 @@ async function seed(knex) {
   await Promise.all(
     _.map(labClinic.labs, async lab => {
       // every lab has a site, m2000 device and a user assigned to it
-      const siteData = Object.assign(
-        {
-          partnerId,
-          geographyId,
-          name: lab.name,
-          shortName: lab.shortName,
-          externalId: lab.externalId,
-          latitude: lab.latitude,
-          longitude: lab.longitude,
-        },
-        auditFields
-      )
+      const siteData = {
+        partnerId,
+        geographyId,
+        name: lab.name,
+        shortName: lab.shortName,
+        externalId: lab.externalId,
+        latitude: lab.latitude,
+        longitude: lab.longitude,
+        ...auditFields,
+      }
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
 
@@ -600,20 +476,16 @@ async function seed(knex) {
         failedPasswordAttempts: 0,
       })
 
-      const [labAdminPersonId] = await knex('Person').insert(
-        Object.assign(
-          {
-            userId: labAdminUserId,
-            name: `${lab.shortName} Admin`,
-            lastPartnerId: partnerId,
-            lastCountryId: countryId,
-            geographyId,
-            culture,
-            timezone,
-          },
-          auditFields
-        )
-      )
+      const [labAdminPersonId] = await knex('Person').insert({
+        userId: labAdminUserId,
+        name: `${lab.shortName} Admin`,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        geographyId,
+        culture,
+        timezone,
+        ...auditFields,
+      })
 
       const [jobIdLabAdmin] = await knex('Job').insert([
         { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin },
@@ -623,62 +495,75 @@ async function seed(knex) {
       if (lab.devices) {
         await Promise.all(
           _.map(lab.devices, async device => {
-            const lastTime = subMinutes(now, _.random(0, 60))
-
-            const [deviceId] = await knex('Device').insert(
-              Object.assign(
-                {
-                  partnerId,
-                  geographyId,
-                  siteId,
-                  deviceTypeId: deviceTypeIdChai,
-                  deviceStatusId,
-                  name: device.name,
-                  shortName: device.shortName,
-                  macAddress: device.macAddress,
-                  serial: device.serial,
-                  hostId: device.hostId,
-                  lastSeenOn: lastTime,
-                  lastPingOn: lastTime,
-                  lastPingFromIp: device.lastPingFromIp,
-                  putInService: subMonths(now, 30),
-                  putInServiceSource: 'Installed at lab',
-                  configurationData: '{}',
-                },
-                auditFields
+            const deviceApiKeyToken = device.deviceApiKey || randomToken()
+            const deviceData =
+              (await knex('DeviceApiKey as dak')
+                .join('Device as d', 'dak.deviceId', 'd.id')
+                .where('dak.token', deviceApiKeyToken)
+                .first('d.*')) || {}
+            if (_.isEmpty(deviceData)) {
+              const lastDeviceActivity = subMinutes(now, _.random(0, 60))
+              deviceData.partnerId = partnerId
+              deviceData.geographyId = siteData.geographyId
+              deviceData.siteId = siteData.id
+              deviceData.defaultReportableSiteId = siteData.id
+              deviceData.deviceTypeId = await deviceTypeToId(
+                device.deviceTypeId
               )
-            )
-
-            await knex('DeviceApiKey').insert(
-              Object.assign(
-                {
-                  token: randomToken(),
-                  revoked: 0,
-                  partnerId,
-                  geographyId,
-                  siteId,
-                  deviceId,
-                },
-                auditFields
-              )
-            )
-
-            // Router
-            await knex('Device').insert(
-              Object.assign({}, auditFields, {
-                name: `Router at ${siteData.name}`,
-                shortName: `RO-${siteData.shortName}`,
-                deviceTypeId: deviceTypeIdRouter,
-                deviceStatusId,
-                partnerId: siteData.partnerId,
-                geographyId: siteData.geographyId,
-                siteId: siteData.id,
-                lastSeenOn: lastTime,
-                lastPingOn: lastTime,
+              deviceData.deviceStatusId = approvedDeviceStatusId
+              deviceData.name = device.name
+              deviceData.shortName = device.shortName
+              deviceData.macAddress = device.macAddress
+              deviceData.serial = device.deviceSerial
+              deviceData.hostId = device.hostId
+              deviceData.lastSeenOn = lastDeviceActivity
+              deviceData.lastPingOn = lastDeviceActivity
+              deviceData.lastPingFromIp = device.lastPingFromIp
+              deviceData.putInService = subMonths(now, 30)
+              deviceData.putInServiceSource = 'Installed at lab'
+              deviceData.configurationData = '{}'
+              const [deviceId] = await knex('Device').insert({
+                ...deviceData,
+                ...auditFields,
               })
-            )
+              deviceData.id = deviceId
+              await knex('DeviceApiKey').insert({
+                token: deviceApiKeyToken,
+                revoked: 0,
+                partnerId,
+                geographyId,
+                siteId,
+                deviceId,
+                ...auditFields,
+              })
+            }
           })
         )
+        const routerData =
+          (await knex('Device')
+            .where({
+              shortName: `RO-${siteData.shortName}`,
+              deviceTypeId: deviceTypeIdRouter,
+              siteId: siteData.id,
+              partnerId: siteData.partnerId,
+            })
+            .first()) || {}
+        if (_.isEmpty(routerData)) {
+          const lastRouterActivity = subMinutes(now, _.random(0, 60))
+          routerData.name = `Router at ${siteData.name}`
+          routerData.shortName = `RO-${siteData.shortName}`
+          routerData.deviceTypeId = deviceTypeIdRouter
+          routerData.deviceStatusId = approvedDeviceStatusId
+          routerData.partnerId = siteData.partnerId
+          routerData.geographyId = siteData.geographyId
+          routerData.siteId = siteData.id
+          routerData.lastSeenOn = lastRouterActivity
+          routerData.lastPingOn = lastRouterActivity
+          await knex('Device').insert({
+            ...routerData,
+            ...auditFields,
+          })
+        }
       }
     })
   )
@@ -718,15 +603,12 @@ async function seed(knex) {
       .first()
 
     const externalId = await createUniqueSampleIdForSite('PREID', siteId)
-    const sample = Object.assign(
-      {},
-      {
-        externalId,
-        collectedOn: calculateDateForResult(i, resultEidNumber, millisInMinute),
-        sampleTypeId: sampleTypeDBSId,
-        originSiteId: siteId,
-      }
-    )
+    const sample = {
+      externalId,
+      collectedOn: calculateDateForResult(i, resultEidNumber, millisInMinute),
+      sampleTypeId: sampleTypeDBSId,
+      originSiteId: siteId,
+    }
 
     sample.id = await knex('Sample').insert(sample)
 
@@ -750,11 +632,11 @@ async function seed(knex) {
 
   // Reuse previously seeded "static" data
   const { id: assayIdEid } = await knex('Assay')
-    .where('name', 'CHAI EID')
+    .where('externalId', 'abbottM2000HIVEID')
     .first()
 
   const { id: assayIdHivVl } = await knex('Assay')
-    .where('name', 'CHAI HIV VL')
+    .where('externalId', 'abbottM2000DBSHivVL')
     .first()
 
   const {
@@ -765,28 +647,6 @@ async function seed(knex) {
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
   const resultTypePatientId = await resultTypeToId('Patient')
-
-  // EID results:
-  // assign categories to assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryNotDetectedId,
-    assayId: assayIdEid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryDetectedId,
-    assayId: assayIdEid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryIndeterminateId,
-    assayId: assayIdEid,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdEid,
-  })
 
   const possibleResultsEid = [
     {
@@ -815,8 +675,9 @@ async function seed(knex) {
     },
   ]
 
-  const devicesM2000 = await knex('Device')
-    .where('deviceTypeId', deviceTypeIdChai)
+  const deviceTypeAbbottM2000 = await deviceTypeToId('AbbottM2000')
+  const m2000Devices = await knex('Device')
+    .where('deviceTypeId', deviceTypeAbbottM2000)
     .select('id', 'siteId')
 
   async function createUniqueResultIdForDevice(
@@ -844,10 +705,10 @@ async function seed(knex) {
   }
 
   async function createResultEid(i) {
-    const device = devicesM2000[i % devicesM2000.length]
+    const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
-      .first('id')
+      .first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultEidNumber, 6000)
 
@@ -862,49 +723,58 @@ async function seed(knex) {
       sample.externalId,
       device.id
     )
-    const resultId = await knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: resultExternalId,
-        assayId: assayIdEid,
-        partnerId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: deliverable,
-        longitude: -33.78725,
-        latitude: -13.96692,
-        resultSourceId: resultSourceLimsId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: sample.externalId.substring(0, 10),
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: randomDate,
-        endedOn: addMinutes(randomDate, 100),
-        researchId: `R-ID-${i}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        senderOperator: 'Frank',
-        patientData: JSON.stringify({
-          id: patient.id,
-          age: patient.age,
-          name: patient.firstName,
-          phone: patient.phone,
-          gender: patient.gender ? patient.gender.substring(0, 1) : null,
-          surname: patient.lastName,
-          provider: patient.providerId,
-          hccNumber: patient.artHccNumber,
-          motherName: patient.motherName,
-          dateOfBirth: patient.dob,
-          motherSurname: patient.lastName,
-          eidRegistrationNumber: patient.artHccNumber,
-        }),
-        qcCheck: 1,
-      })
-    )
+
+    const resultId = await knex('Result').insert({
+      ...auditFields,
+      externalId: resultExternalId,
+      assayId: assayIdEid,
+      partnerId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId: device.id,
+      longitude: -33.78725,
+      latitude: -13.96692,
+      resultSourceId: resultSourceLimsId,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      sampleRunNumber: `${(i % 2) + 1}`,
+      sampleGroup: sample.externalId.substring(0, 10),
+      resultCategory1: result.category1,
+      resultData: JSON.stringify(resultData),
+      assayVersion: '4',
+      startedOn: randomDate,
+      endedOn: addMinutes(randomDate, 100),
+      createdOn: addMinutes(randomDate, 120),
+      updatedOn: addMinutes(randomDate, 180),
+      researchId: `R-ID-${i}`,
+      instrumentSerial: `S-1234-${i % 3}`,
+      moduleName: 'Module A',
+      moduleSerial: `M-1234-${i % 4}`,
+      senderOperator: 'Frank',
+      errorCode:
+        result.category1 === resultCategoryErrorId
+          ? _.random(2000, 9000)
+          : null,
+      errorNotes:
+        result.category1 === resultCategoryErrorId
+          ? 'Temperature out of acceptable range'
+          : null,
+      reportableSiteId: sample.originSiteId || siteData.id,
+      patientData: JSON.stringify({
+        id: patient.id,
+        age: patient.age,
+        name: patient.firstName,
+        phone: patient.phone,
+        gender: patient.gender ? patient.gender.substring(0, 1) : null,
+        surname: patient.lastName,
+        provider: patient.providerId,
+        hccNumber: patient.artHccNumber,
+        motherName: patient.motherName,
+        dateOfBirth: patient.dob,
+        motherSurname: patient.lastName,
+        eidRegistrationNumber: patient.artHccNumber,
+      }),
+    })
 
     await knex('ResultWorkflowLog').insert({
       resultId,
@@ -914,40 +784,21 @@ async function seed(knex) {
       createdBy: adminId,
     })
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
       changedOn: addHours(randomDate, 2),
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultEidNumber)) {
     await createResultEid(i)
   }
-
-  // HIV VL results:
-  // assign categories to assay
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryLessThan1000Id,
-    assayId: assayIdHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryMoreThan1000Id,
-    assayId: assayIdHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryCollectNewSampleId,
-    assayId: assayIdHivVl,
-  })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: resultCategoryErrorId,
-    assayId: assayIdHivVl,
-  })
 
   const possibleResultsHivVl = [
     {
@@ -992,19 +843,12 @@ async function seed(knex) {
       .first()
 
     const externalId = await createUniqueSampleIdForSite('PRHIVVL', siteId)
-    const sample = Object.assign(
-      {},
-      {
-        externalId,
-        collectedOn: calculateDateForResult(
-          i,
-          resultHivVlNumber,
-          millisInMinute
-        ),
-        sampleTypeId: sampleTypeDBSId,
-        originSiteId: siteId,
-      }
-    )
+    const sample = {
+      externalId,
+      collectedOn: calculateDateForResult(i, resultHivVlNumber, millisInMinute),
+      sampleTypeId: sampleTypeDBSId,
+      originSiteId: siteId,
+    }
 
     sample.id = await knex('Sample').insert(sample)
 
@@ -1016,10 +860,10 @@ async function seed(knex) {
   }
 
   async function createResultHiv(i) {
-    const device = devicesM2000[i % devicesM2000.length]
+    const device = m2000Devices[i % m2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
-      .first('id')
+      .first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
@@ -1048,46 +892,54 @@ async function seed(knex) {
       sample.externalId,
       device.id
     )
-    const resultId = await knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: resultExternalId,
-        assayId: assayIdHivVl,
-        partnerId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: deliverable,
-        longitude: -33.78725,
-        latitude: -13.96692,
-        resultSourceId: resultSourceLimsId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: sample.externalId.substring(0, 10),
-        resultCategory1: result.category1,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '3',
-        startedOn: randomDate,
-        endedOn: addMinutes(randomDate, 100),
-        researchId: `R-ID-${i}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        senderOperator: 'Frank',
-        patientData: JSON.stringify({
-          id: patient.id,
-          age: patient.age,
-          name: patient.firstName,
-          phone: patient.phone,
-          gender: patient.gender ? patient.gender.substring(0, 1) : null,
-          surname: patient.lastName,
-          provider: patient.providerId,
-          artNumber: patient.artHccNumber,
-          dateOfBirth: patient.dob,
-        }),
-        qcCheck: 1,
-      })
-    )
+    const resultId = await knex('Result').insert({
+      ...auditFields,
+      externalId: resultExternalId,
+      assayId: assayIdHivVl,
+      partnerId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      reportableSiteId: sample.originSiteId || siteData.id,
+      deviceId: device.id,
+      longitude: -33.78725,
+      latitude: -13.96692,
+      resultSourceId: resultSourceLimsId,
+      resultTypeId: resultTypePatientId,
+      sampleId: sample.id,
+      sampleRunNumber: `${(i % 2) + 1}`,
+      sampleGroup: sample.externalId.substring(0, 10),
+      resultCategory1: result.category1,
+      resultData: JSON.stringify(resultData),
+      assayVersion: '3',
+      startedOn: randomDate,
+      endedOn: addMinutes(randomDate, 100),
+      createdOn: addMinutes(randomDate, 120),
+      updatedOn: addMinutes(randomDate, 180),
+      researchId: `R-ID-${i}`,
+      instrumentSerial: `S-1234-${i % 3}`,
+      moduleName: 'Module A',
+      moduleSerial: `M-1234-${i % 4}`,
+      senderOperator: 'Frank',
+      errorCode:
+        result.category1 === resultCategoryErrorId
+          ? _.random(2000, 9000)
+          : null,
+      errorNotes:
+        result.category1 === resultCategoryErrorId
+          ? 'Temperature out of acceptable range'
+          : null,
+      patientData: JSON.stringify({
+        id: patient.id,
+        age: patient.age,
+        name: patient.firstName,
+        phone: patient.phone,
+        gender: patient.gender ? patient.gender.substring(0, 1) : null,
+        surname: patient.lastName,
+        provider: patient.providerId,
+        artNumber: patient.artHccNumber,
+        dateOfBirth: patient.dob,
+      }),
+    })
 
     await knex('ResultWorkflowLog').insert({
       resultId,
@@ -1097,13 +949,16 @@ async function seed(knex) {
       createdBy: adminId,
     })
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
       changedOn: addHours(randomDate, 2),
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
+    await knex('Result')
+      .where({ id: resultId })
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultHivVlNumber)) {

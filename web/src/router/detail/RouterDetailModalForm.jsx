@@ -15,7 +15,6 @@ import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceStatus/DeviceStatusRedux'
-import CheckboxField from '../../components/shared/CheckboxField'
 import AspectDialog from '../../components/shared/AspectDialog'
 
 const cssClasses = classnames.bind(require('./RouterDetailModalForm.css'))
@@ -122,13 +121,6 @@ export const RouterDetailModalForm = props => {
           fullWidth
           {...errorProps(meta.notes)}
           margin="normal"
-        />
-        <CheckboxField
-          name="Status"
-          color="primary"
-          checked={values.statusToken === tokens.APPROVED}
-          onChange={props.onStatusTokenChange}
-          label={labels.statusToken}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>

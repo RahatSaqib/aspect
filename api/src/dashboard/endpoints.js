@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const {
   asyncHandler,
   validateDateRangeParams,
@@ -11,8 +11,8 @@ const {
   inventoryItemDashboard,
   deviceDashboard,
   siteDashboard,
-  operationalDashboard,
   actionDashboard,
+  operationalDataActivityOverTime,
 } = require('./service')
 
 const routes = [
@@ -23,13 +23,17 @@ const routes = [
     config: {
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard', 'operationalData'] },
       validate: {
-        query: Object.assign({
-          siteId: Joi.number()
-            .allow('')
-            .description('Filter for site ID'),
-        }),
+        query: {
+          siteId: Joi.number().allow('').description('Filter for site ID'),
+          dashboard: Joi.string()
+            .allow('', null)
+            .valid('home', 'operational')
+            .description(
+              'Dashboard token where requested data to be displayed'
+            ),
+        },
       },
     },
   },
@@ -40,7 +44,7 @@ const routes = [
     config: {
       description: 'Target Dashboard',
       notes: 'The top level target dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: Object.assign(validateDateRangeParams()),
       },
@@ -53,7 +57,7 @@ const routes = [
     config: {
       description: 'Result Dashboard',
       notes: 'The top level result dashboard',
-      auth: { scope: ['site', 'result'] },
+      auth: { scope: ['site', 'result', 'dashboard'] },
     },
   },
   {
@@ -63,7 +67,7 @@ const routes = [
     config: {
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
-      auth: { scope: ['site', 'consumable'] },
+      auth: { scope: ['site', 'consumable', 'dashboard'] },
     },
   },
   {
@@ -73,7 +77,7 @@ const routes = [
     config: {
       description: 'Device Dashboard',
       notes: 'The top level device dashboard',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
     },
   },
   {
@@ -83,27 +87,7 @@ const routes = [
     config: {
       description: 'Site Dashboard',
       notes: 'The top level site dashboard',
-      auth: { scope: ['site', 'device'] },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/dashboard/operational',
-    handler: asyncHandler(operationalDashboard),
-    config: {
-      description: 'Operational Data Dashboard',
-      notes: 'The top level operational data',
-      auth: { scope: ['site', 'device'] },
-      validate: {
-        query: Object.assign({
-          assayType: Joi.string()
-            .allow('')
-            .description('Filter for assay type'),
-          dateRange: Joi.number()
-            .allow('')
-            .description('Filter for date range'),
-        }),
-      },
+      auth: { scope: ['site', 'device', 'dashboard'] },
     },
   },
   {
@@ -113,21 +97,68 @@ const routes = [
     config: {
       description: 'Action Data Dashboard',
       notes: 'List of action category with actions',
-      auth: { scope: ['site', 'device'] },
+      auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
-        query: Object.assign(
-          {
-            siteId: Joi.number()
-              .allow('')
-              .description('Filter for Site ID'),
-          },
-          validateSortPageParams(
+        query: {
+          siteId: Joi.number().allow('').description('Filter for Site ID'),
+          ...validateSortPageParams(
             'issueStatusSortOrder',
             'siteName',
             'deviceName',
             'message'
-          )
-        ),
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/operational-data/activity-over-time',
+    handler: asyncHandler(operationalDataActivityOverTime),
+    config: {
+      description: 'Device Activity Rate Over Time',
+      notes:
+        'Gets the number of devices grouped by activity category, by day, in the given date range',
+      auth: { scope: ['site', 'device', 'dashboard'] },
+      validate: {
+        query: {
+          minDate: Joi.date().iso().required().description('From Date'),
+          maxDate: Joi.date().iso().required().description('To Date'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .description(
+              'List of days in the given date range along with activity category counts'
+            )
+            .items(
+              Joi.object().keys({
+                date: Joi.date().description(
+                  'Day that the aggregations were calculated for'
+                ),
+                devicesActive: Joi.number().description(
+                  'The number of devices that were active that day'
+                ),
+                devicesInactive: Joi.number().description(
+                  'The number of devices that were inactive that day'
+                ),
+                devicesTotal: Joi.number().description(
+                  'The total number of devices in the system as of that day'
+                ),
+                isWeekendOrHoliday: Joi.bool().description(
+                  'Indicates whether the day is a weekend day or a holiday.'
+                ),
+              })
+            ),
+        }),
       },
     },
   },

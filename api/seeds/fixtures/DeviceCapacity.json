@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": true,
+      "name": "4 modules",
+      "dailyCapacity": 12
+    },
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": false,
+      "name": "8 modules",
+      "dailyCapacity": 24
+    },
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": false,
+      "name": "16 modules",
+      "dailyCapacity": 48
+    },
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": false,
+      "name": "32 modules",
+      "dailyCapacity": 96
+    },
+    {
+      "deviceTypeExternalId": "AlereQ",
+      "defaultForDeviceType": true,
+      "name": "Q",
+      "dailyCapacity": 8
+    },
+    {
+      "deviceTypeExternalId": "AbbottM2000",
+      "defaultForDeviceType": true,
+      "name": "m2000",
+      "dailyCapacity": 500
+    },
+    {
+      "deviceTypeExternalId": "DaktariVirology",
+      "defaultForDeviceType": true,
+      "name": "Virology",
+      "dailyCapacity": 8
+    },
+    {
+      "deviceTypeExternalId": "DaktariInSight",
+      "defaultForDeviceType": true,
+      "name": "InSight",
+      "dailyCapacity": 8
+    }
+  ]
+}

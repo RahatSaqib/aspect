@@ -1,6 +1,6 @@
 import { compose, withHandlers, pure } from 'recompose'
 
-import DataTableHead from '../../components/shared/DataTableHead'
+import DataTableHead from '../../components/shared/tableHead/DataTableHead'
 
 const enhance = compose(
   pure,

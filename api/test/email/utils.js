@@ -23,7 +23,9 @@ class EmailTestContext {
 
   runTest(test) {
     return run(async knex => {
-      const { auth: { user } } = this
+      const {
+        auth: { user },
+      } = this
       const { userId } = await knex('User')
         .where({ name: user })
         .first('id as userId')
@@ -45,19 +47,16 @@ class EmailTestContext {
 
       // add sample email message
       const now = new Date()
-      this.messageId = await knex('EmailMessage').insert(
-        {
-          emailTemplateId,
-          messageStatusId,
-          personId: userId,
-          siteId,
-          deviceId,
-          resultId,
-          createdOn: now,
-          updatedOn: now,
-        },
-        'id'
-      )
+      this.messageId = await knex('EmailMessage').insert({
+        emailTemplateId,
+        messageStatusId,
+        personId: userId,
+        siteId,
+        deviceId,
+        resultId,
+        createdOn: now,
+        updatedOn: now,
+      })
 
       assert.isOk(this.messageId)
 
@@ -72,9 +71,7 @@ class EmailTestContext {
 
       // remove sample message
       if (this.messageId) {
-        await knex('EmailMessage')
-          .where('id', this.messageId)
-          .delete()
+        await knex('EmailMessage').where('id', this.messageId).delete()
       }
 
       await queuePurge()

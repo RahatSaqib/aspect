@@ -3,16 +3,16 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
-import { Card } from 'react-toolbox/lib/card'
-import MdAssignment from 'react-icons/lib/md/assignment'
+import Card from '@material-ui/core/Card'
+import { MdAssignment } from 'react-icons/md'
 import { formatDate, formatDateTime } from '../../../shared/utils/dateFormat'
-import CardTitle from '../../../components/shared/CardTitle'
-import ReadOnlyFields from '../../../components/shared/ReadOnlyFields'
+import CardTitle from '../CardTitle'
+import ReadOnlyFields from '../ReadOnlyFields'
 import {
   ExpansionPanel,
   ExpansionPanelHeader,
   ExpansionPanelDetail,
-} from '../../../components/shared/expansionPanel'
+} from '../expansionPanel'
 
 const cssClasses = classnames.bind(require('./DetailPanel.css'))
 
@@ -23,7 +23,11 @@ const enhance = _.identity
 const format = (type, intl) =>
   type === 'number'
     ? intl.formatNumber
-    : type === 'date' ? formatDate : type === 'time' ? formatDateTime : null
+    : type === 'date'
+    ? formatDate
+    : type === 'time'
+    ? formatDateTime
+    : null
 
 const makeLink = (template, data) => {
   try {
@@ -88,6 +92,10 @@ export const DetailGroup = compose(
               value: (data && data.get(key)) || rawData.get(key) || '',
               format: format(value.get('type'), intl),
               to: value.get('link') && makeLink(value.get('link'), rawData),
+              linkButton: value.get('linkButton') && {
+                text: value.get('linkButton').toJS().text,
+                to: makeLink(value.get('linkButton').toJS().to, rawData),
+              },
             }))
             .toJSON()}
         />
@@ -109,6 +117,10 @@ export const DetailGroup = compose(
             value: (data && data.get(key)) || rawData.get(key) || '',
             format: format(value.get('type'), intl),
             to: value.get('link') && makeLink(value.get('link'), rawData),
+            linkButton: value.get('linkButton') && {
+              text: value.get('linkButton').toJS().text,
+              to: makeLink(value.get('linkButton').toJS().to, rawData),
+            },
           }))
           .toJSON()}
       />
@@ -121,6 +133,7 @@ export const DetailGroup = compose(
           .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') > 0)
           .filter(it => conditionsMet(it, rawData))
+          .delete('id')
           .sortBy(value => value.get('order'))
           .groupBy(x => x.get('row'))
           .valueSeq()
@@ -131,6 +144,10 @@ export const DetailGroup = compose(
               value: (data && data.get(key)) || rawData.get(key) || '',
               format: format(value.get('type'), intl),
               to: value.get('link') && makeLink(value.get('link'), rawData),
+              linkButton: value.get('linkButton') && {
+                text: value.get('linkButton').toJS().text,
+                to: makeLink(value.get('linkButton').toJS().to, rawData),
+              },
             }))
           )
           .map(fields => (
@@ -144,14 +161,24 @@ export const DetailGroup = compose(
     )}
   </ExpansionPanel>
 ))
-
-export const DetailPanel = ({ intl, data, schema, ...restProps }) => (
+export const DetailPanel = ({
+  intl,
+  data,
+  schema,
+  renderRightTitle,
+  titleSection,
+  ...restProps
+}) => (
   <Card {...restProps}>
     <CardTitle
       title={schema.get('title')}
       icon={<MdAssignment className={cssClasses('Title__Icon')} />}
       className={cssClasses('Title')}
+      renderRight={renderRightTitle}
     />
+
+    {titleSection}
+
     {schema
       .get('groups')
       .sortBy(value => value.get('order'))

@@ -1,7 +1,6 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaLongArrowDown from 'react-icons/lib/fa/long-arrow-down'
-import FaLongArrowUp from 'react-icons/lib/fa/long-arrow-up'
+import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./Indicator.css'))
 
@@ -13,7 +12,7 @@ const Indicator = ({ indicator, coloredIndicator, isGreaterThan }) =>
         'Indicator_Icon_Colored--greater': !!coloredIndicator && isGreaterThan,
       })}
     >
-      {isGreaterThan ? <FaLongArrowUp /> : <FaLongArrowDown />}
+      {isGreaterThan ? <FaLongArrowAltUp /> : <FaLongArrowAltDown />}
     </span>
   )
 

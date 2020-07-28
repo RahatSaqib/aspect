@@ -1,13 +1,14 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const shared = require('../utils/sharedToken')
 const _ = require('lodash')
-const addYears = require('date-fns/add_years')
+const addYears = require('date-fns/addYears')
 
-const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+
+const { assert } = chai
+const server = supertest.agent('http://localhost:8080')
 
 describe('Inventory Routes', () => {
   describe('Inventory List Route', () => {
@@ -141,6 +142,58 @@ describe('Inventory Routes', () => {
         })
       })
     })
+
+    describe('/inventory/days-by-location', () => {
+      const path = '/api/inventory/days-by-location'
+
+      describe('GET', () => {
+        shared.checkToken(server, path)
+
+        const assertAggregatedItem = item => {
+          assert.property(item, 'consumableId')
+          assert.property(item, 'consumableName')
+          // counts
+          assert.property(item, 'outOfStock')
+          assert.property(item, 'upTo14')
+          assert.property(item, 'upTo30')
+          assert.property(item, 'upTo90')
+          assert.property(item, 'upTo180')
+          assert.property(item, 'moreThan180')
+          assert.property(item, 'notRecorded')
+          assert.property(item, 'noConsumption')
+        }
+
+        it('should return a list of sites with inventories counts, when using valid token', done => {
+          server
+            .get(path)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'array')
+              res.body.data.forEach(item => assertAggregatedItem(item))
+              assert.property(res.body, 'total')
+              done()
+            })
+        })
+
+        it('should accept consumableId and siteName as query string parameters', done => {
+          const consumableId = 1
+          const siteNameFilter = 'lab'
+          server
+            .get(
+              `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
+            )
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              res.body.data.forEach(item => assertAggregatedItem(item))
+              done()
+            })
+        })
+      })
+    })
   })
 
   describe('Inventory Adjustments', () => {
@@ -158,7 +211,7 @@ describe('Inventory Routes', () => {
     let siteId
     let transitItem
 
-    beforeEach(async () =>
+    beforeEach(() =>
       run(async knex => {
         const { id: consumableId } = await knex('Consumable')
           .where('name', consumableName)
@@ -196,7 +249,7 @@ describe('Inventory Routes', () => {
       run(async knex => {
         await knex('InventoryLog')
           .where({ inventoryItemId: inventoryItem.id })
-          .orWhere(function() {
+          .orWhere(function () {
             if (transitItem != null) {
               this.where({ inventoryItemId: transitItem.id })
             }
@@ -204,7 +257,7 @@ describe('Inventory Routes', () => {
           .delete()
         await knex('InventoryItem')
           .where({ id: inventoryItem.id })
-          .orWhere(function() {
+          .orWhere(function () {
             if (transitItem != null) {
               this.where({ id: transitItem.id })
             }
@@ -332,16 +385,14 @@ describe('Inventory Routes', () => {
                 _.max([0, inventoryItem.quantityOnHand - quantityToAdjust])
               )
               transitItem = res.body.data.newInventoryItem
-              assert.deepEqual(
-                transitItem,
-                Object.assign({}, transitItem, {
-                  quantityOnHand: _.max([0, quantityToAdjust]),
-                  inTransitFromSiteId: inventoryItem.siteId,
-                  siteId: destinationSite.id,
-                  lotNumber: inventoryItem.lotNumber,
-                  expiresOn: inventoryItem.expiresOn.toISOString(),
-                })
-              )
+              assert.deepEqual(transitItem, {
+                ...transitItem,
+                quantityOnHand: _.max([0, quantityToAdjust]),
+                inTransitFromSiteId: inventoryItem.siteId,
+                siteId: destinationSite.id,
+                lotNumber: inventoryItem.lotNumber,
+                expiresOn: inventoryItem.expiresOn.toISOString(),
+              })
 
               server
                 .put(`${transferInventoryPath}/${inventoryItem.id}`)
@@ -369,19 +420,17 @@ describe('Inventory Routes', () => {
                     ])
                   )
                   const updatedTransitItem = res.body.data.newInventoryItem
-                  assert.deepEqual(
-                    updatedTransitItem,
-                    Object.assign({}, updatedTransitItem, {
-                      quantityOnHand: _.max([
-                        0,
-                        transitItem.quantityOnHand + quantityToAdjust,
-                      ]),
-                      inTransitFromSiteId: inventoryItem.siteId,
-                      siteId: destinationSite.id,
-                      lotNumber: inventoryItem.lotNumber,
-                      expiresOn: inventoryItem.expiresOn.toISOString(),
-                    })
-                  )
+                  assert.deepEqual(updatedTransitItem, {
+                    ...updatedTransitItem,
+                    quantityOnHand: _.max([
+                      0,
+                      transitItem.quantityOnHand + quantityToAdjust,
+                    ]),
+                    inTransitFromSiteId: inventoryItem.siteId,
+                    siteId: destinationSite.id,
+                    lotNumber: inventoryItem.lotNumber,
+                    expiresOn: inventoryItem.expiresOn.toISOString(),
+                  })
                   done()
                 })
             })
@@ -397,9 +446,7 @@ describe('Inventory Routes', () => {
             await knex('InventoryLog')
               .where({ inventoryItemId: receivedItem.id })
               .delete()
-            await knex('InventoryItem')
-              .where({ id: receivedItem.id })
-              .delete()
+            await knex('InventoryItem').where({ id: receivedItem.id }).delete()
           })
         )
 
@@ -437,15 +484,13 @@ describe('Inventory Routes', () => {
                   assert.equal(res.status, 200)
                   assert.typeOf(res.body, 'Object')
                   receivedItem = res.body.data
-                  assert.deepEqual(
-                    receivedItem,
-                    Object.assign({}, res.body.data, {
-                      quantityOnHand: _.max([0, quantityToAdjust]),
-                      siteId: destinationSite.id,
-                      lotNumber: inventoryItem.lotNumber,
-                      expiresOn: inventoryItem.expiresOn.toISOString(),
-                    })
-                  )
+                  assert.deepEqual(receivedItem, {
+                    ...res.body.data,
+                    quantityOnHand: _.max([0, quantityToAdjust]),
+                    siteId: destinationSite.id,
+                    lotNumber: inventoryItem.lotNumber,
+                    expiresOn: inventoryItem.expiresOn.toISOString(),
+                  })
                   done()
                 })
             })

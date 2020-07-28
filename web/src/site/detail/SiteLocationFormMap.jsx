@@ -8,26 +8,13 @@ import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { latLng, address } from '../../shared/selectors/site'
+import {
+  isValidLatLng,
+  isValidFullAddress,
+  formatFullAddressToAddressQuery,
+} from '../utils/address'
 import SiteMap from './SiteMap'
 import styles from './SiteLocationFormMap.css'
-
-function isValidLatLng({ lat, lng }) {
-  return _.isNumber(lat) && _.isNumber(lng)
-}
-
-function isValidFullAddress({ country, state, lga, city, address, address2 }) {
-  return _.some([country, state, lga, city, address, address2], _.isString)
-}
-
-function formatFullAddressToAddressQuery({
-  country,
-  state,
-  lga,
-  city,
-  address,
-}) {
-  return `${address}, ${city}, ${lga}, ${state}, ${country}`
-}
 
 /*
  * This component deals with four location values:
@@ -39,7 +26,12 @@ function formatFullAddressToAddressQuery({
  * If no latLng pair is found, it utilize Geocoder to decode full address object
  * into a latLng pair.
  */
+
 export class SiteLocationFormMap extends PureComponent {
+  geocoder = new google.maps.Geocoder()
+
+  isUnmounted = false
+
   static propTypes = {
     change: PropTypes.func.isRequired, // redux-form
     fullAddressInForm: PropTypes.shape({
@@ -53,23 +45,20 @@ export class SiteLocationFormMap extends PureComponent {
     editable: PropTypes.bool.isRequired,
   }
 
-  componentWillMount() {
-    if (!this.getValidLatLng(this.props)) {
-      this.handleQueryAddress(this.props)
+  constructor(props) {
+    super(props)
+    if (!this.getValidLatLng(props)) {
+      this.handleQueryAddress(props)
     }
   }
 
   // query geocoder again if no valid latLng in nextProps or
   // the use just changed some field of address part in the form
-  componentWillReceiveProps(nextProps) {
-    const noValidLatLng = !this.getValidLatLng(nextProps)
-    const isAddressInFormJustChanged = !_.isEqual(
-      this.props.fullAddressInForm,
-      nextProps.fullAddressInForm
-    )
+  componentDidUpdate(nextProps) {
+    const noValidLatLng = !this.getValidLatLng(this.props)
 
-    if (noValidLatLng || isAddressInFormJustChanged) {
-      this.handleQueryAddress(nextProps)
+    if (noValidLatLng) {
+      this.handleQueryAddress(this.props)
     }
   }
 
@@ -81,7 +70,8 @@ export class SiteLocationFormMap extends PureComponent {
   getValidLatLng({ latLngInForm, latLngInSite }) {
     if (isValidLatLng(latLngInForm)) {
       return latLngInForm
-    } else if (isValidLatLng(latLngInSite)) {
+    }
+    if (isValidLatLng(latLngInSite)) {
       return latLngInSite
     }
     return false
@@ -91,8 +81,8 @@ export class SiteLocationFormMap extends PureComponent {
   handlePositionFound({ geometry: { location } }) {
     const { editable, change } = this.props
     if (editable) {
-      change('lat', location.lat())
-      change('lng', location.lng())
+      change('latitude', location.lat())
+      change('longitude', location.lng())
     }
   }
 
@@ -117,10 +107,6 @@ export class SiteLocationFormMap extends PureComponent {
       }
     )
   }
-
-  geocoder = new google.maps.Geocoder()
-
-  isUnmounted = false
 
   render() {
     const latLng = this.getValidLatLng(this.props)

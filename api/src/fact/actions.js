@@ -14,6 +14,9 @@ const types = {
   FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT:
     'FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT',
   FACT_DATA_CATEGORY_IS_LOW_OTHER: 'FACT_DATA_CATEGORY_IS_LOW_OTHER',
+  FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
+  FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
+  FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
 }
 
 /**
@@ -117,6 +120,50 @@ function factDataCategoryLow({
   }
 }
 
+/**
+ * Requests checking for new results. Will be called on
+ * schedule to run fact ETL
+ */
+function factNewResultsAvailableCheck() {
+  return {
+    type: types.FACT_NEW_RESULTS_AVAILABLE_CHECK,
+  }
+}
+
+/**
+ * Creates an action to notify the origin site with given id
+ * has new results available
+ *
+ * categoryToken, categoryName, periodName, siteId, percentage are required.
+ */
+function factNewResultsAvailable({ siteId, numberOfResults }) {
+  if (!siteId || !numberOfResults) {
+    throw new Error(
+      'Must specify siteId and numberOfResults - for new results available'
+    )
+  }
+  return {
+    type: types.FACT_NEW_RESULTS_AVAILABLE,
+    siteId,
+    options: {
+      siteId,
+      numberOfResults,
+    },
+  }
+}
+
+/**
+ * Creates an action to notify that it is time to check uptime robot stats for Aspect
+ *
+ * sourceName is required.
+ */
+function factExternalSourceCheck({ sourceName }) {
+  return {
+    type: types.FACT_CHECK_EXTERNAL_FACT_SOURCE,
+    sourceName,
+  }
+}
+
 module.exports = {
   types,
   factGenerateDeviceConnectivity,
@@ -125,4 +172,7 @@ module.exports = {
   factCalculateInventoryConsumptionRates,
   factDataCategoryLowCheck,
   factDataCategoryLow,
+  factNewResultsAvailableCheck,
+  factNewResultsAvailable,
+  factExternalSourceCheck,
 }

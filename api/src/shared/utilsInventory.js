@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
+const { issueTypeToId, issueStatusToId } = require('./dictionary')
 
 // -----------------------------
 // auditInventoryStockout
@@ -34,6 +34,7 @@ async function auditInventoryStockout({
     escalator,
   })
 }
+
 // -----------------------------
 // totalDaysUnexpiredInventoryItemsLast - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
@@ -46,7 +47,7 @@ async function totalDaysUnexpiredInventoryItemsLast({
 }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
-    .where(function() {
+    .where(function () {
       this.whereNull('expiresOn') // if is null
         .orWhere('expiresOn', '>', new Date()) // or unexpired
     })
@@ -84,6 +85,7 @@ async function totalDaysUnexpiredInventoryItemsLast({
 
   return days
 }
+
 // -----------------------------
 // auditInventoryStockExpiring
 // -----------------------------
@@ -116,6 +118,7 @@ async function auditInventoryStockExpiring({
     escalator,
   })
 }
+
 // -----------------------------
 // totalWastedInventoryItems - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
@@ -158,6 +161,7 @@ async function totalWastedInventoryItems({
 
   return totalWasted
 }
+
 // -----------------------------
 // resolveEscalate
 // -----------------------------

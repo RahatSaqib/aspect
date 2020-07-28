@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react'
 import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
-import { FormattedHTMLMessage } from 'react-intl'
+import { Helmet } from 'react-helmet'
+import { FormattedMessage, injectIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 
 // Material-UI
@@ -33,6 +33,7 @@ import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 
 const enhance = compose(
+  injectIntl,
   withProps(({ location }) => ({
     searchParams: new URLSearchParams(location.search),
   })),
@@ -48,12 +49,16 @@ const enhance = compose(
 )
 
 export class ResetPassword extends PureComponent {
-  state = {
-    emailAddress: '',
-    resetPasswordToken: '',
-    stepIndex: 0,
-    showAdminHelpDialog: false,
-    resettingPassword: false,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      emailAddress: '',
+      resetPasswordToken: '',
+      stepIndex: 0,
+      showAdminHelpDialog: false,
+      resettingPassword: false,
+    }
   }
 
   componentDidMount() {
@@ -168,7 +173,9 @@ export class ResetPassword extends PureComponent {
 
   render() {
     const { intl } = this.props
-    const { intl: { formatMessage } } = this.props
+    const {
+      intl: { formatMessage },
+    } = this.props
     const { stepIndex, emailAddress, resettingPassword } = this.state
     const adminHelpDialogActions = [
       <Button color="secondary" onClick={this.closeAdminHelpDialog}>
@@ -223,7 +230,7 @@ export class ResetPassword extends PureComponent {
                   )}
                   {stepIndex === 1 && (
                     <div className={styles.Form}>
-                      <FormattedHTMLMessage
+                      <FormattedMessage
                         {...messages.checkEmailContent}
                         values={{ emailAddress }}
                       />
@@ -256,7 +263,7 @@ export class ResetPassword extends PureComponent {
                   )}
                   {stepIndex === 3 && (
                     <div className={styles.Form}>
-                      <FormattedHTMLMessage {...messages.finishContent} />
+                      <FormattedMessage {...messages.finishContent} />
                       <div className={styles.Form__ActionRow}>
                         <Link to="login">
                           <Button color="primary">
@@ -295,7 +302,7 @@ export class ResetPassword extends PureComponent {
                       </StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
-                          <FormattedHTMLMessage
+                          <FormattedMessage
                             {...messages.checkEmailContent}
                             values={{ emailAddress }}
                           />
@@ -330,7 +337,7 @@ export class ResetPassword extends PureComponent {
                       <StepLabel>{formatMessage(messages.finish)}</StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
-                          <FormattedHTMLMessage {...messages.finishContent} />
+                          <FormattedMessage {...messages.finishContent} />
                           <div className={styles.Form__ActionRow}>
                             <Link to="login">
                               <Button color="primary">
@@ -354,7 +361,7 @@ export class ResetPassword extends PureComponent {
           open={this.state.showAdminHelpDialog}
           onRequestClose={this.closeAdminHelpDialog}
         >
-          <FormattedHTMLMessage
+          <FormattedMessage
             {...messages.adminHelpContent}
             values={{
               supportEmail: config.supportEmail,

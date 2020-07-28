@@ -1,7 +1,7 @@
 /**
  * Source: https://www.browserstack.com/automate/nightwatch
  */
-require('dotenv-safe').load()
+require('dotenv-safe').config()
 const Nightwatch = require('nightwatch')
 const browserstack = require('browserstack-local')
 
@@ -9,11 +9,13 @@ try {
   process.mainModule.filename = './node_modules/.bin/nightwatch'
 
   // Code to start browserstack local before start of test
+  // eslint-disable-next-line no-console
   console.log('Connecting local')
   Nightwatch.bs_local = new browserstack.Local()
   Nightwatch.bs_local.start({ key: process.env['browserstack.key'] }, error => {
     if (error) throw error
 
+    // eslint-disable-next-line no-console
     console.log('Connected. Now testing...')
     Nightwatch.cli(argv => {
       Nightwatch.CliRunner(argv).setup(null, () => {
@@ -23,6 +25,7 @@ try {
     })
   })
 } catch (ex) {
+  // eslint-disable-next-line no-console
   console.log('There was an error while starting the test runner:\n\n')
   process.stderr.write(`${ex.stack}\n`)
   process.exit(2)

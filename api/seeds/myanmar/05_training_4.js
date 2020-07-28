@@ -1,4 +1,5 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
 const { getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
@@ -77,55 +78,41 @@ async function seed(knex) {
     })
 
   // adjust calculation for MDR-TB
-  await knex('DashboardWidget')
-    .where({ title: 'MDR-TB' })
-    .update({
-      sqlForIndicator:
-        "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where (ifnull(patientData ->> '$.previouslyTreated', '') = 'Yes' or ifnull(patientData ->> '$.previouslyTreated', '') = 'true') and ifnull(patientData ->> '$.hivStatus', '') != 'HIV Positive' and ifnull(patientData ->> '$.microscopyResult', '') not like '%Positive' and cast(ifnull(patientData ->> '$.age', 100) as UNSIGNED) >= 18 and r.assayId in (1,2)",
-    })
+  await knex('DashboardWidget').where({ title: 'MDR-TB' }).update({
+    sqlForIndicator:
+      "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where (ifnull(patientData ->> '$.previouslyTreated', '') = 'Yes' or ifnull(patientData ->> '$.previouslyTreated', '') = 'true') and ifnull(patientData ->> '$.hivStatus', '') != 'HIV Positive' and ifnull(patientData ->> '$.microscopyResult', '') not like '%Positive' and cast(ifnull(patientData ->> '$.age', 100) as UNSIGNED) >= 18 and r.assayId in (1,2)",
+  })
 
-  await knex('DashboardWidgetTarget')
-    .where({ targetToken: 'MDR' })
-    .update({
-      sqlForDataCollection:
-        "select concat(round(sum(case when ifnull(patientData ->> '$.previouslyTreated', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
-    })
+  await knex('DashboardWidgetTarget').where({ targetToken: 'MDR' }).update({
+    sqlForDataCollection:
+      "select concat(round(sum(case when ifnull(patientData ->> '$.previouslyTreated', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
+  })
 
   // reformat queries using the "->>" operator
-  await knex('DashboardWidget')
-    .where({ title: 'HIV+' })
-    .update({
-      sqlForIndicator:
-        "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(patientData ->> '$.hivStatus', '') = 'HIV Positive' and r.assayId in (1,2)",
-    })
+  await knex('DashboardWidget').where({ title: 'HIV+' }).update({
+    sqlForIndicator:
+      "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(patientData ->> '$.hivStatus', '') = 'HIV Positive' and r.assayId in (1,2)",
+  })
 
-  await knex('DashboardWidgetTarget')
-    .where({ targetToken: 'HIV' })
-    .update({
-      sqlForDataCollection:
-        "select concat(round(sum(case when ifnull(patientData ->> '$.hivStatus', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
-    })
+  await knex('DashboardWidgetTarget').where({ targetToken: 'HIV' }).update({
+    sqlForDataCollection:
+      "select concat(round(sum(case when ifnull(patientData ->> '$.hivStatus', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
+  })
 
-  await knex('DashboardWidget')
-    .where({ title: 'Smear+' })
-    .update({
-      sqlForIndicator:
-        "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(patientData ->> '$.microscopyResult', '') LIKE '%Positive' and r.assayId in (1,2)",
-    })
+  await knex('DashboardWidget').where({ title: 'Smear+' }).update({
+    sqlForIndicator:
+      "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(patientData ->> '$.microscopyResult', '') LIKE '%Positive' and r.assayId in (1,2)",
+  })
 
-  await knex('DashboardWidgetTarget')
-    .where({ targetToken: 'Smear' })
-    .update({
-      sqlForDataCollection:
-        "select concat(round(sum(case when ifnull(patientData ->> '$.microscopyResult', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
-    })
+  await knex('DashboardWidgetTarget').where({ targetToken: 'Smear' }).update({
+    sqlForDataCollection:
+      "select concat(round(sum(case when ifnull(patientData ->> '$.microscopyResult', '') != '' then 1 else 0 end)/count(r.id)*100,0),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
+  })
 
-  await knex('DashboardWidget')
-    .where({ title: 'Children' })
-    .update({
-      sqlForIndicator:
-        "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where cast(ifnull(patientData ->>  '$.age', 100) as UNSIGNED) < 18 and r.assayId in (1,2)",
-    })
+  await knex('DashboardWidget').where({ title: 'Children' }).update({
+    sqlForIndicator:
+      "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where cast(ifnull(patientData ->>  '$.age', 100) as UNSIGNED) < 18 and r.assayId in (1,2)",
+  })
 
   await knex('DashboardWidgetTarget')
     .where({ targetToken: 'Children' })
@@ -140,9 +127,7 @@ async function seed(knex) {
     smsTemplateId: null,
   })
 
-  await knex('Partner')
-    .where({ id: partnerId })
-    .update({ plugin: 'myanmar' })
+  await knex('Partner').where({ id: partnerId }).update({ plugin: 'myanmar' })
 
   await knex('SampleType').insert([
     {
@@ -453,7 +438,7 @@ async function seed(knex) {
   }
 
   // define patientData object
-  const geneXpertPatientDataSchema = JSON.stringify({
+  const patientData = {
     id: {
       title: 'Patient ID',
       type: 'string',
@@ -479,11 +464,6 @@ async function seed(knex) {
       type: 'string',
       order: 4,
     },
-    hivStatus: {
-      title: 'HIV Status',
-      type: 'string',
-      order: 5,
-    },
     age: {
       title: 'Age (in years)',
       type: 'number',
@@ -504,44 +484,47 @@ async function seed(knex) {
       type: 'string',
       order: 9,
     },
+  }
+  const geneXpertPatientDataSchema = JSON.stringify({
+    ...patientData,
+  })
+
+  const geneXpertTBPatientDataSchema = JSON.stringify({
+    ...patientData,
+    hivStatus: {
+      title: 'HIV Status',
+      type: 'string',
+      order: 5,
+    },
   })
 
   await knex('Assay')
     .whereIn('externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola'])
     .update({
-      resultDataSchema: JSON.stringify(
-        Object.assign(
-          {},
-          geneXpertResultDataSchema,
-          geneXpertResultDataSchemaTbGxEbola
-        )
-      ),
-      patientDataSchema: geneXpertPatientDataSchema,
+      resultDataSchema: JSON.stringify({
+        ...geneXpertResultDataSchema,
+        ...geneXpertResultDataSchemaTbGxEbola,
+      }),
+      patientDataSchema: geneXpertTBPatientDataSchema,
     })
 
   await knex('Assay')
     .whereIn('externalId', ['GxHiv1Vl', 'GxHiv1Qual'])
     .update({
-      resultDataSchema: JSON.stringify(
-        Object.assign(
-          {},
-          geneXpertResultDataSchema,
-          geneXpertResultDataSchemaHiv
-        )
-      ),
+      resultDataSchema: JSON.stringify({
+        ...geneXpertResultDataSchema,
+        ...geneXpertResultDataSchemaHiv,
+      }),
       patientDataSchema: geneXpertPatientDataSchema,
     })
 
   await knex('Assay')
     .where('externalId', 'GeneXpertHcv')
     .update({
-      resultDataSchema: JSON.stringify(
-        Object.assign(
-          {},
-          geneXpertResultDataSchema,
-          geneXpertResultDataSchemaHcv
-        )
-      ),
+      resultDataSchema: JSON.stringify({
+        ...geneXpertResultDataSchema,
+        ...geneXpertResultDataSchemaHcv,
+      }),
       patientDataSchema: geneXpertPatientDataSchema,
     })
 

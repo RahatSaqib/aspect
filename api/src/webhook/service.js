@@ -7,12 +7,18 @@ const {
   header,
   body,
 } = require('http-client')
-const { webhookMessagePending, webhookMessageSent } = require('./actions')
+const {
+  webhookMessagePending,
+  webhookMessageSent,
+  webhookMessageError,
+} = require('./actions')
+const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 
 function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
@@ -61,7 +67,10 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
 }
 
 function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ webhookMessageSent })
+  const context = messageContext.bindActionCreators({
+    webhookMessageSent,
+    webhookMessageError,
+  })
   return context.run(async knex => {
     // TODO If filename and resultId add ResultFileReference join
     const message = await knex('WebhookMessage as m')
@@ -110,21 +119,34 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
         }
       }
 
+      const messageUpdates = {}
       if (!webhookError) {
-        const fetch = createFetch(...fetchArgs)
-        const resp = await fetch(message.url)
-        if (fileStream != null) {
-          resp.body.pipe(fileStream)
+        try {
+          const fetch = createFetch(...fetchArgs)
+          const resp = await fetch(message.url)
+          if (fileStream != null) {
+            resp.body.pipe(fileStream)
+          }
+          messageUpdates.response = `${resp.status}`
+          if (resp.statusText) {
+            messageUpdates.response += ` - ${resp.statusText}`
+          }
+          const responseText = await resp.text()
+          if (responseText) {
+            messageUpdates.response += ` ${responseText}`
+          }
+          webhookError = !resp.ok
+        } catch (err) {
+          webhookError = true
+          messageUpdates.response = err.toString()
         }
-        webhookError = !resp.ok
       }
-
       const now = new Date()
-      const messageUpdates = { updatedOn: now }
-
+      messageUpdates.updatedOn = now
       const messageStatusIdSent = await messageStatusToId('Sent')
+      const messageStatusIdError = await messageStatusToId('Error')
       if (webhookError) {
-        messageUpdates.messageStatusId = await messageStatusToId('Error')
+        messageUpdates.messageStatusId = messageStatusIdError
       } else {
         messageUpdates.messageStatusId = messageStatusIdSent
         if (message.fileReferenceId != null && message.resultId != null) {
@@ -140,16 +162,63 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
 
       if (messageUpdates.messageStatusId === messageStatusIdSent) {
         context.webhookMessageSent(webhookMessageId)
+      } else if (messageUpdates.messageStatusId === messageStatusIdError) {
+        context.webhookMessageError(webhookMessageId)
       }
     }
   })
 }
 
+function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
+  return finalizeWebhookMessage(webhookMessageId, messageContext)
+}
+
+function onWebhookMessageError({ webhookMessageId }, { messageContext }) {
+  return finalizeWebhookMessage(webhookMessageId, messageContext)
+}
+
+function finalizeWebhookMessage(webhookMessageId, messageContext) {
+  const context = messageContext.bindActionCreators({
+    resolveIssues,
+    escalateIssues,
+  })
+  return context.run(async knex => {
+    const { issueId } =
+      (await knex('WebhookMessage as m')
+        .join('Notification as n', 'm.id', 'n.webHookMessageId')
+        .where('m.id', webhookMessageId)
+        .first('n.issueId')) || {}
+    if (issueId) {
+      context.resolveIssues(issueId)
+      context.escalateIssues(issueId)
+    }
+  })
+}
+
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
+  const { personId } = await knex('WebhookMessage')
+    .where('id', webhookMessageId)
+    .first('personId')
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      partner: 'pr',
+      device: 'd',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      site: 's',
+      showUnapprovedDevices: true,
+    })
     .where({ 'm.id': webhookMessageId })
     .first(
       'tmpl.payload as payloadTemplate',
@@ -173,4 +242,6 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
+  onWebhookMessageSent,
+  onWebhookMessageError,
 }

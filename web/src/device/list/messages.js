@@ -1,17 +1,15 @@
 import { defineMessages } from 'react-intl'
+import { commonDefinitions } from '../../shared/utils/customMessages'
 
 export const messages = defineMessages({
+  ...commonDefinitions,
   devicesTitle: {
     id: 'pages.DeviceList.devicesTitle',
     defaultMessage: 'Devices',
   },
-  deviceName: {
-    id: 'pages.DeviceList.deviceName',
-    defaultMessage: 'Device Name',
-  },
-  state: {
-    id: 'pages.DeviceList.state',
-    defaultMessage: 'State',
+  device: {
+    id: 'pages.DeviceList.device',
+    defaultMessage: 'Device',
   },
   status: {
     id: 'pages.DeviceList.status',
@@ -27,6 +25,10 @@ export const messages = defineMessages({
   },
   issues: {
     id: 'pages.DeviceList.issues',
+    defaultMessage: 'Issues',
+  },
+  issueCategory: {
+    id: 'pages.DeviceList.issueCategory',
     defaultMessage: 'Issues',
   },
   reportingFor: {
@@ -80,13 +82,33 @@ export const messages = defineMessages({
       other {# devices}
     }`,
   },
+  exportDevices: {
+    id: 'pages.DeviceList.exportDevices',
+    defaultMessage: 'Export device list',
+  },
   reportingForDays: {
     id: 'pages.DeviceList.reportingForDays',
     defaultMessage: 'For {period}',
   },
-  noTests: {
-    id: 'pages.DeviceList.reportingForDays',
-    defaultMessage: 'No Tests',
+  noResults: {
+    id: 'pages.DeviceList.noResults',
+    defaultMessage: 'No Results',
+  },
+  issueCategoryDeviceHealth: {
+    id: 'pages.DeviceList.deviceHealth',
+    defaultMessage: 'Device',
+  },
+  issueCategoryReagentHealth: {
+    id: 'pages.DeviceList.reagentHealth',
+    defaultMessage: 'Reagent',
+  },
+  issueCategoryDataHealth: {
+    id: 'pages.DeviceList.dataHealth',
+    defaultMessage: 'Data',
+  },
+  issueCategoryConnectivityHealth: {
+    id: 'pages.DeviceList.connectivityHealth',
+    defaultMessage: 'Connectivity',
   },
 })
 

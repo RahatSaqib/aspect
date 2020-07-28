@@ -1,0 +1,158 @@
+{
+  "data": [
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DSTB - 2RHZE",
+      "externalId": "dstb-2rhze",
+      "i18nKey": "dstb-2rhze"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DSTB - 4RH",
+      "externalId": "dstb-4rh",
+      "i18nKey": "dstb-4rh"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Bedaquiline Based shorter regimen",
+      "externalId": "drtb-bbsr",
+      "i18nKey": "drtb-bbsr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Injection Based shorter regimen",
+      "externalId": "drtb-ibsr",
+      "i18nKey": "drtb-ibsr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Long Oral MDT-TB regimen and Pre XDR-TB",
+      "externalId": "drtb-lomr",
+      "i18nKey": "drtb-lomr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Pre XDR-TB (RES FQ) regimen/XDR-TB",
+      "externalId": "drtb-prexdr",
+      "i18nKey": "drtb-prexdr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Beyond XDR-TB (Individualized)",
+      "externalId": "drtb-bxdr",
+      "i18nKey": "drtb-bxdr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "type": "treatment",
+      "name": "DRTB - Beyond XDR-TB (Individualized)",
+      "externalId": "drtb-bxdr",
+      "i18nKey": "drtb-bxdr"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Request repeat VL",
+      "externalId": "rrvl",
+      "i18nKey": "rrvl"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Initiate advanced adherence counselling",
+      "externalId": "iaac",
+      "i18nKey": "iaac"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Switch to 2nd or 3rd line regime",
+      "externalId": "st2o3lr",
+      "i18nKey": "st2o3lr"
+    },
+    {
+      "assays": ["abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "treatment",
+      "name": "Maintain current regime",
+      "externalId": "mcr",
+      "i18nKey": "mcr"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "type": "outcome",
+      "name": "Cured",
+      "externalId": "cured",
+      "i18nKey": "cured"
+    },
+    {
+      "assays": [],
+      "type": "outcome",
+      "name": "Died",
+      "externalId": "died",
+      "i18nKey": "died"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "outcome",
+      "name": "Recovered",
+      "externalId": "recovered",
+      "i18nKey": "recovered"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "outcome",
+      "name": "Not Recovered",
+      "externalId": "notRecovered",
+      "i18nKey": "notRecovered"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "outcome",
+      "name": "Unknown",
+      "externalId": "unknown",
+      "i18nKey": "unknown"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "outcome",
+      "name": "Other",
+      "externalId": "other",
+      "i18nKey": "other"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "treatment",
+      "name": "Admission to Hospital",
+      "externalId": "admissionToHospital",
+      "i18nKey": "admissionToHospital"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "treatment",
+      "name": "Admission to Hospital ICU",
+      "externalId": "admissionToHospitalIcu",
+      "i18nKey": "admissionToHospitalIcu"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "treatment",
+      "name": "Quarantine",
+      "externalId": "quarantine",
+      "i18nKey": "quarantine"
+    },
+    {
+      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "type": "treatment",
+      "name": "Self-Quarantine",
+      "externalId": "selfQuarantine",
+      "i18nKey": "selfQuarantine"
+    }
+  ]
+}

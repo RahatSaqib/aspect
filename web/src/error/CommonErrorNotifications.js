@@ -9,7 +9,8 @@ export function errorPleaseTryAgainInAFewMinutes(
     ...defineMessages({
       resolution: {
         id: 'errorResponseMessages.common.tryAgainLater.resolution',
-        defaultMessage: 'Please try again in a few minutes',
+        defaultMessage:
+          'Please, try again in a few minutes. If the error persists, contact your administrator for support.',
       },
     }),
     ...messageDescriptors,
@@ -24,7 +25,7 @@ export function errorInsufficientScope(messageDescriptors, messageValues) {
       resolution: {
         id: 'errorResponseMessages.common.insufficientScope.resolution',
         defaultMessage:
-          'Please contact your administrator to grant access permissions.',
+          'There was a conflict with your permissions. Please, contact your administrator for support.',
       },
     }),
     ...messageDescriptors,

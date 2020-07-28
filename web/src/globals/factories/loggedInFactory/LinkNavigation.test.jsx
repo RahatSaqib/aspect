@@ -1,41 +1,33 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
 import { LinkNavigation } from './LinkNavigation'
+import Link from '../../../components/shared/Link'
 
 describe('LinkNavigation component', () => {
-  const renderer = new ReactShallowRenderer()
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
+  const intl = createIntl({ locale: 'en' })
 
-  it('should shallow render correctly', () => {
+  it('should shallow render without crash', () => {
     const props = {
       intl,
-      userPermissions: Immutable.Set(['browse:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
+      userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
     }
-    const element = renderer.render(<LinkNavigation {...props} />)
-    expect(element).toMatchSnapshot()
+    shallow(<LinkNavigation {...props} />)
   })
 
-  it('should see browse link when having feature and permission', () => {
+  it('should change the direction of Nav with different `type` prop', () => {
     const props = {
       intl,
-      userPermissions: Immutable.Set(['browse:view', 'device:view']),
-      userFeatures: Immutable.Set(['summaryDashboard', 'device']),
+      userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
     }
-    const element = renderer.render(<LinkNavigation {...props} />)
-    expect(element).toMatchSnapshot()
-  })
+    const wrapper = shallow(<LinkNavigation {...props} />)
+    expect(wrapper.prop('className')).toEqual('Navigation')
 
-  it('should not see browse link when having no device feature', () => {
-    const props = {
-      intl,
-      userPermissions: Immutable.Set(['browse:view', 'device:view']),
-      userFeatures: Immutable.Set(['summaryDashboard']),
-    }
-    const element = renderer.render(<LinkNavigation {...props} />)
-    expect(element).toMatchSnapshot()
+    wrapper.setProps({ type: 'vertical' })
+    expect(wrapper.hasClass('Navigation--vertical')).toBe(true)
+
+    wrapper.setProps({ type: 'horizontal' })
+    expect(wrapper.hasClass('Navigation--horizontal')).toBe(true)
   })
 })

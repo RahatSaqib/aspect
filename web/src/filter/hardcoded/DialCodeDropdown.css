@@ -1,3 +1,13 @@
-.Dropdown__templateValue .Item--hidden {
-  display: none;
+.Dropdown {
+  margin: 24px 0 20px 0;
+}
+
+.Dropdown__Icon {
+  color: var(--aspect-color-white-3);
+  font-size: 24px;
+}
+
+.Dropdown__Input {
+  cursor: pointer;
+  text-align: right;
 }

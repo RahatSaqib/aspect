@@ -1,6 +1,6 @@
 const _ = require('lodash')
-const Boom = require('boom')
-const differenceInHours = require('date-fns/difference_in_hours')
+const Boom = require('@hapi/boom')
+const differenceInHours = require('date-fns/differenceInHours')
 const { getDateOrDefault } = require('../../../shared/date')
 const { createUniqueIdForResult } = require('../../../result/service')
 

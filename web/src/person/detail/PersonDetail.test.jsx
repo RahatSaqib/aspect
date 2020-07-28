@@ -1,8 +1,8 @@
 import Immutable from 'immutable'
 import _ from 'lodash'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { IntlProvider } from 'react-intl'
+import { shallow } from 'enzyme'
+import { createIntl } from 'react-intl'
 import { PersonDetail } from './PersonDetail'
 
 function makeContext(userPermissions) {
@@ -13,13 +13,10 @@ function makeContext(userPermissions) {
   }
 }
 describe('PersonDetail module', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-  const { intl } = intlProvider.getChildContext()
-
   const props = {
-    intl,
+    intl: createIntl({ locale: 'en' }),
     editable: false,
-    user: makeContext(['person:admin']),
+    user: makeContext(['person:edit']),
     match: {
       params: {
         reporterId: '1',
@@ -33,17 +30,19 @@ describe('PersonDetail module', () => {
     }),
     showAcknowledgement: _.noop,
     fetchSinglePerson: _.noop,
+    createPerson: _.noop,
     updateSinglePerson: _.noop,
     updateSinglePersonLoginDetails: _.noop,
     updateSinglePersonUserPreferences: _.noop,
     fetchPartnersAndJobFunctionsForSelectList: _.noop,
+    isNew: false,
+    addPersonAssignment: _.noop,
+    deletePersonAssignment: _.noop,
   }
 
   describe('Person Detail component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
-
     it('should render correctly', () => {
-      const element = renderer.render(<PersonDetail {...props} />)
+      const element = shallow(<PersonDetail {...props} />)
       expect(element).toMatchSnapshot()
     })
   })

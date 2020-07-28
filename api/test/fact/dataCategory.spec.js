@@ -26,10 +26,10 @@ const {
   deviceStatusToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
+const { getRandomTBPatientData } = require('../../seeds/commonTbresults')
 
 const totalPatients = patients.length
 
@@ -48,7 +48,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -66,13 +66,9 @@ async function initUserAndJobs(knex, partnerId, siteId) {
       })
       .first()
     // get User
-    const { id: userId } = await knex('User')
-      .where({ name: userName })
-      .first()
+    const { id: userId } = await knex('User').where({ name: userName }).first()
     // get Person
-    const { id: personId } = await knex('Person')
-      .where({ userId })
-      .first()
+    const { id: personId } = await knex('Person').where({ userId }).first()
     // get (insert) Job
     let jobId
     const job = await knex('Job')
@@ -129,7 +125,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
   const categoryTokenWithIssue = 'PreviouslyTreated'
   const issueType = `DataCategoryLowFor${categoryTokenWithIssue}`
 
-  before(async () =>
+  before(() =>
     run(async knex => {
       // get dataCategory definitions
       const pluginName = partnerName.toLowerCase()
@@ -148,7 +144,9 @@ describe('DataCategoryLow Issues Endpoint', () => {
         .first()
 
       // get 1st site for current partner and labUser
-      const { s: { geographyId } } = await getSite(knex, {
+      const {
+        s: { geographyId },
+      } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
         requireInventory: false,
@@ -177,7 +175,6 @@ describe('DataCategoryLow Issues Endpoint', () => {
 
       // get dictionary data
       const sampleTypeId = await sampleTypeToId('DBS')
-      const resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
       const resultSourceId = await resultSourceToId('Generated')
       const resultTypeId = await resultTypeToId('Patient')
       const resultMtbNumber = 100
@@ -216,7 +213,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
           const sample = samples[i % samples.length]
 
           // get sample patient
-          const patient = patients[_.random(totalPatients - 1)]
+          const patient = getRandomTBPatientData(totalPatients - 1, patients)
 
           // set values for all categories
           dataCategories.forEach(category => {
@@ -248,18 +245,17 @@ describe('DataCategoryLow Issues Endpoint', () => {
             }
           })
 
-          const resultId = await knex('Result').insert({
+          const [resultId] = await knex('Result').insert({
             externalId: `Test-${i}`,
             assayId: assayGeneXpertMtbRifId,
             partnerId,
             geographyId,
             siteId, // new site
             deviceId, // new device
-            resultWorkflowStatusId,
             resultSourceId,
             resultTypeId,
             sampleId: sample.id, // new sanple
-            sampleRunNumber: `${i % 2 + 1}`,
+            sampleRunNumber: `${(i % 2) + 1}`,
             sampleGroup: `GRP-${i % 5}`,
             resultCategory1: resultCategoryDetectedId,
             patientData: JSON.stringify(patient),
@@ -269,6 +265,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
             createdBy: myanmarAdminId,
             updatedOn: now,
             updatedBy: myanmarAdminId,
+            reportableSiteId: siteId,
           })
           resultIds.push(resultId)
         })
@@ -285,42 +282,30 @@ describe('DataCategoryLow Issues Endpoint', () => {
     })
   )
 
-  after(async () =>
+  after(() =>
     run(async knex => {
       await waitForIdle(2000)
 
       if (issueEventIds && issueEventIds.length > 0) {
-        await knex('IssueEvent')
-          .whereIn('id', issueEventIds)
-          .delete()
+        await knex('IssueEvent').whereIn('id', issueEventIds).delete()
       }
       issueEventIds = []
 
       await cleanUpIssues(knex, issueIds)
 
-      await knex('Result')
-        .whereIn('id', resultIds)
-        .delete()
+      await knex('Result').whereIn('id', resultIds).delete()
       const sampleIds = samples.map(x => x.id)
-      await knex('Sample')
-        .whereIn('id', sampleIds)
-        .delete()
-      await knex('Device')
-        .where('id', deviceId)
-        .delete()
-      await knex('JobContext')
-        .whereIn('id', jobContextIds)
-        .delete()
-      await knex('Site')
-        .where('id', siteId)
-        .delete()
+      await knex('Sample').whereIn('id', sampleIds).delete()
+      await knex('Device').where('id', deviceId).delete()
+      await knex('JobContext').whereIn('id', jobContextIds).delete()
+      await knex('Site').where('id', siteId).delete()
 
       await queuePurge()
     })
   )
 
-  it('trigger DataCategoryLow issue for testing site', async () => {
-    await runTestWithKnex(async knex => {
+  it('trigger DataCategoryLow issue for testing site', () =>
+    runTestWithKnex(async knex => {
       // last 30 days
       const period = {
         name: 'last 30 days',
@@ -456,6 +441,5 @@ describe('DataCategoryLow Issues Endpoint', () => {
       // see /seeds/dataCategory.js for NotificationType items
       assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User')
       assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer')
-    })
-  })
+    }))
 })

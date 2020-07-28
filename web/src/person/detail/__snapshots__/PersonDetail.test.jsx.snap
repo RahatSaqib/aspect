@@ -12,6 +12,21 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
   <Connect(lifecycle(Component))
     title="Person Detail"
   />
-  <WithStyles(Paper) />
+  <Switch>
+    <Route
+      exact={true}
+      render={[Function]}
+    />
+    <Route
+      exact={true}
+      path="undefined/system-access-control"
+      render={[Function]}
+    />
+    <Route
+      exact={true}
+      path="undefined/job-assignment"
+      render={[Function]}
+    />
+  </Switch>
 </div>
 `;

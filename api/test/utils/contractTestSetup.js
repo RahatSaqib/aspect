@@ -1,4 +1,4 @@
-require('dotenv-safe').load()
+require('dotenv-safe').config()
 
 const supertest = require('supertest')
 const jwt = require('jsonwebtoken')
@@ -13,6 +13,7 @@ let attemptsToConnect = 0
 const { assert } = chai
 chai.should()
 chai.use(require('chai-subset'))
+chai.use(require('chai-as-promised'))
 
 function attemptToConnectAndLogin(done) {
   if (attemptsToConnect === 3) {

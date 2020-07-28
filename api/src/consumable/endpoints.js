@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   listConsumableTypes,
@@ -22,14 +22,12 @@ const routes = [
       notes: 'Pageable and sortable list of consumable types',
       auth: { scope: ['inventory:view', 'inventory:edit'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for consumable type'),
-          },
-          validateSortPageParams('name')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for consumable type'),
+          ...validateSortPageParams('name'),
+        },
       },
     },
   },
@@ -40,16 +38,14 @@ const routes = [
     config: {
       description: 'Consumable Reason',
       notes: 'Pageable and sortable list for reaons that a consumable was used',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
+      auth: { scope: ['inventory'] },
       validate: {
-        query: Object.assign(
-          {
-            name: Joi.string()
-              .allow('')
-              .description('Filter for consumable reason'),
-          },
-          validateSortPageParams('name')
-        ),
+        query: {
+          name: Joi.string()
+            .allow('')
+            .description('Filter for consumable reason'),
+          ...validateSortPageParams('name'),
+        },
       },
     },
   },
@@ -61,13 +57,10 @@ const routes = [
       description:
         'Gets the consumable quantities for each assay for a specific consumable',
       notes: 'Returns a list of assay consumable records',
-      auth: { scope: ['assay:view'] },
+      auth: { scope: ['assay'] },
       validate: {
         params: {
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -79,13 +72,10 @@ const routes = [
     config: {
       description: 'Gets the consumable quantities used by an assay run',
       notes: 'Returns a list of assay consumable records',
-      auth: { scope: ['assay:view'] },
+      auth: { scope: ['assay'] },
       validate: {
         params: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
         },
       },
     },
@@ -97,17 +87,11 @@ const routes = [
     config: {
       description: 'Creates a new consumable quantity record for an assay',
       notes: 'Returns the created assay consumable record',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay'] },
       validate: {
         payload: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
           quantity: Joi.number()
             .positive()
             .precision(2)
@@ -126,17 +110,11 @@ const routes = [
     config: {
       description: 'Updates the quantity of a consumable used by an assay run',
       notes: 'Returns the updated assay consumable record',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay'] },
       validate: {
         params: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
         payload: {
           quantity: Joi.number()
@@ -157,17 +135,11 @@ const routes = [
     config: {
       description: 'Deletes a consumable quantity record for an assay',
       notes: 'Returns ok: true when successfully deleted',
-      auth: { scope: ['assay:view', 'assay:edit'] },
+      auth: { scope: ['assay'] },
       validate: {
         params: {
-          assayId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
-          consumableId: Joi.number()
-            .integer()
-            .positive()
-            .required(),
+          assayId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number().integer().positive().required(),
         },
       },
     },

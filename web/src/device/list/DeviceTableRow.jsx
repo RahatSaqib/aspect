@@ -1,84 +1,100 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import { formatDistanceStrict } from 'date-fns'
+import { formatDistanceStrict, parseISO } from 'date-fns'
+import { injectIntl } from 'react-intl'
+
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import ColoredNumber from '../../components/shared/ColoredNumber'
 import messages from './messages'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
+const sharedCssClasses = classnames.bind(
+  require('../../components/shared/DataTableRow.css')
+)
 
-const enhance = _.identity
+const enhance = _.identity(injectIntl)
 
-const Rate = ({ intl, it, messageId }) => (
+const Rate = ({ intl, it, messageId, threshold }) => (
   <span>
-    {it.total === 0
-      ? intl.formatMessage(messages.noTests)
-      : intl.formatNumber(it.count / it.total, { style: 'percent' })}
+    {it.total === 0 ? (
+      intl.formatMessage(messages.noResults)
+    ) : (
+      <ColoredNumber
+        number={it.rate}
+        intl={intl}
+        formatNumberStyle="percent"
+        error={threshold && it.rate > threshold}
+      />
+    )}
     <span className={cssClasses('Rate__hover')}>
       {intl.formatMessage(messageId, it)}
     </span>
   </span>
 )
 
-const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
+const DeviceTableRow = ({
+  intl,
+  device,
+  onAlertClick,
+  displayPreferences,
+  ...restProps
+}) => (
   <TableRow
     {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
+    className={cssClasses('TableRow', restProps.className)}
   >
-    <TableCell className={cssClasses('TableCell')}>
-      {device.get('name')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {device.get('state')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {device.get('status')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>{device.get('name')}</TableCell>
+    <TableCell>{device.get('status')}</TableCell>
+    <TableCell>
       <Rate
         intl={intl}
         it={device.get('availability').toJS()}
         messageId={messages.availabilityOfDays}
       />
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
+        threshold={displayPreferences.get('errorRateThreshold')}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--alerts')}>
-      {device
-        .get('alerts')
-        .map(it => (
-          <ColoredButton
-            key={it.get('type')}
-            className={cssClasses('ColoredButton--micro')}
-            shipCove={it.get('type') === 'needs-repair'}
-            shakespeare={it.get('type') === 'warranty'}
-            mountain={it.get('type') === 'quality-control'}
-            brink={it.get('type') === 'connectivity'}
-            label={intl.formatMessage(messages[_.camelCase(it.get('type'))])}
-            onClick={onAlertClick}
-            data-pathname="/browse/notification/detail"
-          />
-        ))}
+    <TableCell className={cssClasses('TableCell--alerts')}>
+      {device.get('issueCategories').map(it => (
+        <ColoredButton
+          key={it.get('key')}
+          className={sharedCssClasses('ColoredButton--micro')}
+          shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
+          shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
+          mountain={it.get('key') === 'issueCategoryDataHealth'}
+          brink={it.get('key') === 'issueCategoryConnectivityHealth'}
+          label={intl.formatMessage(messages[it.get('key')])}
+          onClick={onAlertClick}
+          data-device-id={device.get('id')}
+        />
+      ))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>
       {intl.formatMessage(messages.reportingForDays, {
-        period: formatDistanceStrict(new Date(), device.get('createdOn')),
+        period: formatDistanceStrict(
+          new Date(),
+          parseISO(device.get('createdOn'))
+        ),
       })}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(device.get('lastSeen'))}
+    <TableCell>{formatRelative(intl, device.get('lastSeen'))}</TableCell>
+    <TableCell numeric>
+      {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--numeric')}>
-      {intl.formatNumber(device.get('lastMonth'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--numeric')}>
-      {intl.formatNumber(device.get('thisMonth'))}
+    <TableCell numeric>
+      {intl.formatNumber(device.get('resultCountThisMonth'))}
     </TableCell>
   </TableRow>
 )

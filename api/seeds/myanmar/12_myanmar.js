@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {
@@ -28,17 +28,11 @@ async function removeChildrenDashboardTarget(knex) {
     .where('widgetId', childrenWidgetId)
     .delete()
 
-  await knex('DashboardWidgetTarget')
-    .where('targetToken', 'Children')
-    .delete()
+  await knex('DashboardWidgetTarget').where('targetToken', 'Children').delete()
 
-  await knex('DashboardWidget')
-    .where('id', childrenWidgetId)
-    .delete()
+  await knex('DashboardWidget').where('id', childrenWidgetId).delete()
 
-  await knex('Target')
-    .where('targetToken', 'Children')
-    .delete()
+  await knex('Target').where('targetToken', 'Children').delete()
 }
 
 async function turnOffEmailSms(knex) {
