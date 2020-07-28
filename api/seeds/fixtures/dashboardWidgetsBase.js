@@ -189,7 +189,7 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `SELECT
-      CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
+      CONCAT(ROUND(IFNULL(AVG(AvailabilityPercentage), 0)), '%') AS cnt
   FROM
       (SELECT
           COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(NOW(), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
@@ -204,7 +204,7 @@ module.exports = {
       WHERE dt.externalId = 'CepheidGeneXpert'
       GROUP BY d.id) AS q;`,
       sqlForStatUnit: `SELECT
-      CONCAT(ROUND(AVG(AvailabilityPercentage)), '%') AS cnt
+      CONCAT(ROUND(IFNULL(AVG(AvailabilityPercentage), 0)), '%') AS cnt
   FROM
       (SELECT
           COUNT(DISTINCT DATE(r.endedOn)) * 100 / DATEDIFF(NOW(), GREATEST(DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'),d.createdOn)) AS AvailabilityPercentage
@@ -424,38 +424,44 @@ module.exports = {
           CONCAT(
             ROUND(
               IFNULL(
-                SUM(CASE WHEN quantityOnHand IS NULL AND consumableName like '%GeneXpert%' THEN 1 ELSE 0 END)
+                SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
                 / COUNT(siteId) * 100
               ,0)
             ,0)
           ,'%') AS cnt
           FROM (
-            SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, c.name as consumableName
+            SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, dt.externalId as deviceTypeExternalId
             FROM Site AS s
             INNER JOIN Device AS d ON d.siteId = s.id
             LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
                                               AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
                                               AND LAST_DAY(NOW())
             LEFT OUTER JOIN Consumable AS c ON i.consumableId = c.id
+            LEFT OUTER JOIN ConsumableAssay ca ON c.id = ca.consumableId
+            LEFT OUTER JOIN Assay a on ca.assayId = a.id
+            LEFT OUTER JOIN DeviceType dt on a.deviceTypeId = dt.id
             GROUP BY s.id
           ) AS innerQuery`,
       sqlForStatUnit: `SELECT
       CONCAT(
         ROUND(
           IFNULL(
-            SUM(CASE WHEN quantityOnHand IS NULL AND consumableName like '%GeneXpert%' THEN 1 ELSE 0 END)
+            SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
             / COUNT(siteId) * 100
           ,0)
         ,0)
       ,'%') AS cnt
       FROM (
-        SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, c.name as consumableName
+        SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, dt.externalId as deviceTypeExternalId
         FROM Site AS s
         INNER JOIN Device AS d ON d.siteId = s.id
         LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
                                         AND i.createdOn BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 month, '%Y-%m-01')
                                         AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
         LEFT OUTER JOIN Consumable AS c ON i.consumableId = c.id
+        LEFT OUTER JOIN ConsumableAssay ca ON c.id = ca.consumableId
+        LEFT OUTER JOIN Assay a on ca.assayId = a.id
+        LEFT OUTER JOIN DeviceType dt on a.deviceTypeId = dt.id
         GROUP BY s.id
           ) AS innerQuery`,
       statUnit: '{unit} last month',
