@@ -11,6 +11,7 @@ const {
   addDays,
   subDays,
   startOfDay,
+  startOfToday,
   addYears,
   format: dateFormat,
 } = require('date-fns')
@@ -2279,7 +2280,7 @@ describe('Device API routes for GxAlert Device', () => {
               deviceId: geneXpertDevice.id,
               deviceMaintenanceStatusId:
                 deviceMaintenanceStatuses.reportedActive,
-              day: startOfDay(new Date()),
+              day: startOfToday(),
               data: '{}',
               createdOn: new Date(),
             })

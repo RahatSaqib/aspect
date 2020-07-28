@@ -1042,9 +1042,11 @@ async function onDeviceUpdateMaintenanceStatusNoResults(
   const { deviceId, options = {} } = action
   if (deviceId) {
     const daysSinceLastResult = []
-    let day = options.lastResultOn || new Date()
-    while (startOfDay(parseDateOrDefault(day)) < new Date()) {
-      daysSinceLastResult.push(startOfDay(day))
+    let day = options.lastResultOn
+      ? startOfDay(parseDateOrDefault(options.lastResultOn))
+      : startOfDay(new Date())
+    while (day < new Date()) {
+      daysSinceLastResult.push(day)
       day = addDays(day, 1)
     }
     await Promise.each(daysSinceLastResult, day =>
