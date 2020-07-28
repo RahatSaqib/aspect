@@ -608,7 +608,7 @@ const mockedDeviceStatus = [
 
 const mockedDeviceStatusOut = [
   {
-    date: '31',
+    date: 'May 31st',
     devicesTotal: 23,
     devicesActiveRaw: 5,
     devicesActive: '21.7391',
@@ -616,7 +616,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '1',
+    date: 'June 1st',
     devicesTotal: 14,
     devicesActiveRaw: 2,
     devicesActive: '14.2857',
@@ -624,7 +624,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '2',
+    date: 'June 2nd',
     devicesTotal: 56,
     devicesActiveRaw: 48,
     devicesActive: '85.7143',
@@ -632,7 +632,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '3',
+    date: 'June 3rd',
     devicesTotal: 39,
     devicesActiveRaw: 20,
     devicesActive: '51.2821',
@@ -640,7 +640,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '4',
+    date: 'June 4th',
     devicesTotal: 57,
     devicesActiveRaw: 57,
     devicesActive: '100.0000',
@@ -648,23 +648,23 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '5',
+    date: 'June 5th',
     devicesTotal: 45,
     devicesActiveRaw: 40,
-    devicesActive: 0,
+    devicesActive: '88.8889',
     devicesInactive: 0,
-    weekendOrHoliday: 100,
+    weekendOrHoliday: '11.1111',
   },
   {
-    date: '6',
+    date: 'June 6th',
     devicesTotal: 20,
     devicesActiveRaw: 2,
-    devicesActive: 0,
+    devicesActive: '10.0000',
     devicesInactive: 0,
-    weekendOrHoliday: 100,
+    weekendOrHoliday: '90.0000',
   },
   {
-    date: '7',
+    date: 'June 7th',
     devicesTotal: 28,
     devicesActiveRaw: 0,
     devicesActive: '0.0000',
@@ -672,7 +672,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '8',
+    date: 'June 8th',
     devicesTotal: 43,
     devicesActiveRaw: 34,
     devicesActive: '79.0698',
@@ -680,7 +680,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '9',
+    date: 'June 9th',
     devicesTotal: 58,
     devicesActiveRaw: 14,
     devicesActive: '24.1379',
@@ -688,7 +688,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '10',
+    date: 'June 10th',
     devicesTotal: 39,
     devicesActiveRaw: 23,
     devicesActive: '58.9744',
@@ -696,7 +696,7 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '11',
+    date: 'June 11th',
     devicesTotal: 54,
     devicesActiveRaw: 13,
     devicesActive: '24.0741',
@@ -704,23 +704,23 @@ const mockedDeviceStatusOut = [
     weekendOrHoliday: 0,
   },
   {
-    date: '12',
+    date: 'June 12th',
     devicesTotal: 49,
     devicesActiveRaw: 19,
-    devicesActive: 0,
+    devicesActive: '38.7755',
     devicesInactive: 0,
-    weekendOrHoliday: 100,
+    weekendOrHoliday: '61.2245',
   },
   {
-    date: '13',
+    date: 'June 13th',
     devicesTotal: 45,
     devicesActiveRaw: 8,
-    devicesActive: 0,
+    devicesActive: '17.7778',
     devicesInactive: 0,
-    weekendOrHoliday: 100,
+    weekendOrHoliday: '82.2222',
   },
   {
-    date: '14',
+    date: 'June 14th',
     devicesTotal: 47,
     devicesActiveRaw: 45,
     devicesActive: '95.7447',
