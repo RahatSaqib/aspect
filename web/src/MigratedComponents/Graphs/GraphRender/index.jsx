@@ -16,6 +16,23 @@ import EmptyGraph from '../EmptyData'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
+const EmptyOrLoading = ({ graphState, graphData, graphKeys, type }) => {
+  const { data } = graphState
+  const isEmpty = data && data.length < 1 && !graphData && !graphKeys
+  return (
+    <div className={cssClasses('graphrender__spinner')}>
+      {isEmpty ? <EmptyGraph type={type} /> : <CircularProgress />}
+    </div>
+  )
+}
+
+EmptyOrLoading.propTypes = {
+  graphState: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  graphData: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  graphKeys: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  type: PropTypes.string.isRequired,
+}
+
 const GraphRender = ({
   assays,
   id: parentId,
@@ -43,7 +60,6 @@ const GraphRender = ({
     const { [id]: graphState = false } = parentState
     return {
       culture,
-      // graphState: { data: [] },
       graphState,
     }
   })
@@ -86,12 +102,6 @@ const GraphRender = ({
     })
   }, [])
 
-  const EmptyOrLoading = () => {
-    const { data } = graphState
-    const isEmpty = data && data.length < 1 && !graphData && !graphKeys
-    return isEmpty ? <EmptyGraph type={type} /> : <CircularProgress />
-  }
-
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
@@ -105,9 +115,12 @@ const GraphRender = ({
             assaysFromState={assaysFromState}
           />
         )}
-        <div className={cssClasses('graphrender__spinner')}>
-          <EmptyOrLoading />
-        </div>
+        <EmptyOrLoading
+          graphState={graphState}
+          graphData={graphData}
+          graphKeys={graphKeys}
+          type={type}
+        />
       </div>
     </Grid>
   )
