@@ -903,7 +903,10 @@ async function manuallySetDeviceMaintenanceStatus(request) {
   const dataConstraints = await getConstraints(credentials)
   const { id: deviceId } = await knex('Device as d')
     .where('d.id', +params.deviceId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      showUnapprovedDevices: true,
+    })
     .first('d.id')
 
   if (!deviceId) {
@@ -1273,7 +1276,10 @@ async function deviceMaintenanceStatus(request) {
             'dmsl.deviceMaintenanceStatusId'
           )
       })
-      .modify(addConstraints, dataConstraints, { device: 'd' })
+      .modify(addConstraints, dataConstraints, {
+        device: 'd',
+        showUnapprovedDevices: true,
+      })
       .where('d.id', deviceId)
       .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
       .first('dmsl.*')) || {}
