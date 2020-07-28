@@ -24,12 +24,14 @@
 }
 
 .placeholder__graphPie {
-    width: 80%;
+    width: 90vw;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80%;
+    height: 90vw;
     opacity: 0.4;
+    max-width: 280px;
+    max-height: 280px;
 }
 
 .placeholder__graphItem {
