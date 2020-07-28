@@ -498,16 +498,19 @@ module.exports = {
       subTitleI18nKey: null,
       sqlForIndicator: `
     SELECT ROUND(
-        AVG(
-          TIMESTAMPDIFF(
-            MINUTE,
-            CONVERT_TZ(r.endedOn,
-            COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-            ),
-            r.createdOn
+        IFNULL(
+          AVG(
+            TIMESTAMPDIFF(
+              MINUTE,
+              CONVERT_TZ(r.endedOn,
+              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+              ),
+              r.createdOn
+            )
           )
+          ,0
         )
-      )
+      ) as cnt
     FROM Result AS r
     INNER JOIN Site AS s ON r.siteId = s.id
     INNER JOIN Geography AS g ON s.geographyId = g.stateId
@@ -523,20 +526,23 @@ module.exports = {
         ),
         r.createdOn
         )>=2
-           AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW();
+           AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
       `,
       sqlForStatUnit: `
     SELECT ROUND(
-        AVG(
-          TIMESTAMPDIFF(
-            MINUTE,
-            CONVERT_TZ(r.endedOn,
-            COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-            ),
-            r.createdOn
+        IFNULL(
+          AVG(
+            TIMESTAMPDIFF(
+              MINUTE,
+              CONVERT_TZ(r.endedOn,
+              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+              ),
+              r.createdOn
+            )
           )
+          ,0
         )
-      )
+      ) as cnt
     FROM Result AS r
     INNER JOIN Site AS s ON r.siteId = s.id
     INNER JOIN Geography AS g ON s.geographyId = g.stateId
@@ -552,7 +558,8 @@ module.exports = {
         ),
         r.createdOn
         )>=2
-        AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND last_day(NOW()- interval 1 month);`,
+        AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') 
+                      AND last_day(NOW()- interval 1 month)`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'avgTimeToUploadStat',
       link: '/browse/result',
@@ -561,7 +568,11 @@ module.exports = {
       description:
         'Measure the average time between the time where the test is performed in the device and when the result is created in aspect in the current month/last month.',
       descriptionI18nKey: 'avgTimeToUploadDescription',
-      dashboards: ['operational'],
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
     },
   ],
 }

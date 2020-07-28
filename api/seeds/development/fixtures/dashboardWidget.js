@@ -189,5 +189,11 @@ module.exports = {
       ),
       sortOrder: 15,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'avgTimeToUpload'
+      ),
+      sortOrder: 16,
+    },
   ],
 }
