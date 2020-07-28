@@ -68,7 +68,7 @@ describe('Permissions', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 1)
           // check one permission
-          const item = res.body.data.find(x => x === 'person:admin')
+          const item = res.body.data.find(x => x === 'person:edit')
           assert.isString(item)
           //
           done()

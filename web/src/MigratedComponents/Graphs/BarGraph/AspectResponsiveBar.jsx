@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
 import { GraphLegend } from '../GraphLegend'
-import GraphToolTip from '../GraphToolTip'
+import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 
 import {
   formatValuesForGraphs,
@@ -14,6 +14,8 @@ import {
   generateLegend,
   getMaxValueForDivergent,
 } from '../Helpers/Formatters'
+
+import { calcOverallRate } from '../Helpers/Formatters/calcs'
 
 const AspectResponsiveBar = ({
   assaysFromState,
@@ -26,6 +28,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
+  const legendsNotToRender = ['weekendOrHoliday']
   const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =
     type === 'divergent'
@@ -44,7 +47,7 @@ const AspectResponsiveBar = ({
     ? [
         {
           dataFrom: 'keys',
-          data: keys && keys.map(k => generateLegend(k, assaysFromState)),
+          data: keys.map(k => generateLegend(k, assaysFromState, type)),
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
@@ -53,10 +56,13 @@ const AspectResponsiveBar = ({
           itemsSpacing: 2,
           itemWidth: 120,
           itemHeight: 20,
-          itemDirection: 'right-to-left',
+          itemDirection:
+            type === 'stackedDeviceActivity'
+              ? 'left-to-right'
+              : 'right-to-left',
           itemOpacity: 0.85,
           symbolSize: 20,
-          symbolShape: 'circle',
+          symbolShape: type === 'stackedDeviceActivity' ? 'square' : 'circle',
           effects: [
             {
               on: 'hover',
@@ -76,9 +82,9 @@ const AspectResponsiveBar = ({
       indexBy={indexBy}
       colorBy="index"
       enableLabel={false}
-      enableGridY={false}
+      enableGridY={type === 'stackedDeviceActivity'}
       {...divergentExtraConfig}
-      padding={0.3}
+      padding={type === 'stackedDeviceActivity' ? 0.03 : 0.3}
       borderWidth={0}
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
@@ -88,23 +94,34 @@ const AspectResponsiveBar = ({
       animate
       motionStiffness={90}
       motionDamping={15}
-      layers={['grid', 'axes', 'bars', 'markers', GraphLegend]}
+      layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
       colors={v => generateColorForValue(v)}
-      margin={generateMargin(tickValuesYShape, displayLegend)}
-      tooltip={v => (
-        <GraphToolTip
-          values={generateToolTip(
-            v,
-            displayMethod,
-            assaysFromState,
-            intlFormatNumber
-          )}
-        />
-      )}
+      margin={generateMargin(tickValuesYShape, displayLegend, type)}
+      tooltip={v =>
+        v && legendsNotToRender.includes(v.id) ? (
+          <EmptyTooltip title={v.id} />
+        ) : (
+          <GraphToolTip
+            values={generateToolTip(
+              v,
+              displayMethod,
+              assaysFromState,
+              intlFormatNumber,
+              type
+            )}
+          />
+        )
+      }
       axisLeft={{
         tickSize: 5,
         tickValues: yTickvalues,
         format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+        legendPosition: 'middle',
+        legendOffset: -60,
+        legend:
+          type === 'stackedDeviceActivity'
+            ? 'Percent of Monthly Status: June'
+            : false,
       }}
       axisBottom={{
         tickSize: 5,
@@ -113,9 +130,43 @@ const AspectResponsiveBar = ({
         legendPosition: 'middle',
         legendOffset: 32,
         tickValues: xTickValues,
-        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+        format: v =>
+          type === 'stackedDeviceActivity'
+            ? v.replace(/\D/g, '')
+            : formatValuesForGraphs(v, displayMethod, intlFormatNumber),
       }}
       legends={legends}
+      theme={
+        type === 'stackedDeviceActivity' && {
+          grid: {
+            line: {
+              stroke: 'white',
+              strokeWidth: 2,
+            },
+          },
+        }
+      }
+      markers={
+        type === 'stackedDeviceActivity' && [
+          {
+            axis: 'y',
+            value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
+            lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
+            legendOrientation: 'horisontal',
+            legend: `${calcOverallRate(
+              'devicesActiveRaw',
+              'devicesTotal',
+              data
+            ).toFixed(2)}%`,
+            legendOffsetX: -3,
+            legendOffsetY: 0,
+            textStyle: {
+              fill: 'rgba(32, 161, 179, 1)',
+              fontWeight: 'bold',
+            },
+          },
+        ]
+      }
     />
   )
 }
@@ -146,6 +197,7 @@ AspectResponsiveBar.propTypes = {
     'group',
     'divergent',
     'barLegacyTreatment',
+    'stackedDeviceActivity',
   ]),
 }
 

@@ -83,7 +83,17 @@ export const sanitizeFiltersStringBy = config => filtersString =>
   )
 
 const sanitizeBrowseLink = userPermissions => {
-  const permissions = userPermissions.toJS()
+  const permissions = []
+
+  userPermissions.toJS().forEach(permission => {
+    permissions.push(permission)
+    if (permission.includes(':')) {
+      const splittedPermission = permission.split(':')
+      const permissionModule = splittedPermission[0]
+      permissions.push(permissionModule)
+    }
+  })
+
   const source = _.filter(
     navigations,
     link => _.intersection(link.requiredPermissions, permissions).length >= 1
@@ -116,12 +126,11 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
               label: source.label,
             })
           }
-        } else {
+        } else
           result.push({
             href: source.href,
             label: source.label,
           })
-        }
       }
       return result
     },

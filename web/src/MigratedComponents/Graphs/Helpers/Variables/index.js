@@ -6,16 +6,24 @@ const envSource =
     : Object.assign(process.env, variables.customPropertiesVariables)
 
 const {
+  '--alto-2': alto2,
+  '--anakiwa': anakiwa,
   '--aspect-color-black': colorBlack,
   '--aspect-color-mandy': colorMandy,
   '--aspect-color-mandy-2': colorMandy2,
   '--aspect-color-mantis': colorMantis,
   '--aspect-color-pink': colorPink,
-  '--purple-mountains-majesty': colorPurple,
   '--aspect-color-scooter-blue-4': colorBlue4,
   '--aspect-color-supernova': colorSuperNova,
   '--aspect-color-supernova-2': colorSuperNova2,
   '--aspect-color-white-4': colorWhite4,
+  '--conifer': conifer,
+  '--eastern-blue': easternBlue,
+  '--geyser': geyser,
+  '--wild-sand': wildSand,
+  '--purple-mountains-majesty': colorPurple,
+  '--tundora': tundora,
+  '--thunderbird': thunderbird,
 } = envSource
 
 const graphColorMap = [
@@ -42,6 +50,13 @@ const graphColorMap = [
   { id: 21, externalId: 'Female', color: colorPurple },
   { id: 22, externalId: 'Confirmed', color: colorMantis },
   { id: 23, externalId: 'NotConfirmed', color: colorBlue4 },
+  { id: 24, externalId: 'devicesActive', color: conifer },
+  { id: 25, externalId: 'devicesInactive', color: alto2 },
+  { id: 26, externalId: 'weekendOrHoliday', color: wildSand },
+  { id: 27, externalId: 'devicesNeedsRepair', color: thunderbird },
+  { id: 28, externalId: 'devicesUnknown', color: tundora },
+  { id: 29, externalId: 'devicesStockOut', color: anakiwa },
+  { id: 30, externalId: 'medianMarker', color: easternBlue },
   { id: 99, externalId: 'Cases', color: colorMantis },
 ]
 

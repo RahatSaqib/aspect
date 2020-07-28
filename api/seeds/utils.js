@@ -5,6 +5,7 @@ const { readJson } = require('fs-extra')
 const path = require('path')
 const { addMilliseconds, subDays, addMinutes, format } = require('date-fns')
 const relativeObjectsSeeds = require('./relativeObjectsSeeds')
+const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
   allResultCategoryToId,
@@ -752,6 +753,57 @@ async function seedIssueEventTriggersForPartner(
           await knex('IssueEventTrigger').insert({
             ...triggerData,
             triggerConditions: JSON.stringify(triggerConditions),
+            createdOn: now,
+            updatedOn: now,
+          })
+        }
+      }
+    }
+  )
+}
+
+// Ensures all escalation triggers for the given partner.
+// This will only seed for escalation triggers that do
+// not already exist for given partner issue type, and level so
+// it can be called multiple times, and can be called after seeding custom triggers
+async function seedIssueEscalationTriggersForPartner(
+  knex,
+  partnerId,
+  identifiers = []
+) {
+  const now = new Date()
+
+  // get escalation triggers limited by the identifiers
+  const { data } = await readJson(
+    './seeds/fixtures/IssueEscalationTrigger.json'
+  )
+
+  const [issueTypes] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+  ])
+
+  await Promise.each(
+    data,
+    async ({
+      identifier,
+      issueType,
+      escalateToLevel,
+      escalationConditions,
+    }) => {
+      // only try to insert/update if the issue type exists
+      if (identifiers.indexOf(identifier) >= 0 && issueTypes[issueType]) {
+        const triggerData = {
+          partnerId,
+          issueTypeId: issueTypes[issueType].id,
+          escalateToLevel,
+        }
+        const existingTrigger = await knex('IssueEscalationTrigger')
+          .where(triggerData)
+          .first('id')
+        if (existingTrigger == null) {
+          await knex('IssueEscalationTrigger').insert({
+            ...triggerData,
+            escalationConditions: JSON.stringify(escalationConditions),
             createdOn: now,
             updatedOn: now,
           })
@@ -2869,6 +2921,187 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
 }
 
+/**
+ * Adds a new JobFunctionPermission row for each permission id at the permissionsTo parameter that will be associated to the job functions that have assigned one of the permissions of the permissionsFrom one
+ * @param {object} knex Knex instance
+ * @param {array} currentPermissions An array of permissions ids
+ * @param {array} additionalPermissions An array of permissions ids that will be associated to the
+ */
+async function mapJobFunctionPermissions(
+  knex,
+  currentPermissions,
+  additionalPermissions
+) {
+  const jobFunctionsIds = await knex('JobFunctionPermission')
+    .whereIn('permissionId', currentPermissions)
+    .distinct('jobFunctionId')
+  let insertJobs = []
+  for (let index = 0; index < jobFunctionsIds.length; index++) {
+    const { jobFunctionId } = jobFunctionsIds[index]
+    insertJobs = [
+      ...insertJobs,
+      ...additionalPermissions.map(permissionId =>
+        knex('JobFunctionPermission')
+          .where({ jobFunctionId, permissionId })
+          .then(rows => {
+            if (rows.length === 0) {
+              return knex('JobFunctionPermission').insert({
+                permissionId,
+                jobFunctionId,
+              })
+            }
+          })
+      ),
+    ]
+  }
+
+  if (insertJobs.length > 0) await Promise.all(insertJobs)
+}
+
+async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
+  // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
+  // but not critical if field dashboards remains null - we handle setting default value of { home: {} } in both API and WEB
+  await knex('DashboardWidget')
+    .whereNull('dashboards')
+    .update({
+      dashboards: JSON.stringify({ home: {} }),
+    })
+
+  await Promise.all(
+    _.map(
+      widgets.filter(({ dashboards }) => _.isPlainObject(dashboards)),
+      ({ dashboards, externalId }) =>
+        knex('DashboardWidget')
+          .where({ externalId })
+          .update({
+            dashboards: JSON.stringify(dashboards),
+          })
+    )
+  )
+}
+
+/**
+ * Removes a permission activity and replaces it for another one
+ * @param  {[object]} knex The knex instance
+ * @param  {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
+ * @param  {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
+ */
+async function removeAndReplaceActivity(
+  knex,
+  activityToRemove,
+  activityToReplaceFor
+) {
+  const modules = await getPermissionModules(knex)
+  const modulesNames = Object.keys(modules)
+
+  await Promise.each(modulesNames, async moduleName => {
+    const activityToRemoveId = modules[moduleName][activityToRemove]
+
+    if (activityToRemoveId) {
+      let activityToReplaceForId = modules[moduleName][activityToReplaceFor]
+
+      // If module has activityToRemove, reassignation should be done
+      if (!activityToReplaceForId) {
+        // If module doesn't have the activityToReplaceFor
+        // Inserts the new permission
+        const [permissionId] = await knex('Permission').insert({
+          module: moduleName,
+          activity: activityToReplaceFor,
+        })
+
+        activityToReplaceForId = permissionId
+      }
+
+      // Assigns the activityToReplaceFor to all the job functions that use the activityToRemove
+      await mapJobFunctionPermissions(
+        knex,
+        [activityToRemoveId],
+        [activityToReplaceForId]
+      )
+
+      await knex('JobFunctionPermission')
+        .where({ permissionId: activityToRemoveId })
+        .delete()
+      await knex('Permission').where({ id: activityToRemoveId }).delete()
+    }
+  })
+}
+
+// ***********************************************************************
+async function seedIssueTypeModuleReplaced(knex, { userName }) {
+  const { id: adminId } = await knex('User')
+    .where({ name: userName })
+    .first('id')
+
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // get previously defined data for ModuleReplaced issue type
+  const {
+    ModuleReplaced: {
+      issueType,
+      MessageType,
+      AlertTemplate,
+      EmailTemplate,
+      SmsTemplate,
+    },
+  } = await getBaseIssues(auditFields)
+
+  // ------------------------------------------
+  // 'Module Replaced' issue templates
+  // ------------------------------------------
+  const { id: moduleAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    ['message'],
+    {
+      ...AlertTemplate,
+      ...auditFields,
+    }
+  )
+  const { id: moduleSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      ...SmsTemplate,
+      ...auditFields,
+    }
+  )
+  const { id: moduleEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      ...EmailTemplate,
+      ...auditFields,
+    }
+  )
+
+  // ------------------------------------------
+  // MessageType
+  // ------------------------------------------
+  const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
+    ...MessageType,
+    alertTemplateId: moduleAlertTemplateId,
+    smsTemplateId: moduleSmsTemplateId,
+    emailTemplateId: moduleEmailTemplateId,
+  })
+
+  // ------------------------------------------
+  // IssueType
+  // ------------------------------------------
+  await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
+    ...issueType,
+    defaultMessageTypeId: moduleMessageTypeId,
+  })
+}
+
 module.exports = {
   addReports,
 
@@ -2934,4 +3167,10 @@ module.exports = {
   getResultForms,
 
   seedJobFunctionsAndUsersForOperationalData,
+  mapJobFunctionPermissions,
+  seedDashboardsJsonInDashboardWidget,
+  removeAndReplaceActivity,
+
+  seedIssueTypeModuleReplaced,
+  seedIssueEscalationTriggersForPartner,
 }

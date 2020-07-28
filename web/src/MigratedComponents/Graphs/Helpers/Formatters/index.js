@@ -1,4 +1,5 @@
 import first from 'lodash/first'
+import findIndex from 'lodash/findIndex'
 import forOwn from 'lodash/forOwn'
 import includes from 'lodash/includes'
 import keys from 'lodash/keys'
@@ -14,7 +15,7 @@ import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 
-import { getDayFromToday, getTimePeriod } from './datetime'
+import { getDayFromToday, getTimePeriod, getPreviousPeriod } from './datetime'
 import {
   getMaxValueForDivergent,
   roundIfNumber,
@@ -29,6 +30,7 @@ import {
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
+  groupForDeviceStatusAPI,
 } from './grouping'
 
 import validateGraphConfig from './validate'
@@ -48,6 +50,15 @@ const filterByMultiple = (data, filterBy) => {
   return data.filter(d =>
     keys(filterBy).every(f => includes(filterBy[f].values, d[f]))
   )
+}
+
+const findArrayIndexByStringPartial = (array, key, string) => {
+  const formattedSearchString = string.toLowerCase()
+  const index = findIndex(
+    array,
+    i => i[key].toLowerCase() === formattedSearchString
+  )
+  return index !== -1 ? index : 0
 }
 
 const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
@@ -167,13 +178,14 @@ const filterColour = value =>
 const generateColorForValue = ({ id: valueId }) => filterColour(valueId)
 const generateColorForLegend = value => filterColour(value)
 
-const generateMargin = (tickValuesYShape, legend) => {
+const generateMargin = (tickValuesYShape, legend, type = false) => {
   const shouldMargin = tickValuesYShape !== 'none'
+  const bleedForLegends = type === 'stackedDeviceActivity' ? 30 : 0
   const margin = {
     top: 5,
-    right: shouldMargin ? 20 : 0,
-    bottom: legend ? 60 : 0,
-    left: shouldMargin ? 40 : 0,
+    right: shouldMargin ? 20 + bleedForLegends : 0 + bleedForLegends,
+    bottom: legend ? 60 + bleedForLegends : 0 + bleedForLegends,
+    left: shouldMargin ? 40 + bleedForLegends : 0 + bleedForLegends,
   }
 
   return margin
@@ -183,32 +195,47 @@ const generateToolTip = (
   item,
   displayMethod,
   assaysFromState,
-  formatNumber
+  formatNumber,
+  type
 ) => {
-  const { color, id, indexValue, value } = item
+  const { color, id, indexValue, value, data } = item
+  let displayValue = ''
   const displayId = translateLabel(id, assaysFromState)
-  const displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+  if (type === 'stackedDeviceActivity') {
+    const { devicesTotal } = data
+    const valuePercentage = parseFloat(`${value}%`) / 100
+    const displayCount = devicesTotal * valuePercentage
+    const displayTitle = `device${displayCount === 1 ? '' : 's'}`
+    displayValue = `${displayCount} ${displayTitle}`
+  } else {
+    displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+  }
   return { color, displayId, indexValue, displayValue }
 }
 
-const translateLabel = (string, assaysFromState) => {
+const translateLabel = (string, assaysFromState, type = false) => {
   const dictionary = []
-  assaysFromState.map(({ resultCategories }) =>
-    resultCategories.map(({ externalId, name }) =>
-      dictionary.push({ externalId, name })
-    )
+  const removeString = 'devices'
+  assaysFromState.map(
+    ({ resultCategories }) =>
+      Array.isArray(resultCategories) &&
+      resultCategories.map(({ externalId, name }) =>
+        dictionary.push({ externalId, name })
+      )
   )
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
-  return newString.length ? newString[0].name : makeProperCase(string)
+  return newString.length
+    ? newString[0].name
+    : makeProperCase(string.replace(removeString, ''))
 }
 
-const generateLegend = (string, assaysFromState) => {
+const generateLegend = (string, assaysFromState, type = false) => {
   return {
-    label: translateLabel(string, assaysFromState),
-    color: generateColorForLegend(string),
+    label: translateLabel(string, assaysFromState, type),
+    color: generateColorForLegend(string, type),
   }
 }
 
@@ -242,6 +269,16 @@ const formatDataByGraphType = (
 
     case 'barLegacyTreatment':
       grouped = groupForOldTreatmentAPI(
+        data,
+        keyToConsume,
+        indexBy,
+        formatDate,
+        filterBy
+      )
+      break
+
+    case 'stackedDeviceActivity':
+      grouped = groupForDeviceStatusAPI(
         data,
         keyToConsume,
         indexBy,
@@ -305,6 +342,7 @@ export {
   formatValuesForGraphs,
   filterColour,
   filterByMultiple,
+  findArrayIndexByStringPartial,
   generateColorForLegend,
   generateColorForValue,
   generateLegend,
@@ -315,9 +353,11 @@ export {
   getDayFromToday,
   getGraphKeysFromResults,
   getMaxValueForDivergent,
+  getPreviousPeriod,
   getTimePeriod,
   graphColorMap,
   groupByKey,
+  groupForDeviceStatusAPI,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPie,

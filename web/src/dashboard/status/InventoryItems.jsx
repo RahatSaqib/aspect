@@ -17,6 +17,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { fetchInventoryDashboard } from '../DashboardRedux'
 import { Unit } from '../../components/pureGrids'
 import StyledDropdown from '../../components/shared/StyledDropdown'
+import { findArrayIndexByStringPartial } from '../../MigratedComponents/Graphs/Helpers/Formatters'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -175,7 +176,7 @@ function rearrangeInventoryKey(inventoryItem) {
   }
 }
 
-export const inventoryItems = ({
+export const InventoryItems = ({
   className,
   source,
   isSingleItem,
@@ -186,7 +187,13 @@ export const inventoryItems = ({
   history,
   ...restProps
 }) => {
-  const itemSelected = value || inventoryItems[4]
+  const selectIndex = findArrayIndexByStringPartial(
+    inventoryItems,
+    'consumableName',
+    'GeneXpert MTB/Rif'
+  )
+  const itemSelected =
+    value || (inventoryItems && inventoryItems[selectIndex]) || null
   const filteredItem = _.omit(itemSelected, ['consumableId', 'consumableName'])
   const inventoryChartLabel = rearrangeInventoryKey(filteredItem)
   const data = []
@@ -201,7 +208,7 @@ export const inventoryItems = ({
   })
 
   return (
-    <Card className={(className, cssClasses('Inventory_Container'))}>
+    <Card className={`${className} ${cssClasses('Inventory_Container')}`}>
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
       >
@@ -222,7 +229,13 @@ export const inventoryItems = ({
                 source={source}
                 {...restProps}
                 style={{ width: 320 }}
-                value={selectInventoryItem || inventoryItems[4].consumableId}
+                value={
+                  selectInventoryItem ||
+                  (inventoryItems &&
+                    inventoryItems.length &&
+                    inventoryItems[selectIndex].consumableId) ||
+                  null
+                }
               />
             ))}
         </div>
@@ -243,4 +256,4 @@ export const inventoryItems = ({
   )
 }
 
-export default enhance(inventoryItems)
+export default enhance(InventoryItems)
