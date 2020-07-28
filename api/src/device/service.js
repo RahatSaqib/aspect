@@ -29,6 +29,7 @@ const {
   resultCategoryToId,
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
+const { parseDateOrDefault } = require('../shared/date')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -1042,7 +1043,7 @@ async function onDeviceUpdateMaintenanceStatusNoResults(
   if (deviceId) {
     const daysSinceLastResult = []
     let day = options.lastResultOn || new Date()
-    while (startOfDay(day) < new Date()) {
+    while (startOfDay(parseDateOrDefault(day)) < new Date()) {
       daysSinceLastResult.push(startOfDay(day))
       day = addDays(day, 1)
     }

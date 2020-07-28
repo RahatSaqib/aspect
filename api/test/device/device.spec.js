@@ -426,8 +426,8 @@ describe('Device routes', () => {
           .get(`${maintenanceStatusPath}/${deviceWithLogWithNote.deviceId}`)
           .set('Authorization', `Bearer ${shared.token}`)
         assert.isOk(devicesReponse.body.ok)
-        expect(deviceWithLogWithNote).to.containSubset({
-          notes: logData.options.data.notes,
+        expect(devicesReponse).to.containSubset({
+          body: { data: { notes: logData.options.data.notes } },
         })
       })
     })
@@ -637,6 +637,21 @@ describe('Device routes', () => {
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .select('id')
           .pluck('id')
+        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
+          .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .where('dtc.hasResults', true)
+          .first('d.id')
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          data: '{}',
+          day: startOfToday(),
+          createdOn: new Date(),
+        })
+        await knex('Device').where({ id: deviceId }).update({
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+        })
 
         const devicesWithEditableStatus = await server
           .get(
@@ -686,6 +701,22 @@ describe('Device routes', () => {
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .select('id')
           .pluck('id')
+
+        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
+          .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .where('dtc.hasResults', true)
+          .first('d.id')
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          data: '{}',
+          day: startOfToday(),
+          createdOn: new Date(),
+        })
+        await knex('Device').where({ id: deviceId }).update({
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+        })
 
         const devicesWithEditableStatus = await server
           .get(
