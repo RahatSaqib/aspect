@@ -78,6 +78,24 @@ export const messages = defineMessages({
     id: 'pages.Status.summaryHealthPlusHIVTBTitle',
     defaultMessage: 'health Plus HIV TB',
   },
+  // Summary widget groups
+  summaryWidgetGroupConnectivity: {
+    id: 'pages.Status.summaryWidgetGroup.connectivity',
+    defaultMessage: 'Connectivity',
+  },
+  summaryWidgetGroupInventory: {
+    id: 'pages.Status.summaryWidgetGroup.inventory',
+    defaultMessage: 'Inventory',
+  },
+  summaryWidgetGroupDevices: {
+    id: 'pages.Status.summaryWidgetGroup.devices',
+    defaultMessage: 'Devices',
+  },
+  summaryWidgetGroupService: {
+    id: 'pages.Status.summaryWidgetGroup.service',
+    defaultMessage: 'Service',
+  },
+
   receiveConsumablesLabel: {
     id: 'pages.Status.receiveConsumablesLabel',
     defaultMessage: 'receive Consumables',

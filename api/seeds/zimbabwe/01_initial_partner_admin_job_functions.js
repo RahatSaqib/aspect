@@ -44,8 +44,8 @@ async function seed(knex) {
     name: 'Zimbabwe',
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
+    maxDaysDeviceOffline: 1,
+    maxDaysDeviceNoResults: 1,
     serverUrl: 'https://zimbabwe.aspect.id:2843',
   })
 

@@ -18,7 +18,7 @@ const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpe
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
-const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget.json')
+const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget')
 const {
   deviceStatusToId,
   deviceTypeToId,
@@ -1821,7 +1821,9 @@ async function upsertDashboardWidgets(
         'descriptionI18nKey',
         'dashboards',
       ])
-      widgetData.dashboards = JSON.stringify(widgetData.dashboards || ['home'])
+      widgetData.dashboards = JSON.stringify(
+        widgetData.dashboards || { home: {} }
+      )
 
       let { id: widgetId } =
         (await knex('DashboardWidget')
