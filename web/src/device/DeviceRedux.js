@@ -340,7 +340,7 @@ export function hideDialog() {
 export function updateDeviceMaintenanceStatus({
   externalId,
   device,
-  data,
+  notes,
   requestedAt = new Date(),
 }) {
   const deviceId = device.get('id')
@@ -358,7 +358,7 @@ export function updateDeviceMaintenanceStatus({
       method: 'POST',
       body: JSON.stringify({
         externalId,
-        options: { data: { data } },
+        options: { notes },
       }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({

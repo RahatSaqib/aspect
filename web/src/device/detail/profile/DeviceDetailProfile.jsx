@@ -340,7 +340,7 @@ const enhance = compose(
       return updateDeviceMaintenanceStatus({
         externalId: values.maintenanceStatus,
         device,
-        data: { notes: values.notes },
+        notes: values.notes,
       })
     },
     onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
