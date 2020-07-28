@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
-const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const dashboardWidget = require('./fixtures/dashboardWidget')
 const {
   rowsAsObject,
   getDefaultMessageTypes,

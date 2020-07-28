@@ -2960,16 +2960,16 @@ async function mapJobFunctionPermissions(
 
 async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
   // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
-  // but not critical if field dashboards remains null - we handle setting default value of ['home'] in both API and WEB
+  // but not critical if field dashboards remains null - we handle setting default value of { home: {} } in both API and WEB
   await knex('DashboardWidget')
     .whereNull('dashboards')
     .update({
-      dashboards: JSON.stringify(['home']),
+      dashboards: JSON.stringify({ home: {} }),
     })
 
   await Promise.all(
     _.map(
-      widgets.filter(({ dashboards }) => _.isArray(dashboards)),
+      widgets.filter(({ dashboards }) => _.isPlainObject(dashboards)),
       ({ dashboards, externalId }) =>
         knex('DashboardWidget')
           .where({ externalId })

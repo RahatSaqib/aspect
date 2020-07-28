@@ -31,7 +31,7 @@ const deviceStatusGraphs = {
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
         displayLegend: true,
-        formatDate: 'd',
+        formatDate: 'LLLL do',
       },
     ],
   },

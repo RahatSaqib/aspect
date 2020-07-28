@@ -15,7 +15,9 @@ module.exports = {
       sortOrder: 0,
       description: 'The number of sites',
       descriptionI18nKey: 'sitesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdComputer',
@@ -30,7 +32,9 @@ module.exports = {
       sortOrder: 1,
       description: 'The number of lab devices',
       descriptionI18nKey: 'devicesDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdAssignment',
@@ -45,7 +49,9 @@ module.exports = {
       sortOrder: 2,
       description: 'The number of results in the last 30 days',
       descriptionI18nKey: 'resultsDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       icon: 'MdPermIdentity',
@@ -59,7 +65,9 @@ module.exports = {
       sortOrder: 3,
       description: 'The number of users',
       descriptionI18nKey: 'personDescription',
-      dashboards: ['home'],
+      dashboards: {
+        home: {},
+      },
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),

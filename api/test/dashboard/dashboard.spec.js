@@ -1,10 +1,11 @@
+const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
 
 const shared = require('../utils/sharedToken')
-const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget.json')
-const dashboardWidgetMyanmar = require('../../seeds/test/fixtures/myanmarDashboardWidget.json')
+const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget')
+const dashboardWidgetMyanmar = require('../../seeds/test/fixtures/myanmarDashboardWidget')
 
 const server = supertest.agent('http://localhost:8080')
 
@@ -69,7 +70,9 @@ describe('Dashboard routes', () => {
 
           // check widget on OperationalData dashboard - fixture must have at least one widget for this dashboard
           const externalIds = getAllWidgets()
-            .filter(({ dashboards = [] }) => dashboards.includes('operational'))
+            .filter(({ dashboards = {} }) =>
+              _.isPlainObject(dashboards.operational)
+            )
             .map(({ externalId }) => externalId)
           assert.equal(externalIds.includes(res.body.data[0].externalId), true)
 
