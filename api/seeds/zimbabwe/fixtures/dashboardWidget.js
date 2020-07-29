@@ -179,7 +179,7 @@ module.exports = {
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
-      sortOrder: 13,
+      sortOrder: 14,
     },
   ],
 }

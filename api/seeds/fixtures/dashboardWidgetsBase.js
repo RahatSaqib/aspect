@@ -640,7 +640,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'avgTimeToUploadStat',
       link: '/browse/result',
-      sortOrder: 15,
+      sortOrder: 16,
       externalId: 'avgTimeToUpload',
       description:
         'The average delay of uploading results. Only considering results where the delay was greater than two hours.',
