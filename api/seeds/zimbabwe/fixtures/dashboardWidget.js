@@ -177,5 +177,8 @@ module.exports = {
       ),
       sortOrder: 13,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
+    },
   ],
 }
