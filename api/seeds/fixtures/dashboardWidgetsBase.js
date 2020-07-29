@@ -507,5 +507,89 @@ module.exports = {
         },
       },
     },
+    {
+      icon: 'FaCloudUploadAlt',
+      title: 'Average Delay to Upload',
+      titleI18nKey: 'avgTimeToUploadTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+    SELECT ROUND(
+        IFNULL(
+          AVG(
+            TIMESTAMPDIFF(
+              MINUTE,
+              CONVERT_TZ(r.endedOn,
+              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+              ),
+              r.createdOn
+            )
+          )
+          ,0
+        )
+      ) as cnt
+    FROM Result AS r
+    INNER JOIN Site AS s ON r.siteId = s.id
+    INNER JOIN Geography AS g ON s.geographyId = g.stateId
+    INNER JOIN Country AS c ON g.countryId = c.id
+    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
+    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
+    INNER JOIN Device AS d ON r.deviceId = d.id
+    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
+    WHERE 	TIMESTAMPDIFF(
+        HOUR,
+        CONVERT_TZ(r.endedOn,
+        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+        ),
+        r.createdOn
+        )>=2
+           AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
+      `,
+      sqlForStatUnit: `
+    SELECT ROUND(
+        IFNULL(
+          AVG(
+            TIMESTAMPDIFF(
+              MINUTE,
+              CONVERT_TZ(r.endedOn,
+              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+              ),
+              r.createdOn
+            )
+          )
+          ,0
+        )
+      ) as cnt
+    FROM Result AS r
+    INNER JOIN Site AS s ON r.siteId = s.id
+    INNER JOIN Geography AS g ON s.geographyId = g.stateId
+    INNER JOIN Country AS c ON g.countryId = c.id
+    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
+    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
+    INNER JOIN Device AS d ON r.deviceId = d.id
+    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
+    WHERE 	TIMESTAMPDIFF(
+        HOUR,
+        CONVERT_TZ(r.endedOn,
+        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
+        ),
+        r.createdOn
+        )>=2
+        AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') 
+                      AND last_day(NOW()- interval 1 month)`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'avgTimeToUploadStat',
+      link: '/browse/result',
+      sortOrder: 15,
+      externalId: 'avgTimeToUpload',
+      description:
+        'The average delay of uploading results. Only considering results where the delay was greater than two hours.',
+      descriptionI18nKey: 'avgTimeToUploadDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
   ],
 }
