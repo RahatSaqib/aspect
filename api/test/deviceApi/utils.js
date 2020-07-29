@@ -8,7 +8,7 @@ const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   resultCategoryToId,
   resultSourceToId,
   resultTypeToId,
@@ -47,7 +47,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('ResultTag').whereIn('tagId', tagIds).delete()
   await knex('Tag').whereIn('id', tagIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
@@ -212,7 +212,7 @@ async function createSite(knex, { partner, user, site }) {
 
 async function createDevice(
   knex,
-  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} },
+  { siteId, type = 'DaktariVirology', approval = 'approved', baseConfig = {} },
   insertLog = false
 ) {
   const now = new Date()
@@ -235,7 +235,7 @@ async function createDevice(
     siteId,
     deviceTypeId,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-    deviceStatusId: await deviceStatusToId(status),
+    deviceApprovalId: await deviceApprovalToId(approval),
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',
     shortName: 'Test Device',
@@ -323,7 +323,7 @@ class DeviceApiTestContext {
       partner,
       type,
       site,
-      status = 'approved',
+      approval = 'approved',
       baseConfig = {},
     }
   ) {
@@ -333,7 +333,7 @@ class DeviceApiTestContext {
     this.partner = partner
     this.type = type
     this.site = site
-    this.status = status
+    this.approval = approval
     this.baseConfig = baseConfig
     this.now = new Date()
 
@@ -382,7 +382,7 @@ class DeviceApiTestContext {
         {
           siteId,
           type: this.type,
-          status: this.status,
+          approval: this.approval,
           baseConfig: this.baseConfig,
         },
         true
@@ -441,7 +441,7 @@ class DeviceApiTestContext {
       const deviceId = await createDevice(knex, {
         siteId,
         type: this.type,
-        status: this.status,
+        approval: this.approval,
         baseConfig: this.baseConfig,
       })
       this.deviceId = deviceId
@@ -617,7 +617,7 @@ async function getDevicesWithIdLargerThan(deviceId, knex) {
       'geographyId',
       'siteId',
       'deviceTypeId',
-      'deviceStatusId',
+      'deviceApprovalId',
       'name',
       'shortName',
       'macAddress',

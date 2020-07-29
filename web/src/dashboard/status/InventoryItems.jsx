@@ -208,7 +208,10 @@ export const InventoryItems = ({
   })
 
   return (
-    <Card className={`${className} ${cssClasses('Inventory_Container')}`}>
+    <Card
+      className={`${className} ${cssClasses('Inventory_Container')}`}
+      name="inventoryStatus"
+    >
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
       >

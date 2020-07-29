@@ -15,7 +15,7 @@ const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
-  allDeviceStatusToId,
+  allDeviceApprovalToId,
   allDeviceTypeCategoryToId,
   allPartnerTypeToId,
   allResultCategoryToId,
@@ -3262,8 +3262,8 @@ async function seed(knex) {
       .update(assayGenoTypeMTBDRslV2)
   }
 
-  // DeviceStatus
-  const { approved: deviceStatusApproved } = await allDeviceStatusToId()
+  // DeviceApproval
+  const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
   // Result source
   const {
@@ -4197,7 +4197,7 @@ async function seed(knex) {
         name: `${siteData.shortName} Router`,
         shortName: `r${i}`,
         deviceTypeId: deviceTypeIdRouter,
-        deviceStatusId: deviceStatusApproved,
+        deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
@@ -4233,7 +4233,7 @@ async function seed(knex) {
         name: `${siteData.name} GeneXpert`,
         shortName: `GeneXpert #${i}`,
         deviceTypeId: deviceTypeGeneXpertId,
-        deviceStatusId: deviceStatusApproved,
+        deviceApprovalId: deviceApprovalApproved,
         configurationData: JSON.stringify({
           requirePrinter: 'no',
           adminPassword: 'pwd123',
@@ -4278,9 +4278,9 @@ async function seed(knex) {
       })
 
       // Create Status Log
-      await knex('DeviceStatusLog').insert({
+      await knex('DeviceApprovalLog').insert({
         deviceId: device.id,
-        deviceStatusId: deviceStatusApproved,
+        deviceApprovalId: deviceApprovalApproved,
         changedOn: auditFields.updatedOn,
         createdOn: auditFields.createdOn,
         createdBy: auditFields.createdBy,

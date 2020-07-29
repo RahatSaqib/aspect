@@ -37,8 +37,8 @@ describe('Device API Raw routes for cobas', () => {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceStatus = await knex
-        .from('DeviceStatus')
+      const approvedDeviceApproval = await knex
+        .from('DeviceApproval')
         .where('token', 'approved')
         .first()
       const deviceCapacity = await knex('DeviceCapacity')
@@ -66,7 +66,7 @@ describe('Device API Raw routes for cobas', () => {
         geographyId: geography.id,
         deviceTypeId: cobasDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-        deviceStatusId: approvedDeviceStatus.id,
+        deviceApprovalId: approvedDeviceApproval.id,
         name: 'Some COBAS Device',
         shortName: 'COBAS',
         configurationData: '{}',
@@ -97,7 +97,7 @@ describe('Device API Raw routes for cobas', () => {
         .leftJoin('Device as d', 'dak.deviceId', 'd.id')
         .where('dak.token', validApiKeyToken)
         .first('dak.id', 'dak.deviceId', 'd.siteId')
-      await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
+      await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
       await knex('DeviceLog').where('deviceId', deviceId).delete()
 
       await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()

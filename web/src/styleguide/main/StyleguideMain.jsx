@@ -164,7 +164,7 @@ export class StyleguideMain extends PureComponent {
               contactNameOrEmail: true,
               consumable: true,
               workflowStatus: true,
-              deviceStatus: true,
+              deviceApproval: true,
               externalId: true,
             }}
             contentClassName={styles.FiltersPanel__Content}

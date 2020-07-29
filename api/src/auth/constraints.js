@@ -356,13 +356,13 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
   if (device && !showUnapprovedDevices) {
     queryBuilder.leftOuterJoin(
-      `DeviceStatus as deviceStatus`,
-      `${device}.deviceStatusId`,
-      `deviceStatus.id`
+      `DeviceApproval as deviceApproval`,
+      `${device}.deviceApprovalId`,
+      `deviceApproval.id`
     )
     queryBuilder.where(function () {
-      this.where({ [`deviceStatus.token`]: 'approved' }).orWhere(
-        knex.raw('isnull(`deviceStatus`.`token`)')
+      this.where({ [`deviceApproval.token`]: 'approved' }).orWhere(
+        knex.raw('isnull(`deviceApproval`.`token`)')
       )
     })
   }

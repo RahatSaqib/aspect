@@ -18,7 +18,7 @@ const {
 const config = require('../../src/config')
 const {
   partnerTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 const utils = require('../utils')
 
@@ -176,7 +176,7 @@ async function seed(knex) {
   countryData.clinics = []
   countryData.devices = []
 
-  const deviceStatusApprovedId = await deviceStatusToId('approved')
+  const deviceApprovalApprovedId = await deviceApprovalToId('approved')
 
   await Promise.all(
     _.map(countryWakanda.states, async state => {
@@ -222,7 +222,7 @@ async function seed(knex) {
                 45
               ),
               deviceTypeId: deviceType.id,
-              deviceStatusId: deviceStatusApprovedId,
+              deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
               geographyId: labData.geographyId,
               siteId: labData.id,

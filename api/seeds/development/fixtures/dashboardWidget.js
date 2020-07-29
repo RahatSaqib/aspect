@@ -151,43 +151,35 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'dashboardWidgetTestsPerDayTitle'
       ),
-      sortOrder: 8,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'dashboardWidgetValidResultsPc'
       ),
-      sortOrder: 9,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'utilizationRate'
       ),
-      sortOrder: 10,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'activeDevices'),
-      sortOrder: 11,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'stockouts'),
-      sortOrder: 12,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'deviceDaysActive'
       ),
-      sortOrder: 13,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'errorRate'),
-      sortOrder: 14,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'stockNotRecorded'
       ),
-      sortOrder: 15,
     },
     {
       ...dashboardWidgetsBase.stat.find(

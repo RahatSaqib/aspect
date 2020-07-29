@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 
 const { ensureAspectDeviceExists } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
-const { deviceStatusToId } = require('../../src/shared/dictionary')
+const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 async function seed(knex) {
@@ -56,13 +56,13 @@ async function seed(knex) {
         .first('a.*')
     }
   )
-  const deviceStatusApprovedId = await deviceStatusToId('approved')
+  const deviceApprovalApprovedId = await deviceApprovalToId('approved')
   await Promise.each(covidDeviceTypes, async covidDeviceType => {
     const device = await knex('Device')
       .where({
         deviceTypeId: covidDeviceType.id,
         siteId: labSiteId,
-        deviceStatusId: deviceStatusApprovedId,
+        deviceApprovalId: deviceApprovalApprovedId,
       })
       .first('id')
     if (!device) {
@@ -74,7 +74,7 @@ async function seed(knex) {
           45
         ),
         deviceTypeId: covidDeviceType.id,
-        deviceStatusId: deviceStatusApprovedId,
+        deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
         geographyId: labGeographyId,
         siteId: labSiteId,

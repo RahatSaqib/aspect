@@ -2,7 +2,7 @@ const chai = require('chai')
 
 const { assert } = chai
 
-async function assertPropertiesOfListItem(res) {
+function assertPropertiesOfListItem(res) {
   assert.property(res.body.data[0], 'id')
   assert.property(res.body.data[0], 'name')
   assert.property(res.body.data[0], 'shortName')
@@ -14,7 +14,7 @@ async function assertPropertiesOfListItem(res) {
   assert.property(res.body.data[0], 'category')
   assert.property(res.body.data[0], 'hasResults')
   assert.property(res.body.data[0], 'hasConnectivity')
-  assert.property(res.body.data[0], 'status')
+  assert.property(res.body.data[0], 'approval')
   assert.property(res.body.data[0], 'resultCountLastMonth')
   assert.property(res.body.data[0], 'resultCountThisMonth')
   assert.typeOf(res.body.data[0].error, 'Object')
