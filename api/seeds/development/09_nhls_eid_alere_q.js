@@ -24,7 +24,7 @@ const {
   partnerTypeToId,
   resultSourceToId,
   unitToId,
-  deviceStatusToId,
+  deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -65,10 +65,10 @@ async function seed(knex) {
   })
 
   // Reuse previously seeded "static" data
-  const [deviceTypes, modules, approvedDeviceStatusId] = await Promise.all([
+  const [deviceTypes, modules, approvedDeviceApprovalId] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     getPermissionModules(knex),
-    deviceStatusToId('approved'),
+    deviceApprovalToId('approved'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -107,7 +107,7 @@ async function seed(knex) {
   ).insert({
     name: 'South Africa NHLS Alere FTP Connector',
     deviceTypeId: deviceTypes.AlereFtpConnector.id,
-    deviceStatusId: approvedDeviceStatusId,
+    deviceApprovalId: approvedDeviceApprovalId,
     partnerId,
     geographyId: southAfricaGeographyId,
     siteId: southAfricaNhlsAlereFtpConnectorSiteId,
@@ -203,7 +203,7 @@ async function seed(knex) {
               geographyId: clinicGeographyId,
               siteId,
               deviceTypeId: await deviceTypeToId(device.deviceTypeId),
-              deviceStatusId: await deviceStatusToId('approved'),
+              deviceApprovalId: await deviceApprovalToId('approved'),
               name: `${siteData.shortName} ${device.deviceTypeId}`,
               shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
               serial: device.deviceSerial,

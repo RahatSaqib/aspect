@@ -1,7 +1,18 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
+const {
+  addDays,
+  startOfToday,
+  startOfMonth,
+  setMilliseconds,
+} = require('date-fns')
+
 const shared = require('../utils/sharedToken')
+const {
+  allDeviceMaintenanceStatusToId,
+} = require('../../src/shared/dictionary')
+const { formatDateOrDefault } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const {
   assertPropertiesOfListItem,
@@ -9,7 +20,7 @@ const {
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 
 describe('Device routes', () => {
   const path = '/api/device'
@@ -17,6 +28,33 @@ describe('Device routes', () => {
 
   describe('GET', () => {
     shared.checkToken(server, path)
+
+    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
+    const daktariManagerUsername = 'daktari_manager'
+    const daktariManagerPassword = 'daktari-manager-pass'
+    let daktariManagerUserId
+    let daktariManagerAuthAccessToken
+
+    before(async () => {
+      daktariManagerUserId = await createUser(
+        'Partner One',
+        'US',
+        daktariManagerUsername,
+        daktariManagerPassword,
+        [
+          {
+            jobFunctionExternalId: 'manager',
+            deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
+          },
+        ]
+      )
+      daktariManagerAuthAccessToken = await getAccessToken(
+        daktariManagerUsername,
+        daktariManagerPassword
+      )
+    })
+
+    after(async () => removeUser(daktariManagerUserId))
 
     it('should return a list of devices when using valid token "approved"', async () => {
       await server
@@ -90,7 +128,7 @@ describe('Device routes', () => {
       assert.property(res.body.data[0], 'category')
       assert.property(res.body.data[0], 'hasResults')
       assert.property(res.body.data[0], 'hasConnectivity')
-      assert.property(res.body.data[0], 'status')
+      assert.property(res.body.data[0], 'approval')
       assert.property(res.body.data[0], 'resultCountLastMonth')
       assert.property(res.body.data[0], 'resultCountThisMonth')
       assert.typeOf(res.body.data[0].error, 'Object')
@@ -115,15 +153,15 @@ describe('Device routes', () => {
           assert.property(res.body.data, 'createdOn')
           assert.property(res.body.data, 'lastPingOn')
           assert.property(res.body.data, 'lastSeen')
-          assert.property(res.body.data, 'status')
-          assert.property(res.body.data, 'statusToken')
+          assert.property(res.body.data, 'approval')
+          assert.property(res.body.data, 'approvalToken')
           assert.property(res.body.data, 'category')
           assert.property(res.body.data, 'hasResults')
           assert.property(res.body.data, 'hasConnectivity')
           assert.property(res.body.data, 'siteId')
           assert.property(res.body.data, 'siteName')
           assert.property(res.body.data, 'hostId')
-          assert.property(res.body.data, 'deviceStatusId')
+          assert.property(res.body.data, 'deviceApprovalId')
           assert.property(res.body.data, 'configurationData')
           assert.property(res.body.data, 'notes')
           assert.property(res.body.data, 'serial')
@@ -137,6 +175,7 @@ describe('Device routes', () => {
           assert.property(res.body.data, 'errorRateThisMonth')
         })
     })
+
     it('should return details of a filter device from a site', async () => {
       await server
         .get(
@@ -172,32 +211,6 @@ describe('Device routes', () => {
         })
     })
 
-    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
-    const daktariManagerUsername = 'daktari_manager'
-    const daktariManagerPassword = 'daktari-manager-pass'
-    let daktariManagerUserId
-    let daktariManagerAuthAccessToken
-    before(async () => {
-      daktariManagerUserId = await createUser(
-        'Partner One',
-        'US',
-        daktariManagerUsername,
-        daktariManagerPassword,
-        [
-          {
-            jobFunctionExternalId: 'manager',
-            deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
-          },
-        ]
-      )
-      daktariManagerAuthAccessToken = await getAccessToken(
-        daktariManagerUsername,
-        daktariManagerPassword
-      )
-    })
-
-    after(async () => removeUser(daktariManagerUserId))
-
     it("should constrain devices returned based on the user's job context", async () => {
       const devicesReponse = await server
         .get(path)
@@ -208,6 +221,266 @@ describe('Device routes', () => {
         .first('name')
       devicesReponse.body.data.forEach(device => {
         assert.equal(device.type, daktariVirologyDeviceTypeName)
+      })
+    })
+
+    describe('/maintenance-status', () => {
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should return a list of devices with a snapshot of each device maintenance status during the month', async () => {
+        const devicesReponse = await server
+          .get(maintenanceStatusPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.equal(devicesReponse.body.length, devicesReponse.body.total)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        assert.property(devicesReponse.body.data[0], 'id')
+        assert.property(devicesReponse.body.data[0], 'name')
+        assert.property(devicesReponse.body.data[0], 'shortName')
+        assert.property(devicesReponse.body.data[0], 'resultCount')
+        assert.property(devicesReponse.body.data[0], 'days')
+        assert.isAbove(devicesReponse.body.data[0].days.length, 0)
+        assert.property(devicesReponse.body.data[0].days[0], 'date')
+        assert.property(devicesReponse.body.data[0].days[0], 'externalId')
+        assert.property(devicesReponse.body.data[0].days[0], 'isWeekend')
+        assert.property(devicesReponse.body.data[0].days[0], 'data')
+      })
+
+      it('should filter based on device maintenance status', async () => {
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        let filterOnDeviceMaintenanceStatus = ['active', 'inactiveConnectivity']
+        let devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+              .map(
+                status =>
+                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+              )
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.isAbove(devicesReponse.body.length, 0)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        devicesReponse.body.data.forEach(device => {
+          assert.isAbove(
+            device.days.filter(day =>
+              filterOnDeviceMaintenanceStatus.includes(day.externalId)
+            ).length,
+            0
+          )
+        })
+
+        filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
+        devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+              .map(
+                status =>
+                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+              )
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.isAbove(devicesReponse.body.length, 0)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        devicesReponse.body.data.forEach(device => {
+          assert.isAbove(
+            device.days.filter(day =>
+              filterOnDeviceMaintenanceStatus.includes(day.externalId)
+            ).length,
+            0
+          )
+        })
+      })
+
+      it('should show a device status for each day of the current month by default', async () => {
+        const devicesReponse = await server
+          .get(maintenanceStatusPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+        const days = []
+        let day = startOfMonth(new Date())
+        while (day <= startOfToday()) {
+          days.push(day)
+          day = addDays(day, 1)
+        }
+        devicesReponse.body.data.forEach(device => {
+          assert.equal(device.days.length, days.length)
+        })
+      })
+
+      it('should show a device status for each day in between the date filters', async () => {
+        const fromDate = new Date(2020, 3, 5)
+        const toDate = new Date(2020, 4, 13)
+        const devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
+              fromDate,
+              'yyyy-MM-dd'
+            )}&maxDate=${formatDateOrDefault(toDate, 'yyyy-MM-dd')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        const days = []
+        let day = fromDate
+        while (day <= toDate) {
+          days.push(day)
+          day = addDays(day, 1)
+        }
+        devicesReponse.body.data.forEach(device => {
+          assert.equal(device.days.length, days.length)
+        })
+      })
+    })
+
+    describe('/maintenance-status/{deviceId}', () => {
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should return the latest maintenance status log for the devices current status', async () => {
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        const filterOnDeviceMaintenanceStatus = [
+          'inactiveUnknown',
+          'inactiveNoResultsReported',
+          'inactiveDownForRepair',
+          'inactiveConnectivity',
+        ]
+        let devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+              .map(
+                status =>
+                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+              )
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        const { id: deviceId } = devicesReponse.body.data[0]
+        const newDeviceMaintenanceStatusLog = {
+          deviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          day: startOfToday(),
+          data: JSON.stringify({
+            options: { data: { notes: 'More cartridges expected next month' } },
+          }),
+          createdOn: setMilliseconds(new Date(), 0),
+        }
+        await knex('DeviceMaintenanceStatusLog').insert(
+          newDeviceMaintenanceStatusLog
+        )
+        await knex('Device').where('id', deviceId).update({
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+        })
+        const deviceWithLogWithNote = await knex('Device as d')
+          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+            queryBuilder
+              .on('d.id', 'dmsl.deviceId')
+              .andOn(
+                'd.deviceMaintenanceStatusId',
+                'dmsl.deviceMaintenanceStatusId'
+              )
+          })
+          .where(queryBuilder => {
+            queryBuilder.whereRaw(
+              `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
+            )
+          })
+          .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
+          .first('dmsl.*')
+        deviceWithLogWithNote.data = JSON.parse(deviceWithLogWithNote.data)
+        devicesReponse = await server
+          .get(`${maintenanceStatusPath}/${deviceWithLogWithNote.deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        expect(devicesReponse.body.data).to.containSubset({
+          ...newDeviceMaintenanceStatusLog,
+          day: newDeviceMaintenanceStatusLog.day.toISOString(),
+          createdOn: newDeviceMaintenanceStatusLog.createdOn.toISOString(),
+          data: JSON.parse(newDeviceMaintenanceStatusLog.data),
+          notes: JSON.parse(newDeviceMaintenanceStatusLog.data).options.data
+            .notes,
+        })
+      })
+    })
+
+    describe('/maintenance-statuses', () => {
+      const maintenanceStatusesPath = `${path}/maintenance-statuses`
+      it('should return a list of different maintenance statuses that a device can be in', async () => {
+        const devicesReponse = await server
+          .get(maintenanceStatusesPath)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isOk(devicesReponse.body.ok)
+        assert.equal(devicesReponse.body.length, devicesReponse.body.total)
+        assert.equal(
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
+        )
+        expect(devicesReponse.body.data).to.containSubset([
+          {
+            name: 'Active',
+            i18nKey: 'active',
+            externalId: 'active',
+            active: 1,
+            manuallySet: 0,
+          },
+          {
+            name: 'Reported Active',
+            i18nKey: 'reportedActive',
+            externalId: 'reportedActive',
+            active: 1,
+            manuallySet: 1,
+          },
+          {
+            name: 'Unknown',
+            i18nKey: 'inactiveUnknown',
+            externalId: 'inactiveUnknown',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'No Results Reported',
+            i18nKey: 'inactiveNoResultsReported',
+            externalId: 'inactiveNoResultsReported',
+            active: 0,
+            manuallySet: 0,
+          },
+          {
+            name: 'Out of Inventory',
+            i18nKey: 'inactiveOutOfInventory',
+            externalId: 'inactiveOutOfInventory',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'Down for Repair',
+            i18nKey: 'inactiveDownForRepair',
+            externalId: 'inactiveDownForRepair',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'Connectivity',
+            i18nKey: 'inactiveConnectivity',
+            externalId: 'inactiveConnectivity',
+            active: 0,
+            manuallySet: 1,
+          },
+          {
+            name: 'Decommissioned',
+            i18nKey: 'inactiveDecommissioned',
+            externalId: 'inactiveDecommissioned',
+            active: 0,
+            manuallySet: 1,
+          },
+        ])
       })
     })
   })
@@ -331,6 +604,139 @@ describe('Device routes', () => {
             })
         })
       }
+    })
+
+    describe('/maintenance-status/{deviceId}', () => {
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should save the maintenance status of the device', async () => {
+        const editableDeviceMaintenanceStatusIds = await knex(
+          'DeviceMaintenanceStatus'
+        )
+          .where('manuallySet', true)
+          .andWhere('externalId', '<>', 'inactiveDownForRepair')
+          .select('id')
+          .pluck('id')
+        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
+          .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .where('dtc.hasResults', true)
+          .first('d.id')
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          data: '{}',
+          day: startOfToday(),
+          createdOn: new Date(),
+        })
+        await knex('Device').where({ id: deviceId }).update({
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+        })
+
+        const devicesWithEditableStatus = await server
+          .get(
+            `${path}?${editableDeviceMaintenanceStatusIds
+              .map(statusId => `deviceMaintenanceStatusId=${statusId}`)
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        const deviceWithEditableStatus = devicesWithEditableStatus.body.data[0]
+        const payload = {
+          externalId: 'inactiveDownForRepair',
+          options: {
+            data: {
+              notes:
+                "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+            },
+          },
+        }
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusPath}/${deviceWithEditableStatus.id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.isOk(
+          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+        )
+        const deviceMaitnenanceStatusLog = await knex(
+          'DeviceMaintenanceStatusLog'
+        )
+          .where(
+            'id',
+            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          )
+          .first()
+        deviceMaitnenanceStatusLog.data = JSON.parse(
+          deviceMaitnenanceStatusLog.data
+        )
+        expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
+      })
+
+      it('should provide shallow access to write to data.options.data.notes', async () => {
+        const editableDeviceMaintenanceStatusIds = await knex(
+          'DeviceMaintenanceStatus'
+        )
+          .where('manuallySet', true)
+          .andWhere('externalId', '<>', 'inactiveDownForRepair')
+          .select('id')
+          .pluck('id')
+
+        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
+          .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .where('dtc.hasResults', true)
+          .first('d.id')
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          data: '{}',
+          day: startOfToday(),
+          createdOn: new Date(),
+        })
+        await knex('Device').where({ id: deviceId }).update({
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+        })
+
+        const devicesWithEditableStatus = await server
+          .get(
+            `${path}?${editableDeviceMaintenanceStatusIds
+              .map(statusId => `deviceMaintenanceStatusId=${statusId}`)
+              .join('&')}`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        const deviceWithEditableStatus = devicesWithEditableStatus.body.data[0]
+        const payload = {
+          externalId: 'inactiveDownForRepair',
+          notes: 'Service engineer never pitched up',
+        }
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusPath}/${deviceWithEditableStatus.id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.isOk(
+          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+        )
+        const deviceMaitnenanceStatusLog = await knex(
+          'DeviceMaintenanceStatusLog'
+        )
+          .where(
+            'id',
+            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          )
+          .first()
+        deviceMaitnenanceStatusLog.data = JSON.parse(
+          deviceMaitnenanceStatusLog.data
+        )
+        expect(deviceMaitnenanceStatusLog.data).to.containSubset({
+          options: {
+            data: {
+              notes: payload.notes,
+            },
+          },
+        })
+      })
     })
   })
 })

@@ -11,9 +11,9 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.device',
     defaultMessage: 'Device',
   },
-  status: {
-    id: 'pages.DeviceList.status',
-    defaultMessage: 'Status',
+  approval: {
+    id: 'pages.DeviceList.approval',
+    defaultMessage: 'Approval Status',
   },
   availabilityRate: {
     id: 'pages.DeviceList.availabilityRate',

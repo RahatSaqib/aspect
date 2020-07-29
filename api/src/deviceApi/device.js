@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { deviceStatusToId } = require('../shared/dictionary')
+const { deviceApprovalToId } = require('../shared/dictionary')
 
 async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
@@ -129,7 +129,7 @@ async function createNewDevice(
     partnerId,
     siteId,
     geographyId,
-    status,
+    approval,
     shortName,
     macAddress,
     hostId,
@@ -177,7 +177,7 @@ async function createNewDevice(
   if (!shortName && name) {
     shortName = name
   }
-  const deviceStatusId = await deviceStatusToId(status)
+  const deviceApprovalId = await deviceApprovalToId(approval)
   if (shortName && shortName.length > 45) {
     shortName = shortName.substr(0, 45)
   }
@@ -187,7 +187,7 @@ async function createNewDevice(
     siteId,
     deviceTypeId: deviceType.id,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-    deviceStatusId,
+    deviceApprovalId,
     name,
     serial,
     shortName,
@@ -202,16 +202,16 @@ async function createNewDevice(
     createdOn: now,
     updatedOn: now,
   })
-  await knex('DeviceStatusLog').insert({
+  await knex('DeviceApprovalLog').insert({
     deviceId,
-    deviceStatusId,
+    deviceApprovalId,
     changedOn: now,
     createdOn: now,
     createdBy: null,
   })
 
   const device = await knex('Device as d')
-    .join('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
@@ -228,7 +228,7 @@ async function createNewDevice(
       'd.configurationData',
       'd.lastSeenOn',
       'd.putInService',
-      'ds.token as status',
+      'da.token as approval',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',

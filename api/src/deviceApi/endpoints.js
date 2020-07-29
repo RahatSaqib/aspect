@@ -42,13 +42,13 @@ const logResponse = {
 const devicePayload = {
   name: Joi.string().allow('', null).description('The device name'),
   serial: Joi.string().allow('', null).description('The device serial number'),
-  status: Joi.object()
+  approval: Joi.object()
     .allow(null)
     .keys({
       id: Joi.string()
         .required()
         .description(
-          'The device status. Only approved devices will deliver results.'
+          'The device approval status. Only approved devices will deliver results.'
         ),
     }),
   type: Joi.object()

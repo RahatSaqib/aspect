@@ -14,7 +14,7 @@ const {
   allPartnerTypeToId,
   allResultCategoryToId,
   allResultSourceToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   sampleTypeToId,
   resultTypeToId,
   resultWorkflowStatusToId,
@@ -1507,7 +1507,7 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const deviceStatusApproved = await deviceStatusToId('approved')
+  const deviceApprovalApproved = await deviceApprovalToId('approved')
 
   // insert router with sims
   const site = siteDatas[0]
@@ -1516,7 +1516,7 @@ async function seed(knex) {
     name: `Router at ${site.shortName}`,
     shortName: `Router ${site.shortName}`,
     deviceTypeId: deviceTypeIdRouter,
-    deviceStatusId: deviceStatusApproved,
+    deviceApprovalId: deviceApprovalApproved,
     partnerId: site.partnerId,
     geographyId: site.geographyId,
     siteId: site.id,
@@ -1542,7 +1542,7 @@ async function seed(knex) {
       name: `Daktari ${siteData.shortName}`,
       shortName: `Daktari ${siteData.shortName}`,
       deviceTypeId: deviceTypeDaktariVirologyId,
-      deviceStatusId: deviceStatusApproved,
+      deviceApprovalId: deviceApprovalApproved,
       configurationData: JSON.stringify({
         requirePrinter: 'yes',
         adminPassword: 'pwd123',

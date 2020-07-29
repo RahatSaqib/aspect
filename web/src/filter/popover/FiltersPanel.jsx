@@ -26,7 +26,7 @@ import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
-import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
+import DeviceApprovalSelectField from '../resource/DeviceApprovalSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
@@ -113,9 +113,9 @@ const enhance = compose(
         treatmentStatusId,
       }),
 
-    onDeviceStatusIdChange: ({ onChangeFilters }) => deviceStatusId =>
+    onDeviceApprovalIdChange: ({ onChangeFilters }) => deviceApprovalId =>
       onChangeFilters({
-        deviceStatusId,
+        deviceApprovalId,
       }),
     onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
       onChangeFilters({
@@ -333,13 +333,13 @@ const messages = defineMessages({
     id: 'filter.popover.selectTreatmentStatus',
     defaultMessage: 'Select status...',
   },
-  deviceStatus: {
-    id: 'filter.popover.deviceStatus',
-    defaultMessage: 'Status',
+  deviceApproval: {
+    id: 'filter.popover.deviceApproval',
+    defaultMessage: 'Approval',
   },
-  selectDeviceStatus: {
-    id: 'filter.popover.selectDeviceStatus',
-    defaultMessage: 'Select status...',
+  selectDeviceApproval: {
+    id: 'filter.popover.selectDeviceApproval',
+    defaultMessage: 'Select approval status...',
   },
   deviceType: {
     id: 'filter.popover.deviceType',
@@ -402,7 +402,7 @@ export const FiltersPanel = ({
   onDateChange,
   onWorkflowStatusIdChange,
   onTreatmentStatusIdChange,
-  onDeviceStatusIdChange,
+  onDeviceApprovalIdChange,
   onDeviceTypeIdChange,
   onRevokedChange,
   user,
@@ -753,15 +753,15 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.deviceStatus && (
+        {config.deviceApproval && (
           <div className={cssClasses('Control')}>
-            <DeviceStatusSelectField
+            <DeviceApprovalSelectField
               allItemText={intl.formatMessage(messages.all)}
-              value={filters.deviceStatusId}
-              onDeviceStatusChange={onDeviceStatusIdChange}
+              value={filters.deviceApprovalId}
+              onDeviceApprovalChange={onDeviceApprovalIdChange}
               floatingLabelFixed
-              hintText={intl.formatMessage(messages.selectDeviceStatus)}
-              floatingLabelText={intl.formatMessage(messages.deviceStatus)}
+              hintText={intl.formatMessage(messages.selectDeviceApproval)}
+              floatingLabelText={intl.formatMessage(messages.deviceApproval)}
               style={{ verticalAlign: 'bottom' }}
               autoWidth
             />

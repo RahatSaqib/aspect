@@ -45,7 +45,7 @@ describe('DeviceDetailBackBar component', () => {
     })
   })
 
-  describe('ResultDetailsBackBar redirection', () => {
+  describe('DeviceDetailsBackBar redirection', () => {
     it('should click back arrow and navigate back to result list', () => {
       const wrapper = mount(<DeviceDetailBackBar {...props} />)
       const {
