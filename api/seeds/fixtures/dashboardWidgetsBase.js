@@ -532,6 +532,8 @@ module.exports = {
             IssueType it ON i.issueTypeId = it.id
                 INNER JOIN
             Device AS d ON d.id = i.deviceId
+                INNER JOIN 
+            DeviceType as dt on dt.id = d.deviceTypeId
                 INNER JOIN
             Site AS s ON s.id = d.siteId
                 INNER JOIN
@@ -540,6 +542,7 @@ module.exports = {
             Geography AS g ON s.geographyId = g.id
         WHERE
             it.externalId = 'ModuleReplaced'
+            AND dt.externalId = 'CepheidGeneXpert'
             AND i.createdOn >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')`,
       sqlForStatUnit: `SELECT 
       COUNT(*) AS cnt
@@ -549,6 +552,8 @@ module.exports = {
             IssueType it ON i.issueTypeId = it.id
                 INNER JOIN
             Device AS d ON d.id = i.deviceId
+                INNER JOIN 
+            DeviceType as dt on dt.id = d.deviceTypeId
                 INNER JOIN
             Site AS s ON s.id = d.siteId
                 INNER JOIN
@@ -557,6 +562,7 @@ module.exports = {
             Geography AS g ON s.geographyId = g.id
         WHERE
             it.externalId = 'ModuleReplaced'
+            AND dt.externalId = 'CepheidGeneXpert'
             AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND LAST_DAY(CURRENT_DATE-INTERVAL 1 MONTH)`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
