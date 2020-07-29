@@ -1340,28 +1340,33 @@ async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
         'd.deviceMaintenanceStatusId'
       )
       .whereNull('dmsl.id')
+      .orWhere(queryBuilder => {
+        queryBuilder
+          .where('da.token', knex.raw('decommissioned'))
+          .andWhere('dms.externalId', '<>', knex.raw('inactiveDecommissioned'))
+      })
       .select(
         'd.id',
         'dms.externalId as maintenanceStatusExternalId',
         'da.token as approvalToken'
       )
     await Promise.each(devicesWithNoMaintenanceLogForTheDay, async device => {
+      const { id, approvalToken, maintenanceStatusExternalId } = device
       const lastMaintenanceStatusLogForDevice =
         (await knex('DeviceMaintenanceStatusLog')
-          .where('deviceId', device.id)
+          .where('deviceId', id)
           .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
           .first()) || {}
       lastMaintenanceStatusLogForDevice.data = lastMaintenanceStatusLogForDevice.data
         ? JSON.parse(lastMaintenanceStatusLogForDevice.data)
         : {}
-      let deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
-      if (device.approvalToken === 'decommissioned') {
+      let deviceMaintenanceStatusForTheDay =
+        maintenanceStatusExternalId || 'inactiveUnknown'
+      if (approvalToken === 'decommissioned') {
         deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
-      } else if (device.maintenanceStatusExternalId) {
-        deviceMaintenanceStatusForTheDay = device.maintenanceStatusExternalId
       }
       await automaticallySetDeviceMaintenanceStatus(
-        device.id,
+        id,
         startOfToday,
         deviceMaintenanceStatusForTheDay,
         {
