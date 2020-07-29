@@ -35,8 +35,8 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .whereNull('g.stateId')
       .whereNull('g.lgaId')
       .first('g.*')
-    const approvedDeviceStatus = await knex
-      .from('DeviceStatus')
+    const approvedDeviceApproval = await knex
+      .from('DeviceApproval')
       .where('token', 'approved')
       .first()
     const deviceCapacity = await knex('DeviceCapacity')
@@ -49,7 +49,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       geographyId: geography.id,
       deviceTypeId: senaiteLimsDeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-      deviceStatusId: approvedDeviceStatus.id,
+      deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some Senaite LIMS',
       shortName: 'Senaite LIMS',
       configurationData: '{}',
@@ -112,7 +112,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .where('deviceId', deviceId)
       .pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
-    await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
+    await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
     await knex('DeviceLog')
       .where('deviceId', deviceId)
       .orWhereIn('resultId', resultIds)

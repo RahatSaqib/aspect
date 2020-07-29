@@ -14,7 +14,7 @@ const { types: resultActionTypes } = require('../../src/result/actions')
 const { getSite } = require('../utils/issueUtils')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 
 const { assert, expect } = chai
@@ -240,7 +240,7 @@ describe('Issue Escalation', () => {
       geographyId,
       siteId, // new site id
       deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-      deviceStatusId: await deviceStatusToId('approved'),
+      deviceApprovalId: await deviceApprovalToId('approved'),
       name: 'Test Device',
       shortName: 'Test Device',
       lastSeenOn: new Date(),
@@ -250,7 +250,7 @@ describe('Issue Escalation', () => {
 
   async function deleteDeviceAndTestData(knex, deviceIds) {
     await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
-    await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+    await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
     await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
     await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
     await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()

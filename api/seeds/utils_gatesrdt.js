@@ -113,7 +113,7 @@ async function createResults(
   const { id: siteId, geographyId } = await knex('Site')
     .where({ partnerId, externalId: 'commcare' })
     .first()
-  const { id: deviceStatusId } = await knex('DeviceStatus')
+  const { id: deviceApprovalId } = await knex('DeviceApproval')
     .where({ token: 'approved' })
     .first()
   // get/create device
@@ -132,7 +132,7 @@ async function createResults(
       geographyId,
       siteId,
       deviceTypeId,
-      deviceStatusId,
+      deviceApprovalId,
       name: `Commcare Sample Device`,
       shortName: `R-${_.random(100000, 999999)}`,
       serial: `S1-R-${_.random(100000, 999999)}`,

@@ -12,10 +12,10 @@ const context = createTestContext(server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
-  status: 'assigned',
+  approval: 'assigned',
 })
 
-describe('Device API status tests', () => {
+describe('Device API approval tests', () => {
   const devicePath = '/device'
   const deviceConfigurationPath = '/device/configuration'
   const deviceOperationPath = '/device/operation'
@@ -42,7 +42,7 @@ describe('Device API status tests', () => {
             assert.isNotOk(res.body.configuration)
             assert.isNotOk(res.body.operation)
             assert.isNotOk(res.body.result)
-            assert.equal(res.body.status.id, 'assigned')
+            assert.equal(res.body.approval.id, 'assigned')
           })
 
         const configPre = await getDeviceConfigurationData(knex, deviceId)
@@ -96,7 +96,7 @@ describe('Device API status tests', () => {
             assert.isNotOk(res.body.configuration)
             assert.isNotOk(res.body.operation)
             assert.isNotOk(res.body.result)
-            assert.equal(res.body.status.id, 'assigned')
+            assert.equal(res.body.approval.id, 'assigned')
           })
       }))
   })

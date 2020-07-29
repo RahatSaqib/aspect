@@ -24,7 +24,7 @@ const {
   allResultSourceToId,
   allSampleTypeToId,
   resultTypeToId,
-  allDeviceStatusToId,
+  allDeviceApprovalToId,
   resultTreatmentStatusToId,
   resultWorkflowStatusToId,
   resultSourceToId,
@@ -91,7 +91,7 @@ async function createDevicesForAllMissingTypes(
       .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
       .select()
   }
-  const { approved: deviceStatusApproved } = await allDeviceStatusToId()
+  const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
   if (deviceTypes.length > 0 && siteDatas.length > 0) {
     let i = 0
@@ -103,7 +103,7 @@ async function createDevicesForAllMissingTypes(
           name: `${siteData.shortName} Router`,
           shortName: `r${i}`,
           deviceTypeId: elem.id,
-          deviceStatusId: deviceStatusApproved,
+          deviceApprovalId: deviceApprovalApproved,
           partnerId: siteData.partnerId,
           geographyId: siteData.geographyId,
           siteId: siteData.id,
@@ -1354,12 +1354,12 @@ async function getTreatmentDistributionByPartner(knex, partnerId, month) {
     )
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin(
-      'DeviceStatus as deviceStatus',
-      'd.deviceStatusId',
-      'deviceStatus.id'
+      'DeviceApproval as deviceApproval',
+      'd.deviceApprovalId',
+      'deviceApproval.id'
     )
     .where('rca.requiresTreatment', true)
-    .where('deviceStatus.token', 'approved')
+    .where('deviceApproval.token', 'approved')
     .modify(conditionBuilder, partnerId, month)
     .groupByRaw("DATE_FORMAT(r.createdon,'%Y-%m')")
     .select(
@@ -1551,9 +1551,9 @@ async function getRandomResults(
     )
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin(
-      'DeviceStatus as deviceStatus',
-      'd.deviceStatusId',
-      'deviceStatus.id'
+      'DeviceApproval as deviceApproval',
+      'd.deviceApprovalId',
+      'deviceApproval.id'
     )
     .modify((builder, selectedMonth) => {
       if (selectedMonth)
@@ -1562,7 +1562,7 @@ async function getRandomResults(
     .modify(
       (builder, idpartner, approvedDevices, requiresTreatment) => {
         if (idpartner) builder.where('r.partnerId', idpartner)
-        if (approvedDevices) builder.where('deviceStatus.token', 'approved')
+        if (approvedDevices) builder.where('deviceApproval.token', 'approved')
         if (requiresTreatment) builder.where('rca.requiresTreatment', true)
       },
       partnerId,
