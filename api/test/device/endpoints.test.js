@@ -77,13 +77,13 @@ describe('auth endpoints', () => {
       })
     })
 
-    describe('/device/status-types', () => {
+    describe('/device/approval-types', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/device/status-types', {
-          async listStatusTypes() {
+        endpoint = setupRoute('GET', '/device/approval-types', {
+          async listApprovalTypes() {
             return expectedResponse
           },
         })

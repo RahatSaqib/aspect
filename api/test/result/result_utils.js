@@ -2,7 +2,7 @@ const { addMinutes, subDays, format: dateFormat } = require('date-fns')
 const { knex } = require('../../src/db')
 const {
   allResultCategoryToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   deviceTypeToId,
   resultSourceToId,
   resultTypeToId,
@@ -24,7 +24,7 @@ async function createResult(
   sampleDetails = {},
   createDeviceLogFromInstrument = false
 ) {
-  const deviceStatusApprovedId = await deviceStatusToId('approved')
+  const deviceApprovalApprovedId = await deviceApprovalToId('approved')
   let device = await knex('DeviceType as dt')
     .join('Assay as a', 'dt.id', 'a.deviceTypeId')
     .join('Device as d', 'dt.id', 'd.deviceTypeId')
@@ -34,7 +34,7 @@ async function createResult(
     .where('dt.externalId', deviceTypeExternalId)
     .where('a.externalId', assayExternalId)
     .andWhere('c.abbreviation', 'US')
-    .andWhere('d.deviceStatusId', deviceStatusApprovedId)
+    .andWhere('d.deviceApprovalId', deviceApprovalApprovedId)
     .first('d.*')
   if (!device) {
     const { id: geographyId } = await knex('Geography')
@@ -60,7 +60,7 @@ async function createResult(
       siteId,
       defaultReportableSiteId: siteId,
       deviceTypeId: await deviceTypeToId(deviceTypeExternalId),
-      deviceStatusId: deviceStatusApprovedId,
+      deviceApprovalId: deviceApprovalApprovedId,
       name: `Test ${deviceTypeExternalId} Device`,
       shortName: deviceTypeExternalId,
       ...auditFields,

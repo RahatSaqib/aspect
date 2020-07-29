@@ -9,7 +9,7 @@ const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 
 const { assert } = chai
@@ -141,8 +141,8 @@ describe('Issue Resolution', () => {
       .first()
   }
 
-  async function getDeviceStatus(knex, deviceStatusToken) {
-    return knex('DeviceStatus').where('token', deviceStatusToken).first()
+  async function getDeviceApproval(knex, deviceApprovalToken) {
+    return knex('DeviceApproval').where('token', deviceApprovalToken).first()
   }
 
   async function getIssueType(knex, issueType) {
@@ -240,7 +240,7 @@ describe('Issue Resolution', () => {
       geographyId,
       siteId, // new site id
       deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-      deviceStatusId: await deviceStatusToId('approved'),
+      deviceApprovalId: await deviceApprovalToId('approved'),
       name: 'Test Device',
       shortName: 'Test Device',
       lastSeenOn: new Date(),
@@ -250,7 +250,7 @@ describe('Issue Resolution', () => {
 
   async function deleteDeviceAndTestData(knex, deviceIds) {
     await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
-    await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+    await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
     await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
     await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
     await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
@@ -293,7 +293,7 @@ describe('Issue Resolution', () => {
     let activeIssueStatus
     let resolvedIssueStatus
     let triggeredIssueEventStatus
-    let decommissionedDeviceStatus
+    let decommissionedDeviceApproval
 
     let partner
     let messageContext
@@ -307,7 +307,7 @@ describe('Issue Resolution', () => {
         activeIssueStatus = await getIssueStatus(knex, 'Active')
         resolvedIssueStatus = await getIssueStatus(knex, 'Resolved')
         triggeredIssueEventStatus = await getIssueEventStatus(knex, 'Triggered')
-        decommissionedDeviceStatus = await getDeviceStatus(
+        decommissionedDeviceApproval = await getDeviceApproval(
           knex,
           'decommissioned'
         )
@@ -797,7 +797,7 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: decommissionedDeviceStatus.id })
+              .update({ deviceApprovalId: decommissionedDeviceApproval.id })
             await knex('FactDeviceFlag')
               .where('deviceId', device2.id)
               .update({ offline: 1 })
@@ -808,7 +808,7 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: device1.deviceStatusId })
+              .update({ deviceApprovalId: device1.deviceApprovalId })
             await knex('FactDeviceFlag')
               .where('deviceId', device2.id)
               .update({ offline: 0 })
@@ -850,10 +850,10 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: decommissionedDeviceStatus.id })
+              .update({ deviceApprovalId: decommissionedDeviceApproval.id })
             await knex('Device')
               .where('id', device2.id)
-              .update({ deviceStatusId: decommissionedDeviceStatus.id })
+              .update({ deviceApprovalId: decommissionedDeviceApproval.id })
           })
         )
 
@@ -861,10 +861,10 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: device1.deviceStatusId })
+              .update({ deviceApprovalId: device1.deviceApprovalId })
             await knex('Device')
               .where('id', device2.id)
-              .update({ deviceStatusId: device2.deviceStatusId })
+              .update({ deviceApprovalId: device2.deviceApprovalId })
           })
         )
 
@@ -1508,7 +1508,7 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: decommissionedDeviceStatus.id })
+              .update({ deviceApprovalId: decommissionedDeviceApproval.id })
             await knex('FactDeviceFlag')
               .where('deviceId', device2.id)
               .update({ noResults: 1 })
@@ -1519,7 +1519,7 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: device1.deviceStatusId })
+              .update({ deviceApprovalId: device1.deviceApprovalId })
             await knex('FactDeviceFlag')
               .where('deviceId', device2.id)
               .update({ noResults: 0 })
@@ -1561,10 +1561,10 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: decommissionedDeviceStatus.id })
+              .update({ deviceApprovalId: decommissionedDeviceApproval.id })
             await knex('Device')
               .where('id', device2.id)
-              .update({ deviceStatusId: decommissionedDeviceStatus.id })
+              .update({ deviceApprovalId: decommissionedDeviceApproval.id })
           })
         )
 
@@ -1572,10 +1572,10 @@ describe('Issue Resolution', () => {
           run(async knex => {
             await knex('Device')
               .where('id', device1.id)
-              .update({ deviceStatusId: device1.deviceStatusId })
+              .update({ deviceApprovalId: device1.deviceApprovalId })
             await knex('Device')
               .where('id', device2.id)
-              .update({ deviceStatusId: device2.deviceStatusId })
+              .update({ deviceApprovalId: device2.deviceApprovalId })
           })
         )
 

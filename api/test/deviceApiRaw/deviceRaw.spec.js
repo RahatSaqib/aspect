@@ -134,7 +134,7 @@ describe('Device API Raw routes', () => {
       const issueIds = await knex('Issue')
         .where('deviceId', deviceId)
         .pluck('id')
-      await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
+      await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
       await knex('DeviceLog')
         .where('deviceId', deviceId)
         .orWhereIn('resultId', resultIds)
