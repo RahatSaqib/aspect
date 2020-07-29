@@ -49,8 +49,8 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .andWhere('g.stateId', null)
       .andWhere('g.lgaId', null)
       .first('g.*')
-    const approvedDeviceStatus = await knex
-      .from('DeviceStatus')
+    const approvedDeviceApproval = await knex
+      .from('DeviceApproval')
       .where('token', 'approved')
       .first()
     const deviceCapacity = await knex('DeviceCapacity')
@@ -78,7 +78,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       geographyId: geography.id,
       deviceTypeId: abbottM2000DeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-      deviceStatusId: approvedDeviceStatus.id,
+      deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some Abbott M2000 Device',
       shortName: 'Abbott M2000',
       configurationData: '{}',
@@ -133,7 +133,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .where('deviceId', deviceId)
       .pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
-    await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
+    await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
     await knex('DeviceLog')
       .where('deviceId', deviceId)
       .orWhereIn('resultId', resultIds)

@@ -25,9 +25,9 @@ async function seed(knex) {
   const deviceType = await knex('DeviceType')
     .where('externalId', 'CepheidGeneXpert')
     .first()
-  const { deviceStatusId } = await knex('DeviceStatus')
+  const { deviceApprovalId } = await knex('DeviceApproval')
     .where('token', 'approved')
-    .first('id as deviceStatusId')
+    .first('id as deviceApprovalId')
   const sites = await knex('Site as s')
     .join('Geography as g', 's.geographyid', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -41,7 +41,7 @@ async function seed(knex) {
       geographyId: site.geographyId,
       siteId: site.id,
       deviceTypeId: deviceType.id,
-      deviceStatusId,
+      deviceApprovalId,
       name: `${site.name} ${deviceType.name}`,
       shortName: `D-${_.random(100000, 999999)}`,
       serial: `S1-D-${_.random(100000, 999999)}`,

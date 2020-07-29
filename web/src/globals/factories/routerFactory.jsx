@@ -1,8 +1,10 @@
-import _ from 'lodash'
-import React from 'react'
-import { Router, Switch, Route, Redirect } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Router, Switch, Route, Redirect, useLocation } from 'react-router-dom'
+import memoize from 'lodash/memoize'
+import head from 'lodash/head'
 import Paper from '@material-ui/core/Paper'
 import { compose } from 'recompose'
+
 import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
@@ -44,13 +46,28 @@ import License from '../../auth/license/License'
 import ClinicalHistory from '../../patient/ClinicalHistory'
 import CaseDetails from '../../case/details/CaseDetails'
 
+function useHashAndScroll() {
+  const location = useLocation()
+  useEffect(() => {
+    const { hash } = location
+    setTimeout(() => {
+      const nodeList = document.querySelectorAll(
+        `[name="${hash.replace('#', '')}"]`
+      )
+      if (nodeList && nodeList.length) {
+        nodeList[0].scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 0)
+  }, [location])
+}
+
 const notImplementedLoggedInFactory = compose(loggedInFactory, name => () => (
   <div style={{ padding: 10 }}>
     <Paper style={{ padding: 10 }}>{name} is not implemented yet</Paper>
   </div>
 ))
 
-const makeRenderRedirectToLoginWithReason = _.memoize(
+const makeRenderRedirectToLoginWithReason = memoize(
   reason => ({ location }) => (
     <Redirect
       to={{
@@ -65,7 +82,7 @@ const renderRedirectToLoginOr = props =>
   props.isLoggedOut &&
   makeRenderRedirectToLoginWithReason(props.loggedOutReason)
 
-const makeRenderRedirectToLicense = _.memoize(licenseId => ({ location }) => (
+const makeRenderRedirectToLicense = memoize(licenseId => ({ location }) => (
   <Redirect
     to={{
       pathname: '/license',
@@ -105,7 +122,7 @@ const renderRedirectToNotFound = (props, requiredPermission) => {
 
 const renderRedirectToBrowse = ({ permissions }) => () => {
   const reducedNav = reduceNavLinks(navigations, permissions)
-  return <Redirect to={_.head(reducedNav).value || '/browse/device'} />
+  return <Redirect to={head(reducedNav).value || '/browse/device'} />
 }
 
 const renderLoadableLogin = signedOutFactory(LoadableLogin)
@@ -161,8 +178,10 @@ const isLoggedInAndOnLogin = ({ isLoggedOut }, { location }) => {
 }
 
 const renderCaseDetails = loggedInFactory(CaseDetails)
-export const routerFactory = () => props => (
-  <Router history={history}>
+
+const AppRoutes = ({ props }) => {
+  useHashAndScroll()
+  return (
     <Switch>
       <Route
         exact
@@ -486,7 +505,14 @@ export const routerFactory = () => props => (
 
       <Route render={renderNotFound} />
     </Switch>
-  </Router>
-)
+  )
+}
+export const routerFactory = () => props => {
+  return (
+    <Router history={history}>
+      <AppRoutes props={props} />
+    </Router>
+  )
+}
 
 export default routerFactory

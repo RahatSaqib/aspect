@@ -210,8 +210,13 @@ function onDeviceUpdateFlag(updates) {
         .where({ deviceId })
         .update(flagUpdates)
       if (updatedRows === 0) {
-        // If we don't have a flag for this device yet, create it!
-        await knex('FactDeviceFlag').insert({ deviceId, ...flagUpdates })
+        const existingFact = await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .first()
+        if (!existingFact) {
+          // If we don't have a flag for this device yet, create it!
+          await knex('FactDeviceFlag').insert({ deviceId, ...flagUpdates })
+        }
       }
 
       // flags have been updated, check connectivity again for this device with
