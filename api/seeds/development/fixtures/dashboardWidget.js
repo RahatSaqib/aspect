@@ -181,5 +181,11 @@ module.exports = {
         x => x.externalId === 'stockNotRecorded'
       ),
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'avgTimeToUpload'
+      ),
+      sortOrder: 16,
+    },
   ],
 }
