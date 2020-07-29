@@ -1325,6 +1325,55 @@ async function deviceMaintenanceStatus(request) {
   }
 }
 
+async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
+  return messageContext.run(async knex => {
+    const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
+      .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+        queryBuilder
+          .on('d.id', 'dmsl.deviceId')
+          .andOn('dmsl.day', knex.raw('?', [startOfToday()]))
+      })
+      .leftJoin('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
+      .leftJoin(
+        'DeviceMaintenanceStatus as dms',
+        'dms.id',
+        'd.deviceMaintenanceStatusId'
+      )
+      .whereNull('dmsl.id')
+      .select(
+        'd.id',
+        'dms.externalId as maintenanceStatusExternalId',
+        'da.token as approvalToken'
+      )
+    await Promise.each(devicesWithNoMaintenanceLogForTheDay, async device => {
+      const lastMaintenanceStatusLogForDevice =
+        (await knex('DeviceMaintenanceStatusLog')
+          .where('deviceId', device.id)
+          .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
+          .first()) || {}
+      lastMaintenanceStatusLogForDevice.data = lastMaintenanceStatusLogForDevice.data
+        ? JSON.parse(lastMaintenanceStatusLogForDevice.data)
+        : {}
+      let deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
+      if (device.approvalToken === 'decommissioned') {
+        deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
+      } else if (device.maintenanceStatusExternalId) {
+        deviceMaintenanceStatusForTheDay = device.maintenanceStatusExternalId
+      }
+      await automaticallySetDeviceMaintenanceStatus(
+        device.id,
+        startOfToday,
+        deviceMaintenanceStatusForTheDay,
+        {
+          ...lastMaintenanceStatusLogForDevice.data,
+          ...action,
+        },
+        messageContext
+      )
+    })
+  })
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -1347,4 +1396,5 @@ module.exports = {
   onDeviceUpdateMaintenanceStatus,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
+  onTimeToLogDeviceMaintenanceStatus,
 }
