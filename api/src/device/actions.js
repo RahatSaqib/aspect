@@ -8,6 +8,8 @@ const types = {
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
   DEVICE_MAINTENANCE_RESOLVED: 'DEVICE_MAINTENANCE_RESOLVED',
   DEVICE_MAINTENANCE_STATUS_LOGGED: 'DEVICE_MAINTENANCE_STATUS_LOGGED',
+  TIME_TO_LOG_DEVICE_MAINTENANCE_STATUS:
+    'TIME_TO_LOG_DEVICE_MAINTENANCE_STATUS',
 }
 
 // ----------- Action Creators -------------------
@@ -157,6 +159,17 @@ function deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId) {
   }
 }
 
+/**
+ * Creates an action to notify that it is time
+ * to log the maintenance status of unlogged
+ * devices
+ */
+function logDeviceMaintenanceStatus() {
+  return {
+    type: types.TIME_TO_LOG_DEVICE_MAINTENANCE_STATUS,
+  }
+}
+
 module.exports = {
   types,
   deviceSeen,
@@ -167,4 +180,5 @@ module.exports = {
   deviceNoResults,
   deviceHasNewResults,
   deviceMaintenanceStatusLogged,
+  logDeviceMaintenanceStatus,
 }
