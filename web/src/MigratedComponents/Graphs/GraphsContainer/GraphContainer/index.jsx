@@ -99,6 +99,7 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
                 component: CardSelectors,
                 props: selectorModifiers,
               }}
+              name={id}
             >
               <Grid
                 container
