@@ -405,7 +405,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.configurationData',
     'd.lastSeenOn',
     'd.putInService',
-    'ds.token as status',
+    'da.token as approval',
     'dt.externalId as deviceType',
     'dt.plugin as deviceTypePluginName',
     'p.plugin as partnerPluginName',
@@ -418,7 +418,7 @@ async function findDevices(availableDeviceDetails, knex) {
       this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
     })
     .innerJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')

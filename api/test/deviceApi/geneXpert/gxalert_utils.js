@@ -24,7 +24,7 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
@@ -95,7 +95,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
@@ -154,7 +154,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 
   await knex('Device')
     .whereIn('siteId', siteIds)
-    .orWhereIn('deviceId', deviceIds)
+    .orWhereIn('id', deviceIds)
     .delete()
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
@@ -177,7 +177,7 @@ class GxAlertApiTestContext {
     this.basicDevicePayload = {
       name: this.gxAlertDeviceName,
       serial: null,
-      status: null,
+      approval: null,
       type: {
         id: 'CepheidGeneXpert',
       },
@@ -224,8 +224,8 @@ class GxAlertApiTestContext {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceStatus = await knex
-        .from('DeviceStatus')
+      const approvedDeviceApproval = await knex
+        .from('DeviceApproval')
         .where('token', 'approved')
         .first()
 
@@ -241,7 +241,7 @@ class GxAlertApiTestContext {
         geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-        deviceStatusId: approvedDeviceStatus.id,
+        deviceApprovalId: approvedDeviceApproval.id,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
         configurationData: '{}',
@@ -479,6 +479,11 @@ class GxAlertApiTestContext {
           this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
         })
         .leftJoin('Country as c', 'g.countryId', 'c.id')
+        .leftJoin(
+          'DeviceMaintenanceStatus as dms',
+          'd.deviceMaintenanceStatusId',
+          'dms.id'
+        )
         .whereRaw(
           `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${_.last(
             this.gxAlertDeviceIds
@@ -491,7 +496,7 @@ class GxAlertApiTestContext {
           'c.abbreviation as countryAbbreviation',
           's.id as siteId',
           'd.deviceTypeId',
-          'd.deviceStatusId',
+          'd.deviceApprovalId',
           'd.name',
           'd.shortName',
           'd.macAddress',
@@ -501,7 +506,8 @@ class GxAlertApiTestContext {
           'd.timezone',
           'd.configurationData',
           'd.lastSeenOn',
-          'd.lastPingOn'
+          'd.lastPingOn',
+          'dms.externalId as deviceMaintenanceStatus'
         )
       if (_.isEmpty(device)) {
         return device

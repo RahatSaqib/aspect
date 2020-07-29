@@ -117,7 +117,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'lastSeen',
     'delivered',
     'confirmFollowUpRatio',
-    'status',
+    'approval',
     'acknowledgedRatio',
     'requiresFollowUp',
     'totalOnTreatment',

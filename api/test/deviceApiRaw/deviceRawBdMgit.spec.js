@@ -39,8 +39,8 @@ describe('Device API Raw routes for BD MGIT', () => {
       .andWhere('g.stateId', null)
       .andWhere('g.lgaId', null)
       .first('g.*')
-    const approvedDeviceStatus = await knex
-      .from('DeviceStatus')
+    const approvedDeviceApproval = await knex
+      .from('DeviceApproval')
       .where('token', 'approved')
       .first()
     const deviceCapacity = await knex('DeviceCapacity')
@@ -68,7 +68,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       geographyId: geography.id,
       deviceTypeId: bdMgitDeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-      deviceStatusId: approvedDeviceStatus.id,
+      deviceApprovalId: approvedDeviceApproval.id,
       name: 'Some BD MGIT Device',
       shortName: 'BD MGIT',
       configurationData: '{}',
@@ -111,7 +111,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       .where('deviceId', deviceId)
       .pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
-    await knex('DeviceStatusLog').where('deviceId', deviceId).delete()
+    await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
     await knex('DeviceLog')
       .where('deviceId', deviceId)
       .orWhereIn('resultId', resultIds)

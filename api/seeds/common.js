@@ -20,7 +20,7 @@ const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/ge
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
 const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget')
 const {
-  deviceStatusToId,
+  deviceApprovalToId,
   deviceTypeToId,
   allDeviceTypeCategoryToId,
   deviceTypeCategoryToId,
@@ -489,7 +489,7 @@ async function ensureCountryLevelInformationSystemExists(
     const [deviceId] = await knex('Device').insert({
       ...auditFields,
       name,
-      deviceStatusId: await deviceStatusToId('approved'),
+      deviceApprovalId: await deviceApprovalToId('approved'),
       partnerId,
       geographyId: countryGeographyId,
       siteId,
@@ -1309,7 +1309,7 @@ async function baseGxAlertMigration(
               geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
-              deviceStatusId: await deviceStatusToId('approved'),
+              deviceApprovalId: await deviceApprovalToId('approved'),
               name: device.name,
               shortName: device.shortName,
               serial: device.serial,
@@ -1620,7 +1620,7 @@ async function seedLabClinicFixture(
     updatedOn: now,
     updatedBy: adminId,
   }
-  const approvedDeviceStatusId = await deviceStatusToId('approved')
+  const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
   await Promise.all(
     _.map(labClinics.clinics || [], async clinic => {
@@ -1750,7 +1750,7 @@ async function seedLabClinicFixture(
                 .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
                 .first('id')
               deviceData.deviceTypeId = deviceTypeId
-              deviceData.deviceStatusId = approvedDeviceStatusId
+              deviceData.deviceApprovalId = approvedDeviceApprovalId
               deviceData.name = device.name
               deviceData.shortName = device.shortName
               deviceData.macAddress = device.macAddress

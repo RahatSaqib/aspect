@@ -12,7 +12,7 @@ const {
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
@@ -159,7 +159,7 @@ async function seed(knex) {
       )
     })
   )
-  const approvedDeviceStatusId = await deviceStatusToId('approved')
+  const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
   const { id: partnerId } = await knex('Partner')
     .where('name', 'Zimbabwe')
@@ -208,7 +208,7 @@ async function seed(knex) {
               deviceData.deviceTypeId = await deviceTypeToId(
                 device.deviceTypeId
               )
-              deviceData.deviceStatusId = approvedDeviceStatusId
+              deviceData.deviceApprovalId = approvedDeviceApprovalId
               deviceData.name = device.name
               deviceData.shortName = device.shortName
               deviceData.serial = device.deviceSerial
