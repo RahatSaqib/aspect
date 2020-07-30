@@ -563,7 +563,7 @@ module.exports = {
       descriptionI18nKey: 'moduleSwapsDescription',
       dashboards: {
         operational: {
-          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,    
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
         },
       },
     },
