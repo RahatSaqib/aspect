@@ -124,8 +124,13 @@ async function getListDevices(query, auth) {
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin(
+      'DeviceMaintenanceStatusLog as dmsl',
+      'd.deviceMaintenanceStatusLogId',
+      'dmsl.id'
+    )
+    .leftJoin(
       'DeviceMaintenanceStatus as dms',
-      'd.deviceMaintenanceStatusId',
+      'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
     .where(queryBuilder => {
@@ -137,7 +142,7 @@ async function getListDevices(query, auth) {
         !_.isEmpty(query.deviceMaintenanceStatusId)
       ) {
         queryBuilder.whereIn(
-          'd.deviceMaintenanceStatusId',
+          'dmsl.deviceMaintenanceStatusId',
           query.deviceMaintenanceStatusId
         )
       }
@@ -331,8 +336,13 @@ async function getDeviceByDeviceId({
         .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
     })
     .leftJoin(
+      'DeviceMaintenanceStatusLog as dmsl',
+      'd.deviceMaintenanceStatusLogId',
+      'dmsl.id'
+    )
+    .leftJoin(
       'DeviceMaintenanceStatus as dms',
-      'd.deviceMaintenanceStatusId',
+      'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
     .where('d.id', +deviceId)
@@ -932,6 +942,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
       maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
       maintenanceStatusName: deviceMaintenanceStatus.name,
       maintenanceStatusActive: deviceMaintenanceStatus.active,
+      maintenanceStatusNotes: notes,
       maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
     },
   }
@@ -1004,12 +1015,12 @@ async function onDeviceMaintenanceStatusLogged(
         .where('dmsl.deviceId', deviceId)
         .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
         .first(
-          'dmsl.deviceMaintenanceStatusId as latestDeviceMaintenanceStatusId',
-          'd.deviceMaintenanceStatusId as currentDeviceMaintenanceStatusId'
+          'dmsl.id as latestDeviceMaintenanceStatusId',
+          'd.deviceMaintenanceStatusLogId as currentDeviceMaintenanceStatusId'
         )) || {}
     if (currentDeviceMaintenanceStatusId !== latestDeviceMaintenanceStatusId) {
       await knex('Device').where('id', deviceId).update({
-        deviceMaintenanceStatusId: latestDeviceMaintenanceStatusId,
+        deviceMaintenanceStatusLogId: latestDeviceMaintenanceStatusId,
         updatedOn: new Date(),
       })
     }
@@ -1145,8 +1156,13 @@ async function deviceMaintenanceStatusHistory(request) {
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin(
+      'DeviceMaintenanceStatusLog as dmsl',
+      'd.deviceMaintenanceStatusLogId',
+      'dmsl.id'
+    )
+    .leftJoin(
       'DeviceMaintenanceStatus as dms',
-      'd.deviceMaintenanceStatusId',
+      'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
     .where('dc.hasResults', true)
@@ -1278,14 +1294,11 @@ async function deviceMaintenanceStatus(request) {
 
   const currentDeviceMaintenanceStatusLog =
     (await knex('Device as d')
-      .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
-        queryBuilder
-          .on('d.id', 'dmsl.deviceId')
-          .andOn(
-            'd.deviceMaintenanceStatusId',
-            'dmsl.deviceMaintenanceStatusId'
-          )
-      })
+      .leftJoin(
+        'DeviceMaintenanceStatusLog as dmsl',
+        'd.deviceMaintenanceStatusLogId',
+        'dmsl.Id'
+      )
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         showUnapprovedDevices: true,

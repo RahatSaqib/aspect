@@ -94,9 +94,9 @@ async function seed(knex) {
         .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
         .first('dmsl.deviceMaintenanceStatusId')) || {}
     if (latestDeviceMaintenanceStatusLog.deviceMaintenanceStatusId) {
-      await knex('Device')
-        .where('id', device.id)
-        .update(latestDeviceMaintenanceStatusLog)
+      await knex('Device').where('id', device.id).update({
+        DeviceMaintenanceStatusLogId: latestDeviceMaintenanceStatusLog,
+      })
     }
   })
 }

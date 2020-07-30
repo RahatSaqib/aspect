@@ -669,6 +669,9 @@ const routes = [
               maintenanceStatusName: Joi.string()
                 .allow('', null)
                 .description('The default name of the maintenance status'),
+              maintenanceStatuNotes: Joi.string()
+                .allow('', null)
+                .description('The notes of the last the maintenance status'),
               maintenanceStatusActive: Joi.number()
                 .allow(null)
                 .description('Whether the device was active or not'),

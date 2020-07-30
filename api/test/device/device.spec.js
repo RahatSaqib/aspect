@@ -380,14 +380,11 @@ describe('Device routes', () => {
             deviceMaintenanceStatuses.inactiveOutOfInventory,
         })
         const deviceWithLogWithNote = await knex('Device as d')
-          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
-            queryBuilder
-              .on('d.id', 'dmsl.deviceId')
-              .andOn(
-                'd.deviceMaintenanceStatusId',
-                'dmsl.deviceMaintenanceStatusId'
-              )
-          })
+          .join(
+            'DeviceMaintenanceStatusLog as dmsl',
+            'd.deviceMaintenanceStatusLogId',
+            'dmsl.id'
+          )
           .where(queryBuilder => {
             queryBuilder.whereRaw(
               `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
@@ -767,15 +764,17 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceMaintenanceLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
           deviceId,
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusId: deviceMaintenanceLogId,
           data: '{}',
           day: startOfToday(),
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusLogId: deviceMaintenanceLogId,
         })
 
         const devicesWithEditableStatus = await server
@@ -832,7 +831,7 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
           deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
@@ -840,7 +839,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusLogId: deviceLogId,
         })
 
         const devicesWithEditableStatus = await server
