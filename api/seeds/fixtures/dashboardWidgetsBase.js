@@ -626,7 +626,7 @@ module.exports = {
       `,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'unusedModulesStats',
-      link: '/browse/result',
+      link: '/browse/device',
       sortOrder: 16,
       externalId: 'unusedModules',
       description:
@@ -675,7 +675,7 @@ module.exports = {
         HAVING instrumentCount > 1) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
-      link: '/browse/result',
+      link: '/browse/device',
       sortOrder: 13,
       externalId: 'instrumentsReplaced',
       description: 'The number of instruments that were replaced.',
