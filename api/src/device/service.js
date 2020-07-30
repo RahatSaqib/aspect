@@ -1328,6 +1328,8 @@ async function deviceMaintenanceStatus(request) {
 async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
   return messageContext.run(async knex => {
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
         queryBuilder
           .on('d.id', 'dmsl.deviceId')
@@ -1340,10 +1342,11 @@ async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
         'd.deviceMaintenanceStatusId'
       )
       .whereNull('dmsl.id')
+      .andWhere('dtc.hasResults', true)
       .orWhere(queryBuilder => {
         queryBuilder
-          .where('da.token', knex.raw('decommissioned'))
-          .andWhere('dms.externalId', '<>', knex.raw('inactiveDecommissioned'))
+          .where('da.token', 'decommissioned')
+          .andWhere('dms.externalId', '<>', 'inactiveDecommissioned')
       })
       .select(
         'd.id',
@@ -1355,7 +1358,7 @@ async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
       const lastMaintenanceStatusLogForDevice =
         (await knex('DeviceMaintenanceStatusLog')
           .where('deviceId', id)
-          .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
+          .orderByRaw('day desc, createdOn desc, id desc')
           .first()) || {}
       lastMaintenanceStatusLogForDevice.data = lastMaintenanceStatusLogForDevice.data
         ? JSON.parse(lastMaintenanceStatusLogForDevice.data)
@@ -1367,7 +1370,7 @@ async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
       }
       await automaticallySetDeviceMaintenanceStatus(
         id,
-        startOfToday,
+        startOfToday(),
         deviceMaintenanceStatusForTheDay,
         {
           ...lastMaintenanceStatusLogForDevice.data,
