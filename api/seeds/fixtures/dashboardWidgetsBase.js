@@ -591,5 +591,53 @@ module.exports = {
         },
       },
     },
+    {
+      icon: 'MdSwapVert',
+      title: 'Instruments Replaced',
+      titleI18nKey: 'instrumentsReplaced',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT
+      COUNT(instrumentCount) AS cnt
+      FROM(
+        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
+        FROM Result AS r
+        INNER JOIN Device AS d ON d.id = r.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        WHERE YEAR(r.endedOn) = YEAR(NOW())
+              AND
+              MONTH(r.endedOn) = MONTH(NOW())
+              AND
+              dt.externalId = 'CepheidGeneXpert'
+        GROUP BY r.deviceId
+        HAVING instrumentCount > 1) AS innerQuery`,
+      sqlForStatUnit: `SELECT
+      COUNT(instrumentCount) AS cnt
+      FROM(
+        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
+        FROM Result AS r
+        INNER JOIN Device AS d ON d.id = r.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          WHERE
+          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          dt.externalId = 'CepheidGeneXpert'
+        GROUP BY r.deviceId
+        HAVING instrumentCount > 1) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
+      link: '/browse/result',
+      sortOrder: 13,
+      externalId: 'instrumentsReplaced',
+      description: 'The number of instruments that were replaced.',
+      descriptionI18nKey: 'instrumentsReplacedDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
   ],
 }
