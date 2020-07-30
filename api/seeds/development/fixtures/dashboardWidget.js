@@ -191,5 +191,11 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
       sortOrder: 17,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'instrumentsReplaced'
+      ),
+      sortOrder: 18,
+    },
   ],
 }
