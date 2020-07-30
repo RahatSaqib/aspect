@@ -16,6 +16,7 @@ import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
 import AspectTooltip from '../../components/shared/AspectTooltip'
+import AspectLink from '../../components/shared/AspectLink'
 import IconProvider from '../../MigratedComponents/IconProvider'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -159,8 +160,8 @@ export const Widget = ({ intl, defaultMessages, widget }) => {
     defaultMessages
   )
   return (
-    <Link
-      to={widget.link || '#'}
+    <AspectLink
+      to={widget.link}
       className={cssClasses('Summary', {
         'Summary_Link--disabled': !widget.link,
       })}
@@ -211,7 +212,7 @@ export const Widget = ({ intl, defaultMessages, widget }) => {
           </div>
         </div>
       </Card>
-    </Link>
+    </AspectLink>
   )
 }
 
