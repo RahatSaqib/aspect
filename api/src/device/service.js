@@ -924,7 +924,17 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     payload,
     messageContext
   )
-  return { ok: true, deviceMaintenanceStatusLogId }
+  return {
+    ok: true,
+    data: {
+      deviceMaintenanceStatusLogId,
+      maintenanceStatus: deviceMaintenanceStatus.externalId,
+      maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
+      maintenanceStatusName: deviceMaintenanceStatus.name,
+      maintenanceStatusActive: deviceMaintenanceStatus.active,
+      maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
+    },
+  }
 }
 
 async function automaticallySetDeviceMaintenanceStatus(
