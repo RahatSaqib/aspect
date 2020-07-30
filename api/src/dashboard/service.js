@@ -18,6 +18,7 @@ const {
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { getArrayOfDaysInRange } = require('../shared/date')
+const { canView } = require('../auth/constraints')
 
 const i18nKeys = {
   // Dashboard
