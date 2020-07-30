@@ -649,6 +649,11 @@ export const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
+  const maintenanceStatusNotes =
+    !device.get('maintenanceStatusNotes') ||
+    device.get('maintenanceStatusNotes') === ''
+      ? null
+      : device.get('maintenanceStatusNotes')
   const resultColumns = [
     {
       key: 'endedOn',
@@ -719,7 +724,20 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.maintenance)}
-              description={maintenanceStatusText}
+              description={
+                <Fragment>
+                  {maintenanceStatusText}
+                  {maintenanceStatusNotes && (
+                    <Tooltip title={maintenanceStatusNotes} placement="top">
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
               action={
                 <Button
                   variant="contained"

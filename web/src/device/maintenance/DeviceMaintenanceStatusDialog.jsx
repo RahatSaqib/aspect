@@ -57,7 +57,7 @@ const deviceMaintenanceStatusDialog = WrappedComponent => props => {
     () =>
       setValues({
         maintenanceStatus: device.get('maintenanceStatus') || null,
-        notes: device.get('calibrationNotes') || null,
+        notes: device.get('maintenanceStatusNotes') || null,
       }),
     [device]
   )

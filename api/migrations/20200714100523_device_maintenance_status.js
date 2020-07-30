@@ -86,7 +86,7 @@ async function up(knex) {
       .unsigned()
       .index()
       .references('id')
-      .inTable('DeviceMaintenanceStatus')
+      .inTable('DeviceMaintenanceStatusLog')
   })
 }
 
