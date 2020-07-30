@@ -592,7 +592,6 @@ module.exports = {
       },
     },
     {
-      icon: 'MdSwapVert',
       title: 'Devices with Unused Modules',
       titleI18nKey: 'unusedModulesTitle',
       subTitle: null,
@@ -633,6 +632,54 @@ module.exports = {
       description:
         "Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module.",
       descriptionI18nKey: 'unusedModulesDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
+    {
+      icon: 'MdSwapVert',
+      title: 'Instruments Replaced',
+      titleI18nKey: 'instrumentsReplaced',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT
+      COUNT(instrumentCount) AS cnt
+      FROM(
+        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
+        FROM Result AS r
+        INNER JOIN Device AS d ON d.id = r.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        WHERE YEAR(r.endedOn) = YEAR(NOW())
+              AND
+              MONTH(r.endedOn) = MONTH(NOW())
+              AND
+              dt.externalId = 'CepheidGeneXpert'
+        GROUP BY r.deviceId
+        HAVING instrumentCount > 1) AS innerQuery`,
+      sqlForStatUnit: `SELECT
+      COUNT(instrumentCount) AS cnt
+      FROM(
+        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
+        FROM Result AS r
+        INNER JOIN Device AS d ON d.id = r.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          WHERE
+          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          dt.externalId = 'CepheidGeneXpert'
+        GROUP BY r.deviceId
+        HAVING instrumentCount > 1) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
+      link: '/browse/result',
+      sortOrder: 13,
+      externalId: 'instrumentsReplaced',
+      description: 'The number of instruments that were replaced.',
+      descriptionI18nKey: 'instrumentsReplacedDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,

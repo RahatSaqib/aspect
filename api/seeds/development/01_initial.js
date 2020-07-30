@@ -5444,6 +5444,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.unusedModules },
     {
       jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.instrumentsReplaced,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
     },
     {
@@ -5457,6 +5461,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.utilizationRate,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.instrumentsReplaced,
     },
     {
       jobFunctionId: jobFunctionIdManager,
@@ -5486,6 +5494,10 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.instrumentsReplaced,
+    },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.activeDevices,
     },
 
@@ -5502,6 +5514,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.utilizationRate,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.instrumentsReplaced,
     },
     {
       jobFunctionId: jobFunctionIdClinician,
