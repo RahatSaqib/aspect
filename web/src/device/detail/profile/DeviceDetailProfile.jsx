@@ -156,35 +156,35 @@ const messages = defineMessages({
   },
 
   active: {
-    id: 'pages.DeviceDetailProfile.active',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.active',
     defaultMessage: 'Active',
   },
   inactiveConnectivity: {
-    id: 'pages.DeviceDetailProfile.inactiveConnectivity',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity',
     defaultMessage: 'Connectivity',
   },
   inactiveDecommissioned: {
-    id: 'pages.DeviceDetailProfile.inactiveDecommissioned',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned',
     defaultMessage: 'Decommissioned',
   },
   inactiveDownForRepair: {
-    id: 'pages.DeviceDetailProfile.inactiveDownForRepair',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair',
     defaultMessage: 'Down For Repair',
   },
   inactiveNoResultsReported: {
-    id: 'pages.DeviceDetailProfile.inactiveNoResultsReported',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoResultsReported',
     defaultMessage: 'No Results Reported',
   },
   inactiveOutOfInventory: {
-    id: 'pages.DeviceDetailProfile.inactiveOutOfInventory',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory',
     defaultMessage: 'Out Of Inventory',
   },
   inactiveUnknown: {
-    id: 'pages.DeviceDetailProfile.inactiveUnknown',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown',
     defaultMessage: 'Unknown',
   },
   reportedActive: {
-    id: 'pages.DeviceDetailProfile.reportedActive',
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.reportedActive',
     defaultMessage: 'Active',
   },
 })
@@ -334,7 +334,6 @@ const enhance = compose(
       }),
     onMaintenanceSubmit: ({
       device,
-      maintenanceStatus,
       updateDeviceMaintenanceStatus,
     }) => values => {
       return updateDeviceMaintenanceStatus({
@@ -692,8 +691,8 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
-  const maintenanceStatusText = device.get('maintenanceStatus')
-    ? intl.formatMessage(messages[device.get('maintenanceStatus')])
+  const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
+    ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
     : intl.formatMessage(messages.undefinedValue)
 
   return (

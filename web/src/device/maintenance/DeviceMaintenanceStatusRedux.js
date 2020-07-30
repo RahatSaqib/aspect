@@ -49,8 +49,8 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
         400: filterFieldsRejectedError(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchDeviceApprovals.GET.400.title',
-              defaultMessage: 'Searching Device Approvals Failed',
+              id: 'errorResponseMessages.fetchDeviceMaintenance.GET.400.title',
+              defaultMessage: 'Searching Device Maintenance status Failed',
             },
           })
         ),
@@ -59,7 +59,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
             title: {
               id:
                 'errorResponseMessages.fetchDeviceApprovals.GET.default.title',
-              defaultMessage: 'Loading Device Approval Statuses Failed',
+              defaultMessage: 'Loading Device Maintenance Status Failed',
             },
           })
         ),

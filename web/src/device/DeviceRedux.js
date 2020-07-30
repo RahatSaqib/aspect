@@ -195,7 +195,6 @@ export function fetchSingleDevice(deviceId, rawFiltersParams) {
     const filters = _.fromPairs([...filtersParams.entries()])
     const requestedAt = Date.now()
     dispatch(requestSingleDevice(requestedAt, deviceId))
-
     return aspectFetch(`/device/${deviceId}?${stringify(filters)}`, {
       errorNotifications: {
         404: errorNotFound(
@@ -337,19 +336,14 @@ export function hideDialog() {
   }
 }
 
-export function updateDeviceMaintenanceStatus({
-  externalId,
-  device,
-  notes,
-  requestedAt = new Date(),
-}) {
+export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
   const deviceId = device.get('id')
-  const i18nErrorTitleDescriptor = externalId =>
+  const i18nErrorTitleDescriptor = () =>
     defineMessages({
       title: {
         id:
           'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
-        defaultMessage: 'Setting Device Maintenance have Failed',
+        defaultMessage: 'Setting Maintenance Status Failed',
       },
     })
 
@@ -358,7 +352,7 @@ export function updateDeviceMaintenanceStatus({
       method: 'POST',
       body: JSON.stringify({
         externalId,
-        options: { notes },
+        notes,
       }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({
@@ -369,9 +363,8 @@ export function updateDeviceMaintenanceStatus({
     })
       .then(json => {
         dispatch(
-          receiveUpdatedSingleDevice(requestedAt, {
+          receiveUpdatedSingleDevice(new Date(), {
             ...json.data,
-            maintenanceStatus: externalId,
             id: deviceId,
           })
         )
