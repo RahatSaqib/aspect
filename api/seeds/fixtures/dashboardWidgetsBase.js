@@ -692,6 +692,7 @@ module.exports = {
       description:
         "Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module.",
       descriptionI18nKey: 'unusedModulesDescription',
+      icon: 'MdSwapVert',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
