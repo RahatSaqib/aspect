@@ -3610,7 +3610,7 @@ describe('Device API routes for GxAlert Device', () => {
           const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
           const startedOn = setMilliseconds(new Date(), 0)
           const endedOn = addHours(startedOn, 2)
-          const [deviceMaintenanceStatusId] = await knex(
+          const [deviceMaintenanceStatusLogId] = await knex(
             'DeviceMaintenanceStatusLog'
           ).insert({
             deviceId: geneXpertDevice.id,
@@ -3621,7 +3621,7 @@ describe('Device API routes for GxAlert Device', () => {
             createdOn: new Date(),
           })
           await knex('Device').where('id', geneXpertDevice.id).update({
-            deviceMaintenanceStatusId,
+            deviceMaintenanceStatusLogId,
           })
           const resultId = 'A_RESULT_FROM_INACTIVE_DEVICE'
           await postToDeviceApi({
