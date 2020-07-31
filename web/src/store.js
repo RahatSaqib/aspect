@@ -3,10 +3,10 @@ import { createStore, compose, applyMiddleware } from 'redux'
 import { createLogger } from 'redux-logger'
 
 import rootReducer from './rootReducer'
-import { middleware as idleMiddleware } from './idle/IdleRedux'
+// import { middleware as idleMiddleware } from './idle/IdleRedux'
 
-const showLogger = false
-const middleware = [thunk, idleMiddleware]
+const showLogger = true
+const middleware = [thunk]
 
 if (process.env.ASPECT_TARGET === 'local' && showLogger) {
   middleware.push(createLogger({ collapsed: true }))
@@ -18,7 +18,7 @@ const createStoreWithDevTools = compose(
   // eslint-disable-next-line no-underscore-dangle
   window.__REDUX_DEVTOOLS_EXTENSION__
     ? // eslint-disable-next-line no-underscore-dangle
-      window.__REDUX_DEVTOOLS_EXTENSION__()
+      window.__REDUX_DEVTOOLS_EXTENSION__({ trace: true, traceLimit: 25 })
     : f => f
 )(createStore)
 
