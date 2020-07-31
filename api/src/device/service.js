@@ -1008,20 +1008,22 @@ async function onDeviceMaintenanceStatusLogged(
       .where('id', deviceMaintenanceStatusLogId)
       .first('deviceId')
     const {
-      latestDeviceMaintenanceStatusId,
-      currentDeviceMaintenanceStatusId,
+      latestDeviceMaintenanceStatusLogId,
+      currentDeviceMaintenanceStatusLogId,
     } =
       (await knex('DeviceMaintenanceStatusLog as dmsl')
         .join('Device as d', 'dmsl.deviceId', 'd.id')
         .where('dmsl.deviceId', deviceId)
         .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
         .first(
-          'dmsl.id as latestDeviceMaintenanceStatusId',
-          'd.deviceMaintenanceStatusLogId as currentDeviceMaintenanceStatusId'
+          'dmsl.id as latestDeviceMaintenanceStatusLogId',
+          'd.deviceMaintenanceStatusLogId as currentDeviceMaintenanceStatusLogId'
         )) || {}
-    if (currentDeviceMaintenanceStatusId !== latestDeviceMaintenanceStatusId) {
+    if (
+      currentDeviceMaintenanceStatusLogId !== latestDeviceMaintenanceStatusLogId
+    ) {
       await knex('Device').where('id', deviceId).update({
-        deviceMaintenanceStatusLogId: latestDeviceMaintenanceStatusId,
+        deviceMaintenanceStatusLogId: latestDeviceMaintenanceStatusLogId,
         updatedOn: new Date(),
       })
     }

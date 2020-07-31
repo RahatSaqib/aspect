@@ -763,7 +763,7 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        const [deviceMaintenanceLogId] = await knex(
+        const [deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId,
@@ -773,7 +773,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusLogId: deviceMaintenanceLogId,
+          deviceMaintenanceStatusLogId,
         })
 
         const devicesWithEditableStatus = await server
@@ -831,7 +831,9 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        const [deviceLogId] = await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
           deviceId,
           deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
@@ -839,7 +841,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusLogId: deviceLogId,
+          deviceMaintenanceStatusLogId,
         })
 
         const devicesWithEditableStatus = await server

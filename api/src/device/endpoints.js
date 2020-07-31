@@ -656,7 +656,7 @@ const routes = [
             .description('False if there was some sort of error'),
           data: Joi.object()
             .required()
-            .description('Device details fields')
+            .description('Device maintenance status details fields')
             .keys({
               deviceMaintenanceStatusLogId: Joi.number()
                 .required()
