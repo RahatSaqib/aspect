@@ -5,7 +5,7 @@ const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const isWeekend = require('date-fns/isWeekend')
 const differenceInDays = require('date-fns/differenceInDays')
-const { knex, filterParams, filterDateRangeParams } = require('../db')
+const { knex } = require('../db')
 const {
   getConstraints,
   addConstraints,
@@ -18,6 +18,7 @@ const {
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { getArrayOfDaysInRange } = require('../shared/date')
+const { queryValue } = require('../shared/sql-2-knex')
 
 const i18nKeys = {
   // Dashboard
@@ -70,76 +71,6 @@ async function getDashboardWidget({ id, partnerId }, options) {
     .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
   return widgets
-}
-
-function getTableAlias(sql) {
-  const tableAliasRegExp = new RegExp(
-    /\b(?:from|join)\s+([a-zA-Z0-9_$#-]*)\s+as\s+([a-zA-Z0-9_$#-]*)\b/gi
-  )
-  let match
-  const tableAlias = {}
-  // eslint-disable-next-line no-cond-assign
-  while ((match = tableAliasRegExp.exec(sql)) !== null) {
-    if (match.length === 3) {
-      const [, tableName, alias] = match
-      tableAlias[tableName.toLowerCase()] = alias
-    }
-  }
-  return tableAlias
-}
-
-function tryConvertSqlStringToKnexQueryBuilder(sql) {
-  const sqlSelectFromTableNameRegExp = new RegExp(
-    /\bselect\s+(.*?)\s?(?:\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?)?$/gi
-  )
-  const sqlSelectFromTableNameMatch = sqlSelectFromTableNameRegExp.exec(sql)
-  let sqlBuilder
-  if (
-    sqlSelectFromTableNameMatch &&
-    /^[a-zA-Z0-9_\-\s`]*$/.test(sqlSelectFromTableNameMatch[2]) // Does the FROM source look like a table name? Eg: Device or Device as d or `Device` as d
-  ) {
-    if (sqlSelectFromTableNameMatch.length === 6) {
-      sqlBuilder = knex
-        .select(knex.raw(sqlSelectFromTableNameMatch[1]))
-        .from(sqlSelectFromTableNameMatch[2])
-      if (sqlSelectFromTableNameMatch[3]) {
-        sqlBuilder.joinRaw(sqlSelectFromTableNameMatch[3])
-      }
-      if (sqlSelectFromTableNameMatch[4]) {
-        sqlBuilder.whereRaw(sqlSelectFromTableNameMatch[4])
-      }
-      if (sqlSelectFromTableNameMatch[5]) {
-        sqlBuilder.havingRaw(sqlSelectFromTableNameMatch[5])
-      }
-    }
-  }
-  return sqlBuilder
-}
-
-async function queryValue(sql, dataConstraints, query) {
-  if (sql) {
-    // get rid of all new-line symbols, if any exist
-    sql = sql.replace(/\n/g, ' ')
-  }
-  let firstResult
-  const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql)
-  if (sqlBuilder) {
-    const sqlTableAlias = getTableAlias(sql)
-    sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias).first()
-    if (sqlTableAlias.result) {
-      sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
-    }
-    if (sqlTableAlias.site) {
-      sqlBuilder.modify(filterParams, query, { siteId: 's.id' })
-    }
-    firstResult = sqlBuilder
-  } else if (sql) {
-    firstResult = await knex.raw(sql)
-  }
-  while (_.isArray(firstResult)) {
-    ;[firstResult] = firstResult
-  }
-  return firstResult
 }
 
 async function summaryDashboard(request) {
