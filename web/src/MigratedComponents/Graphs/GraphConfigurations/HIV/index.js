@@ -6,6 +6,8 @@ const hivGraphs = {
   hivResults: {
     id: 'hivResults',
     title: 'clinicalIndicatorsVLTitle',
+    componentSize: 'full',
+    group: 'hiv',
     assays: [
       'abbottM2000DBSHivVL',
       'abbottM2000PlasmaHivVL',
