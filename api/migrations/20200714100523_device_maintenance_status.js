@@ -87,6 +87,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('DeviceMaintenanceStatusLog')
+      .onDelete('SET NULL')
   })
 }
 
