@@ -14,8 +14,13 @@ import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
+import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
+import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
+import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
+import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 
 import ColorDemo from './ColorDemo/ColorDemo'
 
@@ -24,6 +29,15 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const Status = ({ history, location, colorDemo }) => {
   const intl = useIntl()
   const { hivResults } = hivGraphs
+  const { tbResults } = tbGraphs
+  const { treatmentStatus } = treatmentStatusGraphs
+  const { deviceStatus } = deviceStatusGraphs
+  const {
+    covidDailyConfirmed,
+    covidCasesByAgeAndGender,
+    covidMortalityAndRecoveryConfig,
+    covidMortalityAndRecoveryByGender,
+  } = covidGraphs
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
@@ -64,15 +78,17 @@ const Status = ({ history, location, colorDemo }) => {
         dashboard="home"
       />
 
-      <GraphsContainer
-        intl={intl}
-        history={history}
-        location={location}
-        assaysFromState={assays}
-        config={hivResults}
-        size="full"
-        group="hiv"
-      />
+      <ErrorBoundary>
+        <GraphsContainer
+          intl={intl}
+          history={history}
+          location={location}
+          assaysFromState={assays}
+          config={hivResults}
+          size="full"
+          group="hiv"
+        />
+      </ErrorBoundary>
 
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus
@@ -126,3 +142,46 @@ Status.propTypes = {
 }
 
 export default Status
+
+// const graphsToRender = [
+//   {
+//     config: hivResults,
+//     size: full,
+//     group: 'hiv',
+//   },
+//   {
+//     config: tbResults,
+//     size: full,
+//     group: 'tb',
+//   },
+//   {
+//     config: treatmentStatus,
+//     size: full,
+//     group: 'all',
+//   },
+//   {
+//     config: covidDailyConfirmed,
+//     size: full,
+//     group: 'covid',
+//   },
+//   {
+//     config: covidMortalityAndRecoveryConfig,
+//     size: full,
+//     group: 'covid',
+//   },
+//   {
+//     config: covidMortalityAndRecoveryByGender,
+//     size: half,
+//     group: 'covid',
+//   },
+//   {
+//     config: covidCasesByAgeAndGender,
+//     size: half,
+//     group: 'covid',
+//   },
+//   {
+//     config: deviceStatus,
+//     size: full,
+//     group: 'assaysNotNeeded',
+//   },
+// ]
