@@ -372,12 +372,11 @@ describe('Device routes', () => {
           }),
           createdOn: setMilliseconds(new Date(), 0),
         }
-        await knex('DeviceMaintenanceStatusLog').insert(
+        const [lastLogId] = await knex('DeviceMaintenanceStatusLog').insert(
           newDeviceMaintenanceStatusLog
         )
         await knex('Device').where('id', deviceId).update({
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          deviceMaintenanceStatusLogId: lastLogId,
         })
         const deviceWithLogWithNote = await knex('Device as d')
           .join(
@@ -768,7 +767,7 @@ describe('Device routes', () => {
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId,
-          deviceMaintenanceStatusId: deviceMaintenanceLogId,
+          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
           day: startOfToday(),
           createdOn: new Date(),
@@ -801,14 +800,15 @@ describe('Device routes', () => {
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.isOk(
-          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
         )
         const deviceMaitnenanceStatusLog = await knex(
           'DeviceMaintenanceStatusLog'
         )
           .where(
             'id',
-            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogId
           )
           .first()
         deviceMaitnenanceStatusLog.data = JSON.parse(
@@ -861,14 +861,15 @@ describe('Device routes', () => {
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.isOk(
-          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
         )
         const deviceMaitnenanceStatusLog = await knex(
           'DeviceMaintenanceStatusLog'
         )
           .where(
             'id',
-            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogId
           )
           .first()
         deviceMaitnenanceStatusLog.data = JSON.parse(
