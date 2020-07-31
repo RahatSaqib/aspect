@@ -338,10 +338,10 @@ function tryConvertSqlStringToKnexQueryBuilder(
     ] = sqlQueryMatch
 
     // Does the FROM source look like a table name? Eg: Device or Device as d or `Device` as d
-    const tableALiasMatch = regexTableAlias.exec(fromPart)
-    console.log('......', { tableALiasMatch: !!tableALiasMatch, fromPart })
-    if (tableALiasMatch) {
-      const [, tableName, tableAlias] = tableALiasMatch
+    const tableAliasMatch = regexTableAlias.exec(fromPart)
+    console.log('......', { tableAliasMatch: !!tableAliasMatch, fromPart })
+    if (tableAliasMatch) {
+      const [, tableName, tableAlias] = tableAliasMatch
       console.log('......', { tableName, tableAlias })
       // regexTableAlias.test(fromPart) // Does the FROM source look like a table name? Eg: Device or Device as d or `Device` as d
 
