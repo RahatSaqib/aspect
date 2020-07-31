@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
@@ -14,6 +15,7 @@ import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
@@ -50,7 +52,7 @@ const Status = ({ history, location, colorDemo }) => {
 
   useEffect(() => {
     dispatch(fetchAssays(false))
-  }, [dispatch])
+  }, [])
 
   useEffect(() => {
     const { search } = location
@@ -79,15 +81,11 @@ const Status = ({ history, location, colorDemo }) => {
       />
 
       <ErrorBoundary>
-        <GraphsContainer
-          intl={intl}
-          history={history}
-          location={location}
-          assaysFromState={assays}
-          config={hivResults}
-          size="full"
-          group="hiv"
-        />
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={hivResults} />
+          ) : null}
+        </PermissionsProvider>
       </ErrorBoundary>
 
       {colorDemo && <ColorDemo vars={process.env} />}

@@ -7,8 +7,6 @@ import classnames from 'classnames/bind'
 import merge from 'lodash/merge'
 import Grid from '@material-ui/core/Grid'
 
-import PermissionsProvider from '../../../../Providers/PermissionsProvider'
-
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
@@ -21,109 +19,91 @@ import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
-const GraphContainer = ({ config, size, assaysFromState, group }) => {
+const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
   const dispatch = useDispatch()
-  const allowedGroupsWithoutAssays = ['assaysNotNeeded'].includes(group)
-  const tempDispatchParams = []
+  // const tempDispatchParams = []
   const { title, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
   const { assays, graphType, id } = config
   const { innerSize, outerSize } = size
-  const [dispatchParams] = useState(false)
-  const [dispatchFromChild, setDispatchFromChild] = useState(false)
-  const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
-  const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
-  const [whiteListed, setwhiteListed] = useState(false)
+  // const [dispatchParams] = useState(false)
+  // const [dispatchFromChild, setDispatchFromChild] = useState(false)
+  // const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
+  // const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
+  // const [whiteListed, setwhiteListed] = useState(false)
 
-  useEffect(() => {
-    const allowed = []
-    validateGraphConfig(config).then(() => {
-      if (assays && assays.length > 0) {
-        assays.map(a =>
-          assaysFromState.filter(
-            ({ externalId, hasResults }) =>
-              externalId === a && hasResults && allowed.push(a)
-          )
-        )
-      }
-      setwhiteListed(allowed)
-    })
-  }, [config, assays, assaysFromState])
+  // useEffect(() => {
+  //   if (dispatchFromChild && dispatchFromSelector) {
+  //     const base = dispatchParams || dispatchFromChild
+  //     const { api } = base
+  //     const { params } = api
+  //     const { identifier, selectedOption } = dispatchFromSelector
+  //     const optionValue = extractOptionValue(identifier, selectedOption)
+  //     const mergedAPI = {
+  //       ...base,
+  //       api: { ...api, params: { ...merge(params, optionValue) } },
+  //     }
+  //     dispatch(
+  //       fetchClinicalIndicatorsDashboard(mergedAPI, allowedGroupsWithoutAssays)
+  //     )
+  //   }
+  // }, [dispatchFromSelector])
 
-  useEffect(() => {
-    if (dispatchFromChild && dispatchFromSelector) {
-      const base = dispatchParams || dispatchFromChild
-      const { api } = base
-      const { params } = api
-      const { identifier, selectedOption } = dispatchFromSelector
-      const optionValue = extractOptionValue(identifier, selectedOption)
-      const mergedAPI = {
-        ...base,
-        api: { ...api, params: { ...merge(params, optionValue) } },
-      }
-      dispatch(
-        fetchClinicalIndicatorsDashboard(mergedAPI, allowedGroupsWithoutAssays)
-      )
-    }
-  }, [dispatchFromSelector])
+  // useEffect(() => {
+  //   if (dispatchParamsFromChild) {
+  //     dispatchParamsFromChild.map(dParams => {
+  //       const { graphState } = dParams
+  //       setDispatchFromChild(dParams)
+  //       if (dParams && graphState === false) {
+  //         dispatch(
+  //           fetchClinicalIndicatorsDashboard(
+  //             { ...dParams },
+  //             allowedGroupsWithoutAssays
+  //           )
+  //         )
+  //       }
+  //       return true
+  //     })
+  //   }
+  // }, [dispatchParamsFromChild])
 
-  useEffect(() => {
-    if (dispatchParamsFromChild) {
-      dispatchParamsFromChild.map(dParams => {
-        const { graphState } = dParams
-        setDispatchFromChild(dParams)
-        if (dParams && graphState === false) {
-          dispatch(
-            fetchClinicalIndicatorsDashboard(
-              { ...dParams },
-              allowedGroupsWithoutAssays
-            )
-          )
-        }
-        return true
-      })
-    }
-  }, [dispatchParamsFromChild])
-
-  return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
-    <PermissionsProvider permissions={['result:view']}>
-      <Grid item xs={12} lg={outerSize}>
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <AspectCard
-              title={intlFormatMessage(messages[title])}
-              innerSize={innerSize}
-              justify="center"
-              action={params => setdispatchFromSelector({ ...params })}
-              actionComponent={{
-                component: CardSelectors,
-                props: selectorModifiers,
-              }}
+  return (
+    <Grid item xs={12} lg={outerSize}>
+      <Grid container spacing={24}>
+        <Grid item xs={12}>
+          <AspectCard
+            title={intlFormatMessage(messages[title])}
+            innerSize={innerSize}
+            justify="center"
+            // action={params => setdispatchFromSelector({ ...params })}
+            actionComponent={{
+              component: CardSelectors,
+              props: selectorModifiers,
+            }}
+          >
+            <Grid
+              container
+              spacing={8}
+              className={cssClasses('graph__containerGrid')}
             >
-              <Grid
-                container
-                spacing={8}
-                className={cssClasses('graph__containerGrid')}
-              >
-                {graphType &&
-                  graphType.map(graph => (
-                    <GraphRender
-                      assays={{ whiteListed, assaysFromState }}
-                      config={graph}
-                      id={id}
-                      action={params => {
-                        tempDispatchParams.push(params)
-                        setDispatchParamsFromChild(tempDispatchParams)
-                      }}
-                    />
-                  ))}
-              </Grid>
-            </AspectCard>
-          </Grid>
+              {graphType &&
+                graphType.map(graph => (
+                  <GraphRender
+                    assays={{ whiteListed, assaysFromState }}
+                    config={graph}
+                    id={id}
+                    // action={params => {
+                    //   tempDispatchParams.push(params)
+                    //   setDispatchParamsFromChild(tempDispatchParams)
+                    // }}
+                  />
+                ))}
+            </Grid>
+          </AspectCard>
         </Grid>
       </Grid>
-    </PermissionsProvider>
-  ) : null
+    </Grid>
+  )
 }
 
 GraphContainer.protoTypes = {
