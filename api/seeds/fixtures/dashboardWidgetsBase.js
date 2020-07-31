@@ -159,7 +159,7 @@ module.exports = {
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN Result AS r ON d.id= r.deviceId 
+          LEFT OUTER JOIN Result AS r ON d.id= r.deviceId
       AND  DATE(r.endedOn)
       BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
       AND LAST_DAY(NOW()-INTERVAL 1 MONTH)
@@ -635,7 +635,7 @@ module.exports = {
         ),
         r.createdOn
         )>=2
-        AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') 
+        AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
                       AND last_day(NOW()- interval 1 month)`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'avgTimeToUploadStat',
@@ -648,6 +648,53 @@ module.exports = {
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+    {
+      title: 'Devices with Unused Modules',
+      titleI18nKey: 'unusedModulesTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+      SELECT COUNT(deviceid) AS cnt
+        FROM(
+                  SELECT d.id AS deviceid
+                    FROM Result AS r
+                    INNER JOIN Device AS d ON d.id = r.deviceId
+                    INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+                    WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
+                          AND NOW()
+                          AND dt.externalId = 'CepheidGeneXpert'
+                  GROUP BY d.id
+                  HAVING COUNT(DISTINCT r.moduleSerial) < 4 AND COUNT(DISTINCT r.id)>=20
+        ) AS innerquery
+      `,
+      sqlForStatUnit: `
+      SELECT COUNT(deviceid) AS cnt
+      FROM(
+                SELECT d.id AS deviceid
+                  FROM Result AS r
+                  INNER JOIN Device AS d ON d.id = r.deviceId
+                  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+                  WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
+                        AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
+                        AND dt.externalId = 'CepheidGeneXpert'
+                GROUP BY d.id
+                HAVING COUNT(DISTINCT r.moduleSerial) < 4 AND COUNT(DISTINCT r.id)>=20
+      ) AS innerquery
+      `,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'unusedModulesStats',
+      link: '/browse/device',
+      sortOrder: 16,
+      externalId: 'unusedModules',
+      description:
+        "Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module.",
+      descriptionI18nKey: 'unusedModulesDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
         },
       },
     },
@@ -688,7 +735,7 @@ module.exports = {
         HAVING instrumentCount > 1) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
-      link: '/browse/result',
+      link: '/browse/device',
       sortOrder: 13,
       externalId: 'instrumentsReplaced',
       description: 'The number of instruments that were replaced.',
