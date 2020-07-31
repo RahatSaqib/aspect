@@ -193,5 +193,9 @@ module.exports = {
       ),
       sortOrder: 17,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
+      sortOrder: 18,
+    },
   ],
 }
