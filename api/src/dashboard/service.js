@@ -19,6 +19,7 @@ const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { getArrayOfDaysInRange } = require('../shared/date')
 const { queryValue } = require('../shared/sql-2-knex')
+const { canView } = require('../auth/constraints')
 
 const i18nKeys = {
   // Dashboard
@@ -73,6 +74,18 @@ async function getDashboardWidget({ id, partnerId }, options) {
   return widgets
 }
 
+function getWidgetLink(widget, auth) {
+  const linkParts = widget.link ? widget.link.split('/') : []
+  if (
+    linkParts.length === 3 &&
+    linkParts[1] === 'browse' &&
+    (!canView(auth, `${linkParts[2]}:`) || !canView(auth, 'browse:'))
+  ) {
+    return null
+  }
+  return widget.link
+}
+
 async function summaryDashboard(request) {
   const { auth, query } = request
   // get data constraints
@@ -83,6 +96,8 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
+      widget.link = getWidgetLink(widget, request.auth)
+
       const count = await queryValue(
         widget.sqlForIndicator,
         dataConstraints,
