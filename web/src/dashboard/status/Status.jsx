@@ -15,12 +15,15 @@ import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
+import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
+
 import ColorDemo from './ColorDemo/ColorDemo'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const Status = ({ history, location, colorDemo }) => {
   const intl = useIntl()
+  const { hivResults } = hivGraphs
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
@@ -66,6 +69,9 @@ const Status = ({ history, location, colorDemo }) => {
         history={history}
         location={location}
         assaysFromState={assays}
+        config={hivResults}
+        size="full"
+        group="hiv"
       />
 
       {colorDemo && <ColorDemo vars={process.env} />}
