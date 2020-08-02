@@ -1,71 +1,30 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
-import merge from 'lodash/merge'
 import Grid from '@material-ui/core/Grid'
 
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
 
-import {
-  extractOptionValue,
-  validateGraphConfig,
-} from '../../Helpers/Formatters'
+import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
-  const dispatch = useDispatch()
-  // const tempDispatchParams = []
   const { title, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
-  const { assays, graphType, id } = config
+  const { graphType } = config
   const { innerSize, outerSize } = size
-  // const [dispatchParams] = useState(false)
-  // const [dispatchFromChild, setDispatchFromChild] = useState(false)
-  // const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
-  // const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
-  // const [whiteListed, setwhiteListed] = useState(false)
+  const [graphParams, setGraphParams] = useState(false)
 
-  // useEffect(() => {
-  //   if (dispatchFromChild && dispatchFromSelector) {
-  //     const base = dispatchParams || dispatchFromChild
-  //     const { api } = base
-  //     const { params } = api
-  //     const { identifier, selectedOption } = dispatchFromSelector
-  //     const optionValue = extractOptionValue(identifier, selectedOption)
-  //     const mergedAPI = {
-  //       ...base,
-  //       api: { ...api, params: { ...merge(params, optionValue) } },
-  //     }
-  //     dispatch(
-  //       fetchClinicalIndicatorsDashboard(mergedAPI, allowedGroupsWithoutAssays)
-  //     )
-  //   }
-  // }, [dispatchFromSelector])
-
-  // useEffect(() => {
-  //   if (dispatchParamsFromChild) {
-  //     dispatchParamsFromChild.map(dParams => {
-  //       const { graphState } = dParams
-  //       setDispatchFromChild(dParams)
-  //       if (dParams && graphState === false) {
-  //         dispatch(
-  //           fetchClinicalIndicatorsDashboard(
-  //             { ...dParams },
-  //             allowedGroupsWithoutAssays
-  //           )
-  //         )
-  //       }
-  //       return true
-  //     })
-  //   }
-  // }, [dispatchParamsFromChild])
+  const updateFromActionComponent = params => {
+    const { identifier, selectedOption } = params
+    setGraphParams(extractOptionValue(identifier, selectedOption))
+  }
 
   return (
     <Grid item xs={12} lg={outerSize}>
@@ -75,7 +34,7 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
             title={intlFormatMessage(messages[title])}
             innerSize={innerSize}
             justify="center"
-            // action={params => setdispatchFromSelector({ ...params })}
+            action={params => updateFromActionComponent({ ...params })}
             actionComponent={{
               component: CardSelectors,
               props: selectorModifiers,
@@ -91,6 +50,7 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
                   <GraphRender
                     assays={{ whiteListed, assaysFromState }}
                     config={graph}
+                    updatedParams={graphParams}
                   />
                 ))}
             </Grid>
