@@ -88,6 +88,77 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={tbResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={treatmentStatus}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={deviceStatus} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidDailyConfirmed}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidMortalityAndRecoveryConfig}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidMortalityAndRecoveryByGender}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidCasesByAgeAndGender}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus
         intl={intl}

@@ -10,7 +10,7 @@ import Grid from '@material-ui/core/Grid'
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
-import { fetchClinicalIndicatorsDashboard } from '../../GraphRender/Redux'
+
 import {
   extractOptionValue,
   validateGraphConfig,
@@ -91,11 +91,6 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
                   <GraphRender
                     assays={{ whiteListed, assaysFromState }}
                     config={graph}
-                    id={id}
-                    // action={params => {
-                    //   tempDispatchParams.push(params)
-                    //   setDispatchParamsFromChild(tempDispatchParams)
-                    // }}
                   />
                 ))}
             </Grid>
