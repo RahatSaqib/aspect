@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -14,7 +15,7 @@ import {
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
-const GraphRender = ({ assays, config }) => {
+const GraphRender = ({ assays, config, updatedParams = {} }) => {
   const {
     averages,
     component: Component,
@@ -36,37 +37,39 @@ const GraphRender = ({ assays, config }) => {
   })
 
   const { isLoading, isError, data, error } = useQuery(
-    id,
-    async () => fetchGraphDataFromConfig({ assays, config }),
-    { cacheTime: 3000 }
+    [id, { ...updatedParams }],
+    async (key, { ...updatedParams }) =>
+      fetchGraphDataFromConfig({ assays, config, updatedParams })
   )
 
   if (isError) {
     throw new Error(`Graph data fetch failed: ${error.message}`)
   }
 
-  if (data && !graphData && !graphKeys) {
-    const grouped = formatDataByGraphType(
-      data,
-      displayMethod,
-      filterBy,
-      formatDate,
-      indexBy,
-      keyToConsume,
-      type
-    )
-    if (grouped) {
-      const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
-      setGraphData(grouped)
-      setGraphKeys(keysFromGrouped)
+  useEffect(() => {
+    if (data && !isLoading) {
+      const grouped = formatDataByGraphType(
+        data,
+        displayMethod,
+        filterBy,
+        formatDate,
+        indexBy,
+        keyToConsume,
+        type
+      )
+      if (grouped) {
+        const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
+        setGraphData(grouped)
+        setGraphKeys(keysFromGrouped)
+      }
     }
-  }
+  }, [data])
 
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {isLoading ? <CircularProgress /> : null}
-        {isEmpty(graphData) ? <div>Empty comp</div> : null}
+        {/* {isEmpty(graphData) && isLoading ? <CircularProgress /> : null} */}
+        {/* {isEmpty(graphData) && !isLoading ? <div>Empty comp</div> : null} */}
         {!isEmpty(graphData) ? (
           <Component
             data={graphData}
