@@ -80,7 +80,7 @@ const Status = ({ history, location, colorDemo }) => {
         dashboard="home"
       />
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
@@ -94,7 +94,7 @@ const Status = ({ history, location, colorDemo }) => {
             <GraphsContainer assaysFromState={assays} config={tbResults} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
@@ -107,7 +107,7 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={deviceStatus} />
@@ -157,7 +157,7 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus
@@ -211,46 +211,3 @@ Status.propTypes = {
 }
 
 export default Status
-
-// const graphsToRender = [
-//   {
-//     config: hivResults,
-//     size: full,
-//     group: 'hiv',
-//   },
-//   {
-//     config: tbResults,
-//     size: full,
-//     group: 'tb',
-//   },
-//   {
-//     config: treatmentStatus,
-//     size: full,
-//     group: 'all',
-//   },
-//   {
-//     config: covidDailyConfirmed,
-//     size: full,
-//     group: 'covid',
-//   },
-//   {
-//     config: covidMortalityAndRecoveryConfig,
-//     size: full,
-//     group: 'covid',
-//   },
-//   {
-//     config: covidMortalityAndRecoveryByGender,
-//     size: half,
-//     group: 'covid',
-//   },
-//   {
-//     config: covidCasesByAgeAndGender,
-//     size: half,
-//     group: 'covid',
-//   },
-//   {
-//     config: deviceStatus,
-//     size: full,
-//     group: 'assaysNotNeeded',
-//   },
-// ]
