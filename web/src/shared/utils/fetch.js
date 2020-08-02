@@ -69,7 +69,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         const contentDisposition = resp.headers.get('Content-Disposition')
         if (date) {
           const store = require('../../store').default
-          // store.dispatch(setLastServerResponseTime(new Date(date)))
+          store.dispatch(setLastServerResponseTime(new Date(date)))
         }
         if (
           contentDisposition &&

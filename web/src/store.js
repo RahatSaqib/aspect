@@ -3,9 +3,10 @@ import { createStore, compose, applyMiddleware } from 'redux'
 import { createLogger } from 'redux-logger'
 
 import rootReducer from './rootReducer'
-// import { middleware as idleMiddleware } from './idle/IdleRedux'
+import { middleware as idleMiddleware } from './idle/IdleRedux'
 
 const showLogger = true
+// const middleware = [thunk, idleMiddleware]
 const middleware = [thunk]
 
 if (process.env.ASPECT_TARGET === 'local' && showLogger) {
