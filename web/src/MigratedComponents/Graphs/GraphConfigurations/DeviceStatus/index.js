@@ -8,6 +8,8 @@ const deviceStatusGraphs = {
   deviceStatus: {
     id: 'deviceStatus',
     title: 'deviceStatusTitle',
+    componentSize: 'full',
+    group: 'assaysNotNeeded',
     assays: [],
     selectorModifiers: [],
     graphType: [

@@ -7,6 +7,8 @@ const treatmentStatusGraphs = {
   treatmentStatus: {
     id: 'treatmentStatus',
     title: 'treatmentGraphStatusMonthly',
+    componentSize: 'full',
+    group: 'all',
     assays: [
       'abbottM2000DBSHivVL',
       'abbottM2000PlasmaHivVL',

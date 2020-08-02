@@ -7,6 +7,8 @@ const tbGraphs = {
     id: 'tbResults',
     title: 'clinicalIndicatorsTBTitle',
     assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    componentSize: 'full',
+    group: 'tb',
     graphType: [
       {
         id: 'resultsByCategory1Monthly',
