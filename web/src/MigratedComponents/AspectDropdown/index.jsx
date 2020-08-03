@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useQuery, queryCache } from 'react-query'
-import { useSelector } from 'react-redux'
+import { useQuery } from 'react-query'
 import Select from 'react-select'
-import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 
 import fetchDropDownData from './fetchDropDownData'
