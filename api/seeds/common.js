@@ -27,6 +27,7 @@ const {
   allAssayTypeToId,
   allResultSourceToId,
   resultCategoryToId,
+  unitToId,
 } = require('../src/shared/dictionary')
 
 /**
@@ -1899,6 +1900,43 @@ async function upsertDashboardWidgets(
   )
 }
 
+async function upsertConsumables(
+  knex,
+  consumableName,
+  assayExternalId,
+  { unit, canExpire = 1, manufacturer, quantity = 1 }
+) {
+  if (!unit) {
+    unit = await unitToId('Piece')
+  }
+  const [assayId] = await knex('Assay')
+    .where('externalId', assayExternalId)
+    .pluck('id')
+
+  const propsConsumables = {
+    name: consumableName,
+    unit,
+    canExpire,
+    manufacturer,
+  }
+  let { id: consumableId } =
+    (await knex('Consumable').where(propsConsumables).first()) || {}
+  if (!consumableId) {
+    ;[consumableId] = await knex('Consumable').insert(propsConsumables)
+  }
+  const propsConsumableAssay = {
+    consumableId,
+    assayId,
+    quantity,
+  }
+  const consumableAssay = await knex('ConsumableAssay')
+    .where(propsConsumableAssay)
+    .first()
+  if (!consumableAssay) {
+    await knex('ConsumableAssay').insert(propsConsumableAssay)
+  }
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1913,4 +1951,5 @@ module.exports = {
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,
   upsertDashboardWidgets,
+  upsertConsumables,
 }
