@@ -1096,6 +1096,7 @@ async function operationalDataActivityOverTime(request) {
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .join('Site as s', 'd.siteId', 's.id')
+      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
       .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
       .where('dt.externalId', 'CepheidGeneXpert')
       .modify(addConstraints, dataConstraints, {
