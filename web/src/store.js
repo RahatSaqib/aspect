@@ -6,8 +6,7 @@ import rootReducer from './rootReducer'
 import { middleware as idleMiddleware } from './idle/IdleRedux'
 
 const showLogger = true
-// const middleware = [thunk, idleMiddleware]
-const middleware = [thunk]
+const middleware = [thunk, idleMiddleware]
 
 if (process.env.ASPECT_TARGET === 'local' && showLogger) {
   middleware.push(createLogger({ collapsed: true }))
