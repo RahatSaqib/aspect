@@ -3,6 +3,8 @@ const chai = require('chai')
 const {
   getBalancedParentheses,
   getNestedQueries,
+  processNestedQueries,
+  tryConvertSqlStringToKnexQueryBuilder,
 } = require('../../src/shared/sql-2-knex')
 const { run } = require('../../src/db')
 const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
@@ -11,26 +13,51 @@ const { assert } = chai
 
 describe.only('Parse nested queries', () => {
   describe('Parse query which nested sub-queries', () => {
-    const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
-      x => x.externalId === 'stockNotRecorded'
-    )
+    // Use this query
+    //    const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
+    //      x => x.externalId === 'stockNotRecorded'
+    //    )
+    // so, for testing purposes just copied above query to not depend on possible change
+    // of query actual format and paddings
+    const sql = `SELECT
+      CONCAT(
+        ROUND(
+          IFNULL(
+            SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
+            / COUNT(siteId) * 100
+          ,0)
+        ,0)
+      ,'%') AS cnt
+      FROM (
+        SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, dt.externalId as deviceTypeExternalId
+        FROM Site AS s
+        INNER JOIN Device AS d ON d.siteId = s.id
+        LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
+                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 month, '%Y-%m-01')
+                                        AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
+        LEFT OUTER JOIN Consumable AS c ON i.consumableId = c.id
+        LEFT OUTER JOIN ConsumableAssay ca ON c.id = ca.consumableId
+        LEFT OUTER JOIN Assay a on ca.assayId = a.id
+        LEFT OUTER JOIN DeviceType dt on a.deviceTypeId = dt.id
+        GROUP BY s.id
+          ) AS innerQuery`
     it('should find nested parentheses and return all matched balanced groups', done => {
       const balancedParentheses = getBalancedParentheses(sql)
 
       let match
 
       // see COUNT(siteId)
-      match = balancedParentheses.find(x => x.chunk === 'siteId')
+      match = balancedParentheses.all.find(x => x.innerText === 'siteId')
       assert.equal(match.children.length, 0)
 
-      match = balancedParentheses.find(
-        x => x.chunk === 'NOW() - INTERVAL 1 MONTH'
+      match = balancedParentheses.all.find(
+        x => x.innerText === 'NOW() - INTERVAL 1 MONTH'
       )
       assert.equal(match.children.length, 1)
 
-      match = balancedParentheses.find(
+      match = balancedParentheses.all.find(
         x =>
-          x.chunk ===
+          x.innerText ===
           `
         ROUND(
           IFNULL(
@@ -45,7 +72,7 @@ describe.only('Parse nested queries', () => {
 
       const child = match.children[0]
       assert.equal(
-        child.chunk,
+        child.innerText,
         `
           IFNULL(
             SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
@@ -57,7 +84,7 @@ describe.only('Parse nested queries', () => {
 
       const subChild = child.children[0]
       assert.equal(
-        subChild.chunk,
+        subChild.innerText,
         `
             SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
             / COUNT(siteId) * 100
@@ -70,18 +97,20 @@ describe.only('Parse nested queries', () => {
 
     it('should find nested query', done => {
       const nestedQueries = getNestedQueries(sql)
-      assert.equal(nestedQueries.length, 1)
+      assert.equal(nestedQueries.all.length, 1)
       done()
     })
   })
 
-  describe('Execute query with sub-query in FROM clause', () => {
+  describe.skip('Execute query with sub-query in FROM clause', () => {
     const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
       x => x.externalId === 'stockNotRecorded'
     )
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
-      assert.equal(nestedQueries.length, 1)
+      assert.equal(nestedQueries.all.length, 1)
+
+      // const { modifiedSql } = processNestedQueries(sql, nestedQueries)
 
       return run(async () => {
         //
@@ -89,14 +118,28 @@ describe.only('Parse nested queries', () => {
     })
   })
 
-  describe.skip('Execute query with sub-query in JOIN clause', () => {
+  describe('Execute query with sub-query in JOIN clause', () => {
     const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
       x => x.externalId === 'stockouts'
     )
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
-      assert.equal(nestedQueries.length, 1)
+      assert.equal(nestedQueries.all.length, 1)
 
+      // const { modifiedSql } = processNestedQueries(
+      //   sql,
+      //   nestedQueries.tree,
+      //   {}
+      // )
+      // console.log('___________________________', 1, { modifiedSql })
+      const dataConstraints = {}
+      const urlQuery = {}
+      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
+        sql,
+        dataConstraints,
+        urlQuery
+      )
+      console.log('___________________________', 2, sqlBuilder.toSQL())
       return run(async () => {
         //
       })
@@ -108,7 +151,7 @@ describe.only('Parse nested queries', () => {
     const sql = ''
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
-      assert.equal(nestedQueries.length, 1)
+      assert.equal(nestedQueries.all.length, 1)
 
       return run(async () => {
         //
@@ -116,7 +159,7 @@ describe.only('Parse nested queries', () => {
     })
   })
 
-  describe.skip('Execute query with sub-query in SELECT clause', () => {
+  describe('Execute query with sub-query in SELECT clause', () => {
     // valid but non-optimized query for sqlForStatUnit for
     // externalId = 'dashboardWidgetTestsPerDayTitle' from 'api/seeds/fixtures/dashboardWidgetsBase.js'
     const sql = `SELECT 
@@ -167,8 +210,34 @@ describe.only('Parse nested queries', () => {
 
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
-      assert.equal(nestedQueries.length, 5)
+      assert.equal(nestedQueries.all.length, 5)
 
+      const { modifiedSql } = processNestedQueries(sql, nestedQueries.tree, {})
+      // console.log('___________________________', 1, { modifiedSql })
+      assert.equal(
+        modifiedSql,
+        `SELECT 
+      CASE
+        WHEN avgCurrentMonth IS NULL OR avgLastMonth IS NULL THEN '?'
+        ELSE
+          CASE 
+            WHEN avgCurrentMonth >= avgLastMonth 
+            THEN concat('+', (avgCurrentMonth - avgLastMonth))
+            ELSE concat('-', (avgCurrentMonth - avgLastMonth))
+          END
+      END as cnt
+    FROM  $$$_1  as t`
+      )
+
+      // const sqlBuilder = convertSqlToKnex(modifiedSql, byToken, {})
+      const dataConstraints = {}
+      const urlQuery = {}
+      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
+        sql,
+        dataConstraints,
+        urlQuery
+      )
+      console.log('___________________________', 2, sqlBuilder.toSQL())
       return run(async () => {
         //
       })
