@@ -7,7 +7,7 @@ import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isEmpty from 'lodash/isEmpty'
 
-import fetchGraphDataFromConfig from './Redux'
+import fetchGraphDataFromConfig from './Queries'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
