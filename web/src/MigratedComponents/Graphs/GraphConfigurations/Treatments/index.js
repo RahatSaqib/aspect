@@ -22,13 +22,15 @@ const treatmentStatusGraphs = {
     selectorModifiers: [
       {
         selectedValue: 'All Sites',
-        state: 'dashboard.siteList',
+        endpoint: '/dashboard/site',
+        state: 'siteList',
         component: AspectDropdown,
         identifier: 'siteId',
       },
       {
         selectedValue: 'Viral Load',
-        state: 'dashboard.assayResultCategoryList',
+        endpoint: '/dashboard/site',
+        state: 'assayResultCategoryList',
         component: AspectDropdown,
         identifier: 'assayTypeId',
       },
