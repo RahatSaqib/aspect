@@ -15,9 +15,10 @@ const fetchGraphDataFromConfig = ({ assays, config, updatedParams }) => {
     containerId,
     api: { endpoint, params, method = 'GET' },
   } = config
-  const mergedParams = isEmpty(updatedParams)
-    ? updatedParams
-    : { ...merge(params, updatedParams) }
+  const mergedParams =
+    isEmpty(params) && isEmpty(updatedParams)
+      ? updatedParams
+      : { ...merge(params, updatedParams) }
 
   const urlParams = removeEmptyParams(mergedParams)
   const assayParams =
