@@ -15,7 +15,7 @@ module.exports = {
       link: '/browse/site',
       sortOrder: 0,
       externalId: 'sitesTitle',
-      description: 'The number of sites',
+      description: 'The number of sites.',
       descriptionI18nKey: 'sitesDescription',
       dashboards: {
         home: {},
@@ -32,7 +32,7 @@ module.exports = {
       link: '/browse/device',
       sortOrder: 0,
       externalId: 'devicesTitle',
-      description: 'The number of lab devices',
+      description: 'The number of lab devices.',
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},
@@ -49,7 +49,7 @@ module.exports = {
       link: '/browse/result',
       sortOrder: 2,
       externalId: 'resultsTitle',
-      description: 'The number of results in the last 30 days',
+      description: 'The number of results in the last 30 days.',
       descriptionI18nKey: 'resultsDescription',
       dashboards: {
         home: {},
@@ -66,7 +66,7 @@ module.exports = {
       link: '/browse/person',
       sortOrder: 3,
       externalId: 'personTitle',
-      description: 'The number of users',
+      description: 'The number of users.',
       descriptionI18nKey: 'personDescription',
       dashboards: {
         home: {},
@@ -81,14 +81,13 @@ module.exports = {
       subTitleI18nKey: null,
       sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'`,
       sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
-          AND YEAR(d.createdOn) <= YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
-          AND MONTH(d.createdOn) <= MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))`,
+          AND d.createdOn <=  DATE_FORMAT(NOW() ,'%Y-%m-01')`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetUnitDevicesCountGeneXpert',
       link: '/browse/device',
       sortOrder: 0,
       externalId: 'devicesCountGeneXpert',
-      description: 'The number of approved GeneXpert devices',
+      description: 'The number of approved GeneXpert devices.',
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         operational: {
@@ -107,7 +106,7 @@ module.exports = {
       sqlForStatUnit: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
-      description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
+      description: `The average uptime of the Aspect server this month.`,
       descriptionI18nKey: 'serverUptimeDescription',
       link: 'https://stats.uptimerobot.com/R6WjlCrRW4',
       dashboards: {
@@ -128,7 +127,7 @@ module.exports = {
       statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
       sortOrder: 4,
       description:
-        "The percentage of GeneXpert's TB and HIV results that were notified",
+        'The percentage of positive GeneXpert TB and HIV results that were notified via SMS or email.',
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
       link: '/browse/result',
       dashboards: {
