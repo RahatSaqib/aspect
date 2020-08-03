@@ -190,7 +190,7 @@ export const InventoryItems = ({
   const selectIndex = findArrayIndexByStringPartial(
     inventoryItems,
     'consumableName',
-    'GeneXpert MTB/Rif'
+    'GeneXpert TB Cartridge'
   )
   const itemSelected =
     value || (inventoryItems && inventoryItems[selectIndex]) || null
