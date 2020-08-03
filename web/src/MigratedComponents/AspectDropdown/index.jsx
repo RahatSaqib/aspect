@@ -101,22 +101,11 @@ const AspectDropdown = ({
   endpoint,
   data: passedData,
 }) => {
-  const { isError, data, error } = useQuery(reduxStateId, async () =>
-    fetchDropDownData(endpoint)
+  const { isError, data, error } = useQuery(
+    reduxStateId,
+    async () => fetchDropDownData(endpoint),
+    { initialData: passedData, initialStale: true }
   )
-
-  // const queries = queryCache.getQueries('treatmentStatusMonthly')
-
-  // // console.log(queries)
-
-  // queries.map(query => {
-  //   console.log(query.queryHash)
-
-  //   // if (query && query.queryHash.includes('treatmentStatusMonthly')) {
-  //   //   console.log(query.queryKey)
-  //   // }
-  //   // return false
-  // })
 
   if (isError) {
     throw new Error(error)
