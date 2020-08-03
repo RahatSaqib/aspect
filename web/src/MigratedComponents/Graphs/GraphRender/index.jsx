@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -83,6 +84,17 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
       </div>
     </Grid>
   )
+}
+
+GraphRender.defaultProps = {
+  updatedParams: {},
+}
+
+GraphRender.propTypes = {
+  assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  id: PropTypes.string.isRequired,
+  updatedParams: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default GraphRender
