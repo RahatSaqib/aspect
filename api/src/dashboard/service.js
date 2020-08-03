@@ -1107,10 +1107,9 @@ async function operationalDataActivityOverTime(request) {
 
   // First, get all devices along with when they conducted their first test
   // This is so we don't include devices in the activity stats before they were first active
-  const devicesByFirstResult = await knex('Result')
-    .whereIn('deviceId', deviceIds)
-    .groupBy('deviceId')
-    .select(knex.raw('date(min(endedOn)) as minEndedOn'))
+  const devicesByCreatedOn = await knex('Device')
+    .whereIn('id', deviceIds)
+    .select('id', 'createdOn')
 
   // Get number of devices active (=conducting tests) by day
   const devicesActiveByDay = await knex('Result')
@@ -1128,7 +1127,7 @@ async function operationalDataActivityOverTime(request) {
     })
   // now we can update the total devices that were in the system per day:
   days.forEach(day => {
-    const devices = devicesByFirstResult.filter(c => c.minEndedOn <= day.date)
+    const devices = devicesByCreatedOn.filter(c => c.createdOn <= day.date)
     const devicesActive = devicesActiveByDay.find(
       c =>
         c.endedOnDate.getDate() === day.date.getDate() &&
