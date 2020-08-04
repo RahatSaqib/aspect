@@ -14,6 +14,8 @@ import {
   getGraphKeysFromResults,
 } from '../Helpers/Formatters'
 
+import EmptyGraph from '../EmptyData'
+
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
 const GraphRender = ({ assays, config, updatedParams = {} }) => {
@@ -70,7 +72,7 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
         {/* {isEmpty(graphData) && isLoading ? <CircularProgress /> : null} */}
-        {/* {isEmpty(graphData) && !isLoading ? <div>Empty comp</div> : null} */}
+        {/* {isEmpty(graphData) && !isLoading ? <EmptyGraph type={type} /> : null} */}
         {!isEmpty(graphData) ? (
           <Component
             data={graphData}

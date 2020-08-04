@@ -156,7 +156,7 @@ const enhance = compose(
       category: PropTypes.string,
       hasResults: PropTypes.number,
       hasConnectivity: PropTypes.number,
-      status: PropTypes.string,
+      approval: PropTypes.string,
       totalTests: PropTypes.number,
       siteId: PropTypes.number,
       approvedOn: PropTypes.string,
@@ -211,7 +211,7 @@ export class RouterDetail extends PureComponent {
         name: router.get('name') || '',
         shortName: router.get('shortName') || '',
         notes: router.get('notes') || '',
-        statusToken: router.get('statusToken') || '',
+        approvalToken: router.get('approvalToken') || '',
         siteId: router.get('siteId'),
         configurationData: router.get('configurationData'),
       })
@@ -251,7 +251,7 @@ export class RouterDetail extends PureComponent {
       name: formatMessage(messages.fieldName),
       shortName: formatMessage(messages.fieldShortName),
       notes: formatMessage(messages.fieldNotes),
-      statusToken: formatMessage(messages.approved),
+      approvalToken: formatMessage(messages.approved),
       siteId: formatMessage(messages.fieldSiteId),
       configuration: formatMessage(messages.fieldConfiguration),
       cancel: formatMessage(messages.cancel),
@@ -336,7 +336,7 @@ export class RouterDetail extends PureComponent {
                     </div>
                     <div className={styles.StatusText}>
                       {formatMessage(messages.fieldStatus)}:{' '}
-                      {router.get('status')}
+                      {router.get('approval')}
                       &nbsp;•&nbsp;
                       <Link to="/browse/result">
                         {router.get('totalTests')}{' '}

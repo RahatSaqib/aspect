@@ -104,7 +104,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       partnerId,
       siteId: site.id,
       geographyId: site.geographyId,
-      status: 'assigned',
+      approval: 'assigned',
       macAddress,
       hostId: _.get(payload, 'configuration.data.hostId', null),
       culture: _.get(payload, 'configuration.data.culture', null),

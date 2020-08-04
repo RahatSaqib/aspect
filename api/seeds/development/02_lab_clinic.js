@@ -26,7 +26,7 @@ const {
   partnerTypeToId,
   deviceTypeToId,
   deviceTypeCategoryToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   resultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
@@ -369,7 +369,7 @@ async function seed(knex) {
     .where({ externalId: 'MetacomRouter' })
     .first()
 
-  const approvedDeviceStatusId = await deviceStatusToId('approved')
+  const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
   // every clinic has a site and a Reporter device
   await Promise.all(
@@ -406,7 +406,7 @@ async function seed(knex) {
           siteId,
           defaultReportableSiteId: siteId,
           deviceTypeId: deviceTypeIdReporter,
-          deviceStatusId: approvedDeviceStatusId,
+          deviceApprovalId: approvedDeviceApprovalId,
           name: `${siteData.name} Reporter`,
           shortName: `R-${_.random(100000, 999999)}`,
           serial: `S1-R-${_.random(100000, 999999)}`,
@@ -438,7 +438,7 @@ async function seed(knex) {
           name: `${siteData.name} Router`,
           shortName: `RO-${siteData.shortName}`,
           deviceTypeId: deviceTypeIdRouter,
-          deviceStatusId: approvedDeviceStatusId,
+          deviceApprovalId: approvedDeviceApprovalId,
           partnerId: siteData.partnerId,
           geographyId: siteData.geographyId,
           siteId: siteData.id,
@@ -510,7 +510,7 @@ async function seed(knex) {
               deviceData.deviceTypeId = await deviceTypeToId(
                 device.deviceTypeId
               )
-              deviceData.deviceStatusId = approvedDeviceStatusId
+              deviceData.deviceApprovalId = approvedDeviceApprovalId
               deviceData.name = device.name
               deviceData.shortName = device.shortName
               deviceData.macAddress = device.macAddress
@@ -553,7 +553,7 @@ async function seed(knex) {
           routerData.name = `Router at ${siteData.name}`
           routerData.shortName = `RO-${siteData.shortName}`
           routerData.deviceTypeId = deviceTypeIdRouter
-          routerData.deviceStatusId = approvedDeviceStatusId
+          routerData.deviceApprovalId = approvedDeviceApprovalId
           routerData.partnerId = siteData.partnerId
           routerData.geographyId = siteData.geographyId
           routerData.siteId = siteData.id

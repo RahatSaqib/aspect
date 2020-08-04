@@ -74,9 +74,9 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withTreatmentStatus',
     defaultMessage: 'treatment status is {treatmentStatusName}',
   },
-  withDeviceStatus: {
-    id: 'filter.btnGroup.withDeviceStatus',
-    defaultMessage: 'status is {deviceStatusName}',
+  withDeviceApproval: {
+    id: 'filter.btnGroup.withDeviceApproval',
+    defaultMessage: 'approval status is {deviceApprovalName}',
   },
   withDeviceType: {
     id: 'filter.btnGroup.withDeviceType',
@@ -125,7 +125,7 @@ const enhance = compose(
       partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
       workflowStatusItems: state.resultWorkflowStatus.items,
       treatmentStatusItems: state.resultTreatmentStatus.items,
-      deviceStatusItems: state.deviceStatus.items,
+      deviceApprovalItems: state.deviceApproval.items,
       deviceTypeItems: state.deviceType.selectList.items,
       diseaseItems: state.disease.diseases.items,
     }),
@@ -153,7 +153,7 @@ const filtersOrdering = {
   contactNameOrEmail: 14,
   consumableId: 7,
   workflowStatusId: 16,
-  deviceStatusId: 17,
+  deviceApprovalId: 17,
   externalId: 15,
   notificationName: 20,
   revoked: 21,
@@ -312,12 +312,17 @@ const buttonBy = {
           .get('name'),
       })
   ),
-  deviceStatusId: makeButton(({ intl, deviceStatusItems }, deviceStatusId) =>
-    intl.formatMessage(messages.withDeviceStatus, {
-      deviceStatusName: deviceStatusItems
-        .find(it => it.get('id') === deviceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name'),
-    })
+  deviceApprovalId: makeButton(
+    ({ intl, deviceApprovalItems }, deviceApprovalId) =>
+      intl.formatMessage(messages.withDeviceApproval, {
+        deviceApprovalName: deviceApprovalItems
+          .find(
+            it => it.get('id') === deviceApprovalId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
   ),
   deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
     intl.formatMessage(messages.withDeviceType, {

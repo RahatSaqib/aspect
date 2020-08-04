@@ -25,7 +25,7 @@ import Results from '../../../result/historyResults/HistoryResults'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
-import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
+import { tokens } from '../../../deviceApproval/DeviceApprovalRedux'
 import {
   showDialog,
   hideDialog,
@@ -44,9 +44,9 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.deviceType',
     defaultMessage: 'Device type',
   },
-  status: {
-    id: 'pages.DeviceDetailProfile.status',
-    defaultMessage: 'Status',
+  approval: {
+    id: 'pages.DeviceDetailProfile.approval',
+    defaultMessage: 'Approval',
   },
   calibration: {
     id: 'pages.DeviceDetailProfile.calibration',
@@ -265,10 +265,10 @@ const enhance = compose(
       },
       // TODO: correct path?
     }) => history.push(`/browse/result/${resultId}`),
-    onToggleDeviceStatus: ({ device, updateSingleDevice }) => () =>
+    onToggleDeviceApproval: ({ device, updateSingleDevice }) => () =>
       updateSingleDevice(device.get('id'), {
-        statusToken:
-          device.get('statusToken') !== tokens.APPROVED
+        approvalToken:
+          device.get('approvalToken') !== tokens.APPROVED
             ? tokens.APPROVED
             : tokens.ASSIGNED,
       }),
@@ -567,7 +567,7 @@ export const DeviceDetailProfile = ({
   disabled,
   displayPreferences,
   // --- injected by recompose ---
-  onToggleDeviceStatus,
+  onToggleDeviceApproval,
   sortCol,
   sortDir,
   pageAt,
@@ -656,12 +656,12 @@ export const DeviceDetailProfile = ({
               ])}`}
             />
             <Summary
-              title={intl.formatMessage(messages.status)}
-              description={device.get('status')}
+              title={intl.formatMessage(messages.approval)}
+              description={device.get('approval')}
               action={
                 <Button
                   variant="contained"
-                  onClick={onToggleDeviceStatus}
+                  onClick={onToggleDeviceApproval}
                   disabled={disabled}
                 >
                   {intl.formatMessage(messages.buttonChange)}

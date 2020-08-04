@@ -6,7 +6,7 @@ const Promise = require('bluebird')
 const { createResult, getResult } = require('./result_utils')
 const shared = require('../utils/sharedToken')
 const {
-  deviceStatusToId,
+  deviceApprovalToId,
   allResultCategoryToId,
   diseaseToId,
 } = require('../../src/shared/dictionary')
@@ -830,7 +830,7 @@ describe('Result routes', () => {
             await knex('User').where('name', '<>', 'admin').first('id')
           ).id
           diseaseId = await diseaseToId('covid19')
-          const deviceStatusApprovedId = await deviceStatusToId('approved')
+          const deviceApprovalApprovedId = await deviceApprovalToId('approved')
           await Promise.each(
             Object.keys(covidDeviceTypeDevices),
             async deviceTypeExternalId => {
@@ -843,7 +843,7 @@ describe('Result routes', () => {
                 .join('Country as c', 'g.countryId', 'c.id')
                 .where('dt.externalId', deviceTypeExternalId)
                 .andWhere('c.abbreviation', 'US')
-                .andWhere('d.deviceStatusId', deviceStatusApprovedId)
+                .andWhere('d.deviceApprovalId', deviceApprovalApprovedId)
                 .first('d.*')
             }
           )

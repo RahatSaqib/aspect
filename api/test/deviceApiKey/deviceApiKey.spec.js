@@ -8,7 +8,7 @@ const { run } = require('../../src/db')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Device routes', () => {
+describe('Device API Key routes', () => {
   const path = '/api/deviceApiKey'
   const deviceApiKeyIds = []
 

@@ -15,7 +15,7 @@ const {
 } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
-  deviceStatusToId,
+  deviceApprovalToId,
   deviceTypeToId,
   partnerTypeToId,
 } = require('../../src/shared/dictionary')
@@ -364,7 +364,7 @@ async function seed(knex) {
         siteId,
         defaultReportableSiteId: siteId,
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-        deviceStatusId: await deviceStatusToId('approved'),
+        deviceApprovalId: await deviceApprovalToId('approved'),
         name: deviceSeed.name,
         shortName: deviceSeed.shortName,
         macAddress: deviceSeed.macAddress,

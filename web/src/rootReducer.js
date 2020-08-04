@@ -11,7 +11,7 @@ import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
 import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
 import deviceOperation from './deviceOperation/DeviceOperationRedux'
-import deviceStatus from './deviceStatus/DeviceStatusRedux'
+import deviceApproval from './deviceApproval/DeviceApprovalRedux'
 import deviceType from './deviceType/DeviceTypeRedux'
 import disease from './disease/DiseaseRedux'
 import site from './site/SiteRedux'
@@ -50,7 +50,7 @@ const appReducer = combineReducers({
   device,
   deviceApiKey,
   deviceOperation,
-  deviceStatus,
+  deviceApproval,
   deviceType,
   disease,
   filter,
@@ -90,7 +90,7 @@ const App = Immutable.Record({
   device: undefined,
   deviceApiKey: undefined,
   deviceOperation: undefined,
-  deviceStatus: undefined,
+  deviceApproval: undefined,
   deviceType: undefined,
   disease: undefined,
   filter: undefined,

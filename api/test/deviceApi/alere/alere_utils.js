@@ -20,7 +20,7 @@ async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
@@ -92,7 +92,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
@@ -196,8 +196,8 @@ class DeviceApiTestContext {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceStatus = await knex
-        .from('DeviceStatus')
+      const approvedApprovalStatus = await knex
+        .from('DeviceApproval')
         .where('token', 'approved')
         .first()
       const deviceCapacity = await knex('DeviceCapacity')
@@ -211,7 +211,7 @@ class DeviceApiTestContext {
         geographyId: geography.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
-        deviceStatusId: approvedDeviceStatus.id,
+        deviceApprovalId: approvedApprovalStatus.id,
         name: 'Some Alere FTP Connector',
         shortName: 'Alere FTP',
         configurationData: '{}',
@@ -462,7 +462,7 @@ class DeviceApiTestContext {
           'c.abbreviation as countryAbbreviation',
           's.id as siteId',
           'd.deviceTypeId',
-          'd.deviceStatusId',
+          'd.deviceApprovalId',
           'd.name',
           'd.shortName',
           'd.macAddress',

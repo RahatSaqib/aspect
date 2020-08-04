@@ -15,7 +15,7 @@ const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
-  allDeviceStatusToId,
+  allDeviceApprovalToId,
   allDeviceTypeCategoryToId,
   allPartnerTypeToId,
   allResultCategoryToId,
@@ -3262,8 +3262,8 @@ async function seed(knex) {
       .update(assayGenoTypeMTBDRslV2)
   }
 
-  // DeviceStatus
-  const { approved: deviceStatusApproved } = await allDeviceStatusToId()
+  // DeviceApproval
+  const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
   // Result source
   const {
@@ -4197,7 +4197,7 @@ async function seed(knex) {
         name: `${siteData.shortName} Router`,
         shortName: `r${i}`,
         deviceTypeId: deviceTypeIdRouter,
-        deviceStatusId: deviceStatusApproved,
+        deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
         geographyId: siteData.geographyId,
         siteId: siteData.id,
@@ -4233,7 +4233,7 @@ async function seed(knex) {
         name: `${siteData.name} GeneXpert`,
         shortName: `GeneXpert #${i}`,
         deviceTypeId: deviceTypeGeneXpertId,
-        deviceStatusId: deviceStatusApproved,
+        deviceApprovalId: deviceApprovalApproved,
         configurationData: JSON.stringify({
           requirePrinter: 'no',
           adminPassword: 'pwd123',
@@ -4251,7 +4251,7 @@ async function seed(knex) {
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
         deviceId: routerId || null,
-        createdOn: new Date(+now - 3 * i * millisInHour),
+        createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
@@ -4278,9 +4278,9 @@ async function seed(knex) {
       })
 
       // Create Status Log
-      await knex('DeviceStatusLog').insert({
+      await knex('DeviceApprovalLog').insert({
         deviceId: device.id,
-        deviceStatusId: deviceStatusApproved,
+        deviceApprovalId: deviceApprovalApproved,
         changedOn: auditFields.updatedOn,
         createdOn: auditFields.createdOn,
         createdBy: auditFields.createdBy,
@@ -5438,8 +5438,15 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockouts },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.deviceDaysActive },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.moduleSwaps },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.errorRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.avgTimeToUpload },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.unusedModules },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.instrumentsReplaced,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetTestsPerDayTitle,
@@ -5455,6 +5462,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.utilizationRate,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.instrumentsReplaced,
     },
     {
       jobFunctionId: jobFunctionIdManager,
@@ -5484,6 +5495,10 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.instrumentsReplaced,
+    },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.activeDevices,
     },
 
@@ -5500,6 +5515,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.utilizationRate,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.instrumentsReplaced,
     },
     {
       jobFunctionId: jobFunctionIdClinician,

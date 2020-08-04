@@ -17,7 +17,7 @@ const enhance = _.identity
 const RouterTableRow = ({ intl, router, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{router.get('name')}</TableCell>
-    <TableCell>{router.get('status')}</TableCell>
+    <TableCell>{router.get('approval')}</TableCell>
     <TableCell>{formatRelative(intl, router.get('createdOn'))}</TableCell>
     <TableCell>{formatRelative(intl, router.get('lastSeen'))}</TableCell>
   </TableRow>
