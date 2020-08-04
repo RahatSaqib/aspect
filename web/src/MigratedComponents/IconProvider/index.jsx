@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import { FaSpinner } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
 
 const cssClasses = classnames.bind(require('./Icons.css'))
@@ -17,26 +17,45 @@ async function loadIconModule(icon) {
   }
 }
 
-function IconProvider({ icon, className }) {
-  const IconComponent = lazy(() =>
-    loadIconModule(icon).then(module => {
-      if (module && module[icon]) {
-        return { default: module[icon] }
-      }
-      throw new Error(`${icon} does not exist!`)
-    })
-  )
-  return (
-    <Suspense fallback={<CircularProgress />}>
-      <div className={cssClasses([className])}>
-        <ErrorBoundary
-          fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
-        >
-          <IconComponent />
-        </ErrorBoundary>
-      </div>
-    </Suspense>
-  )
+class IconProvider extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return JSON.stringify(nextProps) !== JSON.stringify(this.props)
+  }
+
+  render() {
+    const { icon, className } = this.props
+
+    const IconShell = ({ children }) => (
+      <div className={cssClasses([className])}>{children}</div>
+    )
+
+    const IconComponent = lazy(() =>
+      loadIconModule(icon).then(async module => {
+        if (module && module[icon]) {
+          return { default: module[icon] }
+        }
+        throw new Error(`${icon} does not exist!`)
+      })
+    )
+
+    return (
+      <Suspense
+        fallback={
+          <IconShell>
+            <FaSpinner className={cssClasses(['icons__proxy'])} />
+          </IconShell>
+        }
+      >
+        <IconShell>
+          <ErrorBoundary
+            fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
+          >
+            <IconComponent />
+          </ErrorBoundary>
+        </IconShell>
+      </Suspense>
+    )
+  }
 }
 
 IconProvider.propTypes = {

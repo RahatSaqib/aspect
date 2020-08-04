@@ -88,7 +88,7 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
   return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
     <PermissionsProvider permissions={['result:view']}>
       <Grid item xs={12} lg={outerSize}>
-        <Grid container spacing={24}>
+        <Grid container>
           <Grid item xs={12}>
             <AspectCard
               title={intlFormatMessage(messages[title])}
