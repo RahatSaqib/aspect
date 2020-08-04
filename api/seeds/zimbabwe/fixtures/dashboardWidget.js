@@ -121,8 +121,36 @@ module.exports = {
       title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
       externalId: 'gxPositiveResultsNotified',
-      sqlForIndicator: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
-      sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 6/494), '%') as cnt`,
+      sqlForIndicator: `
+          SELECT
+          CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),	
+            0),	
+               0),	
+          '%') AS cnt	
+          FROM	
+          (SELECT	
+              IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications	
+          FROM	
+              Result AS r	
+          INNER JOIN Device d ON d.id = r.deviceId	
+          INNER JOIN Site s ON s.id = d.siteId	
+          INNER JOIN Partner p ON p.id = s.partnerId	
+          INNER JOIN Assay a ON r.assayId = a.id	
+          INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id	
+          INNER JOIN DeviceType dt ON a.deviceTypeId = dt.id
+          LEFT JOIN Geography g ON s.geographyId = g.id	
+          LEFT JOIN Issue i ON r.id = i.resultId	
+          LEFT JOIN IssueType it ON i.issueTypeId = it.id	
+          LEFT JOIN Notification n ON i.id = n.issueId	
+          WHERE	
+              rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')	
+                  AND it.externalId = 'ResultReceived'	
+                  AND dt.externalId = 'CepheidGeneXpert';	
+                  AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)	
+                  AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)	
+          GROUP BY r.id) AS q	
+      `,
+      sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
       sortOrder: 4,
