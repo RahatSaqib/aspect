@@ -15,7 +15,7 @@ module.exports = {
       link: '/browse/site',
       sortOrder: 0,
       externalId: 'sitesTitle',
-      description: 'The number of sites',
+      description: 'The number of sites.',
       descriptionI18nKey: 'sitesDescription',
       dashboards: {
         home: {},
@@ -32,7 +32,7 @@ module.exports = {
       link: '/browse/device',
       sortOrder: 0,
       externalId: 'devicesTitle',
-      description: 'The number of lab devices',
+      description: 'The number of lab devices.',
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},
@@ -49,7 +49,7 @@ module.exports = {
       link: '/browse/result',
       sortOrder: 2,
       externalId: 'resultsTitle',
-      description: 'The number of results in the last 30 days',
+      description: 'The number of results in the last 30 days.',
       descriptionI18nKey: 'resultsDescription',
       dashboards: {
         home: {},
@@ -66,7 +66,7 @@ module.exports = {
       link: '/browse/person',
       sortOrder: 3,
       externalId: 'personTitle',
-      description: 'The number of users',
+      description: 'The number of users.',
       descriptionI18nKey: 'personDescription',
       dashboards: {
         home: {},
@@ -75,21 +75,20 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdComputer',
-      title: 'Devices',
-      titleI18nKey: 'devicesTitle',
+      title: 'GeneXpert Devices',
+      titleI18nKey: 'geneXpertDevicesTitle',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'`,
       sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
-          AND YEAR(d.createdOn) <= YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
-          AND MONTH(d.createdOn) <= MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))`,
+          AND d.createdOn <=  DATE_FORMAT(NOW() ,'%Y-%m-01')`,
       statUnit: '{unit} last month',
-      statUnitI18nKey: 'dashboardWidgetUnitDevicesCountGeneXpert',
+      statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
       link: '/browse/device',
       sortOrder: 0,
-      externalId: 'devicesCountGeneXpert',
-      description: 'The number of approved GeneXpert devices',
-      descriptionI18nKey: 'devicesDescription',
+      externalId: 'geneXpertDevices',
+      description: 'The number of approved GeneXpert devices.',
+      descriptionI18nKey: 'geneXpertDevices',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
@@ -107,7 +106,7 @@ module.exports = {
       sqlForStatUnit: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
-      description: `The amount of time that Uptime Robot has been able to connect to Aspect this month`,
+      description: `The average uptime of the Aspect server this month.`,
       descriptionI18nKey: 'serverUptimeDescription',
       link: 'https://stats.uptimerobot.com/R6WjlCrRW4',
       dashboards: {
@@ -122,13 +121,41 @@ module.exports = {
       title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
       externalId: 'gxPositiveResultsNotified',
-      sqlForIndicator: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
-      sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 6/494), '%') as cnt`,
+      sqlForIndicator: `
+          SELECT
+          CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),	
+            0),	
+               0),	
+          '%') AS cnt	
+          FROM	
+          (SELECT	
+              IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications	
+          FROM	
+              Result AS r	
+          INNER JOIN Device d ON d.id = r.deviceId	
+          INNER JOIN Site s ON s.id = d.siteId	
+          INNER JOIN Partner p ON p.id = s.partnerId	
+          INNER JOIN Assay a ON r.assayId = a.id	
+          INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id	
+          INNER JOIN DeviceType dt ON a.deviceTypeId = dt.id
+          LEFT JOIN Geography g ON s.geographyId = g.id	
+          LEFT JOIN Issue i ON r.id = i.resultId	
+          LEFT JOIN IssueType it ON i.issueTypeId = it.id	
+          LEFT JOIN Notification n ON i.id = n.issueId	
+          WHERE	
+              rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')	
+                  AND it.externalId = 'ResultReceived'	
+                  AND dt.externalId = 'CepheidGeneXpert';	
+                  AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)	
+                  AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)	
+          GROUP BY r.id) AS q	
+      `,
+      sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
       sortOrder: 4,
       description:
-        "The percentage of GeneXpert's TB and HIV results that were notified",
+        'The percentage of positive GeneXpert TB and HIV results that were notified via SMS or email.',
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
       link: '/browse/result',
       dashboards: {
@@ -177,11 +204,20 @@ module.exports = {
       ),
       sortOrder: 13,
     },
+
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
+      sortOrder: 14,
+    },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'instrumentsReplaced'
       ),
-      sortOrder: 14,
+      sortOrder: 15,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
+      sortOrder: 15,
     },
   ],
 }

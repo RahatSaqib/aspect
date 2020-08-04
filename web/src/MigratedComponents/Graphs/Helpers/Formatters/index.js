@@ -204,7 +204,7 @@ const generateToolTip = (
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
-    const displayCount = devicesTotal * valuePercentage
+    const displayCount = Math.round(devicesTotal * valuePercentage)
     const displayTitle = `device${displayCount === 1 ? '' : 's'}`
     displayValue = `${displayCount} ${displayTitle}`
   } else {

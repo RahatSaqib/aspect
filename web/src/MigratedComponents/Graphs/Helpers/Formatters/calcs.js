@@ -120,7 +120,11 @@ const getAverageFromData = (data, value, which, culture) => {
   return {}
 }
 
-const calcOverallRate = (keyToCalc, totalTotal, gData) => {
+const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
+  if (filterCriteria) {
+    gData = filter(gData, filterCriteria)
+  }
+
   const totalKey = sumBy(gData, d => Number(d[keyToCalc]))
   const total = sumBy(gData, d => Number(d[totalTotal]))
   const percentage = total > 0 ? (totalKey / total) * 100 : total

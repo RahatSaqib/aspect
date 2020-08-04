@@ -4251,7 +4251,7 @@ async function seed(knex) {
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
         deviceId: routerId || null,
-        createdOn: new Date(+now - 3 * i * millisInHour),
+        createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
@@ -5438,9 +5438,11 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockouts },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.deviceDaysActive },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.moduleSwaps },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.errorRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.avgTimeToUpload },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.unusedModules },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.instrumentsReplaced,
