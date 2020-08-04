@@ -129,7 +129,9 @@ export const appFactory = compose(
             drawerOpen={drawerOpen}
           />
           {render(restProps)}
-          <ReactQueryDevtools initialIsOpen />
+          {process.env.NODE_ENV !== 'production' ? (
+            <ReactQueryDevtools initialIsOpen />
+          ) : null}
         </div>
       </IntlProvider>
     )
