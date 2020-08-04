@@ -71,8 +71,8 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {/* {isEmpty(graphData) && isLoading ? <CircularProgress /> : null} */}
-        {/* {isEmpty(graphData) && !isLoading ? <EmptyGraph type={type} /> : null} */}
+        {isEmpty(graphData) && isLoading ? <CircularProgress /> : null}
+        {isEmpty(graphData) && !isLoading ? <EmptyGraph type={type} /> : null}
         {!isEmpty(graphData) ? (
           <Component
             data={graphData}
