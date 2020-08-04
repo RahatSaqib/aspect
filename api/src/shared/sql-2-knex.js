@@ -666,9 +666,9 @@ async function queryValue(sql, dataConstraints, query) {
 
     try {
       if (sqlBuilder) {
-        firstResult = await sqlBuilder.first()
+        firstResult = await sqlBuilder
       } else {
-        firstResult = await knex.raw(sql)
+        firstResult = await knex.raw(sql).then(data => data[0])
       }
     } catch (ex) {
       // eslint-disable-next-line no-console
