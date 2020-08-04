@@ -120,7 +120,7 @@ const AspectResponsiveBar = ({
         legendOffset: -60,
         legend:
           type === 'stackedDeviceActivity'
-            ? 'Percent of Monthly Status: June'
+            ? `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`
             : false,
       }}
       axisBottom={{
@@ -150,14 +150,17 @@ const AspectResponsiveBar = ({
         type === 'stackedDeviceActivity' && [
           {
             axis: 'y',
-            value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data),
+            value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
+              weekendOrHoliday: 0,
+            }),
             lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
             legendOrientation: 'horisontal',
             legend: `${calcOverallRate(
               'devicesActiveRaw',
               'devicesTotal',
-              data
-            ).toFixed(2)}%`,
+              data,
+              { weekendOrHoliday: 0 }
+            ).toFixed(0)}%`,
             legendOffsetX: -3,
             legendOffsetY: 0,
             textStyle: {
