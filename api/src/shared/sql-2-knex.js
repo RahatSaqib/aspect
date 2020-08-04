@@ -176,19 +176,28 @@ function getNestedQueries(sql) {
 
 function processNestedQueries(sql, treeOfSubQueries, params) {
   const byToken = {}
-  // helper func to replace sub-query text with table name '$$$_N'
-  const replaceSubQueries = (originalText, subQueries) => {
-    let text = originalText
-    _.forEachRight(subQueries, subQ => {
+  // ------------
+  // helper func 1 - to replace sub-query text with table name '$$$_N'
+  // ------------
+  const replaceSubQueries = ({ innerText, subQueries }) => {
+    const textParts = []
+    let indexStart = 0
+    _.forEach(subQueries, subQ => {
       const tableName = subQ.token
-      const partBefore = text.substring(0, subQ.localIndexStart)
-      const partAfter = text.substring(subQ.localIndexEnd + 1)
-      // assemble text back with spaces around tableName
-      text = `${partBefore} ${tableName} ${partAfter}`
+      const partBefore = innerText.substring(indexStart, subQ.localIndexStart)
+      textParts.push(partBefore)
+      textParts.push(` ${tableName} `)
       byToken[tableName] = subQ
+      // next chunk to start right after current one
+      indexStart = subQ.localIndexEnd + 1
     })
-    return text
+    const partAfter = innerText.substring(indexStart)
+    textParts.push(partAfter)
+    return textParts.join('')
   }
+  // ------------
+  // helper func 2 - process sub-queries for each item and convert each to knex
+  // ------------
   const processItems = items => {
     items.forEach(item => {
       if (item.isProcessed) {
@@ -198,10 +207,8 @@ function processNestedQueries(sql, treeOfSubQueries, params) {
       // 1. process all sub-queries
       processItems(item.subQueries)
 
-      // 2. replace each sub-query with table-like placeholder to pass regex
-      item.sqlText = replaceSubQueries(item.innerText, item.subQueries)
-        .replace(/[\n\t]/g, ' ')
-        .trim()
+      // 2. replace each sub-query with table-like placeholder to pass main regex
+      item.sqlText = trimSql(replaceSubQueries(item))
 
       // 3. prepare knex
       item.sqlBuilder = convertSqlToKnex(item.sqlText, byToken, params)
@@ -209,9 +216,16 @@ function processNestedQueries(sql, treeOfSubQueries, params) {
       item.isProcessed = true
     })
   }
+
+  // recursively process sub-queries from top of the tree
   processItems(treeOfSubQueries)
 
-  const modifiedSql = replaceSubQueries(sql, treeOfSubQueries)
+  // 'byToken' now is defined and here we may do the last step of
+  // processing main 'sql'
+  const modifiedSql = replaceSubQueries({
+    innerText: sql,
+    subQueries: treeOfSubQueries,
+  })
 
   return {
     modifiedSql,
@@ -220,80 +234,58 @@ function processNestedQueries(sql, treeOfSubQueries, params) {
 }
 
 function getSqlQueryRegex() {
-  const regexString = `
-  \\b
-  SELECT                                                                                                                                                        
-  \\s+
-    (.*?)
-  \\s?
-    (?:
-  \\s+
-      FROM
-  \\s+
+  return new RegExp(
+    `
+      \\b  SELECT  \\s+
         (.*?)
-  \\s*
-        (
-          (?:
+        
+      \\s?
+      (?:
+        \\s+  FROM  \\s+
+        (.*?)
+
+          \\s*
+          (
             (?:
-              LEFT  \\s+
-              |
-              RIGHT \\s+
-            )?
-            (?:
-              INNER \\s+
-              |
-              OUTER \\s+
-            )?
-            JOIN    \\s+
-          )
-          (?:.*?)
-        )?
+              (?:
+                (?: LEFT | RIGHT )   \\s+
+              )?
+              (?:
+                (?: INNER | OUTER )  \\s+
+              )?
+              JOIN    \\s+
+            )
+            (?:.*?)
+          )?
 
-  \\s*
-        (?:
+          \\s*
           (?:
-  \\s+
-            WHERE
-          )
-  \\s+
-          (.*?)
-        )?
+            \\s+  WHERE  \\s+
+            (.*?)
+          )?
 
-  \\s*
-        (?:
+          \\s*
           (?:
-  \\s+
-            GROUP\\s+BY
-          )
-  \\s+
-          (.*?)
-        )?
+            \\s+  GROUP  \\s+  BY \\s+
+            (.*?)
+          )?
 
-  \\s*
-        (?:
+          \\s*
           (?:
-  \\s+
-            HAVING
-          )
-  \\s+
-          (.*?)
-        )?
+            \\s+  HAVING  \\s+
+            (.*?)
+          )?
 
-  \\s*
-        (?:
+          \\s*
           (?:
-  \\s+
-            ORDER\\s+BY
-          )
-  \\s+
-          (.*?)
-        )?
-
-    )?
-    $
-  `.replace(/\s/g, '') // remove all white spaces, tabs and line breaks
-
-  return new RegExp(regexString, 'gim')
+            \\s+  ORDER  \\s+  BY  \\s+
+            (.*?)
+          )?
+      )?
+      $
+    `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
+    'gim'
+  )
 }
 
 function isSubQueryInText(text) {
@@ -302,30 +294,31 @@ function isSubQueryInText(text) {
 
 function resolveSubQueryWithAlias(sql, byToken) {
   const sqlBuilders = []
-  // sub-query in SELECT block always goes with alias
+  // Notice that sub-query in SELECT block always goes with alias
   const regex = new RegExp(
     `
       (
         \\$\\$\\$_\\d+
       )
       (
-            \\s+
+        \\s+
         AS
-            \\s+
+        \\s+
       )
       (
         [a-z0-9_\`]+
       )
-            \\s*
-    `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
-    'gim' // leave 'm' for tests because they are testing multi-line queries too
+      \\s*
+    `.replace(/\s/g, ''),
+    'gim'
   )
   let match
   let indexStart = 0
   let text
+
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(sql))) {
-    const [, tableName, as, alias] = match
+    const [, tableName, as, tableAlias] = match
     const { index } = match
 
     // raw text from the left of each sub-query
@@ -334,8 +327,8 @@ function resolveSubQueryWithAlias(sql, byToken) {
       sqlBuilders.push(knex.raw(text))
     }
     // add knex of sub-query
-    sqlBuilders.push(byToken[tableName].sqlBuilder.as(_.trim(alias, '`')))
-    indexStart = index + `${tableName}${as}${alias}`.length
+    sqlBuilders.push(byToken[tableName].sqlBuilder.as(_.trim(tableAlias, '`')))
+    indexStart = index + `${tableName}${as}${tableAlias}`.length
   }
   if (indexStart < sql.length - 1) {
     // raw text from the right of last sub-query
@@ -347,94 +340,128 @@ function resolveSubQueryWithAlias(sql, byToken) {
   return sqlBuilders
 }
 
-function onJoin(qb, condition) {
-  // eslint-disable-next-line
-  const regex = /(?:^\s*|\s+(OR)\s+|\s+(AND)\s+)\s*(.*?)\s*(?:(\s+IS\s+NULL|\s+IS\s+NOT\s+NULL)|(?:([\!\=\>\<]+|\s+IN\s+|NOT\s+IN\s+|\s+(BETWEEN)\s+(.*?)\s+AND\s+)\s*(.*?))?)\s*(?=$|(?:\s+OR\s+)|(?:\s+AND\s+))/gim
+function resolveOn(queryBuilder, condition) {
+  const regex = new RegExp(
+    `
+      (?:
+        ^  \\s*
+        |
+        \\s+   ( OR | AND )   \\s+
+      )
+      \\s*
+      (.*?)
+      \\s*
+      (?:
+        (
+          \\s+  IS  \\s+  (?:  NOT  \\s+)?  NULL
+        )
+        |
+        (?:
+          (
+            [\\!  \\=  \\>  \\<]+
+            |
+            \\s+  (?:  NOT  \\s+)?   IN  \\s+
+            |
+            \\s+  (BETWEEN)  \\s+  (.*?)  \\s+  AND  \\s+
+          )
+          \\s*
+          (.*?)
+        )?
+      )
+      \\s*
+      (?=
+        $
+        |
+        \\s+  (?: OR | AND )  \\s+
+      )
+    `.replace(/\s/g, ''),
+    'gim'
+  )
   let match
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(condition))) {
     const [
       ,
-      _or_,
-      _and_,
+      conjunction,
       field,
-      _unary_,
-      _sign_,
-      _between_,
-      _val1,
-      _val,
+      unary,
+      operation,
+      between,
+      value0,
+      value,
     ] = match
 
-    let onFuncName
-    if (_or_) {
-      onFuncName = 'orOn'
-    } else if (_and_) {
-      onFuncName = 'andOn'
+    let funcName
+    if (conjunction) {
+      funcName = conjunction.toUpperCase() === 'OR' ? 'orOn' : 'andOn'
     } else {
-      onFuncName = 'on'
+      funcName = 'on'
     }
 
-    if (_unary_) {
+    if (unary) {
       // --------------------
       // 'IS NULL' or 'IS NOT NULL'
       // --------------------
-      const unary = _unary_.toUpperCase().replace(/\s/g, ' ')
-      onFuncName =
-        unary === 'IS NULL' ? `${onFuncName}Null` : `${onFuncName}NotNull`
-      qb[onFuncName](field)
-    } else if (_between_) {
+      const unaryUp = unary.toUpperCase().replace(/\s/g, ' ')
+      funcName =
+        unaryUp === 'IS NULL' ? `${funcName}Null` : `${funcName}NotNull`
+      queryBuilder[funcName](field)
+    } else if (between) {
       // --------------------
       // BETWEEN _val1 AND _val
       // --------------------
-      qb[`${onFuncName}Between`](field, [knex.raw(_val1), knex.raw(_val)])
+      queryBuilder[`${funcName}Between`](field, [
+        knex.raw(value0),
+        knex.raw(value),
+      ])
     } else {
-      const signUp = _sign_.toUpperCase().replace(/\s/g, ' ')
-      if (signUp === 'IN' || signUp === 'NOT IN') {
+      const operationUp = operation.toUpperCase().replace(/\s/g, ' ')
+      if (operationUp === 'IN' || operationUp === 'NOT IN') {
         // --------------------
-        // 'IN (_val)' or 'NOT IN (_val)'
+        // 'IN (value)' or 'NOT IN (value)'
         // --------------------
-        onFuncName = signUp === 'IN' ? `${onFuncName}In` : `${onFuncName}NotIn`
-        const val = _.trim(_val, '( )')
-        qb[`${onFuncName}`](field, knex.raw(`[${val}]`))
+        funcName = operationUp === 'IN' ? `${funcName}In` : `${funcName}NotIn`
+        const val = _.trim(value, '( )')
+        queryBuilder[`${funcName}`](field, knex.raw(`[${val}]`))
       } else {
-        qb[onFuncName](field, _sign_, _val)
+        queryBuilder[funcName](field, operation, value)
       }
     }
   }
 }
 
 function resolveJoins(sqlBuilder, sql, byToken) {
-  // sub-query in JOIN block always goes with alias
-  const regexString = `
-    (
-      LEFT    \\s+
-      |
-      RIGHT   \\s+
-    )?
-    (
-      INNER   \\s+
-      |
-      OUTER   \\s+
-    )?
-    (
-      JOIN    \\s+
-    )
-    (
-      [a-zA-Z0-9_$\\-\`]*
-    )
-    (
-      ?:
+  // Notice that sub-query in JOIN block always goes with alias
+  const regex = new RegExp(
+    `
+      (?:
+        ( LEFT | RIGHT )    \\s+
+      )?
+      (?:
+        ( INNER | OUTER )   \\s+
+      )?
+      (
+        JOIN   \\s+
+      )
+      (
+        [a-z0-9_$\\-\`]*
+      )
+      (?:
+        \\s+
+        AS
+        \\s+
+        ([a-z0-9_$\\-\`]*)?
+      )
       \\s+
-      AS
+      ON
       \\s+
-      ([a-zA-Z0-9_$\\-\`]*)?
-    )
-    \\s+
-    ON
-    \\s+
-  `.replace(/\s/g, '')
-  const regex = new RegExp(regexString, 'gim')
+    `.replace(/\s/g, ''),
+    'gim'
+  )
   let match
+  // put all matches in an array 'matches' because we need to know
+  // the index of next match-item to be able to cut text between ON
+  // and next match-item. This simplifies current regex.
   const matches = []
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(sql))) {
@@ -473,11 +500,11 @@ function resolveJoins(sqlBuilder, sql, byToken) {
     if (joinType) {
       if (subQuery) {
         sqlBuilder[joinType](subQuery.sqlBuilder.as(tableAlias), function () {
-          onJoin(this, condition)
+          resolveOn(this, condition)
         })
       } else {
         sqlBuilder[joinType](`${tableName} as ${tableAlias}`, function () {
-          onJoin(this, condition)
+          resolveOn(this, condition)
         })
       }
     }
@@ -485,12 +512,16 @@ function resolveJoins(sqlBuilder, sql, byToken) {
 }
 
 function convertSqlToKnex(sql, byToken = {}, params = {}) {
-  const sqlQueryRegex = getSqlQueryRegex()
-  const tableAliasRegex = /^([a-zA-Z0-9_$\-`]*)(?:\s+AS\s+([a-zA-Z0-9_$\-`]*)?)$/gi
-  sql = sql.replace(/[\n\t]/g, ' ')
-  const sqlQueryMatch = sqlQueryRegex.exec(sql)
-  let sqlBuilder
+  // make sure 'sql' is a single line with no LineBreak/Tab symbols
+  // as well as remove leading/trailing semicolons
+  sql = trimSql(sql)
 
+  // execute main regex
+  const sqlQueryRegex = getSqlQueryRegex()
+  const sqlQueryMatch = sqlQueryRegex.exec(sql)
+
+  // process all captured groups and define 'sqlBuilder'
+  let sqlBuilder
   if (sqlQueryMatch) {
     // get all 7 captured groups defined in regex
     const [
@@ -511,11 +542,11 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
 
     // check if FROM looks like a table name -
     // i.e. Device or Device as d or `Device` as d
+    const tableAliasRegex = /^([a-z0-9_$\-`]*)(?:\s+AS\s+([a-z0-9_$\-`]*)?)$/gi
     const tableAliasMatch = tableAliasRegex.exec(fromPart)
 
     if (tableAliasMatch) {
       const [, tableName, tableAlias] = tableAliasMatch
-
       if (sqlQueryMatch.length === 8) {
         //-----------
         // SELECT
@@ -528,6 +559,7 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
         //-----------
         const subQuery = byToken[tableName]
         if (subQuery) {
+          // tableAlias must exist if table is $$$_N
           sqlBuilder.from(subQuery.sqlBuilder.as(tableAlias))
         } else {
           sqlBuilder.from(fromPart)
@@ -563,7 +595,7 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
         //-----------
         // ORDER BY
         //-----------
-        if (havingPart) {
+        if (orderByPart) {
           sqlBuilder.orderByRaw(orderByPart)
         }
 
@@ -571,15 +603,19 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
 
         // apply constraints
         const { dataConstraints = {} } = params
-        sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias)
+        if (!_.isEmpty(dataConstraints)) {
+          sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias)
+        }
 
         // apply filters
         const { urlQuery = {} } = params
-        if (sqlTableAlias.result) {
-          sqlBuilder.modify(filterDateRangeParams, urlQuery, 'r.endedOn')
-        }
-        if (sqlTableAlias.site) {
-          sqlBuilder.modify(filterParams, urlQuery, { siteId: 's.id' })
+        if (!_.isEmpty(urlQuery)) {
+          if (sqlTableAlias.result) {
+            sqlBuilder.modify(filterDateRangeParams, urlQuery, 'r.endedOn')
+          }
+          if (sqlTableAlias.site) {
+            sqlBuilder.modify(filterParams, urlQuery, { siteId: 's.id' })
+          }
         }
       }
     }
@@ -597,25 +633,19 @@ function tryConvertSqlStringToKnexQueryBuilder(
   dataConstraints,
   urlQuery
 ) {
+  let sql = trimSql(originalSql)
   const params = { dataConstraints, urlQuery }
-  const treeOfSubQueries = getNestedQueries(originalSql).tree
-  let sql = originalSql
+  const treeOfSubQueries = getNestedQueries(sql).tree
   let byToken = {}
 
-  sql = sql.replace(/[\n\t]/gm, ' ')
   if (treeOfSubQueries.length > 0) {
     // replace all sub-queries with table-like placeholder to pass regex
     // like '$$$_N' (N is number) or '$$$ as $$$_N' which map to object with prepared knex
     // All such 'tables' will be handled below where sqlBuilder is assembled
-    const nestedQueries = processNestedQueries(
-      originalSql,
-      treeOfSubQueries,
-      params
-    )
+    const nestedQueries = processNestedQueries(sql, treeOfSubQueries, params)
     ;[{ modifiedSql: sql, byToken }] = [nestedQueries]
   }
 
-  sql = sql.replace(/[\n\t]/gm, ' ')
   const sqlBuilder = convertSqlToKnex(sql, byToken, {
     dataConstraints,
     urlQuery,
@@ -626,25 +656,40 @@ function tryConvertSqlStringToKnexQueryBuilder(
 
 async function queryValue(sql, dataConstraints, query) {
   let firstResult
+  sql = trimSql(sql)
   if (sql) {
-    // put query in a single line
-    sql = sql.replace(/[\n\t]/g, ' ')
-
     const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
       sql,
       dataConstraints,
       query
     )
-    if (sqlBuilder) {
-      firstResult = await sqlBuilder // .first()
-    } else if (sql) {
-      firstResult = await knex.raw(sql)
+
+    try {
+      if (sqlBuilder) {
+        firstResult = await sqlBuilder.first()
+      } else {
+        firstResult = await knex.raw(sql)
+      }
+    } catch (ex) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'ERROR in function queryValue (sql-2-knex.js):',
+        ex.toString()
+      )
     }
+
     while (_.isArray(firstResult)) {
       ;[firstResult] = firstResult
     }
   }
   return firstResult
+}
+
+/**
+ * Puts query in a single line and removes edge semicolon/space symbols
+ */
+function trimSql(sql) {
+  return _.trim((sql || '').replace(/[\n\t]/gm, ' '), '; ')
 }
 
 module.exports = {

@@ -1,4 +1,3 @@
-// const _ = require('lodash')
 const chai = require('chai')
 const {
   getBalancedParentheses,
@@ -9,16 +8,24 @@ const {
 const { run } = require('../../src/db')
 const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
 
-const { assert } = chai
+const { assert, expect } = chai
 
+async function assertQuery(knex, sqlBuilder, sql) {
+  const [rawResult] = await knex.raw(sql).then(data => data[0])
+  const [firstResult] = await sqlBuilder
+  expect(firstResult).to.have.property('cnt')
+  expect(rawResult).to.have.property('cnt')
+  expect(firstResult).to.have.containSubset({
+    cnt: rawResult.cnt,
+  })
+  assert.equal(rawResult.cnt, firstResult.cnt)
+}
 describe.only('Parse nested queries', () => {
   describe('Parse query which nested sub-queries', () => {
-    // Use this query
-    //    const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
-    //      x => x.externalId === 'stockNotRecorded'
-    //    )
-    // so, for testing purposes just copied above query to not depend on possible change
-    // of query actual format and paddings
+    // Used query from 'sqlForStatUnit' in
+    //    dashboardWidgetsBase.stat.find(x => x.externalId === 'stockNotRecorded')
+    // and for testing purposes just copied above query here to not depend
+    // on possible change of query actual format and paddings
     const sql = `SELECT
       CONCAT(
         ROUND(
@@ -102,18 +109,25 @@ describe.only('Parse nested queries', () => {
     })
   })
 
-  describe.skip('Execute query with sub-query in FROM clause', () => {
+  describe('Execute query with sub-query in FROM clause', () => {
     const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
-      x => x.externalId === 'stockNotRecorded'
+      x => x.externalId === 'activeDevices'
+      // 'stockNotRecorded'
     )
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
 
-      // const { modifiedSql } = processNestedQueries(sql, nestedQueries)
+      const dataConstraints = {}
+      const urlQuery = {}
+      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
+        sql,
+        dataConstraints,
+        urlQuery
+      )
 
-      return run(async () => {
-        //
+      return run(async knex => {
+        await assertQuery(knex, sqlBuilder, sql)
       })
     })
   })
@@ -126,12 +140,6 @@ describe.only('Parse nested queries', () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
 
-      // const { modifiedSql } = processNestedQueries(
-      //   sql,
-      //   nestedQueries.tree,
-      //   {}
-      // )
-      // console.log('___________________________', 1, { modifiedSql })
       const dataConstraints = {}
       const urlQuery = {}
       const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
@@ -139,20 +147,16 @@ describe.only('Parse nested queries', () => {
         dataConstraints,
         urlQuery
       )
-      console.log('___________________________', 2, sqlBuilder.toSQL())
-      return run(async () => {
-        //
+
+      return run(async knex => {
+        await assertQuery(knex, sqlBuilder, sql)
       })
     })
   })
 
+  // TODO: find our or prepare query with 'WHERE ... IN (SELECT ...)` pattern
   describe.skip('Execute query with sub-query in WHERE clause', () => {
-    // find our or prepare query with 'WHERE ... IN (SELECT ...)` pattern
-    const sql = ''
     it('should find nested query', async () => {
-      const nestedQueries = getNestedQueries(sql)
-      assert.equal(nestedQueries.all.length, 1)
-
       return run(async () => {
         //
       })
@@ -213,7 +217,6 @@ describe.only('Parse nested queries', () => {
       assert.equal(nestedQueries.all.length, 5)
 
       const { modifiedSql } = processNestedQueries(sql, nestedQueries.tree, {})
-      // console.log('___________________________', 1, { modifiedSql })
       assert.equal(
         modifiedSql,
         `SELECT 
@@ -229,7 +232,6 @@ describe.only('Parse nested queries', () => {
     FROM  $$$_1  as t`
       )
 
-      // const sqlBuilder = convertSqlToKnex(modifiedSql, byToken, {})
       const dataConstraints = {}
       const urlQuery = {}
       const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
@@ -237,9 +239,9 @@ describe.only('Parse nested queries', () => {
         dataConstraints,
         urlQuery
       )
-      console.log('___________________________', 2, sqlBuilder.toSQL())
-      return run(async () => {
-        //
+
+      return run(async knex => {
+        await assertQuery(knex, sqlBuilder, sql)
       })
     })
   })
