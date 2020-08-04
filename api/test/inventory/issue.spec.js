@@ -30,7 +30,7 @@ const {
 const { loadPlugin } = require('../../src/plugin/registration')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
   resultSourceToId,
   resultTypeToId,
   resultCategoryToId,
@@ -514,7 +514,7 @@ async function createTestDevice(knex, siteId, geographyId, partnerId) {
     geographyId,
     siteId, // new site id
     deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
-    deviceStatusId: await deviceStatusToId('approved'),
+    deviceApprovalId: await deviceApprovalToId('approved'),
     name: 'Test Device',
     shortName: 'Test Device',
     lastSeenOn: new Date(),

@@ -8,7 +8,7 @@ const Promise = require('bluebird')
 const sites = require('./fixtures/sites.json')
 const {
   deviceTypeToId,
-  deviceStatusToId,
+  deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 const { getPartnerByName } = require('../utils')
 
@@ -130,7 +130,7 @@ async function seed(knex) {
               geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
-              deviceStatusId: await deviceStatusToId('approved'),
+              deviceApprovalId: await deviceApprovalToId('approved'),
               name: device.name,
               shortName: device.shortName,
               serial: device.serial,

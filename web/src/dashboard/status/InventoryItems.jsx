@@ -190,7 +190,7 @@ export const InventoryItems = ({
   const selectIndex = findArrayIndexByStringPartial(
     inventoryItems,
     'consumableName',
-    'GeneXpert MTB/Rif'
+    'GeneXpert TB Cartridge'
   )
   const itemSelected =
     value || (inventoryItems && inventoryItems[selectIndex]) || null
@@ -208,7 +208,10 @@ export const InventoryItems = ({
   })
 
   return (
-    <Card className={`${className} ${cssClasses('Inventory_Container')}`}>
+    <Card
+      className={`${className} ${cssClasses('Inventory_Container')}`}
+      name="inventoryStatus"
+    >
       <div
         className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
       >

@@ -451,7 +451,7 @@ msgid "Device Name"
 msgstr "Nom de l'appareil"
 
 #: i18n/src/filter/popover/FiltersPanel.json
-msgid "Device Status"
+msgid "Device Approval"
 msgstr "Statut du périphérique"
 
 #: i18n/src/filter/popover/FiltersPanel.json
@@ -958,9 +958,9 @@ msgstr "Chargement des consommables échoué"
 msgid "Loading Contacts Failed"
 msgstr "Échec du chargement des contacts"
 
-#: i18n/src/deviceStatus/DeviceStatusRedux.json
-msgid "Loading Device Statuses Failed"
-msgstr "Échec du chargement des statuts"
+#: i18n/src/deviceApproval/DeviceApprovalRedux.json
+msgid "Loading Device Approvals Failed"
+msgstr "Échec du chargement des approbations de périphérique"
 
 #: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
 msgid "Loading DeviceApiKeys Failed"
@@ -1577,9 +1577,9 @@ msgstr "La recherche de consommables a échoué"
 msgid "Searching Contacts Failed"
 msgstr "La recherche de contacts a échoué"
 
-#: i18n/src/deviceStatus/DeviceStatusRedux.json
-msgid "Searching Device Statuses Failed"
-msgstr "La recherche de statuts de périphérique a échoué"
+#: i18n/src/deviceApproval/DeviceApprovalRedux.json
+msgid "Searching Device Approval Statuses Failed"
+msgstr "Échec de la recherche des états d'approbation de périphérique"
 
 #: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
 msgid "Searching DeviceApiKeys Failed"
@@ -1686,7 +1686,7 @@ msgid "Select state..."
 msgstr "Sélectionnez l'état..."
 
 #: i18n/src/filter/popover/FiltersPanel.json
-msgid "Select status..."
+msgid "Select approval status..."
 msgstr "Sélectionnez le statut ..."
 
 #: i18n/src/filter/popover/FiltersPanel.json
@@ -2504,8 +2504,8 @@ msgid "with device issues"
 msgstr "avec des problèmes de périphérique"
 
 #: i18n/src/filter/btnGroup/FiltersBtnGroup.json
-msgid "with device status is {deviceStatusName}"
-msgstr "avec l'état du périphérique est {deviceStatusName}"
+msgid "with device approval is {deviceApprovalName}"
+msgstr "avec l'état du périphérique est {deviceApprovalName}"
 
 #: i18n/src/filter/btnGroup/FiltersBtnGroup.json
 msgid "with device type is {deviceTypeName}"
