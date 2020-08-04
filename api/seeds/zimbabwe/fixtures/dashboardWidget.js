@@ -75,20 +75,20 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdComputer',
-      title: 'Devices',
-      titleI18nKey: 'devicesTitle',
+      title: 'GeneXpert Devices',
+      titleI18nKey: 'geneXpertDevicesTitle',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'`,
       sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
           AND d.createdOn <=  DATE_FORMAT(NOW() ,'%Y-%m-01')`,
       statUnit: '{unit} last month',
-      statUnitI18nKey: 'dashboardWidgetUnitDevicesCountGeneXpert',
+      statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
       link: '/browse/device',
       sortOrder: 0,
-      externalId: 'devicesCountGeneXpert',
+      externalId: 'geneXpertDevices',
       description: 'The number of approved GeneXpert devices.',
-      descriptionI18nKey: 'devicesDescription',
+      descriptionI18nKey: 'geneXpertDevices',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
@@ -178,10 +178,14 @@ module.exports = {
     },
 
     {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
+      sortOrder: 14,
+    },
+    {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'instrumentsReplaced'
       ),
-      sortOrder: 14,
+      sortOrder: 15,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
