@@ -11,7 +11,7 @@ const tbGraphs = {
     group: 'tb',
     graphType: [
       {
-        id: 'resultsByCategory1Monthly',
+        id: 'tbByCategory1Monthly',
         component: BarGraph,
         type: 'bar',
         size: 8,
@@ -33,7 +33,7 @@ const tbGraphs = {
         formatDate: 'MMM yy',
       },
       {
-        id: 'resultsByCategory1Aggregate',
+        id: 'tbByCategory1Aggregate',
         component: PieGraph,
         type: 'pie',
         size: 4,
