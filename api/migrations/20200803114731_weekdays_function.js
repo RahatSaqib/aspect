@@ -1,7 +1,9 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  await knex.raw(`CREATE FUNCTION GetWeekdaysInRange(endDate datetime, startDate datetime)
+  await knex.raw(`
+    SET GLOBAL log_bin_trust_function_creators = 1;
+    CREATE FUNCTION GetWeekdaysInRange(endDate datetime, startDate datetime)
     RETURNS int
     DETERMINISTIC
     BEGIN
