@@ -3,7 +3,10 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
-const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
+const {
+  deviceApprovalToId,
+  deviceTypeToPlugin,
+} = require('../shared/dictionary')
 const {
   resultUpdated,
   resultLogged,
@@ -286,7 +289,7 @@ async function getDeviceDataWithContext(context) {
   const includeSite = includeAll
 
   // only include device data if approved
-  const deviceApproved = device.status === 'approved'
+  const deviceApproved = device.approval === 'approved'
   const includeConfig = deviceApproved && includeAll
   const includeOp =
     deviceApproved &&
@@ -295,7 +298,7 @@ async function getDeviceDataWithContext(context) {
   const response = { requestedOn: now.toISOString() }
   if (includeDevice) {
     response.name = device.name
-    response.status = { id: device.status }
+    response.approval = { id: device.approval }
   }
 
   if (includeSite) {
@@ -416,17 +419,17 @@ async function updateSiteWithContext(context) {
   const site = sites[0]
 
   if (device.siteId !== site.id) {
-    const status = device.siteId == null ? 'approved' : 'assigned'
-    const deviceStatusId = await deviceStatusToId(status)
+    const approval = device.siteId == null ? 'approved' : 'assigned'
+    const deviceApprovalId = await deviceApprovalToId(approval)
 
     await knex('Device').where({ id: device.id }).update({
       siteId: site.id,
-      deviceStatusId,
+      deviceApprovalId,
     })
 
-    await knex('DeviceStatusLog').insert({
+    await knex('DeviceApprovalLog').insert({
       deviceId: device.id,
-      deviceStatusId,
+      deviceApprovalId,
       changedOn: now,
       createdOn: now,
       createdBy: null,
@@ -527,7 +530,7 @@ async function createDeviceApiContext(
 
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Geography as g', 'd.geographyId', 'g.id')
@@ -549,7 +552,7 @@ async function createDeviceApiContext(
       'd.configurationData',
       'd.lastSeenOn',
       'd.putInService',
-      'ds.token as status',
+      'da.token as approval',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
@@ -705,7 +708,7 @@ function createNewDeviceFromRequest(request, now) {
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,
       geographyId: apiKey.geographyId,
-      status: apiKey.siteId ? 'approved' : 'provisioned',
+      approval: apiKey.siteId ? 'approved' : 'provisioned',
     })
 
     // Assign new device to API Key

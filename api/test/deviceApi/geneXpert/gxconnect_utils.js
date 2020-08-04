@@ -62,7 +62,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .pluck('id')
 
-  await knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
@@ -122,7 +122,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('Device')
     .whereIn('siteId', siteIds)
-    .orWhereIn('deviceId', deviceIds)
+    .orWhereIn('id', deviceIds)
     .delete()
 
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
@@ -181,7 +181,7 @@ class GxConnectApiTestContext {
     this.basicDevicePayload = {
       name: deviceName,
       serial: null,
-      status: null,
+      approval: null,
       type: {
         id: 'CepheidGeneXpert',
       },

@@ -42,9 +42,9 @@ const messages = defineMessages({
     id: 'pages.RouterList.router',
     defaultMessage: 'Router',
   },
-  status: {
-    id: 'pages.RouterList.status',
-    defaultMessage: 'Status',
+  approval: {
+    id: 'pages.RouterList.approval',
+    defaultMessage: 'Approval Status',
   },
   reportingFor: {
     id: 'pages.RouterList.reportingFor',
@@ -71,11 +71,11 @@ const FILTERS_CONFIG = [
     deviceName: true,
     requiredPermissions: [],
   },
-  { deviceStatus: true, requiredPermissions: [] },
+  { deviceApproval: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['name', 'status', 'createdOn', 'lastSeen'],
+  availableSortCol: ['name', 'approval', 'createdOn', 'lastSeen'],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -255,8 +255,8 @@ export const RouterList = ({
                 sortable: true,
               },
               {
-                key: 'status',
-                label: intl.formatMessage(messages.status),
+                key: 'approval',
+                label: intl.formatMessage(messages.approval),
                 sortable: true,
               },
               {

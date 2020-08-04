@@ -17,7 +17,7 @@ const {
   getPermissionModules,
 } = require('../utils')
 const {
-  deviceStatusToId,
+  deviceApprovalToId,
   deviceTypeToId,
   partnerTypeToId,
 } = require('../../src/shared/dictionary')
@@ -96,7 +96,7 @@ async function seed(knex) {
     ...auditFields,
     name: 'GxAlert',
     deviceTypeId: await deviceTypeToId('GxAlert'),
-    deviceStatusId: await deviceStatusToId('approved'),
+    deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
     geographyId: myanmarGeographyId,
     siteId: gxAlertSiteId,

@@ -3,22 +3,22 @@
     {
       "name": "Provisioned",
       "token": "provisioned",
-      "i18nKey": "deviceStatusProvisioned"
+      "i18nKey": "deviceApprovalProvisioned"
     },
     {
       "name": "Assigned",
       "token": "assigned",
-      "i18nKey": "deviceStatusAssigned"
+      "i18nKey": "deviceApprovalAssigned"
     },
     {
       "name": "Approved",
       "token": "approved",
-      "i18nKey": "deviceStatusApproved"
+      "i18nKey": "deviceApprovalApproved"
     },
     {
       "name": "Decommissioned",
       "token": "decommissioned",
-      "i18nKey": "deviceStatusDecommissioned"
+      "i18nKey": "deviceApprovalDecommissioned"
     }
   ]
 }

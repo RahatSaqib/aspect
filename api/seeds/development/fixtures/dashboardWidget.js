@@ -181,5 +181,25 @@ module.exports = {
         x => x.externalId === 'stockNotRecorded'
       ),
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'avgTimeToUpload'
+      ),
+      sortOrder: 16,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
+      sortOrder: 17,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'instrumentsReplaced'
+      ),
+      sortOrder: 18,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
+      sortOrder: 18,
+    },
   ],
 }
