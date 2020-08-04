@@ -18,6 +18,12 @@ import EmptyGraph from '../EmptyData'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
+const Loading = () => (
+  <div className={cssClasses('graphrender__spinner')}>
+    <CircularProgress />
+  </div>
+)
+
 const GraphRender = ({ assays, config, updatedParams = {} }) => {
   const {
     averages,
@@ -71,7 +77,7 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {isEmpty(graphData) && isLoading ? <CircularProgress /> : null}
+        {!isEmpty(graphData) && isLoading ? <Loading /> : null}
         {isEmpty(graphData) && !isLoading ? <EmptyGraph type={type} /> : null}
         {!isEmpty(graphData) ? (
           <Component
