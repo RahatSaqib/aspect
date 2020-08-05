@@ -86,7 +86,9 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
   }, [dispatchParamsFromChild])
 
   return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
-    <PermissionsProvider permissions={['result:view']}>
+    <PermissionsProvider
+      permissions={allowedGroupsWithoutAssays ? ['site:view'] : ['result:view']}
+    >
       <Grid item xs={12} lg={outerSize}>
         <Grid container spacing={24}>
           <Grid item xs={12}>
