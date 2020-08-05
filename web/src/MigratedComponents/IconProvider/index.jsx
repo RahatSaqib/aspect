@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react'
+import React, { Suspense, lazy, memo } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { FaSpinner } from 'react-icons/fa'
@@ -17,7 +17,7 @@ async function loadIconModule(icon) {
   }
 }
 
-const IconProvider = React.memo(({ icon, className }) => {
+const IconProvider = memo(({ icon, className }) => {
   const IconShell = ({ children }) => (
     <div className={cssClasses([className])}>{children}</div>
   )
