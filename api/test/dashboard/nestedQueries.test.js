@@ -20,7 +20,7 @@ async function assertQuery(knex, sqlBuilder, sql) {
   })
   assert.equal(rawResult.cnt, firstResult.cnt)
 }
-describe.only('Parse nested queries', () => {
+describe('Parse nested queries', () => {
   describe('Parse query which nested sub-queries', () => {
     // Used query from 'sqlForStatUnit' in
     //    dashboardWidgetsBase.stat.find(x => x.externalId === 'stockNotRecorded')
@@ -242,6 +242,24 @@ describe.only('Parse nested queries', () => {
 
       return run(async knex => {
         await assertQuery(knex, sqlBuilder, sql)
+      })
+    })
+  })
+
+  describe('Execute ALL widgets in dashboardWidgetBase', () => {
+    dashboardWidgetsBase.stat.forEach(widget => {
+      it(`should convert sql to knex and execute query for widget '${widget.title}'`, async () => {
+        const dataConstraints = {}
+        const urlQuery = {}
+        const sql = widget.sqlForIndicator
+        const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
+          sql,
+          dataConstraints,
+          urlQuery
+        )
+        return run(async knex => {
+          await assertQuery(knex, sqlBuilder, sql)
+        })
       })
     })
   })
