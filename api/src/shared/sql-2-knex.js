@@ -244,43 +244,50 @@ function getSqlQueryRegex() {
         \\s+  FROM  \\s+
         (.*?)
 
-          \\s*
-          (
+        \\s*
+        (
+          (?:
             (?:
-              (?:
-                (?: LEFT | RIGHT )   \\s+
-              )?
-              (?:
-                (?: INNER | OUTER )  \\s+
-              )?
-              JOIN    \\s+
-            )
-            (?:.*?)
-          )?
+              (?: LEFT | RIGHT )   \\s+
+            )?
+            (?:
+              (?: INNER | OUTER | CROSS )  \\s+
+            )?
+            JOIN    \\s+
+          )
+          (?:.*?)
+        )?
 
-          \\s*
-          (?:
-            \\s+  WHERE  \\s+
-            (.*?)
-          )?
+        \\s*
+        (?:
+          \\s+  WHERE  \\s+
+          (.*?)
+        )?
 
-          \\s*
-          (?:
-            \\s+  GROUP  \\s+  BY \\s+
-            (.*?)
-          )?
+        \\s*
+        (?:
+          \\s+  GROUP  \\s+  BY \\s+
+          (.*?)
+        )?
 
-          \\s*
-          (?:
-            \\s+  HAVING  \\s+
-            (.*?)
-          )?
+        \\s*
+        (?:
+          \\s+  HAVING  \\s+
+          (.*?)
+        )?
 
-          \\s*
-          (?:
-            \\s+  ORDER  \\s+  BY  \\s+
-            (.*?)
-          )?
+        \\s*
+        (?:
+          \\s+  ORDER  \\s+  BY  \\s+
+          (.*?)
+        )?
+        
+        \\s*
+        (?:
+          \\s+  LIMIT  \\s+
+          (.*?)
+        )?
+
       )?
       $
     `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
@@ -435,7 +442,7 @@ function resolveJoins(sqlBuilder, sql, byToken) {
   const regex = new RegExp(
     `
       (?:
-        ( LEFT | RIGHT )    \\s+
+        ( LEFT | RIGHT )   \\s+
       )?
       (?:
         ( INNER | OUTER | CROSS )   \\s+
@@ -526,19 +533,44 @@ function resolveJoins(sqlBuilder, sql, byToken) {
   })
 }
 
+function resolveLimit(sqlBuilder, limitPart) {
+  let rowCount
+  let offset
+  // spec --> [LIMIT {[offset,] row_count | row_count OFFSET offset}]
+  if (limitPart.match(/OFFSET/gi)) {
+    ;[rowCount, offset] = limitPart
+      .replace(/OFFSET/i, ',')
+      .replace(/\s/, '')
+      .split(',')
+  } else {
+    ;[offset, rowCount] = limitPart.replace(/\s/, '').split(',')
+    if (offset && !rowCount) {
+      rowCount = offset
+      offset = null
+    }
+  }
+  if (rowCount) {
+    sqlBuilder.limit(rowCount)
+  }
+  if (offset) {
+    sqlBuilder.offset(offset)
+  }
+}
+
 function convertSqlToKnex(sql, byToken = {}, params = {}) {
   // make sure 'sql' is a single line with no LineBreak/Tab symbols
   // as well as remove leading/trailing semicolons
   sql = trimSql(sql)
 
   // execute main regex
+  // see specs of SELECT - https://dev.mysql.com/doc/refman/8.0/en/select.html
   const sqlQueryRegex = getSqlQueryRegex()
   const sqlQueryMatch = sqlQueryRegex.exec(sql)
 
   // process all captured groups and define 'sqlBuilder'
   let sqlBuilder
   if (sqlQueryMatch) {
-    // get all 7 captured groups defined in regex
+    // get all 8 captured groups defined in regex
     const [
       ,
       selectPart,
@@ -548,6 +580,7 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
       groupByPart,
       havingPart,
       orderByPart,
+      limitPart,
     ] = sqlQueryMatch
 
     const isSubQueryInSelect = isSubQueryInText(selectPart)
@@ -562,7 +595,7 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
 
     if (tableAliasMatch) {
       const [, tableName, tableAlias] = tableAliasMatch
-      if (sqlQueryMatch.length === 8) {
+      if (sqlQueryMatch.length === 9) {
         //-----------
         // SELECT
         //-----------
@@ -612,6 +645,13 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
         //-----------
         if (orderByPart) {
           sqlBuilder.orderByRaw(orderByPart)
+        }
+
+        //-----------
+        // LIMIT
+        //-----------
+        if (limitPart) {
+          resolveLimit(sqlBuilder, limitPart)
         }
 
         const sqlTableAlias = getTableAlias(sql)
