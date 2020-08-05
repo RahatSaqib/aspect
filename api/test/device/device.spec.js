@@ -750,7 +750,7 @@ describe('Device routes', () => {
   })
 
   describe('Message Queue', () => {
-    describe('TIME_TO_LOG_DEVICE_MAINTENANCE_STATUS', () => {
+    describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
       it('should log the maintenance status of each un-logged device', async () => {
         const diagnosticDevices = await knex('Device as d')
           .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')

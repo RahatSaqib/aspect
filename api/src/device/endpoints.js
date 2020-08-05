@@ -21,7 +21,7 @@ const {
   onDeviceMaintenanceResolved,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
-  onTimeToLogDeviceMaintenanceStatus,
+  onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
 const { exportDevices } = require('./serviceReports')
 const {
@@ -826,7 +826,7 @@ const subscriptions = [
       DEVICE_MAINTENANCE: onDeviceUpdateMaintenanceStatus,
       DEVICE_NO_RESULTS: onDeviceUpdateMaintenanceStatusNoResults,
       DEVICE_MAINTENANCE_RESOLVED: onDeviceMaintenanceResolved,
-      TIME_TO_LOG_DEVICE_MAINTENANCE_STATUS: onTimeToLogDeviceMaintenanceStatus,
+      DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: onDeviceMaintenanceStatusLogScheduled,
     },
   },
 ]

@@ -1325,7 +1325,10 @@ async function deviceMaintenanceStatus(request) {
   }
 }
 
-async function onTimeToLogDeviceMaintenanceStatus(action, { messageContext }) {
+async function onDeviceMaintenanceStatusLogScheduled(
+  action,
+  { messageContext }
+) {
   return messageContext.run(async knex => {
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -1404,5 +1407,5 @@ module.exports = {
   onDeviceUpdateMaintenanceStatus,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
-  onTimeToLogDeviceMaintenanceStatus,
+  onDeviceMaintenanceStatusLogScheduled,
 }
