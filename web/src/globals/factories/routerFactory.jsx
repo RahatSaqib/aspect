@@ -97,9 +97,9 @@ const renderRedirectToLicenseOr = props =>
 
 const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
   let pathname = ''
-  if (isPermittedUser(permissions, ['dashboard'])) {
+  if (isPermittedUser(permissions, { required: ['dashboard'] })) {
     pathname = '/dashboard'
-  } else if (isPermittedUser(permissions, ['operationalData'])) {
+  } else if (isPermittedUser(permissions, { required: ['operationalData'] })) {
     pathname = '/operational-data'
   } else {
     pathname = '/browse'
