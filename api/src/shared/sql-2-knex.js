@@ -36,7 +36,7 @@ function getTableAlias(sql) {
 }
 
 function isSelectQuery(text) {
-  const regex = /^\s*SELECT\s+/i
+  const regex = /^SELECT\s+/i
   const match = regex.exec(text.trim())
   return (match && match.index === 0) || false
 }
