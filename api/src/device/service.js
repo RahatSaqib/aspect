@@ -1362,7 +1362,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
         (await knex('DeviceMaintenanceStatusLog')
           .where('deviceId', id)
           .orderByRaw('day desc, createdOn desc, id desc')
-          .first()) || {}
+          .first('data')) || {}
       lastMaintenanceStatusLogForDevice.data = lastMaintenanceStatusLogForDevice.data
         ? JSON.parse(lastMaintenanceStatusLogForDevice.data)
         : {}
