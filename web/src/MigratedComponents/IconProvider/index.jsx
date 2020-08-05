@@ -17,46 +17,38 @@ async function loadIconModule(icon) {
   }
 }
 
-class IconProvider extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return JSON.stringify(nextProps) !== JSON.stringify(this.props)
-  }
+const IconProvider = React.memo(({ icon, className }) => {
+  const IconShell = ({ children }) => (
+    <div className={cssClasses([className])}>{children}</div>
+  )
 
-  render() {
-    const { icon, className } = this.props
+  const IconComponent = lazy(() =>
+    loadIconModule(icon).then(module => {
+      if (module && module[icon]) {
+        return { default: module[icon] }
+      }
+      throw new Error(`${icon} does not exist!`)
+    })
+  )
 
-    const IconShell = ({ children }) => (
-      <div className={cssClasses([className])}>{children}</div>
-    )
-
-    const IconComponent = lazy(() =>
-      loadIconModule(icon).then(async module => {
-        if (module && module[icon]) {
-          return { default: module[icon] }
-        }
-        throw new Error(`${icon} does not exist!`)
-      })
-    )
-
-    return (
-      <Suspense
-        fallback={
-          <IconShell>
-            <FaSpinner className={cssClasses(['icons__proxy'])} />
-          </IconShell>
-        }
-      >
+  return (
+    <Suspense
+      fallback={
         <IconShell>
-          <ErrorBoundary
-            fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
-          >
-            <IconComponent />
-          </ErrorBoundary>
+          <FaSpinner className={cssClasses(['icons__proxy'])} />
         </IconShell>
-      </Suspense>
-    )
-  }
-}
+      }
+    >
+      <IconShell>
+        <ErrorBoundary
+          fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
+        >
+          <IconComponent />
+        </ErrorBoundary>
+      </IconShell>
+    </Suspense>
+  )
+})
 
 IconProvider.propTypes = {
   icon: PropTypes.string.isRequired,
