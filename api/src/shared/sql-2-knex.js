@@ -438,7 +438,7 @@ function resolveJoins(sqlBuilder, sql, byToken) {
         ( LEFT | RIGHT )    \\s+
       )?
       (?:
-        ( INNER | OUTER )   \\s+
+        ( INNER | OUTER | CROSS )   \\s+
       )?
       (
         JOIN   \\s+
@@ -470,7 +470,7 @@ function resolveJoins(sqlBuilder, sql, byToken) {
 
   matches.forEach((match, j) => {
     const [wholeMatch, , , , tableName, tableAlias] = match
-    let [, leftRight = '', innerOuter = ''] = match
+    let [, leftRight = '', innerOuterCross = ''] = match
     const { index } = match
     const nextMatch = matches[j + 1]
     const nextIndex = nextMatch ? nextMatch.index : sql.length
@@ -478,24 +478,39 @@ function resolveJoins(sqlBuilder, sql, byToken) {
 
     const subQuery = byToken[tableName]
 
-    innerOuter = innerOuter.toUpperCase().trim()
+    innerOuterCross = innerOuterCross.toUpperCase().trim()
     leftRight = leftRight.toUpperCase().trim()
-    let joinType
-    if (leftRight === 'LEFT') {
-      if (innerOuter === 'OUTER') {
-        joinType = 'leftOuterJoin'
-      } else if (!innerOuter || innerOuter === 'INNER') {
-        joinType = 'leftJoin'
+    // helper func to return join type
+    const getJoinType = (leftRight, innerOuterCross) => {
+      if (leftRight === 'LEFT') {
+        if (innerOuterCross === 'OUTER') {
+          return 'leftOuterJoin'
+        }
+        if (!innerOuterCross || innerOuterCross === 'INNER') {
+          // Notice that LEFT CROSS JOIN is invalid flow because
+          // cross join does not establish relationship between joined tables.
+          // So we do 'crossJoin' in this case when query still has LEFT CROSS JOIN
+          return 'leftJoin'
+        }
+      } else if (leftRight === 'RIGHT') {
+        if (innerOuterCross === 'OUTER') {
+          return 'rightOuterJoin'
+        }
+        if (!innerOuterCross || innerOuterCross === 'INNER') {
+          // see above comment about LEFT CROSS JOIN
+          return 'rightJoin'
+        }
       }
-    } else if (leftRight === 'RIGHT') {
-      if (innerOuter === 'OUTER') {
-        joinType = 'rightOuterJoin'
-      } else if (!innerOuter || innerOuter === 'INNER') {
-        joinType = 'rightJoin'
+      if (innerOuterCross === 'CROSS') {
+        return 'crossJoin'
       }
-    } else {
-      joinType = innerOuter === 'INNER' ? 'innerJoin' : 'join'
+      if (innerOuterCross === 'INNER') {
+        return 'innerJoin'
+      }
+
+      return 'join'
     }
+    const joinType = getJoinType(leftRight, innerOuterCross)
 
     if (joinType) {
       if (subQuery) {
