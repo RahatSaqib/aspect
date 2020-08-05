@@ -336,7 +336,7 @@ module.exports = {
             IFNULL(
               AVG(dayCount)
             ,0)
-          ,0)
+          ,1)
         AS cnt
         FROM (
           SELECT COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
@@ -356,7 +356,7 @@ module.exports = {
             IFNULL(
               AVG(dayCount)
             ,0)
-          ,0)
+          ,1)
         AS cnt
         FROM (
           SELECT COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
@@ -524,7 +524,7 @@ module.exports = {
       titleI18nKey: 'moduleSwapsTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT 
+      sqlForIndicator: `SELECT
       COUNT(*) AS cnt
         FROM
             Issue AS i
@@ -532,7 +532,7 @@ module.exports = {
             IssueType it ON i.issueTypeId = it.id
                 INNER JOIN
             Device AS d ON d.id = i.deviceId
-                INNER JOIN 
+                INNER JOIN
             DeviceType as dt on dt.id = d.deviceTypeId
                 INNER JOIN
             Site AS s ON s.id = d.siteId
@@ -544,7 +544,7 @@ module.exports = {
             it.externalId = 'ModuleReplaced'
             AND dt.externalId = 'CepheidGeneXpert'
             AND i.createdOn >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')`,
-      sqlForStatUnit: `SELECT 
+      sqlForStatUnit: `SELECT
       COUNT(*) AS cnt
         FROM
             Issue AS i
@@ -552,7 +552,7 @@ module.exports = {
             IssueType it ON i.issueTypeId = it.id
                 INNER JOIN
             Device AS d ON d.id = i.deviceId
-                INNER JOIN 
+                INNER JOIN
             DeviceType as dt on dt.id = d.deviceTypeId
                 INNER JOIN
             Site AS s ON s.id = d.siteId
