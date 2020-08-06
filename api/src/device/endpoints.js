@@ -328,6 +328,9 @@ const deviceDetailsResponseFields = Joi.object()
       .description(
         'The default name of the current maintenance status of the device'
       ),
+    maintenanceStatusNotes: Joi.string()
+      .allow('', null)
+      .description('The notes of the last the maintenance status'),
     maintenanceStatusActive: Joi.number()
       .allow(null)
       .description('Whether the device is active or not'),
@@ -651,9 +654,34 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
-          deviceMaintenanceStatusLogId: Joi.number()
+          data: Joi.object()
             .required()
-            .description('DeviceMaintenanceStatusLog.id that was created'),
+            .description('Device maintenance status details fields')
+            .keys({
+              deviceMaintenanceStatusLogId: Joi.number()
+                .required()
+                .description('DeviceMaintenanceStatusLog.id that was created'),
+              maintenanceStatus: Joi.string()
+                .allow('', null)
+                .description('The maintenance status of the device'),
+              maintenanceStatusI18nKey: Joi.string()
+                .allow('', null)
+                .description(
+                  'The i18n key for the name of the maintenance status'
+                ),
+              maintenanceStatusName: Joi.string()
+                .allow('', null)
+                .description('The default name of the maintenance status'),
+              maintenanceStatusNotes: Joi.string()
+                .allow('', null)
+                .description('The notes of the last the maintenance status'),
+              maintenanceStatusActive: Joi.number()
+                .allow(null)
+                .description('Whether the device was active or not'),
+              maintenanceStatusManuallySet: Joi.number()
+                .allow(null)
+                .description('Whether the device status was manually set'),
+            }),
         }),
       },
     },
