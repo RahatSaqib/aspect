@@ -4,6 +4,7 @@ import flowRight from 'lodash/flowRight'
 import reduce from 'lodash/reduce'
 import set from 'lodash/set'
 import filter from 'lodash/filter'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import map from 'lodash/map'
 import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
@@ -223,6 +224,7 @@ export const SummaryStatus = ({
   defaultMessages,
   widgetGroups = [],
   nonGroupedWidgets,
+  allWidgets,
 }) => (
   <div className={className}>
     {/*
@@ -249,6 +251,20 @@ export const SummaryStatus = ({
     --- 2. then show widgets in groups
     ----------------
     */}
+    {allWidgets.length === 0 && (
+      <Card className={cssClasses('Summary_Card_Groups')}>
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      </Card>
+    )}
     {widgetGroups.length > 0 && (
       <Card className={cssClasses('Summary_Card_Groups')}>
         {widgetGroups.map(group => {
