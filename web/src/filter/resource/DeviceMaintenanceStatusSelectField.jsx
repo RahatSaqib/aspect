@@ -73,7 +73,7 @@ export class DeviceMaintenanceStatusSelectField extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.fetchStatuses(false)
+    this.props.fetchStatuses(true)
   }
 
   handleChange = ({ target: { value } }) => {
