@@ -754,7 +754,7 @@ module.exports = {
       AND MONTH(em.createdOn) = MONTH(NOW())
       AND em.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
-      GROUP BY resultId
+      GROUP BY em.resultId
       ) AS innerQuery`,
       sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
       FROM
@@ -769,7 +769,7 @@ module.exports = {
       AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND em.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
-      GROUP BY resultId
+      GROUP BY em.resultId
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfEmail',
@@ -804,7 +804,7 @@ module.exports = {
       AND MONTH(sms.createdOn) = MONTH(NOW())
       AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
-      GROUP BY resultId
+      GROUP BY sms.resultId
       ) AS innerQuery`,
       sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
       FROM
@@ -819,7 +819,7 @@ module.exports = {
       AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
-      GROUP BY resultId
+      GROUP BY sms.resultId
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
@@ -854,7 +854,7 @@ module.exports = {
       AND MONTH(sms.createdOn) = MONTH(NOW())
       AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
-      GROUP BY resultId
+      GROUP BY sms.resultId
       ) AS innerQuery`,
       sqlForStatUnit: `SELECT ROUND(AVG(messageLength)) AS cnt
       FROM
@@ -869,7 +869,7 @@ module.exports = {
       AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
-      GROUP BY resultId
+      GROUP BY sms.resultId
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageLengthOfSms',
