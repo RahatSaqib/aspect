@@ -253,18 +253,16 @@ export const SummaryStatus = ({
     ----------------
     */}
     {loading && (
-      <Card className={cssClasses('Summary_Card_Groups')}>
-        <div
-          style={{
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <CircularProgress />
-        </div>
-      </Card>
+      <div
+        style={{
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </div>
     )}
     {widgetGroups.length > 0 && (
       <Card className={cssClasses('Summary_Card_Groups')}>
