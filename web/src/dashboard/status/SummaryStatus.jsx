@@ -141,6 +141,7 @@ const enhance = compose(
       allWidgets: allWidgets.toJS(),
       widgetGroups,
       nonGroupedWidgets: getItemsInGroup(' '),
+      loading: summary.get('loading') && allWidgets.toJS().length === 0,
     }
   })
 )
@@ -224,7 +225,7 @@ export const SummaryStatus = ({
   defaultMessages,
   widgetGroups = [],
   nonGroupedWidgets,
-  allWidgets,
+  loading,
 }) => (
   <div className={className}>
     {/*
@@ -251,7 +252,7 @@ export const SummaryStatus = ({
     --- 2. then show widgets in groups
     ----------------
     */}
-    {allWidgets.length === 0 && (
+    {loading && (
       <Card className={cssClasses('Summary_Card_Groups')}>
         <div
           style={{
