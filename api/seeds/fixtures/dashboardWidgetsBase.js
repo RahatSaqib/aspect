@@ -741,33 +741,33 @@ module.exports = {
       titleI18nKey: 'averageRecipientsOfEmail',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) as cnt
+      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
       FROM
       (
-      SELECT COUNT(resultId) AS resultCount
-      FROM EmailMessage em
+      SELECT COUNT(em.resultId) AS resultCount
+      FROM EmailMessage AS em
       INNER JOIN Device AS d ON d.id = em.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE YEAR(em.createdOn) = YEAR(NOW())
       AND MONTH(em.createdOn) = MONTH(NOW())
-      AND resultId IS NOT NULL
+      AND em.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) as cnt
+      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
       FROM
       (
-      SELECT COUNT(resultId) AS resultCount
-      FROM EmailMessage em
+      SELECT COUNT(em.resultId) AS resultCount
+      FROM EmailMessage AS em
       INNER JOIN Device AS d ON d.id = em.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE YEAR(em.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND resultId IS NOT NULL
+      AND em.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY resultId
       ) AS innerQuery`,
@@ -791,33 +791,33 @@ module.exports = {
       titleI18nKey: 'averageRecipientsOfSms',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) as cnt
+      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
       FROM
       (
-      SELECT COUNT(resultId) AS resultCount
-      FROM SmsMessage sms
+      SELECT COUNT(sms.resultId) AS resultCount
+      FROM SmsMessage AS sms
       INNER JOIN Device AS d ON d.id = sms.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE YEAR(sms.createdOn) = YEAR(NOW())
       AND MONTH(sms.createdOn) = MONTH(NOW())
-      AND resultId IS NOT NULL
+      AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) as cnt
+      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
       FROM
       (
-      SELECT COUNT(resultId) AS resultCount
-      FROM SmsMessage sms
+      SELECT COUNT(sms.resultId) AS resultCount
+      FROM SmsMessage AS sms
       INNER JOIN Device AS d ON d.id = sms.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND resultId IS NOT NULL
+      AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY resultId
       ) AS innerQuery`,
@@ -841,33 +841,33 @@ module.exports = {
       titleI18nKey: 'averageLengthOfSms',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(messageLength)) as cnt
+      sqlForIndicator: `SELECT ROUND(AVG(messageLength)) AS cnt
       FROM
       (
-      SELECT length(message) AS messageLength
-      FROM SmsMessage sms
+      SELECT length(sms.message) AS messageLength
+      FROM SmsMessage AS sms
       INNER JOIN Device AS d ON d.id = sms.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE YEAR(sms.createdOn) = YEAR(NOW())
       AND MONTH(sms.createdOn) = MONTH(NOW())
-      AND resultId IS NOT NULL
+      AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(messageLength)) as cnt
+      sqlForStatUnit: `SELECT ROUND(AVG(messageLength)) AS cnt
       FROM
       (
-      SELECT length(message) AS messageLength
-      FROM SmsMessage sms
+      SELECT length(sms.message) AS messageLength
+      FROM SmsMessage AS sms
       INNER JOIN Device AS d ON d.id = sms.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND resultId IS NOT NULL
+      AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY resultId
       ) AS innerQuery`,
