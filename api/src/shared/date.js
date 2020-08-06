@@ -82,12 +82,9 @@ function dateEqual(date1, date2) {
 // the day's date and initial properties set to the passed in object
 function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
   const dates = []
-  let typeSafeMinDate = getUtcTime(
-    minDate instanceof Date ? minDate : parseISO(minDate)
-  )
-  const typeSafeMaxDate = getUtcTime(
-    maxDate instanceof Date ? maxDate : parseISO(maxDate)
-  )
+  let typeSafeMinDate = minDate instanceof Date ? minDate : parseISO(minDate)
+  const typeSafeMaxDate = maxDate instanceof Date ? maxDate : parseISO(maxDate)
+
   while (typeSafeMinDate <= typeSafeMaxDate) {
     dates.push(
       initialProperties

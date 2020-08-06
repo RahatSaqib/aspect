@@ -372,22 +372,18 @@ describe('Device routes', () => {
           }),
           createdOn: setMilliseconds(new Date(), 0),
         }
-        await knex('DeviceMaintenanceStatusLog').insert(
+        const [lastLogId] = await knex('DeviceMaintenanceStatusLog').insert(
           newDeviceMaintenanceStatusLog
         )
         await knex('Device').where('id', deviceId).update({
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          deviceMaintenanceStatusLogId: lastLogId,
         })
         const deviceWithLogWithNote = await knex('Device as d')
-          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
-            queryBuilder
-              .on('d.id', 'dmsl.deviceId')
-              .andOn(
-                'd.deviceMaintenanceStatusId',
-                'dmsl.deviceMaintenanceStatusId'
-              )
-          })
+          .join(
+            'DeviceMaintenanceStatusLog as dmsl',
+            'd.deviceMaintenanceStatusLogId',
+            'dmsl.id'
+          )
           .where(queryBuilder => {
             queryBuilder.whereRaw(
               `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
@@ -621,7 +617,9 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
           deviceId,
           deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
@@ -629,7 +627,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusLogId,
         })
 
         const devicesWithEditableStatus = await server
@@ -656,14 +654,15 @@ describe('Device routes', () => {
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.isOk(
-          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
         )
         const deviceMaitnenanceStatusLog = await knex(
           'DeviceMaintenanceStatusLog'
         )
           .where(
             'id',
-            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogId
           )
           .first()
         deviceMaitnenanceStatusLog.data = JSON.parse(
@@ -686,7 +685,9 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
           deviceId,
           deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
@@ -694,7 +695,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusLogId,
         })
 
         const devicesWithEditableStatus = await server
@@ -716,14 +717,15 @@ describe('Device routes', () => {
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.isOk(
-          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
         )
         const deviceMaitnenanceStatusLog = await knex(
           'DeviceMaintenanceStatusLog'
         )
           .where(
             'id',
-            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogId
           )
           .first()
         deviceMaitnenanceStatusLog.data = JSON.parse(

@@ -37,6 +37,7 @@ import patient from './patient/PatientRedux'
 import clinicalIndicators from './MigratedComponents/Graphs/GraphRender/Redux'
 import resultsDetail from './MigratedComponents/Results/Detail/Redux/resultsDetail'
 import resultsForm from './MigratedComponents/Results/Detail/Redux/resultsForm'
+import deviceMaintenanceStatus from './device/maintenance/DeviceMaintenanceStatusRedux'
 import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({
@@ -51,8 +52,9 @@ const appReducer = combineReducers({
   demo,
   device,
   deviceApiKey,
-  deviceOperation,
   deviceApproval,
+  deviceMaintenanceStatus,
+  deviceOperation,
   deviceType,
   disease,
   filter,
@@ -117,6 +119,7 @@ const App = Immutable.Record({
   tag: undefined,
   task: undefined,
   user: undefined,
+  deviceMaintenanceStatus: undefined,
 })
 
 const initialState = new App()
