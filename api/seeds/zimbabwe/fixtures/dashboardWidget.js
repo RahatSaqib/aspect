@@ -153,7 +153,7 @@ module.exports = {
       sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
-      sortOrder: 4,
+      sortOrder: 7,
       description:
         'The percentage of positive GeneXpert TB and HIV results that were notified via SMS or email.',
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
@@ -202,9 +202,8 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'avgTimeToUpload'
       ),
-      sortOrder: 13,
+      sortOrder: 6,
     },
-
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
       sortOrder: 14,
@@ -218,6 +217,24 @@ module.exports = {
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
       sortOrder: 15,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageRecipientsOfEmail'
+      ),
+      sortOrder: 9,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageRecipientsOfSms'
+      ),
+      sortOrder: 10,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageLengthOfSms'
+      ),
+      sortOrder: 11,
     },
   ],
 }
