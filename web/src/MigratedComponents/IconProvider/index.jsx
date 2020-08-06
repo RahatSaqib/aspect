@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, memo } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { FaSpinner } from 'react-icons/fa'
+import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
 
 const cssClasses = classnames.bind(require('./Icons.css'))
@@ -35,7 +35,7 @@ const IconProvider = memo(({ icon, className }) => {
     <Suspense
       fallback={
         <IconShell>
-          <FaSpinner className={cssClasses(['icons__proxy'])} />
+          <FaSquare className={cssClasses(['icons__proxy'])} />
         </IconShell>
       }
     >
