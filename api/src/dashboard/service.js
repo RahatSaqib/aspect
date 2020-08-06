@@ -1090,7 +1090,6 @@ async function resultsTransmittedDashboard(request) {
   const queryBuilder = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('Partner as p', 'p.id', 'r.partnerId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('ResultCategory as rc', 'rc.id', 'r.resultCategory1')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -1129,9 +1128,6 @@ async function resultsTransmittedDashboard(request) {
     })
     .modify(filterParams, query, {
       deviceId: 'd.id',
-      assayId: 'r.assayId',
-      resultCategoryId: 'r.resultCategory1',
-      resultCategory2Id: 'r.resultCategory2',
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
