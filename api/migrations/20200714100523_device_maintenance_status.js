@@ -82,11 +82,12 @@ async function up(knex) {
       .inTable('DeviceApproval')
       .alter()
     device
-      .integer('deviceMaintenanceStatusId')
+      .integer('deviceMaintenanceStatusLogId')
       .unsigned()
       .index()
       .references('id')
-      .inTable('DeviceMaintenanceStatus')
+      .inTable('DeviceMaintenanceStatusLog')
+      .onDelete('SET NULL')
   })
 }
 
@@ -108,9 +109,9 @@ async function down(knex) {
   })
   await knex.schema.alterTable('Device', device => {
     device.renameColumn('deviceApprovalId', 'deviceStatusId')
-    device.dropForeign('deviceMaintenanceStatusId')
-    device.dropIndex('deviceMaintenanceStatusId')
-    device.dropColumns('deviceMaintenanceStatusId')
+    device.dropForeign('deviceMaintenanceStatusLogId')
+    device.dropIndex('deviceMaintenanceStatusLogId')
+    device.dropColumns('deviceMaintenanceStatusLogId')
   })
 
   await knex.schema.alterTable('DeviceStatusLog', deviceApprovalLog => {
