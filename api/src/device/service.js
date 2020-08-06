@@ -25,6 +25,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
   allResultCategoryToId,
+  resultWorkflowStatusToId,
   deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
@@ -1035,7 +1036,8 @@ async function updateFactResultsDevice(
   deviceId,
   deliveredResultWorkfowStatusId,
   days,
-  fromDate
+  fromDate,
+  calculatedOn
 ) {
   const factResultsDeviceData = await knex('Result as r')
     .leftJoin('ResultWorkflowLog as rwl', queryBuilder => {
@@ -1072,7 +1074,7 @@ async function updateFactResultsDevice(
           days,
           resultCount,
           resultsDeliveredCount,
-          calculatedOn: new Date(),
+          calculatedOn,
         })
       }
     }
@@ -1082,9 +1084,10 @@ async function updateFactResultsDevice(
 async function onResultLogged(action, { messageContext }) {
   const { resultId } = action
   return messageContext.run(async knex => {
-    const { deviceId, startedOn, endedOn } = await knex('Result')
-      .where('id', resultId)
-      .first('deviceId', 'startedOn', 'endedOn')
+    const { deviceId, startedOn, endedOn } =
+      (await knex('Result')
+        .where('id', resultId)
+        .first('deviceId', 'startedOn', 'endedOn')) || {}
     if (deviceId) {
       if (endedOn || startedOn) {
         await automaticallySetDeviceMaintenanceStatus(
@@ -1095,13 +1098,10 @@ async function onResultLogged(action, { messageContext }) {
           messageContext
         )
       }
-      const now = new Date()
-      const { id: deliveredResultWorkfowStatusId } = await knex(
-        'ResultWorkflowStatus'
+      const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId(
+        'Delivered'
       )
-        .where('externalId', 'Delivered')
-        .first('id')
-
+      const now = new Date()
       const last30Day = subDays(now, 30)
       const last60Day = subDays(last30Day, 30)
       await updateFactResultsDevice(
@@ -1109,14 +1109,16 @@ async function onResultLogged(action, { messageContext }) {
         deviceId,
         deliveredResultWorkfowStatusId,
         60,
-        last60Day
+        last60Day,
+        now
       )
       await updateFactResultsDevice(
         knex,
         deviceId,
         deliveredResultWorkfowStatusId,
         30,
-        last30Day
+        last30Day,
+        now
       )
     }
   })
