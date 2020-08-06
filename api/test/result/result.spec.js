@@ -600,17 +600,16 @@ describe('Result routes', () => {
         .first('l.resultId as testResultId')
 
       // update with external ID
-      return server
+      const res = await server
         .put(`${path}/treatment-status/${testResultId}`)
         .send(updateWithExternalId)
         .set('Authorization', `Bearer${shared.token}`)
-        .then(res => {
-          baseTreatmentStatusAssertion(res)
 
-          const { treatmentStatus } = res.body.data
-          // check the updated fieldName
-          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
-        })
+      baseTreatmentStatusAssertion(res)
+
+      const { treatmentStatus } = res.body.data
+      // check the updated fieldName
+      assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
     })
 
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', async () => {
