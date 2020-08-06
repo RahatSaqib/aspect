@@ -123,7 +123,7 @@ describe('Dashboard routes', () => {
     })
   })
 
-  describe.only('GET', () => {
+  describe('GET', () => {
     const path = '/api/dashboard/results-transmitted'
     shared.checkToken(server, path)
 
