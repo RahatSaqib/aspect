@@ -5,7 +5,9 @@ const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
 const isWeekend = require('date-fns/isWeekend')
 const differenceInDays = require('date-fns/differenceInDays')
-const { knex } = require('../db')
+const subMonths = require('date-fns/subMonths')
+const formatDate = require('date-fns/format')
+const { knex, filterParams } = require('../db')
 const {
   getConstraints,
   addConstraints,
@@ -20,6 +22,7 @@ const { processDynamicMessage } = require('../stringTemplate/service')
 const { getArrayOfDaysInRange } = require('../shared/date')
 const { queryValue } = require('../shared/sql-2-knex')
 const { canView } = require('../auth/constraints')
+const { allMessageStatusToId } = require('../shared/dictionary')
 
 const i18nKeys = {
   // Dashboard
@@ -1078,6 +1081,169 @@ async function operationalDataActivityOverTime(request) {
   }
 }
 
+async function resultsTransmittedDashboard(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const messageStatusToId = await allMessageStatusToId()
+
+  const queryBuilder = knex('Result as r')
+    .innerJoin('Assay as a', 'a.id', 'r.assayId')
+    .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('Partner as p', 'p.id', 'r.partnerId')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('ResultCategory as rc', 'rc.id', 'r.resultCategory1')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('EmailMessage as em', function () {
+      this.on('r.id', 'em.resultId').andOn(
+        'em.messageStatusId',
+        messageStatusToId.Sent
+      )
+    })
+    .leftOuterJoin('SmsMessage as sm', function () {
+      this.on('r.id', 'sm.resultId').andOn(
+        'sm.messageStatusId',
+        messageStatusToId.Sent
+      )
+    })
+    .whereRaw(
+      `
+        (
+          YEAR(r.endedOn) = YEAR(NOW())
+          AND
+          MONTH(r.endedOn) = MONTH(NOW())
+        )
+        OR
+        (
+          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND
+          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        )
+      `
+    )
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+    })
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      assayId: 'r.assayId',
+      resultCategoryId: 'r.resultCategory1',
+      resultCategory2Id: 'r.resultCategory2',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      siteName: 's.name',
+    })
+    .select(
+      'a.name as assayName',
+      'a.externalId as assayExternalId',
+      'a.i18nKey as assayI18nKey',
+      'rc.externalId as resultCategory',
+      // YYYY_MM field for grouping by
+      knex.raw(`
+        CONCAT_WS(
+          '_', 
+          CAST( YEAR(r.endedOn) AS CHAR ),
+          LPAD(
+            CAST( MONTH(r.endedOn) AS CHAR ),
+            2,
+            '0'
+          )
+        ) AS yearMonth
+      `)
+    )
+    // all results
+    .count('r.id as cntAll')
+    // all Positive results
+    .sum({
+      cntPositive: knex.raw(`
+        CASE WHEN rc.externalId = 'Positive' THEN 1 ELSE 0 END
+      `),
+    })
+    // all results with email sent out
+    .countDistinct('em.id AS cntReportedViaEmail')
+    // all results with sms sent out
+    .countDistinct('sm.id AS cntReportedViaSms')
+    // count results with either email or sms sent out
+    .sum({
+      cntAllReported: knex.raw(`
+        CASE 
+          WHEN 
+            em.id IS NOT NULL
+            OR
+            sm.id IS NOT NULL
+          THEN 1
+          ELSE 0
+        END
+      `),
+    })
+    .sum({
+      cntWithin2Hours: knex.raw(`
+        CASE
+          WHEN
+            em.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+            OR
+            sm.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+          THEN 1
+          ELSE 0
+        END
+      `),
+    })
+    .groupBy('a.id', 'yearMonth')
+
+  const items = await queryBuilder
+
+  // helper func for percentages
+  const getPercent = (numerator, denominator) => {
+    return denominator === 0 ? 0 : (100 * numerator) / denominator
+  }
+  // calculate all percentages
+  items.forEach(item => {
+    item.percentPositive = getPercent(item.cntPositive, item.cntAll)
+    item.percentReported = getPercent(item.cntAllReported, item.cntAll)
+    item.percentViaEmail = getPercent(
+      item.cntReportedViaEmail,
+      item.cntAllReported
+    )
+    item.percentViaSms = getPercent(item.cntReportedViaSms, item.cntAllReported)
+  })
+
+  // helpers
+  const currentMonth = formatDate(new Date(), 'yyyy_MM')
+  const previousMonth = formatDate(subMonths(new Date(), 1), 'yyyy_MM')
+  const getScope = yearMonth => {
+    if (yearMonth === currentMonth) return 'currentMonth'
+    if (yearMonth === previousMonth) return 'previousMonth'
+    return ''
+  }
+  // re-organize list as { currentMonth: [], previousMonth: [] }
+  const data = _.reduce(
+    items,
+    (acc, item) => {
+      const scope = getScope(item.yearMonth)
+      if (scope) {
+        if (!acc[scope]) {
+          acc[scope] = []
+        }
+        acc[scope].push(item)
+      }
+      return acc
+    },
+    {}
+  )
+  if (!data.currentMonth) data.currentMonth = []
+  if (!data.previousMonth) data.previousMonth = []
+
+  return {
+    ok: true,
+    data,
+  }
+}
+
 module.exports = {
   summaryDashboard,
   targetDashboard,
@@ -1087,4 +1253,5 @@ module.exports = {
   siteDashboard,
   actionDashboard,
   operationalDataActivityOverTime,
+  resultsTransmittedDashboard,
 }

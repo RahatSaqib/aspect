@@ -35,9 +35,8 @@ function assertWidgetItemProps(item) {
 }
 
 describe('Dashboard routes', () => {
-  const path = '/api/dashboard/summary'
-
   describe('GET', () => {
+    const path = '/api/dashboard/summary'
     shared.checkToken(server, path)
 
     it('should return a list of stat dashboard widget objects', done => {
@@ -121,6 +120,47 @@ describe('Dashboard routes', () => {
             })
         })
       })
+    })
+  })
+
+  describe.only('GET', () => {
+    const path = '/api/dashboard/results-transmitted'
+    shared.checkToken(server, path)
+
+    it('should return data for Results Transmitted graph', done => {
+      server
+        .get(`${path}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.property(res.body.data, 'currentMonth')
+          assert.property(res.body.data, 'previousMonth')
+          assert.typeOf(res.body.data.currentMonth, 'array')
+          assert.typeOf(res.body.data.previousMonth, 'array')
+          // minimum 4 assays for current month
+          assert.isAtLeast(res.body.data.currentMonth.length, 4)
+
+          const item = res.body.data.currentMonth[0]
+          assert.property(item, 'assayName')
+          assert.property(item, 'assayExternalId')
+          assert.property(item, 'assayI18nKey')
+          assert.property(item, 'resultCategory')
+          assert.property(item, 'yearMonth')
+          assert.property(item, 'cntAll')
+          assert.property(item, 'cntPositive')
+          assert.property(item, 'cntReportedViaEmail')
+          assert.property(item, 'cntReportedViaSms')
+          assert.property(item, 'cntAllReported')
+          assert.property(item, 'cntWithin2Hours')
+          assert.property(item, 'percentPositive')
+          assert.property(item, 'percentReported')
+          assert.property(item, 'percentViaEmail')
+          assert.property(item, 'percentViaSms')
+
+          done()
+        })
     })
   })
 })

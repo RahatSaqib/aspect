@@ -13,6 +13,7 @@ const {
   siteDashboard,
   actionDashboard,
   operationalDataActivityOverTime,
+  resultsTransmittedDashboard,
 } = require('./service')
 
 const routes = [
@@ -160,6 +161,16 @@ const routes = [
             ),
         }),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/results-transmitted',
+    handler: asyncHandler(resultsTransmittedDashboard),
+    config: {
+      description: 'Results Transmitted Graph',
+      notes: 'Data for graph Results Transmitted',
+      auth: { scope: ['site', 'result', 'dashboard'] },
     },
   },
 ]
