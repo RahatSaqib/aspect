@@ -479,7 +479,7 @@ module.exports = {
       sortOrder: 12,
       externalId: 'stockNotRecorded',
       description:
-        "The stock not recorded is calculated by counting all sites that didn't enter any stock for any of the GeneXpert assays dividing that number by the total number of sites.",
+        "The stock not recorded is calculated by counting all sites that didn't enter any stock for any of the GeneXpert assays and dividing that number by the total number of sites.",
       descriptionI18nKey: 'stockNotRecordedDescription',
       dashboards: {
         operational: {
