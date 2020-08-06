@@ -537,7 +537,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
-      sortOrder: 15,
+      sortOrder: 1,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
       descriptionI18nKey: 'moduleSwapsDescription',
@@ -671,7 +671,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'unusedModulesStats',
       link: '/browse/device',
-      sortOrder: 16,
+      sortOrder: 3,
       externalId: 'unusedModules',
       description:
         "Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module.",
@@ -725,7 +725,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
-      sortOrder: 13,
+      sortOrder: 4,
       externalId: 'instrumentsReplaced',
       description: 'The number of instruments that were replaced.',
       descriptionI18nKey: 'instrumentsReplacedDescription',
@@ -882,6 +882,63 @@ module.exports = {
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+
+    {
+      icon: 'MdSwapVert',
+      title: 'Average days between module swaps',
+      titleI18nKey: 'averageDaysModuleSwap',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
+      FROM (
+		    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
+		    FROM (SELECT i.data ->> '$.replacedModuleSerial' as moduleSerial, i.data ->> '$.moduleName' as moduleName, i.deviceId, r.endedOn
+				      FROM Issue AS i
+				      INNER JOIN Result AS r on i.resultId = r.id
+              INNER JOIN Device AS d on r.deviceId = d.id
+              INNER JOIN Site AS s ON d.siteId = s.id
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+				      INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+				      WHERE it.externalId = 'ModuleReplaced'
+				      AND YEAR(r.endedOn) = YEAR(NOW())
+				      AND MONTH(r.endedOn) = MONTH(NOW())
+            )
+            AS issueData
+		    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.moduleName = r.moduleName AND issueData.moduleSerial = r.moduleSerial
+        GROUP by r.deviceId, r.moduleName, r.moduleSerial
+      ) as innerQuery`,
+      sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
+      FROM (
+		    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
+		    FROM (SELECT i.data ->> '$.replacedModuleSerial' as moduleSerial, i.data ->> '$.moduleName' as moduleName, i.deviceId, r.endedOn
+				      FROM Issue AS i
+				      INNER JOIN Result AS r on i.resultId = r.id
+              INNER JOIN Device AS d on r.deviceId = d.id
+              INNER JOIN Site AS s ON d.siteId = s.id
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+				      INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+				      WHERE it.externalId = 'ModuleReplaced'
+				      AND YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+              AND MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            )
+            AS issueData
+		    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.moduleName = r.moduleName AND issueData.moduleSerial = r.moduleSerial
+        GROUP by r.deviceId, r.moduleName, r.moduleSerial
+      ) as innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardAverageDaysModuleSwap',
+      link: '/browse/notification',
+      sortOrder: 2,
+      externalId: 'averageDaysModuleSwap',
+      description:
+        'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
+      descriptionI18nKey: 'averageDaysModuleSwapDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
         },
       },
     },
