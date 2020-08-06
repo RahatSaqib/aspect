@@ -480,8 +480,13 @@ class GxAlertApiTestContext {
         })
         .leftJoin('Country as c', 'g.countryId', 'c.id')
         .leftJoin(
+          'DeviceMaintenanceStatusLog as dmsl',
+          'd.deviceMaintenanceStatusLogId',
+          'dmsl.id'
+        )
+        .leftJoin(
           'DeviceMaintenanceStatus as dms',
-          'd.deviceMaintenanceStatusId',
+          'dmsl.deviceMaintenanceStatusId',
           'dms.id'
         )
         .whereRaw(
