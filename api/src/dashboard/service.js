@@ -1087,6 +1087,7 @@ async function resultsTransmittedDashboard(request) {
 
   const messageStatusToId = await allMessageStatusToId()
 
+  const { currentMonth = new Date() } = query
   const queryBuilder = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
@@ -1108,17 +1109,18 @@ async function resultsTransmittedDashboard(request) {
     .whereRaw(
       `
         (
-          YEAR(r.endedOn) = YEAR(NOW())
+          YEAR(r.endedOn) = YEAR(?)
           AND
-          MONTH(r.endedOn) = MONTH(NOW())
+          MONTH(r.endedOn) = MONTH(?)
         )
         OR
         (
-          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          YEAR(r.endedOn) = YEAR(DATE_SUB(?, INTERVAL 1 MONTH))
           AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          MONTH(r.endedOn) = MONTH(DATE_SUB(?, INTERVAL 1 MONTH))
         )
-      `
+      `,
+      [currentMonth, currentMonth, currentMonth, currentMonth]
     )
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -1142,7 +1144,7 @@ async function resultsTransmittedDashboard(request) {
       // YYYY_MM field for grouping by
       knex.raw(`
         CONCAT_WS(
-          '_', 
+          '-', 
           CAST( YEAR(r.endedOn) AS CHAR ),
           LPAD(
             CAST( MONTH(r.endedOn) AS CHAR ),
@@ -1209,11 +1211,11 @@ async function resultsTransmittedDashboard(request) {
   })
 
   // helpers
-  const currentMonth = formatDate(new Date(), 'yyyy_MM')
-  const previousMonth = formatDate(subMonths(new Date(), 1), 'yyyy_MM')
+  const currMonth = formatDate(currentMonth, 'yyyy-MM')
+  const prevMonth = formatDate(subMonths(new Date(), 1), 'yyyy-MM')
   const getScope = yearMonth => {
-    if (yearMonth === currentMonth) return 'currentMonth'
-    if (yearMonth === previousMonth) return 'previousMonth'
+    if (yearMonth === currMonth) return 'currentMonth'
+    if (yearMonth === prevMonth) return 'previousMonth'
     return ''
   }
   // re-organize list as { currentMonth: [], previousMonth: [] }

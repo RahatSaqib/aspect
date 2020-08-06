@@ -171,6 +171,16 @@ const routes = [
       description: 'Results Transmitted Graph',
       notes: 'Data for graph Results Transmitted',
       auth: { scope: ['site', 'result', 'dashboard'] },
+      validate: {
+        query: {
+          currentMonth: Joi.date()
+            .iso()
+            .allow(null)
+            .description(
+              'Set "current" month to return data for this and previous month'
+            ),
+        },
+      },
     },
   },
 ]

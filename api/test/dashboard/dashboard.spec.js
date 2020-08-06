@@ -130,6 +130,9 @@ describe('Dashboard routes', () => {
     it('should return data for Results Transmitted graph', done => {
       server
         .get(`${path}`)
+        .query({
+          currentMonth: '2019-09-15',
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -139,8 +142,8 @@ describe('Dashboard routes', () => {
           assert.property(res.body.data, 'previousMonth')
           assert.typeOf(res.body.data.currentMonth, 'array')
           assert.typeOf(res.body.data.previousMonth, 'array')
-          // minimum 4 assays for current month
-          assert.isAtLeast(res.body.data.currentMonth.length, 4)
+          // minimum 1 assay for current month
+          assert.isAtLeast(res.body.data.currentMonth.length, 1)
 
           const item = res.body.data.currentMonth[0]
           assert.property(item, 'assayName')
