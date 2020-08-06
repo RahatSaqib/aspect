@@ -459,57 +459,27 @@ module.exports = {
       titleI18nKey: 'stockNotRecordedTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT
-          CONCAT(
-            ROUND(
-              IFNULL(
-                SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
-                / COUNT(siteId) * 100
-              ,0)
-            ,0)
-          ,'%') AS cnt
-          FROM (
-            SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, dt.externalId as deviceTypeExternalId
-            FROM Site AS s
-            INNER JOIN Device AS d ON d.siteId = s.id
-            LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
-                                              AND i.createdOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
-                                              AND LAST_DAY(NOW())
-            LEFT OUTER JOIN Consumable AS c ON i.consumableId = c.id
-            LEFT OUTER JOIN ConsumableAssay ca ON c.id = ca.consumableId
-            LEFT OUTER JOIN Assay a on ca.assayId = a.id
-            LEFT OUTER JOIN DeviceType dt on a.deviceTypeId = dt.id
-            GROUP BY s.id
-          ) AS innerQuery`,
-      sqlForStatUnit: `SELECT
-      CONCAT(
-        ROUND(
-          IFNULL(
-            SUM(CASE WHEN quantityOnHand IS NULL AND deviceTypeExternalId = 'CepheidGeneXpert' THEN 1 ELSE 0 END)
-            / COUNT(siteId) * 100
-          ,0)
-        ,0)
-      ,'%') AS cnt
-      FROM (
-        SELECT s.id AS siteId, sum(i.quantityOnHand) AS quantityOnHand, dt.externalId as deviceTypeExternalId
-        FROM Site AS s
-        INNER JOIN Device AS d ON d.siteId = s.id
-        LEFT OUTER JOIN InventoryItem AS i ON i.siteId = s.id
-                                        AND i.createdOn BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 month, '%Y-%m-01')
-                                        AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-        LEFT OUTER JOIN Consumable AS c ON i.consumableId = c.id
-        LEFT OUTER JOIN ConsumableAssay ca ON c.id = ca.consumableId
-        LEFT OUTER JOIN Assay a on ca.assayId = a.id
-        LEFT OUTER JOIN DeviceType dt on a.deviceTypeId = dt.id
-        GROUP BY s.id
-          ) AS innerQuery`,
+      sqlForIndicator: `SELECT CONCAT(ROUND(SUM(ii.siteId IS NULL) / COUNT(s.id) * 100), '%') AS cnt
+      FROM Device AS d
+      INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
+      INNER JOIN Site AS s on d.siteId = s.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId
+      WHERE dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `SELECT CONCAT(ROUND(SUM(ii.siteId IS NULL) / COUNT(s.id) * 100), '%') AS cnt
+      FROM Device AS d
+      INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
+      INNER JOIN Site AS s on d.siteId = s.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId AND ii.createdON < DATE_FORMAT(NOW(), '%Y-%m-01')
+      WHERE dt.externalId = 'CepheidGeneXpert'`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
       link: '/operational-data#inventoryStatus',
       sortOrder: 12,
       externalId: 'stockNotRecorded',
       description:
-        "The stock not recorded is calculated by counting all sites that didn't enter any stock and dividing that number by the total number of sites.",
+        "The stock not recorded is calculated by counting all sites that didn't enter any stock for any of the GeneXpert assays and dividing that number by the total number of sites.",
       descriptionI18nKey: 'stockNotRecordedDescription',
       dashboards: {
         operational: {
@@ -650,7 +620,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'avgTimeToUploadStat',
       link: '/browse/result',
-      sortOrder: 16,
+      sortOrder: 6,
       externalId: 'avgTimeToUpload',
       description:
         'The average delay of uploading results. Only considering results where the delay was greater than two hours.',
@@ -762,6 +732,156 @@ module.exports = {
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
+    {
+      icon: 'MdEmail',
+      title: 'Average email recipients per positive result',
+      titleI18nKey: 'averageRecipientsOfEmail',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
+      FROM
+      (
+      SELECT COUNT(em.resultId) AS resultCount
+      FROM EmailMessage AS em
+      INNER JOIN Device AS d ON d.id = em.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(em.createdOn) = YEAR(NOW())
+      AND MONTH(em.createdOn) = MONTH(NOW())
+      AND em.resultId IS NOT NULL
+      AND dt.externalId = 'CepheidGeneXpert'
+      GROUP BY em.resultId
+      ) AS innerQuery`,
+      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
+      FROM
+      (
+      SELECT COUNT(em.resultId) AS resultCount
+      FROM EmailMessage AS em
+      INNER JOIN Device AS d ON d.id = em.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(em.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND em.resultId IS NOT NULL
+      AND dt.externalId = 'CepheidGeneXpert'
+      GROUP BY em.resultId
+      ) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardAverageRecipientsOfEmail',
+      link: '/browse/notification',
+      sortOrder: 9,
+      externalId: 'averageRecipientsOfEmail',
+      description:
+        'The average number of email recipients per positive GeneXpert result.',
+      descriptionI18nKey: 'averageRecipientsOfEmailDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+    {
+      icon: 'MdTextsms',
+      title: 'Average SMS recipients per positive result',
+      titleI18nKey: 'averageRecipientsOfSms',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
+      FROM
+      (
+      SELECT COUNT(sms.resultId) AS resultCount
+      FROM SmsMessage AS sms
+      INNER JOIN Device AS d ON d.id = sms.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(sms.createdOn) = YEAR(NOW())
+      AND MONTH(sms.createdOn) = MONTH(NOW())
+      AND sms.resultId IS NOT NULL
+      AND dt.externalId = 'CepheidGeneXpert'
+      GROUP BY sms.resultId
+      ) AS innerQuery`,
+      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
+      FROM
+      (
+      SELECT COUNT(sms.resultId) AS resultCount
+      FROM SmsMessage AS sms
+      INNER JOIN Device AS d ON d.id = sms.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND sms.resultId IS NOT NULL
+      AND dt.externalId = 'CepheidGeneXpert'
+      GROUP BY sms.resultId
+      ) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
+      link: '/browse/notification',
+      sortOrder: 10,
+      externalId: 'averageRecipientsOfSms',
+      description:
+        'The average number of SMS recipients per positive GeneXpert result.',
+      descriptionI18nKey: 'averageRecipientsOfSmsDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+    {
+      icon: 'MdTextsms',
+      title: 'Average length of SMS',
+      titleI18nKey: 'averageLengthOfSms',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `SELECT ROUND(AVG(messageLength)) AS cnt
+      FROM
+      (
+      SELECT length(sms.message) AS messageLength
+      FROM SmsMessage AS sms
+      INNER JOIN Device AS d ON d.id = sms.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(sms.createdOn) = YEAR(NOW())
+      AND MONTH(sms.createdOn) = MONTH(NOW())
+      AND sms.resultId IS NOT NULL
+      AND dt.externalId = 'CepheidGeneXpert'
+      GROUP BY sms.resultId
+      ) AS innerQuery`,
+      sqlForStatUnit: `SELECT ROUND(AVG(messageLength)) AS cnt
+      FROM
+      (
+      SELECT length(sms.message) AS messageLength
+      FROM SmsMessage AS sms
+      INNER JOIN Device AS d ON d.id = sms.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND sms.resultId IS NOT NULL
+      AND dt.externalId = 'CepheidGeneXpert'
+      GROUP BY sms.resultId
+      ) AS innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardAverageLengthOfSms',
+      link: '/browse/notification',
+      sortOrder: 11,
+      externalId: 'averageLengthOfSms',
+      description:
+        'The average number of characters in SMS messages sent about positive GeneXpert results.',
+      descriptionI18nKey: 'averageLengthOfSmsDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
         },
       },
     },
