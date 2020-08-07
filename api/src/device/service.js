@@ -25,7 +25,6 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
   allResultCategoryToId,
-  resultWorkflowStatusToId,
   deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
@@ -1031,56 +1030,6 @@ async function onDeviceMaintenanceStatusLogged(
   })
 }
 
-async function updateFactResultsDevice(
-  knex,
-  deviceId,
-  deliveredResultWorkfowStatusId,
-  days,
-  fromDate,
-  calculatedOn
-) {
-  const factResultsDeviceData = await knex('Result as r')
-    .leftJoin('ResultWorkflowLog as rwl', queryBuilder => {
-      queryBuilder
-        .on('r.resultWorkflowStatusLogId', 'rwl.id')
-        .andOn(
-          knex.raw(
-            'rwl.resultWorkflowStatusId = ?',
-            deliveredResultWorkfowStatusId
-          )
-        )
-        .andOn(knex.raw('rwl.changedOn > ?', fromDate))
-    })
-    .where('r.deviceId', deviceId)
-    .select(
-      knex.raw('COUNT(DISTINCT r.id) as resultCount'),
-      knex.raw(
-        'SUM(CASE WHEN rwl.id IS NULL THEN 0 ELSE 1 END) as resultsDeliveredCount'
-      )
-    )
-  await Promise.each(
-    factResultsDeviceData,
-    async ({ resultCount, resultsDeliveredCount }) => {
-      const factResultsDevice = await knex('FactResultsDevice')
-        .where({ deviceId, days })
-        .first()
-      if (factResultsDevice) {
-        await knex('FactResultsDevice')
-          .where({ deviceId, days })
-          .update({ resultsDeliveredCount, resultCount })
-      } else {
-        await knex('FactResultsDevice').insert({
-          deviceId,
-          days,
-          resultCount,
-          resultsDeliveredCount,
-          calculatedOn,
-        })
-      }
-    }
-  )
-}
-
 async function onResultLogged(action, { messageContext }) {
   const { resultId } = action
   return messageContext.run(async knex => {
@@ -1088,37 +1037,13 @@ async function onResultLogged(action, { messageContext }) {
       (await knex('Result')
         .where('id', resultId)
         .first('deviceId', 'startedOn', 'endedOn')) || {}
-    if (deviceId) {
-      if (endedOn || startedOn) {
-        await automaticallySetDeviceMaintenanceStatus(
-          deviceId,
-          endedOn || startedOn,
-          'active',
-          action,
-          messageContext
-        )
-      }
-      const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId(
-        'Delivered'
-      )
-      const now = new Date()
-      const last30Day = subDays(now, 30)
-      const last60Day = subDays(last30Day, 30)
-      await updateFactResultsDevice(
-        knex,
+    if (deviceId && (endedOn || startedOn)) {
+      await automaticallySetDeviceMaintenanceStatus(
         deviceId,
-        deliveredResultWorkfowStatusId,
-        60,
-        last60Day,
-        now
-      )
-      await updateFactResultsDevice(
-        knex,
-        deviceId,
-        deliveredResultWorkfowStatusId,
-        30,
-        last30Day,
-        now
+        endedOn || startedOn,
+        'active',
+        action,
+        messageContext
       )
     }
   })
