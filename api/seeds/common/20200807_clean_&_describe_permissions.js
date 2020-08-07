@@ -5,10 +5,18 @@ const { mapJobFunctionPermissions, removePermissions, updatePermissions } = requ
 async function seed(knex) {
   const modules = await getPermissionModules(knex)
 
-  await mapJobFunctionPermissions(knex, [modules.task.view], [modules.task.edit])
-  await mapJobFunctionPermissions(knex, [modules.assay.edit], [modules.assay.view])
-  await mapJobFunctionPermissions(knex, [modules.account.view], [modules.account.edit])
-  
+  await Promise.all([
+    mapJobFunctionPermissions(knex, [modules.assay.edit], [modules.assay.view]),
+    mapJobFunctionPermissions(knex, [modules.router.edit], [modules.router.view]),
+    mapJobFunctionPermissions(knex, [modules.account.view], [modules.account.edit]),
+    mapJobFunctionPermissions(knex, [modules.issue.edit], [modules.issue.view]),
+    mapJobFunctionPermissions(knex, [modules.task.view], [modules.task.edit]),
+    mapJobFunctionPermissions(knex, [modules.report.edit], [modules.report.view]),
+    mapJobFunctionPermissions(knex, [modules.actionDashboard.edit], [modules.dashboard.action]),
+    mapJobFunctionPermissions(knex, [modules.reporter.edit], [modules.reporter.view]),
+    mapJobFunctionPermissions(knex, [modules.operationalData.edit], [modules.operationalData.view])
+  ])
+
   const permissionsToRemove = [
     modules.assay.edit,
     modules.router.edit,
@@ -18,13 +26,11 @@ async function seed(knex) {
     modules.report.edit,
     modules.actionDashboard.edit,
     modules.reporter.edit,
-    modules.operationalData.edit,
-    modules.account.view
+    modules.operationalData.edit
   ]
   await removePermissions(knex, permissionsToRemove)
 
   await updatePermissions(knex, PermissionsDefinition)
-      
 }
 
 module.exports = seed
