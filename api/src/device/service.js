@@ -191,9 +191,9 @@ async function getListDevices(query, auth) {
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw(
-        'IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0)) as deliveredLastMonth'
+        'IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'
       ),
-      'IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth',
+      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
       // get csv of issue types
       knex('Issue as i1')
         .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
