@@ -35,7 +35,7 @@ function assertWidgetItemProps(item) {
 }
 
 describe('Dashboard routes', () => {
-  describe('GET', () => {
+  describe('GET /api/dashboard/summary', () => {
     const path = '/api/dashboard/summary'
     shared.checkToken(server, path)
 
@@ -123,7 +123,7 @@ describe('Dashboard routes', () => {
     })
   })
 
-  describe('GET', () => {
+  describe('GET /api/dashboard/results-transmitted', () => {
     const path = '/api/dashboard/results-transmitted'
     shared.checkToken(server, path)
 
