@@ -8,7 +8,6 @@ import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
-import { MdFileDownload } from 'react-icons/md'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
@@ -30,12 +29,14 @@ import {
   showDialog,
   hideDialog,
   updateDeviceMaintenance,
+  updateDeviceMaintenanceStatus,
 } from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../../../globals/components/Summary'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import CalibrationDialog from '../../maintenance/CalibrationDialog'
 import WarrantyDialog from '../../maintenance/WarrantyDialog'
+import DeviceMaintenanceStatusDialog from '../../maintenance/DeviceMaintenanceStatusDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -121,6 +122,10 @@ const messages = defineMessages({
       other {# results}
     }`,
   },
+  maintenance: {
+    id: 'pages.DeviceDetailProfile.maintenance',
+    defaultMessage: 'Maintenance Status',
+  },
   noResults: {
     id: 'pages.DeviceDetailProfile.noResults',
     defaultMessage: 'No Results',
@@ -148,6 +153,39 @@ const messages = defineMessages({
   testHistory: {
     id: 'pages.DeviceDetailProfile.testHistory',
     defaultMessage: 'Test history',
+  },
+
+  active: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.active',
+    defaultMessage: 'Active',
+  },
+  inactiveConnectivity: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity',
+    defaultMessage: 'Connectivity',
+  },
+  inactiveDecommissioned: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  inactiveDownForRepair: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair',
+    defaultMessage: 'Down For Repair',
+  },
+  inactiveNoResultsReported: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoResultsReported',
+    defaultMessage: 'No Results Reported',
+  },
+  inactiveOutOfInventory: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory',
+    defaultMessage: 'Out Of Inventory',
+  },
+  inactiveUnknown: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown',
+    defaultMessage: 'Unknown',
+  },
+  reportedActive: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.reportedActive',
+    defaultMessage: 'Active',
   },
 })
 
@@ -195,11 +233,15 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
+      const {
+        deviceMaintenanceStatus: { items: maintenanceStatus },
+      } = state
       const { items, table } = state.result
       const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
+        maintenanceStatus,
         culture,
         items,
         table,
@@ -208,6 +250,7 @@ const enhance = compose(
     {
       showDialog,
       hideDialog,
+      updateDeviceMaintenanceStatus,
       updateDeviceMaintenance,
       fetchResults,
       exportResults,
@@ -275,6 +318,9 @@ const enhance = compose(
     onShowCalibrationDialog: ({ showDialog, device }) => () => {
       showDialog('calibration', device)
     },
+    onShowMaintenanceDialog: ({ showDialog, device }) => () => {
+      showDialog('maintenance', device)
+    },
     onShowWarrantyDialog: ({ showDialog, device }) => () => {
       showDialog('warranty', device)
     },
@@ -286,6 +332,16 @@ const enhance = compose(
         device,
         values,
       }),
+    onMaintenanceSubmit: ({
+      device,
+      updateDeviceMaintenanceStatus,
+    }) => values => {
+      return updateDeviceMaintenanceStatus({
+        externalId: values.maintenanceStatus,
+        device,
+        notes: values.notes,
+      })
+    },
     onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
       updateDeviceMaintenance({
         externalId: 'warranty',
@@ -573,9 +629,11 @@ export const DeviceDetailProfile = ({
   pageAt,
   pageSize,
   activeDialog,
+  onShowMaintenanceDialog,
   onShowCalibrationDialog,
   onShowWarrantyDialog,
   onHideDialog,
+  onMaintenanceSubmit,
   onCalibrationSubmit,
   onWarrantySubmit,
   table,
@@ -591,6 +649,11 @@ export const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
+  const maintenanceStatusNotes =
+    !device.get('maintenanceStatusNotes') ||
+    device.get('maintenanceStatusNotes') === ''
+      ? null
+      : device.get('maintenanceStatusNotes')
   const resultColumns = [
     {
       key: 'endedOn',
@@ -633,6 +696,10 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
+  const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
+    ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
+    : intl.formatMessage(messages.undefinedValue)
+
   return (
     <div>
       <Helmet title={deviceName} />
@@ -656,18 +723,32 @@ export const DeviceDetailProfile = ({
               ])}`}
             />
             <Summary
-              title={intl.formatMessage(messages.approval)}
-              description={device.get('approval')}
+              title={intl.formatMessage(messages.maintenance)}
+              description={
+                <Fragment>
+                  {maintenanceStatusText}
+                  {maintenanceStatusNotes && (
+                    <Tooltip title={maintenanceStatusNotes} placement="top">
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
               action={
                 <Button
                   variant="contained"
-                  onClick={onToggleDeviceApproval}
+                  onClick={onShowMaintenanceDialog}
                   disabled={disabled}
                 >
                   {intl.formatMessage(messages.buttonChange)}
                 </Button>
               }
             />
+
             <Summary
               title={intl.formatMessage(messages.calibration)}
               description={
@@ -800,6 +881,20 @@ export const DeviceDetailProfile = ({
                 )
               }
             />
+            {/* Approval Status Summary */}
+            <Summary
+              title={intl.formatMessage(messages.approval)}
+              description={device.get('approval')}
+              action={
+                <Button
+                  variant="contained"
+                  onClick={onToggleDeviceApproval}
+                  disabled={disabled}
+                >
+                  {intl.formatMessage(messages.buttonChange)}
+                </Button>
+              }
+            />
           </div>
         </Card>
         <CalibrationDialog
@@ -808,6 +903,13 @@ export const DeviceDetailProfile = ({
           isDialogActive={activeDialog.get('name') === 'calibration'}
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
+        />
+        <DeviceMaintenanceStatusDialog
+          intl={intl}
+          device={device}
+          isDialogActive={activeDialog.get('name') === 'maintenance'}
+          onCancel={onHideDialog}
+          onSubmit={onMaintenanceSubmit}
         />
         <WarrantyDialog
           intl={intl}

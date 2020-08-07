@@ -102,8 +102,29 @@ module.exports = {
       icon: 'MdNetworkCheck',
       title: 'Server Uptime',
       titleI18nKey: 'serverUptimeTitle',
-      sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType LEFT JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
-      sqlForStatUnit: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '?') AS cnt FROM (SELECT JSON_UNQUOTE(JSON_EXTRACT(FactDeviceExternalSource.data, '$.monitors[0].custom_uptime_ranges')) AS uptime_last_2_months FROM DeviceType JOIN Device ON DeviceType.id = Device.deviceTypeId LEFT JOIN FactDeviceExternalSource ON Device.id = FactDeviceExternalSource.deviceId AND FactDeviceExternalSource.sourceName = 'uptimeRobot' WHERE DeviceType.externalId = 'Aspect' LIMIT 1) AS aspect_uptime`,
+      sqlForIndicator: `SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, POSITION('-' IN uptime_last_2_months) + 1) AS UNSIGNED) AS CHAR), '%'), '-') AS cnt
+      FROM (
+        SELECT fdes.data ->> '$.monitors[0].custom_uptime_ranges' AS uptime_last_2_months
+          FROM DeviceType AS dt
+          LEFT JOIN Device AS d ON dt.id = d.deviceTypeId
+          LEFT JOIN Site AS s ON s.id = d.siteId
+          LEFT JOIN Geography AS g ON s.geographyId = g.id
+          LEFT JOIN FactDeviceExternalSource AS fdes ON d.id = fdes.deviceId AND fdes.sourceName = 'uptimeRobot'
+          WHERE dt.externalId = 'Aspect'
+          LIMIT 1
+      ) AS innerQuery`,
+      sqlForStatUnit: `
+      SELECT IFNULL(CONCAT(CAST(CAST(SUBSTR(uptime_last_2_months, 1, POSITION('-' IN uptime_last_2_months) - 1) AS UNSIGNED) AS CHAR), '%'), '-') AS cnt
+      FROM (
+        SELECT fdes.data ->> '$.monitors[0].custom_uptime_ranges' AS uptime_last_2_months
+          FROM DeviceType AS dt
+          LEFT JOIN Device AS d ON dt.id = d.deviceTypeId
+          LEFT JOIN Site AS s ON s.id = d.siteId
+          LEFT JOIN Geography AS g ON s.geographyId = g.id
+          LEFT JOIN FactDeviceExternalSource AS fdes ON d.id = fdes.deviceId AND fdes.sourceName = 'uptimeRobot'
+          WHERE dt.externalId = 'Aspect'
+          LIMIT 1
+      ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
       description: `The average uptime of the Aspect server this month.`,
@@ -153,7 +174,7 @@ module.exports = {
       sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
-      sortOrder: 4,
+      sortOrder: 7,
       description:
         'The percentage of positive GeneXpert TB and HIV results that were notified via SMS or email.',
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
@@ -202,22 +223,45 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'avgTimeToUpload'
       ),
-      sortOrder: 13,
+      sortOrder: 6,
     },
-
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
-      sortOrder: 14,
+      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'instrumentsReplaced'
       ),
-      sortOrder: 15,
+      sortOrder: 4,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
-      sortOrder: 15,
+      sortOrder: 3,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageRecipientsOfEmail'
+      ),
+      sortOrder: 9,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageRecipientsOfSms'
+      ),
+      sortOrder: 10,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageLengthOfSms'
+      ),
+      sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageDaysModuleSwap'
+      ),
+      sortOrder: 2,
     },
   ],
 }
