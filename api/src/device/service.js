@@ -1338,11 +1338,11 @@ async function onDeviceMaintenanceStatusLogScheduled(
           .on('d.id', 'dmsl.deviceId')
           .andOn('dmsl.day', knex.raw('?', [startOfToday()]))
       })
-      .leftJoin('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
+      .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .leftJoin(
         'DeviceMaintenanceStatus as dms',
-        'dms.id',
-        'd.deviceMaintenanceStatusId'
+        'd.deviceMaintenanceStatusId',
+        'dms.id'
       )
       .whereNull('dmsl.id')
       .andWhere('dtc.hasResults', true)
