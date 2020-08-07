@@ -800,21 +800,29 @@ describe('Device routes', () => {
         })
         const getDeviceDetails = async () =>
           knex('Device as d')
-            .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
-              queryBuilder
-                .on('d.id', 'dmsl.deviceId')
-                .andOn('dmsl.day', knex.raw('?', [startOfToday()]))
-            })
-            .leftJoin(
-              'DeviceMaintenanceStatus as dmsl_dms',
-              'dmsl_dms.id',
-              'dmsl.deviceMaintenanceStatusId'
-            )
             .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
             .leftJoin(
-              'DeviceMaintenanceStatus as dms',
-              'd.deviceMaintenanceStatusId',
-              'dms.id'
+              'DeviceMaintenanceStatusLog as today_dmsl',
+              queryBuilder => {
+                queryBuilder
+                  .on('d.id', 'today_dmsl.deviceId')
+                  .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
+              }
+            )
+            .leftJoin(
+              'DeviceMaintenanceStatus as today_dms',
+              'today_dms.id',
+              'today_dmsl.deviceMaintenanceStatusId'
+            )
+            .leftJoin(
+              'DeviceMaintenanceStatusLog as current_dmsl',
+              'd.deviceMaintenanceStatusLogId',
+              'current_dmsl.id'
+            )
+            .leftJoin(
+              'DeviceMaintenanceStatus as current_dms',
+              'current_dms.id',
+              'current_dmsl.deviceMaintenanceStatusId'
             )
             .whereIn('d.id', [
               activeUnloggedDeviceId,
@@ -823,28 +831,28 @@ describe('Device routes', () => {
             ])
             .select(
               'd.id',
-              'dms.externalId as maintenanceStatusExternalId',
-              'dmsl_dms.externalId as loggedMaintenanceStatusExternalId',
+              'current_dms.externalId as currentMaintenanceStatusExternalId',
+              'today_dms.externalId as todaysLoggedMaintenanceStatusExternalId',
               'da.token as approvalToken'
             )
         const devicesWithNoMaintenanceLogForTheDay = await getDeviceDetails()
         expect(devicesWithNoMaintenanceLogForTheDay).to.containSubset([
           {
             id: activeUnloggedDeviceId,
-            maintenanceStatusExternalId: 'active',
-            loggedMaintenanceStatusExternalId: null,
+            currentMaintenanceStatusExternalId: 'active',
+            todaysLoggedMaintenanceStatusExternalId: null,
             approvalToken: 'approved',
           },
           {
             id: inactiveOutOfInventoryUnloggedDeviceId,
-            maintenanceStatusExternalId: 'inactiveOutOfInventory',
-            loggedMaintenanceStatusExternalId: null,
+            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            todaysLoggedMaintenanceStatusExternalId: null,
             approvalToken: 'approved',
           },
           {
             id: decommissionedDeviceId,
-            maintenanceStatusExternalId: 'active',
-            loggedMaintenanceStatusExternalId: null,
+            currentMaintenanceStatusExternalId: 'active',
+            todaysLoggedMaintenanceStatusExternalId: null,
             approvalToken: 'decommissioned',
           },
         ])
@@ -857,20 +865,20 @@ describe('Device routes', () => {
         expect(devicesAfterDailyLog).to.containSubset([
           {
             id: activeUnloggedDeviceId,
-            maintenanceStatusExternalId: 'active',
-            loggedMaintenanceStatusExternalId: 'active',
+            currentMaintenanceStatusExternalId: 'active',
+            todaysLoggedMaintenanceStatusExternalId: 'active',
             approvalToken: 'approved',
           },
           {
             id: inactiveOutOfInventoryUnloggedDeviceId,
-            maintenanceStatusExternalId: 'inactiveOutOfInventory',
-            loggedMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveOutOfInventory',
             approvalToken: 'approved',
           },
           {
             id: decommissionedDeviceId,
-            maintenanceStatusExternalId: 'inactiveDecommissioned',
-            loggedMaintenanceStatusExternalId: 'inactiveDecommissioned',
+            currentMaintenanceStatusExternalId: 'inactiveDecommissioned',
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveDecommissioned',
             approvalToken: 'decommissioned',
           },
         ])
