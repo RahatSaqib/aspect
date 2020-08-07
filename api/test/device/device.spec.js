@@ -3,6 +3,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const {
   addDays,
+  subDays,
   startOfToday,
   startOfMonth,
   setMilliseconds,
@@ -783,20 +784,47 @@ describe('Device routes', () => {
           )
           .andWhere('day', startOfToday())
           .del()
+        const [activeDeviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId: activeUnloggedDeviceId,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          data: '{}',
+          day: subDays(startOfToday(), 2),
+          createdOn: subDays(new Date(), 2),
+        })
         await knex('Device').where('id', activeUnloggedDeviceId).update({
           deviceApprovalId: deviceApprovals.approved,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          deviceMaintenanceStatusLogId: activeDeviceMaintenanceStatusLogId,
+        })
+        const [inactiveOutOfInventoryDeviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId: inactiveOutOfInventoryUnloggedDeviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          data: '{}',
+          day: subDays(startOfToday(), 2),
+          createdOn: subDays(new Date(), 2),
         })
         await knex('Device')
           .where('id', inactiveOutOfInventoryUnloggedDeviceId)
           .update({
             deviceApprovalId: deviceApprovals.approved,
-            deviceMaintenanceStatusId:
-              deviceMaintenanceStatuses.inactiveOutOfInventory,
+            deviceMaintenanceStatusLogId: inactiveOutOfInventoryDeviceMaintenanceStatusLogId,
           })
+        const [decommissionedActiveDeviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId: decommissionedDeviceId,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          data: '{}',
+          day: subDays(startOfToday(), 2),
+          createdOn: subDays(new Date(), 2),
+        })
         await knex('Device').where('id', decommissionedDeviceId).update({
           deviceApprovalId: deviceApprovals.decommissioned,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          deviceMaintenanceStatusLogId: decommissionedActiveDeviceMaintenanceStatusLogId,
         })
         const getDeviceDetails = async () =>
           knex('Device as d')
@@ -856,6 +884,25 @@ describe('Device routes', () => {
             approvalToken: 'decommissioned',
           },
         ])
+
+        await knex('DeviceMaintenanceStatusLog').insert([
+          {
+            deviceId: activeUnloggedDeviceId,
+            deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+            data: '{}',
+            day: startOfToday(),
+            createdOn: new Date(),
+          },
+          {
+            deviceId: inactiveOutOfInventoryUnloggedDeviceId,
+            deviceMaintenanceStatusId:
+              deviceMaintenanceStatuses.inactiveOutOfInventory,
+            data: '{}',
+            day: startOfToday(),
+            createdOn: new Date(),
+          },
+        ])
+
         const messageContext = await createMessageContext()
         const action = logDeviceMaintenanceStatus()
         await messageContext.dispatch(action)

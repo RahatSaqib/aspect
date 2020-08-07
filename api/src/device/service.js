@@ -1337,27 +1337,33 @@ async function onDeviceMaintenanceStatusLogScheduled(
         'd.deviceMaintenanceStatusLogId',
         'current_dmsl.id'
       )
+      .leftJoin(
+        'DeviceMaintenanceStatus as current_dms',
+        'current_dmsl.deviceMaintenanceStatusId',
+        'current_dms.id'
+      )
       .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
         queryBuilder
           .on('d.id', 'today_dmsl.deviceId')
           .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
       })
-      .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .leftJoin(
         'DeviceMaintenanceStatus as today_dms',
         'today_dmsl.deviceMaintenanceStatusId',
         'today_dms.id'
       )
-      .whereNull('today_dmsl.id')
-      .andWhere('dtc.hasResults', true)
-      .orWhere(queryBuilder => {
-        queryBuilder
-          .where('da.token', 'decommissioned')
-          .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
+      .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+      .where('dtc.hasResults', true)
+      .andWhere(queryBuilder => {
+        queryBuilder.whereNull('today_dmsl.id').orWhere(queryBuilder => {
+          queryBuilder
+            .where('da.token', 'decommissioned')
+            .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
+        })
       })
       .select(
         'd.id',
-        'today_dms.externalId as todayMaintenanceStatusExternalId',
+        'current_dms.externalId as currentMaintenanceStatusExternalId',
         'current_dmsl.data as currentMaintenanceStatusLogData',
         'da.token as approvalToken'
       )
@@ -1365,11 +1371,11 @@ async function onDeviceMaintenanceStatusLogScheduled(
       const {
         id,
         approvalToken,
-        todayMaintenanceStatusExternalId,
+        currentMaintenanceStatusExternalId,
         currentMaintenanceStatusLogData = '{}',
       } = device
       let deviceMaintenanceStatusForTheDay =
-        todayMaintenanceStatusExternalId || 'inactiveUnknown'
+        currentMaintenanceStatusExternalId || 'inactiveUnknown'
       if (approvalToken === 'decommissioned') {
         deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
       }
