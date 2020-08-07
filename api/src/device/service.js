@@ -1297,7 +1297,7 @@ async function deviceMaintenanceStatus(request) {
 
   const currentDeviceMaintenanceStatusLog =
     (await knex('Device as d')
-      .leftJoin(
+      .join(
         'DeviceMaintenanceStatusLog as dmsl',
         'd.deviceMaintenanceStatusLogId',
         'dmsl.Id'
@@ -1307,7 +1307,6 @@ async function deviceMaintenanceStatus(request) {
         showUnapprovedDevices: true,
       })
       .where('d.id', deviceId)
-      .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
       .first('dmsl.*')) || {}
   if (currentDeviceMaintenanceStatusLog.data) {
     currentDeviceMaintenanceStatusLog.data = JSON.parse(
@@ -1333,41 +1332,44 @@ async function onDeviceMaintenanceStatusLogScheduled(
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-      .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+      .leftJoin(
+        'DeviceMaintenanceStatusLog as current_dmsl',
+        'd.deviceMaintenanceStatusLogId',
+        'current_dmsl.id'
+      )
+      .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
         queryBuilder
-          .on('d.id', 'dmsl.deviceId')
-          .andOn('dmsl.day', knex.raw('?', [startOfToday()]))
+          .on('d.id', 'today_dmsl.deviceId')
+          .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
       })
       .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .leftJoin(
-        'DeviceMaintenanceStatus as dms',
-        'd.deviceMaintenanceStatusId',
-        'dms.id'
+        'DeviceMaintenanceStatus as today_dms',
+        'today_dmsl.deviceMaintenanceStatusId',
+        'today_dms.id'
       )
-      .whereNull('dmsl.id')
+      .whereNull('today_dmsl.id')
       .andWhere('dtc.hasResults', true)
       .orWhere(queryBuilder => {
         queryBuilder
           .where('da.token', 'decommissioned')
-          .andWhere('dms.externalId', '<>', 'inactiveDecommissioned')
+          .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
       })
       .select(
         'd.id',
-        'dms.externalId as maintenanceStatusExternalId',
+        'today_dms.externalId as todayMaintenanceStatusExternalId',
+        'current_dmsl.data as currentMaintenanceStatusLogData',
         'da.token as approvalToken'
       )
     await Promise.each(devicesWithNoMaintenanceLogForTheDay, async device => {
-      const { id, approvalToken, maintenanceStatusExternalId } = device
-      const lastMaintenanceStatusLogForDevice =
-        (await knex('DeviceMaintenanceStatusLog')
-          .where('deviceId', id)
-          .orderByRaw('day desc, createdOn desc, id desc')
-          .first('data')) || {}
-      lastMaintenanceStatusLogForDevice.data = lastMaintenanceStatusLogForDevice.data
-        ? JSON.parse(lastMaintenanceStatusLogForDevice.data)
-        : {}
+      const {
+        id,
+        approvalToken,
+        todayMaintenanceStatusExternalId,
+        currentMaintenanceStatusLogData = '{}',
+      } = device
       let deviceMaintenanceStatusForTheDay =
-        maintenanceStatusExternalId || 'inactiveUnknown'
+        todayMaintenanceStatusExternalId || 'inactiveUnknown'
       if (approvalToken === 'decommissioned') {
         deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
       }
@@ -1376,7 +1378,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
         startOfToday(),
         deviceMaintenanceStatusForTheDay,
         {
-          ...lastMaintenanceStatusLogForDevice.data,
+          ...JSON.parse(currentMaintenanceStatusLogData),
           ...action,
         },
         messageContext
