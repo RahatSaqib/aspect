@@ -4,7 +4,6 @@ import flowRight from 'lodash/flowRight'
 import reduce from 'lodash/reduce'
 import set from 'lodash/set'
 import filter from 'lodash/filter'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import map from 'lodash/map'
 import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
@@ -12,6 +11,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Card from '@material-ui/core/Card'
+import LinearProgress from '../../components/shared/DelayShowingProgressBar'
 import { Unit } from '../../components/pureGrids'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
@@ -255,13 +255,11 @@ export const SummaryStatus = ({
     {loading && (
       <div
         style={{
+          width: '100%',
           height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
         }}
       >
-        <CircularProgress />
+        <LinearProgress />
       </div>
     )}
     {widgetGroups.length > 0 && (
