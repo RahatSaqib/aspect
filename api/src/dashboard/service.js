@@ -1224,17 +1224,12 @@ async function resultsTransmittedDashboard(request) {
     (acc, item) => {
       const scope = getScope(item.yearMonth)
       if (scope) {
-        if (!acc[scope]) {
-          acc[scope] = []
-        }
         acc[scope].push(item)
       }
       return acc
     },
-    {}
+    { currentMonth: [], previousMonth: [] }
   )
-  if (!data.currentMonth) data.currentMonth = []
-  if (!data.previousMonth) data.previousMonth = []
 
   return {
     ok: true,
