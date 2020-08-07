@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 const isURL = to => {
   const expression = /^https?:/
   const regex = new RegExp(expression)
-  return to.match(regex)
+  return to && to.match(regex)
 }
 
 const AspectLink = ({ to = '#', children, ...restProps }) => {

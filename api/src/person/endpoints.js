@@ -44,7 +44,7 @@ function listContactBaseConfig() {
 
 function listReporterBaseConfig() {
   return {
-    auth: { scope: ['reporter:view', 'reporter:edit'] },
+    auth: { scope: ['reporter:view'] },
     validate: {
       query: {
         contactNameOrEmail: Joi.string()
@@ -114,7 +114,7 @@ const routes = [
     config: {
       description: 'Available People List',
       notes: 'List of available users that logged in user can assign to a site',
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
     },
   },
   {
@@ -211,7 +211,7 @@ const routes = [
     handler: asyncHandler(updateRefreshToken),
     config: {
       description: 'Update a refresh token',
-      auth: { scope: ['reporter:view', 'reporter:edit'] },
+      auth: { scope: ['reporter:view'] },
       validate: {
         params: {
           refreshTokenId: Joi.string()
@@ -253,7 +253,7 @@ const routes = [
     handler: asyncHandler(assignContact),
     config: {
       description: 'Assign person as site contact',
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
       validate: {
         params: {
           siteId: Joi.string().description('Site ID').required(),
@@ -270,7 +270,7 @@ const routes = [
     handler: asyncHandler(unAssignContact),
     config: {
       description: "Remove person from site's contacts",
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
       validate: {
         params: {
           siteId: Joi.string().description('Site ID').required(),

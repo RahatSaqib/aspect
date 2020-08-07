@@ -33,7 +33,7 @@ function listDevicesBaseConfig() {
 
 function listDevicesBaseRequest() {
   return {
-    auth: { scope: ['device:view', 'device:edit', 'operationalData:view'] },
+    auth: { scope: ['device:view', 'operationalData:view'] },
     validate: {
       query: {
         hasResults: Joi.number()
@@ -422,7 +422,7 @@ const routes = [
     config: {
       description: 'Device Detail',
       notes: 'Detail of a device',
-      auth: { scope: ['device:view', 'device:edit'] },
+      auth: { scope: ['device:view'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required(),
@@ -475,7 +475,7 @@ const routes = [
     config: {
       description: 'Device Approval List',
       notes: 'Dictionary set of Device Approval options',
-      auth: { scope: ['device:view', 'device:edit'] },
+      auth: { scope: ['device:view'] },
     },
   },
   {
@@ -485,7 +485,7 @@ const routes = [
     config: {
       description: 'Device Maintenance Status List',
       notes: 'Set of Device Maintenance Status options',
-      auth: { scope: ['device:view', 'device:edit', 'operationalData:view'] },
+      auth: { scope: ['device:view', 'operationalData:view'] },
     },
   },
   {
@@ -559,7 +559,7 @@ const routes = [
     config: {
       description: 'Device Maintenance Status Information for a Device',
       notes: 'Gets the Device Maintenance Status Log Information',
-      auth: { scope: ['device:view', 'device:edit', 'operationalData:view'] },
+      auth: { scope: ['device:view', 'operationalData:view'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required(),

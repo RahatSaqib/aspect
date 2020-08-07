@@ -20,7 +20,7 @@ const routes = [
     config: {
       description: 'Consumable Types',
       notes: 'Pageable and sortable list of consumable types',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
+      auth: { scope: ['inventory:view'] },
       validate: {
         query: {
           name: Joi.string()
