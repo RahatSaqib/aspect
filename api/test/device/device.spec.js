@@ -807,14 +807,14 @@ describe('Device routes', () => {
             })
             .leftJoin(
               'DeviceMaintenanceStatus as dmsl_dms',
-              'dmsl.deviceMaintenanceStatusId',
-              'dmsl_dms.id'
+              'dmsl_dms.id',
+              'dmsl.deviceMaintenanceStatusId'
             )
-            .leftJoin('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
+            .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
             .leftJoin(
               'DeviceMaintenanceStatus as dms',
-              'dms.id',
-              'd.deviceMaintenanceStatusId'
+              'd.deviceMaintenanceStatusId',
+              'dms.id'
             )
             .whereIn('d.id', [
               activeUnloggedDeviceId,
