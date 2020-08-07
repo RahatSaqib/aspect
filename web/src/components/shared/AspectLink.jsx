@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 const isURL = to => {
+  if (!to) return false
   const expression = /^https?:/
   const regex = new RegExp(expression)
   return to && to.match(regex)

@@ -97,9 +97,9 @@ const renderRedirectToLicenseOr = props =>
 
 const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
   let pathname = ''
-  if (isPermittedUser(permissions, ['dashboard'])) {
+  if (isPermittedUser(permissions, { required: ['dashboard:summary'] })) {
     pathname = '/dashboard'
-  } else if (isPermittedUser(permissions, ['operationalData'])) {
+  } else if (isPermittedUser(permissions, { required: ['operationalData'] })) {
     pathname = '/operational-data'
   } else {
     pathname = '/browse'
@@ -116,7 +116,7 @@ const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
 }
 
 const renderRedirectToNotFound = (props, requiredPermission) => {
-  if (!isPermittedUser(props.permissions, requiredPermission))
+  if (!isPermittedUser(props.permissions, { required: requiredPermission }))
     return renderNotFound
 }
 
@@ -215,6 +215,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
+          renderRedirectToNotFound(props, ['dashboard:summary']) ||
           renderLoadableStatus
         }
       />
