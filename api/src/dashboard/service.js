@@ -1163,17 +1163,42 @@ async function resultsTransmittedDashboard(request) {
       `),
     })
     // all results with email sent out
-    .countDistinct('em.id AS cntReportedViaEmail')
+    .sum({
+      cntReportedViaEmail: knex.raw(`
+        CASE 
+          WHEN 
+            rc.externalId = 'Positive'
+            AND
+            em.id IS NOT NULL
+          THEN 1
+          ELSE 0
+        END
+      `),
+    })
     // all results with sms sent out
-    .countDistinct('sm.id AS cntReportedViaSms')
+    .sum({
+      cntReportedViaSms: knex.raw(`
+        CASE 
+          WHEN 
+            rc.externalId = 'Positive'
+            AND
+            sm.id IS NOT NULL
+          THEN 1
+          ELSE 0
+        END
+      `),
+    })
     // count results with either email or sms sent out
     .sum({
       cntAllReported: knex.raw(`
         CASE 
           WHEN 
-            em.id IS NOT NULL
-            OR
-            sm.id IS NOT NULL
+            rc.externalId = 'Positive'
+            AND (
+              em.id IS NOT NULL
+              OR
+              sm.id IS NOT NULL
+            )
           THEN 1
           ELSE 0
         END
