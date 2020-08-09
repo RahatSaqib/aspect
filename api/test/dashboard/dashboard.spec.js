@@ -149,7 +149,7 @@ describe('Dashboard routes', () => {
           assert.property(item, 'assayName')
           assert.property(item, 'assayExternalId')
           assert.property(item, 'assayI18nKey')
-          assert.property(item, 'resultCategory')
+          // assert.property(item, 'resultCategory')
           assert.property(item, 'yearMonth')
           assert.property(item, 'cntAll')
           assert.property(item, 'cntPositive')

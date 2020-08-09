@@ -1092,18 +1092,33 @@ async function resultsTransmittedDashboard(request) {
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('ResultCategory as rc', 'rc.id', 'r.resultCategory1')
+    .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftOuterJoin('Issue AS i', 'r.id', 'i.resultId')
+    .leftOuterJoin('IssueType AS it', function () {
+      this.on('i.issueTypeId', 'it.id')
+        .andOnBetween('i.createdOn', [
+          knex.raw(`DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')`),
+          knex.raw('NOW()'),
+        ])
+        .andOnIn('it.externalId', ['ResultReceived', 'ResultUploaded'])
+    })
+    .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
+
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('EmailMessage as em', function () {
-      this.on('r.id', 'em.resultId')
-        .andOn('em.messageStatusId', messageStatusToId.Sent)
-        .andOn('rc.externalId', 'Positive')
+      this.on('r.id', 'em.resultId').andOn(
+        'em.messageStatusId',
+        messageStatusToId.Sent
+      )
     })
     .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('r.id', 'sm.resultId')
-        .andOn('sm.messageStatusId', messageStatusToId.Sent)
-        .andOn('rc.externalId', 'Positive')
+      this.on('r.id', 'sm.resultId').andOn(
+        'sm.messageStatusId',
+        messageStatusToId.Sent
+      )
     })
+    // only specified 'currentMonth' and previous onth
     .whereRaw(
       `
         (
@@ -1138,7 +1153,8 @@ async function resultsTransmittedDashboard(request) {
       'a.name as assayName',
       'a.externalId as assayExternalId',
       'a.i18nKey as assayI18nKey',
-      'rc.externalId as resultCategory',
+      // 'rc1.externalId as resultCategory1',
+      // 'rc2.externalId as resultCategory2',
       // YYYY_MM field for grouping by
       knex.raw(`
         CONCAT_WS(
@@ -1153,13 +1169,15 @@ async function resultsTransmittedDashboard(request) {
       `)
     )
     // all results
-    .count('DISTINCT r.id AS cntAll')
+    .count({
+      cntAll: knex.raw('DISTINCT r.id'),
+    })
     // all Positive results
     .count({
       cntPositive: knex.raw(`
         DISTINCT
         CASE
-          WHEN rc.externalId = 'Positive' 
+          WHEN rc1.externalId = 'Positive' 
           THEN r.id
           ELSE null
         END
@@ -1171,9 +1189,11 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE 
           WHEN 
-            rc.externalId = 'Positive'
+            rc1.externalId = 'Positive'
             AND
             em.id IS NOT NULL
+            AND
+            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -1185,9 +1205,11 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE 
           WHEN 
-            rc.externalId = 'Positive'
+            rc1.externalId = 'Positive'
             AND
             sm.id IS NOT NULL
+            AND
+            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -1199,12 +1221,14 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE 
           WHEN 
-            rc.externalId = 'Positive'
+            rc1.externalId = 'Positive'
             AND (
               em.id IS NOT NULL
               OR
               sm.id IS NOT NULL
             )
+            AND
+            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -1215,9 +1239,14 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE
           WHEN
-            em.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
-            OR
-            sm.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+            rc1.externalId = 'Positive'
+            AND (
+              em.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+              OR
+              sm.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+            )
+            AND
+            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
