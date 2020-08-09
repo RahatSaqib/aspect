@@ -1095,16 +1095,14 @@ async function resultsTransmittedDashboard(request) {
     .leftOuterJoin('ResultCategory as rc', 'rc.id', 'r.resultCategory1')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('EmailMessage as em', function () {
-      this.on('r.id', 'em.resultId').andOn(
-        'em.messageStatusId',
-        messageStatusToId.Sent
-      )
+      this.on('r.id', 'em.resultId')
+        .andOn('em.messageStatusId', messageStatusToId.Sent)
+        .andOn('rc.externalId', 'Positive')
     })
     .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('r.id', 'sm.resultId').andOn(
-        'sm.messageStatusId',
-        messageStatusToId.Sent
-      )
+      this.on('r.id', 'sm.resultId')
+        .andOn('sm.messageStatusId', messageStatusToId.Sent)
+        .andOn('rc.externalId', 'Positive')
     })
     .whereRaw(
       `
@@ -1155,42 +1153,50 @@ async function resultsTransmittedDashboard(request) {
       `)
     )
     // all results
-    .count('r.id as cntAll')
+    .count('DISTINCT r.id AS cntAll')
     // all Positive results
-    .sum({
+    .count({
       cntPositive: knex.raw(`
-        CASE WHEN rc.externalId = 'Positive' THEN 1 ELSE 0 END
+        DISTINCT
+        CASE
+          WHEN rc.externalId = 'Positive' 
+          THEN r.id
+          ELSE null
+        END
       `),
     })
     // all results with email sent out
-    .sum({
+    .count({
       cntReportedViaEmail: knex.raw(`
+        DISTINCT
         CASE 
           WHEN 
             rc.externalId = 'Positive'
             AND
             em.id IS NOT NULL
-          THEN 1
-          ELSE 0
+          THEN r.id
+          ELSE null
         END
       `),
     })
     // all results with sms sent out
-    .sum({
+    .count({
       cntReportedViaSms: knex.raw(`
+        DISTINCT
         CASE 
           WHEN 
             rc.externalId = 'Positive'
             AND
             sm.id IS NOT NULL
-          THEN 1
-          ELSE 0
+          THEN r.id
+          ELSE null
         END
       `),
     })
     // count results with either email or sms sent out
-    .sum({
+    .count({
       cntAllReported: knex.raw(`
+        DISTINCT
         CASE 
           WHEN 
             rc.externalId = 'Positive'
@@ -1199,20 +1205,21 @@ async function resultsTransmittedDashboard(request) {
               OR
               sm.id IS NOT NULL
             )
-          THEN 1
-          ELSE 0
+          THEN r.id
+          ELSE null
         END
       `),
     })
-    .sum({
+    .count({
       cntWithin2Hours: knex.raw(`
+        DISTINCT
         CASE
           WHEN
             em.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
             OR
             sm.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
-          THEN 1
-          ELSE 0
+          THEN r.id
+          ELSE null
         END
       `),
     })
