@@ -839,8 +839,8 @@ describe('Device routes', () => {
             )
             .leftJoin(
               'DeviceMaintenanceStatus as today_dms',
-              'today_dms.id',
-              'today_dmsl.deviceMaintenanceStatusId'
+              'today_dmsl.deviceMaintenanceStatusId',
+              'today_dms.id'
             )
             .leftJoin(
               'DeviceMaintenanceStatusLog as current_dmsl',
@@ -849,8 +849,8 @@ describe('Device routes', () => {
             )
             .leftJoin(
               'DeviceMaintenanceStatus as current_dms',
-              'current_dms.id',
-              'current_dmsl.deviceMaintenanceStatusId'
+              'current_dmsl.deviceMaintenanceStatusId',
+              'current_dms.id'
             )
             .whereIn('d.id', [
               activeUnloggedDeviceId,
