@@ -139,28 +139,34 @@ describe('Dashboard routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.property(res.body.data, 'currentMonth')
-          assert.property(res.body.data, 'previousMonth')
-          assert.typeOf(res.body.data.currentMonth, 'array')
-          assert.typeOf(res.body.data.previousMonth, 'array')
+          assert.property(res.body.data, 'data')
+          const { data } = res.body.data
+          assert.typeOf(data, 'array')
           // minimum 1 assay for current month
-          assert.isAtLeast(res.body.data.currentMonth.length, 1)
+          assert.isAtLeast(data.length, 1)
 
-          const item = res.body.data.currentMonth[0]
+          const item = data[0]
           assert.property(item, 'assayName')
-          assert.property(item, 'assayExternalId')
-          assert.property(item, 'assayI18nKey')
-          // assert.property(item, 'resultCategory')
           assert.property(item, 'yearMonth')
+          //
           assert.property(item, 'cntAll')
           assert.property(item, 'cntPositive')
           assert.property(item, 'cntReportedViaEmail')
           assert.property(item, 'cntReportedViaSms')
           assert.property(item, 'cntAllReported')
           assert.property(item, 'cntWithin2Hours')
+          //
           assert.property(item, 'percentPositive')
           assert.property(item, 'percentReported')
           assert.property(item, 'percentViaEmail')
           assert.property(item, 'percentViaSms')
+          assert.property(item, 'percentWithin2Hours')
+          //
+          assert.property(item, 'percentPositiveChange')
+          assert.property(item, 'percentReportedChange')
+          assert.property(item, 'percentViaEmailChange')
+          assert.property(item, 'percentViaSmsChange')
+          assert.property(item, 'percentWithin2HoursChange')
 
           done()
         })

@@ -1087,10 +1087,31 @@ async function resultsTransmittedDashboard(request) {
 
   const messageStatusToId = await allMessageStatusToId()
 
+  // get all assays which user can access
+  const assaysQuery = knex('Assay as a')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .modify(addConstraints, dataConstraints, {
+      assayType: 'at',
+      assay: 'a',
+      deviceType: 'dt',
+      disease: 'd',
+    })
+    .modify(filterParams, query, { name: 'a.name' })
+    .select(
+      'a.id as assayId',
+      'a.name as assayName',
+      'a.externalId as assayExternalId',
+      'a.i18nKey as assayI18nKey'
+    )
+    .orderBy('a.name')
+
   const { currentMonth = new Date() } = query
-  const queryBuilder = knex('Result as r')
+  const resultsQuery = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
@@ -1104,7 +1125,6 @@ async function resultsTransmittedDashboard(request) {
         .andOnIn('it.externalId', ['ResultReceived', 'ResultUploaded'])
     })
     .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
-
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('EmailMessage as em', function () {
       this.on('r.id', 'em.resultId').andOn(
@@ -1152,9 +1172,6 @@ async function resultsTransmittedDashboard(request) {
     .select(
       'a.name as assayName',
       'a.externalId as assayExternalId',
-      'a.i18nKey as assayI18nKey',
-      // 'rc1.externalId as resultCategory1',
-      // 'rc2.externalId as resultCategory2',
       // YYYY_MM field for grouping by
       knex.raw(`
         CONCAT_WS(
@@ -1254,11 +1271,15 @@ async function resultsTransmittedDashboard(request) {
     })
     .groupBy('a.id', 'yearMonth')
 
-  const items = await queryBuilder
+  resultsQuery.where('dt.externalId', 'CepheidGeneXpert')
+  assaysQuery.where('dt.externalId', 'CepheidGeneXpert')
+
+  const items = await resultsQuery
+  const assays = await assaysQuery
 
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
-    return denominator === 0 ? 0 : (100 * numerator) / denominator
+    return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
   }
   // calculate all percentages
   items.forEach(item => {
@@ -1269,31 +1290,83 @@ async function resultsTransmittedDashboard(request) {
       item.cntAllReported
     )
     item.percentViaSms = getPercent(item.cntReportedViaSms, item.cntAllReported)
+    item.percentWithin2Hours = getPercent(
+      item.cntWithin2Hours,
+      item.cntAllReported
+    )
   })
 
   // helpers
   const currMonth = formatDate(currentMonth, 'yyyy-MM')
-  const prevMonth = formatDate(subMonths(new Date(), 1), 'yyyy-MM')
-  const getScope = yearMonth => {
-    if (yearMonth === currMonth) return 'currentMonth'
-    if (yearMonth === prevMonth) return 'previousMonth'
-    return ''
+  const prevMonth = formatDate(subMonths(currentMonth, 1), 'yyyy-MM')
+  const getChange = (pcCurr, pcPrev = null) => {
+    if (pcPrev === null) {
+      return 0
+    }
+    return pcCurr - pcPrev
   }
-  // re-organize list as { currentMonth: [], previousMonth: [] }
-  const data = _.reduce(
-    items,
-    (acc, item) => {
-      const scope = getScope(item.yearMonth)
-      if (scope) {
-        acc[scope].push(item)
-      }
-      return acc
-    },
-    { currentMonth: [], previousMonth: [] }
-  )
+  const findItem = (yearMonth, assayExternalId) => item =>
+    item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
+
+  const data = assays.map(({ assayName, assayExternalId }) => {
+    // get items for current and previous month
+    const currItem = items.find(findItem(currMonth, assayExternalId))
+    const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
+    const {
+      yearMonth,
+      cntAll = 0,
+      cntPositive = 0,
+      cntAllReported = 0,
+      cntReportedViaEmail = 0,
+      cntReportedViaSms = 0,
+      cntWithin2Hours = 0,
+      percentPositive,
+      percentReported,
+      percentViaEmail,
+      percentViaSms,
+      percentWithin2Hours,
+    } = currItem || {}
+
+    return {
+      assayName,
+      yearMonth,
+      // totals in current month
+      cntAll,
+      cntPositive,
+      cntAllReported,
+      cntReportedViaEmail,
+      cntReportedViaSms,
+      cntWithin2Hours,
+      // percent in current month
+      percentPositive,
+      percentReported,
+      percentViaEmail,
+      percentViaSms,
+      percentWithin2Hours,
+      // changes since previous month
+      percentPositiveChange: getChange(
+        percentPositive,
+        prevItem.percentPositive
+      ),
+      percentReportedChange: getChange(
+        percentReported,
+        prevItem.percentReported
+      ),
+      percentViaEmailChange: getChange(
+        percentViaEmail,
+        prevItem.percentViaEmail
+      ),
+      percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
+      percentWithin2HoursChange: getChange(
+        percentWithin2Hours,
+        prevItem.percentWithin2Hours
+      ),
+    }
+  })
 
   return {
     ok: true,
+    currentMonth,
     data,
   }
 }

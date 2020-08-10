@@ -7,6 +7,10 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 5px;
+}
+.tooltip__row:last-of-type {
+  margin-bottom: 0;
 }
 
 .tooltip__color {

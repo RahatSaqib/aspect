@@ -8,6 +8,7 @@ import { injectIntl } from 'react-intl'
 import SummaryStatus from '../status/SummaryStatus'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import InventoryItems from '../status/InventoryItems'
+import ResultsTransmittedGraph from './ResultsTransmittedGraph'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
@@ -25,6 +26,11 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             location={location}
             className={cssClasses('Section--summary')}
             dashboard="operational"
+          />
+          <ResultsTransmittedGraph
+            intl={intl}
+            history={history}
+            location={location}
           />
           <GraphsContainer
             intl={intl}

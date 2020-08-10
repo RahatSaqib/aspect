@@ -10,10 +10,8 @@ const cssClasses = classnames.bind(require('./Card.css'))
 
 const CardHeader = ({ props }) => {
   const { title, actionComponent, action } = props
-  const {
-    component: ActionComponent,
-    props: actionComponentProps,
-  } = actionComponent
+  const { component: ActionComponent, props: actionComponentProps } =
+    actionComponent || {}
 
   return title || actionComponent ? (
     <Grid item xs={12}>
