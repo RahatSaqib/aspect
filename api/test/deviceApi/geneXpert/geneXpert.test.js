@@ -9,9 +9,11 @@ const {
   detectedMoreThan1000,
   noDetected,
   detectedWithNoCopies,
+  Invalid,
+  Error,
 } = require('./HIV_VL_payload')
 
-describe.only('Extracting data from Result Text HIV VL', () => {
+describe('Extracting data from Result Text HIV VL', () => {
   it('it extract the number of copies and categorize it', () => {
     const resultText = [
       {
@@ -44,10 +46,20 @@ describe.only('Extracting data from Result Text HIV VL', () => {
   })
 
   it('Check the category for different results HIV VL', async () => {
-    console.log(
-      'detectedmorethan 1000',
-      _.assign({}, getResultCategories(detectedLess1000[0]))
-    )
-    assert.isTrue(true)
+    const textsToTest = [
+      { payload: detectedLess1000[0].result, result: 'LessThan1000' },
+      { payload: detectedLess1000[1].result, result: 'LessThan1000' },
+      { payload: detectedMoreThan1000.result, result: 'MoreThan1000' },
+      { payload: noDetected.result, result: 'NotDetected' },
+      { payload: detectedWithNoCopies.result, result: 'Detected' },
+      { payload: Invalid.result, result: 'Invalid' },
+      { payload: Error.result, result: 'Error' },
+    ]
+    textsToTest.forEach(elem => {
+      const [{ id: categoryExternalId }] = getResultCategories(
+        _.assign({}, elem.payload)
+      )
+      assert.equal(categoryExternalId, elem.result)
+    })
   })
 })

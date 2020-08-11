@@ -794,7 +794,7 @@ function getResultCategories(payload) {
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
-          .replace(/HIV-1/, '')
+          .replace(/hiv-1/, '')
           .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
@@ -852,8 +852,10 @@ function getResultCategories(payload) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
         }
         if (assayId === 'GxHiv1Vl') {
-          payloadCategory = [{ id: getResultCategoriesHivVL(result1Text) }]
-          console.log('entro puto', payloadCategory)
+          const externalId =
+            getResultCategoriesHivVL(result1Text) ||
+            result1CategoryMapping[result1Text]
+          if (externalId) payloadCategory = [{ id: externalId }]
         }
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
@@ -914,7 +916,8 @@ function getResultCategories(payload) {
 function getResultCategoriesHivVL(result1Text) {
   const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
   const arr = regex.exec(result1Text.replace('HIV-1', ''))
-  const copies = parseFloat(arr[0])
+
+  const copies = arr ? parseFloat(arr[0]) : null
   // Add HIV VL Categories
   if (copies && copies < 1000) return 'LessThan1000'
   if (copies && copies >= 1000) return 'MoreThan1000'
