@@ -17,7 +17,14 @@ const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
 } = require('./geneXpertConstants')
-const { detectedMoreThan1000, detectedLess1000 } = require('./HIV_VL_payload')
+const {
+  detectedLess1000,
+  detectedMoreThan1000,
+  noDetected,
+  detectedWithNoCopies,
+  Invalid,
+  Error,
+} = require('./HIV_VL_payload')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
@@ -26,7 +33,7 @@ const { deviceSeen } = require('../../../src/device/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe.only('Device API routes for GxConnect Devices', () => {
+describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -695,7 +702,7 @@ describe.only('Device API routes for GxConnect Devices', () => {
       }))
   })
 
-  describe.only('results', () => {
+  describe('results', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,
@@ -797,51 +804,50 @@ describe.only('Device API routes for GxConnect Devices', () => {
         })
       }))
 
-    it.only('should append a result HIV VL and categorized it well', () =>
+    it('should append a result HIV VL and categorized it well', () =>
       runTest(async () => {
-        const { deviceAuth } = context
+        const { deviceAuth, basicDevicePayload, now } = context
+        const payloads = [
+          { payload: detectedLess1000[0], result: 'LessThan1000' },
+          { payload: detectedLess1000[1], result: 'LessThan1000' },
+          { payload: detectedMoreThan1000, result: 'MoreThan1000' },
+          { payload: noDetected, result: 'NotDetected' },
+          { payload: detectedWithNoCopies, result: 'Detected' },
+          { payload: Invalid, result: 'Invalid' },
+          { payload: Error, result: 'Error' },
+        ]
+        await payloads.forEach(async elem => {
+          const { result: resultPayload } = elem.payload
+          const res = await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, elem.payload, basicDevicePayload, {
+                result: _.assign({}, elem.payload.result, {
+                  sample: { id: 'new sample' },
+                  instrument: { serial: 'new instrument' },
+                  startedOn: now,
+                }),
+              })
+            )
 
-        const res = await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(_.assign({}, detectedLess1000[0]))
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
 
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
+          const afterResultDetails = await getLastResult()
 
-        /* const afterResultDetails = await getLastResult()
-        expect(afterResultDetails).to.containSubset({
-          deviceId: device.id,
-          siteId: device.siteId,
-          geographyId: site.geographyId,
-          assay: basicResultPayload.result.assay.id,
-          assayVersion: basicResultPayload.result.assay.version,
-          resultWorkflowStatus: 'Deliverable',
-          resultSource: 'DiagnosticDevice',
-          resultType: 'Patient',
-          resultCategory1: 'Success',
-          resultCategory2: null,
-          sampleId: 'new sample',
-          sampleCollectedOn: null,
-          sampleOriginSiteId: device.siteId,
-          sampleTypeId: null,
-          resultData: _.assign({}, basicResultPayload.result.data, {
-            geneXpertTestId: basicResultPayload.result.id,
-          }),
-          startedOn: testStartedOn,
-          endedOn: null,
-          consumableSerial: null,
-          consumableExpirationDate: null,
-          consumableLot: null,
-          instrumentSerial: 'new instrument',
-          moduleName: null,
-          moduleSerial: null,
-          patientData: basicResultPayload.result.patient,
-          senderVersion: basicResultPayload.result.sender.version,
-          senderOperator: basicResultPayload.result.sender.operator,
-          notes: null,
-          errorCode: null,
-        }) */
+          assert.equal(afterResultDetails.assay, resultPayload.assay.id)
+          assert.equal(afterResultDetails.resultCategory1, elem.result)
+          assert.equal(afterResultDetails.resultCategory2, null)
+          if (
+            ['MoreThan1000', 'LessThan1000'].includes(
+              afterResultDetails.resultCategory1
+            )
+          ) {
+            assert.isNotNull(afterResultDetails.resultData.copies)
+            assert.isAtLeast(afterResultDetails.resultData.copies, 40)
+          }
+        })
       }))
 
     it('should update a result if the sample ID, instrument serial and test dates are known', () =>

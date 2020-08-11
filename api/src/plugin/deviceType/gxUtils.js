@@ -74,7 +74,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
   }
-  console.log('------------- preProcesMergeResult')
   const startedOn = _.get(payload, 'startedOn') || _.get(payload, 'endedOn')
   const endedOn = _.get(payload, 'endedOn') || startedOn
   if (!startedOn) {
@@ -148,6 +147,14 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (!_.get(payload, 'workflow.status.id') && !payload.error) {
       _.set(payload, 'workflow.status.id', 'Deliverable')
     }
+    if (potentialAssayIds.includes('GxHiv1Vl')){
+      const copies =getVLCopies(_.get(payload, 'data.resultText')
+      if(copies)
+      _.set(
+        payload,
+        'data.copies',
+        copies)
+      )}
   } else {
     // Are we setting this result to NO RESULT?
     if (
@@ -860,7 +867,7 @@ function getResultCategories(payload) {
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        [
+        ([
           'Detected',
           'Trace Detected',
           'Error',
@@ -868,7 +875,8 @@ function getResultCategories(payload) {
           'NoResult',
           'Success',
         ].includes(result1) ||
-        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)
+          !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)) &&
+        assayId !== 'GxHiv1Vl'
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
@@ -913,11 +921,15 @@ function getResultCategories(payload) {
   return payloadCategory
 }
 
-function getResultCategoriesHivVL(result1Text) {
+function getVLCopies(result1Text) {
   const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
   const arr = regex.exec(result1Text.replace('HIV-1', ''))
 
-  const copies = arr ? parseFloat(arr[0]) : null
+  return arr ? parseFloat(arr[0]) : null
+}
+
+function getResultCategoriesHivVL(result1Text) {
+  const copies = getVLCopies(result1Text)
   // Add HIV VL Categories
   if (copies && copies < 1000) return 'LessThan1000'
   if (copies && copies >= 1000) return 'MoreThan1000'
