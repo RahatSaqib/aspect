@@ -10,6 +10,7 @@ const {
   factExternalSourceCheck,
 } = require('./fact/actions')
 const { escalateIssues, resolveIssues } = require('./issue/actions')
+const { logDeviceMaintenanceStatus } = require('./device/actions')
 const config = require('./config')
 
 function startScheduler(queue) {
@@ -24,6 +25,7 @@ function startScheduler(queue) {
     factExternalSourceCheck,
     escalateIssues,
     resolveIssues,
+    logDeviceMaintenanceStatus,
   })
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
@@ -54,6 +56,11 @@ function startScheduler(queue) {
     cron.schedule('30 7,19 * * *', dispatchCheckUptimeRobot) // twice a day at 7:30am & 7:30pm
     dispatchCheckUptimeRobot()
   }
+
+  cron.schedule(
+    config.scheduler.cron.logDeviceMaintenanceStatus,
+    dispatcher.logDeviceMaintenanceStatus
+  ) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
 }
 
 function createActionDispatcher(queue, actionCreators) {
