@@ -3,6 +3,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const {
   addDays,
+  subDays,
   startOfToday,
   startOfMonth,
   setMilliseconds,
@@ -10,14 +11,21 @@ const {
 
 const shared = require('../utils/sharedToken')
 const {
-  allDeviceMaintenanceStatusToId,
-} = require('../../src/shared/dictionary')
-const { formatDateOrDefault } = require('../../src/shared/date')
-const { knex } = require('../../src/db')
+  createMessageContext,
+  waitForAction,
+  waitForIdle,
+} = require('../utils/mqUtils')
 const {
   assertPropertiesOfListItem,
 } = require('../utils/assertPropertiesOfDeviceItem')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
+const {
+  allDeviceMaintenanceStatusToId,
+  allDeviceApprovalToId,
+} = require('../../src/shared/dictionary')
+const { formatDateOrDefault } = require('../../src/shared/date')
+const { knex } = require('../../src/db')
+const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -372,22 +380,18 @@ describe('Device routes', () => {
           }),
           createdOn: setMilliseconds(new Date(), 0),
         }
-        await knex('DeviceMaintenanceStatusLog').insert(
+        const [lastLogId] = await knex('DeviceMaintenanceStatusLog').insert(
           newDeviceMaintenanceStatusLog
         )
         await knex('Device').where('id', deviceId).update({
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          deviceMaintenanceStatusLogId: lastLogId,
         })
         const deviceWithLogWithNote = await knex('Device as d')
-          .join('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
-            queryBuilder
-              .on('d.id', 'dmsl.deviceId')
-              .andOn(
-                'd.deviceMaintenanceStatusId',
-                'dmsl.deviceMaintenanceStatusId'
-              )
-          })
+          .join(
+            'DeviceMaintenanceStatusLog as dmsl',
+            'd.deviceMaintenanceStatusLogId',
+            'dmsl.id'
+          )
           .where(queryBuilder => {
             queryBuilder.whereRaw(
               `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
@@ -621,7 +625,9 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
           deviceId,
           deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
@@ -629,7 +635,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusLogId,
         })
 
         const devicesWithEditableStatus = await server
@@ -656,14 +662,15 @@ describe('Device routes', () => {
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.isOk(
-          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
         )
         const deviceMaitnenanceStatusLog = await knex(
           'DeviceMaintenanceStatusLog'
         )
           .where(
             'id',
-            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogId
           )
           .first()
         deviceMaitnenanceStatusLog.data = JSON.parse(
@@ -686,7 +693,9 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .where('dtc.hasResults', true)
           .first('d.id')
-        await knex('DeviceMaintenanceStatusLog').insert({
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
           deviceId,
           deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
           data: '{}',
@@ -694,7 +703,7 @@ describe('Device routes', () => {
           createdOn: new Date(),
         })
         await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusLogId,
         })
 
         const devicesWithEditableStatus = await server
@@ -716,14 +725,15 @@ describe('Device routes', () => {
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.isOk(
-          updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
         )
         const deviceMaitnenanceStatusLog = await knex(
           'DeviceMaintenanceStatusLog'
         )
           .where(
             'id',
-            updateMaintenanceStatusResponse.body.deviceMaintenanceStatusLogId
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogId
           )
           .first()
         deviceMaitnenanceStatusLog.data = JSON.parse(
@@ -736,6 +746,189 @@ describe('Device routes', () => {
             },
           },
         })
+      })
+    })
+  })
+
+  describe('Message Queue', () => {
+    describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
+      it('should log the maintenance status of each un-logged device', async () => {
+        const diagnosticDevices = await knex('Device as d')
+          .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+          .join(
+            'DeviceTypeCategory as dtc',
+            'dt.deviceTypeCategoryId',
+            'dtc.id'
+          )
+          .where('dtc.hasResults', true)
+          .select('d.id')
+        const { id: activeUnloggedDeviceId } = diagnosticDevices[0]
+        const { id: decommissionedDeviceId } = diagnosticDevices[1]
+        const {
+          id: inactiveOutOfInventoryUnloggedDeviceId,
+        } = diagnosticDevices[2]
+        await knex('DeviceMaintenanceStatusLog')
+          .whereIn('deviceId', [
+            activeUnloggedDeviceId,
+            inactiveOutOfInventoryUnloggedDeviceId,
+          ])
+          .andWhere('day', startOfToday())
+          .del()
+        const deviceApprovals = await allDeviceApprovalToId()
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        await knex('DeviceMaintenanceStatusLog')
+          .where('deviceId', decommissionedDeviceId)
+          .andWhere(
+            'deviceMaintenanceStatusId',
+            deviceMaintenanceStatuses.inactiveDecommissioned
+          )
+          .andWhere('day', startOfToday())
+          .del()
+        const [activeDeviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId: activeUnloggedDeviceId,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          data: '{}',
+          day: subDays(startOfToday(), 2),
+          createdOn: subDays(new Date(), 2),
+        })
+        await knex('Device').where('id', activeUnloggedDeviceId).update({
+          deviceApprovalId: deviceApprovals.approved,
+          deviceMaintenanceStatusLogId: activeDeviceMaintenanceStatusLogId,
+        })
+        const [inactiveOutOfInventoryDeviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId: inactiveOutOfInventoryUnloggedDeviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          data: '{}',
+          day: subDays(startOfToday(), 2),
+          createdOn: subDays(new Date(), 2),
+        })
+        await knex('Device')
+          .where('id', inactiveOutOfInventoryUnloggedDeviceId)
+          .update({
+            deviceApprovalId: deviceApprovals.approved,
+            deviceMaintenanceStatusLogId: inactiveOutOfInventoryDeviceMaintenanceStatusLogId,
+          })
+        const [decommissionedActiveDeviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId: decommissionedDeviceId,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+          data: '{}',
+          day: subDays(startOfToday(), 2),
+          createdOn: subDays(new Date(), 2),
+        })
+        await knex('Device').where('id', decommissionedDeviceId).update({
+          deviceApprovalId: deviceApprovals.decommissioned,
+          deviceMaintenanceStatusLogId: decommissionedActiveDeviceMaintenanceStatusLogId,
+        })
+        const getDeviceDetails = async () =>
+          knex('Device as d')
+            .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+            .leftJoin(
+              'DeviceMaintenanceStatusLog as today_dmsl',
+              queryBuilder => {
+                queryBuilder
+                  .on('d.id', 'today_dmsl.deviceId')
+                  .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
+              }
+            )
+            .leftJoin(
+              'DeviceMaintenanceStatus as today_dms',
+              'today_dmsl.deviceMaintenanceStatusId',
+              'today_dms.id'
+            )
+            .leftJoin(
+              'DeviceMaintenanceStatusLog as current_dmsl',
+              'd.deviceMaintenanceStatusLogId',
+              'current_dmsl.id'
+            )
+            .leftJoin(
+              'DeviceMaintenanceStatus as current_dms',
+              'current_dmsl.deviceMaintenanceStatusId',
+              'current_dms.id'
+            )
+            .whereIn('d.id', [
+              activeUnloggedDeviceId,
+              inactiveOutOfInventoryUnloggedDeviceId,
+              decommissionedDeviceId,
+            ])
+            .select(
+              'd.id',
+              'current_dms.externalId as currentMaintenanceStatusExternalId',
+              'today_dms.externalId as todaysLoggedMaintenanceStatusExternalId',
+              'da.token as approvalToken'
+            )
+        const devicesWithNoMaintenanceLogForTheDay = await getDeviceDetails()
+        expect(devicesWithNoMaintenanceLogForTheDay).to.containSubset([
+          {
+            id: activeUnloggedDeviceId,
+            currentMaintenanceStatusExternalId: 'active',
+            todaysLoggedMaintenanceStatusExternalId: null,
+            approvalToken: 'approved',
+          },
+          {
+            id: inactiveOutOfInventoryUnloggedDeviceId,
+            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            todaysLoggedMaintenanceStatusExternalId: null,
+            approvalToken: 'approved',
+          },
+          {
+            id: decommissionedDeviceId,
+            currentMaintenanceStatusExternalId: 'active',
+            todaysLoggedMaintenanceStatusExternalId: null,
+            approvalToken: 'decommissioned',
+          },
+        ])
+
+        await knex('DeviceMaintenanceStatusLog').insert([
+          {
+            deviceId: activeUnloggedDeviceId,
+            deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
+            data: '{}',
+            day: startOfToday(),
+            createdOn: new Date(),
+          },
+          {
+            deviceId: inactiveOutOfInventoryUnloggedDeviceId,
+            deviceMaintenanceStatusId:
+              deviceMaintenanceStatuses.inactiveOutOfInventory,
+            data: '{}',
+            day: startOfToday(),
+            createdOn: new Date(),
+          },
+        ])
+
+        const messageContext = await createMessageContext()
+        const action = logDeviceMaintenanceStatus()
+        await messageContext.dispatch(action)
+        await waitForAction(action)
+        await waitForIdle(2000)
+        const devicesAfterDailyLog = await getDeviceDetails()
+        expect(devicesAfterDailyLog).to.containSubset([
+          {
+            id: activeUnloggedDeviceId,
+            currentMaintenanceStatusExternalId: 'active',
+            todaysLoggedMaintenanceStatusExternalId: 'active',
+            approvalToken: 'approved',
+          },
+          {
+            id: inactiveOutOfInventoryUnloggedDeviceId,
+            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            approvalToken: 'approved',
+          },
+          {
+            id: decommissionedDeviceId,
+            currentMaintenanceStatusExternalId: 'inactiveDecommissioned',
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveDecommissioned',
+            approvalToken: 'decommissioned',
+          },
+        ])
       })
     })
   })

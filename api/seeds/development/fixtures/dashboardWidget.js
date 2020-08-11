@@ -185,21 +185,45 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'avgTimeToUpload'
       ),
-      sortOrder: 16,
+      sortOrder: 6,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
-      sortOrder: 17,
+      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'instrumentsReplaced'
       ),
-      sortOrder: 18,
+      sortOrder: 4,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
-      sortOrder: 18,
+      sortOrder: 3,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageRecipientsOfEmail'
+      ),
+      sortOrder: 9,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageRecipientsOfSms'
+      ),
+      sortOrder: 10,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageLengthOfSms'
+      ),
+      sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageDaysModuleSwap'
+      ),
+      sortOrder: 2,
     },
   ],
 }

@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid'
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
+import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
@@ -14,7 +15,7 @@ import messages from '../messages'
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
 const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
-  const { title, selectorModifiers = false } = config
+  const { title, id, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
   const { graphType } = config
   const { innerSize, outerSize } = size
@@ -26,37 +27,42 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
   }
 
   return (
-    <Grid item xs={12} lg={outerSize}>
-      <Grid container spacing={24}>
-        <Grid item xs={12}>
-          <AspectCard
-            title={intlFormatMessage(messages[title])}
-            innerSize={innerSize}
-            justify="center"
-            action={params => updateFromActionComponent({ ...params })}
-            actionComponent={{
-              component: CardSelectors,
-              props: selectorModifiers,
-            }}
-          >
-            <Grid
-              container
-              spacing={8}
-              className={cssClasses('graph__containerGrid')}
+    <PermissionsProvider
+      permissions={whiteListed ? ['site:view'] : ['result:view']}
+    >
+      <Grid item xs={12} lg={outerSize}>
+        <Grid container spacing={24}>
+          <Grid item xs={12}>
+            <AspectCard
+              title={intlFormatMessage(messages[title])}
+              innerSize={innerSize}
+              justify="center"
+              action={params => updateFromActionComponent({ ...params })}
+              actionComponent={{
+                component: CardSelectors,
+                props: selectorModifiers,
+              }}
+              name={id}
             >
-              {graphType &&
-                graphType.map(graph => (
-                  <GraphRender
-                    assays={{ whiteListed, assaysFromState }}
-                    config={graph}
-                    updatedParams={graphParams}
-                  />
-                ))}
-            </Grid>
-          </AspectCard>
+              <Grid
+                container
+                spacing={8}
+                className={cssClasses('graph__containerGrid')}
+              >
+                {graphType &&
+                  graphType.map(graph => (
+                    <GraphRender
+                      assays={{ whiteListed, assaysFromState }}
+                      config={graph}
+                      updatedParams={graphParams}
+                    />
+                  ))}
+              </Grid>
+            </AspectCard>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </PermissionsProvider>
   )
 }
 

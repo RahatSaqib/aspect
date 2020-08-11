@@ -195,7 +195,6 @@ export function fetchSingleDevice(deviceId, rawFiltersParams) {
     const filters = _.fromPairs([...filtersParams.entries()])
     const requestedAt = Date.now()
     dispatch(requestSingleDevice(requestedAt, deviceId))
-
     return aspectFetch(`/device/${deviceId}?${stringify(filters)}`, {
       errorNotifications: {
         404: errorNotFound(
@@ -335,6 +334,46 @@ export function hideDialog() {
       type: types.DEVICE_MAINTENANCE_FORM_HIDE,
     })
   }
+}
+
+export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
+  const deviceId = device.get('id')
+  const i18nErrorTitleDescriptor = () =>
+    defineMessages({
+      title: {
+        id:
+          'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
+        defaultMessage: 'Setting Maintenance Status Failed',
+      },
+    })
+
+  return dispatch =>
+    aspectFetch(`/device/maintenance-status/${deviceId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        externalId,
+        notes,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...i18nErrorTitleDescriptor(externalId),
+          onClose: () => dispatch(showDialog('maintenance', device)),
+        }),
+      },
+    })
+      .then(json => {
+        dispatch(
+          receiveUpdatedSingleDevice(new Date(), {
+            ...json.data,
+            id: deviceId,
+          })
+        )
+        dispatch(hideDialog())
+      })
+      .catch(err => {
+        dispatch(hideDialog())
+        throw err
+      })
 }
 
 export function updateDeviceMaintenance({

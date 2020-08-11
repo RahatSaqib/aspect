@@ -5,7 +5,7 @@ import { createLogger } from 'redux-logger'
 import rootReducer from './rootReducer'
 import { middleware as idleMiddleware } from './idle/IdleRedux'
 
-const showLogger = true
+const showLogger = false
 const middleware = [thunk, idleMiddleware]
 
 if (process.env.ASPECT_TARGET === 'local' && showLogger) {
