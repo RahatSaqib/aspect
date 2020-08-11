@@ -6,6 +6,8 @@ const hivGraphs = {
   hivResults: {
     id: 'hivResults',
     title: 'clinicalIndicatorsVLTitle',
+    componentSize: 'full',
+    group: 'hiv',
     assays: [
       'abbottM2000DBSHivVL',
       'abbottM2000PlasmaHivVL',
@@ -18,7 +20,7 @@ const hivGraphs = {
     ],
     graphType: [
       {
-        id: 'resultsByCategory1Monthly',
+        id: 'hivByCategory1Monthly',
         component: BarGraph,
         type: 'bar',
         size: 8,
@@ -40,7 +42,7 @@ const hivGraphs = {
         formatDate: 'MMM yy',
       },
       {
-        id: 'resultsByCategory1Aggregate',
+        id: 'hivByCategory1Aggregate',
         component: PieGraph,
         type: 'pie',
         size: 4,
