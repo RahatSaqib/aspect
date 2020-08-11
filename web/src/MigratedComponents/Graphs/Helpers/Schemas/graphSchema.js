@@ -139,6 +139,12 @@ const graphSchema = {
   title: 'Schema for validating graph configs',
   properties: {
     id: { $id: '#/properties/id', type: 'string' },
+    componentSize: {
+      $id: '#/properties/componentSize',
+      type: 'string',
+      enum: ['full', 'half'],
+    },
+    group: { $id: '#/properties/group', type: 'string' },
     assays: { $id: '#/properties/assays', type: 'array' },
     graphType: {
       $id: '#/properties/graphType',
@@ -147,7 +153,7 @@ const graphSchema = {
       items: graphItemsSchema,
     },
   },
-  required: ['id', 'assays', 'graphType'],
+  required: ['id', 'componentSize', 'group', 'assays', 'graphType'],
 }
 
 export default graphSchema
