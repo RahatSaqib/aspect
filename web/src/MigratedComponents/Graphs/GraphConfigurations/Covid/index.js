@@ -7,6 +7,8 @@ const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
     id: 'covidMortalityAndRecoveryConfig',
     title: 'covidGraphDailyMortalityAndrecovery',
+    componentSize: 'full',
+    group: 'covid',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',

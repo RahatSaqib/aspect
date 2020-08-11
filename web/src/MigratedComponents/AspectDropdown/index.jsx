@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
+import { useQuery } from 'react-query'
 import Select from 'react-select'
-import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
+
+import fetchDropDownData from './fetchDropDownData'
 
 const {
   '--aspect-color-chill-blue-1': aspectChillBlue1,
@@ -60,32 +62,21 @@ const buildCustomStyles = defaultOption => {
   return styles
 }
 
-const AspectDropdown = ({
+const SelectComponent = ({
+  data,
   selectedValue,
-  reduxStateId,
   action: dispatchFromRedux,
   identifier,
-  data: passedData,
 }) => {
   const [defaultOption] = useState(selectedValue)
   const [inputValue, setInputValue] = useState(false)
-  const [data, setData] = useState(false)
-  const reduxData = useSelector(state => get(state.toJS(), reduxStateId))
-
-  useEffect(() => {
-    if (!data) {
-      setData(passedData || sortBy(reduxData, ['name']))
-    }
-  }, [reduxData])
-
   useEffect(() => {
     if (inputValue) {
       const { selectedOption, action } = inputValue
       dispatchFromRedux({ identifier, selectedOption, action })
     }
   }, [inputValue])
-
-  return data && data.length ? (
+  return (
     <Select
       getOptionLabel={({ name }) => name}
       getOptionValue={({ id }) => id}
@@ -96,6 +87,34 @@ const AspectDropdown = ({
       onChange={(selectedOption, { action }) =>
         setInputValue({ selectedOption, action })
       }
+    />
+  )
+}
+
+const AspectDropdown = ({
+  selectedValue,
+  reduxStateId,
+  action,
+  identifier,
+  endpoint,
+  data: passedData,
+}) => {
+  const { isError, data, error } = useQuery(
+    reduxStateId,
+    async () => fetchDropDownData(endpoint),
+    { initialData: passedData, initialStale: true }
+  )
+
+  if (isError) {
+    throw new Error(error)
+  }
+
+  return data && data[reduxStateId] && data[reduxStateId].length ? (
+    <SelectComponent
+      data={sortBy(data[reduxStateId], ['name'])}
+      selectedValue={selectedValue}
+      action={action}
+      identifier={identifier}
     />
   ) : null
 }
@@ -109,6 +128,7 @@ AspectDropdown.propTypes = {
   reduxStateId: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
   identifier: PropTypes.string.isRequired,
+  endpoint: PropTypes.string.isRequired,
   data: PropTypes.bool,
 }
 
