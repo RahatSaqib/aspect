@@ -354,7 +354,6 @@ class GxConnectApiTestContext {
 
   getLastResult() {
     return run(async knex => {
-      console.log('device', this.device.id)
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
         .leftJoin(
