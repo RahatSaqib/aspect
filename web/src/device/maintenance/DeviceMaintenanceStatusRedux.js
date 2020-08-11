@@ -29,16 +29,17 @@ function createReceiveMaintenanceStatus(items) {
 
 export function fetchDeviceMaintenanceStatus(forceRefresh) {
   return (dispatch, getState) => {
-    const { deviceApproval } = getState()
+    const { deviceMaintenanceStatus } = getState()
 
-    if (deviceApproval.loading) {
+    if (deviceMaintenanceStatus.loading) {
       return
     }
     const shouldFetch =
       forceRefresh ||
-      !deviceApproval.lastRefreshed ||
+      !deviceMaintenanceStatus.lastRefreshed ||
       // check every 60 mins in case new option added in db
-      differenceInMinutes(new Date(), deviceApproval.lastRefreshed) > 60
+      differenceInMinutes(new Date(), deviceMaintenanceStatus.lastRefreshed) >
+        60
     if (!shouldFetch) {
       return
     }
@@ -49,7 +50,8 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
         400: filterFieldsRejectedError(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchDeviceMaintenance.GET.400.title',
+              id:
+                'errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title',
               defaultMessage: 'Searching Device Maintenance status Failed',
             },
           })
@@ -58,7 +60,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.fetchDeviceApprovals.GET.default.title',
+                'errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title',
               defaultMessage: 'Loading Device Maintenance Status Failed',
             },
           })
