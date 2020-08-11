@@ -53,6 +53,11 @@ module.exports = {
   webhook: {},
   scheduler: {
     enabled: process.env['scheduler.enabled'] === 'true',
+    cron: {
+      logDeviceMaintenanceStatus:
+        process.env['scheduler.cron.logDeviceMaintenanceStatus'] ||
+        '0 18 * * *',
+    },
   },
   encryption: {
     passPhrase: process.env['encryption.passPhrase'],
