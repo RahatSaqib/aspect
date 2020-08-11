@@ -22,7 +22,10 @@ const { processDynamicMessage } = require('../stringTemplate/service')
 const { getArrayOfDaysInRange } = require('../shared/date')
 const { queryValue } = require('../shared/sql-2-knex')
 const { canView } = require('../auth/constraints')
-const { allMessageStatusToId } = require('../shared/dictionary')
+const {
+  allResultCategoryToId,
+  allMessageStatusToId,
+} = require('../shared/dictionary')
 
 const i18nKeys = {
   // Dashboard
@@ -1107,6 +1110,15 @@ async function resultsTransmittedDashboard(request) {
     )
     .orderBy('a.name')
 
+  const {
+    Detected: resultCategoryDetectedId,
+    Positive: resultCategoryPositiveId,
+  } = await allResultCategoryToId()
+  const positiveResultCategories = [
+    resultCategoryDetectedId,
+    resultCategoryPositiveId,
+  ].join(',')
+
   const { currentMonth = new Date() } = query
   const resultsQuery = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
@@ -1194,7 +1206,7 @@ async function resultsTransmittedDashboard(request) {
       cntPositive: knex.raw(`
         DISTINCT
         CASE
-          WHEN rc1.externalId = 'Positive' 
+          WHEN r.resultCategory1 IN (${positiveResultCategories})
           THEN r.id
           ELSE null
         END
@@ -1206,7 +1218,7 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE 
           WHEN 
-            rc1.externalId = 'Positive'
+            r.resultCategory1 IN (${positiveResultCategories})
             AND
             em.id IS NOT NULL
             AND
@@ -1222,7 +1234,7 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE 
           WHEN 
-            rc1.externalId = 'Positive'
+            r.resultCategory1 IN (${positiveResultCategories})
             AND
             sm.id IS NOT NULL
             AND
@@ -1238,7 +1250,7 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE 
           WHEN 
-            rc1.externalId = 'Positive'
+            r.resultCategory1 IN (${positiveResultCategories})
             AND (
               em.id IS NOT NULL
               OR
@@ -1256,7 +1268,7 @@ async function resultsTransmittedDashboard(request) {
         DISTINCT
         CASE
           WHEN
-            rc1.externalId = 'Positive'
+            r.resultCategory1 IN (${positiveResultCategories})
             AND (
               em.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
               OR
@@ -1313,23 +1325,21 @@ async function resultsTransmittedDashboard(request) {
     const currItem = items.find(findItem(currMonth, assayExternalId))
     const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
     const {
-      yearMonth,
       cntAll = 0,
       cntPositive = 0,
       cntAllReported = 0,
       cntReportedViaEmail = 0,
       cntReportedViaSms = 0,
       cntWithin2Hours = 0,
-      percentPositive,
-      percentReported,
-      percentViaEmail,
-      percentViaSms,
-      percentWithin2Hours,
+      percentPositive = 0,
+      percentReported = 0,
+      percentViaEmail = 0,
+      percentViaSms = 0,
+      percentWithin2Hours = 0,
     } = currItem || {}
 
     return {
       assayName,
-      yearMonth,
       // totals in current month
       cntAll,
       cntPositive,
