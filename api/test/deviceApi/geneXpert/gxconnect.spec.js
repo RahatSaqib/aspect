@@ -17,6 +17,7 @@ const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
 } = require('./geneXpertConstants')
+const { detectedMoreThan1000, detectedLess1000 } = require('./HIV_VL_payload')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
@@ -25,7 +26,7 @@ const { deviceSeen } = require('../../../src/device/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe('Device API routes for GxConnect Devices', () => {
+describe.only('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -694,7 +695,7 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
   })
 
-  describe('results', () => {
+  describe.only('results', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,
@@ -794,6 +795,53 @@ describe('Device API routes for GxConnect Devices', () => {
           notes: null,
           errorCode: null,
         })
+      }))
+
+    it.only('should append a result HIV VL and categorized it well', () =>
+      runTest(async () => {
+        const { deviceAuth } = context
+
+        const res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(_.assign({}, detectedLess1000[0]))
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        /* const afterResultDetails = await getLastResult()
+        expect(afterResultDetails).to.containSubset({
+          deviceId: device.id,
+          siteId: device.siteId,
+          geographyId: site.geographyId,
+          assay: basicResultPayload.result.assay.id,
+          assayVersion: basicResultPayload.result.assay.version,
+          resultWorkflowStatus: 'Deliverable',
+          resultSource: 'DiagnosticDevice',
+          resultType: 'Patient',
+          resultCategory1: 'Success',
+          resultCategory2: null,
+          sampleId: 'new sample',
+          sampleCollectedOn: null,
+          sampleOriginSiteId: device.siteId,
+          sampleTypeId: null,
+          resultData: _.assign({}, basicResultPayload.result.data, {
+            geneXpertTestId: basicResultPayload.result.id,
+          }),
+          startedOn: testStartedOn,
+          endedOn: null,
+          consumableSerial: null,
+          consumableExpirationDate: null,
+          consumableLot: null,
+          instrumentSerial: 'new instrument',
+          moduleName: null,
+          moduleSerial: null,
+          patientData: basicResultPayload.result.patient,
+          senderVersion: basicResultPayload.result.sender.version,
+          senderOperator: basicResultPayload.result.sender.operator,
+          notes: null,
+          errorCode: null,
+        }) */
       }))
 
     it('should update a result if the sample ID, instrument serial and test dates are known', () =>

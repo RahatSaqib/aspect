@@ -74,6 +74,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
   }
+  console.log('------------- preProcesMergeResult')
   const startedOn = _.get(payload, 'startedOn') || _.get(payload, 'endedOn')
   const endedOn = _.get(payload, 'endedOn') || startedOn
   if (!startedOn) {
@@ -787,11 +788,13 @@ function getResultCategories(payload) {
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
       const assayId = _.get(payload, 'assay.id')
+
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
+          .replace(/HIV-1/, '')
           .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
@@ -847,6 +850,10 @@ function getResultCategories(payload) {
         }
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
+        }
+        if (assayId === 'GxHiv1Vl') {
+          payloadCategory = [{ id: getResultCategoriesHivVL(result1Text) }]
+          console.log('entro puto', payloadCategory)
         }
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
@@ -904,6 +911,15 @@ function getResultCategories(payload) {
   return payloadCategory
 }
 
+function getResultCategoriesHivVL(result1Text) {
+  const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
+  const arr = regex.exec(result1Text.replace('HIV-1', ''))
+  const copies = parseFloat(arr[0])
+  // Add HIV VL Categories
+  if (copies && copies < 1000) return 'LessThan1000'
+  if (copies && copies >= 1000) return 'MoreThan1000'
+}
+
 function macAddressValid(macAddress) {
   return (
     !_.isEmpty(macAddress) &&
@@ -921,4 +937,6 @@ module.exports = {
   transformMergeResultPayload,
   postProcessAddDeviceOperation,
   postProcessUpdateDeviceConfiguration,
+  getResultCategoriesHivVL,
+  getResultCategories,
 }
