@@ -1110,15 +1110,25 @@ async function resultsTransmittedDashboard(request) {
     )
     .orderBy('a.name')
 
-  const {
-    Detected: resultCategoryDetectedId,
-    Positive: resultCategoryPositiveId,
-  } = await allResultCategoryToId()
-  const positiveResultCategories = [
-    resultCategoryDetectedId,
-    resultCategoryPositiveId,
-  ].join(',')
-
+  const resultCategories = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategories, [
+      'Detected',
+      'Trace Detected',
+      'MoreThan40',
+      'MoreThan150',
+      'MoreThan550',
+      'MoreThan1000',
+      'Resistant',
+      'Positive1',
+      'Positive2',
+      'Positive3',
+      'Scanty',
+      'PositiveMOTT',
+      'PositiveMTB',
+      'Positive',
+    ])
+  )
   const { currentMonth = new Date() } = query
   const resultsQuery = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
