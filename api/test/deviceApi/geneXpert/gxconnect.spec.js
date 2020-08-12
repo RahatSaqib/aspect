@@ -21,6 +21,7 @@ const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
+const { getLocalDateTimeStringInUtc } = require('../../../src/shared/date')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -780,7 +781,10 @@ describe('Device API routes for GxConnect Devices', () => {
           resultData: _.assign({}, basicResultPayload.result.data, {
             geneXpertTestId: basicResultPayload.result.id,
           }),
-          startedOn: testStartedOn,
+          startedOn: getLocalDateTimeStringInUtc(
+            testStartedOn.toISOString().replace('Z', ''),
+            'America/New_York'
+          ),
           endedOn: null,
           consumableSerial: null,
           consumableExpirationDate: null,
@@ -1306,6 +1310,63 @@ describe('Device API routes for GxConnect Devices', () => {
               await Promise.resolve()
             }
           }
+        )
+      }))
+
+    it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
+      runTest(async () => {
+        const { basicDevicePayload, deviceAuth } = context
+
+        const timezone = 'South Africa Standard Time'
+        const testStartedOn = '2020-08-10T14:00:00Z'
+        const testEndedOn = '2020-08-10T15:30:00Z'
+
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+                assay: _.assign({}, basicResultPayload.result.assay, {
+                  id: 'GxMtbRif',
+                }),
+                data: basicResultPayload.result.data,
+              }),
+              configuration: { data: { timezone } },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const resultDetails = await getLastResult()
+
+        expect(resultDetails.startedOn.getTime()).to.equal(
+          getLocalDateTimeStringInUtc(
+            testStartedOn.replace('Z', ''),
+            'Africa/Johannesburg'
+          ).getTime()
+        )
+
+        expect(resultDetails.endedOn.getTime()).to.equal(
+          getLocalDateTimeStringInUtc(
+            testEndedOn.replace('Z', ''),
+            'Africa/Johannesburg'
+          ).getTime()
+        )
+
+        expect(resultDetails.createdOn.getTime()).to.be.closeTo(
+          Date.now(),
+          2000
+        )
+
+        expect(resultDetails.updatedOn.getTime()).to.be.closeTo(
+          Date.now(),
+          2000
         )
       }))
 
