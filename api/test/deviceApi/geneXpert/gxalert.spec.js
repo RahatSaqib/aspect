@@ -46,7 +46,7 @@ const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe.only('Device API routes for GxAlert Device', () => {
+describe('Device API routes for GxAlert Device', () => {
   shared.checkToken(server, '/api/device')
   function createContext() {
     return createGxAlertTestContext(server)
@@ -2901,7 +2901,7 @@ describe.only('Device API routes for GxAlert Device', () => {
       }))
   })
 
-  describe.only('results', () => {
+  describe('results', () => {
     const gxAlertDeviceId = 23847
     const deviceName = 'This Lab Has Results!'
 
@@ -3101,7 +3101,7 @@ describe.only('Device API routes for GxAlert Device', () => {
         )
       }))
 
-    it.only('should merge results with same sample ID, start time, end time and instrument serial', () =>
+    it('should merge results with same sample ID, start time, end time and instrument serial', () =>
       runTest(async knex => {
         const { deviceAuth, now } = context
 
