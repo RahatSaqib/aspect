@@ -9,6 +9,8 @@ const {
   isEqual,
 } = require('date-fns')
 
+const { zonedTimeToUtc } = require('date-fns-tz')
+
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
@@ -96,6 +98,14 @@ function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
   return dates
 }
 
+// Returns the UTC equivalent of the passed in date/time string
+// based on the timezone parameter
+function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
+  if (!dateString || typeof dateString !== 'string') return null
+
+  return zonedTimeToUtc(dateString, timeZone)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -104,4 +114,5 @@ module.exports = {
   getUtcTime,
   dateEqual,
   getArrayOfDaysInRange,
+  getLocalDateTimeStringInUtc,
 }
