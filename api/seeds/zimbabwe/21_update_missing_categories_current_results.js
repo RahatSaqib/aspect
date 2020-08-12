@@ -34,9 +34,34 @@ async function seed(knex) {
                   '<',''),
                 '>','')
               )
-            ) 
+            )
           AS DECIMAL)
         <1000,${resultCategoryLessThan1000},${resultCategoryMoreThan1000}
+        )`
+      )
+    )
+    .update(
+      'resultData',
+      knex.raw(
+        `JSON_INSERT(resultData,'$.copies',
+          CAST(
+            LTRIM(
+              RTRIM(
+                REPLACE(
+                  REPLACE(
+                    SUBSTR(
+                      SUBSTR(resultData ->> '$.resultText',
+                        LENGTH('HIV-1 DETECTED ')
+                      ),1,INSTR(
+                            SUBSTR(resultData ->> '$.resultText',
+                                  LENGTH('HIV-1 DETECTED ')
+                          ),'copies/mL')-1
+                    ),
+                  '<',''),
+                '>','')
+              )
+            )
+          AS DECIMAL)
         )`
       )
     )
@@ -44,6 +69,6 @@ async function seed(knex) {
     .andWhere(
       knex.raw("resultData ->>'$.resultText'"),
       'LIKE',
-      'HIV-1 DETECTED %'
+      'HIV-1 DETECTED %copies%'
     )
 }

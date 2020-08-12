@@ -918,10 +918,13 @@ function getResultCategories(payload) {
 }
 
 function getVLCopies(result1Text) {
-  const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-  const arr = regex.exec(result1Text.replace('HIV-1', ''))
+  if (result1Text) {
+    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
+    const arr = regex.exec(result1Text.replace('HIV-1', ''))
 
-  return arr ? parseFloat(arr[0]) : null
+    return arr ? parseFloat(arr[0]) : null
+  }
+  return null
 }
 
 function getResultCategoriesHivVL(result1Text) {
