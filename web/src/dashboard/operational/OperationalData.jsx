@@ -15,7 +15,6 @@ import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 
-
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 export const OperationalData = ({ intl, history, location, loading }) => {
@@ -34,13 +33,13 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             className={cssClasses('Section--summary')}
             dashboard="operational"
           />
-          
+
           <ResultsTransmittedGraph
             intl={intl}
             history={history}
             location={location}
           />
-          
+
           <ErrorBoundary>
             <PermissionsProvider permissions={['operationalData']}>
               <GraphsContainer assaysFromState={[]} config={deviceStatus} />
