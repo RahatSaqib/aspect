@@ -9,7 +9,7 @@ const {
   isEqual,
 } = require('date-fns')
 
-const { zonedTimeToUtc } = require('date-fns-tz')
+const { convertToLocalTime } = require('date-fns-timezone')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -103,7 +103,7 @@ function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
 function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
   if (!dateString || typeof dateString !== 'string') return null
 
-  return zonedTimeToUtc(dateString, timeZone)
+  return convertToLocalTime(dateString, { timeZone })
 }
 
 module.exports = {
