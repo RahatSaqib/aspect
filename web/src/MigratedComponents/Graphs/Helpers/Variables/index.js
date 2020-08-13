@@ -19,6 +19,7 @@ const {
   '--aspect-color-white-4': colorWhite4,
   '--conifer': conifer,
   '--eastern-blue': easternBlue,
+  '--eastern-blue-2': easternBlue2,
   '--geyser': geyser,
   '--wild-sand': wildSand,
   '--purple-mountains-majesty': colorPurple,
@@ -57,6 +58,14 @@ const graphColorMap = [
   { id: 28, externalId: 'devicesUnknown', color: tundora },
   { id: 29, externalId: 'devicesStockOut', color: anakiwa },
   { id: 30, externalId: 'medianMarker', color: easternBlue },
+  { id: 31, externalId: 'noData', color: geyser },
+  { id: 32, externalId: 'percentPositive', color: colorMandy },
+  { id: 33, externalId: 'percentReported', color: colorMantis },
+  { id: 34, externalId: 'percentViaSms', color: colorMantis },
+  { id: 35, externalId: 'percentViaEmail', color: colorMantis },
+  { id: 36, externalId: 'percentWithin2Hours', color: colorMantis },
+  { id: 37, externalId: 'cntAll', color: easternBlue2 },
+  { id: 37, externalId: 'cntPositive', color: colorMandy },
   { id: 99, externalId: 'Cases', color: colorMantis },
 ]
 
