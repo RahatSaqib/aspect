@@ -1,8 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
+import IconProvider from '../../IconProvider'
+
 import usePrevious from '../../../Hooks/CustomHooks'
 import { getAverageFromData } from '../Helpers/Formatters'
 
@@ -77,4 +80,54 @@ PieInnerLegend.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
-export { GraphLegend, PieInnerLegend }
+const PieInnerLegendSolid = ({ data }) => {
+  return (
+    <div
+      className={cssClasses(['legend__container', 'legend__container--solid'])}
+    >
+      <div
+        className={cssClasses(['legend__average', 'legend__average--solid'])}
+        style={{ color: 'white' }}
+      >
+        {data && data[0].valueLabel}
+      </div>
+    </div>
+  )
+}
+
+const PieInnerLegendDoughNut = ({ data }) => {
+  const { value, difference } = data && data[0]
+  return data && data.length ? (
+    <div
+      className={cssClasses(['legend__container', 'legend__container--solid'])}
+    >
+      <div
+        className={cssClasses(['legend__average', 'legend__average--doughnut'])}
+      >
+        {value}%
+      </div>
+      <div className={cssClasses('legend__averageDirectionContainer')}>
+        {difference > 0 ? (
+          <IconProvider
+            icon="FaArrowUp"
+            className="legend__averageDirectionArrow"
+          />
+        ) : null}
+        {difference < 0 ? (
+          <IconProvider
+            icon="FaArrowDown"
+            className="legend__averageDirectionArrow"
+          />
+        ) : null}
+        <div>{difference}%</div>
+      </div>
+    </div>
+  ) : null
+}
+
+export {
+  GraphLegend,
+  PieInnerLegend,
+  PieInnerLegendSolid,
+  PieInnerLegendDoughNut,
+}
