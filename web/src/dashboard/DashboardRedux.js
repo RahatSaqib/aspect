@@ -5,7 +5,6 @@ import forEach from 'lodash/forEach'
 import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-import formatDate from 'date-fns/format'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -48,9 +47,6 @@ export const RECEIVE_TREATMENT_DASHBOARD = 'RECEIVE_TREATMENT_DASHBOARD'
 
 export const RECEIVE_INVENTORY_DASHBOARD = 'RECEIVE_INVENTORY_DASHBOARD'
 export const REQUEST_INVENTORY_DASHBOARD = 'REQUEST_INVENTORY_DASHBOARD'
-
-export const REQUEST_RESULTS_TRANSMITTED = 'REQUEST_RESULTS_TRANSMITTED'
-export const RECEIVE_RESULTS_TRANSMITTED = 'RECEIVE_RESULTS_TRANSMITTED'
 
 /*
  * ---------------- Action Creators -----------------
@@ -384,7 +380,7 @@ export function fetchInventoryDashboard() {
             title: {
               id:
                 'errorResponseMessages.fetchInventoryDashboard.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Inventory',
+              defaultMessage: 'Error Loading Dashboard Inventory',
             },
           })
         ),
@@ -403,49 +399,6 @@ function requestInventoryDashboard(data) {
 function receiveInventoryDashboard(requestedAt, data) {
   return {
     type: RECEIVE_INVENTORY_DASHBOARD,
-    requestedAt,
-    data,
-  }
-}
-
-/*
- * Results Transmitted Graph
- */
-export function fetchResultsTransmitted(currentMonth) {
-  return dispatch => {
-    const requestedAt = `resultsTransmitted_${Date.now()}`
-    dispatch(requestResultsTransmitted(requestedAt))
-    let url = '/dashboard/results-transmitted'
-    if (currentMonth) {
-      url += `?${formatDate(currentMonth, 'yyyy-MM-15')}`
-    }
-    return aspectFetch(url, {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchResultsTransmitted.GET.default.title',
-              defaultMessage:
-                'Error Loading Data for Results-Transmitted-Graph',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveResultsTransmitted(requestedAt, json)))
-  }
-}
-
-function requestResultsTransmitted(requestedAt) {
-  return {
-    type: REQUEST_RESULTS_TRANSMITTED,
-    requestedAt,
-  }
-}
-
-function receiveResultsTransmitted(requestedAt, data) {
-  return {
-    type: RECEIVE_RESULTS_TRANSMITTED,
     requestedAt,
     data,
   }
@@ -478,10 +431,6 @@ const initialData = Immutable.Record({
   treatmentStatus: Immutable.Map(),
   clinicalIndicators: Immutable.Map(),
   inventoryItems: Immutable.List(),
-  resultsTransmitted: Immutable.fromJS({
-    currentMonth: new Date(),
-    data: [],
-  }),
 })
 
 const initialState = initialData()
@@ -505,7 +454,6 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_OPERATIONAL_STATUS:
     case REQUEST_ACTION_STATUS:
     case REQUEST_TREATMENT_DASHBOARD:
-    case REQUEST_RESULTS_TRANSMITTED:
       return state.set(
         'requestedAtSet',
         state.requestedAtSet.add(action.requestedAt)
@@ -695,21 +643,6 @@ export default function dashboardReducer(state = initialState, action) {
 
         mutState.set('inventoryItems', Immutable.fromJS(payload.data))
       })
-
-    case RECEIVE_RESULTS_TRANSMITTED:
-      return state.withMutations(mutState => {
-        onRequested(action, mutState, () => {
-          const { currentMonth, data } = action.data
-          mutState.set(
-            'resultsTransmitted',
-            Immutable.fromJS({
-              currentMonth,
-              data,
-            })
-          )
-        })
-      })
-
     default:
       return state
   }
