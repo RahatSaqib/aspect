@@ -60,7 +60,7 @@ const treatmentStatusGraphs = {
         component: PieGraph,
         type: 'pieLegacyTreatment',
         size: 4,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
