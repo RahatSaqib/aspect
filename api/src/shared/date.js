@@ -31,7 +31,7 @@ function parseDateOrDefault(
     parsedDate = parse(
       date,
       options.formatString,
-      options.backupDate || getUtcTime()
+      options.backupDate || new Date()
     )
   } else {
     parsedDate = toDate(parseISO(date))
@@ -57,17 +57,6 @@ function returnIso8601StringWithoutTimeZoneOffset(date) {
     return null
   }
   return `${date.toISOString().split('.')[0]}.000`
-}
-
-// When performing MySQL INSERTS or UPDATES using knex,
-//   the time zone offset seems to be ignored.
-//   This function offsets the hours and minutes of the
-//   date object passed into it to the time as it is at
-//   UTC. This is particularly useful for updating and
-//   inserting into updatedOn and createdOn fields
-function getUtcTime(localTime) {
-  const time = localTime || new Date()
-  return new Date(time.getTime() + time.getTimezoneOffset() * 60000)
 }
 
 function dateEqual(date1, date2) {
@@ -106,13 +95,17 @@ function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
   return convertToLocalTime(dateString, { timeZone })
 }
 
+function getLocalDateInUtc(dateTime) {
+  return convertToLocalTime(dateTime, { timeZone: 'UTC' })
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
   returnIso8601StringWithoutTimeZoneOffset,
-  getUtcTime,
   dateEqual,
   getArrayOfDaysInRange,
   getLocalDateTimeStringInUtc,
+  getLocalDateInUtc,
 }

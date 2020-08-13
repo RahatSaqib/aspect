@@ -3,7 +3,10 @@ const chai = require('chai')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
 const { run } = require('../../src/db')
-const { parseDateOrDefault } = require('../../src/shared/date')
+const {
+  parseDateOrDefault,
+  getLocalDateInUtc,
+} = require('../../src/shared/date')
 const { resultWorkflowStatusToId } = require('../../src/shared/dictionary')
 const { getResult } = require('../../src/deviceApi/result')
 const {
@@ -1713,7 +1716,7 @@ describe('Device Result API routes', () => {
 
           let resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2045-01-30 00:00:00',
+            expirationDate: '2045-01-30 00:00:00Z',
           }
 
           const [lotNumberAndExpirationDateMatch] = await knex(
@@ -1784,9 +1787,9 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'XYZ321',
-            expirationDate: '2035-01-30 00:00:00',
+            expirationDate: '2035-01-30 00:00:00Z',
           }
-          const randomExpiryDate = new Date('2017-03-05 00:00:00')
+          const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
           const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
             consumableId: daktariHivVlCartridgeId,
             siteId,
@@ -1844,7 +1847,7 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2019-11-16 00:00:00',
+            expirationDate: '2019-11-16 00:00:00Z',
           }
           const randomLotNumber = 'RANDOM-LOT'
           const [onlyExpirationDateMatches] = await knex(
@@ -1947,9 +1950,9 @@ describe('Device Result API routes', () => {
 
           const resultDetails = {
             lotNumber: 'QWE987',
-            expirationDate: '2017-12-16 00:00:00',
+            expirationDate: '2017-12-16 00:00:00Z',
           }
-          const randomExpiryDate = new Date('2017-03-05 00:00:00')
+          const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
           const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
             consumableId: daktariHivVlCartridgeId,
             siteId,
@@ -2030,7 +2033,7 @@ describe('Device Result API routes', () => {
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
               inventoryItem.expiresOn.toISOString() ===
-                new Date(randomExpiryDate).toISOString()
+                randomExpiryDate.toISOString()
           )
           const matchingExpirationDateCartridgeAtSiteAfter = _.find(
             inventoryItemsAfter,
@@ -2188,7 +2191,7 @@ describe('Device Result API routes', () => {
 
           const past = subDays(now, 1)
           const future = addDays(now, 7)
-          const futureExpiresOn = startOfDay(future)
+          const futureExpiresOn = getLocalDateInUtc(startOfDay(future))
 
           const assayExternalId = 'DaktariHivVL'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
@@ -2760,11 +2763,11 @@ describe('Device Result API routes', () => {
 
           const resultDetails = {
             lotNumber: 'HIV533',
-            expirationDate: new Date(
+            expirationDate: getLocalDateInUtc(
               new Date(
                 new Date().getTime() + _.random(0, 1000 * 60 * 60 * 24 * 365)
               ).setHours(0, 0, 0, 0)
-            ).toJSON(),
+            ),
           }
           const inventoryItemsBefore = await getInventoryItemsAtSite(
             knex,
@@ -2803,7 +2806,7 @@ describe('Device Result API routes', () => {
             .where('il.consumableId', daktariHivVlCartridgeId)
             .andWhere('il.siteId', siteId)
             .andWhere('il.lotNumber', resultDetails.lotNumber)
-            .andWhere('il.expiresOn', new Date(resultDetails.expirationDate))
+            .andWhere('il.expiresOn', resultDetails.expirationDate)
             .first(
               'il.id',
               'il.inventoryItemId',
@@ -2846,7 +2849,7 @@ describe('Device Result API routes', () => {
           )
           assert.equal(
             inventoryConsumptionLog.expiresOn.toISOString(),
-            new Date(resultDetails.expirationDate).toISOString()
+            resultDetails.expirationDate.toISOString()
           )
           assert.equal(
             inventoryConsumptionLog.quantity,

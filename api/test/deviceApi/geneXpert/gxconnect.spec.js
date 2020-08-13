@@ -2281,7 +2281,10 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+        const expirationDate = dateFormat(
+          addYears(now, 1).setHours(0, 0, 0, 0),
+          "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
         const consumableName = 'Xpert HIV-1 Qual Cartridge'
         const consumableReason = 'Captured'
         const initialQuantity = 100
@@ -2336,7 +2339,7 @@ describe('Device API routes for GxConnect Devices', () => {
               consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: expirationDate,
+              expiresOn: new Date(expirationDate),
               quantityOnHand: _.max([0, initialQuantity + quantity]),
             },
           ]
@@ -2368,7 +2371,7 @@ describe('Device API routes for GxConnect Devices', () => {
             resultId: null,
             operation: 'add from GxConnect',
             lotNumber: null,
-            expiresOn: expirationDate,
+            expiresOn: new Date(expirationDate),
             quantity,
             notes: null,
             adjustedFrom: setMilliseconds(startedOn, 0),

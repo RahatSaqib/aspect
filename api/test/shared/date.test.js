@@ -1,18 +1,7 @@
 const { assert } = require('chai')
-const {
-  getUtcTime,
-  getLocalDateTimeStringInUtc,
-} = require('../../src/shared/date')
+const { getLocalDateTimeStringInUtc } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
-  describe('getUtcTime', () => {
-    it('should return the local server time as it is at Coordinated Universal Time', () => {
-      const localTime = new Date()
-      const utcTime = getUtcTime(localTime)
-      assert.equal(utcTime.getHours(), localTime.getUTCHours())
-      assert.equal(utcTime.getMinutes(), localTime.getUTCMinutes())
-    })
-  })
   describe('getLocalDateTimeStringInUtc', () => {
     it('should return null if no date is passed', () => {
       const utcDateTime = getLocalDateTimeStringInUtc(null)

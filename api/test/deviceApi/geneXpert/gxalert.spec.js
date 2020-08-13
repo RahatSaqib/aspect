@@ -35,6 +35,7 @@ const {
 const {
   formatDateOrDefault,
   getLocalDateTimeStringInUtc,
+  getLocalDateInUtc,
 } = require('../../../src/shared/date')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
@@ -2323,7 +2324,7 @@ describe('Device API routes for GxAlert Device', () => {
               .orderBy(['createdOn', 'id'], 'desc')
               .first()
             expect(latestMaintenanceStatusLog).to.containSubset({
-              day: startOfDay(new Date()),
+              day: getLocalDateInUtc(startOfToday()),
               deviceMaintenanceStatusId:
                 deviceMaintenanceStatuses.inactiveOutOfInventory,
             })
@@ -4072,7 +4073,7 @@ describe('Device API routes for GxAlert Device', () => {
               .whereIn('consumableId', _.map(consumableAssays, 'consumableId'))
               .andWhere({
                 siteId: siteIdFromFirstRequest,
-                expiresOn: expiryDate,
+                expiresOn: getLocalDateInUtc(expiryDate),
               })
               .select()
 
@@ -4170,7 +4171,7 @@ describe('Device API routes for GxAlert Device', () => {
               .whereIn('consumableId', _.map(consumableAssays, 'consumableId'))
               .andWhere({
                 siteId: siteIdFromSecondRequest,
-                expiresOn: expiryDate,
+                expiresOn: getLocalDateInUtc(expiryDate),
               })
               .select()
 
@@ -4722,7 +4723,10 @@ describe('Device API routes for GxAlert Device', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+        const expirationDate = dateFormat(
+          new Date(addYears(now, 1).setHours(0, 0, 0, 0)),
+          "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
         const consumableName = 'Xpert HIV-1 Qual Cartridge'
         const consumableReason = 'Captured'
         const initialQuantity = 100
@@ -4767,7 +4771,7 @@ describe('Device API routes for GxAlert Device', () => {
             consumableName,
             inTransitFromSiteId: null,
             lotNumber: null,
-            expiresOn: expirationDate,
+            expiresOn: new Date(expirationDate),
             quantityOnHand: _.max([0, initialQuantity + quantity]),
           },
         ])
@@ -4798,7 +4802,7 @@ describe('Device API routes for GxAlert Device', () => {
             resultId: null,
             operation: 'add from GxConnect',
             lotNumber: null,
-            expiresOn: expirationDate,
+            expiresOn: new Date(expirationDate),
             quantity,
             notes: null,
             adjustedFrom: setMilliseconds(startedOn, 0),
@@ -4836,7 +4840,10 @@ describe('Device API routes for GxAlert Device', () => {
           const { now } = context
           const startedOn = subHours(subDays(now, 1), 2)
           const endedOn = subHours(now, 2)
-          const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          const expirationDate = dateFormat(
+            new Date(addYears(now, 1).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          )
           const consumableName = 'Xpert HIV-1 Qual Cartridge'
           const consumableReason = 'Captured'
           const initialQuantity = 100
@@ -4868,7 +4875,7 @@ describe('Device API routes for GxAlert Device', () => {
             {
               consumableName,
               quantityOnHand: _.max([0, initialQuantity + quantity]),
-              expiresOn: expirationDate.toJSON(),
+              expiresOn: new Date(expirationDate).toJSON(),
             },
           ])
         }))
@@ -4882,7 +4889,10 @@ describe('Device API routes for GxAlert Device', () => {
 
           const startedOn = subHours(subDays(now, 1), 2)
           const endedOn = subHours(now, 2)
-          const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          const expirationDate = dateFormat(
+            new Date(addYears(now, 1).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          )
 
           await postToDeviceApi({
             authHeader: deviceAuth,
@@ -4934,8 +4944,9 @@ describe('Device API routes for GxAlert Device', () => {
               quantity: 13,
               resultingQuantityOnHand: 86,
               dateChanged: addHours(startedOn, 1),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -4944,8 +4955,9 @@ describe('Device API routes for GxAlert Device', () => {
               quantity: 3,
               resultingQuantityOnHand: 21,
               dateChanged: addHours(startedOn, 2),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -4954,8 +4966,9 @@ describe('Device API routes for GxAlert Device', () => {
               quantity: 44,
               resultingQuantityOnHand: 50,
               dateChanged: addHours(startedOn, 3),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -4964,8 +4977,9 @@ describe('Device API routes for GxAlert Device', () => {
               quantity: 1,
               resultingQuantityOnHand: 13,
               dateChanged: addHours(startedOn, 4),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -4974,8 +4988,9 @@ describe('Device API routes for GxAlert Device', () => {
               quantity: 26,
               resultingQuantityOnHand: 41,
               dateChanged: addHours(startedOn, 5),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
           ]
@@ -5009,7 +5024,7 @@ describe('Device API routes for GxAlert Device', () => {
               consumableName: inventoryChange.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
+              expiresOn: new Date(inventoryChange.expirationDate),
               quantityOnHand: inventoryChange.resultingQuantityOnHand,
             }))
           )
@@ -5043,7 +5058,7 @@ describe('Device API routes for GxAlert Device', () => {
               resultId: null,
               operation: 'add from GxConnect',
               lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
+              expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
               notes: null,
               adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
@@ -5285,8 +5300,9 @@ describe('Device API routes for GxAlert Device', () => {
             quantity: 13,
             resultingQuantityOnHand: 73,
             dateChanged: subHours(startedOn, 1),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -5295,8 +5311,9 @@ describe('Device API routes for GxAlert Device', () => {
             quantity: -3,
             resultingQuantityOnHand: 18,
             dateChanged: subHours(startedOn, 2),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -5305,8 +5322,9 @@ describe('Device API routes for GxAlert Device', () => {
             quantity: -4,
             resultingQuantityOnHand: 46,
             dateChanged: subHours(startedOn, 3),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -5315,8 +5333,9 @@ describe('Device API routes for GxAlert Device', () => {
             quantity: 11,
             resultingQuantityOnHand: 24,
             dateChanged: subHours(startedOn, 4),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -5325,8 +5344,9 @@ describe('Device API routes for GxAlert Device', () => {
             quantity: -6,
             resultingQuantityOnHand: 30,
             dateChanged: subHours(startedOn, 5),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -5335,8 +5355,9 @@ describe('Device API routes for GxAlert Device', () => {
             quantity: -6,
             resultingQuantityOnHand: 50,
             dateChanged: subHours(startedOn, 6),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
         ]
@@ -5370,7 +5391,7 @@ describe('Device API routes for GxAlert Device', () => {
             consumableName: inventoryChange.consumableName,
             inTransitFromSiteId: null,
             lotNumber: null,
-            expiresOn: inventoryChange.expirationDate,
+            expiresOn: new Date(inventoryChange.expirationDate),
             quantityOnHand: inventoryChange.resultingQuantityOnHand,
           }))
         )
@@ -5404,7 +5425,7 @@ describe('Device API routes for GxAlert Device', () => {
                 ? 'add from GxConnect'
                 : 'remove from GxConnect',
             lotNumber: null,
-            expiresOn: inventoryChange.expirationDate,
+            expiresOn: new Date(inventoryChange.expirationDate),
             quantity: Math.abs(inventoryChange.quantity),
             notes: null,
             adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
@@ -5429,8 +5450,9 @@ describe('Device API routes for GxAlert Device', () => {
           quantity: 73,
           resultingQuantityOnHand: 73,
           dateChanged: subHours(startedOn, 2),
-          expirationDate: new Date(
-            subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           ),
         }
         const lot2 = {
@@ -5439,8 +5461,9 @@ describe('Device API routes for GxAlert Device', () => {
           quantity: 38,
           resultingQuantityOnHand: 38,
           dateChanged: subHours(startedOn, 2),
-          expirationDate: new Date(
-            subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           ),
         }
 
@@ -5473,7 +5496,7 @@ describe('Device API routes for GxAlert Device', () => {
             consumableName: inventoryChange.consumableName,
             inTransitFromSiteId: null,
             lotNumber: null,
-            expiresOn: inventoryChange.expirationDate,
+            expiresOn: new Date(inventoryChange.expirationDate),
             quantityOnHand: inventoryChange.resultingQuantityOnHand,
           }))
         )
@@ -5508,7 +5531,7 @@ describe('Device API routes for GxAlert Device', () => {
                 ? 'add from GxConnect'
                 : 'remove from GxConnect',
             lotNumber: null,
-            expiresOn: inventoryChange.expirationDate,
+            expiresOn: new Date(inventoryChange.expirationDate),
             quantity: Math.abs(inventoryChange.quantity),
             notes: null,
             adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
@@ -5536,10 +5559,10 @@ describe('Device API routes for GxAlert Device', () => {
         })
 
         const lot1InventoryItem = _.find(inventoryItemsAtSiteAfter, {
-          expiresOn: lot1.expirationDate,
+          expiresOn: new Date(lot1.expirationDate),
         })
         const lot2InventoryItem = _.find(inventoryItemsAtSiteAfter, {
-          expiresOn: lot2.expirationDate,
+          expiresOn: new Date(lot2.expirationDate),
         })
         const lot1InventoryItemAfterAdjustment1 = await knex(
           'InventoryItem as ii'
@@ -5569,7 +5592,7 @@ describe('Device API routes for GxAlert Device', () => {
           consumableName: lot1.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot1.expirationDate,
+          expiresOn: new Date(lot1.expirationDate),
           quantityOnHand: _.max([
             0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
@@ -5579,7 +5602,7 @@ describe('Device API routes for GxAlert Device', () => {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot2.expirationDate,
+          expiresOn: new Date(lot2.expirationDate),
           quantityOnHand: lot2.resultingQuantityOnHand,
         })
 
@@ -5630,7 +5653,7 @@ describe('Device API routes for GxAlert Device', () => {
           consumableName: lot1.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot1.expirationDate,
+          expiresOn: new Date(lot1.expirationDate),
           quantityOnHand: _.max([
             0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
@@ -5640,7 +5663,7 @@ describe('Device API routes for GxAlert Device', () => {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot2.expirationDate,
+          expiresOn: new Date(lot2.expirationDate),
           quantityOnHand: _.max([
             0,
             lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
@@ -5675,7 +5698,7 @@ describe('Device API routes for GxAlert Device', () => {
             resultId: null,
             operation: 'add from GxConnect',
             lotNumber: null,
-            expiresOn: lot1.expirationDate,
+            expiresOn: new Date(lot1.expirationDate),
             quantity: Math.abs(lot1.resultingQuantityOnHand),
             notes: null,
             adjustedFrom: setMilliseconds(lot1.dateChanged, 0),
@@ -5688,7 +5711,7 @@ describe('Device API routes for GxAlert Device', () => {
             resultId: null,
             operation: 'add from GxConnect',
             lotNumber: null,
-            expiresOn: lot2.expirationDate,
+            expiresOn: new Date(lot2.expirationDate),
             quantity: Math.abs(lot2.resultingQuantityOnHand),
             notes: null,
             adjustedFrom: setMilliseconds(lot2.dateChanged, 0),
@@ -5701,7 +5724,7 @@ describe('Device API routes for GxAlert Device', () => {
             resultId: null,
             operation: 'remove from GxConnect',
             lotNumber: null,
-            expiresOn: lot1.expirationDate,
+            expiresOn: new Date(lot1.expirationDate),
             quantity: Math.abs(updateToLot1.quantity),
             notes: null,
             adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
@@ -5714,7 +5737,7 @@ describe('Device API routes for GxAlert Device', () => {
             resultId: null,
             operation: 'add from GxConnect',
             lotNumber: null,
-            expiresOn: lot2.expirationDate,
+            expiresOn: new Date(lot2.expirationDate),
             quantity: Math.abs(updateToLot2.quantity),
             notes: null,
             adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
@@ -5733,8 +5756,9 @@ describe('Device API routes for GxAlert Device', () => {
 
           const startedOn = subDays(now, 7)
           const endedOn = addHours(startedOn, 2)
-          const expirationDate = new Date(
-            subDays(addYears(now, 1), 16).setHours(0, 0, 0, 0)
+          const expirationDate = dateFormat(
+            new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           )
 
           const initialLotCaptured = {
@@ -5777,7 +5801,7 @@ describe('Device API routes for GxAlert Device', () => {
               consumableName: initialLotCaptured.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: initialLotCaptured.expirationDate,
+              expiresOn: new Date(initialLotCaptured.expirationDate),
               quantityOnHand: initialLotCaptured.resultingQuantityOnHand,
             },
           ])
@@ -5822,7 +5846,7 @@ describe('Device API routes for GxAlert Device', () => {
               consumableName: inventoryLost.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: inventoryLost.expirationDate,
+              expiresOn: new Date(inventoryLost.expirationDate),
               quantityOnHand: inventoryLost.resultingQuantityOnHand,
             },
           ])
@@ -5839,8 +5863,9 @@ describe('Device API routes for GxAlert Device', () => {
 
           const startedOn = subDays(now, 9)
           const endedOn = addHours(startedOn, 2)
-          const expirationDate = new Date(
-            subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)
+          const expirationDate = dateFormat(
+            new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           )
 
           const initialLotCaptured = {
@@ -5882,7 +5907,7 @@ describe('Device API routes for GxAlert Device', () => {
               consumableName: initialLotCaptured.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: initialLotCaptured.expirationDate,
+              expiresOn: new Date(initialLotCaptured.expirationDate),
               quantityOnHand: initialLotCaptured.quantity,
             },
           ])
@@ -5926,7 +5951,7 @@ describe('Device API routes for GxAlert Device', () => {
               consumableName: inventoryLost.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: inventoryLost.expirationDate,
+              expiresOn: new Date(inventoryLost.expirationDate),
               quantityOnHand: _.max([
                 0,
                 initialLotCaptured.quantity + inventoryLost.quantity,

@@ -8,7 +8,6 @@ const {
   startOfMonth,
   setMilliseconds,
 } = require('date-fns')
-
 const shared = require('../utils/sharedToken')
 const {
   createMessageContext,
@@ -23,7 +22,10 @@ const {
   allDeviceMaintenanceStatusToId,
   allDeviceApprovalToId,
 } = require('../../src/shared/dictionary')
-const { formatDateOrDefault } = require('../../src/shared/date')
+const {
+  formatDateOrDefault,
+  getLocalDateInUtc,
+} = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
@@ -834,7 +836,10 @@ describe('Device routes', () => {
               queryBuilder => {
                 queryBuilder
                   .on('d.id', 'today_dmsl.deviceId')
-                  .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
+                  .andOn(
+                    'today_dmsl.day',
+                    knex.raw('?', [getLocalDateInUtc(startOfToday())])
+                  )
               }
             )
             .leftJoin(

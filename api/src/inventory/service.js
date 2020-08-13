@@ -1,7 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { startOfDay } = require('date-fns')
 const { getDateOrDefault, parseDateOrDefault } = require('../shared/date')
 const {
   knex,
@@ -223,9 +222,7 @@ async function findOrCreateMatchingInventoryItems(
     consumableId,
     siteId,
     lotNumber: lotNumberInResultData,
-    expiresOn: expirationDateInResultData
-      ? startOfDay(expirationDateInResultData)
-      : undefined,
+    expiresOn: expirationDateInResultData || undefined,
     quantity: 0,
     now,
   })
@@ -248,7 +245,7 @@ function findInventoryItemMatchingConsumableInResultData(
 
   // Normalize input data for comparisons below
   const consumableExpiresOn =
-    consumable == null ? null : startOfDay(consumable.expirationDate)
+    consumable == null ? null : consumable.expirationDate
   const consumableLot = consumable == null ? null : consumable.lot
 
   let hasItemExpiresOn = false
@@ -344,7 +341,7 @@ function findInventoryItemMatchingConsumableInResultData(
   // Find Least recent inventory item that expires after test started
   // -or- most recently created item with null expires on
   if (hasItemExpiresOn) {
-    const itemCutoffDate = startOfDay(testedOn || now)
+    const itemCutoffDate = testedOn || now
     for (const item of items) {
       if (item.expiresOn == null) {
         // most recently created item with null expires on
@@ -1312,7 +1309,7 @@ async function logInventoryChange({
     consumableReasonId,
     resultId,
     lotNumber,
-    expiresOn: expiresOn ? startOfDay(expiresOn) : null,
+    expiresOn: expiresOn || null,
     quantity,
     operation,
     notes,
@@ -1373,7 +1370,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   const updateValues = {}
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     updateValues.expiresOn = inventoryItemValues.expiresOn
-      ? startOfDay(inventoryItemValues.expiresOn)
+      ? inventoryItemValues.expiresOn
       : null
   }
   if (typeof inventoryItemValues.lotNumber !== 'undefined') {
@@ -1410,7 +1407,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   }
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     insertValues.expiresOn = inventoryItemValues.expiresOn
-      ? startOfDay(inventoryItemValues.expiresOn)
+      ? inventoryItemValues.expiresOn
       : null
   }
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {

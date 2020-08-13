@@ -90,7 +90,7 @@ L|1`
     })
   })
 
-  const utcNow = new Date('2019-09-15T08:09:10.123Z')
+  const now = new Date()
   const deviceIpAddress = '10.11.12.13'
   const staticDatabaseData = {
     Assay: {
@@ -250,7 +250,6 @@ L|1`
       },
       '../../shared/date': {
         parseDateOrDefault,
-        getUtcTime: () => utcNow,
         dateEqual,
       },
       '../../shared/dictionary': {
@@ -439,12 +438,22 @@ L|1`
           softwareVersion: '1',
         },
         lastPingFromIp: deviceIpAddress,
-        lastPingOn: utcNow,
-        lastSeenOn: utcNow,
         serial: '275021695',
         siteId: 5,
-        updatedOn: utcNow,
       })
+
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
 
       const insertSampleCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'Sample'
@@ -833,12 +842,22 @@ L|1`
           softwareVersion: '1',
         },
         lastPingFromIp: deviceIpAddress,
-        lastPingOn: utcNow,
-        lastSeenOn: utcNow,
         serial: '275021695',
         siteId: 5,
-        updatedOn: utcNow,
       })
+
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
 
       const insertSampleCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'Sample'
@@ -1218,12 +1237,22 @@ L|1`
           softwareVersion: '1',
         },
         lastPingFromIp: deviceIpAddress,
-        lastPingOn: utcNow,
-        lastSeenOn: utcNow,
         serial: '275020369',
         siteId: 5,
-        updatedOn: utcNow,
       })
+
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
 
       const insertSampleCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'Sample'
@@ -1602,12 +1631,22 @@ L|1`
           softwareVersion: '1',
         },
         lastPingFromIp: deviceIpAddress,
-        lastPingOn: utcNow,
-        lastSeenOn: utcNow,
         serial: '275020383',
         siteId: 5,
-        updatedOn: utcNow,
       })
+
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+        now.getTime(),
+        10000
+      )
 
       const insertSampleCalls = insertCalls.filter(
         insertCall => insertCall.args[0] === 'Sample'
@@ -2068,12 +2107,22 @@ ${controlResults}`,
             softwareVersion: '1',
           },
           lastPingFromIp: deviceIpAddress,
-          lastPingOn: utcNow,
-          lastSeenOn: utcNow,
           serial: '275020383',
           siteId: 5,
-          updatedOn: utcNow,
         })
+
+        expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
+          now.getTime(),
+          10000
+        )
+        expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+          now.getTime(),
+          10000
+        )
+        expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+          now.getTime(),
+          10000
+        )
 
         const insertSampleCalls = insertCalls.filter(
           insertCall => insertCall.args[0] === 'Sample'
