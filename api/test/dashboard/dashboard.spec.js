@@ -26,7 +26,7 @@ const {
 
 const server = supertest.agent('http://localhost:8080')
 
-const { assert } = chai
+const { assert, expect } = chai
 
 function getAllWidgets() {
   const widgets = [
@@ -504,48 +504,48 @@ describe('Dashboard routes', () => {
           // counts for previous month
           const prev = getExpected(dataToSeed[1].totalResults)
 
-          assert.equal(item.cntAll, curr.cntAll)
-          assert.equal(item.cntPositive, curr.cntPositive)
-          assert.equal(item.cntAllReported, curr.cntAllReported)
-          assert.equal(item.cntReportedViaEmail, curr.cntReportedViaEmail)
-          assert.equal(item.cntReportedViaSms, curr.cntReportedViaSms)
-          assert.equal(item.cntWithin2Hours, curr.cntWithin2Hours)
-
-          assert.equal(item.percentPositive, curr.percentPositive)
-          assert.equal(item.percentReported, curr.percentReported)
-          assert.equal(item.percentViaEmail, curr.percentViaEmail)
-          assert.equal(item.percentViaSms, curr.percentViaSms)
-          assert.equal(item.percentWithin2Hours, curr.percentWithin2Hours)
-
           // changes since previous month
-          const percentPositiveChange = getChange(
+          curr.percentPositiveChange = getChange(
             curr.percentPositive,
             prev.percentPositive
           )
-          const percentReportedChange = getChange(
+          curr.percentReportedChange = getChange(
             curr.percentReported,
             prev.percentReported
           )
-          const percentViaEmailChange = getChange(
+          curr.percentViaEmailChange = getChange(
             curr.percentViaEmail,
             prev.percentViaEmail
           )
-          const percentViaSmsChange = getChange(
+          curr.percentViaSmsChange = getChange(
             curr.percentViaSms,
             prev.percentViaSms
           )
-          const percentWithin2HoursChange = getChange(
+          curr.percentWithin2HoursChange = getChange(
             curr.percentWithin2Hours,
             prev.percentWithin2Hours
           )
-          assert.equal(item.percentPositiveChange, percentPositiveChange)
-          assert.equal(item.percentReportedChange, percentReportedChange)
-          assert.equal(item.percentViaEmailChange, percentViaEmailChange)
-          assert.equal(item.percentViaSmsChange, percentViaSmsChange)
-          assert.equal(
-            item.percentWithin2HoursChange,
-            percentWithin2HoursChange
-          )
+
+          expect(item).to.containSubset({
+            cntAll: curr.cntAll,
+            cntPositive: curr.cntPositive,
+            cntAllReported: curr.cntAllReported,
+            cntReportedViaEmail: curr.cntReportedViaEmail,
+            cntReportedViaSms: curr.cntReportedViaSms,
+            cntWithin2Hours: curr.cntWithin2Hours,
+
+            percentPositive: curr.percentPositive,
+            percentReported: curr.percentReported,
+            percentViaEmail: curr.percentViaEmail,
+            percentViaSms: curr.percentViaSms,
+            percentWithin2Hours: curr.percentWithin2Hours,
+
+            percentPositiveChange: curr.percentPositiveChange,
+            percentReportedChange: curr.percentReportedChange,
+            percentViaEmailChange: curr.percentViaEmailChange,
+            percentViaSmsChange: curr.percentViaSmsChange,
+            percentWithin2HoursChange: curr.percentWithin2HoursChange,
+          })
 
           done()
         })
