@@ -1,26 +1,24 @@
 import PieRowGraph from '../../PieRowGraph'
+import { negateTimeZoneOffset } from '../../Helpers/Formatters/datetime'
+
+const currentMonth = negateTimeZoneOffset(new Date())
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
     id: 'resultsTransmitted',
     title: 'deviceStatusTitle',
     componentSize: 'full',
-    group: 'assaysNotNeeded', // todo: add filtered assays
+    group: 'assaysNotNeeded',
     assays: [
-      // 'abbottM2000DBSHivVL',
-      // 'abbottM2000PlasmaHivVL',
-      // 'assayAlereQHiv12Detect',
-      // 'assayAlereQHiv12VLPlasma',
-      // 'assayCobasHivVl',
       // 'GxHiv1Vl',
       // 'GxMtbRif',
       // 'QHivVL',
-      // 'ReporterHivVL',
+      // todo: add filtered assays
     ],
     selectorModifiers: [],
     graphType: [
       {
-        id: 'deviceStatusMonthly',
+        id: 'resultsTransmittedDials',
         component: PieRowGraph,
         type: 'pieRow',
         size: 12,
@@ -28,18 +26,14 @@ const resultsTransmittedGraphs = {
         api: {
           method: 'GET',
           endpoint: 'dashboard/results-transmitted',
-          params: {}, // todo: add current month
+          params: {
+            currentMonth,
+          },
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
         displayMethod: 'percentage',
         formatDate: 'LLLL do',
-        averages: {
-          showTotal: false,
-          title: 'clinicalIndicatorsPieLegend',
-          key: [],
-          subTitle: 'clinicalIndicatorsPieSubLegend',
-        },
       },
     ],
   },
