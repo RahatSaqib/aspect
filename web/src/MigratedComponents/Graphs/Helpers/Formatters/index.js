@@ -27,6 +27,7 @@ import {
 import {
   groupByKey,
   groupForPie,
+  groupForPieRow,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
@@ -207,6 +208,8 @@ const generateToolTip = (
     const displayCount = Math.round(devicesTotal * valuePercentage)
     const displayTitle = `device${displayCount === 1 ? '' : 's'}`
     displayValue = `${displayCount} ${displayTitle}`
+  } else if (type === 'solid') {
+    displayValue = value
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   }
@@ -300,11 +303,14 @@ const formatDataByGraphType = (
       grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
       break
 
+    case 'pieRow':
+      grouped = groupForPieRow(data)
+      break
+
     default:
       grouped = false
       break
   }
-
   return grouped
 }
 
