@@ -135,7 +135,7 @@ const groupForPieRow = data => {
           {
             id: key,
             label: key,
-            value: value.replace('GeneXpert', ''),
+            value: value.replace(/(^|\s)GeneXpert(\s|$)/gm, ''),
           },
         ]
 

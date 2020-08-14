@@ -367,6 +367,7 @@ export {
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPie,
+  groupForPieRow,
   groupForPieOldTreatmentAPI,
   normaliseKeys,
   percentageOrActualForPie,
