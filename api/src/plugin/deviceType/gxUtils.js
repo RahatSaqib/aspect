@@ -241,9 +241,9 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
               reasonId: matchingConsumableReason.id,
               dateAdjustedFrom: inventoryChange.dateChanged
                 ? setMilliseconds(
-                  parseDateOrDefault(inventoryChange.dateChanged),
-                  0
-                )
+                    parseDateOrDefault(inventoryChange.dateChanged),
+                    0
+                  )
                 : null,
               now,
             }
@@ -931,13 +931,11 @@ function getResultCategoriesHivVL(result1Text) {
   const copies = getVLCopies(result1Text)
   // Add HIV VL Categories
   if (copies) {
-    if ((copies === 40 && result1Text.includes('< 40')) || (copies < 40)) return 'LessThan40'
-    if (copies < 1000 && copies >= 40)
-      return 'LessThan1000'
+    if ((copies === 40 && result1Text.includes('< 40')) || copies < 40)
+      return 'LessThan40'
+    if (copies < 1000 && copies >= 40) return 'LessThan1000'
     if (copies >= 1000) return 'MoreThan1000'
-
   }
-
 }
 
 function macAddressValid(macAddress) {
