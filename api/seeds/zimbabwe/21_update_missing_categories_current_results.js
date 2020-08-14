@@ -4,71 +4,9 @@ const {
   allResultCategoryToId,
   assayToId,
 } = require('../../src/shared/dictionary')
-
+const { upsertAssayResultCategories } = require('../common')
 async function seed(knex) {
-  // result categories
-  const {
-    LessThan1000: resultCategoryLessThan1000,
-    MoreThan1000: resultCategoryMoreThan1000,
-  } = await allResultCategoryToId()
-  const assayId = await assayToId('GxHiv1Vl')
+  //It fixes the GxHivVL assay configuration over the actual data and also insert missing categories for it.
+  fixActualHivVlData(knex)
 
-  await knex('Result')
-    .update(
-      'resultCategory1',
-      knex.raw(
-        `IF(
-          CAST(
-            LTRIM(
-              RTRIM(
-                REPLACE(
-                  REPLACE(
-                    SUBSTR(
-                      SUBSTR(resultData ->> '$.resultText',
-                        LENGTH('HIV-1 DETECTED ')
-                      ),1,INSTR(
-                            SUBSTR(resultData ->> '$.resultText',
-                                  LENGTH('HIV-1 DETECTED ')
-                          ),'copies/mL')-1
-                    ),
-                  '<',''),
-                '>','')
-              )
-            )
-          AS DECIMAL)
-        <1000,${resultCategoryLessThan1000},${resultCategoryMoreThan1000}
-        )`
-      )
-    )
-    .update(
-      'resultData',
-      knex.raw(
-        `JSON_INSERT(resultData,'$.copies',
-          CAST(
-            LTRIM(
-              RTRIM(
-                REPLACE(
-                  REPLACE(
-                    SUBSTR(
-                      SUBSTR(resultData ->> '$.resultText',
-                        LENGTH('HIV-1 DETECTED ')
-                      ),1,INSTR(
-                            SUBSTR(resultData ->> '$.resultText',
-                                  LENGTH('HIV-1 DETECTED ')
-                          ),'copies/mL')-1
-                    ),
-                  '<',''),
-                '>','')
-              )
-            )
-          AS DECIMAL)
-        )`
-      )
-    )
-    .where({ assayId })
-    .andWhere(
-      knex.raw("resultData ->>'$.resultText'"),
-      'LIKE',
-      'HIV-1 DETECTED %copies%'
-    )
 }

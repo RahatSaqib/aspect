@@ -808,7 +808,7 @@ describe('Device API routes for GxConnect Devices', () => {
       runTest(async () => {
         const { deviceAuth, basicDevicePayload, now } = context
         const payloads = [
-          { payload: detectedLess1000[0], result: 'LessThan1000' },
+          { payload: detectedLess1000[0], result: 'LessThan40' },
           { payload: detectedLess1000[1], result: 'LessThan1000' },
           { payload: detectedMoreThan1000, result: 'MoreThan1000' },
           { payload: noDetected, result: 'NotDetected' },
@@ -840,7 +840,7 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.equal(afterResultDetails.resultCategory1, elem.result)
           assert.equal(afterResultDetails.resultCategory2, null)
           if (
-            ['MoreThan1000', 'LessThan1000'].includes(
+            ['MoreThan1000', 'LessThan1000', 'LessThan40'].includes(
               afterResultDetails.resultCategory1
             )
           ) {
@@ -1617,7 +1617,7 @@ describe('Device API routes for GxConnect Devices', () => {
               _.max([
                 0,
                 inventoryItemBeforeFirstRequest.quantityOnHand -
-                  consumableAssay.quantity,
+                consumableAssay.quantity,
               ])
             )
 

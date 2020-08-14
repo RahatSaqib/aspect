@@ -453,13 +453,13 @@ async function ensureCountryLevelInformationSystemExists(
     const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
       'Information System'
     )
-    ;[deviceTypeId] = await knex('DeviceType').insert({
-      externalId,
-      name,
-      manufacturer,
-      plugin,
-      deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
-    })
+      ;[deviceTypeId] = await knex('DeviceType').insert({
+        externalId,
+        name,
+        manufacturer,
+        plugin,
+        deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
+      })
   }
   const { countryGeographyId } = await knex('Geography')
     .where({ countryId })
@@ -571,7 +571,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GX HCV',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaHcv,
-      ['Detected', 'Invalid', 'NoResult', 'Error'],
+      ['Detected', 'Invalid', 'NoResult', 'Error', 'MoreThan1000', 'LessThan40', 'LessThan1000'],
       'HCV',
       'resultCategoryHcv',
       null,
@@ -1171,7 +1171,7 @@ async function baseGxAlertMigration(
               cf =>
                 (geneXpertAssayExternalId === 'GxUnknown' ||
                   cf.testType ===
-                    gxAlertAssayDataMappings[geneXpertAssayExternalId] ||
+                  gxAlertAssayDataMappings[geneXpertAssayExternalId] ||
                   cf.testType === null) &&
                 !patientDbColumns.includes(cf.dbColumn)
             )
@@ -1205,7 +1205,7 @@ async function baseGxAlertMigration(
           const resultDataSchemaProperty = _.camelCase(cf.dbColumn || cf.title)
           const existingCustomFieldProperty =
             resultDataSchema.gxAlertCustomFields.properties[
-              resultDataSchemaProperty
+            resultDataSchemaProperty
             ] || {}
           resultDataSchema.gxAlertCustomFields.properties[
             resultDataSchemaProperty
@@ -1237,21 +1237,21 @@ async function baseGxAlertMigration(
   await Promise.each(sitesFromGxAlert, async site => {
     const state = site.stateName
       ? statesByName[site.stateName.toLowerCase()] || {
-          id: null,
-          lgas: {},
-        }
+        id: null,
+        lgas: {},
+      }
       : {
-          id: null,
-          lgas: {},
-        }
+        id: null,
+        lgas: {},
+      }
     const district =
       state.lgas && site.lgaName
         ? state.lgas[site.lgaName.toLowerCase()] || {
-            id: null,
-          }
+          id: null,
+        }
         : {
-            id: null,
-          }
+          id: null,
+        }
     const { id: siteGeographyId } = await knex('Geography')
       .where({
         countryId: country.id,
@@ -1344,7 +1344,7 @@ async function baseGxAlertMigration(
               existingDevice.hostId !== device.hostId ||
               existingDevice.timezone !== siteData.timezoneId ||
               existingDevice.configurationData !==
-                JSON.stringify(deviceConfigurationData)
+              JSON.stringify(deviceConfigurationData)
             ) {
               await knex('Device')
                 .where('id', existingDevice.id)
@@ -1433,42 +1433,42 @@ async function baseGxAlertMigration(
           legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
           lockedOut: 0,
         }
-        ;[userId] = await knex('User').insert({
-          name: person.username,
-          approved: 1,
-          createdOn: now,
-          ...baseUserData,
-        })
+          ;[userId] = await knex('User').insert({
+            name: person.username,
+            approved: 1,
+            createdOn: now,
+            ...baseUserData,
+          })
       }
     }
     const state =
       !_.isEmpty(person.geographies) && person.geographies[0].stateName
         ? statesByName[person.geographies[0].stateName.toLowerCase()] || {
-            id: null,
-            lgas: {},
-          }
+          id: null,
+          lgas: {},
+        }
         : {
-            id: null,
-            lgas: {},
-          }
+          id: null,
+          lgas: {},
+        }
     const lga =
       state.lgas &&
-      !_.isEmpty(person.geographies) &&
-      person.geographies[0].lgaName
+        !_.isEmpty(person.geographies) &&
+        person.geographies[0].lgaName
         ? state.lgas[person.geographies[0].lgaName.toLowerCase()] || {
-            id: null,
-          }
+          id: null,
+        }
         : {
-            id: null,
-          }
+          id: null,
+        }
     const { id: geographyId } = !_.isEmpty(person.geographies)
       ? await knex('Geography')
-          .where({
-            countryId,
-            stateId: state.id,
-            lgaId: lga.id,
-          })
-          .first()
+        .where({
+          countryId,
+          stateId: state.id,
+          lgaId: lga.id,
+        })
+        .first()
       : { id: countryGeography.id }
     let personId = null
     const existingPerson = await knex('Person')
@@ -1555,21 +1555,21 @@ async function baseGxAlertMigration(
             await Promise.each(person.geographies, async geography => {
               const jobState = geography.stateName
                 ? statesByName[geography.stateName.toLowerCase()] || {
-                    id: null,
-                    lgas: {},
-                  }
+                  id: null,
+                  lgas: {},
+                }
                 : {
-                    id: null,
-                    lgas: {},
-                  }
+                  id: null,
+                  lgas: {},
+                }
               const jobLga =
                 jobState.lgas && geography.lgaName
                   ? jobState.lgas[geography.lgaName.toLowerCase()] || {
-                      id: null,
-                    }
+                    id: null,
+                  }
                   : {
-                      id: null,
-                    }
+                    id: null,
+                  }
               const { id: jobGeographyId } = await knex('Geography')
                 .where({
                   countryId,
@@ -1627,21 +1627,21 @@ async function seedLabClinicFixture(
     _.map(labClinics.clinics || [], async clinic => {
       const state = clinic.stateName
         ? statesByName[clinic.stateName.toLowerCase()] || {
-            id: null,
-            lgas: {},
-          }
+          id: null,
+          lgas: {},
+        }
         : {
-            id: null,
-            lgas: {},
-          }
+          id: null,
+          lgas: {},
+        }
       const district =
         state.lgas && clinic.lgaName
           ? state.lgas[clinic.lgaName.toLowerCase()] || {
-              id: null,
-            }
+            id: null,
+          }
           : {
-              id: null,
-            }
+            id: null,
+          }
       const { id: clinicGeographyId } = await knex('Geography')
         .where({
           countryId,
@@ -1681,21 +1681,21 @@ async function seedLabClinicFixture(
     _.map(labClinics.labs || [], async lab => {
       const state = lab.stateName
         ? statesByName[lab.stateName.toLowerCase()] || {
-            id: null,
-            lgas: {},
-          }
+          id: null,
+          lgas: {},
+        }
         : {
-            id: null,
-            lgas: {},
-          }
+          id: null,
+          lgas: {},
+        }
       const district =
         state.lgas && lab.lgaName
           ? state.lgas[lab.lgaName.toLowerCase()] || {
-              id: null,
-            }
+            id: null,
+          }
           : {
-              id: null,
-            }
+            id: null,
+          }
       const { id: labGeographyId } = await knex('Geography')
         .where({
           countryId,
