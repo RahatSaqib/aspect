@@ -19,7 +19,7 @@ const {
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
 
-describe.only('Device API Raw routes for Abbott M2000', () => {
+describe('Device API Raw routes for Abbott M2000', () => {
   let latestResultIdBeforeTests
   let latestCaseIdBeforeTests
   let latestPatientIdBeforeTests
@@ -393,7 +393,7 @@ aa.`
     })
   })
 
-  it.only('should parse the ASTM RAW messages from an HIV Plasma VL plate, using HIV 0.2ml reagent protocol, and save the results in the database', async () => {
+  it('should parse the ASTM RAW messages from an HIV Plasma VL plate, using HIV 0.2ml reagent protocol, and save the results in the database', async () => {
     const payload = await readTextFile(
       path.join(__dirname, 'abbottM2000PlasmaHivVlRaw.pkl'),
       'utf8'

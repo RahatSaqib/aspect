@@ -21,7 +21,10 @@ const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
-const { getLocalDateTimeStringInUtc } = require('../../../src/shared/date')
+const {
+  getLocalDateTimeStringInUtc,
+  getLocalDateInUtc,
+} = require('../../../src/shared/date')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -1553,7 +1556,7 @@ describe('Device API routes for GxConnect Devices', () => {
               .where({
                 consumableId: consumableAssay.consumableId,
                 siteId: site.id,
-                expiresOn: expiryDate,
+                expiresOn: getLocalDateInUtc(expiryDate),
               })
               .first()
 
@@ -1616,9 +1619,10 @@ describe('Device API routes for GxConnect Devices', () => {
               .where({
                 consumableId: consumableAssay.consumableId,
                 siteId: site.id,
-                expiresOn: expiryDate,
+                expiresOn: getLocalDateInUtc(expiryDate),
               })
               .first()
+
             assert.equal(
               inventoryItemAfterFirstRequest.quantityOnHand,
               _.max([
@@ -1692,7 +1696,7 @@ describe('Device API routes for GxConnect Devices', () => {
               .where({
                 consumableId: consumableAssay.consumableId,
                 siteId: site.id,
-                expiresOn: expiryDate,
+                expiresOn: getLocalDateInUtc(expiryDate),
               })
               .first()
 
@@ -2037,7 +2041,11 @@ describe('Device API routes for GxConnect Devices', () => {
               const { deviceAuth, now } = context
               const instrumentSerial = '803165'
               const cartridgeSerial = '725194650'
-              const startedOn = setMilliseconds(now, 0)
+              const startedOnDate = setMilliseconds(now, 0)
+              const startedOn = dateFormat(
+                startedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
 
               const incompleteResultPayload = _.merge(
                 {},
@@ -2073,14 +2081,18 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(incompleteResult).to.containSubset({
                 resultCategory1: 'NoResult',
                 resultCategory2: 'NoResult',
-                startedOn,
+                startedOn: startedOnDate,
                 endedOn: null,
                 resultData: {
                   resultText: 'NO RESULT',
                 },
               })
 
-              const endedOn = addMinutes(startedOn, 103)
+              const endedOnDate = addMinutes(startedOnDate, 103)
+              const endedOn = dateFormat(
+                endedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
               const completeResultPayload = _.merge(
                 {},
                 incompleteResultPayload,
@@ -2105,8 +2117,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(completeResult).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'Indeterminate',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText: 'DETECTED MEDIUM|INDETERMINATE|',
                 },
@@ -2127,8 +2139,16 @@ describe('Device API routes for GxConnect Devices', () => {
               const { deviceAuth, now } = context
               const instrumentSerial = '803165'
               const cartridgeSerial = '725194660'
-              const startedOn = setMilliseconds(now, 0)
-              const endedOn = addMinutes(startedOn, 103)
+              const startedOnDate = setMilliseconds(now, 0)
+              const startedOn = dateFormat(
+                startedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
+              const endedOnDate = addMinutes(startedOnDate, 103)
+              const endedOn = dateFormat(
+                endedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
               const completeResultPayload = _.merge(
                 {},
                 basicDevicePayload,
@@ -2164,8 +2184,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result1).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -2191,8 +2211,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result2).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -2218,8 +2238,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result3).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -2245,8 +2265,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result4).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NoResult',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText: 'MTB DETECTED MEDIUM|NO RESULT',
                 },
@@ -2477,8 +2497,9 @@ describe('Device API routes for GxConnect Devices', () => {
               quantity: 13,
               resultingQuantityOnHand: 86,
               dateChanged: addHours(startedOn, 1),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -2487,8 +2508,9 @@ describe('Device API routes for GxConnect Devices', () => {
               quantity: 3,
               resultingQuantityOnHand: 21,
               dateChanged: addHours(startedOn, 2),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -2497,8 +2519,9 @@ describe('Device API routes for GxConnect Devices', () => {
               quantity: 44,
               resultingQuantityOnHand: 50,
               dateChanged: addHours(startedOn, 3),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -2507,8 +2530,9 @@ describe('Device API routes for GxConnect Devices', () => {
               quantity: 1,
               resultingQuantityOnHand: 13,
               dateChanged: addHours(startedOn, 4),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
             {
@@ -2517,8 +2541,9 @@ describe('Device API routes for GxConnect Devices', () => {
               quantity: 26,
               resultingQuantityOnHand: 41,
               dateChanged: addHours(startedOn, 5),
-              expirationDate: new Date(
-                subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+              expirationDate: dateFormat(
+                new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
               ),
             },
           ]
@@ -2565,7 +2590,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 consumableName: inventoryChange.consumableName,
                 inTransitFromSiteId: null,
                 lotNumber: null,
-                expiresOn: inventoryChange.expirationDate,
+                expiresOn: new Date(inventoryChange.expirationDate),
                 quantityOnHand: inventoryChange.resultingQuantityOnHand,
               })),
               'consumableName'
@@ -2603,7 +2628,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 resultId: null,
                 operation: 'add from GxConnect',
                 lotNumber: null,
-                expiresOn: inventoryChange.expirationDate,
+                expiresOn: new Date(inventoryChange.expirationDate),
                 quantity: Math.abs(inventoryChange.quantity),
                 notes: null,
                 adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
@@ -2872,8 +2897,9 @@ describe('Device API routes for GxConnect Devices', () => {
             quantity: 13,
             resultingQuantityOnHand: 73,
             dateChanged: subHours(startedOn, 1),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -2882,8 +2908,9 @@ describe('Device API routes for GxConnect Devices', () => {
             quantity: -3,
             resultingQuantityOnHand: 18,
             dateChanged: subHours(startedOn, 2),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -2892,8 +2919,9 @@ describe('Device API routes for GxConnect Devices', () => {
             quantity: -4,
             resultingQuantityOnHand: 46,
             dateChanged: subHours(startedOn, 3),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -2902,8 +2930,9 @@ describe('Device API routes for GxConnect Devices', () => {
             quantity: 11,
             resultingQuantityOnHand: 24,
             dateChanged: subHours(startedOn, 4),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -2912,8 +2941,9 @@ describe('Device API routes for GxConnect Devices', () => {
             quantity: -6,
             resultingQuantityOnHand: 30,
             dateChanged: subHours(startedOn, 5),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
@@ -2922,8 +2952,9 @@ describe('Device API routes for GxConnect Devices', () => {
             quantity: -6,
             resultingQuantityOnHand: 50,
             dateChanged: subHours(startedOn, 6),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
         ]
@@ -2970,7 +3001,7 @@ describe('Device API routes for GxConnect Devices', () => {
               consumableName: inventoryChange.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
+              expiresOn: new Date(inventoryChange.expirationDate),
               quantityOnHand: inventoryChange.resultingQuantityOnHand,
             })),
             ['consumableName', 'consumableReason', 'expiresOn']
@@ -3012,7 +3043,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   ? 'add from GxConnect'
                   : 'remove from GxConnect',
               lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
+              expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
               notes: null,
               adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
@@ -3040,8 +3071,9 @@ describe('Device API routes for GxConnect Devices', () => {
           quantity: 73,
           resultingQuantityOnHand: 73,
           dateChanged: subHours(startedOn, 2),
-          expirationDate: new Date(
-            subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           ),
         }
         const lot2 = {
@@ -3050,8 +3082,9 @@ describe('Device API routes for GxConnect Devices', () => {
           quantity: 38,
           resultingQuantityOnHand: 38,
           dateChanged: subHours(startedOn, 2),
-          expirationDate: new Date(
-            subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           ),
         }
 
@@ -3097,7 +3130,7 @@ describe('Device API routes for GxConnect Devices', () => {
               consumableName: inventoryChange.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
+              expiresOn: new Date(inventoryChange.expirationDate),
               quantityOnHand: inventoryChange.resultingQuantityOnHand,
             })),
             'expiresOn'
@@ -3139,7 +3172,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   ? 'add from GxConnect'
                   : 'remove from GxConnect',
               lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
+              expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
               notes: null,
               adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
@@ -3175,10 +3208,10 @@ describe('Device API routes for GxConnect Devices', () => {
           .catch(assert.fail)
 
         const lot1InventoryItem = _.find(inventoryItemsAtSiteAfter, {
-          expiresOn: lot1.expirationDate,
+          expiresOn: new Date(lot1.expirationDate),
         })
         const lot2InventoryItem = _.find(inventoryItemsAtSiteAfter, {
-          expiresOn: lot2.expirationDate,
+          expiresOn: new Date(lot2.expirationDate),
         })
         const lot1InventoryItemAfterAdjustment1 = await knex(
           'InventoryItem as ii'
@@ -3208,7 +3241,7 @@ describe('Device API routes for GxConnect Devices', () => {
           consumableName: lot1.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot1.expirationDate,
+          expiresOn: new Date(lot1.expirationDate),
           quantityOnHand: _.max([
             0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
@@ -3218,7 +3251,7 @@ describe('Device API routes for GxConnect Devices', () => {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot2.expirationDate,
+          expiresOn: new Date(lot2.expirationDate),
           quantityOnHand: lot2.resultingQuantityOnHand,
         })
 
@@ -3275,7 +3308,7 @@ describe('Device API routes for GxConnect Devices', () => {
           consumableName: lot1.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot1.expirationDate,
+          expiresOn: new Date(lot1.expirationDate),
           quantityOnHand: _.max([
             0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
@@ -3285,7 +3318,7 @@ describe('Device API routes for GxConnect Devices', () => {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
-          expiresOn: lot2.expirationDate,
+          expiresOn: new Date(lot2.expirationDate),
           quantityOnHand: _.max([
             0,
             lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
@@ -3327,7 +3360,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 resultId: null,
                 operation: 'add from GxConnect',
                 lotNumber: null,
-                expiresOn: lot1.expirationDate,
+                expiresOn: new Date(lot1.expirationDate),
                 quantity: Math.abs(lot1.resultingQuantityOnHand),
                 notes: null,
                 adjustedFrom: setMilliseconds(lot1.dateChanged, 0),
@@ -3340,7 +3373,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 resultId: null,
                 operation: 'add from GxConnect',
                 lotNumber: null,
-                expiresOn: lot2.expirationDate,
+                expiresOn: new Date(lot2.expirationDate),
                 quantity: Math.abs(lot2.resultingQuantityOnHand),
                 notes: null,
                 adjustedFrom: setMilliseconds(lot2.dateChanged, 0),
@@ -3353,7 +3386,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 resultId: null,
                 operation: 'remove from GxConnect',
                 lotNumber: null,
-                expiresOn: lot1.expirationDate,
+                expiresOn: new Date(lot1.expirationDate),
                 quantity: Math.abs(updateToLot1.quantity),
                 notes: null,
                 adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
@@ -3366,7 +3399,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 resultId: null,
                 operation: 'add from GxConnect',
                 lotNumber: null,
-                expiresOn: lot2.expirationDate,
+                expiresOn: new Date(lot2.expirationDate),
                 quantity: Math.abs(updateToLot2.quantity),
                 notes: null,
                 adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
@@ -3389,8 +3422,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const startedOn = subDays(now, 7)
           const endedOn = addHours(startedOn, 2)
-          const expirationDate = new Date(
-            subDays(addYears(now, 1), 16).setHours(0, 0, 0, 0)
+          const expirationDate = dateFormat(
+            new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           )
 
           const initialLotCaptured = {
@@ -3446,7 +3480,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 consumableName: initialLotCaptured.consumableName,
                 inTransitFromSiteId: null,
                 lotNumber: null,
-                expiresOn: initialLotCaptured.expirationDate,
+                expiresOn: new Date(initialLotCaptured.expirationDate),
                 quantityOnHand: initialLotCaptured.resultingQuantityOnHand,
               },
             ]
@@ -3505,7 +3539,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 consumableName: inventoryLost.consumableName,
                 inTransitFromSiteId: null,
                 lotNumber: null,
-                expiresOn: inventoryLost.expirationDate,
+                expiresOn: new Date(inventoryLost.expirationDate),
                 quantityOnHand: inventoryLost.resultingQuantityOnHand,
               },
             ]
@@ -3524,8 +3558,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const startedOn = subDays(now, 9)
           const endedOn = addHours(startedOn, 2)
-          const expirationDate = new Date(
-            subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)
+          const expirationDate = dateFormat(
+            new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
           )
 
           const initialLotCaptured = {
@@ -3580,7 +3615,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 consumableName: initialLotCaptured.consumableName,
                 inTransitFromSiteId: null,
                 lotNumber: null,
-                expiresOn: initialLotCaptured.expirationDate,
+                expiresOn: new Date(initialLotCaptured.expirationDate),
                 quantityOnHand: initialLotCaptured.quantity,
               },
             ]
@@ -3638,7 +3673,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 consumableName: inventoryLost.consumableName,
                 inTransitFromSiteId: null,
                 lotNumber: null,
-                expiresOn: inventoryLost.expirationDate,
+                expiresOn: new Date(inventoryLost.expirationDate),
                 quantityOnHand: _.max([
                   0,
                   initialLotCaptured.quantity + inventoryLost.quantity,

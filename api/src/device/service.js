@@ -1230,7 +1230,7 @@ async function deviceMaintenanceStatusHistory(request) {
           latestDeviceMaintenanceStatusLogsPerDay.find(
             log =>
               log.deviceId === device.id &&
-              log.day.toISOString() === day.toISOString()
+              format(log.day, 'yyyyMMdd') === format(day, 'yyyyMMdd')
           ) || {}
         const dayStatus = {
           date: day,

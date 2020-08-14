@@ -1356,6 +1356,11 @@ describe('Device Result API routes', () => {
 
       afterEach(async () => {
         run(async knex => {
+          const inventoryItemIds = await knex('InventoryLog')
+            .whereIn('resultId', resultIds)
+            .select('inventoryItemId')
+            .pluck('inventoryItemId')
+          await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
           await knex('InventoryLog').whereIn('resultId', resultIds).delete()
           await knex('ResultWorkflowLog')
             .whereIn('resultId', resultIds)

@@ -33,7 +33,6 @@ const {
   deviceApprovalToId,
 } = require('../../../src/shared/dictionary')
 const {
-  formatDateOrDefault,
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
 } = require('../../../src/shared/date')
@@ -3675,15 +3674,20 @@ describe('Device API routes for GxAlert Device', () => {
           })
           let geneXpertDevice = await getCurrentGeneXpertDevice()
           const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-          const startedOn = setMilliseconds(new Date(), 0)
-          const endedOn = addHours(startedOn, 2)
+          const startedOnDate = setMilliseconds(new Date(), 0)
+          const startedOn = dateFormat(
+            startedOnDate,
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          )
+          const endedOnDate = addHours(startedOnDate, 2)
+          const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
           const [deviceMaintenanceStatusLogId] = await knex(
             'DeviceMaintenanceStatusLog'
           ).insert({
             deviceId: geneXpertDevice.id,
             deviceMaintenanceStatusId:
               deviceMaintenanceStatuses.inactiveUnknown,
-            day: startOfDay(endedOn),
+            day: startOfDay(endedOnDate),
             data: '{}',
             createdOn: new Date(),
           })
@@ -3718,12 +3722,12 @@ describe('Device API routes for GxAlert Device', () => {
             .orderByRaw('createdOn desc, id desc')
             .first()
           expect(latestMaintenanceStatusLog).to.containSubset({
-            day: startOfDay(endedOn),
+            day: getLocalDateInUtc(startOfDay(endedOnDate)),
             deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
           })
           assert.equal(
             latestMaintenanceStatusLog.day.toISOString(),
-            startOfDay(endedOn).toISOString()
+            getLocalDateInUtc(startOfDay(endedOnDate)).toISOString()
           )
         }))
 
@@ -3740,8 +3744,13 @@ describe('Device API routes for GxAlert Device', () => {
           let geneXpertDevice = await getCurrentGeneXpertDevice()
           const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
           const approvedId = await deviceApprovalToId('approved')
-          const startedOn = setMilliseconds(subDays(new Date(), 5), 0)
-          const endedOn = addHours(startedOn, 2)
+          const startedOnDate = setMilliseconds(subDays(new Date(), 5), 0)
+          const startedOn = dateFormat(
+            startedOnDate,
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          )
+          const endedOnDate = addHours(startedOnDate, 2)
+          const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
           const [deviceMaintenanceStatusLogId] = await knex(
             'DeviceMaintenanceStatusLog'
           ).insert([
@@ -3749,7 +3758,7 @@ describe('Device API routes for GxAlert Device', () => {
               deviceId: geneXpertDevice.id,
               deviceMaintenanceStatusId:
                 deviceMaintenanceStatuses.inactiveUnknown,
-              day: startOfDay(endedOn),
+              day: startOfDay(endedOnDate),
               data: '{}',
               createdOn: new Date(),
             },
@@ -3771,7 +3780,7 @@ describe('Device API routes for GxAlert Device', () => {
             .set('Authorization', `Bearer ${shared.token}`)
             .query({
               deviceIds: geneXpertDevice.id,
-              minDate: formatDateOrDefault(subDays(startedOn, 1), 'yyyy-MM-dd'),
+              minDate: dateFormat(subDays(startedOnDate, 1), 'yyyy-MM-dd'),
             })
           assert.equal(devicesResponse.body.data.length, 1)
           devicesResponse.body.data.forEach(device => {
@@ -3808,14 +3817,14 @@ describe('Device API routes for GxAlert Device', () => {
             .set('Authorization', `Bearer ${shared.token}`)
             .query({
               deviceIds: geneXpertDevice.id,
-              minDate: formatDateOrDefault(subDays(startedOn, 1), 'yyyy-MM-dd'),
+              minDate: dateFormat(subDays(startedOnDate, 1), 'yyyy-MM-dd'),
             })
           assert.equal(devicesResponse.body.data.length, 1)
           devicesResponse.body.data.forEach(device => {
             device.days.forEach(day => {
               if (
-                day.date < startOfDay(addDays(endedOn, 1)) &&
-                day.date >= startOfDay(endedOn)
+                day.date < startOfDay(addDays(endedOnDate, 1)) &&
+                day.date >= startOfDay(endedOnDate)
               ) {
                 assert.equal(day.externalId, 'active')
               } else {
@@ -4458,7 +4467,11 @@ describe('Device API routes for GxAlert Device', () => {
               const { deviceAuth, now } = context
               const instrumentSerial = '803165'
               const cartridgeSerial = '725194650'
-              const startedOn = setMilliseconds(now, 0)
+              const startedOnDate = setMilliseconds(now, 0)
+              const startedOn = dateFormat(
+                startedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
 
               const incompleteResultPayload = _.merge(
                 {},
@@ -4500,14 +4513,18 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: incompleteResultExternalId,
                 resultCategory1: 'NoResult',
                 resultCategory2: 'NoResult',
-                startedOn,
+                startedOn: startedOnDate,
                 endedOn: null,
                 resultData: {
                   resultText: 'NO RESULT',
                 },
               })
 
-              const endedOn = addMinutes(startedOn, 103)
+              const endedOnDate = addMinutes(startedOnDate, 103)
+              const endedOn = dateFormat(
+                endedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
               const completeResultPayload = _.merge(
                 {},
                 incompleteResultPayload,
@@ -4538,8 +4555,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'Indeterminate',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText: 'DETECTED MEDIUM|INDETERMINATE|',
                 },
@@ -4560,8 +4577,16 @@ describe('Device API routes for GxAlert Device', () => {
               const { deviceAuth, now } = context
               const instrumentSerial = '803165'
               const cartridgeSerial = '725194660'
-              const startedOn = setMilliseconds(now, 0)
-              const endedOn = addMinutes(startedOn, 103)
+              const startedOnDate = setMilliseconds(now, 0)
+              const startedOn = dateFormat(
+                startedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
+              const endedOnDate = addMinutes(startedOnDate, 103)
+              const endedOn = dateFormat(
+                endedOnDate,
+                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              )
               const completeResultPayload = _.merge(
                 {},
                 basicDevicePayload,
@@ -4604,8 +4629,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -4627,8 +4652,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -4649,8 +4674,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -4671,8 +4696,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NoResult',
-                startedOn,
-                endedOn,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText: 'MTB DETECTED MEDIUM|NO RESULT',
                 },
