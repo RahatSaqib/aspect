@@ -1,17 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
-import { connect, useSelector, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
+import { useQuery } from 'react-query'
 
 import SummaryStatus from '../status/SummaryStatus'
 import InventoryItems from '../status/InventoryItems'
 
-import { fetchAssays } from '../../assay/AssayRedux'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
+import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
@@ -22,14 +23,22 @@ const cssClasses = classnames.bind(require('./OperationalData.css'))
 export const OperationalData = ({ intl, history, location, loading }) => {
   const { deviceStatus } = deviceStatusGraphs
   const { resultsTransmitted } = resultsTransmittedGraphs
-  const dispatch = useDispatch()
-  const assays = useSelector(({ assay }) =>
-    assay.items.toJS().filter(a => a.hasResults)
+
+  const { isError, data: assays, error } = useQuery('assays', async () =>
+    fetchWrapperForQueries('/assay')
   )
 
-  useEffect(() => {
-    dispatch(fetchAssays(false))
-  }, [])
+  if (isError) {
+    throw new Error(error)
+  }
+  // const dispatch = useDispatch()
+  // const assays = useSelector(({ assay }) =>
+  //   assay.items.toJS().filter(a => a.hasResults)
+  // )
+
+  // useEffect(() => {
+  //   dispatch(fetchAssays(false))
+  // }, [])
 
   return (
     <div className={cssClasses('Container')}>
