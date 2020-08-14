@@ -30,8 +30,8 @@ const detectedMoreThan1000 = {
     },
     consumable: [
       {
-        serial: '208140315',
-        lot: '32802',
+        serial: '123213',
+        lot: '32123',
         expirationDate: '2018-05-27T00:00:00Z',
       },
     ],
@@ -47,12 +47,12 @@ const detectedMoreThan1000 = {
       testTypeId: 9,
       testStartedOn: '2018-01-31T13:07:34Z',
       testEndedOn: '2018-01-31T14:41:37Z',
-      cartridgeSerial: '208140315',
-      cartridgeExpirationDate: '2018-05-27T00:00:00Z',
+      cartridgeSerial: '12378764',
+      cartridgeExpirationDate: '2012-05-27T00:00:00Z',
       reagentLotId: '32802',
       moduleSerial: '622173',
       instrumentSerial: '801871',
-      sampleId: 'vl-18-175',
+      sampleId: 'Sample vl-18',
       patientId: 'PATIENT 3322',
       patientId2: '',
       user: 'OPERATOR',
@@ -127,7 +127,7 @@ const detectedMoreThan1000 = {
       phone: null,
     },
     sample: {
-      id: 'vl-18-175',
+      id: 'Sample vl-18',
       collectedOn: null,
       group: null,
       runNumber: null,
@@ -170,9 +170,9 @@ const detectedLess1000 = [
       },
       consumable: [
         {
-          serial: '881843410',
-          lot: '37403',
-          expirationDate: '2020-08-09T00:00:00Z',
+          serial: '6556565',
+          lot: '043',
+          expirationDate: '2021-08-09T00:00:00Z',
         },
       ],
       data: {
@@ -187,8 +187,8 @@ const detectedLess1000 = [
         testTypeId: 9,
         testStartedOn: '2020-06-23T18:36:38Z',
         testEndedOn: '2020-06-23T20:06:53Z',
-        cartridgeSerial: '881843410',
-        cartridgeExpirationDate: '2020-08-09T00:00:00Z',
+        cartridgeSerial: '723823',
+        cartridgeExpirationDate: '2021-08-09T00:00:00Z',
         reagentLotId: '37403',
         moduleSerial: '718985',
         instrumentSerial: '801871',
@@ -264,7 +264,7 @@ const detectedLess1000 = [
         street: null,
         address: 'Address',
         surname: 'Surname',
-        dateOfBirth: ''
+        dateOfBirth: '',
       },
       sample: {
         id: 'SAMPLE 1',
@@ -309,8 +309,8 @@ const detectedLess1000 = [
       },
       consumable: [
         {
-          serial: '881843195',
-          lot: '37403',
+          serial: 'A123123',
+          lot: '403',
           expirationDate: '2020-08-09T00:00:00Z',
         },
       ],
@@ -326,12 +326,12 @@ const detectedLess1000 = [
         testTypeId: 9,
         testStartedOn: '2020-06-28T13:32:06Z',
         testEndedOn: '2020-06-28T15:03:09Z',
-        cartridgeSerial: '881843195',
+        cartridgeSerial: '2323232',
         cartridgeExpirationDate: '2020-08-09T00:00:00Z',
         reagentLotId: '37403',
         moduleSerial: '718985',
         instrumentSerial: '801871',
-        sampleId: 'bp20-33246',
+        sampleId: 'Sample bp20',
         patientId: 'PATIENT-230',
         patientId2: '',
         user: 'USER goodson',
@@ -406,7 +406,7 @@ const detectedLess1000 = [
         phone: null,
       },
       sample: {
-        id: 'bp20-33246',
+        id: 'Sample bp20',
         collectedOn: null,
         group: null,
         runNumber: null,
@@ -449,9 +449,9 @@ const noDetected = {
     },
     consumable: [
       {
-        serial: '238758837',
+        serial: '5676',
         lot: '34801',
-        expirationDate: '2019-02-24T00:00:00Z',
+        expirationDate: '2020-02-24T00:00:00Z',
       },
     ],
     data: {
@@ -471,7 +471,7 @@ const noDetected = {
       reagentLotId: '34801',
       moduleSerial: '623592',
       instrumentSerial: '801871',
-      sampleId: 'vl-18-182',
+      sampleId: 'Sample vl-181',
       patientId: 'PATIENT-5555',
       patientId2: '',
       user: 'USER A',
@@ -546,7 +546,7 @@ const noDetected = {
       phone: null,
     },
     sample: {
-      id: 'vl-18-182',
+      id: 'Sample vl-181',
       collectedOn: null,
       group: null,
       runNumber: null,
@@ -588,9 +588,9 @@ const detectedWithNoCopies = {
     },
     consumable: [
       {
-        serial: '881843410',
+        serial: '23232881843410',
         lot: '37403',
-        expirationDate: '2020-08-08T00:00:00Z',
+        expirationDate: '2021-08-08T00:00:00Z',
       },
     ],
     data: {
@@ -605,12 +605,12 @@ const detectedWithNoCopies = {
       testTypeId: 9,
       testStartedOn: '2020-06-23T18:36:38Z',
       testEndedOn: '2020-06-23T20:06:53Z',
-      cartridgeSerial: '881843410',
-      cartridgeExpirationDate: '2020-08-08T22:00:00Z',
+      cartridgeSerial: '433434343',
+      cartridgeExpirationDate: '2021-08-08T22:00:00Z',
       reagentLotId: '37403',
       moduleSerial: '718985',
       instrumentSerial: '801871',
-      sampleId: 'vl-20-32041',
+      sampleId: 'Sample vl-203',
       patientId: 'PATIENT-4333',
       patientId2: null,
       user: 'OPERATOR SUSAN',
@@ -681,7 +681,7 @@ const detectedWithNoCopies = {
       phone: null,
     },
     sample: {
-      id: 'vl-20-32041',
+      id: 'Sample vl-203',
       collectedOn: null,
       group: null,
       runNumber: null,
@@ -723,9 +723,9 @@ const Invalid = {
     },
     consumable: [
       {
-        serial: '238758781',
+        serial: '758781',
         lot: '34801',
-        expirationDate: '2019-02-24T00:00:00Z',
+        expirationDate: '2017-02-24T00:00:00Z',
       },
     ],
     data: {
@@ -740,12 +740,12 @@ const Invalid = {
       testTypeId: 9,
       testStartedOn: '2018-10-24T09:08:41Z',
       testEndedOn: '2018-10-24T10:40:33Z',
-      cartridgeSerial: '238758781',
-      cartridgeExpirationDate: '2019-02-24T00:00:00Z',
+      cartridgeSerial: '32423423',
+      cartridgeExpirationDate: '2023-02-24T00:00:00Z',
       reagentLotId: '34801',
       moduleSerial: '623592',
       instrumentSerial: '801871',
-      sampleId: 'vl-18-171',
+      sampleId: 'Sample vl-181',
       patientId: 'PATIENT3323',
       patientId2: '',
       user: 'OPERATOR A',
@@ -820,7 +820,7 @@ const Invalid = {
       phone: null,
     },
     sample: {
-      id: 'vl-18-171',
+      id: 'Sample vl-181',
       collectedOn: null,
       group: null,
       runNumber: null,
@@ -866,9 +866,9 @@ const Error = {
     },
     consumable: [
       {
-        serial: '238758808',
+        serial: '758808',
         lot: '34801',
-        expirationDate: '2019-02-24T00:00:00Z',
+        expirationDate: '2018-02-24T00:00:00Z',
       },
     ],
     data: {
@@ -883,8 +883,8 @@ const Error = {
       testTypeId: 9,
       testStartedOn: '2018-10-20T02:50:11Z',
       testEndedOn: '2018-10-20T02:54:14Z',
-      cartridgeSerial: '238758808',
-      cartridgeExpirationDate: '2019-02-24T00:00:00Z',
+      cartridgeSerial: '8758808',
+      cartridgeExpirationDate: '2021-02-24T00:00:00Z',
       reagentLotId: '34801',
       moduleSerial: '623592',
       instrumentSerial: '801871',
@@ -963,7 +963,7 @@ const Error = {
       phone: null,
     },
     sample: {
-      id: 'vl-18-163',
+      id: 'Sample vl-181',
       collectedOn: null,
       group: null,
       runNumber: null,

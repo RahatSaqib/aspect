@@ -1617,7 +1617,7 @@ describe('Device API routes for GxConnect Devices', () => {
               _.max([
                 0,
                 inventoryItemBeforeFirstRequest.quantityOnHand -
-                consumableAssay.quantity,
+                  consumableAssay.quantity,
               ])
             )
 

@@ -1,16 +1,19 @@
-async function fixActualHivVlData(knex) {
-    const {
-        LessThan1000: resultCategoryLessThan1000,
-        MoreThan1000: resultCategoryMoreThan1000,
-        LessThan40: resultCategoryLessThan40
-    } = await allResultCategoryToId()
-    const assayId = await assayToId('GxHiv1Vl')
+const { allResultCategoryToId, assayToId } = require('../src/shared/dictionary')
 
-    await knex('Result')
-        .update(
-            'resultCategory1',
-            knex.raw(
-                `IF(
+const { upsertAssayResultCategories } = require('./common')
+
+async function fixActualHivVlData(knex) {
+  const {
+    LessThan1000: resultCategoryLessThan1000,
+    MoreThan1000: resultCategoryMoreThan1000,
+    LessThan40: resultCategoryLessThan40,
+  } = await allResultCategoryToId()
+  const assayId = await assayToId('GxHiv1Vl')
+  await knex('Result')
+    .update(
+      'resultCategory1',
+      knex.raw(
+        `IF(
           CAST(
             LTRIM(
               RTRIM(
@@ -33,12 +36,12 @@ async function fixActualHivVlData(knex) {
                 INSTR(resultData->>'$.resultText','< 40') > 0,${resultCategoryLessThan40},${resultCategoryLessThan1000}
                 ),${resultCategoryMoreThan1000}
         )`
-            )
-        )
-        .update(
-            'resultData',
-            knex.raw(
-                `JSON_INSERT(resultData,'$.copies',
+      )
+    )
+    .update(
+      'resultData',
+      knex.raw(
+        `JSON_INSERT(resultData,'$.copies',
           CAST(
             LTRIM(
               RTRIM(
@@ -58,18 +61,18 @@ async function fixActualHivVlData(knex) {
             )
           AS DECIMAL)
         )`
-            )
-        )
-        .where({ assayId })
-        .andWhere(
-            knex.raw("resultData ->>'$.resultText'"),
-            'LIKE',
-            'HIV-1 DETECTED %copies%'
-        )
+      )
+    )
+    .where({ assayId })
+    .andWhere(
+      knex.raw("resultData ->>'$.resultText'"),
+      'LIKE',
+      'HIV-1 DETECTED %copies%'
+    )
 
-    await upsertAssayResultCategories(knex, assayId, ['LessThan40', 'Detected'])
+  await upsertAssayResultCategories(knex, assayId, ['LessThan40', 'Detected'])
 }
 
 module.exports = {
-    fixActualHivVlData
+  fixActualHivVlData,
 }
