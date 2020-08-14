@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment } from 'react'
 
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
@@ -31,14 +31,6 @@ export const OperationalData = ({ intl, history, location, loading }) => {
   if (isError) {
     throw new Error(error)
   }
-  // const dispatch = useDispatch()
-  // const assays = useSelector(({ assay }) =>
-  //   assay.items.toJS().filter(a => a.hasResults)
-  // )
-
-  // useEffect(() => {
-  //   dispatch(fetchAssays(false))
-  // }, [])
 
   return (
     <div className={cssClasses('Container')}>
