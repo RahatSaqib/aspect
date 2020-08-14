@@ -3880,11 +3880,11 @@ describe('Device API Raw Philippines NTRL', () => {
 
           expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
             now.getTime(),
-            10000
+            30000
           )
           expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
             now.getTime(),
-            10000
+            30000
           )
         })
       })
@@ -6350,11 +6350,11 @@ describe('Device API Raw Philippines NTRL', () => {
 
           expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
             now.getTime(),
-            10000
+            30000
           )
           expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
             now.getTime(),
-            10000
+            30000
           )
         })
       })

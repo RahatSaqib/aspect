@@ -444,15 +444,15 @@ L|1`
 
       expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
 
       const insertSampleCalls = insertCalls.filter(
@@ -848,15 +848,15 @@ L|1`
 
       expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
 
       const insertSampleCalls = insertCalls.filter(
@@ -1243,15 +1243,15 @@ L|1`
 
       expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
 
       const insertSampleCalls = insertCalls.filter(
@@ -1637,15 +1637,15 @@ L|1`
 
       expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
       expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
         now.getTime(),
-        10000
+        30000
       )
 
       const insertSampleCalls = insertCalls.filter(
@@ -2113,15 +2113,15 @@ ${controlResults}`,
 
         expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
           now.getTime(),
-          10000
+          30000
         )
         expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
           now.getTime(),
-          10000
+          30000
         )
         expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
           now.getTime(),
-          10000
+          30000
         )
 
         const insertSampleCalls = insertCalls.filter(
