@@ -29,27 +29,6 @@
   align-items: center;
 }
 
-.piegraphs__column:nth-child(4) {
-  margin-right: 10px;
-}
-.piegraphs__column:nth-child(n + 5) {
-  margin-right: 20px;
-}
-.piegraphs__column:last-child {
-  margin-right: 0px !important;
-}
-
-.piegraphs__column:nth-child(n + 5):not(:last-child) div:after {
-  content: ' ';
-  display: block;
-  position: absolute;
-  height: 2px;
-  background: var('--dusty');
-  width: 20px;
-  left: 100%;
-  top: calc(50% - 2px);
-}
-
 .piegraphs__rowTitle {
   font-weight: 400;
   font-size: 1em;
@@ -84,4 +63,29 @@
   text-align: center;
   width: 55%;
   font-weight: 600;
+}
+
+@media only screen and (min-device-width: 1024px) {
+  .piegraphs__column:nth-child(4) {
+    margin-right: 10px;
+  }
+  .piegraphs__column:nth-child(n + 5) {
+    margin-right: 20px;
+  }
+  .piegraphs__column:last-child {
+    margin-right: 0px !important;
+  }
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1400px) {
+  .piegraphs__column:nth-child(n + 5):not(:last-child) div:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    height: 2px;
+    background: var('--dusty');
+    width: 20px;
+    left: 100%;
+    top: calc(50% - 2px);
+  }
 }

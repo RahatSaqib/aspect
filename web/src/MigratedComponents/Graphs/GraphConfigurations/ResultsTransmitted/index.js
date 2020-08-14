@@ -7,7 +7,7 @@ const resultsTransmittedGraphs = {
   resultsTransmitted: {
     id: 'resultsTransmitted',
     title: 'deviceStatusTitle',
-    componentSize: 'full',
+    componentSize: 'row',
     group: 'assaysNotNeeded',
     assays: [
       // 'GxHiv1Vl',
