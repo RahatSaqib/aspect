@@ -1,0 +1,99 @@
+const barDataActualFromAPIIn = [
+  { cnt: 12, month: '2019-11', resultCategory1: 'MoreThan1000' },
+  { cnt: 4, month: '2019-11', resultCategory1: 'LessThan1000' },
+  { cnt: 2, month: '2019-11', resultCategory1: 'NotDetected' },
+
+  { cnt: 6, month: '2019-12', resultCategory1: 'LessThan1000' },
+  { cnt: 7, month: '2019-12', resultCategory1: 'MoreThan1000' },
+  { cnt: 4, month: '2019-12', resultCategory1: 'NotDetected' },
+
+  { cnt: 9, month: '2020-01', resultCategory1: 'LessThan1000' },
+  { cnt: 2, month: '2020-01', resultCategory1: 'NotDetected' },
+  { cnt: 7, month: '2020-01', resultCategory1: 'MoreThan1000' },
+
+  { cnt: 5, month: '2020-02', resultCategory1: 'MoreThan1000' },
+  { cnt: 12, month: '2020-02', resultCategory1: 'LessThan1000' },
+  { cnt: 1, month: '2020-02', resultCategory1: 'NotDetected' },
+
+  { cnt: 3, month: '2020-03', resultCategory1: 'MoreThan1000' },
+  { cnt: 3, month: '2020-03', resultCategory1: 'NotDetected' },
+  { cnt: 11, month: '2020-03', resultCategory1: 'LessThan1000' },
+
+  { cnt: 6, month: '2020-04', resultCategory1: 'LessThan1000' },
+  { cnt: 5, month: '2020-04', resultCategory1: 'MoreThan1000' },
+  { cnt: 1, month: '2020-04', resultCategory1: 'NotDetected' },
+]
+
+const barDataActualFromAPIOut = [
+  { month: 'Nov 2019', MoreThan1000: 12, LessThan1000: 4, NotDetected: 2 },
+  { month: 'Dec 2019', LessThan1000: 6, MoreThan1000: 7, NotDetected: 4 },
+  { month: 'Jan 2020', LessThan1000: 9, NotDetected: 2, MoreThan1000: 7 },
+  { month: 'Feb 2020', MoreThan1000: 5, LessThan1000: 12, NotDetected: 1 },
+  { month: 'Mar 2020', MoreThan1000: 3, NotDetected: 3, LessThan1000: 11 },
+  { month: 'Apr 2020', LessThan1000: 6, MoreThan1000: 5, NotDetected: 1 },
+]
+
+const tickDataForBarDisplayMethodPercentageIn = [
+  {
+    month: 'Nov 19',
+    LessThan1000: '52.9412',
+    MoreThan1000: '47.0588',
+  },
+  {
+    month: 'Dec 19',
+    LessThan1000: '40.9091',
+    MoreThan1000: '54.5455',
+    NotDetected: '4.5455',
+  },
+  {
+    month: 'Jan 20',
+    LessThan1000: '68.7500',
+    MoreThan1000: '25.0000',
+    NotDetected: '6.2500',
+  },
+  {
+    month: 'Feb 20',
+    NotDetected: '11.1111',
+    LessThan1000: '50.0000',
+    MoreThan1000: '38.8889',
+  },
+  {
+    month: 'Mar 20',
+    LessThan1000: '40.0000',
+    NotDetected: '15.0000',
+    MoreThan1000: '45.0000',
+  },
+  {
+    month: 'Apr 20',
+    MoreThan1000: '47.0588',
+    LessThan1000: '35.2941',
+    NotDetected: '17.6471',
+  },
+]
+
+const tickDataForBarDisplayMethodActualIn = [
+  { month: 'Nov 19', LessThan1000: 9, MoreThan1000: 8 },
+  { month: 'Dec 19', LessThan1000: 9, MoreThan1000: 12, NotDetected: 1 },
+  { month: 'Jan 20', LessThan1000: 11, MoreThan1000: 4, NotDetected: 1 },
+  { month: 'Feb 20', NotDetected: 2, LessThan1000: 9, MoreThan1000: 7 },
+  { month: 'Mar 20', LessThan1000: 8, NotDetected: 3, MoreThan1000: 9 },
+  { month: 'Apr 20', MoreThan1000: 8, LessThan1000: 6, NotDetected: 3 },
+]
+
+const tickDataForBarYAxisShapeBookendsDisplayPercentageOut = [0, 100]
+const tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut = [0, 50, 100]
+const tickDataForBarYAxisShapeBookendsDisplayActualOut = [0, 22]
+const tickDataForBarYAxisShapeClubSandwichDisplayActualOut = [0, 11, 22]
+const tickDataForBarXAxisShapeBookendDisplayActualOut = ['Nov 19', 'Apr 20']
+
+export {
+  barDataActualFromAPIIn,
+  barDataActualFromAPIOut,
+  tickDataForBarDisplayMethodPercentageIn,
+  tickDataForBarDisplayMethodActualIn,
+  tickDataForBarYAxisShapeBookendsDisplayPercentageOut,
+  tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut,
+  tickDataForBarYAxisShapeBookendsDisplayActualOut,
+  tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
+  tickDataForBarXAxisShapeBookendDisplayActualOut,
+}

@@ -10,6 +10,8 @@ import {
 import { removeEmptyParams, sanitiseParams } from '../../Helpers/Redux'
 
 const fetchGraphDataFromConfig = ({ assays, config, updatedParams }) => {
+  // eslint-disable-next-line no-useless-escape
+  const endpointRegex = /[\?\&\s]*$/gm
   const { whiteListed } = assays
   const {
     containerId,
@@ -40,7 +42,10 @@ const fetchGraphDataFromConfig = ({ assays, config, updatedParams }) => {
 
   const endpointToCall =
     method === 'GET'
-      ? `/${endpoint}?${assayParams}&${endpointParams}`
+      ? `/${endpoint}?${assayParams}&${endpointParams}`.replace(
+          endpointRegex,
+          ''
+        )
       : `/${endpoint}`
   const body =
     method === 'GET'
