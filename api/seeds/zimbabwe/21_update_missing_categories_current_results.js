@@ -7,6 +7,6 @@ const {
 const { upsertAssayResultCategories } = require('../common')
 async function seed(knex) {
   //It fixes the GxHivVL assay configuration over the actual data and also insert missing categories for it.
-  fixActualHivVlData(knex)
+  await fixActualHivVlData(knex)
 
 }
