@@ -380,7 +380,7 @@ export function fetchInventoryDashboard() {
             title: {
               id:
                 'errorResponseMessages.fetchInventoryDashboard.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Inventory',
+              defaultMessage: 'Error Loading Dashboard Inventory',
             },
           })
         ),

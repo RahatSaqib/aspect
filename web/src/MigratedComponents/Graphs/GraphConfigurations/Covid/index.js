@@ -156,7 +156,7 @@ const covidGraphs = {
         component: PieGraph,
         type: 'pie',
         size: 6,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           endpoint: 'result/follow-up-aggregations',
           params: {
@@ -186,7 +186,7 @@ const covidGraphs = {
         component: PieGraph,
         type: 'pie',
         size: 6,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           endpoint: 'result/follow-up-aggregations',
           params: {

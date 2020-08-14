@@ -76,101 +76,104 @@ const AspectResponsiveBar = ({
     : []
 
   return (
-    <ResponsiveBar
-      data={data}
-      keys={keys}
-      indexBy={indexBy}
-      colorBy="index"
-      enableLabel={false}
-      enableGridY={type === 'stackedDeviceActivity'}
-      {...divergentExtraConfig}
-      padding={type === 'stackedDeviceActivity' ? 0.03 : 0.3}
-      borderWidth={0}
-      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-      axisTop={null}
-      axisRight={null}
-      labelSkipWidth={12}
-      labelSkipHeight={12}
-      animate
-      motionStiffness={90}
-      motionDamping={15}
-      layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
-      colors={v => generateColorForValue(v)}
-      margin={generateMargin(tickValuesYShape, displayLegend, type)}
-      tooltip={v =>
-        v && legendsNotToRender.includes(v.id) ? (
-          <EmptyTooltip title={v.id} />
-        ) : (
-          <GraphToolTip
-            values={generateToolTip(
-              v,
-              displayMethod,
-              assaysFromState,
-              intlFormatNumber,
-              type
-            )}
-          />
-        )
-      }
-      axisLeft={{
-        tickSize: 5,
-        tickValues: yTickvalues,
-        format: v => formatValuesForGraphs(v, displayMethod, intlFormatNumber),
-        legendPosition: 'middle',
-        legendOffset: -60,
-        legend:
-          type === 'stackedDeviceActivity'
-            ? `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`
-            : false,
-      }}
-      axisBottom={{
-        tickSize: 5,
-        tickPadding: 10,
-        tickRotation: 0,
-        legendPosition: 'middle',
-        legendOffset: 32,
-        tickValues: xTickValues,
-        format: v =>
-          type === 'stackedDeviceActivity'
-            ? v.replace(/\D/g, '')
-            : formatValuesForGraphs(v, displayMethod, intlFormatNumber),
-      }}
-      legends={legends}
-      theme={
-        type === 'stackedDeviceActivity' && {
-          grid: {
-            line: {
-              stroke: 'white',
-              strokeWidth: 2,
-            },
-          },
+    <div style={{ height: '100%', maxHeight: '350px' }}>
+      <ResponsiveBar
+        data={data}
+        keys={keys}
+        indexBy={indexBy}
+        colorBy="index"
+        enableLabel={false}
+        enableGridY={type === 'stackedDeviceActivity'}
+        {...divergentExtraConfig}
+        padding={type === 'stackedDeviceActivity' ? 0.03 : 0.3}
+        borderWidth={0}
+        borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+        axisTop={null}
+        axisRight={null}
+        labelSkipWidth={12}
+        labelSkipHeight={12}
+        animate
+        motionStiffness={90}
+        motionDamping={15}
+        layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
+        colors={v => generateColorForValue(v)}
+        margin={generateMargin(tickValuesYShape, displayLegend, type)}
+        tooltip={v =>
+          v && legendsNotToRender.includes(v.id) ? (
+            <EmptyTooltip title={v.id} />
+          ) : (
+            <GraphToolTip
+              values={generateToolTip(
+                v,
+                displayMethod,
+                assaysFromState,
+                intlFormatNumber,
+                type
+              )}
+            />
+          )
         }
-      }
-      markers={
-        type === 'stackedDeviceActivity' && [
-          {
-            axis: 'y',
-            value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
-              weekendOrHoliday: 0,
-            }),
-            lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
-            legendOrientation: 'horisontal',
-            legend: `${calcOverallRate(
-              'devicesActiveRaw',
-              'devicesTotal',
-              data,
-              { weekendOrHoliday: 0 }
-            ).toFixed(0)}%`,
-            legendOffsetX: -3,
-            legendOffsetY: 0,
-            textStyle: {
-              fill: 'rgba(32, 161, 179, 1)',
-              fontWeight: 'bold',
+        axisLeft={{
+          tickSize: 5,
+          tickValues: yTickvalues,
+          format: v =>
+            formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+          legendPosition: 'middle',
+          legendOffset: -60,
+          legend:
+            type === 'stackedDeviceActivity'
+              ? `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`
+              : false,
+        }}
+        axisBottom={{
+          tickSize: 5,
+          tickPadding: 10,
+          tickRotation: 0,
+          legendPosition: 'middle',
+          legendOffset: 32,
+          tickValues: xTickValues,
+          format: v =>
+            type === 'stackedDeviceActivity'
+              ? v.replace(/\D/g, '')
+              : formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+        }}
+        legends={legends}
+        theme={
+          type === 'stackedDeviceActivity' && {
+            grid: {
+              line: {
+                stroke: 'white',
+                strokeWidth: 2,
+              },
             },
-          },
-        ]
-      }
-    />
+          }
+        }
+        markers={
+          type === 'stackedDeviceActivity' && [
+            {
+              axis: 'y',
+              value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
+                weekendOrHoliday: 0,
+              }),
+              lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
+              legendOrientation: 'horisontal',
+              legend: `${calcOverallRate(
+                'devicesActiveRaw',
+                'devicesTotal',
+                data,
+                { weekendOrHoliday: 0 }
+              ).toFixed(0)}%`,
+              legendOffsetX: -3,
+              legendOffsetY: 0,
+              textStyle: {
+                fill: 'rgba(32, 161, 179, 1)',
+                fontWeight: 'bold',
+              },
+            },
+          ]
+        }
+      />
+    </div>
   )
 }
 

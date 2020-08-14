@@ -7,6 +7,7 @@ import { validateGraphConfig } from '../Helpers/Formatters'
 const spacing = {
   half: { innerSize: 12, outerSize: 6 },
   full: { innerSize: 9, outerSize: 12 },
+  row: { innerSize: 10, outerSize: 12 },
 }
 
 const GraphsContainer = ({ assaysFromState, config }) => {
