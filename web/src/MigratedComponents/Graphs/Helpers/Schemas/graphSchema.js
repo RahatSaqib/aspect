@@ -73,6 +73,7 @@ const graphItemsSchema = {
         'stacked',
         'divergent',
         'pie',
+        'pieRow',
         'pieLegacyTreatment',
         'calendar',
         'barLegacyTreatment',

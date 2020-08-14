@@ -46,7 +46,7 @@ const hivGraphs = {
         component: PieGraph,
         type: 'pie',
         size: 4,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           endpoint: 'result/clinical-indicator-aggregations',
           params: {

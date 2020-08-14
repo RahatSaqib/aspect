@@ -1,9 +1,8 @@
-import expect from 'expect.js'
-
 import {
   calcPercentageSplitBar,
   groupByKey,
   groupForPie,
+  groupForPieRow,
   groupForDeviceStatusAPI,
   groupForDivergent,
   generateTickValues,
@@ -20,6 +19,8 @@ import {
   mockedDeviceStatusOut,
   pieDataActualFromAPIIn,
   pieDataActualFromAPIOut,
+  pieRowDataFromAPIIn,
+  pieRowDataFromAPIOut,
   tickDataForBarDisplayMethodPercentageIn,
   tickDataForBarDisplayMethodActualIn,
   tickDataForBarYAxisShapeBookendsDisplayPercentageOut,
@@ -46,7 +47,7 @@ describe('Graph Helpers', () => {
           formatDate,
           filterBy
         )
-        expect(grouped).to.eql(barDataActualFromAPIOut)
+        expect(grouped).toEqual(barDataActualFromAPIOut)
       })
     })
 
@@ -61,7 +62,14 @@ describe('Graph Helpers', () => {
           indexBy,
           filterBy
         )
-        expect(grouped).to.eql(pieDataActualFromAPIOut)
+        expect(grouped).toEqual(pieDataActualFromAPIOut)
+      })
+    })
+
+    describe('PieRowchart: groupForPieRow', () => {
+      it('should group data by types correctly', () => {
+        const grouped = groupForPieRow(pieRowDataFromAPIIn)
+        expect(grouped).toEqual(pieRowDataFromAPIOut)
       })
     })
 
@@ -76,7 +84,7 @@ describe('Graph Helpers', () => {
           keyToConsume,
           filterBy
         )
-        expect(grouped).to.eql(divergentDataFromAPIOut)
+        expect(grouped).toEqual(divergentDataFromAPIOut)
       })
     })
 
@@ -96,7 +104,7 @@ describe('Graph Helpers', () => {
           filterBy,
           displayMethod
         )
-        expect(grouped).to.eql(mockedDeviceStatusOut)
+        expect(grouped).toEqual(mockedDeviceStatusOut)
       })
     })
   })
@@ -115,7 +123,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).to.eql(
+        expect(grouped).toEqual(
           tickDataForBarYAxisShapeBookendsDisplayPercentageOut
         )
       })
@@ -134,7 +142,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).to.eql(
+        expect(grouped).toEqual(
           tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut
         )
       })
@@ -153,7 +161,9 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).to.eql(tickDataForBarYAxisShapeBookendsDisplayActualOut)
+        expect(grouped).toEqual(
+          tickDataForBarYAxisShapeBookendsDisplayActualOut
+        )
       })
     })
 
@@ -170,7 +180,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).to.eql(
+        expect(grouped).toEqual(
           tickDataForBarYAxisShapeClubSandwichDisplayActualOut
         )
       })
@@ -189,7 +199,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).to.eql(tickDataForBarXAxisShapeBookendDisplayActualOut)
+        expect(grouped).toEqual(tickDataForBarXAxisShapeBookendDisplayActualOut)
       })
     })
   })
@@ -205,7 +215,7 @@ describe('Graph Helpers', () => {
           indexBy
         )
         const display = calcPercentageSplitBar(normalised, indexBy)
-        expect(display).to.eql(tickDataForBarDisplayMethodPercentageIn)
+        expect(display).toEqual(tickDataForBarDisplayMethodPercentageIn)
       })
     })
   })
