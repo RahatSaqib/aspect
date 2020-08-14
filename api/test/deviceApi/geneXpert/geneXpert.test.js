@@ -14,10 +14,14 @@ const {
 } = require('./HIV_VL_payload')
 
 describe('Extracting data from Result Text HIV VL', () => {
-  it('it extract the number of copies and categorize it', () => {
+  it('it extract the number of copies and categorizes it', () => {
     const resultText = [
       {
         resulText: 'HIV-1 DETECTED < 40 copies/mL (log 1.60)',
+        value: 'LessThan40',
+      },
+      {
+        resulText: 'HIV-1 DETECTED 40 copies/mL (log 1.60)',
         value: 'LessThan1000',
       },
       {
@@ -47,7 +51,7 @@ describe('Extracting data from Result Text HIV VL', () => {
 
   it('Check the category for different results HIV VL', async () => {
     const textsToTest = [
-      { payload: detectedLess1000[0].result, result: 'LessThan1000' },
+      { payload: detectedLess1000[0].result, result: 'LessThan40' },
       { payload: detectedLess1000[1].result, result: 'LessThan1000' },
       { payload: detectedMoreThan1000.result, result: 'MoreThan1000' },
       { payload: noDetected.result, result: 'NotDetected' },
