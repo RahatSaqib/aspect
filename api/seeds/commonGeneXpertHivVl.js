@@ -2,7 +2,7 @@ const { allResultCategoryToId, assayToId } = require('../src/shared/dictionary')
 
 const { upsertAssayResultCategories } = require('./common')
 
-async function fixActualHivVlData(knex) {
+async function fixActualGeneXpertHivVlData(knex) {
   const {
     LessThan1000: resultCategoryLessThan1000,
     MoreThan1000: resultCategoryMoreThan1000,
@@ -42,24 +42,26 @@ async function fixActualHivVlData(knex) {
       'resultData',
       knex.raw(
         `JSON_INSERT(resultData,'$.copies',
-          CAST(
-            LTRIM(
-              RTRIM(
-                REPLACE(
+          IF(INSTR(resultData->>'$.resultText','DETECTED < 40')>0 OR INSTR(resultData->>'$.resultText','copies')=0,NULL,
+            CAST(
+              LTRIM(
+                RTRIM(
                   REPLACE(
-                    SUBSTR(
-                      SUBSTR(resultData ->> '$.resultText',
-                        LENGTH('HIV-1 DETECTED ')
-                      ),1,INSTR(
-                            SUBSTR(resultData ->> '$.resultText',
-                                  LENGTH('HIV-1 DETECTED ')
-                          ),'copies/mL')-1
-                    ),
-                  '<',''),
-                '>','')
+                    REPLACE(
+                      SUBSTR(
+                        SUBSTR(resultData ->> '$.resultText',
+                          LENGTH('HIV-1 DETECTED ')
+                        ),1,INSTR(
+                              SUBSTR(resultData ->> '$.resultText',
+                                    LENGTH('HIV-1 DETECTED ')
+                            ),'copies/mL')-1
+                      ),
+                    '<',''),
+                  '>','')
+                )
               )
-            )
-          AS DECIMAL)
+            AS DECIMAL)
+          ) 
         )`
       )
     )
@@ -70,9 +72,9 @@ async function fixActualHivVlData(knex) {
       'HIV-1 DETECTED %copies%'
     )
 
-  await upsertAssayResultCategories(knex, assayId, ['LessThan40', 'Detected'])
+  await upsertAssayResultCategories(knex, assayId, ['LessThan40'])
 }
 
 module.exports = {
-  fixActualHivVlData,
+  fixActualGeneXpertHivVlData,
 }

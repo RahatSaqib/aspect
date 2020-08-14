@@ -808,29 +808,37 @@ describe('Device API routes for GxConnect Devices', () => {
       runTest(async () => {
         const { deviceAuth, basicDevicePayload, now } = context
         const payloads = [
+          { payload: detectedWithNoCopies, result: 'NoResult' },
+          { payload: detectedMoreThan1000, result: 'MoreThan1000' },
           { payload: detectedLess1000[0], result: 'LessThan40' },
           { payload: detectedLess1000[1], result: 'LessThan1000' },
-          { payload: detectedMoreThan1000, result: 'MoreThan1000' },
           { payload: noDetected, result: 'NotDetected' },
-          { payload: detectedWithNoCopies, result: 'Detected' },
           { payload: Invalid, result: 'Invalid' },
           { payload: Error, result: 'Error' },
         ]
         await payloads.forEach(async elem => {
           const { result: resultPayload } = elem.payload
+
           const res = await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
               _.assign({}, elem.payload, basicDevicePayload, {
                 result: _.assign({}, elem.payload.result, {
-                  sample: { id: 'new sample' },
-                  instrument: { serial: 'new instrument' },
+                  sample: {
+                    id: `new sample ${Math.floor(Math.random() * 1000)}`,
+                  },
+                  instrument: {
+                    serial: `new instrument ${Math.floor(
+                      Math.random() * 1000
+                    )}`,
+                  },
                   startedOn: now,
                 }),
               })
             )
 
+          // / console.log(res.body, res.status)
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
 
@@ -839,13 +847,18 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.equal(afterResultDetails.assay, resultPayload.assay.id)
           assert.equal(afterResultDetails.resultCategory1, elem.result)
           assert.equal(afterResultDetails.resultCategory2, null)
+
           if (
-            ['MoreThan1000', 'LessThan1000', 'LessThan40'].includes(
+            ['MoreThan1000', 'LessThan1000'].includes(
               afterResultDetails.resultCategory1
             )
           ) {
-            assert.isNotNull(afterResultDetails.resultData.copies)
+            assert.property(afterResultDetails.resultData, 'copies')
             assert.isAtLeast(afterResultDetails.resultData.copies, 40)
+          } else if (
+            'LessThan40'.indexOf(afterResultDetails.resultCategory1) === 0
+          ) {
+            assert.notProperty(afterResultDetails.resultData, 'copies')
           }
         })
       }))

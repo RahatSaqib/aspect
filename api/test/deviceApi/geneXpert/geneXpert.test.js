@@ -3,6 +3,7 @@ const _ = require('lodash')
 const {
   getResultCategoriesHivVL,
   getResultCategories,
+  getVLCopies,
 } = require('../../../src/plugin/deviceType/gxUtils')
 const {
   detectedLess1000,
@@ -19,34 +20,45 @@ describe('Extracting data from Result Text HIV VL', () => {
       {
         resulText: 'HIV-1 DETECTED < 40 copies/mL (log 1.60)',
         value: 'LessThan40',
+        copies: null,
       },
       {
         resulText: 'HIV-1 DETECTED 40 copies/mL (log 1.60)',
         value: 'LessThan1000',
+        copies: 40,
       },
       {
         resulText: 'HIV-1 DETECTED 1.59E03 copies/mL (log 3.20)',
         value: 'MoreThan1000',
+        copies: 1590,
       },
       {
         resulText: 'HIV-1 DETECTED > 40 copies/mL (log 3.20)',
         value: 'LessThan1000',
+        copies: 40,
       },
       {
         resulText: 'HIV-1 DETECTED 159003 copies/mL (log 3.20)',
         value: 'MoreThan1000',
+        copies: 159003,
       },
       {
         resulText: 'HIV-1 DETECTED 44 copies/mL (log 1.64)',
         value: 'LessThan1000',
+        copies: 44,
       },
     ]
-    resultText.forEach(elem =>
+    resultText.forEach(elem => {
+      assert.equal(
+        elem.copies,
+        getVLCopies(elem.resulText.replace('HIV-1', ''))
+      )
+
       assert.equal(
         elem.value,
         getResultCategoriesHivVL(elem.resulText.replace('HIV-1', ''))
       )
-    )
+    })
   })
 
   it('Check the category for different results HIV VL', async () => {
@@ -55,7 +67,7 @@ describe('Extracting data from Result Text HIV VL', () => {
       { payload: detectedLess1000[1].result, result: 'LessThan1000' },
       { payload: detectedMoreThan1000.result, result: 'MoreThan1000' },
       { payload: noDetected.result, result: 'NotDetected' },
-      { payload: detectedWithNoCopies.result, result: 'Detected' },
+      { payload: detectedWithNoCopies.result, result: 'NoResult' },
       { payload: Invalid.result, result: 'Invalid' },
       { payload: Error.result, result: 'Error' },
     ]
