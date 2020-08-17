@@ -912,6 +912,11 @@ function getResultCategories(payload) {
       ) {
         payloadCategory = [...payloadCategory, { id: result1 }]
       }
+    } else {
+      const assayId = _.get(payload, 'assay.id')
+      if (assayId === 'GxHiv1Vl') {
+        return [{ id: getResultCategoriesHivVL(payloadResultText) }]
+      }
     }
   }
   return payloadCategory
@@ -933,9 +938,9 @@ function getResultCategoriesHivVL(result1Text) {
   if (copies) {
     if (copies < 1000 && copies >= 40) return 'LessThan1000'
     if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text.toLowerCase().includes('detected < 40'))
+  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
     return 'LessThan40'
-  else if (result1Text.toLowerCase().indexOf('detected') === 0)
+  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
     return 'NoResult'
 }
 
