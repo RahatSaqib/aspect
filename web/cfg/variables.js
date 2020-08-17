@@ -60,12 +60,15 @@ exports.customPropertiesVariables = {
 
   // Colors 2020
   '--anakiwa': '#73EBFF',
+  '--apple-green': '#439B45',
   '--azure-radiance': '#0091ff',
   '--chathams-blue': '#18527d',
   '--conifer': '#99D25D',
   '--dusty': '#979797',
   '--gallery': '#ececec',
   '--geyser': '#CCDBE1',
+  '--even-red': '#FF0000',
+  '--golden-dream': '#EED22A',
   '--guardsman-red': '#d60000',
   '--humming-bird': '#d4f3f9',
   '--iron-2': '#e6e7e9',
@@ -78,6 +81,7 @@ exports.customPropertiesVariables = {
   '--tundora': '#454545',
   '--your-pink': '#ffc9c4',
   '--malachite': '#00ca1c',
+  '--web-orange': '#FEA500',
 
   // Genrally used variables throughout the app
   '--aspect-color-cyan': 'var(--scooter, #3cc0cd)',
