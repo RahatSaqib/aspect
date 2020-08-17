@@ -22,6 +22,7 @@ const {
   issueTypeToId,
   issueStatusToId,
   issueEventStatusToId,
+  resultWorkflowStatusToId,
 } = require('../shared/dictionary')
 const {
   auditInventoryStockout,
@@ -29,6 +30,7 @@ const {
 } = require('../shared/utilsInventory')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
+const daysToCalculateCountOfDeliveredResults = [30, 60]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
@@ -291,7 +293,6 @@ function onFactGenerateResultCountsForDevice(
 
     await Promise.each(daysToCalculate, async days => {
       const endedOn = startOfDay(subDays(now, days))
-
       // query for selecting data for the device
       const query = knex('Result as r').whereRaw(
         'r.deviceId = :deviceId and r.endedOn > :endedOn',
@@ -300,27 +301,56 @@ function onFactGenerateResultCountsForDevice(
           endedOn,
         }
       )
+      const factResultsDevice = {
+        calculatedOn: now,
+      }
+      if (daysToCalculateCountOfDeliveredResults.includes(days)) {
+        const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId(
+          'Delivered'
+        )
+        const countByDevice = (await query
+          .clone()
+          .leftJoin('ResultWorkflowLog as rwl', queryBuilder => {
+            queryBuilder
+              .on('r.resultWorkflowStatusLogId', 'rwl.id')
+              .andOn(
+                knex.raw(
+                  'rwl.resultWorkflowStatusId = ?',
+                  deliveredResultWorkfowStatusId
+                )
+              )
+              .andOn(knex.raw('rwl.changedOn > ?', endedOn))
+          })
+          .first(
+            knex.raw('COUNT(DISTINCT r.id) as resultCount'),
+            knex.raw(
+              'SUM(CASE WHEN rwl.id IS NULL THEN 0 ELSE 1 END) as resultsDeliveredCount'
+            )
+          )) || { resultCount: 0 }
+        factResultsDevice.resultCount = countByDevice.resultCount
+        factResultsDevice.resultsDeliveredCount =
+          countByDevice.resultsDeliveredCount
+      } else {
+        const countByDevice = await query
+          .clone()
+          .count('r.id as resultCount')
+          .select('r.deviceId')
+          .first()
+        factResultsDevice.resultCount = countByDevice.resultCount
+      }
 
-      const countByDevice = await query
-        .clone()
-        .count('r.id as resultCount')
-        .select('r.deviceId')
-        .first()
-
-      const factResultsDevice = await knex('FactResultsDevice')
+      const existingFactResultsDeviceRecord = await knex('FactResultsDevice')
         .where({ deviceId, days })
         .first()
-      if (factResultsDevice) {
-        await knex('FactResultsDevice').where({ deviceId, days }).update({
-          resultCount: countByDevice.resultCount,
-          calculatedOn: now,
-        })
+      if (existingFactResultsDeviceRecord) {
+        await knex('FactResultsDevice')
+          .where({ deviceId, days })
+          .update(factResultsDevice)
       } else {
         await knex('FactResultsDevice').insert({
+          ...factResultsDevice,
           deviceId,
           days,
-          resultCount: countByDevice.resultCount,
-          calculatedOn: now,
         })
       }
 

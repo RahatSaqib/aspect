@@ -21,6 +21,8 @@ const { getArrayOfDaysInRange } = require('../shared/date')
 const { queryValue } = require('../shared/sql-2-knex')
 const { canView } = require('../auth/constraints')
 
+const resultsTransmittedDashboard = require('./resultsTransmitted')
+
 const i18nKeys = {
   // Dashboard
   sitesTitle: 'sitesTitle',
@@ -1087,4 +1089,5 @@ module.exports = {
   siteDashboard,
   actionDashboard,
   operationalDataActivityOverTime,
+  resultsTransmittedDashboard,
 }

@@ -7,9 +7,11 @@ const tbGraphs = {
     id: 'tbResults',
     title: 'clinicalIndicatorsTBTitle',
     assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    componentSize: 'full',
+    group: 'tb',
     graphType: [
       {
-        id: 'resultsByCategory1Monthly',
+        id: 'tbByCategory1Monthly',
         component: BarGraph,
         type: 'bar',
         size: 8,
@@ -31,11 +33,11 @@ const tbGraphs = {
         formatDate: 'MMM yy',
       },
       {
-        id: 'resultsByCategory1Aggregate',
+        id: 'tbByCategory1Aggregate',
         component: PieGraph,
         type: 'pie',
         size: 4,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           endpoint: 'result/clinical-indicator-aggregations',
           params: {

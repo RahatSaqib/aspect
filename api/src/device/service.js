@@ -3,7 +3,6 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const {
   addDays,
-  subDays,
   startOfToday,
   startOfDay,
   subMonths,
@@ -182,9 +181,6 @@ async function getListDevices(query, auth) {
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
 
-  const last30Day = subDays(new Date(), 30)
-  const last60Day = subDays(last30Day, 30)
-
   // get rows
   const getItems = deviceQuery
     .clone()
@@ -194,44 +190,10 @@ async function getListDevices(query, auth) {
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
-      knex('Result as r')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin(
-          'ResultWorkflowLog as rl',
-          'r.resultWorkflowStatusLogId',
-          'rl.id'
-        )
-        .innerJoin(
-          'ResultWorkflowStatus as rw',
-          'rl.resultWorkflowStatusId',
-          'rw.id'
-        )
-        .modify(addConstraints, dataConstraints, {
-          result: 'r',
-          sample: 's',
-        })
-        .whereRaw('s.originSiteId = d.siteId')
-        .whereBetween('rl.changedOn', [last60Day, last30Day])
-        .where('rw.externalId', '=', 'Delivered')
-        .countDistinct('r.id')
-        .as('deliveredLastMonth'),
-      knex('Result as r')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
-        .innerJoin(
-          'ResultWorkflowStatus as rw',
-          'rl.resultWorkflowStatusId',
-          'rw.id'
-        )
-        .modify(addConstraints, dataConstraints, {
-          result: 'r',
-          sample: 's',
-        })
-        .whereRaw('s.originSiteId = d.siteId')
-        .where('rl.changedOn', '>=', last30Day)
-        .where('rw.externalId', '=', 'Delivered')
-        .countDistinct('r.id')
-        .as('deliveredThisMonth'),
+      knex.raw(
+        'IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'
+      ),
+      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
       // get csv of issue types
       knex('Issue as i1')
         .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
@@ -1033,9 +995,10 @@ async function onDeviceMaintenanceStatusLogged(
 async function onResultLogged(action, { messageContext }) {
   const { resultId } = action
   return messageContext.run(async knex => {
-    const { deviceId, startedOn, endedOn } = await knex('Result')
-      .where('id', resultId)
-      .first('deviceId', 'startedOn', 'endedOn')
+    const { deviceId, startedOn, endedOn } =
+      (await knex('Result')
+        .where('id', resultId)
+        .first('deviceId', 'startedOn', 'endedOn')) || {}
     if (deviceId && (endedOn || startedOn)) {
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,
