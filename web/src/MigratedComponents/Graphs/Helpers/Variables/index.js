@@ -25,13 +25,14 @@ const {
   '--purple-mountains-majesty': colorPurple,
   '--tundora': tundora,
   '--thunderbird': thunderbird,
+  '--aspect-color-cyan': colorCyan,
 } = envSource
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colorMandy },
-  { id: 2, externalId: 'LessThan1000', color: colorPink },
+  { id: 2, externalId: 'LessThan1000', color: colorCyan },
   { id: 3, externalId: 'LessThan150', color: colorPink },
-  { id: 4, externalId: 'LessThan40', color: colorPink },
+  { id: 4, externalId: 'LessThan40', color: colorSuperNova },
   { id: 5, externalId: 'MoreThan40', color: colorPink },
   { id: 6, externalId: 'Detected', color: colorMandy },
   { id: 7, externalId: 'Indeterminate', color: colorPink },
