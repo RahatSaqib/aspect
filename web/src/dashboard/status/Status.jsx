@@ -31,7 +31,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const Status = ({ history, location, colorDemo }) => {
   const intl = useIntl()
   const { hivResults } = hivGraphs
-  const { tbResults } = tbGraphs
+  const { tbDetected, tbResults } = tbGraphs
   const { treatmentStatus } = treatmentStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
   const {
@@ -80,10 +80,18 @@ const Status = ({ history, location, colorDemo }) => {
         dashboard="home"
       />
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary> */}
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={tbDetected} />
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
@@ -96,7 +104,7 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer
@@ -105,17 +113,17 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={deviceStatus} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['covid']}>
           {assays && assays.length ? (
             <GraphsContainer
@@ -124,9 +132,9 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['covid']}>
           {assays && assays.length ? (
             <GraphsContainer
@@ -135,9 +143,9 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['covid']}>
           {assays && assays.length ? (
             <GraphsContainer
@@ -146,9 +154,9 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['covid']}>
           {assays && assays.length ? (
             <GraphsContainer
@@ -157,7 +165,7 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus
