@@ -62,7 +62,7 @@
     {
         "module": "inventory",
         "activity": "view",
-        "description": "Can view inventory and dashboard's 'Consumables' panel",
+        "description": "Can view inventory and the 'Consumables' panel on the dashboard",
         "includedActivities": ""
     },
     {
