@@ -302,7 +302,7 @@
     {
         "module": "dashboard",
         "activity": "actionInventoryLevelUpdate",
-        "description": "Can view and update 'Stock Level' issues at the dashboard's 'Actions' panel",
+        "description": "Can view and update 'Stock Level' issues on the action dashboard",
         "includedActivities": ""
     },
     {
