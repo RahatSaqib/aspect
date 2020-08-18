@@ -26,9 +26,7 @@ const tbGraphs = {
         },
         indexBy: 'month',
         keyToConsume: 'resultCategory1',
-        filterBy: {
-          // resultCategory1: { values: ['detected'] },
-        },
+        filterBy: {},
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
