@@ -38,31 +38,31 @@
     {
         "module": "deviceApiKey",
         "activity": "view",
-        "description": "Can view devices api keys",
+        "description": "Can view device API keys that are used for authenticating lab devices",
         "includedActivities": ""
     },
     {
         "module": "deviceApiKey",
         "activity": "edit",
-        "description": "Can edit and create devices api keys",
+        "description": "Can edit and create device API keys that are used for authenticating lab devices",
         "includedActivities": "view"
     },
     {
         "module": "device",
         "activity": "view",
-        "description": "Can view devices",
+        "description": "Can view lab devices",
         "includedActivities": ""
     },
     {
         "module": "device",
         "activity": "edit",
-        "description": "Can edit devices",
+        "description": "Can edit lab devices",
         "includedActivities": "view"
     },
     {
         "module": "inventory",
         "activity": "view",
-        "description": "Can view inventory and dashboard's 'Consumables' panel",
+        "description": "Can view inventory and the 'Consumables' panel on the dashboard",
         "includedActivities": ""
     },
     {
@@ -74,7 +74,7 @@
     {
         "module": "person",
         "activity": "view",
-        "description": "Can view persons",
+        "description": "Can view persons and users",
         "includedActivities": ""
     },
     {
@@ -152,7 +152,7 @@
     {
         "module": "task",
         "activity": "edit",
-        "description": "Can view, edit and create tasks",
+        "description": "Can view tasks and change their status",
         "includedActivities": ""
     },
     {
