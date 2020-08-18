@@ -290,7 +290,7 @@
     {
         "module": "dashboard",
         "activity": "target",
-        "description": "Can view the dashboard's 'Regional Progress Indicators' panel and download the higher level reports from the Reports panel (Rif, MTB+, TI, Failed Test, Quarterly)",
+        "description": "Can view the action dashboard's 'Regional Progress Indicators' panel and download the higher level reports from the Reports panel (Rif, MTB+, TI, Failed Test, Quarterly)",
         "includedActivities": ""
     },
     {
