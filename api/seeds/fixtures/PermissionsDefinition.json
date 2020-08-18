@@ -152,7 +152,7 @@
     {
         "module": "task",
         "activity": "edit",
-        "description": "Can view, edit and create tasks",
+        "description": "Can view tasks and change their status",
         "includedActivities": ""
     },
     {
