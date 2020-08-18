@@ -240,12 +240,6 @@
         "includedActivities": ""
     },
     {
-        "module": "operationalData",
-        "activity": "edit",
-        "description": "Can view, edit and create operationalDatas",
-        "includedActivities": ""
-    },
-    {
         "module": "patient",
         "activity": "view",
         "description": "Can view patients",
