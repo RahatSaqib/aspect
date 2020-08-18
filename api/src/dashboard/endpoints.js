@@ -13,6 +13,7 @@ const {
   siteDashboard,
   actionDashboard,
   operationalDataActivityOverTime,
+  resultsTransmittedDashboard,
 } = require('./service')
 
 const routes = [
@@ -159,6 +160,26 @@ const routes = [
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/results-transmitted',
+    handler: asyncHandler(resultsTransmittedDashboard),
+    config: {
+      description: 'Results Transmitted Graph',
+      notes: 'Data for graph Results Transmitted',
+      auth: { scope: ['site', 'result', 'dashboard'] },
+      validate: {
+        query: {
+          currentMonth: Joi.date()
+            .iso()
+            .allow(null)
+            .description(
+              'Set "current" month to return data for this and previous month'
+            ),
+        },
       },
     },
   },

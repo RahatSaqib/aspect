@@ -33,6 +33,43 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.deviceCalibrationsUpToDate',
     defaultMessage: 'All device calibrations up to date',
   },
+
+  resultsTransmittedTitle: {
+    id: 'pages.OperationalData.resultsTransmittedTitle',
+    defaultMessage: 'Positive Test Results Transmitted',
+  },
+  assayName: {
+    id: 'pages.OperationalData.assayName',
+    defaultMessage: 'Assay Name',
+  },
+  totalResults: {
+    id: 'pages.OperationalData.totalResults',
+    defaultMessage: 'Total Results',
+  },
+  totalPositiveResults: {
+    id: 'pages.OperationalData.totalPositiveResults',
+    defaultMessage: 'Positives',
+  },
+  percentPositiveResults: {
+    id: 'pages.OperationalData.percentPositiveResults',
+    defaultMessage: 'Percent Positive',
+  },
+  percentReported: {
+    id: 'pages.OperationalData.percentReported',
+    defaultMessage: 'Percent Reported',
+  },
+  sentViaSms: {
+    id: 'pages.OperationalData.totalPositiveResults',
+    defaultMessage: 'Sent via SMS',
+  },
+  sentViaEmail: {
+    id: 'pages.OperationalData.totalPositiveResults',
+    defaultMessage: 'Sent via Email',
+  },
+  withinTwoHoursOfTesting: {
+    id: 'pages.OperationalData.withinTwoHoursOfTesting',
+    defaultMessage: 'Within 2 hours of testing',
+  },
 })
 
 export default messages

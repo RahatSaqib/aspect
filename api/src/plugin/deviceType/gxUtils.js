@@ -183,6 +183,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (!_.get(payload, 'workflow.status.id') && !payload.error) {
       _.set(payload, 'workflow.status.id', 'Deliverable')
     }
+    if (potentialAssayIds.includes('GxHiv1Vl')) {
+      const copies = getVLCopies(_.get(payload, 'data.resultText'))
+      if (copies) _.set(payload, 'data.copies', copies)
+    }
   } else {
     // Are we setting this result to NO RESULT?
     if (
@@ -823,11 +827,13 @@ function getResultCategories(payload) {
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
       const assayId = _.get(payload, 'assay.id')
+
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
+          .replace(/hiv-1/, '')
           .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
@@ -884,10 +890,16 @@ function getResultCategories(payload) {
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
         }
+        if (assayId === 'GxHiv1Vl') {
+          const externalId =
+            getResultCategoriesHivVL(result1Text) ||
+            result1CategoryMapping[result1Text]
+          if (externalId) payloadCategory = [{ id: externalId }]
+        }
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        [
+        ([
           'Detected',
           'Trace Detected',
           'Error',
@@ -895,7 +907,8 @@ function getResultCategories(payload) {
           'NoResult',
           'Success',
         ].includes(result1) ||
-        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)
+          !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)) &&
+        assayId !== 'GxHiv1Vl'
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
@@ -940,6 +953,28 @@ function getResultCategories(payload) {
   return payloadCategory
 }
 
+function getVLCopies(result1Text) {
+  if (result1Text && !result1Text.includes('< 40')) {
+    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
+    const arr = regex.exec(result1Text.replace('HIV-1', ''))
+
+    return arr ? parseFloat(arr[0]) : null
+  }
+  return null
+}
+
+function getResultCategoriesHivVL(result1Text) {
+  const copies = getVLCopies(result1Text)
+  // Add HIV VL Categories
+  if (copies) {
+    if (copies < 1000 && copies >= 40) return 'LessThan1000'
+    if (copies >= 1000) return 'MoreThan1000'
+  } else if (result1Text.toLowerCase().includes('detected < 40'))
+    return 'LessThan40'
+  else if (result1Text.toLowerCase().indexOf('detected') === 0)
+    return 'NoResult'
+}
+
 function macAddressValid(macAddress) {
   return (
     !_.isEmpty(macAddress) &&
@@ -957,4 +992,7 @@ module.exports = {
   transformMergeResultPayload,
   postProcessAddDeviceOperation,
   postProcessUpdateDeviceConfiguration,
+  getResultCategoriesHivVL,
+  getResultCategories,
+  getVLCopies,
 }

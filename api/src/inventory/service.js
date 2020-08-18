@@ -535,6 +535,25 @@ async function getDaysByLocation(request) {
     .from('Consumable as c')
     .innerJoin('InventoryItem as ii', 'c.id', 'ii.consumableId')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('ConsumableAssay as cona', 'cona.consumableId', 'c.id')
+    .innerJoin('Assay as asa', 'asa.id', 'cona.assayId')
+    .innerJoin('DeviceType as dt', 'dt.id', 'asa.deviceTypeId')
+    .innerJoin(
+      function () {
+        this.select('d.*')
+          .from('Device as d')
+          .innerJoin('Site as si', 'si.id', 'd.siteId')
+          .innerJoin('DeviceType as det', 'det.id', 'd.deviceTypeId')
+          .groupBy('d.siteId', 'd.deviceTypeId')
+          .as('DistTable')
+      },
+      function () {
+        this.on('DistTable.siteId', 's.id').andOn(
+          'DistTable.deviceTypeId',
+          'dt.id'
+        )
+      }
+    )
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Country as co', 'g.countryId', 'co.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
@@ -581,6 +600,25 @@ async function getDaysByLocation(request) {
       query('Join Consumable with Sites which does not have inventories')
         .from('Consumable as c')
         .join('Site as s')
+        .innerJoin('ConsumableAssay as cona', 'cona.consumableId', 'c.id')
+        .innerJoin('Assay as asa', 'asa.id', 'cona.assayId')
+        .innerJoin('DeviceType as dt', 'dt.id', 'asa.deviceTypeId')
+        .innerJoin(
+          function () {
+            this.select('d.*')
+              .from('Device as d')
+              .innerJoin('Site as si', 'si.id', 'd.siteId')
+              .innerJoin('DeviceType as det', 'det.id', 'd.deviceTypeId')
+              .groupBy('d.siteId', 'd.deviceTypeId')
+              .as('DistTable')
+          },
+          function () {
+            this.on('DistTable.siteId', 's.id').andOn(
+              'DistTable.deviceTypeId',
+              'dt.id'
+            )
+          }
+        )
         .leftOuterJoin('InventoryItem as ii', function () {
           this.on('c.id', 'ii.consumableId').andOn('s.id', 'ii.siteId')
         })

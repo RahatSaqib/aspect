@@ -64,10 +64,9 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
-  await knex('DeviceLog')
-    .whereIn('deviceId', deviceIds)
-    .orWhereIn('resultId', resultIds)
-    .delete()
+  await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
+
+  await knex('DeviceLog').whereIn('resultId', resultIds).delete()
 
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
@@ -116,18 +115,37 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('Tag').delete()
 
+  const sitesAndDevices = await knex('Result')
+    .whereIn('id', resultIds)
+    .select('siteId', 'deviceId')
   await knex('Result').whereIn('id', resultIds).delete()
 
+  await knex('FactInventoryConsumptionRate')
+    .whereIn('siteId', siteIds)
+    .orWhereIn(
+      'siteId',
+      _.map(sitesAndDevices, elem => elem.siteId)
+    )
   await knex('DeviceOperation').whereIn('id', opIds).delete()
 
   await knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('id', deviceIds)
+    .orWhereIn(
+      'id',
+      _.map(sitesAndDevices, elem => elem.deviceId)
+    )
     .delete()
 
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
-  await knex('Site').whereIn('id', siteIds).delete()
+  await knex('Site')
+    .whereIn('id', siteIds)
+    .orWhereIn(
+      'id',
+      _.map(sitesAndDevices, elem => elem.siteId)
+    )
+    .delete()
 
   await knex('RefreshToken').where({ clientId }).delete()
 }
