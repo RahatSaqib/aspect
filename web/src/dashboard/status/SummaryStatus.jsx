@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
+import { useQuery } from 'react-query'
+import filter from 'lodash/filter'
+
+import _ from 'lodash'
+
 import flowRight from 'lodash/flowRight'
 import reduce from 'lodash/reduce'
 import set from 'lodash/set'
-import filter from 'lodash/filter'
 import map from 'lodash/map'
 import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
@@ -19,6 +23,8 @@ import messages from './messages'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import AspectLink from '../../components/shared/AspectLink'
 import IconProvider from '../../MigratedComponents/IconProvider'
+
+import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -85,6 +91,8 @@ const enhance = compose(
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
+      console.log(filtersParams)
+
       fetchStatDashboard(filtersParams, { dashboard })
     },
   }),
@@ -218,76 +226,134 @@ export const Widget = ({ intl, defaultMessages, widget }) => {
   )
 }
 
+// const getItemsInGroup = groupI18nKey => {
+//   const itemIds =
+//     summary.getIn(['widgetGroups', groupI18nKey]) || Immutable.List()
+//   return itemIds.map(id => allSummaryItems.getIn(['byId', id])).toJS()
+// }
+
+// const widgetGroups = availableGroupI18nKeys
+//   .map(groupI18nKey => ({
+//     groupI18nKey,
+//     items: getItemsInGroup(groupI18nKey),
+//   }))
+//   .filter(({ items }) => items.length > 0)
+
+const formatMe = (data, dashboard) => {
+  const widgetGroups = []
+  const nonGroupedWidgets = []
+  availableGroupI18nKeys.map(group => {
+    const items = filter(data, [
+      'dashboards',
+      `{"${dashboard}": {"groupI18nKey": "${group}"}}`,
+    ])
+    if (items && items.length) {
+      widgetGroups.push({ groupI18nKey: group, items })
+    }
+    return widgetGroups
+  })
+
+  return { widgetGroups, nonGroupedWidgets }
+}
+
 export const SummaryStatus = ({
   intl,
   className,
+  dashboard = 'home',
   // --- injected by recompose ---
-  defaultMessages,
-  widgetGroups = [],
-  nonGroupedWidgets,
-  loading,
-}) => (
-  <div className={className}>
-    {/*
+  // defaultMessages,
+  // widgetGroups = [],
+  // nonGroupedWidgets,
+  // loading,
+}) => {
+  const [widgets, setWidgets] = useState(false)
+  const defaultMessages = false
+  const widgetGroups = false
+  const nonGroupedWidgets = false
+  const loading = false
+
+  const { isError, data, error } = useQuery(`${dashboard}Widgets`, async () =>
+    fetchWrapperForQueries(`/dashboard/summary?dashboard=${dashboard}`)
+  )
+
+  if (isError) {
+    throw new Error(error)
+  }
+
+  useEffect(() => {
+    if (data) {
+      setWidgets(formatMe(data, dashboard))
+    }
+  }, [data])
+
+  console.log(widgets)
+
+  // /dashboard/summary
+  // console.log({ defaultMessages, widgetGroups, nonGroupedWidgets, loading })
+
+  return (
+    <div className={className}>
+      {/*
     ----------------
     --- 1. first show non-grouped widgets
     ----------------
     */}
-    {map(nonGroupedWidgets, widget => {
-      const description = formatMessage(
-        'description',
-        widget,
-        intl,
-        defaultMessages
-      )
-      const widgetProps = { intl, defaultMessages, widget }
-      return (
-        <Unit key={widget.id} sm="1-2" lg="1-4">
-          <Widget {...widgetProps} />
-        </Unit>
-      )
-    })}
-    {/*
+      {/* {map(nonGroupedWidgets, widget => {
+        const description = formatMessage(
+          'description',
+          widget,
+          intl,
+          defaultMessages
+        )
+        const widgetProps = { intl, defaultMessages, widget }
+        return (
+          <Unit key={widget.id} sm="1-2" lg="1-4">
+            <Widget {...widgetProps} />
+          </Unit>
+        )
+      })} */}
+      {/*
     ----------------
     --- 2. then show widgets in groups
     ----------------
     */}
-    {loading && (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-      >
-        <LinearProgress />
-      </div>
-    )}
-    {widgetGroups.length > 0 && (
-      <Card className={cssClasses('Summary_Card_Groups')}>
-        {widgetGroups.map(group => {
-          return (
-            <Unit
-              key={group.groupI18nKey}
-              sm="1-2"
-              lg="1-4"
-              className={cssClasses('Summary_Group_Wrapper')}
-            >
-              <div className={cssClasses('Summary_Group')}>
-                <div className={cssClasses('Summary_Group_Title')}>
-                  {formatMessage('group', group, intl, defaultMessages)}
+      {/* {loading && (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <LinearProgress />
+        </div>
+      )} */}
+      {/* {widgetGroups.length > 0 && (
+        <Card className={cssClasses('Summary_Card_Groups')}>
+          {widgetGroups.map(group => {
+            return (
+              <Unit
+                key={group.groupI18nKey}
+                sm="1-2"
+                lg="1-4"
+                className={cssClasses('Summary_Group_Wrapper')}
+              >
+                <div className={cssClasses('Summary_Group')}>
+                  <div className={cssClasses('Summary_Group_Title')}>
+                    {formatMessage('group', group, intl, defaultMessages)}
+                  </div>
+                  <div className={cssClasses('Summary_Group_Widgets')}>
+                    {group.items.map(widget => (
+                      <Widget {...{ intl, defaultMessages, widget }} />
+                    ))}
+                  </div>
                 </div>
-                <div className={cssClasses('Summary_Group_Widgets')}>
-                  {group.items.map(widget => (
-                    <Widget {...{ intl, defaultMessages, widget }} />
-                  ))}
-                </div>
-              </div>
-            </Unit>
-          )
-        })}
-      </Card>
-    )}
-  </div>
-)
+              </Unit>
+            )
+          })}
+        </Card>
+      )} */}
+    </div>
+  )
+}
 
 export default enhance(SummaryStatus)
