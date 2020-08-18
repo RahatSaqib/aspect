@@ -816,7 +816,7 @@ describe('Device API routes for GxConnect Devices', () => {
           { payload: Invalid, result: 'Invalid' },
           { payload: Error, result: 'Error' },
         ]
-        await payloads.forEach(async elem => {
+        await Promise.each(payloads, async elem => {
           const { result: resultPayload } = elem.payload
 
           const res = await server
