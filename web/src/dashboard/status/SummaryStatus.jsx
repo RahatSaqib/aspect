@@ -242,16 +242,16 @@ export const Widget = ({ intl, defaultMessages, widget }) => {
 const formatMe = (data, dashboard) => {
   const widgetGroups = []
   const nonGroupedWidgets = []
-  availableGroupI18nKeys.map(group => {
-    const items = filter(data, [
-      'dashboards',
-      `{"${dashboard}": {"groupI18nKey": "${group}"}}`,
-    ])
-    if (items && items.length) {
-      widgetGroups.push({ groupI18nKey: group, items })
-    }
-    return widgetGroups
-  })
+  // availableGroupI18nKeys.map(group => {
+  //   const items = filter(data, [
+  //     'dashboards',
+  //     `{"${dashboard}": {"groupI18nKey": "${group}"}}`,
+  //   ])
+  //   if (items && items.length) {
+  //     widgetGroups.push({ groupI18nKey: group, items })
+  //   }
+  //   return widgetGroups
+  // })
 
   return { widgetGroups, nonGroupedWidgets }
 }
