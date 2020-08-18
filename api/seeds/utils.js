@@ -2964,11 +2964,10 @@ async function mapJobFunctionPermissions(
  * @param {object} knex Knex instance
  * @param {array} permissionsToRemove An array of permissions ids
  */
-async function removePermissions(
-  knex,
-  permissions
-) {
-  await knex('JobFunctionPermission').whereIn('permissionId', permissions).delete()
+async function removePermissions(knex, permissions) {
+  await knex('JobFunctionPermission')
+    .whereIn('permissionId', permissions)
+    .delete()
   await knex('Permission').whereIn('id', permissions).delete()
 }
 
@@ -2999,14 +2998,12 @@ async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
  * @param {object} knex Knex instance
  * @param {array} permissions An array of permissions definitions. The next props are mandatory: module, activity. You can also specify description and includedActivities.
  */
-async function updatePermissions(
-  knex,
-  permissions
-) {
-  return Promise.each(permissions,
-    async ({ module, activity, ...restProps }) => knex('Permission')
+async function updatePermissions(knex, permissions) {
+  return Promise.each(permissions, async ({ module, activity, ...restProps }) =>
+    knex('Permission')
       .where({ module, activity })
-      .update({ ...restProps }))
+      .update({ ...restProps })
+  )
 }
 
 /**
