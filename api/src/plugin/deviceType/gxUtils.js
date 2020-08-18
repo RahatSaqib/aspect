@@ -159,8 +159,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     ) {
       // Has the result already been determined?
       if (
-        _.get(existingResult, 'resultCategory1') !== 'NoResult' &&
-        _.get(existingResult, 'resultCategory2') !== 'NoResult'
+        (_.get(existingResult, 'resultCategory1') &&
+          _.get(existingResult, 'resultCategory1') !== 'NoResult') ||
+        (_.get(existingResult, 'resultCategory2') &&
+          _.get(existingResult, 'resultCategory2') !== 'NoResult')
       ) {
         // We should never merge an incomplete result over a complete result
         throw Boom.conflict('A later version of this result already exists')
