@@ -650,6 +650,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
         'Invalid',
         'NoResult',
         'Error',
+        'LessThan40',
       ],
       'HIV',
       'resultCategoryHiv'
