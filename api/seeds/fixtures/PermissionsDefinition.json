@@ -26,7 +26,7 @@
     {
         "module": "account",
         "activity": "view",
-        "description": "Can view logged user's account",
+        "description": "Can view their own account details (name, language, etc.)",
         "includedActivities": ""
     },
     {
