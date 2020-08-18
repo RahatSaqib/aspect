@@ -92,7 +92,7 @@ describe('Extracting data from Result Text HIV VL', () => {
       },
       {
         payload: badCategorizedResults2.result,
-        expectedCategory: 'NotDetected',
+        expectedCategory: 'LessThan40',
       },
     ]
     textsToTest.forEach(elem => {
