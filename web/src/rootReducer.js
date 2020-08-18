@@ -34,7 +34,6 @@ import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatus
 import report from './report/ReportRedux'
 import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
-import clinicalIndicators from './MigratedComponents/Graphs/GraphRender/Redux'
 import resultsDetail from './MigratedComponents/Results/Detail/Redux/resultsDetail'
 import resultsForm from './MigratedComponents/Results/Detail/Redux/resultsForm'
 import deviceMaintenanceStatus from './device/maintenance/DeviceMaintenanceStatusRedux'
@@ -46,7 +45,6 @@ const appReducer = combineReducers({
   assay,
   assayType,
   case: _case,
-  clinicalIndicators,
   consumable,
   dashboard,
   demo,

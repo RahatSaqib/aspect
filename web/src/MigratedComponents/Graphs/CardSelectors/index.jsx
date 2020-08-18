@@ -9,13 +9,20 @@ const CardSelectors = ({ props }) => {
   return actionComponentProps ? (
     <Grid container className={cssClasses('selectors__container')}>
       {actionComponentProps.map(
-        ({ selectedValue, state, component: Component, identifier }) => {
+        ({
+          selectedValue,
+          state,
+          component: Component,
+          identifier,
+          endpoint,
+        }) => {
           return (
             <Component
               reduxStateId={state}
               selectedValue={selectedValue}
               action={action}
               identifier={identifier}
+              endpoint={endpoint}
             />
           )
         }

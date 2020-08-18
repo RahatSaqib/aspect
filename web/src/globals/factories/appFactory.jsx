@@ -4,6 +4,7 @@ import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { Provider, connect } from 'react-redux'
 import { IntlProvider } from 'react-intl'
+import { ReactQueryDevtools } from 'react-query-devtools'
 
 import translation from '../../shared/i18n/translation'
 import { getTimezoneById } from '../../shared/utils/timezone'
@@ -128,6 +129,9 @@ export const appFactory = compose(
             drawerOpen={drawerOpen}
           />
           {render(restProps)}
+          {process.env.NODE_ENV !== 'production' ? (
+            <ReactQueryDevtools initialIsOpen />
+          ) : null}
         </div>
       </IntlProvider>
     )

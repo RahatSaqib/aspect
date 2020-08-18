@@ -7,6 +7,8 @@ const treatmentStatusGraphs = {
   treatmentStatus: {
     id: 'treatmentStatus',
     title: 'treatmentGraphStatusMonthly',
+    componentSize: 'full',
+    group: 'all',
     assays: [
       'abbottM2000DBSHivVL',
       'abbottM2000PlasmaHivVL',
@@ -20,13 +22,15 @@ const treatmentStatusGraphs = {
     selectorModifiers: [
       {
         selectedValue: 'All Sites',
-        state: 'dashboard.siteList',
+        endpoint: '/dashboard/site',
+        state: 'siteList',
         component: AspectDropdown,
         identifier: 'siteId',
       },
       {
         selectedValue: 'Viral Load',
-        state: 'dashboard.assayResultCategoryList',
+        endpoint: '/dashboard/site',
+        state: 'assayResultCategoryList',
         component: AspectDropdown,
         identifier: 'assayTypeId',
       },
@@ -56,7 +60,7 @@ const treatmentStatusGraphs = {
         component: PieGraph,
         type: 'pieLegacyTreatment',
         size: 4,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           method: 'POST',
           endpoint: 'result/confirmed-treatment-tracking',
