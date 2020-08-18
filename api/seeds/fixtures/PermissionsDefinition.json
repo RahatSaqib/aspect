@@ -74,7 +74,7 @@
     {
         "module": "person",
         "activity": "view",
-        "description": "Can view persons",
+        "description": "Can view persons and users",
         "includedActivities": ""
     },
     {
