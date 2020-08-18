@@ -260,7 +260,7 @@
     {
         "module": "dashboard",
         "activity": "summary",
-        "description": "Can view the dashboard's allowed wigets",
+        "description": "Can view the dashboard's allowed widgets",
         "includedActivities": ""
     },
     {
