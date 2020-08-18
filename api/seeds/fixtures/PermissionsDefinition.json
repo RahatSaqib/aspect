@@ -44,7 +44,7 @@
     {
         "module": "deviceApiKey",
         "activity": "edit",
-        "description": "Can edit and create devices api keys",
+        "description": "Can edit and create device API keys that are used for authenticating lab devices",
         "includedActivities": "view"
     },
     {
