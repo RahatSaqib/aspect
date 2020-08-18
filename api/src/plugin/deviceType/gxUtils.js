@@ -126,6 +126,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   ) {
     potentialAssayIds.push('GxMtbRif')
   }
+  if (potentialAssayIds.includes('GxHiv1Vl')) {
+    const copies = getVLCopies(_.get(payload, 'data.resultText'))
+    if (copies) _.set(payload, 'data.copies', copies)
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -147,10 +151,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (!_.get(payload, 'workflow.status.id') && !payload.error) {
       _.set(payload, 'workflow.status.id', 'Deliverable')
     }
-    if (potentialAssayIds.includes('GxHiv1Vl')) {
-      const copies = getVLCopies(_.get(payload, 'data.resultText'))
-      if (copies) _.set(payload, 'data.copies', copies)
-    }
   } else {
     // Are we setting this result to NO RESULT?
     if (
@@ -159,7 +159,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     ) {
       // Has the result already been determined?
       if (
-        _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
+        _.get(existingResult, 'resultCategory1') !== 'NoResult' &&
         _.get(existingResult, 'resultCategory2') !== 'NoResult'
       ) {
         // We should never merge an incomplete result over a complete result
