@@ -32,8 +32,8 @@
     {
         "module": "account",
         "activity": "edit",
-        "description": "Can view and edit logged user's account",
-        "includedActivities": ""
+        "description": "Can edit their own account details (name, language, etc.)",
+        "includedActivities": "view"
     },
     {
         "module": "deviceApiKey",
