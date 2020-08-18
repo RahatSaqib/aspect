@@ -563,7 +563,7 @@ const routes = [
     config: {
       description: 'Device Maintenance Status Information for a Device',
       notes: 'Gets the Device Maintenance Status Log Information',
-      auth: { scope: ['device:view', 'operationalData:view'] },
+      auth: { scope: ['device', 'operationalData'] },
       validate: {
         params: {
           deviceId: Joi.string().description('Device id').required(),
