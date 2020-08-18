@@ -170,8 +170,8 @@
     {
         "module": "report",
         "activity": "edit",
-        "description": "Can view, edit and create reports",
-        "includedActivities": ""
+        "description": "Can edit and create reports",
+        "includedActivities": "view"
     },
     {
         "module": "case",
