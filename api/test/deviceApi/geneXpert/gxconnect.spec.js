@@ -36,7 +36,7 @@ const { deviceSeen } = require('../../../src/device/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe.only('Device API routes for GxConnect Devices', () => {
+describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
