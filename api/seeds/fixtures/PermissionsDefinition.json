@@ -50,7 +50,7 @@
     {
         "module": "device",
         "activity": "view",
-        "description": "Can view devices",
+        "description": "Can view lab devices",
         "includedActivities": ""
     },
     {
