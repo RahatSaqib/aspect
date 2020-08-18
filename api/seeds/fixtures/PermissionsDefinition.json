@@ -38,7 +38,7 @@
     {
         "module": "deviceApiKey",
         "activity": "view",
-        "description": "Can view devices api keys",
+        "description": "Can view device API keys that are used for authenticating lab devices",
         "includedActivities": ""
     },
     {
