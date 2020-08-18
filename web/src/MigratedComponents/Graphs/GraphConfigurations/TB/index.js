@@ -11,7 +11,7 @@ const tbGraphs = {
     group: 'tb',
     graphType: [
       {
-        id: 'tbByCategory1Monthly',
+        id: 'tbResultsByCategory1Monthly',
         component: BarGraph,
         type: 'bar',
         size: 8,
@@ -36,7 +36,7 @@ const tbGraphs = {
         formatDate: 'MMM yy',
       },
       {
-        id: 'tbByCategory1Aggregate',
+        id: 'tbResultsByCategory1Aggregate',
         component: PieGraph,
         type: 'pie',
         size: 4,
@@ -55,8 +55,8 @@ const tbGraphs = {
         formatDate: 'MMM yy',
         averages: {
           showTotal: false,
-          title: 'clinicalIndicatorsTBPieLegend',
-          key: ['NotDetected'],
+          title: 'clinicalIndicatorsTBDetectedPie',
+          key: ['Detected'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
@@ -78,15 +78,15 @@ const tbGraphs = {
         api: {
           endpoint: 'result/clinical-indicator-aggregations',
           params: {
-            groupBy: ['month', 'resultCategory1'],
+            groupBy: ['month', 'resultCategory2', 'resultCategory1'],
             minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
-        keyToConsume: 'resultCategory1',
+        keyToConsume: 'resultCategory2',
         filterBy: {
-          // resultCategory1: { values: ['detected'] },
+          resultCategory1: { values: ['Detected'] },
         },
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
@@ -103,19 +103,22 @@ const tbGraphs = {
         api: {
           endpoint: 'result/clinical-indicator-aggregations',
           params: {
-            groupBy: ['resultCategory1'],
+            groupBy: ['resultCategory2', 'resultCategory1'],
             minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
-        keyToConsume: 'resultCategory1',
+        keyToConsume: 'resultCategory2',
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
+        filterBy: {
+          resultCategory1: { values: ['Detected'] },
+        },
         averages: {
           showTotal: false,
           title: 'clinicalIndicatorsTBPieLegend',
-          key: ['NotDetected'],
+          key: ['Detected', 'Indeterminate'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
