@@ -56,7 +56,7 @@
     {
         "module": "device",
         "activity": "edit",
-        "description": "Can edit devices",
+        "description": "Can edit lab devices",
         "includedActivities": "view"
     },
     {
