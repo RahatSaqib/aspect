@@ -206,7 +206,7 @@
     {
         "module": "reporter",
         "activity": "view",
-        "description": "Can refresh token for reporter",
+        "description": "Can view a list of Reporters",
         "includedActivities": ""
     },
     {
