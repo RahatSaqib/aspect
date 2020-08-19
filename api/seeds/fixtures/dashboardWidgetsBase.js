@@ -887,8 +887,8 @@ module.exports = {
     },
     {
       icon: 'MdTextsms',
-      title: 'Number of SMS Sent',
-      titleI18nKey: 'smsSent',
+      title: 'Number of SMS Sent MTD',
+      titleI18nKey: 'dashboardWidgetSmsSentTitle',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
@@ -918,12 +918,12 @@ module.exports = {
         AND dt.externalId = 'CepheidGeneXpert'
       `,
       statUnit: '{unit} YTD',
-      statUnitI18nKey: 'dashboardSmsSent',
+      statUnitI18nKey: 'dashboardWidgetSmsSentStat',
       link: '/browse/notification',
       sortOrder: 12,
       externalId: 'smsSent',
       description: 'The total number of text messages sent in the month',
-      descriptionI18nKey: 'averageSmsSent',
+      descriptionI18nKey: 'dashboardWidgetSmsSentDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
