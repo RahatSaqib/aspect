@@ -815,7 +815,8 @@ module.exports = {
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-      WHERE YEAR(sms.createdOn) = YEAR(NOW())
+      WHERE YEAR(em.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
@@ -912,8 +913,7 @@ module.exports = {
         INNER JOIN Site AS s ON d.siteId = s.id
         LEFT OUTER JOIN Geography as g on s.geographyId = g.id
       WHERE
-        YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-        AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        YEAR(sms.createdOn) = YEAR(NOW())
         AND sms.resultId IS NOT NULL
         AND dt.externalId = 'CepheidGeneXpert'
       `,
