@@ -791,7 +791,7 @@ module.exports = {
       titleI18nKey: 'averageRecipientsOfSms',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForIndicator: `SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(sms.resultId) AS resultCount
@@ -806,7 +806,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(sms.resultId) AS resultCount
@@ -841,7 +841,7 @@ module.exports = {
       titleI18nKey: 'averageLengthOfSms',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(messageLength)) AS cnt
+      sqlForIndicator: `SELECT IFNULL(ROUND(AVG(messageLength)),0) AS cnt
       FROM
       (
       SELECT length(sms.message) AS messageLength
@@ -856,7 +856,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(messageLength)) AS cnt
+      sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(messageLength)),0) AS cnt
       FROM
       (
       SELECT length(sms.message) AS messageLength
