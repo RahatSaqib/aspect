@@ -1,71 +1,88 @@
 import React from 'react'
+import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
+import Card from '@material-ui/core/Card'
 
-const AspectWidgetGroup = props => {
-  console.log(props)
+import AspectLink from '../../components/shared/AspectLink'
+import AspectTooltip from '../../components/shared/AspectTooltip'
+import IconProvider from '../IconProvider'
+import messages from './messages'
 
-  return <div>Group!</div>
-  //   const { link, icon, count, extra } = props.widget;
-  //   const description = formatMessage(
-  //     'description',
-  //     widget,
-  //     intl,
-  //     defaultMessages
-  //   );
-  //   return (
-  //     <AspectLink
-  //       to={widget.link}
-  //       className={cssClasses('Summary', {
-  //         'Summary_Link--disabled': !widget.link
-  //       })}
-  //       testId="SummaryStatus--Summary_Link"
-  //     >
-  //       <Card className={cssClasses('Summary__Card')}>
-  //         <div className={cssClasses('Summary__Card__Title')}>
-  //           <IconProvider icon={widget.icon} className="summaryCard__icon" />
-  //           <span className={cssClasses('Summary__Card__Title--main')}>
-  //             {formatMessage('title', widget, intl, defaultMessages)}
+const cssClasses = classnames.bind(require('./Group.css'))
 
-  //             <span className={cssClasses('Summary__Card__Title--sub')}>
-  //               {formatMessage('subTitle', widget, intl, defaultMessages)}
-  //             </span>
-  //           </span>
-  //           {description ? (
-  //             <AspectTooltip showHelpIcon title={description} />
-  //           ) : null}
-  //         </div>
-  //         <div className={cssClasses('Summary__Card__Content')}>
-  //           <div className={cssClasses('Summary__Card__Item')}>
-  //             <div className={cssClasses('Summary__Card__Item__Count')}>
-  //               {widget.count}
-  //             </div>
-  //             <div className={cssClasses('Summary__Card__Item__Messages')}>
-  //               <div
-  //                 className={cssClasses('Summary__Card__Item__Messages--main')}
-  //               >
-  //                 {formatMessage('statUnit', widget, intl, defaultMessages)}
-  //               </div>
-  //               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
-  //                 {formatMessage('statStatus', widget, intl, defaultMessages)}
-  //               </div>
-  //             </div>
-  //           </div>
-  //           <div className={cssClasses('Summary__Card__Item--right')}>
-  //             <div className={cssClasses('Summary__Card__Item__Messages')}>
-  //               <div
-  //                 className={cssClasses('Summary__Card__Item__Messages--main')}
-  //               >
-  //                 {widget.extra}
-  //                 {formatMessage('extraUnit', widget, intl, defaultMessages)}
-  //               </div>
-  //               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
-  //                 {formatMessage('extraLabel', widget, intl, defaultMessages)}
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </Card>
-  //     </AspectLink>
-  //   );
+const AspectWidgetGroup = ({ data }) => {
+  const { formatMessage: intlFormatMessage } = useIntl()
+
+  const {
+    link,
+    icon,
+    description,
+    count,
+    extra,
+    title,
+    titleI18nKey,
+    subTitleI18nKey,
+    extraUnitI18nKey,
+    extraLabelI18nKey,
+    statUnitI18nKey,
+    statStatusI18nKey,
+  } = data
+  // console.log(data)
+
+  return (
+    <AspectLink
+      to={link}
+      className={cssClasses('Summary', {
+        'Summary_Link--disabled': !link,
+      })}
+      testId="SummaryStatus--Summary_Link"
+    >
+      <Card className={cssClasses('Summary__Card')}>
+        <div className={cssClasses('Summary__Card__Title')}>
+          <IconProvider icon={icon} className="summaryCard__icon" />
+          <span className={cssClasses('Summary__Card__Title--main')}>
+            {title}
+            <span className={cssClasses('Summary__Card__Title--sub')}>
+              {/* {subTitleI18nKey && intlFormatMessage(messages[subTitleI18nKey])} */}
+            </span>
+          </span>
+          {description ? (
+            <AspectTooltip showHelpIcon title={description} />
+          ) : null}
+        </div>
+        <div className={cssClasses('Summary__Card__Content')}>
+          <div className={cssClasses('Summary__Card__Item')}>
+            <div className={cssClasses('Summary__Card__Item__Count')}>
+              {count}
+            </div>
+            <div className={cssClasses('Summary__Card__Item__Messages')}>
+              <div
+                className={cssClasses('Summary__Card__Item__Messages--main')}
+              >
+                {/* {!statUnitI18nKey && intlFormatMessage(messages[statUnitI18nKey])} */}
+              </div>
+              <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
+                {/* {statStatusI18nKey && intlFormatMessage(messages[statStatusI18nKey])} */}
+              </div>
+            </div>
+          </div>
+          <div className={cssClasses('Summary__Card__Item--right')}>
+            <div className={cssClasses('Summary__Card__Item__Messages')}>
+              <div
+                className={cssClasses('Summary__Card__Item__Messages--main')}
+              >
+                {extra}
+                {/* {extraUnitI18nKey && intlFormatMessage(messages[extraUnitI18nKey])} */}
+              </div>
+              <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
+                {/* {extraLabelI18nKey &&  intlFormatMessage(messages[extraLabelI18nKey])} */}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </AspectLink>
+  )
 }
 
 export default AspectWidgetGroup
