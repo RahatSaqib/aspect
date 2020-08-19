@@ -741,7 +741,7 @@ module.exports = {
       titleI18nKey: 'averageRecipientsOfEmail',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForIndicator: `SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(em.resultId) AS resultCount
@@ -756,7 +756,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY em.resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForStatUnit: `SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(em.resultId) AS resultCount
