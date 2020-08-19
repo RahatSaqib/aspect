@@ -7,8 +7,12 @@ async function fixActualGeneXpertHivVlData(knex) {
     LessThan1000: resultCategoryLessThan1000,
     MoreThan1000: resultCategoryMoreThan1000,
     LessThan40: resultCategoryLessThan40,
+    NoResult: resultCategoryNoResult,
+    Success: resultCategorySuccess,
+    NotDetected: resultCategoryNotDetected,
   } = await allResultCategoryToId()
   const assayId = await assayToId('GxHiv1Vl')
+  // Fix those results categorized as "Detected" Only but without the copies and the correspondent category 'MoreThan1000','LessThan1000','LessThan40'
   await knex('Result')
     .update(
       'resultCategory1',
@@ -61,7 +65,7 @@ async function fixActualGeneXpertHivVlData(knex) {
                 )
               )
             AS DECIMAL)
-          ) 
+          )
         )`
       )
     )
@@ -70,6 +74,25 @@ async function fixActualGeneXpertHivVlData(knex) {
       knex.raw("resultData ->>'$.resultText'"),
       'LIKE',
       'HIV-1 DETECTED %copies%'
+    )
+
+  // Fix all results with the resultText property null values assigned and the resultCategory 'Success'.
+  // It updates to No Result
+  await knex('Result')
+    .update('resultCategory1', resultCategoryNoResult)
+    .whereRaw("resultData ->>'$.resultText' is null")
+    .andWhere({ assayId })
+    .andWhere('resultCategory1', resultCategorySuccess)
+    .orWhere(knex.raw("resultData ->>'$.resultText'"), 'null')
+
+  // Fill all results with the resultText property with 'HIV-1 NOT DETECTED' and the result Category 'Success'
+  await knex('Result')
+    .update('resultCategory1', resultCategoryNotDetected)
+    .andWhere('resultCategory1', resultCategorySuccess)
+    .andWhere(
+      knex.raw("resultData ->>'$.resultText'"),
+      'LIKE',
+      'HIV-1 NOT DETECTED'
     )
 
   await upsertAssayResultCategories(knex, assayId, ['LessThan40'])
