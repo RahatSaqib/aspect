@@ -13,11 +13,12 @@ async function fixActualGeneXpertHivVlData(knex) {
   } = await allResultCategoryToId()
   const assayId = await assayToId('GxHiv1Vl')
   // Fix those results categorized as "Detected" Only but without the copies and the correspondent category 'MoreThan1000','LessThan1000','LessThan40'
-  await knex('Result')
-    .update(
-      'resultCategory1',
-      knex.raw(
-        `IF(
+  if (assayId) {
+    await knex('Result')
+      .update(
+        'resultCategory1',
+        knex.raw(
+          `IF(
           CAST(
             LTRIM(
               RTRIM(
@@ -40,12 +41,12 @@ async function fixActualGeneXpertHivVlData(knex) {
                 INSTR(resultData->>'$.resultText','< 40') > 0,${resultCategoryLessThan40},${resultCategoryLessThan1000}
                 ),${resultCategoryMoreThan1000}
         )`
+        )
       )
-    )
-    .update(
-      'resultData',
-      knex.raw(
-        `JSON_INSERT(resultData,'$.copies',
+      .update(
+        'resultData',
+        knex.raw(
+          `JSON_INSERT(resultData,'$.copies',
           IF(INSTR(resultData->>'$.resultText','DETECTED < 40')>0 OR INSTR(resultData->>'$.resultText','copies')=0,NULL,
             CAST(
               LTRIM(
@@ -67,35 +68,36 @@ async function fixActualGeneXpertHivVlData(knex) {
             AS DECIMAL)
           )
         )`
+        )
       )
-    )
-    .where({ assayId })
-    .andWhere(
-      knex.raw("resultData ->>'$.resultText'"),
-      'LIKE',
-      'HIV-1 DETECTED %copies%'
-    )
+      .where({ assayId })
+      .andWhere(
+        knex.raw("resultData ->>'$.resultText'"),
+        'LIKE',
+        'HIV-1 DETECTED %copies%'
+      )
 
-  // Fix all results with the resultText property null values assigned and the resultCategory 'Success'.
-  // It updates to No Result
-  await knex('Result')
-    .update('resultCategory1', resultCategoryNoResult)
-    .whereRaw("resultData ->>'$.resultText' is null")
-    .andWhere({ assayId })
-    .andWhere('resultCategory1', resultCategorySuccess)
-    .orWhere(knex.raw("resultData ->>'$.resultText'"), 'null')
+    // Fix all results with the resultText property null values assigned and the resultCategory 'Success'.
+    // It updates to No Result
+    await knex('Result')
+      .update('resultCategory1', resultCategoryNoResult)
+      .whereRaw("resultData ->>'$.resultText' is null")
+      .andWhere({ assayId })
+      .andWhere('resultCategory1', resultCategorySuccess)
+      .orWhere(knex.raw("resultData ->>'$.resultText'"), 'null')
 
-  // Fill all results with the resultText property with 'HIV-1 NOT DETECTED' and the result Category 'Success'
-  await knex('Result')
-    .update('resultCategory1', resultCategoryNotDetected)
-    .andWhere('resultCategory1', resultCategorySuccess)
-    .andWhere(
-      knex.raw("resultData ->>'$.resultText'"),
-      'LIKE',
-      'HIV-1 NOT DETECTED'
-    )
+    // Fill all results with the resultText property with 'HIV-1 NOT DETECTED' and the result Category 'Success'
+    await knex('Result')
+      .update('resultCategory1', resultCategoryNotDetected)
+      .andWhere('resultCategory1', resultCategorySuccess)
+      .andWhere(
+        knex.raw("resultData ->>'$.resultText'"),
+        'LIKE',
+        'HIV-1 NOT DETECTED'
+      )
 
-  await upsertAssayResultCategories(knex, assayId, ['LessThan40'])
+    await upsertAssayResultCategories(knex, assayId, ['LessThan40'])
+  }
 }
 
 module.exports = {
