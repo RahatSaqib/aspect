@@ -308,7 +308,7 @@
     {
         "module": "dashboard",
         "activity": "report",
-        "description": "Can see the 'Reports' panel at the dashboard and download lower level reports (Inventory, Quarterly - By Site)",
+        "description": "Can see the 'Reports' panel on the action dashboard",
         "includedActivities": ""
     },
     {
