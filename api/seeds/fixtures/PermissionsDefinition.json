@@ -86,7 +86,7 @@
     {
         "module": "result",
         "activity": "view",
-        "description": "Can view results, and dashboard's panels 'VL Outcomes', 'TB Rif Resistance', 'Confirmed Response' and 'Overall Activity Rate'",
+        "description": "Can view results, and the disease-specific graphs on the dashboard.",
         "includedActivities": ""
     },
     {
