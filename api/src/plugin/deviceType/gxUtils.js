@@ -126,6 +126,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   ) {
     potentialAssayIds.push('GxMtbRif')
   }
+  if (potentialAssayIds.includes('GxHiv1Vl')) {
+    const copies = getVLCopies(_.get(payload, 'data.resultText'))
+    if (copies) _.set(payload, 'data.copies', copies)
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -147,10 +151,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (!_.get(payload, 'workflow.status.id') && !payload.error) {
       _.set(payload, 'workflow.status.id', 'Deliverable')
     }
-    if (potentialAssayIds.includes('GxHiv1Vl')) {
-      const copies = getVLCopies(_.get(payload, 'data.resultText'))
-      if (copies) _.set(payload, 'data.copies', copies)
-    }
   } else {
     // Are we setting this result to NO RESULT?
     if (
@@ -159,8 +159,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     ) {
       // Has the result already been determined?
       if (
-        _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
-        _.get(existingResult, 'resultCategory2') !== 'NoResult'
+        (_.get(existingResult, 'resultCategory1') &&
+          _.get(existingResult, 'resultCategory1') !== 'NoResult') ||
+        (_.get(existingResult, 'resultCategory2') &&
+          _.get(existingResult, 'resultCategory2') !== 'NoResult')
       ) {
         // We should never merge an incomplete result over a complete result
         throw Boom.conflict('A later version of this result already exists')
@@ -912,6 +914,11 @@ function getResultCategories(payload) {
       ) {
         payloadCategory = [...payloadCategory, { id: result1 }]
       }
+    } else {
+      const assayId = _.get(payload, 'assay.id')
+      if (assayId === 'GxHiv1Vl') {
+        return [{ id: getResultCategoriesHivVL(payloadResultText) }]
+      }
     }
   }
   return payloadCategory
@@ -933,9 +940,9 @@ function getResultCategoriesHivVL(result1Text) {
   if (copies) {
     if (copies < 1000 && copies >= 40) return 'LessThan1000'
     if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text.toLowerCase().includes('detected < 40'))
+  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
     return 'LessThan40'
-  else if (result1Text.toLowerCase().indexOf('detected') === 0)
+  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
     return 'NoResult'
 }
 

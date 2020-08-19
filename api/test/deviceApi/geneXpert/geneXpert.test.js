@@ -10,8 +10,11 @@ const {
   detectedMoreThan1000,
   noDetected,
   detectedWithNoCopies,
-  Invalid,
-  Error,
+  invalidCategory,
+  errorCategory,
+  resultTextNull,
+  badCategorizedResults,
+  badCategorizedResults2,
 } = require('./HIV_VL_payload')
 
 describe('Extracting data from Result Text HIV VL', () => {
@@ -26,6 +29,11 @@ describe('Extracting data from Result Text HIV VL', () => {
         resulText: 'HIV-1 DETECTED 40 copies/mL (log 1.60)',
         value: 'LessThan1000',
         copies: 40,
+      },
+      {
+        resulText: null,
+        value: 'NoResult',
+        copies: null,
       },
       {
         resulText: 'HIV-1 DETECTED 1.59E03 copies/mL (log 3.20)',
@@ -51,31 +59,47 @@ describe('Extracting data from Result Text HIV VL', () => {
     resultText.forEach(elem => {
       assert.equal(
         elem.copies,
-        getVLCopies(elem.resulText.replace('HIV-1', ''))
+        getVLCopies(
+          elem.resulText ? elem.resulText.replace('HIV-1', '') : elem.resulText
+        )
       )
 
       assert.equal(
         elem.value,
-        getResultCategoriesHivVL(elem.resulText.replace('HIV-1', ''))
+        getResultCategoriesHivVL(
+          elem.resulText ? elem.resulText.replace('HIV-1', '') : elem.resulText
+        )
       )
     })
   })
 
   it('Check the category for different results HIV VL', async () => {
     const textsToTest = [
-      { payload: detectedLess1000[0].result, result: 'LessThan40' },
-      { payload: detectedLess1000[1].result, result: 'LessThan1000' },
-      { payload: detectedMoreThan1000.result, result: 'MoreThan1000' },
-      { payload: noDetected.result, result: 'NotDetected' },
-      { payload: detectedWithNoCopies.result, result: 'NoResult' },
-      { payload: Invalid.result, result: 'Invalid' },
-      { payload: Error.result, result: 'Error' },
+      { payload: detectedLess1000[0].result, expectedCategory: 'LessThan40' },
+      { payload: detectedLess1000[1].result, expectedCategory: 'LessThan1000' },
+      {
+        payload: detectedMoreThan1000.result,
+        expectedCategory: 'MoreThan1000',
+      },
+      { payload: noDetected.result, expectedCategory: 'NotDetected' },
+      { payload: detectedWithNoCopies.result, expectedCategory: 'NoResult' },
+      { payload: invalidCategory.result, expectedCategory: 'Invalid' },
+      { payload: errorCategory.result, expectedCategory: 'Error' },
+      { payload: resultTextNull.result, expectedCategory: 'NoResult' },
+      {
+        payload: badCategorizedResults.result,
+        expectedCategory: 'NotDetected',
+      },
+      {
+        payload: badCategorizedResults2.result,
+        expectedCategory: 'LessThan40',
+      },
     ]
     textsToTest.forEach(elem => {
       const [{ id: categoryExternalId }] = getResultCategories(
         _.assign({}, elem.payload)
       )
-      assert.equal(categoryExternalId, elem.result)
+      assert.equal(categoryExternalId, elem.expectedCategory)
     })
   })
 })
