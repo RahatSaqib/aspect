@@ -314,7 +314,7 @@
     {
         "module": "dashboard",
         "activity": "siteFilter",
-        "description": "Can filter the dashboard by Site",
+        "description": "Can filter the action dashboard by site",
         "includedActivities": ""
     }
 ]
