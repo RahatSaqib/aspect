@@ -150,12 +150,15 @@ async function listAssays(request) {
 
   // map rawAssays with extra values
   const assays = _.map(rawAssays, assay => {
-    const abilities = abilitiesByAssayId[assay.id].map(ability => ({
-      ...ability,
-      canCreate: ability.canCreate === 1,
-      canDelete: ability.canDelete === 1,
-      canEdit: ability.canEdit === 1,
-    }))
+    let abilities = null
+    if (abilitiesByAssayId[assay.id]) {
+      abilities = abilitiesByAssayId[assay.id].map(ability => ({
+        ...ability,
+        canCreate: ability.canCreate === 1,
+        canDelete: ability.canDelete === 1,
+        canEdit: ability.canEdit === 1,
+      }))
+    }
     return {
       ...assay,
       hasResults: usedAssayIds.includes(assay.id),

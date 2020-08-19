@@ -258,6 +258,10 @@ module.exports = {
       sortOrder: 11,
     },
     {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'smsSent'),
+      sortOrder: 12,
+    },
+    {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageDaysModuleSwap'
       ),
