@@ -31,7 +31,7 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
       permissions={whiteListed ? ['site:view'] : ['result:view']}
     >
       <Grid item xs={12} lg={outerSize}>
-        <Grid container spacing={24}>
+        <Grid container>
           <Grid item xs={12}>
             <AspectCard
               title={intlFormatMessage(messages[title])}

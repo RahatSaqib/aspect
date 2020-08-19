@@ -22,8 +22,11 @@ const {
   detectedMoreThan1000,
   noDetected,
   detectedWithNoCopies,
-  Invalid,
-  Error,
+  invalidCategory,
+  errorCategory,
+  resultTextNull,
+  badCategorizedResults,
+  badCategorizedResults2,
 } = require('./HIV_VL_payload')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
@@ -808,13 +811,16 @@ describe('Device API routes for GxConnect Devices', () => {
       runTest(async () => {
         const { deviceAuth, basicDevicePayload, now } = context
         const payloads = [
-          { payload: detectedWithNoCopies, result: 'NoResult' },
-          { payload: detectedMoreThan1000, result: 'MoreThan1000' },
-          { payload: detectedLess1000[0], result: 'LessThan40' },
-          { payload: detectedLess1000[1], result: 'LessThan1000' },
-          { payload: noDetected, result: 'NotDetected' },
-          { payload: Invalid, result: 'Invalid' },
-          { payload: Error, result: 'Error' },
+          { payload: detectedWithNoCopies, expectedCategory: 'NoResult' },
+          { payload: detectedMoreThan1000, expectedCategory: 'MoreThan1000' },
+          { payload: detectedLess1000[0], expectedCategory: 'LessThan40' },
+          { payload: detectedLess1000[1], expectedCategory: 'LessThan1000' },
+          { payload: noDetected, expectedCategory: 'NotDetected' },
+          { payload: invalidCategory, expectedCategory: 'Invalid' },
+          { payload: errorCategory, expectedCategory: 'Error' },
+          { payload: resultTextNull, expectedCategory: 'NoResult' },
+          { payload: badCategorizedResults, expectedCategory: 'NotDetected' },
+          { payload: badCategorizedResults2, expectedCategory: 'LessThan40' },
         ]
         await Promise.each(payloads, async elem => {
           const { result: resultPayload } = elem.payload
@@ -845,7 +851,10 @@ describe('Device API routes for GxConnect Devices', () => {
           const afterResultDetails = await getLastResult()
 
           assert.equal(afterResultDetails.assay, resultPayload.assay.id)
-          assert.equal(afterResultDetails.resultCategory1, elem.result)
+          assert.equal(
+            afterResultDetails.resultCategory1,
+            elem.expectedCategory
+          )
           assert.equal(afterResultDetails.resultCategory2, null)
 
           if (
