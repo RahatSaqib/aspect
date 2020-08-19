@@ -296,7 +296,7 @@
     {
         "module": "dashboard",
         "activity": "action",
-        "description": "Can view the dashboard's 'Action' panel",
+        "description": "Can view the action dashboard",
         "includedActivities": ""
     },
     {
