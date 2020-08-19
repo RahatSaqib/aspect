@@ -820,7 +820,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
       ) AS innerQuery`,
-      statUnit: '{unit} YTD',
+      statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
       link: '/browse/notification',
       sortOrder: 10,
@@ -890,28 +890,34 @@ module.exports = {
       titleI18nKey: 'smsSent',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
+      sqlForIndicator: `
+      SELECT
+        IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
       FROM SmsMessage AS sms
-      INNER JOIN Device AS d ON d.id = sms.deviceId
-      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      INNER JOIN Site AS s ON d.siteId = s.id
-      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-      WHERE YEAR(sms.createdOn) = YEAR(NOW())
-      AND MONTH(sms.createdOn) = MONTH(NOW())
-      AND sms.resultId IS NOT NULL
-      AND dt.externalId = 'CepheidGeneXpert'`,
-      sqlForStatUnit: `SELECT IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
+        INNER JOIN Device AS d ON d.id = sms.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      WHERE
+        YEAR(sms.createdOn) = YEAR(NOW())
+        AND MONTH(sms.createdOn) = MONTH(NOW())
+        AND sms.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `
+      SELECT
+        IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
       FROM SmsMessage AS sms
-      INNER JOIN Device AS d ON d.id = sms.deviceId
-      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      INNER JOIN Site AS s ON d.siteId = s.id
-      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-      WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND sms.resultId IS NOT NULL
-      AND dt.externalId = 'CepheidGeneXpert'
+        INNER JOIN Device AS d ON d.id = sms.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE
+        YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND sms.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'
       `,
-      statUnit: '{unit} last month',
+      statUnit: '{unit} YTD',
       statUnitI18nKey: 'dashboardSmsSent',
       link: '/browse/notification',
       sortOrder: 12,
