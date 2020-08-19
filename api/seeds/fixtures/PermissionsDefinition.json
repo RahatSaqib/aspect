@@ -278,7 +278,7 @@
     {
         "module": "dashboard",
         "activity": "device",
-        "description": "Can view the dashboard's 'Sites' panel (including devices summary)",
+        "description": "Can view the summary of devices inside the 'Sites' panel",
         "includedActivities": ""
     },
     {
