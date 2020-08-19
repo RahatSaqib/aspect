@@ -212,7 +212,7 @@
     {
         "module": "reporter",
         "activity": "edit",
-        "description": "",
+        "description": "Can view a list of Reporters and change their status, including revoking their access token",
         "includedActivities": ""
     },
     {
