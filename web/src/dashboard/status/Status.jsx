@@ -31,7 +31,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const Status = ({ history, location, colorDemo }) => {
   const intl = useIntl()
   const { hivResults } = hivGraphs
-  const { tbResults } = tbGraphs
+  const { tbDetected, tbResults } = tbGraphs
   const { treatmentStatus } = treatmentStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
   const {
@@ -84,6 +84,14 @@ const Status = ({ history, location, colorDemo }) => {
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={tbDetected} />
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
