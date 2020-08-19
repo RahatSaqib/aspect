@@ -236,7 +236,7 @@
     {
         "module": "operationalData",
         "activity": "view",
-        "description": "Can view inventory and devices",
+        "description": "Can view operational data related to devices, including inventory",
         "includedActivities": ""
     },
     {
