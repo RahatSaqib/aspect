@@ -815,13 +815,12 @@ module.exports = {
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON d.siteId = s.id
       LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-      WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      WHERE YEAR(sms.createdOn) = YEAR(NOW())
       AND sms.resultId IS NOT NULL
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
       ) AS innerQuery`,
-      statUnit: '{unit} last month',
+      statUnit: '{unit} YTD',
       statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
       link: '/browse/notification',
       sortOrder: 10,
