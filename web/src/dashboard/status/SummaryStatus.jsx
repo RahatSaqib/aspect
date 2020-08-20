@@ -6,14 +6,6 @@ import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
 import AspectWidgets from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 
-/**
- * TODO: https://ops.systemone.id/browse/ASP-1521
- * Correct filters to page navigation
- *
- * TODO: https://ops.systemone.id/browse/ASP-1522
- * Refactor lifecycles and code-reuse
- */
-
 export const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
 
