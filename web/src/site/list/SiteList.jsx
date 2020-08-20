@@ -82,6 +82,10 @@ export const messages = defineMessages({
       other {# sites}
     }`,
   },
+  inventoryUpdate: {
+    id: 'pages.SiteList.inventoryUpdate',
+    defaultMessage: 'Inventory Update',
+  },
 })
 
 const FILTERS_CONFIG = [
@@ -99,7 +103,13 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['name', 'state', 'lga', 'totalDevices'],
+  availableSortCol: [
+    'name',
+    'state',
+    'lga',
+    'totalDevices',
+    'inventoryUpdatedOn',
+  ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -304,6 +314,11 @@ export const SiteList = ({
               {
                 key: 'totalDevices',
                 label: intl.formatMessage(messages.totalDevices),
+                sortable: true,
+              },
+              {
+                key: 'inventoryUpdatedOn',
+                label: intl.formatMessage(messages.inventoryUpdate),
                 sortable: true,
               },
               {

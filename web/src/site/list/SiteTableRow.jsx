@@ -7,12 +7,16 @@ import {
 } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import { messages } from './SiteList'
+import { daysUntilToday } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
 const enhance = _.identity
+
+const getInventoryUpdateDescription = date =>
+  date ? `${daysUntilToday(date)} days ago` : 'N/A'
 
 const SiteTableRow = ({ intl, site, onAlertClick, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -21,6 +25,9 @@ const SiteTableRow = ({ intl, site, onAlertClick, ...restProps }) => (
     <TableCell>{site.get('lga')}</TableCell>
     <TableCell>{site.get('externalId')}</TableCell>
     <TableCell>{site.get('totalDevices')}</TableCell>
+    <TableCell>
+      {getInventoryUpdateDescription(site.get('inventoryUpdatedOn'))}
+    </TableCell>
     <TableCell>
       {site.get('siteIssues') &&
         site

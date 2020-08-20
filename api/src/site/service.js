@@ -24,6 +24,7 @@ const SELECT_LIST_FIELDS = [
   totalDevicesQuery,
   's.externalId',
   'activeIssues.siteIssues',
+  knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn')
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -52,6 +53,8 @@ const SELECT_SHOW_FIELDS = [
 async function listSites(request) {
   const { query, auth } = request
 
+  console.log(auth)
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -59,6 +62,7 @@ async function listSites(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .leftOuterJoin(
       knex('Issue as i')
         .select(
@@ -94,6 +98,16 @@ async function listSites(request) {
 
       this.whereIn('s.id', deviceQuery)
     })
+    .groupBy([
+      's.id',
+      's.name',
+      's.shortName',
+      'st.name',
+      'l.name',
+      's.createdOn',
+      's.externalId',
+      'activeIssues.siteIssues',
+    ])
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -104,6 +118,8 @@ async function listSites(request) {
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
   const getCount = siteQuery.clone().count('s.id as count').first()
+
+  console.log(siteQuery.toString())
 
   // get rows
   const getItems = siteQuery

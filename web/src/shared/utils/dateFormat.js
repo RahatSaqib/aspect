@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { startOfDay, format as dateFnFormat, parseISO } from 'date-fns'
 import { withProps } from 'recompose'
+import differenceInDays from 'date-fns/differenceInDays'
 
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
@@ -109,3 +110,10 @@ export const formatRelative = (intl, date) => {
     { number: 'auto' }
   )
 }
+
+/**
+ * @param {string} date The ISO-formatted date that will be compared.
+ * @return {number} The number of days between the given date and today.
+ */
+export const daysUntilToday = date =>
+  differenceInDays(new Date(), new Date(date))
