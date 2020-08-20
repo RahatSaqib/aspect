@@ -7,7 +7,6 @@ const set = require('lodash/set')
  * NB: Any changes to this file needs a restart of the web
  * dev environment.
  */
-
 exports.customPropertiesVariables = {
   // Colors 2019
   '--alto': '#e0e0e0',
@@ -65,6 +64,7 @@ exports.customPropertiesVariables = {
   '--chathams-blue': '#18527d',
   '--conifer': '#99D25D',
   '--dusty': '#979797',
+  '--foam': '#f6fcfe',
   '--gallery': '#ececec',
   '--geyser': '#CCDBE1',
   '--even-red': '#FF0000',
