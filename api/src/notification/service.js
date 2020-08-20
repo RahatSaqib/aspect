@@ -269,7 +269,57 @@ async function createNotificationIfNotCreatedAlready(
   }
 }
 
+async function getNotifications(request) {
+  const { auth, query } = request
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultQuery = knex('Notification as n')
+    .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+    .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
+    .leftJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
+    .leftJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
+    .leftJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
+    .leftJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
+    .leftJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
+    .leftJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
+    .groupBy('n.createdOn')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
+
+  const getItems = resultQuery
+    .clone()
+    .modify(sortPageParams, query, 'n.createdOn', 'desc')
+    .select([
+      knex.raw(
+        'sum(case when mswm.externalId = "Sent" then 1 else 0 end) as webhookSent'
+      ),
+      knex.raw(
+        'sum(case when mswm.externalId = "Error" then 1 else 0 end) as webhookError'
+      ),
+      knex.raw(
+        'sum(case when mssms.externalId = "Sent" then 1 else 0 end) as smsSent'
+      ),
+      knex.raw(
+        'sum(case when mssms.externalId = "Error" then 1 else 0 end) as smsError'
+      ),
+      knex.raw(
+        'sum(case when msem.externalId = "Sent" then 1 else 0 end) as emailSent'
+      ),
+      knex.raw(
+        'sum(case when msem.externalId = "Error" then 1 else 0 end) as emailError'
+      ),
+      'n.createdOn',
+    ])
+console.log(getItems.toString())
+  const getCount = resultQuery.clone().count('n.id as count').first()
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  return { ok: true, total, data }
+}
+
 module.exports = {
   listNotifications,
   onIssueEscalated,
+  getNotifications,
 }

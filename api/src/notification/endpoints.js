@@ -1,6 +1,10 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listNotifications, onIssueEscalated } = require('./service')
+const {
+  listNotifications,
+  onIssueEscalated,
+  getNotifications,
+} = require('./service')
 const { exportNotifications } = require('./serviceReports')
 
 function listNotificationsBaseConfig() {
@@ -46,6 +50,53 @@ const routes = [
       description: 'Export Notifications List into Excel or CSV',
       notes: 'Filtered and sorted list of Notifications',
       ...listNotificationsBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/notification/history',
+    handler: getNotifications,
+    config: {
+      description: 'Get all notifications',
+      notes: 'Filtered and sorted list of Notifications',
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          total: Joi.number()
+            .required()
+            .description('The total number of items aggregated by consumable'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                webhookSent: Joi.number().description(
+                  'The number of webhook notification sent'
+                ),
+                webhookError: Joi.number().description(
+                  'The number of webhook Error notification Received'
+                ),
+                smsSent: Joi.number().description(
+                  'The number of sms notification sent'
+                ),
+                smsError: Joi.number().description(
+                  'The number of sms Error notification Received'
+                ),
+                emailSent: Joi.number().description(
+                  'The number of email notification sent'
+                ),
+                emailError: Joi.number().description(
+                  'The number of email Error notification Received'
+                ),
+                createdOn: Joi.date().description(
+                  'The date notification was sent or received'
+                ),
+              })
+            ),
+        }),
+      },
     },
   },
 ]

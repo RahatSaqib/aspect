@@ -148,7 +148,7 @@ export const NotificationList = props => {
     currentTarget: {
       dataset: { notificationId },
     },
-  }) => history.push(`/browse/notification/${notificationId}`)
+  }) => history.push(`/browse/notification/${notificationId}/history`)
 
   const onExcelClick = formatType => {
     const format = formatType.id

@@ -21,6 +21,9 @@ export const types = {
   REQUEST_NOTIFICATIONS: 'REQUEST_NOTIFICATIONS',
   RECEIVE_NOTIFICATIONS: 'RECEIVE_NOTIFICATIONS',
   REJECTED_NOTIFICATIONS: 'REJECTED_NOTIFICATIONS',
+  REQUEST_NOTIFICATION_HISTORY: 'REQUEST_NOTIFICATIONS_HISTORY',
+  RECEIVE_NOTIFICATION_HISTORY: 'RECEIVE_NOTIFICATIONS_HISTORY',
+  REJECTED_NOTIFICATION_HISTORY: 'REJECTED_NOTIFICATIONS_HISTORY',
 }
 
 /*
@@ -51,6 +54,88 @@ function rejectNotifications() {
   }
 }
 
+function requestNotificationHistory(sortCol, sortDir, page, size, filters) {
+  return {
+    type: types.REQUEST_NOTIFICATION_HISTORY,
+    sortCol,
+    sortDir,
+    page,
+    size,
+    filters,
+  }
+}
+
+function receiveNotificationHistory(json) {
+  return {
+    type: types.RECEIVE_NOTIFICATION_HISTORY,
+    items: json.data,
+    total: json.total,
+  }
+}
+
+function rejectNotificationHistory() {
+  return {
+    type: types.REJECTED_NOTIFICATION_HISTORY,
+  }
+}
+
+export function fetchNotificationsHistory(
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    dispatch(
+      requestNotificationHistory(sortCol, sortDir, page, pageSize, filters)
+    )
+
+    return aspectFetch(
+      `/notification/history${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.fetchNotificationHistory.GET.400.title',
+                defaultMessage: 'Searching Notification History Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.fetchNotificationHistory.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.fetchNotificationHistory.GET.default.title',
+                defaultMessage: 'Loading Notifications Failed',
+              },
+            })
+          ),
+        },
+      }
+    )
+      .then(json => dispatch(receiveNotificationHistory(json)))
+      .catch(() => dispatch(rejectNotificationHistory()))
+  }
+}
 export function fetchNotifications(
   filtersParams,
   sortCol,
