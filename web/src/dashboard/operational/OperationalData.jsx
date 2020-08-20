@@ -47,7 +47,7 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             dashboard="operational"
           />
 
-          {/* <ErrorBoundary>
+          <ErrorBoundary>
             <PermissionsProvider permissions={['operationalData']}>
               {assays && assays.length ? (
                 <GraphsContainer
@@ -69,7 +69,7 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             history={history}
             location={location}
             className={cssClasses('Section--stock')}
-          /> */}
+          />
         </Fragment>
       )}
     </div>
