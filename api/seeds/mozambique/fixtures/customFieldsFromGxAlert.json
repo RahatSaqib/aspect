@@ -1,0 +1,100 @@
+[
+  {
+    "title": "Nome do Doente",
+    "type": "string",
+    "order": 10,
+    "dbColumn": "PatientName",
+    "testType": null
+  },
+  {
+    "title": "Idade em Anos",
+    "type": "int",
+    "order": 20,
+    "dbColumn": "PatientAge",
+    "testType": null
+  },
+  {
+    "title": "Sexo",
+    "type": "int",
+    "order": 30,
+    "dbColumn": "PatientGender",
+    "testType": null
+  },
+  {
+    "title": "Número Celular Doente Ou Contacto",
+    "type": "string",
+    "order": 40,
+    "dbColumn": "PatientPhone",
+    "testType": null
+  },
+  {
+    "title": "Residencia do Doente / Ponto de Referência",
+    "type": "string",
+    "order": 50,
+    "dbColumn": "PatientStreet",
+    "testType": null
+  },
+  {
+    "title": "Estado Serologico HIV",
+    "type": "int",
+    "order": 60,
+    "dbColumn": "HivStatus",
+    "testType": null
+  },
+  {
+    "title": "Nome de Trab. De Saúde Manda Requisição",
+    "type": "string",
+    "order": 90,
+    "dbColumn": "RequestorName",
+    "testType": null
+  },
+  {
+    "title": "Número Cellular Trab. De Saúde",
+    "type": "string",
+    "order": 100,
+    "dbColumn": "RequestorPhone",
+    "testType": null
+  },
+  {
+    "title": "Categoria do Doente",
+    "type": "string",
+    "order": 70,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Categoria de Risco: Trabalho",
+    "type": "string",
+    "order": 80,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Data Amostra Foi Pedida",
+    "type": "string",
+    "order": 110,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Número de Registro Lab. com GeneXpert",
+    "type": "int",
+    "order": 120,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Provencia de CS da Amostra (se não foi CS com GeneXpert)",
+    "type": "string",
+    "order": 130,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Outras Notas",
+    "type": "string",
+    "order": 140,
+    "dbColumn": null,
+    "testType": null
+  }
+]

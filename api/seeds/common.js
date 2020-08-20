@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 
 const utils = require('./utils')
-const { partnerTypeToId } = require('../src/shared/dictionary')
 const config = require('../src/config')
 const { query } = require('../src/db')
 
@@ -28,6 +27,7 @@ const {
   allResultSourceToId,
   resultCategoryToId,
   unitToId,
+  partnerTypeToId,
 } = require('../src/shared/dictionary')
 
 /**

@@ -1,5 +1,8 @@
 -- This file contains queries for generating fixture files that are used for migrating clients from GxAlert to Aspect
 -- See the README file for more details on how to use these
+-- If exporting the results of these queries to a text file, the results might by text formatted with escape double quotes.
+--  You can find & replace these with the following capture group find expression ""([A-Za-z0-9\s\\\.\:\-ç\()\;#']*)""
+--  and replace with "$1"
 -- Be sure to limit these by countryId if you're migrating data for a country that is using our cloud server
 
 -- Query Country With States & LGAs in GxAlert
