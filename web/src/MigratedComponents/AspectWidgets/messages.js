@@ -1,7 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  // groups
   summaryWidgetGroupConnectivity: {
     id: 'pages.Status.summaryWidgetGroup.connectivity',
     defaultMessage: 'Connectivity',
@@ -21,6 +20,14 @@ export const messages = defineMessages({
   dashboardWidgetTestsPerDayTitle: {
     id: 'pages.Status.dashboardWidgetTestsPerDayTitle',
     defaultMessage: 'Tests Per Day',
+  },
+  dashboardWidgetSmsSentTitle: {
+    id: 'pages.Status.dashboardWidgetSmsSentTitle',
+    defaultMessage: 'Number of SMS Sent MTD',
+  },
+  dashboardWidgetSmsSentDescription: {
+    id: 'pages.Status.dashboardWidgetSmsSentDescription',
+    defaultMessage: 'The total number of text messages sent in the month',
   },
   dashboardWidgetTestsPerDayDescription: {
     id: 'pages.Status.dashboardWidgetTestsPerDayDescription',
