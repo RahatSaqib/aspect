@@ -8,7 +8,7 @@ import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./Group.css'))
+const cssClasses = classnames.bind(require('./Widgets.css'))
 
 const AspectWidgetGroup = ({ data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()

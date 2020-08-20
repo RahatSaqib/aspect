@@ -8,7 +8,7 @@ import Widget from './Widget'
 
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./Group.css'))
+const cssClasses = classnames.bind(require('./Widgets.css'))
 
 const AspectWidgetGroup = ({ data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
