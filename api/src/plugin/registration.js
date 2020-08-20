@@ -58,6 +58,7 @@ const plugins = {
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
+    onModuleDisableReceived,
     onGxAlertAuthenticated,
     onCaseAdded,
     onCaseUpdated,
@@ -309,6 +310,15 @@ async function transformMergeResultPayload(context) {
  * a result handled by this plugin
  */
 async function onResultLogged(/* { resultId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * This action was triggered when a device is registered or when
+ * it reports a daily news with the information of disableModules.
+ */
+
+async function onModuleDisableReceived(/* { deviceId }, { messageContext } */) {
   // do nothing by default
 }
 

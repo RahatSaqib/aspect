@@ -1356,6 +1356,11 @@ async function onDeviceMaintenanceStatusLogScheduled(
   })
 }
 
+async function onModuleDisableReceived(action, { messageContext }) {
+  console.log(action, messageContext)
+  return Promise.resolve()
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -1379,4 +1384,5 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
+  onModuleDisableReceived,
 }

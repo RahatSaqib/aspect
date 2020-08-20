@@ -1,5 +1,8 @@
 const { knex } = require('../db')
-const { resultModuleReplaced } = require('../result/actions')
+const {
+  resultModuleReplaced,
+  deviceModuleDisabled,
+} = require('../result/actions')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -96,9 +99,45 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
   }
 }
 
+async function shouldTriggerModuleDisabled(
+  knex,
+  messageContext,
+  deviceId,
+  moduleSerialNumber,
+  disabledOn
+) {
+  const issue = await knex('Issue')
+    .where({ deviceId })
+    .andWhere(
+      knex.raw('"data->>"$.disabledOn"=? and data->>"$.moduleSerialNumber"=?', [
+        disabledOn,
+        moduleSerialNumber,
+      ])
+    )
+    .orderBy('createdOn', 'desc')
+    .first(
+      knex.raw(
+        "data->>'$.disabledOn' as disabledOn, data->>'$.moduleSerialNumber' moduleSerial"
+      )
+    )
+  if (!issue) {
+    if (!messageContext.deviceModuleDisabled) {
+      messageContext = messageContext.bindActionCreators({
+        deviceModuleDisabled,
+      })
+    }
+    messageContext.deviceModuleDisabled(
+      deviceId,
+      moduleSerialNumber,
+      disabledOn
+    )
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
   getReplacedModuleSerials,
   shouldTriggerModuleReplaced,
+  shouldTriggerModuleDisabled,
 }

@@ -10,6 +10,7 @@ const types = {
   DEVICE_MAINTENANCE_STATUS_LOGGED: 'DEVICE_MAINTENANCE_STATUS_LOGGED',
   DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED:
     'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
+  DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
 }
 
 // ----------- Action Creators -------------------
@@ -142,6 +143,26 @@ function deviceHasNewResults(deviceId) {
 }
 
 /**
+ * Creates an action to notify an update about modules disable
+ * @param {*} deviceId
+ * @param {*} moduleSerial // the serial number of the module which is disable
+ * @param {*} disabledOn // the date when this module was disable
+ */
+function deviceModuleDisabled(deviceId, moduleSerial, disabledOn) {
+  if (!deviceId || !moduleSerial || !disabledOn) {
+    throw new Error(
+      'Must specify deviceId, module and the date for notify deviceModuleDisable'
+    )
+  }
+  return {
+    type: types.DEVICE_MODULE_DISABLE_RECEIVED,
+    deviceId,
+    moduleSerial,
+    disabledOn,
+  }
+}
+
+/**
  * Creates an action to notify the device has a
  * maintenance status update
  *
@@ -181,4 +202,5 @@ module.exports = {
   deviceHasNewResults,
   deviceMaintenanceStatusLogged,
   logDeviceMaintenanceStatus,
+  deviceModuleDisabled,
 }
