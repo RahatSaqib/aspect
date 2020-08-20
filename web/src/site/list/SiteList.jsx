@@ -82,9 +82,9 @@ export const messages = defineMessages({
       other {# sites}
     }`,
   },
-  inventoryUpdate: {
-    id: 'pages.SiteList.inventoryUpdate',
-    defaultMessage: 'Inventory Update',
+  latestInventoryUpdate: {
+    id: 'pages.SiteList.latestInventoryUpdate',
+    defaultMessage: 'Latest Inventory Update',
   },
 })
 
@@ -318,7 +318,7 @@ export const SiteList = ({
               },
               {
                 key: 'inventoryUpdatedOn',
-                label: intl.formatMessage(messages.inventoryUpdate),
+                label: intl.formatMessage(messages.latestInventoryUpdate),
                 sortable: true,
               },
               {
