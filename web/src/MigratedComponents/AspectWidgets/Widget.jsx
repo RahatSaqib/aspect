@@ -4,7 +4,6 @@ import classnames from 'classnames/bind'
 import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 
-import _ from 'lodash'
 import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
