@@ -7,7 +7,6 @@ import Card from '@material-ui/core/Card'
 import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
-import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
