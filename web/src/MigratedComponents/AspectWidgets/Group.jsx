@@ -14,28 +14,25 @@ const AspectWidgetGroup = ({ data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   return (
     <Card className={cssClasses('summary__groupCard')}>
-      {data.map(group => {
-        const { groupI18nKey, items } = group
-        return (
-          <Unit
-            key={groupI18nKey}
-            sm="1-2"
-            lg="1-4"
-            className={cssClasses('summary__groupWrapper')}
-          >
-            <div className={cssClasses('summary__groupContainer')}>
-              <div className={cssClasses('summary__groupTitle')}>
-                {intlFormatMessage(messages[groupI18nKey])}
-              </div>
-              <div className={cssClasses('summary__groupWidgets')}>
-                {items.map(widget => (
-                  <Widget data={widget} />
-                ))}
-              </div>
+      {data.map(({ groupI18nKey, items }) => (
+        <Unit
+          key={groupI18nKey}
+          sm="1-2"
+          lg="1-4"
+          className={cssClasses('summary__groupWrapper')}
+        >
+          <div className={cssClasses('summary__groupContainer')}>
+            <div className={cssClasses('summary__groupTitle')}>
+              {intlFormatMessage(messages[groupI18nKey])}
             </div>
-          </Unit>
-        )
-      })}
+            <div className={cssClasses('summary__groupWidgets')}>
+              {items.map(widget => (
+                <Widget data={widget} />
+              ))}
+            </div>
+          </div>
+        </Unit>
+      ))}
     </Card>
   )
 }
