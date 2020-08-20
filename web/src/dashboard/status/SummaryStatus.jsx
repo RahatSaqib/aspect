@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 
-import groupWidgets from '../../MigratedComponents/AspectWidgets/Helpers'
+import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
 import AspectWidgets from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 

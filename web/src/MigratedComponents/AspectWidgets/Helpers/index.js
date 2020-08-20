@@ -1,5 +1,6 @@
 import filter from 'lodash/filter'
 import get from 'lodash/get'
+import includes from 'lodash/includes'
 import remove from 'lodash/remove'
 import map from 'lodash/map'
 
@@ -35,4 +36,17 @@ const groupWidgets = (data, dashboard) => {
   return { widgetGroups, nonGroupedWidgets }
 }
 
-export default groupWidgets
+const buildMessagesFromI18nKeys = item => {
+  const messages = {}
+  filter(item, (_, k) => {
+    if (includes(k, 'I18nKey')) {
+      return (messages[k] = {
+        id: k,
+        defaultMessage: get(item, `${k.replace('I18nKey', '')}`),
+      })
+    }
+  })
+  return messages
+}
+
+export { groupWidgets, buildMessagesFromI18nKeys }

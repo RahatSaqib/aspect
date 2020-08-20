@@ -4,13 +4,16 @@ import classnames from 'classnames/bind'
 import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 
+import _ from 'lodash'
 import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
+import { buildMessagesFromI18nKeys } from './Helpers'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
 const AspectWidget = ({
+  data,
   data: {
     link,
     icon,
@@ -20,16 +23,14 @@ const AspectWidget = ({
     title,
     unit,
     subTitle,
-    statUnit,
     statStatus,
     extraLabel,
     statUnitI18nKey,
   },
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
-  const units = defineMessage({
-    [statUnitI18nKey]: { id: statUnitI18nKey, defaultMessage: statUnit },
-  })
+  const messages = defineMessage(buildMessagesFromI18nKeys(data))
+
   return (
     <AspectLink
       to={link}
@@ -60,8 +61,8 @@ const AspectWidget = ({
               <div
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
-                {statUnit !== null &&
-                  intlFormatMessage(units[statUnitI18nKey], { unit })}
+                {statUnitI18nKey !== null &&
+                  intlFormatMessage(messages.statUnitI18nKey, { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
                 {statStatus}
