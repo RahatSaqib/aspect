@@ -1,6 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
+import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 
 import AspectLink from '../../components/shared/AspectLink'
@@ -10,25 +11,26 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
-const AspectWidgetGroup = ({ data }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
-
-  const {
+const AspectWidget = ({
+  data: {
     link,
     icon,
     description,
     count,
     extra,
     title,
-    titleI18nKey,
-    subTitleI18nKey,
-    extraUnitI18nKey,
-    extraLabelI18nKey,
+    unit,
+    subTitle,
+    statUnit,
+    statStatus,
+    extraLabel,
     statUnitI18nKey,
-    statStatusI18nKey,
-  } = data
-  // console.log(data)
-
+  },
+}) => {
+  const { formatMessage: intlFormatMessage } = useIntl()
+  const units = defineMessage({
+    [statUnitI18nKey]: { id: statUnitI18nKey, defaultMessage: statUnit },
+  })
   return (
     <AspectLink
       to={link}
@@ -43,7 +45,7 @@ const AspectWidgetGroup = ({ data }) => {
           <span className={cssClasses('Summary__Card__Title--main')}>
             {title}
             <span className={cssClasses('Summary__Card__Title--sub')}>
-              {/* {subTitleI18nKey && intlFormatMessage(messages[subTitleI18nKey])} */}
+              {subTitle}
             </span>
           </span>
           {description ? (
@@ -59,10 +61,11 @@ const AspectWidgetGroup = ({ data }) => {
               <div
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
-                {/* {!statUnitI18nKey && intlFormatMessage(messages[statUnitI18nKey])} */}
+                {statUnit !== null &&
+                  intlFormatMessage(units[statUnitI18nKey], { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
-                {/* {statStatusI18nKey && intlFormatMessage(messages[statStatusI18nKey])} */}
+                {statStatus}
               </div>
             </div>
           </div>
@@ -72,10 +75,9 @@ const AspectWidgetGroup = ({ data }) => {
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
                 {extra}
-                {/* {extraUnitI18nKey && intlFormatMessage(messages[extraUnitI18nKey])} */}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
-                {/* {extraLabelI18nKey &&  intlFormatMessage(messages[extraLabelI18nKey])} */}
+                {extraLabel}
               </div>
             </div>
           </div>
@@ -85,4 +87,21 @@ const AspectWidgetGroup = ({ data }) => {
   )
 }
 
-export default AspectWidgetGroup
+AspectWidget.propTypes = {
+  data: PropTypes.shape({
+    link: PropTypes.string,
+    icon: PropTypes.string,
+    description: PropTypes.string,
+    count: PropTypes.string,
+    extra: PropTypes.object,
+    title: PropTypes.string,
+    unit: PropTypes.string,
+    subTitle: PropTypes.object,
+    statUnit: PropTypes.string,
+    statStatus: PropTypes.object,
+    extraLabel: PropTypes.object,
+    statUnitI18nKey: PropTypes.string,
+  }).isRequired,
+}
+
+export default AspectWidget

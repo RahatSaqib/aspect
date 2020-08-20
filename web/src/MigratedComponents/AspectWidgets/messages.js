@@ -18,7 +18,6 @@ export const messages = defineMessages({
     id: 'pages.Status.summaryWidgetGroup.service',
     defaultMessage: 'Service',
   },
-  // widget "Tests per Day"
   dashboardWidgetTestsPerDayTitle: {
     id: 'pages.Status.dashboardWidgetTestsPerDayTitle',
     defaultMessage: 'Tests Per Day',
@@ -28,7 +27,6 @@ export const messages = defineMessages({
     defaultMessage:
       'Average number of tests per day reported the current month',
   },
-  // widget "Valid Results"
   dashboardWidgetValidResultsPc: {
     id: 'pages.Status.dashboardWidgetValidResultsPc',
     defaultMessage: 'Valid Results',
