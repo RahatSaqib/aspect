@@ -53,8 +53,6 @@ const SELECT_SHOW_FIELDS = [
 async function listSites(request) {
   const { query, auth } = request
 
-  console.log(auth)
-
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -118,8 +116,6 @@ async function listSites(request) {
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
   const getCount = siteQuery.clone().count('s.id as count').first()
-
-  console.log(siteQuery.toString())
 
   // get rows
   const getItems = siteQuery
