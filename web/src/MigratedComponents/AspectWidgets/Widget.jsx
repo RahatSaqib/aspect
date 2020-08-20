@@ -29,10 +29,11 @@ const AspectWidget = ({
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const messages = defineMessage(buildMessagesFromI18nKeys(data))
+  console.log(data)
 
   return (
     <AspectLink
-      to={link}
+      to={`${link}?filters=deviceTypeId%3D2%26minDate%3D2020-07-20T21%253A00%253A00.000Z%26maxDate%3D2020-08-20T20%253A59%253A59.999Z`}
       className={cssClasses('Summary', {
         'Summary_Link--disabled': !link,
       })}
