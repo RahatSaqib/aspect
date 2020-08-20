@@ -550,6 +550,16 @@ async function triggerIssue(request) {
       triggered = true
       break
     }
+    case 'ModuleDisabled'.toLowerCase(): {
+      const { deviceId, disabledOn, moduleSerialNumber } = data
+      await messageContext.resultModuleReplaced(
+        deviceId,
+        moduleSerialNumber,
+        disabledOn
+      )
+      triggered = true
+      break
+    }
     case 'ModuleUnknownError'.toLowerCase(): {
       const { deviceId, options } = data
       await messageContext.resultModuleUnknownError(deviceId, options)

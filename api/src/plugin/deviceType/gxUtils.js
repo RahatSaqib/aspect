@@ -32,7 +32,6 @@ async function preProcessAddDeviceData({
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
   const configurationData = _.get(payload, 'configuration.data') || {}
-  console.log('ConfigurationData', configurationData)
   const site = await getOrCreateSite(knex, device, payload, now)
   const deviceDetails = {
     lastSeenOn: parseDateOrDefault(configurationData.lastPingOn, now),
