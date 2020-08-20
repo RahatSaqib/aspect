@@ -28,7 +28,7 @@ const groupWidgets = (data, dashboard) => {
     if (items && items.length) {
       widgetGroups.push({ groupI18nKey: group, items })
       const removeItems = map(items, 'id')
-      remove(nonGroupedWidgets, obj => removeItems.includes(obj.id))
+      remove(nonGroupedWidgets, widget => removeItems.includes(widget.id))
     }
     return widgetGroups
   })
