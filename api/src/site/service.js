@@ -24,7 +24,7 @@ const SELECT_LIST_FIELDS = [
   totalDevicesQuery,
   's.externalId',
   'activeIssues.siteIssues',
-  knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn')
+  knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -96,16 +96,7 @@ async function listSites(request) {
 
       this.whereIn('s.id', deviceQuery)
     })
-    .groupBy([
-      's.id',
-      's.name',
-      's.shortName',
-      'st.name',
-      'l.name',
-      's.createdOn',
-      's.externalId',
-      'activeIssues.siteIssues',
-    ])
+    .groupBy(['s.id'])
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -115,6 +106,7 @@ async function listSites(request) {
       externalId: 's.externalId',
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+
   const getCount = siteQuery.clone().count('s.id as count').first()
 
   // get rows
