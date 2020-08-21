@@ -12,7 +12,7 @@ const {
   format,
   isWeekend,
 } = require('date-fns')
-
+const { createNewIssue } = require('../issue/service')
 const { deviceMaintenanceStatusLogged } = require('./actions')
 const {
   knex,
@@ -27,6 +27,8 @@ const {
   deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
+  issueTypeToId,
+  issueStatusToId,
 } = require('../shared/dictionary')
 const { parseDateOrDefault } = require('../shared/date')
 
@@ -1356,8 +1358,39 @@ async function onDeviceMaintenanceStatusLogScheduled(
   })
 }
 
-async function onModuleDisableReceived(action, { messageContext }) {
-  console.log(action, messageContext)
+async function onDeviceModuleDisableReceived(action) {
+  const issueTypeId = await issueTypeToId('ModuleDisabled')
+  const existingModuleDisabledIssue = await knex('Issue')
+    .where({
+      issueTypeId,
+      deviceId: action.deviceId,
+    })
+    .andWhere(
+      knex.raw('data->>"$.moduleSerial"=? and data->>"$.disabledOn"=?', [
+        action.options.data.moduleSerial,
+        action.options.data.disabledOn,
+      ])
+    )
+    .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
+    .first('data')
+  if (!existingModuleDisabledIssue) {
+    const moduleReplacedIssue = await knex('Issue')
+      .where({
+        issueTypeId: await issueTypeToId('ModuleReplaced'),
+        deviceId: action.deviceId,
+      })
+      .andWhere(
+        knex.raw('data->>"$.replacedModuleSerial"=?', [
+          action.options.data.moduleSerial,
+        ])
+      )
+      .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
+      .first('data')
+    if (!moduleReplacedIssue) {
+      await createNewIssue(knex, 'ModuleDisabled', action, false)
+    }
+  }
+
   return Promise.resolve()
 }
 
@@ -1384,5 +1417,5 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
-  onModuleDisableReceived,
+  onDeviceModuleDisableReceived,
 }

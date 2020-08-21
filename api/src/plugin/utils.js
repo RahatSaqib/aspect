@@ -1,6 +1,7 @@
 const { knex } = require('../db')
 const { resultModuleReplaced } = require('../result/actions')
 const { deviceModuleDisabled } = require('../device/actions')
+const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -105,13 +106,14 @@ async function shouldTriggerModuleDisabled(
   disabledOn
 ) {
   const issue = await knex('Issue')
-    .where({ deviceId })
+    .where({ deviceId, issueTypeId: await issueTypeToId('ModuleReplaced') })
     .andWhere(
       knex.raw('data->>"$.disabledOn"=? and data->>"$.moduleSerialNumber"=?', [
         disabledOn,
         moduleSerialNumber,
       ])
     )
+    .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
     .orderBy('createdOn', 'desc')
     .first(
       knex.raw(
