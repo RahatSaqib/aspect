@@ -546,6 +546,13 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
+  const piece = await unitToId('Piece')
+  const commonProps = {
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    quantity: 1,
+  }
   if (_.includes(assayExternalIds, 'GxUnknown')) {
     await createAssay(
       knex,
@@ -577,6 +584,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       null,
       null
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HCV Viral Load Cartridge',
+      'GxHcv',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
     await createAssay(
@@ -602,6 +615,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'resultCategoryMtb',
       'Rif',
       'resultCategoryRif'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert TB Cartridge',
+      'GxMtbRif',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
@@ -630,6 +649,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
+    await upsertConsumables(
+      knex,
+      'GeneXpert TB Ultra Cartridge',
+      'GxMtbRifUltra',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
     await createAssay(
@@ -655,6 +680,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HIV-1 Viral Load Cartridge',
+      'GxHiv1Vl',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
     await createAssay(
@@ -672,6 +703,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HIV-1 Qual Cartridge',
+      'GxHiv1Qual',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
     await createAssay(
@@ -688,6 +725,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
       'GP',
       'resultCategoryEbolaGp'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert Ebola Cartridge',
+      'GxEbola',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
@@ -713,6 +756,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ],
       'COVID-19',
       'resultCategoryCovid19'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert COVID-19 Cartridge',
+      'assayGXCovid19',
+      commonProps
     )
   }
 
