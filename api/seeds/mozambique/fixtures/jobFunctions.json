@@ -41,6 +41,14 @@
       {
         "module":"inventory",
         "activity":"edit"
+      },
+      {
+        "module":"case",
+        "activity":"edit"
+      },
+      {
+        "module":"reporter",
+        "activity":"edit"
       }
     ]
   },
@@ -87,6 +95,14 @@
       {
         "module":"inventory",
         "activity":"edit"
+      },
+      {
+        "module":"case",
+        "activity":"edit"
+      },
+      {
+        "module":"reporter",
+        "activity":"edit"
       }
     ]
   },
@@ -132,6 +148,14 @@
       {
         "module":"inventory",
         "activity":"edit"
+      },
+      {
+        "module":"case",
+        "activity":"edit"
+      },
+      {
+        "module":"reporter",
+        "activity":"view"
       }
     ]
   }
