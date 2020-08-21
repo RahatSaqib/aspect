@@ -1196,6 +1196,7 @@ async function baseGxAlertMigration(
     geneXpertAssayExternalIds,
     patientDataSchema
   )
+  returnValue.patientDataSchema = patientDataSchema
   const gxAlertAssayDataMappings = {
     GxMtbRif: 'GeneXpert TB/RIF Result',
     GxMtbRifUltra: 'GeneXpert MTB-RIF Ultra',
