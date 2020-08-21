@@ -33,6 +33,7 @@ async function getResultDates(knex) {
 
 async function getSampleDates(knex) {
     const dates = await knex('Sample as sm')
+        .innerJoin('Result as r', 'sm.id', 'r.sampleId')
         .innerJoin('Site as s', 'sm.originSiteId', 's.id')
         .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -41,14 +42,14 @@ async function getSampleDates(knex) {
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
         .select([
-            'r.id',
+            'sm.id',
             knex.raw(`CONVERT_TZ(sm.collectedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
             'UTC') as collectedOn`)
         ])
-    return dates.map(({ id, ...dates }) => knex('Result').where({ id }).update(dates))
+    return dates.map(({ id, ...dates }) => knex('Sample').where({ id }).update(dates))
 }
 
 module.exports = seed
