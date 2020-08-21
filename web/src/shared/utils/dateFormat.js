@@ -70,9 +70,9 @@ export const withTodayProps = withProps(() => ({
   today: startOfDay(new Date()),
 }))
 
-export const formatRelative = (intl, date) => {
+export const formatRelative = (intl, date, defaultMessage) => {
   const dateInMilliseconds = Date.parse(date)
-  if (_.isNaN(dateInMilliseconds)) return ''
+  if (_.isNaN(dateInMilliseconds)) return defaultMessage ?? ''
 
   const getParams = timeDiffInMilliseconds => {
     const timeInMilliseconds = Math.abs(timeDiffInMilliseconds)
