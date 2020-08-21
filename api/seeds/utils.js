@@ -3043,7 +3043,7 @@ async function seedIssueType(knex, issueType, { userName }) {
   }
 
   // get previously defined data for ModuleReplaced issue type
-  const { issue } = await getBaseIssues(auditFields)[issueType]
+  const issue = (await getBaseIssues(auditFields))[issueType]
 
   // ------------------------------------------
   // issue templates
@@ -3090,7 +3090,7 @@ async function seedIssueType(knex, issueType, { userName }) {
   // IssueType
   // ------------------------------------------
   await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
-    ...issueType,
+    ...issue.issueType,
     defaultMessageTypeId: moduleMessageTypeId,
   })
 }
