@@ -173,7 +173,7 @@ async function findOpenIssue(knex, issueType, action) {
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 
-async function createNewIssue(knex, issueType, action, checkTrigger = true) {
+async function createNewIssue(knex, issueType, action) {
   const now = new Date()
   const issueTypeId = await issueTypeToId(issueType)
   if (issueTypeId == null) {
@@ -213,7 +213,7 @@ async function createNewIssue(knex, issueType, action, checkTrigger = true) {
       action,
       issueEventStatus: 'Triggered',
     }))
-  if (!hasTrigger && checkTrigger) {
+  if (!hasTrigger) {
     return null
   }
 

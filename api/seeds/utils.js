@@ -3029,7 +3029,7 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function seedIssueTypeModuleReplaced(knex, { userName }) {
+async function seedIssueType(knex, issueType, { userName }) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -3043,43 +3043,35 @@ async function seedIssueTypeModuleReplaced(knex, { userName }) {
   }
 
   // get previously defined data for ModuleReplaced issue type
-  const {
-    ModuleReplaced: {
-      issueType,
-      MessageType,
-      AlertTemplate,
-      EmailTemplate,
-      SmsTemplate,
-    },
-  } = await getBaseIssues(auditFields)
+  const { issue } = await getBaseIssues(auditFields)[issueType]
 
   // ------------------------------------------
-  // 'Module Replaced' issue templates
+  // issue templates
   // ------------------------------------------
-  const { id: moduleAlertTemplateId } = await upsertSingle(
+  const { id: alertTemplateId } = await upsertSingle(
     knex,
     'AlertTemplate',
     ['message'],
     {
-      ...AlertTemplate,
+      ...issue.AlertTemplate,
       ...auditFields,
     }
   )
-  const { id: moduleSmsTemplateId } = await upsertSingle(
+  const { id: smsTemplateId } = await upsertSingle(
     knex,
     'SmsTemplate',
     ['message'],
     {
-      ...SmsTemplate,
+      ...issue.SmsTemplate,
       ...auditFields,
     }
   )
-  const { id: moduleEmailTemplateId } = await upsertSingle(
+  const { id: emailTemplateId } = await upsertSingle(
     knex,
     'EmailTemplate',
     ['subject', 'body'],
     {
-      ...EmailTemplate,
+      ...issue.EmailTemplate,
       ...auditFields,
     }
   )
@@ -3088,10 +3080,10 @@ async function seedIssueTypeModuleReplaced(knex, { userName }) {
   // MessageType
   // ------------------------------------------
   const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
-    ...MessageType,
-    alertTemplateId: moduleAlertTemplateId,
-    smsTemplateId: moduleSmsTemplateId,
-    emailTemplateId: moduleEmailTemplateId,
+    ...issue.MessageType,
+    alertTemplateId,
+    smsTemplateId,
+    emailTemplateId,
   })
 
   // ------------------------------------------
@@ -3172,6 +3164,6 @@ module.exports = {
   seedDashboardsJsonInDashboardWidget,
   removeAndReplaceActivity,
 
-  seedIssueTypeModuleReplaced,
+  seedIssueType,
   seedIssueEscalationTriggersForPartner,
 }

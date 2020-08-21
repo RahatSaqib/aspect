@@ -1,172 +1,179 @@
 {
-  "data": [
-    {
-      "issueType": "DeviceMaintenance",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_MAINTENANCE"
-      }
-    },
-    {
-      "issueType": "DeviceMaintenance",
-      "issueEventStatus": "Resolved",
-      "triggerConditions": {
-        "action": "DEVICE_MAINTENANCE_RESOLVED"
-      }
-    },
-    {
-      "issueType": "DeviceNoResults",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_NO_RESULTS"
-      }
-    },
-    {
-      "issueType": "DeviceNoResults",
-      "issueEventStatus": "Resolved",
-      "triggerConditions": {
-        "action": "DEVICE_HAS_NEW_RESULTS"
-      }
-    },
-    {
-      "issueType": "DeviceOffline",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_OFFLINE"
-      }
-    },
-    {
-      "issueType": "DeviceOffline",
-      "issueEventStatus": "Resolved",
-      "triggerConditions": {
-        "action": "DEVICE_ONLINE"
-      }
-    },
-    {
-      "issueType": "ReagentHealthError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "INVENTORY_REAGENT_HEALTH"
-      }
-    },
-    {
-      "issueType": "InventoryStockout",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "INVENTORY_STOCKOUT"
-      }
-    },
-    {
-      "issueType": "InventoryStockExpiring",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "INVENTORY_STOCK_EXPIRING"
-      }
-    },
-    {
-      "issueType": "ResultReceived",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_LOGGED"
-      }
-    },
-    {
-      "issueType": "MachinePowerError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MACHINE_POWER_ERROR"
-      }
-    },
-    {
-      "issueType": "MachineProceduralError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MACHINE_PROCEDURAL_ERROR"
-      }
-    },
-    {
-      "issueType": "MachineTemperatureError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MACHINE_TEMPERATURE_ERROR"
-      }
-    },
-    {
-      "issueType": "ModuleFailureError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MODULE_FAILURE_ERROR"
-      }
-    },
-    {
-      "issueType": "ModulePowerError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MODULE_POWER_ERROR"
-      }
-    },
-    {
-      "issueType": "ModuleProceduralError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MODULE_PROCEDURAL_ERROR"
-      }
-    },
-    {
-      "issueType": "ModuleTemperatureError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MODULE_TEMPERATURE_ERROR"
-      }
-    },
-    {
-      "issueType": "ModuleUnknownError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MODULE_UNKNOWN_ERROR"
-      }
-    },
-    {
-      "issueType": "MachineUnknownError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MACHINE_UNKNOWN_ERROR"
-      }
-    },
-    {
-      "issueType": "ModuleReplaced",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_MODULE_REPLACED"
-      }
-    },
-    {
-      "issueType": "DataCategoryLowForHivStatus",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS"
-      }
-    },
-    {
-      "issueType": "DataCategoryLowForPreviouslyTreated",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED"
-      }
-    },
-    {
-      "issueType": "DataCategoryLowForMicroscopyResult",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT"
-      }
-    },
-    {
-      "issueType": "DataCategoryLowForOther",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FACT_DATA_CATEGORY_IS_LOW_OTHER"
-      }
-    }
-  ]
+	"data": [
+		{
+			"issueType": "DeviceMaintenance",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "DEVICE_MAINTENANCE"
+			}
+		},
+		{
+			"issueType": "DeviceMaintenance",
+			"issueEventStatus": "Resolved",
+			"triggerConditions": {
+				"action": "DEVICE_MAINTENANCE_RESOLVED"
+			}
+		},
+		{
+			"issueType": "DeviceNoResults",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "DEVICE_NO_RESULTS"
+			}
+		},
+		{
+			"issueType": "DeviceNoResults",
+			"issueEventStatus": "Resolved",
+			"triggerConditions": {
+				"action": "DEVICE_HAS_NEW_RESULTS"
+			}
+		},
+		{
+			"issueType": "DeviceOffline",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "DEVICE_OFFLINE"
+			}
+		},
+		{
+			"issueType": "DeviceOffline",
+			"issueEventStatus": "Resolved",
+			"triggerConditions": {
+				"action": "DEVICE_ONLINE"
+			}
+		},
+		{
+			"issueType": "ReagentHealthError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "INVENTORY_REAGENT_HEALTH"
+			}
+		},
+		{
+			"issueType": "InventoryStockout",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "INVENTORY_STOCKOUT"
+			}
+		},
+		{
+			"issueType": "InventoryStockExpiring",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "INVENTORY_STOCK_EXPIRING"
+			}
+		},
+		{
+			"issueType": "ResultReceived",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_LOGGED"
+			}
+		},
+		{
+			"issueType": "MachinePowerError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MACHINE_POWER_ERROR"
+			}
+		},
+		{
+			"issueType": "MachineProceduralError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MACHINE_PROCEDURAL_ERROR"
+			}
+		},
+		{
+			"issueType": "MachineTemperatureError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MACHINE_TEMPERATURE_ERROR"
+			}
+		},
+		{
+			"issueType": "ModuleFailureError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MODULE_FAILURE_ERROR"
+			}
+		},
+		{
+			"issueType": "ModulePowerError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MODULE_POWER_ERROR"
+			}
+		},
+		{
+			"issueType": "ModuleProceduralError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MODULE_PROCEDURAL_ERROR"
+			}
+		},
+		{
+			"issueType": "ModuleTemperatureError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MODULE_TEMPERATURE_ERROR"
+			}
+		},
+		{
+			"issueType": "ModuleUnknownError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MODULE_UNKNOWN_ERROR"
+			}
+		},
+		{
+			"issueType": "MachineUnknownError",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MACHINE_UNKNOWN_ERROR"
+			}
+		},
+		{
+			"issueType": "ModuleReplaced",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "RESULT_MODULE_REPLACED"
+			}
+		},
+		{
+			"issueType": "ModuleDisabled",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "DEVICE_MODULE_DISABLE_RECEIVED"
+			}
+		},
+		{
+			"issueType": "DataCategoryLowForHivStatus",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS"
+			}
+		},
+		{
+			"issueType": "DataCategoryLowForPreviouslyTreated",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED"
+			}
+		},
+		{
+			"issueType": "DataCategoryLowForMicroscopyResult",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT"
+			}
+		},
+		{
+			"issueType": "DataCategoryLowForOther",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "FACT_DATA_CATEGORY_IS_LOW_OTHER"
+			}
+		}
+	]
 }

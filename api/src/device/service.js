@@ -1360,34 +1360,47 @@ async function onDeviceMaintenanceStatusLogScheduled(
 
 async function onDeviceModuleDisableReceived(action) {
   const issueTypeId = await issueTypeToId('ModuleDisabled')
+  /**
+   * Check if the module disabled record was already inserted.
+   * This data comes with the dailynews process.
+   */
   const existingModuleDisabledIssue = await knex('Issue')
     .where({
       issueTypeId,
       deviceId: action.deviceId,
     })
     .andWhere(
-      knex.raw('data->>"$.moduleSerial"=? and data->>"$.disabledOn"=?', [
-        action.options.data.moduleSerial,
-        action.options.data.disabledOn,
-      ])
+      knex.raw(
+        'data->>"$.moduleSerial"=? and DATE(data->>"$.disabledOn")=DATE(?)',
+        [action.options.data.moduleSerial, action.options.data.disabledOn]
+      )
     )
-    .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
     .first('data')
+  /**
+   * If the module wasn't already inserted, we create the issue.
+   */
   if (!existingModuleDisabledIssue) {
+    /**
+     * Check if the module was already replaced, after the disabled date.
+     */
     const moduleReplacedIssue = await knex('Issue')
       .where({
         issueTypeId: await issueTypeToId('ModuleReplaced'),
         deviceId: action.deviceId,
       })
       .andWhere(
-        knex.raw('data->>"$.replacedModuleSerial"=?', [
-          action.options.data.moduleSerial,
-        ])
+        knex.raw(
+          'data->>"$.replacedModuleSerial"=? AND and DATE(createdOn)>=DATE()',
+          [action.options.data.moduleSerial, action.options.data.disabledOn]
+        )
       )
       .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
       .first('data')
+    /**
+     * If the module wasn't replaced already, we insert the new issue.
+     */
     if (!moduleReplacedIssue) {
-      await createNewIssue(knex, 'ModuleDisabled', action, false)
+      await createNewIssue(knex, 'ModuleDisabled', action)
     }
   }
 
