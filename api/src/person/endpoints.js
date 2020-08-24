@@ -211,7 +211,7 @@ const routes = [
     handler: asyncHandler(updateRefreshToken),
     config: {
       description: 'Update a refresh token',
-      auth: { scope: ['reporter:view'] },
+      auth: { scope: ['reporter:edit'] },
       validate: {
         params: {
           refreshTokenId: Joi.string()

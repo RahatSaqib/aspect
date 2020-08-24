@@ -2,319 +2,231 @@
     {
         "module": "assay",
         "activity": "view",
-        "description": "Can view and filter by assays",
-        "includedActivities": ""
-    },
-    {
-        "module": "assay",
-        "activity": "edit",
-        "description": "Can edit and create assays",
-        "includedActivities": "view"
+        "description": "Can view and filter by assays"
     },
     {
         "module": "router",
         "activity": "view",
-        "description": "Can view routers",
-        "includedActivities": ""
-    },
-    {
-        "module": "router",
-        "activity": "edit",
-        "description": "Can edit and create routers",
-        "includedActivities": "view"
-    },
-    {
-        "module": "account",
-        "activity": "view",
-        "description": "Can view their own account details (name, language, etc.)",
-        "includedActivities": ""
+        "description": "Can view routers"
     },
     {
         "module": "account",
         "activity": "edit",
-        "description": "Can edit their own account details (name, language, etc.)",
-        "includedActivities": "view"
+        "description": "Can view and edit their own account details (name, language, etc.)"
     },
     {
         "module": "deviceApiKey",
         "activity": "view",
-        "description": "Can view device API keys that are used for authenticating lab devices",
-        "includedActivities": ""
+        "description": "Can view device API keys that are used for authenticating lab devices"
     },
     {
         "module": "deviceApiKey",
         "activity": "edit",
-        "description": "Can edit and create device API keys that are used for authenticating lab devices",
-        "includedActivities": "view"
+        "description": "Can view, edit and create device API keys that are used for authenticating lab devices"
     },
     {
         "module": "device",
         "activity": "view",
-        "description": "Can view lab devices",
-        "includedActivities": ""
+        "description": "Can view lab devices"
     },
     {
         "module": "device",
         "activity": "edit",
-        "description": "Can edit lab devices",
-        "includedActivities": "view"
+        "description": "Can view and edit lab devices"
     },
     {
         "module": "inventory",
         "activity": "view",
-        "description": "Can view inventory and the 'Consumables' panel on the dashboard",
-        "includedActivities": ""
+        "description": "Can view inventory and the 'Consumables' panel on the dashboard"
     },
     {
         "module": "inventory",
         "activity": "edit",
-        "description": "Can add, transfer and remove inventory",
-        "includedActivities": "view"
+        "description": "Can view, add, transfer and remove inventory"
     },
     {
         "module": "person",
         "activity": "view",
-        "description": "Can view persons and users",
-        "includedActivities": ""
+        "description": "Can view persons and users"
     },
     {
         "module": "person",
         "activity": "edit",
-        "description": "Can edit and create persons and users, including credentials and job assignments",
-        "includedActivities": "view"
+        "description": "Can view, edit and create persons and users, including credentials and job assignments"
     },
     {
         "module": "result",
         "activity": "view",
-        "description": "Can view results, and the disease-specific graphs on the dashboard.",
-        "includedActivities": ""
+        "description": "Can view results, and the disease-specific graphs on the dashboard"
     },
     {
         "module": "result",
         "activity": "edit",
-        "description": "Can edit and create results",
-        "includedActivities": "view"
+        "description": "Can view, edit and create results, and see the disease-specific graphs on the dashboard"
     },
     {
         "module": "treatmentStatus",
         "activity": "view",
-        "description": "Can view result's treatment status panel",
-        "includedActivities": ""
+        "description": "Can view result's treatment status panel"
     },
     {
         "module": "treatmentStatus",
         "activity": "edit",
-        "description": "Can edit result's treatments, and also create, edit and remove follow ups",
-        "includedActivities": "view"
+        "description": "Can view and edit result's treatments, and also create, edit and remove follow ups"
     },
     {
         "module": "site",
         "activity": "view",
-        "description": "Can view and filter by sites",
-        "includedActivities": ""
+        "description": "Can view and filter by sites"
     },
     {
         "module": "site",
         "activity": "edit",
-        "description": "Can edit sites",
-        "includedActivities": "view"
-    },
-    {
-        "module": "issue",
-        "activity": "view",
-        "description": "Can view issues",
-        "includedActivities": ""
+        "description": "Can view, edit, and filter by sites"
     },
     {
         "module": "issue",
         "activity": "edit",
-        "description": "Can trigger issues (internal/developer use only)",
-        "includedActivities": ""
+        "description": "Can trigger issues (internal/developer use only)"
     },
     {
         "module": "notification",
         "activity": "view",
-        "description": "Can view notifications",
-        "includedActivities": ""
+        "description": "Can view notifications"
     },
     {
         "module": "notification",
         "activity": "edit",
-        "description": "Can edit and create notifications",
-        "includedActivities": "view"
+        "description": "Can view, edit and create notifications"
     },
     {
         "module": "task",
         "activity": "view",
-        "description": "Can view tasks",
-        "includedActivities": ""
-    },
-    {
-        "module": "task",
-        "activity": "edit",
-        "description": "Can view tasks and change their status",
-        "includedActivities": ""
+        "description": "Can view tasks"
     },
     {
         "module": "taskMenu",
         "activity": "view",
-        "description": "Can view the Task List menu",
-        "includedActivities": ""
+        "description": "Can view the Task List menu"
     },
     {
         "module": "report",
         "activity": "view",
-        "description": "Can view and download reports",
-        "includedActivities": ""
-    },
-    {
-        "module": "report",
-        "activity": "edit",
-        "description": "Can edit and create reports",
-        "includedActivities": "view"
+        "description": "Can view and download reports"
     },
     {
         "module": "case",
         "activity": "view",
-        "description": "Can view cases",
-        "includedActivities": ""
+        "description": "Can view cases"
     },
     {
         "module": "case",
         "activity": "edit",
-        "description": "Can edit, create and remove cases",
-        "includedActivities": ""
+        "description": "Can view, edit, create and remove cases"
     },
     {
         "module": "browse",
         "activity": "view",
-        "description": "Can view the Browse menu",
-        "includedActivities": ""
+        "description": "Can view the Browse menu"
     },
     {
         "module": "actionDashboard",
         "activity": "view",
-        "description": "Can view the Action Dashboard",
-        "includedActivities": ""
-    },
-    {
-        "module": "actionDashboard",
-        "activity": "edit",
-        "description": "Can view, edit and create actionDashboards",
-        "includedActivities": ""
+        "description": "Can view the Action Dashboard"
     },
     {
         "module": "reporter",
         "activity": "view",
-        "description": "Can view a list of Reporters",
-        "includedActivities": ""
+        "description": "Can view a list of Reporters"
     },
     {
         "module": "reporter",
         "activity": "edit",
-        "description": "Can view a list of Reporters and change their status, including revoking their access token",
-        "includedActivities": ""
+        "description": "Can view a list of Reporters and change their status, including revoking their access token"
     },
     {
         "module": "dashboard",
         "activity": "view",
-        "description": "Can view main dashboard",
-        "includedActivities": ""
+        "description": "Can view main dashboard"
     },
     {
         "module": "manage",
         "activity": "view",
-        "description": "Can view the Manage menu (not implemented)",
-        "includedActivities": ""
+        "description": "Can view the Manage menu (not implemented)"
     },
     {
         "module": "clinicalIndicators",
         "activity": "view",
-        "description": "Can view clinical indicators (not implemented)",
-        "includedActivities": ""
+        "description": "Can view clinical indicators (not implemented)"
     },
     {
         "module": "operationalData",
         "activity": "view",
-        "description": "Can view operational data related to devices, including inventory",
-        "includedActivities": ""
+        "description": "Can view operational data related to devices, including inventory"
     },
     {
         "module": "patient",
         "activity": "view",
-        "description": "Can view patients",
-        "includedActivities": ""
+        "description": "Can view patients"
     },
     {
         "module": "patient",
         "activity": "edit",
-        "description": "Can edit, create and remove patients (not implemented)",
-        "includedActivities": ""
+        "description": "Can edit, create and remove patients (not implemented)"
     },
     {
         "module": "demo",
         "activity": "edit",
-        "description": "",
-        "includedActivities": ""
+        "description": ""
     },
     {
         "module": "dashboard",
         "activity": "summary",
-        "description": "Can view the dashboard's allowed widgets",
-        "includedActivities": ""
+        "description": "Can view the dashboard's allowed widgets"
     },
     {
         "module": "dashboard",
         "activity": "site",
-        "description": "Can view the dashboard's 'Sites' panel (including sites summary)",
-        "includedActivities": ""
+        "description": "Can view the dashboard's 'Sites' panel (including sites summary)"
     },
     {
         "module": "dashboard",
         "activity": "inventory",
-        "description": "Can view the dashboard's 'Consumables' panel",
-        "includedActivities": ""
+        "description": "Can view the dashboard's 'Consumables' panel"
     },
     {
         "module": "dashboard",
         "activity": "device",
-        "description": "Can view the summary of devices inside the 'Sites' panel",
-        "includedActivities": ""
+        "description": "Can view the summary of devices inside the 'Sites' panel"
     },
     {
         "module": "dashboard",
         "activity": "result",
-        "description": "Can view the dashboard's 'Result Status'",
-        "includedActivities": ""
+        "description": "Can view the dashboard's 'Result Status'"
     },
     {
         "module": "dashboard",
         "activity": "target",
-        "description": "Can view the action dashboard's 'Regional Progress Indicators' panel and download the higher level reports from the Reports panel (Rif, MTB+, TI, Failed Test, Quarterly)",
-        "includedActivities": ""
+        "description": "Can view the action dashboard's 'Regional Progress Indicators' panel and download the higher level reports from the Reports panel (Rif, MTB+, TI, Failed Test, Quarterly)"
     },
     {
         "module": "dashboard",
         "activity": "action",
-        "description": "Can view the action dashboard",
-        "includedActivities": ""
+        "description": "Can view the action dashboard"
     },
     {
         "module": "dashboard",
         "activity": "actionInventoryLevelUpdate",
-        "description": "Can view and update 'Stock Level' issues on the action dashboard",
-        "includedActivities": ""
+        "description": "Can view and update 'Stock Level' issues on the action dashboard"
     },
     {
         "module": "dashboard",
         "activity": "report",
-        "description": "Can see the 'Reports' panel on the action dashboard",
-        "includedActivities": ""
+        "description": "Can see the 'Reports' panel on the action dashboard"
     },
     {
         "module": "dashboard",
         "activity": "siteFilter",
-        "description": "Can filter the action dashboard by site",
-        "includedActivities": ""
+        "description": "Can filter the action dashboard by site"
     }
 ]
