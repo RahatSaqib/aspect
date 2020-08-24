@@ -1,6 +1,6 @@
 const dashboardWidgetsBase = require('./dashboardWidgetsBase')
 
-const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+const { WIDGET_GROUP_KEYS, WIDGET_FILTER_KEYS } = dashboardWidgetsBase
 
 module.exports = {
   stat: [

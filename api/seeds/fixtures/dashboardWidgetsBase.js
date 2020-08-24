@@ -27,8 +27,14 @@ const WIDGET_GROUP_KEYS = {
   DEVICES: 'summaryWidgetGroupDevices',
   SERVICE: 'summaryWidgetGroupService',
 }
+
+const WIDGET_FILTER_KEYS = {
+  LAST_THIRTY_DAYS: 'last30Days',
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
+  WIDGET_FILTER_KEYS,
   stat: [
     {
       jobFunctions: ['all'],

@@ -1,6 +1,6 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
-const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+const { WIDGET_GROUP_KEYS, WIDGET_FILTER_KEYS } = dashboardWidgetsBase
 
 module.exports = {
   stat: [
@@ -30,7 +30,7 @@ module.exports = {
       link: '/browse/device',
       linkParams: {
         deviceTypeId: 2,
-        dateRange: 'lastThirtyDays',
+        dateRange: WIDGET_FILTER_KEYS.LAST_THIRTY_DAYS,
       },
       sortOrder: 1,
       externalId: 'devicesTitle',
