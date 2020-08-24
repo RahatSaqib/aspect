@@ -225,7 +225,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task:edit']) ||
+          renderRedirectToNotFound(props, ['task']) ||
           renderTaskList
         }
       />
@@ -235,7 +235,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task:edit']) ||
+          renderRedirectToNotFound(props, ['task']) ||
           renderTaskAggre
         }
       />
@@ -244,7 +244,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task:edit']) ||
+          renderRedirectToNotFound(props, ['task']) ||
           renderTaskDetail
         }
       />
