@@ -11,10 +11,22 @@ import { buildMessagesFromI18nKeys } from './Helpers'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
+const buildWidgetToLinkParams = (link, linkParams) => {
+  const params = JSON.parse(linkParams)
+  if (Object.keys(params).length !== 0 && params.constructor === Object) {
+    for (const [key, value] of Object.entries(params)) {
+      console.log(`${key}: ${value}`)
+    }
+  }
+
+  return link
+}
+
 const AspectWidget = ({
   data,
   data: {
     link,
+    linkParams,
     icon,
     description,
     count,
@@ -29,11 +41,11 @@ const AspectWidget = ({
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const messages = defineMessage(buildMessagesFromI18nKeys(data))
-  console.log(data)
+  const linkParam = buildWidgetToLinkParams(link, linkParams)
 
   return (
     <AspectLink
-      to={`${link}?filters=deviceTypeId%3D2%26minDate%3D2020-07-20T21%253A00%253A00.000Z%26maxDate%3D2020-08-20T20%253A59%253A59.999Z`}
+      to={linkParam}
       className={cssClasses('Summary', {
         'Summary_Link--disabled': !link,
       })}
@@ -90,6 +102,7 @@ const AspectWidget = ({
 AspectWidget.propTypes = {
   data: PropTypes.shape({
     link: PropTypes.string,
+    linkParams: PropTypes.string,
     icon: PropTypes.string,
     description: PropTypes.string,
     count: PropTypes.string,
