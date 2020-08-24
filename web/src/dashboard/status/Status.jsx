@@ -72,13 +72,17 @@ const Status = ({ history, location, colorDemo }) => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
-      <SummaryStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--summary')}
-        dashboard="home"
-      />
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          <SummaryStatus
+            intl={intl}
+            history={history}
+            location={location}
+            className={cssClasses('Section--summary')}
+            dashboard="home"
+          />
+        </PermissionsProvider>
+      </ErrorBoundary>
 
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
