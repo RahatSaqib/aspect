@@ -42,7 +42,7 @@ describe('dashboard endpoint', () => {
         'GET',
         '/dashboard/operational-data/activity-over-time',
         {
-          async operationalDataActivityOverTime() {
+          async activityOverTimeDashboard() {
             return expectedResponse
           },
         }
