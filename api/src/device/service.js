@@ -1364,7 +1364,7 @@ async function onDeviceModuleDisableReceived(action) {
    * Check if the module disabled record was already inserted.
    * This data comes with the dailynews process.
    */
-  const existingModuleDisabledIssue = await knex('Issue')
+  const query = knex('Issue')
     .where({
       issueTypeId,
       deviceId: action.deviceId,
@@ -1376,9 +1376,18 @@ async function onDeviceModuleDisableReceived(action) {
       )
     )
     .first('data')
+  console.log('query', query.toString())
+
+  const existingModuleDisabledIssue = await query
   /**
    * If the module wasn't already inserted, we create the issue.
    */
+  console.log(
+    'existingissue',
+    action.options.data.moduleSerial,
+    existingModuleDisabledIssue
+  )
+
   if (!existingModuleDisabledIssue) {
     /**
      * Check if the module was already replaced, after the disabled date.
@@ -1390,7 +1399,7 @@ async function onDeviceModuleDisableReceived(action) {
       })
       .andWhere(
         knex.raw(
-          'data->>"$.replacedModuleSerial"=? AND and DATE(createdOn)>=DATE()',
+          'data->>"$.replacedModuleSerial"=? AND DATE(createdOn)>=DATE(?)',
           [action.options.data.moduleSerial, action.options.data.disabledOn]
         )
       )
@@ -1399,12 +1408,12 @@ async function onDeviceModuleDisableReceived(action) {
     /**
      * If the module wasn't replaced already, we insert the new issue.
      */
+    console.log('Existing moduleReplacedIssue', moduleReplacedIssue)
     if (!moduleReplacedIssue) {
+      console.log('CreateNewIssue', moduleReplacedIssue)
       await createNewIssue(knex, 'ModuleDisabled', action)
     }
   }
-
-  return Promise.resolve()
 }
 
 module.exports = {
