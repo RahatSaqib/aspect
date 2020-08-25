@@ -169,6 +169,18 @@ async function findOpenIssue(knex, issueType, action) {
   } else if (action.partnerId) {
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
+  if (_.get(action, 'options.data'))
+    if (
+      _.get(action, 'options.data.moduleSerial') &&
+      _.get(action, 'options.data.disabledOn')
+    ) {
+      findOpenIssue.andWhere(
+        knex.raw(
+          'data->>"$.moduleSerial"=? and DATE(data->>"$.disabledOn")=DATE(?)',
+          [action.options.data.moduleSerial, action.options.data.disabledOn]
+        )
+      )
+    }
 
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
@@ -202,7 +214,6 @@ async function createNewIssue(knex, issueType, action) {
       'data',
     ]),
   }
-
   // Now that we know partnerId, check to see if we have a trigger
   const hasTrigger =
     issue != null &&

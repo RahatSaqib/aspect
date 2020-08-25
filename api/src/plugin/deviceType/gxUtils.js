@@ -14,7 +14,7 @@ const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
 const { updateDeviceDetails } = require('../../deviceApi/device')
-const { deviceModuleDisabled } = require('../../device/actions')
+const { shouldTriggerModuleDisabled } = require('../utils')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -69,18 +69,8 @@ async function preProcessAddDeviceData({
   }
   await knex.from('Device').where({ id: device.id }).update(deviceDetails)
   if (configurationData.disabledModules) {
-    if (!messageContext.deviceModuleDisabled) {
-      messageContext = messageContext.bindActionCreators({
-        deviceModuleDisabled,
-      })
-    }
-
-    await Promise.each(configurationData.disabledModules, modules =>
-      messageContext.deviceModuleDisabled(
-        device,
-        modules.SiteSerialNumber,
-        modules.Creation
-      )
+    await Promise.each(configurationData.disabledModules, async modules =>
+      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
     )
   }
 }

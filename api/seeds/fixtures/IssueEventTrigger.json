@@ -142,7 +142,7 @@
 		},
 		{
 			"issueType": "ModuleDisabled",
-			"issueEventStatus": "Triggered",
+			"issueEventStatus": "Resolved",
 			"triggerConditions": {
 				"action": "DEVICE_MODULE_DISABLE_RECEIVED"
 			}

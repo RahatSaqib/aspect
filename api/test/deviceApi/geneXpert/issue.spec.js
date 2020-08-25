@@ -1,11 +1,7 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const Promise = require('bluebird')
-const {
-  issueTypeToId,
-  issueStatusToId,
-} = require('../../../src/shared/dictionary')
+const { issueTypeToId } = require('../../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { postToDeviceApi } = require('../utils')
 const { knex } = require('../../../src/db')
@@ -16,7 +12,7 @@ const { deviceModuleDisabled } = require('../../../src/device/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Integration test for device status', () => {
+describe('Integration test for device status', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -30,211 +26,247 @@ describe.only('Integration test for device status', () => {
     deviceName,
     macAddress,
   })
+  describe('module disable issue', () => {
+    beforeEach(context.beforeRegisterAndSetDevice)
+    afterEach(context.afterCleanUp)
+    it('should create new issue per module disabled ', async () => {
+      const { basicDevicePayload } = context
+      const { deviceAuth } = context
 
-  before(context.beforeRegisterAndSetDevice)
-  after(context.afterCleanUp)
-  it('should create new issue, module disabled ', async () => {
-    const { basicDevicePayload } = context
-    const { deviceAuth } = context
-
-    // Post to deviceApi to ensure the device in in Aspect
-    const response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        configuration: {
-          data: {
-            disabledModules: [
-              {
-                SiteSerialNumber: '233',
-                UserId: '1',
-                Creation: '2020-08-18T17:08:22.515Z',
-              },
-              {
-                SiteSerialNumber: '234',
-                UserId: '1',
-                Creation: '2019-10-18T17:08:22.515Z',
-              },
-            ],
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          configuration: {
+            data: {
+              disabledModules: [
+                {
+                  SiteSerialNumber: '233',
+                  UserId: '1',
+                  Creation: '2020-08-18T17:08:22.515Z',
+                },
+                {
+                  SiteSerialNumber: '234',
+                  UserId: '1',
+                  Creation: '2019-10-18T17:08:22.515Z',
+                },
+              ],
+            },
           },
-        },
-      }),
-    })
-    const deviceId = response.body.device.id
-    const device = await knex('Device').where({ id: deviceId }).first()
-    const waitForModuleDisabledIssue = waitForAction(
-      deviceModuleDisabled(
-        response.body.device.id,
-        '234',
-        '2019-10-18T17:08:22.515Z'
-      )
-    )
-    await waitForModuleDisabledIssue
-    await waitForIdle(2000)
-
-    const issue = await knex('Issue')
-      .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
-      .orderBy('createdOn', 'DESC')
-      .first()
-    assert.equal(device.id, deviceId)
-    assert.isArray(JSON.parse(device.configurationData).disabledModules)
-    assert.equal(JSON.parse(device.configurationData).disabledModules.length, 2)
-    assert.isNotNull(issue.data)
-
-    assert.equal(issue.issueTypeId, await issueTypeToId('ModuleDisabled'))
-    assert.equal(JSON.parse(issue.data).disabledOn, '2019-10-18T17:08:22.515Z')
-    assert.equal(JSON.parse(issue.data).moduleSerial, '234')
-
-    // Should now create a module disabled issue
-  })
-  it('should create only one issue module disable ', async () => {
-    const { basicDevicePayload } = context
-    const { deviceAuth } = context
-
-    // Post to deviceApi to ensure the device in Aspect
-    const response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        configuration: {
-          data: {
-            disabledModules: [
-              {
-                SiteSerialNumber: '233',
-                UserId: '1',
-                Creation: '2020-08-18T17:08:22.515Z',
-              },
-              {
-                SiteSerialNumber: '234',
-                UserId: '1',
-                Creation: '2019-10-18T17:08:22.515Z',
-              },
-            ],
-          },
-        },
-      }),
-    })
-    const deviceId = response.body.device.id
-    // Post to deviceApi to ensure the device in in Aspect
-    const response2 = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        configuration: {
-          data: {
-            disabledModules: [
-              {
-                SiteSerialNumber: '233',
-                UserId: '1',
-                Creation: '2020-08-18T17:08:22.515Z',
-              },
-              {
-                SiteSerialNumber: '234',
-                UserId: '1',
-                Creation: '2019-10-18T17:08:22.515Z',
-              },
-            ],
-          },
-        },
-      }),
-    })
-    // should be the same device
-    assert.equal(response.body.device.id, response2.body.device.id)
-    const waitForModuleDisabledIssue = waitForAction(
-      deviceModuleDisabled(
-        response.body.device.id,
-        '234',
-        '2019-10-18T17:08:22.515Z'
-      )
-    )
-    await waitForModuleDisabledIssue
-    await waitForIdle(2000)
-
-    const { qntIssue } = await knex('Issue')
-      .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
-      .orderBy('createdOn', 'DESC')
-      .count('Id as qntIssue')
-      .first()
-
-    // should only have 2 issues only for this device.
-    assert.equal(qntIssue, 2)
-  })
-  it('should merge device configuration Data and create a new issue', async () => {
-    const { basicDevicePayload } = context
-    const { deviceAuth } = context
-
-    // Post to deviceApi to ensure the device in Aspect
-    const response = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        configuration: {
-          data: {
-            disabledModules: [
-              {
-                SiteSerialNumber: '233',
-                UserId: '1',
-                Creation: '2020-08-18T17:08:22.515Z',
-              },
-              {
-                SiteSerialNumber: '234',
-                UserId: '1',
-                Creation: '2019-10-18T17:08:22.515Z',
-              },
-            ],
-          },
-        },
-      }),
-    })
-    const deviceId = response.body.device.id
-    // Post to deviceApi to ensure the device in in Aspect
-    const response2 = await postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: _.merge({}, basicDevicePayload, {
-        configuration: {
-          data: {
-            disabledModules: [
-              {
-                SiteSerialNumber: '777',
-                UserId: '1',
-                Creation: '2020-08-18T17:08:22.515Z',
-              },
-            ],
-          },
-        },
-      }),
-    })
-    // should be the same device
-    assert.equal(response.body.device.id, response2.body.device.id)
-    const device = await knex('Device')
-      .where({
-        deviceId: response.body.device.id,
+        }),
       })
-      .first()
-    const waitForModuleDisabledIssue = waitForAction(
-      deviceModuleDisabled(
-        response.body.device.id,
-        '777',
-        '2020-08-18T17:08:22.515Z'
+      const deviceId = response.body.device.id
+      const device = await knex('Device').where({ id: deviceId }).first()
+      const waitForModuleDisabledIssue = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2019-10-18T17:08:22.515Z'
+        )
       )
-    )
-    await waitForModuleDisabledIssue
-    await waitForIdle(2000)
-    const { qntIssue } = await knex('Issue')
-      .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
-      .orderBy('createdOn', 'DESC')
-      .count('Id as qntIssue')
-      .first()
+      await waitForModuleDisabledIssue
+      await waitForIdle(2000)
 
-    // should only have 2 issues only for this device.
-    assert.equal(qntIssue, 3)
-    const issue = await knex('Issue')
-      .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
-      .orderBy('createdOn', 'DESC')
-      .first()
-    assert.equal(device.id, deviceId)
-    assert.isArray(JSON.parse(device.configurationData).disabledModules)
-    assert.equal(JSON.parse(device.configurationData).disabledModules.length, 3)
-    assert.isNotNull(issue.data)
+      const issue = await knex('Issue')
+        .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
+        .andWhere(knex.raw('data->>"$.moduleSerial"=?', ['234']))
+        .orderBy('createdOn', 'DESC')
+        .first()
+      assert.equal(device.id, deviceId)
+      assert.isArray(JSON.parse(device.configurationData).disabledModules)
+      assert.equal(
+        JSON.parse(device.configurationData).disabledModules.length,
+        2
+      )
+      assert.isNotNull(issue.data)
 
-    assert.equal(issue.issueTypeId, await issueTypeToId('ModuleDisabled'))
-    assert.equal(JSON.parse(issue.data).disabledOn, '2019-10-18T17:08:22.515Z')
-    assert.equal(JSON.parse(issue.data).moduleSerial, '777')
+      assert.equal(issue.issueTypeId, await issueTypeToId('ModuleDisabled'))
+      assert.equal(
+        JSON.parse(issue.data).disabledOn,
+        '2019-10-18T17:08:22.515Z'
+      )
+      assert.equal(JSON.parse(issue.data).moduleSerial, '234')
+
+      // Should now create a module disabled issue
+    })
+    it('should create only one issue per module disable on a repeated payload ', async () => {
+      const { basicDevicePayload } = context
+      const { deviceAuth } = context
+
+      // Post to deviceApi to ensure the device in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          configuration: {
+            data: {
+              disabledModules: [
+                {
+                  SiteSerialNumber: '233',
+                  UserId: '1',
+                  Creation: '2020-08-18T17:08:22.515Z',
+                },
+                {
+                  SiteSerialNumber: '234',
+                  UserId: '1',
+                  Creation: '2019-10-18T17:08:22.515Z',
+                },
+              ],
+            },
+          },
+        }),
+      })
+      const deviceId = response.body.device.id
+      const waitForModuleDisabledIssue1 = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2019-10-18T17:08:22.515Z'
+        )
+      )
+
+      await waitForModuleDisabledIssue1
+
+      await waitForIdle(2000)
+      // Post to deviceApi to ensure the device in in Aspect
+      const response2 = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          configuration: {
+            data: {
+              disabledModules: [
+                {
+                  SiteSerialNumber: '233',
+                  UserId: '1',
+                  Creation: '2020-08-18T17:08:22.515Z',
+                },
+                {
+                  SiteSerialNumber: '234',
+                  UserId: '1',
+                  Creation: '2019-10-18T17:08:22.515Z',
+                },
+              ],
+            },
+          },
+        }),
+      })
+      // should be the same device
+      assert.equal(response.body.device.id, response2.body.device.id)
+      await waitForModuleDisabledIssue1
+      await waitForIdle(2000)
+
+      const { qntIssue } = await knex('Issue')
+        .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
+        .orderBy('createdOn', 'DESC')
+        .count('Id as qntIssue')
+        .first()
+
+      // should only have 2 issues for this device.
+      assert.equal(qntIssue, 2)
+    })
+    it('should create a new issue of the novelty only', async () => {
+      const { basicDevicePayload } = context
+      const { deviceAuth } = context
+
+      // Post to deviceApi to ensure the device in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          configuration: {
+            data: {
+              disabledModules: [
+                {
+                  SiteSerialNumber: '233',
+                  UserId: '1',
+                  Creation: '2020-08-18T17:08:22.515Z',
+                },
+                {
+                  SiteSerialNumber: '234',
+                  UserId: '1',
+                  Creation: '2019-10-18T17:08:22.515Z',
+                },
+              ],
+            },
+          },
+        }),
+      })
+      const waitForModuleDisabledIssue1 = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2019-10-18T17:08:22.515Z'
+        )
+      )
+      await waitForModuleDisabledIssue1
+      await waitForIdle(2000)
+      const deviceId = response.body.device.id
+      // Post to deviceApi to ensure the device in in Aspect
+      const response2 = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          configuration: {
+            data: {
+              disabledModules: [
+                {
+                  SiteSerialNumber: '233',
+                  UserId: '1',
+                  Creation: '2020-08-18T17:08:22.515Z',
+                },
+                {
+                  SiteSerialNumber: '234',
+                  UserId: '1',
+                  Creation: '2019-10-18T17:08:22.515Z',
+                },
+                {
+                  SiteSerialNumber: '777',
+                  UserId: '1',
+                  Creation: '2020-05-18T17:08:22.515Z',
+                },
+              ],
+            },
+          },
+        }),
+      })
+      // should be the same device
+      assert.equal(response.body.device.id, response2.body.device.id)
+      await waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '777',
+          '2020-05-18T17:08:22.515Z'
+        )
+      )
+      await waitForIdle(2000)
+      const device = await knex('Device')
+        .where({
+          id: response.body.device.id,
+        })
+        .first()
+      const { qntIssue } = await knex('Issue')
+        .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
+        .count('Id as qntIssue')
+        .first()
+
+      assert.isArray(JSON.parse(device.configurationData).disabledModules)
+      assert.equal(
+        JSON.parse(device.configurationData).disabledModules.length,
+        3
+      )
+      // should only have 3 issues for this device.
+      assert.equal(qntIssue, 3)
+      const issue = await knex('Issue')
+        .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
+        // .andWhere(knex.raw('data->>"$.moduleSerial"=?', ['777']))
+        .orderBy('createdOn', 'DESC')
+        .first()
+
+      assert.isNotNull(issue.data)
+
+      assert.equal(issue.issueTypeId, await issueTypeToId('ModuleDisabled'))
+      assert.equal(
+        JSON.parse(issue.data).disabledOn,
+        '2020-05-18T17:08:22.515Z'
+      )
+      assert.equal(JSON.parse(issue.data).moduleSerial, '777')
+    })
   })
 })

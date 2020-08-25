@@ -12,7 +12,6 @@ const {
   format,
   isWeekend,
 } = require('date-fns')
-const { createNewIssue } = require('../issue/service')
 const { deviceMaintenanceStatusLogged } = require('./actions')
 const {
   knex,
@@ -27,8 +26,6 @@ const {
   deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
-  issueTypeToId,
-  issueStatusToId,
 } = require('../shared/dictionary')
 const { parseDateOrDefault } = require('../shared/date')
 
@@ -1358,64 +1355,6 @@ async function onDeviceMaintenanceStatusLogScheduled(
   })
 }
 
-async function onDeviceModuleDisableReceived(action) {
-  const issueTypeId = await issueTypeToId('ModuleDisabled')
-  /**
-   * Check if the module disabled record was already inserted.
-   * This data comes with the dailynews process.
-   */
-  const query = knex('Issue')
-    .where({
-      issueTypeId,
-      deviceId: action.deviceId,
-    })
-    .andWhere(
-      knex.raw(
-        'data->>"$.moduleSerial"=? and DATE(data->>"$.disabledOn")=DATE(?)',
-        [action.options.data.moduleSerial, action.options.data.disabledOn]
-      )
-    )
-    .first('data')
-  console.log('query', query.toString())
-
-  const existingModuleDisabledIssue = await query
-  /**
-   * If the module wasn't already inserted, we create the issue.
-   */
-  console.log(
-    'existingissue',
-    action.options.data.moduleSerial,
-    existingModuleDisabledIssue
-  )
-
-  if (!existingModuleDisabledIssue) {
-    /**
-     * Check if the module was already replaced, after the disabled date.
-     */
-    const moduleReplacedIssue = await knex('Issue')
-      .where({
-        issueTypeId: await issueTypeToId('ModuleReplaced'),
-        deviceId: action.deviceId,
-      })
-      .andWhere(
-        knex.raw(
-          'data->>"$.replacedModuleSerial"=? AND DATE(createdOn)>=DATE(?)',
-          [action.options.data.moduleSerial, action.options.data.disabledOn]
-        )
-      )
-      .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
-      .first('data')
-    /**
-     * If the module wasn't replaced already, we insert the new issue.
-     */
-    console.log('Existing moduleReplacedIssue', moduleReplacedIssue)
-    if (!moduleReplacedIssue) {
-      console.log('CreateNewIssue', moduleReplacedIssue)
-      await createNewIssue(knex, 'ModuleDisabled', action)
-    }
-  }
-}
-
 module.exports = {
   listDevices,
   showDevice,
@@ -1439,5 +1378,4 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
-  onDeviceModuleDisableReceived,
 }

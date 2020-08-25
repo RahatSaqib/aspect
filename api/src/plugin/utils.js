@@ -1,5 +1,7 @@
 const { knex } = require('../db')
 const { resultModuleReplaced } = require('../result/actions')
+const { deviceModuleDisabled } = require('../device/actions')
+const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -96,9 +98,71 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
   }
 }
 
+async function shouldTriggerModuleDisabled(
+  knex,
+  messageContext,
+  device,
+  deviceModule
+) {
+  /**
+   * For checking if this issue was already created, you should check in the Event "onEventTrigger"
+   * There the process basically check if there is already an inserted issue or not.
+   * This data comes with the dailynews process.
+   */
+  /* const existingModuleDisabledIssue = await knex('Issue')
+    .where({
+      issueTypeId,
+      deviceId: device.id,
+    })
+    .andWhere(
+      knex.raw(
+        'data->>"$.moduleSerial"=? and DATE(data->>"$.disabledOn")=DATE(?)',
+        [deviceModule.SiteSerialNumber, deviceModule.Creation]
+      )
+    )
+    .first('data')
+*/
+  /**
+   * If the module wasn't already inserted, we create the issue.
+   */
+
+  /**
+   * Check if the module was already replaced, after the disabled date.
+   */
+  const moduleReplacedIssue = await knex('Issue')
+    .where({
+      issueTypeId: await issueTypeToId('ModuleReplaced'),
+      deviceId: device.id,
+    })
+    .andWhere(
+      knex.raw(
+        'data->>"$.replacedModuleSerial"=? AND DATE(createdOn)>=DATE(?)',
+        [deviceModule.SiteSerialNumber, deviceModule.Creation]
+      )
+    )
+    .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
+    .first('data')
+  /**
+   * If the module wasn't replaced already, we insert the new issue.
+   */
+  if (!moduleReplacedIssue) {
+    if (!messageContext.deviceModuleDisabled) {
+      messageContext = messageContext.bindActionCreators({
+        deviceModuleDisabled,
+      })
+    }
+    messageContext.deviceModuleDisabled(
+      device,
+      deviceModule.SiteSerialNumber,
+      deviceModule.Creation
+    )
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
   getReplacedModuleSerials,
   shouldTriggerModuleReplaced,
+  shouldTriggerModuleDisabled,
 }
