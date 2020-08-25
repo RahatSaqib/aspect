@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
-
+const filterFunctions = require('./filterConditions')
 const {
   issueCreated,
   issueTriggered,
@@ -26,13 +26,20 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
         'it.externalId as issueType',
         'ies.externalId as issueEventStatus',
         'iet.partnerId',
-        'iet.triggerConditions'
+        'iet.triggerConditions',
+        'iet.filterIssueCondition'
       )
       .then(items =>
         items.reduce(
           (
             memo,
-            { issueType, issueEventStatus, partnerId, triggerConditions }
+            {
+              issueType,
+              issueEventStatus,
+              partnerId,
+              triggerConditions,
+              filterIssueCondition,
+            }
           ) => {
             const { action } = JSON.parse(triggerConditions)
             if (action != null) {
@@ -40,7 +47,8 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
                 memo[action] = onIssueEventTrigger(
                   partnerId,
                   issueType,
-                  triggerConditions
+                  triggerConditions,
+                  filterIssueCondition
                 )
               } else if (issueEventStatus === 'Resolved') {
                 memo[action] = onIssueEventResolve(issueType)
@@ -55,7 +63,12 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
   })
 }
 
-function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
+function onIssueEventTrigger(
+  partnerId,
+  issueType,
+  triggerConditions,
+  filterIssueCondition = null
+) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
     return context.transact(async knex => {
@@ -67,7 +80,12 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
       )
       if (shouldTriggerEvent) {
         const now = new Date()
-        const openIssue = await findOpenIssue(knex, issueType, action)
+        const openIssue = await findOpenIssue(
+          knex,
+          issueType,
+          action,
+          JSON.parse(filterIssueCondition)
+        )
         let issue = null
         if (openIssue != null) {
           // ----------------------
@@ -118,10 +136,12 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
 
 function onIssueEventResolve(issueType) {
   return async (action, { messageContext: context }) => {
+    // console.log('onIssueEventResolve--------------')
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
       const issue = await findOpenIssue(knex, issueType, action)
+      // console.log('onIssueEventResolve--------------', issue, issueType, action)
       const hasTrigger =
         issue != null &&
         issue.partnerId &&
@@ -131,6 +151,7 @@ function onIssueEventResolve(issueType) {
           action,
           issueEventStatus: 'Resolved',
         }))
+      // console.log('onIssueEventResolve--------------hasTrigger', hasTrigger)
       if (hasTrigger) {
         await knex('Issue')
           .where({ id: issue.id })
@@ -138,6 +159,7 @@ function onIssueEventResolve(issueType) {
             issueStatusId: await issueStatusToId('Resolved'),
             updatedOn: now,
           })
+        // console.log('onIssueEventResolve dispatch--------------')
         context.issueResolved(issue.id)
         await knex('IssueEvent').insert({
           issueId: issue.id,
@@ -150,7 +172,12 @@ function onIssueEventResolve(issueType) {
   }
 }
 
-async function findOpenIssue(knex, issueType, action) {
+async function findOpenIssue(
+  knex,
+  issueType,
+  action,
+  { evaluationFunction } = {}
+) {
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -169,19 +196,16 @@ async function findOpenIssue(knex, issueType, action) {
   } else if (action.partnerId) {
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
-  if (_.get(action, 'options.data'))
-    if (
-      _.get(action, 'options.data.moduleSerial') &&
-      _.get(action, 'options.data.disabledOn')
-    ) {
-      findOpenIssue.andWhere(
-        knex.raw(
-          'data->>"$.moduleSerial"=? and DATE(data->>"$.disabledOn")=DATE(?)',
-          [action.options.data.moduleSerial, action.options.data.disabledOn]
-        )
-      )
-    }
 
+  if (
+    _.get(action, 'options.data') &&
+    evaluationFunction &&
+    filterFunctions[evaluationFunction]
+  )
+    findOpenIssue.modify(
+      filterFunctions[evaluationFunction],
+      action.options.data
+    )
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 

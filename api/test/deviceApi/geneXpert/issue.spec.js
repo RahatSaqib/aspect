@@ -65,7 +65,7 @@ describe('Integration test for device status', () => {
         )
       )
       await waitForModuleDisabledIssue
-      await waitForIdle(2000)
+      await waitForIdle()
 
       const issue = await knex('Issue')
         .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
@@ -126,7 +126,7 @@ describe('Integration test for device status', () => {
 
       await waitForModuleDisabledIssue1
 
-      await waitForIdle(2000)
+      await waitForIdle()
       // Post to deviceApi to ensure the device in in Aspect
       const response2 = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -152,7 +152,7 @@ describe('Integration test for device status', () => {
       // should be the same device
       assert.equal(response.body.device.id, response2.body.device.id)
       await waitForModuleDisabledIssue1
-      await waitForIdle(2000)
+      await waitForIdle()
 
       const { qntIssue } = await knex('Issue')
         .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
@@ -197,7 +197,7 @@ describe('Integration test for device status', () => {
         )
       )
       await waitForModuleDisabledIssue1
-      await waitForIdle(2000)
+      await waitForIdle()
       const deviceId = response.body.device.id
       // Post to deviceApi to ensure the device in in Aspect
       const response2 = await postToDeviceApi({
@@ -235,7 +235,7 @@ describe('Integration test for device status', () => {
           '2020-05-18T17:08:22.515Z'
         )
       )
-      await waitForIdle(2000)
+      await waitForIdle()
       const device = await knex('Device')
         .where({
           id: response.body.device.id,
@@ -255,7 +255,7 @@ describe('Integration test for device status', () => {
       assert.equal(qntIssue, 3)
       const issue = await knex('Issue')
         .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
-        // .andWhere(knex.raw('data->>"$.moduleSerial"=?', ['777']))
+        .andWhere(knex.raw('data->>"$.moduleSerial"=?', ['777']))
         .orderBy('createdOn', 'DESC')
         .first()
 

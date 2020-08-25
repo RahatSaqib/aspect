@@ -1,6 +1,12 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { seedIssueType, seedIssueEventTriggersForPartner } = require('../utils')
+const {
+  seedIssueType,
+  seedIssueEventTriggersForPartner,
+  upsertIssueResolutionTrigger,
+} = require('../utils')
+
+const { issueTypeToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { partnerId } = await knex('User as u')
@@ -14,5 +20,16 @@ async function seed(knex) {
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['ModuleDisabled'],
+  })
+  const now = new Date()
+  await upsertIssueResolutionTrigger(knex, {
+    issueTypeId: await issueTypeToId('ModuleDisabled'),
+    partnerId,
+    resolutionConditions: JSON.stringify({
+      evaluationMethod: 'plugin-function',
+      evaluationParameter: 'resolveIssueModuleDisabled',
+    }),
+    createdOn: now,
+    updatedOn: now,
   })
 }

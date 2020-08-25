@@ -142,9 +142,12 @@
 		},
 		{
 			"issueType": "ModuleDisabled",
-			"issueEventStatus": "Resolved",
+			"issueEventStatus": "Triggered",
 			"triggerConditions": {
 				"action": "DEVICE_MODULE_DISABLE_RECEIVED"
+			},
+			"filterIssueCondition": {
+				"evaluationFunction": "filterModuleDisabledIssue"
 			}
 		},
 		{

@@ -507,6 +507,10 @@ async function resolveDataCategoryLow(knex, issue) {
   return false
 }
 
+async function resolveIssueModuleDisabled(knex, issue) {
+  console.log('-----------------------issue resolveIssueModuleDisabled', issue)
+}
+
 async function resolveIssueStockout(knex, issue) {
   const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
   return status.isResolved
@@ -554,4 +558,5 @@ module.exports = {
   resolveReagentHealthError,
   resolveIssueStockout,
   resolveIssueStockExpiring,
+  resolveIssueModuleDisabled,
 }

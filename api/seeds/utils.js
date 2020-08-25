@@ -740,7 +740,12 @@ async function seedIssueEventTriggersForPartner(
 
   await Promise.each(
     data,
-    async ({ issueType, issueEventStatus, triggerConditions }) => {
+    async ({
+      issueType,
+      issueEventStatus,
+      triggerConditions,
+      filterIssueCondition,
+    }) => {
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
           partnerId,
@@ -754,6 +759,7 @@ async function seedIssueEventTriggersForPartner(
           await knex('IssueEventTrigger').insert({
             ...triggerData,
             triggerConditions: JSON.stringify(triggerConditions),
+            filterIssueCondition: JSON.stringify(filterIssueCondition),
             createdOn: now,
             updatedOn: now,
           })
