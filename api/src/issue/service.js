@@ -176,8 +176,9 @@ async function findOpenIssue(
   knex,
   issueType,
   action,
-  { evaluationFunction } = {}
+  filterIssueCondition = {}
 ) {
+  const evaluationFunction = _.get(filterIssueCondition, 'evaluationFunction')
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
