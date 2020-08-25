@@ -70,9 +70,9 @@ export const withTodayProps = withProps(() => ({
   today: startOfDay(new Date()),
 }))
 
-export const formatRelative = (intl, date, defaultMessage) => {
+export const formatRelative = (intl, date, defaultMessage = '') => {
   const dateInMilliseconds = Date.parse(date)
-  if (_.isNaN(dateInMilliseconds)) return defaultMessage ?? ''
+  if (_.isNaN(dateInMilliseconds)) return defaultMessage
 
   const getParams = timeDiffInMilliseconds => {
     const timeInMilliseconds = Math.abs(timeDiffInMilliseconds)
@@ -110,10 +110,3 @@ export const formatRelative = (intl, date, defaultMessage) => {
     { number: 'auto' }
   )
 }
-
-/**
- * @param {string} date The ISO-formatted date that will be compared.
- * @return {number} The number of days between the given date and today.
- */
-export const daysUntilToday = date =>
-  differenceInDays(new Date(), new Date(date))
