@@ -15,6 +15,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import Immutable from 'immutable'
+import PropTypeOf from '../../shared/types'
 
 import {
   getCustomMessage,
@@ -131,8 +133,11 @@ const filtersFromLocation = composeSanitizer(
 const enhance = compose(
   injectIntl,
   setPropTypes({
+    intl: PropTypeOf.intl.isRequired,
     location: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    table: PropTypes.instanceOf(Immutable.Record).isRequired,
+    items: PropTypes.instanceOf(Immutable.Record).isRequired,
   }),
   withProps(
     makeSortPageSelector({
@@ -270,109 +275,104 @@ export const SiteList = ({
   onAlertClick,
   reducedFilters,
   user,
-}) => {
-  console.log('holaaaa')
-  console.log(table)
-  console.log(items)
-  return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-      <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
-      <BrowseFilters
-        history={history}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
+}) => (
+  <div className={cssClasses('Container')}>
+    <Helmet title={intl.formatMessage(messages.sitesTitle)} />
+    <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={reducedFilters}
+    />
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      <ExportListButton
+        onExcelClick={onExcelClick}
+        onCsvClick={onExcelClick}
+        visible={!items.currentIdList.isEmpty()}
+        reportName="Sites"
       />
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
-        )}
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Sites"
-        />
 
-        {!items.currentIdList.isEmpty() && (
-          <SiteDataTable
-            selectable={false}
-            className={cssClasses('SiteDataTable')}
-          >
-            <SiteDataTableHead
-              history={history}
-              location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={[
-                {
-                  key: 'name',
-                  label: intl.formatMessage(messages.siteName),
-                  sortable: true,
-                },
-                {
-                  key: 'state',
-                  label: getCustomMessage(intl, messages, 'state', user),
-                  sortable: true,
-                },
-                {
-                  key: 'lga',
-                  label: getCustomMessage(intl, messages, 'lga', user),
-                  sortable: true,
-                },
-                {
-                  key: 'siteId',
-                  label: intl.formatMessage(messages.externalId),
-                  sortable: true,
-                },
-                {
-                  key: 'totalDevices',
-                  label: intl.formatMessage(messages.totalDevices),
-                  sortable: true,
-                },
-                {
-                  key: 'inventoryUpdatedOn',
-                  label: intl.formatMessage(messages.latestInventoryUpdate),
-                  sortable: true,
-                },
-                {
-                  key: 'siteIssues',
-                  label: intl.formatMessage(messages.siteIssues),
-                },
-              ]}
-            />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(site => (
-                  <SiteDataTableRow
-                    key={site.get('id')}
-                    intl={intl}
-                    site={site}
-                    onClick={onRowClick}
-                    onAlertClick={onAlertClick}
-                    data-site-id={site.get('id')}
-                  />
-                ))}
-            </TableBody>
-          </SiteDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
+      {!items.currentIdList.isEmpty() && (
+        <SiteDataTable
+          selectable={false}
+          className={cssClasses('SiteDataTable')}
+        >
+          <SiteDataTableHead
             history={history}
             location={location}
-            intl={intl}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
+            columns={[
+              {
+                key: 'name',
+                label: intl.formatMessage(messages.siteName),
+                sortable: true,
+              },
+              {
+                key: 'state',
+                label: getCustomMessage(intl, messages, 'state', user),
+                sortable: true,
+              },
+              {
+                key: 'lga',
+                label: getCustomMessage(intl, messages, 'lga', user),
+                sortable: true,
+              },
+              {
+                key: 'siteId',
+                label: intl.formatMessage(messages.externalId),
+                sortable: true,
+              },
+              {
+                key: 'totalDevices',
+                label: intl.formatMessage(messages.totalDevices),
+                sortable: true,
+              },
+              {
+                key: 'inventoryUpdatedOn',
+                label: intl.formatMessage(messages.latestInventoryUpdate),
+                sortable: true,
+              },
+              {
+                key: 'siteIssues',
+                label: intl.formatMessage(messages.siteIssues),
+              },
+            ]}
           />
-        )}
-      </DataTableCard>
-    </div>
-  )
-}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(site => (
+                <SiteDataTableRow
+                  key={site.get('id')}
+                  intl={intl}
+                  site={site}
+                  onClick={onRowClick}
+                  onAlertClick={onAlertClick}
+                  data-site-id={site.get('id')}
+                />
+              ))}
+          </TableBody>
+        </SiteDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
+        <BrowseTablePaginator
+          history={history}
+          location={location}
+          intl={intl}
+          paginatorStatus={messages.paginatorStatus}
+          total={table.total}
+          pageAt={pageAt}
+          pageSize={pageSize}
+        />
+      )}
+    </DataTableCard>
+  </div>
+)
 
 export default enhance(SiteList)
