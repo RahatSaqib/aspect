@@ -1,0 +1,32 @@
+import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
+
+import { Unit } from '../../components/pureGrids'
+import Group from './Group'
+import Widget from './Widget'
+
+const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
+  return (
+    <Fragment>
+      {widgetGroups && widgetGroups.length ? (
+        <Group data={widgetGroups} />
+      ) : null}
+      {nonGroupedWidgets && nonGroupedWidgets.length
+        ? nonGroupedWidgets.map(widget => (
+            <Unit key={widget.id} sm="1-2" lg="1-4">
+              <Widget data={widget} />
+            </Unit>
+          ))
+        : null}
+    </Fragment>
+  )
+}
+
+AspectWidgets.propTypes = {
+  data: PropTypes.shape({
+    widgetGroups: PropTypes.oneOf([PropTypes.object]),
+    nonGroupedWidgets: PropTypes.oneOf([PropTypes.object]),
+  }).isRequired,
+}
+
+export default AspectWidgets
