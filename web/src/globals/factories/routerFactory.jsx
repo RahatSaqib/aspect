@@ -292,7 +292,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['report:view']) ||
+          renderRedirectToNotFound(props, ['report']) ||
           renderReports
         }
       />
@@ -301,12 +301,21 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['manage:view']) ||
+          renderRedirectToNotFound(props, ['manage']) ||
           renderManage
         }
       />
 
-      <Route exact path="/browse" render={renderRedirectToBrowse(props)} />
+      <Route
+        exact
+        path="/browse"
+        render={
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderRedirectToNotFound(props, ['browse']) ||
+          renderRedirectToBrowse(props)
+        }
+      />
 
       <Route
         exact
@@ -314,7 +323,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['device:view']) ||
+          renderRedirectToNotFound(props, ['device']) ||
           renderDeviceList
         }
       />
@@ -323,7 +332,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['device:view']) ||
+          renderRedirectToNotFound(props, ['device']) ||
           renderDeviceDetail
         }
       />
@@ -351,7 +360,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['deviceApiKey:view']) ||
+          renderRedirectToNotFound(props, ['deviceApiKey']) ||
           renderDeviceApiKeyList
         }
       />
@@ -362,7 +371,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['case:view']) ||
+          renderRedirectToNotFound(props, ['case']) ||
           renderCaseList
         }
       />
@@ -373,7 +382,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['router:view']) ||
+          renderRedirectToNotFound(props, ['router']) ||
           renderRouterList
         }
       />
@@ -382,7 +391,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['router:view']) ||
+          renderRedirectToNotFound(props, ['router']) ||
           renderRouterDetail
         }
       />
@@ -393,7 +402,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['reporter:view']) ||
+          renderRedirectToNotFound(props, ['reporter']) ||
           renderReporterList
         }
       />
@@ -404,7 +413,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['result:view']) ||
+          renderRedirectToNotFound(props, ['result']) ||
           renderResultList
         }
       />
@@ -424,7 +433,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['site:view']) ||
+          renderRedirectToNotFound(props, ['site']) ||
           renderSiteList
         }
       />
@@ -433,7 +442,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['site:view']) ||
+          renderRedirectToNotFound(props, ['site']) ||
           renderSiteDetail
         }
       />
@@ -444,7 +453,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['person:view']) ||
+          renderRedirectToNotFound(props, ['person']) ||
           renderPersonList
         }
       />
@@ -464,7 +473,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['inventory:view']) ||
+          renderRedirectToNotFound(props, ['inventory']) ||
           renderInventoryItemsList
         }
       />
@@ -475,7 +484,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['notification:view']) ||
+          renderRedirectToNotFound(props, ['notification']) ||
           renderNotificationList
         }
       />
@@ -496,7 +505,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['report:view'])
+          renderRedirectToNotFound(props, ['report'])
         }
       />
 
