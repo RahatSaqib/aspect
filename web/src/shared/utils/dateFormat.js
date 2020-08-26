@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import isString from 'lodash/isString'
+import isNaN from 'lodash/isNaN'
 import { startOfDay, format as dateFnFormat, parseISO } from 'date-fns'
 import { withProps } from 'recompose'
 import differenceInDays from 'date-fns/differenceInDays'
@@ -24,7 +25,7 @@ export const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
 export const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
 
 function formatBase(date, unit) {
-  if (_.isString(date)) {
+  if (isString(date)) {
     date = parseISO(date)
   }
   return format(date, unit)
@@ -72,7 +73,7 @@ export const withTodayProps = withProps(() => ({
 
 export const formatRelative = (intl, date, defaultMessage = '') => {
   const dateInMilliseconds = Date.parse(date)
-  if (_.isNaN(dateInMilliseconds)) return defaultMessage
+  if (isNaN(dateInMilliseconds)) return defaultMessage
 
   const getParams = timeDiffInMilliseconds => {
     const timeInMilliseconds = Math.abs(timeDiffInMilliseconds)
