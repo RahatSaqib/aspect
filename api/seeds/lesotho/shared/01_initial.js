@@ -1,6 +1,5 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { sep } = require('path')
 const bcrypt = require('bcrypt')
 const config = require('../../../src/config')
 const utils = require('../../utils')
@@ -10,81 +9,116 @@ const {
   commonUpserts,
 } = require('../../common')
 const geography = require('./fixtures/geography.json')
+const tbPartnerVariables = require('../tb/fixtures/partnerVariables.json')
+const tbGeneXpertPatientDataSchema = require('../tb/fixtures/geneXpertPatientDataSchema.json')
+const hivPartnerVariables = require('../hiv/fixtures/partnerVariables.json')
+const hivGeneXpertPatientDataSchema = require('../hiv/fixtures/geneXpertPatientDataSchema.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-module.exports = async function (
-  knex,
-  patientData,
-  adminUsername,
-  adminPasssword,
-  partnerName,
-  gxAlertDeviceApiKeyToken
-) {
+async function seed(knex) {
+  utils.hasSeededStaticData = true
+  const partnerDetails = {
+    partnerTypeId: await partnerTypeToId('Operating'),
+    deviceLogHistoryDays: 365,
+    maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
+    serverUrl: 'https://lesotho.aspect.id',
+  }
+  const adminDetails = {
+    approved: 1,
+    createdOn: new Date(),
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  }
   const previouslyRunSeeds = await knex('AspectSeed')
-    .where('fileName', 'LIKE', `lesotho${sep}%`)
-    .andWhere(knex.raw('SUBSTRING(fileName, 9)'), 'NOT LIKE', `%${sep}%`)
+    .where('fileName', 'LIKE', `lesotho%`)
+    .andWhere(knex.raw('SUBSTRING(fileName, 9)'), 'NOT LIKE', `%/%`)
     .select()
   await Promise.each(previouslyRunSeeds, async previouslyRunSeed => {
     await knex('AspectSeed')
       .where('id', previouslyRunSeed.id)
       .update(
         'fileName',
-        knex.raw(`CONCAT('lesotho${sep}tb${sep}', SUBSTRING(fileName, 9))`)
+        knex.raw(`CONCAT('lesotho/tb/', SUBSTRING(fileName, 9))`)
       )
     await knex('AspectSeed').insert({
       ..._.omit(previouslyRunSeed, ['id', 'fileName']),
-      fileName: `lesotho${sep}hiv${sep}${previouslyRunSeed.fileName.substring(
-        8
-      )}`,
+      fileName: `lesotho/hiv/${previouslyRunSeed.fileName.substring(8)}`,
     })
   })
-  if (
-    _.some(previouslyRunSeeds, previouslyRunSeed =>
-      previouslyRunSeed.endsWith(`${sep}01_initial.js`)
+  const previouslyRunInitialSeed = _.find(
+    previouslyRunSeeds,
+    previouslyRunSeed => previouslyRunSeed.fileName.endsWith(`/01_initial.js`)
+  )
+  if (previouslyRunInitialSeed) {
+    await knex('AspectSeed').where('id', previouslyRunInitialSeed.id).del()
+    await knex('Partner').where('name', 'Lesotho').update({
+      name: tbPartnerVariables.partnerName,
+    })
+    let { id: hivPartnerId } =
+      (await knex('Partner')
+        .where('name', hivPartnerVariables.partnerName)
+        .first('id')) || {}
+    if (!hivPartnerId) {
+      ;[hivPartnerId] = await knex('Partner').insert({
+        ...partnerDetails,
+        name: hivPartnerVariables.partnerName,
+      })
+    }
+    let { id: hivAdminId } =
+      (await knex('User')
+        .where('name', hivPartnerVariables.adminName)
+        .first('id')) || {}
+    if (!hivAdminId) {
+      ;[hivAdminId] = await knex('User').insert({
+        ...adminDetails,
+        name: hivPartnerVariables.adminName,
+        password: bcrypt.hashSync(
+          hivPartnerVariables.adminPassword,
+          saltRounds
+        ),
+      })
+    }
+    await commonUpserts(
+      knex,
+      hivPartnerId,
+      hivAdminId,
+      geography,
+      'LS',
+      hivPartnerVariables.gxAlertDeviceApiKey
     )
-  ) {
+    await upsertGeneXpertDeviceTypeAndAssays(
+      knex,
+      ['GxHiv', 'GxHiv1Vl', 'GxHiv1Qual'],
+      hivGeneXpertPatientDataSchema.patientData
+    )
     return
   }
-  utils.hasSeededStaticData = true
 
-  // Create admin user and audit fields
-  const now = new Date()
-  const [adminId] = await knex('User').insert({
-    name: adminUsername,
-    password: bcrypt.hashSync(adminPasssword, saltRounds),
-    approved: 1,
-    createdOn: now,
-    lockedOut: 0,
-    failedPasswordAttempts: 0,
+  const [tbAdminId] = await knex('User').insert({
+    ...adminDetails,
+    name: tbPartnerVariables.adminName,
+    password: bcrypt.hashSync(tbPartnerVariables.adminPassword, saltRounds),
   })
 
-  const [partnerId] = await knex('Partner').insert({
-    name: partnerName,
-    partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://lesotho.aspect.id',
+  const [tbPartnerId] = await knex('Partner').insert({
+    ...partnerDetails,
+    name: tbPartnerVariables.partnerName,
   })
   await commonUpserts(
     knex,
-    partnerId,
-    adminId,
+    tbPartnerId,
+    tbAdminId,
     geography,
     'LS',
-    gxAlertDeviceApiKeyToken
+    tbPartnerVariables.gxAlertDeviceApiKey
   )
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
-    [
-      'GxUnknown',
-      'GxHiv',
-      'GxMtbRif',
-      'GxMtbRifUltra',
-      'GxHiv1Vl',
-      'GxHiv1Qual',
-    ],
-    patientData
+    ['GxUnknown', 'GxMtbRif', 'GxMtbRifUltra'],
+    tbGeneXpertPatientDataSchema.patientData
   )
 }
+
+module.exports = seed
