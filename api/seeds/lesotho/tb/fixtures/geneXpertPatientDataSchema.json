@@ -9,7 +9,6 @@
     "type": "string",
     "order": 1
   },
-  
   "age": {
     "title": "Age",
     "type": "number",
@@ -25,31 +24,31 @@
     "type": "string",
     "order": 4
   },
-  "street":{
+  "street": {
     "title": "Patient Address",
-    "type":"string",
+    "type": "string",
     "order": 5
   },
-  "stateId":{
-    "title":"Patient State",
-    "type":"number",
-    "order":6
+  "stateId": {
+    "title": "Patient State",
+    "type": "number",
+    "order": 6
   },
-  "lgaId":{
-    "title":"Patient LGA",
-    "type":"number",
-    "order":7
+  "lgaId": {
+    "title": "Patient LGA",
+    "type": "number",
+    "order": 7
   },
-  
+
   "hivStatus": {
     "title": "HIV Status",
     "type": "number",
     "order": 8
   },
-  "testReason":{
-    "title":"Reason for test",
-    "type":"string",
-    "order":9
+  "testReason": {
+    "title": "Reason for test",
+    "type": "string",
+    "order": 9
   },
   "requestorName": {
     "title": "Name of Person Requesting Test",
@@ -66,10 +65,9 @@
     "type": "string",
     "order": 12
   },
-  "repeatTest":{
-    "title":"Repeat test",
-    "type":"number",
-    "order":13
+  "repeatTest": {
+    "title": "Repeat test",
+    "type": "number",
+    "order": 13
   }
-
 }
