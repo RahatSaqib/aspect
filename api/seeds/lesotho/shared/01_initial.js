@@ -53,48 +53,45 @@ async function seed(knex) {
   )
   if (previouslyRunInitialSeed) {
     await knex('AspectSeed').where('id', previouslyRunInitialSeed.id).del()
-    await knex('Partner').where('name', 'Lesotho').update({
-      name: tbPartnerVariables.partnerName,
-    })
-    let { id: hivPartnerId } =
-      (await knex('Partner')
-        .where('name', hivPartnerVariables.partnerName)
-        .first('id')) || {}
-    if (!hivPartnerId) {
-      ;[hivPartnerId] = await knex('Partner').insert({
-        ...partnerDetails,
-        name: hivPartnerVariables.partnerName,
-      })
-    }
-    let { id: hivAdminId } =
-      (await knex('User')
-        .where('name', hivPartnerVariables.adminName)
-        .first('id')) || {}
-    if (!hivAdminId) {
-      ;[hivAdminId] = await knex('User').insert({
-        ...adminDetails,
-        name: hivPartnerVariables.adminName,
-        password: bcrypt.hashSync(
-          hivPartnerVariables.adminPassword,
-          saltRounds
-        ),
-      })
-    }
-    await commonUpserts(
-      knex,
-      hivPartnerId,
-      hivAdminId,
-      geography,
-      'LS',
-      hivPartnerVariables.gxAlertDeviceApiKey
-    )
-    await upsertGeneXpertDeviceTypeAndAssays(
-      knex,
-      ['GxHiv', 'GxHiv1Vl', 'GxHiv1Qual'],
-      hivGeneXpertPatientDataSchema.patientData
-    )
-    return
   }
+
+  await knex('Partner').where('name', 'Lesotho').update({
+    name: tbPartnerVariables.partnerName,
+  })
+  let { id: hivPartnerId } =
+    (await knex('Partner')
+      .where('name', hivPartnerVariables.partnerName)
+      .first('id')) || {}
+  if (!hivPartnerId) {
+    ;[hivPartnerId] = await knex('Partner').insert({
+      ...partnerDetails,
+      name: hivPartnerVariables.partnerName,
+    })
+  }
+  let { id: hivAdminId } =
+    (await knex('User')
+      .where('name', hivPartnerVariables.adminName)
+      .first('id')) || {}
+  if (!hivAdminId) {
+    ;[hivAdminId] = await knex('User').insert({
+      ...adminDetails,
+      name: hivPartnerVariables.adminName,
+      password: bcrypt.hashSync(hivPartnerVariables.adminPassword, saltRounds),
+    })
+  }
+  await commonUpserts(
+    knex,
+    hivPartnerId,
+    hivAdminId,
+    geography,
+    'LS',
+    hivPartnerVariables.gxAlertDeviceApiKey
+  )
+  await upsertGeneXpertDeviceTypeAndAssays(
+    knex,
+    ['GxHiv', 'GxHiv1Vl', 'GxHiv1Qual'],
+    hivGeneXpertPatientDataSchema.patientData
+  )
 
   let { id: tbAdminId } =
     (await knex('User')

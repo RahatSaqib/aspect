@@ -1532,6 +1532,7 @@ async function baseGxAlertMigration(
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
+        existingPerson.partnerId !== partnerId ||
         existingPerson.timezone !== person.timezone ||
         existingPerson.title !== person.title ||
         existingPerson.geographyId !== geographyId ||
@@ -1547,6 +1548,7 @@ async function baseGxAlertMigration(
           .update({
             ...existingPerson,
             name: person.personName,
+            partnerId,
             timezone: person.timezone,
             title: person.title,
             geographyId,
@@ -1564,6 +1566,7 @@ async function baseGxAlertMigration(
     } else {
       ;[personId] = await knex('Person').insert({
         name: person.personName,
+        partnerId,
         timezone: person.timezone || countries[0].timezone,
         geographyId,
         title: person.title,
