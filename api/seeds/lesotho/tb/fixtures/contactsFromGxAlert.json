@@ -1,23 +1,8 @@
 [
   {
-    "personName": "'Mathabo Mareka",
-    "personTitle": "Lab Manager",
+    "personName": "Lesotho Admin",
     "jobFunctions": ["Admin"],
-    "personEmailAddress": "mmareka2000@yahoo.com",
-    "username": "'Mathabo",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Admin Lesotho",
-    "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "sbaumgartner@systemone.id",
-    "username": "lesotho",
+    "username": "adminlesotho",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -30,6 +15,7 @@
     "personTitle": "Project Manager - Lesotho",
     "jobFunctions": ["Admin"],
     "personEmailAddress": "amitchell@systemone.id",
+    "personCell": "+27812955204",
     "username": "amitchell@systemone.id",
     "timezone": "South Africa Standard Time",
     "hidePatientId": true,
@@ -39,102 +25,41 @@
     "geographies": []
   },
   {
-    "personName": "api-lesotho",
+    "personName": "mapaseka mapana",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26658559360",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BEREA LAB"
+    }]
+  },
+  {
+    "personName": "Victor Lubuku",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "vlubuku@systemone.id",
+    "personCell": "+27614877047",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BEREA LAB"
+    }]
+  },
+  {
+    "personName": "MOSA LEFOKA",
+    "personTitle": "Installer",
     "jobFunctions": ["Admin"],
-    "username": "api-lesotho",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "itumeleng sello",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "KHAUHELO RAMOKOTJO",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "kramokotjo@pedaids.org",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Kolisang Phatsoane",
-    "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "kolisangphatsoane22@gmail.com",
-    "username": "kolisangphatsoane22",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Lebohang Nteso",
-    "personTitle": "Ms",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "Lnteso231@gmail.com",
-    "username": "Lnteso231@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Lerato Motseki",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Lerato Motseki",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Lesotho Admin",
-    "jobFunctions": ["Admin"],
-    "username": "adminlesotho",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Limpho Mabulu",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "mabulu1987@gmail.com",
+    "personEmailAddress": "mnlefoka@gmail.com",
+    "personCell": "+26659909008",
+    "username": "MOSALEFOKA",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -143,10 +68,115 @@
     "geographies": []
   },
   {
-    "personName": "Lisebo Makara",
+    "personName": "MAFUSI TJAMELA",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "lisebomakara@yahoo.com",
+    "personCell": "+26667439928",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "QUEEN  4 MODULES"
+      }, {
+        "shortName": "Queen 16 MODULES"
+      }]
+  },
+  {
+    "personName": "Maleshoane Maebo",
+    "personTitle": "Installer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "maebomaleshoane@gmail.com",
+    "personCell": "+26658963682",
+    "username": "maebo",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "MONAHENG TSOEUTE",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "monahengtsoeute@gmail.com",
+    "personCell": "+26658046748",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PIH BOTSHABELO"
+    }]
+  },
+  {
+    "personName": "MABASIA THAMAHANE",
+    "personTitle": "Installer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "mplitsitso@gmail.com",
+    "personCell": "+26658701572",
+    "username": "Mabasia",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Mohammed suaudi Hassen",
+    "personTitle": "Installer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "m.sh34@ymail.com",
+    "personCell": "+26658182060",
+    "username": "Hassen",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Lerato Motseki",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26656983945",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NTRL-16"
+    }]
+  },
+  {
+    "personName": "Mamohau Majara",
+    "personTitle": "Installer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "mhseotsa@gmail.com",
+    "personCell": "+26658537032",
+    "username": "majara",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Mooko Matobo",
+    "personTitle": "Super User",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "nickshakes@yahoo.co.uk",
+    "personPhone": "+266 63212251",
+    "personCell": "+26663212251",
+    "username": "Mooko",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -155,10 +185,25 @@
     "geographies": []
   },
   {
-    "personName": "Lithabiso Motanyane",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "deehteehmott@gmail.com",
+    "personName": "Mokenyakenya Matoko",
+    "personTitle": "MDR Lab Focal",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "mmatoko@pih.org",
+    "personPhone": "+266 56626261",
+    "personCell": "+266 62082720",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Tsietso Motsoane",
+    "personTitle": "Lab Director",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "motsoanets@gmail.com",
+    "personPhone": "+266 58864158",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -171,6 +216,8 @@
     "personTitle": "NTP Manager",
     "jobFunctions": ["Admin"],
     "personEmailAddress": "maama36@hotmail.com",
+    "personPhone": "+266 58949666",
+    "personCell": "+266 62949666",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -179,383 +226,17 @@
     "geographies": []
   },
   {
-    "personName": "MABASIA THAMAHANE",
-    "personTitle": "Installer",
+    "personName": "'Mathabo Mareka",
+    "personTitle": "Lab Manager",
     "jobFunctions": ["Admin"],
-    "personEmailAddress": "mplitsitso@gmail.com",
-    "username": "Mabasia",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "mafusi tjamela",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mmareka2000@yahoo.com",
+    "personPhone": "+266 58434642",
+    "personCell": "+266 58434642",
+    "username": "'Mathabo",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MAFUSI TJAMELA",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": true,
-    "hideSampleId": true,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Maipato Matsaba",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "leoniematsaba@ymail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Majoel Makhanya",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "bernicemakhanya@gmail.com",
-    "username": "bernicemakhanya@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Makarabo Mohapi",
-    "personTitle": "Ms",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "mam.makhele@gmail.com",
-    "username": "mam.makhele@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Maleshoane Maebo",
-    "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "maebomaleshoane@gmail.com",
-    "username": "maebo",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Malillo Sepiriti",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "msepiriti2@pedaids.org",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "maliteboho ncheke",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mamello Molatelle",
-    "personTitle": "Ms",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "mmolatelle@yahoo.com",
-    "username": "mmolatelle@yahoo.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mamohau Majara",
-    "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "mhseotsa@gmail.com",
-    "username": "majara",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mamolefi Lenka",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mamotseare Mohlalise",
-    "personTitle": "Ms",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "ntebomohlalise@gmail.com",
-    "username": "ntebomohlalise@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mamotsieloa Makhomo",
-    "personTitle": "Ms",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "mjmakhomo@gmail.com",
-    "username": "mjmakhomo@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Maneo Mothobi",
-    "personTitle": "Ms",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "mothobiem@gmail.com",
-    "username": "mothobiem@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "mapaseka mapana",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Matseliso Masilo",
-    "personTitle": "Mr",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "tsedy.moholisa@gmail.com",
-    "username": "tsedy.moholisa@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mcengana Nqojane",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "nqojfs@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mohammed suaudi Hassen",
-    "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "m.sh34@ymail.com",
-    "username": "Hassen",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mokenyakenya Matoko",
-    "personTitle": "MDR Lab Focal",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "mmatoko@pih.org",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Moleboheng Fothela",
-    "personTitle": "Mr",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "fothela@gmail.com",
-    "username": "fothela@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MOLIEHI LEROTHOLI",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "rothymody@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MOLIEHI MOTLATLA",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "mmotlatla2018@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Moliehi Seleke",
-    "personTitle": "Ms",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "molill.seleke@gmail.com",
-    "username": "molill.seleke@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MONAHENG TSOEUTE",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "monahengtsoeute@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Monkoe Leqheka",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "m_leqheka@yahoo.co.uk",
-    "username": "m_leqheka@yahoo.co.uk",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MOOKO MATOBO",
-    "personTitle": "Installer",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "nickshakes@tahoo.co.uk",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mooko Matobo",
-    "personTitle": "Installer",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "nickshakes@yahoo.co.uk",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Mooko Matobo",
-    "personTitle": "Super User",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "nickshakes@yahoo.co.uk",
-    "username": "Mooko",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Moroesi Mosoaka",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MOSA LEFOKA",
-    "personTitle": "Installer",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "mnlefoka@gmail.com",
-    "username": "MOSALEFOKA",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "geographies": []
   },
@@ -564,6 +245,7 @@
     "personTitle": "Installer",
     "jobFunctions": ["Admin"],
     "personEmailAddress": "mothelefela@gmail.com",
+    "personCell": "+26656716119",
     "username": "mothelefela",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
@@ -577,18 +259,9 @@
     "personTitle": "Super User",
     "jobFunctions": ["Admin"],
     "personEmailAddress": "hlatsoane@yahoo.com",
+    "personPhone": "+266 58981006",
+    "personCell": "+26658981006",
     "username": "mmokatse",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "MPHO MOHLAKAJOE",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -601,54 +274,358 @@
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "makoanyanelaboratory678@gmail.com",
+    "personCell": "+26658546077",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "MAKOANYANE LAB"
+    }]
   },
   {
-    "personName": "Nkatso Ntene",
+    "personName": "mafusi tjamela",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "nntene@pedaids.org",
+    "personCell": "+26653566959",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "QUEEN  4 MODULES"
+    }]
+  },
+  {
+    "personName": "Thabang Likhojana",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "tlikhojane2@pedaids.org",
+    "personCell": "+266 59554823",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Likotsi Filter "
+    }]
+  },
+  {
+    "personName": "Limpho Mabulu",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mabulu1987@gmail.com",
+    "personCell": "+26656272776",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NT'SEKHE Hosp"
+    }]
+  },
+  {
+    "personName": "maliteboho ncheke",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26658812776",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Scott Lab"
+    }]
   },
   {
     "personName": "Ntsebe Moremoholo",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "nmoremoholo3@gmail.com",
+    "personCell": "+26663287337",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Paray Hospital"
+    }]
+  },
+  {
+    "personName": "MPHO MOHLAKAJOE",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26656964948",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Teba Mafeteng "
+    }]
+  },
+  {
+    "personName": "Monokoane Selaotsoe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "monokoane123@gmail.com",
+    "personCell": "+26659148912",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "QUTHING HOSPITAL"
+      }, {
+        "shortName": "Quthing Lab"
+      }
+    ]
+  },
+  {
+    "personName": "Nkatso Ntene",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "nntene@pedaids.org",
+    "personCell": "+26663560982",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Thamae Health "
+    }]
+  },
+  {
+    "personName": "MOLIEHI MOTLATLA",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mmotlatla2018@gmail.com",
+    "personCell": "+26658900219",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Quthing Lab"
+    }]
+  },
+  {
+    "personName": "itumeleng sello",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26658598529",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "B-B Laboratory"
+    }]
+  },
+  {
+    "personName": "Refuoe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "r.ramoroke@gmail.com",
+    "personCell": "+26659189588",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TEBA LERIBE LAB"
+    }]
+  },
+  {
+    "personName": "Lisebo Makara",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "lisebomakara@yahoo.com",
+    "personCell": "+26663071556",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MOTEBANG HOSPLAB"
+    }]
+  },
+  {
+    "personName": "Mamolefi Lenka",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26658785319",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Quthing Lab"
+    }]
+  },
+  {
+    "personName": "MOOKO MATOBO",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "nickshakes@tahoo.co.uk",
+    "personCell": "+26650225451",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Teba Mafeteng "
+    }]
   },
   {
     "personName": "PALO NTLAMELLE",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "stjameshospitallab@gmail.com",
+    "personCell": "+26658689499",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "ST JAMES"
+    }]
+  },
+  {
+    "personName": "RANTSANE MPUTSOE",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+26659606272",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PARAY HOSP LAB"
+    }]
+  },
+  {
+    "personName": "Mooko Matobo",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "nickshakes@yahoo.co.uk",
+    "personCell": "+26663212251",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Quthing Lab"
+    }]
+  },
+  {
+    "personName": "Lerato Motseki",
+    "jobFunctions": ["Lab User"],
+    "personCell": "+266 56983945",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Maipato Matsaba",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "leoniematsaba@ymail.com",
+    "personCell": "+26663412087",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "St Joseph's Roma"
+    }]
+  },
+  {
+    "personName": "MOLIEHI LEROTHOLI",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "rothymody@gmail.com",
+    "personCell": "+26656916426",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MOKHOTLONG LAB"
+    }]
+  },
+  {
+    "personName": "Sephiwe Pheko",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "spheko@pedaids.org",
+    "personCell": "+26659753980",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Scott Hsptl MCH"
+    }]
+  },
+  {
+    "personName": "TANKISO MOHLOUOA",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "tankisomohlouoa@gmail.com",
+    "personCell": "+26658597595",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MALUTI LAB"
+    }]
   },
   {
     "personName": "PHALLANG THUELA",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "phallangt@gmail.com",
+    "personCell": "+26657221180",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAMOHAU HOSP LAB"
+    }]
+  },
+  {
+    "personName": "api-lesotho",
+    "jobFunctions": ["Admin"],
+    "username": "api-lesotho",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -661,216 +638,385 @@
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "pulelikhojana@gmail.com",
+    "personCell": "+26659514567",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Tebellong Lab"
+    }]
   },
   {
-    "personName": "RANTSANE MPUTSOE",
+    "personName": "Moroesi Mosoaka",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
+    "personCell": "+26659649393",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Refuoe",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "r.ramoroke@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Relebohile Mokoenehi",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "relebohilemokoenehi@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Machabeng Lab"
+    }]
   },
   {
     "personName": "RETHABILE LEBESA",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "lebesarethabile@yahoo.com",
+    "personCell": "+26668200083",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Selaotsoe Monokoane",
-    "personTitle": "Lab Contact",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "monokoane123@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "QTH St Mat"
+    }]
   },
   {
     "personName": "SELLOANE MOTABA",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "motaba032@gmail.com",
+    "personCell": "+26657093156",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "MAPUTSOE FC"
+    }]
   },
   {
-    "personName": "Sephiwe Pheko",
+    "personName": "Mcengana Nqojane",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "spheko@pedaids.org",
+    "personEmailAddress": "nqojfs@gmail.com",
+    "personCell": "+26658437397",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Semonkong m-lab"
+    }]
   },
   {
-    "personName": "TANKISO MOHLOUOA",
+    "personName": "Lithabiso Motanyane",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "tankisomohlouoa@gmail.com",
+    "personEmailAddress": "deehteehmott@gmail.com",
+    "personCell": "+26668624004",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Mapholane"
+    }]
   },
   {
-    "personName": "Tankiso Molahli",
-    "personTitle": "Installer",
+    "personName": "Relebohile Mokoenehi",
+    "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "tmolahli@pedaids.org",
+    "personEmailAddress": "relebohilemokoenehi@gmail.com",
+    "personCell": "+26653229814",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Tau Moahloli",
-    "personTitle": "Mr",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "taumoahloli@gmail.com",
-    "username": "taumoahloli@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Tebello Samosamo",
-    "personTitle": "Installer",
-    "jobFunctions": ["Lab User"],
-    "personEmailAddress": "tsamosamo@pedaids.org",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Katse mini lab"
+    }]
   },
   {
     "personName": "Teboho Mphongoa",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "mphongoat@gmail.co",
+    "personCell": "+26653281680",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Sehong-Hong "
+    }]
+  },
+  {
+    "personName": "Malillo Sepiriti",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "msepiriti2@pedaids.org",
+    "personCell": "+26658487765",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAL SDA HOSPITAL"
+    }]
+  },
+  {
+    "personName": "Majoel Makhanya",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "bernicemakhanya@gmail.com",
+    "personCell": "+26658462806",
+    "username": "bernicemakhanya@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAFETENG HSPTL"
+    }]
+  },
+  {
+    "personName": "Maneo Mothobi",
+    "personTitle": "Ms",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "mothobiem@gmail.com",
+    "personPhone": "+266 63663608",
+    "personCell": "+266 63663608",
+    "username": "mothobiem@gmail.com",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
     "geographies": []
+  },
+  {
+    "personName": "KHAUHELO RAMOKOTJO",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "kramokotjo@pedaids.org",
+    "personCell": "+266 63556831",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Berea Hospital"
+    }]
   },
   {
     "personName": "Tefo Libate",
     "personTitle": "Installer",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "tlibate@pedaids.org",
+    "personCell": "+26659048691",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [
+      {
+        "shortName": "BBHospital"
+      }, {
+        "shortName": "Berea Hospital"
+      }, {
+        "shortName": "Likotsi Filter "
+      }, {
+        "shortName": "Mokhotlong Hosp"
+      }, {
+        "shortName": "Motebang "
+      }, {
+        "shortName": "Paray Hospital"
+      }, {
+        "shortName": "Scott Hsptl MCH"
+      }, {
+        "shortName": "Seboche Hospital"
+      }
+    ]
   },
   {
-    "personName": "Thabang Likhojana",
-    "personTitle": "Lab Contact",
+    "personName": "Tankiso Molahli",
+    "personTitle": "Installer",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "tlikhojane2@pedaids.org",
+    "personEmailAddress": "tmolahli@pedaids.org",
+    "personCell": "+26658668981",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [
+      {
+        "shortName": "BBHospital"
+      }, {
+        "shortName": "Mokhotlong Hosp"
+      }, {
+        "shortName": "Motebang "
+      }, {
+        "shortName": "Seboche Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Tebello Samosamo",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "tsamosamo@pedaids.org",
+    "personCell": "+26663205329",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MAFETENG HSPTL"
+      }, {
+        "shortName": "MAL SDA HOSPITAL"
+      }, {
+        "shortName": "NT'SEKHE Hosp"
+      }, {
+        "shortName": "QUTHING HOSPITAL"
+      }
+    ]
   },
   {
     "personName": "Tseko Sebofi",
     "personTitle": "Ms",
+    "personTitle": "Ms",
     "jobFunctions": ["Lab User"],
     "personEmailAddress": "fostersebofi@gmail.com",
+    "personPhone": "+266 59033877",
     "username": "fostersebofi@gmail.com",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Scott Hsptl MCH"
+    }]
   },
   {
-    "personName": "Tsietso Motsoane",
-    "personTitle": "Lab Director",
-    "jobFunctions": ["Admin"],
-    "personEmailAddress": "motsoanets@gmail.com",
-    "timezone": "South Africa Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": []
-  },
-  {
-    "personName": "Victor Lubuku",
-    "personTitle": "Installer",
+    "personName": "Mamotsieloa Makhomo",
+    "personTitle": "Ms",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "vlubuku@systemone.id",
+    "personEmailAddress": "mjmakhomo@gmail.com",
+    "personPhone": "+266 57492396",
+    "username": "mjmakhomo@gmail.com",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": []
+    "sites": [{
+      "shortName": "Paray Hospital"
+    }]
+  },
+  {
+    "personName": "Mamotseare Mohlalise",
+    "personTitle": "Ms",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "ntebomohlalise@gmail.com",
+    "personPhone": "+266 63844993",
+    "username": "ntebomohlalise@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Berea Hospital"
+    }]
+  },
+  {
+    "personName": "Lebohang Nteso",
+    "personTitle": "Ms",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "Lnteso231@gmail.com",
+    "personPhone": "+266 57953582",
+    "username": "Lnteso231@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAL SDA HOSPITAL"
+    }]
+  },
+  {
+    "personName": "Moliehi Seleke",
+    "personTitle": "Ms",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "molill.seleke@gmail.com",
+    "personPhone": "+266 56656684",
+    "username": "molill.seleke@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Motebang "
+    }]
+  },
+  {
+    "personName": "Matseliso Masilo",
+    "personTitle": "Mr",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "tsedy.moholisa@gmail.com",
+    "personPhone": "+266 58842005",
+    "username": "tsedy.moholisa@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BBHospital"
+    }]
+  },
+  {
+    "personName": "Mamello Molatelle",
+    "personTitle": "Ms",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "mmolatelle@yahoo.com",
+    "personPhone": "+266 50146280",
+    "username": "mmolatelle@yahoo.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Seboche Hospital"
+    }]
+  },
+  {
+    "personName": "Moleboheng Fothela",
+    "personTitle": "Mr",
+    "jobFunctions": ["Lab User"],
+    "personEmailAddress": "fothela@gmail.com",
+    "personPhone": "+266 63392218",
+    "username": "fothela@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Mokhotlong Hosp"
+    }]
   }
 ]
