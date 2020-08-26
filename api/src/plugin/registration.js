@@ -75,6 +75,7 @@ const plugins = {
     onResultLogged: require('./partner/Malawi/onResultLogged'),
   },
   gxconnect: {
+    issueResolutions: require('./deviceType/CepheidGeneXpert/issueResolutions'),
     preProcessCreateDevice: require('./deviceType/CepheidGeneXpert/preProcessCreateDevice'),
     preProcessAddDeviceData: require('./deviceType/CepheidGeneXpert/preProcessAddDeviceData'),
     postProcessUpdateDeviceConfiguration: require('./deviceType/CepheidGeneXpert/postProcessUpdateDeviceConfiguration'),
