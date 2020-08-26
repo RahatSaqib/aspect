@@ -26,7 +26,7 @@ const server = supertest.agent('http://localhost:8080')
 
 const { assert } = chai
 
-describe.only('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
+describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
   const path = '/api/dashboard/operational-data/activity-over-time'
   shared.checkToken(server, path)
 

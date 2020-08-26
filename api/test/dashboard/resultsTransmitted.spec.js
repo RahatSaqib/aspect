@@ -10,7 +10,7 @@ const {
 } = require('date-fns')
 const Promise = require('bluebird')
 
-const { run } = require('../../src/db')
+const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
 const {
   allResultCategoryToId,
@@ -40,228 +40,222 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   ]
   let initialState = {}
   let assayGeneXpertMtbRif
-  before(() =>
-    run(async knex => {
-      // -----------------------------
-      // current id's in some touched tables - to delete all
-      // new records in after()
-      // -----------------------------
-      // helper
-      const getLastId = async tableName => {
-        const [id] =
-          (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
-        return id
-      }
-      // get last item id from tables we touch in test
-      initialState = {
-        sampleId: await getLastId('Sample'),
-        resultId: await getLastId('Result'),
-        issueId: await getLastId('Issue'),
-        emailMessageId: await getLastId('EmailMessage'),
-        smsMessageId: await getLastId('SmsMessage'),
-      }
-      // -----------------------------
-      // get data for adding results
-      // -----------------------------
-      const { partnerId, userId, personId } = await knex('Person as p')
-        .innerJoin('User as u')
-        .where('u.name', 'admin')
-        .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
-      const countryAbbreviation = 'US'
-      const siteDatas = await knex('Site as s')
-        .join('Geography as g', 's.geographyId', 'g.id')
-        .join('Country as c', 'g.countryId', 'c.id')
-        .where('s.partnerId', partnerId)
-        .where('c.abbreviation', countryAbbreviation)
-        .select('s.*')
-      const now = new Date()
-      const auditFields = {
-        createdOn: now,
-        createdBy: userId,
-        updatedOn: now,
-        updatedBy: userId,
-      }
-      const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-      const { Resolved: issueStatusResolvedId } = await allIssueStatusToId()
-      const {
-        ResultReceived: issueTypeResultReceivedId,
-      } = await allIssueTypeToId()
-      const {
-        DiagnosticDevice: resultSourceDiagnosticId,
-      } = await allResultSourceToId()
-      const resultTypePatientId = await resultTypeToId('Patient')
-      const messageStatusSentId = await messageStatusToId('Sent')
-      const {
-        Detected: resultCategoryDetectedId,
-        NotDetected: resultCategoryNotDetectedId,
-      } = await allResultCategoryToId()
-      const [deviceTypeGeneXpertId] = await knex('DeviceType')
-        .where('externalId', 'CepheidGeneXpert')
-        .pluck('id')
-      ;[assayGeneXpertMtbRif] = [
-        await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name'),
-      ]
-      const [emailTemplateId] = await knex('EmailTemplate').pluck('id')
-      const [smsTemplateId] = await knex('SmsTemplate').pluck('id')
-      const device = await knex('Device')
-        .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId })
-        .whereIn('siteId', _.map(siteDatas, 'id'))
-        .first('id', 'partnerId', 'geographyId', 'siteId')
+  before(async () => {
+    // -----------------------------
+    // current id's in some touched tables - to delete all
+    // new records in after()
+    // -----------------------------
+    // helper
+    const getLastId = async tableName => {
+      const [id] =
+        (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
+      return id
+    }
+    // get last item id from tables we touch in test
+    initialState = {
+      sampleId: await getLastId('Sample'),
+      resultId: await getLastId('Result'),
+      issueId: await getLastId('Issue'),
+      emailMessageId: await getLastId('EmailMessage'),
+      smsMessageId: await getLastId('SmsMessage'),
+    }
+    // -----------------------------
+    // get data for adding results
+    // -----------------------------
+    const { partnerId, userId, personId } = await knex('Person as p')
+      .innerJoin('User as u')
+      .where('u.name', 'admin')
+      .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
+    const countryAbbreviation = 'US'
+    const siteDatas = await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .join('Country as c', 'g.countryId', 'c.id')
+      .where('s.partnerId', partnerId)
+      .where('c.abbreviation', countryAbbreviation)
+      .select('s.*')
+    const now = new Date()
+    const auditFields = {
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+    }
+    const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
+    const { Resolved: issueStatusResolvedId } = await allIssueStatusToId()
+    const {
+      ResultReceived: issueTypeResultReceivedId,
+    } = await allIssueTypeToId()
+    const {
+      DiagnosticDevice: resultSourceDiagnosticId,
+    } = await allResultSourceToId()
+    const resultTypePatientId = await resultTypeToId('Patient')
+    const messageStatusSentId = await messageStatusToId('Sent')
+    const {
+      Detected: resultCategoryDetectedId,
+      NotDetected: resultCategoryNotDetectedId,
+    } = await allResultCategoryToId()
+    const [deviceTypeGeneXpertId] = await knex('DeviceType')
+      .where('externalId', 'CepheidGeneXpert')
+      .pluck('id')
+    ;[assayGeneXpertMtbRif] = [
+      await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name'),
+    ]
+    const [emailTemplateId] = await knex('EmailTemplate').pluck('id')
+    const [smsTemplateId] = await knex('SmsTemplate').pluck('id')
+    const device = await knex('Device')
+      .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId })
+      .whereIn('siteId', _.map(siteDatas, 'id'))
+      .first('id', 'partnerId', 'geographyId', 'siteId')
 
-      const getResultCategoryId = isDetected => {
-        return isDetected
-          ? resultCategoryDetectedId
-          : resultCategoryNotDetectedId
-      }
+    const getResultCategoryId = isDetected => {
+      return isDetected ? resultCategoryDetectedId : resultCategoryNotDetectedId
+    }
 
-      // -----------------------------
-      // insert 100 results - with resultCategoryN like
-      // 50% are ('Detected','NotDetected')
-      // 25% are ('Detected','Detected')
-      // -----------------------------
-      const { id: deviceId, geographyId, siteId } = device
-      await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
-        const getRandomDate = () => subDays(midMonth, _.random(10))
-        // const totalResults = 100
-        const samples = []
-        await Promise.each(_.range(totalResults), async () => {
-          const sample = {
-            externalId: `SMP-TB-${format(new Date(), 'TT')}`,
-            collectedOn: getRandomDate(),
-            sampleTypeId: sampleTypeDBSId,
-            originSiteId: siteId,
+    // -----------------------------
+    // insert 100 results - with resultCategoryN like
+    // 50% are ('Detected','NotDetected')
+    // 25% are ('Detected','Detected')
+    // -----------------------------
+    const { id: deviceId, geographyId, siteId } = device
+    await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
+      const getRandomDate = () => subDays(midMonth, _.random(10))
+      // const totalResults = 100
+      const samples = []
+      await Promise.each(_.range(totalResults), async () => {
+        const sample = {
+          externalId: `SMP-TB-${format(new Date(), 'TT')}`,
+          collectedOn: getRandomDate(),
+          sampleTypeId: sampleTypeDBSId,
+          originSiteId: siteId,
+        }
+        sample.id = await knex('Sample').insert(sample)
+        samples.push(sample)
+      })
+      let totalPositive = 0
+      let totalViaEmail = 0
+      let totalViaSms = 0
+      await Promise.each(_.range(totalResults), async i => {
+        const randomDate = getRandomDate()
+        const sample = samples[i]
+        // 50% of results are 'Detected'
+        const resultCategory1 = getResultCategoryId(i % 2 === 0)
+        let resultCategory2 = getResultCategoryId(false)
+        if (resultCategory1 === resultCategoryDetectedId) {
+          totalPositive += 1
+
+          // 50% of 'Detected' are Rif+
+          if (totalPositive % 2 === 0) {
+            resultCategory2 = getResultCategoryId(true)
           }
-          sample.id = await knex('Sample').insert(sample)
-          samples.push(sample)
-        })
-        let totalPositive = 0
-        let totalViaEmail = 0
-        let totalViaSms = 0
-        await Promise.each(_.range(totalResults), async i => {
-          const randomDate = getRandomDate()
-          const sample = samples[i]
-          // 50% of results are 'Detected'
-          const resultCategory1 = getResultCategoryId(i % 2 === 0)
-          let resultCategory2 = getResultCategoryId(false)
-          if (resultCategory1 === resultCategoryDetectedId) {
-            totalPositive += 1
+        }
 
-            // 50% of 'Detected' are Rif+
-            if (totalPositive % 2 === 0) {
-              resultCategory2 = getResultCategoryId(true)
-            }
-          }
+        // -----------------------------
+        // insert Result
+        // -----------------------------
+        const resultElement = {
+          ...auditFields,
+          externalId: `UQTB-${i}-${format(
+            new Date(new Date() * _.random(1, 8)),
+            'tt'
+          )}-D`,
+          assayId: assayGeneXpertMtbRif.id,
+          partnerId,
+          geographyId,
+          siteId,
+          reportableSiteId: sample.originSiteId || siteId,
+          deviceId,
+          resultSourceId: resultSourceDiagnosticId,
+          resultTypeId: resultTypePatientId,
+          sampleId: sample.id,
+          sampleRunNumber: `${(i % 2) + 1}`,
+          sampleGroup: `GRP-HIV-${i % 5}`,
+          resultCategory1,
+          resultCategory2,
+          assayVersion: '4',
+          startedOn: subMinutes(randomDate, 100),
+          endedOn: randomDate,
+          createdOn: subMinutes(randomDate, 90),
+          updatedOn: subMinutes(randomDate, 90),
+          notes: 'This is a test... result',
+        }
 
+        const [resultId] = await knex('Result').insert(resultElement)
+
+        if (resultCategory1 === resultCategoryDetectedId) {
           // -----------------------------
-          // insert Result
+          // insert Issue
           // -----------------------------
-          const resultElement = {
-            ...auditFields,
-            externalId: `UQTB-${i}-${format(
-              new Date(new Date() * _.random(1, 8)),
-              'tt'
-            )}-D`,
-            assayId: assayGeneXpertMtbRif.id,
+          await knex('Issue').insert({
+            issueTypeId: issueTypeResultReceivedId,
+            issueStatusId: issueStatusResolvedId,
             partnerId,
             geographyId,
             siteId,
-            reportableSiteId: sample.originSiteId || siteId,
             deviceId,
-            resultSourceId: resultSourceDiagnosticId,
-            resultTypeId: resultTypePatientId,
-            sampleId: sample.id,
-            sampleRunNumber: `${(i % 2) + 1}`,
-            sampleGroup: `GRP-HIV-${i % 5}`,
-            resultCategory1,
-            resultCategory2,
-            assayVersion: '4',
-            startedOn: subMinutes(randomDate, 100),
-            endedOn: randomDate,
-            createdOn: subMinutes(randomDate, 90),
-            updatedOn: subMinutes(randomDate, 90),
-            notes: 'This is a test... result',
+            resultId,
+            level: 2,
+            createdOn: randomDate,
+            updatedOn: randomDate,
+          })
+
+          const propsEmailSms = {
+            messageStatusId: messageStatusSentId,
+            personId,
+            siteId,
+            deviceId,
+            resultId,
           }
-
-          const [resultId] = await knex('Result').insert(resultElement)
-
-          if (resultCategory1 === resultCategoryDetectedId) {
-            // -----------------------------
-            // insert Issue
-            // -----------------------------
-            await knex('Issue').insert({
-              issueTypeId: issueTypeResultReceivedId,
-              issueStatusId: issueStatusResolvedId,
-              partnerId,
-              geographyId,
-              siteId,
-              deviceId,
-              resultId,
-              level: 2,
-              createdOn: randomDate,
-              updatedOn: randomDate,
+          // -----------------------------
+          // insert EmailMessage for 33% of Detected
+          // -----------------------------
+          if (totalPositive % 3 === 0) {
+            totalViaEmail += 1
+            // 50% of reported via email are reported within 2 hours
+            const date = addMinutes(
+              randomDate,
+              totalViaEmail % 2 === 0 ? 60 : 180
+            )
+            await knex('EmailMessage').insert({
+              emailTemplateId,
+              ...propsEmailSms,
+              createdOn: date,
+              updatedOn: date,
             })
-
-            const propsEmailSms = {
-              messageStatusId: messageStatusSentId,
-              personId,
-              siteId,
-              deviceId,
-              resultId,
-            }
-            // -----------------------------
-            // insert EmailMessage for 33% of Detected
-            // -----------------------------
-            if (totalPositive % 3 === 0) {
-              totalViaEmail += 1
-              // 50% of reported via email are reported within 2 hours
-              const date = addMinutes(
-                randomDate,
-                totalViaEmail % 2 === 0 ? 60 : 180
-              )
-              await knex('EmailMessage').insert({
-                emailTemplateId,
-                ...propsEmailSms,
-                createdOn: date,
-                updatedOn: date,
-              })
-            }
-
-            // -----------------------------
-            // insert SmsMessage for 25% of Detected
-            // -----------------------------
-            if (totalPositive % 4 === 0) {
-              totalViaSms += 1
-              // 50% of reported via sms are reported within 2 hours
-              const date = addMinutes(
-                randomDate,
-                totalViaSms % 2 === 0 ? 60 : 180
-              )
-              await knex('SmsMessage').insert({
-                smsTemplateId,
-                ...propsEmailSms,
-                createdOn: date,
-                updatedOn: date,
-              })
-            }
           }
-        })
+
+          // -----------------------------
+          // insert SmsMessage for 25% of Detected
+          // -----------------------------
+          if (totalPositive % 4 === 0) {
+            totalViaSms += 1
+            // 50% of reported via sms are reported within 2 hours
+            const date = addMinutes(
+              randomDate,
+              totalViaSms % 2 === 0 ? 60 : 180
+            )
+            await knex('SmsMessage').insert({
+              smsTemplateId,
+              ...propsEmailSms,
+              createdOn: date,
+              updatedOn: date,
+            })
+          }
+        }
       })
     })
-  )
+  })
 
-  after(() =>
-    run(async knex => {
-      // helper
-      const reset = async (tableName, id) =>
-        knex(tableName).where('id', '>', id).delete()
-      // reset all data tables affected in test
-      await reset('Issue', initialState.issueId)
-      await reset('EmailMessage', initialState.emailMessageId || 0)
-      await reset('SmsMessage', initialState.smsMessageId || 0)
-      await reset('Result', initialState.resultId)
-      await reset('Sample', initialState.sampleId || 0)
-    })
-  )
+  after(async () => {
+    // helper
+    const reset = async (tableName, id) =>
+      knex(tableName).where('id', '>', id).delete()
+    // reset all data tables affected in test
+    await reset('Issue', initialState.issueId)
+    await reset('EmailMessage', initialState.emailMessageId || 0)
+    await reset('SmsMessage', initialState.smsMessageId || 0)
+    await reset('Result', initialState.resultId)
+    await reset('Sample', initialState.sampleId || 0)
+  })
 
   it('should return data for Results Transmitted graph', done => {
     server
