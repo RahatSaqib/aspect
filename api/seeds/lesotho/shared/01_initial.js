@@ -96,16 +96,28 @@ async function seed(knex) {
     return
   }
 
-  const [tbAdminId] = await knex('User').insert({
-    ...adminDetails,
-    name: tbPartnerVariables.adminName,
-    password: bcrypt.hashSync(tbPartnerVariables.adminPassword, saltRounds),
-  })
+  let { id: tbAdminId } =
+    (await knex('User')
+      .where('name', tbPartnerVariables.adminName)
+      .first('id')) || {}
+  if (!tbAdminId) {
+    ;[tbAdminId] = await knex('User').insert({
+      ...adminDetails,
+      name: tbPartnerVariables.adminName,
+      password: bcrypt.hashSync(tbPartnerVariables.adminPassword, saltRounds),
+    })
+  }
 
-  const [tbPartnerId] = await knex('Partner').insert({
-    ...partnerDetails,
-    name: tbPartnerVariables.partnerName,
-  })
+  let { id: tbPartnerId } =
+    (await knex('Partner')
+      .where('name', tbPartnerVariables.partnerName)
+      .first('id')) || {}
+  if (!tbPartnerId) {
+    ;[tbPartnerId] = await knex('Partner').insert({
+      ...partnerDetails,
+      name: tbPartnerVariables.partnerName,
+    })
+  }
   await commonUpserts(
     knex,
     tbPartnerId,

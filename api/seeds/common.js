@@ -398,10 +398,8 @@ async function upsertGxAlertDevice(
   }
   const { id: gxAlertDeviceApiKeyId } =
     (await knex('DeviceApiKey')
-      .where({
-        token: deviceApiToken,
-        deviceId: device.id,
-      })
+      .where('token', deviceApiToken)
+      .orWhere('deviceId', device.id)
       .first('id')) || {}
   if (!gxAlertDeviceApiKeyId) {
     await knex('DeviceApiKey').insert({
@@ -1030,7 +1028,9 @@ async function baseGxAlertMigration(
   // Validate passed variables
   // -------------------------
   const missingVariables = []
-  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert) {
+  let { id: adminId } =
+    (await knex('User').where('name', admin.name).first('id')) || {}
+  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert && !adminId) {
     missingVariables.push('admin.password')
   }
   if (!partner.name) {
@@ -1075,8 +1075,6 @@ async function baseGxAlertMigration(
   // Seed admin user and partner
   // ---------------------------
   const now = new Date()
-  let { id: adminId } =
-    (await knex('User').where('name', admin.name).first('id')) || {}
   if (!adminId) {
     ;[adminId] = await knex('User').insert({
       approved: 1,
