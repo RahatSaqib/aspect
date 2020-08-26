@@ -257,14 +257,14 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     await reset('Sample', initialState.sampleId || 0)
   })
 
-  it('should return data for Results Transmitted graph', done => {
+  it('should return data for Results Transmitted graph', async () =>
     server
       .get(`${path}`)
       .query({
         currentMonth: format(currentMonth, 'yyyy-MM-dd'),
       })
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -424,8 +424,5 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           percentViaSmsChange: curr.percentViaSmsChange,
           percentWithin2HoursChange: curr.percentWithin2HoursChange,
         })
-
-        done()
-      })
-  })
+      }))
 })

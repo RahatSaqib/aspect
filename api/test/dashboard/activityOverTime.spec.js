@@ -223,7 +223,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     await reset('Sample', initialState.sampleId || 0)
   })
 
-  it('should return data for Activity Over Time graph', done => {
+  it('should return data for Activity Over Time graph', async () =>
     server
       .get(`${path}`)
       .query({
@@ -231,7 +231,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         maxDate: format(maxDate, 'yyyy-MM-dd'),
       })
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
+      .then(res => {
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
@@ -290,8 +290,5 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         assert.isAtLeast(getItem(13).inactiveConnectivity, 1)
         //
         assert.isAtLeast(getItem(14).inactiveDecommissioned, 1)
-
-        done()
-      })
-  })
+      }))
 })
