@@ -32,6 +32,11 @@ async function listPeople(request) {
       siteId: 'jc.siteId',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
+    .modify(queryBuilder => {
+      if (dataConstraints.partner.id) {
+        queryBuilder.where('p.partnerId', dataConstraints.partner.id)
+      }
+    })
 
   // get total count for paging
   const getCount = personQuery
