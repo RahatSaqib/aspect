@@ -79,26 +79,18 @@ function rejectNotificationHistory() {
   }
 }
 
-export function fetchNotificationsHistory(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
+export function fetchNotificationsHistory({
+  notificationId,
+  pageAt = 0,
+  pageSize = 10,
+}) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
-    dispatch(
-      requestNotificationHistory(sortCol, sortDir, page, pageSize, filters)
-    )
+    dispatch(requestNotificationHistory(notificationId))
 
     return aspectFetch(
-      `/notification/history${stringify({
-        sortCol,
-        sortDir,
-        page,
+      `/notification/history/${notificationId}?${stringify({
+        page: pageAt,
         size: pageSize,
-        ...filters,
       })}`,
       {
         errorNotifications: {
@@ -269,6 +261,19 @@ export default function notificationReducer(state = initialState, action) {
     case types.REJECTED_NOTIFICATIONS:
       return state.withMutations(mutState => {
         mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
+    case types.REQUEST_NOTIFICATION_HISTORY:
+      return state.set('table', requestTable(state.table, action))
+    case types.RECEIVE_NOTIFICATION_HISTORY:
+      return state.withMutations(mutState => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_NOTIFICATION_HISTORY:
+      return state.withMutations(mutState => {
+        mutState.set('notificationHistory', mutState.get('items').clear())
         mutState.set('table', mutState.get('table').clear())
       })
     default:

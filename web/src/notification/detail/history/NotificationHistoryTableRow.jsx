@@ -30,10 +30,10 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
       {formatDateTime(delivery.date)}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {delivery.webCount}
+      {delivery.webhookSent}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {delivery.emailCount}
+      {delivery.emailSent}
     </TableCell>
     <TableCell
       className={cssClasses('TableCell', {
@@ -43,7 +43,7 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
       {delivery.emailError}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {delivery.smsCount}
+      {delivery.smsSent}
     </TableCell>
     <TableCell
       className={cssClasses('TableCell', {

@@ -270,11 +270,11 @@ async function createNotificationIfNotCreatedAlready(
 }
 
 async function getNotifications(request) {
-  const { auth, query } = request
+  const { auth, query, params } = request
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const resultQuery = knex('Notification as n')
+  const notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .leftJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
@@ -283,12 +283,23 @@ async function getNotifications(request) {
     .leftJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
+    .where('n.notificationTypeId', params.notificationTypeId)
     .groupBy('n.createdOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
 
-  const getItems = resultQuery
+  const getCount = knex
+    .count('innerQuery.number as total')
+    .from(
+      notificationQuery
+        .clone()
+        .count('n.notificationTypeId as number')
+        .as('innerQuery')
+    )
+    .first()
+
+  const getNotificationHistory = notificationQuery
     .clone()
-    .modify(sortPageParams, query, 'n.createdOn', 'desc')
+    .modify(sortPageParams, query, 'n.createdOn')
     .select([
       knex.raw(
         'sum(case when mswm.externalId = "Sent" then 1 else 0 end) as webhookSent'
@@ -308,12 +319,14 @@ async function getNotifications(request) {
       knex.raw(
         'sum(case when msem.externalId = "Error" then 1 else 0 end) as emailError'
       ),
-      'n.createdOn',
+      'n.createdOn as date',
+      'n.id',
     ])
-console.log(getItems.toString())
-  const getCount = resultQuery.clone().count('n.id as count').first()
 
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [{ total }, data] = await Promise.all([
+    getCount,
+    getNotificationHistory,
+  ])
 
   return { ok: true, total, data }
 }

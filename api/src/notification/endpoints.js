@@ -54,11 +54,19 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/notification/history',
+    path: '/notification/history/{notificationTypeId}',
     handler: getNotifications,
     config: {
-      description: 'Get all notifications',
+      description: 'Get all notification history',
       notes: 'Filtered and sorted list of Notifications',
+      validate: {
+        params: {
+          notificationTypeId: Joi.number().integer().positive().required(),
+        },
+        query: {
+          ...validateSortPageParams(),
+        },
+      },
       response: {
         options: {
           allowUnknown: false,
@@ -72,6 +80,7 @@ const routes = [
             .allow(null)
             .items(
               Joi.object().keys({
+                id: Joi.number().description('id'),
                 webhookSent: Joi.number().description(
                   'The number of webhook notification sent'
                 ),
@@ -90,7 +99,7 @@ const routes = [
                 emailError: Joi.number().description(
                   'The number of email Error notification Received'
                 ),
-                createdOn: Joi.date().description(
+                date: Joi.date().description(
                   'The date notification was sent or received'
                 ),
               })

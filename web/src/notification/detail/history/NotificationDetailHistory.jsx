@@ -1,19 +1,23 @@
 import _ from 'lodash'
-import subDays from 'date-fns/subDays'
 import classnames from 'classnames/bind'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import TableBody from '@material-ui/core/TableBody'
+import { useParams } from 'react-router-dom'
 
+import { useDispatch, useSelector } from 'react-redux'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import NotificationDetailBackBar from '../NotificationDetailBackBar'
+import { fetchNotificationsHistory } from '../../NotificationRedux'
 import {
   NotificationHistoryDataTable,
   NotificationHistoryDataTableHead,
   NotificationHistoryDataTableRow,
 } from './NotificationHistoryDataTable'
+
+import { makeSortPageSelector } from '../../../shared/selectors/searchParams'
 
 const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 
@@ -29,141 +33,98 @@ const messages = defineMessages({
 
 const enhance = _.identity(injectIntl)
 
-const now = new Date()
-
 export const NotificationDetailHistory = ({
   intl,
   history,
   location,
   match,
   // --- injected by recompose ---
-}) => (
-  <div>
-    <Helmet title="TB MTB+ Rif+ in Western Region" />
-    <NotificationDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      title="TB MTB+ Rif+ in Western Region"
-    />
-    <section
-      className={cssClasses('Section', 'Section--first', 'Section--last')}
-    >
-      <Card className={cssClasses('Card')}>
-        <NotificationHistoryDataTable
-          selectable={false}
-          className={cssClasses('NotificationHistoryDataTable')}
-        >
-          <NotificationHistoryDataTableHead
-            columns={[
-              {
-                key: 'id',
-                label: '',
-              },
-              {
-                key: 'date',
-                label: 'Date',
-              },
-              {
-                key: 'web-alerts',
-                label: 'Web alerts',
-              },
-              {
-                key: 'email-sent',
-                label: 'Email sent',
-              },
-              {
-                key: 'email-errors',
-                label: 'Email errors',
-              },
-              {
-                key: 'sms-sent',
-                label: 'SMSes sent',
-              },
-              {
-                key: 'sms-errors',
-                label: 'SMS errors',
-              },
-            ]}
+}) => {
+  const dispatch = useDispatch()
+  const { notificationId } = useParams()
+  const { pageAt, pageSize } = makeSortPageSelector()({ location })
+
+  const notification = useSelector(state => state.notification)
+
+  useEffect(() => {
+    dispatch(fetchNotificationsHistory({ notificationId, pageSize, pageAt }))
+  }, [dispatch, notificationId, pageSize, pageAt])
+
+  return (
+    <div>
+      <Helmet title="TB MTB+ Rif+ in Western Region" />
+      <NotificationDetailBackBar
+        intl={intl}
+        history={history}
+        location={location}
+        match={match}
+        title="TB MTB+ Rif+ in Western Region"
+      />
+      <section
+        className={cssClasses('Section', 'Section--first', 'Section--last')}
+      >
+        <Card className={cssClasses('Card')}>
+          <NotificationHistoryDataTable
+            selectable={false}
+            className={cssClasses('NotificationHistoryDataTable')}
+          >
+            <NotificationHistoryDataTableHead
+              columns={[
+                {
+                  key: 'id',
+                  label: '',
+                },
+                {
+                  key: 'date',
+                  label: 'Date',
+                },
+                {
+                  key: 'web-alerts',
+                  label: 'Web alerts',
+                },
+                {
+                  key: 'email-sent',
+                  label: 'Email sent',
+                },
+                {
+                  key: 'email-errors',
+                  label: 'Email errors',
+                },
+                {
+                  key: 'sms-sent',
+                  label: 'SMSes sent',
+                },
+                {
+                  key: 'sms-errors',
+                  label: 'SMS errors',
+                },
+              ]}
+            />
+            <TableBody>
+              {notification?.items?.currentIdList
+                .map(id => notification?.items?.byId.get(id))
+                .map(delivery => (
+                  <NotificationHistoryDataTableRow
+                    key={delivery.get('id')}
+                    intl={intl}
+                    delivery={delivery.toJS()}
+                  />
+                ))}
+            </TableBody>
+          </NotificationHistoryDataTable>
+          <BrowseTablePaginator
+            history={history}
+            location={location}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={notification?.table?.get('total')}
+            pageAt={pageAt}
+            pageSize={pageSize}
           />
-          <TableBody>
-            {[
-              {
-                id: 1,
-                date: subDays(now, 2),
-                webCount: 10,
-                emailCount: 10,
-                emailError: 1,
-                smsCount: 6,
-                smsError: 1,
-              },
-              {
-                id: 2,
-                date: subDays(now, 3),
-                webCount: 10,
-                emailCount: 10,
-                emailError: 0,
-                smsCount: 6,
-                smsError: 0,
-              },
-              {
-                id: 3,
-                date: subDays(now, 5),
-                webCount: 9,
-                emailCount: 9,
-                emailError: 0,
-                smsCount: 3,
-                smsError: 0,
-              },
-              {
-                id: 4,
-                date: subDays(now, 6),
-                webCount: 9,
-                emailCount: 9,
-                emailError: 0,
-                smsCount: 3,
-                smsError: 0,
-              },
-              {
-                id: 5,
-                date: subDays(now, 7),
-                webCount: 9,
-                emailCount: 9,
-                emailError: 1,
-                smsCount: 3,
-                smsError: 1,
-              },
-              {
-                id: 6,
-                date: subDays(now, 8),
-                webCount: 9,
-                emailCount: 9,
-                emailError: 0,
-                smsCount: 3,
-                smsError: 0,
-              },
-            ].map(delivery => (
-              <NotificationHistoryDataTableRow
-                key={delivery.id}
-                intl={intl}
-                delivery={delivery}
-              />
-            ))}
-          </TableBody>
-        </NotificationHistoryDataTable>
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          paginatorStatus={messages.paginatorStatus}
-          total={897}
-          pageAt={0}
-          pageSize={25}
-        />
-      </Card>
-    </section>
-  </div>
-)
+        </Card>
+      </section>
+    </div>
+  )
+}
 
 export default enhance(NotificationDetailHistory)

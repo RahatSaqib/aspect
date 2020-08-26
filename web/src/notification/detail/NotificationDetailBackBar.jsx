@@ -55,33 +55,39 @@ export const NotificationDetailBackBar = ({
       {
         label: intl.formatMessage(messages.view),
         path: `/browse/notification/:notificationId`,
+        hidden: true,
       },
       {
         label: intl.formatMessage(messages.edit),
         path: `/browse/notification/:notificationId/edit`,
         disabled,
+        hidden: true,
       },
       {
         label: intl.formatMessage(messages.history),
         path: `/browse/notification/:notificationId/history`,
+        hidden: false,
       },
-    ].map(({ label, path, disabled }) => (
-      <AspectButton
-        key={path}
-        onClick={({
-          currentTarget: {
-            dataset: { path },
-          },
-        }) => onPathClick(path)}
-        data-path={path}
-        color="primary"
-        variant="contained"
-        inverse={match.path !== path}
-        disabled={disabled}
-      >
-        {label}
-      </AspectButton>
-    ))}
+    ].map(
+      ({ label, path, disabled, hidden }) =>
+        !hidden && (
+          <AspectButton
+            key={path}
+            onClick={({
+              currentTarget: {
+                dataset: { path },
+              },
+            }) => onPathClick(path)}
+            data-path={path}
+            color="primary"
+            variant="contained"
+            inverse={match.path !== path}
+            disabled={disabled}
+          >
+            {label}
+          </AspectButton>
+        )
+    )}
   </DetailBackBar>
 )
 
