@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const differenceInHours = require('date-fns/differenceInHours')
 const {
+  getTimeZoneById,
   getDateOrDefault,
   getLocalDateTimeStringInUtc,
 } = require('../../../shared/date')
@@ -36,13 +37,13 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
     )
   }
 
-  // The start/end time from Alere is reported without a time zone
-  // designator. We treat it as local time of the device and then translate it to UTC
-  const convertedTimeZone = _.findKey(
+  const convertedTimeZone = getTimeZoneById(
     await allTimeZoneToId(),
-    _.partial(_.isEqual, device.timezone || 'UTC')
+    device.timezone
   )
 
+  // The start/end time from Alere is reported without a time zone
+  // designator. We treat it as local time of the device and then translate it to UTC
   if (payload.startedOn) {
     payload.startedOn = getLocalDateTimeStringInUtc(
       startedOn.toISOString(),

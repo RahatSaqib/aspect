@@ -99,6 +99,12 @@ function getLocalDateInUtc(dateTime) {
   return convertToLocalTime(dateTime, { timeZone: 'UTC' })
 }
 
+// Returns a timezone's ISO-name based on the ID that is passed in
+// For example, "Eastern Standard Time" will return "America/New_York"
+function getTimeZoneById(allTimeZones, timeZoneId) {
+  return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -108,4 +114,5 @@ module.exports = {
   getArrayOfDaysInRange,
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
+  getTimeZoneById,
 }

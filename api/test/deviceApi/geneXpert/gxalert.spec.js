@@ -2987,6 +2987,8 @@ describe('Device API routes for GxAlert Device', () => {
         const afterResultDetails = await getLastResult()
         const currentGeneXpertDevice = await getCurrentGeneXpertDevice()
 
+        // this device is located in the America/New_York time zone, so we have to
+        // convert testStartedOn to UTC in order to compare it to the value in the database
         expect(afterResultDetails).to.containSubset({
           deviceId: currentGeneXpertDevice.id,
           siteId: currentGeneXpertDevice.siteId,

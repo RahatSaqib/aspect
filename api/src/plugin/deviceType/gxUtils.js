@@ -13,6 +13,7 @@ const {
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const {
+  getTimeZoneById,
   parseDateOrDefault,
   getLocalDateTimeStringInUtc,
 } = require('../../shared/date')
@@ -111,14 +112,14 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
   const sampleId = _.get(payload, 'sample.id')
 
+  const convertedTimeZone = getTimeZoneById(
+    await allTimeZoneToId(),
+    device.timezone
+  )
+
   // The start/end time from GeneXpert is reported with a time zone
   // designator "Z" that indicates UTC, but it isn't. We have to disregard
   // this designation and treat it as local time of the device and then translate it to UTC
-  const convertedTimeZone = _.findKey(
-    await allTimeZoneToId(),
-    _.partial(_.isEqual, device.timezone || 'UTC')
-  )
-
   if (payload.endedOn) {
     payload.endedOn = getLocalDateTimeStringInUtc(
       endedOn.toISOString().replace('Z', ''),

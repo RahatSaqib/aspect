@@ -774,6 +774,9 @@ describe('Device API routes for GxConnect Devices', () => {
           .catch(assert.fail)
 
         const afterResultDetails = await getLastResult()
+
+        // this device is located in the America/New_York time zone, so we have to
+        // convert testStartedOn to UTC in order to compare it to the value in the database
         expect(afterResultDetails).to.containSubset({
           deviceId: device.id,
           siteId: device.siteId,
