@@ -246,18 +246,26 @@ async function refreshToken(request) {
     .from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
     .innerJoin('Person as p', 'u.id', 'p.userId')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ clientId, token, clientType, revoked: 0 })
     .first(
+      'u.lockedOut',
+      'u.failedPasswordAttempts',
+      'u.password',
+      'u.legacyPassword',
       'rt.userId as id',
       'rt.expires',
       'rt.clientName',
       'rt.clientType',
       'u.name',
+      'p.name as userName',
       'p.culture',
       'p.timezone',
+      'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.lastCountryId as countryId',
-      'p.id as personId'
+      'p.userId',
+      'c.abbreviation as countryAbbreviation'
     )
 
   if (!data) {
@@ -286,6 +294,7 @@ async function refreshToken(request) {
     })
 
   const accessToken = await getAccessToken(data)
+  const displayPreferences = await getDisplayPreferences(data)
   return {
     access: accessToken,
     refresh: refreshToken,
@@ -293,6 +302,10 @@ async function refreshToken(request) {
     clientType,
     countryId: data.countryId,
     deviceTokenId,
+    culture: data.culture || 'en-US',
+    timezone: data.timezone || 'Eastern Standard Time',
+    displayPreferences,
+    countryAbbreviation: data.countryAbbreviation,
   }
 }
 

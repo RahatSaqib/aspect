@@ -43,8 +43,8 @@ const Status = ({ history, location, colorDemo }) => {
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2Code = useSelector(({ user }) =>
-    user.culture.substring(3, 5)
+  const countryIsoAlpha2Code = useSelector(
+    ({ user }) => user.countryAbbreviation
   )
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
