@@ -1185,7 +1185,7 @@ async function baseGxAlertMigration(
   )
   const patientDataSchema = patientDataCustomFields.length > 0 ? {} : undefined
   patientDataCustomFields.forEach(cf => {
-    patientDataCustomFields[_.camelCase(cf.dbColumn)] = {
+    patientDataSchema[_.camelCase(cf.dbColumn)] = {
       title: cf.title,
       type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
       order: cf.order,
