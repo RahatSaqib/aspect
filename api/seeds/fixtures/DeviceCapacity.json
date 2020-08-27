@@ -37,6 +37,12 @@
       "dailyCapacity": 500
     },
     {
+      "deviceTypeExternalId": "BDMGIT",
+      "defaultForDeviceType": true,
+      "name": "BD MGIT",
+      "dailyCapacity": 23
+    },
+    {
       "deviceTypeExternalId": "DaktariVirology",
       "defaultForDeviceType": true,
       "name": "Virology",

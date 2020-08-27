@@ -1,0 +1,2934 @@
+[
+  {
+    "externalId": "C. Maputo: 1 De Maio",
+    "stateName": "Maputo City",
+    "lgaName": "KaMaxaquene",
+    "name": "C. Maputo: 1 De Maio",
+    "shortname": "C Maputo: 1 Maio",
+    "timeZoneId": "South Africa Standard Time"
+  },
+  {
+    "externalId": "Zambezia: HR Mocuba",
+    "stateName": "Zambezia",
+    "lgaName": "Mocuba District",
+    "name": "Zambezia: HR Mocuba",
+    "shortname": "Zam: HR Mocuba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: HR Mocuba",
+      "shortName": "Zam: HR Mocuba",
+      "macAddress": "MACD89D6798F043",
+      "hostId": "Zambezia: HR Mocuba",
+      "serial": "Cepheid-30797QQ",
+      "gxAlertDeviceId": 803
+    }]
+  },
+  {
+    "externalId": "C Maputo: CS Mavalane",
+    "latitude": 32.610001,
+    "longitude": -25.868000,
+    "stateName": "Maputo City",
+    "lgaName": "KaMavota",
+    "name": "C Maputo: CS Mavalane",
+    "shortname": "C Map: CS Maval",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CS Mavalane",
+      "shortName": "C Map: CS Maval",
+      "macAddress": "MACECB1D7485986",
+      "hostId": "C.S de Mavalane",
+      "serial": "Cepheid-530PD58",
+      "gxAlertDeviceId": 1187
+    }]
+  },
+  {
+    "externalId": "C Maputo: HCM",
+    "latitude": 32.610001,
+    "longitude": -25.868000,
+    "stateName": "Maputo City",
+    "lgaName": "KaMpfumo",
+    "name": "C Maputo: HCM",
+    "shortname": "C Map: HCM",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: HCM",
+      "shortName": "C Map: HCM",
+      "macAddress": "MACECB1D73F33DE",
+      "hostId": "HCM",
+      "serial": "Cepheid-530PD7S",
+      "gxAlertDeviceId": 1190
+    }]
+  },
+  {
+    "externalId": "Sofala: CS de Gorongosa",
+    "latitude": 34.669998,
+    "longitude": -19.061001,
+    "stateName": "Sofala",
+    "lgaName": "Gorongosa District",
+    "name": "Sofala: CS de Gorongosa",
+    "shortname": "Sof: Gorongosa",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: CS de Gorongosa",
+      "shortName": "Sof: Gorongosa",
+      "macAddress": "MACA0369F5A34B0",
+      "hostId": "CS de Gorongosa",
+      "serial": "CS de Gorongosa",
+      "gxAlertDeviceId": 1227
+    }]
+  },
+  {
+    "externalId": "C Maputo: CS 1 de Maio",
+    "stateName": "Maputo City",
+    "lgaName": "KaMaxaquene",
+    "name": "C Maputo: CS 1 de Maio",
+    "shortname": "C Map: 1 de Maio",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CS 1 de Maio",
+      "shortName": "C Map: 1 de Maio",
+      "macAddress": "MACA4BADBEBF3AD",
+      "hostId": "C Maputo:CS 1 de Mai",
+      "serial": "D4NG0LN1",
+      "gxAlertDeviceId": 511
+    }]
+  },
+  {
+    "externalId": "Niassa: HR de Cuamba",
+    "stateName": "Niassa",
+    "lgaName": "Cuamba District",
+    "name": "Niassa: HR de Cuamba",
+    "shortname": "Niassa: Cuamba",
+    "timeZoneId": "South Africa Standard Time"
+  },
+  {
+    "externalId": "P Maputo: HR Xinavane",
+    "stateName": "Maputo Province",
+    "lgaName": "Manhica District",
+    "name": "P Maputo: HR Xinavane",
+    "shortname": "P Map: Xinavane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: HR Xinavane",
+      "shortName": "P Map: Xinavane",
+      "macAddress": "MAC90B11C9F3D5B",
+      "hostId": "Hospital rural de Xi",
+      "serial": "Cepheid-6432026",
+      "gxAlertDeviceId": 1454
+    }]
+  },
+  {
+    "externalId": "Sofala: CS Dream",
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: CS Dream",
+    "shortname": "Sof: CS Dream",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: CS Dream",
+      "shortName": "Sof: CS Dream",
+      "macAddress": "MACA02BB82F5C88",
+      "hostId": "Sofala: CS Dream",
+      "serial": "Cepheid-412BVJW",
+      "gxAlertDeviceId": 1545
+    }]
+  },
+  {
+    "externalId": "INATB-1 Moçambique",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-1 Moçambique",
+    "shortname": "INATB-1 MOZ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-1 Moçambique",
+      "shortName": "INATB-1 MOZ",
+      "macAddress": "MACE4A4717CAF10",
+      "hostId": "INATB-1 Moçambique",
+      "serial": "Cepheid-62952R0",
+      "gxAlertDeviceId": 1592
+    }]
+  },
+  {
+    "externalId": "INATB-2 Moçambique",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-2 Moçambique",
+    "shortname": "INATB-2 MOZ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-2 Moçambique",
+      "shortName": "INATB-2 MOZ",
+      "macAddress": "MACEC8EB5505CE6",
+      "hostId": "INATB-2 MOZAMBIQUE",
+      "serial": "Cepheid-62952RV",
+      "gxAlertDeviceId": 1594
+    }]
+  },
+  {
+    "externalId": "INATB-3 Moçambique",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-3 Moçambique",
+    "shortname": "INATB-3 MOZ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-3 Moçambique",
+      "shortName": "INATB-3 MOZ",
+      "macAddress": "MACF0D5BF0CE3EC",
+      "hostId": "INATB-3 MOZAMBIQUE",
+      "serial": "Cepheid-64262RR",
+      "gxAlertDeviceId": 1595
+    }]
+  },
+  {
+    "externalId": "INATB-4 Moçambique",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-4 Moçambique",
+    "shortname": "INATB-4 MOZ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-4 Moçambique",
+      "shortName": "INATB-4 MOZ",
+      "macAddress": "MACF0D5BF43B0CF",
+      "hostId": "INATB-4 Moçambique",
+      "serial": "Cepheid-64261T0",
+      "gxAlertDeviceId": 1596
+    }]
+  },
+  {
+    "externalId": "P Maputo: CISM 2",
+    "stateName": "Maputo Province",
+    "lgaName": "Manhica District",
+    "name": "P Maputo: CISM 2",
+    "shortname": "P Map: CISM 2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CISM 2",
+      "shortName": "P Map: CISM 2",
+      "macAddress": "MACA0369FD4EAC5",
+      "hostId": "CISM 2",
+      "serial": "Cepheid-70329B6",
+      "gxAlertDeviceId": 1642
+    }]
+  },
+  {
+    "externalId": "INATB-5 Moçambique",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-5 Moçambique",
+    "shortname": "INATB-5 MOZ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-5 Moçambique",
+      "shortName": "INATB-5 MOZ",
+      "macAddress": "MACF0D5BF43BD45",
+      "hostId": "INATB-5",
+      "serial": "Cepheid-64261S8",
+      "gxAlertDeviceId": 1648
+    }]
+  },
+  {
+    "externalId": "INATB-6 Moçambique",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-6 Moçambique",
+    "shortname": "INATB-6 MOZ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-6 Moçambique",
+      "shortName": "INATB-6 MOZ",
+      "macAddress": "MACB88A60E7C813",
+      "hostId": "INATB-6",
+      "serial": "Cepheid-64262PK",
+      "gxAlertDeviceId": 1649
+    }]
+  },
+  {
+    "externalId": "INATB-7 Moçambique LNRT",
+    "stateName": "Maputo City",
+    "name": "INATB-7 Moçambique LNRT",
+    "shortname": "Map:INATB-7 LNRT",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-7 Moçambique LNRT",
+      "shortName": "Map:INATB-7 LNRT",
+      "macAddress": "MAC98E7F45DDB25",
+      "hostId": "INATB-7",
+      "serial": "Cepheid-64261SB",
+      "gxAlertDeviceId": 1774
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: HP de Pemba",
+    "latitude": 40.500000,
+    "longitude": -12.964000,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Pemba",
+    "name": "Cabo Delgado: HP de Pemba",
+    "shortname": "CD: HP Pemba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: HP de Pemba",
+      "shortName": "CD: HP Pemba",
+      "macAddress": "MACD89D67988025",
+      "hostId": "Cabo Delgado:HP de P",
+      "serial": "Cepheid-30797TQ",
+      "gxAlertDeviceId": 1988
+    }]
+  },
+  {
+    "externalId": "Cabo Del: HP Pemba",
+    "latitude": 39.362999,
+    "longitude": -12.462000,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Pemba",
+    "name": "Cabo Del: HP Pemba",
+    "shortname": "Cabo Del: HP Pem",
+    "timeZoneId": "South Africa Standard Time"
+  },
+  {
+    "externalId": "INATB-8 Backup",
+    "stateName": "Mocambique: INATB",
+    "name": "INATB-8 Backup",
+    "shortname": "INATB-8 Backup",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "INATB-8 Backup",
+      "shortName": "INATB-8 Backup",
+      "macAddress": "MAC98E7F45DDA2E",
+      "hostId": "INATB-Backup",
+      "serial": "Cepheid-64261SP",
+      "gxAlertDeviceId": 1940
+    }]
+  },
+  {
+    "externalId": "Sofala: CS da Munhava",
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: CS da Munhava",
+    "shortname": "Sof: Munhava",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: CS da Munhava",
+      "shortName": "Sof: Munhava",
+      "macAddress": "MAC705A0F3EBB08",
+      "hostId": "Sofala- CS da Munhav",
+      "serial": "Cepheid-7021MSF",
+      "gxAlertDeviceId": 1989
+    }]
+  },
+  {
+    "externalId": "Zambezia: Maganja da Costa",
+    "stateName": "Zambezia",
+    "lgaName": "Maganja da Costa District",
+    "name": "Zambezia: Maganja da Costa",
+    "shortname": "Zam: M da Costa",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: Maganja da Costa",
+      "shortName": "Zam: M da Costa",
+      "macAddress": "MAC480FCF4EFA77",
+      "hostId": "Maganja da Costa",
+      "serial": "Cepheid-609134M",
+      "gxAlertDeviceId": 1997
+    }]
+  },
+  {
+    "externalId": "P Maputo: HG Machava 2",
+    "stateName": "Maputo Province",
+    "lgaName": "Matola",
+    "name": "P Maputo: HG Machava 2",
+    "shortname": "P Map: Machava2 ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: HG Machava 2",
+      "shortName": "P Map: Machava2 ",
+      "macAddress": "MAC40B0341B6F9F",
+      "hostId": "P Maputo: Hospital G",
+      "serial": "Cepheid-7361P94",
+      "gxAlertDeviceId": 1999
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS Machava 2",
+    "latitude": 32.451000,
+    "longitude": -25.532000,
+    "stateName": "Maputo Province",
+    "lgaName": "Matola",
+    "name": "P Maputo: CS Machava 2",
+    "shortname": "P Map: CSMacha2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS Machava 2",
+      "shortName": "P Map: CSMacha2",
+      "macAddress": "MACA08CFDD64562",
+      "hostId": "Matola: Centro de Sa",
+      "serial": "Cepheid-7122C8C",
+      "gxAlertDeviceId": 2016
+    }]
+  },
+  {
+    "externalId": "Sofala: HD Caia",
+    "latitude": 34.669998,
+    "longitude": -19.061001,
+    "stateName": "Sofala",
+    "lgaName": "Caia District",
+    "name": "Sofala: HD Caia",
+    "shortname": "Sof: HD Caia",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: HD Caia",
+      "shortName": "Sof: HD Caia",
+      "macAddress": "MAC480FCF30AEA5",
+      "hostId": "HD Caia",
+      "serial": "Cepheid-6050XPY",
+      "gxAlertDeviceId": 2019
+    }]
+  },
+  {
+    "externalId": "C Maputo: Chamanculo",
+    "latitude": 32.573002,
+    "longitude": -25.974001,
+    "stateName": "Maputo City",
+    "lgaName": "Nlhamankulu",
+    "name": "C Maputo: Chamanculo",
+    "shortname": "C Map: Chamancul",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Chamanculo",
+      "shortName": "C Map: Chamancul",
+      "macAddress": "MAC90B11C96AD75",
+      "hostId": "C. Maputo: Chamancul",
+      "serial": "CepheidDWV8TW1",
+      "gxAlertDeviceId": 2021
+    }]
+  },
+  {
+    "externalId": "Inhambane: HD de Quissico-Zavala",
+    "latitude": 34.513000,
+    "longitude": -22.812000,
+    "stateName": "Inhambane",
+    "lgaName": "Zavala District",
+    "name": "Inhambane: HD de Quissico-Zavala",
+    "shortname": "Inh: HD Quissico",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: HD de Quissico-Zavala",
+      "shortName": "Inh: HD Quissico",
+      "macAddress": "MACECB1D73F31E8",
+      "hostId": "Inhambane: HD de Qui",
+      "serial": "Cepheid-530PD5F",
+      "gxAlertDeviceId": 2022
+    }]
+  },
+  {
+    "externalId": "C Maputo: Hospital Militar Maputo",
+    "latitude": 32.573002,
+    "longitude": -25.974001,
+    "stateName": "Maputo City",
+    "lgaName": "KaMpfumo",
+    "name": "C Maputo: Hospital Militar Maputo",
+    "shortname": "C Map: Hosp Mil",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Hospital Militar Maputo",
+      "shortName": "C Map: Hosp Mil",
+      "macAddress": "MACC4346B73E686",
+      "hostId": "C. Maputo- Hospital",
+      "serial": "Cepheid-44819CB",
+      "gxAlertDeviceId": 2023
+    }]
+  },
+  {
+    "externalId": "Sofala: HR Muxungue",
+    "latitude": 34.671001,
+    "longitude": -19.061001,
+    "stateName": "Sofala",
+    "lgaName": "Chibabava District",
+    "name": "Sofala: HR Muxungue",
+    "shortname": "Sof: Muxungue",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: HR Muxungue",
+      "shortName": "Sof: Muxungue",
+      "macAddress": "MACECB1D73F33E0",
+      "hostId": "Sofala- HR de Muxung",
+      "serial": "Cepheid-530PD7Q",
+      "gxAlertDeviceId": 2024
+    }]
+  },
+  {
+    "externalId": "Sofala: CS Ponta Gea",
+    "latitude": 34.853001,
+    "longitude": -19.816999,
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: CS Ponta Gea",
+    "shortname": "Sof: CSPonta Gea",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: CS Ponta Gea",
+      "shortName": "Sof: CSPonta Gea",
+      "macAddress": "MAC1803733C5A41",
+      "hostId": "Sofala- CS Ponta Gea",
+      "serial": "CepheidBTXHTV1",
+      "gxAlertDeviceId": 2026
+    }]
+  },
+  {
+    "externalId": "P Maputo: Ndlavela",
+    "latitude": 32.735001,
+    "longitude": -26.027000,
+    "stateName": "Maputo Province",
+    "lgaName": "Matola",
+    "name": "P Maputo: Ndlavela",
+    "shortname": "P Map: Ndlavela",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: Ndlavela",
+      "shortName": "P Map: Ndlavela",
+      "macAddress": "MACA0369F479767",
+      "hostId": "P Maputo: Ndlavela",
+      "serial": "Cepheid-4421HK9",
+      "gxAlertDeviceId": 2031
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: HR de Montepuez",
+    "latitude": 38.999001,
+    "longitude": -13.127000,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Montepuez",
+    "name": "Cabo Delgado: HR de Montepuez",
+    "shortname": "CD: HR Montepuez",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: HR de Montepuez",
+      "shortName": "CD: HR Montepuez",
+      "macAddress": "MACECB1D73F33D6",
+      "hostId": "Cabo Delgado: HR de",
+      "serial": "Cepheid-530PDDF",
+      "gxAlertDeviceId": 2033
+    }]
+  },
+  {
+    "externalId": "C Maputo: Bagamoio",
+    "latitude": 32.573002,
+    "longitude": -25.974001,
+    "stateName": "Maputo City",
+    "lgaName": "KaMubukwana",
+    "name": "C Maputo: Bagamoio",
+    "shortname": "C Map: Bagamoio",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Bagamoio",
+      "shortName": "C Map: Bagamoio",
+      "macAddress": "MACC4346B5CD426",
+      "hostId": "C. Maputo: Bagamoio",
+      "serial": "Cepheid-4421HKS",
+      "gxAlertDeviceId": 2034
+    }]
+  },
+  {
+    "externalId": "Sofala: Hospital Militar da Beira",
+    "latitude": 34.853001,
+    "longitude": -19.816999,
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: Hospital Militar da Beira",
+    "shortname": "Sof: Hos Militar",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: Hospital Militar da Beira",
+      "shortName": "Sof: Hos Militar",
+      "macAddress": "MACC4346B73E47A",
+      "hostId": "Sofala: Hospital Mil",
+      "serial": "Cepheid-448199Z",
+      "gxAlertDeviceId": 2035
+    }]
+  },
+  {
+    "externalId": "Sofala: CS de Dondo",
+    "latitude": 34.745998,
+    "longitude": -19.618000,
+    "stateName": "Sofala",
+    "lgaName": "Dondo District",
+    "name": "Sofala: CS de Dondo",
+    "shortname": "Sof: CS Dondo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: CS de Dondo",
+      "shortName": "Sof: CS Dondo",
+      "macAddress": "MAC7C8BCA1E93FF",
+      "hostId": "Sofala- CS Dondo",
+      "serial": "Sofala- CS Dondo",
+      "gxAlertDeviceId": 2037
+    }]
+  },
+  {
+    "externalId": "Nampula: HR Ribaue",
+    "stateName": "Nampula",
+    "lgaName": "Ribaue District",
+    "name": "Nampula: HR Ribaue",
+    "shortname": "Nam: HR Ribaue",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: HR Ribaue",
+      "shortName": "Nam: HR Ribaue",
+      "macAddress": "MACC4346B5E1FB7",
+      "hostId": "Niassa: H R de Ribau",
+      "serial": "Niassa: H R de Ribau",
+      "gxAlertDeviceId": 2043
+    }]
+  },
+  {
+    "externalId": "C Maputo: Dream",
+    "stateName": "Maputo City",
+    "name": "C Maputo: Dream",
+    "shortname": "C Map: Dream",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Dream",
+      "shortName": "C Map: Dream",
+      "macAddress": "MACA0481CDEC00A",
+      "hostId": "Dream-Maputo",
+      "serial": "Dream-PC",
+      "gxAlertDeviceId": 2045
+    }]
+  },
+  {
+    "externalId": "Nampula: HD Monapo",
+    "latitude": 39.247002,
+    "longitude": -14.964000,
+    "stateName": "Nampula",
+    "lgaName": "Monapo",
+    "name": "Nampula: HD Monapo",
+    "shortname": "Nam: HD Monapo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: HD Monapo",
+      "shortName": "Nam: HD Monapo",
+      "macAddress": "MAC7C8BCA1FCFAB",
+      "hostId": "Hospital Distrital d",
+      "serial": "Cepheid-321BXGG",
+      "gxAlertDeviceId": 2049
+    }]
+  },
+  {
+    "externalId": "Nampula: CS Urbano Nacala",
+    "latitude": 39.247002,
+    "longitude": -14.965000,
+    "stateName": "Nampula",
+    "lgaName": "Nacala",
+    "name": "Nampula: CS Urbano Nacala",
+    "shortname": "Nam: UrbanNacala",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS Urbano Nacala",
+      "shortName": "Nam: UrbanNacala",
+      "macAddress": "MACECB1D7445B6B",
+      "hostId": "Nampula Nacala Cs Ur",
+      "serial": "Cepheid-530PDBJ",
+      "gxAlertDeviceId": 2050
+    }]
+  },
+  {
+    "externalId": "Inhambane: Hospital Provincial",
+    "stateName": "Inhambane",
+    "name": "Inhambane: Hospital Provincial",
+    "shortname": "Inh: HP",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: Hospital Provincial",
+      "shortName": "Inh: HP",
+      "macAddress": "MACD46E0E685194",
+      "hostId": "Inhambane: H Provinc",
+      "serial": "Cepheid-4421HLD",
+      "gxAlertDeviceId": 2055
+    }]
+  },
+  {
+    "externalId": "Zambezia: Removido (17 de setembro)",
+    "stateName": "Zambezia",
+    "lgaName": "Quelimane",
+    "name": "Zambezia: Removido (17 de setembro)",
+    "shortname": "Zam: 17 Setembro",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: Removido (17 de setembro)",
+      "shortName": "Zam: 17 Setembro",
+      "macAddress": "MACA0369F88954D",
+      "hostId": "C.S 17 de Setembro",
+      "serial": "Cepheid-6011N53",
+      "gxAlertDeviceId": 2057
+    }]
+  },
+  {
+    "externalId": "Nampula: Cidade LNRT",
+    "stateName": "Nampula",
+    "lgaName": "Nampula",
+    "name": "Nampula: Cidade LNRT",
+    "shortname": "Nam: Cidade LNRT",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: Cidade LNRT",
+      "shortName": "Nam: Cidade LNRT",
+      "macAddress": "MAC2C44FD1BEA55",
+      "hostId": "Nampula: HCN LNRT",
+      "serial": "user-96ef2dfe2b",
+      "gxAlertDeviceId": 2062
+    }]
+  },
+  {
+    "externalId": "Tete: HR Ulongue",
+    "latitude": 32.770000,
+    "longitude": -15.520000,
+    "stateName": "Tete",
+    "lgaName": "Angonia District",
+    "name": "Tete: HR Ulongue",
+    "shortname": "Tete: HR Ulongue",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: HR Ulongue",
+      "shortName": "Tete: HR Ulongue",
+      "macAddress": "MACC4346B5CD3F6",
+      "hostId": "h.r.ulongue",
+      "serial": "h.r.ulongue",
+      "gxAlertDeviceId": 2063
+    }]
+  },
+  {
+    "externalId": "Sofala: HR Buzi",
+    "latitude": 34.588001,
+    "longitude": -19.895000,
+    "stateName": "Sofala",
+    "lgaName": "Buzi District",
+    "name": "Sofala: HR Buzi",
+    "shortname": "Sof: HR Buzi",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: HR Buzi",
+      "shortName": "Sof: HR Buzi",
+      "macAddress": "MACC4346B5E1FB5",
+      "hostId": "Sofala:HR Buzi",
+      "serial": "Cepheid-4421HLH",
+      "gxAlertDeviceId": 2064
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS Boane",
+    "latitude": 32.451000,
+    "longitude": -25.532000,
+    "stateName": "Maputo Province",
+    "lgaName": "Boane District",
+    "name": "P Maputo: CS Boane",
+    "shortname": "P Map: CS Boane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS Boane",
+      "shortName": "P Map: CS Boane",
+      "macAddress": "MAC180373C6E3E0",
+      "hostId": "P Maputo: CS Boane",
+      "serial": "CepheidAdmin-PC",
+      "gxAlertDeviceId": 2065
+    }]
+  },
+  {
+    "externalId": "Manica: CS Eduardo Mondlane",
+    "latitude": 33.480000,
+    "longitude": -19.129999,
+    "stateName": "Manica",
+    "lgaName": "C. Chimoio",
+    "name": "Manica: CS Eduardo Mondlane",
+    "shortname": "Man: CS Ed Mondl",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: CS Eduardo Mondlane",
+      "shortName": "Man: CS Ed Mondl",
+      "macAddress": "MAC7446A0A85B10",
+      "hostId": "Centro de Saude Edua",
+      "serial": "Cepheid-3371XKP",
+      "gxAlertDeviceId": 2067
+    }]
+  },
+  {
+    "externalId": "Manica: HD Espungabera",
+    "stateName": "Manica",
+    "lgaName": "Sussundenga District",
+    "name": "Manica: HD Espungabera",
+    "shortname": "Man: Espungabera",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: HD Espungabera",
+      "shortName": "Man: Espungabera",
+      "macAddress": "MACECB1D7485A0F",
+      "hostId": "Manica: H D de Espun",
+      "serial": "Cepheid-530PD95",
+      "gxAlertDeviceId": 2071
+    }]
+  },
+  {
+    "externalId": "Sofala: HR Nhamatanda",
+    "stateName": "Sofala",
+    "lgaName": "Nhamatanda District",
+    "name": "Sofala: HR Nhamatanda",
+    "shortname": "Sof: Nhamatanda",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: HR Nhamatanda",
+      "shortName": "Sof: Nhamatanda",
+      "macAddress": "MAC480FCF3DC005",
+      "hostId": "Sofala; HR Nhamatand",
+      "serial": "Cepheid-6050XTK",
+      "gxAlertDeviceId": 2075
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS Urbano Milange",
+    "stateName": "Zambezia",
+    "lgaName": "Milange District",
+    "name": "Zambezia: CS Urbano Milange",
+    "shortname": "Zam: CS Milange",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS Urbano Milange",
+      "shortName": "Zam: CS Milange",
+      "macAddress": "MACD89D67987028",
+      "hostId": "ZAMBEZIA: C.S Urbano",
+      "serial": "Cepheid-30797TM",
+      "gxAlertDeviceId": 2078
+    }]
+  },
+  {
+    "externalId": "Tete: HP Tete",
+    "latitude": 32.770000,
+    "longitude": -15.520000,
+    "stateName": "Tete",
+    "lgaName": "Tete District",
+    "name": "Tete: HP Tete",
+    "shortname": "Tete: HP Tete",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: HP Tete",
+      "shortName": "Tete: HP Tete",
+      "macAddress": "MACC4346B5E2023",
+      "hostId": "H P TETE",
+      "serial": "Cepheid-4421HKY",
+      "gxAlertDeviceId": 2079
+    }]
+  },
+  {
+    "externalId": "Zambezia: HP Quelimane",
+    "stateName": "Zambezia",
+    "lgaName": "Quelimane District",
+    "name": "Zambezia: HP Quelimane",
+    "shortname": "Zam: HP Quelima",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: HP Quelimane",
+      "shortName": "Zam: HP Quelima",
+      "macAddress": "MAC6805CA21DFBC",
+      "hostId": "HOSPITAL GERAL DE QU",
+      "serial": "Cepheid-4061215",
+      "gxAlertDeviceId": 2082
+    }]
+  },
+  {
+    "externalId": "Gaza: HR Manjacaze",
+    "latitude": 32.801998,
+    "longitude": -23.323000,
+    "stateName": "Gaza",
+    "lgaName": "Manjacaze District",
+    "name": "Gaza: HR Manjacaze",
+    "shortname": "Gaza: HR Manjaca",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: HR Manjacaze",
+      "shortName": "Gaza: HR Manjaca",
+      "macAddress": "MACD89D679870DB",
+      "hostId": "Hospital Rural de Ma",
+      "serial": "Cepheid-30797TS",
+      "gxAlertDeviceId": 2084
+    }]
+  },
+  {
+    "externalId": "Gaza: CS Chissano",
+    "latitude": 32.801998,
+    "longitude": -23.323000,
+    "stateName": "Gaza",
+    "lgaName": "Macia",
+    "name": "Gaza: CS Chissano",
+    "shortname": "Gaza: CS Chissa",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS Chissano",
+      "shortName": "Gaza: CS Chissa",
+      "macAddress": "MAC90B11C723B37",
+      "hostId": "Gaza: C S Chissano",
+      "serial": "76C0ZV1",
+      "gxAlertDeviceId": 2085
+    }]
+  },
+  {
+    "externalId": "Gaza: H Carmelo",
+    "latitude": 32.801998,
+    "longitude": -23.323000,
+    "stateName": "Gaza",
+    "lgaName": "Chokwe District",
+    "name": "Gaza: H Carmelo",
+    "shortname": "Gaza: H Carmelo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: H Carmelo",
+      "shortName": "Gaza: H Carmelo",
+      "macAddress": "MAC6805CA21E230",
+      "hostId": "Gaza: H Carmelo",
+      "serial": "Cepheidt-40611XJ",
+      "gxAlertDeviceId": 2086
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS Vilankulos",
+    "latitude": 35.319000,
+    "longitude": -22.000000,
+    "stateName": "Inhambane",
+    "lgaName": "Vilankulo District",
+    "name": "Inhambane: CS Vilankulos",
+    "shortname": "Inh: CS Vilankul",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS Vilankulos",
+      "shortName": "Inh: CS Vilankul",
+      "macAddress": "MACC4346B5E1FFA",
+      "hostId": "Inhambane: CS Vilank",
+      "serial": "Cepheid-4421HKX",
+      "gxAlertDeviceId": 2087
+    }]
+  },
+  {
+    "externalId": "Gaza: HR Chokwe",
+    "latitude": 32.997002,
+    "longitude": -24.530001,
+    "stateName": "Gaza",
+    "lgaName": "Chokwe",
+    "name": "Gaza: HR Chokwe",
+    "shortname": "Gaza: HR Chokwe",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: HR Chokwe",
+      "shortName": "Gaza: HR Chokwe",
+      "macAddress": "MAC7C8BCA07014F",
+      "hostId": "GAZA:Hospital Rural",
+      "serial": "Cepheid-Admi",
+      "gxAlertDeviceId": 2091
+    }]
+  },
+  {
+    "externalId": "C Maputo: LNRT Antigo",
+    "latitude": 32.451000,
+    "longitude": -25.532000,
+    "stateName": "Maputo City",
+    "lgaName": "KaMpfumo",
+    "name": "C Maputo: LNRT Antigo",
+    "shortname": "C Map: LNRT Anti",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: LNRT Antigo",
+      "shortName": "C Map: LNRT Anti",
+      "macAddress": "MACB88A60E7C73C",
+      "hostId": "Maputo: LNRT",
+      "serial": "Cepheid-64262NC",
+      "gxAlertDeviceId": 2093
+    }]
+  },
+  {
+    "externalId": "Gaza: CS Saude Ocup Manjacaze",
+    "latitude": 32.801998,
+    "longitude": -23.323000,
+    "stateName": "Gaza",
+    "lgaName": "Manjacaze District",
+    "name": "Gaza: CS Saude Ocup Manjacaze",
+    "shortname": "Gaza: CSO Manj",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS Saude Ocup Manjacaze",
+      "shortName": "Gaza: CSO Manj",
+      "macAddress": "MACA08CFDCBA1DB",
+      "hostId": "Gaza:Centro de saude",
+      "serial": "Cepheid-7122CG8",
+      "gxAlertDeviceId": 2096
+    }]
+  },
+  {
+    "externalId": "Niassa: HR de Cuamba",
+    "latitude": 36.543999,
+    "longitude": -14.800000,
+    "stateName": "Niassa",
+    "lgaName": "Cuamba District",
+    "name": "Niassa: HR de Cuamba",
+    "shortname": "Niassa: Cuamba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: HR de Cuamba",
+      "shortName": "Niassa: Cuamba",
+      "macAddress": "MAC180373D27E99",
+      "hostId": "Laboratorio Cuamba",
+      "serial": "ChangeMe",
+      "gxAlertDeviceId": 2115
+    }]
+  },
+  {
+    "externalId": "C Maputo: HG Mavalane-TBSequel",
+    "stateName": "Maputo City",
+    "lgaName": "KaMavota",
+    "name": "C Maputo: HG Mavalane-TBSequel",
+    "shortname": "C Map: Maval TBS",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: HG Mavalane-TBSequel",
+      "shortName": "C Map: Maval TBS",
+      "macAddress": "MACD4C9EFE640EF",
+      "hostId": "Mavalane-TBSequel",
+      "serial": "Cepheid-321BXZK",
+      "gxAlertDeviceId": 2116
+    }]
+  },
+  {
+    "externalId": "C Maputo: Alto Mae",
+    "latitude": 32.735001,
+    "longitude": -26.027000,
+    "stateName": "Maputo City",
+    "lgaName": "KaMpfumo",
+    "name": "C Maputo: Alto Mae",
+    "shortname": "C Map:Alto Mae",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Alto Mae",
+      "shortName": "C Map:Alto Mae",
+      "macAddress": "MAC6805CA21E2AD",
+      "hostId": "C Maputo; Alto Mae",
+      "serial": "Cepheid-40611YS",
+      "gxAlertDeviceId": 2118
+    }]
+  },
+  {
+    "externalId": "P Maputo: HP Matola",
+    "stateName": "Maputo Province",
+    "lgaName": "Matola",
+    "name": "P Maputo: HP Matola",
+    "shortname": "P Map: HP Matola",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: HP Matola",
+      "shortName": "P Map: HP Matola",
+      "macAddress": "MAC480FCF57ED0B",
+      "hostId": "P. Maputo: HP Matola",
+      "serial": "Cepheid-6201QL3",
+      "gxAlertDeviceId": 2120
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: HR de Mueda",
+    "latitude": 39.558998,
+    "longitude": -11.662000,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Mueda District",
+    "name": "Cabo Delgado: HR de Mueda",
+    "shortname": "CD: HR Mueda",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: HR de Mueda",
+      "shortName": "CD: HR Mueda",
+      "macAddress": "MACA08CFDF268F3",
+      "hostId": "Cabo Delgado; Hospit",
+      "serial": "Cepheid-7282LSK",
+      "gxAlertDeviceId": 2124
+    }]
+  },
+  {
+    "externalId": "Manica: HR Gondola",
+    "latitude": 33.646999,
+    "longitude": -19.087999,
+    "stateName": "Manica",
+    "lgaName": "Gondola District",
+    "name": "Manica: HR Gondola",
+    "shortname": "Man: HR Gondola",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: HR Gondola",
+      "shortName": "Man: HR Gondola",
+      "macAddress": "MAC2C44FD2DE0BB",
+      "hostId": "Manica: Hospital Dis",
+      "serial": "Cepheid-3520VRB",
+      "gxAlertDeviceId": 2131
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS Ressano Garcia",
+    "latitude": 32.451000,
+    "longitude": -25.532000,
+    "stateName": "Maputo Province",
+    "lgaName": "Moamba District",
+    "name": "P Maputo: CS Ressano Garcia",
+    "shortname": "P Map: Ressano G",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS Ressano Garcia",
+      "shortName": "P Map: Ressano G",
+      "macAddress": "MACA08CFDDE2DCF",
+      "hostId": "P Maputo: CS de Ress",
+      "serial": "Cepheid-7382NG8",
+      "gxAlertDeviceId": 2134
+    }]
+  },
+  {
+    "externalId": "Tete: CS Moatize",
+    "latitude": 32.770000,
+    "longitude": -15.520000,
+    "stateName": "Tete",
+    "lgaName": "Moatize District",
+    "name": "Tete: CS Moatize",
+    "shortname": "Tete: C.S Moatiz",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: CS Moatize",
+      "shortName": "Tete: C.S Moatiz",
+      "macAddress": "MACA4BADBEBF53C",
+      "hostId": "Tete : CS Moatize",
+      "serial": "LabMoatize-PC",
+      "gxAlertDeviceId": 2137
+    }]
+  },
+  {
+    "externalId": "P Maputo: HG Machava 3",
+    "latitude": -25.532009,
+    "longitude": 32.450710,
+    "stateName": "Maputo Province",
+    "lgaName": "Matola",
+    "name": "P Maputo: HG Machava 3",
+    "shortname": "P Map - HG Mach3",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: HG Machava 3",
+      "shortName": "P Map - HG Mach3",
+      "macAddress": "MAC3C52825D34B4",
+      "hostId": "P MAPUTO - HG da Mac",
+      "serial": "Cepheid-7481KQN",
+      "gxAlertDeviceId": 2138
+    }]
+  },
+  {
+    "externalId": "Tete: HR Mutarara",
+    "latitude": -15.520710,
+    "longitude": 32.769699,
+    "stateName": "Tete",
+    "lgaName": "Mutarara District",
+    "name": "Tete: HR Mutarara",
+    "shortname": "Tete: Mutarara",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: HR Mutarara",
+      "shortName": "Tete: Mutarara",
+      "macAddress": "MACECB1D73F3320",
+      "hostId": "Hospital rural de Mu",
+      "serial": "Cepheid-530PD6J",
+      "gxAlertDeviceId": 2141
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Chongoene",
+    "latitude": -23.322620,
+    "longitude": 32.801979,
+    "stateName": "Gaza",
+    "lgaName": "Xai-Xai District",
+    "name": "Gaza: CS de Chongoene",
+    "shortname": "Gaza: CHONGOENE",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Chongoene",
+      "shortName": "Gaza: CHONGOENE",
+      "macAddress": "MAC40B0343D0B33",
+      "hostId": "C.S CHONGOENE",
+      "serial": "Cepheid-7382PFN",
+      "gxAlertDeviceId": 2143
+    }]
+  },
+  {
+    "externalId": "Niassa: HP de Lichinga",
+    "latitude": 35.244999,
+    "longitude": -13.306000,
+    "stateName": "Niassa",
+    "lgaName": "Lichinga",
+    "name": "Niassa: HP de Lichinga",
+    "shortname": "Niassa: Lichinga",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: HP de Lichinga",
+      "shortName": "Niassa: Lichinga",
+      "macAddress": "MACC4346B5E1FBB",
+      "hostId": "Niassa: HP de Lichin",
+      "serial": "Cepheid-4421HLG",
+      "gxAlertDeviceId": 2148
+    }]
+  },
+  {
+    "externalId": "P Maputo: HG Machava 1",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo Province",
+    "lgaName": "Matola",
+    "name": "P Maputo: HG Machava 1",
+    "shortname": "P Map: HG Mac 1",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: HG Machava 1",
+      "shortName": "P Map: HG Mac 1",
+      "macAddress": "MACA4BADBEF72D1",
+      "hostId": "Maputo: H G Machava",
+      "serial": "4NH0LN1",
+      "gxAlertDeviceId": 2153
+    }]
+  },
+  {
+    "externalId": "Nampula: HR Angoche",
+    "latitude": -14.964370,
+    "longitude": 39.247120,
+    "stateName": "Nampula",
+    "lgaName": "Angoche District",
+    "name": "Nampula: HR Angoche",
+    "shortname": "Nam: HR Angoche",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: HR Angoche",
+      "shortName": "Nam: HR Angoche",
+      "macAddress": "MACD4C9EFE66073",
+      "hostId": "NAMPULA-HR ANGOCHE",
+      "serial": "Cepheid-321BXHZ",
+      "gxAlertDeviceId": 2154
+    }]
+  },
+  {
+    "externalId": "C Maputo: Apopo 2",
+    "latitude": 32.451000,
+    "longitude": -25.532000,
+    "stateName": "Maputo City",
+    "lgaName": "KaMubukwana",
+    "name": "C Maputo: Apopo 2",
+    "shortname": "C Map: Apopo 2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Apopo 2",
+      "shortName": "C Map: Apopo 2",
+      "macAddress": "MAC6805CA6227E0",
+      "hostId": "C Maputo-Apopo 2",
+      "serial": "Cepheid-7361P8G",
+      "gxAlertDeviceId": 2157
+    }]
+  },
+  {
+    "externalId": "C Maputo: Apopo 1",
+    "latitude": -25.974461,
+    "longitude": 32.573219,
+    "stateName": "Maputo City",
+    "lgaName": "KaMubukwana",
+    "name": "C Maputo: Apopo 1",
+    "shortname": "C Map: Apopo 1",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: Apopo 1",
+      "shortName": "C Map: Apopo 1",
+      "macAddress": "MACA02BB82C16FD",
+      "hostId": "C Maputo: Apopo 1",
+      "serial": "Admin-PC",
+      "gxAlertDeviceId": 2162
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS Moamba",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo Province",
+    "lgaName": "Moamba District",
+    "name": "P Maputo: CS Moamba",
+    "shortname": "P Map: CS Moamba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS Moamba",
+      "shortName": "P Map: CS Moamba",
+      "macAddress": "MACA08CFDDE3D89",
+      "hostId": "P Maputo: CS Moamba",
+      "serial": "Cepheid-7382N90",
+      "gxAlertDeviceId": 2172
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS de Magude",
+    "stateName": "Maputo Province",
+    "lgaName": "Magude District",
+    "name": "P Maputo: CS de Magude",
+    "shortname": "P Map: Magude",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS de Magude",
+      "shortName": "P Map: Magude",
+      "macAddress": "MAC40B0343D0B57",
+      "hostId": "P Maputo: CS de Magu",
+      "serial": "Cepheid-7382PHG",
+      "gxAlertDeviceId": 2176
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS de Namaacha",
+    "latitude": -25.532009,
+    "longitude": 32.450710,
+    "stateName": "Maputo Province",
+    "lgaName": "Namaacha",
+    "name": "P Maputo: CS de Namaacha",
+    "shortname": "P Map. Namaacha",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS de Namaacha",
+      "shortName": "P Map. Namaacha",
+      "macAddress": "MAC40B0343D0B38",
+      "hostId": "P Maputo: CS de Nama",
+      "serial": "Cepheid-7382PHQ",
+      "gxAlertDeviceId": 2178
+    }]
+  },
+  {
+    "externalId": "Gaza: HR de Chibuto",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Chibuto District",
+    "name": "Gaza: HR de Chibuto",
+    "shortname": "Gaza: Chibuto",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: HR de Chibuto",
+      "shortName": "Gaza: Chibuto",
+      "macAddress": "MAC40B0341D58B9",
+      "hostId": "Gaza- HR de Chibuto",
+      "serial": "Cepheid-7382PHK",
+      "gxAlertDeviceId": 2179
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS Marracuene",
+    "latitude": 32.451000,
+    "longitude": -25.532000,
+    "stateName": "Maputo Province",
+    "lgaName": "Marracuene District",
+    "name": "P Maputo: CS Marracuene",
+    "shortname": "P Map: Maracuene",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS Marracuene",
+      "shortName": "P Map: Maracuene",
+      "macAddress": "MACECB1D7445AF3",
+      "hostId": "P Maputo- CS de Marr",
+      "serial": "Cepheid-530PD5C",
+      "gxAlertDeviceId": 2186
+    }]
+  },
+  {
+    "externalId": "Gaza: HD de Mapai",
+    "stateName": "Gaza",
+    "name": "Gaza: HD de Mapai",
+    "shortname": " Gaza: Mapai",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: HD de Mapai",
+      "shortName": " Gaza: Mapai",
+      "macAddress": "MAC40B0343D0B61",
+      "hostId": "Gaza- HD de Mapai",
+      "serial": "Cepheid-7382PJ0",
+      "gxAlertDeviceId": 2187
+    }]
+  },
+  {
+    "externalId": "Zambezia: HD de Morrumbala",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Morrumbala District",
+    "name": "Zambezia: HD de Morrumbala",
+    "shortname": "Zam: Morrumbala",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: HD de Morrumbala",
+      "shortName": "Zam: Morrumbala",
+      "macAddress": "MACECB1D7445B21",
+      "hostId": "H.D Morrumbala",
+      "serial": "Cepheid-530PD5D",
+      "gxAlertDeviceId": 2191
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Doane",
+    "stateName": "Inhambane",
+    "name": "Inhambane: CS de Doane",
+    "shortname": "Inh: CS de Doane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS de Doane",
+      "shortName": "Inh: CS de Doane",
+      "macAddress": "MAC40B0343D0B2E",
+      "hostId": "Inhambane - CS de Do",
+      "serial": "Cepheid-7382PHW",
+      "gxAlertDeviceId": 2200
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Maxixe",
+    "latitude": -22.812300,
+    "longitude": 34.512920,
+    "stateName": "Inhambane",
+    "name": "Inhambane: CS de Maxixe",
+    "shortname": "Inh: MaxIxe",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS de Maxixe",
+      "shortName": "Inh: MaxIxe",
+      "macAddress": "MAC40B0343D0B2D",
+      "hostId": "Inhambane- CS de Max",
+      "serial": "Cepheid-7382PHL",
+      "gxAlertDeviceId": 2202
+    }]
+  },
+  {
+    "externalId": "Manica: HR de Catandica",
+    "latitude": -19.024349,
+    "longitude": 33.429829,
+    "stateName": "Manica",
+    "lgaName": "Barue District",
+    "name": "Manica: HR de Catandica",
+    "shortname": "Man: Catandica",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: HR de Catandica",
+      "shortName": "Man: Catandica",
+      "macAddress": "MAC40B0341D58AD",
+      "hostId": "Manica: HR de Catand",
+      "serial": "Cepheid-7382PHY",
+      "gxAlertDeviceId": 2204
+    }]
+  },
+  {
+    "externalId": "Gaza: CS Macia #2",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Macia",
+    "name": "Gaza: CS Macia #2",
+    "shortname": "Gaza: Macia II",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS Macia #2",
+      "shortName": "Gaza: Macia II",
+      "macAddress": "MAC705A0F387A47",
+      "hostId": "Gaza: Macia II",
+      "serial": "Cepheid-7021M3F",
+      "gxAlertDeviceId": 2206
+    }]
+  },
+  {
+    "externalId": "Manica: CS de Sussundenga",
+    "latitude": -19.024349,
+    "longitude": 33.429829,
+    "stateName": "Manica",
+    "lgaName": "Sussundenga District",
+    "name": "Manica: CS de Sussundenga",
+    "shortname": "Man: Sussundenga",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: CS de Sussundenga",
+      "shortName": "Man: Sussundenga",
+      "macAddress": "MAC7C8BCA071994",
+      "hostId": "Manica- CS de Sussun",
+      "serial": "Cepheid-7382PGW",
+      "gxAlertDeviceId": 2208
+    }]
+  },
+  {
+    "externalId": "Manica: CS de Chitobe",
+    "latitude": -19.024349,
+    "longitude": 33.429829,
+    "stateName": "Manica",
+    "lgaName": "Machaze District",
+    "name": "Manica: CS de Chitobe",
+    "shortname": "Man: Chitobe",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: CS de Chitobe",
+      "shortName": "Man: Chitobe",
+      "macAddress": "MAC40B0343D243F",
+      "hostId": "Manica: CS de Chitob",
+      "serial": "Cepheid-7382NB5",
+      "gxAlertDeviceId": 2211
+    }]
+  },
+  {
+    "externalId": "Gaza: CS Macia #1",
+    "latitude": -23.322620,
+    "longitude": 32.801979,
+    "stateName": "Gaza",
+    "lgaName": "Macia",
+    "name": "Gaza: CS Macia #1",
+    "shortname": "Gaza: Macia #1",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS Macia #1",
+      "shortName": "Gaza: Macia #1",
+      "macAddress": "MAC705A0F3EBE57",
+      "hostId": "Gaza- CS Macia #1",
+      "serial": "Cepheid-7021M49",
+      "gxAlertDeviceId": 2216
+    }]
+  },
+  {
+    "externalId": "Tete: HR de Songo",
+    "stateName": "Tete",
+    "lgaName": "Cahora-Bassa District",
+    "name": "Tete: HR de Songo",
+    "shortname": "Tete: Songo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: HR de Songo",
+      "shortName": "Tete: Songo",
+      "macAddress": "MAC7C8BCA10D7B3",
+      "hostId": "Tete: HR de Songo",
+      "serial": "Cepheid-7382PH1",
+      "gxAlertDeviceId": 2219
+    }]
+  },
+  {
+    "externalId": "Tete: CS de Changara",
+    "latitude": -15.520710,
+    "longitude": 32.769699,
+    "stateName": "Tete",
+    "lgaName": "Changara District",
+    "name": "Tete: CS de Changara",
+    "shortname": "Tete: Changara",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: CS de Changara",
+      "shortName": "Tete: Changara",
+      "macAddress": "MAC40B0343D0B15",
+      "hostId": "Tete: CS de Changara",
+      "serial": "Cepheid-7382PH0",
+      "gxAlertDeviceId": 2222
+    }]
+  },
+  {
+    "externalId": "Tete: HD de Maravia",
+    "latitude": -15.520710,
+    "longitude": 32.769699,
+    "stateName": "Tete",
+    "lgaName": "Maravia District",
+    "name": "Tete: HD de Maravia",
+    "shortname": "Tete: Maravia",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: HD de Maravia",
+      "shortName": "Tete: Maravia",
+      "macAddress": "MAC6805CA64B9DB",
+      "hostId": "Tete: HD de Maravia",
+      "serial": "Cepheid-7382PH4",
+      "gxAlertDeviceId": 2223
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS sede Ile",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Ile District",
+    "name": "Zambezia: CS sede Ile",
+    "shortname": "Zam: CS sede Ile",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS sede Ile",
+      "shortName": "Zam: CS sede Ile",
+      "macAddress": "MAC40B0341D58C0",
+      "hostId": "Zambezia- CS sede Il",
+      "serial": "Cepheid-7382PHR",
+      "gxAlertDeviceId": 2229
+    }]
+  },
+  {
+    "externalId": "Zambezia: HR de Gurue",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Gurue District",
+    "name": "Zambezia: HR de Gurue",
+    "shortname": "Zam: HR de Gurue",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: HR de Gurue",
+      "shortName": "Zam: HR de Gurue",
+      "macAddress": "MAC40B0343D0B50",
+      "hostId": "Zambezia- HR de Guru",
+      "serial": "Cepheid-7382PHH",
+      "gxAlertDeviceId": 2230
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS 17 de Setembro",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Quelimane",
+    "name": "Zambezia: CS 17 de Setembro",
+    "shortname": "Zam: 17 Setembro",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS 17 de Setembro",
+      "shortName": "Zam: 17 Setembro",
+      "macAddress": "MAC40B0343D2B7F",
+      "hostId": "Zambezia- CS 17 de S",
+      "serial": "Cepheid-7382MXY",
+      "gxAlertDeviceId": 2234
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Nicoadala",
+    "latitude": -16.655472,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Nicoadala District",
+    "name": "Zambezia: CS de Nicoadala",
+    "shortname": "CS de Nicoadala",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Nicoadala",
+      "shortName": "CS de Nicoadala",
+      "macAddress": "MACA08CFDDE2DEF",
+      "hostId": "Zambezia: CS de Nico",
+      "serial": "Cepheid-7382NKC",
+      "gxAlertDeviceId": 2235
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Namacurra",
+    "name": "Zambezia: CS de Namacurra",
+    "shortname": "CS de Namacurra",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Namacurra",
+      "shortName": "CS de Namacurra",
+      "macAddress": "MAC40B0343D2BC8",
+      "hostId": "Zambezia- CS de Nama",
+      "serial": "Cepheid-7382NFR",
+      "gxAlertDeviceId": 2236
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Molumbo",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "name": "Zambezia: CS de Molumbo",
+    "shortname": "Zam: Molumbo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Molumbo",
+      "shortName": "Zam: Molumbo",
+      "macAddress": "MAC40B0343D0DE8",
+      "hostId": "Zambezia- CS de Molu",
+      "serial": "Cepheid-7382NHR",
+      "gxAlertDeviceId": 2237
+    }]
+  },
+  {
+    "externalId": "Zambezia: HD de Gile",
+    "stateName": "Zambezia",
+    "lgaName": "Gile District",
+    "name": "Zambezia: HD de Gile",
+    "shortname": "Zam: HD de Gile",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: HD de Gile",
+      "shortName": "Zam: HD de Gile",
+      "macAddress": "MAC40B0341D59DC",
+      "hostId": "Zambezia- HD de Gile",
+      "serial": "Cepheid-7382NL7",
+      "gxAlertDeviceId": 2238
+    }]
+  },
+  {
+    "externalId": "Zambezia: HR Allto Molocue",
+    "latitude": 37.682999,
+    "longitude": -15.644000,
+    "stateName": "Zambezia",
+    "lgaName": "Alto Molocue District",
+    "name": "Zambezia: HR Allto Molocue",
+    "shortname": "Zam:Alto Molocue",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: HR Allto Molocue",
+      "shortName": "Zam:Alto Molocue",
+      "macAddress": "MACA0369F5C731A",
+      "hostId": "Zambezia: HR A lto M",
+      "serial": "DPS-PC",
+      "gxAlertDeviceId": 2239
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Pebane",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Pebane District",
+    "name": "Zambezia: CS de Pebane",
+    "shortname": "Zam: Pebane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Pebane",
+      "shortName": "Zam: Pebane",
+      "macAddress": "MAC40B0341D72FF",
+      "hostId": "Zambezia- CS de Peba",
+      "serial": "Cepheid-7382NBS",
+      "gxAlertDeviceId": 2241
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Mocubela",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "name": "Zambezia: CS de Mocubela",
+    "shortname": "Zam: Mocubela",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Mocubela",
+      "shortName": "Zam: Mocubela",
+      "macAddress": "MACA08CFDDE3D3C",
+      "hostId": "Zambezia- CS de Mocu",
+      "serial": "Cepheid-7382NC3",
+      "gxAlertDeviceId": 2242
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Lugela",
+    "stateName": "Zambezia",
+    "lgaName": "Lugela District",
+    "name": "Zambezia: CS de Lugela",
+    "shortname": "Zam: Lugela",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Lugela",
+      "shortName": "Zam: Lugela",
+      "macAddress": "MAC40B0341D5ABD",
+      "hostId": "Zambezia- CS de Luge",
+      "serial": "Cepheid-7382NQ9",
+      "gxAlertDeviceId": 2244
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Inhassunge",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Inhassunge District",
+    "name": "Zambezia: CS de Inhassunge",
+    "shortname": "Zam: Inhassunge",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Inhassunge",
+      "shortName": "Zam: Inhassunge",
+      "macAddress": "MAC40B0343D0D5D",
+      "hostId": "Zambezia- CS de Inha",
+      "serial": "Cepheid-7382NMB",
+      "gxAlertDeviceId": 2245
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Derre",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "name": "Zambezia: CS de Derre",
+    "shortname": "Zam: Derre",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Derre",
+      "shortName": "Zam: Derre",
+      "macAddress": "MACA08CFDDE3E9C",
+      "hostId": "Zambezia- CS de Derr",
+      "serial": "Cepheid-7382ND4",
+      "gxAlertDeviceId": 2247
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Mopeia",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Mopeia District",
+    "name": "Zambezia: CS de Mopeia",
+    "shortname": "Zam: Mopeia",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Mopeia",
+      "shortName": "Zam: Mopeia",
+      "macAddress": "MAC40B0343D2A74",
+      "hostId": "Zambezia- CS de Mope",
+      "serial": "Cepheid-7382N0N",
+      "gxAlertDeviceId": 2248
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Coalane",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Quelimane",
+    "name": "Zambezia: CS de Coalane",
+    "shortname": "Zam: Coalane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Zambezia: CS de Coalane",
+      "shortName": "Zam: Coalane",
+      "macAddress": "MAC40B0343D0DE9",
+      "hostId": "Zambezia- CS de Coal",
+      "serial": "Cepheid-7382NFZ",
+      "gxAlertDeviceId": 2251
+    }]
+  },
+  {
+    "externalId": "Zambezia: CS de Namarroi",
+    "latitude": -16.655470,
+    "longitude": 36.982342,
+    "stateName": "Zambezia",
+    "lgaName": "Namarroi District",
+    "name": "Zambezia: CS de Namarroi",
+    "shortname": "Zam: CS Namarroi",
+    "timeZoneId": "South Africa Standard Time"
+  },
+  {
+    "externalId": "Tete: CS de Tsangano # Novo",
+    "latitude": -15.520710,
+    "longitude": 32.769699,
+    "stateName": "Tete",
+    "lgaName": "Tsangano District",
+    "name": "Tete: CS de Tsangano # Novo",
+    "shortname": "Tete: Tsangano",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: CS de Tsangano # Novo",
+      "shortName": "Tete: Tsangano",
+      "macAddress": "MACA08CFDDE3D1E",
+      "hostId": "Tete: CS de Tsangano",
+      "serial": "Cepheid-7382NDJ",
+      "gxAlertDeviceId": 2261
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Massingir",
+    "stateName": "Gaza",
+    "name": "Gaza: CS de Massingir",
+    "shortname": "Gaza: Massingir",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Massingir",
+      "shortName": "Gaza: Massingir",
+      "macAddress": "MAC40B0343D0B48",
+      "hostId": "Gaza: CS de Massingi",
+      "serial": "Cepheid-7382PHN",
+      "gxAlertDeviceId": 2262
+    }]
+  },
+  {
+    "externalId": "Tete: CS de Luia - Chifunde",
+    "latitude": -15.520710,
+    "longitude": 32.769699,
+    "stateName": "Tete",
+    "lgaName": "Chifunde District",
+    "name": "Tete: CS de Luia - Chifunde",
+    "shortname": "Tete: CS de Luia",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: CS de Luia - Chifunde",
+      "shortName": "Tete: CS de Luia",
+      "macAddress": "MAC7C8BCA1DD846",
+      "hostId": "Tete: CS de Luia - C",
+      "serial": "Cepheid-7382NF2",
+      "gxAlertDeviceId": 2263
+    }]
+  },
+  {
+    "externalId": "Tete: HD de Zumbo",
+    "stateName": "Tete",
+    "lgaName": "Zumbo District",
+    "name": "Tete: HD de Zumbo",
+    "shortname": "Tete: Zumbo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: HD de Zumbo",
+      "shortName": "Tete: Zumbo",
+      "macAddress": "MACC025E936DE55",
+      "hostId": "Tete: HD de Zumbo",
+      "serial": "Cepheid-7382NNG",
+      "gxAlertDeviceId": 2265
+    }]
+  },
+  {
+    "externalId": "Tete: CS de Magoe",
+    "stateName": "Tete",
+    "lgaName": "Magoe District",
+    "name": "Tete: CS de Magoe",
+    "shortname": "Tete: CS Magoe",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: CS de Magoe",
+      "shortName": "Tete: CS Magoe",
+      "macAddress": "MACD46E0E66DBFE",
+      "hostId": "Tete: CS de Magoe",
+      "serial": "Cepheid-7382NL5",
+      "gxAlertDeviceId": 2268
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Guija",
+    "latitude": -23.322620,
+    "longitude": 32.801979,
+    "stateName": "Gaza",
+    "lgaName": "Guija District",
+    "name": "Gaza: CS de Guija",
+    "shortname": "Gaza: CS de Guija",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Guija",
+      "shortName": "Gaza: CS de Guija",
+      "macAddress": "MAC40B0343D252F",
+      "hostId": "Gaza: CS de Guija",
+      "serial": "Cepheid-7382NB0",
+      "gxAlertDeviceId": 2272
+    }]
+  },
+  {
+    "externalId": "C Maputo: CS de Albasine",
+    "latitude": -25.532009,
+    "longitude": 32.450710,
+    "stateName": "Maputo City",
+    "lgaName": "KaMavota",
+    "name": "C Maputo: CS de Albasine",
+    "shortname": "C Map: Albasine",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CS de Albasine",
+      "shortName": "C Map: Albasine",
+      "macAddress": "MAC40B0343D24E7",
+      "hostId": "C Maputo: CS de Alba",
+      "serial": "Cepheid-7382NC7",
+      "gxAlertDeviceId": 2276
+    }]
+  },
+  {
+    "externalId": "C Maputo: CS do Zimpeto",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo City",
+    "name": "C Maputo: CS do Zimpeto",
+    "shortname": "C Map: Zimpeto",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CS do Zimpeto",
+      "shortName": "C Map: Zimpeto",
+      "macAddress": "MAC40B0341D5A5A",
+      "hostId": "C Maputo: CS do Zimo",
+      "serial": "Cepheid-7382NNM",
+      "gxAlertDeviceId": 2277
+    }]
+  },
+  {
+    "externalId": "Inhambaene: CS de Cumbana",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "name": "Inhambaene: CS de Cumbana",
+    "shortname": "Inha: Cumbana",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambaene: CS de Cumbana",
+      "shortName": "Inha: Cumbana",
+      "macAddress": "MAC40B0343D0E16",
+      "hostId": "Inhambaene: CS de Cu",
+      "serial": "Cepheid-7382NKL",
+      "gxAlertDeviceId": 2280
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Homoine",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "name": "Inhambane: CS de Homoine",
+    "shortname": "Inha: Homoine",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS de Homoine",
+      "shortName": "Inha: Homoine",
+      "macAddress": "MAC40B0341D71D7",
+      "hostId": "Inhambane: CS de Hom",
+      "serial": "Cepheid-7382NDK",
+      "gxAlertDeviceId": 2281
+    }]
+  },
+  {
+    "externalId": "Inhambane: HR de Chicuque",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "name": "Inhambane: HR de Chicuque",
+    "shortname": "Inha: Chicuque",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: HR de Chicuque",
+      "shortName": "Inha: Chicuque",
+      "macAddress": "MAC40B0343D2CBE",
+      "hostId": "Inhambane: HR de Chi",
+      "serial": "Cepheid-7382NBZ",
+      "gxAlertDeviceId": 2282
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Morrumbene",
+    "stateName": "Inhambane",
+    "lgaName": "Morrumbene District",
+    "name": "Inhambane: CS de Morrumbene",
+    "shortname": "Inha: Morrumbene",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS de Morrumbene",
+      "shortName": "Inha: Morrumbene",
+      "macAddress": "MAC40B0343D2A65",
+      "hostId": "Inhambane: CS de Mor",
+      "serial": "Cepheid-7382N5J",
+      "gxAlertDeviceId": 2283
+    }]
+  },
+  {
+    "externalId": "Tete: CS Moatize #2",
+    "latitude": -15.520710,
+    "longitude": 32.769699,
+    "stateName": "Tete",
+    "lgaName": "Tsangano District",
+    "name": "Tete: CS Moatize #2",
+    "shortname": "Tete: Moatize #2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Tete: CS Moatize #2",
+      "shortName": "Tete: Moatize #2",
+      "macAddress": "MACDC4A3E831D78",
+      "hostId": "Tete: CS de #2",
+      "serial": "Cepheid-6412MCN",
+      "gxAlertDeviceId": 2284
+    }]
+  },
+  {
+    "externalId": "Nampula: CS Muhala Expansao",
+    "latitude": -14.964370,
+    "longitude": 39.247120,
+    "stateName": "Nampula",
+    "lgaName": "Nampula",
+    "name": "Nampula: CS Muhala Expansao",
+    "shortname": "Nam: CS Muhala",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS Muhala Expansao",
+      "shortName": "Nam: CS Muhala",
+      "macAddress": "MAC40B0343D265B",
+      "hostId": "Nampula-- C.S Muhala",
+      "serial": "Cepheid-7382MYC",
+      "gxAlertDeviceId": 2291
+    }]
+  },
+  {
+    "externalId": "Nampula: CS 25 de Setembro",
+    "latitude": -14.964370,
+    "longitude": 39.247120,
+    "stateName": "Nampula",
+    "lgaName": "Nampula",
+    "name": "Nampula: CS 25 de Setembro",
+    "shortname": "Nam: 25 Setembr ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS 25 de Setembro",
+      "shortName": "Nam: 25 Setembr ",
+      "macAddress": "MAC40B0341D5AE9",
+      "hostId": "Nampula- C.S. 25 de",
+      "serial": "Cepheid-7382NGY",
+      "gxAlertDeviceId": 2292
+    }]
+  },
+  {
+    "externalId": "Nampula: HG Marrere",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "name": "Nampula: HG Marrere",
+    "shortname": "Nam: HG Marrere",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: HG Marrere",
+      "shortName": "Nam: HG Marrere",
+      "macAddress": "MAC40B0341D5A6F",
+      "hostId": "Nampula-- HG Marrere",
+      "serial": "Cepheid-7382NGF",
+      "gxAlertDeviceId": 2293
+    }]
+  },
+  {
+    "externalId": "Nampula: CS Nametil",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "lgaName": "Mogovolas District",
+    "name": "Nampula: CS Nametil",
+    "shortname": "Nam: CS Nametili",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS Nametil",
+      "shortName": "Nam: CS Nametili",
+      "macAddress": "MAC40B0343D2ADD",
+      "hostId": "Nampula- CS Nametili",
+      "serial": "Cepheid-7382N6J",
+      "gxAlertDeviceId": 2294
+    }]
+  },
+  {
+    "externalId": "Nampoula: CS Mecuburi",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "lgaName": "Mecuburi District",
+    "name": "Nampoula: CS Mecuburi",
+    "shortname": "Nam: Mecuburi",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampoula: CS Mecuburi",
+      "shortName": "Nam: Mecuburi",
+      "macAddress": "MAC40B0343D24B5",
+      "hostId": "Nampoula- C:S Metugi",
+      "serial": "Cepheid-7382NCG",
+      "gxAlertDeviceId": 2295
+    }]
+  },
+  {
+    "externalId": "Nampula: CS Murrupula",
+    "stateName": "Nampula",
+    "name": "Nampula: CS Murrupula",
+    "shortname": "Nam: Murrupula",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS Murrupula",
+      "shortName": "Nam: Murrupula",
+      "macAddress": "MAC40B0343D0D5F",
+      "hostId": "Nampula- C.S Murrupu",
+      "serial": "Cepheid-7382NM1",
+      "gxAlertDeviceId": 2296
+    }]
+  },
+  {
+    "externalId": "Nampula: HD de Moma",
+    "latitude": -14.964370,
+    "longitude": 39.247120,
+    "stateName": "Nampula",
+    "lgaName": "Moma District",
+    "name": "Nampula: HD de Moma",
+    "shortname": "Nampula: HD Moma",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: HD de Moma",
+      "shortName": "Nampula: HD Moma",
+      "macAddress": "MAC40B0341D5ABB",
+      "hostId": "Nampula-Hospital Dis",
+      "serial": "Cepheid-7382NKY",
+      "gxAlertDeviceId": 2297
+    }]
+  },
+  {
+    "externalId": "Nampula: CS de Namialo",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "lgaName": "Meconta District",
+    "name": "Nampula: CS de Namialo",
+    "shortname": "Nam: CS Namialo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS de Namialo",
+      "shortName": "Nam: CS Namialo",
+      "macAddress": "MAC40B0344641AC",
+      "hostId": "Nampula: C.S Namialo",
+      "serial": "Cepheid-7382N0W",
+      "gxAlertDeviceId": 2298
+    }]
+  },
+  {
+    "externalId": "Nampula: CS de Memba",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "lgaName": "Memba District",
+    "name": "Nampula: CS de Memba",
+    "shortname": "Nam:CS de Memba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS de Memba",
+      "shortName": "Nam:CS de Memba",
+      "macAddress": "MAC40B0344641B0",
+      "hostId": "Nampula Centro de sa",
+      "serial": "Cepheid-7382N07",
+      "gxAlertDeviceId": 2299
+    }]
+  },
+  {
+    "externalId": "Nampula: CS de Malema",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "lgaName": "Malema District",
+    "name": "Nampula: CS de Malema",
+    "shortname": "Nam:CS Malema",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: CS de Malema",
+      "shortName": "Nam:CS Malema",
+      "macAddress": "MAC40B0343D0DF9",
+      "hostId": "Nampula- CS de Malem",
+      "serial": "Cepheid-7382NHZ",
+      "gxAlertDeviceId": 2302
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Mabote",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "lgaName": "Mabote District",
+    "name": "Inhambane: CS de Mabote",
+    "shortname": "Inh: Mabote",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS de Mabote",
+      "shortName": "Inh: Mabote",
+      "macAddress": "MAC40B0343D265F",
+      "hostId": "cs mabote",
+      "serial": "Cepheid-7382N8K",
+      "gxAlertDeviceId": 2304
+    }]
+  },
+  {
+    "externalId": "Niassa: CS de Metangula",
+    "latitude": -13.058074,
+    "longitude": 36.462368,
+    "stateName": "Niassa",
+    "lgaName": "Metangula",
+    "name": "Niassa: CS de Metangula",
+    "shortname": "Niassa:Metangula",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: CS de Metangula",
+      "shortName": "Niassa:Metangula",
+      "macAddress": "MACA08CFDDE2D0A",
+      "hostId": "Niassa- CS de Metang",
+      "serial": "Cepheid-7382NL3",
+      "gxAlertDeviceId": 2307
+    }]
+  },
+  {
+    "externalId": "Niassa: CS de Massangulo",
+    "stateName": "Niassa",
+    "lgaName": "N'gauma District",
+    "name": "Niassa: CS de Massangulo",
+    "shortname": "Niassa:Masangulo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: CS de Massangulo",
+      "shortName": "Niassa:Masangulo",
+      "macAddress": "MAC40B0343D2B31",
+      "hostId": "Niassa- CS de Massan",
+      "serial": "Cepheid-7382N0T",
+      "gxAlertDeviceId": 2309
+    }]
+  },
+  {
+    "externalId": "Niassa: CS de Mandimba",
+    "latitude": -13.058070,
+    "longitude": 36.462372,
+    "stateName": "Niassa",
+    "lgaName": "Mandimba District",
+    "name": "Niassa: CS de Mandimba",
+    "shortname": "Niassa:Mandimba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: CS de Mandimba",
+      "shortName": "Niassa:Mandimba",
+      "macAddress": "MACA08CFDDE2DCC",
+      "hostId": "Niassa- CS de Mandim",
+      "serial": "Cepheid-7382NLZ",
+      "gxAlertDeviceId": 2310
+    }]
+  },
+  {
+    "externalId": "Niassa: CS de Mecanhelas",
+    "latitude": -13.058074,
+    "longitude": 36.462368,
+    "stateName": "Niassa",
+    "lgaName": "Mecenhelas District",
+    "name": "Niassa: CS de Mecanhelas",
+    "shortname": "Niassa:Mecanhela",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: CS de Mecanhelas",
+      "shortName": "Niassa:Mecanhela",
+      "macAddress": "MAC40B0341D733F",
+      "hostId": "Niassa- CS de Mecanh",
+      "serial": "Cepheid-7382MZR",
+      "gxAlertDeviceId": 2311
+    }]
+  },
+  {
+    "externalId": "Niassa: CS de Maua",
+    "latitude": -13.058074,
+    "longitude": 36.462368,
+    "stateName": "Niassa",
+    "lgaName": "Maua District",
+    "name": "Niassa: CS de Maua",
+    "shortname": "Niassa: CS Maua",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: CS de Maua",
+      "shortName": "Niassa: CS Maua",
+      "macAddress": "MAC40B0341D590C",
+      "hostId": "Niassa- CS de Maua",
+      "serial": "Cepheid-7382NG4",
+      "gxAlertDeviceId": 2312
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: HD Chiure",
+    "latitude": -12.462330,
+    "longitude": 39.362789,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Chiure District",
+    "name": "Cabo Delgado: HD Chiure",
+    "shortname": "CD: HD Chiure",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: HD Chiure",
+      "shortName": "CD: HD Chiure",
+      "macAddress": "MAC40B0341D71E2",
+      "hostId": "Cabo Delgado- HD Chi",
+      "serial": "Cepheid-7382NFB",
+      "gxAlertDeviceId": 2313
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: CS Namuno",
+    "latitude": -12.462326,
+    "longitude": 39.362793,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Namuno District",
+    "name": "Cabo Delgado: CS Namuno",
+    "shortname": "CD: CS Namuno",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: CS Namuno",
+      "shortName": "CD: CS Namuno",
+      "macAddress": "MAC40B0343D0D71",
+      "hostId": "Cabo Delgado - CS Na",
+      "serial": "Cepheid-7382NGL",
+      "gxAlertDeviceId": 2314
+    }]
+  },
+  {
+    "externalId": "Cabo delgado: HR Montepuez #2",
+    "latitude": -12.462326,
+    "longitude": 39.362793,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Montepuez District",
+    "name": "Cabo delgado: HR Montepuez #2",
+    "shortname": "CD: HR Montepuez",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo delgado: HR Montepuez #2",
+      "shortName": "CD: HR Montepuez",
+      "macAddress": "MAC40B0343D2B82",
+      "hostId": "Cabo delgado - HR Mo",
+      "serial": "Cepheid-7382NJF",
+      "gxAlertDeviceId": 2315
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: CS Macomia",
+    "stateName": "Cabo Delgado",
+    "lgaName": "Macomia District",
+    "name": "Cabo Delgado: CS Macomia",
+    "shortname": "CD: CS Macomia",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: CS Macomia",
+      "shortName": "CD: CS Macomia",
+      "macAddress": "MAC40B0341D7504",
+      "hostId": "Cabo Delgado - CS Ma",
+      "serial": "Cepheid-7382N0S",
+      "gxAlertDeviceId": 2317
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: CS de Muatide",
+    "latitude": -12.462326,
+    "longitude": 39.362793,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Muidumbe District",
+    "name": "Cabo Delgado: CS de Muatide",
+    "shortname": "CD: Muatide",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: CS de Muatide",
+      "shortName": "CD: Muatide",
+      "macAddress": "MAC40B0343D88E8",
+      "hostId": "Cabo Delgado",
+      "serial": "Cepheid-7382NG1",
+      "gxAlertDeviceId": 2318
+    }]
+  },
+  {
+    "externalId": "Nampula: Hospital Militar",
+    "latitude": -14.964371,
+    "longitude": 39.247116,
+    "stateName": "Nampula",
+    "lgaName": "Nampula",
+    "name": "Nampula: Hospital Militar",
+    "shortname": "Nam: H Militar",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Nampula: Hospital Militar",
+      "shortName": "Nam: H Militar",
+      "macAddress": "MACC4346B780D9B",
+      "hostId": "Nampula: Hospital Mi",
+      "serial": "Cepheid-448198V",
+      "gxAlertDeviceId": 2322
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: CS Palma",
+    "latitude": -12.462326,
+    "longitude": 39.362793,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Palma District",
+    "name": "Cabo Delgado: CS Palma",
+    "shortname": "CD: CS Palma",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: CS Palma",
+      "shortName": "CD: CS Palma",
+      "macAddress": "MAC7C8BCA1F8924",
+      "hostId": "Cabo Delgado - CS Pa",
+      "serial": "Cepheid-7382NL4",
+      "gxAlertDeviceId": 2323
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado: CS Ancuabe",
+    "stateName": "Cabo Delgado",
+    "lgaName": "Ancuabe",
+    "name": "Cabo Delgado: CS Ancuabe",
+    "shortname": "CD: Ancuabe",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado: CS Ancuabe",
+      "shortName": "CD: Ancuabe",
+      "macAddress": "MAC40B0343D0C6E",
+      "hostId": "Cabo Delgado - CS An",
+      "serial": "Cepheid-7382NLR",
+      "gxAlertDeviceId": 2324
+    }]
+  },
+  {
+    "externalId": "Cabo Delgado:HP Pemba #2",
+    "latitude": -12.462326,
+    "longitude": 39.362793,
+    "stateName": "Cabo Delgado",
+    "lgaName": "Pemba",
+    "name": "Cabo Delgado:HP Pemba #2",
+    "shortname": "CD: Pemba",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Cabo Delgado:HP Pemba #2",
+      "shortName": "CD: Pemba",
+      "macAddress": "MAC40B0341D59D7",
+      "hostId": "Hospital Provincial",
+      "serial": "Cepheid-7382NLK",
+      "gxAlertDeviceId": 2325
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Inharime",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "name": "Inhambane: CS de Inharime",
+    "shortname": "Inh. Inharime",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: CS de Inharime",
+      "shortName": "Inh. Inharime",
+      "macAddress": "MAC40B0341D7604",
+      "hostId": "Inhambane: CS de Inh",
+      "serial": "Cepheid-7382MYG",
+      "gxAlertDeviceId": 2334
+    }]
+  },
+  {
+    "externalId": "Niassa: HD de Marrupa",
+    "latitude": -13.058074,
+    "longitude": 36.462368,
+    "stateName": "Niassa",
+    "lgaName": "Marrupa District",
+    "name": "Niassa: HD de Marrupa",
+    "shortname": "Marrupa",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: HD de Marrupa",
+      "shortName": "Marrupa",
+      "macAddress": "MACECB1D7445B84",
+      "hostId": "Niassa: H D Marrupa",
+      "serial": "Niassa: H D Marrupa",
+      "gxAlertDeviceId": 2338
+    }]
+  },
+  {
+    "externalId": "P Maputo: CS de Matutuine",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo Province",
+    "lgaName": "Matutuine District",
+    "name": "P Maputo: CS de Matutuine",
+    "shortname": "P Map: Matutuine",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "P Maputo: CS de Matutuine",
+      "shortName": "P Map: Matutuine",
+      "macAddress": "MAC40B0343D0B1E",
+      "hostId": "Matutuine",
+      "serial": "Cepheid-7382PH3",
+      "gxAlertDeviceId": 2339
+    }]
+  },
+  {
+    "externalId": "C Maputo: CISPOC",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo City",
+    "lgaName": "KaMavota",
+    "name": "C Maputo: CISPOC",
+    "shortname": "C Map: CISPOC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CISPOC",
+      "shortName": "C Map: CISPOC",
+      "macAddress": "MACA0369FD4B7C7",
+      "hostId": "C Maputo: CISPOC",
+      "serial": "Cepheid-70310VF",
+      "gxAlertDeviceId": 2342
+    }]
+  },
+  {
+    "externalId": "Inhambane: CS de Inhassoro",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "lgaName": "Inhassoro District",
+    "name": "Inhambane: CS de Inhassoro",
+    "shortname": "inh: Inhassora",
+    "timeZoneId": "South Africa Standard Time"
+  },
+  {
+    "externalId": "C Maputo: CS de Xipamanine",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo City",
+    "name": "C Maputo: CS de Xipamanine",
+    "shortname": "C Map: Xipamanin",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CS de Xipamanine",
+      "shortName": "C Map: Xipamanin",
+      "macAddress": "MAC480FCF57EC75",
+      "hostId": "CS Xipamanine",
+      "serial": "Cepheid-6201QQC",
+      "gxAlertDeviceId": 2346
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Chicualacuala",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Chicualacuala District",
+    "name": "Gaza: CS de Chicualacuala",
+    "shortname": "Gaza:Chicuala",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Chicualacuala",
+      "shortName": "Gaza:Chicuala",
+      "macAddress": "MAC40B0341D59D3",
+      "hostId": "Gaza: CS de Chicuala",
+      "serial": "Cepheid-7382NM5",
+      "gxAlertDeviceId": 2348
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Mabalane",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Mabalane District",
+    "name": "Gaza: CS de Mabalane",
+    "shortname": "Gaza: Mabalane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Mabalane",
+      "shortName": "Gaza: Mabalane",
+      "macAddress": "MAC7C8BCA1F72A1",
+      "hostId": "Gaza: CS de Mabalane",
+      "serial": "Cepheid-7382N4D",
+      "gxAlertDeviceId": 2349
+    }]
+  },
+  {
+    "externalId": "Gaza: CS Chigubo - Dindiza",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Chigubo District",
+    "name": "Gaza: CS Chigubo - Dindiza",
+    "shortname": "Gaza: CS Chigubo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS Chigubo - Dindiza",
+      "shortName": "Gaza: CS Chigubo",
+      "macAddress": "MACA08CFDDE2DF8",
+      "hostId": "Gaza: CS Chigubo- Di",
+      "serial": "Cepheid-7382NHH",
+      "gxAlertDeviceId": 2350
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Chalucuane",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Chokwe District",
+    "name": "Gaza: CS de Chalucuane",
+    "shortname": "Gaza:Chalucuane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Chalucuane",
+      "shortName": "Gaza:Chalucuane",
+      "macAddress": "MAC40B0343D24C1",
+      "hostId": "Gaza; CS de Chalucua",
+      "serial": "Cepheid-7382NBP",
+      "gxAlertDeviceId": 2352
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Chicumbane",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Xai-Xai District",
+    "name": "Gaza: CS de Chicumbane",
+    "shortname": "Gaza: Chicumbane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Chicumbane",
+      "shortName": "Gaza: Chicumbane",
+      "macAddress": "MAC40B0341D7549",
+      "hostId": "Gaza: CS de Chicumba",
+      "serial": "Cepheid-7382MY4",
+      "gxAlertDeviceId": 2354
+    }]
+  },
+  {
+    "externalId": "Gaza: CS de Malehice",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Chibuto District",
+    "name": "Gaza: CS de Malehice",
+    "shortname": "Gaza:Malehice",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS de Malehice",
+      "shortName": "Gaza:Malehice",
+      "macAddress": "MAC40B0341D753E",
+      "hostId": "Gaza: CS de Malehice",
+      "serial": "Cepheid-7382MY9",
+      "gxAlertDeviceId": 2355
+    }]
+  },
+  {
+    "externalId": "Gaza: CS XaiXai",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Xai-Xai",
+    "name": "Gaza: CS XaiXai",
+    "shortname": "Gaza: XaiXai",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: CS XaiXai",
+      "shortName": "Gaza: XaiXai",
+      "macAddress": "MAC843497217007",
+      "hostId": "xaixai",
+      "serial": "Cepheid-2399T85",
+      "gxAlertDeviceId": 2360
+    }]
+  },
+  {
+    "externalId": "Gaza: Centro de Saude Marien Ngouaby #2",
+    "latitude": -23.322620,
+    "longitude": 32.801975,
+    "stateName": "Gaza",
+    "lgaName": "Xai-Xai",
+    "name": "Gaza: Centro de Saude Marien Ngouaby #2",
+    "shortname": "Gaza: M. Ngoaby",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Gaza: Centro de Saude Marien Ngouaby #2",
+      "shortName": "Gaza: M. Ngoaby",
+      "macAddress": "MACA08CFDC37D59",
+      "hostId": "Gaza: Centro de Saud",
+      "serial": "Cepheid-71020G0",
+      "gxAlertDeviceId": 2362
+    }]
+  },
+  {
+    "externalId": "Sofala: HC Beira #2",
+    "latitude": -19.060797,
+    "longitude": 34.670574,
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: HC Beira #2",
+    "shortname": "Sofala:Beira #2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: HC Beira #2",
+      "shortName": "Sofala:Beira #2",
+      "macAddress": "MACA0369FD392DB",
+      "hostId": "Sofala: HC Beira #2",
+      "serial": "Cepheid-7021MSL",
+      "gxAlertDeviceId": 2367
+    }]
+  },
+  {
+    "externalId": "Sofala: Ponta Gea #2",
+    "latitude": -19.060797,
+    "longitude": 34.670574,
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: Ponta Gea #2",
+    "shortname": "Sof:Ponta Gea #2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: Ponta Gea #2",
+      "shortName": "Sof:Ponta Gea #2",
+      "macAddress": "MAC6805CA6474AF",
+      "hostId": "Sofala- Ponta Gea #2",
+      "serial": "Cepheid-7382NMZ",
+      "gxAlertDeviceId": 2368
+    }]
+  },
+  {
+    "externalId": "Sofala: HC Beira",
+    "latitude": 34.889000,
+    "longitude": -19.847000,
+    "stateName": "Sofala",
+    "lgaName": "C. Beira",
+    "name": "Sofala: HC Beira",
+    "shortname": "Sofala- HC Beira",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala: HC Beira",
+      "shortName": "Sofala- HC Beira",
+      "macAddress": "MACD4BED98AD917",
+      "hostId": "Hospital Central daB",
+      "serial": "CEPHEID-PC",
+      "gxAlertDeviceId": 2369
+    }]
+  },
+  {
+    "externalId": "Sofala- HC Beira",
+    "name": "Sofala- HC Beira",
+    "shortname": "Sofala- HC Beira",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Sofala- HC Beira",
+      "shortName": "Sofala- HC Beira",
+      "macAddress": "MACD4BED98AD917",
+      "hostId": "Sofala- HC Beira",
+      "serial": "CEPHEID-PC",
+      "gxAlertDeviceId": 2373
+    }]
+  },
+  {
+    "externalId": "Manica- CS Nhacolo - Tambara",
+    "latitude": -19.024347,
+    "longitude": 33.429829,
+    "stateName": "Manica",
+    "lgaName": "Tambara District",
+    "name": "Manica- CS Nhacolo - Tambara",
+    "shortname": "Man- CS Nhacolo",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica- CS Nhacolo - Tambara",
+      "shortName": "Man- CS Nhacolo",
+      "macAddress": "MAC40B0343D2B37",
+      "hostId": "Manica- CS Nhacolo",
+      "serial": "Cepheid-7382N0G",
+      "gxAlertDeviceId": 2374
+    }]
+  },
+  {
+    "externalId": "Manica: CS de Guro",
+    "latitude": -19.024347,
+    "longitude": 33.429829,
+    "stateName": "Manica",
+    "lgaName": "Guro District",
+    "name": "Manica: CS de Guro",
+    "shortname": "Man: CS de Guro",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: CS de Guro",
+      "shortName": "Man: CS de Guro",
+      "macAddress": "MAC40B0343D0E14",
+      "hostId": "Manica- CS de Guro",
+      "serial": "Cepheid-7382NN7",
+      "gxAlertDeviceId": 2375
+    }]
+  },
+  {
+    "externalId": "Manica: CS de Macate",
+    "stateName": "Manica",
+    "lgaName": "C. Chimoio",
+    "name": "Manica: CS de Macate",
+    "shortname": "Man:CS de Macate",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: CS de Macate",
+      "shortName": "Man:CS de Macate",
+      "macAddress": "MACA08CFDDE2DE3",
+      "hostId": "Manica- CS de Macate",
+      "serial": "Cepheid-7382NHQ",
+      "gxAlertDeviceId": 2376
+    }]
+  },
+  {
+    "externalId": "Manica: CS de Vanduzi",
+    "stateName": "Manica",
+    "lgaName": "Manica District",
+    "name": "Manica: CS de Vanduzi",
+    "shortname": "Ma:CS de Vanduzi",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: CS de Vanduzi",
+      "shortName": "Ma:CS de Vanduzi",
+      "macAddress": "MAC40B0343D0BC8",
+      "hostId": "Manica- CS de Vanduz",
+      "serial": "Cepheid-7382NKN",
+      "gxAlertDeviceId": 2377
+    }]
+  },
+  {
+    "externalId": "Manica: HP Chimoio",
+    "latitude": -19.024347,
+    "longitude": 33.429829,
+    "stateName": "Manica",
+    "lgaName": "C. Chimoio",
+    "name": "Manica: HP Chimoio",
+    "shortname": "Manica: HP Chimoio",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Manica: HP Chimoio",
+      "shortName": "Manica: HP Chimoio",
+      "macAddress": "MAC6805CA647277",
+      "hostId": "Manica: HP Chimoio",
+      "serial": "Cepheid-7382N5F",
+      "gxAlertDeviceId": 2379
+    }]
+  },
+  {
+    "externalId": "Inhambane: HD Massinga",
+    "latitude": -22.812304,
+    "longitude": 34.512924,
+    "stateName": "Inhambane",
+    "lgaName": "Massinga District",
+    "name": "Inhambane: HD Massinga",
+    "shortname": "inh: Massinga",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Inhambane: HD Massinga",
+      "shortName": "inh: Massinga",
+      "macAddress": "MACECB1D7445B97",
+      "hostId": "808346-H.DdeMassinga",
+      "serial": "Cepheid-530PD9Y",
+      "gxAlertDeviceId": 2382
+    }]
+  },
+  {
+    "externalId": "C Maputo: CS 1 de Junho",
+    "latitude": -25.532005,
+    "longitude": 32.450706,
+    "stateName": "Maputo City",
+    "lgaName": "KaMavota",
+    "name": "C Maputo: CS 1 de Junho",
+    "shortname": "C Map:1 de Junho",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C Maputo: CS 1 de Junho",
+      "shortName": "C Map:1 de Junho",
+      "macAddress": "MAC7C8BCA07771C",
+      "hostId": "1",
+      "serial": "Cepheid-7382N79",
+      "gxAlertDeviceId": 2383
+    }]
+  },
+  {
+    "externalId": "Niassa: HP de Lichinga #2",
+    "latitude": -13.058074,
+    "longitude": 36.462368,
+    "stateName": "Niassa",
+    "lgaName": "Lichinga",
+    "name": "Niassa: HP de Lichinga #2",
+    "shortname": "Niassa: Lichi 2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "Niassa: HP de Lichinga #2",
+      "shortName": "Niassa: Lichi 2",
+      "macAddress": "MAC40B0341D760F",
+      "hostId": "Niassa- HP de Lichin",
+      "serial": "Cepheid-7382MZP",
+      "gxAlertDeviceId": 2384
+    }]
+  },
+  {
+    "externalId": "C. Maputo: HG Jose Macamo",
+    "latitude": -25.532009,
+    "longitude": 32.450710,
+    "stateName": "Maputo City",
+    "name": "C. Maputo: HG Jose Macamo",
+    "shortname": "C. Map:HG Jose M",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [{
+      "name": "C. Maputo: HG Jose Macamo",
+      "shortName": "C. Map:HG Jose M",
+      "macAddress": "MAC40B0343D0DF7",
+      "hostId": "C. Maputo: HG Jose M",
+      "serial": "Cepheid-7382NK4",
+      "gxAlertDeviceId": 2385
+    }]
+  }
+]

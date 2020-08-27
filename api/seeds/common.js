@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 
 const utils = require('./utils')
-const { partnerTypeToId } = require('../src/shared/dictionary')
 const config = require('../src/config')
 const { query } = require('../src/db')
 
@@ -28,6 +27,7 @@ const {
   allResultSourceToId,
   resultCategoryToId,
   unitToId,
+  partnerTypeToId,
 } = require('../src/shared/dictionary')
 
 /**
@@ -546,6 +546,13 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
+  const piece = await unitToId('Piece')
+  const commonProps = {
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    quantity: 1,
+  }
   if (_.includes(assayExternalIds, 'GxUnknown')) {
     await createAssay(
       knex,
@@ -577,6 +584,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       null,
       null
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HCV Viral Load Cartridge',
+      'GxHcv',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
     await createAssay(
@@ -602,6 +615,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'resultCategoryMtb',
       'Rif',
       'resultCategoryRif'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert TB Cartridge',
+      'GxMtbRif',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
@@ -630,6 +649,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
+    await upsertConsumables(
+      knex,
+      'GeneXpert TB Ultra Cartridge',
+      'GxMtbRifUltra',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
     await createAssay(
@@ -655,6 +680,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HIV-1 Viral Load Cartridge',
+      'GxHiv1Vl',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
     await createAssay(
@@ -672,6 +703,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HIV-1 Qual Cartridge',
+      'GxHiv1Qual',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
     await createAssay(
@@ -688,6 +725,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
       'GP',
       'resultCategoryEbolaGp'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert Ebola Cartridge',
+      'GxEbola',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
@@ -713,6 +756,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ],
       'COVID-19',
       'resultCategoryCovid19'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert COVID-19 Cartridge',
+      'assayGXCovid19',
+      commonProps
     )
   }
 
@@ -1136,7 +1185,7 @@ async function baseGxAlertMigration(
   )
   const patientDataSchema = patientDataCustomFields.length > 0 ? {} : undefined
   patientDataCustomFields.forEach(cf => {
-    patientDataCustomFields[_.camelCase(cf.dbColumn)] = {
+    patientDataSchema[_.camelCase(cf.dbColumn)] = {
       title: cf.title,
       type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
       order: cf.order,
@@ -1147,6 +1196,7 @@ async function baseGxAlertMigration(
     geneXpertAssayExternalIds,
     patientDataSchema
   )
+  returnValue.patientDataSchema = patientDataSchema
   const gxAlertAssayDataMappings = {
     GxMtbRif: 'GeneXpert TB/RIF Result',
     GxMtbRifUltra: 'GeneXpert MTB-RIF Ultra',
