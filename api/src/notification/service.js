@@ -284,7 +284,7 @@ async function getNotifications(request) {
     .leftJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
-    .groupBy('n.createdOn')
+    .groupBy('n.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   const getCount = knex
@@ -305,19 +305,10 @@ async function getNotifications(request) {
         'sum(case when mswm.externalId = "Sent" then 1 else 0 end) as webhookSent'
       ),
       knex.raw(
-        'sum(case when mswm.externalId = "Error" then 1 else 0 end) as webhookError'
-      ),
-      knex.raw(
         'sum(case when mssms.externalId = "Sent" then 1 else 0 end) as smsSent'
       ),
       knex.raw(
-        'sum(case when mssms.externalId = "Error" then 1 else 0 end) as smsError'
-      ),
-      knex.raw(
         'sum(case when msem.externalId = "Sent" then 1 else 0 end) as emailSent'
-      ),
-      knex.raw(
-        'sum(case when msem.externalId = "Error" then 1 else 0 end) as emailError'
       ),
       'n.createdOn as date',
       'n.id',

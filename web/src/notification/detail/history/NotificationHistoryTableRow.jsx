@@ -17,15 +17,6 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
   >
-    <TableCell
-      className={cssClasses('TableCell', {
-        'TableCell--hasError': delivery.emailError > 0 || delivery.smsError > 0,
-      })}
-    >
-      {(delivery.emailError > 0 || delivery.smsError > 0) && (
-        <FaCircle className={cssClasses('FaCircle')} />
-      )}
-    </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {formatDateTime(delivery.date)}
     </TableCell>
@@ -35,22 +26,8 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {delivery.emailSent}
     </TableCell>
-    <TableCell
-      className={cssClasses('TableCell', {
-        'TableCell--hasError': delivery.emailError > 0,
-      })}
-    >
-      {delivery.emailError}
-    </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {delivery.smsSent}
-    </TableCell>
-    <TableCell
-      className={cssClasses('TableCell', {
-        'TableCell--hasError': delivery.smsError > 0,
-      })}
-    >
-      {delivery.smsError}
     </TableCell>
   </TableRow>
 )

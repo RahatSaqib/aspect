@@ -84,20 +84,11 @@ const routes = [
                 webhookSent: Joi.number().description(
                   'The number of webhook notification sent'
                 ),
-                webhookError: Joi.number().description(
-                  'The number of webhook Error notification Received'
-                ),
                 smsSent: Joi.number().description(
                   'The number of sms notification sent'
                 ),
-                smsError: Joi.number().description(
-                  'The number of sms Error notification Received'
-                ),
                 emailSent: Joi.number().description(
                   'The number of email notification sent'
-                ),
-                emailError: Joi.number().description(
-                  'The number of email Error notification Received'
                 ),
                 date: Joi.date().description(
                   'The date notification was sent or received'

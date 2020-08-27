@@ -7,7 +7,8 @@ import Card from '@material-ui/core/Card'
 import TableBody from '@material-ui/core/TableBody'
 import { useParams } from 'react-router-dom'
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useQuery } from 'react-query'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import NotificationDetailBackBar from '../NotificationDetailBackBar'
 import { fetchNotificationsHistory } from '../../NotificationRedux'
@@ -40,25 +41,27 @@ export const NotificationDetailHistory = ({
   match,
   // --- injected by recompose ---
 }) => {
-  const dispatch = useDispatch()
   const { notificationId } = useParams()
   const { pageAt, pageSize } = makeSortPageSelector()({ location })
-
   const notification = useSelector(state => state.notification)
+  const { data, isError, error } = useQuery(
+    ['notificationHistory', { notificationId, pageSize, pageAt }],
+    fetchNotificationsHistory
+  )
 
-  useEffect(() => {
-    dispatch(fetchNotificationsHistory({ notificationId, pageSize, pageAt }))
-  }, [dispatch, notificationId, pageSize, pageAt])
+  if (isError) {
+    throw new Error(error)
+  }
 
   return (
     <div>
-      <Helmet title="TB MTB+ Rif+ in Western Region" />
+      <Helmet title={notification?.items?.byId.toJS()[notificationId]?.name} />
       <NotificationDetailBackBar
         intl={intl}
         history={history}
         location={location}
         match={match}
-        title="TB MTB+ Rif+ in Western Region"
+        title={notification?.items?.byId.toJS()[notificationId]?.name}
       />
       <section
         className={cssClasses('Section', 'Section--first', 'Section--last')}
@@ -70,10 +73,6 @@ export const NotificationDetailHistory = ({
           >
             <NotificationHistoryDataTableHead
               columns={[
-                {
-                  key: 'id',
-                  label: '',
-                },
                 {
                   key: 'date',
                   label: 'Date',
@@ -87,29 +86,19 @@ export const NotificationDetailHistory = ({
                   label: 'Email sent',
                 },
                 {
-                  key: 'email-errors',
-                  label: 'Email errors',
-                },
-                {
                   key: 'sms-sent',
-                  label: 'SMSes sent',
-                },
-                {
-                  key: 'sms-errors',
-                  label: 'SMS errors',
+                  label: 'SMS sent',
                 },
               ]}
             />
             <TableBody>
-              {notification?.items?.currentIdList
-                .map(id => notification?.items?.byId.get(id))
-                .map(delivery => (
-                  <NotificationHistoryDataTableRow
-                    key={delivery.get('id')}
-                    intl={intl}
-                    delivery={delivery.toJS()}
-                  />
-                ))}
+              {data?.notificationHistory.map(delivery => (
+                <NotificationHistoryDataTableRow
+                  key={delivery.id}
+                  intl={intl}
+                  delivery={delivery}
+                />
+              ))}
             </TableBody>
           </NotificationHistoryDataTable>
           <BrowseTablePaginator
@@ -117,7 +106,7 @@ export const NotificationDetailHistory = ({
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}
-            total={notification?.table?.get('total')}
+            total={data?.total || 0}
             pageAt={pageAt}
             pageSize={pageSize}
           />

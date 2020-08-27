@@ -65,68 +65,49 @@ function requestNotificationHistory(sortCol, sortDir, page, size, filters) {
   }
 }
 
-function receiveNotificationHistory(json) {
-  return {
-    type: types.RECEIVE_NOTIFICATION_HISTORY,
-    items: json.data,
-    total: json.total,
-  }
-}
-
-function rejectNotificationHistory() {
-  return {
-    type: types.REJECTED_NOTIFICATION_HISTORY,
-  }
-}
-
-export function fetchNotificationsHistory({
-  notificationId,
-  pageAt = 0,
-  pageSize = 10,
-}) {
-  return dispatch => {
-    dispatch(requestNotificationHistory(notificationId))
-
-    return aspectFetch(
-      `/notification/history/${notificationId}?${stringify({
-        page: pageAt,
-        size: pageSize,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.fetchNotificationHistory.GET.400.title',
-                defaultMessage: 'Searching Notification History Failed',
-              },
-            })
-          ),
-          403: errorInsufficientScope(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.fetchNotificationHistory.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.fetchNotificationHistory.GET.default.title',
-                defaultMessage: 'Loading Notifications Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json => dispatch(receiveNotificationHistory(json)))
-      .catch(() => dispatch(rejectNotificationHistory()))
-  }
+export function fetchNotificationsHistory(
+  key,
+  { notificationId, pageAt = 0, pageSize = 10 }
+) {
+  return aspectFetch(
+    `/notification/history/${notificationId}?${stringify({
+      page: pageAt,
+      size: pageSize,
+    })}`,
+    {
+      errorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchNotificationHistory.GET.400.title',
+              defaultMessage: 'Searching Notification History Failed',
+            },
+          })
+        ),
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchNotificationHistory.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.fetchNotificationHistory.GET.default.title',
+              defaultMessage: 'Loading Notifications Failed',
+            },
+          })
+        ),
+      },
+    }
+  )
+    .then(({ data, total }) => ({ notificationHistory: data, total }))
+    .catch(err => err)
 }
 export function fetchNotifications(
   filtersParams,
