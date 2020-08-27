@@ -323,7 +323,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['device']) ||
+          renderRedirectToNotFound(props, ['browse', 'device']) ||
           renderDeviceList
         }
       />
@@ -332,7 +332,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['device']) ||
+          renderRedirectToNotFound(props, ['browse', 'device']) ||
           renderDeviceDetail
         }
       />
@@ -341,7 +341,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['case:edit']) ||
+          renderRedirectToNotFound(props, ['browse', 'case:edit']) ||
           renderCaseDetails
         }
       />
@@ -350,7 +350,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['patient:edit']) ||
+          renderRedirectToNotFound(props, ['browse', 'patient:edit']) ||
           renderClinicalHistory
         }
       />
@@ -360,7 +360,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['deviceApiKey']) ||
+          renderRedirectToNotFound(props, ['browse', 'deviceApiKey']) ||
           renderDeviceApiKeyList
         }
       />
@@ -371,7 +371,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['case']) ||
+          renderRedirectToNotFound(props, ['browse', 'case']) ||
           renderCaseList
         }
       />
@@ -382,7 +382,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['router']) ||
+          renderRedirectToNotFound(props, ['browse', 'router']) ||
           renderRouterList
         }
       />
@@ -391,7 +391,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['router']) ||
+          renderRedirectToNotFound(props, ['browse', 'router']) ||
           renderRouterDetail
         }
       />
@@ -402,7 +402,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['reporter']) ||
+          renderRedirectToNotFound(props, ['browse', 'reporter']) ||
           renderReporterList
         }
       />
@@ -413,7 +413,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['result']) ||
+          renderRedirectToNotFound(props, ['browse', 'result']) ||
           renderResultList
         }
       />
@@ -422,7 +422,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['result:edit']) ||
+          renderRedirectToNotFound(props, ['browse', 'result:edit']) ||
           renderResultDetail
         }
       />
@@ -433,7 +433,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['site']) ||
+          renderRedirectToNotFound(props, ['browse', 'site']) ||
           renderSiteList
         }
       />
@@ -442,7 +442,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['site']) ||
+          renderRedirectToNotFound(props, ['browse', 'site']) ||
           renderSiteDetail
         }
       />
@@ -453,7 +453,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['person']) ||
+          renderRedirectToNotFound(props, ['browse', 'person']) ||
           renderPersonList
         }
       />
@@ -462,7 +462,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['person:edit']) ||
+          renderRedirectToNotFound(props, ['browse', 'person:edit']) ||
           renderPersonDetail
         }
       />
@@ -473,7 +473,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['inventory']) ||
+          renderRedirectToNotFound(props, ['browse', 'inventory']) ||
           renderInventoryItemsList
         }
       />
@@ -484,7 +484,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['notification']) ||
+          renderRedirectToNotFound(props, ['browse', 'notification']) ||
           renderNotificationList
         }
       />
@@ -494,7 +494,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['notification:edit']) ||
+          renderRedirectToNotFound(props, ['browse', 'notification:edit']) ||
           renderNotificationDetail
         }
       />
@@ -505,7 +505,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['report'])
+          renderRedirectToNotFound(props, ['browse', 'report'])
         }
       />
 
