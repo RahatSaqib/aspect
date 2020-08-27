@@ -8,17 +8,63 @@ import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
 import { buildMessagesFromI18nKeys } from './Helpers'
+import {
+  getTimePeriod,
+  getAllDaysInCurrentMonth,
+} from '../Graphs/Helpers/Formatters/datetime'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
-const buildWidgetToLinkParams = (link, linkParams) => {
-  const params = JSON.parse(linkParams)
-  if (Object.keys(params).length !== 0 && params.constructor === Object) {
-    for (const [key, value] of Object.entries(params)) {
-      console.log(`${key}: ${value}`)
-    }
+const buildDateRange = term => {
+  let dateRange
+  console.log(term)
+
+  switch (true) {
+    case term === 'last30Days':
+      dateRange = {
+        minDate: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
+        maxDate: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+      }
+      break
+
+    case term === 'currentMonth':
+      dateRange = {
+        minDate: getAllDaysInCurrentMonth().start,
+        maxDate: getAllDaysInCurrentMonth(true).end,
+      }
+      break
+
+    default:
+      dateRange = {}
+      break
   }
 
+  return dateRange
+}
+
+const buildWidgetToLinkParams = (link, linkParams) => {
+  const inParams = JSON.parse(linkParams)
+  if (Object.keys(inParams).length !== 0 && inParams.constructor === Object) {
+    let tempParams = {}
+    for (const [key, value] of Object.entries(inParams)) {
+      // console.log(`${key}: ${value}`)
+
+      switch (true) {
+        case key === 'dateRange':
+          tempParams = { ...tempParams, ...buildDateRange(value) }
+          break
+
+        default:
+          tempParams[key] = value
+          break
+      }
+    }
+    const newLink = `${link}?filters=${encodeURIComponent(
+      new URLSearchParams(tempParams).toString()
+    )}`
+    console.log(newLink)
+    return newLink
+  }
   return link
 }
 

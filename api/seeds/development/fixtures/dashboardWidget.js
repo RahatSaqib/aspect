@@ -30,7 +30,7 @@ module.exports = {
       link: '/browse/device',
       linkParams: {
         deviceTypeId: 2,
-        dateRange: WIDGET_FILTER_KEYS.LAST_THIRTY_DAYS,
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
       },
       sortOrder: 1,
       externalId: 'devicesTitle',

@@ -1,3 +1,6 @@
+/**
+ * TODO: Needs a healthy refactor!
+ */
 import classnames from 'classnames/bind'
 import _ from 'lodash'
 import Immutable from 'immutable'
@@ -119,6 +122,10 @@ const FILTERS_CONFIG = [
   {
     siteName: true,
     requiredPermissions: ['site:view'],
+  },
+  {
+    deviceName: true,
+    requiredPermissions: ['device'],
   },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },

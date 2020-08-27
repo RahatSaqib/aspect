@@ -30,6 +30,7 @@ const WIDGET_GROUP_KEYS = {
 
 const WIDGET_FILTER_KEYS = {
   LAST_THIRTY_DAYS: 'last30Days',
+  CURRENT_MONTH: 'currentMonth',
 }
 
 module.exports = {
@@ -80,6 +81,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 1,
       externalId: 'dashboardWidgetTestsPerDayTitle',
       description: 'Average number of tests per weekday conducted this month.',
@@ -180,6 +185,10 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
+      linkParams: {
+        deviceTypeId: 2,
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 0,
       externalId: 'utilizationRate',
       description:
