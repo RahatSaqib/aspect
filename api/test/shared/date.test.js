@@ -5,12 +5,12 @@ describe('Shared Date Utility Functions', () => {
   describe('getLocalDateTimeStringInUtc', () => {
     it('should return null if no date is passed', () => {
       const utcDateTime = getLocalDateTimeStringInUtc(null)
-      assert.equal(utcDateTime, null)
+      assert.isNull(utcDateTime)
     })
 
     it('should return null if something other than a string was passed', () => {
       const utcDateTime = getLocalDateTimeStringInUtc(new Date())
-      assert.equal(utcDateTime, null)
+      assert.isNull(utcDateTime)
     })
 
     it('should return datetime in UTC', () => {

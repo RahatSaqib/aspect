@@ -4474,6 +4474,10 @@ describe('Device API routes for GxAlert Device', () => {
                 startedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
               )
+              const startedOnDateInUtc = getLocalDateTimeStringInUtc(
+                startedOn.replace('Z', ''),
+                'America/New_York'
+              )
 
               const incompleteResultPayload = _.merge(
                 {},
@@ -4515,7 +4519,7 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: incompleteResultExternalId,
                 resultCategory1: 'NoResult',
                 resultCategory2: 'NoResult',
-                startedOn: startedOnDate,
+                startedOn: startedOnDateInUtc,
                 endedOn: null,
                 resultData: {
                   resultText: 'NO RESULT',
@@ -4527,6 +4531,11 @@ describe('Device API routes for GxAlert Device', () => {
                 endedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
               )
+              const endedOnDateInUtc = getLocalDateTimeStringInUtc(
+                endedOn.replace('Z', ''),
+                'America/New_York'
+              )
+
               const completeResultPayload = _.merge(
                 {},
                 incompleteResultPayload,
@@ -4557,8 +4566,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'Indeterminate',
-                startedOn: startedOnDate,
-                endedOn: endedOnDate,
+                startedOn: startedOnDateInUtc,
+                endedOn: endedOnDateInUtc,
                 resultData: {
                   resultText: 'DETECTED MEDIUM|INDETERMINATE|',
                 },
@@ -4584,11 +4593,21 @@ describe('Device API routes for GxAlert Device', () => {
                 startedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
               )
+              const startedOnDateInUtc = getLocalDateTimeStringInUtc(
+                startedOn.replace('Z', ''),
+                'America/New_York'
+              )
+
               const endedOnDate = addMinutes(startedOnDate, 103)
               const endedOn = dateFormat(
                 endedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
               )
+              const endedOnDateInUtc = getLocalDateTimeStringInUtc(
+                endedOn.replace('Z', ''),
+                'America/New_York'
+              )
+
               const completeResultPayload = _.merge(
                 {},
                 basicDevicePayload,
@@ -4631,8 +4650,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn: startedOnDate,
-                endedOn: endedOnDate,
+                startedOn: startedOnDateInUtc,
+                endedOn: endedOnDateInUtc,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -4654,8 +4673,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn: startedOnDate,
-                endedOn: endedOnDate,
+                startedOn: startedOnDateInUtc,
+                endedOn: endedOnDateInUtc,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -4676,8 +4695,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn: startedOnDate,
-                endedOn: endedOnDate,
+                startedOn: startedOnDateInUtc,
+                endedOn: endedOnDateInUtc,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -4698,8 +4717,8 @@ describe('Device API routes for GxAlert Device', () => {
                 externalId: completeResultExternalId,
                 resultCategory1: 'Detected',
                 resultCategory2: 'NoResult',
-                startedOn: startedOnDate,
-                endedOn: endedOnDate,
+                startedOn: startedOnDateInUtc,
+                endedOn: endedOnDateInUtc,
                 resultData: {
                   resultText: 'MTB DETECTED MEDIUM|NO RESULT',
                 },
