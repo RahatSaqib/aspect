@@ -17,8 +17,6 @@ const cssClasses = classnames.bind(require('./Widgets.css'))
 
 const buildDateRange = term => {
   let dateRange
-  console.log(term)
-
   switch (true) {
     case term === 'last30Days':
       dateRange = {
@@ -38,7 +36,6 @@ const buildDateRange = term => {
       dateRange = {}
       break
   }
-
   return dateRange
 }
 
