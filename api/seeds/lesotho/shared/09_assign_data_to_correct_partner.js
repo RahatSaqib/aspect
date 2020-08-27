@@ -15,28 +15,6 @@ module.exports = async function (
   customFieldsFromGxAlert,
   diseaseExternalId
 ) {
-  await baseGxAlertMigration(
-    {
-      admin: {
-        name: adminName,
-      },
-      partner: {
-        name: partnerName,
-        serverUrl: 'https://lesotho.aspect.id',
-      },
-      geographyFromGxAlert,
-      gxAlertDevice: {
-        deviceApiKeyToken: gxAlertDeviceApiKey,
-      },
-      sitesFromGxAlert,
-      jobFunctions,
-      contactsFromGxAlert,
-      geneXpertAssayExternalIds,
-      customFieldsFromGxAlert,
-    },
-    knex
-  )
-
   const { id: partnerId } = await knex('Partner')
     .where('name', partnerName)
     .first('id')
@@ -65,4 +43,26 @@ module.exports = async function (
     .where('jf.partnerId', partnerId)
     .pluck('jc.id')
   await knex('JobContext').whereIn('id', jobContextIds).update({ diseaseId })
+
+  await baseGxAlertMigration(
+    {
+      admin: {
+        name: adminName,
+      },
+      partner: {
+        name: partnerName,
+        serverUrl: 'https://lesotho.aspect.id',
+      },
+      geographyFromGxAlert,
+      gxAlertDevice: {
+        deviceApiKeyToken: gxAlertDeviceApiKey,
+      },
+      sitesFromGxAlert,
+      jobFunctions,
+      contactsFromGxAlert,
+      geneXpertAssayExternalIds,
+      customFieldsFromGxAlert,
+    },
+    knex
+  )
 }
