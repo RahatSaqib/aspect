@@ -163,14 +163,16 @@ export const InventoryStatus = ({
       icon={<MdAssignmentTurnedIn className={cssClasses('Title__Icon')} />}
     />
     <div>
-      <Unit sm="1-2" lg="1-4">
-        <CountryWithPoints
-          countryIsoAlpha2Code={countryIsoAlpha2Code}
-          fill={fill}
-          points={points}
-        />
-      </Unit>
-      <Unit sm="1-2">
+      {countryIsoAlpha2Code && (
+        <Unit sm="1-2" lg="1-4">
+          <CountryWithPoints
+            countryIsoAlpha2Code={countryIsoAlpha2Code}
+            fill={fill}
+            points={points}
+          />
+        </Unit>
+      )}
+      <Unit sm={countryIsoAlpha2Code ? '1-2' : '3-4'}>
         <div
           className={cssClasses('SummaryItemsBlocks--horizontal-scrollable')}
         >
@@ -191,7 +193,7 @@ export const InventoryStatus = ({
           ))}
         </div>
       </Unit>
-      <Unit sm="1-2" lg="1-4">
+      <Unit sm={countryIsoAlpha2Code ? '1-2' : '1-4'} lg="1-4">
         <div className={cssClasses('ButtonsBlock')}>
           <Button
             className={cssClasses('Button', 'Button--receive')}
