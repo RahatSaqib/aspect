@@ -31,7 +31,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const Status = ({ history, location, colorDemo }) => {
   const intl = useIntl()
   const { hivResults } = hivGraphs
-  const { tbResults } = tbGraphs
+  const { tbDetected, tbResults } = tbGraphs
   const { treatmentStatus } = treatmentStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
   const {
@@ -43,8 +43,8 @@ const Status = ({ history, location, colorDemo }) => {
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2Code = useSelector(({ user }) =>
-    user.culture.substring(3, 5)
+  const countryIsoAlpha2Code = useSelector(
+    ({ user }) => user.countryAbbreviation
   )
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
@@ -72,18 +72,30 @@ const Status = ({ history, location, colorDemo }) => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
-      <SummaryStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--summary')}
-        dashboard="home"
-      />
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          <SummaryStatus
+            intl={intl}
+            history={history}
+            location={location}
+            className={cssClasses('Section--summary')}
+            dashboard="home"
+          />
+        </PermissionsProvider>
+      </ErrorBoundary>
 
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={tbDetected} />
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>

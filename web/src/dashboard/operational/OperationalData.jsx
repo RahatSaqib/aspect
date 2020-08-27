@@ -39,13 +39,17 @@ export const OperationalData = ({ intl, history, location, loading }) => {
         <div className={cssClasses({ 'Content--loading': loading })} />
       ) : (
         <Fragment>
-          <SummaryStatus
-            intl={intl}
-            history={history}
-            location={location}
-            className={cssClasses('Section--summary')}
-            dashboard="operational"
-          />
+          <ErrorBoundary>
+            <PermissionsProvider permissions={['operationalData']}>
+              <SummaryStatus
+                intl={intl}
+                history={history}
+                location={location}
+                className={cssClasses('Section--summary')}
+                dashboard="operational"
+              />
+            </PermissionsProvider>
+          </ErrorBoundary>
 
           <ErrorBoundary>
             <PermissionsProvider permissions={['operationalData']}>

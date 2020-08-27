@@ -267,6 +267,10 @@ export function refreshStart() {
             refresh: json.refresh,
             clientId: json.clientId,
             countryId: json.countryId,
+            culture: json.culture,
+            countryAbbreviation: json.countryAbbreviation,
+            timezoneId: json.timezone,
+            displayPreferences: Immutable.Map(json.displayPreferences),
           })
         )
       )

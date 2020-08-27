@@ -25,6 +25,14 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsTB.title',
     defaultMessage: 'TB Rif Resistance',
   },
+  clinicalIndicatorsTBDetected: {
+    id: 'pages.Status.clinicalIndicatorsTBDetected.title',
+    defaultMessage: 'TB Detected',
+  },
+  clinicalIndicatorsTBDetectedPie: {
+    id: 'pages.Status.clinicalIndicatorsTBDetectedPie.title',
+    defaultMessage: 'Average monthly TB Detected Rate',
+  },
   clinicalIndicatorsTBPieLegend: {
     id: 'pages.Status.clinicalIndicatorsTB.pie',
     defaultMessage: 'Average Monthly Rif Resistance Rate',

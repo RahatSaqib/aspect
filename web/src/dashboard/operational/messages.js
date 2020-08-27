@@ -70,6 +70,16 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.withinTwoHoursOfTesting',
     defaultMessage: 'Within 2 hours of testing',
   },
+  // Widget sms sent this month
+
+  dashboardWidgetSmsSentTitle: {
+    id: 'pages.Status.dashboardWidgetSmsSentTitle',
+    defaultMessage: 'Number of SMS Sent MTD',
+  },
+  dashboardWidgetSmsSentDescription: {
+    id: 'pages.Status.dashboardWidgetSmsSentDescription',
+    defaultMessage: 'The total number of text messages sent in the month',
+  },
 })
 
 export default messages

@@ -3,15 +3,15 @@ import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
 const tbGraphs = {
-  tbResults: {
-    id: 'tbResults',
-    title: 'clinicalIndicatorsTBTitle',
+  tbDetected: {
+    id: 'tbDetected',
+    title: 'clinicalIndicatorsTBDetected',
     assays: ['GxMtbRif', 'GxMtbRifUltra'],
     componentSize: 'full',
     group: 'tb',
     graphType: [
       {
-        id: 'tbByCategory1Monthly',
+        id: 'tbResultsByCategory1Monthly',
         component: BarGraph,
         type: 'bar',
         size: 8,
@@ -26,6 +26,7 @@ const tbGraphs = {
         },
         indexBy: 'month',
         keyToConsume: 'resultCategory1',
+        filterBy: {},
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
@@ -33,7 +34,7 @@ const tbGraphs = {
         formatDate: 'MMM yy',
       },
       {
-        id: 'tbByCategory1Aggregate',
+        id: 'tbResultsByCategory1Aggregate',
         component: PieGraph,
         type: 'pie',
         size: 4,
@@ -52,8 +53,70 @@ const tbGraphs = {
         formatDate: 'MMM yy',
         averages: {
           showTotal: false,
+          title: 'clinicalIndicatorsTBDetectedPie',
+          key: ['Detected'],
+          subTitle: 'clinicalIndicatorsPieSubLegend',
+        },
+      },
+    ],
+  },
+  tbResults: {
+    id: 'tbResults',
+    title: 'clinicalIndicatorsTBTitle',
+    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    componentSize: 'full',
+    group: 'tb',
+    graphType: [
+      {
+        id: 'tbByCategory1Monthly',
+        component: BarGraph,
+        type: 'bar',
+        size: 8,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: 'result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['month', 'resultCategory2', 'resultCategory1'],
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'month',
+        keyToConsume: 'resultCategory2',
+        filterBy: {
+          resultCategory1: { values: ['Detected'] },
+        },
+        tickValuesYShape: 'none',
+        tickValuesXShape: 'all',
+        displayMethod: 'percentage',
+        displayLegend: true,
+        formatDate: 'MMM yy',
+      },
+      {
+        id: 'tbByCategory1Aggregate',
+        component: PieGraph,
+        type: 'pie',
+        size: 4,
+        componentClasses: ['piegraph__container'],
+        api: {
+          endpoint: 'result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['resultCategory2', 'resultCategory1'],
+            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'cnt',
+        keyToConsume: 'resultCategory2',
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        filterBy: {
+          resultCategory1: { values: ['Detected'] },
+        },
+        averages: {
+          showTotal: false,
           title: 'clinicalIndicatorsTBPieLegend',
-          key: ['NotDetected'],
+          key: ['Detected', 'Indeterminate'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },

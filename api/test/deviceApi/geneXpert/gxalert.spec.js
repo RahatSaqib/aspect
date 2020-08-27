@@ -3438,7 +3438,7 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(result2Category2.externalId, 'Indeterminate')
       }))
 
-    it('should map result categories based on result text', () =>
+    it('should map result categorizes based on result text', () =>
       runTest(async () => {
         const sendResult = async (
           resultId,
