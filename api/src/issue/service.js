@@ -136,7 +136,7 @@ function onIssueEventTrigger(
 
 function onIssueEventResolve(issueType) {
   return async (action, { messageContext: context }) => {
-    // console.log('onIssueEventResolve--------------')
+    console.log('onIssueEventResolve--------------')
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
