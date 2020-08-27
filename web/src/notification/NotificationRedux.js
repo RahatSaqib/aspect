@@ -244,19 +244,6 @@ export default function notificationReducer(state = initialState, action) {
         mutState.set('items', mutState.get('items').clear())
         mutState.set('table', mutState.get('table').clear())
       })
-    case types.REQUEST_NOTIFICATION_HISTORY:
-      return state.set('table', requestTable(state.table, action))
-    case types.RECEIVE_NOTIFICATION_HISTORY:
-      return state.withMutations(mutState => {
-        const immutList = Immutable.fromJS(action.items)
-        mutState.set('items', receiveList(mutState.items, immutList))
-        mutState.set('table', receiveTableItems(mutState.table, action.total))
-      })
-    case types.REJECTED_NOTIFICATION_HISTORY:
-      return state.withMutations(mutState => {
-        mutState.set('notificationHistory', mutState.get('items').clear())
-        mutState.set('table', mutState.get('table').clear())
-      })
     default:
       return state
   }
