@@ -72,7 +72,7 @@ const Status = ({ history, location, colorDemo }) => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           <SummaryStatus
             intl={intl}
@@ -82,33 +82,33 @@ const Status = ({ history, location, colorDemo }) => {
             dashboard="home"
           />
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbDetected} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbResults} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           {assays && assays.length ? (
             <GraphsContainer
@@ -117,7 +117,7 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
