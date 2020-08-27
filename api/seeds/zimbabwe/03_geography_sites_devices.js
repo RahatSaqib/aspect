@@ -237,7 +237,6 @@ async function seed(knex) {
     })
   )
 
-  // TODO: ZIMBABWE Determine Device Capacities for Hain GenoScan and BD MGIT
   await addDeviceCapacities(knex)
   await setCapacityForExistingDevices(knex)
 }
