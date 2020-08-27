@@ -31,7 +31,7 @@
     "title": "Residencia do Doente / Ponto de Referência",
     "type": "string",
     "order": 50,
-    "dbColumn": "PatientStreet",
+    "dbColumn": "PatientAddress",
     "testType": null
   },
   {
