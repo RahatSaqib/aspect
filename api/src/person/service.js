@@ -34,7 +34,9 @@ async function listPeople(request) {
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .modify(queryBuilder => {
       if (dataConstraints.partner.id) {
-        queryBuilder.where('p.partnerId', dataConstraints.partner.id)
+        queryBuilder
+          .whereNull('p.partnerId')
+          .orWhere('p.partnerId', dataConstraints.partner.id)
       }
     })
 
