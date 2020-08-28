@@ -791,6 +791,7 @@ async function onResultUpdated(
   }
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
+    console.log('pase por aqui')
     // we've already created device logs originating here, so ignore
     return context.resultLogged(resultId, deviceLogId, userId)
   }
@@ -799,6 +800,8 @@ async function onResultUpdated(
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that
     // the updates will be downloaded
+    console.log('deberia pasar pase por aqui')
+
     const createdOn = new Date()
     const [deviceLogId] = await knex('Result')
       .where({ id: resultId })

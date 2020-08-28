@@ -1,18 +1,19 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
+const { subDays } = require('date-fns')
 const { issueTypeToId } = require('../../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { postToDeviceApi } = require('../utils')
 const { knex } = require('../../../src/db')
-
+const { basicResultPayload } = require('./geneXpertConstants')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceModuleDisabled } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Integration test for device status', () => {
+describe.only('Integration test for device status', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -26,13 +27,108 @@ describe('Integration test for device status', () => {
     deviceName,
     macAddress,
   })
+
   describe('module disable issue', () => {
     beforeEach(context.beforeRegisterAndSetDevice)
-    afterEach(context.afterCleanUp)
+    // afterEach(context.afterCleanUp)
+    it.only('should create new issue for module disabled, then one for module replaced and change the status of the module disabled issue.', async () => {
+      const { basicDevicePayload } = context
+      const { deviceAuth } = context
+      const firstPayload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          startedOn: subDays(new Date(), 2),
+          endedOn: subDays(new Date(), 2),
+          instrument: {
+            serial: '123456',
+            module: {
+              serial: '234',
+              name: 'A1',
+            },
+          },
+        },
+      })
+
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: firstPayload,
+      })
+
+      assert.equal(response.statusCode, 200)
+
+      const responseDeviceWithDisabledModule = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          configuration: {
+            data: {
+              disabledModules: [
+                {
+                  SiteSerialNumber: '234',
+                  UserId: '1',
+                  Creation: '2020-08-18T17:08:22.515Z',
+                },
+              ],
+            },
+          },
+        }),
+      })
+      const waitForModuleDisabledIssue = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2020-08-18T17:08:22.515Z'
+        )
+      )
+      await waitForModuleDisabledIssue
+      await waitForIdle()
+
+      const issues = await knex('Issue')
+        .where({ deviceId: response.body.device.id })
+        .orderBy('createdOn', 'DESC')
+        .select()
+      console.log('issueModuleDisabled', issues)
+
+      assert.equal(responseDeviceWithDisabledModule.statusCode, 200)
+
+      const now = subDays(new Date(), 1)
+      const responseWithIssue = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, basicResultPayload, {
+          result: {
+            id: 'UNIQUE-RESULT-ID2',
+            startedOn: now,
+            endedOn: now,
+            sample: {
+              id: 'ANOTHERSAMPLE-ID',
+            },
+            patient: {
+              id: 'another-patient',
+            },
+            instrument: {
+              serial: '123456',
+              module: {
+                serial: '654321',
+                name: 'A1',
+              },
+            },
+          },
+        }),
+      })
+      await waitForIdle(5000)
+      const results = await knex('Result').where({
+        deviceId: responseWithIssue.body.device.id,
+      })
+      const issues2 = await knex('Issue')
+        .where({ deviceId: response.body.device.id })
+        .orderBy('createdOn', 'DESC')
+        .select()
+      console.log('issueModuleReplaced', results, issues2)
+
+      assert.equal(responseWithIssue.statusCode, 200)
+    })
     it('should create new issue per module disabled ', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
-
       // Post to deviceApi to ensure the device in in Aspect
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -115,6 +211,7 @@ describe('Integration test for device status', () => {
           },
         }),
       })
+      assert.equal(response.statusCode, 200)
       const deviceId = response.body.device.id
       const waitForModuleDisabledIssue1 = waitForAction(
         deviceModuleDisabled(
@@ -149,6 +246,8 @@ describe('Integration test for device status', () => {
           },
         }),
       })
+      assert.equal(response.statusCode, 200)
+
       // should be the same device
       assert.equal(response.body.device.id, response2.body.device.id)
       await waitForModuleDisabledIssue1
@@ -189,6 +288,8 @@ describe('Integration test for device status', () => {
           },
         }),
       })
+      assert.equal(response.statusCode, 200)
+
       const waitForModuleDisabledIssue1 = waitForAction(
         deviceModuleDisabled(
           response.body.device.id,

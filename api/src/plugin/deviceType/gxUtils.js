@@ -154,6 +154,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     },
     knex
   )
+  console.log('existingResult', existingResult)
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
