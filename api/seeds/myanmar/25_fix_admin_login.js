@@ -7,6 +7,8 @@ async function seed(knex) {
   const { id: jobFunctionId } = await knex('JobFunction').where({ name: 'Admin' }).first()
   const { id: adminId } = await knex('Person').where({ name: 'Admin' }).first()
 
-  await knex('Job').insert({ personId: adminId, jobFunctionId })
-  await knex('Person').where({ id: adminId }).update({ lastPartnerId, lastCountryId })
+  await Promise.all([
+    await knex('Job').insert({ personId: adminId, jobFunctionId }),
+    await knex('Person').where({ id: adminId }).update({ lastPartnerId, lastCountryId })
+  ])
 }
