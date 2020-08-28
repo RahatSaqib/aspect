@@ -263,7 +263,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['account:edit']) ||
+          renderRedirectToNotFound(props, ['account']) ||
           renderAccountDetails
         }
       />
