@@ -395,7 +395,9 @@ class GxAlertApiTestContext {
           'r.senderVersion',
           'r.senderOperator',
           'r.notes',
-          'r.errorCode'
+          'r.errorCode',
+          'r.createdOn',
+          'r.updatedOn'
         )
       if (resultDetails) {
         resultDetails.patientData = JSON.parse(resultDetails.patientData)

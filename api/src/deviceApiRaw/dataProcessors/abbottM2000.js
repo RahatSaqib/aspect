@@ -4,11 +4,7 @@ const Boom = require('@hapi/boom')
 const { convertToTimeZone } = require('date-fns-timezone')
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const {
-  getUtcTime,
-  parseDateOrDefault,
-  dateEqual,
-} = require('../../shared/date')
+const { parseDateOrDefault, dateEqual } = require('../../shared/date')
 const { isNumeric } = require('../../shared/string')
 const { astmE1394MessagesToJson } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
@@ -1214,7 +1210,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { auth, payload } = request
-    const utcNow = getUtcTime()
+    const now = new Date()
     this.response = { deviceApiRawId: this.id }
     if (!payload) {
       throw Boom.badRequest('No payload to process')
@@ -1228,7 +1224,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const parsedResults = this.convertJsonParsedASTMMessagesToResultDetails(
       jsonAstmMessages,
       assayMappings,
-      utcNow,
+      now,
       remoteAddress
     )
     const unknownAssayCodes = parsedResults
@@ -1328,7 +1324,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           _.cloneDeep(
             _.omit(deviceDetailsInPayload, ['comments', 'enquiries', 'rawData'])
           ),
-          { updatedOn: utcNow },
+          { updatedOn: now },
           mergeDeep
         )
         if (!_.isNil(deviceUpdates.configurationData)) {
@@ -1341,7 +1337,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           deviceId: device.id,
           source: this.name,
           deviceConfigurationUpdated: true,
-          createdOn: utcNow,
+          createdOn: now,
           senderIp: remoteAddress,
           rawMessage: deviceDetailsInPayload.rawData,
         })
@@ -1356,7 +1352,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               const [commentDeviceLogId] = await knex('DeviceLog').insert({
                 deviceId: device.id,
                 source: this.name,
-                createdOn: utcNow,
+                createdOn: now,
                 senderIp: remoteAddress,
                 rawMessage: comment.rawData,
               })
@@ -1375,7 +1371,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
               const [enquiryDeviceLogId] = await knex('DeviceLog').insert({
                 deviceId: device.id,
                 source: this.name,
-                createdOn: utcNow,
+                createdOn: now,
                 senderIp: remoteAddress,
                 rawMessage: comment.rawData,
               })
@@ -1413,7 +1409,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           deviceApiKey,
           site,
           qualityControlSummaries,
-          utcNow,
+          now,
           resultSourceDiagnosticDeviceId,
           resultTypePatientId,
           resultCategories,
@@ -1424,7 +1420,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const [resultDeviceLogId] = await knex('DeviceLog').insert({
           deviceId: device.id,
           source: this.name,
-          createdOn: utcNow,
+          createdOn: now,
           senderIp: remoteAddress,
           rawMessage: result.rawData,
           resultId: result.id,

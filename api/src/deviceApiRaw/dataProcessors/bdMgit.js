@@ -3,7 +3,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
+const { parseDateOrDefault } = require('../../shared/date')
 const { getAstmField } = require('../../shared/astm')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -54,12 +54,12 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       this.response.deviceId = deviceId
 
-      const utcNow = getUtcTime()
+      const now = new Date()
 
       const [deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         source: _.get(payload, 'log.source', ''),
-        createdOn: utcNow,
+        createdOn: now,
         senderIp: remoteAddress,
         // TODO: DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload),
@@ -69,7 +69,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       await knex('Device')
         .where({ id: deviceId })
-        .update({ lastSeenOn: utcNow, updatedOn: utcNow })
+        .update({ lastSeenOn: now, updatedOn: now })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       if (!this.request.payload) {
@@ -265,7 +265,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           }) || _.get(result, 'endedOn'),
         consumableSerial: mgitConsumableSequenceNumber,
         senderVersion: mgitVersionNumber,
-        updatedOn: utcNow,
+        updatedOn: now,
         resultData: JSON.stringify(resultData),
         reportableSiteId: device.defaultReportableSiteId || device.siteId,
       }
@@ -284,7 +284,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
             deviceId,
             externalId,
             sampleId,
-            createdOn: utcNow,
+            createdOn: now,
           })
         )
       }
@@ -304,8 +304,8 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         const logId = await knex('ResultWorkflowLog').insert({
           resultId,
           resultWorkflowStatusId,
-          changedOn: utcNow,
-          createdOn: utcNow,
+          changedOn: now,
+          createdOn: now,
         })
 
         await knex('Result')
