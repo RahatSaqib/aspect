@@ -67,15 +67,6 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
     knex,
     result.deviceId
   )
-
-  console.log('replacedModuleSerials', replacedModuleSerials)
-
-  console.log(
-    'evaluateonditions',
-    result.moduleName,
-    result.moduleSerial,
-    result.createdOn.getTime() === result.updatedOn.getTime()
-  )
   // check if a module was just now replaced and trigger replacement-issue if it was
   if (
     result.moduleName &&
@@ -91,19 +82,6 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
       .whereRaw('endedOn < ?', [result.endedOn])
       .orderBy('endedOn', 'desc')
       .first('moduleSerial')
-    console.log(
-      'previousResultOnModule',
-      previousResultOnModule,
-      knex('Result')
-        .where('deviceId', result.deviceId)
-        .where('moduleName', result.moduleName)
-        .whereNotNull('moduleSerial')
-        .whereNot('id', result.id)
-        .whereRaw('endedOn < ?', [result.endedOn])
-        .orderBy('endedOn', 'desc')
-        .first('moduleSerial')
-        .toString()
-    )
     if (
       previousResultOnModule &&
       previousResultOnModule.moduleSerial !== result.moduleSerial &&
