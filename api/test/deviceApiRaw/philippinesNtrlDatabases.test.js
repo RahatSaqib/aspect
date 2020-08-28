@@ -10,7 +10,7 @@ const { convertStringToFloat } = require('../../src/shared/string')
 const { assert, expect } = chai
 
 describe('Device API Raw Philippines NTRL', () => {
-  const utcNow = new Date('2019-09-15T08:09:10.123Z')
+  const now = new Date()
   const deviceIpAddress = '10.11.12.13'
   const staticDatabaseData = {
     Assay: {
@@ -290,7 +290,6 @@ describe('Device API Raw Philippines NTRL', () => {
         },
         '../../shared/date': {
           parseDateOrDefault,
-          getUtcTime: () => utcNow,
           dateEqual,
         },
         '../../shared/dictionary': {
@@ -3878,10 +3877,15 @@ describe('Device API Raw Philippines NTRL', () => {
             .filter(updateCall => updateCall.args[0] === 'Device')
           expect(updateDeviceCalls).to.have.lengthOf(1)
           const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-          expect(actualDeviceUpdates).to.containSubset({
-            lastSeenOn: utcNow,
-            updatedOn: utcNow,
-          })
+
+          expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+            now.getTime(),
+            60000
+          )
+          expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+            now.getTime(),
+            60000
+          )
         })
       })
 
@@ -6343,10 +6347,15 @@ describe('Device API Raw Philippines NTRL', () => {
             .filter(updateCall => updateCall.args[0] === 'Device')
           expect(updateDeviceCalls).to.have.lengthOf(1)
           const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-          expect(actualDeviceUpdates).to.containSubset({
-            lastSeenOn: utcNow,
-            updatedOn: utcNow,
-          })
+
+          expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
+            now.getTime(),
+            60000
+          )
+          expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
+            now.getTime(),
+            60000
+          )
         })
       })
 

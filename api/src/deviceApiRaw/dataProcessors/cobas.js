@@ -4,7 +4,6 @@ const Boom = require('@hapi/boom')
 
 const { transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime } = require('../../shared/date')
 
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
@@ -71,12 +70,12 @@ class DefaultCOBAS extends SynchronousDataProcessor {
 
       this.response.deviceId = deviceId
 
-      const utcNow = getUtcTime()
+      const now = new Date()
 
       const [deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         source: _.get(payload, 'log.source', ''),
-        createdOn: utcNow,
+        createdOn: now,
         senderIp: remoteAddress,
         // TODO: DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload),
@@ -86,7 +85,7 @@ class DefaultCOBAS extends SynchronousDataProcessor {
 
       await knex('Device')
         .where({ id: deviceId })
-        .update({ lastSeenOn: utcNow, updatedOn: utcNow })
+        .update({ lastSeenOn: now, updatedOn: now })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       if (!this.request.payload) {
