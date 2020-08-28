@@ -7,15 +7,10 @@ const {
   allResultCategoryToId,
   allMessageStatusToId,
 } = require('../shared/dictionary')
+const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
-async function resultsTransmittedDashboard(request) {
-  const { auth, query } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const messageStatusToId = await allMessageStatusToId()
-
-  // get all assays which user can access
-  const assaysQuery = knex('Assay as a')
+async function getAssayQuery(query, dataConstraints) {
+  return knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -32,32 +27,18 @@ async function resultsTransmittedDashboard(request) {
       'a.externalId as assayExternalId',
       'a.i18nKey as assayI18nKey'
     )
+    .whereIn('a.id', knex('Result').select('assayId').distinct())
+    .where('a.externalId', '!=', 'GxUnknown')
+    .where('dt.externalId', 'CepheidGeneXpert')
     .orderBy('a.name')
+}
 
-  const resultCategories = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategories, [
-      'Detected',
-      'Trace Detected',
-      'MoreThan40',
-      'MoreThan150',
-      'MoreThan550',
-      'MoreThan1000',
-      'LessThan40',
-      'LessThan150',
-      'LessThan550',
-      'LessThan1000',
-      'Resistant',
-      'Positive1',
-      'Positive2',
-      'Positive3',
-      'Scanty',
-      'PositiveMOTT',
-      'PositiveMTB',
-      'Positive',
-    ])
-  )
+async function getResultQuery(query, dataConstraints) {
   const { currentMonth = new Date() } = query
+  const resultCategories = await allResultCategoryToId()
+  const positiveResultCategories = _.values(_.pick(resultCategories, getPositiveCategoriesExternalIds()))
+  const messageStatusToId = await allMessageStatusToId()
+
   const resultsQuery = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
@@ -221,11 +202,16 @@ async function resultsTransmittedDashboard(request) {
     })
     .groupBy('a.id', 'yearMonth')
 
-  resultsQuery.where('dt.externalId', 'CepheidGeneXpert')
-  assaysQuery.where('dt.externalId', 'CepheidGeneXpert')
+  return resultsQuery.where('dt.externalId', 'CepheidGeneXpert')
+}
 
-  const items = await resultsQuery
-  const assays = await assaysQuery
+async function resultsTransmittedDashboard(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // get all assays which user can access
+  const assays = await getAssayQuery(query, dataConstraints)
+  const items = await getResultQuery(query, dataConstraints)
 
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
@@ -247,6 +233,7 @@ async function resultsTransmittedDashboard(request) {
   })
 
   // helpers
+  const { currentMonth = new Date() } = query
   const currMonth = formatDate(currentMonth, 'yyyy-MM')
   const prevMonth = formatDate(subMonths(currentMonth, 1), 'yyyy-MM')
   const getChange = (pcCurr, pcPrev = null) => {
