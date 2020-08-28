@@ -3663,7 +3663,7 @@ describe('Device API routes for GxAlert Device', () => {
         )
       }))
 
-    describe(`result's effect on device maintenance status`, () => {
+    describe.skip(`result's effect on device maintenance status`, () => {
       it('should change the maintenance status of an inactive device to active', () =>
         runTest(async knex => {
           useGxAlertDeviceId(gxAlertDeviceId)
