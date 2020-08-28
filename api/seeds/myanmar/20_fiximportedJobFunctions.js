@@ -26,11 +26,7 @@ async function seed(knex) {
     else await upsertJobFunctionPermission(knex, elem.id, [modules.assay.view])
     await knex('JobFunctionPermission')
       .where({ jobFunctionId: elem.id })
-      .whereIn('permissionId', [
-        modules.task.view,
-        modules.task.admin,
-        modules.task.edit,
-      ])
+      .whereIn('permissionId', [modules.task.view, modules.task.edit])
       .delete()
   })
 }

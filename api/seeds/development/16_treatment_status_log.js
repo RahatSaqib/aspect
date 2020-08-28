@@ -27,7 +27,7 @@ async function seed(knex) {
       knex,
       userName,
       'Admin', // jobFunctionName
-      modules.treatmentStatus.admin // permissionId
+      modules.treatmentStatus.edit // permissionId
     )
 
     // ------------------------------------------------------

@@ -2865,11 +2865,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
     knex,
     'Device Maker',
     partnerId,
-    [modules.account.edit, modules.operationalData.admin]
+    [modules.account.edit, modules.operationalData.edit]
   )
   const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
     modules.account.edit,
-    modules.operationalData.admin,
+    modules.operationalData.edit,
   ])
   const jobFunctionIdTechnician = await upsertJobFunction(
     knex,

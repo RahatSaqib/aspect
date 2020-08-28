@@ -126,19 +126,19 @@ async function commonUpserts(
     })
   }
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.demo.admin,
-    modules.issue.admin,
-    modules.assay.admin,
-    modules.case.admin,
-    modules.site.admin,
-    modules.result.admin,
+    modules.demo.edit,
+    modules.issue.edit,
+    modules.assay.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
-    modules.account.admin,
-    modules.device.admin,
-    modules.reporter.admin,
+    modules.account.edit,
+    modules.device.edit,
+    modules.reporter.edit,
     modules.browse.view,
-    modules.person.admin,
+    modules.person.edit,
   ])
   let { id: jobIdAdmin } =
     (await knex('Job')

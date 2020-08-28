@@ -352,10 +352,7 @@ async function seed(knex) {
   await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
     await knex('JobFunctionPermission').insert({
       jobFunctionId: myanmarJobFunction.id,
-      permissionId:
-        myanmarJobFunction.name === 'Admin'
-          ? modules.actionDashboard.admin
-          : modules.actionDashboard.edit,
+      permissionId: modules.actionDashboard.edit,
     })
   })
 
