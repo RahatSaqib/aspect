@@ -18,8 +18,12 @@ async function seed(knex) {
     userName: 'admin',
   })
 
+  await seedIssueType(knex, 'ModuleReplaced', {
+    userName: 'admin',
+  })
+
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['ModuleDisabled'],
+    issueTypeWhitelist: ['ModuleDisabled', 'ModuleReplaced'],
   })
   const now = new Date()
   await upsertIssueResolutionTrigger(knex, {
