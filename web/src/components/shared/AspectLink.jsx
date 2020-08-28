@@ -5,7 +5,7 @@ const isURL = to => {
   if (!to) return false
   const expression = /^https?:/
   const regex = new RegExp(expression)
-  return to && to.match(regex)
+  return to.match(regex)
 }
 
 const AspectLink = ({ to = '#', children, ...restProps }) => {
