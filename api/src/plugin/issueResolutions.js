@@ -13,10 +13,12 @@ async function resolveIssueModuleDisabled(knex, issue) {
     .first()
   if (moduleReplacedIssue) {
     await knex('Issue')
+      .update({
+        issueStatusId: await issueStatusToId('Resolved'),
+      })
       .where({ id: issue.id })
-      .update({ issueStatusId: await issueStatusToId('Resolved') })
   }
-  Promise.resolve(true)
+  return Promise.resolve(true)
 }
 module.exports = {
   resolveIssueModuleDisabled,

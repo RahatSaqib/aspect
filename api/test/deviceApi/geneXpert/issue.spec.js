@@ -2,7 +2,10 @@ const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const { subDays } = require('date-fns')
-const { issueTypeToId } = require('../../../src/shared/dictionary')
+const {
+  issueTypeToId,
+  issueStatusToId,
+} = require('../../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { postToDeviceApi } = require('../utils')
 const { knex } = require('../../../src/db')
@@ -18,7 +21,7 @@ const { resolveIssues } = require('../../../src/issue/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Integration test for device status', () => {
+describe('Integration test for device status', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -48,7 +51,7 @@ describe.only('Integration test for device status', () => {
   describe('module disable issue', () => {
     beforeEach(context.beforeRegisterAndSetDevice)
     afterEach(context.afterCleanUp)
-    it.only('should create new issue for module disabled, then one for module replaced and change the status of the module disabled issue.', async () => {
+    it('should create new issue for module disabled, then one for module replaced and change the status of the module disabled issue.', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
       const firstPayload = _.merge(
@@ -151,8 +154,20 @@ describe.only('Integration test for device status', () => {
 
       assert.equal(responseWithIssue.statusCode, 200)
       assert.equal(issues.length, 2)
+      const moduleDisabledIssue = _.find(
+        issues,
+        async issue =>
+          issue.issueTypeId === (await issueTypeToId('ModuleDisabled'))
+      )
+
+      assert.isOk(moduleDisabledIssue)
+      assert.equal(
+        moduleDisabledIssue.issueStatusId,
+        await issueStatusToId('Active')
+      )
       await dispatchAndWaitForAction(resolveIssues())
-      checkIssueStatusByIssueId(knex, issues[1].id, 'Resolved')
+      await waitForIdle
+      await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
     it('should create new issue per module disabled ', async () => {
       const { basicDevicePayload } = context
