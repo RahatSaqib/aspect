@@ -7,7 +7,8 @@ See subfolders for project specific READMEs.
 The Aspect API lives under `api`
 React Client App lives under `web`
 
+## Setup Development Environemnt
+See: [API README](api/README.md#new-development-setup) & [Web README](web/README.md#installation)
 
-## For create a production release please follow the next steps.
-
-https://kb.systemone.id/display/AS/Release+Process
+## Deployment
+See: https://kb.systemone.id/display/AS/Release+Process
