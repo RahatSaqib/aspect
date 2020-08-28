@@ -22,7 +22,6 @@ async function seed(knex) {
       [modules.account.edit]
     ),
     mapJobFunctionPermissions(knex, [modules.issue.edit], [modules.issue.view]),
-    mapJobFunctionPermissions(knex, [modules.task.view], [modules.task.edit]),
     mapJobFunctionPermissions(
       knex,
       [modules.report.edit],
@@ -45,7 +44,7 @@ async function seed(knex) {
     modules.router.edit,
     modules.account.view,
     modules.issue.view,
-    modules.task.view,
+    modules.task.edit,
     modules.report.edit,
     modules.actionDashboard.edit,
     modules.operationalData.edit,
