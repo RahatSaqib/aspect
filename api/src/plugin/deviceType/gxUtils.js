@@ -12,7 +12,13 @@ const {
 } = require('../../inventory/service')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
-const { parseDateOrDefault } = require('../../shared/date')
+const {
+  getTimeZoneById,
+  parseDateOrDefault,
+  getLocalDateTimeStringInUtc,
+} = require('../../shared/date')
+const { allTimeZoneToId } = require('../../shared/dictionary')
+
 const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
 /*
@@ -94,8 +100,17 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   }
   const [device] = await knex
     .from('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
-    .select('d.id', 'd.siteId', 'd.partnerId', 'd.deviceTypeId')
+    .select(
+      'd.id',
+      'd.siteId',
+      'd.partnerId',
+      'd.deviceTypeId',
+      knex.raw('coalesce(d.timezone, s.timezoneId, c.timezone) as timezone')
+    )
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
@@ -107,6 +122,28 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
   const sampleId = _.get(payload, 'sample.id')
+
+  const convertedTimeZone = getTimeZoneById(
+    await allTimeZoneToId(),
+    device.timezone
+  )
+
+  // The start/end time from GeneXpert is reported with a time zone
+  // designator "Z" that indicates UTC, but it isn't. We have to disregard
+  // this designation and treat it as local time of the device and then translate it to UTC
+  if (payload.endedOn) {
+    payload.endedOn = getLocalDateTimeStringInUtc(
+      endedOn.toISOString().replace('Z', ''),
+      convertedTimeZone
+    )
+  }
+
+  if (payload.startedOn) {
+    payload.startedOn = getLocalDateTimeStringInUtc(
+      startedOn.toISOString().replace('Z', ''),
+      convertedTimeZone
+    )
+  }
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id

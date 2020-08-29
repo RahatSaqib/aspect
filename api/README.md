@@ -43,8 +43,11 @@ grant all on aspect. * to 'aspectapi'@'localhost';
 flush privileges;
 EOT
 
-# If you are using MySQL 5.7 or have ONLY_FULL_GROUP_BY in your sql_mode by default, add this to my.cnf or my.ini
-sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+# If you have ONLY_FULL_GROUP_BY in your sql_mode by default, add this to my.cnf or my.ini in the [mysqld] section
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+
+# Configure MySQL to use UTC. Add the following to my.cnf or my.ini in the [mysqld] section
+default-time-zone=+00:00
 
 # Create an .env file and configure settings for your environment
 # using .env.example as a template
