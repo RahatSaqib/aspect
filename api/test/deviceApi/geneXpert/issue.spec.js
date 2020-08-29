@@ -177,7 +177,7 @@ describe('Integration test for device status', () => {
         await issueStatusToId('Active')
       )
       await dispatchAndWaitForAction(resolveIssues())
-      await waitForIdle
+      await waitForIdle(5000)
       await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
     it('should create new issue per module disabled ', async () => {
