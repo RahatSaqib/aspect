@@ -4,7 +4,11 @@ const _ = require('lodash')
 const { subDays, subHours } = require('date-fns')
 const { knex } = require('../../src/db')
 
-const { createMessageContext, waitForAction } = require('../utils/mqUtils')
+const {
+  createMessageContext,
+  waitForAction,
+  waitForIdle,
+} = require('../utils/mqUtils')
 const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
 const {
@@ -59,7 +63,7 @@ describe('Issue Resolution', () => {
       deviceIdsToRemove.push(testDeviceId1)
       deviceIdsToRemove.push(testDeviceId2)
     })
-    after(deleteDeviceAndTestData(knex, deviceIdsToRemove))
+    after(async () => deleteDeviceAndTestData(knex, deviceIdsToRemove))
 
     describe('when DeviceOffline issues exist', () => {
       let deviceOfflineIssueType
@@ -779,12 +783,9 @@ describe('Issue Resolution', () => {
         })
       })
 
-      afterEach(async () => {
-        await cleanUpIssues(knex, [
-          device1NoResultsIssueId,
-          device2NoResultsIssueId,
-        ])
-      })
+      afterEach(async () =>
+        cleanUpIssues(knex, [device1NoResultsIssueId, device2NoResultsIssueId])
+      )
 
       describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
         it('the issues should still be active', async () => {
@@ -904,7 +905,7 @@ describe('Issue Resolution', () => {
             )
             messageContext.resolveIssues()
             await waitForIssueResolved
-
+            await waitForIdle(3000)
             const device1NoResultsIssue = await getIssue(
               knex,
               device1NoResultsIssueId
@@ -996,7 +997,7 @@ describe('Issue Resolution', () => {
             )
             messageContext.resolveIssues()
             await waitForIssueResolved
-
+            await waitForIdle(2000)
             const device1NoResultsIssue = await getIssue(
               knex,
               device1NoResultsIssueId
@@ -1171,6 +1172,7 @@ describe('Issue Resolution', () => {
             )
             messageContext.resolveIssues()
             await waitForIssueResolved
+            await waitForIdle(3000)
 
             const device1NoResultsIssue = await getIssue(
               knex,
