@@ -849,11 +849,11 @@ describe('Issue Resolution', () => {
           resultIdsToCleanUp.push(resultId)
         })
 
-        afterEach(
-          Promise.each(resultIdsToCleanUp, resultId =>
+        afterEach(async () => {
+          await Promise.each(resultIdsToCleanUp, resultId =>
             knex('Result').where('id', resultId).del()
           )
-        )
+        })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the online device only', async () => {
@@ -892,11 +892,11 @@ describe('Issue Resolution', () => {
           resultIdsToCleanUp.push(resultId)
         })
 
-        afterEach(
-          Promise.each(resultIdsToCleanUp, resultId =>
+        afterEach(async () => {
+          await Promise.each(resultIdsToCleanUp, resultId =>
             knex('Result').where('id', resultId).del()
           )
-        )
+        })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for the other device should be resolved', async () => {

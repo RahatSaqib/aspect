@@ -73,7 +73,7 @@ async function getDevice(
       }
       if (noResultsSince) {
         const resultsAfter = knex('Result as r')
-          .whereRaw('r.deviceId = d.id')
+          .where('r.deviceId', 'd.id')
           .andWhere(function () {
             this.where('r.startedOn', '>', noResultsSince)
             this.orWhere('r.endedOn', '>', noResultsSince)
