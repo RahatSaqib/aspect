@@ -21,7 +21,7 @@ const { resolveIssues } = require('../../../src/issue/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Integration test for device status', () => {
+describe('Integration test for device status', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -52,6 +52,17 @@ describe.only('Integration test for device status', () => {
     beforeEach(context.beforeRegisterAndSetDevice)
     afterEach(context.afterCleanUp)
     it('should create new issue for module disabled, then one for module replaced and change the status of the module disabled issue.', async () => {
+      /**
+       * This test represent the whole workflow of module replacement.
+       * 1) Creates a device with a result with a specific module serial
+       * 2) Creates a module disable issue, based on the information received in data:{ disabledModules:[....]}
+       *    property of the device payload
+       * 3) Create a module replaced issue based on a new result of the same instrument with a different serial
+       *    number of the same module name.
+       * 4) Check if the module disabled issue is resolved.
+       *
+       */
+
       const { basicDevicePayload } = context
       const { deviceAuth } = context
       const firstPayload = _.merge(
@@ -225,8 +236,6 @@ describe.only('Integration test for device status', () => {
         '2019-10-18T17:08:22.515Z'
       )
       assert.equal(JSON.parse(issue.data).moduleSerial, '234')
-
-      // Should now create a module disabled issue
     })
     it('should create only one issue per module disable on a repeated payload ', async () => {
       const { basicDevicePayload } = context
