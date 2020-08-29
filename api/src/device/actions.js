@@ -151,7 +151,7 @@ function deviceHasNewResults(deviceId) {
 function deviceModuleDisabled(device, moduleSerial, disabledOn) {
   if (!device || !moduleSerial || !disabledOn) {
     throw new Error(
-      'Must specify deviceId, module and the date for notify deviceModuleDisable'
+      'Must specify deviceId, moduleSerial and disabledOn and for deviceModuleDisable'
     )
   }
   return {

@@ -136,7 +136,7 @@ function onIssueEventTrigger(
   }
 }
 
-function onIssueEventResolve(issueType, filterConditions) {
+function onIssueEventResolve(issueType, filterIssueCondition) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
@@ -145,7 +145,7 @@ function onIssueEventResolve(issueType, filterConditions) {
         knex,
         issueType,
         action,
-        filterConditions
+        filterIssueCondition
       )
       const hasTrigger =
         issue != null &&
@@ -258,7 +258,6 @@ async function createNewIssue(knex, issueType, action) {
       'siteId',
       'geographyId',
       'partnerId',
-      'data',
     ]),
   }
   // Now that we know partnerId, check to see if we have a trigger

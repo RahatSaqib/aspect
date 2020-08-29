@@ -75,7 +75,7 @@ async function preProcessAddDeviceData({
   }
   await knex.from('Device').where({ id: device.id }).update(deviceDetails)
   if (configurationData.disabledModules) {
-    await Promise.each(configurationData.disabledModules, async modules =>
+    await Promise.each(configurationData.disabledModules, modules =>
       shouldTriggerModuleDisabled(knex, messageContext, device, modules)
     )
   }
