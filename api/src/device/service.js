@@ -12,6 +12,7 @@ const {
   format,
   isWeekend,
 } = require('date-fns')
+
 const { deviceMaintenanceStatusLogged } = require('./actions')
 const {
   knex,

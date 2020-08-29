@@ -1,7 +1,7 @@
 const { knex } = require('../db')
 const { resultModuleReplaced } = require('../result/actions')
 const { deviceModuleDisabled } = require('../device/actions')
-const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
+const { issueTypeToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -104,29 +104,7 @@ async function shouldTriggerModuleDisabled(
   deviceModule
 ) {
   /**
-   * For checking if this issue was already created, you should check in the Event "onEventTrigger"
-   * There the process basically check if there is already an inserted issue or not.
-   * This data comes with the dailynews process.
-   */
-  /* const existingModuleDisabledIssue = await knex('Issue')
-    .where({
-      issueTypeId,
-      deviceId: device.id,
-    })
-    .andWhere(
-      knex.raw(
-        'data->>"$.moduleSerial"=? and DATE(data->>"$.disabledOn")=DATE(?)',
-        [deviceModule.SiteSerialNumber, deviceModule.Creation]
-      )
-    )
-    .first('data')
-*/
-  /**
-   * If the module wasn't already inserted, we create the issue.
-   */
-
-  /**
-   * Check if the module was already replaced, after the disabled date.
+   * Check if the module was already replaced
    */
   const moduleReplacedIssue = await knex('Issue')
     .where({
@@ -139,10 +117,9 @@ async function shouldTriggerModuleDisabled(
         [deviceModule.SiteSerialNumber, deviceModule.Creation]
       )
     )
-    .andWhere('issueStatusId', '<>', await issueStatusToId('Resolved'))
     .first('data')
   /**
-   * If the module wasn't replaced already, we insert the new issue.
+   * If the module wasn't replaced already, we trigger the event to create the new issue.
    */
   if (!moduleReplacedIssue) {
     if (!messageContext.deviceModuleDisabled) {
