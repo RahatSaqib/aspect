@@ -171,6 +171,7 @@
 				"action": "FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT"
 			}
 		},
+
 		{
 			"issueType": "DataCategoryLowForOther",
 			"issueEventStatus": "Triggered",
