@@ -21,7 +21,7 @@ const { resolveIssues } = require('../../../src/issue/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Integration test for device status', () => {
+describe.only('Integration test for device status', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'

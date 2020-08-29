@@ -41,6 +41,7 @@ const plugins = {
     issueResolutions: require('./issueResolutions'),
     issueEscalations: {},
     dataCategories: {},
+    filterModuleDisabledIssue: require('../issue/filterConditions'),
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,

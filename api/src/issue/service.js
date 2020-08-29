@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
-const filterFunctions = require('./filterConditions')
+const { loadPlugin } = require('../plugin/registration')
 const {
   issueCreated,
   issueTriggered,
@@ -201,16 +201,35 @@ async function findOpenIssue(
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
-  if (
-    _.get(action, 'options.data') &&
-    evaluationFunction &&
-    filterFunctions[evaluationFunction]
-  )
-    findOpenIssue.modify(
-      filterFunctions[evaluationFunction],
-      action.options.data
+  if (_.get(action, 'options.data') && evaluationFunction) {
+    const filterFunctions = await getIssueFilter(
+      knex,
+      action.partnerId,
+      action.deviceId
     )
+    if (filterFunctions[evaluationFunction])
+      findOpenIssue.modify(
+        filterFunctions[evaluationFunction],
+        action.options.data
+      )
+  }
+
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
+}
+
+async function getIssueFilter(knex, partnerId, deviceId) {
+  let plugin
+  if (partnerId) {
+    ;({ plugin } = await knex('Partner')
+      .where({ id: partnerId })
+      .first('plugin'))
+  } else if (deviceId) {
+    ;({ plugin } = await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .where({ 'd.id': deviceId })
+      .first('dt.plugin'))
+  }
+  return loadPlugin([plugin], 'filterModuleDisabledIssue')
 }
 
 async function createNewIssue(knex, issueType, action) {
