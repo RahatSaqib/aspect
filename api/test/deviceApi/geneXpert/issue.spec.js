@@ -65,6 +65,28 @@ describe('Integration test for device status', () => {
 
       const { basicDevicePayload } = context
       const { deviceAuth } = context
+      const responseDeviceWithDisabledModule = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          {
+            configuration: {
+              data: {
+                disabledModules: [
+                  {
+                    SiteSerialNumber: '234',
+                    UserId: '1',
+                    Creation: '2020-08-18T17:08:22.515Z',
+                  },
+                ],
+              },
+            },
+          }
+        ),
+      })
+
       const firstPayload = _.merge(
         {},
         basicDevicePayload,
@@ -92,28 +114,6 @@ describe('Integration test for device status', () => {
       })
 
       assert.equal(response.statusCode, 200)
-
-      const responseDeviceWithDisabledModule = await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload: _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          {
-            configuration: {
-              data: {
-                disabledModules: [
-                  {
-                    SiteSerialNumber: '234',
-                    UserId: '1',
-                    Creation: '2020-08-18T17:08:22.515Z',
-                  },
-                ],
-              },
-            },
-          }
-        ),
-      })
       const waitForModuleDisabledIssue = waitForAction(
         deviceModuleDisabled(
           response.body.device.id,
@@ -121,6 +121,7 @@ describe('Integration test for device status', () => {
           '2020-08-18T17:08:22.515Z'
         )
       )
+
       await waitForModuleDisabledIssue
       await waitForIdle()
 
@@ -183,6 +184,14 @@ describe('Integration test for device status', () => {
     it('should create new issue per module disabled ', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
+      const waitForModuleDisabledIssue = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2019-10-18T17:08:22.515Z'
+        )
+      )
+
       // Post to deviceApi to ensure the device in in Aspect
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -207,13 +216,6 @@ describe('Integration test for device status', () => {
       })
       const deviceId = response.body.device.id
       const device = await knex('Device').where({ id: deviceId }).first()
-      const waitForModuleDisabledIssue = waitForAction(
-        deviceModuleDisabled(
-          response.body.device.id,
-          '234',
-          '2019-10-18T17:08:22.515Z'
-        )
-      )
       await waitForModuleDisabledIssue
       await waitForIdle(3000)
 
@@ -240,6 +242,13 @@ describe('Integration test for device status', () => {
     it('should create only one issue per module disable on a repeated payload ', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
+      const waitForModuleDisabledIssue1 = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2019-10-18T17:08:22.515Z'
+        )
+      )
 
       // Post to deviceApi to ensure the device in Aspect
       const response = await postToDeviceApi({
@@ -265,13 +274,6 @@ describe('Integration test for device status', () => {
       })
       assert.equal(response.statusCode, 200)
       const deviceId = response.body.device.id
-      const waitForModuleDisabledIssue1 = waitForAction(
-        deviceModuleDisabled(
-          response.body.device.id,
-          '234',
-          '2019-10-18T17:08:22.515Z'
-        )
-      )
 
       await waitForModuleDisabledIssue1
 
@@ -317,7 +319,13 @@ describe('Integration test for device status', () => {
     it('should create a new issue of the novelty only', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
-
+      const waitForModuleDisabledIssue1 = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '234',
+          '2019-10-18T17:08:22.515Z'
+        )
+      )
       // Post to deviceApi to ensure the device in Aspect
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -342,16 +350,16 @@ describe('Integration test for device status', () => {
       })
       assert.equal(response.statusCode, 200)
 
-      const waitForModuleDisabledIssue1 = waitForAction(
-        deviceModuleDisabled(
-          response.body.device.id,
-          '234',
-          '2019-10-18T17:08:22.515Z'
-        )
-      )
       await waitForModuleDisabledIssue1
       await waitForIdle(3000)
       const deviceId = response.body.device.id
+      const deviceDisableEvent = waitForAction(
+        deviceModuleDisabled(
+          response.body.device.id,
+          '777',
+          '2020-05-18T17:08:22.515Z'
+        )
+      )
       // Post to deviceApi to ensure the device in in Aspect
       const response2 = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -381,13 +389,7 @@ describe('Integration test for device status', () => {
       })
       // should be the same device
       assert.equal(response.body.device.id, response2.body.device.id)
-      await waitForAction(
-        deviceModuleDisabled(
-          response.body.device.id,
-          '777',
-          '2020-05-18T17:08:22.515Z'
-        )
-      )
+      await deviceDisableEvent
       await waitForIdle()
       const device = await knex('Device')
         .where({
