@@ -215,7 +215,7 @@ describe('Integration test for device status', () => {
         )
       )
       await waitForModuleDisabledIssue
-      await waitForIdle()
+      await waitForIdle(3000)
 
       const issue = await knex('Issue')
         .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
@@ -350,7 +350,7 @@ describe('Integration test for device status', () => {
         )
       )
       await waitForModuleDisabledIssue1
-      await waitForIdle()
+      await waitForIdle(3000)
       const deviceId = response.body.device.id
       // Post to deviceApi to ensure the device in in Aspect
       const response2 = await postToDeviceApi({
