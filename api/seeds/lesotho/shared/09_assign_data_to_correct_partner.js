@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { baseGxAlertMigration } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
 const jobFunctions = require('./fixtures/jobFunctions.json')
@@ -27,9 +28,12 @@ module.exports = async function (
   await knex('Result').whereIn('siteId', siteIds).update('partnerId', partnerId)
 
   const diseaseId = await diseaseToId(diseaseExternalId)
-  const personUsernames = contactsFromGxAlert
-    .filter(contact => !!contact.username)
-    .map(contact => contact.username)
+  const personUsernames = _.uniq([
+    ...contactsFromGxAlert
+      .filter(contact => !!contact.username)
+      .map(contact => contact.username),
+    adminName,
+  ])
   const personIds = await knex('User as u')
     .join('Person as p', 'u.id', 'p.userId')
     .whereIn('u.name', personUsernames)
