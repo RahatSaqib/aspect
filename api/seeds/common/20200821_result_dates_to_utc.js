@@ -16,11 +16,11 @@ async function getResultDateUpdates(knex) {
     .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
     .select([
       'r.id',
-      knex.raw(`CONVERT_TZ(r.endedOn,
+      knex.raw(`IFNULL(CONVERT_TZ(r.endedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
-            'UTC') as endedOn`),
+            'UTC'), r.endedOn) as endedOn`),
       knex.raw(`IFNULL(CONVERT_TZ(r.startedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
