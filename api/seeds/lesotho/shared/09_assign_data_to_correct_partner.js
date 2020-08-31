@@ -40,7 +40,7 @@ module.exports = async function (
     .pluck('p.id')
   await knex('Person')
     .whereIn('id', personIds)
-    .update({ lastPartnerId: partnerId })
+    .update({ partnerId, lastPartnerId: partnerId })
   const jobContextIds = await knex('JobFunction as jf')
     .join('Job as j', 'jf.id', 'j.jobFunctionId')
     .join('JobContext as jc', 'j.id', 'jc.jobId')
