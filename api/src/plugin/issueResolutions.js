@@ -1,3 +1,4 @@
+const { compareAsc } = require('date-fns')
 const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
 
 async function resolveIssueModuleDisabled(knex, issue) {
@@ -9,7 +10,11 @@ async function resolveIssueModuleDisabled(knex, issue) {
       issueTypeId: await issueTypeToId('ModuleReplaced'),
     })
     .first()
-  if (moduleReplacedIssue) {
+
+  if (
+    moduleReplacedIssue &&
+    compareAsc(moduleReplacedIssue.createdOn, data.disabledOn) >= 0
+  ) {
     await knex('Issue')
       .update({
         issueStatusId: await issueStatusToId('Resolved'),
