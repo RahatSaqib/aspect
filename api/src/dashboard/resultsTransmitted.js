@@ -47,14 +47,7 @@ async function getResultQuery(query, dataConstraints) {
     .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Issue AS i', 'r.id', 'i.resultId')
-    .leftOuterJoin('IssueType AS it', function () {
-      this.on('i.issueTypeId', 'it.id')
-        .andOnBetween('i.createdOn', [
-          knex.raw(`DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')`),
-          knex.raw('NOW()'),
-        ])
-        .andOnIn('it.externalId', ['ResultReceived', 'ResultUploaded'])
-    })
+    .leftOuterJoin('IssueType AS it', 'i.issueTypeId', 'it.id')
     .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('EmailMessage as em', function () {
@@ -298,6 +291,8 @@ async function resultsTransmittedDashboard(request) {
       ),
     }
   })
+
+  console.log(currentMonth)
 
   return {
     ok: true,
