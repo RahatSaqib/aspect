@@ -21,11 +21,11 @@ async function getResultDates(knex) {
                     sitetz.timezone,
                     countrytz.timezone),
             'UTC') as endedOn`),
-      knex.raw(`CONVERT_TZ(r.startedOn,
+      knex.raw(`IFNULL(CONVERT_TZ(r.startedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
-            'UTC') as startedOn
+            'UTC'), r.startedOn) as startedOn
         `),
     ])
   return dates.map(({ id, ...dates }) =>
@@ -45,11 +45,11 @@ async function getSampleDates(knex) {
     .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
     .select([
       'sm.id',
-      knex.raw(`CONVERT_TZ(sm.collectedOn,
+      knex.raw(`IFNULL(CONVERT_TZ(sm.collectedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
-            'UTC') as collectedOn`),
+            'UTC'), sm.collectedOn) as collectedOn`),
     ])
   return dates.map(({ id, ...dates }) =>
     knex('Sample').where({ id }).update(dates)
