@@ -2,15 +2,13 @@ const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
-const subHours = require('date-fns/subHours')
-const subMinutes = require('date-fns/subMinutes')
-const setMilliseconds = require('date-fns/setMilliseconds')
 const {
   postToDeviceApi,
   getMaxDeviceId,
   getDeviceType,
   getDevicesWithIdLargerThan,
 } = require('../utils')
+const { getLocalDateTimeStringInUtc } = require('../../../src/shared/date')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { createTestContext } = require('./alere_utils')
@@ -316,15 +314,9 @@ describe('Device API routes for Alere FTP Connector Device', () => {
 
     it('should append a result if the instrument, sample, test date combination is not known', () =>
       runTest(async () => {
-        const { now, deviceAuth, basicDevicePayload } = context
+        const { deviceAuth, basicDevicePayload } = context
         const beforeResultDetails = await getLastResult()
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
+        const testStartedOn = '2020-08-10T14:00:00'
 
         const resultPayloadWithNewStartDate = _.merge({}, basicResultPayload, {
           startedOn: testStartedOn,
@@ -354,7 +346,10 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           sampleOriginSiteId: currentAlereDevice.siteId,
           sampleTypeId: null,
           resultData: resultPayloadWithNewStartDate.data,
-          startedOn: testStartedOn,
+          startedOn: getLocalDateTimeStringInUtc(
+            testStartedOn,
+            'America/New_York'
+          ),
           consumableSerial: resultPayloadWithNewStartDate.consumable.serial,
           consumableExpirationDate: null,
           consumableLot: null,
@@ -370,13 +365,8 @@ describe('Device API routes for Alere FTP Connector Device', () => {
       runTest(async () => {
         const { now, deviceAuth, basicDevicePayload } = context
         const beforeResultDetails = await getLastResult()
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
+        const testStartedOn = '2020-08-10T14:00:00'
+
         const sampleId = 'This test will be updated'
         const instrumentSerial = 'Tested on the same instrument'
         useAlereDeviceSerialNumber(instrumentSerial)
@@ -414,7 +404,10 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           sampleOriginSiteId: currentAlereDevice.siteId,
           sampleTypeId: null,
           resultData: basicResultPayload.data,
-          startedOn: testStartedOn,
+          startedOn: getLocalDateTimeStringInUtc(
+            testStartedOn,
+            'America/New_York'
+          ),
           consumableSerial: basicResultPayload.consumable.serial,
           consumableExpirationDate: null,
           consumableLot: null,
@@ -522,6 +515,43 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           .pluck('deviceId')
           .distinct()
         assert.deepEqual(deviceIdsInDeviceLogsForResult, [context.device.id])
+      }))
+
+    it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
+      runTest(async () => {
+        const { deviceAuth, basicDevicePayload } = context
+        const testStartedOn = '2020-08-10T14:00:00'
+
+        const resultPayloadWithNewStartDate = _.merge({}, basicResultPayload, {
+          startedOn: testStartedOn,
+        })
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge({}, basicDevicePayload, {
+            result: resultPayloadWithNewStartDate,
+          }),
+        })
+
+        const afterResultDetails = await getLastResult()
+
+        // this device is located in the America/New_York time zone, so we have to
+        // convert testStartedOn to UTC in order to compare it to the value in the database
+        expect(afterResultDetails.startedOn.getTime()).to.equal(
+          getLocalDateTimeStringInUtc(
+            testStartedOn,
+            'America/New_York'
+          ).getTime()
+        )
+
+        expect(afterResultDetails.createdOn.getTime()).to.be.closeTo(
+          Date.now(),
+          2000
+        )
+
+        expect(afterResultDetails.updatedOn.getTime()).to.be.closeTo(
+          Date.now(),
+          2000
+        )
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {

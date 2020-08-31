@@ -9,6 +9,8 @@ const {
   isEqual,
 } = require('date-fns')
 
+const { convertToLocalTime } = require('date-fns-timezone')
+
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
@@ -29,7 +31,7 @@ function parseDateOrDefault(
     parsedDate = parse(
       date,
       options.formatString,
-      options.backupDate || getUtcTime()
+      options.backupDate || new Date()
     )
   } else {
     parsedDate = toDate(parseISO(date))
@@ -55,17 +57,6 @@ function returnIso8601StringWithoutTimeZoneOffset(date) {
     return null
   }
   return `${date.toISOString().split('.')[0]}.000`
-}
-
-// When performing MySQL INSERTS or UPDATES using knex,
-//   the time zone offset seems to be ignored.
-//   This function offsets the hours and minutes of the
-//   date object passed into it to the time as it is at
-//   UTC. This is particularly useful for updating and
-//   inserting into updatedOn and createdOn fields
-function getUtcTime(localTime) {
-  const time = localTime || new Date()
-  return new Date(time.getTime() + time.getTimezoneOffset() * 60000)
 }
 
 function dateEqual(date1, date2) {
@@ -96,12 +87,32 @@ function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
   return dates
 }
 
+// Returns the UTC equivalent of the passed in date/time string
+// based on the timezone parameter
+function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
+  if (!dateString || typeof dateString !== 'string') return null
+
+  return convertToLocalTime(dateString, { timeZone })
+}
+
+function getLocalDateInUtc(dateTime) {
+  return convertToLocalTime(dateTime, { timeZone: 'UTC' })
+}
+
+// Returns a timezone's ISO-name based on the ID that is passed in
+// For example, "Eastern Standard Time" will return "America/New_York"
+function getTimeZoneById(allTimeZones, timeZoneId) {
+  return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
   returnIso8601StringWithoutTimeZoneOffset,
-  getUtcTime,
   dateEqual,
   getArrayOfDaysInRange,
+  getLocalDateTimeStringInUtc,
+  getLocalDateInUtc,
+  getTimeZoneById,
 }

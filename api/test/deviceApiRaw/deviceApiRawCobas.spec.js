@@ -2,7 +2,6 @@ const supertest = require('supertest')
 const chai = require('chai')
 const { run } = require('../../src/db')
 
-const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -19,7 +18,7 @@ describe('Device API Raw routes for cobas', () => {
   const validApiKeyToken = randomToken()
   before(() =>
     run(async knex => {
-      const now = getUtcTime()
+      const now = new Date()
       const { id: userId } = await knex('User').first('id')
 
       const cobasDeviceType = await knex

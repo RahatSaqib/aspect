@@ -1,7 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const { knex } = require('../../src/db')
-const { getUtcTime, parseDateOrDefault } = require('../../src/shared/date')
+const { parseDateOrDefault } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -22,7 +22,7 @@ describe('Device API Raw routes for BD MGIT', () => {
   let bdMgitDeviceId
   let bdMgitSiteId
   before(async () => {
-    const now = getUtcTime()
+    const now = new Date()
     const { id: userId } = await knex('User').first('id')
     const bdMgitDeviceType = await knex
       .from('DeviceType')
@@ -264,7 +264,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       expect(result.consumableSerial).to.equal('430109967351')
       expect(result.senderVersion).to.equal('V1.00')
       expect(result.updatedOn.getTime()).to.be.closeTo(
-        getUtcTime().getTime(),
+        new Date().getTime(),
         10000
       )
 
@@ -298,11 +298,11 @@ describe('Device API Raw routes for BD MGIT', () => {
         .first()
 
       expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
-        getUtcTime().getTime(),
+        new Date().getTime(),
         10000
       )
       expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
-        getUtcTime().getTime(),
+        new Date().getTime(),
         10000
       )
     }))
@@ -363,7 +363,7 @@ describe('Device API Raw routes for BD MGIT', () => {
     expect(result.consumableSerial).to.equal('439309967350')
     expect(result.senderVersion).to.equal('V1.00')
     expect(result.updatedOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
+      new Date().getTime(),
       10000
     )
 
@@ -408,11 +408,11 @@ describe('Device API Raw routes for BD MGIT', () => {
       .first()
 
     expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
+      new Date().getTime(),
       10000
     )
     expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
-      getUtcTime().getTime(),
+      new Date().getTime(),
       10000
     )
   })

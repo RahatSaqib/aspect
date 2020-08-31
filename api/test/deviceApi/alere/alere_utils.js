@@ -370,6 +370,7 @@ class DeviceApiTestContext {
           'r.senderOperator',
           'r.notes',
           'r.errorCode',
+          'r.createdOn',
           'r.updatedOn'
         )
       if (resultDetails) {
