@@ -170,17 +170,17 @@ async function seed(knex) {
   }
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
     // Admin Permissions
-    modules.demo.admin,
-    modules.device.admin,
-    modules.deviceApiKey.admin,
-    modules.person.admin,
-    modules.result.admin,
-    modules.site.admin,
-    modules.assay.admin,
-    modules.issue.admin,
+    modules.demo.edit,
+    modules.device.edit,
+    modules.deviceApiKey.edit,
+    modules.person.edit,
+    modules.result.edit,
+    modules.site.edit,
+    modules.assay.edit,
+    modules.issue.edit,
     modules.dashboard.actionInventoryLevelUpdate,
-    modules.inventory.admin,
-    modules.task.admin,
+    modules.inventory.edit,
+    modules.task.edit,
     modules.dashboard.summary,
     modules.dashboard.target,
     modules.dashboard.report,
@@ -189,12 +189,12 @@ async function seed(knex) {
 
   // Regional Officer Permissions
   await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.device.admin,
-    modules.result.admin,
-    modules.site.admin,
-    modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
+    modules.device.edit,
+    modules.result.edit,
+    modules.site.edit,
+    modules.issue.edit,
+    modules.inventory.edit,
+    modules.task.edit,
     modules.dashboard.summary,
     modules.dashboard.target,
     modules.dashboard.report,
@@ -204,13 +204,13 @@ async function seed(knex) {
 
   // Lab User Permissions
   await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.device.admin,
+    modules.device.edit,
 
-    modules.result.admin,
-    modules.site.admin,
-    modules.issue.admin,
-    modules.inventory.admin,
-    modules.task.admin,
+    modules.result.edit,
+    modules.site.edit,
+    modules.issue.edit,
+    modules.inventory.edit,
+    modules.task.edit,
     modules.dashboard.summary,
     modules.dashboard.actionInventoryLevelUpdate,
     modules.dashboard.report,

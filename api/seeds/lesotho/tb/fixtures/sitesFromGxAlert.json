@@ -1,0 +1,562 @@
+[
+  {
+    "externalId": "BEREA LAB TB",
+    "longitude": 27.920361,
+    "latitude": -29.19574,
+    "stateName": "Berea",
+    "lgaName": "",
+    "name": "BEREA LAB TB",
+    "shortName": "BEREA LAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "BEREA LAB TB",
+        "shortName": "BEREA LAB",
+        "macAddress": "MACA0369F4A3CF6",
+        "hostId": "Berea Lab",
+        "serial": "Cepheid-44224T8",
+        "gxAlertDeviceId": "3185"
+      }
+    ]
+  },
+  {
+    "externalId": "BUTHA-BUTHE HOSPITAL LAB TB",
+    "longitude": 28.56398,
+    "latitude": -28.802839,
+    "stateName": "Butha-Buthe",
+    "lgaName": "",
+    "name": "BUTHA-BUTHE HOSPITAL LAB TB",
+    "shortName": "B-B Laboratory",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "BUTHA-BUTHE HOSPITAL LAB TB",
+        "shortName": "B-B Laboratory",
+        "macAddress": "MAC8851FB41DEF5",
+        "hostId": "BUTHA-BUTHE HOSPITAL",
+        "serial": "Cepheid-3200YJJ",
+        "gxAlertDeviceId": "3209"
+      }
+    ]
+  },
+  {
+    "externalId": "Katse mini lab TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "",
+    "lgaName": "",
+    "name": "Katse mini lab TB",
+    "shortName": "Katse mini lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Katse mini lab TB",
+        "shortName": "Katse mini lab",
+        "macAddress": "MAC480FCF314D25",
+        "hostId": "Katse mini lab",
+        "serial": "Cepheid-6131P1X",
+        "gxAlertDeviceId": "3352"
+      }
+    ]
+  },
+  {
+    "externalId": "Machabeng Hospital",
+    "longitude": 28.738331,
+    "latitude": -29.965254,
+    "stateName": "Qacha's Nek",
+    "lgaName": "",
+    "name": "Machabeng Hospital",
+    "shortName": "Machabeng Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Machabeng Hospital",
+        "shortName": "Machabeng Lab",
+        "macAddress": "MAC7446A0B4E616",
+        "hostId": "Machabeng Hospital",
+        "serial": "Cepheid-3381P57",
+        "gxAlertDeviceId": "3236"
+      }
+    ]
+  },
+  {
+    "externalId": "MALUTI LABORATORY TB",
+    "longitude": 27.920361,
+    "latitude": -29.19574,
+    "stateName": "Berea",
+    "lgaName": "",
+    "name": "MALUTI LABORATORY TB",
+    "shortName": "MALUTI LAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "MALUTI LABORATORY TB",
+        "shortName": "MALUTI LAB",
+        "macAddress": "MACA0CEC809C80D",
+        "hostId": "MALUTI LABORATORY",
+        "serial": "Cepheid-2UA3481GQ5",
+        "gxAlertDeviceId": "3228"
+      }
+    ]
+  },
+  {
+    "externalId": "MAMOHAU HOSPITAL LABORATORY TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "",
+    "lgaName": "",
+    "name": "MAMOHAU HOSPITAL LABORATORY TB",
+    "shortName": "MAMOHAU HOSP LAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "MAMOHAU HOSPITAL LABORATORY TB",
+        "shortName": "MAMOHAU HOSP LAB",
+        "macAddress": "MACC4346B5E35DE",
+        "hostId": "MAMOHAU HOSPITAL LAB",
+        "serial": "Cepheid-44224V8",
+        "gxAlertDeviceId": "3230"
+      }
+    ]
+  },
+  {
+    "externalId": "MAPUTSOE FILTER CLINIC",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "",
+    "lgaName": "",
+    "name": "MAPUTSOE FILTER CLINIC",
+    "shortName": "MAPUTSOE FC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "MAPUTSOE FILTER CLINIC",
+        "shortName": "MAPUTSOE FC",
+        "macAddress": "MACA0369F8F1528",
+        "hostId": "MAPUTSOE FILTER CLIN",
+        "serial": "Cepheid-6131P1D",
+        "gxAlertDeviceId": "3263"
+      }
+    ]
+  },
+  {
+    "externalId": "MOKHOTLONG LABORATORY TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Mokhotlong",
+    "lgaName": "",
+    "name": "MOKHOTLONG LABORATORY TB",
+    "shortName": "MOKHOTLONG LAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "MOKHOTLONG LABORATORY TB",
+        "shortName": "MOKHOTLONG LAB",
+        "macAddress": "MACD4BED98BCFDD",
+        "hostId": "MOKHOTLONG LABORATOR",
+        "serial": "G2G0LS1",
+        "gxAlertDeviceId": "3226"
+      }
+    ]
+  },
+  {
+    "externalId": "Mokhotlong Mapholaneng mini lab TB",
+    "longitude": 29.03142,
+    "latitude": -29.21883,
+    "stateName": "Mokhotlong",
+    "lgaName": "",
+    "name": "Mokhotlong Mapholaneng mini lab TB",
+    "shortName": "Mapholane",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mokhotlong Mapholaneng mini lab TB",
+        "shortName": "Mapholane",
+        "macAddress": "MACA0369F8F1251",
+        "hostId": "Mokhotlong Mapholane",
+        "serial": "Cepheid-6131P2D",
+        "gxAlertDeviceId": "3279"
+      }
+    ]
+  },
+  {
+    "externalId": "MOTEBANG HOSPITAL LAB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Leribe",
+    "lgaName": "",
+    "name": "MOTEBANG HOSPITAL LAB",
+    "shortName": "MOTEBANG HOSPLAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "MOTEBANG HOSPITAL LAB",
+        "shortName": "MOTEBANG HOSPLAB",
+        "macAddress": "MACA0369F4A3EBC",
+        "hostId": "MOTEBANG HOSPITAL LA",
+        "serial": "Cepheid-44224VF",
+        "gxAlertDeviceId": "3212"
+      }
+    ]
+  },
+  {
+    "externalId": "National TB Reference Laboratory",
+    "longitude": -29.576,
+    "latitude": 27.816999,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "National TB Reference Laboratory",
+    "shortName": "National TB Ref ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "National TB Reference Laboratory",
+        "shortName": "National TB Ref ",
+        "macAddress": "MACA4BADBEF6C3B",
+        "hostId": "National TB Referenc",
+        "serial": "D1L9ZKN1",
+        "gxAlertDeviceId": "2339"
+      }
+    ]
+  },
+  {
+    "externalId": "NTRL-16",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "NTRL-16",
+    "shortName": "NTRL-16",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "NTRL-16",
+        "shortName": "NTRL-16",
+        "macAddress": "MAC6805CA617873",
+        "hostId": "Botsabelo, Maseru",
+        "serial": "Cepheid-7361P5F",
+        "gxAlertDeviceId": "3192"
+      }
+    ]
+  },
+  {
+    "externalId": "NTRL-4",
+    "longitude": 27.817381,
+    "latitude": -29.576139,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "NTRL-4",
+    "shortName": "NTRL-4",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "NTRL-4",
+        "shortName": "NTRL-4",
+        "macAddress": "MACA4BADBEF6C3B",
+        "hostId": "NTRL-4",
+        "serial": "D1L9ZKN1",
+        "gxAlertDeviceId": "3194"
+      }
+    ]
+  },
+  {
+    "externalId": "PARAY HOSPITAL LABORATORY TB",
+    "longitude": 28.59399,
+    "latitude": -29.570089,
+    "stateName": "Thaba-Tseka",
+    "lgaName": "",
+    "name": "PARAY HOSPITAL LABORATORY TB",
+    "shortName": "PARAY HOSP LAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "PARAY HOSPITAL LABORATORY TB",
+        "shortName": "PARAY HOSP LAB",
+        "macAddress": "MAC8851FB43B0A9",
+        "hostId": "PARAY HOSPITAL LABOR",
+        "serial": "Cepheid-3200YJ6",
+        "gxAlertDeviceId": "3216"
+      }
+    ]
+  },
+  {
+    "externalId": "PIH LAB BOTSHABELO TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "PIH LAB BOTSHABELO TB",
+    "shortName": "PIH BOTSHABELO",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "PIH LAB BOTSHABELO TB",
+        "shortName": "PIH BOTSHABELO",
+        "macAddress": "MAC000ACD3047BA",
+        "hostId": "GenexpertPC",
+        "serial": "5CG5010C6L",
+        "gxAlertDeviceId": "3190"
+      }
+    ]
+  },
+  {
+    "externalId": "QUEEN II 16 MODULES",
+    "longitude": 27.817381,
+    "latitude": -29.576139,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "QUEEN II 16 MODULES",
+    "shortName": "Queen 16 MODULES",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "QUEEN II 16 MODULES",
+        "shortName": "Queen 16 MODULES",
+        "macAddress": "MAC6805CA61FEB8",
+        "hostId": "Kobongoto Hospital",
+        "serial": "Cepheid-7361NZ9",
+        "gxAlertDeviceId": "3187"
+      }
+    ]
+  },
+  {
+    "externalId": "QUEEN II 4 MODULES",
+    "longitude": 27.817381,
+    "latitude": -29.576139,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "QUEEN II 4 MODULES",
+    "shortName": "QUEEN  4 MODULES",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "QUEEN II 4 MODULES",
+        "shortName": "QUEEN  4 MODULES",
+        "macAddress": "MAC6805CA5A5AE2",
+        "hostId": "QUEEN II 4 MODULES",
+        "serial": "Cepheid-7282LQK",
+        "gxAlertDeviceId": "3188"
+      }
+    ]
+  },
+  {
+    "externalId": "Quthing Lab",
+    "longitude": 27.984783,
+    "latitude": -30.359758,
+    "stateName": "Quthing",
+    "lgaName": "",
+    "name": "Quthing Lab",
+    "shortName": "Quthing Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Quthing Lab",
+        "shortName": "Quthing Lab",
+        "macAddress": "MACA0369F4A3554",
+        "hostId": "Disalab",
+        "serial": "Cepheid-44224T0",
+        "gxAlertDeviceId": "3206"
+      }
+    ]
+  },
+  {
+    "externalId": "Scott Lab",
+    "longitude": 27.817381,
+    "latitude": -29.576139,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "Scott Lab",
+    "shortName": "Scott Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Scott Lab",
+        "shortName": "Scott Lab",
+        "macAddress": "MAC6805CA4E3254",
+        "hostId": "Scott Lab",
+        "serial": "Cepheid-71020DM",
+        "gxAlertDeviceId": "3202"
+      }
+    ]
+  },
+  {
+    "externalId": "Sehong-Hong Thaba-Tseka",
+    "longitude": 28.59399,
+    "latitude": -29.570089,
+    "stateName": "Thaba-Tseka",
+    "lgaName": "",
+    "name": "Sehong-Hong Thaba-Tseka",
+    "shortName": "Sehong-Hong ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Sehong-Hong Thaba-Tseka",
+        "shortName": "Sehong-Hong ",
+        "macAddress": "MAC5065F34E517C",
+        "hostId": "Sehong-Hong Thaba-Ts",
+        "serial": "Cepheid-6131P32",
+        "gxAlertDeviceId": "3353"
+      }
+    ]
+  },
+  {
+    "externalId": "Semonkong mini lab TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "",
+    "lgaName": "",
+    "name": "Semonkong mini lab TB",
+    "shortName": "Semonkong m-lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Semonkong mini lab TB",
+        "shortName": "Semonkong m-lab",
+        "macAddress": "MACA0369F888540",
+        "hostId": "Semonkong mini lab",
+        "serial": "Cepheid-6021ZML",
+        "gxAlertDeviceId": "3270"
+      }
+    ]
+  },
+  {
+    "externalId": "ST JAMES",
+    "longitude": 28.59399,
+    "latitude": -29.570089,
+    "stateName": "Thaba-Tseka",
+    "lgaName": "",
+    "name": "ST JAMES",
+    "shortName": "ST JAMES",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "ST JAMES",
+        "shortName": "ST JAMES",
+        "macAddress": "MACA0369F4A356C",
+        "hostId": "ST JAMES",
+        "serial": "Cepheid-44224T7",
+        "gxAlertDeviceId": "3214"
+      }
+    ]
+  },
+  {
+    "externalId": "St Joseph's Roma",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "Maseru",
+    "lgaName": "",
+    "name": "St Joseph's Roma",
+    "shortName": "St Joseph's Roma",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "St Joseph's Roma",
+        "shortName": "St Joseph's Roma",
+        "macAddress": "MAC180373D970D7",
+        "hostId": "DISA LAB",
+        "serial": "Cepheid5YSWDQ1",
+        "gxAlertDeviceId": "3219"
+      }
+    ]
+  },
+  {
+    "externalId": "St Matthews H/C Quthing",
+    "longitude": 27.984783,
+    "latitude": -30.359758,
+    "stateName": "Quthing",
+    "lgaName": "",
+    "name": "St Matthews H/C Quthing",
+    "shortName": "QTH St Mat",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "St Matthews H/C Quthing",
+        "shortName": "QTH St Mat",
+        "macAddress": "MACA0369F861311",
+        "hostId": "St Matthews H/C Quth",
+        "serial": "Cepheid-6021ZNT",
+        "gxAlertDeviceId": "3252"
+      }
+    ]
+  },
+  {
+    "externalId": "TEBA LERIBE LAB TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "",
+    "lgaName": "",
+    "name": "TEBA LERIBE LAB TB",
+    "shortName": "TEBA LERIBE LAB",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "TEBA LERIBE LAB TB",
+        "shortName": "TEBA LERIBE LAB",
+        "macAddress": "MAC10604B6DE6D2",
+        "hostId": "TEBA LERIBE LAB",
+        "serial": "Cepheid-3031JBL",
+        "gxAlertDeviceId": "3211"
+      }
+    ]
+  },
+  {
+    "externalId": "Teba Mafeteng Lab TB",
+    "longitude": 27.39065,
+    "latitude": -29.778099,
+    "stateName": "Mafeteng",
+    "lgaName": "",
+    "name": "Teba Mafeteng Lab TB",
+    "shortName": "Teba Mafeteng ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Teba Mafeteng Lab TB",
+        "shortName": "Teba Mafeteng ",
+        "macAddress": "MAC180373B9EEDB",
+        "hostId": "Teba Mafeteng Lab",
+        "serial": "Cepheid2FSQ0R1",
+        "gxAlertDeviceId": "3203"
+      }
+    ]
+  },
+  {
+    "externalId": "Tebellong Hospital",
+    "longitude": 28.738331,
+    "latitude": -29.965254,
+    "stateName": "Qacha's Nek",
+    "lgaName": "",
+    "name": "Tebellong Hospital",
+    "shortName": "Tebellong Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Tebellong Hospital",
+        "shortName": "Tebellong Lab",
+        "macAddress": "MAC7446A0A06B36",
+        "hostId": "Tebellong Hospital",
+        "serial": "Cepheid-33714J3",
+        "gxAlertDeviceId": "3235"
+      }
+    ]
+  },
+  {
+    "externalId": "THABANA-MORENA HEALTH CENTRE TB",
+    "longitude": null,
+    "latitude": null,
+    "stateName": "",
+    "lgaName": "",
+    "name": "THABANA-MORENA HEALTH CENTRE TB",
+    "shortName": "MFT T/Morena",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "THABANA-MORENA HEALTH CENTRE TB",
+        "shortName": "MFT T/Morena",
+        "macAddress": "MACA0369F9075B5",
+        "hostId": "THABANA-MORENA HEALTH CENTRE",
+        "serial": "Cepheid-60912SK",
+        "gxAlertDeviceId": "3255"
+      }
+    ]
+  }
+]

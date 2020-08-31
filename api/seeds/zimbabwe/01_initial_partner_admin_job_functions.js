@@ -90,11 +90,11 @@ async function seed(knex) {
 
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.edit },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([
@@ -118,7 +118,7 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.admin,
+      permissionId: modules.result.edit,
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -146,7 +146,7 @@ async function seed(knex) {
 
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.edit },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.assay.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },

@@ -175,7 +175,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         deviceMaintenanceStatusId,
         data: '{}',
         day: format(date, 'yyyy-MM-dd'),
-        createdOn: date,
+        createdOn: new Date(),
       })
 
     let statusId

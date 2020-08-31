@@ -7,7 +7,6 @@ async function seed(knex) {
   // give admin access to persons and reporters
 
   await knex('Permission').insert([
-    { module: 'patient', activity: 'admin' },
     { module: 'patient', activity: 'view' },
     { module: 'patient', activity: 'edit' },
   ])
@@ -18,7 +17,6 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
   // permissions
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.patient.admin,
     modules.patient.view,
     modules.patient.edit,
   ])

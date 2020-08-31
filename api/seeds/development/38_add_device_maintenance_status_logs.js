@@ -88,7 +88,6 @@ async function seed(knex) {
     const weekDays = []
     for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
       if (
-        !isWeekend(day) &&
         !activeDates.find(
           dayDate => format(dayDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
         )
@@ -104,8 +103,9 @@ async function seed(knex) {
 
     // Inactive statuses for all days without results
     await Promise.each(weekDays, (day, index) => {
-      const inactiveStatusId =
-        inactiveStatusIds[index % inactiveStatusIds.length]
+      const inactiveStatusId = isWeekend(day)
+        ? deviceMaintenanceStatusToId.inactiveUnknown
+        : inactiveStatusIds[index % inactiveStatusIds.length]
       addDmsl(deviceId, day, inactiveStatusId)
     })
   })

@@ -130,6 +130,9 @@ const plugins = {
   aspectresultentry: {
     onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
   },
+  lesothoTb: {
+    preProcessAddDeviceData: require('./partner/Lesotho_TB/preProcessAddDeviceData'),
+  },
 }
 
 /**
