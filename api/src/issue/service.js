@@ -609,7 +609,7 @@ async function triggerIssue(request) {
     }
     case 'ModuleDisabled'.toLowerCase(): {
       const { deviceId, disabledOn, moduleSerialNumber } = data
-      await messageContext.resultModuleDisabled(
+      await messageContext.deviceModuleDisabled(
         deviceId,
         moduleSerialNumber,
         disabledOn
