@@ -28,6 +28,8 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
+  console.log(data)
+
   const legendsNotToRender = ['weekendOrHoliday']
   const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =
@@ -47,14 +49,16 @@ const AspectResponsiveBar = ({
     ? [
         {
           dataFrom: 'keys',
-          data: keys.map(k => generateLegend(k, assaysFromState, type)),
+          data: keys.map(k =>
+            generateLegend(k, assaysFromState, type, legendsNotToRender)
+          ),
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
-          translateX: -25,
+          translateX: type === 'stackedDeviceActivity' ? 15 : -25,
           translateY: 60,
           itemsSpacing: 2,
-          itemWidth: 120,
+          itemWidth: type === 'stackedDeviceActivity' ? 140 : 120,
           itemHeight: 20,
           itemDirection:
             type === 'stackedDeviceActivity'

@@ -74,8 +74,6 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
     }
   }, [data])
 
-  console.log(data)
-
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
