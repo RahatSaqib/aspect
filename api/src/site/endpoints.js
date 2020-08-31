@@ -41,7 +41,8 @@ function listSitesBaseConfig() {
           'lga',
           'createdOn',
           'totalDevices',
-          'externalId'
+          'externalId',
+          'inventoryUpdatedOn'
         ),
       },
     },
