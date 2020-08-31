@@ -161,7 +161,7 @@ describe('Integration test for device status', () => {
         ),
       })
 
-      await waitForIdle(2000)
+      await waitForIdle(3000)
       const issues = await knex('Issue')
         .where({ deviceId: response.body.device.id })
         .orderBy('createdOn', 'DESC')
