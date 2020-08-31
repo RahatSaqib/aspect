@@ -1,11 +1,11 @@
 async function seed(knex) {
-  const resultDatesUpdate = await getResultDates(knex)
-  await Promise.all(resultDatesUpdate)
-  const sampleDatesUpdate = await getSampleDates(knex)
-  await Promise.all(sampleDatesUpdate)
+  const resultDateUpdates = await getResultDateUpdates(knex)
+  await Promise.all(resultDateUpdates)
+  const sampleDateUpdates = await getSampleDateUpdates(knex)
+  await Promise.all(sampleDateUpdates)
 }
 
-async function getResultDates(knex) {
+async function getResultDateUpdates(knex) {
   const dates = await knex('Result as r')
     .innerJoin('Site as s', 'r.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
@@ -33,7 +33,7 @@ async function getResultDates(knex) {
   )
 }
 
-async function getSampleDates(knex) {
+async function getSampleDateUpdates(knex) {
   const dates = await knex('Sample as sm')
     .innerJoin('Result as r', 'sm.id', 'r.sampleId')
     .innerJoin('Site as s', 'sm.originSiteId', 's.id')
