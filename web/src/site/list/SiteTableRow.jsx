@@ -7,6 +7,7 @@ import {
 } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import { messages } from './SiteList'
+import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -21,6 +22,9 @@ const SiteTableRow = ({ intl, site, onAlertClick, ...restProps }) => (
     <TableCell>{site.get('lga')}</TableCell>
     <TableCell>{site.get('externalId')}</TableCell>
     <TableCell>{site.get('totalDevices')}</TableCell>
+    <TableCell>
+      {formatRelative(intl, site.get('inventoryUpdatedOn'), 'N/A')}
+    </TableCell>
     <TableCell>
       {site.get('siteIssues') &&
         site
