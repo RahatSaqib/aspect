@@ -238,7 +238,7 @@ function getSqlQueryRegex() {
     `
       \\b  SELECT  \\s+
         (.*?)
-        
+
       \\s?
       (?:
         \\s+  FROM  \\s+
@@ -281,7 +281,7 @@ function getSqlQueryRegex() {
           \\s+  ORDER  \\s+  BY  \\s+
           (.*?)
         )?
-        
+
         \\s*
         (?:
           \\s+  LIMIT  \\s+
