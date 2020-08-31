@@ -47,7 +47,7 @@ export const NotificationDetailHistory = ({
   const { notificationId } = useParams()
   const { pageAt, pageSize } = makeSortPageSelector()({ location })
   const notification = useSelector(state => state.notification)
-  const { data, isError, error } = useQuery(
+  const { data: { data, total } = false, isError, error } = useQuery(
     [NOTIFICATION_HISTORY.KEY, notificationId, pageAt, pageSize],
     async () =>
       fetchWrapperForQueries(
@@ -57,6 +57,10 @@ export const NotificationDetailHistory = ({
 
   if (isError) {
     throw new Error(error)
+  }
+
+  if (data && total) {
+    console.log(data, total)
   }
 
   return (
@@ -98,13 +102,14 @@ export const NotificationDetailHistory = ({
               ]}
             />
             <TableBody>
-              {data?.map(delivery => (
-                <NotificationHistoryDataTableRow
-                  key={delivery.id}
-                  intl={intl}
-                  delivery={delivery}
-                />
-              ))}
+              {data &&
+                data.map(delivery => (
+                  <NotificationHistoryDataTableRow
+                    key={delivery.id}
+                    intl={intl}
+                    delivery={delivery}
+                  />
+                ))}
             </TableBody>
           </NotificationHistoryDataTable>
           <BrowseTablePaginator

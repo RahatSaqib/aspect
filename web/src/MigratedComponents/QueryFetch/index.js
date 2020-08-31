@@ -29,7 +29,7 @@ const fetchWrapperForQueries = endpoint => {
       ),
     },
   })
-    .then(({ data }) => data)
+    .then(data => data)
     .catch(err => err)
 }
 
