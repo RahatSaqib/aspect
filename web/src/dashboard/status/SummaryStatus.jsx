@@ -9,10 +9,13 @@ import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 export const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
 
-  const { isLoading, isError, data, error } = useQuery(
-    `${dashboard}Widgets`,
-    async () =>
-      fetchWrapperForQueries(`/dashboard/summary?dashboard=${dashboard}`)
+  const {
+    isLoading,
+    isError,
+    data: { data: widgetData } = false,
+    error,
+  } = useQuery(`${dashboard}Widgets`, async () =>
+    fetchWrapperForQueries(`/dashboard/summary?dashboard=${dashboard}`)
   )
 
   if (isError) {
@@ -20,10 +23,10 @@ export const SummaryStatus = ({ className, dashboard }) => {
   }
 
   useEffect(() => {
-    if (data) {
-      setWidgets(groupWidgets(data, dashboard))
+    if (widgetData) {
+      setWidgets(groupWidgets(widgetData, dashboard))
     }
-  }, [data, dashboard])
+  }, [widgetData, dashboard])
 
   return (
     <div className={className}>
