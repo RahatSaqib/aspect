@@ -3,7 +3,6 @@ const chai = require('chai')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { knex } = require('../../src/db')
-const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
@@ -17,7 +16,7 @@ describe('Device API Raw routes for Senaite LIMS', () => {
   const validApiKeyToken = randomToken()
   let senaiteLimsDeviceId
   before(async () => {
-    const now = getUtcTime()
+    const now = new Date()
     const { id: userId } = await knex('User').first('id')
     const senaiteLimsDeviceType = await knex
       .from('DeviceType')

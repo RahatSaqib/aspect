@@ -77,7 +77,7 @@
   }
 }
 
-@media only screen and (min-device-width: 1024px) and (max-device-width: 1400px) {
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1440px) {
   .piegraphs__column:nth-child(n + 5):not(:last-child) div:after {
     content: ' ';
     display: block;
