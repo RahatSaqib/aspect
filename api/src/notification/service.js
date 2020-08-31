@@ -276,6 +276,7 @@ async function getNotifications(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+    .leftJoin('Issue as iss', 'iss.Id', 'n.issueId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .leftJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
     .leftJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
@@ -284,16 +285,12 @@ async function getNotifications(request) {
     .leftJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
-    .groupBy('n.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   const getCount = knex
     .count('innerQuery.number as total')
     .from(
-      notificationQuery
-        .clone()
-        .count('n.notificationTypeId as number')
-        .as('innerQuery')
+      notificationQuery.clone().select('n.issueId as number').as('innerQuery')
     )
     .first()
 
@@ -313,6 +310,7 @@ async function getNotifications(request) {
       'n.createdOn as date',
       'n.id',
     ])
+    .groupBy('iss.createdOn')
 
   const [{ total }, data] = await Promise.all([
     getCount,

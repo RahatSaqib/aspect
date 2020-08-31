@@ -21,9 +21,6 @@ export const types = {
   REQUEST_NOTIFICATIONS: 'REQUEST_NOTIFICATIONS',
   RECEIVE_NOTIFICATIONS: 'RECEIVE_NOTIFICATIONS',
   REJECTED_NOTIFICATIONS: 'REJECTED_NOTIFICATIONS',
-  REQUEST_NOTIFICATION_HISTORY: 'REQUEST_NOTIFICATIONS_HISTORY',
-  RECEIVE_NOTIFICATION_HISTORY: 'RECEIVE_NOTIFICATIONS_HISTORY',
-  REJECTED_NOTIFICATION_HISTORY: 'REJECTED_NOTIFICATIONS_HISTORY',
 }
 
 /*
@@ -54,61 +51,6 @@ function rejectNotifications() {
   }
 }
 
-function requestNotificationHistory(sortCol, sortDir, page, size, filters) {
-  return {
-    type: types.REQUEST_NOTIFICATION_HISTORY,
-    sortCol,
-    sortDir,
-    page,
-    size,
-    filters,
-  }
-}
-
-export function fetchNotificationsHistory(
-  key,
-  { notificationId, pageAt = 0, pageSize = 10 }
-) {
-  return aspectFetch(
-    `/notification/history/${notificationId}?${stringify({
-      page: pageAt,
-      size: pageSize,
-    })}`,
-    {
-      errorNotifications: {
-        400: filterFieldsRejectedError(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchNotificationHistory.GET.400.title',
-              defaultMessage: 'Searching Notification History Failed',
-            },
-          })
-        ),
-        403: errorInsufficientScope(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchNotificationHistory.GET.403.title',
-              defaultMessage: 'Insufficient Permissions',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchNotificationHistory.GET.default.title',
-              defaultMessage: 'Loading Notifications Failed',
-            },
-          })
-        ),
-      },
-    }
-  )
-    .then(({ data, total }) => ({ notificationHistory: data, total }))
-    .catch(err => err)
-}
 export function fetchNotifications(
   filtersParams,
   sortCol,

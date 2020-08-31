@@ -1,6 +1,8 @@
 import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
+import PropTypes from 'prop-types'
+
 import AspectButton from '../../components/shared/AspectButton'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 
@@ -90,5 +92,16 @@ export const NotificationDetailBackBar = ({
     )}
   </DetailBackBar>
 )
+
+NotificationDetailBackBar.propTypes = {
+  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  match: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  onBackClick: PropTypes.func.isRequired,
+  onPathClick: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  disabled: PropTypes.bool.isRequired,
+}
 
 export default enhance(NotificationDetailBackBar)

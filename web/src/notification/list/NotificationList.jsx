@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { flowRight } from 'lodash'
 import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
@@ -85,7 +85,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -282,9 +282,9 @@ NotificationList.defaultProps = {
 }
 
 NotificationList.propTypes = {
-  intl: PropTypes.object.isRequired, // eslint-disable-line
-  location: PropTypes.object.isRequired, // eslint-disable-line
-  history: PropTypes.object.isRequired, // eslint-disable-line
+  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
   table: PropTypes.instanceOf(Immutable.Record).isRequired,
   items: PropTypes.instanceOf(Immutable.Record).isRequired,
   fetchNotifications: PropTypes.func.isRequired,
@@ -296,7 +296,7 @@ NotificationList.propTypes = {
   pageSize: PropTypes.number.isRequired,
 }
 
-export default _.flowRight(
+export default flowRight(
   injectIntl,
   connect(mapStateToProps, {
     fetchNotifications,

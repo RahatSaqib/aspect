@@ -1,7 +1,8 @@
-import _ from 'lodash'
+import { identity } from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { FaCircle } from 'react-icons/fa'
+import PropTypes from 'prop-types'
+
 import { formatDateTime } from '../../../shared/utils/dateFormat'
 import {
   DataTableRow as TableRow,
@@ -10,7 +11,7 @@ import {
 
 const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
   <TableRow
@@ -31,5 +32,15 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
     </TableCell>
   </TableRow>
 )
+
+NotificationHistoryTableRow.propTypes = {
+  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  delivery: PropTypes.shape({
+    date: PropTypes.string,
+    webhookSent: PropTypes.string,
+    emailSent: PropTypes.string,
+    smsSent: PropTypes.string,
+  }).isRequired,
+}
 
 export default enhance(NotificationHistoryTableRow)

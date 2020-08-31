@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
+import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import TableBody from '@material-ui/core/TableBody'
@@ -11,7 +12,7 @@ import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import NotificationDetailBackBar from '../NotificationDetailBackBar'
-import { fetchNotificationsHistory } from '../../NotificationRedux'
+
 import {
   NotificationHistoryDataTable,
   NotificationHistoryDataTableHead,
@@ -19,6 +20,8 @@ import {
 } from './NotificationHistoryDataTable'
 
 import { makeSortPageSelector } from '../../../shared/selectors/searchParams'
+import fetchWrapperForQueries from '../../../MigratedComponents/QueryFetch/index'
+import { NOTIFICATION_HISTORY } from '../../../MigratedComponents/QueryFetch/Notification/index'
 
 const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 
@@ -45,8 +48,11 @@ export const NotificationDetailHistory = ({
   const { pageAt, pageSize } = makeSortPageSelector()({ location })
   const notification = useSelector(state => state.notification)
   const { data, isError, error } = useQuery(
-    ['notificationHistory', { notificationId, pageSize, pageAt }],
-    fetchNotificationsHistory
+    [NOTIFICATION_HISTORY.KEY, notificationId, pageAt, pageSize],
+    async () =>
+      fetchWrapperForQueries(
+        `${NOTIFICATION_HISTORY.ENDPOINT}/${notificationId}?page=${pageAt}&size=${pageSize}`
+      )
   )
 
   if (isError) {
@@ -78,12 +84,12 @@ export const NotificationDetailHistory = ({
                   label: 'Date',
                 },
                 {
-                  key: 'web-alerts',
-                  label: 'Web alerts',
+                  key: 'web-sent',
+                  label: 'Webhook Sent',
                 },
                 {
                   key: 'email-sent',
-                  label: 'Email sent',
+                  label: 'Emails sent',
                 },
                 {
                   key: 'sms-sent',
@@ -92,7 +98,7 @@ export const NotificationDetailHistory = ({
               ]}
             />
             <TableBody>
-              {data?.notificationHistory.map(delivery => (
+              {data?.map(delivery => (
                 <NotificationHistoryDataTableRow
                   key={delivery.id}
                   intl={intl}
@@ -106,7 +112,7 @@ export const NotificationDetailHistory = ({
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}
-            total={data?.total || 0}
+            total={0}
             pageAt={pageAt}
             pageSize={pageSize}
           />
@@ -114,6 +120,13 @@ export const NotificationDetailHistory = ({
       </section>
     </div>
   )
+}
+
+NotificationDetailHistory.propTypes = {
+  intl: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.object.isRequired, // eslint-disable-line
+  history: PropTypes.object.isRequired, // eslint-disable-line
+  match: PropTypes.object.isRequired, // eslint-disable-line
 }
 
 export default enhance(NotificationDetailHistory)
