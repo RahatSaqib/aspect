@@ -1,8 +1,8 @@
 async function seed(knex) {
   const resultDatesUpdate = await getResultDates(knex)
+  await Promise.all(resultDatesUpdate)
   const sampleDatesUpdate = await getSampleDates(knex)
-  const conversions = [...resultDatesUpdate, ...sampleDatesUpdate]
-  await Promise.all(conversions)
+  await Promise.all(sampleDatesUpdate)
 }
 
 async function getResultDates(knex) {
