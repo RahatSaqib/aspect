@@ -111,31 +111,34 @@ async function runSeed(seed, knex, fileName, overridedSeeds) {
     hasSeededStaticData = true
   }
   if (fileName) {
-    fileName = path.relative(__filename, fileName).slice(3)
-  }
-  if (fileName && (!seedsRun || !seedsRun[fileName])) {
-    return seed(knex)
-      .catch(async e => {
-        await knex('AspectSeed').insert({
-          fileName,
-          success: false,
-          errorMessage: e.message,
-        })
-        throw e
-      })
-      .then(async () => {
-        if (!commonInserts) {
-          commonInserts = true
-          await Promise.each(Object.keys(relativeObjectsSeeds), async elem => {
-            commonInserts =
-              commonInserts && (await relativeObjectsSeeds[elem](knex))
+    fileName = path.relative(__filename, fileName).slice(3).replace(/\\/g, '/')
+    if (!seedsRun || !seedsRun[fileName]) {
+      return seed(knex)
+        .catch(async e => {
+          await knex('AspectSeed').insert({
+            fileName,
+            success: false,
+            errorMessage: e.message,
           })
-        }
-        await knex('AspectSeed').insert({
-          fileName,
-          success: true,
+          throw e
         })
-      })
+        .then(async () => {
+          if (!commonInserts) {
+            commonInserts = true
+            await Promise.each(
+              Object.keys(relativeObjectsSeeds),
+              async elem => {
+                commonInserts =
+                  commonInserts && (await relativeObjectsSeeds[elem](knex))
+              }
+            )
+          }
+          await knex('AspectSeed').insert({
+            fileName,
+            success: true,
+          })
+        })
+    }
   }
 }
 
@@ -2862,11 +2865,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
     knex,
     'Device Maker',
     partnerId,
-    [modules.account.edit, modules.operationalData.admin]
+    [modules.account.edit, modules.operationalData.edit]
   )
   const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
     modules.account.edit,
-    modules.operationalData.admin,
+    modules.operationalData.edit,
   ])
   const jobFunctionIdTechnician = await upsertJobFunction(
     knex,

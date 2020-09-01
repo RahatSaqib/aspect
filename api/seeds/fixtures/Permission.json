@@ -4,110 +4,97 @@
       "name": "assay",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "router",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "account",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "demo",
       "activities": [
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "deviceApiKey",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "device",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "inventory",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "person",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "result",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "treatmentStatus",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "site",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "issue",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "notification",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "task",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
@@ -120,16 +107,14 @@
       "name": "report",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "case",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
@@ -142,24 +127,21 @@
       "name": "actionDashboard",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "account",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
       "name": "reporter",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     },
     {
@@ -194,11 +176,8 @@
       "name": "operationalData",
       "activities": [
         "view",
-        "edit",
-        "admin"
+        "edit"
       ]
     }
-
-
   ]
 }
