@@ -4,8 +4,10 @@ const _ = require('lodash')
 const {
   addDays,
   subDays,
+  subMonths,
   startOfToday,
   startOfMonth,
+  endOfMonth,
   setMilliseconds,
 } = require('date-fns')
 const shared = require('../utils/sharedToken')
@@ -263,7 +265,13 @@ describe('Device routes', () => {
         let filterOnDeviceMaintenanceStatus = ['active', 'inactiveConnectivity']
         let devicesReponse = await server
           .get(
-            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
+              startOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&maxDate=${formatDateOrDefault(
+              endOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&${filterOnDeviceMaintenanceStatus
               .map(
                 status =>
                   `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
@@ -290,7 +298,13 @@ describe('Device routes', () => {
         filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
         devicesReponse = await server
           .get(
-            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
+              startOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&maxDate=${formatDateOrDefault(
+              endOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&${filterOnDeviceMaintenanceStatus
               .map(
                 status =>
                   `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
