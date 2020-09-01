@@ -39,7 +39,7 @@ export const OperationalData = ({ intl, history, location, loading }) => {
         <div className={cssClasses({ 'Content--loading': loading })} />
       ) : (
         <Fragment>
-          <ErrorBoundary>
+          {/* <ErrorBoundary>
             <PermissionsProvider permissions={['operationalData']}>
               <SummaryStatus
                 intl={intl}
@@ -49,9 +49,9 @@ export const OperationalData = ({ intl, history, location, loading }) => {
                 dashboard="operational"
               />
             </PermissionsProvider>
-          </ErrorBoundary>
+          </ErrorBoundary> */}
 
-          <ErrorBoundary>
+          {/* <ErrorBoundary>
             <PermissionsProvider permissions={['operationalData']}>
               {assays && assays.length ? (
                 <GraphsContainer
@@ -60,7 +60,7 @@ export const OperationalData = ({ intl, history, location, loading }) => {
                 />
               ) : null}
             </PermissionsProvider>
-          </ErrorBoundary>
+          </ErrorBoundary> */}
 
           <ErrorBoundary>
             <PermissionsProvider permissions={['operationalData']}>
