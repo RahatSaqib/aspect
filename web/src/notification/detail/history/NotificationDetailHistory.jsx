@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { identity } from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
@@ -21,7 +21,7 @@ import {
 
 import { makeSortPageSelector } from '../../../shared/selectors/searchParams'
 import fetchWrapperForQueries from '../../../MigratedComponents/QueryFetch/index'
-import { NOTIFICATION_HISTORY } from '../../../MigratedComponents/QueryFetch/Notification/index'
+import NOTIFICATION_HISTORY from '../../../MigratedComponents/QueryFetch/Notification/index'
 
 const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 
@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
 })
 
-const enhance = _.identity(injectIntl)
+const enhance = identity(injectIntl)
 
 export const NotificationDetailHistory = ({
   intl,
@@ -57,10 +57,6 @@ export const NotificationDetailHistory = ({
 
   if (isError) {
     throw new Error(error)
-  }
-
-  if (data && total) {
-    console.log(data, total)
   }
 
   return (
@@ -117,7 +113,7 @@ export const NotificationDetailHistory = ({
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}
-            total={0}
+            total={total || 0}
             pageAt={pageAt}
             pageSize={pageSize}
           />

@@ -287,16 +287,11 @@ async function getNotifications(request) {
     .where('n.notificationTypeId', params.notificationTypeId)
     .modify(addConstraints, dataConstraints, { partner: 'p' })
 
-  const getCount = knex
-    .count('innerQuery.number as total')
-    .from(
-      notificationQuery.clone().select('n.issueId as number').as('innerQuery')
-    )
-    .first()
+  const getCount = notificationQuery.clone().count('n.issueId as total').first()
 
   const getNotificationHistory = notificationQuery
     .clone()
-    .modify(sortPageParams, query, 'n.createdOn')
+    .modify(sortPageParams, query, 'iss.createdOn')
     .select([
       knex.raw(
         'sum(case when mswm.externalId = "Sent" then 1 else 0 end) as webhookSent'
@@ -307,10 +302,10 @@ async function getNotifications(request) {
       knex.raw(
         'sum(case when msem.externalId = "Sent" then 1 else 0 end) as emailSent'
       ),
-      'n.createdOn as date',
+      'iss.createdOn as date',
       'n.id',
     ])
-    .groupBy('iss.createdOn')
+    .groupBy('n.issueId')
 
   const [{ total }, data] = await Promise.all([
     getCount,
