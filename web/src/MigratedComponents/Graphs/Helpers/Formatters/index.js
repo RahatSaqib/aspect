@@ -359,6 +359,17 @@ const extractOptionValue = (identifier, selectedOption) => {
             }
       break
 
+    case 'currentMonth':
+      optionValue =
+        selectedOption && selectedOption.value
+          ? {
+              currentMonth: selectedOption.value.minDate,
+            }
+          : {
+              currentMonth: getPreviousPeriod('months', 'yyyy-MM-dd').start,
+            }
+      break
+
     case 'assayTypeId':
       optionValue = {
         assayTypeId: selectedOption
