@@ -1,5 +1,5 @@
 async function seed(knex) {
-  const [{ mySqlTimezoneTablesMissing }] = await knex.select(knex.raw("ISNULL(NULL) as mySqlTimezoneTablesMissing"))
+  const [{ mySqlTimezoneTablesMissing }] = await knex.select(knex.raw("ISNULL(CONVERT_TZ(now(), 'EST', 'UTC')) as mySqlTimezoneTablesMissing"))
   if (mySqlTimezoneTablesMissing === 1)
     throw new Error("TimeZone tables weren't configured on the MySql server. For more information, check the next link: https://dev.mysql.com/downloads/timezones.html.")
 

@@ -29,9 +29,17 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.percentViaSms',
     defaultMessage: 'Sent via SMS',
   },
+  percentViaSmsDescription: {
+    id: 'pages.OperationalData.percentViaSmsDescription',
+    defaultMessage: 'The percent of positive results reported via SMS',
+  },
   percentViaEmail: {
     id: 'pages.OperationalData.percentViaEmail',
     defaultMessage: 'Sent via Email',
+  },
+  percentViaEmailDescription: {
+    id: 'pages.OperationalData.percentViaSmsDescription',
+    defaultMessage: 'The percent of positive results reported via Email',
   },
   percentWithin2Hours: {
     id: 'pages.OperationalData.percentWithin2Hours',

@@ -312,6 +312,11 @@ async function resultsTransmittedDashboard(request) {
     }
   })
 
+<<<<<<< Updated upstream
+=======
+  console.log(data)
+
+>>>>>>> Stashed changes
   return {
     ok: true,
     currentMonth,

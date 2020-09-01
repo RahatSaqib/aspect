@@ -17,6 +17,7 @@ import {
 
 import { GraphToolTip } from '../GraphToolTip'
 
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
 import messages from './messages'
 
@@ -41,6 +42,12 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
               <div className={cssClasses('piegraphs__column')}>
                 <div className={cssClasses('piegraphs__columnTitle')}>
                   {intlFormatMessage(messages[heading])}
+                  {messages[`${heading}Description`] && (
+                    <AspectTooltip
+                      showHelpIcon
+                      title={messages[`${heading}Description`]}
+                    />
+                  )}
                 </div>
               </div>
             ))}
