@@ -126,19 +126,19 @@ async function commonUpserts(
     })
   }
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.demo.admin,
-    modules.issue.admin,
-    modules.assay.admin,
-    modules.case.admin,
-    modules.site.admin,
-    modules.result.admin,
+    modules.demo.edit,
+    modules.issue.edit,
+    modules.assay.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
-    modules.account.admin,
-    modules.device.admin,
-    modules.reporter.admin,
+    modules.account.edit,
+    modules.device.edit,
+    modules.reporter.edit,
     modules.browse.view,
-    modules.person.admin,
+    modules.person.edit,
   ])
   let { id: jobIdAdmin } =
     (await knex('Job')
@@ -398,10 +398,8 @@ async function upsertGxAlertDevice(
   }
   const { id: gxAlertDeviceApiKeyId } =
     (await knex('DeviceApiKey')
-      .where({
-        token: deviceApiToken,
-        deviceId: device.id,
-      })
+      .where('token', deviceApiToken)
+      .orWhere('deviceId', device.id)
       .first('id')) || {}
   if (!gxAlertDeviceApiKeyId) {
     await knex('DeviceApiKey').insert({
@@ -1030,7 +1028,9 @@ async function baseGxAlertMigration(
   // Validate passed variables
   // -------------------------
   const missingVariables = []
-  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert) {
+  let { id: adminId } =
+    (await knex('User').where('name', admin.name).first('id')) || {}
+  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert && !adminId) {
     missingVariables.push('admin.password')
   }
   if (!partner.name) {
@@ -1075,8 +1075,6 @@ async function baseGxAlertMigration(
   // Seed admin user and partner
   // ---------------------------
   const now = new Date()
-  let { id: adminId } =
-    (await knex('User').where('name', admin.name).first('id')) || {}
   if (!adminId) {
     ;[adminId] = await knex('User').insert({
       approved: 1,
@@ -1534,6 +1532,7 @@ async function baseGxAlertMigration(
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
+        existingPerson.partnerId !== partnerId ||
         existingPerson.timezone !== person.timezone ||
         existingPerson.title !== person.title ||
         existingPerson.geographyId !== geographyId ||
@@ -1549,6 +1548,7 @@ async function baseGxAlertMigration(
           .update({
             ...existingPerson,
             name: person.personName,
+            partnerId,
             timezone: person.timezone,
             title: person.title,
             geographyId,
@@ -1566,6 +1566,7 @@ async function baseGxAlertMigration(
     } else {
       ;[personId] = await knex('Person').insert({
         name: person.personName,
+        partnerId,
         timezone: person.timezone || countries[0].timezone,
         geographyId,
         title: person.title,

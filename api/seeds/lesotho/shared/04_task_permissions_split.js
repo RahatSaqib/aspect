@@ -1,19 +1,15 @@
-module.exports = require('../utils').seed(seed, __filename)
-const { getPermissionModules, mapJobFunctionPermissions } = require('../utils')
+const {
+  getPermissionModules,
+  mapJobFunctionPermissions,
+} = require('../../utils')
 
-async function seed(knex) {
+module.exports = async function (knex) {
   const modules = await getPermissionModules(knex)
 
   await mapJobFunctionPermissions(
     knex,
-    [modules.task.admin, modules.task.edit, modules.task.view],
+    [modules.task.edit, modules.task.view],
     [modules.taskMenu.view]
-  )
-
-  await mapJobFunctionPermissions(
-    knex,
-    [modules.device.admin, modules.site.admin],
-    [modules.task.admin]
   )
 
   await mapJobFunctionPermissions(

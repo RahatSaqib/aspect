@@ -1,25 +1,5 @@
 [
   {
-    "externalId": "Berea Hospital MCH",
-    "longitude": null,
-    "latitude": null,
-    "stateName": "Berea",
-    "lgaName": "",
-    "name": "Berea Hospital MCH",
-    "shortName": "Berea Hospital",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Berea Hospital MCH",
-        "shortName": "Berea Hospital",
-        "macAddress": "MAC98E7F468D058",
-        "hostId": "Berea Hospital",
-        "serial": "Cepheid-6426187",
-        "gxAlertDeviceId": "2373"
-      }
-    ]
-  },
-  {
     "externalId": "BEREA LAB TB",
     "longitude": 27.920361,
     "latitude": -29.19574,
@@ -60,46 +40,6 @@
     ]
   },
   {
-    "externalId": "Butha-Buthe Hospital MCH",
-    "longitude": -28.802999,
-    "latitude": 28.563999,
-    "stateName": "Butha-Buthe",
-    "lgaName": "",
-    "name": "Butha-Buthe Hospital MCH",
-    "shortName": "BBHospital",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Butha-Buthe Hospital MCH",
-        "shortName": "BBHospital",
-        "macAddress": "MAC48BA4E8A7423",
-        "hostId": "Botha-Bothe Hospital",
-        "serial": "Cepheid-7352VFD",
-        "gxAlertDeviceId": "2378"
-      }
-    ]
-  },
-  {
-    "externalId": "ghkghjk",
-    "longitude": null,
-    "latitude": null,
-    "stateName": "",
-    "lgaName": "",
-    "name": "ghkghjk",
-    "shortName": "ghkghjk",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "ghkghjk",
-        "shortName": "ghkghjk",
-        "macAddress": "MAC1C872CB8D373",
-        "hostId": "ghkghjk",
-        "serial": "Tranquilo",
-        "gxAlertDeviceId": "3176"
-      }
-    ]
-  },
-  {
     "externalId": "Katse mini lab TB",
     "longitude": null,
     "latitude": null,
@@ -116,26 +56,6 @@
         "hostId": "Katse mini lab",
         "serial": "Cepheid-6131P1X",
         "gxAlertDeviceId": "3352"
-      }
-    ]
-  },
-  {
-    "externalId": "Likotsi Filter Clinic MCH",
-    "longitude": null,
-    "latitude": null,
-    "stateName": "Maseru",
-    "lgaName": "",
-    "name": "Likotsi Filter Clinic MCH",
-    "shortName": "Likotsi Filter ",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Likotsi Filter Clinic MCH",
-        "shortName": "Likotsi Filter ",
-        "macAddress": "MAC98E7F45DDB10",
-        "hostId": "Likotsi Filter Clinic",
-        "serial": "Cepheid-64262K1",
-        "gxAlertDeviceId": "2336"
       }
     ]
   },
@@ -160,46 +80,6 @@
     ]
   },
   {
-    "externalId": "MAFETENG HOSPITAL MCH",
-    "longitude": null,
-    "latitude": null,
-    "stateName": "Mafeteng",
-    "lgaName": "",
-    "name": "MAFETENG HOSPITAL MCH",
-    "shortName": "MAFETENG HSPTL",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "MAFETENG HOSPITAL MCH",
-        "shortName": "MAFETENG HSPTL",
-        "macAddress": "MACEC8EB54F8100",
-        "hostId": "MAFETENG HOSPITAL",
-        "serial": "Cepheid-62952KF",
-        "gxAlertDeviceId": "2340"
-      }
-    ]
-  },
-  {
-    "externalId": "MAKOANYANE  MILLITARY HOSPITAL MCH",
-    "longitude": 27.817381,
-    "latitude": -29.576139,
-    "stateName": "Maseru",
-    "lgaName": "",
-    "name": "MAKOANYANE  MILLITARY HOSPITAL MCH",
-    "shortName": "MAKOANYANE LAB",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "MAKOANYANE  MILLITARY HOSPITAL MCH",
-        "shortName": "MAKOANYANE LAB",
-        "macAddress": "MACA0369FD4EC05",
-        "hostId": "MAKOANYANE LABORATORY",
-        "serial": "Cepheid-70310VQ",
-        "gxAlertDeviceId": "2416"
-      }
-    ]
-  },
-  {
     "externalId": "MALUTI LABORATORY TB",
     "longitude": 27.920361,
     "latitude": -29.19574,
@@ -216,26 +96,6 @@
         "hostId": "MALUTI LABORATORY",
         "serial": "Cepheid-2UA3481GQ5",
         "gxAlertDeviceId": "3228"
-      }
-    ]
-  },
-  {
-    "externalId": "MALUTI SDA HOSPITAL MCH",
-    "longitude": 27.920361,
-    "latitude": -29.19574,
-    "stateName": "Berea",
-    "lgaName": "",
-    "name": "MALUTI SDA HOSPITAL MCH",
-    "shortName": "MAL SDA HOSPITAL",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "MALUTI SDA HOSPITAL MCH",
-        "shortName": "MAL SDA HOSPITAL",
-        "macAddress": "MACFC3FDB88300C",
-        "hostId": "MALUTI SDA HOSPITAL",
-        "serial": "Cepheid-60348Q8",
-        "gxAlertDeviceId": "2374"
       }
     ]
   },
@@ -276,26 +136,6 @@
         "hostId": "MAPUTSOE FILTER CLIN",
         "serial": "Cepheid-6131P1D",
         "gxAlertDeviceId": "3263"
-      }
-    ]
-  },
-  {
-    "externalId": "Mokhotlong Hospital MCH",
-    "longitude": 29.03142,
-    "latitude": -29.21883,
-    "stateName": "Mokhotlong",
-    "lgaName": "",
-    "name": "Mokhotlong Hospital MCH",
-    "shortName": "Mokhotlong Hosp",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Mokhotlong Hospital MCH",
-        "shortName": "Mokhotlong Hosp",
-        "macAddress": "MAC98E7F45C1F53",
-        "hostId": "Mokhotlong Hospital",
-        "serial": "Cepheid-64262KG",
-        "gxAlertDeviceId": "2401"
       }
     ]
   },
@@ -360,26 +200,6 @@
     ]
   },
   {
-    "externalId": "Motebang Hospital MCH",
-    "longitude": -29.018,
-    "latitude": 28.264,
-    "stateName": "Leribe",
-    "lgaName": "",
-    "name": "Motebang Hospital MCH",
-    "shortName": "Motebang ",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Motebang Hospital MCH",
-        "shortName": "Motebang ",
-        "macAddress": "MAC98E7F468CF82",
-        "hostId": "Motebang Hospital",
-        "serial": "Cepheid-6426183",
-        "gxAlertDeviceId": "2380"
-      }
-    ]
-  },
-  {
     "externalId": "National TB Reference Laboratory",
     "longitude": -29.576,
     "latitude": 27.816999,
@@ -396,26 +216,6 @@
         "hostId": "National TB Referenc",
         "serial": "D1L9ZKN1",
         "gxAlertDeviceId": "2339"
-      }
-    ]
-  },
-  {
-    "externalId": "NT'SEKHE HOSPITAL MCH",
-    "longitude": 27.812759,
-    "latitude": -30.05542,
-    "stateName": "Mohale's Hoek",
-    "lgaName": "",
-    "name": "NT'SEKHE HOSPITAL MCH",
-    "shortName": "NT'SEKHE Hosp",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "NT'SEKHE HOSPITAL MCH",
-        "shortName": "NT'SEKHE Hosp",
-        "macAddress": "MAC98E7F452FD9C",
-        "hostId": "NT'SEKHE HOSPITAL",
-        "serial": "Cepheid-64261CR",
-        "gxAlertDeviceId": "2421"
       }
     ]
   },
@@ -480,26 +280,6 @@
     ]
   },
   {
-    "externalId": "Paray Hospital MCH",
-    "longitude": 28.59399,
-    "latitude": -29.570089,
-    "stateName": "Thaba-Tseka",
-    "lgaName": "",
-    "name": "Paray Hospital MCH",
-    "shortName": "Paray Hospital",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Paray Hospital MCH",
-        "shortName": "Paray Hospital",
-        "macAddress": "MAC98E7F468CFB6",
-        "hostId": "Paray Hospital",
-        "serial": "Cepheid-642619T",
-        "gxAlertDeviceId": "2395"
-      }
-    ]
-  },
-  {
     "externalId": "PIH LAB BOTSHABELO TB",
     "longitude": null,
     "latitude": null,
@@ -560,26 +340,6 @@
     ]
   },
   {
-    "externalId": "QUTHING HOSPITAL MCH",
-    "longitude": -30.360001,
-    "latitude": 27.985001,
-    "stateName": "Quthing",
-    "lgaName": "",
-    "name": "QUTHING HOSPITAL MCH",
-    "shortName": "QUTHING HOSPITAL",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "QUTHING HOSPITAL MCH",
-        "shortName": "QUTHING HOSPITAL",
-        "macAddress": "MAC98E7F468CE8D",
-        "hostId": "QUTHING HOSPITAL",
-        "serial": "Cepheid-6426193",
-        "gxAlertDeviceId": "2334"
-      }
-    ]
-  },
-  {
     "externalId": "Quthing Lab",
     "longitude": 27.984783,
     "latitude": -30.359758,
@@ -600,26 +360,6 @@
     ]
   },
   {
-    "externalId": "Scott Hospital MCH",
-    "longitude": 27.817381,
-    "latitude": -29.576139,
-    "stateName": "Maseru",
-    "lgaName": "",
-    "name": "Scott Hospital MCH",
-    "shortName": "Scott Hsptl MCH",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Scott Hospital MCH",
-        "shortName": "Scott Hsptl MCH",
-        "macAddress": "MACF0D5BF0E19C4",
-        "hostId": "Scott Hospital MCH",
-        "serial": "Cepheid-642619M",
-        "gxAlertDeviceId": "2333"
-      }
-    ]
-  },
-  {
     "externalId": "Scott Lab",
     "longitude": 27.817381,
     "latitude": -29.576139,
@@ -636,26 +376,6 @@
         "hostId": "Scott Lab",
         "serial": "Cepheid-71020DM",
         "gxAlertDeviceId": "3202"
-      }
-    ]
-  },
-  {
-    "externalId": "Seboche Hospital MCH",
-    "longitude": 28.56398,
-    "latitude": -28.802839,
-    "stateName": "Butha-Buthe",
-    "lgaName": "",
-    "name": "Seboche Hospital MCH",
-    "shortName": "Seboche Hospital",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Seboche Hospital MCH",
-        "shortName": "Seboche Hospital",
-        "macAddress": "MACFC3FDB876FA9",
-        "hostId": "Seboche Hospital",
-        "serial": "Cepheid-60348RS",
-        "gxAlertDeviceId": "2377"
       }
     ]
   },
@@ -836,26 +556,6 @@
         "hostId": "THABANA-MORENA HEALTH CENTRE",
         "serial": "Cepheid-60912SK",
         "gxAlertDeviceId": "3255"
-      }
-    ]
-  },
-  {
-    "externalId": "Thamae Health Centre MCH",
-    "longitude": -29.576,
-    "latitude": 27.816999,
-    "stateName": "Maseru",
-    "lgaName": "",
-    "name": "Thamae Health Centre MCH",
-    "shortName": "Thamae Health ",
-    "timeZoneId": "South Africa Standard Time",
-    "devices": [
-      {
-        "name": "Thamae Health Centre MCH",
-        "shortName": "Thamae Health ",
-        "macAddress": "MAC48BA4E8AC5BB",
-        "hostId": "Thamae Health Centre",
-        "serial": "Cepheid-7353800",
-        "gxAlertDeviceId": "2338"
       }
     ]
   }
