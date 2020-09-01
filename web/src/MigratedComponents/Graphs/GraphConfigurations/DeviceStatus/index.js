@@ -1,10 +1,5 @@
 import BarGraph from '../../BarGraph'
-import {
-  getPreviousPeriod,
-  dateRangeOptions,
-  lastMonthLabel,
-  negateTimeZoneOffset,
-} from '../../Helpers/Formatters'
+import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
 import AspectDropdown from '../../../AspectDropdown'
 
 const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
