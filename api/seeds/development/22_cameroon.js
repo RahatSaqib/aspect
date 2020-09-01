@@ -52,9 +52,9 @@ async function seed(knex) {
 
   // Grant access to sites
   // Reuse previously seeded "static" data
-  const { id: permissionSiteAdminId } = await knex('Permission')
+  const { id: permissionSiteEditId } = await knex('Permission')
     .where('module', 'site')
-    .where('activity', 'admin')
+    .where('activity', 'edit')
     .first('id')
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
@@ -64,12 +64,12 @@ async function seed(knex) {
   if (
     !(await knex('JobFunctionPermission')
       .where('jobFunctionId', jobFunctionIdAdmin)
-      .where('permissionId', permissionSiteAdminId))
+      .where('permissionId', permissionSiteEditId))
   ) {
     await knex('JobFunctionPermission').insert([
       {
         jobFunctionId: jobFunctionIdAdmin,
-        permissionId: permissionSiteAdminId,
+        permissionId: permissionSiteEditId,
       },
     ])
   }

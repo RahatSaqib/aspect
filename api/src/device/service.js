@@ -1111,79 +1111,81 @@ async function deviceMaintenanceStatusHistory(request) {
     .distinct('d.id')
     .pluck('d.id')
 
-  const devices = await knex('Device as d')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-    .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
-    .where('dc.hasResults', true)
-    .modify(queryBuilder => {
-      if (!_.isEmpty(filterByDeviceIds)) {
-        queryBuilder.whereIn('d.id', filterByDeviceIds)
-      }
-    })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      deviceName: 'd.name',
-      deviceApprovalId: 'd.deviceApprovalId',
-      deviceTypeId: 'd.deviceTypeId',
-      hasConnectivity: 'dc.hasConnectivity',
-      hasResults: 'dc.hasResults',
-      category: 'dc.name',
-      type: 'dt.name',
-      siteExternalId: 's.externalId',
-      siteName: 's.name',
-      siteId: 's.id',
-      diseaseId: 'dis.id',
-      assayId: 'a.id',
-    })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      device: 'd',
-      deviceType: 'dt',
-      geography: 'g',
-      site: 's',
-      disease: 'dis',
-    })
-    .select([
-      ...SELECT_LIST_FIELDS,
-      knex('Result as r')
-        .innerJoin('Sample as s', 'r.sampleId', 's.id')
+  const devices = _.isEmpty(filterByDeviceIds)
+    ? []
+    : await knex('Device as d')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+        .innerJoin(
+          'DeviceTypeCategory as dc',
+          'dt.deviceTypeCategoryId',
+          'dc.id'
+        )
+        .innerJoin('Site as s', 'd.siteId', 's.id')
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftJoin('State as st', 'g.stateId', 'st.id')
+        .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+        .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+        .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+        .leftJoin(
+          'DeviceMaintenanceStatusLog as dmsl',
+          'd.deviceMaintenanceStatusLogId',
+          'dmsl.id'
+        )
+        .leftJoin(
+          'DeviceMaintenanceStatus as dms',
+          'dmsl.deviceMaintenanceStatusId',
+          'dms.id'
+        )
+        .whereIn('d.id', filterByDeviceIds)
+        .andWhere('dc.hasResults', true)
+        .modify(filterParams, query, {
+          countryId: 'g.countryId',
+          stateId: 'g.stateId',
+          lgaId: 'g.lgaId',
+          deviceName: 'd.name',
+          deviceApprovalId: 'd.deviceApprovalId',
+          deviceTypeId: 'd.deviceTypeId',
+          hasConnectivity: 'dc.hasConnectivity',
+          hasResults: 'dc.hasResults',
+          category: 'dc.name',
+          type: 'dt.name',
+          siteExternalId: 's.externalId',
+          siteName: 's.name',
+          siteId: 's.id',
+          diseaseId: 'dis.id',
+          assayId: 'a.id',
+        })
         .modify(addConstraints, dataConstraints, {
-          result: 'r',
-          sample: 's',
+          assay: 'a',
+          device: 'd',
+          deviceType: 'dt',
+          geography: 'g',
+          site: 's',
+          disease: 'dis',
         })
-        .whereRaw('r.deviceId = d.id')
-        .modify(queryBuilder => {
-          if (minDate) {
-            queryBuilder
-              .whereBetween('r.startedOn', [minDate, maxDate])
-              .orWhere(queryBuilder => {
-                queryBuilder.whereBetween('r.endedOn', [minDate, maxDate])
-              })
-          }
-        })
-        .countDistinct('r.id')
-        .as('resultCount'),
-    ])
-    .distinct()
+        .select([
+          ...SELECT_LIST_FIELDS,
+          knex('Result as r')
+            .innerJoin('Sample as s', 'r.sampleId', 's.id')
+            .modify(addConstraints, dataConstraints, {
+              result: 'r',
+              sample: 's',
+            })
+            .whereRaw('r.deviceId = d.id')
+            .modify(queryBuilder => {
+              if (minDate) {
+                queryBuilder
+                  .whereBetween('r.startedOn', [minDate, maxDate])
+                  .orWhere(queryBuilder => {
+                    queryBuilder.whereBetween('r.endedOn', [minDate, maxDate])
+                  })
+              }
+            })
+            .countDistinct('r.id')
+            .as('resultCount'),
+        ])
+        .distinct()
   const latestDeviceMaintenanceStatusLogsPerDay = _.isEmpty(devices)
     ? []
     : await knex
