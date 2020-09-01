@@ -378,7 +378,13 @@ describe('Device routes', () => {
         ]
         let devicesReponse = await server
           .get(
-            `${maintenanceStatusPath}?${filterOnDeviceMaintenanceStatus
+            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
+              startOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&maxDate=${formatDateOrDefault(
+              endOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&${filterOnDeviceMaintenanceStatus
               .map(
                 status =>
                   `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
@@ -391,7 +397,7 @@ describe('Device routes', () => {
           deviceId,
           deviceMaintenanceStatusId:
             deviceMaintenanceStatuses.inactiveOutOfInventory,
-          day: startOfToday(),
+          day: getLocalDateInUtc(startOfToday()),
           data: JSON.stringify({
             options: { data: { notes: 'More cartridges expected next month' } },
           }),
@@ -423,9 +429,7 @@ describe('Device routes', () => {
         assert.isOk(devicesReponse.body.ok)
         expect(devicesReponse.body.data).to.containSubset({
           ...newDeviceMaintenanceStatusLog,
-          day: getLocalDateInUtc(
-            newDeviceMaintenanceStatusLog.day
-          ).toISOString(),
+          day: newDeviceMaintenanceStatusLog.day.toISOString(),
           createdOn: newDeviceMaintenanceStatusLog.createdOn.toISOString(),
           data: JSON.parse(newDeviceMaintenanceStatusLog.data),
           notes: JSON.parse(newDeviceMaintenanceStatusLog.data).options.data
