@@ -223,9 +223,16 @@ const generateToolTip = (
   return { color, displayId, indexValue, displayValue }
 }
 
+const removeStringsFromArray = string => {
+  const removeStrings = ['devices', 'inactive']
+  const newString = removeStrings.map(removeString =>
+    string.replace(removeString, '')
+  )
+  return newString.length > 1 ? newString[1] : newString[0]
+}
+
 const translateLabel = (string, assaysFromState, type = false) => {
   const dictionary = []
-  const removeString = 'devices'
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
@@ -237,16 +244,25 @@ const translateLabel = (string, assaysFromState, type = false) => {
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
+
   return newString.length
     ? newString[0].name
-    : makeProperCase(string.replace(removeString, ''))
+    : makeProperCase(removeStringsFromArray(string))
 }
 
-const generateLegend = (string, assaysFromState, type = false) => {
-  return {
-    label: translateLabel(string, assaysFromState, type),
-    color: generateColorForLegend(string, type),
+const generateLegend = (
+  string,
+  assaysFromState,
+  type = false,
+  legendsNotToRender = false
+) => {
+  if (!legendsNotToRender.includes(string)) {
+    return {
+      label: translateLabel(string, assaysFromState, type),
+      color: generateColorForLegend(string, type),
+    }
   }
+  return {}
 }
 
 const formatDataByGraphType = (
