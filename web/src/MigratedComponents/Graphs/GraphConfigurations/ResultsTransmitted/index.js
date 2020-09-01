@@ -6,7 +6,7 @@ const currentMonth = negateTimeZoneOffset(new Date())
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
     id: 'resultsTransmitted',
-    title: 'resultsTransmittedGraphTitle',
+    title: 'deviceStatusTitle',
     componentSize: 'row',
     group: 'assaysNotNeeded',
     assays: [
