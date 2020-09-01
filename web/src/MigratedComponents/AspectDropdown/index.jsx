@@ -76,8 +76,6 @@ const SelectComponent = ({
       dispatchFromRedux({ identifier, selectedOption, action })
     }
   }, [inputValue])
-  console.log(inputValue, selectedValue)
-
   return (
     <Select
       getOptionLabel={({ name }) => name}

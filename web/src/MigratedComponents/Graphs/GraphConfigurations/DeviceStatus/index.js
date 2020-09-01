@@ -19,8 +19,7 @@ const deviceStatusGraphs = {
     assays: [],
     selectorModifiers: [
       {
-        // selectedValue: 'Last Month (01/08 - 31/08)',
-        selectedValue: dateRangeOptions('deviceDateRange')[1],
+        selectedValue: 'Date Range',
         endpoint: false,
         state: 'deviceDateRange',
         component: AspectDropdown,
