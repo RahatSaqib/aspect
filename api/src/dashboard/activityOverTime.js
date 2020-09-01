@@ -67,6 +67,26 @@ async function activityOverTimeDashboard(request) {
       'd.id',
       'dmsl.deviceId'
     )
+    // left join to the same table DeviceMaintenanceStatusLog for the same
+    // 'day' and 'deviceId' and make sure we deal with LATEST entry for `dmsl` -
+    // i.e. for this we do dmsl2.createdOn > dmsl.createdOn, and if date are equal
+    // then we get recently added entry with dmsl2.id > dmsl.id.
+    // And then in WHERE section we do 'dmsl2.id IS NULL' which guarantees to get
+    // latest entry for 'dmsl'
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl2', function () {
+      this.on('dmsl2.deviceId', 'dmsl.deviceId')
+        .andOn('dmsl2.day', 'dmsl.day')
+        .andOn(function () {
+          this.on('dmsl2.createdOn', '>', 'dmsl.createdOn')
+          this.orOn(function () {
+            this.on('dmsl2.createdOn', '=', 'dmsl.createdOn').andOn(
+              'dmsl2.id',
+              '>',
+              'dmsl.id'
+            )
+          })
+        })
+    })
     .leftOuterJoin(
       'DeviceMaintenanceStatus as dms',
       'dmsl.deviceMaintenanceStatusId',
@@ -76,6 +96,7 @@ async function activityOverTimeDashboard(request) {
       format(query.minDate, 'yyyy-MM-dd'),
       format(query.maxDate, 'yyyy-MM-dd'),
     ])
+    .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)
     .groupBy('dayDate')
     // additional counts
