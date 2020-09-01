@@ -1754,25 +1754,25 @@ async function seed(knex) {
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.admin,
-    modules.deviceApiKey.admin,
-    modules.device.admin,
-    modules.person.admin,
-    modules.treatmentStatus.admin,
-    modules.result.admin,
-    modules.case.admin,
-    modules.site.admin,
-    modules.assay.admin,
-    modules.inventory.admin,
-    modules.notification.admin,
-    modules.issue.admin,
-    modules.task.admin,
-    modules.report.admin,
+    modules.demo.edit,
+    modules.deviceApiKey.edit,
+    modules.device.edit,
+    modules.person.edit,
+    modules.treatmentStatus.edit,
+    modules.result.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.assay.edit,
+    modules.inventory.edit,
+    modules.notification.edit,
+    modules.issue.edit,
+    modules.task.edit,
+    modules.report.edit,
     modules.browse.view,
-    modules.reporter.admin,
+    modules.reporter.edit,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
-    modules.treatmentStatus.admin,
+    modules.treatmentStatus.edit,
     modules.site.edit,
     modules.device.edit,
     modules.assay.edit,
@@ -1780,7 +1780,7 @@ async function seed(knex) {
     modules.reporter.edit,
   ])
   await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
-    modules.treatmentStatus.admin,
+    modules.treatmentStatus.edit,
     modules.site.edit,
     modules.device.edit,
   ])

@@ -45,14 +45,14 @@ async function seed(knex) {
     .first('id')
 
   // persons
-  const { id: permissionPersonAdminId } = await knex('Permission')
+  const { id: permissionPersonEditId } = await knex('Permission')
     .where('module', 'person')
-    .where('activity', 'admin')
+    .where('activity', 'edit')
     .first('id')
 
   const { jobFunctionIdPersonCount } = await knex('JobFunctionPermission')
     .where('jobFunctionId', jobFunctionIdAdmin)
-    .where('permissionId', permissionPersonAdminId)
+    .where('permissionId', permissionPersonEditId)
     .count('jobFunctionId as jobFunctionIdPersonCount')
     .first()
 
@@ -60,19 +60,19 @@ async function seed(knex) {
     await knex('JobFunctionPermission').insert([
       {
         jobFunctionId: jobFunctionIdAdmin,
-        permissionId: permissionPersonAdminId,
+        permissionId: permissionPersonEditId,
       },
     ])
   }
 
-  const { id: permissionReporterAdminId } = await knex('Permission')
+  const { id: permissionReporterEditId } = await knex('Permission')
     .where('module', 'reporter')
-    .where('activity', 'admin')
+    .where('activity', 'edit')
     .first('id')
 
   const { jobFunctionIdReporterCount } = await knex('JobFunctionPermission')
     .where('jobFunctionId', jobFunctionIdAdmin)
-    .where('permissionId', permissionReporterAdminId)
+    .where('permissionId', permissionReporterEditId)
     .count('jobFunctionId as jobFunctionIdReporterCount')
     .first()
 
@@ -80,7 +80,7 @@ async function seed(knex) {
     await knex('JobFunctionPermission').insert([
       {
         jobFunctionId: jobFunctionIdAdmin,
-        permissionId: permissionReporterAdminId,
+        permissionId: permissionReporterEditId,
       },
     ])
   }

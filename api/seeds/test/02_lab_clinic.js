@@ -234,19 +234,19 @@ async function seed(knex) {
   await knex('JobFunctionPermission').insert([
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.device.admin,
+      permissionId: modules.device.edit,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.result.admin,
+      permissionId: modules.result.edit,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.site.admin,
+      permissionId: modules.site.edit,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.assay.admin,
+      permissionId: modules.assay.edit,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
@@ -255,44 +255,44 @@ async function seed(knex) {
   ])
 
   await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.edit },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
+      permissionId: modules.deviceApiKey.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.device.admin,
+      permissionId: modules.device.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.person.admin,
+      permissionId: modules.person.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.result.admin,
+      permissionId: modules.result.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.assay.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
+      permissionId: modules.assay.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.notification.admin,
+      permissionId: modules.inventory.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.issue.admin,
+      permissionId: modules.notification.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.report.admin,
+      permissionId: modules.issue.edit,
+    },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.edit },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.report.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
