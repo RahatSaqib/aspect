@@ -15,7 +15,14 @@ import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 
-import { getDayFromToday, getTimePeriod, getPreviousPeriod } from './datetime'
+import {
+  dateRangeOptions,
+  getDayFromToday,
+  getTimePeriod,
+  getPreviousPeriod,
+  lastMonthLabel,
+  negateTimeZoneOffset,
+} from './datetime'
 import {
   getMaxValueForDivergent,
   roundIfNumber,
@@ -323,6 +330,19 @@ const extractOptionValue = (identifier, selectedOption) => {
       }
       break
 
+    case 'dateRange':
+      optionValue =
+        selectedOption && selectedOption.value
+          ? {
+              minDate: selectedOption.value.minDate,
+              maxDate: selectedOption.value.maxDate,
+            }
+          : {
+              minDate: getPreviousPeriod('months', 'yyyy-MM-dd').start,
+              maxDate: getPreviousPeriod('months', 'yyyy-MM-dd').end,
+            }
+      break
+
     case 'assayTypeId':
       optionValue = {
         assayTypeId: selectedOption
@@ -337,12 +357,14 @@ const extractOptionValue = (identifier, selectedOption) => {
     default:
       break
   }
+  // console.log(identifier, selectedOption)
 
   return optionValue
 }
 
 export {
   calcPercentageSplitBar,
+  dateRangeOptions,
   extractOptionValue,
   formatDataByGraphType,
   formatValuesForGraphs,
@@ -369,7 +391,9 @@ export {
   groupForPie,
   groupForPieRow,
   groupForPieOldTreatmentAPI,
+  lastMonthLabel,
   normaliseKeys,
+  negateTimeZoneOffset,
   percentageOrActualForPie,
   validateGraphConfig,
 }
