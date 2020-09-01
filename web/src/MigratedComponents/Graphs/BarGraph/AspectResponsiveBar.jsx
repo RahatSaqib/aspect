@@ -28,8 +28,6 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
-  console.log(data)
-
   const legendsNotToRender = ['weekendOrHoliday']
   const { formatNumber: intlFormatNumber } = useIntl()
   const yTickvalues =

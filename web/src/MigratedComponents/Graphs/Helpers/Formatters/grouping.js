@@ -341,7 +341,6 @@ const groupForDeviceStatusAPI = (
     }
     return acc
   }, {})
-
   return normaliseKeys(grouped)
 }
 
