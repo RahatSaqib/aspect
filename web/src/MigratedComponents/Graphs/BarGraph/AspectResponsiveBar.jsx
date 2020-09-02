@@ -30,18 +30,100 @@ const AspectResponsiveBar = ({
 }) => {
   const legendsNotToRender = ['weekendOrHoliday']
   const { formatNumber: intlFormatNumber } = useIntl()
-  const yTickvalues =
-    type === 'divergent'
-      ? generateTickValues(data, tickValuesXShape, indexBy, 'X')
-      : generateTickValues(data, tickValuesYShape, keys, 'Y', true)
-  const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X')
-  const divergentExtraConfig =
-    type === 'divergent'
-      ? {
-          ...getMaxValueForDivergent(data, 'value'),
+
+  const config = (type, data, displayMethod) => {
+    switch (true) {
+      case type === 'divergent':
+        return {
+          legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
+          yTickvalues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          extraConfig: {
+            ...getMaxValueForDivergent(data, 'value'),
+            layout: 'horisontal',
+          },
           layout: 'horizontal',
+          padding: 0.3,
+          translateX: -25,
+          itemWidth: 120,
+          itemDirection: 'right-to-left',
+          symbolShape: 'circle',
+          theme: {},
+          enableGridY: false,
+          markers: [],
         }
-      : {}
+
+      case type === 'stackedDeviceActivity':
+        return {
+          legend: false,
+          yTickvalues: generateTickValues(
+            data,
+            tickValuesYShape,
+            keys,
+            'Y',
+            true
+          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          extraConfig: {},
+          padding: 0.03,
+          translateX: 15,
+          itemWidth: 140,
+          itemDirection: 'left-to-right',
+          symbolShape: 'square',
+          theme: { grid: { line: { stroke: 'white', strokeWidth: 2 } } },
+          enableGridY: true,
+          markers: [
+            {
+              axis: 'y',
+              value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
+                weekendOrHoliday: 0,
+              }),
+              lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
+              legendOrientation: 'horisontal',
+              legend: `${calcOverallRate(
+                'devicesActiveRaw',
+                'devicesTotal',
+                data,
+                { weekendOrHoliday: 0 }
+              ).toFixed(0)}%`,
+              legendOffsetX: -3,
+              legendOffsetY: 0,
+              textStyle: {
+                fill: 'rgba(32, 161, 179, 1)',
+                fontWeight: 'bold',
+              },
+            },
+          ],
+        }
+
+      default:
+        return {
+          legend: false,
+          yTickvalues: generateTickValues(
+            data,
+            tickValuesYShape,
+            keys,
+            'Y',
+            true
+          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          extraConfig: {},
+          padding: 0.3,
+          translateX: -25,
+          itemWidth: 120,
+          itemDirection: 'right-to-left',
+          symbolShape: 'circle',
+          theme: {},
+          enableGridY: false,
+          markers: [],
+        }
+    }
+  }
+
+  const format = (v, displayMethod, intlFormatNumber) =>
+    type === 'stackedDeviceActivity'
+      ? v.replace(/\D/g, '')
+      : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
   const legends = displayLegend
     ? [
@@ -53,26 +135,16 @@ const AspectResponsiveBar = ({
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
-          translateX: type === 'stackedDeviceActivity' ? 15 : -25,
+          translateX: config(type, data, displayMethod).translateX,
           translateY: 60,
           itemsSpacing: 2,
-          itemWidth: type === 'stackedDeviceActivity' ? 140 : 120,
+          itemWidth: config(type, data, displayMethod).itemWidth,
           itemHeight: 20,
-          itemDirection:
-            type === 'stackedDeviceActivity'
-              ? 'left-to-right'
-              : 'right-to-left',
+          itemDirection: config(type, data, displayMethod).itemDirection,
           itemOpacity: 0.85,
           symbolSize: 20,
-          symbolShape: type === 'stackedDeviceActivity' ? 'square' : 'circle',
-          effects: [
-            {
-              on: 'hover',
-              style: {
-                itemOpacity: 1,
-              },
-            },
-          ],
+          symbolShape: config(type, data, displayMethod).symbolShape,
+          effects: [{ on: 'hover', style: { itemOpacity: 1 } }],
         },
       ]
     : []
@@ -85,9 +157,9 @@ const AspectResponsiveBar = ({
         indexBy={indexBy}
         colorBy="index"
         enableLabel={false}
-        enableGridY={type === 'stackedDeviceActivity'}
-        {...divergentExtraConfig}
-        padding={type === 'stackedDeviceActivity' ? 0.03 : 0.3}
+        enableGridY={config(type, data, displayMethod).enableGridY}
+        {...config(type, data, displayMethod).extraConfig}
+        padding={config(type, data, displayMethod).padding}
         borderWidth={0}
         borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
         axisTop={null}
@@ -117,63 +189,25 @@ const AspectResponsiveBar = ({
         }
         axisLeft={{
           tickSize: 5,
-          tickValues: yTickvalues,
+          tickValues: config(type, data, displayMethod).yTickvalues,
           format: v =>
             formatValuesForGraphs(v, displayMethod, intlFormatNumber),
           legendPosition: 'middle',
           legendOffset: -60,
-          legend:
-            type === 'stackedDeviceActivity'
-              ? `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`
-              : false,
+          legend: config(type, data, displayMethod).legend,
         }}
         axisBottom={{
           tickSize: 5,
+          tickValues: config(type, data, displayMethod).xTickvalues,
           tickPadding: 10,
           tickRotation: 0,
           legendPosition: 'middle',
           legendOffset: 32,
-          tickValues: xTickValues,
-          format: v =>
-            type === 'stackedDeviceActivity'
-              ? v.replace(/\D/g, '')
-              : formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+          format: v => format(v, displayMethod, intlFormatNumber),
         }}
         legends={legends}
-        theme={
-          type === 'stackedDeviceActivity' && {
-            grid: {
-              line: {
-                stroke: 'white',
-                strokeWidth: 2,
-              },
-            },
-          }
-        }
-        markers={
-          type === 'stackedDeviceActivity' && [
-            {
-              axis: 'y',
-              value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
-                weekendOrHoliday: 0,
-              }),
-              lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
-              legendOrientation: 'horisontal',
-              legend: `${calcOverallRate(
-                'devicesActiveRaw',
-                'devicesTotal',
-                data,
-                { weekendOrHoliday: 0 }
-              ).toFixed(0)}%`,
-              legendOffsetX: -3,
-              legendOffsetY: 0,
-              textStyle: {
-                fill: 'rgba(32, 161, 179, 1)',
-                fontWeight: 'bold',
-              },
-            },
-          ]
-        }
+        theme={config(type, data, displayMethod).theme}
+        markers={config(type, data, displayMethod).markers}
       />
     </div>
   )
