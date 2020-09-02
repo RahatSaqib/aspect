@@ -101,7 +101,7 @@ async function getResultQuery(query, dataConstraints) {
       // YYYY_MM field for grouping by
       knex.raw(`
         CONCAT_WS(
-          '-', 
+          '-',
           CAST( YEAR(r.endedOn) AS CHAR ),
           LPAD(
             CAST( MONTH(r.endedOn) AS CHAR ),
@@ -130,8 +130,8 @@ async function getResultQuery(query, dataConstraints) {
     .count({
       cntReportedViaEmail: knex.raw(`
         DISTINCT
-        CASE 
-          WHEN 
+        CASE
+          WHEN
             r.resultCategory1 IN (${positiveResultCategories})
             AND
             em.id IS NOT NULL
@@ -146,8 +146,8 @@ async function getResultQuery(query, dataConstraints) {
     .count({
       cntReportedViaSms: knex.raw(`
         DISTINCT
-        CASE 
-          WHEN 
+        CASE
+          WHEN
             r.resultCategory1 IN (${positiveResultCategories})
             AND
             sm.id IS NOT NULL
@@ -162,8 +162,8 @@ async function getResultQuery(query, dataConstraints) {
     .count({
       cntAllReported: knex.raw(`
         DISTINCT
-        CASE 
-          WHEN 
+        CASE
+          WHEN
             r.resultCategory1 IN (${positiveResultCategories})
             AND (
               em.id IS NOT NULL

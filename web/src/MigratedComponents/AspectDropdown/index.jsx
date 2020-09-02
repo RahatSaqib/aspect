@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import Select from 'react-select'
 import sortBy from 'lodash/sortBy'
 
-import fetchDropDownData from './fetchDropDownData'
+import fetchWrapperForQueries from '../QueryFetch'
 
 const {
   '--aspect-color-chill-blue-1': aspectChillBlue1,
@@ -92,17 +92,23 @@ const SelectComponent = ({
 }
 
 const AspectDropdown = ({
-  selectedValue,
-  reduxStateId,
+  props: {
+    selectedValue,
+    state: reduxStateId,
+    identifier,
+    endpoint,
+    data: passedData,
+    sortByKeys = ['name'],
+  },
   action,
-  identifier,
-  endpoint,
-  data: passedData,
 }) => {
-  const { isError, data, error } = useQuery(
+  const { isError, data = false, error } = useQuery(
     reduxStateId,
-    async () => fetchDropDownData(endpoint),
-    { initialData: passedData, initialStale: true }
+    async () => (endpoint ? fetchWrapperForQueries(endpoint) : passedData),
+    {
+      initialData: passedData,
+      initialStale: true,
+    }
   )
 
   if (isError) {
@@ -111,7 +117,7 @@ const AspectDropdown = ({
 
   return data && data[reduxStateId] && data[reduxStateId].length ? (
     <SelectComponent
-      data={sortBy(data[reduxStateId], ['name'])}
+      data={sortBy(data[reduxStateId], sortByKeys)}
       selectedValue={selectedValue}
       action={action}
       identifier={identifier}
@@ -119,17 +125,16 @@ const AspectDropdown = ({
   ) : null
 }
 
-AspectDropdown.defaultProps = {
-  data: false,
-}
-
 AspectDropdown.propTypes = {
-  selectedValue: PropTypes.string.isRequired,
-  reduxStateId: PropTypes.string.isRequired,
+  props: PropTypes.shape({
+    selectedValue: PropTypes.string.isRequired,
+    state: PropTypes.string.isRequired,
+    identifier: PropTypes.string.isRequired,
+    endpoint: PropTypes.string.isRequired,
+    data: PropTypes.bool,
+    sortByKeys: PropTypes.oneOf([PropTypes.array]),
+  }).isRequired,
   action: PropTypes.func.isRequired,
-  identifier: PropTypes.string.isRequired,
-  endpoint: PropTypes.string.isRequired,
-  data: PropTypes.bool,
 }
 
 export default AspectDropdown

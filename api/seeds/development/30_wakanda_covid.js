@@ -94,17 +94,17 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.admin,
-    modules.issue.admin,
-    modules.patient.admin,
-    modules.case.admin,
-    modules.site.admin,
-    modules.result.admin,
+    modules.demo.edit,
+    modules.issue.edit,
+    modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
-    modules.account.admin,
-    modules.device.admin,
-    modules.reporter.admin,
+    modules.account.edit,
+    modules.device.edit,
+    modules.reporter.edit,
     modules.assay.edit,
     modules.browse.view,
     modules.person.view,
@@ -116,15 +116,15 @@ async function seed(knex) {
     .first('id')
 
   await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.demo.admin,
-    modules.patient.admin,
-    modules.case.admin,
-    modules.site.admin,
-    modules.result.admin,
+    modules.demo.edit,
+    modules.patient.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
-    modules.account.admin,
-    modules.device.admin,
+    modules.account.edit,
+    modules.device.edit,
     modules.assay.edit,
     modules.browse.view,
     modules.person.view,
@@ -324,7 +324,7 @@ async function seed(knex) {
   )
 
   await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.demo.admin,
+    modules.demo.edit,
     modules.patient.edit,
     modules.case.edit,
     modules.site.edit,

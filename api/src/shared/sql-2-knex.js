@@ -24,7 +24,7 @@ function getTableAlias(sql) {
     'gim'
   )
   let match
-  const tableAlias = {}
+  const tableAlias = { allowAdminThrough: true }
   // eslint-disable-next-line no-cond-assign
   while ((match = tableAliasRegExp.exec(sql)) !== null) {
     if (match.length === 3) {
@@ -238,7 +238,7 @@ function getSqlQueryRegex() {
     `
       \\b  SELECT  \\s+
         (.*?)
-        
+
       \\s?
       (?:
         \\s+  FROM  \\s+
@@ -281,7 +281,7 @@ function getSqlQueryRegex() {
           \\s+  ORDER  \\s+  BY  \\s+
           (.*?)
         )?
-        
+
         \\s*
         (?:
           \\s+  LIMIT  \\s+
