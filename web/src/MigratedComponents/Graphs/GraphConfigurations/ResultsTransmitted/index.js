@@ -8,7 +8,7 @@ const currentMonth = formatISO(negateTimeZoneOffset(addMonths(new Date(), -1)))
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
     id: 'resultsTransmitted',
-    title: 'deviceStatusTitle',
+    title: 'resultsTransmittedTitle',
     componentSize: 'row',
     group: 'assaysNotNeeded',
     assays: [
