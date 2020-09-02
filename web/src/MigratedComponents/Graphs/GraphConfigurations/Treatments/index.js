@@ -1,7 +1,6 @@
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import AspectDropdown from '../../../AspectDropdown'
-import { getTimePeriod } from '../../Helpers/Formatters'
 
 const treatmentStatusGraphs = {
   treatmentStatus: {
