@@ -82,10 +82,11 @@ const dateRangeOptions = key => {
     },
   ]
   times(monthsToGet, month => {
-    switch (month + 1) {
+    const count = month + 1
+    switch (count) {
       case 1:
         dateRange.push({
-          id: month,
+          id: count,
           name: `This Month (${format(
             startOfMonth(today),
             dateFormatLabel
@@ -99,7 +100,7 @@ const dateRangeOptions = key => {
 
       case 2:
         dateRange.push({
-          id: month,
+          id: count,
           name: lastMonthLabel(today, month, dateFormatLabel),
           value: monthRangeByCount(today, month, dateFormatValue),
         })
@@ -107,7 +108,7 @@ const dateRangeOptions = key => {
 
       default:
         dateRange.push({
-          id: month,
+          id: count,
           name: format(subMonths(today, month), dateFormatMonths),
           value: monthRangeByCount(today, month, dateFormatValue),
         })
