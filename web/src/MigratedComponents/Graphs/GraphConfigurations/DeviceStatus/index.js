@@ -32,7 +32,7 @@ const deviceStatusGraphs = {
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
-        displayLegend: true,
+        displayLegend: false,
         formatDate: 'LLLL do',
       },
     ],
