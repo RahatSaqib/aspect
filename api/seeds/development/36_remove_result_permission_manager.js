@@ -36,7 +36,7 @@ async function seed(knex) {
   }
 
   const permission = [
-    { module: 'treatmentStatus', activity: 'admin' },
+    { module: 'treatmentStatus', activity: 'edit' },
     { module: 'dashboard', activity: 'result' },
     { module: 'clinicalIndicators', activity: 'view' },
   ]
