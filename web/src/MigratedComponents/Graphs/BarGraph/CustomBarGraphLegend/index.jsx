@@ -38,11 +38,11 @@ CustomBarGraphLegend.defaultProps = {
   assaysFromState: {},
 }
 CustomBarGraphLegend.propTypes = {
-  keys: PropTypes.onOf([PropTypes.object]).isRequired,
+  keys: PropTypes.oneOf([PropTypes.object]).isRequired,
   generateLegend: PropTypes.func.isRequired,
-  assaysFromState: PropTypes.onOf([PropTypes.object]),
+  assaysFromState: PropTypes.oneOf([PropTypes.object]),
   type: PropTypes.string.isRequired,
-  legendsNotToRender: PropTypes.onOf([PropTypes.object]).isRequired,
+  legendsNotToRender: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
 export default CustomBarGraphLegend
