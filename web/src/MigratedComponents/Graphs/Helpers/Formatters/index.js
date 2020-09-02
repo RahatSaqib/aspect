@@ -384,8 +384,6 @@ const extractOptionValue = (identifier, selectedOption) => {
     default:
       break
   }
-  // console.log(identifier, selectedOption)
-
   return optionValue
 }
 
