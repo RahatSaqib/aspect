@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
+import CustomBarGraphLegend from './CustomBarGraphLegend'
 
 import {
   formatValuesForGraphs,
   generateColorForValue,
-  generateMargin,
   generateTickValues,
   generateToolTip,
   generateLegend,
@@ -28,7 +28,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
-  const legendsNotToRender = ['weekendOrHoliday']
+  const legendsNotToRender = []
   const { formatNumber: intlFormatNumber } = useIntl()
 
   const config = (type, data, displayMethod) => {
@@ -50,6 +50,7 @@ const AspectResponsiveBar = ({
           symbolShape: 'circle',
           theme: {},
           enableGridY: false,
+          margin: { top: 5, right: 0, bottom: 60, left: 0 },
           markers: [],
         }
 
@@ -72,6 +73,7 @@ const AspectResponsiveBar = ({
           symbolShape: 'square',
           theme: { grid: { line: { stroke: 'white', strokeWidth: 2 } } },
           enableGridY: true,
+          margin: { top: 5, right: 70, bottom: 100, left: 70 },
           markers: [
             {
               axis: 'y',
@@ -115,17 +117,13 @@ const AspectResponsiveBar = ({
           symbolShape: 'circle',
           theme: {},
           enableGridY: false,
+          margin: { top: 5, right: 0, bottom: 60, left: 0 },
           markers: [],
         }
     }
   }
 
-  const format = (v, displayMethod, intlFormatNumber) =>
-    type === 'stackedDeviceActivity'
-      ? v.replace(/\D/g, '')
-      : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
-
-  const legends = displayLegend
+  const baseLegend = displayLegend
     ? [
         {
           dataFrom: 'keys',
@@ -149,6 +147,11 @@ const AspectResponsiveBar = ({
       ]
     : []
 
+  const format = (v, displayMethod, intlFormatNumber) =>
+    type === 'stackedDeviceActivity'
+      ? v.replace(/\D/g, '')
+      : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
+
   return (
     <div style={{ height: '100%', maxHeight: '350px' }}>
       <ResponsiveBar
@@ -171,7 +174,7 @@ const AspectResponsiveBar = ({
         motionDamping={15}
         layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
         colors={v => generateColorForValue(v)}
-        margin={generateMargin(tickValuesYShape, displayLegend, type)}
+        margin={config(type, data, displayMethod).margin}
         tooltip={v =>
           v && legendsNotToRender.includes(v.id) ? (
             <EmptyTooltip title={v.id} />
@@ -205,9 +208,16 @@ const AspectResponsiveBar = ({
           legendOffset: 32,
           format: v => format(v, displayMethod, intlFormatNumber),
         }}
-        legends={legends}
+        legends={baseLegend}
         theme={config(type, data, displayMethod).theme}
         markers={config(type, data, displayMethod).markers}
+      />
+      <CustomBarGraphLegend
+        keys={keys}
+        generateLegend={generateLegend}
+        assaysFromState={assaysFromState}
+        type={type}
+        legendsNotToRender={legendsNotToRender}
       />
     </div>
   )
