@@ -36,9 +36,7 @@ async function getAssayQuery(query, dataConstraints) {
 async function getResultQuery(query, dataConstraints) {
   const { currentMonth = new Date() } = query
   const resultCategories = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategories, getPositiveCategoriesExternalIds())
-  )
+  const positiveResultCategories = _.values(_.pick(resultCategories, getPositiveCategoriesExternalIds()))
   const messageStatusToId = await allMessageStatusToId()
 
   const resultsQuery = knex('Result as r')
@@ -293,8 +291,6 @@ async function resultsTransmittedDashboard(request) {
       ),
     }
   })
-
-  console.log(currentMonth)
 
   return {
     ok: true,
