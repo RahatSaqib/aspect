@@ -559,9 +559,7 @@ module.exports = {
           AVG(
             TIMESTAMPDIFF(
               MINUTE,
-              CONVERT_TZ(r.endedOn,
-              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-              ),
+              r.endedOn,
               r.createdOn
             )
           )
@@ -572,15 +570,10 @@ module.exports = {
     INNER JOIN Site AS s ON r.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     INNER JOIN Country AS c ON g.countryId = c.id
-    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
-    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
     INNER JOIN Device AS d ON r.deviceId = d.id
-    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
-    WHERE 	TIMESTAMPDIFF(
+    WHERE TIMESTAMPDIFF(
         HOUR,
-        CONVERT_TZ(r.endedOn,
-        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-        ),
+        r.endedOn,
         r.createdOn
         )>=2
            AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
@@ -591,9 +584,7 @@ module.exports = {
           AVG(
             TIMESTAMPDIFF(
               MINUTE,
-              CONVERT_TZ(r.endedOn,
-              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-              ),
+              r.endedOn,
               r.createdOn
             )
           )
@@ -604,15 +595,10 @@ module.exports = {
     INNER JOIN Site AS s ON r.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     INNER JOIN Country AS c ON g.countryId = c.id
-    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
-    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
     INNER JOIN Device AS d ON r.deviceId = d.id
-    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
-    WHERE 	TIMESTAMPDIFF(
+    WHERE TIMESTAMPDIFF(
         HOUR,
-        CONVERT_TZ(r.endedOn,
-        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-        ),
+        r.endedOn,
         r.createdOn
         )>=2
         AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')

@@ -139,16 +139,16 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.result.admin,
+      permissionId: modules.result.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.device.admin,
+      permissionId: modules.device.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
+      permissionId: modules.deviceApiKey.edit,
     },
   ])
 

@@ -277,43 +277,43 @@ async function seed(knex) {
   await knex('JobFunctionPermission').insert([
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.device.admin,
+      permissionId: modules.device.edit,
     },
     {
       jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.result.admin,
+      permissionId: modules.result.edit,
     },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.assay.edit },
     { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.browse.view },
   ])
 
   await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.edit },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.admin,
+      permissionId: modules.deviceApiKey.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.edit },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.notification.admin,
+      permissionId: modules.inventory.edit,
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.issue.admin,
+      permissionId: modules.notification.edit,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.issue.edit,
+    },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.edit },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.taskMenu.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.edit },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
   ])
 
