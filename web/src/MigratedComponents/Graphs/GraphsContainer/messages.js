@@ -74,6 +74,10 @@ export const messages = defineMessages({
     id: 'pages.Status.deviceStatusTitle.graph',
     defaultMessage: 'Overall Activity Rate',
   },
+  resultsTransmittedTitle: {
+    id: 'pages.Status.resultsTransmittedTitle.graph',
+    defaultMessage: 'Results Transmitted',
+  },
 })
 
 export default messages

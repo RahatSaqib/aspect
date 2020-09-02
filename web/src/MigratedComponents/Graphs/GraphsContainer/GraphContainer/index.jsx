@@ -27,9 +27,7 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
   }
 
   return (
-    <PermissionsProvider
-      permissions={whiteListed ? ['site:view'] : ['result:view']}
-    >
+    <PermissionsProvider permissions={whiteListed ? ['site'] : ['result']}>
       <Grid item xs={12} lg={outerSize}>
         <Grid container>
           <Grid item xs={12}>
