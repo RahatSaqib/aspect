@@ -36,7 +36,7 @@ const AspectResponsiveBar = ({
       case type === 'divergent':
         return {
           legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
-          yTickvalues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
@@ -57,7 +57,7 @@ const AspectResponsiveBar = ({
       case type === 'stackedDeviceActivity':
         return {
           legend: false,
-          yTickvalues: generateTickValues(
+          yTickValues: generateTickValues(
             data,
             tickValuesYShape,
             keys,
@@ -101,7 +101,7 @@ const AspectResponsiveBar = ({
       default:
         return {
           legend: false,
-          yTickvalues: generateTickValues(
+          yTickValues: generateTickValues(
             data,
             tickValuesYShape,
             keys,
@@ -192,7 +192,7 @@ const AspectResponsiveBar = ({
         }
         axisLeft={{
           tickSize: 5,
-          tickValues: config(type, data, displayMethod).yTickvalues,
+          tickValues: config(type, data, displayMethod).yTickValues,
           format: v =>
             formatValuesForGraphs(v, displayMethod, intlFormatNumber),
           legendPosition: 'middle',
@@ -201,7 +201,7 @@ const AspectResponsiveBar = ({
         }}
         axisBottom={{
           tickSize: 5,
-          tickValues: config(type, data, displayMethod).xTickvalues,
+          tickValues: config(type, data, displayMethod).xTickValues,
           tickPadding: 10,
           tickRotation: 0,
           legendPosition: 'middle',
