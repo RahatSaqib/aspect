@@ -1,12 +1,16 @@
 import PieRowGraph from '../../PieRowGraph'
-import { negateTimeZoneOffset } from '../../Helpers/Formatters/datetime'
+import {
+  negateTimeZoneOffset,
+  dateRangeOptions,
+} from '../../Helpers/Formatters/datetime'
+import AspectDropdown from '../../../AspectDropdown'
 
 const currentMonth = negateTimeZoneOffset(new Date())
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
     id: 'resultsTransmitted',
-    title: 'deviceStatusTitle',
+    title: 'resultsTransmittedTitle',
     componentSize: 'row',
     group: 'assaysNotNeeded',
     assays: [
@@ -15,7 +19,17 @@ const resultsTransmittedGraphs = {
       // 'QHivVL',
       // todo: add filtered assays
     ],
-    selectorModifiers: [],
+    selectorModifiers: [
+      {
+        selectedValue: 'Date Range',
+        endpoint: false,
+        state: 'resultsDateRange',
+        component: AspectDropdown,
+        identifier: 'currentMonth',
+        data: dateRangeOptions('resultsDateRange'),
+        sortByKeys: ['id'],
+      },
+    ],
     graphType: [
       {
         id: 'resultsTransmittedDials',
