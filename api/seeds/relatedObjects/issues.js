@@ -467,6 +467,28 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.replacedModuleSerial}} in slot {{issue.data.moduleName}} has been replaced.`,
       },
     },
+    ModuleDisabled: {
+      issueType: {
+        name: 'Module Disabled',
+        externalId: 'ModuleDisabled',
+        i18nKey: 'issueTypeModuleDisabled',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+      },
+      SmsTemplate: {
+        message: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+      },
+      EmailTemplate: {
+        subject: 'Module has been disabled',
+        body: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+        htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+      },
+    },
     InventoryStockExpiring: {
       issueType: {
         name: 'Inventory Stock Expiring',
