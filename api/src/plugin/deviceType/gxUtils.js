@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-
+const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const {
   findConsumables,
@@ -20,14 +20,20 @@ const {
 const { allTimeZoneToId } = require('../../shared/dictionary')
 
 const { updateDeviceDetails } = require('../../deviceApi/device')
-
+const { shouldTriggerModuleDisabled } = require('../utils')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
 If the device is unknown, ignore this request
 If the site for the device in unknown, create a site and link it to the device
 */
-async function preProcessAddDeviceData({ knex, device, payload, now }) {
+async function preProcessAddDeviceData({
+  knex,
+  device,
+  payload,
+  now,
+  messageContext,
+}) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
@@ -68,6 +74,11 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     )
   }
   await knex.from('Device').where({ id: device.id }).update(deviceDetails)
+  if (configurationData.disabledModules) {
+    await Promise.each(configurationData.disabledModules, modules =>
+      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
+    )
+  }
 }
 
 /*

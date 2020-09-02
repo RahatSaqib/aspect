@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
-
+const { loadPlugin } = require('../plugin/registration')
 const {
   issueCreated,
   issueTriggered,
@@ -26,13 +26,20 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
         'it.externalId as issueType',
         'ies.externalId as issueEventStatus',
         'iet.partnerId',
-        'iet.triggerConditions'
+        'iet.triggerConditions',
+        'iet.filterIssueCondition'
       )
       .then(items =>
         items.reduce(
           (
             memo,
-            { issueType, issueEventStatus, partnerId, triggerConditions }
+            {
+              issueType,
+              issueEventStatus,
+              partnerId,
+              triggerConditions,
+              filterIssueCondition,
+            }
           ) => {
             const { action } = JSON.parse(triggerConditions)
             if (action != null) {
@@ -40,10 +47,14 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
                 memo[action] = onIssueEventTrigger(
                   partnerId,
                   issueType,
-                  triggerConditions
+                  triggerConditions,
+                  filterIssueCondition
                 )
               } else if (issueEventStatus === 'Resolved') {
-                memo[action] = onIssueEventResolve(issueType)
+                memo[action] = onIssueEventResolve(
+                  issueType,
+                  filterIssueCondition
+                )
               }
             }
             return memo
@@ -55,7 +66,12 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
   })
 }
 
-function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
+function onIssueEventTrigger(
+  partnerId,
+  issueType,
+  triggerConditions,
+  filterIssueCondition = null
+) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
     return context.transact(async knex => {
@@ -67,7 +83,12 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
       )
       if (shouldTriggerEvent) {
         const now = new Date()
-        const openIssue = await findOpenIssue(knex, issueType, action)
+        const openIssue = await findOpenIssue(
+          knex,
+          issueType,
+          action,
+          JSON.parse(filterIssueCondition)
+        )
         let issue = null
         if (openIssue != null) {
           // ----------------------
@@ -92,7 +113,6 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
             }
           }
           // ----------------------
-
           issue = await mergeActionData(knex, openIssue, action)
         } else {
           issue = await createNewIssue(knex, issueType, action)
@@ -116,12 +136,17 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
   }
 }
 
-function onIssueEventResolve(issueType) {
+function onIssueEventResolve(issueType, filterIssueCondition) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
-      const issue = await findOpenIssue(knex, issueType, action)
+      const issue = await findOpenIssue(
+        knex,
+        issueType,
+        action,
+        filterIssueCondition
+      )
       const hasTrigger =
         issue != null &&
         issue.partnerId &&
@@ -150,7 +175,13 @@ function onIssueEventResolve(issueType) {
   }
 }
 
-async function findOpenIssue(knex, issueType, action) {
+async function findOpenIssue(
+  knex,
+  issueType,
+  action,
+  filterIssueCondition = {}
+) {
+  const evaluationFunction = _.get(filterIssueCondition, 'evaluationFunction')
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -170,7 +201,35 @@ async function findOpenIssue(knex, issueType, action) {
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
+  if (_.get(action, 'options.data') && evaluationFunction) {
+    const filterFunctions = await getIssueFilter(
+      knex,
+      action.partnerId,
+      action.deviceId
+    )
+    if (filterFunctions[evaluationFunction])
+      findOpenIssue.modify(
+        filterFunctions[evaluationFunction],
+        action.options.data
+      )
+  }
+
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
+}
+
+async function getIssueFilter(knex, partnerId, deviceId) {
+  let plugin
+  if (partnerId) {
+    ;({ plugin } = await knex('Partner')
+      .where({ id: partnerId })
+      .first('plugin'))
+  } else if (deviceId) {
+    ;({ plugin } = await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .where({ 'd.id': deviceId })
+      .first('dt.plugin'))
+  }
+  return loadPlugin([plugin], 'filterModuleDisabledIssue')
 }
 
 async function createNewIssue(knex, issueType, action) {
@@ -201,7 +260,6 @@ async function createNewIssue(knex, issueType, action) {
       'partnerId',
     ]),
   }
-
   // Now that we know partnerId, check to see if we have a trigger
   const hasTrigger =
     issue != null &&
@@ -221,7 +279,6 @@ async function createNewIssue(knex, issueType, action) {
     issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
-
   // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
@@ -550,6 +607,16 @@ async function triggerIssue(request) {
       triggered = true
       break
     }
+    case 'ModuleDisabled'.toLowerCase(): {
+      const { deviceId, disabledOn, moduleSerialNumber } = data
+      await messageContext.deviceModuleDisabled(
+        deviceId,
+        moduleSerialNumber,
+        disabledOn
+      )
+      triggered = true
+      break
+    }
     case 'ModuleUnknownError'.toLowerCase(): {
       const { deviceId, options } = data
       await messageContext.resultModuleUnknownError(deviceId, options)
@@ -596,4 +663,5 @@ module.exports = {
   getIssueEventTriggerSubscriptions,
   triggerIssue,
   updateIssueStatus,
+  createNewIssue,
 }

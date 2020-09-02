@@ -817,70 +817,64 @@ describe('Device API routes for GxConnect Devices', () => {
         })
       }))
 
-    it('should append a result HIV VL and categorized it well', () =>
-      runTest(async () => {
-        const { deviceAuth, basicDevicePayload, now } = context
-        const payloads = [
-          { payload: detectedWithNoCopies, expectedCategory: 'NoResult' },
-          { payload: detectedMoreThan1000, expectedCategory: 'MoreThan1000' },
-          { payload: detectedLess1000[0], expectedCategory: 'LessThan40' },
-          { payload: detectedLess1000[1], expectedCategory: 'LessThan1000' },
-          { payload: noDetected, expectedCategory: 'NotDetected' },
-          { payload: invalidCategory, expectedCategory: 'Invalid' },
-          { payload: errorCategory, expectedCategory: 'Error' },
-          { payload: resultTextNull, expectedCategory: 'NoResult' },
-          { payload: badCategorizedResults, expectedCategory: 'NotDetected' },
-          { payload: badCategorizedResults2, expectedCategory: 'LessThan40' },
-        ]
-        await Promise.each(payloads, async elem => {
-          const { result: resultPayload } = elem.payload
+    it('should append a result HIV VL and categorized it well', async () => {
+      const { deviceAuth, basicDevicePayload, now } = context
+      const payloads = [
+        { payload: detectedWithNoCopies, expectedCategory: 'NoResult' },
+        { payload: detectedMoreThan1000, expectedCategory: 'MoreThan1000' },
+        { payload: detectedLess1000[0], expectedCategory: 'LessThan40' },
+        { payload: detectedLess1000[1], expectedCategory: 'LessThan1000' },
+        { payload: noDetected, expectedCategory: 'NotDetected' },
+        { payload: invalidCategory, expectedCategory: 'Invalid' },
+        { payload: errorCategory, expectedCategory: 'Error' },
+        { payload: resultTextNull, expectedCategory: 'NoResult' },
+        { payload: badCategorizedResults, expectedCategory: 'NotDetected' },
+        { payload: badCategorizedResults2, expectedCategory: 'LessThan40' },
+      ]
+      await Promise.each(payloads, async elem => {
+        const { result: resultPayload } = elem.payload
 
-          const res = await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, elem.payload, basicDevicePayload, {
-                result: _.assign({}, elem.payload.result, {
-                  sample: {
-                    id: `new sample ${Math.floor(Math.random() * 1000)}`,
-                  },
-                  instrument: {
-                    serial: `new instrument ${Math.floor(
-                      Math.random() * 1000
-                    )}`,
-                  },
-                  startedOn: now,
-                }),
-              })
-            )
-
-          // / console.log(res.body, res.status)
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-
-          const afterResultDetails = await getLastResult()
-
-          assert.equal(afterResultDetails.assay, resultPayload.assay.id)
-          assert.equal(
-            afterResultDetails.resultCategory1,
-            elem.expectedCategory
+        const res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, elem.payload, basicDevicePayload, {
+              result: _.assign({}, elem.payload.result, {
+                sample: {
+                  id: `new sample ${Math.floor(Math.random() * 1000)}`,
+                },
+                instrument: {
+                  serial: `new instrument ${Math.floor(Math.random() * 1000)}`,
+                },
+                startedOn: now,
+              }),
+            })
           )
-          assert.equal(afterResultDetails.resultCategory2, null)
 
-          if (
-            ['MoreThan1000', 'LessThan1000'].includes(
-              afterResultDetails.resultCategory1
-            )
-          ) {
-            assert.property(afterResultDetails.resultData, 'copies')
-            assert.isAtLeast(afterResultDetails.resultData.copies, 40)
-          } else if (
-            'LessThan40'.indexOf(afterResultDetails.resultCategory1) === 0
-          ) {
-            assert.notProperty(afterResultDetails.resultData, 'copies')
-          }
-        })
-      }))
+        // / console.log(res.body, res.status)
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        const afterResultDetails = await getLastResult()
+
+        assert.equal(afterResultDetails.assay, resultPayload.assay.id)
+        assert.equal(afterResultDetails.resultCategory1, elem.expectedCategory)
+        assert.equal(afterResultDetails.resultCategory2, null)
+
+        if (
+          ['MoreThan1000', 'LessThan1000'].includes(
+            afterResultDetails.resultCategory1
+          )
+        ) {
+          assert.property(afterResultDetails.resultData, 'copies')
+          assert.isAtLeast(afterResultDetails.resultData.copies, 40)
+        } else if (
+          'LessThan40'.indexOf(afterResultDetails.resultCategory1) === 0
+        ) {
+          assert.notProperty(afterResultDetails.resultData, 'copies')
+        }
+      })
+    })
 
     it('should update a result if the sample ID, instrument serial and test dates are known', () =>
       runTest(async () => {

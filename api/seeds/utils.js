@@ -743,7 +743,12 @@ async function seedIssueEventTriggersForPartner(
 
   await Promise.each(
     data,
-    async ({ issueType, issueEventStatus, triggerConditions }) => {
+    async ({
+      issueType,
+      issueEventStatus,
+      triggerConditions,
+      filterIssueCondition,
+    }) => {
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
           partnerId,
@@ -757,6 +762,7 @@ async function seedIssueEventTriggersForPartner(
           await knex('IssueEventTrigger').insert({
             ...triggerData,
             triggerConditions: JSON.stringify(triggerConditions),
+            filterIssueCondition: JSON.stringify(filterIssueCondition),
             createdOn: now,
             updatedOn: now,
           })
@@ -3057,7 +3063,7 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function seedIssueTypeModuleReplaced(knex, { userName }) {
+async function seedIssueType(knex, issueType, { userName }) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -3071,43 +3077,35 @@ async function seedIssueTypeModuleReplaced(knex, { userName }) {
   }
 
   // get previously defined data for ModuleReplaced issue type
-  const {
-    ModuleReplaced: {
-      issueType,
-      MessageType,
-      AlertTemplate,
-      EmailTemplate,
-      SmsTemplate,
-    },
-  } = await getBaseIssues(auditFields)
+  const issue = (await getBaseIssues(auditFields))[issueType]
 
   // ------------------------------------------
-  // 'Module Replaced' issue templates
+  // issue templates
   // ------------------------------------------
-  const { id: moduleAlertTemplateId } = await upsertSingle(
+  const { id: alertTemplateId } = await upsertSingle(
     knex,
     'AlertTemplate',
     ['message'],
     {
-      ...AlertTemplate,
+      ...issue.AlertTemplate,
       ...auditFields,
     }
   )
-  const { id: moduleSmsTemplateId } = await upsertSingle(
+  const { id: smsTemplateId } = await upsertSingle(
     knex,
     'SmsTemplate',
     ['message'],
     {
-      ...SmsTemplate,
+      ...issue.SmsTemplate,
       ...auditFields,
     }
   )
-  const { id: moduleEmailTemplateId } = await upsertSingle(
+  const { id: emailTemplateId } = await upsertSingle(
     knex,
     'EmailTemplate',
     ['subject', 'body'],
     {
-      ...EmailTemplate,
+      ...issue.EmailTemplate,
       ...auditFields,
     }
   )
@@ -3116,17 +3114,17 @@ async function seedIssueTypeModuleReplaced(knex, { userName }) {
   // MessageType
   // ------------------------------------------
   const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
-    ...MessageType,
-    alertTemplateId: moduleAlertTemplateId,
-    smsTemplateId: moduleSmsTemplateId,
-    emailTemplateId: moduleEmailTemplateId,
+    ...issue.MessageType,
+    alertTemplateId,
+    smsTemplateId,
+    emailTemplateId,
   })
 
   // ------------------------------------------
   // IssueType
   // ------------------------------------------
   await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
-    ...issueType,
+    ...issue.issueType,
     defaultMessageTypeId: moduleMessageTypeId,
   })
 }
@@ -3202,6 +3200,6 @@ module.exports = {
   removePermissions,
   updatePermissions,
 
-  seedIssueTypeModuleReplaced,
+  seedIssueType,
   seedIssueEscalationTriggersForPartner,
 }

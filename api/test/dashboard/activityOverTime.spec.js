@@ -14,6 +14,7 @@ const Promise = require('bluebird')
 
 const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
+const { getLocalDateInUtc } = require('../../src/shared/date')
 const {
   allDeviceMaintenanceStatusToId,
   allResultCategoryToId,
@@ -30,12 +31,13 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
   const path = '/api/dashboard/operational-data/activity-over-time'
   shared.checkToken(server, path)
 
-  const now = new Date()
+  const now = parseISO(new Date().toISOString())
   const previousMonth = subMonths(now, 1)
   const minDate = parseISO(
     `${format(previousMonth, 'yyyy-MM-01')}T00:00:00.000Z`
   )
-  const maxDate = endOfMonth(previousMonth)
+  const maxDate = getLocalDateInUtc(endOfMonth(previousMonth))
+
   const totalResults = 5
   let initialState = {}
   let assayGeneXpertMtbRif
@@ -67,7 +69,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       .where('u.name', 'admin')
       .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
     const countryAbbreviation = 'US'
-    const now = new Date()
+    const now = new Date().toISOString()
     const auditFields = {
       createdOn: now,
       createdBy: userId,
@@ -155,10 +157,10 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         resultCategory1,
         resultCategory2,
         assayVersion: '4',
-        startedOn: subMinutes(date, 100),
-        endedOn: date,
-        createdOn: subMinutes(date, 90),
-        updatedOn: subMinutes(date, 90),
+        startedOn: getLocalDateInUtc(subMinutes(date, 100)),
+        endedOn: getLocalDateInUtc(date),
+        createdOn: getLocalDateInUtc(subMinutes(date, 90)),
+        updatedOn: getLocalDateInUtc(subMinutes(date, 90)),
         notes: 'This is a test... result',
       }
 
@@ -174,14 +176,15 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         deviceId,
         deviceMaintenanceStatusId,
         data: '{}',
-        day: format(date, 'yyyy-MM-dd'),
-        createdOn: new Date(),
+        day: date,
+        createdOn: getLocalDateInUtc(new Date()),
       })
 
     let statusId
     // for minDate we added few results - so set status 'active'
     await addDmsl(weekDays[0], deviceMaintenanceStatusToId.active)
     //
+
     await addDmsl(weekDays[1], deviceMaintenanceStatusToId.reportedActive)
     //
     statusId = deviceMaintenanceStatusToId.inactiveUnknown
@@ -227,8 +230,8 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     server
       .get(`${path}`)
       .query({
-        minDate: format(minDate, 'yyyy-MM-dd'),
-        maxDate: format(maxDate, 'yyyy-MM-dd'),
+        minDate,
+        maxDate,
       })
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
@@ -269,6 +272,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         // ----------------
         // assert statuses to corresponding week-days by week-day indices
         // ----------------
+
         assert.isAtLeast(getItem(1).devicesTotal, 1)
         assert.isAtLeast(getItem(1).devicesActive, 1)
         //

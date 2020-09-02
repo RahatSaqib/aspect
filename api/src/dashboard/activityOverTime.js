@@ -54,7 +54,7 @@ async function activityOverTimeDashboard(request) {
 
   So, below query should have counts (especially total # of devices)
   for each date in range. But because seeding of `development` env
-  may miss adding logs for some days (i.e. for weekends), we use default 
+  may miss adding logs for some days (i.e. for weekends), we use default
   value of `devicesTotal` in case when below query doesn't have data for
   some day in table DeviceMaintenanceStatusLog.
   */
