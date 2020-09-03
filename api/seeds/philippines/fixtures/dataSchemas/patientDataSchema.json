@@ -72,256 +72,256 @@
   "province": {
     "title": "Province",
     "type": "string",
-    "order": 13
+    "order": 14
   },
   "city": {
     "title": "City",
     "type": "string",
-    "order": 13
+    "order": 15
   },
   "phone": {
     "title": "Patient Phone",
     "type": "string",
-    "order": 14
+    "order": 16
   },
   "landlineNo": {
     "title": "Patient's Landline No.",
     "type": "string",
-    "order": 15
+    "order": 17
   },
   "emailAddress": {
     "title": "Patient's Email Address",
     "type": "string",
-    "order": 16
+    "order": 18
   },
   "paragioniamiasisResult1": {
     "title": "Paragioniamiasis Result 1",
     "type": "string",
-    "order": 14
+    "order": 19
   },
   "paragioniamiasisResult2": {
     "title": "Paragioniamiasis Result 2",
     "type": "string",
-    "order": 14
+    "order": 20
   },
   "cultureCenter": {
     "title": "Culture Center",
     "type": "string",
-    "order": 17
+    "order": 21
   },
   "dstCenter": {
     "title": "DST Center",
     "type": "string",
-    "order": 18
+    "order": 22
   },
   "treatmentCategory": {
     "title": "Treatment Category",
     "type": "string",
-    "order": 19
+    "order": 23
   },
   "registrationGroup": {
     "title": "Registration Group",
     "type": "string",
-    "order": 20
+    "order": 24
   },
   "treatmentSchedule": {
     "title": "Treatment Schedule",
     "type": "string",
-    "order": 21
+    "order": 25
   },
   "monthOfTreatment": {
     "title": "Month of tx",
     "type": "string",
-    "order": 22
+    "order": 26
   },
   "typeOfSpecimen": {
     "title": "Type of Specimen",
     "type": "string",
-    "order": 23
+    "order": 27
   },
   "ifOthersSpecify": {
     "title": "(If Others) Specify",
     "type": "string",
-    "order": 24
+    "order": 28
   },
   "accessionNo": {
     "title": "Accession No",
     "type": "string",
-    "order": 25
+    "order": 29
   },
   "site": {
     "title": "Site",
     "type": "string",
-    "order": 26
+    "order": 30
   },
   "testRequestedSmear": {
     "title": "Test Requested Smear",
     "type": "bool",
-    "order": 27
+    "order": 31
   },
   "testRequestedCulture": {
     "title": "Test Requested Culture",
     "type": "bool",
-    "order": 28
+    "order": 32
   },
   "testRequestedDst": {
     "title": "Test Requested DST",
     "type": "bool",
-    "order": 29
+    "order": 33
   },
   "testRequestedLpa": {
     "title": "Test Requested LPA",
     "type": "bool",
-    "order": 30
+    "order": 34
   },
   "testRequestedGx": {
     "title": "Test Requested Gx",
     "type": "bool",
-    "order": 31
+    "order": 35
   },
   "testRequestedTbLamp": {
     "title": "Test Requested TB LAMP",
     "type": "bool",
-    "order": 31
+    "order": 36
   },
   "testRequestedParagonimiasis": {
     "title": "Test Requested Paragonimiasis",
     "type": "bool",
-    "order": 31
+    "order": 37
   },
   "dateTransferedToDst": {
     "title": "Date transfered to DST",
     "type": "date",
-    "order": 32
+    "order": 38
   },
   "cultureMethod": {
     "title": "Culture Method",
     "type": "string",
-    "order": 33
+    "order": 39
   },
   "presumptiveDsOrDr": {
     "title": "If for Xpert, DST or LPA",
     "type": "string",
-    "order": 34
+    "order": 40
   },
   "dateReceived": {
     "title": "Date Received",
     "type": "date",
-    "order": 35
+    "order": 41
   },
   "labNo1": {
     "title": "Lab No",
     "type": "string",
-    "order": 36
+    "order": 42
   },
   "tbCaseNumber": {
     "title": "TB Case Number",
     "type": "string",
-    "order": 37
+    "order": 43
   },
   "repeatCollection": {
     "title": "Repeat Collection",
     "type": "bool",
-    "order": 31
+    "order": 44
   },
   "reasonForRecollection": {
     "title": "Reason for Recollection",
     "type": "string",
-    "order": 37
+    "order": 45
   },
   "dateCollected1": {
     "title": "Date Collected 1",
     "type": "date",
-    "order": 38
+    "order": 46
   },
   "dateCollected2": {
     "title": "Date Collected 2",
     "type": "date",
-    "order": 39
+    "order": 47
   },
   "dateCollected3": {
     "title": "Date Collected 3",
     "type": "date",
-    "order": 40
+    "order": 48
   },
   "dateDispatched": {
     "title": "Date Dispatched",
     "type": "date",
-    "order": 41
+    "order": 49
   },
   "volume1": {
     "title": "Volume 1",
     "type": "string",
-    "order": 42
+    "order": 50
   },
   "volume2": {
     "title": "Volume 2",
     "type": "string",
-    "order": 43
+    "order": 51
   },
   "volume3": {
     "title": "Volume 3",
     "type": "string",
-    "order": 44
+    "order": 52
   },
   "consistency1": {
     "title": "consistency 1",
     "type": "string",
-    "order": 45
+    "order": 53
   },
   "consistency2": {
     "title": "consistency 2",
     "type": "string",
-    "order": 46
+    "order": 54
   },
   "consistency3": {
     "title": "consistency 3",
     "type": "string",
-    "order": 47
+    "order": 55
   },
   "specimenAccepted": {
     "title": "Specimen Accepted",
     "type": "bool",
-    "order": 31
+    "order": 56
   },
   "specimenRejectedReason": {
     "title": "Specimen Rejected Reason",
     "type": "string",
-    "order": 37
+    "order": 57
   },
   "opd": {
     "title": "OPD",
     "type": "bool",
-    "order": 48
+    "order": 58
   },
   "referral": {
     "title": "Referral",
     "type": "bool",
-    "order": 49
+    "order": 59
   },
   "inpatient": {
     "title": "Inpatient",
     "type": "bool",
-    "order": 50
+    "order": 60
   },
   "inpatientRemarks": {
     "title": "Inpatient Remarks",
     "type": "string",
-    "order": 51
+    "order": 61
   },
   "encodedBy": {
     "title": "Encoded by",
     "type": "string",
-    "order": 52
+    "order": 62
   },
   "dateEncoded": {
     "title": "Date Encoded",
     "type": "date",
-    "order": 53
+    "order": 63
   },
   "healthCareSystem": {
     "title": "Health Care System",
     "type": "string",
-    "order": 54
+    "order": 64
   }
 }
