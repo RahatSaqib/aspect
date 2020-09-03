@@ -1,5 +1,5 @@
 import omit from 'lodash/omit'
-import isNil from 'lodash/isNil'
+import isEmpty from 'lodash/isEmpty'
 
 const onRequested = (action, mutState, cb) => {
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
@@ -12,7 +12,7 @@ const onRequested = (action, mutState, cb) => {
 }
 
 const removeEmptyParams = params => {
-  Object.keys(params).forEach(key => isNil(params[key]) && delete params[key])
+  Object.keys(params).forEach(key => isEmpty(params[key]) && delete params[key])
   return params
 }
 

@@ -65,6 +65,118 @@ const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
   return grouped
 }
 
+const groupForPieRow = data => {
+  const keysToRenderOrder = [
+    'assayName',
+    'cntAll',
+    'cntPositive',
+    'percentPositive',
+    'percentReported',
+    'percentViaSms',
+    'percentViaEmail',
+    'percentWithin2Hours',
+  ]
+
+  const pieValueFormat = key => {
+    let type
+    switch (true) {
+      case key.includes('percent'):
+        type = 'percent'
+        break
+      case key.includes('cnt'):
+        type = 'int'
+        break
+
+      default:
+        type = 'string'
+        break
+    }
+    return type
+  }
+
+  const pieWidgetType = (key, value, difference) => {
+    let type
+    switch (true) {
+      case typeof value === 'number' && difference !== undefined:
+        type = 'doughnut'
+        break
+
+      case typeof value === 'string':
+        type = 'string'
+        break
+
+      default:
+        type = 'solid'
+        break
+    }
+    return type
+  }
+
+  const valueSplit = (key, value, type, difference) => {
+    switch (true) {
+      case type === 'doughnut':
+        return [
+          {
+            id: key,
+            label: key,
+            value,
+            difference,
+          },
+          {
+            id: 'noData',
+            label: 'noData',
+            value: 100 - value,
+            difference,
+          },
+        ]
+
+      case type === 'string':
+        return [
+          {
+            id: key,
+            label: key,
+            value: value.replace(/(^|\s)GeneXpert(\s|$)/gm, ''),
+          },
+        ]
+
+      default:
+        return [
+          {
+            id: key,
+            label: key,
+            value: value > 0 ? value : 100,
+            valueLabel: value,
+            difference,
+          },
+        ]
+    }
+  }
+
+  const pieRows = []
+  data.map(row => {
+    const pieRow = {}
+    for (const [key, value] of Object.entries(row)) {
+      if (keysToRenderOrder.includes(key)) {
+        const hasChange = row[`${key}Change`]
+        const type = pieWidgetType(key, value, hasChange)
+        const format = pieValueFormat(key)
+        pieRow[key] = {
+          heading: `${key}`,
+          type,
+          format,
+          value: valueSplit(key, value, type, hasChange),
+        }
+      }
+    }
+    return pieRows.push(
+      Object.keys(pieRow).reduce(function(r, k) {
+        return r.concat(pieRow[k])
+      }, [])
+    )
+  })
+  return pieRows
+}
+
 const groupForDivergent = (data, indexBy, keyToConsume, filterBy) => {
   const divergences = []
   const ranges = []
@@ -154,6 +266,9 @@ const groupForPieOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
   return [...groupedConfirmed, ...groupedNotConfirmed]
 }
 
+const weekendOrHolidayInactive = (inactive, total, isWeekendOrHoliday) =>
+  isWeekendOrHoliday ? 0 : calcPercentageForGraphs(inactive, total)
+
 const groupForDeviceStatusAPI = (
   data,
   keyToConsume,
@@ -169,7 +284,14 @@ const groupForDeviceStatusAPI = (
       devicesActive,
       devicesTotal,
       devicesInactive,
+      inactiveUnknown,
+      inactiveConnectivity,
+      inactiveDecommissioned,
+      inactiveDownForRepair,
+      inactiveNoResultsReported,
+      inactiveOutOfInventory,
     } = curr
+
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
       : curr[indexBy]
@@ -180,18 +302,42 @@ const groupForDeviceStatusAPI = (
       date: dateFormatted,
       devicesTotal,
       devicesActiveRaw: devicesActive,
-      devicesActive: shouldBeZero
-        ? 0
-        : calcPercentageForGraphs(devicesActive, devicesTotal),
-      devicesInactive:
-        shouldBeZero || isWeekendOrHoliday
-          ? 0
-          : calcPercentageForGraphs(devicesInactive, devicesTotal),
+      devicesActive: calcPercentageForGraphs(devicesActive, devicesTotal),
       weekendOrHoliday: isWeekendOrHoliday
         ? shouldBeZero
           ? 0
           : calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
+      inactiveUnknown: weekendOrHolidayInactive(
+        inactiveUnknown,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveConnectivity: weekendOrHolidayInactive(
+        inactiveConnectivity,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveDecommissioned: weekendOrHolidayInactive(
+        inactiveDecommissioned,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveDownForRepair: weekendOrHolidayInactive(
+        inactiveDownForRepair,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoResultsReported: weekendOrHolidayInactive(
+        inactiveNoResultsReported,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveOutOfInventory: weekendOrHolidayInactive(
+        inactiveOutOfInventory,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
     }
     return acc
   }, {})
@@ -201,6 +347,7 @@ const groupForDeviceStatusAPI = (
 export {
   groupByKey,
   groupForPie,
+  groupForPieRow,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,

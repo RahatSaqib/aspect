@@ -1,5 +1,6 @@
 import BarGraph from '../../BarGraph'
-import { getPreviousPeriod } from '../../Helpers/Formatters'
+import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
+import AspectDropdown from '../../../AspectDropdown'
 
 const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
 const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
@@ -8,8 +9,20 @@ const deviceStatusGraphs = {
   deviceStatus: {
     id: 'deviceStatus',
     title: 'deviceStatusTitle',
+    componentSize: 'full',
+    group: 'assaysNotNeeded',
     assays: [],
-    selectorModifiers: [],
+    selectorModifiers: [
+      {
+        selectedValue: 'Date Range',
+        endpoint: false,
+        state: 'deviceDateRange',
+        component: AspectDropdown,
+        identifier: 'dateRange',
+        data: dateRangeOptions('deviceDateRange'),
+        sortByKeys: ['id'],
+      },
+    ],
     graphType: [
       {
         id: 'deviceStatusMonthly',
@@ -30,7 +43,7 @@ const deviceStatusGraphs = {
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
-        displayLegend: true,
+        displayLegend: false,
         formatDate: 'LLLL do',
       },
     ],

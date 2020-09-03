@@ -559,9 +559,7 @@ module.exports = {
           AVG(
             TIMESTAMPDIFF(
               MINUTE,
-              CONVERT_TZ(r.endedOn,
-              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-              ),
+              r.endedOn,
               r.createdOn
             )
           )
@@ -572,15 +570,10 @@ module.exports = {
     INNER JOIN Site AS s ON r.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     INNER JOIN Country AS c ON g.countryId = c.id
-    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
-    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
     INNER JOIN Device AS d ON r.deviceId = d.id
-    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
-    WHERE 	TIMESTAMPDIFF(
+    WHERE TIMESTAMPDIFF(
         HOUR,
-        CONVERT_TZ(r.endedOn,
-        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-        ),
+        r.endedOn,
         r.createdOn
         )>=2
            AND r.endedOn BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
@@ -591,9 +584,7 @@ module.exports = {
           AVG(
             TIMESTAMPDIFF(
               MINUTE,
-              CONVERT_TZ(r.endedOn,
-              COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-              ),
+              r.endedOn,
               r.createdOn
             )
           )
@@ -604,15 +595,10 @@ module.exports = {
     INNER JOIN Site AS s ON r.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     INNER JOIN Country AS c ON g.countryId = c.id
-    INNER JOIN TimeZone AS countrytz ON c.timezone = countrytz.id
-    LEFT OUTER JOIN TimeZone AS sitetz ON s.timezoneId= sitetz.id
     INNER JOIN Device AS d ON r.deviceId = d.id
-    LEFT OUTER JOIN TimeZone AS devicetz ON d.timezone= devicetz.id
-    WHERE 	TIMESTAMPDIFF(
+    WHERE TIMESTAMPDIFF(
         HOUR,
-        CONVERT_TZ(r.endedOn,
-        COALESCE(devicetz.timezone,sitetz.timezone,countrytz.timezone),'UTC'
-        ),
+        r.endedOn,
         r.createdOn
         )>=2
         AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
@@ -741,7 +727,7 @@ module.exports = {
       titleI18nKey: 'averageRecipientsOfEmail',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForIndicator: `SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(em.resultId) AS resultCount
@@ -756,7 +742,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY em.resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForStatUnit: `SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(em.resultId) AS resultCount
@@ -791,7 +777,7 @@ module.exports = {
       titleI18nKey: 'averageRecipientsOfSms',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForIndicator: `SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(sms.resultId) AS resultCount
@@ -806,7 +792,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(resultCount)) AS cnt
+      sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
       FROM
       (
       SELECT COUNT(sms.resultId) AS resultCount
@@ -841,7 +827,7 @@ module.exports = {
       titleI18nKey: 'averageLengthOfSms',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT ROUND(AVG(messageLength)) AS cnt
+      sqlForIndicator: `SELECT IFNULL(ROUND(AVG(messageLength)),0) AS cnt
       FROM
       (
       SELECT length(sms.message) AS messageLength
@@ -856,7 +842,7 @@ module.exports = {
       AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY sms.resultId
       ) AS innerQuery`,
-      sqlForStatUnit: `SELECT ROUND(AVG(messageLength)) AS cnt
+      sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(messageLength)),0) AS cnt
       FROM
       (
       SELECT length(sms.message) AS messageLength
@@ -885,7 +871,51 @@ module.exports = {
         },
       },
     },
-
+    {
+      icon: 'MdTextsms',
+      title: 'Number of SMS Sent MTD',
+      titleI18nKey: 'dashboardWidgetSmsSentTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+      SELECT
+        IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
+      FROM SmsMessage AS sms
+        INNER JOIN Device AS d ON d.id = sms.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      WHERE
+        YEAR(sms.createdOn) = YEAR(NOW())
+        AND MONTH(sms.createdOn) = MONTH(NOW())
+        AND sms.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `
+      SELECT
+        IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
+      FROM SmsMessage AS sms
+        INNER JOIN Device AS d ON d.id = sms.deviceId
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE
+        YEAR(sms.createdOn) = YEAR(NOW())
+        AND sms.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'
+      `,
+      statUnit: '{unit} YTD',
+      statUnitI18nKey: 'dashboardWidgetSmsSentStat',
+      link: '/browse/notification',
+      sortOrder: 12,
+      externalId: 'smsSent',
+      description: 'The total number of text messages sent in the month',
+      descriptionI18nKey: 'dashboardWidgetSmsSentDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
     {
       icon: 'MdSwapVert',
       title: 'Average days between module swaps',

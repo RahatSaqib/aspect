@@ -3,7 +3,11 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import { ResponsivePie } from '@nivo/pie'
-import { PieInnerLegend } from '../GraphLegend'
+import {
+  PieInnerLegend,
+  PieInnerLegendSolid,
+  PieInnerLegendDoughNut,
+} from '../GraphLegend'
 
 import {
   generateColorForValue,
@@ -20,20 +24,56 @@ const AspectResponsivePie = ({
   averages,
   data,
   displayMethod,
+  componentClasses,
   keys,
+  type = false,
 }) => {
   const { formatNumber: intlFormatNumber } = useIntl()
+
+  const config = (type, data, displayMethod) => {
+    switch (true) {
+      case type === 'doughnut':
+        return {
+          margin: { top: 0, right: 0, bottom: 0, left: 0 },
+          data,
+          radius: 0.65,
+          endAngle: 360,
+          interactive: false,
+        }
+
+      case type === 'solid':
+        return {
+          margin: { top: 0, right: 0, bottom: 0, left: 0 },
+          data,
+          radius: 0,
+          endAngle: 360,
+          interactive: false,
+        }
+
+      default:
+        return {
+          margin: { top: 30, right: 30, bottom: 30, left: 30 },
+          data: percentageOrActualForPie(data, displayMethod),
+          radius: 0.8,
+          endAngle: -360,
+          interactive: true,
+        }
+    }
+  }
+
   return (
-    <div className={cssClasses('piegraph__container')}>
+    <div className={cssClasses(componentClasses)}>
       <ResponsivePie
-        data={percentageOrActualForPie(data, displayMethod)}
+        data={config(type, data, displayMethod).data}
         keys={keys}
-        margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
-        innerRadius={0.8}
+        margin={config(type).margin}
+        innerRadius={config(type).radius}
         enableRadialLabels={false}
         enableSlicesLabels={false}
         padAngle={-1}
         startAngle={0}
+        endAngle={config(type).endAngle}
+        isInteractive={config(type).interactive}
         cornerRadius={3}
         borderWidth={0}
         borderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
@@ -56,15 +96,22 @@ const AspectResponsivePie = ({
               v,
               displayMethod,
               assaysFromState,
-              intlFormatNumber
+              intlFormatNumber,
+              type
             )}
           />
         )}
         colors={v => generateColorForValue(v)}
       />
-      {averages && <PieInnerLegend averages={averages} data={data} />}
+      {averages && !type && <PieInnerLegend averages={averages} data={data} />}
+      {type === 'solid' && <PieInnerLegendSolid data={data} />}
+      {type === 'doughnut' && <PieInnerLegendDoughNut data={data} />}
     </div>
   )
+}
+
+AspectResponsivePie.defaultProps = {
+  type: false,
 }
 
 AspectResponsivePie.propTypes = {
@@ -73,6 +120,8 @@ AspectResponsivePie.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 }
 
 export default AspectResponsivePie

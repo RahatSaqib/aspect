@@ -1,5 +1,7 @@
 const { knex } = require('../db')
 const { resultModuleReplaced } = require('../result/actions')
+const { deviceModuleDisabled } = require('../device/actions')
+const { issueTypeToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -65,7 +67,6 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
     knex,
     result.deviceId
   )
-
   // check if a module was just now replaced and trigger replacement-issue if it was
   if (
     result.moduleName &&
@@ -96,9 +97,48 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
   }
 }
 
+async function shouldTriggerModuleDisabled(
+  knex,
+  messageContext,
+  device,
+  deviceModule
+) {
+  /**
+   * Check if the module was already replaced
+   */
+  const moduleReplacedIssue = await knex('Issue')
+    .where({
+      issueTypeId: await issueTypeToId('ModuleReplaced'),
+      deviceId: device.id,
+    })
+    .andWhere(
+      knex.raw(
+        'data->>"$.replacedModuleSerial"=? AND DATE(createdOn)>=DATE(?)',
+        [deviceModule.SiteSerialNumber, deviceModule.Creation]
+      )
+    )
+    .first('data')
+  /**
+   * If the module wasn't replaced already, we trigger the event to create the new issue.
+   */
+  if (!moduleReplacedIssue) {
+    if (!messageContext.deviceModuleDisabled) {
+      messageContext = messageContext.bindActionCreators({
+        deviceModuleDisabled,
+      })
+    }
+    messageContext.deviceModuleDisabled(
+      device,
+      deviceModule.SiteSerialNumber,
+      deviceModule.Creation
+    )
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
   getReplacedModuleSerials,
   shouldTriggerModuleReplaced,
+  shouldTriggerModuleDisabled,
 }

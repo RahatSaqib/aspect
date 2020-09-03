@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Patient Name",
+    "type": "string",
+    "order": 0,
+    "dbColumn": "PatientName",
+    "testType": null
+  },
+  {
+    "title": "Age",
+    "type": "int",
+    "order": 10,
+    "dbColumn": "PatientAge",
+    "testType": null
+  },
+  {
+    "title": "Gender",
+    "type": "int",
+    "order": 20,
+    "dbColumn": "PatientGender",
+    "testType": null
+  },
+  {
+    "title": "Patient Phone",
+    "type": "string",
+    "order": 30,
+    "dbColumn": "PatientPhone",
+    "testType": null
+  },
+  {
+    "title": "Patient Address",
+    "type": "string",
+    "order": 40,
+    "dbColumn": "PatientStreet",
+    "testType": null
+  },
+  {
+    "title": "Patient State",
+    "type": "int",
+    "order": 50,
+    "dbColumn": "PatientStateId",
+    "testType": null
+  },
+  {
+    "title": "Name of Person Requesting Test",
+    "type": "string",
+    "order": 70,
+    "dbColumn": "RequestorName",
+    "testType": null
+  },
+  {
+    "title": "Referring Clinician or Facility Phone Number (if known)",
+    "type": "string",
+    "order": 80,
+    "dbColumn": "RequestorPhone",
+    "testType": null
+  }
+]

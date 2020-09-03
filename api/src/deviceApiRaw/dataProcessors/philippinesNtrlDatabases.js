@@ -6,7 +6,6 @@ const { getRemoteAddress } = require('../../shared/request')
 const {
   getDateOrDefault,
   parseDateOrDefault,
-  getUtcTime,
   dateEqual,
 } = require('../../shared/date')
 const { convertStringToFloat } = require('../../shared/string')
@@ -1306,7 +1305,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           payload[dateKey] = getDateOrDefault(payload, dateKey)
         })
         const rawMessage = JSON.stringify(request.plugins.rawPayload)
-        const utcNow = getUtcTime()
+        const utcNow = new Date()
         await knex('Device')
           .where({ id: deviceId })
           .update({ lastSeenOn: utcNow, updatedOn: utcNow })
@@ -2357,10 +2356,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           payload[dateKey] = getDateOrDefault(payload, dateKey)
         })
         const rawMessage = JSON.stringify(request.plugins.rawPayload)
-        const utcNow = getUtcTime()
+        const now = new Date()
         await knex('Device')
           .where({ id: deviceId })
-          .update({ lastSeenOn: utcNow, updatedOn: utcNow })
+          .update({ lastSeenOn: now, updatedOn: now })
         const site = await knex('Device as d')
           .join('Site as s', 'd.siteId', 's.id')
           .where('d.id', deviceId)
@@ -2457,8 +2456,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               partnerId,
               geographyId: countryDetails.countryGeographyId,
               timezoneId: countryDetails.timezone,
-              createdOn: utcNow,
-              updatedOn: utcNow,
+              createdOn: now,
+              updatedOn: now,
             })
             originSite = await knex('Site').where('id', originSiteId).first()
           }
@@ -2611,9 +2610,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           resultCategory2: resultCategories.Missing,
           patientData: JSON.stringify(patientData),
           rawData: rawMessage,
-          createdOn: utcNow,
+          createdOn: now,
           createdBy: null,
-          updatedOn: utcNow,
+          updatedOn: now,
           updatedBy: null,
         }
 
@@ -2787,7 +2786,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             dstResultData.readBy,
             dstResultData.remarks,
             patientData,
-            utcNow,
+            now,
             resultCategories,
             resultWorkflowStatuses,
             dstResultOverwritePriority
@@ -2911,7 +2910,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               cultureResultData.labTech,
               cultureResultData.remarks,
               patientData,
-              utcNow,
+              now,
               resultCategories,
               resultWorkflowStatuses,
               cultureResultOverwritePriority
@@ -3050,7 +3049,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               smearResultData.laboratoryTechnician,
               null,
               patientData,
-              utcNow,
+              now,
               resultCategories,
               resultWorkflowStatuses,
               smearResultOverwritePriority
@@ -3149,7 +3148,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             geneXpertResultData.examiner,
             geneXpertResultData.remarks,
             patientData,
-            utcNow,
+            now,
             resultCategories,
             resultWorkflowStatuses,
             resultOverwritePriority

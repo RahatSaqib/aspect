@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-
+const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const {
   findConsumables,
@@ -12,16 +12,28 @@ const {
 } = require('../../inventory/service')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
-const { parseDateOrDefault } = require('../../shared/date')
-const { updateDeviceDetails } = require('../../deviceApi/device')
+const {
+  getTimeZoneById,
+  parseDateOrDefault,
+  getLocalDateTimeStringInUtc,
+} = require('../../shared/date')
+const { allTimeZoneToId } = require('../../shared/dictionary')
 
+const { updateDeviceDetails } = require('../../deviceApi/device')
+const { shouldTriggerModuleDisabled } = require('../utils')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
 If the device is unknown, ignore this request
 If the site for the device in unknown, create a site and link it to the device
 */
-async function preProcessAddDeviceData({ knex, device, payload, now }) {
+async function preProcessAddDeviceData({
+  knex,
+  device,
+  payload,
+  now,
+  messageContext,
+}) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
@@ -62,6 +74,11 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     )
   }
   await knex.from('Device').where({ id: device.id }).update(deviceDetails)
+  if (configurationData.disabledModules) {
+    await Promise.each(configurationData.disabledModules, modules =>
+      shouldTriggerModuleDisabled(knex, messageContext, device, modules)
+    )
+  }
 }
 
 /*
@@ -83,8 +100,17 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   }
   const [device] = await knex
     .from('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
-    .select('d.id', 'd.siteId', 'd.partnerId', 'd.deviceTypeId')
+    .select(
+      'd.id',
+      'd.siteId',
+      'd.partnerId',
+      'd.deviceTypeId',
+      knex.raw('coalesce(d.timezone, s.timezoneId, c.timezone) as timezone')
+    )
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
@@ -96,6 +122,28 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
   const sampleId = _.get(payload, 'sample.id')
+
+  const convertedTimeZone = getTimeZoneById(
+    await allTimeZoneToId(),
+    device.timezone
+  )
+
+  // The start/end time from GeneXpert is reported with a time zone
+  // designator "Z" that indicates UTC, but it isn't. We have to disregard
+  // this designation and treat it as local time of the device and then translate it to UTC
+  if (payload.endedOn) {
+    payload.endedOn = getLocalDateTimeStringInUtc(
+      endedOn.toISOString().replace('Z', ''),
+      convertedTimeZone
+    )
+  }
+
+  if (payload.startedOn) {
+    payload.startedOn = getLocalDateTimeStringInUtc(
+      startedOn.toISOString().replace('Z', ''),
+      convertedTimeZone
+    )
+  }
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
@@ -126,6 +174,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   ) {
     potentialAssayIds.push('GxMtbRif')
   }
+  if (potentialAssayIds.includes('GxHiv1Vl')) {
+    const copies = getVLCopies(_.get(payload, 'data.resultText'))
+    if (copies) _.set(payload, 'data.copies', copies)
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -155,8 +207,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     ) {
       // Has the result already been determined?
       if (
-        _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
-        _.get(existingResult, 'resultCategory2') !== 'NoResult'
+        (_.get(existingResult, 'resultCategory1') &&
+          _.get(existingResult, 'resultCategory1') !== 'NoResult') ||
+        (_.get(existingResult, 'resultCategory2') &&
+          _.get(existingResult, 'resultCategory2') !== 'NoResult')
       ) {
         // We should never merge an incomplete result over a complete result
         throw Boom.conflict('A later version of this result already exists')
@@ -787,11 +841,13 @@ function getResultCategories(payload) {
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
       const assayId = _.get(payload, 'assay.id')
+
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
+          .replace(/hiv-1/, '')
           .replace(/sars-cov-2/, '')
           .trim()
         const result1CategoryMapping = {
@@ -848,10 +904,16 @@ function getResultCategories(payload) {
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
         }
+        if (assayId === 'GxHiv1Vl') {
+          const externalId =
+            getResultCategoriesHivVL(result1Text) ||
+            result1CategoryMapping[result1Text]
+          if (externalId) payloadCategory = [{ id: externalId }]
+        }
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        [
+        ([
           'Detected',
           'Trace Detected',
           'Error',
@@ -859,7 +921,8 @@ function getResultCategories(payload) {
           'NoResult',
           'Success',
         ].includes(result1) ||
-        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)
+          !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)) &&
+        assayId !== 'GxHiv1Vl'
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
@@ -899,9 +962,36 @@ function getResultCategories(payload) {
       ) {
         payloadCategory = [...payloadCategory, { id: result1 }]
       }
+    } else {
+      const assayId = _.get(payload, 'assay.id')
+      if (assayId === 'GxHiv1Vl') {
+        return [{ id: getResultCategoriesHivVL(payloadResultText) }]
+      }
     }
   }
   return payloadCategory
+}
+
+function getVLCopies(result1Text) {
+  if (result1Text && !result1Text.includes('< 40')) {
+    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
+    const arr = regex.exec(result1Text.replace('HIV-1', ''))
+
+    return arr ? parseFloat(arr[0]) : null
+  }
+  return null
+}
+
+function getResultCategoriesHivVL(result1Text) {
+  const copies = getVLCopies(result1Text)
+  // Add HIV VL Categories
+  if (copies) {
+    if (copies < 1000 && copies >= 40) return 'LessThan1000'
+    if (copies >= 1000) return 'MoreThan1000'
+  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
+    return 'LessThan40'
+  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
+    return 'NoResult'
 }
 
 function macAddressValid(macAddress) {
@@ -921,4 +1011,7 @@ module.exports = {
   transformMergeResultPayload,
   postProcessAddDeviceOperation,
   postProcessUpdateDeviceConfiguration,
+  getResultCategoriesHivVL,
+  getResultCategories,
+  getVLCopies,
 }

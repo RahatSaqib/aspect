@@ -3,7 +3,11 @@ const chai = require('chai')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
 const { run } = require('../../src/db')
-const { parseDateOrDefault } = require('../../src/shared/date')
+const {
+  parseDateOrDefault,
+  getLocalDateInUtc,
+} = require('../../src/shared/date')
+const { resultWorkflowStatusToId } = require('../../src/shared/dictionary')
 const { getResult } = require('../../src/deviceApi/result')
 const {
   createTestContext,
@@ -1352,6 +1356,11 @@ describe('Device Result API routes', () => {
 
       afterEach(async () => {
         run(async knex => {
+          const inventoryItemIds = await knex('InventoryLog')
+            .whereIn('resultId', resultIds)
+            .select('inventoryItemId')
+            .pluck('inventoryItemId')
+          await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
           await knex('InventoryLog').whereIn('resultId', resultIds).delete()
           await knex('ResultWorkflowLog')
             .whereIn('resultId', resultIds)
@@ -1712,7 +1721,7 @@ describe('Device Result API routes', () => {
 
           let resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2045-01-30 00:00:00',
+            expirationDate: '2045-01-30 00:00:00Z',
           }
 
           const [lotNumberAndExpirationDateMatch] = await knex(
@@ -1783,9 +1792,9 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'XYZ321',
-            expirationDate: '2035-01-30 00:00:00',
+            expirationDate: '2035-01-30 00:00:00Z',
           }
-          const randomExpiryDate = new Date('2017-03-05 00:00:00')
+          const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
           const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
             consumableId: daktariHivVlCartridgeId,
             siteId,
@@ -1843,7 +1852,7 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2019-11-16 00:00:00',
+            expirationDate: '2019-11-16 00:00:00Z',
           }
           const randomLotNumber = 'RANDOM-LOT'
           const [onlyExpirationDateMatches] = await knex(
@@ -1946,9 +1955,9 @@ describe('Device Result API routes', () => {
 
           const resultDetails = {
             lotNumber: 'QWE987',
-            expirationDate: '2017-12-16 00:00:00',
+            expirationDate: '2017-12-16 00:00:00Z',
           }
-          const randomExpiryDate = new Date('2017-03-05 00:00:00')
+          const randomExpiryDate = new Date('2017-03-05 00:00:00Z')
           const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
             consumableId: daktariHivVlCartridgeId,
             siteId,
@@ -2029,7 +2038,7 @@ describe('Device Result API routes', () => {
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
               inventoryItem.expiresOn.toISOString() ===
-                new Date(randomExpiryDate).toISOString()
+                randomExpiryDate.toISOString()
           )
           const matchingExpirationDateCartridgeAtSiteAfter = _.find(
             inventoryItemsAfter,
@@ -2187,7 +2196,7 @@ describe('Device Result API routes', () => {
 
           const past = subDays(now, 1)
           const future = addDays(now, 7)
-          const futureExpiresOn = startOfDay(future)
+          const futureExpiresOn = getLocalDateInUtc(startOfDay(future))
 
           const assayExternalId = 'DaktariHivVL'
           const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
@@ -2759,11 +2768,11 @@ describe('Device Result API routes', () => {
 
           const resultDetails = {
             lotNumber: 'HIV533',
-            expirationDate: new Date(
+            expirationDate: getLocalDateInUtc(
               new Date(
                 new Date().getTime() + _.random(0, 1000 * 60 * 60 * 24 * 365)
               ).setHours(0, 0, 0, 0)
-            ).toJSON(),
+            ),
           }
           const inventoryItemsBefore = await getInventoryItemsAtSite(
             knex,
@@ -2802,7 +2811,7 @@ describe('Device Result API routes', () => {
             .where('il.consumableId', daktariHivVlCartridgeId)
             .andWhere('il.siteId', siteId)
             .andWhere('il.lotNumber', resultDetails.lotNumber)
-            .andWhere('il.expiresOn', new Date(resultDetails.expirationDate))
+            .andWhere('il.expiresOn', resultDetails.expirationDate)
             .first(
               'il.id',
               'il.inventoryItemId',
@@ -2845,7 +2854,7 @@ describe('Device Result API routes', () => {
           )
           assert.equal(
             inventoryConsumptionLog.expiresOn.toISOString(),
-            new Date(resultDetails.expirationDate).toISOString()
+            resultDetails.expirationDate.toISOString()
           )
           assert.equal(
             inventoryConsumptionLog.quantity,
@@ -2860,7 +2869,13 @@ describe('Device Result API routes', () => {
       function getFactResultsDevice(knex, deviceId) {
         return knex('FactResultsDevice')
           .where({ deviceId })
-          .select('deviceId', 'days', 'resultCount', 'calculatedOn')
+          .select(
+            'deviceId',
+            'days',
+            'resultCount',
+            'resultsDeliveredCount',
+            'calculatedOn'
+          )
       }
 
       function getFactResultsDeviceByAssay(knex, deviceId, assayId) {
@@ -3087,6 +3102,99 @@ describe('Device Result API routes', () => {
                 countAfter.resultCount,
                 countBefore.resultCount + 1,
                 'Count in device category 1 and 2 fact-table should have increased by one after posting a result'
+              )
+            }
+          })
+        }))
+
+      it('should update the result delivered counts in the facts-tables when a new result is delivered', () =>
+        runTest(async knex => {
+          const resultDetails = {
+            assayExternalId: 'DaktariHivVL',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'MoreThan1000',
+            deviceId: context.deviceId,
+          }
+          const resultExternalId = new Date().getTime().toString()
+          await server
+            .post(devicePostResultPath)
+            .set('Authorization', context.deviceAuth)
+            .send({
+              id: resultExternalId, // eslint-disable-line newline-per-chained-call
+              data: { a: 'b' },
+              assay: { id: resultDetails.assayExternalId },
+              category: [
+                { id: resultDetails.resultCategory1ExternalId },
+                { id: resultDetails.resultCategory2ExternalId },
+              ],
+              endedOn: new Date(),
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+              return waitAsyncComplete(res)
+            })
+          const { id: resultId } = await knex('Result')
+            .where('externalId', resultExternalId)
+            .andWhere('deviceId', context.deviceId)
+            .first('id')
+
+          const factResultsDeviceBefore = await getFactResultsDevice(
+            knex,
+            context.deviceId
+          )
+
+          const deliveredWorkflowStatusId = await resultWorkflowStatusToId(
+            'Delivered'
+          )
+          const [resultWorkflowStatusLogId] = await knex(
+            'ResultWorkflowLog'
+          ).insert({
+            resultId,
+            resultWorkflowStatusId: deliveredWorkflowStatusId,
+            changedOn: new Date(),
+            createdOn: new Date(),
+          })
+          await knex('Result')
+            .where({ id: resultId })
+            .update({ resultWorkflowStatusLogId })
+
+          await server
+            .post(devicePostResultPath)
+            .set('Authorization', context.deviceAuth)
+            .send({
+              id: resultExternalId, // eslint-disable-line newline-per-chained-call
+              data: { a: 'b', c: 'd' },
+              assay: { id: resultDetails.assayExternalId },
+              category: [
+                { id: resultDetails.resultCategory1ExternalId },
+                { id: resultDetails.resultCategory2ExternalId },
+              ],
+              endedOn: new Date(),
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+              return waitAsyncComplete(res)
+            })
+
+          const factResultsDeviceAfter = await getFactResultsDevice(
+            knex,
+            context.deviceId
+          )
+
+          const factResultsDeviceBefore30And60Days = factResultsDeviceBefore.filter(
+            factResultsDevice => [30, 60].includes(factResultsDevice.days)
+          )
+          factResultsDeviceBefore30And60Days.forEach(countBefore => {
+            const countAfter = _.find(factResultsDeviceAfter, {
+              days: countBefore.days,
+            })
+
+            // compare before and after counts
+            if (countAfter) {
+              assert.equal(
+                countAfter.resultsDeliveredCount,
+                (countBefore.resultsDeliveredCount || 0) + 1,
+                'Delivered Count in device fact-table should have increased by one after posting a delivered result'
               )
             }
           })

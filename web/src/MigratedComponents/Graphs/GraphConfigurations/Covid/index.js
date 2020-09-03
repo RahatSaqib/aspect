@@ -7,6 +7,8 @@ const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
     id: 'covidMortalityAndRecoveryConfig',
     title: 'covidGraphDailyMortalityAndrecovery',
+    componentSize: 'full',
+    group: 'covid',
     assays: [
       'assayGenericCovid19',
       'assayGXCovid19',
@@ -154,7 +156,7 @@ const covidGraphs = {
         component: PieGraph,
         type: 'pie',
         size: 6,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           endpoint: 'result/follow-up-aggregations',
           params: {
@@ -184,7 +186,7 @@ const covidGraphs = {
         component: PieGraph,
         type: 'pie',
         size: 6,
-        componentClasses: ['BARCLASS'],
+        componentClasses: ['piegraph__container'],
         api: {
           endpoint: 'result/follow-up-aggregations',
           params: {

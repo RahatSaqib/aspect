@@ -2,7 +2,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { createSalt, encrypt } = require('../../shared/encryption')
-const { getUtcTime } = require('../../shared/date')
 const { deviceApiRawStatusToId } = require('../../shared/dictionary')
 const { knex } = require('../../db')
 const {
@@ -46,7 +45,7 @@ class DataProcessor {
     const {
       credentials: { token },
     } = auth
-    const utcNow = getUtcTime()
+    const now = new Date()
     const deviceApiKey = await knex('DeviceApiKey').where({ token }).first()
     let salt = null
     let rawData = JSON.stringify(
@@ -78,8 +77,8 @@ class DataProcessor {
       deviceApiKeySnapshot: JSON.stringify(deviceApiKey),
       deviceApiRawStatusId: await deviceApiRawStatusToId('Ready'),
       dataProcessor: this.name,
-      createdOn: utcNow,
-      updatedOn: utcNow,
+      createdOn: now,
+      updatedOn: now,
     })
     this.id = deviceApiRawId
     this.messageContext = this.messageContext.bindActionCreators(
@@ -252,7 +251,7 @@ class DataProcessor {
     const deviceApiRawStatusId = await deviceApiRawStatusToId(status)
     return knex('DeviceApiRaw').where('id', this.id).update({
       deviceApiRawStatusId,
-      updatedOn: getUtcTime(),
+      updatedOn: new Date(),
     })
   }
 

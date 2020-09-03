@@ -244,10 +244,10 @@ describe('Myanmar Issue endpoints', () => {
       }
 
       /* -------
-        submit result with changed moduleSerial and __SAME__ 
+        submit result with changed moduleSerial and __SAME__
         values for instrumentSerial, startedOn, endedOn and sampleId
         as in one of 5 above results. Otherwise a new entry in 'result' table will be created.
-        Keep in mind that we have to use same values for these 4 fields 
+        Keep in mind that we have to use same values for these 4 fields
         because API calls func
           createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
         to get unique result externalId.
@@ -1163,7 +1163,7 @@ describe('Myanmar Issue endpoints', () => {
             payload,
           })
           await waitForModuleProceduralError
-          await waitForIdle()
+          await waitForIdle(3000)
 
           const issues = await knex('Issue as i')
             .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -2182,7 +2182,7 @@ describe('Myanmar Issue endpoints', () => {
             payload,
           })
           await waitForModuleUnknownError
-          await waitForIdle()
+          await waitForIdle(3000)
 
           const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)

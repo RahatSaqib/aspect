@@ -7,7 +7,6 @@ const set = require('lodash/set')
  * NB: Any changes to this file needs a restart of the web
  * dev environment.
  */
-
 exports.customPropertiesVariables = {
   // Colors 2019
   '--alto': '#e0e0e0',
@@ -20,6 +19,7 @@ exports.customPropertiesVariables = {
   '--carnation': '#f45b69',
   '--cornflower-blue': '#4687f4',
   '--eastern-blue': '#21A0B0',
+  '--eastern-blue-2': '#20A1B3',
   '--french-gray': '#b7b7be',
   '--froly': '#f36283',
   '--feijoa': '#aed581',
@@ -59,11 +59,16 @@ exports.customPropertiesVariables = {
 
   // Colors 2020
   '--anakiwa': '#73EBFF',
+  '--apple-green': '#439B45',
   '--azure-radiance': '#0091ff',
   '--chathams-blue': '#18527d',
   '--conifer': '#99D25D',
+  '--dusty': '#979797',
+  '--foam': '#f6fcfe',
   '--gallery': '#ececec',
   '--geyser': '#CCDBE1',
+  '--even-red': '#FF0000',
+  '--golden-dream': '#EED22A',
   '--guardsman-red': '#d60000',
   '--humming-bird': '#d4f3f9',
   '--iron-2': '#e6e7e9',
@@ -76,6 +81,7 @@ exports.customPropertiesVariables = {
   '--tundora': '#454545',
   '--your-pink': '#ffc9c4',
   '--malachite': '#00ca1c',
+  '--web-orange': '#FEA500',
 
   // Genrally used variables throughout the app
   '--aspect-color-cyan': 'var(--scooter, #3cc0cd)',

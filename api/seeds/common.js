@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 
 const utils = require('./utils')
-const { partnerTypeToId } = require('../src/shared/dictionary')
 const config = require('../src/config')
 const { query } = require('../src/db')
 
@@ -28,6 +27,7 @@ const {
   allResultSourceToId,
   resultCategoryToId,
   unitToId,
+  partnerTypeToId,
 } = require('../src/shared/dictionary')
 
 /**
@@ -126,19 +126,19 @@ async function commonUpserts(
     })
   }
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.demo.admin,
-    modules.issue.admin,
-    modules.assay.admin,
-    modules.case.admin,
-    modules.site.admin,
-    modules.result.admin,
+    modules.demo.edit,
+    modules.issue.edit,
+    modules.assay.edit,
+    modules.case.edit,
+    modules.site.edit,
+    modules.result.edit,
     modules.dashboard.summary,
     modules.dashboard.result,
-    modules.account.admin,
-    modules.device.admin,
-    modules.reporter.admin,
+    modules.account.edit,
+    modules.device.edit,
+    modules.reporter.edit,
     modules.browse.view,
-    modules.person.admin,
+    modules.person.edit,
   ])
   let { id: jobIdAdmin } =
     (await knex('Job')
@@ -398,10 +398,8 @@ async function upsertGxAlertDevice(
   }
   const { id: gxAlertDeviceApiKeyId } =
     (await knex('DeviceApiKey')
-      .where({
-        token: deviceApiToken,
-        deviceId: device.id,
-      })
+      .where('token', deviceApiToken)
+      .orWhere('deviceId', device.id)
       .first('id')) || {}
   if (!gxAlertDeviceApiKeyId) {
     await knex('DeviceApiKey').insert({
@@ -546,6 +544,13 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
+  const piece = await unitToId('Piece')
+  const commonProps = {
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Cepheid',
+    quantity: 1,
+  }
   if (_.includes(assayExternalIds, 'GxUnknown')) {
     await createAssay(
       knex,
@@ -577,6 +582,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       null,
       null
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HCV Viral Load Cartridge',
+      'GxHcv',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
     await createAssay(
@@ -602,6 +613,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'resultCategoryMtb',
       'Rif',
       'resultCategoryRif'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert TB Cartridge',
+      'GxMtbRif',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
@@ -630,6 +647,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
+    await upsertConsumables(
+      knex,
+      'GeneXpert TB Ultra Cartridge',
+      'GxMtbRifUltra',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
     await createAssay(
@@ -650,9 +673,16 @@ async function upsertGeneXpertDeviceTypeAndAssays(
         'Invalid',
         'NoResult',
         'Error',
+        'LessThan40',
       ],
       'HIV',
       'resultCategoryHiv'
+    )
+    await upsertConsumables(
+      knex,
+      'Xpert HIV-1 Viral Load Cartridge',
+      'GxHiv1Vl',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
@@ -671,6 +701,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
+    await upsertConsumables(
+      knex,
+      'Xpert HIV-1 Qual Cartridge',
+      'GxHiv1Qual',
+      commonProps
+    )
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
     await createAssay(
@@ -687,6 +723,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ['Detected', 'NotDetected', 'Invalid', 'NoResult', 'Error'],
       'GP',
       'resultCategoryEbolaGp'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert Ebola Cartridge',
+      'GxEbola',
+      commonProps
     )
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
@@ -712,6 +754,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ],
       'COVID-19',
       'resultCategoryCovid19'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert COVID-19 Cartridge',
+      'assayGXCovid19',
+      commonProps
     )
   }
 
@@ -980,7 +1028,9 @@ async function baseGxAlertMigration(
   // Validate passed variables
   // -------------------------
   const missingVariables = []
-  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert) {
+  let { id: adminId } =
+    (await knex('User').where('name', admin.name).first('id')) || {}
+  if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert && !adminId) {
     missingVariables.push('admin.password')
   }
   if (!partner.name) {
@@ -1025,8 +1075,6 @@ async function baseGxAlertMigration(
   // Seed admin user and partner
   // ---------------------------
   const now = new Date()
-  let { id: adminId } =
-    (await knex('User').where('name', admin.name).first('id')) || {}
   if (!adminId) {
     ;[adminId] = await knex('User').insert({
       approved: 1,
@@ -1135,7 +1183,7 @@ async function baseGxAlertMigration(
   )
   const patientDataSchema = patientDataCustomFields.length > 0 ? {} : undefined
   patientDataCustomFields.forEach(cf => {
-    patientDataCustomFields[_.camelCase(cf.dbColumn)] = {
+    patientDataSchema[_.camelCase(cf.dbColumn)] = {
       title: cf.title,
       type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
       order: cf.order,
@@ -1146,6 +1194,7 @@ async function baseGxAlertMigration(
     geneXpertAssayExternalIds,
     patientDataSchema
   )
+  returnValue.patientDataSchema = patientDataSchema
   const gxAlertAssayDataMappings = {
     GxMtbRif: 'GeneXpert TB/RIF Result',
     GxMtbRifUltra: 'GeneXpert MTB-RIF Ultra',
@@ -1483,6 +1532,7 @@ async function baseGxAlertMigration(
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
+        existingPerson.partnerId !== partnerId ||
         existingPerson.timezone !== person.timezone ||
         existingPerson.title !== person.title ||
         existingPerson.geographyId !== geographyId ||
@@ -1498,6 +1548,7 @@ async function baseGxAlertMigration(
           .update({
             ...existingPerson,
             name: person.personName,
+            partnerId,
             timezone: person.timezone,
             title: person.title,
             geographyId,
@@ -1515,6 +1566,7 @@ async function baseGxAlertMigration(
     } else {
       ;[personId] = await knex('Person').insert({
         name: person.personName,
+        partnerId,
         timezone: person.timezone || countries[0].timezone,
         geographyId,
         title: person.title,

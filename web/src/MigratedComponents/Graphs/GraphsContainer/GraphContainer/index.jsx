@@ -1,102 +1,41 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
-import merge from 'lodash/merge'
 import Grid from '@material-ui/core/Grid'
-
-import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
-import { fetchClinicalIndicatorsDashboard } from '../../GraphRender/Redux'
-import {
-  extractOptionValue,
-  validateGraphConfig,
-} from '../../Helpers/Formatters'
+import PermissionsProvider from '../../../../Providers/PermissionsProvider'
+
+import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 
-const GraphContainer = ({ config, size, assaysFromState, group }) => {
-  const dispatch = useDispatch()
-  const allowedGroupsWithoutAssays = ['assaysNotNeeded'].includes(group)
-  const tempDispatchParams = []
-  const { title, selectorModifiers = false } = config
+const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
+  const { title, id, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
-  const { assays, graphType, id } = config
+  const { graphType } = config
   const { innerSize, outerSize } = size
-  const [dispatchParams] = useState(false)
-  const [dispatchFromChild, setDispatchFromChild] = useState(false)
-  const [dispatchParamsFromChild, setDispatchParamsFromChild] = useState(false)
-  const [dispatchFromSelector, setdispatchFromSelector] = useState(false)
-  const [whiteListed, setwhiteListed] = useState(false)
+  const [graphParams, setGraphParams] = useState(false)
 
-  useEffect(() => {
-    const allowed = []
-    validateGraphConfig(config).then(() => {
-      if (assays && assays.length > 0) {
-        assays.map(a =>
-          assaysFromState.filter(
-            ({ externalId, hasResults }) =>
-              externalId === a && hasResults && allowed.push(a)
-          )
-        )
-      }
-      setwhiteListed(allowed)
-    })
-  }, [config, assays, assaysFromState])
+  const updateFromActionComponent = params => {
+    const { identifier, selectedOption } = params
+    setGraphParams(extractOptionValue(identifier, selectedOption))
+  }
 
-  useEffect(() => {
-    if (dispatchFromChild && dispatchFromSelector) {
-      const base = dispatchParams || dispatchFromChild
-      const { api } = base
-      const { params } = api
-      const { identifier, selectedOption } = dispatchFromSelector
-      const optionValue = extractOptionValue(identifier, selectedOption)
-      const mergedAPI = {
-        ...base,
-        api: { ...api, params: { ...merge(params, optionValue) } },
-      }
-      dispatch(
-        fetchClinicalIndicatorsDashboard(mergedAPI, allowedGroupsWithoutAssays)
-      )
-    }
-  }, [dispatchFromSelector])
-
-  useEffect(() => {
-    if (dispatchParamsFromChild) {
-      dispatchParamsFromChild.map(dParams => {
-        const { graphState } = dParams
-        setDispatchFromChild(dParams)
-        if (dParams && graphState === false) {
-          dispatch(
-            fetchClinicalIndicatorsDashboard(
-              { ...dParams },
-              allowedGroupsWithoutAssays
-            )
-          )
-        }
-        return true
-      })
-    }
-  }, [dispatchParamsFromChild])
-
-  return (whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
-    <PermissionsProvider
-      permissions={allowedGroupsWithoutAssays ? ['site:view'] : ['result:view']}
-    >
+  return (
+    <PermissionsProvider permissions={whiteListed ? ['site'] : ['result']}>
       <Grid item xs={12} lg={outerSize}>
-        <Grid container spacing={24}>
+        <Grid container>
           <Grid item xs={12}>
             <AspectCard
               title={intlFormatMessage(messages[title])}
               innerSize={innerSize}
               justify="center"
-              action={params => setdispatchFromSelector({ ...params })}
+              action={params => updateFromActionComponent({ ...params })}
               actionComponent={{
                 component: CardSelectors,
                 props: selectorModifiers,
@@ -113,11 +52,7 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
                     <GraphRender
                       assays={{ whiteListed, assaysFromState }}
                       config={graph}
-                      id={id}
-                      action={params => {
-                        tempDispatchParams.push(params)
-                        setDispatchParamsFromChild(tempDispatchParams)
-                      }}
+                      updatedParams={graphParams}
                     />
                   ))}
               </Grid>
@@ -126,7 +61,7 @@ const GraphContainer = ({ config, size, assaysFromState, group }) => {
         </Grid>
       </Grid>
     </PermissionsProvider>
-  ) : null
+  )
 }
 
 GraphContainer.protoTypes = {

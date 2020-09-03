@@ -1,12 +1,22 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import PropTypes from 'prop-types'
+import {
+  compose,
+  withProps,
+  withHandlers,
+  lifecycle,
+  setPropTypes,
+} from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import Immutable from 'immutable'
+import PropTypeOf from '../../shared/types'
 
 import {
   getCustomMessage,
@@ -82,6 +92,10 @@ export const messages = defineMessages({
       other {# sites}
     }`,
   },
+  latestInventoryUpdate: {
+    id: 'pages.SiteList.latestInventoryUpdate',
+    defaultMessage: 'Latest Inventory Update',
+  },
 })
 
 const FILTERS_CONFIG = [
@@ -99,11 +113,17 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['name', 'state', 'lga', 'totalDevices'],
+  availableSortCol: [
+    'name',
+    'state',
+    'lga',
+    'totalDevices',
+    'inventoryUpdatedOn',
+  ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -112,6 +132,13 @@ const filtersFromLocation = composeSanitizer(
 
 const enhance = compose(
   injectIntl,
+  setPropTypes({
+    intl: PropTypeOf.intl.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    table: PropTypes.instanceOf(Immutable.Record).isRequired,
+    items: PropTypes.instanceOf(Immutable.Record).isRequired,
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -122,7 +149,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: _.fromPairs([...filtersParams.entries()]),
+        filters: fromPairs([...filtersParams.entries()]),
       }
     }
   ),
@@ -304,6 +331,11 @@ export const SiteList = ({
               {
                 key: 'totalDevices',
                 label: intl.formatMessage(messages.totalDevices),
+                sortable: true,
+              },
+              {
+                key: 'inventoryUpdatedOn',
+                label: intl.formatMessage(messages.latestInventoryUpdate),
                 sortable: true,
               },
               {

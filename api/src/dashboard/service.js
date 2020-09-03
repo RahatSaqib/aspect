@@ -3,7 +3,6 @@ const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const subDays = require('date-fns/subDays')
 const isAfter = require('date-fns/isAfter')
-const isWeekend = require('date-fns/isWeekend')
 const differenceInDays = require('date-fns/differenceInDays')
 const { knex } = require('../db')
 const {
@@ -17,9 +16,11 @@ const {
 } = require('../auth/constraints')
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
-const { getArrayOfDaysInRange } = require('../shared/date')
 const { queryValue } = require('../shared/sql-2-knex')
 const { canView } = require('../auth/constraints')
+
+const resultsTransmittedDashboard = require('./resultsTransmitted')
+const activityOverTimeDashboard = require('./activityOverTime')
 
 const i18nKeys = {
   // Dashboard
@@ -1010,74 +1011,6 @@ async function getAssayResultCategoryList(dataConstraints) {
   return assayResultCategory
 }
 
-async function operationalDataActivityOverTime(request) {
-  const { auth, query } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  // build up array of days in date range. makes querying easier:
-  const days = getArrayOfDaysInRange(query.minDate, query.maxDate, {
-    devicesActive: 0,
-    devicesInactive: 0,
-    devicesTotal: 0,
-  })
-
-  // now, get all device IDs that user has access to (much better performance in following queries)
-  const deviceIds = (
-    await knex('Device as d')
-      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-      .join('Site as s', 'd.siteId', 's.id')
-      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-      .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
-      .where('dt.externalId', 'CepheidGeneXpert')
-      .modify(addConstraints, dataConstraints, {
-        site: 's',
-        device: 'd',
-      })
-      .select('d.id')
-  ).map(d => d.id)
-
-  // First, get all devices along with when they conducted their first test
-  // This is so we don't include devices in the activity stats before they were first active
-  const devicesByCreatedOn = await knex('Device')
-    .whereIn('id', deviceIds)
-    .select('id', 'createdOn')
-
-  // Get number of devices active (=conducting tests) by day
-  const devicesActiveByDay = await knex('Result')
-    .whereIn('deviceId', deviceIds)
-    .groupBy('endedOnDate')
-    .select(knex.raw('date(endedOn) as endedOnDate'))
-    .countDistinct('deviceId as deviceCount')
-    .modify(qb => {
-      if (query.maxDate) {
-        qb.where('endedOn', '<', addDays(query.maxDate, 1))
-      }
-      if (query.minDate) {
-        qb.where('endedOn', '>=', query.minDate)
-      }
-    })
-  // now we can update the total devices that were in the system per day:
-  days.forEach(day => {
-    const devices = devicesByCreatedOn.filter(c => c.createdOn <= day.date)
-    const devicesActive = devicesActiveByDay.find(
-      c =>
-        c.endedOnDate.getDate() === day.date.getDate() &&
-        c.endedOnDate.getMonth() === day.date.getMonth() &&
-        c.endedOnDate.getFullYear() === day.date.getFullYear()
-    )
-    day.devicesTotal = devices.length
-    day.devicesActive = devicesActive ? devicesActive.deviceCount : 0
-    day.devicesInactive = day.devicesTotal - day.devicesActive
-    day.isWeekendOrHoliday = isWeekend(day.date)
-  })
-
-  return {
-    ok: true,
-    data: days,
-  }
-}
-
 module.exports = {
   summaryDashboard,
   targetDashboard,
@@ -1086,5 +1019,6 @@ module.exports = {
   deviceDashboard,
   siteDashboard,
   actionDashboard,
-  operationalDataActivityOverTime,
+  resultsTransmittedDashboard,
+  activityOverTimeDashboard,
 }

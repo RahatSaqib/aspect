@@ -62,11 +62,11 @@ module.exports = {
       titleI18nKey: 'personTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: 'select count(u.id) as cnt from User as u',
+      sqlForIndicator: 'SELECT COUNT(p.id) AS cnt FROM Person as p',
       link: '/browse/person',
       sortOrder: 3,
       externalId: 'personTitle',
-      description: 'The number of users.',
+      description: 'The number of contacts in the system.',
       descriptionI18nKey: 'personDescription',
       dashboards: {
         home: {},
@@ -256,6 +256,10 @@ module.exports = {
         x => x.externalId === 'averageLengthOfSms'
       ),
       sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'smsSent'),
+      sortOrder: 12,
     },
     {
       ...dashboardWidgetsBase.stat.find(

@@ -38,9 +38,10 @@ const plugins = {
     settings: DEFAULT_SETTINGS,
     handlerOptions: DEFAULT_HANDLER_OPTIONS,
     issueTriggers: {},
-    issueResolutions: {},
+    issueResolutions: require('./issueResolutions'),
     issueEscalations: {},
     dataCategories: {},
+    filterModuleDisabledIssue: require('../issue/filterConditions'),
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -128,6 +129,9 @@ const plugins = {
   },
   aspectresultentry: {
     onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
+  },
+  lesothoTb: {
+    preProcessAddDeviceData: require('./partner/Lesotho_TB/preProcessAddDeviceData'),
   },
 }
 

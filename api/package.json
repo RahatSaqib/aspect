@@ -7,6 +7,7 @@
   "scripts": {
     "db:recreate": "node ./migrations/utils/recreateDB",
     "db:reseed": "npm-run-all db:recreate knex:migrate:latest knex:seed:run",
+    "debug": "nodemon --inspect src/server.js",
     "knex": "knex",
     "knex:migrate:latest": "knex migrate:latest",
     "knex:seed:run": "knex seed:run",

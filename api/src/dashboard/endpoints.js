@@ -12,7 +12,8 @@ const {
   deviceDashboard,
   siteDashboard,
   actionDashboard,
-  operationalDataActivityOverTime,
+  resultsTransmittedDashboard,
+  activityOverTimeDashboard,
 } = require('./service')
 
 const routes = [
@@ -114,7 +115,7 @@ const routes = [
   {
     method: 'GET',
     path: '/dashboard/operational-data/activity-over-time',
-    handler: asyncHandler(operationalDataActivityOverTime),
+    handler: asyncHandler(activityOverTimeDashboard),
     config: {
       description: 'Device Activity Rate Over Time',
       notes:
@@ -122,8 +123,14 @@ const routes = [
       auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
-          minDate: Joi.date().iso().required().description('From Date'),
-          maxDate: Joi.date().iso().required().description('To Date'),
+          minDate: Joi.date()
+            .iso()
+            .required()
+            .description('From Date, inclusive'),
+          maxDate: Joi.date()
+            .iso()
+            .required()
+            .description('To Date, inclusive'),
         },
       },
       response: {
@@ -153,12 +160,50 @@ const routes = [
                 devicesTotal: Joi.number().description(
                   'The total number of devices in the system as of that day'
                 ),
+                inactiveUnknown: Joi.number().description(
+                  'The number of inactive "Unknown" devices in the system as of that day'
+                ),
+                inactiveNoResultsReported: Joi.number().description(
+                  'The number of inactive "NoResultsReported" devices in the system as of that day'
+                ),
+                inactiveOutOfInventory: Joi.number().description(
+                  'The number of inactive "OutOfInventory" devices in the system as of that day'
+                ),
+                inactiveDownForRepair: Joi.number().description(
+                  'The number of inactive "DownForRepair" devices in the system as of that day'
+                ),
+                inactiveConnectivity: Joi.number().description(
+                  'The number of inactive "Connectivity" devices in the system as of that day'
+                ),
+                inactiveDecommissioned: Joi.number().description(
+                  'The number of inactive "Decommissioned" devices in the system as of that day'
+                ),
                 isWeekendOrHoliday: Joi.bool().description(
                   'Indicates whether the day is a weekend day or a holiday.'
                 ),
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/results-transmitted',
+    handler: asyncHandler(resultsTransmittedDashboard),
+    config: {
+      description: 'Results Transmitted Graph',
+      notes: 'Data for graph Results Transmitted',
+      auth: { scope: ['site', 'result', 'dashboard'] },
+      validate: {
+        query: {
+          currentMonth: Joi.date()
+            .iso()
+            .allow(null)
+            .description(
+              'Set "current" month to return data for this and previous month'
+            ),
+        },
       },
     },
   },
