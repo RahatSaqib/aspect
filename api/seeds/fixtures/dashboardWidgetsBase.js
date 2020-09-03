@@ -979,52 +979,80 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-        SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
+        SELECT
+          IFNULL(ROUND(AVG(days)), 0) AS cnt
         FROM (
           SELECT 
-            DATEDIFF(r1.endedOn, i.createdOn) AS days
+            ABS(DATEDIFF(logResolved.changedOn, logActive.changedOn)) AS days
           FROM Issue AS i
             INNER JOIN IssueType AS it ON i.issueTypeId = it.id
-            INNER JOIN Result AS r1 ON 
-                    i.deviceId = r1.deviceId      /* same device */
-                AND r1.endedOn > i.createdOn      /* r1 ended after issue created */
-                AND YEAR(r1.endedOn) = YEAR(NOW())
-                AND MONTH(r1.endedOn) = MONTH(NOW())
-            LEFT OUTER JOIN Result AS r0 ON 
-                    r1.deviceId = r0.deviceId     /* same device */
-                AND r1.id <> r0.id 
-                AND r0.endedOn > i.createdOn      /* r0 ended after issue created */
-                AND r0.endedOn < r1.endedOn       /* r0 is before r1 */
-            INNER JOIN Device AS d on r1.deviceId = d.id
+            /*
+              --------------------
+              log with status Active
+              --------------------
+            */
+            LEFT OUTER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+            LEFT OUTER JOIN IssueStatus AS isActive ON 
+                    logActive.issueStatusId = isActive.id
+                AND isActive.externalId = 'Active'
+            /*
+              --------------------
+              log with status Resolved
+              --------------------
+            */
+            LEFT OUTER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+            LEFT OUTER JOIN IssueStatus AS isResolved ON 
+                    logResolved.issueStatusId = isResolved.id
+                AND isResolved.externalId = 'Resolved'
+            /*
+              --------------------
+              joins for constraints
+              --------------------
+            */
+            INNER JOIN Device AS d on i.deviceId = d.id
             INNER JOIN Site AS s ON d.siteId = s.id
             LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           WHERE it.externalId = 'ModuleDisabled'
-            AND r0.id IS NULL                     /* means we take a single r1 closest to issue created */
-            AND (i.data ->> '$.moduleName') = r1.moduleName
+            AND YEAR(logResolved.createdOn) = YEAR(NOW())
+            AND MONTH(logResolved.createdOn) = MONTH(NOW())
         ) as innerQuery`,
       sqlForStatUnit: `
-        SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
+        SELECT
+          IFNULL(ROUND(AVG(days)), 0) AS cnt
         FROM (
           SELECT 
-            DATEDIFF(r1.endedOn, i.createdOn) AS days
+            ABS(DATEDIFF(logResolved.changedOn, logActive.changedOn)) AS days
           FROM Issue AS i
             INNER JOIN IssueType AS it ON i.issueTypeId = it.id
-            INNER JOIN Result AS r1 ON 
-                    i.deviceId = r1.deviceId      /* same device */
-                AND r1.endedOn > i.createdOn      /* r1 ended after issue created */
-                AND YEAR(r1.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-                AND MONTH(r1.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-            LEFT OUTER JOIN Result AS r0 ON 
-                    r1.deviceId = r0.deviceId     /* same device */
-                AND r1.id <> r0.id 
-                AND r0.endedOn > i.createdOn      /* r0 ended after issue created */
-                AND r0.endedOn < r1.endedOn       /* r0 is before r1 */
-            INNER JOIN Device AS d on r1.deviceId = d.id
+            /*
+              --------------------
+              log with status Active
+              --------------------
+            */
+            LEFT OUTER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+            LEFT OUTER JOIN IssueStatus AS isActive ON 
+                    logActive.issueStatusId = isActive.id
+                AND isActive.externalId = 'Active'
+            /*
+              --------------------
+              log with status Resolved
+              --------------------
+            */
+            LEFT OUTER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+            LEFT OUTER JOIN IssueStatus AS isResolved ON 
+                    logResolved.issueStatusId = isResolved.id
+                AND isResolved.externalId = 'Resolved'
+            /*
+              --------------------
+              joins for constraints
+              --------------------
+            */
+            INNER JOIN Device AS d on i.deviceId = d.id
             INNER JOIN Site AS s ON d.siteId = s.id
             LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           WHERE it.externalId = 'ModuleDisabled'
-            AND r0.id IS NULL                     /* means we take a single r1 closest to issue created */
-            AND (i.data ->> '$.moduleName') = r1.moduleName
+            AND YEAR(logResolved.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
         ) as innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
