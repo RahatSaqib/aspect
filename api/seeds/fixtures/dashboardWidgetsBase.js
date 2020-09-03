@@ -972,5 +972,74 @@ module.exports = {
         },
       },
     },
+    {
+      icon: 'MdSwapVert',
+      title: 'Average time to module replacement',
+      titleI18nKey: 'averageTimeToModuleReplacementTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+        SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
+        FROM (
+          SELECT 
+            DATEDIFF(r1.endedOn, i.createdOn) AS days
+          FROM Issue AS i
+            INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+            INNER JOIN Result AS r1 ON 
+                    i.deviceId = r1.deviceId      /* same device */
+                AND r1.endedOn > i.createdOn      /* r1 ended after issue created */
+                AND YEAR(r1.endedOn) = YEAR(NOW())
+                AND MONTH(r1.endedOn) = MONTH(NOW())
+            LEFT OUTER JOIN Result AS r0 ON 
+                    r1.deviceId = r0.deviceId     /* same device */
+                AND r1.id <> r0.id 
+                AND r0.endedOn > i.createdOn      /* r0 ended after issue created */
+                AND r0.endedOn < r1.endedOn       /* r0 is before r1 */
+            INNER JOIN Device AS d on r1.deviceId = d.id
+            INNER JOIN Site AS s ON d.siteId = s.id
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          WHERE it.externalId = 'ModuleDisabled'
+            AND r0.id IS NULL                     /* means we take a single r1 closest to issue created */
+            AND (i.data ->> '$.moduleName') = r1.moduleName
+        ) as innerQuery`,
+      sqlForStatUnit: `
+        SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
+        FROM (
+          SELECT 
+            DATEDIFF(r1.endedOn, i.createdOn) AS days
+          FROM Issue AS i
+            INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+            INNER JOIN Result AS r1 ON 
+                    i.deviceId = r1.deviceId      /* same device */
+                AND r1.endedOn > i.createdOn      /* r1 ended after issue created */
+                AND YEAR(r1.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+                AND MONTH(r1.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            LEFT OUTER JOIN Result AS r0 ON 
+                    r1.deviceId = r0.deviceId     /* same device */
+                AND r1.id <> r0.id 
+                AND r0.endedOn > i.createdOn      /* r0 ended after issue created */
+                AND r0.endedOn < r1.endedOn       /* r0 is before r1 */
+            INNER JOIN Device AS d on r1.deviceId = d.id
+            INNER JOIN Site AS s ON d.siteId = s.id
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          WHERE it.externalId = 'ModuleDisabled'
+            AND r0.id IS NULL                     /* means we take a single r1 closest to issue created */
+            AND (i.data ->> '$.moduleName') = r1.moduleName
+        ) as innerQuery`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
+      link: '/browse/notification',
+      sortOrder: 25,
+      externalId: 'averageTimeToModuleReplacement',
+      description: `The average time (in days) between module replacement - i.e. 
+        between day module serial was marked as disabled until a
+        different module serial detected in that slot.`,
+      descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
   ],
 }

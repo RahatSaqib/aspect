@@ -80,6 +80,17 @@ export const messages = defineMessages({
     id: 'pages.Status.dashboardWidgetSmsSentDescription',
     defaultMessage: 'The total number of text messages sent in the month',
   },
+
+  averageTimeToModuleReplacementTitle: {
+    id: 'pages.OperationalData.averageTimeToModuleReplacementTitle',
+    defaultMessage: 'Average time to module replacement',
+  },
+  averageTimeToModuleReplacementDescription: {
+    id: 'pages.OperationalData.averageTimeToModuleReplacementDescription',
+    defaultMessage: `The average time (in days) between module replacement - i.e. 
+      between day module serial was marked as disabled until a
+      different module serial detected in that slot.`,
+  },
 })
 
 export default messages
