@@ -10,7 +10,7 @@ const routes = [
     config: {
       description: 'Device Operation List',
       notes: 'Pageable and sortable list of device operations',
-      auth: { scope: ['device:view', 'device:edit'] },
+      auth: { scope: ['device:view'] },
       validate: {
         query: {
           deviceId: Joi.string().description('Filter for device id'),
