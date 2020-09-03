@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
+const addMinutes = require('date-fns/addMinutes')
 const formatDate = require('date-fns/format')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -215,7 +216,7 @@ async function resultsTransmittedDashboard(request) {
   // calculate all percentages
   items.forEach(item => {
     item.percentPositive = getPercent(item.cntPositive, item.cntAll)
-    item.percentReported = getPercent(item.cntAllReported, item.cntAll)
+    item.percentReported = getPercent(item.cntAllReported, item.cntPositive)
     item.percentViaEmail = getPercent(
       item.cntReportedViaEmail,
       item.cntAllReported
@@ -229,8 +230,12 @@ async function resultsTransmittedDashboard(request) {
 
   // helpers
   const { currentMonth = new Date() } = query
-  const currMonth = formatDate(currentMonth, 'yyyy-MM')
-  const prevMonth = formatDate(subMonths(currentMonth, 1), 'yyyy-MM')
+  const currentMonthUtc = addMinutes(
+    currentMonth,
+    currentMonth.getTimezoneOffset()
+  )
+  const currMonth = formatDate(currentMonthUtc, 'yyyy-MM')
+  const prevMonth = formatDate(subMonths(currentMonthUtc, 1), 'yyyy-MM')
   const getChange = (pcCurr, pcPrev = null) => {
     if (pcPrev === null) {
       return 0
