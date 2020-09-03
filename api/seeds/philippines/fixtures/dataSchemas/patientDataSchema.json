@@ -69,6 +69,16 @@
     "type": "string",
     "order": 13
   },
+  "province": {
+    "title": "Province",
+    "type": "string",
+    "order": 13
+  },
+  "city": {
+    "title": "City",
+    "type": "string",
+    "order": 13
+  },
   "phone": {
     "title": "Patient Phone",
     "type": "string",
@@ -83,6 +93,16 @@
     "title": "Patient's Email Address",
     "type": "string",
     "order": 16
+  },
+  "paragioniamiasisResult1": {
+    "title": "Paragioniamiasis Result 1",
+    "type": "string",
+    "order": 14
+  },
+  "paragioniamiasisResult2": {
+    "title": "Paragioniamiasis Result 2",
+    "type": "string",
+    "order": 14
   },
   "cultureCenter": {
     "title": "Culture Center",
@@ -159,6 +179,16 @@
     "type": "bool",
     "order": 31
   },
+  "testRequestedTbLamp": {
+    "title": "Test Requested TB LAMP",
+    "type": "bool",
+    "order": 31
+  },
+  "testRequestedParagonimiasis": {
+    "title": "Test Requested Paragonimiasis",
+    "type": "bool",
+    "order": 31
+  },
   "dateTransferedToDst": {
     "title": "Date transfered to DST",
     "type": "date",
@@ -186,6 +216,16 @@
   },
   "tbCaseNumber": {
     "title": "TB Case Number",
+    "type": "string",
+    "order": 37
+  },
+  "repeatCollection": {
+    "title": "Repeat Collection",
+    "type": "bool",
+    "order": 31
+  },
+  "reasonForRecollection": {
+    "title": "Reason for Recollection",
     "type": "string",
     "order": 37
   },
@@ -238,6 +278,16 @@
     "title": "consistency 3",
     "type": "string",
     "order": 47
+  },
+  "specimenAccepted": {
+    "title": "Specimen Accepted",
+    "type": "bool",
+    "order": 31
+  },
+  "specimenRejectedReason": {
+    "title": "Specimen Rejected Reason",
+    "type": "string",
+    "order": 37
   },
   "opd": {
     "title": "OPD",
