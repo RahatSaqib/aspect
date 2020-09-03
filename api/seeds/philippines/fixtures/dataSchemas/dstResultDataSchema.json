@@ -75,55 +75,60 @@
         "type": "string",
         "order": 13
       },
+      "moxifloxacin": {
+        "order": 14,
+        "title": "Moxifloxacin",
+        "type": "string"
+      },
       "methodUsed": {
         "title": "Method Used",
         "type": "string",
-        "order": 14
+        "order": 15
       },
       "otherMethodUsed": {
         "title": "Other Method",
         "type": "string",
-        "order": 15
+        "order": 16
       },
       "remarks": {
         "title": "Remarks",
         "type": "string",
-        "order": 16
+        "order": 17
       },
       "dateRead": {
         "title": "Date Read",
         "type": "date",
-        "order": 17
+        "order": 18
       },
       "dateReleased": {
         "title": "Date Released",
         "type": "date",
-        "order": 18
+        "order": 19
       },
       "readBy": {
         "title": "Read by Med Tech",
         "type": "string",
-        "order": 19
+        "order": 20
       },
       "labTech": {
         "title": "Lab Tech",
         "type": "string",
-        "order": 20
+        "order": 21
       },
       "encodedBy": {
         "title": "Encoded By",
         "type": "string",
-        "order": 21
+        "order": 22
       },
       "reviewedBy": {
         "title": "Reviewed By",
         "type": "string",
-        "order": 22
+        "order": 23
       },
       "notedBy": {
         "title": "Noted By",
         "type": "string",
-        "order": 23
+        "order": 24
       }
     }
   }

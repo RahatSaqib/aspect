@@ -1558,6 +1558,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           levofloxacin: payload.Levofloxacin,
           amikacin: payload.Amikacin,
           capreomycin: payload.Capreomycin,
+          moxifloxacin: payload.Moxifloxacin,
           methodUsed: payload['DST Method Used'],
           otherMethodUsed: payload['DST Method Used Others'],
           remarks: payload['DST Remarks'],
@@ -1872,7 +1873,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           fluoroquinolones: payload['LPA Fluoroquinolones'],
           aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
           ethionamideProthionamide: payload['LPA Ethionamide/Prothionamide'],
-          moxifloxacin: payload.Moxifloxacin,
           remarks: payload['LPA Remarks:'],
           dateReleased: payload['LPA Date of Release'],
           performedBy: payload['LPA Performed By'],
@@ -2004,7 +2004,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           dateReleased: payload['Smear Date Released'],
           encodedBy: payload['Smear Encoded by'],
           laboratoryTechnician: payload['Smear Lab Tech'],
-          notedBy: payload['Smear Note By'],
+          notedBy: payload['Smear Noted By'],
           verifiedBy: payload['Smear Verified By'],
         }
         if (
@@ -2238,7 +2238,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             NEGATIVE: resultCategories.Negative,
             INDETERMINATE: resultCategories.Inconclusive,
           }
-          const resultSignOff = this.getResultSignOff('TB LAMP', payload)
+          const resultSignOff = this.getResultSignOff('TBLAMP', payload)
           const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
           const result = (await knex('Result')
             .where({ externalId, deviceId })
@@ -2653,14 +2653,18 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           referringHealthFacility:
             payload.Address || payload['Referring Facility'],
           requestingPhysician: payload.Requisitioner,
+          facilityContactNumber: payload['Facility Contact Number'],
           lastName: payload['Last Name'],
           firstName: payload['First Name'],
           middleInitialOrName: payload['Middle Name'],
           dateOfAdmission: payload['Date of Admission'],
           age,
           sex,
+          phone: payload['Patient Contact Number'],
           dateOfBirth: payload['Date of Birth'],
           address: payload.Address,
+          paragioniamiasisResult1: payload['Paragioniamiasis Result 1'],
+          paragioniamiasisResult2: payload['Paragioniamiasis Result 2'],
           treatmentCategory: payload['History of Treatment'],
           registrationGroup: payload['Registration Group'],
           treatmentSchedule: payload['Reason for Examination'],
@@ -2670,6 +2674,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           testRequestedCulture: payload.Culture,
           testRequestedDst: payload.DST,
           testRequestedGx: payload.GeneXpert,
+          testRequestedTbLamp: payload['Test Requested TB LAMP'],
           dateTransferedToDst: payload['Date transfered to DST'],
           cultureMethod: payload['Culture Method'],
           presumptiveDsOrDr: payload['Presumptive DS or DR'],
@@ -2677,6 +2682,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           labNo1: payload['Laboratory No'],
           tbCaseNumber: payload['RITM Hospital No'],
           dateCollected1: payload['Date and Time of Specimen Collection'],
+          dateDispatched: payload['Date Dispatch'],
           encodedBy: payload['MRF Encoded by'],
           dateEncoded: payload['MRF Date Encoded'],
           healthCareSystem: 'RITM',
@@ -2722,6 +2728,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           amikacin: payload.Amikacin,
           capreomycin: payload.Capreomycin,
           ofloxacin: payload.Ofloxacin,
+          moxifloxacin: payload.Moxifloxacin,
           methodUsed: payload['DST Laboratory Test Performed'],
           remarks: payload['DST Comments'],
           dateReleased: payload['Date and Time of Release of DST Result'],
@@ -3235,6 +3242,71 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             geneXpertResultData.dateReleased,
             geneXpertResultData.examiner,
             geneXpertResultData.remarks,
+            patientData,
+            now,
+            resultCategories,
+            resultWorkflowStatuses,
+            resultOverwritePriority
+          )
+        }
+
+        const tbLampResultData = {
+          tbLampResult: payload['TB LAMP Result'],
+        }
+        if (objectHasValues(_.pick(tbLampResultData, ['tbLampResult']))) {
+          const assayTbLampId = await assayToId('assayTbLamp')
+          const resultCategoryMappings = {
+            POSITIVE: resultCategories.Positive,
+            NEGATIVE: resultCategories.Negative,
+            INDETERMINATE: resultCategories.Inconclusive,
+          }
+          const resultSignOff = this.getResultSignOff('TBLAMP', payload)
+          const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(function () {
+              this.whereIn('sampleId', sampleIds)
+                .andWhere('assayId', assayTbLampId)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
+            ...baseNewResult,
+            externalId,
+            assayId: assayTbLampId,
+            sampleId: samples[0].id,
+            reportableSiteId,
+            startedOn: geneXpertResultData.processingDate,
+            endedOn: geneXpertResultData.processingDate,
+            resultData: JSON.stringify({
+              encodedResult: tbLampResultData,
+              resultSignOff,
+            }),
+            senderOperator: geneXpertResultData.examiner,
+          }
+          const resultCategory1Id =
+            resultCategoryMappings[tbLampResultData.tbLampResult]
+          const resultOverwritePriority = [
+            resultCategories.Positive,
+            resultCategories.Negative,
+            resultCategories.Inconclusive,
+            resultCategories.Indeterminate,
+            resultCategories.Invalid,
+            resultCategories.NoResult,
+            resultCategories.Missing,
+          ]
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            null,
+            tbLampResultData,
+            resultSignOff,
+            smearResultData.dateReleased || geneXpertResultData.processingDate,
+            smearResultData.dateReleased || geneXpertResultData.processingDate,
+            tbLampResultData.notedBy,
+            null,
             patientData,
             now,
             resultCategories,

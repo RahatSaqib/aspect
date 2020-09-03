@@ -65,33 +65,28 @@
         "title": "Ethionamide/Prothionamide",
         "type": "string"
       },
-      "moxifloxacin": {
-        "order": 12,
-        "title": "Moxifloxacin",
-        "type": "string"
-      },
       "remarks": {
-        "order": 13,
+        "order": 12,
         "title": "Remarks",
         "type": "string"
       },
       "dateReleased": {
-        "order": 14,
+        "order": 13,
         "title": "Date Released",
         "type": "date"
       },
       "performedBy": {
-        "order": 15,
+        "order": 14,
         "title": "Performed By",
         "type": "string"
       },
       "reviewedBy": {
-        "order": 16,
+        "order": 15,
         "title": "Reviewed By",
         "type": "string"
       },
       "notedBy": {
-        "order": 17,
+        "order": 16,
         "title": "Noted By",
         "type": "string"
       }
