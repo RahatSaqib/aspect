@@ -93,7 +93,7 @@ const routes = [
     config: {
       description: 'Result Detail',
       notes: 'Details of a result',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.string().description('Result ID').required(),
@@ -108,7 +108,7 @@ const routes = [
     config: {
       description: 'Device Logs',
       notes: 'Device Logs by result id',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.string().description('Result ID').required(),
@@ -123,7 +123,7 @@ const routes = [
     config: {
       description: 'File References',
       notes: 'File References by result id',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.string().description('Result ID').required(),
@@ -138,7 +138,7 @@ const routes = [
     config: {
       description: 'Download file',
       notes: 'Downloads the last file for the result with given name',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.string().description('File Reference ID').required(),
@@ -157,7 +157,7 @@ const routes = [
     config: {
       description: 'Download first image',
       notes: 'Downloads the first image for the result',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.string().description('File Reference ID').required(),
@@ -172,7 +172,7 @@ const routes = [
     config: {
       description: 'Result Type List',
       notes: 'Pageable and sortable list of results types',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         query: {
           name: Joi.string()
@@ -320,7 +320,7 @@ const routes = [
     config: {
       description: 'Get all notes for specified result ',
       notes: 'Get all notes for specified result',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -340,7 +340,7 @@ const routes = [
     config: {
       description: 'Remove a specified comment from a result',
       notes: 'Removes a specified comment from a result',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         params: {
           resultId: Joi.number()
@@ -365,7 +365,7 @@ const routes = [
     config: {
       description: 'Result Workflow Status List',
       notes: 'Dictionary set of Result Workflow Status options',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
     },
   },
   {
@@ -376,7 +376,7 @@ const routes = [
       description: 'Result Workflow Status Logs',
       notes:
         'Pageable and sortable list of workflow status logs for current result',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         query: validateSortPageParams(),
         params: {
@@ -403,7 +403,7 @@ const routes = [
       description: 'Result Sync',
       notes:
         'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
       validate: {
         query: {
           minUpdatedOn: Joi.date()
@@ -691,7 +691,7 @@ const routes = [
     config: {
       description: 'Result Treatment Status List',
       notes: 'Dictionary set of Result Treatment Status options',
-      auth: { scope: ['result:view', 'result:edit'] },
+      auth: { scope: ['result:view'] },
     },
   },
   {
@@ -766,7 +766,7 @@ const routes = [
     config: {
       description: 'Result Follow Up List',
       notes: 'List of possible result follow ups',
-      auth: { scope: ['treatmentStatus:view', 'treatmentStatus:edit'] },
+      auth: { scope: ['treatmentStatus:view'] },
       validate: {
         query: {
           typeId: Joi.number()
@@ -1068,7 +1068,7 @@ const routes = [
     handler: asyncHandler(getPatientResultsDetails),
     config: {
       description: 'Get the patient results with details',
-      auth: { scope: ['patient:view', 'patient:edit'] },
+      auth: { scope: ['patient:view'] },
       validate: {
         query: {
           patientId: Joi.string().required().description('patient Id'),

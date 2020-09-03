@@ -10,7 +10,7 @@ const routes = [
     config: {
       description: 'Task List',
       notes: 'Pageable and sortable list of tasks',
-      auth: { scope: ['task:view', 'task:edit'] },
+      auth: { scope: ['task'] },
       validate: {
         query: {
           alertType: Joi.string()
@@ -91,7 +91,7 @@ const routes = [
     config: {
       description: 'Task List by status',
       notes: 'Pageable and sortable list of tasks',
-      auth: { scope: ['task:view', 'task:edit'] },
+      auth: { scope: ['task'] },
       validate: {
         query: {
           alertType: Joi.string()
@@ -175,7 +175,7 @@ const routes = [
     config: {
       description: 'Task List',
       notes: 'details of the task for the current id',
-      auth: { scope: ['task:view', 'task:edit'] },
+      auth: { scope: ['task'] },
       validate: {
         params: {
           taskId: Joi.number().required().description('id number of the alert'),
