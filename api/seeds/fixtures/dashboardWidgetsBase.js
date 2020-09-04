@@ -695,50 +695,53 @@ module.exports = {
     },
     {
       icon: 'MdSwapVert',
-      title: 'Instruments Replaced',
+      title: 'Average Days for Instrument Replacement',
       titleI18nKey: 'instrumentsReplaced',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT
-      COUNT(instrumentCount) AS cnt
-      FROM(
-        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
-        FROM Result AS r
-        INNER JOIN Device AS d ON d.id = r.deviceId
+      sqlForIndicator: `
+      SELECT
+        ROUND(IFNULL(SUM(days)/count(deviceId), 0)) AS cnt
+      FROM (
+      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
+      FROM Result AS r1
+          INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
+          INNER JOIN Device AS d ON d.id = r1.deviceId
+          INNER JOIN Site AS s ON d.siteId = s.id
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      WHERE YEAR(r1.endedOn) = YEAR(NOW())
+                AND
+                MONTH(r1.endedOn) = MONTH(NOW())
+                AND
+                dt.externalId = 'CepheidGeneXpert'
+      GROUP BY deviceId) AS innerQuery`,
+      sqlForStatUnit: `
+      SELECT
+      ROUND(IFNULL(
+        SUM(days)/count(deviceId), 0)) AS cnt
+      FROM (
+      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
+      FROM Result AS r1
+        INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
+        INNER JOIN Device AS d ON d.id = r1.deviceId
         INNER JOIN Site AS s ON d.siteId = s.id
-        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-        WHERE YEAR(r.endedOn) = YEAR(NOW())
-              AND
-              MONTH(r.endedOn) = MONTH(NOW())
-              AND
-              dt.externalId = 'CepheidGeneXpert'
-        GROUP BY r.deviceId
-        HAVING instrumentCount > 1) AS innerQuery`,
-      sqlForStatUnit: `SELECT
-      COUNT(instrumentCount) AS cnt
-      FROM(
-        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
-        FROM Result AS r
-        INNER JOIN Device AS d ON d.id = r.deviceId
-        INNER JOIN Site AS s ON d.siteId = s.id
-        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-          WHERE
-          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND
-          dt.externalId = 'CepheidGeneXpert'
-        GROUP BY r.deviceId
-        HAVING instrumentCount > 1) AS innerQuery`,
+      WHERE
+            YEAR(r1.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            AND
+            MONTH(r1.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            AND
+            dt.externalId = 'CepheidGeneXpert'
+      GROUP BY deviceId) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
       linkParams: {},
       sortOrder: 4,
       externalId: 'instrumentsReplaced',
-      description: 'The number of instruments that were replaced.',
+      description: 'The average days for an instrument replacement.',
       descriptionI18nKey: 'instrumentsReplacedDescription',
       dashboards: {
         operational: {
