@@ -5454,6 +5454,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetValidResultsPc,
     },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
@@ -5479,6 +5483,11 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.stockNotRecorded,
     },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
+
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
@@ -5509,6 +5518,11 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.stockNotRecorded,
     },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
+
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
     {
@@ -5530,6 +5544,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.stockNotRecorded,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
     },
   ])
 

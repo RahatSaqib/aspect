@@ -1000,5 +1000,96 @@ module.exports = {
         },
       },
     },
+    {
+      icon: 'MdSwapVert',
+      title: 'Average time to module replacement',
+      titleI18nKey: 'averageTimeToModuleReplacementTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+        SELECT 
+          IFNULL(ROUND(AVG(
+            DATEDIFF(logResolved.changedOn, logActive.changedOn)
+          )), 0) AS cnt
+        FROM Issue AS i
+          INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+          /*
+            --------------------
+            log with status Active
+            --------------------
+          */
+          INNER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+          INNER JOIN IssueStatus AS isActive ON logActive.issueStatusId = isActive.id
+          /*
+            --------------------
+            log with status Resolved
+            --------------------
+          */
+          INNER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+          INNER JOIN IssueStatus AS isResolved ON logResolved.issueStatusId = isResolved.id
+          /*
+            --------------------
+            joins for constraints
+            --------------------
+          */
+          INNER JOIN Device AS d on i.deviceId = d.id
+          INNER JOIN Site AS s ON d.siteId = s.id
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        WHERE it.externalId = 'ModuleDisabled'
+          AND isActive.externalId = 'Active'
+          AND isResolved.externalId = 'Resolved'
+          AND YEAR(logResolved.createdOn) = YEAR(NOW())
+          AND MONTH(logResolved.createdOn) = MONTH(NOW())
+      `,
+      sqlForStatUnit: `
+        SELECT 
+        IFNULL(ROUND(AVG(
+          DATEDIFF(logResolved.changedOn, logActive.changedOn)
+        )), 0) AS cnt
+      FROM Issue AS i
+        INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+        /*
+          --------------------
+          log with status Active
+          --------------------
+        */
+        INNER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+        INNER JOIN IssueStatus AS isActive ON logActive.issueStatusId = isActive.id
+        /*
+          --------------------
+          log with status Resolved
+          --------------------
+        */
+        INNER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+        INNER JOIN IssueStatus AS isResolved ON logResolved.issueStatusId = isResolved.id
+        /*
+          --------------------
+          joins for constraints
+          --------------------
+        */
+        INNER JOIN Device AS d on i.deviceId = d.id
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      WHERE it.externalId = 'ModuleDisabled'
+        AND isActive.externalId = 'Active'
+        AND isResolved.externalId = 'Resolved'
+        AND YEAR(logResolved.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      `,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
+      link: '/browse/notification',
+      sortOrder: 25,
+      externalId: 'averageTimeToModuleReplacement',
+      description: `The average time (in days) between module replacement - i.e. 
+        between day module serial was marked as disabled until a
+        different module serial detected in that slot.`,
+      descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
   ],
 }

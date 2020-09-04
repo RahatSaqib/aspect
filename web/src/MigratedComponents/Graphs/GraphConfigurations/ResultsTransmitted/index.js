@@ -1,3 +1,5 @@
+import addMonths from 'date-fns/addMonths'
+import formatISO from 'date-fns/formatISO'
 import PieRowGraph from '../../PieRowGraph'
 import {
   negateTimeZoneOffset,
@@ -5,7 +7,7 @@ import {
 } from '../../Helpers/Formatters/datetime'
 import AspectDropdown from '../../../AspectDropdown'
 
-const currentMonth = negateTimeZoneOffset(new Date())
+const currentMonth = formatISO(negateTimeZoneOffset(addMonths(new Date(), -1)))
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
