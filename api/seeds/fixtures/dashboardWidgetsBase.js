@@ -27,8 +27,15 @@ const WIDGET_GROUP_KEYS = {
   DEVICES: 'summaryWidgetGroupDevices',
   SERVICE: 'summaryWidgetGroupService',
 }
+
+const WIDGET_FILTER_KEYS = {
+  LAST_THIRTY_DAYS: 'last30Days',
+  CURRENT_MONTH: 'currentMonth',
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
+  WIDGET_FILTER_KEYS,
   stat: [
     {
       jobFunctions: ['all'],
@@ -74,6 +81,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 1,
       externalId: 'dashboardWidgetTestsPerDayTitle',
       description: 'Average number of tests per weekday conducted this month.',
@@ -110,6 +121,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 2,
       externalId: 'dashboardWidgetValidResultsPc',
       description:
@@ -174,6 +189,9 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
+      linkParams: {
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 0,
       externalId: 'utilizationRate',
       description:
@@ -442,6 +460,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetErrorRate',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 3,
       externalId: 'errorRate',
       description:
@@ -537,6 +559,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
+      linkParams: {},
       sortOrder: 1,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
@@ -657,6 +680,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'unusedModulesStats',
       link: '/browse/device',
+      linkParams: {},
       sortOrder: 3,
       externalId: 'unusedModules',
       description:
@@ -714,6 +738,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
+      linkParams: {},
       sortOrder: 4,
       externalId: 'instrumentsReplaced',
       description: 'The average days for an instrument replacement.',
@@ -762,7 +787,7 @@ module.exports = {
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfEmail',
-      link: '/browse/notification',
+      link: '/operational-data#resultsTransmitted',
       sortOrder: 9,
       externalId: 'averageRecipientsOfEmail',
       description:
@@ -812,7 +837,7 @@ module.exports = {
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
-      link: '/browse/notification',
+      link: '/operational-data#resultsTransmitted',
       sortOrder: 10,
       externalId: 'averageRecipientsOfSms',
       description:
