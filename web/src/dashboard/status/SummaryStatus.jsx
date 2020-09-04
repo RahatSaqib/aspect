@@ -10,18 +10,16 @@ import { DASHBOARD_SUMMARY_WIDGETS } from '../../MigratedComponents/QueryFetch/D
 export const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
 
-  const { 
+  const {
     isLoading,
     isError,
     data: { data: widgetData } = false,
-    error, 
-  } = useQuery(
-    DASHBOARD_SUMMARY_WIDGETS.KEY,
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT,
-        params: { dashboard },
-      })
+    error,
+  } = useQuery(DASHBOARD_SUMMARY_WIDGETS.KEY, async () =>
+    fetchWrapperForQueries({
+      endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT,
+      params: { dashboard },
+    })
   )
 
   if (isError) {
