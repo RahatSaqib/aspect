@@ -1250,9 +1250,9 @@ describe('Device API Raw Philippines NTRL', () => {
               LPASignedOffBy2: null,
               LPASignedOffBy3: null,
               LPAVersionTimeStamp: null,
-              TBLAMPSignedOffBy1: 'cultureMedTechUser',
-              TBLAMPSignedOffBy2: 'cultureLabSupervisorUser',
-              TBLAMPSignedOffBy3: 'cultureLabManagerUser',
+              TBLAMPSignedOffBy1: 'tbLampMedTechUser',
+              TBLAMPSignedOffBy2: 'tbLampLabSupervisorUser',
+              TBLAMPSignedOffBy3: 'tbLampLabManagerUser',
               TBLAMPVersionTimeStamp: '0x000000000006FD2A',
               MOST_RECENT_TIMESTAMP: '0x000000000006FD2A',
             },
@@ -4128,6 +4128,11 @@ describe('Device API Raw Philippines NTRL', () => {
         'TB LAMP Result': 'POSITIVE',
         'TB LAMP Verified By': 'Bryan',
         'TB LAMP Noted By': 'Bryan',
+        TBLAMPSignedOffBy1: 'TBLAMPMedTechUser',
+        TBLAMPSignedOffBy2: 'TBLAMPLabSupervisorUser',
+        TBLAMPSignedOffBy3: 'TBLAMPLabManagerUser',
+        TBLAMPVersionTimeStamp: '0x000000000006FD2A',
+        MOST_RECENT_TIMESTAMP: '0x000000000006FD2A',
       }
       const pmdtRecordPayloads = [
         pmdtRecordPayload8442SmearCultureNegative2Samples,
@@ -5333,10 +5338,29 @@ describe('Device API Raw Philippines NTRL', () => {
               tbLampResult: payload['TB LAMP Result'],
               verifiedBy: payload['TB LAMP Verified By'],
             },
+            resultSignOff: {
+              laboratoryTechnician: payload.TBLAMPSignedOffBy1,
+              laboratorySupervisor: payload.TBLAMPSignedOffBy2,
+              laboratoryManager: payload.TBLAMPSignedOffBy3,
+            },
           },
           senderOperator: payload['Smear Lab Tech'] || payload['Gx Examiner'],
           reportableSiteId: databaseRecords.Site.id,
         })
+
+        const insertedResultWorkflowStatusLogs = insertSpy
+          .getCalls()
+          .filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
+          .map(insert => insert.lastArg)
+        expect(insertedResultWorkflowStatusLogs).to.containSubset([
+          {
+            resultId: tbLampResult.id,
+            resultWorkflowStatusId:
+              staticDatabaseData.ResultWorkflowStatus.Validated,
+            operator:
+              pmdtRecordPayload03795TbLampPositiveSample.TBLAMPSignedOffBy3,
+          },
+        ])
       })
 
       it('should create a single sample when only one sample has been captured', async () => {
