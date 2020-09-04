@@ -39,7 +39,7 @@ async function seed(knex) {
   const partner = await knex('Partner').where('name', 'Partner One').first('id')
   if (adminId && partner) {
     await upsertJobFunction(knex, 'Admin', partner.id, [
-      modules.operationalData.admin,
+      modules.operationalData.edit,
     ])
   }
 }

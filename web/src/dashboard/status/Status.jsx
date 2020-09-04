@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
@@ -14,18 +15,36 @@ import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
+import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
+import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
+import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
+import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
+import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
+import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
+
 import ColorDemo from './ColorDemo/ColorDemo'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const Status = ({ history, location, colorDemo }) => {
   const intl = useIntl()
+  const { hivResults } = hivGraphs
+  const { tbDetected, tbResults } = tbGraphs
+  const { treatmentStatus } = treatmentStatusGraphs
+  const { deviceStatus } = deviceStatusGraphs
+  const {
+    covidDailyConfirmed,
+    covidCasesByAgeAndGender,
+    covidMortalityAndRecoveryConfig,
+    covidMortalityAndRecoveryByGender,
+  } = covidGraphs
   const [marginBottom, setMarginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2Code = useSelector(({ user }) =>
-    user.culture.substring(3, 5)
+  const countryIsoAlpha2Code = useSelector(
+    ({ user }) => user.countryAbbreviation
   )
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
@@ -33,7 +52,7 @@ const Status = ({ history, location, colorDemo }) => {
 
   useEffect(() => {
     dispatch(fetchAssays(false))
-  }, [dispatch])
+  }, [])
 
   useEffect(() => {
     const { search } = location
@@ -53,20 +72,104 @@ const Status = ({ history, location, colorDemo }) => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
-      <SummaryStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--summary')}
-        dashboard="home"
-      />
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          <SummaryStatus
+            intl={intl}
+            history={history}
+            location={location}
+            className={cssClasses('Section--summary')}
+            dashboard="home"
+          />
+        </PermissionsProvider>
+      </ErrorBoundary>
 
-      <GraphsContainer
-        intl={intl}
-        history={history}
-        location={location}
-        assaysFromState={assays}
-      />
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={hivResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={tbDetected} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={tbResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={treatmentStatus}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['dashboard']}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={deviceStatus} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidDailyConfirmed}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidMortalityAndRecoveryConfig}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidMortalityAndRecoveryByGender}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={['covid']}>
+          {assays && assays.length ? (
+            <GraphsContainer
+              assaysFromState={assays}
+              config={covidCasesByAgeAndGender}
+            />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
 
       {colorDemo && <ColorDemo vars={process.env} />}
       <TargetStatus

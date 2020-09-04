@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/subDays')
+const { subDays } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget')
@@ -35,9 +35,8 @@ function assertWidgetItemProps(item) {
 }
 
 describe('Dashboard routes', () => {
-  const path = '/api/dashboard/summary'
-
-  describe('GET', () => {
+  describe('GET /api/dashboard/summary', () => {
+    const path = '/api/dashboard/summary'
     shared.checkToken(server, path)
 
     it('should return a list of stat dashboard widget objects', done => {

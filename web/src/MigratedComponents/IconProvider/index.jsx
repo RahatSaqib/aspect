@@ -1,7 +1,7 @@
-import React, { Suspense, lazy } from 'react'
+import React, { Suspense, lazy, memo } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
 
 const cssClasses = classnames.bind(require('./Icons.css'))
@@ -17,7 +17,11 @@ async function loadIconModule(icon) {
   }
 }
 
-function IconProvider({ icon, className }) {
+const IconProvider = memo(({ icon, className }) => {
+  const IconShell = ({ children }) => (
+    <div className={cssClasses([className])}>{children}</div>
+  )
+
   const IconComponent = lazy(() =>
     loadIconModule(icon).then(module => {
       if (module && module[icon]) {
@@ -26,18 +30,25 @@ function IconProvider({ icon, className }) {
       throw new Error(`${icon} does not exist!`)
     })
   )
+
   return (
-    <Suspense fallback={<CircularProgress />}>
-      <div className={cssClasses([className])}>
+    <Suspense
+      fallback={
+        <IconShell>
+          <FaSquare className={cssClasses(['icons__proxy'])} />
+        </IconShell>
+      }
+    >
+      <IconShell>
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
           <IconComponent />
         </ErrorBoundary>
-      </div>
+      </IconShell>
     </Suspense>
   )
-}
+})
 
 IconProvider.propTypes = {
   icon: PropTypes.string.isRequired,

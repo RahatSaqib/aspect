@@ -4,7 +4,6 @@ const path = require('path')
 const _ = require('lodash')
 const { convertToTimeZone } = require('date-fns-timezone')
 const { knex } = require('../../src/db')
-const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
@@ -32,7 +31,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
   let abbottM2000SiteId
 
   before(async () => {
-    const now = getUtcTime()
+    const now = new Date()
     const { id: userId } = await knex('User').first('id')
     const abbottM2000DeviceType = await knex
       .from('DeviceType')
@@ -325,7 +324,7 @@ aa.`
       }
       expect(result.senderVersion).to.equal('1')
       expect(result.updatedOn.getTime()).to.be.closeTo(
-        getUtcTime().getTime(),
+        new Date().getTime(),
         10000
       )
       const resultData = JSON.parse(result.resultData)
@@ -458,7 +457,7 @@ aa.`
       }
       expect(result.senderVersion).to.equal('1')
       expect(result.updatedOn.getTime()).to.be.closeTo(
-        getUtcTime().getTime(),
+        new Date().getTime(),
         10000
       )
       const resultData = JSON.parse(result.resultData)
@@ -595,7 +594,7 @@ aa.`
       }
       expect(result.senderVersion).to.equal('1')
       expect(result.updatedOn.getTime()).to.be.closeTo(
-        getUtcTime().getTime(),
+        new Date().getTime(),
         10000
       )
       const resultData = JSON.parse(result.resultData)

@@ -1,5 +1,5 @@
 .graph__containerGrid {
   display: flex;
   justify-content: space-between;
-  height: 350px;
+  min-height: 350px;
 }

@@ -1,0 +1,61 @@
+[
+  {
+    "personName": "Kolisang Phatsoane",
+    "personTitle": "Mr",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "kolisangphatsoane22@gmail.com",
+    "personPhone": "+266 63663608",
+    "personCell": "+266 63663608",
+    "username": "kolisangphatsoane22",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Tau Moahloli",
+    "personTitle": "Mr",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "taumoahloli@gmail.com",
+    "personPhone": "+266 63663608",
+    "personCell": "+266 63663608",
+    "username": "taumoahloli@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Makarabo Mohapi",
+    "personTitle": "Ms",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "mam.makhele@gmail.com",
+    "personPhone": "+266 63663608",
+    "personCell": "+266 63663608",
+    "username": "mam.makhele@gmail.com",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  },
+  {
+    "personName": "Monkoe Leqheka",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "m_leqheka@yahoo.co.uk",
+    "personPhone": "+266 63663608",
+    "personCell": "+266 63663608",
+    "username": "m_leqheka@yahoo.co.uk",
+    "timezone": "South Africa Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": []
+  }
+]

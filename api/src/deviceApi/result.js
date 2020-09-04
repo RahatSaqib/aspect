@@ -105,13 +105,7 @@ async function mergeResult(
 
   const [assays, site] = await Promise.all([assayQ, siteQ])
 
-  if (
-    !site ||
-    !resultTypeId ||
-    // !resultWorkflowStatusId ||
-    !resultCategory1 ||
-    assays.length !== 1
-  ) {
+  if (!site || !resultTypeId || !resultCategory1 || assays.length !== 1) {
     const requestErrors = []
     if (!site) {
       requestErrors.push('assigned site for device')

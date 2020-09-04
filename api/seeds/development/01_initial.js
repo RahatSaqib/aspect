@@ -5149,30 +5149,30 @@ async function seed(knex) {
     'Admin',
     partnerOneId,
     [
-      modules.demo.admin,
-      modules.deviceApiKey.admin,
-      modules.device.admin,
-      modules.person.admin,
-      modules.result.admin,
-      modules.site.admin,
-      modules.assay.admin,
-      modules.inventory.admin,
-      modules.notification.admin,
-      modules.issue.admin,
-      modules.task.admin,
-      modules.report.admin,
+      modules.demo.edit,
+      modules.deviceApiKey.edit,
+      modules.device.edit,
+      modules.person.edit,
+      modules.result.edit,
+      modules.site.edit,
+      modules.assay.edit,
+      modules.inventory.edit,
+      modules.notification.edit,
+      modules.issue.edit,
+      modules.task.edit,
+      modules.report.edit,
       modules.browse.view,
-      modules.reporter.admin,
-      modules.treatmentStatus.admin,
+      modules.reporter.edit,
+      modules.treatmentStatus.edit,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
       modules.dashboard.inventory,
       modules.dashboard.site,
       modules.dashboard.summary,
-      modules.case.admin,
-      modules.account.admin,
-      modules.router.admin,
+      modules.case.edit,
+      modules.account.edit,
+      modules.router.edit,
       modules.manage.view,
     ]
   )
@@ -5182,23 +5182,22 @@ async function seed(knex) {
     'Manager',
     partnerOneId,
     [
-      modules.treatmentStatus.admin,
+      modules.treatmentStatus.edit,
       modules.site.edit,
       modules.device.edit,
       modules.assay.view,
       modules.inventory.edit,
       modules.reporter.edit,
       modules.dashboard.report,
-      modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
       modules.dashboard.inventory,
       modules.dashboard.site,
       modules.dashboard.summary,
-      modules.case.admin,
-      modules.account.admin,
-      modules.router.admin,
+      modules.case.edit,
+      modules.account.edit,
+      modules.router.edit,
       modules.person.edit,
       modules.clinicalIndicators.view,
     ]
@@ -5217,7 +5216,6 @@ async function seed(knex) {
       modules.browse.view,
       modules.treatmentStatus.edit,
       modules.dashboard.report,
-      modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
@@ -5236,21 +5234,20 @@ async function seed(knex) {
     'Lab Manager',
     partnerTwoId,
     [
-      modules.treatmentStatus.admin,
+      modules.treatmentStatus.edit,
       modules.site.edit,
       modules.device.edit,
       modules.dashboard.report,
-      modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
       modules.dashboard.inventory,
       modules.dashboard.site,
       modules.dashboard.summary,
-      modules.case.admin,
+      modules.case.edit,
       modules.person.view,
-      modules.account.admin,
-      modules.router.admin,
+      modules.account.edit,
+      modules.router.edit,
       modules.assay.view,
       modules.inventory.view,
     ]
@@ -5401,10 +5398,12 @@ async function seed(knex) {
         'description',
         'descriptionI18nKey',
         'dashboards',
+        'linkParams',
       ])
       widgetData.dashboards = JSON.stringify(
         widgetData.dashboards || { home: {} }
       )
+      widgetData.linkParams = JSON.stringify(widgetData.linkParams || {})
       const [widgetId] = await knex('DashboardWidget').insert(widgetData)
 
       const statWidgetData = _.pick(widget, [
@@ -5455,6 +5454,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetValidResultsPc,
     },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
@@ -5480,6 +5483,11 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.stockNotRecorded,
     },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
+
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
@@ -5510,6 +5518,11 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.stockNotRecorded,
     },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
+
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
     {
@@ -5531,6 +5544,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.stockNotRecorded,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
     },
   ])
 

@@ -4,27 +4,27 @@
     "permissions": [
       {
         "module": "assay",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "device",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "person",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "result",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "treatmentStatus",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "site",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "browse",
@@ -32,7 +32,7 @@
       },
       {
         "module": "account",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "dashboard",
@@ -44,7 +44,7 @@
       },
       {
         "module": "issue",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "browse",
@@ -52,7 +52,7 @@
       },
       {
         "module": "reporter",
-        "activity": "admin"
+        "activity": "edit"
       }
     ]
   },
@@ -89,7 +89,7 @@
       },
       {
         "module": "account",
-        "activity": "admin"
+        "activity": "edit"
       },
       {
         "module": "dashboard",

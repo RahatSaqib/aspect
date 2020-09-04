@@ -1,6 +1,10 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listNotifications, onIssueEscalated } = require('./service')
+const {
+  listNotifications,
+  onIssueEscalated,
+  getNotifications,
+} = require('./service')
 const { exportNotifications } = require('./serviceReports')
 
 function listNotificationsBaseConfig() {
@@ -46,6 +50,53 @@ const routes = [
       description: 'Export Notifications List into Excel or CSV',
       notes: 'Filtered and sorted list of Notifications',
       ...listNotificationsBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/notification/history/{notificationTypeId}',
+    handler: getNotifications,
+    config: {
+      description: 'Get all notification history',
+      notes: 'Filtered and sorted list of Notifications',
+      validate: {
+        params: {
+          notificationTypeId: Joi.number().integer().positive().required(),
+        },
+        query: {
+          ...validateSortPageParams(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          total: Joi.number()
+            .required()
+            .description('The total number of items aggregated by consumable'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('id'),
+                webhookSent: Joi.number().description(
+                  'The number of webhook notification sent'
+                ),
+                smsSent: Joi.number().description(
+                  'The number of sms notification sent'
+                ),
+                emailSent: Joi.number().description(
+                  'The number of email notification sent'
+                ),
+                date: Joi.date().description(
+                  'The date notification was sent or received'
+                ),
+              })
+            ),
+        }),
+      },
     },
   },
 ]

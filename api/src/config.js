@@ -13,6 +13,7 @@ module.exports = {
     password: process.env['db.password'],
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
+    timezone: 'UTC',
   },
   log: {
     db: {
@@ -53,6 +54,11 @@ module.exports = {
   webhook: {},
   scheduler: {
     enabled: process.env['scheduler.enabled'] === 'true',
+    cron: {
+      logDeviceMaintenanceStatus:
+        process.env['scheduler.cron.logDeviceMaintenanceStatus'] ||
+        '0 18 * * *',
+    },
   },
   encryption: {
     passPhrase: process.env['encryption.passPhrase'],

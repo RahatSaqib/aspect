@@ -13,11 +13,7 @@ const Promise = require('bluebird')
 
 const config = require('../../config')
 const { deviceTypeToId } = require('../../shared/dictionary')
-const {
-  getUtcTime,
-  formatDateOrDefault,
-  parseDateOrDefault,
-} = require('../../shared/date')
+const { formatDateOrDefault, parseDateOrDefault } = require('../../shared/date')
 
 function utcDate(localDateTime) {
   return parseDateOrDefault(
@@ -80,14 +76,14 @@ async function checkUptimeRobot({ messageContext }) {
               .andWhere('sourceName', 'uptimeRobot')
               .update({
                 data: uptimeRobotResponseJson,
-                updatedOn: getUtcTime(),
+                updatedOn: new Date(),
               })
           } else {
             await knex('FactDeviceExternalSource').insert({
               deviceId: aspectDeviceId,
               sourceName: 'uptimeRobot',
               data: uptimeRobotResponseJson,
-              updatedOn: getUtcTime(),
+              updatedOn: new Date(),
             })
           }
         })

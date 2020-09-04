@@ -1,7 +1,8 @@
-import _ from 'lodash'
+import { identity } from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { FaCircle } from 'react-icons/fa'
+import PropTypes from 'prop-types'
+
 import { formatDateTime } from '../../../shared/utils/dateFormat'
 import {
   DataTableRow as TableRow,
@@ -10,49 +11,36 @@ import {
 
 const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
   >
-    <TableCell
-      className={cssClasses('TableCell', {
-        'TableCell--hasError': delivery.emailError > 0 || delivery.smsError > 0,
-      })}
-    >
-      {(delivery.emailError > 0 || delivery.smsError > 0) && (
-        <FaCircle className={cssClasses('FaCircle')} />
-      )}
-    </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {formatDateTime(delivery.date)}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {delivery.webCount}
+      {delivery.webhookSent}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {delivery.emailCount}
-    </TableCell>
-    <TableCell
-      className={cssClasses('TableCell', {
-        'TableCell--hasError': delivery.emailError > 0,
-      })}
-    >
-      {delivery.emailError}
+      {delivery.emailSent}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {delivery.smsCount}
-    </TableCell>
-    <TableCell
-      className={cssClasses('TableCell', {
-        'TableCell--hasError': delivery.smsError > 0,
-      })}
-    >
-      {delivery.smsError}
+      {delivery.smsSent}
     </TableCell>
   </TableRow>
 )
+
+NotificationHistoryTableRow.propTypes = {
+  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  delivery: PropTypes.shape({
+    date: PropTypes.string,
+    webhookSent: PropTypes.string,
+    emailSent: PropTypes.string,
+    smsSent: PropTypes.string,
+  }).isRequired,
+}
 
 export default enhance(NotificationHistoryTableRow)

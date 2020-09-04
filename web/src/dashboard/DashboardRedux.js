@@ -56,6 +56,7 @@ function requestStatDashboard(requestedAt, dashboard) {
     type: REQUEST_STAT_DASHBOARD,
     requestedAt,
     dashboard,
+    loading: true,
   }
 }
 
@@ -64,6 +65,7 @@ function receiveStatDashboard(requestedAt, dashboard, data) {
     type: RECEIVE_STAT_DASHBOARD,
     requestedAt,
     dashboard,
+    loading: false,
     data,
   }
 }
@@ -378,7 +380,7 @@ export function fetchInventoryDashboard() {
             title: {
               id:
                 'errorResponseMessages.fetchInventoryDashboard.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Inventory',
+              defaultMessage: 'Error Loading Dashboard Inventory',
             },
           })
         ),
@@ -412,6 +414,7 @@ const initialData = Immutable.Record({
   summary: Immutable.fromJS({
     currentIdList: [],
     widgetGroups: {},
+    loading: false,
   }),
   targetSummaryList: Immutable.List(),
   resultSiteList: Immutable.List(),
@@ -465,9 +468,13 @@ export default function dashboardReducer(state = initialState, action) {
         // get previously stored dashboard widgets
         const dashboardItem =
           state.getIn(['dashboardsCache', action.dashboard]) ||
-          Immutable.fromJS({ widgetGroups: {}, currentIdList: [] })
+          Immutable.fromJS({
+            widgetGroups: {},
+            currentIdList: [],
+          })
 
         mutState.set('summary', dashboardItem)
+        mutState.setIn(['summary', 'loading'], action.loading)
       })
     case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
@@ -513,6 +520,7 @@ export default function dashboardReducer(state = initialState, action) {
             'summary',
             mutState.getIn(['dashboardsCache', action.dashboard])
           )
+          mutState.setIn(['summary', 'loading'], action.loading)
         })
       })
     case RECEIVE_TARGET_DASHBOARD:

@@ -1,0 +1,561 @@
+{
+  "countries": [
+    {
+      "abbreviation": "MZ",
+      "name": "Mozambique",
+      "a3": "MOZ",
+      "culture": "pt-PT",
+      "countryCode": "258",
+      "timezone": "South Africa Standard Time",
+      "portNumber": 3012,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|PatientId|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 21,
+      "states": [
+        {
+          "name": "Cabo Delgado",
+          "lgas": [
+            {
+              "name": "Ancuabe"
+            },
+            {
+              "name": "Balama"
+            },
+            {
+              "name": "Chiure District"
+            },
+            {
+              "name": "Ibo District"
+            },
+            {
+              "name": "Macomia District"
+            },
+            {
+              "name": "Mecufi District"
+            },
+            {
+              "name": "Meluco District"
+            },
+            {
+              "name": "Mocimboa a Praia District"
+            },
+            {
+              "name": "Montepuez District"
+            },
+            {
+              "name": "Mueda District"
+            },
+            {
+              "name": "Muidumbe District"
+            },
+            {
+              "name": "Namuno District"
+            },
+            {
+              "name": "Nangade District"
+            },
+            {
+              "name": "Palma District"
+            },
+            {
+              "name": "Pemba-Metuge District"
+            },
+            {
+              "name": "Quissanga District"
+            },
+            {
+              "name": "Mocimboa da Praia"
+            },
+            {
+              "name": "Montepuez"
+            },
+            {
+              "name": "Pemba"
+            }
+          ]
+        },
+        {
+          "name": "Gaza",
+          "lgas": [
+            {
+              "name": "Belene Macia District"
+            },
+            {
+              "name": "Chibuto District"
+            },
+            {
+              "name": "Chicualacuala District"
+            },
+            {
+              "name": "Chigubo District"
+            },
+            {
+              "name": "Chokwe District"
+            },
+            {
+              "name": "Guija District"
+            },
+            {
+              "name": "Mabalane District"
+            },
+            {
+              "name": "Manjacaze District"
+            },
+            {
+              "name": "Massagena District"
+            },
+            {
+              "name": "Massingir District"
+            },
+            {
+              "name": "Xai-Xai District"
+            },
+            {
+              "name": "Chibuto"
+            },
+            {
+              "name": "Chokwe"
+            },
+            {
+              "name": "Macia"
+            },
+            {
+              "name": "Manjacaze"
+            },
+            {
+              "name": "Xai-Xai"
+            }
+          ]
+        },
+        {
+          "name": "Inhambane",
+          "lgas": [
+            {
+              "name": "Funhalouro District"
+            },
+            {
+              "name": "Govuro District"
+            },
+            {
+              "name": "Homoine District"
+            },
+            {
+              "name": "Jangamo District"
+            },
+            {
+              "name": "Inharrime District"
+            },
+            {
+              "name": "Inhassoro District"
+            },
+            {
+              "name": "Mabote District"
+            },
+            {
+              "name": "Massinga District"
+            },
+            {
+              "name": "Morrumbene District"
+            },
+            {
+              "name": "Panda District"
+            },
+            {
+              "name": "Vilankulo District"
+            },
+            {
+              "name": "Zavala District"
+            }
+          ]
+        },
+        {
+          "name": "Manica",
+          "lgas": [
+            {
+              "name": "Barue District"
+            },
+            {
+              "name": "Gondola District"
+            },
+            {
+              "name": "Guro District"
+            },
+            {
+              "name": "Machaze District"
+            },
+            {
+              "name": "Macossa District"
+            },
+            {
+              "name": "Manica District"
+            },
+            {
+              "name": "Mossurize District"
+            },
+            {
+              "name": "Sussundenga District"
+            },
+            {
+              "name": "Tambara District"
+            },
+            {
+              "name": "C. Chimoio"
+            }
+          ]
+        },
+        {
+          "name": "Maputo City",
+          "lgas": [
+            {
+              "name": "KaMpfumo"
+            },
+            {
+              "name": "Nlhamankulu"
+            },
+            {
+              "name": "KaMaxaquene"
+            },
+            {
+              "name": "KaMavota"
+            },
+            {
+              "name": "KaMubukwana"
+            },
+            {
+              "name": "KaTembe"
+            },
+            {
+              "name": "KaNyaka"
+            }
+          ]
+        },
+        {
+          "name": "Maputo Province",
+          "lgas": [
+            {
+              "name": "Boane District"
+            },
+            {
+              "name": "Magude District"
+            },
+            {
+              "name": "Manhica District"
+            },
+            {
+              "name": "Marracuene District"
+            },
+            {
+              "name": "Moamba District"
+            },
+            {
+              "name": "Namaacha District"
+            },
+            {
+              "name": "Matutuine District"
+            },
+            {
+              "name": "Manhica"
+            },
+            {
+              "name": "Matola"
+            },
+            {
+              "name": "Namaacha"
+            }
+          ]
+        },
+        {
+          "name": "Nampula",
+          "lgas": [
+            {
+              "name": "Angoche District"
+            },
+            {
+              "name": "Erati District"
+            },
+            {
+              "name": "Lalaua District"
+            },
+            {
+              "name": "Malema District"
+            },
+            {
+              "name": "Meconta District"
+            },
+            {
+              "name": "Mecuburi District"
+            },
+            {
+              "name": "Memba District"
+            },
+            {
+              "name": "Mogincual District"
+            },
+            {
+              "name": "Mogovolas District"
+            },
+            {
+              "name": "Moma District"
+            },
+            {
+              "name": "Monapo District"
+            },
+            {
+              "name": "Mossuril District"
+            },
+            {
+              "name": "Muecate District"
+            },
+            {
+              "name": "Murrupula District"
+            },
+            {
+              "name": "Nacala-a-Velha District"
+            },
+            {
+              "name": "Nacaroa District"
+            },
+            {
+              "name": "Nampula District"
+            },
+            {
+              "name": "Ribaue District"
+            },
+            {
+              "name": "Angoche"
+            },
+            {
+              "name": "Ilha de Mocambique"
+            },
+            {
+              "name": "Monapo"
+            },
+            {
+              "name": "Nacala"
+            },
+            {
+              "name": "Nampula"
+            }
+          ]
+        },
+        {
+          "name": "Niassa",
+          "lgas": [
+            {
+              "name": "Cuamba District"
+            },
+            {
+              "name": "Lago District"
+            },
+            {
+              "name": "Lichinga District"
+            },
+            {
+              "name": "Majune District"
+            },
+            {
+              "name": "Mandimba District"
+            },
+            {
+              "name": "Marrupa District"
+            },
+            {
+              "name": "Maua District"
+            },
+            {
+              "name": "Mavagoago District"
+            },
+            {
+              "name": "Mecenhelas District"
+            },
+            {
+              "name": "Mecula District"
+            },
+            {
+              "name": "Metarica District"
+            },
+            {
+              "name": "Muembe District"
+            },
+            {
+              "name": "N'gauma District"
+            },
+            {
+              "name": "Nipepe District"
+            },
+            {
+              "name": "Sanga District"
+            },
+            {
+              "name": "Cuamba"
+            },
+            {
+              "name": "Lichinga"
+            },
+            {
+              "name": "Metangula"
+            }
+          ]
+        },
+        {
+          "name": "Sofala",
+          "lgas": [
+            {
+              "name": "Buzi District"
+            },
+            {
+              "name": "Caia District"
+            },
+            {
+              "name": "Chemba District"
+            },
+            {
+              "name": "Cheringoma District"
+            },
+            {
+              "name": "Chibabava District"
+            },
+            {
+              "name": "Dondo District"
+            },
+            {
+              "name": "Gorongosa District"
+            },
+            {
+              "name": "Marromeu District"
+            },
+            {
+              "name": "Machanga District"
+            },
+            {
+              "name": "Maringue District"
+            },
+            {
+              "name": "Muanza District"
+            },
+            {
+              "name": "Nhamatanda District"
+            },
+            {
+              "name": "C. Beira"
+            }
+          ]
+        },
+        {
+          "name": "Tete",
+          "lgas": [
+            {
+              "name": "Angonia District"
+            },
+            {
+              "name": "Cahora-Bassa District"
+            },
+            {
+              "name": "Changara District"
+            },
+            {
+              "name": "Chifunde District"
+            },
+            {
+              "name": "Chiuta District"
+            },
+            {
+              "name": "Tete District"
+            },
+            {
+              "name": "Doa District"
+            },
+            {
+              "name": "Macanga District"
+            },
+            {
+              "name": "Magoe District"
+            },
+            {
+              "name": "Maravia District"
+            },
+            {
+              "name": "Marara District"
+            },
+            {
+              "name": "Moatize District"
+            },
+            {
+              "name": "Mutarara District"
+            },
+            {
+              "name": "Tsangano District"
+            },
+            {
+              "name": "Zumbo District"
+            }
+          ]
+        },
+        {
+          "name": "Zambezia",
+          "lgas": [
+            {
+              "name": "Alto Molocue District"
+            },
+            {
+              "name": "Chinde District"
+            },
+            {
+              "name": "Gile District"
+            },
+            {
+              "name": "Gurue District"
+            },
+            {
+              "name": "Ile District"
+            },
+            {
+              "name": "Inhassunge District"
+            },
+            {
+              "name": "Lugela District"
+            },
+            {
+              "name": "Maganja da Costa District"
+            },
+            {
+              "name": "Milange District"
+            },
+            {
+              "name": "Mocuba District"
+            },
+            {
+              "name": "Mopeia District"
+            },
+            {
+              "name": "Morrumbala District"
+            },
+            {
+              "name": "Namacurra District"
+            },
+            {
+              "name": "Namarroi District"
+            },
+            {
+              "name": "Nicoadala District"
+            },
+            {
+              "name": "Pebane District"
+            },
+            {
+              "name": "Quelimane District"
+            },
+            {
+              "name": "Quelimane"
+            }
+          ]
+        },
+        {
+          "name": "Mocambique: INATB",
+          "abbreviation": "MOZ-INATB",
+          "lgas": []
+        }
+      ]
+    }
+  ]
+}
