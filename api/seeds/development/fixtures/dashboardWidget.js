@@ -225,5 +225,11 @@ module.exports = {
       ),
       sortOrder: 2,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageTimeToModuleReplacement'
+      ),
+      sortOrder: 25,
+    },
   ],
 }
