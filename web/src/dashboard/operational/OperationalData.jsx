@@ -18,14 +18,16 @@ import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import resultsTransmittedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/ResultsTransmitted'
 
+import { ASSAY_LIST } from '../../MigratedComponents/QueryFetch/Assay/index'
+
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 export const OperationalData = ({ intl, history, location, loading }) => {
   const { deviceStatus } = deviceStatusGraphs
   const { resultsTransmitted } = resultsTransmittedGraphs
 
-  const { isError, data: assays, error } = useQuery('assays', async () =>
-    fetchWrapperForQueries('/assay')
+  const { isError, data: assays, error } = useQuery(ASSAY_LIST.KEY, async () =>
+    fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT})
   )
 
   if (isError) {
