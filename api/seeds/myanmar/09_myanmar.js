@@ -350,13 +350,18 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
 
   await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    await knex('JobFunctionPermission').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      permissionId:
-        myanmarJobFunction.name === 'Admin'
-          ? modules.actionDashboard.admin
-          : modules.actionDashboard.edit,
-    })
+    const existingJobFunctionPermission = await knex('JobFunctionPermission')
+      .where({
+        jobFunctionId: myanmarJobFunction.id,
+        permissionId: modules.actionDashboard.edit,
+      })
+      .first()
+    if (!existingJobFunctionPermission) {
+      await knex('JobFunctionPermission').insert({
+        jobFunctionId: myanmarJobFunction.id,
+        permissionId: modules.actionDashboard.edit,
+      })
+    }
   })
 
   // turn off email/sms

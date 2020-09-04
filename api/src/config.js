@@ -13,6 +13,7 @@ module.exports = {
     password: process.env['db.password'],
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
+    timezone: 'UTC',
   },
   log: {
     db: {

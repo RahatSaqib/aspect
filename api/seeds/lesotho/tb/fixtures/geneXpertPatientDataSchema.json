@@ -1,0 +1,73 @@
+{
+  "id": {
+    "title": "Patient ID",
+    "type": "string",
+    "order": 0
+  },
+  "name": {
+    "title": "Patient name",
+    "type": "string",
+    "order": 1
+  },
+  "age": {
+    "title": "Age",
+    "type": "number",
+    "order": 2
+  },
+  "gender": {
+    "title": "Gender",
+    "type": "string",
+    "order": 3
+  },
+  "phone": {
+    "title": "Patient Phone",
+    "type": "string",
+    "order": 4
+  },
+  "street": {
+    "title": "Patient Address",
+    "type": "string",
+    "order": 5
+  },
+  "stateId": {
+    "title": "Patient State",
+    "type": "number",
+    "order": 6
+  },
+  "lgaId": {
+    "title": "Patient LGA",
+    "type": "number",
+    "order": 7
+  },
+
+  "hivStatus": {
+    "title": "HIV Status",
+    "type": "number",
+    "order": 8
+  },
+  "testReason": {
+    "title": "Reason for test",
+    "type": "string",
+    "order": 9
+  },
+  "requestorName": {
+    "title": "Name of Person Requesting Test",
+    "type": "string",
+    "order": 10
+  },
+  "requestorPhone": {
+    "title": "Referring Clinician or Facility Phone Number (if known)",
+    "type": "string",
+    "order": 11
+  },
+  "healthFacility": {
+    "title": "Referring Facility",
+    "type": "string",
+    "order": 12
+  },
+  "repeatTest": {
+    "title": "Repeat test",
+    "type": "number",
+    "order": 13
+  }
+}

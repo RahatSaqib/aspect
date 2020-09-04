@@ -3,7 +3,7 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
+const { parseDateOrDefault } = require('../../shared/date')
 const {
   allAssayToId,
   resultCategoryToId,
@@ -46,7 +46,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         console.error(error) // eslint-disable-line no-console
       }
     }
-    const now = getUtcTime()
+    const now = new Date()
     await transact(async knex => {
       const {
         deviceId,

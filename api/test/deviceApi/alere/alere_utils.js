@@ -304,6 +304,11 @@ class DeviceApiTestContext {
           this.clientId
         )
       }
+      await knex('FactInventoryConsumptionRate')
+        .where({
+          siteId: this.device.siteId,
+        })
+        .delete()
     })
   }
 
@@ -370,6 +375,7 @@ class DeviceApiTestContext {
           'r.senderOperator',
           'r.notes',
           'r.errorCode',
+          'r.createdOn',
           'r.updatedOn'
         )
       if (resultDetails) {
