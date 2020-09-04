@@ -352,7 +352,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           })
 
           const percentPositive = getPercent(cntPositive, cntAll)
-          const percentReported = getPercent(cntAllReported, cntAll)
+          const percentReported = getPercent(cntAllReported, cntPositive)
           const percentViaEmail = getPercent(
             cntReportedViaEmail,
             cntAllReported

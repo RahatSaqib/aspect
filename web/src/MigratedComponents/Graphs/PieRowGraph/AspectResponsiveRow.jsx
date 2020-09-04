@@ -2,20 +2,8 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
-
-import flattenDeep from 'lodash/flattenDeep'
-import groupBy from 'lodash/groupBy'
-import get from 'lodash/get'
 import _ from 'lodash'
-import { PieInnerLegend } from '../GraphLegend'
-
-import {
-  generateColorForValue,
-  generateToolTip,
-  percentageOrActualForPie,
-} from '../Helpers/Formatters'
-
-import { GraphToolTip } from '../GraphToolTip'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 
 import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
 import messages from './messages'
@@ -40,7 +28,18 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
             {headings(data).map(heading => (
               <div className={cssClasses('piegraphs__column')}>
                 <div className={cssClasses('piegraphs__columnTitle')}>
-                  {intlFormatMessage(messages[heading])}
+                  {messages[`${heading}Description`] ? (
+                    <AspectTooltip
+                      showHelpIcon
+                      title={intlFormatMessage(
+                        messages[`${heading}Description`]
+                      )}
+                    >
+                      {intlFormatMessage(messages[heading])}
+                    </AspectTooltip>
+                  ) : (
+                    intlFormatMessage(messages[heading])
+                  )}
                 </div>
               </div>
             ))}

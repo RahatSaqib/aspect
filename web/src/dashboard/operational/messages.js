@@ -66,6 +66,10 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.totalPositiveResults',
     defaultMessage: 'Sent via Email',
   },
+  averageDaysForInstrumentReplacement: {
+    id: 'pages.OperationalData.instrumentsReplaced',
+    defaultMessage: 'Average Days for Instrument Replacement',
+  },
   withinTwoHoursOfTesting: {
     id: 'pages.OperationalData.withinTwoHoursOfTesting',
     defaultMessage: 'Within 2 hours of testing',
