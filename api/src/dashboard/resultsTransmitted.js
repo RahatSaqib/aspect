@@ -82,6 +82,7 @@ async function getResultQuery(query, dataConstraints) {
       `,
       [currentMonth, currentMonth, currentMonth, currentMonth]
     )
+    .where('dt.externalId', 'CepheidGeneXpert')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -198,7 +199,7 @@ async function getResultQuery(query, dataConstraints) {
     })
     .groupBy('a.id', 'yearMonth')
 
-  return resultsQuery.where('dt.externalId', 'CepheidGeneXpert')
+  return resultsQuery
 }
 
 async function resultsTransmittedDashboard(request) {
