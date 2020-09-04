@@ -39,7 +39,7 @@ export const messages = defineMessages({
   },
   percentViaEmailDescription: {
     id: 'pages.OperationalData.percentViaEmailDescription',
-    defaultMessage: 'The percent of positive results notified via Email',
+    defaultMessage: 'The percentage of reported results that were reported via Email.',
   },
   percentWithin2Hours: {
     id: 'pages.OperationalData.percentWithin2Hours',
