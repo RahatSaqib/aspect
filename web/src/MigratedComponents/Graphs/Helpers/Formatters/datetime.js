@@ -52,7 +52,6 @@ const getAllDaysInCurrentMonth = (
   const dateNow = new Date()
   const start = startOfMonth(dateNow)
   const end = upToToday ? dateNow : endOfMonth(dateNow)
-
   return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
