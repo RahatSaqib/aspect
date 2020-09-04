@@ -743,7 +743,12 @@ async function seedIssueEventTriggersForPartner(
 
   await Promise.each(
     data,
-    async ({ issueType, issueEventStatus, triggerConditions }) => {
+    async ({
+      issueType,
+      issueEventStatus,
+      triggerConditions,
+      filterIssueCondition,
+    }) => {
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
           partnerId,
@@ -757,6 +762,7 @@ async function seedIssueEventTriggersForPartner(
           await knex('IssueEventTrigger').insert({
             ...triggerData,
             triggerConditions: JSON.stringify(triggerConditions),
+            filterIssueCondition: JSON.stringify(filterIssueCondition),
             createdOn: now,
             updatedOn: now,
           })
@@ -2962,6 +2968,18 @@ async function mapJobFunctionPermissions(
   if (insertJobs.length > 0) await Promise.all(insertJobs)
 }
 
+/**
+ * Removes the jobs and permissions for the specified ids
+ * @param {object} knex Knex instance
+ * @param {array} permissionsToRemove An array of permissions ids
+ */
+async function removePermissions(knex, permissions) {
+  await knex('JobFunctionPermission')
+    .whereIn('permissionId', permissions)
+    .delete()
+  await knex('Permission').whereIn('id', permissions).delete()
+}
+
 async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
   // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
   // but not critical if field dashboards remains null - we handle setting default value of { home: {} } in both API and WEB
@@ -2981,6 +2999,19 @@ async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
             dashboards: JSON.stringify(dashboards),
           })
     )
+  )
+}
+
+/**
+ * Updates all the defined props searching by module and activity
+ * @param {object} knex Knex instance
+ * @param {array} permissions An array of permissions definitions. The next props are mandatory: module, activity. Currently, you can also specify description.
+ */
+async function updatePermissions(knex, permissions) {
+  return Promise.each(permissions, async ({ module, activity, ...restProps }) =>
+    knex('Permission')
+      .where({ module, activity })
+      .update({ ...restProps })
   )
 }
 
@@ -3032,7 +3063,7 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function seedIssueTypeModuleReplaced(knex, { userName }) {
+async function seedIssueType(knex, issueType, { userName }) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -3046,43 +3077,35 @@ async function seedIssueTypeModuleReplaced(knex, { userName }) {
   }
 
   // get previously defined data for ModuleReplaced issue type
-  const {
-    ModuleReplaced: {
-      issueType,
-      MessageType,
-      AlertTemplate,
-      EmailTemplate,
-      SmsTemplate,
-    },
-  } = await getBaseIssues(auditFields)
+  const issue = (await getBaseIssues(auditFields))[issueType]
 
   // ------------------------------------------
-  // 'Module Replaced' issue templates
+  // issue templates
   // ------------------------------------------
-  const { id: moduleAlertTemplateId } = await upsertSingle(
+  const { id: alertTemplateId } = await upsertSingle(
     knex,
     'AlertTemplate',
     ['message'],
     {
-      ...AlertTemplate,
+      ...issue.AlertTemplate,
       ...auditFields,
     }
   )
-  const { id: moduleSmsTemplateId } = await upsertSingle(
+  const { id: smsTemplateId } = await upsertSingle(
     knex,
     'SmsTemplate',
     ['message'],
     {
-      ...SmsTemplate,
+      ...issue.SmsTemplate,
       ...auditFields,
     }
   )
-  const { id: moduleEmailTemplateId } = await upsertSingle(
+  const { id: emailTemplateId } = await upsertSingle(
     knex,
     'EmailTemplate',
     ['subject', 'body'],
     {
-      ...EmailTemplate,
+      ...issue.EmailTemplate,
       ...auditFields,
     }
   )
@@ -3091,17 +3114,17 @@ async function seedIssueTypeModuleReplaced(knex, { userName }) {
   // MessageType
   // ------------------------------------------
   const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
-    ...MessageType,
-    alertTemplateId: moduleAlertTemplateId,
-    smsTemplateId: moduleSmsTemplateId,
-    emailTemplateId: moduleEmailTemplateId,
+    ...issue.MessageType,
+    alertTemplateId,
+    smsTemplateId,
+    emailTemplateId,
   })
 
   // ------------------------------------------
   // IssueType
   // ------------------------------------------
   await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
-    ...issueType,
+    ...issue.issueType,
     defaultMessageTypeId: moduleMessageTypeId,
   })
 }
@@ -3174,7 +3197,9 @@ module.exports = {
   mapJobFunctionPermissions,
   seedDashboardsJsonInDashboardWidget,
   removeAndReplaceActivity,
+  removePermissions,
+  updatePermissions,
 
-  seedIssueTypeModuleReplaced,
+  seedIssueType,
   seedIssueEscalationTriggersForPartner,
 }

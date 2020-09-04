@@ -304,6 +304,11 @@ class DeviceApiTestContext {
           this.clientId
         )
       }
+      await knex('FactInventoryConsumptionRate')
+        .where({
+          siteId: this.device.siteId,
+        })
+        .delete()
     })
   }
 

@@ -12,7 +12,7 @@ const {
 
 function listReportBaseConfig() {
   return {
-    auth: { scope: ['report:view', 'report:edit'] },
+    auth: { scope: ['report:view'] },
     validate: {
       query: {
         format: Joi.string()
@@ -52,7 +52,7 @@ const routes = [
     config: {
       description: 'List of Reports',
       notes: 'Reports scoped by user permissions, filterable by geography',
-      auth: { scope: ['report:view', 'report:edit'] },
+      auth: { scope: ['report:view'] },
       validate: {
         query: {
           ...requestBaseQuery(),
@@ -96,7 +96,7 @@ const routes = [
       description: 'Report Excel file',
       notes:
         'Returns Excel file generated from template corresponding to externalId',
-      auth: { scope: ['report:view', 'report:edit'] },
+      auth: { scope: ['report:view'] },
       validate: {
         query: {
           ...requestBaseQuery(),
