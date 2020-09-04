@@ -8,6 +8,11 @@ import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import times from 'lodash/times'
 
+/**
+ * TODO: Should move this to a more central helpers file for all date stuff
+ * https://github.com/SystemOneId/aspect/issues/1308
+ */
+
 const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
 
 const negateTimeZoneOffset = dateString => {
@@ -37,8 +42,17 @@ const getTimePeriod = (cnt, period, dateFormat) => {
       timePeriod = dateNow
       break
   }
-
   return format(timePeriod, dateFormat)
+}
+
+const getAllDaysInCurrentMonth = (
+  upToToday = false,
+  dateFormat = 'yyyy-MM-dd'
+) => {
+  const dateNow = new Date()
+  const start = startOfMonth(dateNow)
+  const end = upToToday ? dateNow : endOfMonth(dateNow)
+  return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
 const getPreviousPeriod = (period = 'month', dateFormat) => {
@@ -121,6 +135,7 @@ const dateRangeOptions = key => {
 }
 
 export {
+  getAllDaysInCurrentMonth,
   dateRangeOptions,
   getDayFromToday,
   getTimePeriod,

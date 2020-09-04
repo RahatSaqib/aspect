@@ -178,7 +178,7 @@ module.exports = {
       description:
         'The percentage of positive GeneXpert TB and HIV results that were notified via SMS or email.',
       descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
-      link: '/browse/result',
+      link: '/operational-data#resultsTransmitted',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
@@ -266,6 +266,12 @@ module.exports = {
         x => x.externalId === 'averageDaysModuleSwap'
       ),
       sortOrder: 2,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageTimeToModuleReplacement'
+      ),
+      sortOrder: 25,
     },
   ],
 }

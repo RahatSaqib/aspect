@@ -49,7 +49,7 @@ const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customE
     errorNotifications,
     body
   })
-    .then(({ data }) => data)
+    .then(data => data)
     .catch(err => err)
 }
 
