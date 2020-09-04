@@ -24,8 +24,8 @@
     },
     "sections": [
         {
-            "id": "Lab",
-            "label": "Lab",
+            "id": "Site",
+            "label": "Site",
             "rows": [
                 {
                     "id": 0,
@@ -36,15 +36,23 @@
                                 "component": "textField"
                             },
                             "type": "readOnly",
-                            "label": "Deployment Full Name"
+                            "label": "Site Name"
                         },
                         {
-                            "id": "deviceSerial",
+                            "id": "lgaName",
                             "controlType": {
                                 "component": "textField"
                             },
                             "type": "readOnly",
-                            "label": "Device Serial"
+                            "label": "City"
+                        },
+                        {
+                            "id": "stateName",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "readOnly",
+                            "label": "State"
                         }
                     ]
                 },
@@ -58,22 +66,41 @@
                             },
                             "type": "readOnly",
                             "label": "Country"
-                        },
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Device",
+            "label": "Device",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
                         {
-                            "id": "stateName",
+                            "id": "deviceName",
                             "controlType": {
                                 "component": "textField"
                             },
                             "type": "readOnly",
-                            "label": "State"
+                            "label": "Device Name"
                         },
                         {
-                            "id": "lgaName",
+                            "id": "deviceType",
                             "controlType": {
                                 "component": "textField"
                             },
                             "type": "readOnly",
-                            "label": "City"
+                            "label": "Device Type"
+                        },
+                        {
+                            "id": "deviceSerial",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "readOnly",
+                            "label": "Device Serial"
                         }
                     ]
                 }
@@ -87,20 +114,77 @@
                     "id": 0,
                     "items": [
                         {
-                            "id": "deviceName",
+                            "id": "assayType",
                             "controlType": {
                                 "component": "textField"
                             },
                             "type": "string",
-                            "label": "Assay Type"
+                            "label": "Assay"
                         }
                     ]
                 }
             ]
         },
         {
-            "id": "Start Date",
-            "label": "Start Date",
+            "id": "Result",
+            "label": "Result",
+            "rows": [
+                {
+                    "id": 0,
+                    "items": [
+                        {
+                            "id": "resultCategory1Name",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "labelId": "resultCategory1Label"
+                        },
+                        {
+                            "id": "resultCategory2Name",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "labelId": "resultCategory2Label",
+                            "hideIfNull": true
+                        },
+                        {
+                            "id": "resultText",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Result Text"
+                        }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": "errorCode",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Error Code"
+                        },
+                        {
+                            "id": "notes",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Notes"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Date",
+            "label": "Date",
             "rows": [
                 {
                     "id": 0,
@@ -112,6 +196,14 @@
                             },
                             "type": "string",
                             "label": "Start Date"
+                        },
+                        {
+                            "id": "endedOn",
+                            "controlType": {
+                                "component": "datePicker"
+                            },
+                            "type": "string",
+                            "label": "End Date"
                         }
                     ]
                 }
@@ -146,7 +238,7 @@
                                 "component": "datePicker"
                             },
                             "type": "readOnly",
-                            "label": "Sample Collection Date"
+                            "label": "Collected On"
                         }
                     ]
                 },
@@ -197,49 +289,72 @@
                             "label": "Case ID"
                         }
                     ]
-                },
-                {
-                    "id": 1,
-                    "items": [
-                        {
-                            "id": "deviceSerial",
-                            "controlType": {
-                                "component": "textField"
-                            },
-                            "type": "readOnly",
-                            "label": "Device Serial"
-                        }
-                    ]
                 }
             ]
         },
         {
-            "id": "Result",
-            "label": "Result",
+            "id": "TechicalDetails",
+            "label": "Technical Details",
             "rows": [
                 {
                     "id": 0,
                     "items": [
                         {
-                            "id": "resultCategory1Name",
+                            "id": "instrumentSerial",
                             "controlType": {
                                 "component": "textField"
                             },
                             "type": "string",
-                            "label": "COVID 19"
+                            "label": "Instrument Details"
                         },
                         {
-                            "id": "errorCode",
+                            "id": "moduleName",
                             "controlType": {
                                 "component": "textField"
                             },
                             "type": "string",
-                            "label": "Error Code"
+                            "label": "Module Name"
+                        },
+                        {
+                            "id": "moduleSerial",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Module Serial"
+                        }
+                    ]
+                },
+                {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": "consumableLot",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Consumable Lot"
+                        },
+                        {
+                            "id": "consumableSerial",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Consumable Serial"
+                        },
+                        {
+                            "id": "senderOperator",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Sender Operator"
                         }
                     ]
                 }
             ]
         }
-        
     ]
 }

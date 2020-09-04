@@ -7,9 +7,21 @@ const mergeFormConfigWithData = (data, config) => {
   const { sections } = config
   if (!isEmpty(data)) {
     sections.map(({ rows }) =>
-      rows.map(({ items }) =>
-        items.map(item => (item.initialValue = get(data, item.id)))
-      )
+      rows.map(rows => {
+        const { items } = rows
+
+        let newItems = []
+        items.map(item => {
+          item.initialValue = get(data, item.id)
+          
+          if (item.labelId) item.label = get(data, item.labelId)
+
+          // If field should be hidden when value is null and the value is null, then hide it
+          if (!item.hideIfNull || item.initialValue) newItems.push(item)
+        })
+
+        rows.items = newItems
+      })
     )
   }
   return config
