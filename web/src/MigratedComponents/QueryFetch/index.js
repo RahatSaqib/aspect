@@ -27,8 +27,9 @@ const mergeErrorNotifications = (endpoint, customErrorNotifications) => merge({
 }, customErrorNotifications)
 
 const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customErrorNotifications = {} }) => {
+  if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
+
   let body = null
-  
   const errorNotifications = mergeErrorNotifications(endpoint, customErrorNotifications)
 
   switch (method) {
