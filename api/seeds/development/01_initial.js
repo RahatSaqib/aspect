@@ -5189,7 +5189,6 @@ async function seed(knex) {
       modules.inventory.edit,
       modules.reporter.edit,
       modules.dashboard.report,
-      modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
@@ -5217,7 +5216,6 @@ async function seed(knex) {
       modules.browse.view,
       modules.treatmentStatus.edit,
       modules.dashboard.report,
-      modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
@@ -5240,7 +5238,6 @@ async function seed(knex) {
       modules.site.edit,
       modules.device.edit,
       modules.dashboard.report,
-      modules.dashboard.action,
       modules.dashboard.target,
       modules.dashboard.result,
       modules.dashboard.device,
@@ -5401,10 +5398,12 @@ async function seed(knex) {
         'description',
         'descriptionI18nKey',
         'dashboards',
+        'linkParams',
       ])
       widgetData.dashboards = JSON.stringify(
         widgetData.dashboards || { home: {} }
       )
+      widgetData.linkParams = JSON.stringify(widgetData.linkParams || {})
       const [widgetId] = await knex('DashboardWidget').insert(widgetData)
 
       const statWidgetData = _.pick(widget, [
@@ -5455,6 +5454,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.dashboardWidgetValidResultsPc,
     },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
@@ -5480,6 +5483,11 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.stockNotRecorded,
     },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
+
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sitesTitle },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
@@ -5510,6 +5518,11 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.stockNotRecorded,
     },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
+    },
+
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devicesTitle },
     {
@@ -5531,6 +5544,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdClinician,
       widgetId: widgetIds.stockNotRecorded,
+    },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      widgetId: widgetIds.averageTimeToModuleReplacement,
     },
   ])
 

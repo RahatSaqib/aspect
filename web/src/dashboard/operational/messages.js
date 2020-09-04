@@ -66,6 +66,10 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.totalPositiveResults',
     defaultMessage: 'Sent via Email',
   },
+  averageDaysForInstrumentReplacement: {
+    id: 'pages.OperationalData.instrumentsReplaced',
+    defaultMessage: 'Average Days for Instrument Replacement',
+  },
   withinTwoHoursOfTesting: {
     id: 'pages.OperationalData.withinTwoHoursOfTesting',
     defaultMessage: 'Within 2 hours of testing',
@@ -79,6 +83,17 @@ export const messages = defineMessages({
   dashboardWidgetSmsSentDescription: {
     id: 'pages.Status.dashboardWidgetSmsSentDescription',
     defaultMessage: 'The total number of text messages sent in the month',
+  },
+
+  averageTimeToModuleReplacementTitle: {
+    id: 'pages.OperationalData.averageTimeToModuleReplacementTitle',
+    defaultMessage: 'Average time to module replacement',
+  },
+  averageTimeToModuleReplacementDescription: {
+    id: 'pages.OperationalData.averageTimeToModuleReplacementDescription',
+    defaultMessage: `The average time (in days) between module replacement - i.e. 
+      between day module serial was marked as disabled until a
+      different module serial detected in that slot.`,
   },
 })
 

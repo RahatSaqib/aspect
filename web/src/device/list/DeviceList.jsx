@@ -55,7 +55,7 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   {
     deviceName: true,
-    requiredPermissions: [],
+    requiredPermissions: ['device'],
   },
   {
     deviceType: true,

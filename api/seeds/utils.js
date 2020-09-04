@@ -2968,6 +2968,18 @@ async function mapJobFunctionPermissions(
   if (insertJobs.length > 0) await Promise.all(insertJobs)
 }
 
+/**
+ * Removes the jobs and permissions for the specified ids
+ * @param {object} knex Knex instance
+ * @param {array} permissionsToRemove An array of permissions ids
+ */
+async function removePermissions(knex, permissions) {
+  await knex('JobFunctionPermission')
+    .whereIn('permissionId', permissions)
+    .delete()
+  await knex('Permission').whereIn('id', permissions).delete()
+}
+
 async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
   // fill in default value for all records - this is needed because `.defaultsTo()` can not be applied for JSON field
   // but not critical if field dashboards remains null - we handle setting default value of { home: {} } in both API and WEB
@@ -2987,6 +2999,19 @@ async function seedDashboardsJsonInDashboardWidget(knex, widgets) {
             dashboards: JSON.stringify(dashboards),
           })
     )
+  )
+}
+
+/**
+ * Updates all the defined props searching by module and activity
+ * @param {object} knex Knex instance
+ * @param {array} permissions An array of permissions definitions. The next props are mandatory: module, activity. Currently, you can also specify description.
+ */
+async function updatePermissions(knex, permissions) {
+  return Promise.each(permissions, async ({ module, activity, ...restProps }) =>
+    knex('Permission')
+      .where({ module, activity })
+      .update({ ...restProps })
   )
 }
 
@@ -3172,6 +3197,8 @@ module.exports = {
   mapJobFunctionPermissions,
   seedDashboardsJsonInDashboardWidget,
   removeAndReplaceActivity,
+  removePermissions,
+  updatePermissions,
 
   seedIssueType,
   seedIssueEscalationTriggersForPartner,

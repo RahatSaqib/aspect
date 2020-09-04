@@ -18,7 +18,7 @@ const { exportSites } = require('./serviceReports')
 
 function listSitesBaseConfig() {
   return {
-    auth: { scope: ['site:view', 'site:edit'] },
+    auth: { scope: ['site:view'] },
     validate: {
       query: {
         siteIds: Joi.string().allow('').description('Filter for site ids'),
@@ -76,7 +76,7 @@ const routes = [
     config: {
       description: 'Site Detail',
       notes: 'Detail of a site',
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
       validate: {
         params: {
           siteId: Joi.string().description('Site id').required(),
@@ -125,7 +125,7 @@ const routes = [
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",
-      auth: { scope: ['site:view', 'site:edit'] },
+      auth: { scope: ['site:view'] },
       validate: {
         query: {
           tags: [

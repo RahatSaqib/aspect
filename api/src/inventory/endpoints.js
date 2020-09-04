@@ -81,7 +81,7 @@ const routes = [
     config: {
       description: 'List of Consumables on Hand At Site',
       notes: 'Pageable and sortable list of inventory items',
-      auth: { scope: ['inventory:view', 'inventory:edit'] },
+      auth: { scope: ['inventory:view'] },
       validate: {
         query: {
           ...inventoryFilters,

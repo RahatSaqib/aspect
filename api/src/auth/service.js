@@ -761,7 +761,7 @@ async function acceptLicense(request) {
   return refreshToken(request)
 }
 
-// / Revoke/Grantt access to specific user
+// / Revoke/Grant access to specific user
 async function revokeUsersToken(userId, revoke) {
   await query(
     'change revoked state for the specific user in refresh token tables'

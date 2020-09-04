@@ -27,8 +27,15 @@ const WIDGET_GROUP_KEYS = {
   DEVICES: 'summaryWidgetGroupDevices',
   SERVICE: 'summaryWidgetGroupService',
 }
+
+const WIDGET_FILTER_KEYS = {
+  LAST_THIRTY_DAYS: 'last30Days',
+  CURRENT_MONTH: 'currentMonth',
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
+  WIDGET_FILTER_KEYS,
   stat: [
     {
       jobFunctions: ['all'],
@@ -74,6 +81,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 1,
       externalId: 'dashboardWidgetTestsPerDayTitle',
       description: 'Average number of tests per weekday conducted this month.',
@@ -110,6 +121,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 2,
       externalId: 'dashboardWidgetValidResultsPc',
       description:
@@ -174,6 +189,9 @@ module.exports = {
       statUnit: '{unit} in last month',
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
+      linkParams: {
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 0,
       externalId: 'utilizationRate',
       description:
@@ -442,6 +460,10 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetErrorRate',
       link: '/browse/result',
+      linkParams: {
+        deviceName: 'GeneXpert',
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 3,
       externalId: 'errorRate',
       description:
@@ -537,6 +559,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
+      linkParams: {},
       sortOrder: 1,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
@@ -657,6 +680,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'unusedModulesStats',
       link: '/browse/device',
+      linkParams: {},
       sortOrder: 3,
       externalId: 'unusedModules',
       description:
@@ -671,49 +695,53 @@ module.exports = {
     },
     {
       icon: 'MdSwapVert',
-      title: 'Instruments Replaced',
+      title: 'Average Days for Instrument Replacement',
       titleI18nKey: 'instrumentsReplaced',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT
-      COUNT(instrumentCount) AS cnt
-      FROM(
-        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
-        FROM Result AS r
-        INNER JOIN Device AS d ON d.id = r.deviceId
+      sqlForIndicator: `
+      SELECT
+        ROUND(IFNULL(SUM(days)/count(deviceId), 0)) AS cnt
+      FROM (
+      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
+      FROM Result AS r1
+          INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
+          INNER JOIN Device AS d ON d.id = r1.deviceId
+          INNER JOIN Site AS s ON d.siteId = s.id
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      WHERE YEAR(r1.endedOn) = YEAR(NOW())
+                AND
+                MONTH(r1.endedOn) = MONTH(NOW())
+                AND
+                dt.externalId = 'CepheidGeneXpert'
+      GROUP BY deviceId) AS innerQuery`,
+      sqlForStatUnit: `
+      SELECT
+      ROUND(IFNULL(
+        SUM(days)/count(deviceId), 0)) AS cnt
+      FROM (
+      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
+      FROM Result AS r1
+        INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
+        INNER JOIN Device AS d ON d.id = r1.deviceId
         INNER JOIN Site AS s ON d.siteId = s.id
-        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-        WHERE YEAR(r.endedOn) = YEAR(NOW())
-              AND
-              MONTH(r.endedOn) = MONTH(NOW())
-              AND
-              dt.externalId = 'CepheidGeneXpert'
-        GROUP BY r.deviceId
-        HAVING instrumentCount > 1) AS innerQuery`,
-      sqlForStatUnit: `SELECT
-      COUNT(instrumentCount) AS cnt
-      FROM(
-        SELECT r.deviceId, COUNT(DISTINCT r.instrumentSerial) AS instrumentCount
-        FROM Result AS r
-        INNER JOIN Device AS d ON d.id = r.deviceId
-        INNER JOIN Site AS s ON d.siteId = s.id
-        LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-          WHERE
-          YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND
-          dt.externalId = 'CepheidGeneXpert'
-        GROUP BY r.deviceId
-        HAVING instrumentCount > 1) AS innerQuery`,
+      WHERE
+            YEAR(r1.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            AND
+            MONTH(r1.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            AND
+            dt.externalId = 'CepheidGeneXpert'
+      GROUP BY deviceId) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
+      linkParams: {},
       sortOrder: 4,
       externalId: 'instrumentsReplaced',
-      description: 'The number of instruments that were replaced.',
+      description: 'The average days for an instrument replacement.',
       descriptionI18nKey: 'instrumentsReplacedDescription',
       dashboards: {
         operational: {
@@ -759,7 +787,7 @@ module.exports = {
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfEmail',
-      link: '/browse/notification',
+      link: '/operational-data#resultsTransmitted',
       sortOrder: 9,
       externalId: 'averageRecipientsOfEmail',
       description:
@@ -809,7 +837,7 @@ module.exports = {
       ) AS innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
-      link: '/browse/notification',
+      link: '/operational-data#resultsTransmitted',
       sortOrder: 10,
       externalId: 'averageRecipientsOfSms',
       description:
@@ -966,6 +994,97 @@ module.exports = {
       description:
         'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
       descriptionI18nKey: 'averageDaysModuleSwapDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
+    {
+      icon: 'MdSwapVert',
+      title: 'Average time to module replacement',
+      titleI18nKey: 'averageTimeToModuleReplacementTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+        SELECT 
+          IFNULL(ROUND(AVG(
+            DATEDIFF(logResolved.changedOn, logActive.changedOn)
+          )), 0) AS cnt
+        FROM Issue AS i
+          INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+          /*
+            --------------------
+            log with status Active
+            --------------------
+          */
+          INNER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+          INNER JOIN IssueStatus AS isActive ON logActive.issueStatusId = isActive.id
+          /*
+            --------------------
+            log with status Resolved
+            --------------------
+          */
+          INNER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+          INNER JOIN IssueStatus AS isResolved ON logResolved.issueStatusId = isResolved.id
+          /*
+            --------------------
+            joins for constraints
+            --------------------
+          */
+          INNER JOIN Device AS d on i.deviceId = d.id
+          INNER JOIN Site AS s ON d.siteId = s.id
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        WHERE it.externalId = 'ModuleDisabled'
+          AND isActive.externalId = 'Active'
+          AND isResolved.externalId = 'Resolved'
+          AND YEAR(logResolved.createdOn) = YEAR(NOW())
+          AND MONTH(logResolved.createdOn) = MONTH(NOW())
+      `,
+      sqlForStatUnit: `
+        SELECT 
+        IFNULL(ROUND(AVG(
+          DATEDIFF(logResolved.changedOn, logActive.changedOn)
+        )), 0) AS cnt
+      FROM Issue AS i
+        INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+        /*
+          --------------------
+          log with status Active
+          --------------------
+        */
+        INNER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+        INNER JOIN IssueStatus AS isActive ON logActive.issueStatusId = isActive.id
+        /*
+          --------------------
+          log with status Resolved
+          --------------------
+        */
+        INNER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+        INNER JOIN IssueStatus AS isResolved ON logResolved.issueStatusId = isResolved.id
+        /*
+          --------------------
+          joins for constraints
+          --------------------
+        */
+        INNER JOIN Device AS d on i.deviceId = d.id
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      WHERE it.externalId = 'ModuleDisabled'
+        AND isActive.externalId = 'Active'
+        AND isResolved.externalId = 'Resolved'
+        AND YEAR(logResolved.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      `,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
+      link: '/browse/notification',
+      sortOrder: 25,
+      externalId: 'averageTimeToModuleReplacement',
+      description: `The average time (in days) between module replacement - i.e. 
+        between day module serial was marked as disabled until a
+        different module serial detected in that slot.`,
+      descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,

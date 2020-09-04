@@ -8,13 +8,68 @@ import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
 import { buildMessagesFromI18nKeys } from './Helpers'
+import {
+  getTimePeriod,
+  getAllDaysInCurrentMonth,
+} from '../Graphs/Helpers/Formatters/datetime'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
+
+const buildDateRange = term => {
+  let dateRange
+  switch (true) {
+    case term === 'last30Days':
+      dateRange = {
+        minDate: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
+        maxDate: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+      }
+      break
+
+    case term === 'currentMonth':
+      dateRange = {
+        minDate: getAllDaysInCurrentMonth().start,
+        maxDate: getAllDaysInCurrentMonth(true).end,
+      }
+      break
+
+    default:
+      dateRange = {}
+      break
+  }
+  return dateRange
+}
+
+const buildWidgetToLinkParams = (link, linkParams) => {
+  const inParams = JSON.parse(linkParams)
+  if (
+    inParams &&
+    Object.keys(inParams).length !== 0 &&
+    inParams.constructor === Object
+  ) {
+    let tempParams = {}
+    for (const [key, value] of Object.entries(inParams)) {
+      switch (true) {
+        case key === 'dateRange':
+          tempParams = { ...tempParams, ...buildDateRange(value) }
+          break
+
+        default:
+          tempParams[key] = value
+          break
+      }
+    }
+    return `${link}?filters=${encodeURIComponent(
+      new URLSearchParams(tempParams).toString()
+    )}`
+  }
+  return link
+}
 
 const AspectWidget = ({
   data,
   data: {
     link,
+    linkParams,
     icon,
     description,
     count,
@@ -29,10 +84,11 @@ const AspectWidget = ({
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const messages = defineMessage(buildMessagesFromI18nKeys(data))
+  const linkParam = buildWidgetToLinkParams(link, linkParams)
 
   return (
     <AspectLink
-      to={link}
+      to={linkParam}
       className={cssClasses('Summary', {
         'Summary_Link--disabled': !link,
       })}
@@ -89,6 +145,7 @@ const AspectWidget = ({
 AspectWidget.propTypes = {
   data: PropTypes.shape({
     link: PropTypes.string,
+    linkParams: PropTypes.string,
     icon: PropTypes.string,
     description: PropTypes.string,
     count: PropTypes.string,
