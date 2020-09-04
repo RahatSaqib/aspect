@@ -44,8 +44,6 @@ const buildWidgetToLinkParams = (link, linkParams) => {
   if (Object.keys(inParams).length !== 0 && inParams.constructor === Object) {
     let tempParams = {}
     for (const [key, value] of Object.entries(inParams)) {
-      // console.log(`${key}: ${value}`)
-
       switch (true) {
         case key === 'dateRange':
           tempParams = { ...tempParams, ...buildDateRange(value) }
@@ -56,11 +54,9 @@ const buildWidgetToLinkParams = (link, linkParams) => {
           break
       }
     }
-    const newLink = `${link}?filters=${encodeURIComponent(
+    return `${link}?filters=${encodeURIComponent(
       new URLSearchParams(tempParams).toString()
     )}`
-    console.log(newLink)
-    return newLink
   }
   return link
 }
