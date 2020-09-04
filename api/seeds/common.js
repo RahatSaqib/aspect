@@ -1868,6 +1868,7 @@ async function upsertDashboardWidgets(
         'subTitleI18nKey',
         'sqlForIndicator',
         'link',
+        'linkParams',
         'sortOrder',
         'externalId',
         'description',
@@ -1877,6 +1878,7 @@ async function upsertDashboardWidgets(
       widgetData.dashboards = JSON.stringify(
         widgetData.dashboards || { home: {} }
       )
+      widgetData.linkParams = JSON.stringify(widgetData.linkParams || {})
 
       let { id: widgetId } =
         (await knex('DashboardWidget')

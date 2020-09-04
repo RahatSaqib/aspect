@@ -65,7 +65,7 @@ const fetchWrapperForQueries = ({
     errorNotifications,
     body,
   })
-    .then(({ data }) => data)
+    .then(data => data)
     .catch(err => err)
 }
 
