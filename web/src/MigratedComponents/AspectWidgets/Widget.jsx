@@ -41,7 +41,11 @@ const buildDateRange = term => {
 
 const buildWidgetToLinkParams = (link, linkParams) => {
   const inParams = JSON.parse(linkParams)
-  if (Object.keys(inParams).length !== 0 && inParams.constructor === Object) {
+  if (
+    inParams &&
+    Object.keys(inParams).length !== 0 &&
+    inParams.constructor === Object
+  ) {
     let tempParams = {}
     for (const [key, value] of Object.entries(inParams)) {
       switch (true) {
