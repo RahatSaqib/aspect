@@ -979,81 +979,75 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-        SELECT
-          IFNULL(ROUND(AVG(days)), 0) AS cnt
-        FROM (
-          SELECT 
-            ABS(DATEDIFF(logResolved.changedOn, logActive.changedOn)) AS days
-          FROM Issue AS i
-            INNER JOIN IssueType AS it ON i.issueTypeId = it.id
-            /*
-              --------------------
-              log with status Active
-              --------------------
-            */
-            LEFT OUTER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
-            LEFT OUTER JOIN IssueStatus AS isActive ON 
-                    logActive.issueStatusId = isActive.id
-                AND isActive.externalId = 'Active'
-            /*
-              --------------------
-              log with status Resolved
-              --------------------
-            */
-            LEFT OUTER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
-            LEFT OUTER JOIN IssueStatus AS isResolved ON 
-                    logResolved.issueStatusId = isResolved.id
-                AND isResolved.externalId = 'Resolved'
-            /*
-              --------------------
-              joins for constraints
-              --------------------
-            */
-            INNER JOIN Device AS d on i.deviceId = d.id
-            INNER JOIN Site AS s ON d.siteId = s.id
-            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          WHERE it.externalId = 'ModuleDisabled'
-            AND YEAR(logResolved.createdOn) = YEAR(NOW())
-            AND MONTH(logResolved.createdOn) = MONTH(NOW())
-        ) as innerQuery`,
+        SELECT 
+          IFNULL(ROUND(AVG(
+            DATEDIFF(logResolved.changedOn, logActive.changedOn)
+          )), 0) AS cnt
+        FROM Issue AS i
+          INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+          /*
+            --------------------
+            log with status Active
+            --------------------
+          */
+          INNER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+          INNER JOIN IssueStatus AS isActive ON logActive.issueStatusId = isActive.id
+          /*
+            --------------------
+            log with status Resolved
+            --------------------
+          */
+          INNER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+          INNER JOIN IssueStatus AS isResolved ON logResolved.issueStatusId = isResolved.id
+          /*
+            --------------------
+            joins for constraints
+            --------------------
+          */
+          INNER JOIN Device AS d on i.deviceId = d.id
+          INNER JOIN Site AS s ON d.siteId = s.id
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        WHERE it.externalId = 'ModuleDisabled'
+          AND isActive.externalId = 'Active'
+          AND isResolved.externalId = 'Resolved'
+          AND YEAR(logResolved.createdOn) = YEAR(NOW())
+          AND MONTH(logResolved.createdOn) = MONTH(NOW())
+      `,
       sqlForStatUnit: `
-        SELECT
-          IFNULL(ROUND(AVG(days)), 0) AS cnt
-        FROM (
-          SELECT 
-            ABS(DATEDIFF(logResolved.changedOn, logActive.changedOn)) AS days
-          FROM Issue AS i
-            INNER JOIN IssueType AS it ON i.issueTypeId = it.id
-            /*
-              --------------------
-              log with status Active
-              --------------------
-            */
-            LEFT OUTER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
-            LEFT OUTER JOIN IssueStatus AS isActive ON 
-                    logActive.issueStatusId = isActive.id
-                AND isActive.externalId = 'Active'
-            /*
-              --------------------
-              log with status Resolved
-              --------------------
-            */
-            LEFT OUTER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
-            LEFT OUTER JOIN IssueStatus AS isResolved ON 
-                    logResolved.issueStatusId = isResolved.id
-                AND isResolved.externalId = 'Resolved'
-            /*
-              --------------------
-              joins for constraints
-              --------------------
-            */
-            INNER JOIN Device AS d on i.deviceId = d.id
-            INNER JOIN Site AS s ON d.siteId = s.id
-            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          WHERE it.externalId = 'ModuleDisabled'
-            AND YEAR(logResolved.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-            AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-        ) as innerQuery`,
+        SELECT 
+        IFNULL(ROUND(AVG(
+          DATEDIFF(logResolved.changedOn, logActive.changedOn)
+        )), 0) AS cnt
+      FROM Issue AS i
+        INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+        /*
+          --------------------
+          log with status Active
+          --------------------
+        */
+        INNER JOIN IssueStatusLog AS logActive ON i.id = logActive.issueId
+        INNER JOIN IssueStatus AS isActive ON logActive.issueStatusId = isActive.id
+        /*
+          --------------------
+          log with status Resolved
+          --------------------
+        */
+        INNER JOIN IssueStatusLog AS logResolved ON i.id = logResolved.issueId
+        INNER JOIN IssueStatus AS isResolved ON logResolved.issueStatusId = isResolved.id
+        /*
+          --------------------
+          joins for constraints
+          --------------------
+        */
+        INNER JOIN Device AS d on i.deviceId = d.id
+        INNER JOIN Site AS s ON d.siteId = s.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      WHERE it.externalId = 'ModuleDisabled'
+        AND isActive.externalId = 'Active'
+        AND isResolved.externalId = 'Resolved'
+        AND YEAR(logResolved.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      `,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
       link: '/browse/notification',
