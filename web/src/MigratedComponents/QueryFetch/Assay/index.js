@@ -4,5 +4,5 @@ const ASSAY_LIST = {
 }
 
 module.exports = {
-  ASSAY_LIST
+  ASSAY_LIST,
 }

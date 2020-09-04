@@ -27,7 +27,7 @@ export const OperationalData = ({ intl, history, location, loading }) => {
   const { resultsTransmitted } = resultsTransmittedGraphs
 
   const { isError, data: assays, error } = useQuery(ASSAY_LIST.KEY, async () =>
-    fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT})
+    fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT })
   )
 
   if (isError) {

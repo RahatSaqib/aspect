@@ -13,7 +13,10 @@ export const SummaryStatus = ({ className, dashboard }) => {
   const { isLoading, isError, data, error } = useQuery(
     DASHBOARD_SUMMARY_WIDGETS.KEY,
     async () =>
-      fetchWrapperForQueries({ endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT, params: { dashboard }})
+      fetchWrapperForQueries({
+        endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT,
+        params: { dashboard },
+      })
   )
 
   if (isError) {

@@ -4,5 +4,5 @@ const RESULT_DETAILS = {
 }
 
 module.exports = {
-  RESULT_DETAILS
+  RESULT_DETAILS,
 }

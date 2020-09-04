@@ -6,48 +6,64 @@ import {
   errorInsufficientScope,
 } from '../../error/CommonErrorNotifications'
 
-const mergeErrorNotifications = (endpoint, customErrorNotifications) => merge({
-  403: errorInsufficientScope(
-    defineMessages({
-      title: {
-        id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.403.title',
-        defaultMessage: 'Insufficient Permissions',
-      },
-    })
-  ),
-  default: errorPleaseTryAgainInAFewMinutes(
-    defineMessages({
-      title: {
-        id:
-          'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
-        defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
-      },
-    })
-  ),
-}, customErrorNotifications)
+const mergeErrorNotifications = (endpoint, customErrorNotifications) =>
+  merge(
+    {
+      403: errorInsufficientScope(
+        defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.403.title',
+            defaultMessage: 'Insufficient Permissions',
+          },
+        })
+      ),
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
+            defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
+          },
+        })
+      ),
+    },
+    customErrorNotifications
+  )
 
-const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customErrorNotifications = {} }) => {
+const fetchWrapperForQueries = ({
+  endpoint,
+  method = 'GET',
+  params = {},
+  customErrorNotifications = {},
+}) => {
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
 
   let body = null
-  const errorNotifications = mergeErrorNotifications(endpoint, customErrorNotifications)
+  const errorNotifications = mergeErrorNotifications(
+    endpoint,
+    customErrorNotifications
+  )
 
   switch (method) {
     case 'POST':
     case 'PUT':
       body = JSON.stringify(params)
-      breaK
+      break
     case 'GET':
-      endpoint += `?${Object.keys(params).map(k => `${k}=${encodeURIComponent(params[k])}`).join('&')}`
+      endpoint += `?${Object.keys(params)
+        .map(k => `${k}=${encodeURIComponent(params[k])}`)
+        .join('&')}`
       break
     default:
-      throw new Error(`Method ${method} is not supported by fetchWrapperForQueries function`)
+      throw new Error(
+        `Method ${method} is not supported by fetchWrapperForQueries function`
+      )
   }
 
   return aspectFetch(endpoint, {
     method,
     errorNotifications,
-    body
+    body,
   })
     .then(({ data }) => data)
     .catch(err => err)
