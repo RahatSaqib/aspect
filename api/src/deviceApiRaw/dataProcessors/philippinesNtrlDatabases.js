@@ -2253,13 +2253,19 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             assayId: assayTbLampId,
             sampleId: samples[0].id,
             reportableSiteId,
-            startedOn: geneXpertResultData.processingDate,
-            endedOn: geneXpertResultData.processingDate,
+            startedOn:
+              smearResultData.dateReleased ||
+              geneXpertResultData.processingDate,
+            endedOn:
+              smearResultData.dateReleased ||
+              geneXpertResultData.processingDate,
             resultData: JSON.stringify({
               encodedResult: tbLampResultData,
               resultSignOff,
             }),
-            senderOperator: geneXpertResultData.examiner,
+            senderOperator:
+              smearResultData.laboratoryTechnician ||
+              geneXpertResultData.examiner,
           }
           const resultCategory1Id =
             resultCategoryMappings[tbLampResultData.tbLampResult]
