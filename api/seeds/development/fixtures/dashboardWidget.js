@@ -1,6 +1,6 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
-const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+const { WIDGET_GROUP_KEYS, WIDGET_FILTER_KEYS } = dashboardWidgetsBase
 
 module.exports = {
   stat: [
@@ -28,6 +28,9 @@ module.exports = {
       subTitleI18nKey: null,
       sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1`,
       link: '/browse/device',
+      linkParams: {
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
       sortOrder: 1,
       externalId: 'devicesTitle',
       description: 'The number of lab devices',
@@ -224,6 +227,12 @@ module.exports = {
         x => x.externalId === 'averageDaysModuleSwap'
       ),
       sortOrder: 2,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageTimeToModuleReplacement'
+      ),
+      sortOrder: 25,
     },
   ],
 }

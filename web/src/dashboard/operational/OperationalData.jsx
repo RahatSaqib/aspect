@@ -24,8 +24,9 @@ export const OperationalData = ({ intl, history, location, loading }) => {
   const { deviceStatus } = deviceStatusGraphs
   const { resultsTransmitted } = resultsTransmittedGraphs
 
-  const { isError, data: assays, error } = useQuery('assays', async () =>
-    fetchWrapperForQueries('/assay')
+  const { isError, data: { data: assays } = false, error } = useQuery(
+    'assays',
+    async () => fetchWrapperForQueries('/assay')
   )
 
   if (isError) {

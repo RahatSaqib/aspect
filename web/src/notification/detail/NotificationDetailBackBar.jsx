@@ -1,6 +1,8 @@
 import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
+import PropTypes from 'prop-types'
+
 import AspectButton from '../../components/shared/AspectButton'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 
@@ -55,34 +57,51 @@ export const NotificationDetailBackBar = ({
       {
         label: intl.formatMessage(messages.view),
         path: `/browse/notification/:notificationId`,
+        hidden: true,
       },
       {
         label: intl.formatMessage(messages.edit),
         path: `/browse/notification/:notificationId/edit`,
         disabled,
+        hidden: true,
       },
       {
         label: intl.formatMessage(messages.history),
         path: `/browse/notification/:notificationId/history`,
+        hidden: false,
       },
-    ].map(({ label, path, disabled }) => (
-      <AspectButton
-        key={path}
-        onClick={({
-          currentTarget: {
-            dataset: { path },
-          },
-        }) => onPathClick(path)}
-        data-path={path}
-        color="primary"
-        variant="contained"
-        inverse={match.path !== path}
-        disabled={disabled}
-      >
-        {label}
-      </AspectButton>
-    ))}
+    ].map(
+      ({ label, path, disabled, hidden }) =>
+        !hidden && (
+          <AspectButton
+            key={path}
+            onClick={({
+              currentTarget: {
+                dataset: { path },
+              },
+            }) => onPathClick(path)}
+            data-path={path}
+            color="primary"
+            variant="contained"
+            inverse={match.path !== path}
+            disabled={disabled}
+          >
+            {label}
+          </AspectButton>
+        )
+    )}
   </DetailBackBar>
 )
+
+NotificationDetailBackBar.propTypes = {
+  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  match: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  onBackClick: PropTypes.func.isRequired,
+  onPathClick: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  disabled: PropTypes.bool.isRequired,
+}
 
 export default enhance(NotificationDetailBackBar)
