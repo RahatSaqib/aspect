@@ -1,10 +1,15 @@
 /**
- * TODO: Needs a healthy refactor!
+ * TODO: Lifecycles refactor
+ * https://ops.systemone.id/browse/ASP-1395
  */
-import classnames from 'classnames/bind'
-import _ from 'lodash'
-import Immutable from 'immutable'
 import React from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import without from 'lodash/without'
+import partial from 'lodash/partial'
+import identity from 'lodash/identity'
+import Immutable from 'immutable'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
@@ -154,14 +159,14 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
-const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
+const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
   injectIntl,
@@ -266,13 +271,13 @@ const enhance = compose(
   })
 )
 
-const messageByI18nKey = _.partial(
+const messageByI18nKey = partial(
   // Explicit declare messageBy[i18nKey] so that the keys are searchable.
   (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
   {
     resultCategoryCopiesMl: (title, intl) =>
       intl.formatMessage(messages.resultCategoryCopiesMl),
-    default: _.identity,
+    default: identity,
   }
 )
 
@@ -440,6 +445,22 @@ export const ResultList = ({
       </DataTableCard>
     </div>
   )
+}
+
+ResultList.propTypes = {
+  intl: PropTypes.oneOf([PropTypes.object]).isRequired,
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  table: PropTypes.oneOf([PropTypes.object]).isRequired,
+  items: PropTypes.oneOf([PropTypes.object]).isRequired,
+  sortCol: PropTypes.string.isRequired,
+  sortDir: PropTypes.string.isRequired,
+  pageAt: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  onExportClick: PropTypes.func.isRequired,
+  onAddNewButtonClick: PropTypes.func.isRequired,
+  onRowClick: PropTypes.func.isRequired,
+  reducedFilters: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
 export default enhance(ResultList)
