@@ -190,7 +190,6 @@ module.exports = {
       statUnitI18nKey: 'dashboardWidgetUtilizationRate',
       link: '/browse/device',
       linkParams: {
-        deviceTypeId: 2,
         dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
       },
       sortOrder: 0,
@@ -560,9 +559,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
-      linkParams: {
-        deviceTypeId: 2,
-      },
+      linkParams: {},
       sortOrder: 1,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
@@ -683,9 +680,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'unusedModulesStats',
       link: '/browse/device',
-      linkParams: {
-        deviceTypeId: 2,
-      },
+      linkParams: {},
       sortOrder: 3,
       externalId: 'unusedModules',
       description:
@@ -740,9 +735,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
-      linkParams: {
-        deviceTypeId: 2,
-      },
+      linkParams: {},
       sortOrder: 4,
       externalId: 'instrumentsReplaced',
       description: 'The number of instruments that were replaced.',
