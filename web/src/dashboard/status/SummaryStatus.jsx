@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
 import AspectWidgets from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import { DASHBOARD_SUMMARY_WIDGETS } from '../../MigratedComponents/QueryFetch/Dashboard/index'
+import DASHBOARD_SUMMARY_WIDGETS from '../../MigratedComponents/QueryFetch/Dashboard/index'
 
 export const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
