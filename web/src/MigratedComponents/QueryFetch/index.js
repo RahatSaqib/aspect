@@ -14,8 +14,10 @@ const fetchWrapperForQueries = ({
   switch (method) {
     case 'POST':
     case 'PUT':
+    case 'PATCH':
       body = JSON.stringify(params)
       break
+    case 'DELETE':
     case 'GET':
       endpoint += `?${Object.keys(params)
         .map(k => `${k}=${encodeURIComponent(params[k])}`)
