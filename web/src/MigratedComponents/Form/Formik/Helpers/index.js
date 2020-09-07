@@ -1,27 +1,39 @@
 import * as Yup from 'yup'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
+import remove from 'lodash/remove'
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config) => {
   const { sections } = config
   if (!isEmpty(data)) {
-    sections.map(({ rows }) =>
-      rows.map(rows => {
-        const { items } = rows
+    sections.map(
+      ({ rows }) =>
+        rows.map(({ items }) =>
+          items.reduce((acc, curr) => {
+            acc = curr
+            acc.label = get(data, curr.label) || curr.label
+            acc.initialValue = get(data, curr.id)
+            return acc
+          }, [])
+        )
+      // rows.map(rows => {
+      //   const { items } = rows
 
-        let newItems = []
-        items.map(item => {
-          item.initialValue = get(data, item.id)
-          
-          if (item.labelId) item.label = get(data, item.labelId)
+      //   const newItems = []
+      //   items.map(item => {
+      //     item.initialValue = get(data, item.id)
+      //     // console.log(get(data, item.labelId), item.label)
 
-          // If field should be hidden when value is null and the value is null, then hide it
-          if (!item.hideIfNull || item.initialValue) newItems.push(item)
-        })
+      //     // if (item.labelId) item.label = get(data, item.labelId)
+      //     item.label = get(data, item.labelId) || item.label
 
-        rows.items = newItems
-      })
+      //     // If field should be hidden when value is null and the value is null, then hide it
+      //     if (!item.hideIfNull || item.initialValue) newItems.push(item)
+      //   })
+
+      //   rows.items = newItems
+      // })
     )
   }
   return config
