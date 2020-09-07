@@ -135,6 +135,7 @@
                     "items": [
                         {
                             "id": "resultCategory1Name",
+                            "type": "readOnly"
                             "controlType": {
                                 "component": "textField"
                             },
