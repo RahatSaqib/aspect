@@ -158,7 +158,8 @@
                                 "component": "textField"
                             },
                             "type": "string",
-                            "label": "Result Text"
+                            "label": "Result Text",
+                            "type": "readOnly"
                         }
                     ]
                 },
