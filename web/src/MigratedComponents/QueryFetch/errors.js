@@ -4,7 +4,7 @@ import {
   errorInsufficientScope,
 } from '../../error/CommonErrorNotifications'
 
-export const errors = {
+const defaultErrors = endpoint => ({
   403: errorInsufficientScope(
     defineMessages({
       title: {
@@ -13,20 +13,14 @@ export const errors = {
       },
     })
   ),
-}
+  default: errorPleaseTryAgainInAFewMinutes(
+    defineMessages({
+      title: {
+        id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
+        defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
+      },
+    })
+  ),
+})
 
-export const mergeErrors = (endpoint, customErrorNotifications) => {
-  return {
-    ...errors,
-    default: errorPleaseTryAgainInAFewMinutes(
-      defineMessages({
-        title: {
-          id:
-            'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
-          defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
-        },
-      })
-    ),
-    ...customErrorNotifications,
-  }
-}
+export default defaultErrors
