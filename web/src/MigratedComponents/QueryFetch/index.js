@@ -10,7 +10,7 @@ const fetchWrapperForQueries = ({
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
 
   let body = null
-  
+
   switch (method) {
     case 'POST':
     case 'PUT':
@@ -21,7 +21,9 @@ const fetchWrapperForQueries = ({
     case 'GET':
       if (params && typeof params === 'object') {
         const keys = Object.keys(params)
-        endpoint += keys && `?${keys.map(k => `${k}=${encodeURIComponent(params[k])}`).join('&')}`
+        endpoint +=
+          keys &&
+          `?${keys.map(k => `${k}=${encodeURIComponent(params[k])}`).join('&')}`
       }
       break
     default:
