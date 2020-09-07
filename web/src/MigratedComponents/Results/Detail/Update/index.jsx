@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { useQuery } from 'react-query'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import { mergeFormConfigWithData } from '../../../Form/Formik/Helpers'
-import { useQuery } from 'react-query'
 import AspectForm from '../../../Form'
 import FormActions from '../../../Form/formActions'
 import Shell from '../../../Shell'
@@ -25,11 +25,11 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
     isError,
     data: { data: formData } = false,
     error,
-    isLoading
+    isLoading,
   } = useQuery(RESULT_DETAIL.KEY, async () =>
     fetchWrapperForQueries({
       endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-      errors
+      errors,
     })
   )
 
@@ -44,32 +44,29 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
 
   return (
     <Shell>
-      {!isLoading && formConfig ?
-        (
-          <FormikProvider config={formConfig}>
-            <ShellHeader
-              icon={FaNotesMedical}
-              title={`${formConfig.title}: ${patienId}`}
-            >
-              <FormActions config={formConfig} />
-            </ShellHeader>
-            <ShellContent>
-              <AspectForm config={formConfig} />
-            </ShellContent>
-            <ShellFooter />
-          </FormikProvider>
-        ) :
-        (
-          <CircularProgress />
-        )
-      }
+      {!isLoading && formConfig ? (
+        <FormikProvider config={formConfig}>
+          <ShellHeader
+            icon={FaNotesMedical}
+            title={`${formConfig.title}: ${patienId}`}
+          >
+            <FormActions config={formConfig} />
+          </ShellHeader>
+          <ShellContent>
+            <AspectForm config={formConfig} />
+          </ShellContent>
+          <ShellFooter />
+        </FormikProvider>
+      ) : (
+        <CircularProgress />
+      )}
     </Shell>
   )
 }
 
 AspectResultDetail.propTypes = {
   formSchema: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  resultId: PropTypes.number.isRequired
+  resultId: PropTypes.number.isRequired,
 }
 
 export default AspectResultDetail

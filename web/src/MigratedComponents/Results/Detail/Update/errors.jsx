@@ -1,8 +1,8 @@
+import { defineMessages } from 'react-intl'
 import {
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
 } from '../../../../error/CommonErrorNotifications'
-import { defineMessages } from 'react-intl'
 
 const ERRORS = {
   404: errorNotFound(
@@ -16,8 +16,7 @@ const ERRORS = {
   default: errorPleaseTryAgainInAFewMinutes(
     defineMessages({
       title: {
-        id:
-          'errorResponseMessages.fetchResultsDetailDetails.GET.default.title',
+        id: 'errorResponseMessages.fetchResultsDetailDetails.GET.default.title',
         defaultMessage: 'Error Loading Result Details',
       },
     })

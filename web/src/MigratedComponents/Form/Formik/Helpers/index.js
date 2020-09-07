@@ -6,16 +6,15 @@ import messages from '../messages'
 const mergeFormConfigWithData = (data, config) => {
   const { sections } = config
   if (!isEmpty(data)) {
-    sections.map(
-      ({ rows }) =>
-        rows.map(({ items }) =>
-          items.reduce((acc, curr) => {
-            acc = curr
-            acc.label = get(data, curr.label) || curr.label
-            acc.initialValue = get(data, curr.id)
-            return acc
-          }, [])
-        )
+    sections.map(({ rows }) =>
+      rows.map(({ items }) =>
+        items.reduce((acc, curr) => {
+          acc = curr
+          acc.label = get(data, curr.label) || curr.label
+          acc.initialValue = get(data, curr.id)
+          return acc
+        }, [])
+      )
     )
   }
   return config

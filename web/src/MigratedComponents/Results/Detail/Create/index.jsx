@@ -46,7 +46,7 @@ const AspectResultDetail = ({ formSchema }) => {
 }
 
 AspectResultDetail.propTypes = {
-  formSchema: PropTypes.oneOfType([PropTypes.object]).isRequired
+  formSchema: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectResultDetail
