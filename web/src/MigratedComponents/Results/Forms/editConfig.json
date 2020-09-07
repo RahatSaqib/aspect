@@ -305,7 +305,7 @@
                                 "component": "textField"
                             },
                             "type": "string",
-                            "label": "Instrument Details"
+                            "label": "Instrument Serial"
                         },
                         {
                             "id": "moduleName",
@@ -329,6 +329,14 @@
                     "id": 1,
                     "items": [
                         {
+                            "id": "consumableExpirationDate",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "string",
+                            "label": "Consumable Expiration Date"
+                        },
+                        {
                             "id": "consumableLot",
                             "controlType": {
                                 "component": "textField"
@@ -343,7 +351,12 @@
                             },
                             "type": "string",
                             "label": "Consumable Serial"
-                        },
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "items": [
                         {
                             "id": "senderOperator",
                             "controlType": {
