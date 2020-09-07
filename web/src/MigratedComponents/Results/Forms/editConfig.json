@@ -118,7 +118,6 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
                             "label": "Assay",
                             "type": "readOnly"
                         }
@@ -135,21 +134,19 @@
                     "items": [
                         {
                             "id": "resultCategory1Name",
-                            "type": "readOnly"
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readOnly",
                             "label": "resultCategory1Label"
                         },
                         {
                             "id": "resultCategory2Name",
-                            "type": "readOnly"
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
                             "label": "resultCategory2Label",
+                            "type": "readOnly",
                             "hideIfNull": true
                         },
                         {
@@ -157,7 +154,6 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
                             "label": "Result Text",
                             "type": "readOnly"
                         }
@@ -308,7 +304,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Instrument Serial"
                         },
                         {
@@ -316,7 +312,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Module Name"
                         },
                         {
@@ -324,7 +320,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Module Serial"
                         }
                     ]
@@ -337,7 +333,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Consumable Expiration Date"
                         },
                         {
@@ -345,7 +341,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Consumable Lot"
                         },
                         {
@@ -353,7 +349,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Consumable Serial"
                         }
                     ]
@@ -366,7 +362,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "readonly",
+                            "type": "readOnly",
                             "label": "Sender Operator"
                         }
                     ]
