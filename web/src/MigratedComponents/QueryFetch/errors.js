@@ -1,4 +1,3 @@
-import merge from 'lodash/merge'
 import { defineMessages } from 'react-intl'
 import {
     errorPleaseTryAgainInAFewMinutes,
@@ -17,7 +16,8 @@ export const errors = {
 }
 
 export const mergeErrors = (endpoint, customErrorNotifications) => {
-    const defaultError = {
+    return {
+      ...errors, 
       default: errorPleaseTryAgainInAFewMinutes(
         defineMessages({
           title: {
@@ -26,11 +26,7 @@ export const mergeErrors = (endpoint, customErrorNotifications) => {
             defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
           },
         })
-      )
-    }
-    return merge(
-      errors, 
-      { defaultError },
-      customErrorNotifications,
-    )
+      ),
+      ...customErrorNotifications,
+      }
   }
