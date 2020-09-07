@@ -19,7 +19,7 @@ const fetchWrapperForQueries = ({
       break
     case 'DELETE':
     case 'GET':
-      if (typeof params === 'object') {
+      if (params && typeof params === 'object') {
         const keys = Object.keys(params)
         endpoint += keys && `?${keys.map(k => `${k}=${encodeURIComponent(params[k])}`).join('&')}`
       }
