@@ -1,7 +1,6 @@
 import * as Yup from 'yup'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
-import remove from 'lodash/remove'
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config) => {
@@ -20,13 +19,11 @@ const mergeFormConfigWithData = (data, config) => {
       // rows.map(rows => {
       //   const { items } = rows
 
-      //   const newItems = []
+      //   let newItems = []
       //   items.map(item => {
       //     item.initialValue = get(data, item.id)
-      //     // console.log(get(data, item.labelId), item.label)
 
-      //     // if (item.labelId) item.label = get(data, item.labelId)
-      //     item.label = get(data, item.labelId) || item.label
+      //     if (item.labelId) item.label = get(data, item.labelId)
 
       //     // If field should be hidden when value is null and the value is null, then hide it
       //     if (!item.hideIfNull || item.initialValue) newItems.push(item)
