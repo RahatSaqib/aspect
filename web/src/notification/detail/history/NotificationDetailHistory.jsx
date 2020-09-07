@@ -50,9 +50,10 @@ export const NotificationDetailHistory = ({
   const { data: { data, total } = false, isError, error } = useQuery(
     [NOTIFICATION_HISTORY.KEY, notificationId, pageAt, pageSize],
     async () =>
-      fetchWrapperForQueries(
-        `${NOTIFICATION_HISTORY.ENDPOINT}/${notificationId}?page=${pageAt}&size=${pageSize}`
-      )
+      fetchWrapperForQueries({
+        endpoint: `${NOTIFICATION_HISTORY.ENDPOINT}/${notificationId}`,
+        params: { page: pageAt, size: pageSize },
+      })
   )
 
   if (isError) {
