@@ -304,7 +304,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Instrument Serial"
                         },
                         {
@@ -312,7 +312,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Module Name"
                         },
                         {
@@ -320,7 +320,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Module Serial"
                         }
                     ]
@@ -333,7 +333,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Consumable Expiration Date"
                         },
                         {
@@ -341,7 +341,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Consumable Lot"
                         },
                         {
@@ -349,7 +349,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Consumable Serial"
                         }
                     ]
@@ -362,7 +362,7 @@
                             "controlType": {
                                 "component": "textField"
                             },
-                            "type": "string",
+                            "type": "readonly",
                             "label": "Sender Operator"
                         }
                     ]
