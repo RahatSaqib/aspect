@@ -69,9 +69,9 @@ describe.only('Backward update db after getting tests from offline device', () =
     const now = new Date()
     const messageContext = await createMessageContext()
 
-    // ------------------------
-    // 1. create new device (without result)
-    // ------------------------
+    /**
+     * 1. create new device (without result)
+     */
     const { basicDevicePayload } = context
     const { deviceAuth } = context
     const devicePayload = _.merge({}, basicDevicePayload, { name: deviceName })
@@ -83,10 +83,10 @@ describe.only('Backward update db after getting tests from offline device', () =
     assert.equal(response.statusCode, 200)
     const { id: deviceId, partnerId } = response.body.device
 
-    // ------------------------
-    // 2.1. see that flag 'offline' in table FactDeviceFlag is not set
-    // meaning that just created device is treated as being 'online'
-    // ------------------------
+    /**
+     * 2.1. see that flag 'offline' in table FactDeviceFlag is not set
+     * meaning that just created device is treated as being 'online'
+     */
     let factDevice
     ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
     expect(factDevice).to.containSubset({
@@ -95,9 +95,9 @@ describe.only('Backward update db after getting tests from offline device', () =
       maintenance: 0,
     })
 
-    // ------------------------
-    // 2.2. set device 'Offline'
-    // ------------------------
+    /**
+     * 2.2. set device 'Offline'
+     */
     // get Partner-specific props for being 'offline' and 'no-result'
     const partnerProps = await knex('Partner').where({ id: partnerId }).first()
     const { maxDaysDeviceOffline, maxDaysDeviceNoResults } = partnerProps
@@ -124,9 +124,9 @@ describe.only('Backward update db after getting tests from offline device', () =
     })
     assert.isNotOk(factDevice.maintenanceDueOn)
 
-    // ------------------------
-    // 3. prepare dates for table 'DeviceMaintenanceStatusLog'
-    // ------------------------
+    /**
+     * 3. prepare dates for table 'DeviceMaintenanceStatusLog'
+     */
     const deviceMaintenanceStatusToId = await allDeviceMaintenanceStatusToId()
     const minDate = deviceOfflineDate
     const maxDate = now
@@ -135,23 +135,23 @@ describe.only('Backward update db after getting tests from offline device', () =
       days.push(new Date(`${format(day, 'yyyy-MM-dd')}T00:00:00.000Z`))
     }
 
-    // ------------------------
-    // 4.1. set Offline status in DeviceMaintenanceStatusLog for all related days for this deviceId.
-    // Notice that we dispatch in MQ same action 'logDeviceMaintenanceStatus' as in `api/src/scheduler.js`,
-    // but pass there a day which is treated as 'today' to process past date.
-    // ------------------------
+    /**
+     * 4.1. set Offline status in DeviceMaintenanceStatusLog for all related days for this deviceId.
+     * Notice that we dispatch in MQ same action 'logDeviceMaintenanceStatus' as in `api/src/scheduler.js`,
+     * but pass there a day which is treated as 'today' to process past date.
+     */
     await Promise.each(days, async day => {
       await messageContext.dispatch(logDeviceMaintenanceStatus(day))
       await waitForAction(logDeviceMaintenanceStatus())
       await waitForIdle()
     })
 
-    // ------------------------
-    // 4.2. check that all processed days should be set to `inactiveUnknown` because
-    // func onDeviceMaintenanceStatusLogScheduled (see in api/src/device/service.js)
-    // uses status 'inactiveUnknown' for days without results (and when current
-    // device doesn't have deviceMaintenanceStatusLogId field defined)
-    // ------------------------
+    /**
+     * 4.2. check that all processed days should be set to `inactiveUnknown` because
+     * func onDeviceMaintenanceStatusLogScheduled (see in api/src/device/service.js)
+     * uses status 'inactiveUnknown' for days without results (and when current
+     * device doesn't have deviceMaintenanceStatusLogId field defined)
+     */
     let logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
       expect(log.deviceMaintenanceStatusId).to.be.equal(
@@ -159,9 +159,9 @@ describe.only('Backward update db after getting tests from offline device', () =
       )
     })
 
-    // ------------------------
-    // 5. Insert results for days which have been marked as inactiveUnknown
-    // ------------------------
+    /**
+     * 5. Insert results for days which have been marked as inactiveUnknown
+     */
     await Promise.each(days, async (day, index) => {
       // post tests to Offline device for each day when DeviceMaintenanceStatusLog was set to 'inactiveUnknown'
       const response = await postToDeviceApi({
@@ -190,9 +190,9 @@ describe.only('Backward update db after getting tests from offline device', () =
       assert.equal(response.statusCode, 200)
     })
 
-    // ------------------------
-    // 6. check that 'offline' flag in FactDeviceFlag was reset
-    // ------------------------
+    /**
+     * 6. check that 'offline' flag in FactDeviceFlag was reset
+     */
     ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
     expect(factDevice).to.containSubset({
       offline: 0, // now device is 'online'
@@ -201,9 +201,9 @@ describe.only('Backward update db after getting tests from offline device', () =
     })
     assert.isNotOk(factDevice.maintenanceDueOn)
 
-    // ------------------------
-    // 7. days with tests are marked now as Active in DeviceMaintenanceStatusLog
-    // ------------------------
+    /**
+     * 7. days with tests are marked now as Active in DeviceMaintenanceStatusLog
+     */
     logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
       expect(log.deviceMaintenanceStatusId).to.be.equal(
