@@ -20,7 +20,7 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps } = formik
 
-  return !hideIfNull && initialValue ? (
+  return !hideIfNull || initialValue ? (
     <Grid
       item
       xs={12}
