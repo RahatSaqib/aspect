@@ -1,34 +1,5 @@
-import { defineMessages } from 'react-intl'
-import merge from 'lodash/merge'
 import { aspectFetch } from '../../shared/utils/fetch'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
-} from '../../error/CommonErrorNotifications'
-
-const mergeErrorNotifications = (endpoint, customErrorNotifications) =>
-  merge(
-    {
-      403: errorInsufficientScope(
-        defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.403.title',
-            defaultMessage: 'Insufficient Permissions',
-          },
-        })
-      ),
-      default: errorPleaseTryAgainInAFewMinutes(
-        defineMessages({
-          title: {
-            id:
-              'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
-            defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
-          },
-        })
-      ),
-    },
-    customErrorNotifications
-  )
+import { mergeErrors } from './errors'
 
 const fetchWrapperForQueries = ({
   endpoint,
@@ -39,11 +10,7 @@ const fetchWrapperForQueries = ({
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
 
   let body = null
-  const errorNotifications = mergeErrorNotifications(
-    endpoint,
-    customErrorNotifications
-  )
-
+  
   switch (method) {
     case 'POST':
     case 'PUT':
@@ -59,6 +26,8 @@ const fetchWrapperForQueries = ({
         `Method ${method} is not supported by fetchWrapperForQueries function`
       )
   }
+
+  const errorNotifications = mergeErrors(endpoint, customErrorNotifications)
 
   return aspectFetch(endpoint, {
     method,
