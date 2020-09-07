@@ -1,5 +1,5 @@
 import { aspectFetch } from '../../shared/utils/fetch'
-import { mergeErrors } from './errors'
+import defaultErrors from './errors'
 
 const fetchWrapperForQueries = ({
   endpoint,
@@ -19,9 +19,10 @@ const fetchWrapperForQueries = ({
       break
     case 'DELETE':
     case 'GET':
-      endpoint = params && typeof params === 'object'
-        ? `${endpoint}?${new URLSearchParams(params).toString()}`
-        : endpoint
+      endpoint =
+        Object.keys(params).length !== 0 && params.constructor === Object
+          ? `${endpoint}?${new URLSearchParams(params).toString()}`
+          : endpoint
       break
     default:
       throw new Error(
@@ -29,11 +30,12 @@ const fetchWrapperForQueries = ({
       )
   }
 
-  const errorNotifications = mergeErrors(endpoint, customErrorNotifications)
-
   return aspectFetch(endpoint, {
     method,
-    errorNotifications,
+    errors: {
+      ...defaultErrors(endpoint),
+      ...customErrorNotifications,
+    },
     body,
   })
     .then(data => data)
