@@ -11,6 +11,7 @@ const {
   getDaysInMonth,
   format,
   isWeekend,
+  parseISO,
 } = require('date-fns')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
@@ -1294,6 +1295,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
   { messageContext }
 ) {
   return messageContext.run(async knex => {
+    const today = parseISO(action.today) || startOfToday()
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -1310,7 +1312,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
         queryBuilder
           .on('d.id', 'today_dmsl.deviceId')
-          .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
+          .andOn('today_dmsl.day', knex.raw('?', [today]))
       })
       .leftJoin(
         'DeviceMaintenanceStatus as today_dms',
@@ -1346,7 +1348,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       }
       await automaticallySetDeviceMaintenanceStatus(
         id,
-        startOfToday(),
+        today,
         deviceMaintenanceStatusForTheDay,
         {
           ...JSON.parse(currentMaintenanceStatusLogData),

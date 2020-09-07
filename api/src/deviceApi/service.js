@@ -1,11 +1,13 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const { format } = require('date-fns')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const {
   deviceApprovalToId,
   deviceTypeToPlugin,
+  deviceMaintenanceStatusToId,
 } = require('../shared/dictionary')
 const {
   resultUpdated,
@@ -819,7 +821,7 @@ async function onResultUpdated(
 
 async function onResultLogged(action, context) {
   return context.messageContext.run(async knex => {
-    const { partnerPluginName, deviceTypePluginName } =
+    const { partnerPluginName, deviceTypePluginName, deviceId, endedOn } =
       (await knex('Result as r')
         .leftJoin('Partner as p', 'r.partnerId', 'p.id')
         .leftJoin('Device as d', 'r.deviceId', 'd.id')
@@ -827,8 +829,33 @@ async function onResultLogged(action, context) {
         .where({ 'r.id': action.resultId })
         .first(
           'p.plugin as partnerPluginName',
-          'dt.plugin as deviceTypePluginName'
+          'dt.plugin as deviceTypePluginName',
+          'r.deviceId',
+          'r.endedOn'
         )) || {}
+
+    if (deviceId) {
+      const logProps = {
+        deviceId,
+        deviceMaintenanceStatusId: await deviceMaintenanceStatusToId('active'),
+        day: new Date(`${format(endedOn, 'yyyy-MM-dd')}T00:00:00.000Z`),
+      }
+      // get log entry for deviceId for Active status
+      const log = await knex('DeviceMaintenanceStatusLog')
+        .where(logProps)
+        .first()
+      // if no such entry (there might be entry for this day with another status)
+      // then insert it
+      if (!log) {
+        await knex('DeviceMaintenanceStatusLog').insert({
+          ...logProps,
+          data: '{}',
+          createdOn: new Date(),
+          createdBy: action.userId,
+        })
+      }
+    }
+
     const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
@@ -843,6 +870,8 @@ async function onResultLogged(action, context) {
     )
   })
 }
+
+// async function updateDeviceMaintenanceStatusLog(deviceId, userId,)
 
 function addDeviceLog(error) {
   return asyncHandler(async request => {
