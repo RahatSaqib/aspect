@@ -34,8 +34,6 @@ import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatus
 import report from './report/ReportRedux'
 import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
-import resultsDetail from './MigratedComponents/Results/Detail/Redux/resultsDetail'
-import resultsForm from './MigratedComponents/Results/Detail/Redux/resultsForm'
 import deviceMaintenanceStatus from './device/maintenance/DeviceMaintenanceStatusRedux'
 import _case from './case/CaseRedux'
 
@@ -68,8 +66,6 @@ const appReducer = combineReducers({
   report,
   reporter,
   result,
-  resultsDetail,
-  resultsForm,
   resultTreatmentStatus,
   resultWorkflowStatus,
   router,
@@ -108,8 +104,6 @@ const App = Immutable.Record({
   report: undefined,
   reporter: undefined,
   result: undefined,
-  resultsDetail: undefined,
-  resultsForm: undefined,
   resultTreatmentStatus: undefined,
   resultWorkflowStatus: undefined,
   router: undefined,

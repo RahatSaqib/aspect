@@ -1,54 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-
-import usePrevious from '../../../Hooks/CustomHooks'
-import { fetchResultsDetail } from './Redux/resultsDetail'
-import { fetchResultsForm } from './Redux/resultsForm'
-
 import Create from './Create'
 import Update from './Update'
+import editActions from '../Forms/editConfig.json'
 
 const AspectResultDetail = ({ match }) => {
   const { params } = match
   const { resultId } = params
-  const dispatch = useDispatch()
-  const [done, setDone] = useState(false)
-  const { formSchema } = useSelector(
-    ({ resultsForm }) => ({ ...resultsForm.toJS() }),
-    shallowEqual
-  )
-  const { formData } = useSelector(
-    ({ resultsDetail }) => ({ ...resultsDetail.toJS() }),
-    shallowEqual
-  )
-  const prevResultId = usePrevious(resultId)
-
-  useEffect(() => {
-    if (
-      (!formSchema && resultId) ||
-      (!formSchema && resultId !== prevResultId)
-    ) {
-      dispatch(fetchResultsForm(resultId))
-    }
-  })
-
-  useEffect(() => {
-    if (resultId !== 'add') {
-      if (formSchema && !done) {
-        setDone(true)
-        dispatch(fetchResultsDetail(resultId))
-      }
-    }
-  }, [resultId, formSchema])
-
+  const formSchema = resultId === 'add' ? null : editActions
+  
   return formSchema ? (
     <Fragment>
       {resultId === 'add' ? <Create formSchema={formSchema} /> : null}
-      {resultId !== 'add' && formSchema && formData ? (
-        <Update formSchema={formSchema} formData={formData} />
-      ) : null}
+      {resultId !== 'add' && formSchema ? (<Update formSchema={formSchema} resultId={resultId} />) : null}
     </Fragment>
   ) : null
 }
