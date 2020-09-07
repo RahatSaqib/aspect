@@ -9,11 +9,18 @@ import AspectInput from './Inputs'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const FormItem = ({ id, label, type, controlType }) => {
+const FormItem = ({
+  id,
+  label,
+  type,
+  controlType,
+  hideIfNull,
+  initialValue,
+}) => {
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps } = formik
 
-  return (
+  return !hideIfNull && initialValue ? (
     <Grid
       item
       xs={12}
@@ -44,7 +51,11 @@ const FormItem = ({ id, label, type, controlType }) => {
         formik={formik}
       />
     </Grid>
-  )
+  ) : null
+}
+
+FormItem.defaultProps = {
+  hideIfNull: false,
 }
 
 FormItem.propTypes = {
@@ -52,6 +63,8 @@ FormItem.propTypes = {
   label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   controlType: PropTypes.string.isRequired,
+  hideIfNull: PropTypes.bool,
+  initialValue: PropTypes.string.isRequired,
 }
 
 export default FormItem
