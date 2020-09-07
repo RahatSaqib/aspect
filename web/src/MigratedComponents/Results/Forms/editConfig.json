@@ -119,7 +119,8 @@
                                 "component": "textField"
                             },
                             "type": "string",
-                            "label": "Assay"
+                            "label": "Assay",
+                            "type": "readOnly"
                         }
                     ]
                 }
