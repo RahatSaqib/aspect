@@ -25,7 +25,7 @@ const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe.only('Backward update db after getting tests from offline device', () => {
+describe('Backward update db after getting tests from offline device', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
