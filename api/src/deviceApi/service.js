@@ -1,13 +1,11 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { format } = require('date-fns')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const {
   deviceApprovalToId,
   deviceTypeToPlugin,
-  deviceMaintenanceStatusToId,
 } = require('../shared/dictionary')
 const {
   resultUpdated,
@@ -826,13 +824,11 @@ async function onResultLogged(action, context) {
         .leftJoin('Partner as p', 'r.partnerId', 'p.id')
         .leftJoin('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
         .where({ 'r.id': action.resultId })
         .first(
           'p.plugin as partnerPluginName',
           'dt.plugin as deviceTypePluginName'
         )) || {}
-
     const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
