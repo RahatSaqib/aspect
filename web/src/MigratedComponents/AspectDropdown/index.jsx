@@ -104,7 +104,7 @@ const AspectDropdown = ({
 }) => {
   const { isError, data = false, error } = useQuery(
     reduxStateId,
-    async () => (endpoint ? fetchWrapperForQueries(endpoint) : passedData),
+    async () => (endpoint ? fetchWrapperForQueries({ endpoint }) : passedData),
     {
       initialData: passedData,
       initialStale: true,
