@@ -6,8 +6,6 @@ const {
   upsertIssueResolutionTrigger,
 } = require('../utils')
 
-const { issueTypeToId } = require('../../src/shared/dictionary')
-
 async function seed(knex) {
   const { partnerId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
@@ -26,8 +24,11 @@ async function seed(knex) {
     issueTypeWhitelist: ['ModuleDisabled', 'ModuleReplaced'],
   })
   const now = new Date()
+  const { id: issueTypeId } = await knex('IssueType')
+    .where('externalId', 'ModuleDisabled')
+    .first('id')
   await upsertIssueResolutionTrigger(knex, {
-    issueTypeId: await issueTypeToId('ModuleDisabled'),
+    issueTypeId,
     partnerId,
     resolutionConditions: JSON.stringify({
       evaluationMethod: 'plugin-function',
