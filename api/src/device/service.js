@@ -996,15 +996,24 @@ async function onDeviceMaintenanceStatusLogged(
 async function onResultLogged(action, { messageContext }) {
   const { resultId } = action
   return messageContext.run(async knex => {
-    const { deviceId, startedOn, endedOn } =
-      (await knex('Result')
-        .where('id', resultId)
-        .first('deviceId', 'startedOn', 'endedOn')) || {}
+    const { deviceId, startedOn, endedOn, approvalToken } =
+      (await knex('Result as r')
+        .leftJoin('Device as d', 'r.deviceId', 'd.id')
+        .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+        .where('r.id', resultId)
+        .first(
+          'r.deviceId',
+          'r.startedOn',
+          'r.endedOn',
+          'da.token as approvalToken'
+        )) || {}
     if (deviceId && (endedOn || startedOn)) {
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,
         endedOn || startedOn,
-        'active',
+        approvalToken === 'decommissioned'
+          ? 'inactiveDecommissioned'
+          : 'active',
         action,
         messageContext
       )
