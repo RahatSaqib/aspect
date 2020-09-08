@@ -30,6 +30,12 @@ async function seed(knex) {
     culture,
     partnerId,
     timezone,
+    passwords: {
+      cepheid: 'test07', // for jobFunction 'Device Maker'
+      ntp: 'test07', // for jobFunction 'NTP'
+      technician: 'test07', // for jobFunction 'Technician'
+      usaid: 'test07', // for jobFunction 'Donor'
+    },
   })
 
   // --- ----------------------
