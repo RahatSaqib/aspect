@@ -83,6 +83,9 @@ describe('Backward update db after getting tests from offline device', () => {
     assert.equal(response.statusCode, 200)
     const { id: deviceId, partnerId } = response.body.device
 
+    // wait a bit until all MQ jobs are finished after creating a new device
+    await waitForIdle()
+
     /**
      * 2.1. see that flag 'offline' in table FactDeviceFlag is not set
      * meaning that just created device is treated as being 'online'
