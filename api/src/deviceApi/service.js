@@ -883,8 +883,6 @@ async function onResultLogged(action, context) {
   })
 }
 
-// async function updateDeviceMaintenanceStatusLog(deviceId, userId,)
-
 function addDeviceLog(error) {
   return asyncHandler(async request => {
     await updateLogs(request)
