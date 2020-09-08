@@ -821,23 +821,35 @@ async function onResultUpdated(
 
 async function onResultLogged(action, context) {
   return context.messageContext.run(async knex => {
-    const { partnerPluginName, deviceTypePluginName, deviceId, endedOn } =
+    const {
+      partnerPluginName,
+      deviceTypePluginName,
+      deviceId,
+      endedOn,
+      approvalToken,
+    } =
       (await knex('Result as r')
         .leftJoin('Partner as p', 'r.partnerId', 'p.id')
         .leftJoin('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
         .where({ 'r.id': action.resultId })
         .first(
           'p.plugin as partnerPluginName',
           'dt.plugin as deviceTypePluginName',
           'r.deviceId',
-          'r.endedOn'
+          'r.endedOn',
+          'da.token as approvalToken'
         )) || {}
 
     if (deviceId) {
       const logProps = {
         deviceId,
-        deviceMaintenanceStatusId: await deviceMaintenanceStatusToId('active'),
+        deviceMaintenanceStatusId: await deviceMaintenanceStatusToId(
+          approvalToken === 'decommissioned'
+            ? 'inactiveDecommissioned'
+            : 'active'
+        ),
         day: new Date(`${format(endedOn, 'yyyy-MM-dd')}T00:00:00.000Z`),
       }
       // get log entry for deviceId for Active status

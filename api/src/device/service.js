@@ -29,7 +29,7 @@ const {
   resultCategoryToId,
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
-const { parseDateOrDefault } = require('../shared/date')
+const { parseDateOrDefault, getLocalDateInUtc } = require('../shared/date')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -919,7 +919,7 @@ async function automaticallySetDeviceMaintenanceStatus(
   data,
   messageContext
 ) {
-  const dayDate = startOfDay(day)
+  const dayDate = getLocalDateInUtc(startOfDay(day))
   const latestDeviceMaintenanceStatusForDay =
     (await knex('DeviceMaintenanceStatusLog as dmsl')
       .join(
@@ -1295,7 +1295,9 @@ async function onDeviceMaintenanceStatusLogScheduled(
   { messageContext }
 ) {
   return messageContext.run(async knex => {
-    const today = (action.today && parseISO(action.today)) || startOfToday()
+    const today =
+      (action.today && parseISO(action.today)) ||
+      getLocalDateInUtc(startOfToday())
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')

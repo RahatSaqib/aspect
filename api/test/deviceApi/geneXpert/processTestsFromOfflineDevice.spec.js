@@ -50,7 +50,7 @@ describe('Backward update db after getting tests from offline device', () => {
           })
       })
       .where('dmsl.deviceId', deviceId)
-      .where('dmsl.day', '>', minDate)
+      .where('dmsl.day', '>=', minDate)
       .whereNull('dmsl2.id')
       .select('dmsl.*')
 
@@ -189,6 +189,9 @@ describe('Backward update db after getting tests from offline device', () => {
       })
       assert.equal(response.statusCode, 200)
     })
+
+    // wait a bit until all MQ jobs are finished for each inserted result
+    await waitForIdle()
 
     /**
      * 6. check that 'offline' flag in FactDeviceFlag was reset
