@@ -18,6 +18,7 @@ const hivGraphs = {
       'QHivVL',
       'ReporterHivVL',
     ],
+    graphRenderPermissions: ['dashboard'],
     graphType: [
       {
         id: 'hivByCategory1Monthly',

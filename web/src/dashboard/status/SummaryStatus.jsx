@@ -5,6 +5,7 @@ import { useQuery } from 'react-query'
 import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
 import AspectWidgets from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
+import DASHBOARD_SUMMARY_WIDGETS from '../../MigratedComponents/QueryFetch/Dashboard/index'
 
 export const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
@@ -14,8 +15,11 @@ export const SummaryStatus = ({ className, dashboard }) => {
     isError,
     data: { data: widgetData } = false,
     error,
-  } = useQuery(`${dashboard}Widgets`, async () =>
-    fetchWrapperForQueries(`/dashboard/summary?dashboard=${dashboard}`)
+  } = useQuery(DASHBOARD_SUMMARY_WIDGETS.KEY, async () =>
+    fetchWrapperForQueries({
+      endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT,
+      params: { dashboard },
+    })
   )
 
   if (isError) {

@@ -23,6 +23,7 @@ const deviceStatusGraphs = {
         sortByKeys: ['id'],
       },
     ],
+    graphRenderPermissions: ['dashboard', 'operationalData'],
     graphType: [
       {
         id: 'deviceStatusMonthly',
