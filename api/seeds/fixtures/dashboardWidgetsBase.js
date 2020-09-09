@@ -584,7 +584,7 @@ module.exports = {
           '%') AS cnt
           FROM
           (SELECT
-            ISNULL(MAX(em.id)) = 0 OR ISNULL(MAX(sm.id)) = 0 AS HasNotifications
+            MAX(em.id) IS NOT NULL OR MAX(sm.id) IS NOT NULL AS HasNotifications
           FROM
               Result AS r
           INNER JOIN Device d ON d.id = r.deviceId
@@ -597,8 +597,8 @@ module.exports = {
           LEFT JOIN Issue i ON r.id = i.resultId
           LEFT JOIN IssueType it ON i.issueTypeId = it.id
           LEFT JOIN Notification n ON i.id = n.issueId
-          LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id
-          LEFT JOIN EmailMessage em ON n.emailMessageId = em.id
+          LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id AND sm.messageStatusId = 3
+	        LEFT JOIN EmailMessage em ON n.emailMessageId = em.id AND em.messageStatusId = 3
           LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
           WHERE
               rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
@@ -618,7 +618,7 @@ module.exports = {
           '%') AS cnt
           FROM
           (SELECT
-            ISNULL(MAX(em.id)) = 0 OR ISNULL(MAX(sm.id)) = 0 AS HasNotifications
+            MAX(em.id) IS NOT NULL OR MAX(sm.id) IS NOT NULL AS HasNotifications
           FROM
               Result AS r
           INNER JOIN Device d ON d.id = r.deviceId
@@ -631,8 +631,8 @@ module.exports = {
           LEFT JOIN Issue i ON r.id = i.resultId
           LEFT JOIN IssueType it ON i.issueTypeId = it.id
           LEFT JOIN Notification n ON i.id = n.issueId
-          LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id
-          LEFT JOIN EmailMessage em ON n.emailMessageId = em.id
+          LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id AND sm.messageStatusId = 3
+	        LEFT JOIN EmailMessage em ON n.emailMessageId = em.id AND em.messageStatusId = 3
           LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
           WHERE
               rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')

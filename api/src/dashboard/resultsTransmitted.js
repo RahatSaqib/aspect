@@ -169,7 +169,11 @@ async function getResultQuery(query, dataConstraints) {
         CASE
           WHEN
             r.resultCategory1 IN (${positiveResultCategories})
-            AND n.id IS NOT NULL
+            AND (
+              em.id IS NOT NULL
+              OR
+              sm.id IS NOT NULL
+            )
             AND ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
