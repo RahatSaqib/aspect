@@ -36,7 +36,11 @@
                                 "component": "textField"
                             },
                             "type": "readOnly",
-                            "label": "Site Name"
+                            "label": "Site Name",
+                            "link": {
+                                "key": "siteId",
+                                "url": "/browse/site/:siteId"
+                            }
                         },
                         {
                             "id": "lgaName",
