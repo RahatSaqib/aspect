@@ -34,6 +34,7 @@ async function seed(knex) {
       cepheid: '54wzDZPtOs', // for jobFunction 'Device Maker'
       ntp: '78oc1ZPtOs', // for jobFunction 'NTP'
       technician: '39wzDWEtBd', // for jobFunction 'Technician'
+      usaid: '0JzBx1m6PV', // for jobFunction 'Donor'
     },
   })
 

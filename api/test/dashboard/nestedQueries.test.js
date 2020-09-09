@@ -111,8 +111,7 @@ describe('Parse nested queries', () => {
 
   describe('Execute query with sub-query in FROM clause', () => {
     const { sqlForStatUnit: sql } = dashboardWidgetsBase.stat.find(
-      x => x.externalId === 'activeDevices'
-      // 'stockNotRecorded'
+      x => x.externalId === 'errorRate'
     )
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
@@ -166,20 +165,20 @@ describe('Parse nested queries', () => {
   describe('Execute query with sub-query in SELECT clause', () => {
     // valid but non-optimized query for sqlForStatUnit for
     // externalId = 'dashboardWidgetTestsPerDayTitle' from 'api/seeds/fixtures/dashboardWidgetsBase.js'
-    const sql = `SELECT 
+    const sql = `SELECT
       CASE
         WHEN avgCurrentMonth IS NULL OR avgLastMonth IS NULL THEN '?'
         ELSE
-          CASE 
-            WHEN avgCurrentMonth >= avgLastMonth 
+          CASE
+            WHEN avgCurrentMonth >= avgLastMonth
             THEN concat('+', (avgCurrentMonth - avgLastMonth))
             ELSE concat('-', (avgCurrentMonth - avgLastMonth))
           END
       END as cnt
     FROM (
-      SELECT 
+      SELECT
         (
-          SELECT CEILING(avg(cnt)) 
+          SELECT CEILING(avg(cnt))
           FROM (
             SELECT COUNT(r.id) as cnt
             FROM Result as r
@@ -188,14 +187,14 @@ describe('Parse nested queries', () => {
               INNER JOIN Partner p on s.partnerId = p.id
               LEFT OUTER JOIN Geography as g on s.geographyId = g.id
             WHERE
-              YEAR(r.endedOn) = YEAR(NOW()) 
-              AND 
+              YEAR(r.endedOn) = YEAR(NOW())
+              AND
               MONTH(r.endedOn) = MONTH(NOW())
             GROUP BY DATE(r.endedOn)
           ) as t1
         ) as avgCurrentMonth,
         (
-          SELECT CEILING(avg(cnt)) 
+          SELECT CEILING(avg(cnt))
           FROM (
             SELECT COUNT(r.id) as cnt
             FROM Result as r
@@ -219,12 +218,12 @@ describe('Parse nested queries', () => {
       const { modifiedSql } = processNestedQueries(sql, nestedQueries.tree, {})
       assert.equal(
         modifiedSql,
-        `SELECT 
+        `SELECT
       CASE
         WHEN avgCurrentMonth IS NULL OR avgLastMonth IS NULL THEN '?'
         ELSE
-          CASE 
-            WHEN avgCurrentMonth >= avgLastMonth 
+          CASE
+            WHEN avgCurrentMonth >= avgLastMonth
             THEN concat('+', (avgCurrentMonth - avgLastMonth))
             ELSE concat('-', (avgCurrentMonth - avgLastMonth))
           END

@@ -147,6 +147,10 @@ const graphSchema = {
     },
     group: { $id: '#/properties/group', type: 'string' },
     assays: { $id: '#/properties/assays', type: 'array' },
+    graphRenderPermissions: {
+      $id: '#/properties/graphRenderPermissions',
+      type: 'array',
+    },
     graphType: {
       $id: '#/properties/graphType',
       type: 'array',
