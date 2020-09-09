@@ -125,6 +125,7 @@ async function summaryDashboard(request) {
       )
     })
   )
+
   return { ok: true, data }
 }
 

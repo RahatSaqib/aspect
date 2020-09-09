@@ -53,14 +53,15 @@ async function getResultQuery(query, dataConstraints) {
     .leftOuterJoin('IssueType AS it', 'i.issueTypeId', 'it.id')
     .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('Notification as n', 'i.id', 'n.issueId')
     .leftOuterJoin('EmailMessage as em', function () {
-      this.on('r.id', 'em.resultId').andOn(
+      this.on('n.emailMessageId', 'em.id').andOn(
         'em.messageStatusId',
         messageStatusToId.Sent
       )
     })
     .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('r.id', 'sm.resultId').andOn(
+      this.on('n.smsMessageId', 'sm.id').andOn(
         'sm.messageStatusId',
         messageStatusToId.Sent
       )
@@ -68,7 +69,7 @@ async function getResultQuery(query, dataConstraints) {
     // only specified 'currentMonth' and previous onth
     .whereRaw(
       `
-        (
+        ((
           YEAR(r.endedOn) = YEAR(?)
           AND
           MONTH(r.endedOn) = MONTH(?)
@@ -78,11 +79,12 @@ async function getResultQuery(query, dataConstraints) {
           YEAR(r.endedOn) = YEAR(DATE_SUB(?, INTERVAL 1 MONTH))
           AND
           MONTH(r.endedOn) = MONTH(DATE_SUB(?, INTERVAL 1 MONTH))
-        )
+        ))
       `,
       [currentMonth, currentMonth, currentMonth, currentMonth]
     )
     .where('dt.externalId', 'CepheidGeneXpert')
+    .where('it.externalId', 'ResultReceived')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -167,13 +169,8 @@ async function getResultQuery(query, dataConstraints) {
         CASE
           WHEN
             r.resultCategory1 IN (${positiveResultCategories})
-            AND (
-              em.id IS NOT NULL
-              OR
-              sm.id IS NOT NULL
-            )
-            AND
-            ist.externalId IN ('Active', 'OK', 'Resolved')
+            AND n.id IS NOT NULL
+            AND ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -198,6 +195,8 @@ async function getResultQuery(query, dataConstraints) {
       `),
     })
     .groupBy('a.id', 'yearMonth')
+
+  console.log('resultsQuery', resultsQuery.toString())
 
   return resultsQuery
 }
