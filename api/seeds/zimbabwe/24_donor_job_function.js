@@ -1,5 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const Promise = require('bluebird')
 const { upsertJobFunction } = require('../common')
 const {
   getPermissionModules,
@@ -44,28 +45,12 @@ async function seed(knex) {
   // --- ----------------------
   // --- Give all except donor and device maker access to task list
   // --- ----------------------
-  await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.task.view,
-    modules.taskMenu.view,
-  ])
-  await upsertJobFunction(knex, 'Regional Officer', partnerId, [
-    modules.task.view,
-    modules.taskMenu.view,
-  ])
-  await upsertJobFunction(knex, 'Lab User', partnerId, [
-    modules.task.view,
-    modules.taskMenu.view,
-  ])
-  await upsertJobFunction(knex, 'NTP', partnerId, [
-    modules.task.view,
-    modules.taskMenu.view,
-  ])
-  await upsertJobFunction(knex, 'Technician', partnerId, [
-    modules.task.view,
-    modules.taskMenu.view,
-  ])
-  await upsertJobFunction(knex, 'Clinician', partnerId, [
-    modules.task.view,
-    modules.taskMenu.view,
-  ])
+  await Promise.each(
+    ['Admin', 'Regional Officer', 'Lab User', 'NTP', 'Technician', 'Clinician'],
+    async jobFunction =>
+      upsertJobFunction(knex, jobFunction, partnerId, [
+        modules.task.view,
+        modules.taskMenu.view,
+      ])
+  )
 }
