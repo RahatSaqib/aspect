@@ -14,23 +14,22 @@ import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
 import RESULT_DETAIL from '../../../QueryFetch/Result/index'
-import fetchWrapperForQueries from '../../../QueryFetch'
+import fetchWrapperForQueries from '../../../QueryFetch/index.js'
 import errors from './errors'
 
 const AspectResultDetail = ({ formSchema, resultId }) => {
-  const [formConfig, setFormConfig] = useState(false)
   const [patienId, setPatientId] = useState()
+  const [formData, setFormData] = useState(false)
+  const [formConfig, setFormConfig] = useState(false)
 
-  const {
-    isLoading,
-    isError,
-    data: { data: formData } = false,
-    error,
-  } = useQuery([RESULT_DETAIL.KEY, { resultId }], async (key, { resultId }) =>
-    fetchWrapperForQueries({
-      endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-      errors,
-    })
+  const { isLoading, isError, data, error } = useQuery(
+    [RESULT_DETAIL.KEY, { resultId }],
+    async (key, { resultId }) =>
+      fetchWrapperForQueries({
+        endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
+        errors,
+      }),
+    { onSuccess: setFormData }
   )
 
   if (isError) {
@@ -38,11 +37,12 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
   }
 
   useEffect(() => {
-    if (formData && formSchema) {
-      setPatientId(formData.patientId)
-      setFormConfig(mergeFormConfigWithData(formData, formSchema))
+    if (formData) {
+      const { data } = formData
+      setPatientId(data.patientId)
+      setFormConfig(mergeFormConfigWithData(data, formSchema))
     }
-  }, [formData, formSchema, resultId])
+  }, [formData])
 
   return (
     <Shell>
