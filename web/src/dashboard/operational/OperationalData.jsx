@@ -58,7 +58,9 @@ export const OperationalData = ({ intl, history, location, loading }) => {
           </ErrorBoundary>
 
           <ErrorBoundary>
-            <PermissionsProvider permissions={['operationalData']}>
+            <PermissionsProvider
+              permissions={resultsTransmitted.graphRenderPermissions}
+            >
               {assays && assays.length ? (
                 <GraphsContainer
                   assaysFromState={assays}
@@ -69,7 +71,9 @@ export const OperationalData = ({ intl, history, location, loading }) => {
           </ErrorBoundary>
 
           <ErrorBoundary>
-            <PermissionsProvider permissions={['operationalData']}>
+            <PermissionsProvider
+              permissions={deviceStatus.graphRenderPermissions}
+            >
               <GraphsContainer assaysFromState={[]} config={deviceStatus} />
             </PermissionsProvider>
           </ErrorBoundary>

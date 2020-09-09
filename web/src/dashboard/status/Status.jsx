@@ -85,7 +85,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
           ) : null}
@@ -93,7 +93,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={tbDetected.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbDetected} />
           ) : null}
@@ -101,7 +101,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbResults} />
           ) : null}
@@ -109,7 +109,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider
+          permissions={treatmentStatus.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -120,7 +122,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={deviceStatus} />
           ) : null}
@@ -128,7 +130,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidDailyConfirmed.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -139,7 +143,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidMortalityAndRecoveryConfig.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -150,7 +156,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidMortalityAndRecoveryByGender.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -161,7 +169,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidCasesByAgeAndGender.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -195,13 +205,15 @@ const Status = ({ history, location, colorDemo }) => {
         className={cssClasses('Section--withStatus')}
         title={intl.formatMessage(messages.sitesTitle)}
       />
-      <InventoryStatus
-        history={history}
-        intl={intl}
-        countryIsoAlpha2Code={countryIsoAlpha2Code}
-        className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.consumableTitle)}
-      />
+      <PermissionsProvider permissions={['dashboard']}>
+        <InventoryStatus
+          history={history}
+          intl={intl}
+          countryIsoAlpha2Code={countryIsoAlpha2Code}
+          className={cssClasses('Section--withStatus')}
+          title={intl.formatMessage(messages.consumableTitle)}
+        />
+      </PermissionsProvider>
       <Reports
         intl={intl}
         location={location}
