@@ -606,7 +606,7 @@ module.exports = {
         IFNULL(
           AVG(
             TIMESTAMPDIFF(
-              MINUTE,
+              HOUR,
               r.endedOn,
               r.createdOn
             )
