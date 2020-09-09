@@ -22,25 +22,27 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
   const [patienId, setPatientId] = useState()
 
   const {
+    isLoading,
     isError,
     data: { data: formData } = false,
     error,
-    isLoading,
-  } = useQuery(RESULT_DETAIL.KEY, async () =>
+  } = useQuery([RESULT_DETAIL.KEY, { resultId }], async (key, { resultId }) =>
     fetchWrapperForQueries({
       endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
       errors,
     })
   )
 
-  useEffect(() => {
-    if (isError) throw new Error(error)
+  if (isError) {
+    throw new Error(error)
+  }
 
-    if (formSchema && formData) {
+  useEffect(() => {
+    if (formData && formSchema) {
       setPatientId(formData.patientId)
       setFormConfig(mergeFormConfigWithData(formData, formSchema))
     }
-  }, [formSchema, formData, resultId])
+  }, [formData, formSchema, resultId])
 
   return (
     <Shell>
