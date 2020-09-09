@@ -122,7 +122,7 @@
                     "id": 0,
                     "items": [
                         {
-                            "id": "assayType",
+                            "id": "assayName",
                             "controlType": {
                                 "component": "textField"
                             },
