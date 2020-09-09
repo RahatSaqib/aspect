@@ -574,7 +574,7 @@ module.exports = {
         IFNULL(
           AVG(
             TIMESTAMPDIFF(
-              MINUTE,
+              HOUR,
               r.endedOn,
               r.createdOn
             )
@@ -599,7 +599,7 @@ module.exports = {
         IFNULL(
           AVG(
             TIMESTAMPDIFF(
-              MINUTE,
+              HOUR,
               r.endedOn,
               r.createdOn
             )
@@ -625,7 +625,7 @@ module.exports = {
       sortOrder: 6,
       externalId: 'avgTimeToUpload',
       description:
-        'The average delay of uploading results. Only considering results where the delay was greater than two hours.',
+        'The average delay of uploading results, in hours. Only considering results where the delay was greater than two hours.',
       descriptionI18nKey: 'avgTimeToUploadDescription',
       dashboards: {
         operational: {
