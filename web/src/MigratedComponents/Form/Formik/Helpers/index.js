@@ -1,11 +1,13 @@
 import * as Yup from 'yup'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
 
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config) => {
-  const { sections } = config
+  const configToMutate = cloneDeep(config)
+  const { sections } = configToMutate
   if (!isEmpty(data)) {
     sections.map(({ rows }) =>
       rows.map(({ items }) =>
@@ -27,7 +29,7 @@ const mergeFormConfigWithData = (data, config) => {
       )
     )
   }
-  return config
+  return configToMutate
 }
 
 const pickKeys = (data, keys) => {
