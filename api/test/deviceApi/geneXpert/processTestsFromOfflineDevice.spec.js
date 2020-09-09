@@ -15,6 +15,7 @@ const {
   createMessageContext,
   waitForIdle,
   waitForAction,
+  dispatchAndWaitForAction,
 } = require('../../utils/mqUtils')
 const {
   deviceOffline,
@@ -114,8 +115,18 @@ describe('Backward update db after getting tests from offline device', () => {
       lastPingOn: deviceOfflineDate,
     })
     const waitForOffline = waitForAction(deviceOffline(deviceId))
-    // exec MQ to update FactDeviceFlag table for device 'lastPingOn' and 'createdOn' fields
+    /**
+     * run MQ action `factGenerateDeviceConnectivity` to update
+     * fields 'lastPingOn' and 'createdOn' in table FactDeviceFlag
+     * for current device.
+     * Notice that handler runs another MQ actions, see below.
+     */
     await messageContext.dispatch(factGenerateDeviceConnectivity(deviceId))
+    /**
+     * above MQ action (factGenerateDeviceConnectivity) triggers another
+     * chained action `deviceOffline` with same parameter `deviceId`.
+     * So here we await for this new MQ action
+     */
     await waitForOffline
     await waitForIdle()
     // let factDevice
@@ -143,11 +154,9 @@ describe('Backward update db after getting tests from offline device', () => {
      * Notice that we dispatch in MQ same action 'logDeviceMaintenanceStatus' as in `api/src/scheduler.js`,
      * but pass there a day which is treated as 'today' to process past date.
      */
-    await Promise.each(days, async day => {
-      await messageContext.dispatch(logDeviceMaintenanceStatus(day))
-      await waitForAction(logDeviceMaintenanceStatus())
-      await waitForIdle()
-    })
+    await Promise.each(days, async day =>
+      dispatchAndWaitForAction(logDeviceMaintenanceStatus(day))
+    )
 
     /**
      * 4.2. check that all processed days should be set to `inactiveUnknown` because
