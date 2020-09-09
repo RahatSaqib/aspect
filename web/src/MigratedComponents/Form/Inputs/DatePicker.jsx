@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { useSelector, shallowEqual } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
+
+const cssClasses = classnames.bind(require('./DatePicker.css'))
 
 const AspectDatePicker = props => {
   const {
@@ -31,6 +34,7 @@ const AspectDatePicker = props => {
 
   return (
     <DatePicker
+      wrapperClassName={cssClasses('datepicker__wrapper')}
       className={className}
       showTimeSelect={showTimeSelect}
       selected={startDate}
