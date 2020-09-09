@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import TextField from '@material-ui/core/TextField'
 
-const AspectTextField = props => <TextField {...props} />
+import FormHTMLLabel from '../FormHTMLLabel'
+
+const AspectTextField = props => (
+  <TextField
+    {...props}
+    label={<FormHTMLLabel label={props.label} link={props.link} />}
+  />
+)
 
 export default AspectTextField
