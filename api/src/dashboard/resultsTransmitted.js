@@ -200,8 +200,6 @@ async function getResultQuery(query, dataConstraints) {
     })
     .groupBy('a.id', 'yearMonth')
 
-  console.log('resultsQuery', resultsQuery.toString())
-
   return resultsQuery
 }
 
