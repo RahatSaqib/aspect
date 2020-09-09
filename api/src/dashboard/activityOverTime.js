@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const isWeekend = require('date-fns/isWeekend')
+const { isWeekend, addMinutes } = require('date-fns')
 const format = require('date-fns/format')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -10,17 +10,31 @@ async function activityOverTimeDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // build up array of days in date range. makes querying easier:
-  let days = getArrayOfDaysInRange(query.minDate, query.maxDate, {
-    devicesActive: 0,
-    devicesInactive: 0,
-    devicesTotal: 0,
-    inactiveUnknown: 0,
-    inactiveNoResultsReported: 0,
-    inactiveOutOfInventory: 0,
-    inactiveDownForRepair: 0,
-    inactiveConnectivity: 0,
-    inactiveDecommissioned: 0,
-  })
+  let days = getArrayOfDaysInRange(
+    query.minDate,
+    _.min([query.maxDate, new Date()]),
+    {
+      devicesActive: 0,
+      devicesInactive: 0,
+      devicesTotal: 0,
+      inactiveUnknown: 0,
+      inactiveNoResultsReported: 0,
+      inactiveOutOfInventory: 0,
+      inactiveDownForRepair: 0,
+      inactiveConnectivity: 0,
+      inactiveDecommissioned: 0,
+    }
+  )
+
+  const minDateUtc = addMinutes(
+    query.minDate,
+    query.minDate.getTimezoneOffset()
+  )
+  const maxDateUtc = addMinutes(
+    query.maxDate,
+    query.maxDate.getTimezoneOffset()
+  )
+
   // base query for all actual devices
   const allDevicesBase = knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -93,8 +107,8 @@ async function activityOverTimeDashboard(request) {
       'dms.id'
     )
     .whereRaw('dmsl.day >= ? AND dmsl.day <= ?', [
-      format(query.minDate, 'yyyy-MM-dd'),
-      format(query.maxDate, 'yyyy-MM-dd'),
+      format(minDateUtc, 'yyyy-MM-dd'),
+      format(maxDateUtc, 'yyyy-MM-dd'),
     ])
     .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)
@@ -159,7 +173,13 @@ async function activityOverTimeDashboard(request) {
         devicesTotal,
       }
     }
-    day.isWeekendOrHoliday = isWeekend(day.date)
+    day.isWeekendOrHoliday = isWeekend(
+      new Date(
+        day.date.getUTCFullYear(),
+        day.date.getUTCMonth(),
+        day.date.getUTCDate()
+      )
+    )
     return day
   })
 
