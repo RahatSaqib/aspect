@@ -2823,21 +2823,26 @@ async function seedJobFunctionsAndUsersForOperationalData(
         'cepheid', // for jobFunction 'Device Maker'
         'ntp', // for jobFunction 'NTP'
         'technician', // for jobFunction 'Technician'
+        'usaid', // for jobFunction 'Donor'
       ],
       async name => {
         const { id: userId } = await upsertSingle(
           knex,
           'User', // tableName
           'name', // whereKeys
-          {
-            name: name.toLowerCase(),
-            password: bcrypt.hashSync(passwords[name] || 'test07', saltRounds),
-            legacyPassword: 0,
-            approved: 1,
-            createdOn: now,
-            lockedOut: 0,
-            failedPasswordAttempts: 0,
-          }
+          Object.assign(
+            passwords[name]
+              ? { password: bcrypt.hashSync(passwords[name], saltRounds) }
+              : {},
+            {
+              name: name.toLowerCase(),
+              legacyPassword: 0,
+              approved: 1,
+              createdOn: now,
+              lockedOut: 0,
+              failedPasswordAttempts: 0,
+            }
+          )
         )
 
         userIds[name.toLowerCase()] = userId
@@ -2871,11 +2876,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
     knex,
     'Device Maker',
     partnerId,
-    [modules.account.edit, modules.operationalData.edit]
+    [modules.account.edit, modules.operationalData.view]
   )
   const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
     modules.account.edit,
-    modules.operationalData.edit,
+    modules.operationalData.view,
   ])
   const jobFunctionIdTechnician = await upsertJobFunction(
     knex,
@@ -2883,6 +2888,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
     partnerId,
     [modules.account.edit, modules.operationalData.view]
   )
+  const jobFunctionIdDonor = await upsertJobFunction(knex, 'Donor', partnerId, [
+    modules.account.edit,
+    modules.site.view,
+    modules.operationalData.view,
+  ])
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -2903,6 +2913,7 @@ async function seedJobFunctionsAndUsersForOperationalData(
     personIds.technician,
     jobFunctionIdTechnician
   )
+  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionIdDonor)
 
   // -------------------------------------------
   // Constrain jobs by context
@@ -2914,6 +2925,7 @@ async function seedJobFunctionsAndUsersForOperationalData(
       { jobId: jobIdCepheid, geographyId },
       { jobId: jobIdNtp, geographyId },
       { jobId: jobIdTechnician, geographyId },
+      { jobId: jobIdUsaid, geographyId },
     ]
   )
 
@@ -2924,10 +2936,12 @@ async function seedJobFunctionsAndUsersForOperationalData(
     jobFunctionIdDeviceMaker,
     jobFunctionIdNtp,
     jobFunctionIdTechnician,
+    jobFunctionIdDonor,
 
     jobIdCepheid,
     jobIdNtp,
     jobIdTechnician,
+    jobIdUsaid,
   }
 }
 
