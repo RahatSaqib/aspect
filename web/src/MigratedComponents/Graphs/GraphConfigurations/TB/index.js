@@ -9,6 +9,7 @@ const tbGraphs = {
     assays: ['GxMtbRif', 'GxMtbRifUltra'],
     componentSize: 'full',
     group: 'tb',
+    graphRenderPermissions: ['dashboard'],
     graphType: [
       {
         id: 'tbResultsByCategory1Monthly',
@@ -66,6 +67,7 @@ const tbGraphs = {
     assays: ['GxMtbRif', 'GxMtbRifUltra'],
     componentSize: 'full',
     group: 'tb',
+    graphRenderPermissions: ['dashboard'],
     graphType: [
       {
         id: 'tbByCategory1Monthly',

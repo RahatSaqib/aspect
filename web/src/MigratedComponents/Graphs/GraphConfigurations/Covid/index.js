@@ -15,6 +15,7 @@ const covidGraphs = {
       'assayMP96Covid19',
       'assayQS7Covid19',
     ],
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'deathsPerDay',
@@ -75,6 +76,7 @@ const covidGraphs = {
       'assayMP96Covid19',
       'assayQS7Covid19',
     ],
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'outcomeByGender',
@@ -113,6 +115,7 @@ const covidGraphs = {
       'assayMP96Covid19',
       'assayQS7Covid19',
     ],
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'dailyConfirmed',
@@ -150,6 +153,7 @@ const covidGraphs = {
       'assayMP96Covid19',
       'assayQS7Covid19',
     ],
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'splitByFemale',
@@ -222,6 +226,7 @@ const covidGraphs = {
       'assayMP96Covid19',
       'assayQS7Covid19',
     ],
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'dailyConfirmedFemale',
