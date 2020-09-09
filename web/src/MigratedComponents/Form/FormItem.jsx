@@ -12,6 +12,7 @@ const cssClasses = classnames.bind(require('./Form.css'))
 const FormItem = ({
   id,
   label,
+  link,
   type,
   controlType,
   hideIfNull,
@@ -34,6 +35,7 @@ const FormItem = ({
         input={type}
         controlType={controlType}
         label={buildLabel(label, false)}
+        link={link}
         placeholder=" - "
         className={cssClasses('form__sectionItemInput', {
           'form__sectionItemInput--enabled': toggleEdit,
@@ -56,11 +58,13 @@ const FormItem = ({
 
 FormItem.defaultProps = {
   hideIfNull: false,
+  link: false,
 }
 
 FormItem.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  link: PropTypes.oneOf([PropTypes.object, PropTypes.bool]),
   type: PropTypes.string.isRequired,
   controlType: PropTypes.string.isRequired,
   hideIfNull: PropTypes.bool,
