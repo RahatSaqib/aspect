@@ -161,7 +161,7 @@ describe('Integration test for device status', () => {
         ),
       })
 
-      await waitForIdle(3000)
+      await waitForIdle()
       const issues = await knex('Issue')
         .where({ deviceId: response.body.device.id })
         .orderBy('createdOn', 'DESC')
@@ -181,7 +181,6 @@ describe('Integration test for device status', () => {
         await issueStatusToId('Active')
       )
       await dispatchAndWaitForAction(resolveIssues())
-      await waitForIdle(5000)
       await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
     it('should create new issue per module disabled ', async () => {
