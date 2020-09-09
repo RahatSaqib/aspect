@@ -84,7 +84,11 @@
                                 "component": "textField"
                             },
                             "type": "readOnly",
-                            "label": "Device Name"
+                            "label": "Device Name",
+                            "link": {
+                                "key": "deviceId",
+                                "url": "/browse/device/:deviceId"
+                            }
                         },
                         {
                             "id": "deviceType",
