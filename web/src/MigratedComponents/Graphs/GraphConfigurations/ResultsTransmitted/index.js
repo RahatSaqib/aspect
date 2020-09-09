@@ -32,6 +32,7 @@ const resultsTransmittedGraphs = {
         sortByKeys: ['id'],
       },
     ],
+    graphRenderPermissions: ['dashboard', 'operationalData'],
     graphType: [
       {
         id: 'resultsTransmittedDials',

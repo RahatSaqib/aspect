@@ -210,43 +210,36 @@ module.exports = {
       titleI18nKey: 'activeDevicesTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT
-      CONCAT(ROUND(IFNULL(SUM(distinctResultDates) * 100 / SUM(days), 0)), '%') AS cnt
-  FROM
-      (SELECT
-      COUNT(DISTINCT DATE(r.endedOn)) AS distinctResultDates,
-          GetWeekdaysInRange(CURRENT_DATE, GREATEST(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), d.createdOn)) AS days
-      FROM
-          Device AS d
-      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-      LEFT JOIN Result AS r ON d.id = r.deviceId
-          AND r.endedOn >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
-          AND DAYOFWEEK(r.endedOn) <> 1
-          AND DAYOFWEEK(r.endedOn) <> 7
+      sqlForIndicator: `SELECT CONCAT(ROUND(SUM(dms.active = 1) * 100 / COUNT(dms.id), 0), '%') AS cnt
+      FROM DeviceMaintenanceStatusLog AS dml
+      LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dms2 ON dml.deviceId = dms2.deviceId AND dml.day = dms2.day AND (dml.createdOn < dms2.createdOn OR (dml.createdOn = dms2.createdOn AND dml.id < dms2.id))
+      INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
+      INNER JOIN Device AS d ON dml.deviceId = d.id
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON s.id = d.siteId
       INNER JOIN Partner AS p ON s.partnerId = p.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       WHERE dt.externalId = 'CepheidGeneXpert'
-      GROUP BY d.id) AS q`,
-      sqlForStatUnit: `SELECT
-      CONCAT(ROUND(IFNULL(SUM(distinctResultDates) * 100 / SUM(days), 0)), '%') AS cnt
-  FROM
-      (SELECT
-          COUNT(DISTINCT DATE(r.endedOn)) AS distinctResultDates,
-          GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), GREATEST(DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'), d.createdOn)) AS days
-      FROM
-          Device AS d
-      INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-      LEFT JOIN Result AS r ON d.id = r.deviceId
-          AND r.endedOn >= DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')
-          AND r.endedOn < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
-          AND DAYOFWEEK(r.endedOn) <> 1
-          AND DAYOFWEEK(r.endedOn) <> 7
+      AND ISNULL(dms2.id)
+      AND MONTH(dml.day) = MONTH(CURRENT_DATE)
+      AND YEAR(dml.day) = YEAR(CURRENT_DATE)
+      AND DAYOFWEEK(dml.day) <> 1
+      AND DAYOFWEEK(dml.day) <> 7`,
+      sqlForStatUnit: `SELECT CONCAT(ROUND(SUM(dms.active = 1) * 100 / COUNT(dms.id), 0), '%') AS cnt
+      FROM DeviceMaintenanceStatusLog AS dml
+      LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dms2 ON dml.deviceId = dms2.deviceId AND dml.day = dms2.day AND (dml.createdOn < dms2.createdOn OR (dml.createdOn = dms2.createdOn AND dml.id < dms2.id))
+      INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
+      INNER JOIN Device AS d ON dml.deviceId = d.id
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN Site AS s ON s.id = d.siteId
       INNER JOIN Partner AS p ON s.partnerId = p.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       WHERE dt.externalId = 'CepheidGeneXpert'
-      GROUP BY d.id) AS q`,
+      AND ISNULL(dms2.id)
+      AND MONTH(dml.day) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+      AND YEAR(dml.day) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+      AND DAYOFWEEK(dml.day) <> 1
+      AND DAYOFWEEK(dml.day) <> 7`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetActiveDevices',
       link: '/operational-data#deviceStatus',
@@ -349,46 +342,46 @@ module.exports = {
       titleI18nKey: 'deviceDaysActiveTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT
-          ROUND(
-            IFNULL(
-              AVG(dayCount)
-            ,0)
-          ,1)
-        AS cnt
-        FROM (
-          SELECT COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
-            FROM Device AS d
-          INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-          INNER JOIN Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN Result AS r ON d.id = r.deviceId
-      AND DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
-              AND DAYOFWEEK(r.endedOn) <> 1
-              AND DAYOFWEEK(r.endedOn) <> 7
-          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          WHERE dt.externalId = 'CepheidGeneXpert'
-          GROUP BY d.id
-    ) AS innerQuery`,
-      sqlForStatUnit: `SELECT
-          ROUND(
-            IFNULL(
-              AVG(dayCount)
-            ,0)
-          ,1)
-        AS cnt
-        FROM (
-          SELECT COUNT(DISTINCT DATE(r.endedOn)) AS dayCount
-            FROM Device AS d
-            INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
-            INNER JOIN Site AS s ON s.id = d.siteId
-            LEFT OUTER JOIN Result AS r ON d.id = r.deviceId
-        AND DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01') AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-                AND DAYOFWEEK(r.endedOn) <> 1
-                AND DAYOFWEEK(r.endedOn) <> 7
-            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-            WHERE dt.externalId = 'CepheidGeneXpert'
-          GROUP BY d.id
-        ) AS innerQuery`,
+      sqlForIndicator: `SELECT ROUND(AVG(daysActive), 1) as cnt
+      FROM
+        (
+        SELECT SUM(dms.active = 1) AS daysActive
+        FROM DeviceMaintenanceStatusLog AS dml
+        LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dms2 ON dml.deviceId = dms2.deviceId AND dml.day = dms2.day AND (dml.createdOn < dms2.createdOn OR (dml.createdOn = dms2.createdOn AND dml.id < dms2.id))
+        INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
+        INNER JOIN Device AS d ON dml.deviceId = d.id
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON s.id = d.siteId
+        INNER JOIN Partner AS p ON s.partnerId = p.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        WHERE dt.externalId = 'CepheidGeneXpert'
+        AND ISNULL(dms2.id)
+        AND MONTH(dml.day) = MONTH(CURRENT_DATE)
+        AND YEAR(dml.day) = YEAR(CURRENT_DATE)
+        AND DAYOFWEEK(dml.day) <> 1
+        AND DAYOFWEEK(dml.day) <> 7
+        GROUP BY dml.deviceId
+      ) as innerQuery`,
+      sqlForStatUnit: `SELECT ROUND(AVG(daysActive), 1) as cnt
+      FROM
+        (
+        SELECT SUM(dms.active = 1) AS daysActive
+        FROM DeviceMaintenanceStatusLog AS dml
+        LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dms2 ON dml.deviceId = dms2.deviceId AND dml.day = dms2.day AND (dml.createdOn < dms2.createdOn OR (dml.createdOn = dms2.createdOn AND dml.id < dms2.id))
+        INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
+        INNER JOIN Device AS d ON dml.deviceId = d.id
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON s.id = d.siteId
+        INNER JOIN Partner AS p ON s.partnerId = p.id
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        WHERE dt.externalId = 'CepheidGeneXpert'
+        AND ISNULL(dms2.id)
+        AND MONTH(dml.day) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+        AND YEAR(dml.day) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+        AND DAYOFWEEK(dml.day) <> 1
+        AND DAYOFWEEK(dml.day) <> 7
+        GROUP BY dml.deviceId
+      ) as innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetDeviceDaysActiveTitle',
       link: '/operational-data#deviceStatus',
@@ -581,7 +574,7 @@ module.exports = {
         IFNULL(
           AVG(
             TIMESTAMPDIFF(
-              MINUTE,
+              HOUR,
               r.endedOn,
               r.createdOn
             )
@@ -606,7 +599,7 @@ module.exports = {
         IFNULL(
           AVG(
             TIMESTAMPDIFF(
-              MINUTE,
+              HOUR,
               r.endedOn,
               r.createdOn
             )
@@ -632,7 +625,7 @@ module.exports = {
       sortOrder: 6,
       externalId: 'avgTimeToUpload',
       description:
-        'The average delay of uploading results. Only considering results where the delay was greater than two hours.',
+        'The average delay of uploading results, in hours. Only considering results where the delay was greater than two hours.',
       descriptionI18nKey: 'avgTimeToUploadDescription',
       dashboards: {
         operational: {
@@ -1007,7 +1000,7 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-        SELECT 
+        SELECT
           IFNULL(ROUND(AVG(
             DATEDIFF(logResolved.changedOn, logActive.changedOn)
           )), 0) AS cnt
@@ -1042,7 +1035,7 @@ module.exports = {
           AND MONTH(logResolved.createdOn) = MONTH(NOW())
       `,
       sqlForStatUnit: `
-        SELECT 
+        SELECT
         IFNULL(ROUND(AVG(
           DATEDIFF(logResolved.changedOn, logActive.changedOn)
         )), 0) AS cnt
@@ -1081,7 +1074,7 @@ module.exports = {
       link: '/browse/notification',
       sortOrder: 25,
       externalId: 'averageTimeToModuleReplacement',
-      description: `The average time (in days) between module replacement - i.e. 
+      description: `The average time (in days) between module replacement - i.e.
         between day module serial was marked as disabled until a
         different module serial detected in that slot.`,
       descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
