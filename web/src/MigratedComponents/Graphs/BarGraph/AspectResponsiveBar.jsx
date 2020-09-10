@@ -217,6 +217,7 @@ const AspectResponsiveBar = ({
         generateLegend={generateLegend}
         assaysFromState={assaysFromState}
         type={type}
+        symbolShape={config(type, data, displayMethod).symbolShape}
         legendsNotToRender={legendsNotToRender}
       />
     </div>

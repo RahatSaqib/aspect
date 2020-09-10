@@ -10,9 +10,20 @@ const CustomBarGraphLegend = ({
   assaysFromState,
   type,
   legendsNotToRender,
+  symbolShape,
 }) => {
-  return type === 'stackedDeviceActivity' ? (
-    <div className={cssClasses('customLegend__container')}>
+  const graphsToHaveCustomLegend = [
+    'bar',
+    'stackedDeviceActivity',
+    'barLegacyTreatment',
+  ]
+  return graphsToHaveCustomLegend.includes(type) ? (
+    <div
+      className={cssClasses([
+        'customLegend__container',
+        `customLegend__container--${type}`,
+      ])}
+    >
       {keys.map(k => {
         const { label, color } = generateLegend(
           k,
@@ -23,7 +34,10 @@ const CustomBarGraphLegend = ({
         return (
           <div className={cssClasses('legend__container')}>
             <div
-              className={cssClasses('legend__color')}
+              className={cssClasses([
+                'legend__color',
+                `legend__color--${symbolShape}`,
+              ])}
               style={{ background: color }}
             />
             <div className={cssClasses('legend__label')}>{label}</div>
@@ -36,12 +50,15 @@ const CustomBarGraphLegend = ({
 
 CustomBarGraphLegend.defaultProps = {
   assaysFromState: {},
+  symbolShape: 'circle',
 }
+
 CustomBarGraphLegend.propTypes = {
   keys: PropTypes.oneOf([PropTypes.object]).isRequired,
   generateLegend: PropTypes.func.isRequired,
   assaysFromState: PropTypes.oneOf([PropTypes.object]),
   type: PropTypes.string.isRequired,
+  symbolShape: PropTypes.string,
   legendsNotToRender: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
