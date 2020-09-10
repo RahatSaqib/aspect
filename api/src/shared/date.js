@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const {
   addDays,
+  addMinutes,
   format,
   parse,
   parseISO,
@@ -39,17 +40,17 @@ function parseDateOrDefault(
   return isValid(parsedDate) ? parsedDate : defaultValue
 }
 
-function formatDateOrDefault(date, dateFormat, defaultValue = null) {
+function formatDateOrDefault(
+  date,
+  dateFormat = 'yyyy-MM-dd',
+  defaultValue = null
+) {
   date = parseDateOrDefault(date)
   if (date == null) {
     return defaultValue
   }
 
-  if (dateFormat != null) {
-    return format(date, dateFormat)
-  }
-
-  return format(date, 'yyyy-MM-dd')
+  return format(addMinutes(date, date.getTimezoneOffset()), dateFormat)
 }
 
 function returnIso8601StringWithoutTimeZoneOffset(date) {

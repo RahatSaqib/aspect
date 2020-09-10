@@ -2,15 +2,15 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
 const _ = require('lodash')
-const dns = require('date-fns')
+const { subDays } = require('date-fns')
 const reporters = require('../fixtures/reporters.json')
 
 async function seed(knex) {
   await Promise.all(
     _.map(reporters, async report => {
-      const subDays = _.random(1, 31)
-      const createdOn = dns.subDays(new Date(), subDays)
-      const expires = dns.subDays(new Date(), subDays + 1)
+      const days = _.random(1, 31)
+      const createdOn = subDays(new Date(), days)
+      const expires = subDays(new Date(), days + 1)
       await knex('RefreshToken').insert({
         ...report,
         createdOn,
