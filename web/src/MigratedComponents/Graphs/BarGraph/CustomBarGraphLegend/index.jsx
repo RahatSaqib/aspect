@@ -12,12 +12,7 @@ const CustomBarGraphLegend = ({
   legendsNotToRender,
   symbolShape,
 }) => {
-  const graphsToHaveCustomLegend = [
-    'bar',
-    'stackedDeviceActivity',
-    'barLegacyTreatment',
-  ]
-  return graphsToHaveCustomLegend.includes(type) ? (
+  return (
     <div
       className={cssClasses([
         'customLegend__container',
@@ -45,7 +40,7 @@ const CustomBarGraphLegend = ({
         )
       })}
     </div>
-  ) : null
+  )
 }
 
 CustomBarGraphLegend.defaultProps = {

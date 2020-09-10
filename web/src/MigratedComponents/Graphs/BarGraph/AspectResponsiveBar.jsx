@@ -29,6 +29,11 @@ const AspectResponsiveBar = ({
   type,
 }) => {
   const legendsNotToRender = []
+  const graphsToHaveCustomLegend = [
+    'bar',
+    'stackedDeviceActivity',
+    'barLegacyTreatment',
+  ]
   const { formatNumber: intlFormatNumber } = useIntl()
 
   const config = (type, data, displayMethod) => {
@@ -123,29 +128,30 @@ const AspectResponsiveBar = ({
     }
   }
 
-  const baseLegend = displayLegend
-    ? [
-        {
-          dataFrom: 'keys',
-          data: keys.map(k =>
-            generateLegend(k, assaysFromState, type, legendsNotToRender)
-          ),
-          anchor: 'bottom-right',
-          direction: 'row',
-          justify: false,
-          translateX: config(type, data, displayMethod).translateX,
-          translateY: 60,
-          itemsSpacing: 2,
-          itemWidth: config(type, data, displayMethod).itemWidth,
-          itemHeight: 20,
-          itemDirection: config(type, data, displayMethod).itemDirection,
-          itemOpacity: 0.85,
-          symbolSize: 20,
-          symbolShape: config(type, data, displayMethod).symbolShape,
-          effects: [{ on: 'hover', style: { itemOpacity: 1 } }],
-        },
-      ]
-    : []
+  const baseLegend =
+    displayLegend && !graphsToHaveCustomLegend.includes(type)
+      ? [
+          {
+            dataFrom: 'keys',
+            data: keys.map(k =>
+              generateLegend(k, assaysFromState, type, legendsNotToRender)
+            ),
+            anchor: 'bottom-right',
+            direction: 'row',
+            justify: false,
+            translateX: config(type, data, displayMethod).translateX,
+            translateY: 60,
+            itemsSpacing: 2,
+            itemWidth: config(type, data, displayMethod).itemWidth,
+            itemHeight: 20,
+            itemDirection: config(type, data, displayMethod).itemDirection,
+            itemOpacity: 0.85,
+            symbolSize: 20,
+            symbolShape: config(type, data, displayMethod).symbolShape,
+            effects: [{ on: 'hover', style: { itemOpacity: 1 } }],
+          },
+        ]
+      : []
 
   const format = (v, displayMethod, intlFormatNumber) =>
     type === 'stackedDeviceActivity'
@@ -212,14 +218,16 @@ const AspectResponsiveBar = ({
         theme={config(type, data, displayMethod).theme}
         markers={config(type, data, displayMethod).markers}
       />
-      <CustomBarGraphLegend
-        keys={keys}
-        generateLegend={generateLegend}
-        assaysFromState={assaysFromState}
-        type={type}
-        symbolShape={config(type, data, displayMethod).symbolShape}
-        legendsNotToRender={legendsNotToRender}
-      />
+      {displayLegend && graphsToHaveCustomLegend.includes(type) ? (
+        <CustomBarGraphLegend
+          keys={keys}
+          generateLegend={generateLegend}
+          assaysFromState={assaysFromState}
+          type={type}
+          symbolShape={config(type, data, displayMethod).symbolShape}
+          legendsNotToRender={legendsNotToRender}
+        />
+      ) : null}
     </div>
   )
 }
