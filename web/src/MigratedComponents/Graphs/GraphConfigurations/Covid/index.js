@@ -36,7 +36,7 @@ const covidGraphs = {
         indexBy: 'day',
         keyToConsume: 'followUp',
         displayMethod: 'actual',
-        displayLegend: true,
+        displayLegend: false, // uses custom legend that can wrap
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'bookends',
         formatDate: 'dd MMM',
@@ -60,7 +60,7 @@ const covidGraphs = {
         indexBy: 'day',
         keyToConsume: 'followUp',
         displayMethod: 'actual',
-        displayLegend: true,
+        displayLegend: false, // uses custom legend that can wrap
         tickValuesYShape: 'bookends',
         tickValuesXShape: 'bookends',
         formatDate: 'dd MMM',
@@ -101,7 +101,7 @@ const covidGraphs = {
         tickValuesYShape: 'all',
         tickValuesXShape: 'all',
         displayMethod: 'actual',
-        displayLegend: true,
+        displayLegend: false, // uses custom legend that can wrap
         formatDate: 'dd MMM',
       },
     ],
@@ -139,7 +139,7 @@ const covidGraphs = {
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'actual',
-        displayLegend: true,
+        displayLegend: false, // uses custom legend that can wrap
         formatDate: 'dd MMM',
       },
     ],
@@ -252,7 +252,7 @@ const covidGraphs = {
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'actual',
-        displayLegend: true,
+        displayLegend: false, // uses custom legend that can wrap
         formatDate: 'dd MMM',
       },
     ],
