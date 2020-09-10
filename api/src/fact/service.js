@@ -233,23 +233,21 @@ function onResultLogged({ resultId }, { messageContext }) {
     factGenerateResultCounts,
     deviceHasNewResults,
   })
-  return context.run(async knex => {
-    const {
-      deviceId,
-      assayId,
-      resultCategory1,
-      resultCategory2,
-      noResults,
-    } = await knex('Result as r')
-      .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
-      .where({ id: resultId })
-      .first(
-        'r.deviceId',
-        'r.assayId',
-        'r.resultCategory1',
-        'r.resultCategory2',
-        'fdf.noResults'
-      )
+  return context.transact(async knex => {
+    const { deviceId, assayId, resultCategory1, resultCategory2, noResults } =
+      (await knex('Result as r')
+        .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
+        .where({ id: resultId })
+        .first(
+          'r.deviceId',
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          'fdf.noResults'
+        )) || {}
+    if (!deviceId) {
+      return
+    }
     if (noResults === 1) {
       context.deviceHasNewResults(deviceId)
     }

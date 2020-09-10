@@ -54,6 +54,16 @@
         "title": "Date Released" ,
         "type": "date",
         "order": 9
+      },
+      "gxTestRequested": {
+        "title": "Xpert Test Requested" ,
+        "type": "string",
+        "order": 10
+      },
+      "notedBy": {
+        "title": "Noted By" ,
+        "type": "string",
+        "order": 11
       }
     }
   },
