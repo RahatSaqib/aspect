@@ -39,7 +39,7 @@ const hivGraphs = {
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
-        displayLegend: false, // uses custom legend that can wrap
+        displayLegend: true,
         formatDate: 'MMM yy',
       },
       {

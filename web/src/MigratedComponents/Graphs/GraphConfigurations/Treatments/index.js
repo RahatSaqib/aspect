@@ -52,7 +52,7 @@ const treatmentStatusGraphs = {
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage', // todo: actual
-        displayLegend: false, // uses custom legend that can wrap
+        displayLegend: true,
         formatDate: 'MMM yy',
       },
       {
