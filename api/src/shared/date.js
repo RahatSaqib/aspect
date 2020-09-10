@@ -8,6 +8,8 @@ const {
   isValid,
   toDate,
   isEqual,
+  startOfDay,
+  startOfToday,
 } = require('date-fns')
 
 const { convertToLocalTime } = require('date-fns-timezone')
@@ -50,7 +52,7 @@ function formatDateOrDefault(
     return defaultValue
   }
 
-  return format(addMinutes(date, date.getTimezoneOffset()), dateFormat)
+  return format(date, dateFormat)
 }
 
 function returnIso8601StringWithoutTimeZoneOffset(date) {
@@ -106,6 +108,15 @@ function getTimeZoneById(allTimeZones, timeZoneId) {
   return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
 }
 
+function startOfDayUtc(date) {
+  return addMinutes(startOfDay(date), -date.getTimezoneOffset())
+}
+
+function startOfTodayUtc() {
+  const date = startOfToday()
+  return addMinutes(date, -date.getTimezoneOffset())
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -116,4 +127,6 @@ module.exports = {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
   getTimeZoneById,
+  startOfDayUtc,
+  startOfTodayUtc,
 }

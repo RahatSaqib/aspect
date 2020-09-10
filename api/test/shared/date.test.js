@@ -6,6 +6,8 @@ const {
   getLocalDateInUtc,
   getTimeZoneById,
   formatDateOrDefault,
+  startOfDayUtc,
+  startOfTodayUtc,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -114,12 +116,30 @@ describe('Shared Date Utility Functions', () => {
       it('should return the date in UTC', () => {
         assert.equal(
           formatDateOrDefault(
-            new Date(2020, 7, 1, 12, 34, 56),
+            new Date('2020-08-01T12:34:56.000Z'),
             'yyyy-MM-dd HH:mm:ss'
           ),
           '2020-08-01 12:34:56'
         )
       })
+    })
+  })
+
+  describe('startOfDayUtc', () => {
+    it('should return the start of the given day in UTC, ignoring server time', () => {
+      assert.equal(
+        startOfDayUtc(new Date('2020-08-02T01:23:45')).toISOString(),
+        '2020-08-02T00:00:00.000Z'
+      )
+    })
+  })
+
+  describe('startOfTodayUtc', () => {
+    it('should return the start of today in UTC, ignoring server time', () => {
+      assert.equal(
+        startOfTodayUtc().toISOString(),
+        startOfDayUtc(new Date()).toISOString()
+      )
     })
   })
 })
