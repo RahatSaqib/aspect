@@ -161,7 +161,7 @@ describe('Integration test for device status', () => {
         ),
       })
 
-      await waitForIdle(3000)
+      await waitForIdle()
       const issues = await knex('Issue')
         .where({ deviceId: response.body.device.id })
         .orderBy('createdOn', 'DESC')
@@ -169,10 +169,10 @@ describe('Integration test for device status', () => {
 
       assert.equal(responseWithIssue.statusCode, 200)
       assert.equal(issues.length, 2)
+      const moduleDisabledIssueTypeId = await issueTypeToId('ModuleDisabled')
       const moduleDisabledIssue = _.find(
         issues,
-        async issue =>
-          issue.issueTypeId === (await issueTypeToId('ModuleDisabled'))
+        issue => issue.issueTypeId === moduleDisabledIssueTypeId
       )
 
       assert.isOk(moduleDisabledIssue)
@@ -181,7 +181,7 @@ describe('Integration test for device status', () => {
         await issueStatusToId('Active')
       )
       await dispatchAndWaitForAction(resolveIssues())
-      await waitForIdle(5000)
+      await waitForIdle()
       await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
     it('should create new issue per module disabled ', async () => {
@@ -221,7 +221,7 @@ describe('Integration test for device status', () => {
       const deviceId = response.body.device.id
       const device = await knex('Device').where({ id: deviceId }).first()
       await waitForModuleDisabledIssue
-      await waitForIdle(3000)
+      await waitForIdle()
 
       const issue = await knex('Issue')
         .where({ deviceId, issueTypeId: await issueTypeToId('ModuleDisabled') })
@@ -356,7 +356,7 @@ describe('Integration test for device status', () => {
       assert.equal(response.statusCode, 200)
 
       await waitForModuleDisabledIssue1
-      await waitForIdle(3000)
+      await waitForIdle()
       const deviceId = response.body.device.id
       const deviceDisableEvent = waitForAction(
         deviceModuleDisabled(
