@@ -50,7 +50,12 @@ async function getResultQuery(query, dataConstraints) {
     .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Issue AS i', 'r.id', 'i.resultId')
-    .leftOuterJoin('IssueType AS it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueType AS it', function () {
+      this.on('i.issueTypeId', 'it.id').andOn(
+        'it.externalId',
+        knex.raw("'ResultReceived'")
+      )
+    })
     .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Notification as n', 'i.id', 'n.issueId')
@@ -84,7 +89,6 @@ async function getResultQuery(query, dataConstraints) {
       [currentMonth, currentMonth, currentMonth, currentMonth]
     )
     .where('dt.externalId', 'CepheidGeneXpert')
-    .where('it.externalId', 'ResultReceived')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
