@@ -155,7 +155,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         const resultElement = {
           ...auditFields,
           externalId: `UQTB-${i}-${format(
-            new Date(new Date() * _.random(1, 8)),
+            new Date(new Date() * _.random(1, 100)),
             'tt'
           )}-D`,
           assayId: assayGeneXpertMtbRif.id,
