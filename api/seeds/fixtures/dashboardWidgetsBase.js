@@ -564,6 +564,92 @@ module.exports = {
       },
     },
     {
+      icon: 'MdNotificationsNone',
+      jobFunctions: ['all'],
+      title: 'Positive Results Notified',
+      titleI18nKey: 'gxPositiveResultsNotifiedTitle',
+      externalId: 'gxPositiveResultsNotified',
+      sqlForIndicator: `
+          SELECT
+          CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
+            0),
+               0),
+          '%') AS cnt
+          FROM
+          (SELECT
+            MAX(em.id) IS NOT NULL OR MAX(sm.id) IS NOT NULL AS HasNotifications
+          FROM
+              Result AS r
+          INNER JOIN Device d ON d.id = r.deviceId
+          INNER JOIN Site s ON s.id = d.siteId
+          INNER JOIN Partner p ON p.id = s.partnerId
+          INNER JOIN Assay a ON r.assayId = a.id
+          INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
+          INNER JOIN DeviceType dt ON a.deviceTypeId = dt.id
+          LEFT JOIN Geography g ON s.geographyId = g.id
+          LEFT JOIN Issue i ON r.id = i.resultId
+          LEFT JOIN IssueType it ON i.issueTypeId = it.id
+          LEFT JOIN Notification n ON i.id = n.issueId
+          LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id AND sm.messageStatusId = 3
+	        LEFT JOIN EmailMessage em ON n.emailMessageId = em.id AND em.messageStatusId = 3
+          LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
+          WHERE
+              rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
+                  AND it.externalId = 'ResultReceived'
+                  AND dt.externalId = 'CepheidGeneXpert'
+                  AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
+                  AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+                  AND (deviceApproval.token = 'approved'
+                  OR ISNULL(deviceApproval.token))
+          GROUP BY r.id) AS q
+      `,
+      sqlForStatUnit: `
+      SELECT
+          CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
+            0),
+               0),
+          '%') AS cnt
+          FROM
+          (SELECT
+            MAX(em.id) IS NOT NULL OR MAX(sm.id) IS NOT NULL AS HasNotifications
+          FROM
+              Result AS r
+          INNER JOIN Device d ON d.id = r.deviceId
+          INNER JOIN Site s ON s.id = d.siteId
+          INNER JOIN Partner p ON p.id = s.partnerId
+          INNER JOIN Assay a ON r.assayId = a.id
+          INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
+          INNER JOIN DeviceType dt ON a.deviceTypeId = dt.id
+          LEFT JOIN Geography g ON s.geographyId = g.id
+          LEFT JOIN Issue i ON r.id = i.resultId
+          LEFT JOIN IssueType it ON i.issueTypeId = it.id
+          LEFT JOIN Notification n ON i.id = n.issueId
+          LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id AND sm.messageStatusId = 3
+	        LEFT JOIN EmailMessage em ON n.emailMessageId = em.id AND em.messageStatusId = 3
+          LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
+          WHERE
+              rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
+                  AND it.externalId = 'ResultReceived'
+                  AND dt.externalId = 'CepheidGeneXpert'
+                  AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+                  AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+                  AND (deviceApproval.token = 'approved'
+                  OR ISNULL(deviceApproval.token))
+          GROUP BY r.id) AS q`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
+      sortOrder: 7,
+      description:
+        "The percentage of positive GeneXpert's results that were notified via SMS or email.",
+      descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
+      link: '/operational-data#resultsTransmitted',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+    {
       icon: 'FaCloudUploadAlt',
       title: 'Average Delay to Upload',
       titleI18nKey: 'avgTimeToUploadTitle',
