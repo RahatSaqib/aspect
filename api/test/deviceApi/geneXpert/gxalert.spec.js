@@ -3837,17 +3837,15 @@ describe('Device API routes for GxAlert Device', () => {
               minDate: dateFormat(subDays(startedOnDate, 1), 'yyyy-MM-dd'),
             })
           assert.equal(devicesResponse.body.data.length, 1)
-          devicesResponse.body.data.forEach(device => {
-            device.days.forEach(day => {
-              if (
-                day.date < startOfDay(addDays(endedOnDateInUtc, 1)) &&
-                day.date >= startOfDay(endedOnDateInUtc)
-              ) {
-                assert.equal(day.externalId, 'active')
-              } else {
-                assert.equal(day.externalId, 'inactiveUnknown')
-              }
-            })
+          devicesResponse.body.data[0].days.forEach(day => {
+            if (
+              new Date(day.date) < startOfDay(addDays(endedOnDateInUtc, 1)) &&
+              new Date(day.date) >= startOfDay(endedOnDateInUtc)
+            ) {
+              assert.equal(day.externalId, 'active')
+            } else {
+              assert.equal(day.externalId, 'inactiveUnknown')
+            }
           })
         }))
     })

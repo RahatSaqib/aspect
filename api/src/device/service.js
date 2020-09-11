@@ -1222,6 +1222,8 @@ async function deviceMaintenanceStatusHistory(request) {
           'dms.id'
         )
         .orderBy(['dmsl.deviceId', 'dmsl.day'])
+        .orderBy('dmsl.createdOn', 'desc')
+        .orderBy('dmsl.id', 'desc')
         .select('dmsl.deviceId', 'dmsl.day', 'dmsl.data', 'dms.externalId')
   const result = {
     ok: true,
