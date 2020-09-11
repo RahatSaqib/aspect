@@ -44,7 +44,7 @@ const deviceStatusGraphs = {
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
-        displayLegend: false,
+        displayLegend: true,
         formatDate: 'LLLL do',
       },
     ],
