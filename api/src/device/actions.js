@@ -216,9 +216,10 @@ function deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId) {
  * to log the maintenance status of unlogged
  * devices
  */
-function logDeviceMaintenanceStatus() {
+function logDeviceMaintenanceStatus(today = null) {
   return {
     type: types.DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED,
+    today,
   }
 }
 
