@@ -418,7 +418,7 @@ async function updateIssueStatus(request) {
       })
       .first('n.id')
     if (notification == null) {
-      throw Boom.unauthorized('No Active Issue to Acknowledge')
+      throw Boom.forbidden('No Active Issue to Acknowledge')
     }
 
     ;({ issueStatusId, issueStatusSeverityExternalId } = await knex(

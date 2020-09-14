@@ -94,7 +94,7 @@ async function authenticate(request) {
       // no user with such username in Aspect yet - check it in GxAlert
       user = await validateUserAtGxAlert(payload.name, payload.password)
       if (!user) {
-        return Boom.unauthorized(
+        return Boom.forbidden(
           'Authentication failed. Wrong username or password.'
         )
       }
@@ -118,7 +118,7 @@ async function authenticate(request) {
   }
 
   if (user.lockedOut === 1) {
-    return Boom.unauthorized('Your account is locked.')
+    return Boom.forbidden('Your account is locked.')
   }
 
   // if password isn't a bcrypt hash, user was migrated from
@@ -127,7 +127,9 @@ async function authenticate(request) {
     // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
     user = await validateUserAtGxAlert(payload.name, payload.password, user)
     if (!user) {
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+      return Boom.forbidden(
+        'Authentication failed. Wrong username or password.'
+      )
     }
   } else {
     // this is for "regular" accounts that were either created in aspect
@@ -148,7 +150,8 @@ async function authenticate(request) {
         })
 
       await updateFailedPass
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+
+      return Boom.forbidden('Authentication failed. Wrong password.')
     }
   }
 
@@ -358,7 +361,7 @@ async function getAccessToken(
     },
     config.secret,
     {
-      expiresIn: '1 hour',
+      expiresIn: '10 seconds',
       issuer: 'https://www.aspect.id',
     }
   )

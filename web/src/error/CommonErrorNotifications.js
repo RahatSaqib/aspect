@@ -33,6 +33,20 @@ export function errorInsufficientScope(messageDescriptors, messageValues) {
   }
 }
 
+export function errorForbidden(messageDescriptors, messageValues) {
+  return {
+    severity: 'error',
+    ...defineMessages({
+      resolution: {
+        id: 'errorResponseMessages.common.forbidden.resolution',
+        defaultMessage: `Access denied for this resource. Please, contact your administrator for support.`,
+      },
+    }),
+    ...messageDescriptors,
+    messageValues,
+  }
+}
+
 export function inlineErrorPleaseTryAgainInAFewMinutes(
   messageDescriptors,
   messageValues

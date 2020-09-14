@@ -271,7 +271,7 @@ describe('Authentication routes', () => {
           })
       })
 
-      it('should return 401 and error message if incorrect password', async () => {
+      it.only('should return 403 and error message if incorrect password', async () => {
         await server
           .post(authPath)
           .send({
@@ -280,7 +280,7 @@ describe('Authentication routes', () => {
             clientName: webClientName,
           })
           .then(res => {
-            assert.equal(res.status, 401)
+            assert.equal(res.status, 403)
             assert.equal(
               res.body.message,
               'Authentication failed. Wrong password.'

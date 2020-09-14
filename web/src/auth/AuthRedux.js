@@ -139,23 +139,23 @@ export function loginStart({ user, password }) {
             }),
           },
         },
-        401: {
+        403: {
           'Your account is locked.': {
             severity: 'warn',
             ...defineMessages({
               title: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.accountLocked.title',
-                defaultMessage: 'Login Failed',
+                  'errorResponseMessages.loginStart.POST.403.accountLocked.title',
+                defaultMessage: 'Login failed',
               },
               message: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                  'errorResponseMessages.loginStart.POST.403.accountLocked.message',
                 defaultMessage: 'Your user account has been locked',
               },
               resolution: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                  'errorResponseMessages.loginStart.POST.403.accountLocked.resolution',
                 defaultMessage:
                   'You can contact us to unlock your account for you by email ({supportEmail})',
               },
@@ -164,24 +164,65 @@ export function loginStart({ user, password }) {
               supportEmail: config.supportEmail,
             },
           },
-          default: {
+          'Authentication failed. Wrong username or password.': {
             severity: 'warn',
             ...defineMessages({
               title: {
                 id:
-                  'errorResponseMessages.loginStart.POST.default.default.title',
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.title',
                 defaultMessage: 'Login Failed',
               },
               message: {
                 id:
-                  'errorResponseMessages.loginStart.POST.default.default.message',
-                defaultMessage:
-                  'The details that you have entered are incorrect',
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.message',
+                defaultMessage: 'Invalid username or password',
               },
               resolution: {
-                id: 'errorResponseMessages.loginStart.POST.default.resolution',
+                id:
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.resolution',
                 defaultMessage:
-                  'Please re-enter your login details and try again?',
+                  'Please, correct the credentials your entered and try again.',
+              },
+            }),
+          },
+          'Authentication failed. Wrong password.': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.title',
+                defaultMessage: 'Login Failed',
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.message',
+                defaultMessage: 'Incorrect password',
+              },
+              resolution: {
+                id:
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.resolution',
+                defaultMessage:
+                  'Please, correct the credentials your entered and try again.',
+              },
+            }),
+          },
+          'Incorrect password': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.403.incorrectPassword.title',
+                defaultMessage: 'Could not update your credentials',
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.message',
+                defaultMessage: 'The password you entered is incorrect',
+              },
+              resolution: {
+                id:
+                  'errorResponseMessages.loginStart.POST.403.wrongUsernameOrPassword.resolution',
+                defaultMessage: 'Please, re-enter your password and try again.',
               },
             }),
           },
