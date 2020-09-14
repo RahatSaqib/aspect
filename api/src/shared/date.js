@@ -1,12 +1,15 @@
 const _ = require('lodash')
 const {
   addDays,
+  addMinutes,
   format,
   parse,
   parseISO,
   isValid,
   toDate,
   isEqual,
+  startOfDay,
+  startOfToday,
 } = require('date-fns')
 
 const { convertToLocalTime } = require('date-fns-timezone')
@@ -39,17 +42,17 @@ function parseDateOrDefault(
   return isValid(parsedDate) ? parsedDate : defaultValue
 }
 
-function formatDateOrDefault(date, dateFormat, defaultValue = null) {
+function formatDateOrDefault(
+  date,
+  dateFormat = 'yyyy-MM-dd',
+  defaultValue = null
+) {
   date = parseDateOrDefault(date)
   if (date == null) {
     return defaultValue
   }
 
-  if (dateFormat != null) {
-    return format(date, dateFormat)
-  }
-
-  return format(date, 'yyyy-MM-dd')
+  return format(date, dateFormat)
 }
 
 function returnIso8601StringWithoutTimeZoneOffset(date) {
@@ -105,6 +108,15 @@ function getTimeZoneById(allTimeZones, timeZoneId) {
   return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
 }
 
+function startOfDayUtc(date) {
+  return addMinutes(startOfDay(date), -date.getTimezoneOffset())
+}
+
+function startOfTodayUtc() {
+  const date = startOfToday()
+  return addMinutes(date, -date.getTimezoneOffset())
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -115,4 +127,6 @@ module.exports = {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
   getTimeZoneById,
+  startOfDayUtc,
+  startOfTodayUtc,
 }
