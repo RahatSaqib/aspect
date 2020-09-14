@@ -1304,9 +1304,18 @@ async function onDeviceMaintenanceStatusLogScheduled(
   { messageContext }
 ) {
   return messageContext.run(async knex => {
-    const today =
-      (action.today && parseISO(action.today)) ||
-      getLocalDateInUtc(startOfToday())
+    const getCustomToday = today => {
+      if (today) {
+        if (_.isDate(today)) {
+          return today
+        }
+        if (_.isString(today)) {
+          return parseISO(action.today)
+        }
+      }
+      return getLocalDateInUtc(startOfToday())
+    }
+    const today = getCustomToday(action.today)
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
