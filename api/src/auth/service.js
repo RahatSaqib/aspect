@@ -361,7 +361,7 @@ async function getAccessToken(
     },
     config.secret,
     {
-      expiresIn: '10 seconds',
+      expiresIn: '1 hour',
       issuer: 'https://www.aspect.id',
     }
   )
