@@ -1,9 +1,9 @@
 const _ = require('lodash')
-const { isWeekend, addMinutes } = require('date-fns')
+const { isWeekend } = require('date-fns')
 const format = require('date-fns/format')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getArrayOfDaysInRange } = require('../shared/date')
+const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
 
 async function activityOverTimeDashboard(request) {
   const { auth, query } = request
@@ -24,15 +24,6 @@ async function activityOverTimeDashboard(request) {
       inactiveConnectivity: 0,
       inactiveDecommissioned: 0,
     }
-  )
-
-  const minDateUtc = addMinutes(
-    query.minDate,
-    query.minDate.getTimezoneOffset()
-  )
-  const maxDateUtc = addMinutes(
-    query.maxDate,
-    query.maxDate.getTimezoneOffset()
   )
 
   // base query for all actual devices
@@ -107,8 +98,8 @@ async function activityOverTimeDashboard(request) {
       'dms.id'
     )
     .whereRaw('dmsl.day >= ? AND dmsl.day <= ?', [
-      format(minDateUtc, 'yyyy-MM-dd'),
-      format(maxDateUtc, 'yyyy-MM-dd'),
+      formatDateOrDefault(query.minDate, 'yyyy-MM-dd'),
+      formatDateOrDefault(query.maxDate, 'yyyy-MM-dd'),
     ])
     .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)
