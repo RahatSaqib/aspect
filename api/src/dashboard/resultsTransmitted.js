@@ -1,13 +1,13 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
-const addMinutes = require('date-fns/addMinutes')
-const formatDate = require('date-fns/format')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
   allResultCategoryToId,
   allMessageStatusToId,
 } = require('../shared/dictionary')
+const { formatDateOrDefault } = require('../shared/date')
+
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
 async function getAssayQuery(query, dataConstraints) {
@@ -236,12 +236,9 @@ async function resultsTransmittedDashboard(request) {
 
   // helpers
   const { currentMonth = new Date() } = query
-  const currentMonthUtc = addMinutes(
-    currentMonth,
-    currentMonth.getTimezoneOffset()
-  )
-  const currMonth = formatDate(currentMonthUtc, 'yyyy-MM')
-  const prevMonth = formatDate(subMonths(currentMonthUtc, 1), 'yyyy-MM')
+  const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
+  const prevMonth = formatDateOrDefault(subMonths(currentMonth, 1), 'yyyy-MM')
+
   const getChange = (pcCurr, pcPrev = null) => {
     if (pcPrev === null) {
       return 0

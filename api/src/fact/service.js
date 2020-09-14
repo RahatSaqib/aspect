@@ -1,4 +1,4 @@
-const { addDays, subDays, startOfDay } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
@@ -28,6 +28,7 @@ const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
 } = require('../shared/utilsInventory')
+const { startOfDayUtc } = require('../shared/date')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
@@ -290,7 +291,7 @@ function onFactGenerateResultCountsForDevice(
     }
 
     await Promise.each(daysToCalculate, async days => {
-      const endedOn = startOfDay(subDays(now, days))
+      const endedOn = startOfDayUtc(subDays(now, days))
       // query for selecting data for the device
       const query = knex('Result as r').whereRaw(
         'r.deviceId = :deviceId and r.endedOn > :endedOn',
