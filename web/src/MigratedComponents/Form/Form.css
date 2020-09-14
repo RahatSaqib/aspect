@@ -26,7 +26,7 @@
 }
 
 .form__sectionItemInput > label {
-  color: var('--aspect-color-chill-blue-1')
+  color: var('--aspect-color-chill-blue-1') !important;
 }
 
 .form__sectionItemInput--enabled > div > input {

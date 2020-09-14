@@ -1,13 +1,14 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { startOfToday, addDays, addSeconds } = require('date-fns')
+const { addDays, addSeconds } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { startOfTodayUtc } = require('../../src/shared/date')
 
 async function seed(knex) {
   const days = []
   let day = new Date(2018, 0, 1)
-  while (day < startOfToday()) {
+  while (day < startOfTodayUtc()) {
     days.push(day)
     day = addDays(day, 1)
   }

@@ -54,6 +54,8 @@ const SELECT_COMMON_FIELDS = [
   'r.deviceId',
   'd.name as deviceName',
   'd.serial as deviceSerial',
+  knex.raw("CONCAT(dt.manufacturer, ' ', dt.name) as deviceType"),
+  'at.name as assayType',
   'c.name as countryName',
   'st.name as stateName',
   'lg.name as lgaName',
@@ -127,6 +129,12 @@ const SELECT_SHOW_FIELDS = [
   'rf.formSchema',
   knex.raw('IFNULL(pa.canEdit, 0) AS canEdit'),
   knex.raw('IFNULL(pa.canDelete, 0) AS canDelete'),
+  knex.raw(
+    `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
+  ),
+  'r.notes as resultNotes',
+  'a.resultCategory1Label',
+  'a.resultCategory2Label',
 ]
 const SORT_FIELDS = [
   'endedOn',
