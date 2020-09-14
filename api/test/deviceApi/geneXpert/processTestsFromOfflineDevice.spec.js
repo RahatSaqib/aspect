@@ -172,6 +172,32 @@ describe('Backward update db after getting tests from offline device', () => {
     })
 
     /**
+     * 4.3. Let's manually change statuses for 1st, 2nd and 3rd days from 'inactiveUnknown'
+     * to 'inactiveNoResultsReported', 'inactiveOutOfInventory' and 'inactiveDownForRepair'
+     */
+    const customStatuses = [
+      deviceMaintenanceStatusToId.inactiveNoResultsReported,
+      deviceMaintenanceStatusToId.inactiveOutOfInventory,
+      deviceMaintenanceStatusToId.inactiveDownForRepair,
+    ]
+    await Promise.each(
+      customStatuses,
+      async (deviceMaintenanceStatusId, index) =>
+        knex('DeviceMaintenanceStatusLog')
+          .update({ deviceMaintenanceStatusId })
+          .where('id', logs[index].id)
+    )
+    // reread logs and see that first 3 days have manually changed to another statuses
+    logs = await getLatestLogs(deviceId, minDate)
+    logs.forEach((log, index) => {
+      expect(log.deviceMaintenanceStatusId).to.be.equal(
+        index < customStatuses.length
+          ? customStatuses[index]
+          : deviceMaintenanceStatusToId.inactiveUnknown
+      )
+    })
+
+    /**
      * 5. Insert results for days which have been marked as inactiveUnknown
      */
     await Promise.each(days, async (day, index) => {
@@ -217,7 +243,8 @@ describe('Backward update db after getting tests from offline device', () => {
     assert.isNotOk(factDevice.maintenanceDueOn)
 
     /**
-     * 7. days with tests are marked now as Active in DeviceMaintenanceStatusLog
+     * 7. days with tests are marked now as Active in DeviceMaintenanceStatusLog -
+     * including all manually changed custom statuses (see step 4.3 above)
      */
     logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
