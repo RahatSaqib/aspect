@@ -271,7 +271,7 @@ describe('Authentication routes', () => {
           })
       })
 
-      it.only('should return 403 and error message if incorrect password', async () => {
+      it('should return 403 and error message if incorrect password', async () => {
         await server
           .post(authPath)
           .send({
