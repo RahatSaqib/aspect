@@ -112,13 +112,13 @@ export function loginStart({ user, password }) {
               title: {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
-                defaultMessage: "Couldn't connect to GxAlert",
+                defaultMessage: "Login failed",
               },
               message: {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
                 defaultMessage:
-                  "If your credentials are from GxAlert, please contact your administrator for support. If they're not, try to login again.",
+                  "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, probably you entered invalid credentials.",
               },
             }),
           },
