@@ -29,6 +29,7 @@ const {
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
 const { parseDateOrDefault } = require('../shared/date')
+const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -1007,6 +1008,8 @@ async function onResultLogged(action, { messageContext }) {
         action,
         messageContext
       )
+
+      await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
   })
 }
