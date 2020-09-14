@@ -283,6 +283,21 @@ function validateResultDetailResponse() {
     patientData: Joi.object().allow(null).description('The patient data'),
     formSchema: Joi.object().allow(null).description('The form data object'),
     assay: Joi.object().allow(null).description('The assay object'),
+    assayType: Joi.string()
+      .allow(null)
+      .description("The type of the result's assay"),
+    deviceType: Joi.string()
+      .allow(null)
+      .description("The type of the result's device"),
+    resultText: Joi.string()
+      .allow(null)
+      .description('The result represented in text format'),
+    resultCategory1Label: Joi.string()
+      .allow(null)
+      .description('The name of the test made for the first result category'),
+    resultCategory2Label: Joi.string()
+      .allow(null)
+      .description('The name of the test made for the second result category'),
     treatmentStatus: Joi.object()
       .allow(null)
       .description('The treatment status object'),

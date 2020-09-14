@@ -5444,6 +5444,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.unusedModules },
     {
       jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.gxPositiveResultsNotified,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.instrumentsReplaced,
     },
     {

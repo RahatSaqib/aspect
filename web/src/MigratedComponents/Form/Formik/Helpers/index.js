@@ -1,18 +1,35 @@
 import * as Yup from 'yup'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
+import cloneDeep from 'lodash/cloneDeep'
+
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config) => {
-  const { sections } = config
+  const configToMutate = cloneDeep(config)
+  const { sections } = configToMutate
   if (!isEmpty(data)) {
     sections.map(({ rows }) =>
       rows.map(({ items }) =>
-        items.map(item => (item.initialValue = get(data, item.id)))
+        items.reduce((acc, curr) => {
+          acc = curr
+          acc.label = get(data, curr.label) || curr.label
+          acc.initialValue = get(data, curr.id)
+          acc.link = curr.link
+            ? {
+                ...curr.link,
+                url: curr.link.url.replace(
+                  `:${curr.link.key}`,
+                  get(data, curr.link.key)
+                ),
+              }
+            : null
+          return acc
+        }, [])
       )
     )
   }
-  return config
+  return configToMutate
 }
 
 const pickKeys = (data, keys) => {

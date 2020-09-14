@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { useSelector, shallowEqual } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
@@ -7,8 +8,18 @@ import enUS from 'date-fns/locale/en-US'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
+const cssClasses = classnames.bind(require('./DatePicker.css'))
+
 const AspectDatePicker = props => {
-  const { id, value, InputProps, formik, showTimeSelect, placeholder } = props
+  const {
+    id,
+    value,
+    InputProps,
+    formik,
+    showTimeSelect,
+    placeholder,
+    className,
+  } = props
 
   const [startDate, setStartDate] = useState(value ? new Date(value) : null)
   const { displayPreferences, culture } = useSelector(({ user }) => ({
@@ -23,6 +34,8 @@ const AspectDatePicker = props => {
 
   return (
     <DatePicker
+      wrapperClassName={cssClasses('datepicker__wrapper')}
+      className={className}
       showTimeSelect={showTimeSelect}
       selected={startDate}
       dateFormat={displayPreferences.dateTimeFormat}
@@ -39,6 +52,7 @@ const AspectDatePicker = props => {
 AspectDatePicker.defaultProps = {
   showTimeSelect: new Date(),
   placeholder: '',
+  className: '',
 }
 
 AspectDatePicker.propTypes = {
@@ -48,6 +62,7 @@ AspectDatePicker.propTypes = {
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
   showTimeSelect: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   placeholder: PropTypes.string,
+  className: PropTypes.string,
 }
 
 const AspectDateTimePicker = props => {
