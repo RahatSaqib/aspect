@@ -50,17 +50,23 @@ async function getResultQuery(query, dataConstraints) {
     .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Issue AS i', 'r.id', 'i.resultId')
-    .leftOuterJoin('IssueType AS it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueType AS it', function () {
+      this.on('i.issueTypeId', 'it.id').andOn(
+        'it.externalId',
+        knex.raw("'ResultReceived'")
+      )
+    })
     .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('Notification as n', 'i.id', 'n.issueId')
     .leftOuterJoin('EmailMessage as em', function () {
-      this.on('r.id', 'em.resultId').andOn(
+      this.on('n.emailMessageId', 'em.id').andOn(
         'em.messageStatusId',
         messageStatusToId.Sent
       )
     })
     .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('r.id', 'sm.resultId').andOn(
+      this.on('n.smsMessageId', 'sm.id').andOn(
         'sm.messageStatusId',
         messageStatusToId.Sent
       )
@@ -68,7 +74,7 @@ async function getResultQuery(query, dataConstraints) {
     // only specified 'currentMonth' and previous onth
     .whereRaw(
       `
-        (
+        ((
           YEAR(r.endedOn) = YEAR(?)
           AND
           MONTH(r.endedOn) = MONTH(?)
@@ -78,7 +84,7 @@ async function getResultQuery(query, dataConstraints) {
           YEAR(r.endedOn) = YEAR(DATE_SUB(?, INTERVAL 1 MONTH))
           AND
           MONTH(r.endedOn) = MONTH(DATE_SUB(?, INTERVAL 1 MONTH))
-        )
+        ))
       `,
       [currentMonth, currentMonth, currentMonth, currentMonth]
     )
@@ -172,8 +178,7 @@ async function getResultQuery(query, dataConstraints) {
               OR
               sm.id IS NOT NULL
             )
-            AND
-            ist.externalId IN ('Active', 'OK', 'Resolved')
+            AND ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END

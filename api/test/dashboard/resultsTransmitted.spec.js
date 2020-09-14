@@ -155,7 +155,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         const resultElement = {
           ...auditFields,
           externalId: `UQTB-${i}-${format(
-            new Date(new Date() * _.random(1, 8)),
+            new Date(new Date() * _.random(1, 10)),
             'tt'
           )}-D`,
           assayId: assayGeneXpertMtbRif.id,
@@ -185,7 +185,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           // -----------------------------
           // insert Issue
           // -----------------------------
-          await knex('Issue').insert({
+          const [issueId] = await knex('Issue').insert({
             issueTypeId: issueTypeResultReceivedId,
             issueStatusId: issueStatusResolvedId,
             partnerId,
@@ -196,6 +196,16 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
             level: 2,
             createdOn: randomDate,
             updatedOn: randomDate,
+          })
+
+          const [resultReceivedId] = await knex('IssueType')
+            .where({ externalId: 'ResultReceived' })
+            .pluck('id')
+          const [notificationId] = await knex('Notification').insert({
+            notificationTypeId: resultReceivedId,
+            issueId,
+            personId,
+            createdOn: new Date(),
           })
 
           const propsEmailSms = {
@@ -215,11 +225,15 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
               randomDate,
               totalViaEmail % 2 === 0 ? 60 : 180
             )
-            await knex('EmailMessage').insert({
+            const [emailMessageId] = await knex('EmailMessage').insert({
               emailTemplateId,
               ...propsEmailSms,
               createdOn: date,
               updatedOn: date,
+            })
+
+            await knex('Notification').where({ id: notificationId }).update({
+              emailMessageId,
             })
           }
 
@@ -233,11 +247,15 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
               randomDate,
               totalViaSms % 2 === 0 ? 60 : 180
             )
-            await knex('SmsMessage').insert({
+            const [smsMessageId] = await knex('SmsMessage').insert({
               smsTemplateId,
               ...propsEmailSms,
               createdOn: date,
               updatedOn: date,
+            })
+
+            await knex('Notification').where({ id: notificationId }).update({
+              smsMessageId,
             })
           }
         }
