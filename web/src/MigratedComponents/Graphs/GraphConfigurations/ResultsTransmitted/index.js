@@ -7,7 +7,9 @@ import {
 } from '../../Helpers/Formatters/datetime'
 import AspectDropdown from '../../../AspectDropdown'
 
-const currentMonth = formatISO(negateTimeZoneOffset(addMonths(new Date(), -1)))
+// get previous month by default
+const dateRanges = dateRangeOptions()
+const currentMonth = dateRanges[Object.keys(dateRanges)][2].value.minDate
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {

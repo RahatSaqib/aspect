@@ -234,5 +234,11 @@ module.exports = {
       ),
       sortOrder: 25,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'gxPositiveResultsNotified'
+      ),
+      sortOrder: 26,
+    },
   ],
 }
