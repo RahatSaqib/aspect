@@ -112,7 +112,7 @@ export function loginStart({ user, password }) {
               title: {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
-                defaultMessage: "Login failed",
+                defaultMessage: 'Login failed',
               },
               message: {
                 id:
