@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
-import { useSelector, shallowEqual } from 'react-redux'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import { useSelector } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
+import { convertToTimeZone } from 'date-fns-timezone'
+import { getTimezoneById } from '../../../shared/utils/timezone'
 
 const cssClasses = classnames.bind(require('./DatePicker.css'))
 
@@ -21,7 +23,9 @@ const AspectDatePicker = props => {
     className,
   } = props
 
-  const [startDate, setStartDate] = useState(value ? new Date(value) : null)
+  const [startDate, setStartDate] = useState(
+    value ? convertToTimeZone(value, { timeZone: getTimezoneById() }) : null
+  )
   const { displayPreferences, culture } = useSelector(({ user }) => ({
     ...user.toJS(),
   }))
@@ -29,7 +33,7 @@ const AspectDatePicker = props => {
 
   const updateStartDate = date => {
     formik.setFieldValue(id, date)
-    setStartDate(date)
+    setStartDate(convertToTimeZone(date, { timeZone: getTimezoneById() }))
   }
 
   return (
