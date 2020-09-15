@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import forEach from 'lodash/forEach'
+import isNil from 'lodash/isNil'
+import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
@@ -528,14 +530,14 @@ export default function authReducer(state = initialState, action) {
         mutState.delete('requestedAt')
         mutState.delete('licenseContent')
 
-        _.forEach(action.data, (v, k) => {
-          if (!_.isNil(v)) {
+        forEach(action.data, (v, k) => {
+          if (!isNil(v)) {
             mutState.set(k, v)
           }
         })
         mutState.mergeDeepIn(
           ['jwt'],
-          _.pick(jwtDecode(action.data.access), [
+          pick(jwtDecode(action.data.access), [
             'name',
             'permissions',
             'hasToAcceptLicenseId',
