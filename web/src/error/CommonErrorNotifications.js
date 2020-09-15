@@ -18,14 +18,13 @@ export function errorPleaseTryAgainInAFewMinutes(
   }
 }
 
-export function errorInsufficientScope(messageDescriptors, messageValues) {
+export function errorUnauthorized(messageDescriptors, messageValues) {
   return {
     severity: 'error',
     ...defineMessages({
       resolution: {
-        id: 'errorResponseMessages.common.insufficientScope.resolution',
-        defaultMessage:
-          'There was a conflict with your permissions. Please, contact your administrator for support.',
+        id: 'errorResponseMessages.common.unauthorized.resolution',
+        defaultMessage: `Invalid credentials. Please, login again.`,
       },
     }),
     ...messageDescriptors,

@@ -362,12 +362,12 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(basicUserDetails)
       })
 
-      it('Should increment the number of failed password attempts and respond with 403 and "Authentication failed. Wrong password."', done => {
+      it('Should increment the number of failed password attempts and respond with 401 and "Authentication failed. Wrong password."', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(responseData => {
-            assert.equal(responseData.output.statusCode, 403)
+            assert.equal(responseData.output.statusCode, 401)
             assert.equal(
               responseData.output.payload.message,
               'Authentication failed. Wrong password.'
@@ -671,15 +671,15 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should respond 403 forbidden', done => {
+      it('should respond 401 unauthorized', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(response => {
-            assert.equal(response.output.statusCode, 403)
+            assert.equal(response.output.statusCode, 401)
             assert.deepEqual(response.output.payload, {
-              statusCode: 403,
-              error: 'Forbidden',
+              statusCode: 401,
+              error: 'Unauthorized',
               message: 'Incorrect password.',
             })
           })

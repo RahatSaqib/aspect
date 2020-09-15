@@ -13,7 +13,7 @@ import {
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 
@@ -107,7 +107,7 @@ export function fetchInventoryItems(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -207,7 +207,7 @@ export function exportSupplies(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportSupplies.GET.403.title',

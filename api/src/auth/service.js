@@ -95,7 +95,7 @@ async function authenticate(request) {
       user = await gxAlertAuthenticate(payload.name, payload.password)
       if (!user) {
         // TODO: Check if what is wrong is the user or the password
-        return Boom.forbidden(
+        return Boom.unauthorized(
           'Authentication failed. Wrong username or password.'
         )
       }
@@ -119,7 +119,7 @@ async function authenticate(request) {
   }
 
   if (user.lockedOut === 1) {
-    return Boom.forbidden('Your account is locked.')
+    return Boom.unauthorized('Your account is locked.')
   }
 
   // if password isn't a bcrypt hash, user was migrated from
@@ -128,7 +128,7 @@ async function authenticate(request) {
     // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
     user = await gxAlertAuthenticate(payload.name, payload.password)
     if (!user) {
-      return Boom.forbidden(
+      return Boom.unauthorized(
         'Authentication failed. Wrong username or password.'
       )
     }
@@ -152,7 +152,7 @@ async function authenticate(request) {
 
       await updateFailedPass
 
-      return Boom.forbidden('Authentication failed. Wrong password.')
+      return Boom.unauthorized('Authentication failed. Wrong password.')
     }
   }
 
@@ -481,7 +481,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     loggedInUser.password
   )
   if (!pwResult) {
-    return Boom.forbidden('Incorrect password.')
+    return Boom.unauthorized('Incorrect password.')
   }
 
   if (payload.newUsername) {

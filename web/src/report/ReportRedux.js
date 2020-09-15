@@ -7,7 +7,7 @@ import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedFileResponse } from '../globals/GlobalsRedux'
 
@@ -59,7 +59,7 @@ export function fetchReports(filtersParams) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchReports.GET.403.title',
@@ -100,7 +100,7 @@ export function getReportFile(externalId, filtersParams) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.getReportFile.GET.403.title',

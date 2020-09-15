@@ -9,7 +9,7 @@ import {
   inlineWarning,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
@@ -144,7 +144,7 @@ export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -213,7 +213,7 @@ export function exportContacts(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportContacts.GET.403.title',
@@ -243,7 +243,7 @@ export function fetchAvailablePersons() {
     dispatch(requestAvailablePersons())
     return aspectFetch('/person/available', {
       errorNotifications: {
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchAvailablePersons.GET.403.title',
@@ -534,7 +534,7 @@ export function fetchUpdateSiteContacts(siteId, person, operation) {
       method: 'PUT',
       body: JSON.stringify(person),
       errorNotifications: {
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title',
@@ -552,7 +552,7 @@ export function fetchPersonAssignments(personId) {
     dispatch(requestPersonAssignments(personId))
     return aspectFetch(`/job-function/person-assignments/${personId}`, {
       errorNotifications: {
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchPersonAssignments.GET.404.title',
@@ -572,7 +572,7 @@ export function addPersonAssignment(data) {
       method: 'POST',
       body: JSON.stringify(data),
       errorNotifications: {
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.addPersonAssignment.POST.404.title',
@@ -597,7 +597,7 @@ export function deletePersonAssignment(data) {
       {
         method: 'DELETE',
         errorNotifications: {
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id:
