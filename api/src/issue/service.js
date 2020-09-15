@@ -647,6 +647,12 @@ async function triggerIssue(request) {
     case 'ResultDataEntered'.toLowerCase(): {
       break
     }
+    case 'InstrumentReplaced'.toLowerCase(): {
+      const { device, options } = data
+      await messageContext.deviceInstrumentReplaced(device, options)
+      triggered = true
+      break
+    }
   }
 
   return {
