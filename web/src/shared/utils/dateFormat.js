@@ -3,20 +3,27 @@ import isNaN from 'lodash/isNaN'
 import { startOfDay, format as dateFnFormat } from 'date-fns'
 import { withProps } from 'recompose'
 
-import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
+import {
+  getAspectDisplayPreferences,
+  getTimezoneId,
+} from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
-  const { code: localeCode } = getLocale()
+  const userSetTimeZone = getTimezoneId()
+  const { code: localeCode } = userSetTimeZone
+    ? getLocale(userSetTimeZone)
+    : getLocale()
   const timeZone = getTimezoneById()
+  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
   const timeToFormat = isString(date)
     ? new Date(date).toLocaleString(localeCode, {
         timeZone,
       })
     : date
-  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
+
   return timeToFormat === null
     ? ''
     : dateFnFormat(new Date(timeToFormat), dateFormatPreference)
