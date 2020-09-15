@@ -223,7 +223,6 @@ async function upsertUser(gxUser, username, password) {
  *
  * @param {string} username The username for login
  * @param {string} password The password for login
- * @param {object} aspectUser The current Aspect's user
  * @return {object} An Aspect's user. Returns null when username or password are incorrect.
  */
 async function gxAlertAuthenticate(username, password) {

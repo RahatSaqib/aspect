@@ -125,11 +125,7 @@ export function loginStart({ user, password }) {
                 id:
                   'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
                 defaultMessage:
-<<<<<<< HEAD
-                  'Please, correct the credentials your entered and try again.',
-=======
                   "We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
->>>>>>> 39272bd40a5432aff25ed6c30d2899a9f3e11bf1
               },
             }),
           },
@@ -188,7 +184,7 @@ export function loginStart({ user, password }) {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
                 defaultMessage:
-                  "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, probably you entered invalid credentials.",
+                  "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
               },
             }),
           },

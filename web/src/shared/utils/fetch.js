@@ -130,8 +130,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
             ...errorNotification,
           }
         }
-        console.log(err.message)
-        // Only if statusCode isn't unauthorized, we should show the error as notification. For 401 errors, the user will be logged out.
+        // Only if statusCode isn't unauthorized or message isn't Expired Token, we should show the error as notification. For 401 errors of type Expired Token, the user will be logged out.
         if (err.statusCode !== 401 || err.message !== 'Expired token') {
           store.dispatch(showError(errorNotification, err))
         } 
