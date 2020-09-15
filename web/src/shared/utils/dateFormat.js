@@ -13,9 +13,7 @@ import { getTimezoneById } from './timezone'
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = getTimezoneId()
-  const { code: localeCode } = userSetTimeZone
-    ? getLocale(userSetTimeZone)
-    : getLocale()
+  const { code: localeCode } = getLocale(userSetTimeZone)
   const timeZone = getTimezoneById()
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
   const timeToFormat = isString(date)
