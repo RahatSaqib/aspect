@@ -1,8 +1,9 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
-import { startOfDay, format as dateFnFormat, parseISO } from 'date-fns'
+import startOfDay from 'date-fns/startOfDay'
+import { format as dateFnFormat } from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { withProps } from 'recompose'
-import differenceInDays from 'date-fns/differenceInDays'
 
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
