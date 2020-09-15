@@ -9,6 +9,8 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
+  const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
+  await knex('Partner').where('id', partnerId).update('plugin', 'philippines')
   const now = new Date()
   const { id: adminId } = await knex('User')
     .where({ name: 'admin' })
@@ -155,7 +157,7 @@ async function seed(knex) {
     url:
       `http://itis.doh.gov.ph:3005/pushtbexam/${encodeURIComponent(
         'gX@leR+!Ti$'
-      )}/` +
+      )}` +
       `/TB_CASE_NUMBER/{{urlEncode (defaultTo result.patientData.tbCaseNumber 'NULL')}}` +
       `/SPECIMEN_CODE/{{urlEncode (defaultTo result.sample.id 'NULL')}}` +
       `/REQUESTING_FACILITY/{{urlEncode (defaultTo result.patientData.referringHealthFacility 'NULL')}}` +
@@ -291,8 +293,6 @@ async function seed(knex) {
     i18nKey: 'issueTypeResultUpdated',
     issueCategoryId: issueCategoryDataHealthId,
   })
-
-  const partnerId = await getPartnerByName('Philippines')
 
   await knex('NotificationType').insert({
     name: 'Result Updated',
