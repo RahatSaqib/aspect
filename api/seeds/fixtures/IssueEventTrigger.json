@@ -177,6 +177,13 @@
 			"triggerConditions": {
 				"action": "FACT_DATA_CATEGORY_IS_LOW_OTHER"
 			}
+		},
+		{
+			"issueType": "InstrumentReplaced",
+			"issueEventStatus": "Triggered",
+			"triggerConditions": {
+				"action": "DEVICE_INSTRUMENT_REPLACED"
+			}
 		}
 	]
 }
