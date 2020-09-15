@@ -8,7 +8,16 @@ import enUS from 'date-fns/locale/en-US'
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const AspectDatePicker = props => {
-  const { id, value, InputProps, formik, showTimeSelect, placeholder } = props
+  const {
+    id,
+    value,
+    InputProps,
+    formik,
+    showTimeSelect,
+    placeholder,
+    controlType,
+  } = props
+  const { format: dateFormat } = controlType || false
 
   const [startDate, setStartDate] = useState(value ? new Date(value) : null)
   const { displayPreferences, culture } = useSelector(({ user }) => ({
@@ -25,7 +34,7 @@ const AspectDatePicker = props => {
     <DatePicker
       showTimeSelect={showTimeSelect}
       selected={startDate}
-      dateFormat={displayPreferences.dateTimeFormat}
+      dateFormat={dateFormat || displayPreferences.dateTimeFormat}
       onChange={date => updateStartDate(date)}
       customInput={<TextField {...props} />}
       disabled={InputProps.disabled}
@@ -45,6 +54,7 @@ AspectDatePicker.propTypes = {
   id: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([PropTypes.object]).isRequired,
   InputProps: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  controlType: PropTypes.oneOfType([PropTypes.object]).isRequired,
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
   showTimeSelect: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   placeholder: PropTypes.string,
