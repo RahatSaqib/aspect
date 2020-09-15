@@ -73,10 +73,15 @@ async function seed(knex) {
   }
   const registrationGroupCodes = {
     New: '938610',
+    NEW: '938610',
     RELAPSE: '938611',
     TALF: '938613',
+    'TX AFTER LOST TO FF-UP': '938613',
+    'TX AFTER FAILURE': '938614',
     TAF: '938614',
     PTOU: '938615',
+    'PREVIOUS TX OUTCOME UNKNOWN': '938615',
+    OTHER: '938616',
   }
   const specimenTypeCodes = { Sputum: '0', Isolates: '1', Others: '1' }
   const repeatCollectionCodes = { Yes: '1', No: '0' }
@@ -118,6 +123,11 @@ async function seed(knex) {
     NoResult: '2',
     Error: '2',
   }
+  const xpertRifResultCodeMappings = {
+    Detected: '1',
+    Error: '4',
+    Indeterminate: '7',
+  }
   const tbLampResultCodeMappings = { Negative: '0', Positive: '1' }
   const cultureResultCodeMappings = {
     NotDetected: '0',
@@ -158,38 +168,38 @@ async function seed(knex) {
       `http://itis.doh.gov.ph:3005/pushtbexam/${encodeURIComponent(
         'gX@leR+!Ti$'
       )}` +
-      `/TB_CASE_NUMBER/{{urlEncode (defaultTo result.patientData.tbCaseNumber 'NULL')}}` +
+      `/TB_CASE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.tbCaseNumber result.patient.id) 'NULL')}}` +
       `/SPECIMEN_CODE/{{urlEncode (defaultTo result.sample.id 'NULL')}}` +
-      `/REQUESTING_FACILITY/{{urlEncode (defaultTo result.patientData.referringHealthFacility 'NULL')}}` +
-      `/DATE_OF_REQUEST/{{urlEncode (defaultTo (formatDate result.patientData.mrfDateRequested formatString='${itisDateFormat}') 'NULL')}}` +
-      `/FACILITY_CONTACT/{{urlEncode (defaultTo result.patientData.facilityContactNumber 'NULL')}}` +
-      `/REQUESTING_PHYSICIAN/{{urlEncode (defaultTo result.patientData.requestingPhysician 'NULL')}}` +
-      `/PATIENT_LAST_NAME/{{urlEncode (defaultTo result.patientData.lastName 'NULL')}}` +
-      `/PATIENT_FIRST_NAME/{{urlEncode (defaultTo result.patientData.firstName 'NULL')}}` +
-      `/PATIENT_MIDDLE_NAME/{{urlEncode (defaultTo result.patientData.middleInitialOrName 'NULL')}}` +
-      `/PATIENT_AGE/{{urlEncode (defaultTo result.patientData.age 'NULL')}}` +
-      `/PATIENT_ADDRESS/{{urlEncode (defaultTo result.patientData.address 'NULL')}}` +
-      `/SEX/{{defaultTo (mapValue result.patientData.sex '${JSON.stringify(
+      `/REQUESTING_FACILITY/{{urlEncode (defaultTo (coalesce result.sample.originSite.id result.patient.referringHealthFacility) 'NULL')}}` +
+      `/DATE_OF_REQUEST/{{urlEncode (defaultTo (formatDate result.patient.mrfDateRequested formatString='${itisDateFormat}') 'NULL')}}` +
+      `/FACILITY_CONTACT/{{urlEncode (defaultTo result.patient.facilityContactNumber 'NULL')}}` +
+      `/REQUESTING_PHYSICIAN/{{urlEncode (defaultTo result.patient.requestingPhysician 'NULL')}}` +
+      `/PATIENT_LAST_NAME/{{urlEncode (defaultTo result.patient.lastName 'NULL')}}` +
+      `/PATIENT_FIRST_NAME/{{urlEncode (defaultTo result.patient.firstName 'NULL')}}` +
+      `/PATIENT_MIDDLE_NAME/{{urlEncode (defaultTo result.patient.middleInitialOrName 'NULL')}}` +
+      `/PATIENT_AGE/{{defaultTo (extractValueFromRegexCaptureGroup result.patient.age expression='^(\\d*)(.*)$' groupNumber=1) 'NULL'}}` +
+      `/PATIENT_ADDRESS/{{urlEncode (defaultTo result.patient.address 'NULL')}}` +
+      `/SEX/{{defaultTo (mapValue result.patient.sex '${JSON.stringify(
         genderValueMap
       )}') 'NULL'}}` +
-      `/PATIENT_MOBILE_NUMBER/{{urlEncode (defaultTo result.patientData.phone 'NULL')}}` +
-      `/PATIENT_LANDLINE_NUMBER/NULL` +
-      `/PATIENT_EMAIL/NULL` +
+      `/PATIENT_MOBILE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.phone (customFieldValueFromLabel result.data.customFieldData 'Patient Phone')) 'NULL')}}` +
+      `/PATIENT_LANDLINE_NUMBER/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Landline No.') 'NULL')}}` +
+      `/PATIENT_EMAIL/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Email Address') 'NULL')}}` +
       `/REASON_FOR_EXAMINATION/` +
-      `{{#if (eq (toLowerCase (defaultTo (extractValueFromRegexCaptureGroup result.patientData.monthOfTreatment expression='^(PT)\\d*' groupNumber=1) '')) 'pt')}}` +
-      `{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patientData.monthOfTreatment expression='^PT(\\d*)' groupNumber=1) '${JSON.stringify(
+      `{{#if (eq (toLowerCase (defaultTo (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^(PT)\\d*' groupNumber=1) '')) 'pt')}}` +
+      `{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='^PT(\\d*)' groupNumber=1) '${JSON.stringify(
         postTreatmentReasonForExaminationCodes
       )}') 'NULL'}}` +
-      `{{else if (isRegexMatch (toLowerCase (defaultTo patientData.data.treatmentSchedule '')) 'diagnosis')}}` +
+      `{{else if (isRegexMatch (toLowerCase (defaultTo patient.treatmentSchedule '')) 'diagnosis')}}` +
       `938492` +
-      `{{else if (isRegexMatch (toLowerCase (defaultTo result.patientData.treatmentSchedule '')) 'bas')}}` +
+      `{{else if (or (isRegexMatch (toLowerCase (defaultTo result.patient.treatmentSchedule '')) 'bas') (isRegexMatch (toLowerCase (defaultTo result.patient.treatmentSchedule '')) 'baseline'))}}` +
       `938493` +
       `{{else}}` +
-      `{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patientData.monthOfTreatment expression='(\\d*)' groupNumber=1) '${JSON.stringify(
+      `{{defaultTo (mapValue (extractValueFromRegexCaptureGroup result.patient.monthOfTreatment expression='(\\d*)' groupNumber=1) '${JSON.stringify(
         monthOfTreatmentReasonForExaminationCodes
       )}') 'NULL'}}` +
       `{{/if}}` +
-      `/REGISTRATION_GROUP/{{urlEncode (defaultTo (mapValue result.patientData.registrationGroup '${JSON.stringify(
+      `/REGISTRATION_GROUP/{{urlEncode (defaultTo (mapValue result.patient.registrationGroup '${JSON.stringify(
         registrationGroupCodes
       )}') '938616')}}` +
       `/SPECIMEN_TYPE/{{defaultTo (mapValue result.sample.data.type '${JSON.stringify(
@@ -198,7 +208,7 @@ async function seed(knex) {
       `/REPEAT_COLLECTION/{{defaultTo (mapValue result.sample.data.repeatCollection '${JSON.stringify(
         repeatCollectionCodes
       )}') 'NULL'}}` +
-      `/PRESUMPTIVE_TB_DSDR/{{defaultTo (mapValue result.patientData.presumptiveDsOrDr '${JSON.stringify(
+      `/PRESUMPTIVE_TB_DSDR/{{defaultTo (mapValue result.patient.presumptiveDsOrDr '${JSON.stringify(
         presumptiveTbDsDrCodes
       )}') 'NULL'}}` +
       `/DATE_SPECIMEN_COLLECTED/{{defaultTo (formatDate result.sample.collectedOn formatString='${itisDateFormat}') 'NULL'}}` +
@@ -216,7 +226,9 @@ async function seed(knex) {
       `{{else if (or (eq result.assay.id 'GxMtbRif') (eq result.assay.id 'GxMtbRifUltra'))}}` +
       `%7B%22MTB%22%3A%22{{defaultTo (mapValue result.category1.id '${JSON.stringify(
         xpertResultCodeMappings
-      )}') '3'}}%22%2C%22RIF%22%3A%22{{defaultTo (mapValue result.category2.id '{"Detected":"1","Error":"4","Indeterminate":"7"}') '6'}}%22%7D` +
+      )}') '3'}}%22%2C%22RIF%22%3A%22{{defaultTo (mapValue result.category2.id '${JSON.stringify(
+        xpertRifResultCodeMappings
+      )}') '6'}}%22%7D` +
       `{{else if (and (eq result.assay.id 'assayTbLamp') (or (eq result.category1.id 'Negative') (eq result.category1.id 'Positive')))}}` +
       `%7B%22RESULT%22%3A%22{{defaultTo (mapValue result.category1.id '${JSON.stringify(
         tbLampResultCodeMappings
@@ -228,21 +240,21 @@ async function seed(knex) {
       `{{else if (and (or (eq result.assay.id 'assayBdMgitAst') (eq result.assay.id 'assayGenericDst')) (or (eq result.category1.id 'Detected') (eq result.category1.id 'PositiveMTB')) (or (eq result.category2.id 'Resistant') (eq result.category2.id 'Susceptible') (eq result.category2.id 'Contaminated')))}}` +
       `%7B%22H%22%3A%22{{defaultTo (mapValue (coalesce result.data.encodedResult.isoniazid (defaultTo (mapValue result.data.INH.sirStatus '${JSON.stringify(
         mgitSireStatusToEncodedMappings
-      )}') 'NOT DONE') '${JSON.stringify(
+      )}') 'NOT DONE')) '${JSON.stringify(
         dstResultCodeMappings
       )}') 'ND'}}%22%2C%22R%22%3A%22{{defaultTo (mapValue (coalesce result.data.encodedResult.rifampicin (defaultTo (mapValue result.data.RIF.sirStatus '${JSON.stringify(
         mgitSireStatusToEncodedMappings
-      )}') 'NOT DONE') '${JSON.stringify(
+      )}') 'NOT DONE')) '${JSON.stringify(
         dstResultCodeMappings
       )}') 'ND'}}%22%2C%22Z%22%3A%22{{defaultTo (mapValue result.data.encodedResult.pyrazinamide '${JSON.stringify(
         dstResultCodeMappings
       )}') 'ND'}}%22%2C%22E%22%3A%22{{defaultTo (mapValue (coalesce result.data.encodedResult.ethambutol (defaultTo (mapValue result.data.EMB.sirStatus '${JSON.stringify(
         mgitSireStatusToEncodedMappings
-      )}') 'NOT DONE') '${JSON.stringify(
+      )}') 'NOT DONE')) '${JSON.stringify(
         dstResultCodeMappings
       )}') 'ND'}}%22%2C%22S%22%3A%22{{defaultTo (mapValue (coalesce result.data.encodedResult.streptomycin (defaultTo (mapValue result.data.S.sirStatus '${JSON.stringify(
         mgitSireStatusToEncodedMappings
-      )}') 'NOT DONE') '${JSON.stringify(
+      )}') 'NOT DONE')) '${JSON.stringify(
         dstResultCodeMappings
       )}') 'ND'}}%22%2C%22Km%22%3A%22{{defaultTo (mapValue result.data.encodedResult.kanamycin '${JSON.stringify(
         dstResultCodeMappings
