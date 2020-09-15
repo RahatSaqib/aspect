@@ -7,24 +7,18 @@ import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStor
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 
-function formatBase(date, displayPreferenceKey, timeZone = getTimezoneById()) {
+function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const { code: localeCode } = getLocale()
-  console.log(
-    timeZone,
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-    // date: dateFnFormat(new Date(timeToFormat), dateFormatPreference),
-  )
-  const timeToFormat = isString(date)
+  const timeZone = getTimezoneById()
+  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
+  return date === null
+    ? ''
+    : isString(date)
     ? new Date(date).toLocaleString(localeCode, {
         timeZone,
       })
-    : date
-  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-
-  return date === null
-    ? ''
-    : dateFnFormat(new Date(timeToFormat), dateFormatPreference)
+    : dateFnFormat(new Date(date), dateFormatPreference)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
