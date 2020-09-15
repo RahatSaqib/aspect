@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import DatePicker, { registerLocale } from 'react-datepicker'
@@ -6,13 +6,14 @@ import { useSelector } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
 
+import { formatDateTime } from '../../../shared/utils/dateFormat'
+
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
-import { convertToTimeZone } from 'date-fns-timezone'
-import { getTimezoneById } from '../../../shared/utils/timezone'
 
 const cssClasses = classnames.bind(require('./DatePicker.css'))
 
 const AspectDatePicker = props => {
+  registerLocale(culture, enUS)
   const {
     id,
     value,
@@ -23,19 +24,17 @@ const AspectDatePicker = props => {
     className,
     controlType,
   } = props
-  const { format: dateFormat } = controlType || false
 
-  const [startDate, setStartDate] = useState(
-    value ? convertToTimeZone(value, { timeZone: getTimezoneById() }) : null
-  )
+  const { format: dateFormat } = controlType || false
+  const [selectDate, setSelectDate] = useState()
+  const [currentDate] = useState(value ? formatDateTime(value) : null)
   const { displayPreferences, culture } = useSelector(({ user }) => ({
     ...user.toJS(),
   }))
-  registerLocale(culture, enUS)
 
-  const updateStartDate = date => {
+  const updateSelectDate = date => {
     formik.setFieldValue(id, date)
-    setStartDate(convertToTimeZone(date, { timeZone: getTimezoneById() }))
+    setSelectDate(formatDateTime(date))
   }
 
   return (
@@ -43,13 +42,13 @@ const AspectDatePicker = props => {
       wrapperClassName={cssClasses('datepicker__wrapper')}
       className={className}
       showTimeSelect={showTimeSelect}
-      selected={startDate}
+      selected={selectDate}
       dateFormat={dateFormat || displayPreferences.dateTimeFormat}
-      onChange={date => updateStartDate(date)}
+      onChange={date => updateSelectDate(date)}
       customInput={<TextField {...props} />}
       disabled={InputProps.disabled}
       placeholderText={placeholder}
-      value={startDate}
+      value={currentDate}
       locale={culture}
     />
   )

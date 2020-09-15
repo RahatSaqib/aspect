@@ -200,8 +200,7 @@
                         {
                             "id": "startedOn",
                             "controlType": {
-                                "component": "datePicker",
-                                "format": "dd MMM yyyy hh:mm"
+                                "component": "datePicker"
                             },
                             "type": "string",
                             "label": "Start Date"
@@ -244,8 +243,7 @@
                         {
                             "id": "sampleCollectedOn",
                             "controlType": {
-                                "component": "datePicker",
-                                "format": "dd MMM yyyy hh:mm"
+                                "component": "datePicker"
                             },
                             "type": "readOnly",
                             "label": "Collected On"

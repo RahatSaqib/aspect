@@ -1,24 +1,30 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
 import { startOfDay, format as dateFnFormat } from 'date-fns'
-import { convertToTimeZone } from 'date-fns-timezone'
 import { withProps } from 'recompose'
 
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 
-function format(date, displayPreferenceKey) {
+function formatBase(date, displayPreferenceKey, timeZone = getTimezoneById()) {
   const prefs = getAspectDisplayPreferences()
-  const dateFormat = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  return date == null
+  const { code: localeCode } = getLocale()
+  console.log(
+    timeZone,
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+    // date: dateFnFormat(new Date(timeToFormat), dateFormatPreference),
+  )
+  const timeToFormat = isString(date)
+    ? new Date(date).toLocaleString(localeCode, {
+        timeZone,
+      })
+    : date
+  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
+
+  return date === null
     ? ''
-    : dateFnFormat(
-        convertToTimeZone(date, {
-          timeZone: getTimezoneById(),
-        }),
-        dateFormat
-      )
+    : dateFnFormat(new Date(timeToFormat), dateFormatPreference)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
@@ -29,15 +35,6 @@ export const WEEK_IN_MILLISECONDS = 7 * DAY_IN_MILLISECONDS
 export const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
 export const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
 export const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
-
-function formatBase(date, unit) {
-  if (isString(date)) {
-    date = convertToTimeZone(date, {
-      timeZone: getTimezoneById(),
-    })
-  }
-  return format(date, unit)
-}
 
 export function formatDate(date) {
   return formatBase(date, 'dateFormat')
@@ -80,11 +77,7 @@ export const withTodayProps = withProps(() => ({
 }))
 
 export const formatRelative = (intl, date, defaultMessage = '') => {
-  const dateInMilliseconds = Date.parse(
-    convertToTimeZone(date, {
-      timeZone: getTimezoneById(),
-    })
-  )
+  const dateInMilliseconds = new Date(date).getTime()
   if (isNaN(dateInMilliseconds)) return defaultMessage
 
   const getParams = timeDiffInMilliseconds => {
