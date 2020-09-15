@@ -11,14 +11,15 @@ function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const { code: localeCode } = getLocale()
   const timeZone = getTimezoneById()
-  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  return date === null
-    ? ''
-    : isString(date)
+  const timeToFormat = isString(date)
     ? new Date(date).toLocaleString(localeCode, {
         timeZone,
       })
-    : dateFnFormat(new Date(date), dateFormatPreference)
+    : date
+  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
+  return timeToFormat === null
+    ? ''
+    : dateFnFormat(new Date(timeToFormat), dateFormatPreference)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
