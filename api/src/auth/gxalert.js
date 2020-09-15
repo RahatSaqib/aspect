@@ -49,40 +49,92 @@ function getUser(username, knex) {
     )
 }
 
-// --------------------------------------------------------------------------------------------
-// validateUserAtGxAlert
-// --------------------------------------------------------------------------------------------
-async function validateUserAtGxAlert(username, password, user) {
+async function storeUser(
+  knex,
+  username,
+  password,
+  gxUser,
+  partnerId,
+  countryId,
+  jobFunctionId,
+  partnerPlugin
+) {
   const now = new Date()
 
-  // lower name
-  username = username.toLowerCase()
+  // generate pw hash
+  const pw = await bcryptHash(password, parseInt(config.passwordSaltRounds, 10))
 
-  // use GxAlert API to check pw
-  const gxFetch = createFetch(
-    method('POST'),
-    base(config.gxAlertApi),
-    accept('application/json'),
-    header('Content-Type', 'application/json'),
-    body(JSON.stringify({ username, password }), 'application/json')
+  // basic data to save
+  const baseUserData = {
+    password: pw,
+    failedPasswordAttempts: 0,
+    legacyPassword: 0,
+    lockedOut: 0,
+  }
+
+  let aspectUser = await getUser(username, knex)
+  let userId
+
+  // insert/update fields in 'User' table
+  if (!aspectUser) {
+    // create new user in Aspect
+    ;[userId] = await knex('User').insert({
+      name: username,
+      approved: 1,
+      createdOn: now,
+      ...baseUserData,
+    })
+  } else {
+    userId = aspectUser.id
+
+    // update user with password hash
+    await knex('User').update(baseUserData).where({ id: userId })
+  }
+
+  // create/update Person in our db
+  const personOptions = { userId, partnerId, countryId }
+  const personId = await updateCreatePerson(knex, gxUser, personOptions)
+  if (!_.isEmpty(gxUser.tags)) {
+    await updateTagsForPerson(knex, {
+      partnerId,
+      personId,
+      tagTitles: gxUser.tags,
+    })
+  }
+
+  // insert Job if not exists
+  if (jobFunctionId) {
+    const d = { personId, jobFunctionId }
+    let { id: jobId } = (await knex('Job').where(d).first('id')) || {}
+    if (!jobId) {
+      ;[jobId] = await knex('Job').insert(d)
+    }
+
+    await setJobContext(knex, jobId, gxUser)
+  }
+
+  // finally return User
+  const { loadPlugin } = require('../plugin/registration')
+  const onGxAlertAuthenticated = await loadPlugin(
+    [partnerPlugin],
+    'onGxAlertAuthenticated'
   )
+  await onGxAlertAuthenticated({ gxUser, partnerId, personId, knex })
 
-  let resp = null
-  try {
-    resp = await gxFetch('/auth')
-  } catch (err) {
-    throw new GxAlertLoginError("GxAlert service isn't available", true)
-  }
+  aspectUser = await getUser(username, knex)
 
-  if (resp.status !== 200) {
-    throw new GxAlertLoginError(
-      'GxAlert service is available, but an error happened while authenticating',
-      true
-    )
-  }
+  return aspectUser
+}
 
-  // user profile from GxAlert
-  const gxUser = await resp.json()
+/**
+ * Inserts or updates a GxAlert's user in Aspect.
+ * Throws GxAlertLoginError exception if any conflict within GxAlert and Aspect credentials is found.
+ * @param {object} gxUser The user data provided by GxAlert
+ * @param {string} username The username for login
+ * @param {string} password The password for login
+ * @return {object} The upserted user
+ */
+async function upsertUser(gxUser, username, password) {
   const countryId = await getCountryIdByAbbr(gxUser.country.abbreviation)
   // exit if no country found in Aspect
   // 'null' means username and/or password did not match in GxAlert
@@ -152,73 +204,66 @@ async function validateUserAtGxAlert(username, password, user) {
   // - job function of the user, if any calculated
   // Store user profile in our database in a transaction
   // -------------------------------------------
-  return transact(async knex => {
-    // generate pw hash
-    const pw = await bcryptHash(
+  return transact(async knex =>
+    storeUser(
+      knex,
+      username,
       password,
-      parseInt(config.passwordSaltRounds, 10)
+      gxUser,
+      partnerId,
+      countryId,
+      jobFunctionId,
+      partnerPlugin
     )
+  )
+}
 
-    // basic data to save
-    const baseUserData = {
-      password: pw,
-      failedPasswordAttempts: 0,
-      legacyPassword: 0,
-      lockedOut: 0,
-    }
+/**
+ * Authenticates to GxAlert and validates a user using the provided username and password.
+ *
+ * @param {string} username The username for login
+ * @param {string} password The password for login
+ * @param {object} aspectUser The current Aspect's user
+ * @return {object} An Aspect's user. Returns null when username or password are incorrect.
+ */
+async function gxAlertAuthenticate(username, password) {
+  // lower name
+  username = username.toLowerCase()
 
-    let userId
-    // insert/update fields in 'User' table
-    if (!user) {
-      // create new user in Aspect
-      ;[userId] = await knex('User').insert({
-        name: username,
-        approved: 1,
-        createdOn: now,
-        ...baseUserData,
-      })
-    } else {
-      userId = user.id
+  // use GxAlert API to check pw
+  const gxFetch = createFetch(
+    method('POST'),
+    base(config.gxAlertApi),
+    accept('application/json'),
+    header('Content-Type', 'application/json'),
+    body(JSON.stringify({ username, password }), 'application/json')
+  )
 
-      // update user with password hash
-      await knex('User').update(baseUserData).where({ id: userId })
-    }
+  let resp = null
+  try {
+    resp = await gxFetch('/auth')
+  } catch (err) {
+    throw new GxAlertLoginError("GxAlert service isn't available", true)
+  }
 
-    // create/update Person in our db
-    const personOptions = { userId, partnerId, countryId }
-    const personId = await updateCreatePerson(knex, gxUser, personOptions)
-    if (!_.isEmpty(gxUser.tags)) {
-      await updateTagsForPerson(knex, {
-        partnerId,
-        personId,
-        tagTitles: gxUser.tags,
-      })
-    }
+  let aspectUser
+  let gxUser
+  switch (resp.status) {
+    case 200:
+      gxUser = await resp.json()
+      aspectUser = upsertUser(gxUser, username, password)
+      break
+    case 403:
+      aspectUser = null
+      break
+    default:
+      throw new GxAlertLoginError(
+        'GxAlert service is available, but an error happened while authenticating',
+        true
+      )
+  }
 
-    // insert Job if not exists
-    if (jobFunctionId) {
-      const d = { personId, jobFunctionId }
-      let { id: jobId } = (await knex('Job').where(d).first('id')) || {}
-      if (!jobId) {
-        ;[jobId] = await knex('Job').insert(d)
-      }
-
-      await setJobContext(knex, jobId, gxUser)
-    }
-
-    // finally return User
-    user = await getUser(username, knex)
-    const { loadPlugin } = require('../plugin/registration')
-    const onGxAlertAuthenticated = await loadPlugin(
-      [partnerPlugin],
-      'onGxAlertAuthenticated'
-    )
-    await onGxAlertAuthenticated({ gxUser, partnerId, personId, knex })
-    return user
-
-    // catch error from setJobContext() if no site found or JobContext defined
-    // and return null
-  })
+  return aspectUser
 }
 
 // --------------------------------------------------------------------------------------------
@@ -559,6 +604,6 @@ async function updateTagsForPerson(
 }
 
 module.exports = {
-  validateUserAtGxAlert,
+  gxAlertAuthenticate,
   GxAlertLoginError,
 }

@@ -14,7 +14,7 @@ const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
 const { query, knex } = require('../db')
-const { validateUserAtGxAlert } = require('./gxalert')
+const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 
 const clientTypes = {
@@ -92,8 +92,9 @@ async function authenticate(request) {
   if (!user) {
     try {
       // no user with such username in Aspect yet - check it in GxAlert
-      user = await validateUserAtGxAlert(payload.name, payload.password)
+      user = await gxAlertAuthenticate(payload.name, payload.password)
       if (!user) {
+        // TODO: Check if what is wrong is the user or the password
         return Boom.forbidden(
           'Authentication failed. Wrong username or password.'
         )
@@ -125,7 +126,7 @@ async function authenticate(request) {
   // GxAlert and password wasn't set yet in aspect:
   if (user.password && user.legacyPassword) {
     // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
-    user = await validateUserAtGxAlert(payload.name, payload.password, user)
+    user = await gxAlertAuthenticate(payload.name, payload.password)
     if (!user) {
       return Boom.forbidden(
         'Authentication failed. Wrong username or password.'
