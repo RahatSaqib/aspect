@@ -1,24 +1,26 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
-import { startOfDay, format as dateFnFormat } from 'date-fns'
-import { convertToTimeZone } from 'date-fns-timezone'
+import { startOfDay, parseISO, format as dateFnFormat } from 'date-fns'
 import { withProps } from 'recompose'
 
-import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
+import {
+  getAspectDisplayPreferences,
+  getTimezoneId,
+} from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
-import { getTimezoneById } from './timezone'
+import { getUtcInLocalTime } from './timezone'
 
 function format(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const dateFormat = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
+
+  if (isString(date)) {
+    date = parseISO(date)
+  }
+
   return date == null
     ? ''
-    : dateFnFormat(
-        convertToTimeZone(date, {
-          timeZone: getTimezoneById(),
-        }),
-        dateFormat
-      )
+    : dateFnFormat(getUtcInLocalTime(date, getTimezoneId()), dateFormat)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
@@ -32,9 +34,7 @@ export const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
 
 function formatBase(date, unit) {
   if (isString(date)) {
-    date = convertToTimeZone(date, {
-      timeZone: getTimezoneById(),
-    })
+    date = parseISO(date)
   }
   return format(date, unit)
 }
@@ -80,11 +80,10 @@ export const withTodayProps = withProps(() => ({
 }))
 
 export const formatRelative = (intl, date, defaultMessage = '') => {
-  const dateInMilliseconds = Date.parse(
-    convertToTimeZone(date, {
-      timeZone: getTimezoneById(),
-    })
-  )
+  if (isString(date)) {
+    date = parseISO(date)
+  }
+  const dateInMilliseconds = Date.parse(date)
   if (isNaN(dateInMilliseconds)) return defaultMessage
 
   const getParams = timeDiffInMilliseconds => {

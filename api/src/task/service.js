@@ -95,7 +95,7 @@ async function listTasks(request) {
           'ic.shortname as issueCategory',
           'ic.Id as issueCategoryId',
           'ic.externalId as issueCategoryExternalId',
-          knex.raw('date(am.createdOn) as time'),
+          knex.raw('max(am.createdOn) as time'),
           'am.message',
           knex.raw(
             'sum(case when i.id is null then 0 else 1 end) as issueCount'

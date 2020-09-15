@@ -7,8 +7,8 @@ import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
-import { convertToTimeZone } from 'date-fns-timezone'
-import { getTimezoneById } from '../../../shared/utils/timezone'
+import { getUtcInLocalTime } from '../../../shared/utils/timezone'
+import { getTimezoneId } from '../../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(require('./DatePicker.css'))
 
@@ -24,7 +24,7 @@ const AspectDatePicker = props => {
   } = props
 
   const [startDate, setStartDate] = useState(
-    value ? convertToTimeZone(value, { timeZone: getTimezoneById() }) : null
+    value ? getUtcInLocalTime(value, getTimezoneId()) : null
   )
   const { displayPreferences, culture } = useSelector(({ user }) => ({
     ...user.toJS(),
@@ -33,7 +33,7 @@ const AspectDatePicker = props => {
 
   const updateStartDate = date => {
     formik.setFieldValue(id, date)
-    setStartDate(convertToTimeZone(date, { timeZone: getTimezoneById() }))
+    setStartDate(getUtcInLocalTime(date, getTimezoneId()))
   }
 
   return (
