@@ -1552,7 +1552,7 @@ L|1`,
       it('should process ITIS "REST API" urls', async () => {
         const philippinesITISSystemKey = 't3$+P@s5h!'
         const philippinesITISWebApiUrl =
-          'http://itis.doh.gov.ph:3005/pushtbexam/'
+          'http://itis.doh.gov.ph:3005/pushtbexam'
         const genderValueMap = { Male: 'M', Female: 'F' }
         const postTreatmentReasonForExaminationCodes = {
           '1': '938563',
@@ -2088,6 +2088,166 @@ L|1`,
               },
             }),
           },
+          {
+            site: {
+              id: 'REMOTE2',
+              name: 'Satellite Treatment Center',
+              shortName: 'STC2',
+            },
+            assayExternalId: 'assaySmear',
+            resultCategory1ExternalId: 'Positive1',
+            resultPatientData: JSON.stringify({
+              id: 'P-123422-111',
+              mrfDateRequested: '1999-12-31 23:59',
+              lastName: 'Swanepoel',
+              firstName: 'Baksteen',
+              middleInitialOrName: 'PJHHA',
+              age: '22 Years',
+              address: '1 Beckton Avenue, Mulspoort, California, USA',
+              serialNumber: '92382',
+              treatmentSchedule: 'Follow up',
+              monthOfTreatment: 'PT2',
+              registrationGroup: 'PTOU',
+              presumptiveDsOrDr: 'Presumptive DR-TB',
+              referringHealthFacility: 'Boeties Lekker Clinic',
+              facilityContactNumber: '555-123-1234',
+              requestingPhysician: 'Dr Boetie van der Merwe',
+              sex: 'Male',
+              phone: '+27833243688',
+            }),
+            sampleExternalId: 'P-123422-111',
+            sampleCollectedOn: '1970-12-16',
+            sampleData: JSON.stringify({
+              type: 'Isolates',
+            }),
+            deviceTypeExternalId: 'PhilippinesNtrl',
+            resultData: JSON.stringify({
+              customFieldData: [
+                {
+                  label: "Patient's Email Address",
+                  value: 'isolate@history.geocities.com',
+                },
+              ],
+              encodedResult: {
+                dateReleased: '2018-06-03 08:13',
+                labTech: 'Jemima Puddleduck',
+              },
+            }),
+          },
+          {
+            site: {
+              id: 'REMOTE2',
+              name: 'Satellite Treatment Center',
+              shortName: 'STC2',
+            },
+            assayExternalId: 'assayTbLamp',
+            resultCategory1ExternalId: 'Positive',
+            resultPatientData: JSON.stringify({
+              id: 'P-123-111',
+              mrfDateRequested: '2010-1-11 1:01',
+              monthOfTreatment: '1st month',
+              registrationGroup: 'New',
+              presumptiveDsOrDr: 'Presumptive DS-TB',
+              referringHealthFacility: 'REMOTE2',
+              facilityContactNumber: '123-123-1234',
+              requestingPhysician: 'Dr Dr',
+              sex: 'Female',
+              phone: '0987654321',
+            }),
+            sampleExternalId: 'P-123-111',
+            sampleCollectedOn: '2222-11-30',
+            deviceTypeExternalId: 'PhilippinesNtrl',
+            resultData: JSON.stringify({
+              encodedResult: {
+                dateReleased: '2018-07-04 18:21',
+              },
+            }),
+          },
+          {
+            site: {
+              id: 'NTRL',
+              name: 'NTRL',
+              shortName: 'NTRL',
+            },
+            assayExternalId: 'assayGenericCulture',
+            resultCategory1ExternalId: 'PositiveMOTT',
+            resultPatientData: JSON.stringify({
+              mrfDateRequested: '2022-2-22 2:22',
+              monthOfTreatment: '2nd month',
+              registrationGroup: 'New',
+              presumptiveDsOrDr: 'Presumptive DS-TB',
+              referringHealthFacility: 'RITM',
+            }),
+            sampleExternalId: 'P-CULTURE-MOTT',
+            deviceTypeExternalId: 'PhilippinesNtrl',
+          },
+          {
+            site: {
+              id: 'NTRL',
+              name: 'NTRL',
+              shortName: 'NTRL',
+            },
+            assayExternalId: 'assayBdMgitAst',
+            resultCategory1ExternalId: 'PositiveMTB',
+            resultCategory2ExternalId: 'Resistant',
+            resultPatientData: JSON.stringify({
+              mrfDateRequested: '2022-2-22 2:22',
+              monthOfTreatment: '2nd month',
+              registrationGroup: 'New',
+              presumptiveDsOrDr: 'Presumptive DS-TB',
+              referringHealthFacility: 'RITM',
+            }),
+            sampleExternalId: 'P-DST-MOTT',
+            deviceTypeExternalId: 'PhilippinesNtrl',
+            resultData: JSON.stringify({
+              INH: {
+                sirStatus: 'R',
+              },
+              RIF: {
+                sirStatus: 'R',
+              },
+              EMB: {
+                sirStatus: 'S',
+              },
+              S: {
+                sirStatus: 'S',
+              },
+              encodedResult: {
+                isoniazid: 'RESISTANT',
+                rifampicin: 'RESISTANT',
+                ethambutol: 'SUSCEPTIBLE',
+                streptomycin: 'SUSCEPTIBLE',
+              },
+            }),
+          },
+          {
+            site: {
+              id: 'NTRL',
+              name: 'NTRL',
+              shortName: 'NTRL',
+            },
+            assayExternalId: 'assayLPA',
+            resultCategory1ExternalId: 'PositiveMTB',
+            resultCategory2ExternalId: 'Susceptible',
+            resultPatientData: JSON.stringify({
+              mrfDateRequested: '2022-2-22 2:22',
+              monthOfTreatment: '3rd month',
+              registrationGroup: 'New',
+              presumptiveDsOrDr: 'Presumptive DR-TB',
+              referringHealthFacility: 'RITM',
+            }),
+            sampleExternalId: 'P-LPA-PATIENT',
+            deviceTypeExternalId: 'PhilippinesNtrl',
+            resultData: JSON.stringify({
+              encodedResult: {
+                MTB: 'PositiveMTB',
+                H: 'Resistance Not detected',
+                R: 'Resistance Not Detected',
+                FQ: 'Resistance Not Detected',
+                SLI: 'Resistance Not Detected',
+              },
+            }),
+          },
         ]
         await Promise.each(useCases, async useCase => {
           const dataSource = { ...messageDataSource, ...useCase }
@@ -2113,6 +2273,7 @@ L|1`,
               RESULT:
                 smearResultCodeMappings[dataSource.resultCategory1ExternalId] ||
                 '6',
+              NUM_AFB: 'N/A',
             }
           } else if (
             ['GxMtbRif', 'GxMtbRifUltra'].includes(dataSource.assayExternalId)
@@ -2143,11 +2304,13 @@ L|1`,
               dataSource.assayExternalId
             ) &&
             [
-              'Detected',
               'NotDetected',
+              'Detected',
+              'PositiveMTB',
+              'PositiveMOTT',
+              'Contaminated',
               'Missing',
               'Unknown',
-              'Contaminated',
             ].includes(dataSource.resultCategory1ExternalId)
           ) {
             examResult = {
@@ -2220,13 +2383,14 @@ L|1`,
                 dstResultCodeMappings[
                   _.get(resultData, 'encodedResult.levofloxacin') || 'NOT DONE'
                 ] || 'ND',
-              Cs:
+              Cs: 'ND',
+              Am:
                 dstResultCodeMappings[
                   _.get(resultData, 'encodedResult.amikacin') || 'NOT DONE'
                 ] || 'ND',
             }
           } else if (
-            dataSource.assay.id === 'assayLPA' &&
+            dataSource.assayExternalId === 'assayLPA' &&
             ['NotDetected', 'Invalid', 'PositiveMTB'].includes(
               dataSource.resultCategory1ExternalId
             )
@@ -2256,7 +2420,7 @@ L|1`,
           if (/^PT\d*/i.test(resultPatientData.monthOfTreatment)) {
             reasonFormExamination =
               postTreatmentReasonForExaminationCodes[
-                /^PT(\d*)/i.exec(resultPatientData.monthOfTreatment)[0]
+                /^PT(\d*)/i.exec(resultPatientData.monthOfTreatment)[1]
               ]
           } else if (
             resultPatientData.treatmentSchedule &&
@@ -2273,7 +2437,7 @@ L|1`,
           } else if (/\d*/.test(resultPatientData.monthOfTreatment)) {
             reasonFormExamination =
               monthOfTreatmentReasonForExaminationCodes[
-                /(\d*)/.exec(resultPatientData.monthOfTreatment)[0]
+                /(\d*)/.exec(resultPatientData.monthOfTreatment)[1]
               ]
           }
           const message = await runProcessUsingDataSourceQuery(
@@ -2292,7 +2456,9 @@ L|1`,
                 resultSample.id || 'NULL'
               )}` +
               `/REQUESTING_FACILITY/${encodeURIComponent(
-                resultSample.originSite.id || 'NULL'
+                resultSample.originSite.id ||
+                  resultPatientData.referringHealthFacility ||
+                  'NULL'
               )}` +
               `/DATE_OF_REQUEST/${
                 formatDateOrDefault(
@@ -2340,7 +2506,9 @@ L|1`,
                   (resultData.customFieldData || []).find(
                     customField => customField.label === 'Patient Phone'
                   ) || {}
-                ).value || 'NULL'
+                ).value ||
+                  resultPatientData.phone ||
+                  'NULL'
               )}` +
               `/PATIENT_LANDLINE_NUMBER/${encodeURIComponent(
                 (
