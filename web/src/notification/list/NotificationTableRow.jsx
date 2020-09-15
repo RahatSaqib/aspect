@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-
+import Badge from '@material-ui/core/Badge'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -13,21 +13,17 @@ const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 const enhance = _.identity
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
-  const counter = column =>
-    notification.get(column) === null
-      ? 'Not Configured'
-      : notification.get(column)
-
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
-      <TableCell>{notification.get('name')}</TableCell>
+      <TableCell>{notification.name}</TableCell>
       <TableCell>
-        {formatRelative(intl, notification.get('lastTriggeredOn'))}
+        {formatRelative(intl, notification.lastTriggeredOn)}
       </TableCell>
-      <TableCell>{notification.get('totalTriggers')}</TableCell>
-      <TableCell>{counter('alertCount')}</TableCell>
-      <TableCell>{counter('smsCount')}</TableCell>
-      <TableCell>{counter('emailCount')}</TableCell>
+      <TableCell>{notification.totalTriggers}</TableCell>
+      <TableCell className={cssClasses('TableCell--truncate')}>
+        <Badge badgeContent={notification.contactsCount} color="primary" />
+        {notification.contactsCount >= 0 ? `   ${notification.contacts}` : ''}
+      </TableCell>
     </TableRow>
   )
 }
