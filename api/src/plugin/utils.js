@@ -1,6 +1,9 @@
 const { knex } = require('../db')
 const { resultModuleReplaced } = require('../result/actions')
-const { deviceModuleDisabled } = require('../device/actions')
+const {
+  deviceInstrumentReplaced,
+  deviceModuleDisabled,
+} = require('../device/actions')
 const { issueTypeToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
@@ -135,10 +138,94 @@ async function shouldTriggerModuleDisabled(
   }
 }
 
+async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
+  const result = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .where('r.id', resultId)
+    .first(
+      'r.id',
+      'r.moduleName',
+      'r.moduleSerial',
+      'r.instrumentSerial',
+      'r.createdOn',
+      'r.endedOn',
+      'r.updatedOn',
+      // props to populate fields in table 'Issue'
+      'r.deviceId',
+      'd.partnerId',
+      'd.geographyId',
+      'd.siteId'
+    )
+  if (!result) {
+    return
+  }
+
+  if (!messageContext.deviceInstrumentReplaced) {
+    messageContext = messageContext.bindActionCreators({
+      deviceInstrumentReplaced,
+    })
+  }
+
+  // get all instruments that have been already marked as 'replaced'
+  // for this device, so we can ignore them in the queries below
+  const replacedInstrumentSerials = await knex('Issue as i')
+    .innerJoin('IssueType as it', 'it.id', 'i.issueTypeId')
+    .where('it.externalId', 'InstrumentReplaced')
+    .where('i.deviceId', result.deviceId)
+    .select(
+      knex.raw(
+        'i.data->>"$.replacedInstrumentSerial" as replacedInstrumentSerial'
+      )
+    )
+    .then(items => items.map(x => x.replacedInstrumentSerial))
+
+  // check if instrument was just now replaced and trigger replacement issue.
+  // Notice that we assume new instrument has same modules as old (replaced) one.
+  // Otherwise, if instrument and all it's modules have new serials then
+  // this is a totally new device.
+  if (
+    result.moduleName &&
+    result.moduleSerial &&
+    result.createdOn.getTime() === result.updatedOn.getTime()
+  ) {
+    // get the most recent result from the same moduleName as the current result
+    const [{ moduleSerial, instrumentSerial } = {}] = await knex('Result as r')
+      .leftOuterJoin('Result as r2', qb => {
+        qb.on('r.deviceId', 'r2.deviceId')
+          .on('r.moduleName', 'r2.moduleName')
+          .on('r.moduleSerial', 'r2.moduleSerial')
+          .on('r.id', '<>', 'r2.id')
+          .on('r2.id', '<>', result.id)
+          .on('r.endedOn', '<', 'r2.endedOn')
+          .on('r2.endedOn', '<', knex.raw('?', [result.endedOn]))
+      })
+      .where('r.deviceId', result.deviceId)
+      .where('r.moduleName', result.moduleName)
+      .where('r.endedOn', '<', result.endedOn)
+      .whereNotNull('r.moduleSerial')
+      .whereNot('r.id', result.id)
+      .whereNull('r2.id')
+      .select('r.*')
+    if (
+      moduleSerial &&
+      moduleSerial === result.moduleSerial &&
+      !replacedInstrumentSerials.includes(instrumentSerial)
+    ) {
+      messageContext.deviceInstrumentReplaced(result, {
+        moduleName: result.moduleName,
+        moduleSerial: result.moduleSerial,
+        replacedInstrumentSerial: instrumentSerial,
+        newInstrumentSerial: result.instrumentSerial,
+      })
+    }
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
   getReplacedModuleSerials,
   shouldTriggerModuleReplaced,
   shouldTriggerModuleDisabled,
+  shouldTriggerInstrumentReplaced,
 }

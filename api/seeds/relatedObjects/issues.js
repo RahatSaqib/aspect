@@ -3,6 +3,11 @@ const {
   allMessageSeverityToId,
 } = require('../../src/shared/dictionary')
 
+const msgInstrumentReplaced = `{{device.name}}: 
+  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to 
+  "{{issue.data.newInstrumentSerial}}"
+`
+
 async function getBaseIssues(auditFields) {
   // Issues
   const issueCategories = await allIssueCategoryToId()
@@ -509,6 +514,28 @@ async function getBaseIssues(auditFields) {
         subject: 'stock expiring at {{site.name}}',
         htmlBody: '{{issue.data.totalWasted}} consumables likely to expire.',
         body: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+    },
+    InstrumentReplaced: {
+      issueType: {
+        name: 'Instrument Replaced',
+        externalId: 'InstrumentReplaced',
+        i18nKey: 'issueTypeInstrumentReplaced',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: msgInstrumentReplaced,
+      },
+      SmsTemplate: {
+        message: msgInstrumentReplaced,
+      },
+      EmailTemplate: {
+        subject: 'Instrument has been replaced',
+        body: msgInstrumentReplaced,
+        htmlBody: msgInstrumentReplaced,
       },
     },
   }
