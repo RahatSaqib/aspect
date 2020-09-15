@@ -190,6 +190,7 @@
     "d3-array": "^2.4.0",
     "d3-scale": "^3.2.1",
     "date-fns": "2.8.1",
+    "date-fns-timezone": "^0.1.4",
     "dotenv-safe": "^8.2.0",
     "downshift": "^3.4.7",
     "element-resize-detector": "^1.2.1",
