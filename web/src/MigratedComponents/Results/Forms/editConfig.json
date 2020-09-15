@@ -245,7 +245,7 @@
                             "id": "sampleCollectedOn",
                             "controlType": {
                                 "component": "datePicker",
-                                "format": "dd MM yyyy hh:mm"
+                                "format": "dd MMM yyyy hh:mm"
                             },
                             "type": "readOnly",
                             "label": "Collected On"
