@@ -8,7 +8,10 @@ import React, {
 } from 'react'
 import classNames from 'classnames'
 import _fp from 'lodash/fp'
-import _ from 'lodash'
+import map from 'lodash/map'
+import isFunction from 'lodash/isFunction'
+import noop from 'lodash/noop'
+import filter from 'lodash/filter'
 import Downshift from 'downshift'
 
 import FormControl from '@material-ui/core/FormControl'
@@ -129,7 +132,7 @@ const displayOptions = intl => {
       get: accessOptions.getYear,
       options: ({ minDate, maxDate, formatToken = 'yyyy' }) => {
         const yearList = getYearList({ minDate, maxDate })
-        return _.map(yearList, v => ({
+        return map(yearList, v => ({
           value: v,
           label: dateFnFormat(new Date(v, 0, 1), formatToken),
         }))
@@ -140,7 +143,7 @@ const displayOptions = intl => {
       get: accessOptions.getMonth,
       options: ({ date, minDate, maxDate, formatToken = 'MM' }) => {
         const monthList = getMonthList({ date, minDate, maxDate })
-        return _.map(monthList, v => ({
+        return map(monthList, v => ({
           value: v,
           label: dateFnFormat(new Date(1970, v, 1), formatToken),
         }))
@@ -151,7 +154,7 @@ const displayOptions = intl => {
       get: accessOptions.getDate,
       options: ({ date, minDate, maxDate, formatToken = 'dd' }) => {
         const dateList = getDateList({ date, minDate, maxDate })
-        return _.map(dateList, v => ({
+        return map(dateList, v => ({
           value: v,
           label: dateFnFormat(new Date(1970, 0, v), formatToken),
         }))
@@ -162,7 +165,7 @@ const displayOptions = intl => {
       get: accessOptions.getHours,
       options: ({ date, minDate, maxDate, formatToken = 'HH' }) => {
         const hourList = getHourList({ date, minDate, maxDate })
-        return _.map(hourList, v => ({
+        return map(hourList, v => ({
           value: v,
           label: dateFnFormat(new Date(1970, 0, 1, v, 0), formatToken),
         }))
@@ -173,7 +176,7 @@ const displayOptions = intl => {
       get: accessOptions.getMinutes,
       options: ({ date, minDate, maxDate, formatToken = 'mm' }) => {
         const minuteList = getMinuteList({ date, minDate, maxDate })
-        return _.map(minuteList, v => ({
+        return map(minuteList, v => ({
           value: v,
           label: dateFnFormat(new Date(1970, 0, 1, 0, v), formatToken),
         }))
@@ -231,7 +234,7 @@ const getDefaultFieldsPropsWithI18n = formatMessage =>
 
 const getDefaultFieldsProps = intl => {
   const formatMessage = _fp.prop(['formatMessage'], intl)
-  if (_.isFunction(formatMessage)) {
+  if (isFunction(formatMessage)) {
     return getDefaultFieldsPropsWithI18n(formatMessage)
   }
   return DEFAULT_FIELDS_PROPS
@@ -258,7 +261,7 @@ const pruneFormat = str => {
 
 const cleanFormat = str => {
   const keys = Object.keys(dateTimeKeyMap)
-  return _.filter(str, c => keys.includes(c)).join('')
+  return filter(str, c => keys.includes(c)).join('')
 }
 
 const normalizeFormat = _fp.pipe(uniqLastRepeatStr, _fp.join(''), pruneFormat)
@@ -631,7 +634,7 @@ const DateTimeInput = props => {
     _fp.pipe(
       _fp.values,
       _fp.filter(
-        ref => ref && ref.current && _.isFunction(ref.current[handlerName])
+        ref => ref && ref.current && isFunction(ref.current[handlerName])
       ),
       _fp.map(ref => ref.current[handlerName](...args))
     )(refs)
@@ -663,7 +666,7 @@ const DateTimeInput = props => {
       className={classNames(className, classesMap.selectControl)}
       onBlur={handleBlur}
     >
-      {_.map(normalizeFormat(displayFormat), (display, i) => {
+      {map(normalizeFormat(displayFormat), (display, i) => {
         const baseKey = `${display}-${i}`
         const displayOption = displayOptions(intl)[dateTimeKeyMap[display]]
 
@@ -714,8 +717,7 @@ const DateTimeInput = props => {
           onClick={setNow}
         >
           {buttonLabel ||
-            (_.isFunction(formatMessage) &&
-              formatMessage(messages.nowButton)) ||
+            (isFunction(formatMessage) && formatMessage(messages.nowButton)) ||
             'Now'}
         </AspectButton>
       )}
@@ -761,8 +763,8 @@ DateTimeInput.propTypes = {
 DateTimeInput.defaultProps = {
   className: '',
   dateFormat: 'yyyy/MM/dd',
-  onChange: _.noop,
-  onBlur: _.noop,
+  onChange: noop,
+  onBlur: noop,
   defaultValue: since,
   minDate: since,
   maxDate: until,

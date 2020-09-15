@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import keyBy from 'lodash/keyBy'
 import classnames from 'classnames/bind'
 import React, { useRef } from 'react'
 import Downshift from 'downshift'
@@ -17,7 +17,7 @@ import dialCodes from './dialCodes'
 
 const cssClasses = classnames.bind(require('./DialCodeDropdown.css'))
 
-const countryBy = _.keyBy(countries, 'isoAlpha2Code')
+const countryBy = keyBy(countries, 'isoAlpha2Code')
 
 const dialCodesWithCountry = dialCodes.map(({ dialCode, isoAlpha2Code }) => ({
   isoAlpha2Code,

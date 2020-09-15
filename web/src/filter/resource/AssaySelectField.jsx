@@ -1,5 +1,6 @@
 // Imports from packages
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
@@ -217,7 +218,7 @@ export class AssaySelectField extends PureComponent {
 
     const validAssays = assayItems.filter(a => a.get('hasResults'))
     const isSingleAssay = validAssays.size === 1
-    const restProps = _.omit(this.props, [
+    const restProps = omit(this.props, [
       'allItemText',
       'fetchAssays',
       'assayItems',
@@ -281,6 +282,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
   AssaySelectField
 )

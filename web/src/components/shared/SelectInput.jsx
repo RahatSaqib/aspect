@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import map from 'lodash/map'
 import React from 'react'
 import { Field } from 'redux-form/immutable'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -78,7 +78,7 @@ const renderFormField = props => {
   } = props
   const valueKey = dataSourceConfig.value
   const textKey = dataSourceConfig.text
-  const selectItems = _.map(dataSource, item => ({
+  const selectItems = map(dataSource, item => ({
     key: item[valueKey] || '-1',
     value: item[valueKey] || null,
     primaryText: item[textKey],

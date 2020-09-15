@@ -1,5 +1,6 @@
 import Immutable from 'immutable'
-import _ from 'lodash'
+import map from 'lodash/map'
+import find from 'lodash/find'
 import sinon from 'sinon'
 import geography, {
   types,
@@ -65,8 +66,8 @@ describe('geography reducer', () => {
             countries: countriesReceived,
             lastRefreshed: now,
           })
-          const countryIds = _.map(countriesReceived, 'id')
-          const countryNames = _.map(countriesReceived, 'name')
+          const countryIds = map(countriesReceived, 'id')
+          const countryNames = map(countriesReceived, 'name')
 
           expect(state.countriesForLocationSelector.items).toBeInstanceOf(
             Immutable.List
@@ -110,8 +111,8 @@ describe('geography reducer', () => {
             countries: countriesReceived,
             lastRefreshed: now,
           })
-          const countryIds = _.map(countriesReceived, 'id')
-          const countryNames = _.map(countriesReceived, 'name')
+          const countryIds = map(countriesReceived, 'id')
+          const countryNames = map(countriesReceived, 'name')
 
           expect(state.countriesForLocationSelector.items).toBeInstanceOf(
             Immutable.List
@@ -121,12 +122,12 @@ describe('geography reducer', () => {
             expect(countryNames).toContain(countryRecord.name)
             expect(countryRecord.children).toBeInstanceOf(Immutable.Record)
             expect(countryRecord.children.loading).toBe(false)
-            const countryReceived = _.find(countriesReceived, {
+            const countryReceived = find(countriesReceived, {
               id: countryRecord.id,
             })
             if (countryReceived.states) {
-              const stateIds = _.map(countryReceived.states, 'id')
-              const stateNames = _.map(countryReceived.states, 'name')
+              const stateIds = map(countryReceived.states, 'id')
+              const stateNames = map(countryReceived.states, 'name')
               expect(countryRecord.children.items).toBeInstanceOf(
                 Immutable.List
               )
@@ -136,12 +137,12 @@ describe('geography reducer', () => {
                 expect(stateNames).toContain(stateRecord.name)
                 expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
                 expect(stateRecord.children.loading).toBe(false)
-                const stateReceived = _.find(countryReceived.states, {
+                const stateReceived = find(countryReceived.states, {
                   id: stateRecord.id,
                 })
                 if (stateReceived.lgas) {
-                  const lgaIds = _.map(stateReceived.lgas, 'id')
-                  const lgaNames = _.map(stateReceived.lgas, 'name')
+                  const lgaIds = map(stateReceived.lgas, 'id')
+                  const lgaNames = map(stateReceived.lgas, 'name')
                   expect(stateRecord.children.items).toBeInstanceOf(
                     Immutable.List
                   )
@@ -303,8 +304,8 @@ describe('geography reducer', () => {
               { id: 2, name: 'Gauteng' },
               { id: 3, name: 'Western Cape' },
             ]
-            const stateIds = _.map(statesReceived, 'id')
-            const stateNames = _.map(statesReceived, 'name')
+            const stateIds = map(statesReceived, 'id')
+            const stateNames = map(statesReceived, 'name')
             const newState = geography(initialState, {
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: statesReceived,
@@ -347,8 +348,8 @@ describe('geography reducer', () => {
               },
               { id: 3, name: 'Western Cape' },
             ]
-            const stateIds = _.map(statesReceived, 'id')
-            const stateNames = _.map(statesReceived, 'name')
+            const stateIds = map(statesReceived, 'id')
+            const stateNames = map(statesReceived, 'name')
             const newState = geography(initialState, {
               type: types.RECEIVE_STATES_FOR_LOCATION_SELECTOR,
               states: statesReceived,
@@ -370,12 +371,12 @@ describe('geography reducer', () => {
               expect(stateNames).toContain(stateRecord.name)
               expect(stateRecord.children).toBeInstanceOf(Immutable.Record)
               expect(stateRecord.children.loading).toBe(false)
-              const stateReceived = _.find(statesReceived, {
+              const stateReceived = find(statesReceived, {
                 id: stateRecord.id,
               })
               if (stateReceived.lgas) {
-                const lgaIds = _.map(stateReceived.lgas, 'id')
-                const lgaNames = _.map(stateReceived.lgas, 'name')
+                const lgaIds = map(stateReceived.lgas, 'id')
+                const lgaNames = map(stateReceived.lgas, 'name')
                 expect(stateRecord.children.items).toBeInstanceOf(
                   Immutable.List
                 )
@@ -632,8 +633,8 @@ describe('geography reducer', () => {
             { id: 2, name: 'Gauteng' },
             { id: 3, name: 'Western Cape' },
           ]
-          const lgaIds = _.map(lgasReceived, 'id')
-          const lgaNames = _.map(lgasReceived, 'name')
+          const lgaIds = map(lgasReceived, 'id')
+          const lgaNames = map(lgasReceived, 'name')
           const newState = geography(initialState, {
             type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
             lgas: lgasReceived,
@@ -690,7 +691,7 @@ describe('geography action creators', () => {
       .set(
         'items',
         Immutable.List(
-          _.map(
+          map(
             countries,
             country =>
               new LazyLoadParent({
@@ -701,7 +702,7 @@ describe('geography action creators', () => {
                   lastRefreshed: country.states ? lastRefreshed : undefined,
                   items: country.states
                     ? Immutable.List(
-                        _.map(
+                        map(
                           country.states,
                           state =>
                             new LazyLoadParent({
@@ -714,7 +715,7 @@ describe('geography action creators', () => {
                                   : undefined,
                                 items: state.lgas
                                   ? Immutable.List(
-                                      _.map(
+                                      map(
                                         state.lgas,
                                         lga => new LazyLoadChild(lga)
                                       )

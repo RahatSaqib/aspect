@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import times from 'lodash/times'
 import React from 'react'
 import classnames from 'classnames'
 import { Group } from '@vx/group'
@@ -25,8 +25,8 @@ export const ErrorRate = ({
       top={top}
       left={left}
     >
-      {_.times(yCount, yIndex =>
-        _.times(xCount, xIndex => {
+      {times(yCount, yIndex =>
+        times(xCount, xIndex => {
           const index = yIndex * xCount + xIndex
           if (index >= count) {
             return false

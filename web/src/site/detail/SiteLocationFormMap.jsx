@@ -1,6 +1,6 @@
 /* global google */
 // Imports from packages
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { reduxForm, formValueSelector } from 'redux-form/immutable'
@@ -155,7 +155,7 @@ function mapStateToProps(state, props) {
   }
 }
 
-export const SiteLocationFormMapContainer = _.flowRight(
+export const SiteLocationFormMapContainer = flowRight(
   reduxForm({
     form: 'siteDetail',
     validate,

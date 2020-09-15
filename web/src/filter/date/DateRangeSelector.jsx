@@ -1,5 +1,7 @@
 // Imports from packages
-import _ from 'lodash'
+import map from 'lodash/map'
+import find from 'lodash/find'
+import omit from 'lodash/omit'
 import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
 import subtractDays from 'date-fns/subDays'
@@ -183,7 +185,7 @@ export class DateRangeSelector extends PureComponent {
         minDate: startOfDay(yesterday),
         maxDate: endOfDay(yesterday),
       },
-      ..._.map(daysBeforeYesterday, day => {
+      ...map(daysBeforeYesterday, day => {
         const selectItem = {
           label: formatDate(day, {
             weekday: 'long',
@@ -247,7 +249,7 @@ export class DateRangeSelector extends PureComponent {
         minDate: lastWeekStart,
         maxDate: lastWeekEnd,
       },
-      ..._.map(weeksBeforeLast, dayInWeek => {
+      ...map(weeksBeforeLast, dayInWeek => {
         const weekStart = startOfWeek(dayInWeek)
         const weekEnd = endOfWeek(dayInWeek)
         return {
@@ -316,7 +318,7 @@ export class DateRangeSelector extends PureComponent {
         minDate: lastMonthStart,
         maxDate: lastMonthEnd,
       },
-      ..._.map(monthsBeforeLast, dayInMonth => {
+      ...map(monthsBeforeLast, dayInMonth => {
         const monthStart = startOfMonth(dayInMonth)
         const monthEnd = endOfMonth(dayInMonth)
         return {
@@ -345,7 +347,7 @@ export class DateRangeSelector extends PureComponent {
         minDate: startOfDay(thisQuarterStart),
         maxDate: endOfDay(thisQuarterEnd),
       },
-      ..._.map(previousQuarters, dayInQuarter => {
+      ...map(previousQuarters, dayInQuarter => {
         const quarterStart = startOfQuarter(dayInQuarter)
         const quarterEnd = endOfQuarter(dayInQuarter)
         return {
@@ -390,7 +392,7 @@ export class DateRangeSelector extends PureComponent {
         minDate: lastYearStart,
         maxDate: lastYearEnd,
       },
-      ..._.map(yearsBeforeLast, dayInYear => {
+      ...map(yearsBeforeLast, dayInYear => {
         const yearStart = startOfYear(dayInYear)
         const yearEnd = endOfYear(dayInYear)
         return {
@@ -459,12 +461,12 @@ export class DateRangeSelector extends PureComponent {
       custom: '',
     }[this.state.rangeMode]
 
-    const selectedValue = _.find(dropDownSelectItems, {
+    const selectedValue = find(dropDownSelectItems, {
       minDate: this.getMinDate(),
       maxDate: this.getMaxDate(),
     })
 
-    const restProps = _.omit(this.props, [
+    const restProps = omit(this.props, [
       'floatingLabelText',
       'controlClassName',
       'clearButtonTooltip',

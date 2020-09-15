@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
-import _ from 'lodash'
+import map from 'lodash/map'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
 
 import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
@@ -16,7 +16,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
     formatMessage: intlFormatMessage,
   } = useIntl()
 
-  const headings = graphData => _.map(graphData[0], 'heading')
+  const headings = graphData => map(graphData[0], 'heading')
 
   return (
     <div className={cssClasses('piegraph__container')}>

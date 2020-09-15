@@ -1,4 +1,8 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import fromPairs from 'lodash/fromPairs'
+import intersectionWith from 'lodash/intersectionWith'
+import isEqual from 'lodash/isEqual'
+import isEmpty from 'lodash/isEmpty'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -139,7 +143,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -159,7 +163,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: _.fromPairs([...filtersParams.entries()]),
+        filters: fromPairs([...filtersParams.entries()]),
       }
     }
   ),
@@ -355,9 +359,9 @@ const enhance = compose(
           const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
           selection.push({ partnerId, siteId, countryId })
         })
-        const [{ countryId, siteId, partnerId }] = _.intersectionWith(
+        const [{ countryId, siteId, partnerId }] = intersectionWith(
           selection,
-          _.isEqual
+          isEqual
         )
         selectedDDL = { countryId, siteId, partnerId }
       }
@@ -439,7 +443,7 @@ export const DeviceApiKeyList = ({
         color="primary"
         variant="contained"
         onClick={onOpenAssignerDialog}
-        disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
+        disabled={isEmpty(assignerValues.deviceApiKeyIds)}
         browseButton
       >
         {intl.formatMessage(messages.assign)}

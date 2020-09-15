@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import bind from 'lodash/bind'
+import get from 'lodash/get'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React, { Fragment } from 'react'
@@ -64,7 +65,7 @@ const enhance = compose(
             }
           }
         })
-        .then(_.bind(this.setState, this))
+        .then(bind(this.setState, this))
         .catch(err =>
           // eslint-disable-next-line no-console
           console.warn(
@@ -113,7 +114,7 @@ export const CountryMap = ({
       {...restProps}
     >
       {mercator => {
-        const currProjection = _.get(mercator, ['features', 0, 'projection'])
+        const currProjection = get(mercator, ['features', 0, 'projection'])
         return (
           <Fragment>
             <g transform={transform}>

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import omit from 'lodash/omit'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
@@ -194,7 +194,7 @@ export const InventoryItems = ({
   )
   const itemSelected =
     value || (inventoryItems && inventoryItems[selectIndex]) || null
-  const filteredItem = _.omit(itemSelected, ['consumableId', 'consumableName'])
+  const filteredItem = omit(itemSelected, ['consumableId', 'consumableName'])
   const inventoryChartLabel = rearrangeInventoryKey(filteredItem)
   const data = []
 

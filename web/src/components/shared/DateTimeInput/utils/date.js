@@ -1,4 +1,8 @@
-import _ from 'lodash'
+import upperFirst from 'lodash/upperFirst'
+import every from 'lodash/every'
+import range from 'lodash/range'
+import isString from 'lodash/isString'
+import isDate from 'lodash/isDate'
 import isValid from 'date-fns/isValid'
 import getYear from 'date-fns/getYear'
 import setYear from 'date-fns/setYear'
@@ -20,14 +24,14 @@ import parseISO from 'date-fns/parseISO'
 const now = new Date()
 export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)
 export const until = new Date(getYear(subtractYears(now, -10)), 11, 31)
-export const rangeIncludeLast = (start, end) => _.range(start, end + 1)
+export const rangeIncludeLast = (start, end) => range(start, end + 1)
 
 export const defaultYearList = rangeIncludeLast(getYear(since), getYear(until))
-export const defaultMonthList = _.range(0, 12)
+export const defaultMonthList = range(0, 12)
 export const defaultDateList = rangeIncludeLast(1, 31)
-export const defaultHourList = _.range(0, 24)
-export const defaultMinuteList = _.range(0, 60)
-export const defaultSecondList = _.range(0, 60)
+export const defaultHourList = range(0, 24)
+export const defaultMinuteList = range(0, 60)
+export const defaultSecondList = range(0, 60)
 
 export const accessOptions = {
   setYear,
@@ -43,9 +47,9 @@ export const accessOptions = {
 }
 
 export function getDateObject(value, defaultValue) {
-  if (_.isString(value)) return parseISO(value)
-  if (_.isDate(value)) return value
-  if (defaultValue && !_.isDate(defaultValue)) {
+  if (isString(value)) return parseISO(value)
+  if (isDate(value)) return value
+  if (defaultValue && !isDate(defaultValue)) {
     // eslint-disable-next-line no-console
     console.error(
       'getDateObject accepts only Date object for defaultValue if provided'
@@ -66,13 +70,13 @@ export function isValidDateRange(minDate, maxDate) {
 }
 
 export const isDateEqual = field => (date1, date2) => {
-  const name = _.upperFirst(field)
+  const name = upperFirst(field)
   const get = accessOptions[`get${name}`]
   return get(date1) === get(date2)
 }
 
 export const isAllSameDateFields = (fields = []) => (date1, date2) =>
-  _.every(fields, field => isDateEqual(field)(date1, date2))
+  every(fields, field => isDateEqual(field)(date1, date2))
 
 export const normalizeDate = ({ date, minDate = since, maxDate = until }) => {
   if (!isValid(date)) {
@@ -100,7 +104,7 @@ export function getMonthList({ date, minDate = since, maxDate = until }) {
   const isEqualYear = isDateEqual('Year')
 
   if (isEqualYear(date, minDate)) {
-    return _.range(getMonth(minDate), 12)
+    return range(getMonth(minDate), 12)
   }
 
   if (isEqualYear(date, maxDate)) {
@@ -142,7 +146,7 @@ export function getHourList({ date, minDate = since, maxDate = until }) {
     'Date',
   ])
   if (isAllEqualFromYearToDate(date, minDate)) {
-    return _.range(getHours(minDate), 24)
+    return range(getHours(minDate), 24)
   }
 
   if (isAllEqualFromYearToDate(date, maxDate)) {
@@ -164,7 +168,7 @@ export function getMinuteList({ date, minDate = since, maxDate = until }) {
     'Hours',
   ])
   if (isAllEqualFromYearToHour(date, minDate)) {
-    return _.range(getMinutes(minDate), 60)
+    return range(getMinutes(minDate), 60)
   }
 
   if (isAllEqualFromYearToHour(date, maxDate)) {

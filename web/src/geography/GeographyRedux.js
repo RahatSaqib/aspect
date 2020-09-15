@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import _ from 'lodash'
+import map from 'lodash/map'
 import Immutable from 'immutable'
 import { aspectFetch } from '../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
@@ -223,7 +223,7 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
       loading: false,
       lastRefreshed,
       items: Immutable.List(
-        _.map(
+        map(
           countries,
           country =>
             new LazyLoadParent({
@@ -234,7 +234,7 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
                 lastRefreshed: country.states ? lastRefreshed : undefined,
                 items: country.states
                   ? Immutable.List(
-                      _.map(
+                      map(
                         country.states,
                         state =>
                           new LazyLoadParent({
@@ -247,7 +247,7 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
                                 : undefined,
                               items: state.lgas
                                 ? Immutable.List(
-                                    _.map(
+                                    map(
                                       state.lgas,
                                       lga => new LazyLoadChild(lga)
                                     )
@@ -313,7 +313,7 @@ function receiveStatesForLocationSelector(
           loading: false,
           lastRefreshed,
           items: Immutable.List(
-            _.map(
+            map(
               states,
               state =>
                 new LazyLoadParent({
@@ -324,7 +324,7 @@ function receiveStatesForLocationSelector(
                     lastRefreshed: state.lgas ? lastRefreshed : undefined,
                     items: state.lgas
                       ? Immutable.List(
-                          _.map(state.lgas, lga => new LazyLoadChild(lga))
+                          map(state.lgas, lga => new LazyLoadChild(lga))
                         )
                       : EMPTY_LIST,
                   }),
@@ -404,7 +404,7 @@ function receiveLgasForLocationSelector(
           {
             loading: false,
             lastRefreshed,
-            items: Immutable.List(_.map(lgas, lga => new LazyLoadChild(lga))),
+            items: Immutable.List(map(lgas, lga => new LazyLoadChild(lga))),
           }
         )
       }

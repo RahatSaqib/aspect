@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import keyBy from 'lodash/keyBy'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure } from 'recompose'
@@ -9,7 +9,7 @@ import dialCodes from './dialCodes'
 
 const cssClasses = classnames.bind(require('./DialCodeDropdownInput.css'))
 
-const dialCodeBy = _.keyBy(dialCodes, 'dialCode')
+const dialCodeBy = keyBy(dialCodes, 'dialCode')
 
 export const parseRawNumber = rawNumber => {
   let numberPart = rawNumber.replace(/^\s+/, '')

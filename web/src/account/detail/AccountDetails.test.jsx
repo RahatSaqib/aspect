@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Route } from 'react-router-dom'
@@ -16,11 +16,11 @@ describe('AccountDetails module', () => {
       loading: false,
       saving: false,
       accountDetails: new AccountDetailsData(),
-      showAcknowledgement: _.noop,
-      fetchAccountDetails: _.noop,
-      saveContactDetails: _.noop,
-      saveLoginDetails: _.noop,
-      saveUserPreferences: _.noop,
+      showAcknowledgement: noop,
+      fetchAccountDetails: noop,
+      saveContactDetails: noop,
+      saveLoginDetails: noop,
+      saveUserPreferences: noop,
       history: {},
       location: {},
       match: {},

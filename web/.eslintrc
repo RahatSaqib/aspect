@@ -19,6 +19,14 @@
   "rules": {
     "consistent-return": "off",
     "class-methods-use-this": "off",
+    "no-console": [
+      "error",
+      { "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
     "func-names": "off",
     "global-require": "off",
     "import/extensions": "off",
@@ -97,19 +105,22 @@
       2,
       "method"
     ],
-    "lodash/prefer-lodash-method": "off",
+    "lodash/collection-method-value": "off",
     "lodash/consistent-compose": "off",
+    "lodash/identity-shorthand": "off",
+    "lodash/prefer-lodash-method": "off",
     "lodash/prefer-includes": "off",
     "lodash/prefer-noop": "off",
+    "lodash/prefer-find": "off",
     "lodash/preferred-alias": "off",
     "lodash/prefer-is-nil": "off",
-    "lodash/identity-shorthand": "off",
     "lodash/prop-shorthand": "off",
     "lodash/prefer-times": "off",
     "lodash/prefer-startswith": "off",
     "lodash/prefer-lodash-chain": "off",
     "lodash/prefer-constant": "off",
     "lodash/prefer-lodash-typecheck": "off",
-    "lodash/path-style": "off"
+    "lodash/path-style": "off",
+    "lodash/prefer-immutable-method": "off",
   }
 }

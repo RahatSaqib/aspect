@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDate } from '../../../shared/utils/dateFormat'
@@ -11,7 +11,7 @@ const cssClasses = classnames.bind(
   require('../../../components/shared/DataTableRow.css')
 )
 
-const enhance = _.identity
+const enhance = identity
 
 const ResultTableRow = ({ intl, result, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>

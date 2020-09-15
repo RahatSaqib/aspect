@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -43,7 +43,7 @@ function rejectReports() {
 
 export function fetchReports(filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestReports(filters))
     return aspectFetch(
       `/reports?${stringify({
@@ -85,7 +85,7 @@ export function fetchReports(filtersParams) {
 
 export function getReportFile(externalId, filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     return aspectFetchFile(
       `/reports/${externalId}?${stringify({
         ...filters,

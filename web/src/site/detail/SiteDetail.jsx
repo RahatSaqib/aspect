@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
@@ -167,7 +167,7 @@ SiteDetail.propTypes = {
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
 }
-export default _.flowRight(
+export default flowRight(
   injectIntl,
   connect(mapStateToProps, {
     fetchSingleSite,

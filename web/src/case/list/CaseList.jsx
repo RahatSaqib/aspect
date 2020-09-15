@@ -1,5 +1,6 @@
 import classnames from 'classnames/bind'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import without from 'lodash/without'
 import Immutable from 'immutable'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
@@ -100,14 +101,14 @@ const searchSanitizer = makeSearchParamsSanitizer({
 
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
-const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
+const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
   injectIntl,

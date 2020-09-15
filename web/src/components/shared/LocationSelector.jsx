@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import isEmpty from 'lodash/isEmpty'
 import React, { PureComponent } from 'react'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { injectIntl, defineMessages } from 'react-intl'
@@ -106,13 +107,13 @@ export class LocationSelector extends PureComponent {
       lgaIdFieldName,
     } = this.props
     if (
-      !_.isEmpty(selectedCountryId) &&
+      !isEmpty(selectedCountryId) &&
       selectedCountryId !== this.props.selectedCountryId
     ) {
       changeFieldValue(formName, stateIdFieldName, null)
       changeFieldValue(formName, lgaIdFieldName, null)
     } else if (
-      !_.isEmpty(selectedStateId) &&
+      !isEmpty(selectedStateId) &&
       selectedStateId !== this.props.selectedStateId
     ) {
       changeFieldValue(formName, lgaIdFieldName, null)
@@ -241,7 +242,7 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(
+export default flowRight(
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps)
 )(LocationSelector)

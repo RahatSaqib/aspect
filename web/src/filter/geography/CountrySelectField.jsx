@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
@@ -37,7 +38,7 @@ export class CountrySelectField extends PureComponent {
   render() {
     const { allItemText, countries, countryId, ...others } = this.props
 
-    const restProps = _.omit(others, [
+    const restProps = omit(others, [
       'onCountryIdChange',
       'fetchCountriesForLocationSelector',
     ])
@@ -73,6 +74,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
   CountrySelectField
 )

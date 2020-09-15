@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -79,7 +79,7 @@ function rejectResults() {
 
 export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'endedOn'
     return aspectFetch(
@@ -484,7 +484,7 @@ export function exportResults(
   reportName
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     return aspectFetch(
       `/result/export?${stringify({
         sortCol,
