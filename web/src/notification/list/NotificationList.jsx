@@ -1,4 +1,4 @@
-import { flowRight } from 'lodash'
+import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'

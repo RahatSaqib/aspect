@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import Button from '@material-ui/core/Button'
@@ -6,7 +6,7 @@ import { MdKeyboardArrowLeft } from 'react-icons/md'
 
 const cssClasses = classnames.bind(require('./DetailBackBar.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 export const DetailBackBar = ({ onBackClick, title, children }) => (
   <div className={cssClasses('Container')}>

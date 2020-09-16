@@ -1,5 +1,6 @@
 // Imports from packages
-import _ from 'lodash'
+import noop from 'lodash/noop'
+import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { withStyles } from '@material-ui/core/styles'
@@ -25,9 +26,9 @@ export class FocusBlurTextField extends PureComponent {
   }
 
   static defaultProps = {
-    onBlur: _.noop,
-    onFocus: _.noop,
-    onKeyUp: _.noop,
+    onBlur: noop,
+    onFocus: noop,
+    onKeyUp: noop,
     value: '',
     component: withStyles(styles)(TextField),
   }
@@ -74,7 +75,7 @@ export class FocusBlurTextField extends PureComponent {
   render() {
     const { isFocused, pendingValue } = this.state
     const value = isFocused ? pendingValue : this.props.value
-    const restProps = _.omit(this.props, ['onCommitValue', 'component'])
+    const restProps = omit(this.props, ['onCommitValue', 'component'])
 
     return React.createElement(this.props.component, {
       ...restProps,

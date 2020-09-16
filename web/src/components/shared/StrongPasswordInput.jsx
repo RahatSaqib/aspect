@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { useState } from 'react'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { defineMessages } from 'react-intl'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
@@ -170,7 +170,7 @@ const StrongPasswordInput = ({
 
       <Popper
         anchorEl={anchorEl}
-        open={showMeter && !_.isEmpty(input.value)}
+        open={showMeter && !isEmpty(input.value)}
         placement="bottom-start"
         {...popOverProps}
       >

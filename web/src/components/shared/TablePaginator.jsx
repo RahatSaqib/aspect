@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import min from 'lodash/min'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
@@ -53,7 +53,7 @@ const enhance = compose(
     hasFirstPage: pageAt !== 0,
     hasPreviousPage: pageAt > 0,
     firstItemIndex: 1 + pageSize * pageAt,
-    lastItemIndex: _.min([total, pageSize * (1 + pageAt)]),
+    lastItemIndex: min([total, pageSize * (1 + pageAt)]),
     hasNextPage: total > pageSize * (1 + pageAt),
     hasLastPage: total > pageSize * (1 + pageAt),
   })),

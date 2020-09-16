@@ -1,5 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import { Group } from '@vx/group'
 import { withParentSize } from '@vx/responsive'
 import { AxisRight } from '@vx/axis'
@@ -111,7 +111,7 @@ const TemperatureGauge = ({
           left={width / 2 - tubeWidth / 2}
           stroke={tubeBorderColor}
           tickStroke={tubeBorderColor}
-          tickFormat={_.noop}
+          tickFormat={noop}
           hideAxisLine
           hideZero
         />

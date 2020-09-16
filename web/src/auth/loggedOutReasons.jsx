@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import reduce from 'lodash/reduce'
+import set from 'lodash/set'
+import has from 'lodash/has'
 import { defineMessages } from 'react-intl'
 
 const reasonTypeList = [
@@ -20,18 +22,18 @@ const reasonTypeList = [
   },
 ]
 
-export const reasonTypes = _.reduce(
+export const reasonTypes = reduce(
   reasonTypeList,
-  (acc, { type }) => _.set(acc, type, type),
+  (acc, { type }) => set(acc, type, type),
   {}
 )
 
 export const typeToMessage = type =>
-  _.has(i18nKeyByType, type) && messages[i18nKeyByType[type]]
+  has(i18nKeyByType, type) && messages[i18nKeyByType[type]]
 
-const i18nKeyByType = _.reduce(
+const i18nKeyByType = reduce(
   reasonTypeList,
-  (acc, { type, i18nKey }) => _.set(acc, type, i18nKey),
+  (acc, { type, i18nKey }) => set(acc, type, i18nKey),
   {}
 )
 

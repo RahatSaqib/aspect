@@ -2,7 +2,7 @@
   This is a generic reducer for a list of things that are
   to be loaded in a pageable, sortable grid
 */
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import Immutable from 'immutable'
 
 export function requestTable(table, action) {
@@ -38,4 +38,4 @@ export const Table = Immutable.Record({
   groupBy: Immutable.List(),
 })
 
-export const makeTable = _.flowRight(Table, Immutable.fromJS)
+export const makeTable = flowRight(Table, Immutable.fromJS)

@@ -1,18 +1,17 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
-import { startOfDay, format as dateFnFormat, parseISO } from 'date-fns'
+import startOfDay from 'date-fns/startOfDay'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { withProps } from 'recompose'
-import differenceInDays from 'date-fns/differenceInDays'
 
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
 
-function format(date, displayPreferenceKey) {
+function dateFormat(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const dateFormat = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  return date == null
-    ? ''
-    : dateFnFormat(parseISO(date.toISOString()), dateFormat)
+  return date == null ? '' : format(parseISO(date.toISOString()), dateFormat)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
@@ -28,7 +27,7 @@ function formatBase(date, unit) {
   if (isString(date)) {
     date = parseISO(date)
   }
-  return format(date, unit)
+  return dateFormat(date, unit)
 }
 
 export function formatDate(date) {
@@ -44,7 +43,7 @@ export function formatDateTime(date) {
 }
 
 export const formatWithLocale = locale => (date, formatStr) =>
-  dateFnFormat(date, formatStr, { locale: getLocale(locale) })
+  format(date, formatStr, { locale: getLocale(locale) })
 
 export const withDateFormatProps = withProps(() => {
   const prefs = getAspectDisplayPreferences()

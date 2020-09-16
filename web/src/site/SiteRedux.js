@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
@@ -65,7 +65,7 @@ function rejectSites() {
 
 export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -119,7 +119,7 @@ export function exportSites(
   reportName
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/site/export?${stringify({

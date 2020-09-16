@@ -1,4 +1,12 @@
-import _ from 'lodash'
+import isNull from 'lodash/isNull'
+import isUndefined from 'lodash/isUndefined'
+import reduce from 'lodash/reduce'
+import identity from 'lodash/identity'
+import filter from 'lodash/filter'
+import intersection from 'lodash/intersection'
+import flowRight from 'lodash/flowRight'
+import mapKeys from 'lodash/mapKeys'
+import find from 'lodash/find'
 import {
   getPermissions,
   groupByPermissionTypes,
@@ -7,11 +15,11 @@ import {
 import { navigations } from '../globals/components/BrowseFilters'
 
 export function nonEmptyFilterValue(x) {
-  return !_.isNull(x) && !_.isUndefined(x) && x !== ''
+  return !isNull(x) && !isUndefined(x) && x !== ''
 }
 
 export const mergeToFiltersParams = (filters, filtersParams) => {
-  return _.reduce(
+  return reduce(
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
@@ -48,8 +56,8 @@ const sanitizerByConfigKey = {
     'diseaseId',
   ]),
   geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
-  state: _.identity,
-  lga: _.identity,
+  state: identity,
+  lga: identity,
   date: makeArraySanitizer(['minDate', 'maxDate']),
   patientOrResearchId: defaultSanitizer,
   partnerId: defaultSanitizer,
@@ -68,10 +76,10 @@ const sanitizerByConfigKey = {
 }
 
 export const sanitizeFiltersStringBy = config => filtersString =>
-  _.reduce(
+  reduce(
     sanitizerByConfigKey,
     (acc, sanitizer, key) => {
-      if (_.find(config, configObject => configObject[key]) || config[key]) {
+      if (find(config, configObject => configObject[key]) || config[key]) {
         return acc
       }
       return sanitizer(acc, key)
@@ -94,18 +102,18 @@ const sanitizeBrowseLink = userPermissions => {
     }
   })
 
-  const source = _.filter(
+  const source = filter(
     navigations,
-    link => _.intersection(link.requiredPermissions, permissions).length >= 1
+    link => intersection(link.requiredPermissions, permissions).length >= 1
   )
   return source.length >= 1 ? source[0] : false
 }
 
 export const reduceNavLinks = (linkArray, userPermissions) => {
-  const reducedNav = _.reduce(
+  const reducedNav = reduce(
     linkArray,
     (result, source) => {
-      const permissionsByTypes = _.flowRight([
+      const permissionsByTypes = flowRight([
         groupByPermissionTypes,
         getPermissions,
       ])(source.requiredPermissions, [], [])
@@ -140,17 +148,17 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
 }
 
 export const reduceFiltersConfig = (configObject, userPermissions) => {
-  const reducedFilters = _.reduce(
+  const reducedFilters = reduce(
     configObject,
     (result, source) => {
-      const permissionsByTypes = _.flowRight([
+      const permissionsByTypes = flowRight([
         groupByPermissionTypes,
         getPermissions,
       ])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
       if (isPermitted) {
-        _.mapKeys(source, (value, key) => {
+        mapKeys(source, (value, key) => {
           switch (key) {
             case 'assayAndResultCategory':
               result.assayAndResultCategory = true

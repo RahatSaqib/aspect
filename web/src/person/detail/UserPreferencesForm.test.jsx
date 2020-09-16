@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import TextField from '@material-ui/core/TextField'
@@ -17,9 +17,9 @@ describe('UserPreferencesForm module', () => {
       submitting: false,
     },
     values: {},
-    onTimezoneChange: _.noop,
-    onCultureChange: _.noop,
-    handleSubmit: _.noop,
+    onTimezoneChange: noop,
+    onCultureChange: noop,
+    handleSubmit: noop,
   }
 
   describe('UserPreferencesForm component', () => {

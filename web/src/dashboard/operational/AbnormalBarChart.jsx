@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import omit from 'lodash/omit'
 import classnames from 'classnames/bind'
 import React from 'react'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -9,14 +10,14 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const yDomainMaxBy = {
   'days-unavailable': 14,
 }
 
 const Header = ({ header, children, ...restProps }) => (
-  <div {..._.omit(restProps, ['tooltip', 'theme'])}>
+  <div {...omit(restProps, ['tooltip', 'theme'])}>
     {header}
     {children}
   </div>

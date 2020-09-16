@@ -1,4 +1,9 @@
-import _ from 'lodash'
+// TODO: still being used?
+import identity from 'lodash/identity'
+import max from 'lodash/max'
+import assign from 'lodash/assign'
+import flowRight from 'lodash/flowRight'
+import isNumber from 'lodash/isNumber'
 import React from 'react'
 import { scaleLinear, scaleBand } from '@vx/scale'
 import { Point } from '@vx/point'
@@ -6,7 +11,7 @@ import { Bar, Line } from '@vx/shape'
 import { AxisBottom } from '@vx/axis'
 import { ScaleSVG } from '@vx/responsive'
 
-const enhance = _.identity
+const enhance = identity
 
 const AbnormalBarGraph = ({
   clientWidth = 150,
@@ -18,15 +23,11 @@ const AbnormalBarGraph = ({
   data,
   x,
   y,
-  key = _.identity,
-  yDomainMax = _.max(data.map(y)),
+  key = identity,
+  yDomainMax = max(data.map(y)),
   fill,
 }) => {
-  const margin = _.assign(
-    {},
-    { top: 0, bottom: 0, left: 0, right: 0 },
-    rawMargin
-  )
+  const margin = assign({}, { top: 0, bottom: 0, left: 0, right: 0 }, rawMargin)
 
   // Create bounds
   const xPointMax = clientWidth - margin.left - margin.right
@@ -46,15 +47,15 @@ const AbnormalBarGraph = ({
   })
 
   // Compose together the scale and accessor functions to get point functions
-  const xPoint = _.flowRight(xScale, x)
-  const yPoint = _.flowRight(yScale, y)
+  const xPoint = flowRight(xScale, x)
+  const yPoint = flowRight(yScale, y)
 
   const [xFrom, xTo] = xScale.range()
-  const lineAtY = _.isNumber(average) ? yPointMax - yScale(average) : 0
+  const lineAtY = isNumber(average) ? yPointMax - yScale(average) : 0
 
   return (
     <ScaleSVG width={clientWidth} height={clientHeight}>
-      {_.isNumber(average) && (
+      {isNumber(average) && (
         <Line
           from={new Point({ x: xFrom, y: lineAtY })}
           to={new Point({ x: xTo, y: lineAtY })}

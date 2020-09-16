@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -64,7 +64,7 @@ export function fetchDeviceApiKeys(
   pageSize
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestDeviceApiKeys(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -120,7 +120,7 @@ export function exportDeviceApiKeys(
   reportName
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/deviceApiKey/export?${stringify({

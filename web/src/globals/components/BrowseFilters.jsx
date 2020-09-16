@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import replace from 'lodash/replace'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
@@ -26,8 +27,8 @@ const enhance = compose(
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const prefs = getAspectDisplayPreferences()
     return {
-      filters: _.fromPairs([...filtersParams.entries()]),
-      dateFormat: _.replace(prefs.get('dateFormat'), /-/g, '/'),
+      filters: fromPairs([...filtersParams.entries()]),
+      dateFormat: replace(prefs.get('dateFormat'), /-/g, '/'),
     }
   }),
   withHandlers({

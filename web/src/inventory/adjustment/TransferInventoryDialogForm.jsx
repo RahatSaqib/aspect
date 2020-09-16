@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import pick from 'lodash/pick'
 import { compose, withProps, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 
@@ -76,7 +76,7 @@ export function validate(
   return errors
 }
 
-const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, [
+const DEFAULT_VALUES = pick(SHARED_DEFAULT_VALUES, [
   'lotNumber',
   'canExpire',
   'expiresOn',

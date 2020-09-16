@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-import _ from 'lodash'
+import sortBy from 'lodash/sortBy'
+import reduce from 'lodash/reduce'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -84,9 +85,9 @@ function requestTreatmentStatuses(state) {
 }
 
 function sortTreatmentStatuses(treatmentStatusArr) {
-  const sortedTreatmentStatusArr = _.sortBy(treatmentStatusArr, obj => obj.name)
+  const sortedTreatmentStatusArr = sortBy(treatmentStatusArr, obj => obj.name)
   const errorStatusArr = []
-  const reducedTreatmentArray = _.reduce(
+  const reducedTreatmentArray = reduce(
     sortedTreatmentStatusArr,
     (result, item) => {
       result.push(item)

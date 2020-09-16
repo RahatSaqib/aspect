@@ -1,5 +1,5 @@
 // Imports from packages
-import _ from 'lodash'
+import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import React from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -24,7 +24,7 @@ const RevokedSelectField = props => {
   }
 
   const { allItemText, value } = props
-  const restProps = _.omit(props, ['allItemText', 'value'])
+  const restProps = omit(props, ['allItemText', 'value'])
 
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>

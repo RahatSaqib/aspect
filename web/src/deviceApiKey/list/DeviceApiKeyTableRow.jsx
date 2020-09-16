@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDate } from '../../shared/utils/dateFormat'
@@ -10,7 +10,7 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const DeviceApiKeyTableRow = ({
   intl,
