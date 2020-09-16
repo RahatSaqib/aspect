@@ -5,7 +5,7 @@ async function up(knex) {
     webhookTemplate.text('url').notNullable().alter()
   })
   await knex.schema.alterTable('WebhookMessage', webhookMessage => {
-    webhookMessage.text('url').notNullable().alter()
+    webhookMessage.text('url').alter()
   })
 }
 
@@ -14,6 +14,6 @@ async function down(knex) {
     webhookTemplate.string('url').notNullable().alter()
   })
   await knex.schema.alterTable('WebhookMessage', webhookMessage => {
-    webhookMessage.string('url').notNullable().alter()
+    webhookMessage.string('url').alter()
   })
 }

@@ -4,11 +4,22 @@ const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
   return context.transact(async knex => {
-    const { externalId: deviceTypeExternalId } = await knex('Result as r')
+    const { deviceTypeExternalId, diseaseExternalId } = await knex(
+      'Result as r'
+    )
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('Assay as a', 'r.assayId', 'a.id')
+      .join('AssayType as at', 'a.assayTypeId', 'at.id')
+      .join('Disease as dis', 'at.diseaseId', 'dis.id')
       .where('r.id', resultId)
-      .first('dt.externalId')
+      .first(
+        'dt.externalId as deviceTypeExternalId',
+        'dis.externalId as diseaseExternalId'
+      )
+    if (diseaseExternalId !== 'tb') {
+      return
+    }
     if (deviceTypeExternalId === 'CepheidGeneXpert') {
       await updateResultToDeliverable(
         knex,
@@ -17,7 +28,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
         'Automatically Deliver GeneXpert Results'
       )
     } else {
-      const currentResultWorkflowStatusExternalId = await knex('Result as r')
+      const { externalId: currentResultWorkflowStatusExternalId } = await knex(
+        'Result as r'
+      )
         .join(
           'ResultWorkflowLog as rwl',
           'r.resultWorkflowStatusLogId',
