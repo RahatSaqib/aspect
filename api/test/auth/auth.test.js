@@ -283,30 +283,6 @@ describe('auth endpoints', () => {
       })
     })
 
-    describe("When a user is not found and GxAlert's is not available", () => {
-      beforeEach(() => {
-        dbSpy.query.for('Get basic user details').resolvesWith()
-      })
-
-      it('Should respond with 409', done => {
-        const requestData = {
-          payload: {
-            name: 'nonexistant',
-            password: 'whatevs',
-            clientId: 'request client id',
-          },
-        }
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .with(requestData)
-          .handleResponseWith(responseData => {
-            assert.equal(responseData.output.statusCode, 409)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
     describe('When the users account is locked', () => {
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith({
