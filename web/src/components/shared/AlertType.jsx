@@ -1,11 +1,11 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { FaRegCircle as FaCircleO, FaCircle } from 'react-icons/fa'
 
 const cssClasses = classnames.bind(require('./AlertType.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const AlertType = ({ alertType, ...restProps }) => {
   if (['Active', 'Due Soon', 'Due Now', 'Overdue'].indexOf(alertType) >= 0) {

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import {
@@ -10,7 +10,8 @@ const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const enhance = _.identity
+const enhance = identity
+
 const formatTags = tagsStr => {
   if (!tagsStr) return ''
   let tags = tagsStr.split(';')

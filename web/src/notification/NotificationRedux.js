@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -61,7 +61,7 @@ export function exportNotifications(
   reportName
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/notification/export?${stringify({

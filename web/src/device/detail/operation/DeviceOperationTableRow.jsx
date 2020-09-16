@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import partial from 'lodash/partial'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDate } from '../../../shared/utils/dateFormat'
@@ -12,9 +13,9 @@ const cssClasses = classnames.bind(
   require('../../../components/shared/DataTableRow.css')
 )
 
-const enhance = _.identity
+const enhance = identity
 
-const formatterByType = _.partial(
+const formatterByType = partial(
   // TODO: Extract to a shared module
   (formatterBy, type) => formatterBy[type] || formatterBy.default,
   {
@@ -23,7 +24,7 @@ const formatterByType = _.partial(
         maximumFractionDigits: schema.get('decimals'),
       })}${schema.get('suffix')}`
     },
-    default: _.identity,
+    default: identity,
   }
 )
 

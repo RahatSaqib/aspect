@@ -6,7 +6,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions'
 import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
-import { format, parseISO } from 'date-fns'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 
 const cssClasses = classnames.bind(require('./Milestones.css'))
 

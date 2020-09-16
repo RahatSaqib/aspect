@@ -1,5 +1,6 @@
 // Imports from packages
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
@@ -40,7 +41,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
 
   render() {
     const { allItemText, workflowStatusItems, value } = this.props
-    const restProps = _.omit(this.props, [
+    const restProps = omit(this.props, [
       'allItemText',
       'fetchWorkflowStatuses',
       'workflowStatusItems',
@@ -76,6 +77,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
   ResultWorkflowStatusSelectField
 )

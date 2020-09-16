@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
@@ -60,15 +60,15 @@ const enhance = compose(
   }),
   recomposeForm({
     fields: [
-      { fieldName: 'jobFunctionId', valueFromChangeEvent: _.identity },
-      { fieldName: 'countryId', valueFromChangeEvent: _.identity },
-      { fieldName: 'stateId', valueFromChangeEvent: _.identity },
-      { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
-      { fieldName: 'siteId', valueFromChangeEvent: _.identity },
-      { fieldName: 'diseaseId', valueFromChangeEvent: _.identity },
-      { fieldName: 'deviceTypeId', valueFromChangeEvent: _.identity },
-      { fieldName: 'assayTypeId', valueFromChangeEvent: _.identity },
-      { fieldName: 'assayId', valueFromChangeEvent: _.identity },
+      { fieldName: 'jobFunctionId', valueFromChangeEvent: identity },
+      { fieldName: 'countryId', valueFromChangeEvent: identity },
+      { fieldName: 'stateId', valueFromChangeEvent: identity },
+      { fieldName: 'lgaId', valueFromChangeEvent: identity },
+      { fieldName: 'siteId', valueFromChangeEvent: identity },
+      { fieldName: 'diseaseId', valueFromChangeEvent: identity },
+      { fieldName: 'deviceTypeId', valueFromChangeEvent: identity },
+      { fieldName: 'assayTypeId', valueFromChangeEvent: identity },
+      { fieldName: 'assayId', valueFromChangeEvent: identity },
     ],
     validate,
   }),

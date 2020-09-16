@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import has from 'lodash/has'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
@@ -26,7 +27,7 @@ export const SHARED_DEFAULT_VALUES = {
 export const sharedFields = {
   contextDate: {
     fieldName: 'contextDate',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: identity,
   },
   notes: {
     fieldName: 'notes',
@@ -82,7 +83,7 @@ export const BaseDialog = ({
     <form className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
         <section>
-          {_.has(values, 'contextDate') && (
+          {has(values, 'contextDate') && (
             <div>
               <InputLabel shrink htmlFor="age-label-placeholder">
                 {labels.contextDate}

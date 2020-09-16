@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -41,11 +41,11 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: identity,
       },
       {
         fieldName: 'configurationData',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: identity,
       },
     ],
     validate(values) {

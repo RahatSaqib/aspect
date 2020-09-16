@@ -5446,6 +5446,10 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.numberOfDevicesExperiencingServiceInterrumption,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.instrumentsReplaced,
     },
     {

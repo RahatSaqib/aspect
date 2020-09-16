@@ -1,5 +1,7 @@
-import _ from 'lodash'
 import _fp from 'lodash/fp'
+import includes from 'lodash/includes'
+import isEqual from 'lodash/isEqual'
+import toString from 'lodash/toString'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
@@ -15,7 +17,7 @@ import Card from '@material-ui/core/Card'
 import Button from '@material-ui/core/Button'
 import { MdAssignmentTurnedIn } from 'react-icons/md'
 
-import { findKeyInTree } from '../../shared/utils/dom'
+import findKeyInTree from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchInventoryItemDashboard } from '../DashboardRedux'
@@ -38,11 +40,11 @@ const getIssueIdsFromSummaryList = (key, summaryList) =>
   _fp.pipe(_fp.flatMap(_fp.prop([key])), _fp.uniq)(summaryList)
 
 function getFillColor({ id, activeSiteIds, issueSiteIds }) {
-  if (_.includes(activeSiteIds, id)) {
+  if (includes(activeSiteIds, id)) {
     return colorMandy
   }
 
-  if (_.includes(issueSiteIds, id)) {
+  if (includes(issueSiteIds, id)) {
     return colorSupernova
   }
 
@@ -98,7 +100,7 @@ const enhance = compose(
         activeSiteIds: JSON.parse(findKeyInTree(target, 'siteIds')),
       }),
       onMouseLeave: ({ activeSiteIds }) => ({ target }) => ({
-        activeSiteIds: _.isEqual(
+        activeSiteIds: isEqual(
           JSON.parse(findKeyInTree(target, 'siteIds')),
           activeSiteIds
         )
@@ -181,7 +183,7 @@ export const InventoryStatus = ({
               key={it.get('consumableId')}
               data-consumable-id={it.get('consumableId')}
               data-site-ids={JSON.stringify(
-                it.get('affectedSiteIds').map(_.toString)
+                it.get('affectedSiteIds').map(toString)
               )}
               onClick={onSummaryItemClick}
               onMouseEnter={onMouseEnter}

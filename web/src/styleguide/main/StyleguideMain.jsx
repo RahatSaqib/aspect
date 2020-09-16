@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import Immutable from 'immutable'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
@@ -145,7 +145,7 @@ export class StyleguideMain extends PureComponent {
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FiltersPanel
             intl={intl}
-            onClearFilter={_.noop}
+            onClearFilter={noop}
             onChangeFilters={this.handleChangeFilter}
             filters={this.state.filter}
             config={{

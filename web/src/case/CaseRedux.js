@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -51,7 +51,7 @@ function rejectCases() {
 
 export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'createdOn'
     return aspectFetch(

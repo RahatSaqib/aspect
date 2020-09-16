@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import _ from 'lodash'
+import map from 'lodash/map'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
@@ -98,14 +98,14 @@ function receivePartnersAndJobFunctionsForSelectList(state, partners) {
       loading: false,
       lastRefreshed: new Date(),
       partners: Immutable.List(
-        _.map(
+        map(
           partners,
           partner =>
             new Partner({
               id: partner.id,
               name: partner.name,
               jobFunctions: Immutable.List(
-                _.map(
+                map(
                   partner.jobFunctions,
                   jobFunction =>
                     new JobFunction({

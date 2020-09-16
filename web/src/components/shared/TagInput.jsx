@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
+import deburr from 'lodash/deburr'
+import some from 'lodash/some'
 import Downshift from 'downshift'
 import { withStyles } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
@@ -73,13 +74,13 @@ const renderSuggestion = ({
 }
 
 const getSuggestions = (suggestions, selectedItem, value = '', tagName) => {
-  const inputValue = _.deburr(value.trim()).toLowerCase()
+  const inputValue = deburr(value.trim()).toLowerCase()
 
   return inputValue.length === 0
     ? []
     : suggestions.filter(
         suggestion =>
-          !_.some(selectedItem, suggestion) &&
+          !some(selectedItem, suggestion) &&
           suggestion[tagName].toLowerCase().indexOf(inputValue) > -1
       )
 }

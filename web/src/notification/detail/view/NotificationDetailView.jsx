@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import includes from 'lodash/includes'
 import subDays from 'date-fns/subDays'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -27,7 +28,7 @@ const MockTogglBtn = withStateHandlers(
   }
 )(AspectButton)
 
-const enhance = _.identity
+const enhance = identity
 
 const BUTTON_THEME = {
   primary: cssClasses('Button--primary'),
@@ -208,7 +209,7 @@ export const NotificationDetailView = ({
                 color="primary"
                 variant="contained"
                 inverse={
-                  !_.includes(
+                  !includes(
                     [
                       'State contacts (in same state as device)',
                       'Lab contacts for the device',
@@ -268,7 +269,7 @@ export const NotificationDetailView = ({
               className={cssClasses('Card__Button', 'Card__Button--inline')}
               color="primary"
               variant="contained"
-              inverse={_.includes(['Web', 'Email'], label)}
+              inverse={includes(['Web', 'Email'], label)}
               theme={BUTTON_THEME}
             >
               {label}

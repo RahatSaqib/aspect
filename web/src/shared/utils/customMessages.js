@@ -65,6 +65,7 @@ export function getCustomMessage(intl, messages, key, user, params) {
   }
 
   if (!message) {
+    // eslint-disable-next-line no-console
     console.error(`No message was found for the specificed key: ${key}`)
     return ''
   }

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { createIntl } from 'react-intl'
@@ -9,7 +9,7 @@ describe('LoginDetailsForm module', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     loading: false,
-    onSubmit: _.noop,
+    onSubmit: noop,
     values: { newPassword: '' },
     meta: {
       username: {},
@@ -17,12 +17,12 @@ describe('LoginDetailsForm module', () => {
       confirmNewPassword: {},
       currentPassword: {},
     },
-    onUsernameChange: _.noop,
-    onNewPasswordChange: _.noop,
-    onConfirmNewPasswordChange: _.noop,
-    onCurrentPasswordChange: _.noop,
-    onCurrentPasswordKeyPress: _.noop,
-    handleSubmit: _.noop,
+    onUsernameChange: noop,
+    onNewPasswordChange: noop,
+    onConfirmNewPasswordChange: noop,
+    onCurrentPasswordChange: noop,
+    onCurrentPasswordKeyPress: noop,
+    handleSubmit: noop,
   }
 
   describe('LoginDetailsForm component', () => {
