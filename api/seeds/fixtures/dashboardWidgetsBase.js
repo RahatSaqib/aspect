@@ -40,7 +40,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdDateRange',
-      title: 'TestsPerDay',
+      title: 'Tests Per Day',
       titleI18nKey: 'dashboardWidgetTestsPerDayTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -98,7 +98,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdCheck',
-      title: 'ValidResultsPc',
+      title: 'Valid Results Pc',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1164,6 +1164,62 @@ module.exports = {
         between day module serial was marked as disabled until a
         different module serial detected in that slot.`,
       descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
+    {
+      icon: 'MdSwapVert',
+      title: 'Number of Devices Experiencing Service Interruption',
+      titleI18nKey: 'numberOfDevicesExperiencingServiceInterrumptionTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+      SELECT 
+        COUNT(DISTINCT d.id) AS cnt
+      FROM
+          Device AS d
+              INNER JOIN
+          Site AS s ON s.id = d.siteId
+              LEFT OUTER JOIN
+          Geography AS g ON s.geographyId = g.id
+              INNER JOIN
+          DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
+              INNER JOIN
+          DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+      WHERE
+          dms.externalId = 'inactiveDownForRepair'
+              AND YEAR(dmsl.day) = YEAR(CURRENT_DATE)
+              AND MONTH(dmsl.day) = MONTH(CURRENT_DATE)
+      `,
+      sqlForStatUnit: `
+      SELECT 
+        COUNT(DISTINCT d.id) AS cnt
+      FROM
+          Device AS d
+              INNER JOIN
+          Site AS s ON s.id = d.siteId
+              LEFT OUTER JOIN
+          Geography AS g ON s.geographyId = g.id
+              INNER JOIN
+          DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
+              INNER JOIN
+          DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+      WHERE
+          dms.externalId = 'inactiveDownForRepair'
+              AND YEAR(dmsl.day) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+              AND MONTH(dmsl.day) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+      `,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterrumptionUnit',
+      link: '/browse/device',
+      sortOrder: 26,
+      externalId: 'numberOfDevicesExperiencingServiceInterrumption',
+      description: `The number of devices experiencing service interrumption on this and the previous month.`,
+      descriptionI18nKey:
+        'numberOfDevicesExperiencingServiceInterrumptionDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,

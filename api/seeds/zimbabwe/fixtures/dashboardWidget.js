@@ -229,5 +229,11 @@ module.exports = {
       ),
       sortOrder: 25,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'numberOfDevicesExperiencingServiceInterrumption'
+      ),
+      sortOrder: 26,
+    },
   ],
 }
