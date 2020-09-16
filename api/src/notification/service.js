@@ -34,7 +34,7 @@ async function listNotifications(request) {
 
   const getItems = notificationQuery
     .clone()
-    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.id')
+    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
     .leftJoin('Person as per', 'j.personId', 'per.id')
     .select(
       'n.notificationTypeId as id',

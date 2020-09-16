@@ -4112,6 +4112,13 @@ async function seed(knex) {
     _.map(
       [
         'Admin',
+        'Admin1',
+        'Admin2',
+        'Admin3',
+        'Admin4',
+        'Admin5',
+        'Admin6',
+        'Admin7',
         'Bill',
         'Bob',
         'Frank',
@@ -5254,10 +5261,37 @@ async function seed(knex) {
   )
 
   // crate jobs for users
-  const jobIdAdmin = await knex('Job').insert({
-    personId: personIds.admin,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
+
+  const jobIdAdmin = await knex('Job').insert([
+    {
+      personId: personIds.admin,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin1,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin2,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin3,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin4,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin5,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin6,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+  ])
 
   const jobIdJason = await knex('Job').insert({
     personId: personIds.jason,
@@ -5332,7 +5366,7 @@ async function seed(knex) {
   // TODO: Remove when we implemented the jobs that calculate these flags
   const devices = await knex('Device').select('id')
   await Promise.each(devices, async device => {
-    return knex('FactDeviceFlag').insert({
+    await knex('FactDeviceFlag').insert({
       deviceId: device.id,
       offline: _.random(10) === 0,
       service: _.random(10) === 0,
