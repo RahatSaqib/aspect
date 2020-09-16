@@ -5,9 +5,15 @@ import { useQuery } from 'react-query'
 import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
 import AspectWidgets from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import DASHBOARD_SUMMARY_WIDGETS from '../../MigratedComponents/QueryFetch/Dashboard/index'
+import {
+  HOME_WIDGETS,
+  OPERATIONAL_DATA_WIDGETS,
+} from '../../MigratedComponents/QueryFetch/Dashboard/index'
 
 export const SummaryStatus = ({ className, dashboard }) => {
+  const QUERY_CONFIG =
+    dashboard === 'home' ? HOME_WIDGETS : OPERATIONAL_DATA_WIDGETS
+
   const [widgets, setWidgets] = useState(false)
 
   const {
@@ -15,10 +21,9 @@ export const SummaryStatus = ({ className, dashboard }) => {
     isError,
     data: { data: widgetData } = false,
     error,
-  } = useQuery(DASHBOARD_SUMMARY_WIDGETS.KEY, async () =>
+  } = useQuery(QUERY_CONFIG.KEY, async () =>
     fetchWrapperForQueries({
-      endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT,
-      params: { dashboard },
+      endpoint: QUERY_CONFIG.ENDPOINT,
     })
   )
 

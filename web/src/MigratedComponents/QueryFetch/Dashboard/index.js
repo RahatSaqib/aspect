@@ -1,6 +1,9 @@
-const DASHBOARD_SUMMARY_WIDGETS = {
-  ENDPOINT: '/dashboard/summary',
-  KEY: 'DASHBOARD_SUMMARY_WIDGETS',
+export const HOME_WIDGETS = {
+  ENDPOINT: '/dashboard/summary?dashboard=home',
+  KEY: 'DASHBOARD_SUMMARY_WIDGETS_HOME',
 }
 
-export default DASHBOARD_SUMMARY_WIDGETS
+export const OPERATIONAL_DATA_WIDGETS = {
+  ENDPOINT: '/dashboard/summary?dashboard=operational',
+  KEY: 'DASHBOARD_SUMMARY_WIDGETS_OPERATIONAL',
+}
