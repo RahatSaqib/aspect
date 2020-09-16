@@ -19,7 +19,7 @@ const messages = defineMessages({
 
 const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
   const addEllipsis = (words, totalCount) => {
     const wordsArray = words ? words.split(',') : []
