@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import range from 'lodash/range'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import {
   getYearList,
@@ -28,7 +28,7 @@ describe('getYearList', () => {
         minDate: new Date('1990-2-25'),
         maxDate: new Date('2050-2-25'),
       })
-    ).toEqual(_.range(1990, 2050 + 1))
+    ).toEqual(range(1990, 2050 + 1))
   })
 })
 
@@ -46,21 +46,21 @@ describe('getMonthList', () => {
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(0, 12))
+    ).toEqual(range(0, 12))
     expect(
       getMonthList({
         date: new Date('1999-5-15'),
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(5 - 1, 12))
+    ).toEqual(range(5 - 1, 12))
     expect(
       getMonthList({
         date: new Date('2000-6-15'),
         minDate: new Date('2000-5-15'),
         maxDate: new Date('2020-5-15'),
       })
-    ).toEqual(_.range(5 - 1, 12))
+    ).toEqual(range(5 - 1, 12))
   })
 
   it('should return a month list that do not contain the months that bigger then maxDate when the year of date is equal to maxDate', () => {
@@ -70,14 +70,14 @@ describe('getMonthList', () => {
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(0, 5))
+    ).toEqual(range(0, 5))
     expect(
       getMonthList({
         date: new Date('2020-1-15'),
         minDate: new Date('2000-5-15'),
         maxDate: new Date('2020-5-15'),
       })
-    ).toEqual(_.range(0, 5))
+    ).toEqual(range(0, 5))
   })
 })
 
@@ -88,10 +88,10 @@ describe('getDateList', () => {
     expect(getDateList({ maxDate: null })).toEqual(defaultDateList)
     expect(
       getDateList({ date: new Date('2000-05-05'), minDate: null })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('2000-05-05')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('2000-05-05')) + 1))
     expect(
       getDateList({ date: new Date('2000-05-05'), maxDate: null })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('2000-05-05')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('2000-05-05')) + 1))
   })
 
   it('should return the days in month when the date between minDate and maxDate', () => {
@@ -101,14 +101,14 @@ describe('getDateList', () => {
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('2000-5-15')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('2000-5-15')) + 1))
     expect(
       getDateList({
         date: new Date('1999-12-22'),
         minDate: new Date('1900-1-1'),
         maxDate: new Date('2020-1-1'),
       })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('1999-12-22')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('1999-12-22')) + 1))
   })
 
   it('should return the days in month when only the date of year is equal to minDate or maxDate', () => {
@@ -119,14 +119,14 @@ describe('getDateList', () => {
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('1999-7-30')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('1999-7-30')) + 1))
     expect(
       getDateList({
         date: new Date('2000-5-15'),
         minDate: new Date('2000-3-11'),
         maxDate: new Date('2020-3-11'),
       })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('2000-5-15')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('2000-5-15')) + 1))
 
     // maxDate
     expect(
@@ -135,14 +135,14 @@ describe('getDateList', () => {
         minDate: new Date('2-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('2001-3-30')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('2001-3-30')) + 1))
     expect(
       getDateList({
         date: new Date('2020-1-15'),
         minDate: new Date('2000-3-11'),
         maxDate: new Date('2020-3-11'),
       })
-    ).toEqual(_.range(1, getDaysInMonth(new Date('2020-1-15')) + 1))
+    ).toEqual(range(1, getDaysInMonth(new Date('2020-1-15')) + 1))
   })
 
   it('should return a date list that do not contain the dates that smaller then minDate when the year and month of date are equal to minDate', () => {
@@ -152,14 +152,14 @@ describe('getDateList', () => {
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(15, getDaysInMonth(new Date('1999-5-20')) + 1))
+    ).toEqual(range(15, getDaysInMonth(new Date('1999-5-20')) + 1))
     expect(
       getDateList({
         date: new Date('2000-3-15'),
         minDate: new Date('2000-3-11'),
         maxDate: new Date('2020-3-11'),
       })
-    ).toEqual(_.range(11, getDaysInMonth(new Date('2000-3-15')) + 1))
+    ).toEqual(range(11, getDaysInMonth(new Date('2000-3-15')) + 1))
   })
 
   it('should return a date list that do not contain the dates that bigger then maxDate when the year and month of date are equal to maxDate', () => {
@@ -169,14 +169,14 @@ describe('getDateList', () => {
         minDate: new Date('1999-5-15'),
         maxDate: new Date('2001-5-15'),
       })
-    ).toEqual(_.range(1, 15 + 1))
+    ).toEqual(range(1, 15 + 1))
     expect(
       getDateList({
         date: new Date('2020-3-10'),
         minDate: new Date('2000-3-11'),
         maxDate: new Date('2020-3-11'),
       })
-    ).toEqual(_.range(1, 11 + 1))
+    ).toEqual(range(1, 11 + 1))
   })
 })
 
@@ -194,14 +194,14 @@ describe('getHourList', () => {
         minDate: new Date('1999-05-15 19:20:21'),
         maxDate: new Date('2000-05-15 19:20:21'),
       })
-    ).toEqual(_.range(19, 24))
+    ).toEqual(range(19, 24))
     expect(
       getHourList({
         date: new Date('2000-03-18 12:20:21'),
         minDate: new Date('2000-03-18 10:20:21'),
         maxDate: new Date('2020-05-15 19:20:21'),
       })
-    ).toEqual(_.range(10, 24))
+    ).toEqual(range(10, 24))
   })
 
   it('should return a limited hour list when the year, month and date of the date are equal to maxDate', () => {
@@ -211,14 +211,14 @@ describe('getHourList', () => {
         minDate: new Date('1999-05-15 19:20:21'),
         maxDate: new Date('2000-05-15 19:20:21'),
       })
-    ).toEqual(_.range(0, 19 + 1))
+    ).toEqual(range(0, 19 + 1))
     expect(
       getHourList({
         date: new Date('2020-03-18 12:20:21'),
         minDate: new Date('2000-03-18 10:20:21'),
         maxDate: new Date('2020-03-18 17:20:21'),
       })
-    ).toEqual(_.range(0, 17 + 1))
+    ).toEqual(range(0, 17 + 1))
   })
 })
 
@@ -236,14 +236,14 @@ describe('getMinuteList', () => {
         minDate: new Date('1999-05-15 19:20:21'),
         maxDate: new Date('2000-05-15 19:20:21'),
       })
-    ).toEqual(_.range(20, 60))
+    ).toEqual(range(20, 60))
     expect(
       getMinuteList({
         date: new Date('2000-03-18 10:40:40'),
         minDate: new Date('2000-03-18 10:15:10'),
         maxDate: new Date('2020-05-15 19:20:21'),
       })
-    ).toEqual(_.range(15, 60))
+    ).toEqual(range(15, 60))
   })
 
   it('should return a limited minute list when the year, month, date and hour of the date are equal to maxDate', () => {
@@ -253,13 +253,13 @@ describe('getMinuteList', () => {
         minDate: new Date('1999-05-15 19:20:21'),
         maxDate: new Date('2000-05-15 19:40:21'),
       })
-    ).toEqual(_.range(0, 40 + 1))
+    ).toEqual(range(0, 40 + 1))
     expect(
       getMinuteList({
         date: new Date('2020-03-18 17:20:21'),
         minDate: new Date('2000-03-18 10:20:21'),
         maxDate: new Date('2020-03-18 17:30:21'),
       })
-    ).toEqual(_.range(0, 30 + 1))
+    ).toEqual(range(0, 30 + 1))
   })
 })

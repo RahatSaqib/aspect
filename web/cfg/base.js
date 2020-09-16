@@ -1,5 +1,5 @@
 const path = require('path')
-const _ = require('lodash')
+const assign = require('lodash/assign')
 const webpack = require('webpack')
 const pxToRem = require('postcss-pxtorem')
 const cssImport = require('postcss-import')
@@ -120,7 +120,7 @@ module.exports = {
     new DelWebpackPlugin({
       info: false,
     }),
-    new webpack.DefinePlugin(_.assign({}, definePluginVariables)),
+    new webpack.DefinePlugin(assign({}, definePluginVariables)),
     new HtmlWebpackPlugin({
       inject: true,
       alwaysWriteToDisk: true,

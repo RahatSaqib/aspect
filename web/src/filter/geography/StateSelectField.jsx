@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import flowRight from 'lodash/flowRight'
 import Immutable from 'immutable'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
@@ -67,7 +68,7 @@ export class StateSelectField extends PureComponent {
 
   render() {
     const { allItemText, stateId } = this.props
-    const restProps = _.omit(this.props, [
+    const restProps = omit(this.props, [
       'allItemText',
       'countries',
       'onStateIdChange',
@@ -110,6 +111,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
   StateSelectField
 )

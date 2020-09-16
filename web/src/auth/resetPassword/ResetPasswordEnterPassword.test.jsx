@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
@@ -18,9 +18,9 @@ describe('ResetPasswordEnterPassword module', () => {
       newPassword: {},
       confirmNewPassword: {},
     },
-    onNewPasswordChange: _.noop,
-    onConfirmNewPasswordChange: _.noop,
-    handleSubmit: _.noop,
+    onNewPasswordChange: noop,
+    onConfirmNewPasswordChange: noop,
+    handleSubmit: noop,
   }
 
   describe('ResetPasswordEnterPassword component', () => {

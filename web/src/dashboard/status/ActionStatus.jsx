@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import React from 'react'
@@ -20,7 +20,7 @@ import { fetchActionDashboard } from '../DashboardRedux'
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
 import ActionFilterButton from './ActionFilterButton'
-import { findKeyInTree } from '../../shared/utils/dom'
+import findKeyInTree from '../../shared/utils/dom'
 import {
   ActionDataTable,
   ActionDataTableHead,
@@ -49,7 +49,7 @@ export const searchSanitizer = makeSearchParamsSanitizer({
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),

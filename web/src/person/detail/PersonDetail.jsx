@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
@@ -216,7 +216,7 @@ export class PersonDetail extends PureComponent {
     const { person, addPersonAssignment } = this.props
     const data = {
       personId: person.get('id'),
-      ..._.pick(values, [
+      ...pick(values, [
         'jobFunctionId',
         'countryId',
         'stateId',

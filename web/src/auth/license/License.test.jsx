@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
@@ -8,8 +8,8 @@ describe('License component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     licenseContent: 'License here!\nYou better accept!',
-    onDoNotAcceptClick: _.noop,
-    onAcceptClick: _.noop,
+    onDoNotAcceptClick: noop,
+    onAcceptClick: noop,
   }
 
   it('should shallow render without crash', () => {

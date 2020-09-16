@@ -1,5 +1,5 @@
 import Immutable from 'immutable'
-import _ from 'lodash'
+import omit from 'lodash/omit'
 
 export const types = {
   SHOW_APP_NOTIFICATION: 'SHOW_APP_NOTIFICATION',
@@ -20,7 +20,7 @@ function showNotification(options, messageValues, notificationType) {
       ...options,
     },
     messageValues: {
-      ..._.omit(messageValues, ['constructor']),
+      ...omit(messageValues, ['constructor']),
       ...options.messageValues,
     },
   }

@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React from 'react'
 import {
@@ -82,7 +83,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -101,7 +102,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: _.fromPairs([...filtersParams.entries()]),
+        filters: fromPairs([...filtersParams.entries()]),
       }
     }
   ),

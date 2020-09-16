@@ -1,5 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
+import omit from 'lodash/omit'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Input from '@material-ui/core/Input'
@@ -55,7 +55,7 @@ const styles = theme => ({
 export const Dropdown = ({ classes, source, ...props }) => (
   <Select
     input={<Input disableUnderline />}
-    classes={{ ..._.omit(classes, 'menu') }}
+    classes={{ ...omit(classes, 'menu') }}
     MenuProps={{ classes: { paper: classes.menu } }}
     {...props}
   >

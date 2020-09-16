@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import _ from 'lodash'
+import pick from 'lodash/pick'
+import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
 
 import recomposeForm from '../../components/recomposeForm'
@@ -29,7 +30,7 @@ export function validate({ contextDate }, { intl }) {
   return errors
 }
 
-const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
+const DEFAULT_VALUES = pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
 const calibrationDialog = WrappedComponent => props => {
   const [values, setValues] = useState({})
@@ -58,7 +59,7 @@ const calibrationDialog = WrappedComponent => props => {
   return <WrappedComponent {...allProps} />
 }
 
-export default _.flowRight(
+export default flowRight(
   React.memo,
   withDateFormatProps,
   calibrationDialog,

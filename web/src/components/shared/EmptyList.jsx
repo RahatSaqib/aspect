@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import { defineMessages } from 'react-intl'
@@ -14,7 +14,7 @@ const messages = defineMessages({
   },
 })
 
-const enhance = _.identity
+const enhance = identity
 
 export const EmptyList = ({ intl, onClearFilters }) => (
   <div style={{ textAlign: 'center' }}>

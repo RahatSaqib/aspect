@@ -1,11 +1,11 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import AspectButton from '../shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./ColoredButton.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const ColoredButton = ({
   neutral = true,

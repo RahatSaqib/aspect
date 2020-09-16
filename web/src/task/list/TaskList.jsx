@@ -1,4 +1,7 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import pickBy from 'lodash/pickBy'
+import identity from 'lodash/identity'
+import isEqual from 'lodash/isEqual'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PropTypes from 'prop-types'
@@ -14,17 +17,12 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-/* import TableBody from '@material-ui/core/TableBody'
-
-import AspectButton from '../../components/shared/AspectButton' */
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
-// import FiltersPanel from '../../filter/popover/FiltersPanel'
-// import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
@@ -81,7 +79,7 @@ export const searchSanitizer = makeSearchParamsSanitizer({
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -89,11 +87,11 @@ export const filtersFromLocation = composeSanitizer(
 )
 
 function mergeFilterOptions(searchParams, filterOptions = {}) {
-  const options = _.pickBy(filterOptions, _.identity)
+  const options = pickBy(filterOptions, identity)
   Object.keys(options).forEach(key => {
     const param = searchParams.get(key)
     const option = options[key]
-    if (param && _.isEqual(param, option)) {
+    if (param && isEqual(param, option)) {
       return
     }
     searchParams.set(key, option)
@@ -256,64 +254,6 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
-      {/*
-      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <AspectButton
-          color="primary"
-          variant="contained"
-
-          inverse={alertType !== 'mine'}
-          data-alert-type="mine"
-          onClick={onAlertTypeClick}
-        >
-          My alerts
-        </AspectButton>
-        <AspectButton
-          className={cssClasses('Button--mini')}
-          color="primary"
-          variant="contained"
-        >
-          {`${countByAlert.get('mine', 0)}`}
-        </AspectButton>
-      </ButtonGroup>
-      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <AspectButton
-          color="primary"
-          variant="contained"
-          inverse={alertType !== 'snoozed'}
-          data-alert-type="snoozed"
-          onClick={onAlertTypeClick}
-        >
-          Snoozed
-        </AspectButton>
-        <AspectButton
-          className={cssClasses('Button--mini')}
-          color="primary"
-          variant="contained"
-        >
-          {`${countByAlert.get('snoozed', 0)}`}
-        </AspectButton>
-      </ButtonGroup>
-
-      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <AspectButton
-          color="primary"
-          variant="contained"
-          inverse={alertType !== 'all'}
-          data-alert-type="all"
-          onClick={onAlertTypeClick}
-        >
-          All
-        </AspectButton>
-        <AspectButton
-          className={cssClasses('Button--mini')}
-          color="primary"
-          variant="contained"
-        >
-          {`${countByAlert.get('total', 0)}`}
-        </AspectButton>
-      </ButtonGroup>
-      */}
       <div
         className={cssClasses(
           'FiltersGroup__Child',
@@ -347,17 +287,6 @@ export const TaskList = ({
           onChange={onIssueCategoryChange}
         />
       </div>
-      {/* <div className={cssClasses('FiltersGroup__Child')}>
-        <FiltersPanel
-          history={history}
-          location={location}
-          intl={intl}
-          config={{}}
-          filters={{}}
-          onChangeFilters={_.noop}
-          disabled
-        />
-      </div> */}
     </div>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />

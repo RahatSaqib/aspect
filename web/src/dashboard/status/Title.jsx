@@ -1,10 +1,10 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 export const Title = ({ className, icon, title }) => (
   <div className={cssClasses('Title', className)}>

@@ -1,5 +1,7 @@
 import window from 'global/window'
-import _ from 'lodash'
+import isString from 'lodash/isString'
+import identity from 'lodash/identity'
+import isUndefined from 'lodash/isUndefined'
 import Immutable from 'immutable'
 import { compose, pure, lifecycle } from 'recompose'
 
@@ -28,9 +30,9 @@ export const getAspectDisplayPreferences = () => displayPreferences
 
 export const getAspectHydrateData = () => {
   const { result, data } = storageMappings.reduce(
-    (acc, { storageKey, propsKey, load = _.identity }) => {
+    (acc, { storageKey, propsKey, load = identity }) => {
       const value = localStorage.getItem(storageKey)
-      if (_.isString(value)) {
+      if (isString(value)) {
         acc.data[propsKey] = load(value)
       } else {
         acc.result = false
@@ -79,16 +81,14 @@ const enhance = compose(
   pure,
   lifecycle({
     handleStorage(props) {
-      storageMappings.forEach(
-        ({ storageKey, propsKey, update = _.identity }) => {
-          const value = props[propsKey]
-          if (_.isUndefined(value) && propsKey !== 'clientId') {
-            localStorage.removeItem(storageKey)
-          } else if (update(value)) {
-            localStorage.setItem(storageKey, update(value))
-          }
+      storageMappings.forEach(({ storageKey, propsKey, update = identity }) => {
+        const value = props[propsKey]
+        if (isUndefined(value) && propsKey !== 'clientId') {
+          localStorage.removeItem(storageKey)
+        } else if (update(value)) {
+          localStorage.setItem(storageKey, update(value))
         }
-      )
+      })
     },
 
     componentDidMount() {

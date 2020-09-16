@@ -1,6 +1,7 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
-import { startOfDay, format as dateFnFormat } from 'date-fns'
+import startOfDay from 'date-fns/startOfDay'
+import format from 'date-fns/format'
 import { withProps } from 'recompose'
 
 import {
@@ -24,7 +25,7 @@ function formatBase(date, displayPreferenceKey) {
 
   return timeToFormat === null
     ? ''
-    : dateFnFormat(new Date(timeToFormat), dateFormatPreference)
+    : format(new Date(timeToFormat), dateFormatPreference)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
@@ -49,7 +50,7 @@ export function formatDateTime(date) {
 }
 
 export const formatWithLocale = locale => (date, formatStr) =>
-  dateFnFormat(date, formatStr, { locale: getLocale(locale) })
+  format(date, formatStr, { locale: getLocale(locale) })
 
 export const withDateFormatProps = withProps(() => {
   const prefs = getAspectDisplayPreferences()

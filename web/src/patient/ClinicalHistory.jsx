@@ -2,7 +2,10 @@ import classnames from 'classnames/bind'
 import { connect } from 'react-redux'
 import React, { useRef, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import _ from 'lodash'
+import mapKeys from 'lodash/mapKeys'
+import sortBy from 'lodash/sortBy'
+import get from 'lodash/get'
+import flowRight from 'lodash/flowRight'
 import { defineMessages, injectIntl } from 'react-intl'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
@@ -145,15 +148,15 @@ const mapStateToProps = (state, ownProps) => {
       : null
   const orderSchemaProperties = patient => {
     const patientData = []
-    _.mapKeys(patient.toJS().patientDataSchema, (value, key) =>
+    mapKeys(patient.toJS().patientDataSchema, (value, key) =>
       patientData.push({ ...value, key })
     )
 
-    return _.sortBy(patientData, 'order').map(value => ({
-      key: _.get(value, 'key'),
-      label: _.get(value, 'title'),
-      value: _.get(patient.toJS().patientData, _.get(value, 'key')),
-      format: format(_.get(value, 'type'), intl),
+    return sortBy(patientData, 'order').map(value => ({
+      key: get(value, 'key'),
+      label: get(value, 'title'),
+      value: get(patient.toJS().patientData, get(value, 'key')),
+      format: format(get(value, 'type'), intl),
     }))
   }
 
@@ -167,7 +170,7 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export default _.flowRight(
+export default flowRight(
   injectIntl,
   connect(mapStateToProps, { fetchResultsByPatient })
 )(ClinicalHistory)
