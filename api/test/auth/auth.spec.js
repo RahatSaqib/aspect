@@ -269,7 +269,7 @@ describe('Authentication routes', () => {
           })
       })
 
-      it("should return 409 if user not found and GxAlert isn't available", async () => {
+      it("should return 409 if user not found and GxAlert isn't available, or 401 if GxAlert is available but the user not found", async () => {
         await server
           .post(authPath)
           .send({
