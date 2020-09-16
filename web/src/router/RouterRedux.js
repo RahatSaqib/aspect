@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -69,7 +69,7 @@ export function fetchRouters(
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestRouters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -125,7 +125,7 @@ export function exportRouters(
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/device/export?${stringify({

@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import lowerCase from 'lodash/lowerCase'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { FaCircle, FaArrowRight } from 'react-icons/fa'
@@ -12,7 +13,7 @@ import ActionStatus from './ActionStatus'
 
 const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const ActionLinkButton = requirePermissions({
   permissions: [
@@ -42,7 +43,7 @@ const ActionTableRow = ({
     <TableCell className={cssClasses('TableCell', 'TableCell--actionType')}>
       <FaCircle
         className={cssClasses(
-          `ActionType--${_.lowerCase(
+          `ActionType--${lowerCase(
             action.get('issueStatusSeverityExternalId')
           )}`
         )}

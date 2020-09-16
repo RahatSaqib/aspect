@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import fromPairs from 'lodash/fromPairs'
+import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -156,7 +158,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -175,7 +177,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: _.fromPairs([...filtersParams.entries()]),
+        filters: fromPairs([...filtersParams.entries()]),
       }
     }
   ),
@@ -307,7 +309,7 @@ const enhance = compose(
       addInventory,
       onAdjustInventorySucceeded,
     }) => values =>
-      addInventory(_.omit(values, ['canExpire'])).then(
+      addInventory(omit(values, ['canExpire'])).then(
         onAdjustInventorySucceeded
       ),
 
@@ -323,11 +325,11 @@ const enhance = compose(
         selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
       ) {
         return removeInventory(
-          _.omit(values, ['canExpire', 'dateAdjusted'])
+          omit(values, ['canExpire', 'dateAdjusted'])
         ).then(onAdjustInventorySucceeded)
       }
       return removeInventory(
-        _.omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo'])
+        omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo'])
       ).then(onAdjustInventorySucceeded)
     },
 
@@ -335,7 +337,7 @@ const enhance = compose(
       transferInventory,
       onAdjustInventorySucceeded,
     }) => values =>
-      transferInventory(_.omit(values, ['canExpire'])).then(
+      transferInventory(omit(values, ['canExpire'])).then(
         onAdjustInventorySucceeded
       ),
 
@@ -343,7 +345,7 @@ const enhance = compose(
       receiveInventory,
       onAdjustInventorySucceeded,
     }) => values =>
-      receiveInventory(_.omit(values, ['canExpire'])).then(
+      receiveInventory(omit(values, ['canExpire'])).then(
         onAdjustInventorySucceeded
       ),
   })

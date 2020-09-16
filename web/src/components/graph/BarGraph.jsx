@@ -1,6 +1,8 @@
+// TODO: still being used?
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
+import get from 'lodash/get'
+import flowRight from 'lodash/flowRight'
 import { scaleLinear, scaleBand } from '@vx/scale'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
@@ -60,7 +62,7 @@ class BarGraph extends Component {
     // Array y holds each color bar based on data values
     const y = []
     for (let i = 0; i < maxLength; i++) {
-      y[i] = d => _.get(d, ['data', i, 'cnt'], _.get(d, ['data', i], 0))
+      y[i] = d => get(d, ['data', i, 'cnt'], get(d, ['data', i], 0))
     }
 
     // Creates dynamic y axis
@@ -79,11 +81,11 @@ class BarGraph extends Component {
     })
 
     // Compose together the scale and accessor functions to get point functions
-    const xPoint = _.flowRight(xScale, x)
+    const xPoint = flowRight(xScale, x)
 
     const yPoint = []
     for (let i = 0; i < maxLength; i++) {
-      yPoint[i] = _.flowRight(yScale, y[i])
+      yPoint[i] = flowRight(yScale, y[i])
     }
 
     // determine labelling based on props

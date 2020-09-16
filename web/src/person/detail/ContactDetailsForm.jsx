@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
@@ -202,15 +202,15 @@ const enhance = compose(
       { fieldName: 'title', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'email', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'email2', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'phone', valueFromChangeEvent: _.identity },
-      { fieldName: 'cell', valueFromChangeEvent: _.identity },
+      { fieldName: 'phone', valueFromChangeEvent: identity },
+      { fieldName: 'cell', valueFromChangeEvent: identity },
       {
         fieldName: 'lastPartnerId',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: identity,
       },
-      { fieldName: 'countryId', valueFromChangeEvent: _.identity },
-      { fieldName: 'stateId', valueFromChangeEvent: _.identity },
-      { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
+      { fieldName: 'countryId', valueFromChangeEvent: identity },
+      { fieldName: 'stateId', valueFromChangeEvent: identity },
+      { fieldName: 'lgaId', valueFromChangeEvent: identity },
       { fieldName: 'zip', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
       {

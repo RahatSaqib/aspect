@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 
@@ -10,7 +10,7 @@ import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
   const counter = column =>

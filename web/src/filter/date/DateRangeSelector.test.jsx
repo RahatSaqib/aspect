@@ -1,5 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
+import includes from 'lodash/includes'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -607,7 +607,7 @@ describe('DateRangeSelector Component', () => {
             .at(1)
             .find(MenuItem)
             .filterWhere(
-              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+              item => !includes(item.prop('className'), 'emptyMenuItem')
             )
           expect(dropDownListItems.length).toEqual(8)
           const firstItemInDropDownList = dropDownListItems.at(0)
@@ -671,7 +671,7 @@ describe('DateRangeSelector Component', () => {
             .at(1)
             .find(MenuItem)
             .filterWhere(
-              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+              item => !includes(item.prop('className'), 'emptyMenuItem')
             )
           expect(dropDownListItems.length).toEqual(9)
           const firstItemInDropDownList = dropDownListItems.at(0)
@@ -741,7 +741,7 @@ describe('DateRangeSelector Component', () => {
             .at(1)
             .find(MenuItem)
             .filterWhere(
-              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+              item => !includes(item.prop('className'), 'emptyMenuItem')
             )
           expect(dropDownListItems.length).toEqual(13)
           const firstItemInDropDownList = dropDownListItems.at(0)
@@ -835,7 +835,7 @@ describe('DateRangeSelector Component', () => {
             .at(1)
             .find(MenuItem)
             .filterWhere(
-              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+              item => !includes(item.prop('className'), 'emptyMenuItem')
             )
           expect(dropDownListItems.length).toEqual(12)
           const firstItemInDropDownList = dropDownListItems.at(0)
@@ -924,7 +924,7 @@ describe('DateRangeSelector Component', () => {
             .at(1)
             .find(MenuItem)
             .filterWhere(
-              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+              item => !includes(item.prop('className'), 'emptyMenuItem')
             )
           expect(dropDownListItems.length).toEqual(7)
           const firstItemInDropDownList = dropDownListItems.at(0)

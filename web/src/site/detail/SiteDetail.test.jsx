@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { mount } from 'enzyme'
 import { createIntl } from 'react-intl'
@@ -24,15 +24,15 @@ describe('SiteDetail component', () => {
     site: new Site(),
     siteTags: Immutable.List(),
     siteContacts: Immutable.List(),
-    onSiteTagChange: _.noop,
-    fetchSingleSite: _.noop,
-    updateSingleSiteFromForm: _.noop,
-    fetchSiteContacts: _.noop,
-    fetchTags: _.noop,
-    updateTags: _.noop,
-    updateLatLongFromFormAddress: _.noop,
-    onDoNotAcceptClick: _.noop,
-    onAcceptClick: _.noop,
+    onSiteTagChange: noop,
+    fetchSingleSite: noop,
+    updateSingleSiteFromForm: noop,
+    fetchSiteContacts: noop,
+    fetchTags: noop,
+    updateTags: noop,
+    updateLatLongFromFormAddress: noop,
+    onDoNotAcceptClick: noop,
+    onAcceptClick: noop,
   }
 
   it('should render without crashing', () => {

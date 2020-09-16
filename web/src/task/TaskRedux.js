@@ -1,5 +1,7 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import uniqBy from 'lodash/uniqBy'
+import map from 'lodash/map'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -90,12 +92,12 @@ function receiveDetailedTasks(json) {
     total: json.total,
     countByAlert: json.countByAlert,
     title: json.data && json.data.length > 0 ? json.data[0].message : '',
-    sites: _.uniqBy(
-      _.map(json.data, elem => ({ siteId: elem.siteId, site: elem.site })),
+    sites: uniqBy(
+      map(json.data, elem => ({ siteId: elem.siteId, site: elem.site })),
       'siteId'
     ),
-    devices: _.uniqBy(
-      _.map(json.data, elem => ({
+    devices: uniqBy(
+      map(json.data, elem => ({
         deviceId: elem.deviceId,
         device: elem.device,
       })),
@@ -115,7 +117,7 @@ export function getTasksByAlertTemplateAndDate(
   alertTemplateId
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(
       requestTasksByStatus(
         sortCol,
@@ -192,7 +194,7 @@ export function fetchTask(id) {
 
 export function fetchTasks(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestTasks(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(

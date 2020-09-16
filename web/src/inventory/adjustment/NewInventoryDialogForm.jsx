@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import pick from 'lodash/pick'
+import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { compose, withProps, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
@@ -71,7 +72,7 @@ export function validate(
 
 const DEFAULT_VALUES = {
   consumableId: '',
-  ..._.pick(SHARED_DEFAULT_VALUES, [
+  ...pick(SHARED_DEFAULT_VALUES, [
     'lotNumber',
     'canExpire',
     'expiresOn',
@@ -134,7 +135,7 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'consumableId',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: identity,
       },
       sharedFields.lotNumber,
       sharedFields.canExpire,

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import React from 'react'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Button from '@material-ui/core/Button'
@@ -54,9 +54,9 @@ export const RawDataDialog = ({
       title="Raw Result Data"
       autoScrollBodyContent
     >
-      {_.isEmpty(logs) && loading ? (
+      {isEmpty(logs) && loading ? (
         <LinearProgress />
-      ) : _.isEmpty(logs) ? (
+      ) : isEmpty(logs) ? (
         <div style={{ paddingTop: '10px' }}>
           No log entries found for this result
         </div>

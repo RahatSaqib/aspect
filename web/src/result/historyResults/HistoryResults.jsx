@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import map from 'lodash/map'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
@@ -84,7 +84,7 @@ export const Results = ({
                     data-result-id={result.get('id')}
                   >
                     {columns &&
-                      _.map(columns, elem => (
+                      map(columns, elem => (
                         <TableCell hiddenOn={elem.hiddenOn || 'md'}>
                           {elem.tooltip && result.get(elem.key) && (
                             <Tooltip title={result.get(elem.tooltip)}>

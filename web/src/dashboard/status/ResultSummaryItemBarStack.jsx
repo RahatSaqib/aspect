@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import assign from 'lodash/assign'
+import maxBy from 'lodash/maxBy'
+import noop from 'lodash/noop'
 import React from 'react'
 import { compose, withProps, withHandlers } from 'recompose'
 import { ScaleSVG } from '@vx/responsive'
@@ -39,7 +41,7 @@ const enhance = compose(
       margin: rawMargin,
       item,
     }) => {
-      const margin = _.assign(
+      const margin = assign(
         {},
         { top: 0, bottom: 60, left: 40, right: 0 },
         rawMargin
@@ -71,7 +73,7 @@ const enhance = compose(
         yScale: scaleLinear({
           rangeRound: [yMax, 0],
           nice: true,
-          domain: [0, y(_.maxBy(item.data, y))],
+          domain: [0, y(maxBy(item.data, y))],
         }),
         zScale: scaleOrdinal({
           domain: keys,
@@ -163,7 +165,7 @@ const ResultSummaryItemBarStack = ({
         top={stackTop + stackHeight}
         left={margin.left}
         stroke={process.env['--aspect-color-grey-2']}
-        tickFormat={_.noop}
+        tickFormat={noop}
         label={`${item.data.length} Sites`}
         labelProps={{
           textAnchor: 'middle',

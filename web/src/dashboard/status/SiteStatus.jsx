@@ -1,4 +1,7 @@
-import _ from 'lodash'
+import includes from 'lodash/includes'
+import isEqual from 'lodash/isEqual'
+import uniq from 'lodash/uniq'
+import toString from 'lodash/toString'
 import _fp from 'lodash/fp'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
@@ -15,7 +18,7 @@ import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 import { MdDashboard } from 'react-icons/md'
 
-import { findKeyInTree } from '../../shared/utils/dom'
+import findKeyInTree from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchSiteDashboard, fetchDeviceDashboard } from '../DashboardRedux'
@@ -43,11 +46,11 @@ const getIssueIdsFromSummaryMap = (key, summaryMap) =>
   )(summaryMap)
 
 function getFillColor({ id, activeSiteIds, issueSiteIds }) {
-  if (_.includes(activeSiteIds, id)) {
+  if (includes(activeSiteIds, id)) {
     return colorMandy
   }
 
-  if (_.includes(issueSiteIds, id)) {
+  if (includes(issueSiteIds, id)) {
     return colorSupernova
   }
 
@@ -100,7 +103,7 @@ const enhance = compose(
         activeSiteIds: JSON.parse(findKeyInTree(target, 'siteIds')),
       }),
       onMouseLeave: ({ activeSiteIds }) => ({ target }) => ({
-        activeSiteIds: _.isEqual(
+        activeSiteIds: isEqual(
           JSON.parse(findKeyInTree(target, 'siteIds')),
           activeSiteIds
         )
@@ -120,7 +123,7 @@ const enhance = compose(
       deviceSummaryMap.toJS()
     ).map(id => String(id))
 
-    const issueSiteIds = _.uniq(
+    const issueSiteIds = uniq(
       issueSiteIdsFromSiteSummaryMap.concat(issueSiteIdsFromDeviceSummaryMap)
     )
 
@@ -183,7 +186,7 @@ export const SiteStatus = ({
             data-device-ids={JSON.stringify(
               deviceSummaryMap
                 .getIn(['operational', 'deviceIds'], EMPTY_LIST)
-                .map(_.toString)
+                .map(toString)
             )}
             data-site-ids={JSON.stringify(
               deviceSummaryMap.getIn(['operational', 'siteIds'], EMPTY_LIST)
@@ -216,7 +219,7 @@ export const SiteStatus = ({
             data-device-ids={JSON.stringify(
               deviceSummaryMap
                 .getIn(['uploadingData', 'deviceIds'], EMPTY_LIST)
-                .map(_.toString)
+                .map(toString)
             )}
             data-site-ids={JSON.stringify(
               deviceSummaryMap.getIn(['uploadingData', 'siteIds'], EMPTY_LIST)
@@ -249,7 +252,7 @@ export const SiteStatus = ({
             data-device-ids={JSON.stringify(
               deviceSummaryMap
                 .getIn(['testFailures', 'deviceIds'], EMPTY_LIST)
-                .map(_.toString)
+                .map(toString)
             )}
             data-site-ids={JSON.stringify(
               deviceSummaryMap.getIn(['testFailures', 'siteIds'], EMPTY_LIST)
