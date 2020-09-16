@@ -34,8 +34,8 @@ async function listNotifications(request) {
 
   const getItems = notificationQuery
     .clone()
-    .innerJoin('Job as j', 'nt.jobFunctionId', 'j.id')
-    .innerJoin('Person as per', 'j.personId', 'per.id')
+    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.id')
+    .leftJoin('Person as per', 'j.personId', 'per.id')
     .select(
       'n.notificationTypeId as id',
       'nt.name',
@@ -45,8 +45,7 @@ async function listNotifications(request) {
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
       knex.raw(
-        //        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
-        "CONCAT(SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`), ',', 5),', CONTACT APELLIDO, CONTACT2 CONTACT APELLIDO, CONTACT3 CONTACT APELLIDO,CONTACT 4 CONTACT APELLIDO, CONTACT 5 CONTACT APELLIDO') AS contacts"
+        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
       )
     )
     .max('n.createdOn as lastTriggeredOn')
@@ -70,7 +69,6 @@ async function listNotifications(request) {
     .countDistinct('n.notificationTypeId as count')
     .first()
 
-  console.log('-- ------------sql', getItems.toString())
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, data, length: data.length }
