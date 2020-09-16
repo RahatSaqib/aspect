@@ -19,18 +19,10 @@ async function shouldSendResultToItis(knex, action) {
         'assayGenericCulture',
         'assayLPA',
         'assaySmear',
+        'assayTbLamp',
       ])
       .andWhere('r.id', action.resultId)
-      .andWhere(queryBuilder => {
-        queryBuilder.whereIn('rws.externalId', [
-          'Error',
-          'Validated',
-          'Deliverable',
-          'Delivered',
-          'Acknowledged',
-          'Flagged',
-        ])
-      })
+      .andWhere('rws.externalId', 'Deliverable')
       .first('r.id')
     if (_.isEmpty(result)) {
       return false
