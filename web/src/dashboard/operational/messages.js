@@ -33,7 +33,18 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.deviceCalibrationsUpToDate',
     defaultMessage: 'All device calibrations up to date',
   },
-
+  numberOfDevicesExperiencingServiceInterrumptionTitle: {
+    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterrumptionTitle',
+    defaultMessage: 'Number of Devices Experiencing Service Interruption'
+  },
+  numberOfDevicesExperiencingServiceInterrumptionUnit: {
+    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterrumptionUnit',
+    defaultMessage: '{unit} last month'
+  },
+  numberOfDevicesExperiencingServiceInterrumptionDescription: {
+    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterrumptionDescription',
+    defaultMessage: 'The number of devices experiencing service interrumption on this and the previous month.'
+  },
   resultsTransmittedTitle: {
     id: 'pages.OperationalData.resultsTransmittedTitle',
     defaultMessage: 'Positive Test Results Transmitted',
