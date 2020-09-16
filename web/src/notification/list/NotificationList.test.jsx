@@ -19,7 +19,6 @@ describe('NotificationList module', () => {
     history: {
       push: () => {},
     },
-    fetchNotifications: () => {},
     exportNotifications: () => {},
     userPermissions: Immutable.Set([
       'notification:edit',
