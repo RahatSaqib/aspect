@@ -1,10 +1,12 @@
 /* global google */
-import _ from 'lodash'
+import isNumber from 'lodash/isNumber'
+import some from 'lodash/some'
+import isString from 'lodash/isString'
 
 const geocoder = new google.maps.Geocoder()
 
 export function isValidLatLng({ lat, lng }) {
-  return _.isNumber(lat) && _.isNumber(lng)
+  return isNumber(lat) && isNumber(lng)
 }
 
 export function isValidFullAddress({
@@ -15,7 +17,7 @@ export function isValidFullAddress({
   address,
   address2,
 }) {
-  return _.some([country, state, lga, city, address, address2], _.isString)
+  return some([country, state, lga, city, address, address2], isString)
 }
 
 export function formatFullAddressToAddressQuery({

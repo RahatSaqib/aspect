@@ -1,5 +1,6 @@
 import Immutable from 'immutable'
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import pick from 'lodash/pick'
 
 import {
   errorPleaseTryAgainInAFewMinutes,
@@ -106,7 +107,7 @@ describe('AccountRedux module', () => {
           })
           expect(state.get('loading')).toBe(false)
           expect(state.getIn(['data', 'contactDetails']).toJS()).toEqual(
-            _.omit(accountDetailsData, [
+            omit(accountDetailsData, [
               'username',
               'userId',
               'timezone',
@@ -125,7 +126,7 @@ describe('AccountRedux module', () => {
             jobFunctions: [],
           })
           expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(
-            _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+            pick(accountDetailsData, ['id', 'timezone', 'culture'])
           )
         })
       })
@@ -172,7 +173,7 @@ describe('AccountRedux module', () => {
 
           expect(newState.get('loading')).toBe(false)
           expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(
-            _.omit(newAccountDetailsData, [
+            omit(newAccountDetailsData, [
               'username',
               'userId',
               'timezone',
@@ -191,7 +192,7 @@ describe('AccountRedux module', () => {
             email: null,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
-            _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+            pick(accountDetailsData, ['id', 'timezone', 'culture'])
           )
         })
       })
@@ -212,7 +213,7 @@ describe('AccountRedux module', () => {
 
           expect(newState.get('loading')).toBe(false)
           expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(
-            _.omit(accountDetailsData, [
+            omit(accountDetailsData, [
               'username',
               'userId',
               'timezone',
@@ -231,7 +232,7 @@ describe('AccountRedux module', () => {
             email: null,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
-            _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
+            pick(accountDetailsData, ['id', 'timezone', 'culture'])
           )
         })
       })
@@ -266,7 +267,7 @@ describe('AccountRedux module', () => {
 
           expect(newState.get('loading')).toBe(false)
           expect(newState.getIn(['data', 'contactDetails']).toJS()).toEqual(
-            _.omit(accountDetailsData, [
+            omit(accountDetailsData, [
               'username',
               'userId',
               'timezone',
@@ -285,7 +286,7 @@ describe('AccountRedux module', () => {
             email: null,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
-            _.pick(newAccountDetailsData, ['id', 'timezone', 'culture'])
+            pick(newAccountDetailsData, ['id', 'timezone', 'culture'])
           )
         })
       })
@@ -366,7 +367,7 @@ describe('AccountRedux module', () => {
       let contactDetailsData
 
       beforeAll(() => {
-        contactDetailsData = _.omit(accountDetailsData, [
+        contactDetailsData = omit(accountDetailsData, [
           'username',
           'userId',
           'timezone',
@@ -574,7 +575,7 @@ describe('AccountRedux module', () => {
     })
 
     describe('saveUserPreferences', () => {
-      const userPreferencesData = _.pick(accountDetailsData, [
+      const userPreferencesData = pick(accountDetailsData, [
         'id',
         'timezone',
         'culture',

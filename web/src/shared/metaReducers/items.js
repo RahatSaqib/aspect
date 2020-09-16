@@ -2,7 +2,7 @@
   This is a generic reducer for a list of items
   where individual items can be updated with additional data
 */
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import Immutable from 'immutable'
 
 export function receiveList(items, list) {
@@ -24,4 +24,4 @@ export const Items = Immutable.Record({
   currentIdList: Immutable.List(),
 })
 
-export const makeItems = _.flowRight(Items, Immutable.fromJS)
+export const makeItems = flowRight(Items, Immutable.fromJS)

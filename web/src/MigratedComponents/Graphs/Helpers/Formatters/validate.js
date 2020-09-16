@@ -13,8 +13,7 @@ const validateGraphConfig = config => {
 
     return ajv.validate(graphSchema, config)
       ? res(true)
-      : // eslint-disable-next-line no-console
-        console.error(`Graph config error for ${id}: ${ajv.errorsText()}`)
+      : console.error(`Graph config error for ${id}: ${ajv.errorsText()}`)
   })
 }
 

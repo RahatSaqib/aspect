@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
 
 import classnames from 'classnames/bind'
@@ -149,7 +149,7 @@ const FormDialog = ({
   </AspectDialog>
 )
 
-export default _.flowRight(
+export default flowRight(
   React.memo,
   deviceMaintenanceStatusDialog,
   recomposeForm({

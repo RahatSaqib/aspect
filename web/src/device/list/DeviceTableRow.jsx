@@ -1,7 +1,8 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { formatDistanceStrict, parseISO } from 'date-fns'
+import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+import parseISO from 'date-fns/parseISO'
 import { injectIntl } from 'react-intl'
 
 import {
@@ -18,7 +19,7 @@ const sharedCssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const enhance = _.identity(injectIntl)
+const enhance = identity(injectIntl)
 
 const Rate = ({ intl, it, messageId, threshold }) => (
   <span>

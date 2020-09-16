@@ -1,8 +1,8 @@
 const path = require('path')
 const glob = require('glob')
-const _ = require('lodash')
+const pick = require('lodash/pick')
 
-const partialConfig = _.pick(require('./cfg/dev.js'), [
+const partialConfig = pick(require('./cfg/dev.js'), [
   'resolve',
   'module',
   'plugins',

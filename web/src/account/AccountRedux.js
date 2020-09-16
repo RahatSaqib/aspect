@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-import _ from 'lodash'
+import pick from 'lodash/pick'
 import { SubmissionError } from 'redux-form/immutable'
 import { getClientName } from '../shared/utils/browser'
 import { aspectFetch } from '../shared/utils/fetch'
@@ -256,7 +256,7 @@ function receiveAccountDetails(state, accountDetailsData) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: new ContactDetails(
-        _.pick(
+        pick(
           accountDetailsData,
           Object.keys(state.getIn(['data', 'contactDetails']).toJS())
         )
@@ -266,7 +266,7 @@ function receiveAccountDetails(state, accountDetailsData) {
         username: accountDetailsData.username,
       }),
       userPreferences: new UserPreferences(
-        _.pick(
+        pick(
           accountDetailsData,
           Object.keys(state.getIn(['data', 'userPreferences']).toJS())
         )
@@ -287,7 +287,7 @@ function receiveUpdatedContactDetails(state, accountDetailsData) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: new ContactDetails(
-        _.pick(
+        pick(
           accountDetailsData,
           Object.keys(state.getIn(['data', 'contactDetails']).toJS())
         )
@@ -337,7 +337,7 @@ function receiveUpdatedUserPreferences(state, accountDetailsData) {
       contactDetails: state.getIn(['data', 'contactDetails']),
       loginDetails: state.getIn(['data', 'loginDetails']),
       userPreferences: new UserPreferences(
-        _.pick(
+        pick(
           accountDetailsData,
           Object.keys(state.getIn(['data', 'userPreferences']).toJS())
         )

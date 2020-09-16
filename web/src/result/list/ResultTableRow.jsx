@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import partial from 'lodash/partial'
+import isNumber from 'lodash/isNumber'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
@@ -16,12 +18,12 @@ const cssClasses = classnames.bind(
 
 const styles = require('../../components/shared/DataTableRow.css')
 
-const formatterByType = _.partial(
+const formatterByType = partial(
   // TODO: refactor, see DeviceOperationTableRow
   (formatterBy, type) => formatterBy[type] || formatterBy.default,
   {
-    number: (n, intl) => (_.isNumber(n) ? intl.formatNumber(n) : false),
-    default: _.identity,
+    number: (n, intl) => (isNumber(n) ? intl.formatNumber(n) : false),
+    default: identity,
   }
 )
 

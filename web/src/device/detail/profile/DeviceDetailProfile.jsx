@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
@@ -215,7 +215,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),

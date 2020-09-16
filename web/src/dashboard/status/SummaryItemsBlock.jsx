@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import isFunction from 'lodash/isFunction'
+import map from 'lodash/map'
 import classnames from 'classnames/bind'
 import React from 'react'
 
@@ -6,18 +8,18 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 export const SummaryItemsBlock = ({ intl, title, items, ...restProps }) => (
   <div
     {...restProps}
     className={cssClasses('SummaryItemsBlock', {
-      'SummaryItemsBlock--clickable': _.isFunction(restProps.onClick),
+      'SummaryItemsBlock--clickable': isFunction(restProps.onClick),
     })}
   >
     <div className={cssClasses('SummaryItemsBlock__Title')}>{title}</div>
     <ul className={cssClasses('SummaryItemsBlock__Items')}>
-      {_.map(items, it => (
+      {map(items, it => (
         <li key={it.key} className={cssClasses('SummaryItemsBlock__Item')}>
           <div className={cssClasses('SummaryItemsBlock__Item__Count')}>
             {it.count}

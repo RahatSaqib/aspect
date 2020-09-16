@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
@@ -8,7 +8,7 @@ import { Unit } from '../../components/pureGrids'
 
 const cssClasses = classnames.bind(require('./Summary.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const descriptionSection = (description, to, action) => (
   <div className={cssClasses('Summary__Description')}>

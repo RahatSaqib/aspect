@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { Helmet } from 'react-helmet'
@@ -7,7 +7,7 @@ import TaskList from '../../../task/list/TaskList'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 export const DeviceDetailAlerts = ({
   intl,

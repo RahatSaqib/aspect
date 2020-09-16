@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import classNames from 'classnames'
 import { compose, withHandlers, pure } from 'recompose'
@@ -6,7 +6,7 @@ import MUILink from '@material-ui/core/Link'
 
 const enhance = compose(
   withHandlers({
-    onLinkClick: ({ onClick = _.noop, history, disabled }) => event => {
+    onLinkClick: ({ onClick = noop, history, disabled }) => event => {
       event.preventDefault()
       if (disabled) {
         return

@@ -1,5 +1,10 @@
-import _ from 'lodash'
 import React, { Component, createRef } from 'react'
+import assign from 'lodash/assign'
+import identity from 'lodash/identity'
+import isFinite from 'lodash/isFinite'
+import isNil from 'lodash/isNil'
+import constant from 'lodash/constant'
+import noop from 'lodash/noop'
 import { ScaleSVG } from '@vx/responsive'
 import { Group } from '@vx/group'
 import { GlyphDot } from '@vx/glyph'
@@ -8,7 +13,7 @@ import { localPoint } from '@vx/event'
 import Tooltip from '@material-ui/core/Tooltip'
 import CountryMap from '../../components/graph/CountryMap'
 
-const enhance = _.identity
+const enhance = identity
 
 const randomBlue = feature =>
   `#${feature.index % 10}${feature.index % 5}d${feature.index %
@@ -166,11 +171,11 @@ class Map extends Component {
                 {points
                   .filter(
                     ({ longitude, latitude }) =>
-                      _.isFinite(longitude) && _.isFinite(latitude)
+                      isFinite(longitude) && isFinite(latitude)
                   )
                   .map(({ longitude, latitude, fill, size, id, siteName }) => {
                     const [left, top] = projection([longitude, latitude])
-                    const isTooltipDisabled = _.isNil(siteName)
+                    const isTooltipDisabled = isNil(siteName)
 
                     return (
                       <Tooltip
@@ -198,7 +203,7 @@ class Map extends Component {
               </Group>
             )}
             fill={fill}
-            stroke={_.constant(colorWhite)}
+            stroke={constant(colorWhite)}
           />
         </ScaleSVG>
       </div>
@@ -236,11 +241,11 @@ const CountryWithPoints = ({
   countryIsoAlpha2Code,
   fill = randomBlue,
   points = [],
-  onMouseEnterPoint = _.noop,
-  onMouseLeavePoint = _.noop,
+  onMouseEnterPoint = noop,
+  onMouseLeavePoint = noop,
   margin: rawMargin = {},
 }) => {
-  const margin = _.assign(
+  const margin = assign(
     {},
     { top: 10, bottom: 10, left: 10, right: 10 },
     rawMargin

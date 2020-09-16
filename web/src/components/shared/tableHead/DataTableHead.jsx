@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import isFunction from 'lodash/isFunction'
+import noop from 'lodash/noop'
 import classNames from 'classnames'
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
@@ -49,7 +50,7 @@ const DataTableHead = ({
   sortColumnKey,
   sortColumnDir,
   columns,
-  onHeadColumnClick = _.noop,
+  onHeadColumnClick = noop,
 }) => (
   <TableHead>
     <TableRow className={classNames({ [classes.compact]: compact })}>
@@ -79,7 +80,7 @@ const DataTableHead = ({
               classes[`hidden${hiddenOn}Down`],
               {
                 [classes.centerAlignedCell]: !!colSpan,
-                [classes.clickable]: _.isFunction(onClick) || sortable,
+                [classes.clickable]: isFunction(onClick) || sortable,
                 [classes.compact]: compact,
               }
             )}

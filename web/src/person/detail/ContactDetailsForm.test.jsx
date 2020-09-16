@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import Immutable from 'immutable'
 import { shallow } from 'enzyme'
@@ -29,22 +29,22 @@ describe('ContactDetailsForm module', () => {
       zip: {},
       notes: {},
     },
-    onNameChange: _.noop,
-    onTitleChange: _.noop,
-    onEmailChange: _.noop,
-    onEmail2Change: _.noop,
-    onPhoneChange: _.noop,
-    onCellChange: _.noop,
-    onLastPartnerIdChange: _.noop,
-    onCountryIdChange: _.noop,
-    onStateIdChange: _.noop,
-    onLgaIdChange: _.noop,
-    onZipChange: _.noop,
-    onNotesChange: _.noop,
-    handleSubmit: _.noop,
+    onNameChange: noop,
+    onTitleChange: noop,
+    onEmailChange: noop,
+    onEmail2Change: noop,
+    onPhoneChange: noop,
+    onCellChange: noop,
+    onLastPartnerIdChange: noop,
+    onCountryIdChange: noop,
+    onStateIdChange: noop,
+    onLgaIdChange: noop,
+    onZipChange: noop,
+    onNotesChange: noop,
+    handleSubmit: noop,
     contactDetails: Immutable.Map(),
     personTags: Immutable.List(),
-    onPersonTagsChange: _.noop,
+    onPersonTagsChange: noop,
   }
 
   describe('ContactDetailsForm component', () => {

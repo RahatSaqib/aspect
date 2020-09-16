@@ -1,4 +1,7 @@
-import _ from 'lodash'
+import keys from 'lodash/keys'
+import values from 'lodash/values'
+import noop from 'lodash/noop'
+import constant from 'lodash/constant'
 import { scaleLinear } from 'd3-scale'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -45,7 +48,7 @@ const enhance = compose(
     const siteById = siteList
       .toKeyedSeq()
       .mapEntries(([, it]) => [it.get('id'), it])
-    const domain = _.keys(colorByResultCategoryExternalId)
+    const domain = keys(colorByResultCategoryExternalId)
 
     const scale = scaleLinear()
       .domain(
@@ -79,7 +82,7 @@ const enhance = compose(
       domain,
       zScale: scaleOrdinal({
         domain,
-        range: _.values(colorByResultCategoryExternalId),
+        range: values(colorByResultCategoryExternalId),
       }),
       resultSummaryList: resultSummaryList
         .map(item =>
@@ -118,8 +121,8 @@ export const ResultStatus = ({
           countryIsoAlpha2Code={countryIsoAlpha2Code}
           fill={fill}
           points={points}
-          onMouseEnterPoint={_.noop}
-          onMouseLeavePoint={_.noop}
+          onMouseEnterPoint={noop}
+          onMouseLeavePoint={noop}
         />
         <div
           style={{
@@ -131,7 +134,7 @@ export const ResultStatus = ({
           <LegendOrdinal
             domain={domain}
             scale={zScale}
-            labelTransform={_.constant((datum, index) => ({
+            labelTransform={constant((datum, index) => ({
               datum,
               index,
               text: datum,

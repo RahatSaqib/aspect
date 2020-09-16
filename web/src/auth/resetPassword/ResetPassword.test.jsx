@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -223,7 +223,7 @@ describe('ResetPassword module', () => {
         ).first()
         resetPasswordEnterEmail
           .props()
-          .onShowAdminHelpDialog({ preventDefault: _.noop })
+          .onShowAdminHelpDialog({ preventDefault: noop })
         ResetPasswordWrapper.update()
 
         const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
@@ -240,7 +240,7 @@ describe('ResetPassword module', () => {
         const step2Content = largeScreenDiv.children().at(1)
         const iDidntReceiveAnEmailLink = step2Content.children().find('a')
 
-        iDidntReceiveAnEmailLink.simulate('click', { preventDefault: _.noop })
+        iDidntReceiveAnEmailLink.simulate('click', { preventDefault: noop })
         ResetPasswordWrapper.update()
         let adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)
@@ -261,7 +261,7 @@ describe('ResetPassword module', () => {
         const step2Content = largeScreenDiv.children().at(1)
         const iDidntReceiveAnEmailLink = step2Content.children().find('a')
 
-        iDidntReceiveAnEmailLink.simulate('click', { preventDefault: _.noop })
+        iDidntReceiveAnEmailLink.simulate('click', { preventDefault: noop })
         ResetPasswordWrapper.update()
         const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)

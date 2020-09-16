@@ -1,17 +1,22 @@
 // Imports from packages
-import _ from 'lodash'
+import curry from 'lodash/curry'
+import isString from 'lodash/isString'
+import reduce from 'lodash/reduce'
+import isBoolean from 'lodash/isBoolean'
+import keys from 'lodash/keys'
+import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 
-export const makeGetClassNames = _.curry(
+export const makeGetClassNames = curry(
   (pureGridPropTypes, keyToClassNameMappings, props) => {
-    const initial = _.isString(props.className) ? [props.className] : []
+    const initial = isString(props.className) ? [props.className] : []
 
-    return _.reduce(
+    return reduce(
       pureGridPropTypes,
       (acc, unused, key) => {
         const value = props[key]
-        if (_.isBoolean(value) && value) {
+        if (isBoolean(value) && value) {
           acc.push(keyToClassNameMappings[key])
         }
         return acc
@@ -32,7 +37,7 @@ export function makeDelegateComponent(
     ...pureGridPropTypes,
   }
 
-  const excludedPropList = _.keys(propTypes)
+  const excludedPropList = keys(propTypes)
 
   const getClassNames = makeGetClassNames(
     pureGridPropTypes,
@@ -50,7 +55,7 @@ export function makeDelegateComponent(
     }
 
     render() {
-      const restProps = _.omit(this.props, excludedPropList)
+      const restProps = omit(this.props, excludedPropList)
 
       return React.createElement(
         this.props.component,
