@@ -37,9 +37,7 @@ export const SummaryStatus = ({ className, dashboard }) => {
   return (
     <div className={className}>
       {isLoading && !widgets ? <EmptyWidgets /> : null}
-      {!isLoading && !isError && widgets ? (
-        <AspectWidgets data={widgets} />
-      ) : null}
+      {!isLoading && widgets ? <AspectWidgets data={widgets} /> : null}
     </div>
   )
 }
