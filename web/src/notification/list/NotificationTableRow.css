@@ -4,7 +4,8 @@
 	color: var(--aspect-color-mandy);
 }
 
-.TableCell--truncate {
+  .table__cell {}
+  .table__cell--truncate {}
 	width: 40%;
 	overflow: hidden;
 	text-overflow: ellipsis;
