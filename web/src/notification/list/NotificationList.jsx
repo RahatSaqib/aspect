@@ -7,11 +7,15 @@ import { useIntl, defineMessages, injectIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
-
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
+} from '../../error/CommonErrorNotifications'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -104,6 +108,35 @@ export const NotificationList = props => {
       const filters = fromPairs([...filtersParams.entries()])
       return fetchWrapperForQueries({
         endpoint: NOTIFICATION_LIST.ENDPOINT,
+        customErrorNotifications: [
+          {
+            400: filterFieldsRejectedError(
+              defineMessages({
+                title: {
+                  id: 'errorResponseMessages.fetchNotifications.GET.400.title',
+                  defaultMessage: 'Searching Notifications Failed',
+                },
+              })
+            ),
+            403: errorInsufficientScope(
+              defineMessages({
+                title: {
+                  id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                  defaultMessage: 'Insufficient Permissions',
+                },
+              })
+            ),
+            default: errorPleaseTryAgainInAFewMinutes(
+              defineMessages({
+                title: {
+                  id:
+                    'errorResponseMessages.fetchNotifications.GET.default.title',
+                  defaultMessage: 'Loading Notifications Failed',
+                },
+              })
+            ),
+          },
+        ],
         params: {
           page: pageAt,
           size: pageSize,

@@ -54,7 +54,7 @@ const NotificationTableRow = ({
     <TableRow
       key={key}
       data-notification-id={id}
-      onClick
+      onClick={onClick}
       className={cssClasses(className)}
     >
       <TableCell>{name}</TableCell>
