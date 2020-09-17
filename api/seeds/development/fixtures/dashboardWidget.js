@@ -5,6 +5,7 @@ const { WIDGET_GROUP_KEYS, WIDGET_FILTER_KEYS } = dashboardWidgetsBase
 module.exports = {
   stat: [
     {
+      jobFunctions: ['all'],
       icon: 'MdPlace',
       title: 'Sites',
       titleI18nKey: 'sitesTitle',
@@ -14,13 +15,14 @@ module.exports = {
       link: '/browse/site',
       sortOrder: 0,
       externalId: 'sitesTitle',
-      description: 'The number of sites',
+      description: 'The number of sites.',
       descriptionI18nKey: 'sitesDescription',
       dashboards: {
         home: {},
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdDesktopWindows',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
@@ -37,12 +39,10 @@ module.exports = {
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},
-        operational: {
-          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
-        },
       },
     },
     {
+      jobFunctions: ['admin', 'clinician', 'resultViewerYes', 'ntp'],
       icon: 'MdAssignment',
       title: 'Results',
       titleI18nKey: 'resultsTitle',
@@ -59,6 +59,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdPermIdentity',
       title: 'Contacts',
       titleI18nKey: 'personTitle',
@@ -75,6 +76,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdAddAlert',
       title: 'Confirmed cases',
       titleI18nKey: 'dashboardWidgetTitleConfirmedCases',
@@ -92,8 +94,10 @@ module.exports = {
       dashboards: {
         home: {},
       },
+      partnerNames: ['Wakanda'],
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdAssignment',
       title: 'Active cases',
       titleI18nKey: 'dashboardWidgetTitleTotalActiveCases',
@@ -111,8 +115,10 @@ module.exports = {
       dashboards: {
         home: {},
       },
+      partnerNames: ['Wakanda'],
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdVerifiedUser',
       title: 'Recovered cases',
       titleI18nKey: 'dashboardWidgetTitleTotalRecoveredCases',
@@ -130,8 +136,10 @@ module.exports = {
       dashboards: {
         home: {},
       },
+      partnerNames: ['Wakanda'],
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdEventBusy',
       title: 'Deaths',
       titleI18nKey: 'dashboardWidgetTitleTotalDeaths',
@@ -149,6 +157,35 @@ module.exports = {
       dashboards: {
         home: {},
       },
+      partnerNames: ['Wakanda'],
+    },
+    {
+      jobFunctions: ['all'],
+      icon: 'MdDesktopWindows',
+      title: 'GeneXpert Devices',
+      titleI18nKey: 'geneXpertDevicesTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'`,
+      sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
+          AND d.createdOn <=  DATE_FORMAT(NOW() ,'%Y-%m-01')`,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
+      link: '/browse/device',
+      sortOrder: 0,
+      externalId: 'geneXpertDevices',
+      description: 'The number of approved GeneXpert devices.',
+      descriptionI18nKey: 'geneXpertDevices',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+        },
+      },
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'gxPositiveResultsNotified'
+      ),
     },
     {
       ...dashboardWidgetsBase.stat.find(
@@ -188,63 +225,55 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'avgTimeToUpload'
       ),
-      sortOrder: 6,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
-      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'instrumentsReplaced'
       ),
-      sortOrder: 4,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
-      sortOrder: 3,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageRecipientsOfEmail'
       ),
-      sortOrder: 9,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageRecipientsOfSms'
       ),
-      sortOrder: 10,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageLengthOfSms'
       ),
-      sortOrder: 11,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(x => x.externalId === 'smsSent'),
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageDaysModuleSwap'
       ),
-      sortOrder: 2,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageTimeToModuleReplacement'
       ),
-      sortOrder: 25,
     },
     {
       ...dashboardWidgetsBase.stat.find(
-        x => x.externalId === 'gxPositiveResultsNotified'
+        x => x.externalId === 'numberOfDevicesExperiencingServiceInterruption'
       ),
-      sortOrder: 26,
     },
     {
       ...dashboardWidgetsBase.stat.find(
-        x => x.externalId === 'numberOfDevicesExperiencingServiceInterrumption'
+        x => x.externalId === 'averageDurationServiceInterruption'
       ),
-      sortOrder: 27,
     },
   ],
 }
