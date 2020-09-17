@@ -23,6 +23,8 @@ const AspectResponsiveBar = ({
   displayLegend,
   displayMethod,
   indexBy,
+  keysToRename,
+  keysToPopover,
   keys,
   tickValuesYShape,
   tickValuesXShape,
@@ -226,6 +228,8 @@ const AspectResponsiveBar = ({
           type={type}
           symbolShape={config(type, data, displayMethod).symbolShape}
           legendsNotToRender={legendsNotToRender}
+          keysToRename={keysToRename}
+          keysToPopover={keysToPopover}
         />
       ) : null}
     </div>
@@ -236,6 +240,8 @@ AspectResponsiveBar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
   type: 'bar',
+  keysToRename: false,
+  keysToPopover: false,
 }
 
 AspectResponsiveBar.propTypes = {
@@ -245,6 +251,8 @@ AspectResponsiveBar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  keysToRename: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  keysToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   tickValuesYShape: PropTypes.oneOf([
     'bookends',
     'clubsandwich',
