@@ -22,7 +22,6 @@ const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 const enhance = identity
 const NotificationTableRow = ({
   className,
-  key,
   onClick,
   notification: {
     id,
@@ -52,7 +51,7 @@ const NotificationTableRow = ({
 
   return (
     <TableRow
-      key={key}
+      key={id}
       data-notification-id={id}
       onClick={onClick}
       className={cssClasses(className)}
@@ -68,6 +67,8 @@ const NotificationTableRow = ({
 }
 
 NotificationTableRow.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
   notification: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string,
@@ -76,9 +77,6 @@ NotificationTableRow.propTypes = {
     contacts: PropTypes.string.isRequired,
     contactsCount: PropTypes.number.isRequired,
   }).isRequired,
-  onClick: PropTypes.func.isRequired,
-  key: PropTypes.number.isRequired,
-  className: PropTypes.string,
 }
 
 NotificationTableRow.defaultProps = {

@@ -90,6 +90,7 @@ const filtersFromLocation = composeSanitizer(
 
 export const NotificationList = props => {
   const {
+    intl,
     history,
     location,
     table,
@@ -100,7 +101,7 @@ export const NotificationList = props => {
     pageSize,
     exportNotifications,
   } = props
-  const intl = useIntl()
+
   const { data: { data } = false, isError, error } = useQuery(
     [NOTIFICATION_LIST.KEY, pageAt, pageSize, location.search],
     async () => {
@@ -115,14 +116,6 @@ export const NotificationList = props => {
                 title: {
                   id: 'errorResponseMessages.fetchNotifications.GET.400.title',
                   defaultMessage: 'Searching Notifications Failed',
-                },
-              })
-            ),
-            403: errorInsufficientScope(
-              defineMessages({
-                title: {
-                  id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                  defaultMessage: 'Insufficient Permissions',
                 },
               })
             ),
@@ -301,8 +294,9 @@ NotificationList.defaultProps = {
 }
 
 NotificationList.propTypes = {
-  location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   table: PropTypes.instanceOf(Immutable.Record).isRequired,
   exportNotifications: PropTypes.func.isRequired,
   userPermissions: PropTypes.instanceOf(Immutable.Set).isRequired,
