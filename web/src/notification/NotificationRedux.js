@@ -73,7 +73,7 @@ export function exportNotifications(
         ...filters,
       })}`,
       {
-        orNotifications: {
+        errorNotifications: {
           400: filterFieldsRejectedError(
             defineMessages({
               title: {

@@ -1,9 +1,13 @@
-import _, { flowRight } from 'lodash'
+import flowRight from 'lodash/flowRight'
+import identity from 'lodash/identity'
+import isNil from 'lodash/isNil'
+import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
+import { useIntl, defineMessages, injectIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
-import { defineMessages, injectIntl } from 'react-intl'
+
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -82,7 +86,6 @@ const filtersFromLocation = composeSanitizer(
 
 export const NotificationList = props => {
   const {
-    intl,
     history,
     location,
     table,
@@ -93,13 +96,12 @@ export const NotificationList = props => {
     pageSize,
     exportNotifications,
   } = props
-
-  const { isLoading, data: { data, total } = false, isError, error } = useQuery(
+  const intl = useIntl()
+  const { data: { data } = false, isError, error } = useQuery(
     [NOTIFICATION_LIST.KEY, pageAt, pageSize, location.search],
     async () => {
-      setFilters()
       const { value: filtersParams } = filtersFromLocation(location)
-      const filters = _.fromPairs([...filtersParams.entries()])
+      const filters = fromPairs([...filtersParams.entries()])
       return fetchWrapperForQueries({
         endpoint: NOTIFICATION_LIST.ENDPOINT,
         params: {
@@ -112,14 +114,6 @@ export const NotificationList = props => {
       })
     }
   )
-
-  if (isError) {
-    throw new Error(error)
-  }
-
-  const [reducedFilters, setReducedFilters] = useState({
-    name: true,
-  })
   const setFilters = () => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -136,6 +130,18 @@ export const NotificationList = props => {
     }
     setReducedFilters(reduceFiltersConfig(FILTERS_CONFIG, userPermissions))
   }
+  useEffect(() => {
+    setFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search])
+  if (isError) {
+    throw new Error(error)
+  }
+
+  const [reducedFilters, setReducedFilters] = useState({
+    name: true,
+  })
+
   const onRowClick = ({
     currentTarget: {
       dataset: { notificationId },
@@ -157,7 +163,7 @@ export const NotificationList = props => {
       )
     }
   }
-  const emptyList = _.isNil(data) || data.length === 0
+  const emptyList = isNil(data) || data.length === 0
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -217,10 +223,8 @@ export const NotificationList = props => {
                 data.map(notification => (
                   <NotificationDataTableRow
                     key={notification.id}
-                    intl={intl}
                     notification={notification}
                     onClick={onRowClick}
-                    data-notification-id={notification.id}
                   />
                 ))}
             </TableBody>
@@ -264,7 +268,6 @@ NotificationList.defaultProps = {
 }
 
 NotificationList.propTypes = {
-  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
   location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
   history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
   table: PropTypes.instanceOf(Immutable.Record).isRequired,

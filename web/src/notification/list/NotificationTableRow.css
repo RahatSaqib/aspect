@@ -1,12 +1,13 @@
 @import '../../globals/variables.css';
 
 .TableCell--errorsCount {
-	color: var(--aspect-color-mandy);
+  color: var(--aspect-color-mandy);
 }
 
-  .table__cell {}
-  .table__cell--truncate {}
-	width: 40%;
-	overflow: hidden;
-	text-overflow: ellipsis;
+.table__cell {
+}
+.table__cell--truncate {
+  width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
