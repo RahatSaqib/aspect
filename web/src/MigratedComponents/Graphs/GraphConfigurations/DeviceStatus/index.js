@@ -41,6 +41,14 @@ const deviceStatusGraphs = {
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
+        keysToRename: [{ externalId: 'devicesActive', name: 'Active' }],
+        keysToPopover: [
+          {
+            externalId: 'inactiveUnknown',
+            popover: true,
+            message: 'Something long and terrible!',
+          },
+        ],
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
