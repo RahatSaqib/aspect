@@ -28,8 +28,8 @@ async function shouldSendResultToItis(knex, action) {
       return false
     }
     const resultUpdatedIssueResults = await knex('Issue as i')
-      .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-      .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+      .join('IssueType as it', 'i.issueTypeId', 'it.id')
+      .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
       .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
       .andWhere({
         'i.resultId': action.resultId,

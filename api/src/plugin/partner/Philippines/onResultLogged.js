@@ -75,7 +75,6 @@ async function updateResultToDeliverable(knex, context, resultId, reason) {
   await knex('Result').where('id', resultId).update({
     resultWorkflowStatusLogId: resultWorkflowLogId,
   })
-  context.resultUpdated(resultId)
 }
 
 module.exports = onResultLogged
