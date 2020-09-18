@@ -14,6 +14,7 @@ const {
   '--aspect-color-mantis': colorMantis,
   '--aspect-color-pink': colorPink,
   '--aspect-color-scooter-blue-4': colorBlue4,
+  '--aspect-color-shakespeare': colorShakespeare,
   '--aspect-color-supernova': colorSuperNova,
   '--aspect-color-supernova-2': colorSuperNova2,
   '--aspect-color-white-4': colorWhite4,
@@ -93,7 +94,15 @@ const graphColorMap = [
   { id: 70, externalId: 'cntAll', color: easternBlue2 },
   { id: 71, externalId: 'cntPositive', color: colorMandy },
   { id: 80, externalId: 'noData', color: geyser },
-  { id: 99, externalId: 'Cases', color: colorMantis },
+  { id: 90, externalId: 'outOfStock', color: odNeedsRepair },
+  { id: 91, externalId: 'upTo14', color: odTransferTime },
+  { id: 92, externalId: 'upTo30', color: odTransferTime },
+  { id: 93, externalId: 'upTo90', color: odTransferTime },
+  { id: 94, externalId: 'upTo180', color: odTransferTime },
+  { id: 95, externalId: 'moreThan180', color: odTransferTime },
+  { id: 96, externalId: 'notRecorded', color: odUnknown },
+  { id: 97, externalId: 'noConsumption', color: odActive },
+  { id: 999, externalId: 'Cases', color: colorMantis },
 ]
 
 export default graphColorMap
