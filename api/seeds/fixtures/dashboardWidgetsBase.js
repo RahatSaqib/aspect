@@ -1246,14 +1246,15 @@ module.exports = {
       titleI18nKey: 'averageDurationServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,
+      /*
+        The innermost query gets the number of times the device was down for repair if it wasn't down the entire month
+        The "middle-query" combines that with the devices that were down the entire month so we have the total number of times a device was down
+        That then allows us at the top level to calculate the average number of days a device was down
+      */
       sqlForIndicator: `
       SELECT IFNULL(ROUND(AVG(days/times)), 0) AS cnt
       FROM
           (
-          /*
-          Count devices that were down for entire month as one occurence
-          If device was offline at start and end of month, add one occurrence
-          */
           SELECT MIN(dmsl.day) AS minInactive, MAX(dmsl.day) AS maxInactive, dmsl.deviceId,
             COUNT(CASE WHEN DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7 THEN dmsl.deviceId ELSE NULL END) AS days,
                   CASE WHEN o.times IS NULL THEN 1 ELSE o.times + (CASE WHEN MIN(dmsl.day) = DATE_FORMAT(NOW(), '%Y-%m-01') AND MAX(dmsl.day) = LAST_DAY(NOW()) THEN 1 ELSE 0 END) END AS times
@@ -1261,9 +1262,6 @@ module.exports = {
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
           LEFT OUTER JOIN
           (
-              /*
-              Number of times device was down for repair
-              */
               SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
               FROM DeviceMaintenanceStatusLog AS dmsl
               LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
@@ -1282,10 +1280,6 @@ module.exports = {
       SELECT IFNULL(ROUND(AVG(days/times)), 0) AS cnt
       FROM
           (
-          /*
-          Count devices that were down for entire month as one occurence
-          If device was offline at start and end of month, add one occurrence
-          */
           SELECT MIN(dmsl.day) AS minInactive, MAX(dmsl.day) AS maxInactive, dmsl.deviceId,
             COUNT(CASE WHEN DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7 THEN dmsl.deviceId ELSE NULL END) AS days,
                   CASE WHEN o.times IS NULL THEN 1 ELSE o.times + (CASE WHEN MIN(dmsl.day) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01') AND MAX(dmsl.day) = LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)) THEN 1 ELSE 0 END) END AS times
@@ -1293,9 +1287,6 @@ module.exports = {
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
           LEFT OUTER JOIN
           (
-              /*
-              Number of times device was down for repair
-              */
               SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
           FROM DeviceMaintenanceStatusLog AS dmsl
           LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
