@@ -1260,6 +1260,9 @@ module.exports = {
                   CASE WHEN o.times IS NULL THEN 1 ELSE o.times + (CASE WHEN MIN(dmsl.day) = DATE_FORMAT(NOW(), '%Y-%m-01') AND MAX(dmsl.day) = LAST_DAY(NOW()) THEN 1 ELSE 0 END) END AS times
           FROM DeviceMaintenanceStatusLog AS dmsl
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN Device AS d ON dmsl.deviceId = d.id
+		      INNER JOIN Site AS s ON s.id = d.siteId
+		      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           LEFT OUTER JOIN
           (
               SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
@@ -1285,6 +1288,9 @@ module.exports = {
                   CASE WHEN o.times IS NULL THEN 1 ELSE o.times + (CASE WHEN MIN(dmsl.day) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01') AND MAX(dmsl.day) = LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)) THEN 1 ELSE 0 END) END AS times
           FROM DeviceMaintenanceStatusLog AS dmsl
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN Device AS d ON dmsl.deviceId = d.id
+		      INNER JOIN Site AS s ON s.id = d.siteId
+		      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           LEFT OUTER JOIN
           (
               SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
