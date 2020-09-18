@@ -1,8 +1,9 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
+import { useHistory } from 'react-router-dom';
 
+import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -13,41 +14,47 @@ const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
 const enhance = identity
 
-const getItemActions = () => [
+const getItemActions = (history) => [
   {
     icon: 'FaPause',
     text: 'Pause',
-    action: (params) => { console.log('Pause', params) }
+    action: (params) => { console.log('Pause', params) },
+    disabled: true
   },
   {
     icon: 'FaEdit',
     text: 'Edit',
-    action: (params) => { console.log('Edit', params) }
+    action: (params) => { history.push(`/browse/notification/${params.get('id')}`) }
   },
   {
     icon: 'FaCopy',
     text: 'Copy',
-    action: (params) => { console.log('Copy', params) }
+    action: (params) => { console.log('Copy', params) },
+    disabled: true
   },
   {
     icon: 'FaEye',
     text: 'Preview',
-    action: (params) => { console.log('Preview', params) }
+    action: (params) => { console.log('Preview', params) },
+    disabled: true
   },
   {
     icon: 'FaFileAlt',
     text: 'View Log',
-    action: (params) => { console.log('View Log', params) },
+    action: (params) => { history.push(`/browse/notification/${params.get('id')}/history`) },
     separator: true
   },
   {
     icon: 'FaTrash',
     text: 'Delete',
-    action: (params) => { console.log('Delete', params) }
+    action: (params) => { console.log('Delete', params) },
+    disabled: true
   }
 ]
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
+  const history = useHistory()
+
   const counter = column =>
     notification.get(column) === null
       ? 'Not Configured'
@@ -64,7 +71,7 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => {
       <TableCell>{counter('smsCount')}</TableCell>
       <TableCell>{counter('emailCount')}</TableCell>
       <TableCell>
-        <AspectVertMenu params={notification} actions={getItemActions()} />
+        <AspectVertMenu params={notification} actions={getItemActions(history)} />
       </TableCell>
     </TableRow>
   )

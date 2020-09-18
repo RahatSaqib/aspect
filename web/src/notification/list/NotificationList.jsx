@@ -144,11 +144,6 @@ export const NotificationList = props => {
     }
     setReducedFilters(reduceFiltersConfig(FILTERS_CONFIG, userPermissions))
   }
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { notificationId },
-    },
-  }) => history.push(`/browse/notification/${notificationId}/history`)
 
   const onExcelClick = formatType => {
     const format = formatType.id
@@ -240,7 +235,6 @@ export const NotificationList = props => {
                     key={notification.get('id')}
                     intl={intl}
                     notification={notification}
-                    // onClick={onRowClick}
                     data-notification-id={notification.get('id')}
                   />
                 ))}

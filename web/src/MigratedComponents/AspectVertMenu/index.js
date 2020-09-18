@@ -11,9 +11,9 @@ import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('./AspectVertMenu.css'))
 
-const AspectVertMenuItem = ({ icon, text, action, params, separator = false }) => (
+const AspectVertMenuItem = ({ icon, disabled = false, text, action, params, separator = false }) => (
   <>
-    <MenuItem onClick={() => { action(params) }} className={cssClasses('menu-item')}>
+    <MenuItem disabled={disabled} onClick={() => { action(params) }} className={cssClasses('menu-item')}>
       {icon && <ListItemIcon>
         <IconProvider icon={icon}></IconProvider>
       </ListItemIcon>
