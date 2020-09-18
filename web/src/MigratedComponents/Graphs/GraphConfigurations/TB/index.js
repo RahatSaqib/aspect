@@ -55,7 +55,7 @@ const tbGraphs = {
         averages: {
           showTotal: false,
           title: 'clinicalIndicatorsTBDetectedPie',
-          key: ['Detected'],
+          key: ['Detected', 'Trace Detected'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
