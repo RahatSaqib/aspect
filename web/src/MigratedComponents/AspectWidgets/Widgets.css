@@ -163,3 +163,10 @@
   composes: Summary__Card__Item;
   text-align: right;
 }
+
+.empty__widget {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 93px;
+}
