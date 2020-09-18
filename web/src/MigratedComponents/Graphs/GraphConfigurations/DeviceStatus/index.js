@@ -48,7 +48,7 @@ const deviceStatusGraphs = {
           },
           {
             externalId: 'inactiveUnknown',
-            name: 'Unknown *',
+            name: 'Unknown ',
           },
         ],
         legendsToPopover: [

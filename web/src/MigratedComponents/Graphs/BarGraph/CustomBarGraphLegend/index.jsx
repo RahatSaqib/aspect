@@ -4,6 +4,8 @@ import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import find from 'lodash/find'
 import Tooltip from '@material-ui/core/Tooltip'
+
+import IconProvider from '../../../IconProvider'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./CustomLegend.css'))
@@ -26,7 +28,15 @@ const LegendKey = props => {
         ])}
         style={{ background: color }}
       />
-      <div className={cssClasses('legend__label')}>{label}</div>
+      <div className={cssClasses('legend__label')}>
+        {label}
+        {tooltip ? (
+          <IconProvider
+            icon="FaQuestionCircle"
+            className="legendTooltip__icon"
+          />
+        ) : null}
+      </div>
     </div>
   )
 }
