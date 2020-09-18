@@ -17,33 +17,33 @@ const getItemActions = () => [
   {
     icon: 'FaPause',
     text: 'Pause',
-    action: () => { console.log('Pause') }
+    action: (params) => { console.log('Pause', params) }
   },
   {
     icon: 'FaEdit',
     text: 'Edit',
-    action: () => { console.log('Edit') }
+    action: (params) => { console.log('Edit', params) }
   },
   {
     icon: 'FaCopy',
     text: 'Copy',
-    action: () => { console.log('Copy') }
+    action: (params) => { console.log('Copy', params) }
   },
   {
     icon: 'FaEye',
     text: 'Preview',
-    action: () => { console.log('Preview') }
+    action: (params) => { console.log('Preview', params) }
   },
   {
     icon: 'FaFileAlt',
     text: 'View Log',
-    action: () => { console.log('View Log') },
+    action: (params) => { console.log('View Log', params) },
     separator: true
   },
   {
     icon: 'FaTrash',
     text: 'Delete',
-    action: () => { console.log('Delete') }
+    action: (params) => { console.log('Delete', params) }
   }
 ]
 
@@ -64,7 +64,7 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => {
       <TableCell>{counter('smsCount')}</TableCell>
       <TableCell>{counter('emailCount')}</TableCell>
       <TableCell>
-        <AspectVertMenu actions={getItemActions(notification.get('id'))} />
+        <AspectVertMenu params={notification} actions={getItemActions()} />
       </TableCell>
     </TableRow>
   )
