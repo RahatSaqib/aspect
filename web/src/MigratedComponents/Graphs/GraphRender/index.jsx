@@ -42,13 +42,24 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
   const [graphKeys, setGraphKeys] = useState(false)
   const { culture } = useSelector(({ user }) => {
     const { culture } = user.toJS()
-    return { culture }
+    return {
+      culture,
+    }
   })
 
   const { isLoading, isError, data, error } = useQuery(
-    [id, { ...updatedParams }],
+    [
+      id,
+      {
+        ...updatedParams,
+      },
+    ],
     async (key, { ...updatedParams }) =>
-      fetchGraphDataFromConfig({ assays, config, updatedParams })
+      fetchGraphDataFromConfig({
+        assays,
+        config,
+        updatedParams,
+      })
   )
 
   if (isError) {
