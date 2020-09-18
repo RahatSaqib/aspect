@@ -59,7 +59,7 @@ const NotificationTableRow = ({
       <TableCell>{name}</TableCell>
       <TableCell>{formatRelative(intl, lastTriggeredOn)}</TableCell>
       <TableCell>{totalTriggers}</TableCell>
-      <TableCell className={cssClasses('table__cell, table__cell--truncate')}>
+      <TableCell className={cssClasses('table__cell--truncate')}>
         {addEllipsis(contacts, contactsCount)}
       </TableCell>
     </TableRow>

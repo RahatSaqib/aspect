@@ -4,8 +4,6 @@
   color: var(--aspect-color-mandy);
 }
 
-.table__cell {
-}
 .table__cell--truncate {
   width: 40%;
   overflow: hidden;
