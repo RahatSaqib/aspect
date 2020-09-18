@@ -235,10 +235,10 @@ const removeStringsFromArray = string => {
 const translateLabel = (
   string,
   assaysFromState,
-  keysToRename,
+  legendsToRename,
   type = false
 ) => {
-  const dictionary = keysToRename ? [...keysToRename] : []
+  const dictionary = legendsToRename ? [...legendsToRename] : []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
@@ -262,11 +262,11 @@ const generateLegend = (
   assaysFromState,
   type = false,
   legendsNotToRender = false,
-  keysToRename = false
+  legendsToRename = false
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {
-      label: translateLabel(string, assaysFromState, keysToRename, type),
+      label: translateLabel(string, assaysFromState, legendsToRename, type),
       color: generateColorForLegend(string, type),
     }
   }

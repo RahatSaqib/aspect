@@ -37,8 +37,8 @@ const CustomBarGraphLegend = ({
   assaysFromState,
   type,
   legendsNotToRender,
-  keysToRename,
-  keysToPopover,
+  legendsToRename,
+  legendsToPopover,
   symbolShape,
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
@@ -51,7 +51,7 @@ const CustomBarGraphLegend = ({
     >
       {keys.map(k => {
         const { tooltip: { show, placement, message } = false } =
-          find(keysToPopover, { externalId: k, tooltip: { show: true } }) ||
+          find(legendsToPopover, { externalId: k, tooltip: { show: true } }) ||
           false
 
         const { label, color } = generateLegend(
@@ -59,7 +59,7 @@ const CustomBarGraphLegend = ({
           assaysFromState,
           type,
           legendsNotToRender,
-          keysToRename
+          legendsToRename
         )
 
         return show ? (
@@ -94,8 +94,8 @@ CustomBarGraphLegend.propTypes = {
   type: PropTypes.string.isRequired,
   symbolShape: PropTypes.string,
   legendsNotToRender: PropTypes.oneOf([PropTypes.object]).isRequired,
-  keysToRename: PropTypes.oneOf([PropTypes.array]).isRequired,
-  keysToPopover: PropTypes.oneOf([PropTypes.array]).isRequired,
+  legendsToRename: PropTypes.oneOf([PropTypes.array]).isRequired,
+  legendsToPopover: PropTypes.oneOf([PropTypes.array]).isRequired,
 }
 
 export default CustomBarGraphLegend
