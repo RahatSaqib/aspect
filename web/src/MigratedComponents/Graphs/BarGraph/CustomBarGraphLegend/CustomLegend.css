@@ -36,6 +36,8 @@
 .legend__color--circle {
   border-radius: 50%;
 }
-
 .legend__label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
