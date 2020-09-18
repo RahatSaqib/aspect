@@ -1,0 +1,9 @@
+.menu-item {
+    padding: 15px 20px 15px 20px;
+}
+
+.divider {
+    width: 90%;
+    margin: auto;
+    background-color:#7f7f7f8c !important;
+}

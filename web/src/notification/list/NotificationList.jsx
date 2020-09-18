@@ -227,6 +227,9 @@ export const NotificationList = props => {
                   label: intl.formatMessage(messages.email),
                   sortable: true,
                 },
+                {
+                  key: 'actions',
+                },
               ]}
             />
             <TableBody>
@@ -237,7 +240,7 @@ export const NotificationList = props => {
                     key={notification.get('id')}
                     intl={intl}
                     notification={notification}
-                    onClick={onRowClick}
+                    // onClick={onRowClick}
                     data-notification-id={notification.get('id')}
                   />
                 ))}
