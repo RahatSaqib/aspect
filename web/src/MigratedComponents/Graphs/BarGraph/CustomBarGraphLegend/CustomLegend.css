@@ -23,7 +23,7 @@
 }
 
 .legend__container--popover:hover {
-  cursor: pointer;
+  cursor: help;
   background: rgba(216, 216, 216, 0.4);
 }
 
