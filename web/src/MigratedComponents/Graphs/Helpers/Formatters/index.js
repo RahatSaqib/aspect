@@ -238,7 +238,7 @@ const translateLabel = (
   keysToRename,
   type = false
 ) => {
-  const dictionary = [...keysToRename]
+  const dictionary = keysToRename ? [...keysToRename] : []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
