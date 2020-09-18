@@ -1,7 +1,6 @@
 import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
-
 import groupBy from 'lodash/groupBy'
 import indexOf from 'lodash/indexOf'
 import last from 'lodash/last'
@@ -344,11 +343,22 @@ const groupForDeviceStatusAPI = (
   return normaliseKeys(grouped)
 }
 
+const groupForInvetoryStatusAPI = data => {
+  const grouped = []
+  map(data, ({ consumableId, consumableName, ...rest }) =>
+    map(rest, (val, key) =>
+      grouped.push({ consumableId, consumableName, increment: key, [key]: val })
+    )
+  )
+  return grouped
+}
+
 export {
   groupByKey,
   groupForPie,
   groupForPieRow,
   groupForDivergent,
+  groupForInvetoryStatusAPI,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,

@@ -36,6 +36,7 @@ import {
   groupForPie,
   groupForPieRow,
   groupForDivergent,
+  groupForInvetoryStatusAPI,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
@@ -311,6 +312,10 @@ const formatDataByGraphType = (
         formatDate,
         filterBy
       )
+      break
+
+    case 'barInventory':
+      grouped = groupForInvetoryStatusAPI(data)
       break
 
     case 'pieLegacyTreatment':
