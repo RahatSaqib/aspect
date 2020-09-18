@@ -16,12 +16,6 @@ const enhance = identity
 
 const getItemActions = (history) => [
   {
-    icon: 'FaPause',
-    text: 'Pause',
-    action: (params) => { console.log('Pause', params) },
-    disabled: true
-  },
-  {
     icon: 'FaEdit',
     text: 'Edit',
     action: (params) => { history.push(`/browse/notification/${params.get('id')}`) }
