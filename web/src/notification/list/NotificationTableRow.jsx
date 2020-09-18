@@ -41,7 +41,8 @@ const getItemActions = history => [
   {
     icon: 'FaFileAlt',
     text: 'View Log',
-    action: params => history.push(`/browse/notification/${params.get('id')}/history`),
+    action: params =>
+      history.push(`/browse/notification/${params.get('id')}/history`),
     separator: true,
   },
   {
