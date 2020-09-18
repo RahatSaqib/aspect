@@ -1,6 +1,8 @@
-const _ = require('lodash')
-const { isWeekend } = require('date-fns')
+const min = require('lodash/min')
+const omit = require('lodash/omit')
+const isWeekend = require('date-fns/isWeekend')
 const format = require('date-fns/format')
+const addDays = require('date-fns/addDays')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
@@ -9,10 +11,10 @@ async function activityOverTimeDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // build up array of days in date range. makes querying easier:
+  // build up array of days in date range, excluding today because it could be incomplete. It makes querying easier:
   let days = getArrayOfDaysInRange(
     query.minDate,
-    _.min([query.maxDate, new Date()]),
+    min([query.maxDate, addDays(new Date(), -1)]),
     {
       devicesActive: 0,
       devicesInactive: 0,
@@ -155,7 +157,7 @@ async function activityOverTimeDashboard(request) {
     if (dayCounts) {
       day = {
         ...day,
-        ..._.omit(dayCounts, ['dayDate']),
+        ...omit(dayCounts, ['dayDate']),
       }
       day.devicesInactive = day.devicesTotal - day.devicesActive
     } else {
