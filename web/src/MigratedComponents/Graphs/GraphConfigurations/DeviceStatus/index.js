@@ -45,8 +45,11 @@ const deviceStatusGraphs = {
         keysToPopover: [
           {
             externalId: 'inactiveUnknown',
-            popover: true,
-            message: 'Something long and terrible!',
+            tooltip: {
+              show: true,
+              placement: 'top',
+              message: 'statusUnknownLegend',
+            },
           },
         ],
         tickValuesYShape: 'clubsandwich',
