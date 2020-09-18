@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -47,6 +48,16 @@ const AspectVertMenu = ({ actions, params }) => {
       </IconMenu>
     )
   return null
+}
+
+AspectVertMenu.propTypes = {
+  actions: PropTypes.shape({
+    icon: PropTypes.string,
+    text: PropTypes.string.isRequired,
+    action: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
+  }),
+  params: PropTypes.oneOf(['PropTypes.Object']).isRequired,
 }
 
 export default AspectVertMenu
