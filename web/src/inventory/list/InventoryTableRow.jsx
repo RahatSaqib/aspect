@@ -28,29 +28,27 @@ const InventoryTableRow = ({ inventoryItem, ...restProps }) => {
   const actions = [
     {
       icon: 'FaCheck',
-      text: intl.formatMessage(
-        messages.receiveInventory
-      ),
-      action: ({ inventoryItemId }) => dispatch(showReceiveInventoryDialog(inventoryItemId))
+      text: intl.formatMessage(messages.receiveInventory),
+      action: ({ inventoryItemId }) =>
+        dispatch(showReceiveInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaPlus',
       text: intl.formatMessage(messages.addInventory),
-      action: ({ inventoryItemId }) => dispatch(showAddInventoryDialog(inventoryItemId))
+      action: ({ inventoryItemId }) =>
+        dispatch(showAddInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaExchangeAlt',
-      text: intl.formatMessage(
-        messages.transferInventory
-      ),
-      action: ({ inventoryItemId }) => dispatch(showTransferInventoryDialog(inventoryItemId))
+      text: intl.formatMessage(messages.transferInventory),
+      action: ({ inventoryItemId }) =>
+        dispatch(showTransferInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaMinus',
-      text: intl.formatMessage(
-        messages.removeInventory
-      ),
-      action: ({ inventoryItemId }) => dispatch(showRemoveInventoryDialog(inventoryItemId))
+      text: intl.formatMessage(messages.removeInventory),
+      action: ({ inventoryItemId }) =>
+        dispatch(showRemoveInventoryDialog(inventoryItemId)),
     },
   ]
 
@@ -83,7 +81,7 @@ const InventoryTableRow = ({ inventoryItem, ...restProps }) => {
           {inventoryItem.get('inTransitFromSiteName') ? (
             <span>
               {intl.formatNumber(inventoryItem.get('quantityOnHand'))}
-            &nbsp;
+              &nbsp;
               <small>
                 {intl.formatMessage(messages.inTransitFromSiteName, {
                   inTransitFromSiteName: inventoryItem.get(
@@ -93,8 +91,8 @@ const InventoryTableRow = ({ inventoryItem, ...restProps }) => {
               </small>
             </span>
           ) : (
-              inventoryItem.get('quantityOnHand')
-            )}
+            inventoryItem.get('quantityOnHand')
+          )}
         </TableCell>
       )}
       {inventoryItem.get('visibleProperties').includes('expiresOn') && (
@@ -118,7 +116,10 @@ const InventoryTableRow = ({ inventoryItem, ...restProps }) => {
         </TableCell>
       )}
       <TableCell className={cssClasses('TableCell')}>
-        <AspectVertMenu params={{ inventoryItemId: inventoryItem.get('id') }} actions={actions} />
+        <AspectVertMenu
+          params={{ inventoryItemId: inventoryItem.get('id') }}
+          actions={actions}
+        />
       </TableCell>
     </TableRow>
   )

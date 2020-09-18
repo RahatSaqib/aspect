@@ -1,7 +1,7 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'
 
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 import {
@@ -14,36 +14,45 @@ const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
 const enhance = identity
 
-const getItemActions = (history) => [
+const getItemActions = history => [
   {
     icon: 'FaEdit',
     text: 'Edit',
-    action: (params) => { history.push(`/browse/notification/${params.get('id')}`) }
+    action: params => history.push(`/browse/notification/${params.get('id')}`),
   },
   {
     icon: 'FaCopy',
     text: 'Copy',
-    action: (params) => { console.log('Copy', params) },
-    disabled: true
+    action: params => {
+      /* eslint-disable no-debugger, no-console */
+      console.log('Copy', params)
+    },
+    disabled: true,
   },
   {
     icon: 'FaEye',
     text: 'Preview',
-    action: (params) => { console.log('Preview', params) },
-    disabled: true
+    action: params => {
+      /* eslint-disable no-debugger, no-console */
+      console.log('Preview', params)
+    },
+    disabled: true,
   },
   {
     icon: 'FaFileAlt',
     text: 'View Log',
-    action: (params) => { history.push(`/browse/notification/${params.get('id')}/history`) },
-    separator: true
+    action: params => history.push(`/browse/notification/${params.get('id')}/history`),
+    separator: true,
   },
   {
     icon: 'FaTrash',
     text: 'Delete',
-    action: (params) => { console.log('Delete', params) },
-    disabled: true
-  }
+    action: params => {
+      /* eslint-disable no-debugger, no-console */
+      console.log('Delete', params)
+    },
+    disabled: true,
+  },
 ]
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
@@ -65,7 +74,10 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => {
       <TableCell>{counter('smsCount')}</TableCell>
       <TableCell>{counter('emailCount')}</TableCell>
       <TableCell>
-        <AspectVertMenu params={notification} actions={getItemActions(history)} />
+        <AspectVertMenu
+          params={notification}
+          actions={getItemActions(history)}
+        />
       </TableCell>
     </TableRow>
   )
