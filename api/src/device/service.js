@@ -189,6 +189,7 @@ async function getListDevices(query, auth) {
   const getItems = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
+    .groupBy('d.id')
     .select([
       ...SELECT_LIST_FIELDS,
       'frd30.resultCount as resultCountThisMonth',
@@ -208,6 +209,32 @@ async function getListDevices(query, auth) {
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
+      // Gets the count of days the device was logged
+      knex('DeviceMaintenanceStatusLog as dmsl_total')
+        .whereRaw('dmsl_total.deviceId = d.id')
+        .andWhere(
+          'dmsl_total.day',
+          '>=',
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)')
+        )
+        .count(knex.raw('DISTINCT day'))
+        .as('totalDays'),
+      // Gets the count of days the device was in status 'Active'
+      knex('DeviceMaintenanceStatusLog as dmsl_active')
+        .innerJoin(
+          'DeviceMaintenanceStatus as dms_active',
+          'dmsl_active.deviceMaintenanceStatusId',
+          'dms_active.id'
+        )
+        .whereRaw('dmsl_active.deviceId = d.id')
+        .andWhere(
+          'dmsl_active.day',
+          '>=',
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)')
+        )
+        .andWhere('dms_active.externalId', 'active')
+        .count(knex.raw('DISTINCT day'))
+        .as('activeDays'),
     ])
     .distinct()
 
@@ -215,13 +242,13 @@ async function getListDevices(query, auth) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   data.forEach(it => {
-    // FIXME: Use actual data instead
-    const availabilityCount = _.random(25, 30)
     it.availability = {
-      count: availabilityCount,
-      total: 30,
-      rate: availabilityCount / 30,
+      count: it.activeDays,
+      total: it.totalDays,
+      rate: it.activeDays / it.totalDays,
     }
+    delete it.activeDays
+    delete it.totalDays
 
     it.error = {
       count: it.thisMonthErrors || 0,

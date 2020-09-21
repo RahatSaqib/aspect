@@ -17,7 +17,7 @@ export const messages = defineMessages({
   },
   availabilityRate: {
     id: 'pages.DeviceList.availabilityRate',
-    defaultMessage: 'Availability',
+    defaultMessage: 'Active',
   },
   errorRate: {
     id: 'pages.DeviceList.errorRate',
