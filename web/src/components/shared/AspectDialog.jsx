@@ -1,10 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import classnames from 'classnames/bind'
 
+import IconButton from '@material-ui/core/IconButton'
+import CloseIcon from '@material-ui/icons/Close'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+
+const cssClasses = classnames.bind(require('./AspectDialog.css'))
 
 const AspectDialog = ({
   actions,
@@ -13,6 +18,7 @@ const AspectDialog = ({
   maxWidth,
   modal,
   onRequestClose,
+  showCrossIcon,
   title,
   ...restProps
 }) => (
@@ -25,7 +31,20 @@ const AspectDialog = ({
     aria-labelledby="dialog-title"
     {...restProps}
   >
-    {title && <DialogTitle id="dialog-title">{title}</DialogTitle>}
+    {title && (
+      <DialogTitle id="dialog-title">
+        {title}
+        {showCrossIcon && onRequestClose ? (
+          <IconButton
+            aria-label="close"
+            className={cssClasses('button-close')}
+            onClick={onRequestClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    )}
     <DialogContent>{children}</DialogContent>
 
     {React.Children.count(actions) > 0 && (
@@ -41,6 +60,7 @@ AspectDialog.propTypes = {
   maxWidth: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', false]),
   modal: PropTypes.bool,
   onRequestClose: PropTypes.func, // eslint-disable-line
+  showCrossIcon: PropTypes.bool,
   title: PropTypes.string,
 }
 AspectDialog.defaultProps = {
@@ -48,6 +68,7 @@ AspectDialog.defaultProps = {
   maxWidth: 'md',
   modal: false,
   title: '',
+  showCrossIcon: false,
 }
 
 export default AspectDialog

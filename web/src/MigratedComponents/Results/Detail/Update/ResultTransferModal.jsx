@@ -1,0 +1,221 @@
+import React, { useState, useEffect } from 'react'
+import classnames from 'classnames/bind'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { useQuery } from 'react-query'
+import { defineMessages, injectIntl } from 'react-intl'
+import { useHistory } from 'react-router'
+
+import AspectDialog from '../../../../components/shared/AspectDialog'
+import AutoComplete from '../../../../components/shared/AutoComplete'
+import CheckboxField from '../../../../components/shared/CheckboxField'
+import fetchWrapperForQueries from '../../../QueryFetch'
+import { SITE_ALL } from '../../../QueryFetch/Site'
+import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
+import { aspectFetch } from '../../../../shared/utils/fetch'
+import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
+import errors from './errors'
+
+const cssClasses = classnames.bind(require('../Detail.css'))
+
+const messages = defineMessages({
+  header: {
+    id: 'pages.transferResult.header',
+    defaultMessage: 'Transfer Result',
+  },
+  titleSites: {
+    id: 'pages.transferResult.titleSites',
+    defaultMessage: 'Transfer to Clinic',
+  },
+  hint: {
+    id: 'pages.transferResult.hint',
+    defaultMessage: 'Enter clinic name',
+  },
+  buttonCancel: {
+    id: 'pages.transferResult.buttonCancel',
+    defaultMessage: 'Cancel',
+  },
+  buttonTransfer: {
+    id: 'pages.transferResult.buttonTransfer',
+    defaultMessage: 'Transfer',
+  },
+  includeAllResults: {
+    id: 'pages.transferResult.includeAllResults',
+    defaultMessage: 'Include ALL results related to Patient ID',
+  },
+  processing: {
+    id: 'pages.transferResult.processing',
+    defaultMessage: 'Processing...',
+  },
+  note: {
+    id: 'pages.transferResult.note',
+    defaultMessage: `
+      By transferring this result you will no longer be able to edit
+      this result record.
+      This action cannot be undone.
+    `,
+  },
+})
+
+const ResultTransferModal = ({
+  intl: { formatMessage },
+  data: { id: resultId, patientId, siteId } = {},
+  isOpen,
+  onClose,
+}) => {
+  const [allSites, setAllSites] = useState([])
+  const [selectedSiteId, setSelectedSite] = useState(null)
+  const [comment, setComment] = useState('')
+  const [includeAllResults, setIncludeAllResults] = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [transferError, setTransferError] = useState(null)
+  const history = useHistory()
+
+  useQuery(
+    [SITE_ALL.KEY],
+    async key =>
+      fetchWrapperForQueries({
+        endpoint: `${SITE_ALL.ENDPOINT}`,
+        errors: errors.SitesAll,
+      }),
+    {
+      onSuccess: ({ data }) =>
+        setAllSites(
+          data
+            .filter(({ id }) => +id !== +siteId)
+            .map(({ id, name }) => ({ text: name, value: id }))
+        ),
+    }
+  )
+
+  const reset = () => {
+    setSelectedSite(null)
+    setComment('')
+    setIncludeAllResults(true)
+    setIsProcessing(false)
+    setTransferError(null)
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      reset()
+    }
+  }, [isOpen])
+
+  const onRequestClose = () => {
+    if (!isProcessing && onClose) {
+      onClose()
+    }
+  }
+  const onSubmit = () => {
+    setIsProcessing(true)
+
+    return aspectFetch(`${RESULT_TRANSFER.ENDPOINT}/${resultId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        siteId: selectedSiteId,
+        timestamp: new Date().getTime(),
+        comment,
+        includeAllResults,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.transferResult.POST.default.title',
+              defaultMessage: 'Transfer Result Error',
+            },
+          })
+        ),
+      },
+    })
+      .then(() => {
+        history.push('/browse/result')
+      })
+      .catch(err => {
+        setTransferError(err.message)
+        setIsProcessing(false)
+      })
+  }
+
+  return (
+    <AspectDialog
+      actions={[
+        <Button
+          color="primary"
+          disabled={isProcessing}
+          onClick={onRequestClose}
+        >
+          {formatMessage(messages.buttonCancel)}
+        </Button>,
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={isProcessing || !selectedSiteId}
+          onClick={onSubmit}
+        >
+          {formatMessage(messages.buttonTransfer)}
+        </Button>,
+      ]}
+      maxWidth="sm"
+      open={isOpen}
+      onRequestClose={onRequestClose}
+      showCrossIcon
+      title={`${formatMessage(messages.header)}: ${patientId}`}
+      disableBackdropClick
+      disableEscapeKeyDown
+    >
+      <div>
+        <AutoComplete
+          classes={{ container: cssClasses('autocomplete-wrapper') }}
+          hintText={formatMessage(messages.hint)}
+          floatingLabelText={formatMessage(messages.titleSites)}
+          floatingLabelFixed
+          dataSource={allSites}
+          listStyle={{ width: 'auto' }}
+          onSelect={({ value }) => {
+            setSelectedSite(value)
+          }}
+          filter={AutoComplete.caseInsensitiveFilter}
+        />
+        <TextField
+          fullWidth
+          multiline
+          rowsMax="5"
+          placeholder="Enter comment"
+          onChange={event => setComment(event.target.value)}
+          margin="normal"
+          value={comment}
+          inputProps={{ maxLength: 1000 }}
+        />
+      </div>
+
+      <CheckboxField
+        checked={includeAllResults}
+        label={formatMessage(messages.includeAllResults)}
+        onChange={(event, isChecked) => setIncludeAllResults(isChecked)}
+      />
+      <div className={cssClasses('NoteWrapper')}>
+        {formatMessage(messages.note)}
+      </div>
+
+      {isProcessing && (
+        <div className={cssClasses('processing')}>
+          <div className={cssClasses('processing-spinner')}>
+            <CircularProgress size="100%" thickness="1" disableShrink />
+          </div>
+          <div className={cssClasses('processing-label')}>
+            {formatMessage(messages.processing)}
+          </div>
+        </div>
+      )}
+
+      {transferError && (
+        <div className={cssClasses('ErrorMessage')}>{transferError}</div>
+      )}
+    </AspectDialog>
+  )
+}
+
+export default injectIntl(ResultTransferModal)
