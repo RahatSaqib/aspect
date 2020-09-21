@@ -19,36 +19,36 @@ const AspectVertMenuItem = ({
   params,
   separator = false,
 }) => (
-  <Fragment>
-    <MenuItem
-      disabled={disabled}
-      onClick={() => {
-        action(params)
-      }}
-      className={cssClasses('menu-item')}
-    >
-      {icon && (
-        <ListItemIcon>
-          <IconProvider icon={icon} />
-        </ListItemIcon>
-      )}
-      <ListItemText inset primary={text} />
-    </MenuItem>
-    {separator && <Divider className={cssClasses('divider')} />}
-  </Fragment>
-)
+    <Fragment>
+      <MenuItem
+        disabled={disabled}
+        onClick={() => {
+          action(params)
+        }}
+        className={cssClasses('menu-item')}
+      >
+        {icon && (
+          <ListItemIcon>
+            <IconProvider icon={icon} />
+          </ListItemIcon>
+        )}
+        <ListItemText inset primary={text} />
+      </MenuItem>
+      {separator && <Divider className={cssClasses('divider')} />}
+    </Fragment>
+  )
 
-const AspectVertMenu = ({ actions, params }) => {
-  if (actions)
-    return (
+const AspectVertMenu = ({ actions, params }) =>
+  actions ?
+    (
       <IconMenu icon={<MoreVertIcon />} className={cssClasses('menu')}>
         {actions.map(props => (
           <AspectVertMenuItem {...props} params={params} />
         ))}
       </IconMenu>
     )
-  return null
-}
+    : null
+
 
 AspectVertMenu.propTypes = {
   actions: PropTypes.shape({

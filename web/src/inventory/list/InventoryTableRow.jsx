@@ -21,7 +21,7 @@ const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const InventoryTableRow = ({ inventoryItem, ...restProps }) => {
+const InventoryTableRow = ({ inventoryItem, key }) => {
   const intl = useIntl()
   const dispatch = useDispatch()
 
@@ -54,8 +54,8 @@ const InventoryTableRow = ({ inventoryItem, ...restProps }) => {
 
   return (
     <TableRow
-      {...restProps}
-      className={cssClasses(restProps.className, 'TableRow')}
+      key={key}
+      className={cssClasses('TableRow')}
     >
       {inventoryItem.get('visibleProperties').includes('siteName') && (
         <TableCell

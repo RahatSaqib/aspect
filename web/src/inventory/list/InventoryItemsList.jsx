@@ -399,7 +399,6 @@ export const InventoryItemsList = ({
                 .map(inventoryItem => (
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
-                    intl={intl}
                     inventoryItem={inventoryItem}
                   />
                 ))}
