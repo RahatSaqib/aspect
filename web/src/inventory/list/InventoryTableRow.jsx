@@ -57,23 +57,23 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
       key={key}
       className={cssClasses('TableRow')}
     >
-      {inventoryItem.get('visibleProperties').includes('siteName') && (
+      {inventoryItem.get('visibleProperties').includes('siteName') ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={inventoryItem.getIn(['rowSpans', 'siteName'])}
         >
           {inventoryItem.get('siteName')}
         </TableCell>
-      )}
-      {inventoryItem.get('visibleProperties').includes('consumableName') && (
+      ) : null}
+      {inventoryItem.get('visibleProperties').includes('consumableName') ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={inventoryItem.getIn(['rowSpans', 'consumableName'])}
         >
           {inventoryItem.get('consumableName')}
         </TableCell>
-      )}
-      {inventoryItem.get('visibleProperties').includes('quantityOnHand') && (
+      ) : null}
+      {inventoryItem.get('visibleProperties').includes('quantityOnHand') ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={inventoryItem.getIn(['rowSpans', 'quantityOnHand'])}
@@ -91,11 +91,11 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
               </small>
             </span>
           ) : (
-            inventoryItem.get('quantityOnHand')
-          )}
+              inventoryItem.get('quantityOnHand')
+            )}
         </TableCell>
-      )}
-      {inventoryItem.get('visibleProperties').includes('expiresOn') && (
+      ) : null}
+      {inventoryItem.get('visibleProperties').includes('expiresOn') ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
@@ -104,8 +104,8 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
             ? formatDate(inventoryItem.get('expiresOn'))
             : 'N/A'}
         </TableCell>
-      )}
-      {inventoryItem.get('visibleProperties').includes('expiresOn') && (
+      ) : null}
+      {inventoryItem.get('visibleProperties').includes('expiresOn') ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
@@ -114,7 +114,7 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
             ? formatRelative(intl, inventoryItem.get('expiresOn'))
             : intl.formatMessage(messages.never)}
         </TableCell>
-      )}
+      ) : null}
       <TableCell className={cssClasses('TableCell')}>
         <AspectVertMenu
           params={{ inventoryItemId: inventoryItem.get('id') }}
