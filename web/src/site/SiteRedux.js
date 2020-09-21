@@ -13,7 +13,11 @@ import {
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
-import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
+import {
+  receiveItem,
+  Items,
+  receiveListWithSet,
+} from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
@@ -384,7 +388,8 @@ export default function siteReducer(state = initialState, action) {
     case types.RECEIVE_SITES:
       return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
-        mutState.set('items', receiveList(mutState.items, immutList))
+
+        mutState.set('items', receiveListWithSet(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
     case types.REJECTED_SITES:

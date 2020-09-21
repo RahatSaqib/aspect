@@ -523,7 +523,7 @@ function isRegexMatch(stringValue, options) {
     const expression = getArgumentFromOptions(options, 'expression')
     if (expression) {
       const regex = new RegExp(expression, 'g')
-      return !_.isNull(stringValue.match(regex))
+      return !_.isNull(raw.match(regex))
     }
   }
 }
@@ -534,7 +534,7 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
     const expression = getArgumentFromOptions(options, 'expression')
     const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
     if (expression) {
-      const regex = new RegExp(expression, 'gm')
+      const regex = new RegExp(expression, 'gmi')
       const match = regex.exec(stringValue)
       if (match && match.length > groupNumber) {
         return safeString(match[groupNumber])
