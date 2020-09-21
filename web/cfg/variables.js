@@ -82,6 +82,7 @@ exports.customPropertiesVariables = {
   '--your-pink': '#ffc9c4',
   '--malachite': '#00ca1c',
   '--web-orange': '#FEA500',
+  '--web-orange-2': '#FFD970',
 
   // Genrally used variables throughout the app
   '--aspect-color-cyan': 'var(--scooter, #3cc0cd)',
@@ -104,7 +105,7 @@ exports.customPropertiesVariables = {
   '--aspect-color-grey-8': 'var(--white-lilac-2, #f6f7fb)',
   '--aspect-color-grey-9': 'var(--mercury, #e6e6e6)',
   '--aspect-color-mandy': 'var(--guardsman-red, #d60000)',
-  '--aspect-color-mandy-2': 'var(--carnation, #f45b69)',
+  '--aspect-color-mandy-2': 'var(--carnation, #EB6562)',
   '--aspect-color-mandy-3': 'var(--mandy-3,  #e85164)',
   '--aspect-color-mantis': 'var(--malachite, #00ca1c)',
   '--aspect-color-mountain': 'var(--purple-mountains-majesty, #9874b2)',
@@ -122,6 +123,21 @@ exports.customPropertiesVariables = {
   '--aspect-color-supernova': 'var(--saffron, #f0bc2c)',
   '--aspect-color-supernova-2': 'var(--my-sin, #fcb124)',
   '--aspect-color-sushi': 'var(--sushi, #7cb342)',
+
+  // Operational Data screen
+  '--aspect-device-active': '#99D25D',
+  '--aspect-device-inactive': '#D8D8D8',
+  '--aspect-device-no-samples': '#CCDCE1',
+  '--aspect-device-stockout': '#72ECFF',
+  '--aspect-device-no-staff': '#F7B500',
+  '--aspect-device-needs-repair': '#DB3018',
+  '--aspect-device-connectivity': '#EB6562',
+  '--aspect-device-error': '#FF2000',
+  '--aspect-device-unknown': '#454545',
+  '--aspect-device-transfer-time': '#99D7EF',
+  '--aspect-device-weekend': '#F4F4F4',
+  '--aspect-device-aspect': '#20A1B3',
+  '--aspect-device-titles': '#06C4E3',
 
   // commenting 'var(--white, #ffffff)' for now because after upgrade Chip component
   // in web/src/components/shared/TagInput.jsx crashes page and shows error in console

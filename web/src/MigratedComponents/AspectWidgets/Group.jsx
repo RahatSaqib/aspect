@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
-import Widget from './Widget'
+import { AspectWidget } from './Widget'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
@@ -27,7 +27,7 @@ const AspectWidgetGroup = ({ data }) => {
             </div>
             <div className={cssClasses('summary__groupWidgets')}>
               {items.map(widget => (
-                <Widget data={widget} />
+                <AspectWidget data={widget} />
               ))}
             </div>
           </div>
