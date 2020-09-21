@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Fragment } from 'react'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -19,7 +19,7 @@ const AspectVertMenuItem = ({
   params,
   separator = false,
 }) => (
-  <>
+  <Fragment>
     <MenuItem
       disabled={disabled}
       onClick={() => {
@@ -35,7 +35,7 @@ const AspectVertMenuItem = ({
       <ListItemText inset primary={text} />
     </MenuItem>
     {separator && <Divider className={cssClasses('divider')} />}
-  </>
+  </Fragment>
 )
 
 const AspectVertMenu = ({ actions, params }) => {
