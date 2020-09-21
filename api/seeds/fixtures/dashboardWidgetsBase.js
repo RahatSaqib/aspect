@@ -1189,10 +1189,13 @@ module.exports = {
           DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
               INNER JOIN
           DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+              INNER JOIN
+          DeviceType AS dt ON dt.id = d.deviceTypeId
       WHERE
           dms.externalId = 'inactiveDownForRepair'
               AND YEAR(dmsl.day) = YEAR(CURRENT_DATE)
               AND MONTH(dmsl.day) = MONTH(CURRENT_DATE)
+              AND dt.externalId = 'CepheidGeneXpert'
       `,
       sqlForStatUnit: `
       SELECT
@@ -1207,10 +1210,13 @@ module.exports = {
           DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
               INNER JOIN
           DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+              INNER JOIN
+          DeviceType AS dt ON dt.id = d.deviceTypeId
       WHERE
           dms.externalId = 'inactiveDownForRepair'
               AND YEAR(dmsl.day) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
               AND MONTH(dmsl.day) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+              AND dt.externalId = 'CepheidGeneXpert'
       `,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterrumptionUnit',
@@ -1237,6 +1243,7 @@ module.exports = {
       FROM (
         SELECT GetWeekdaysInRange(NOW(), GREATEST(d.createdOn, DATE_FORMAT(NOW(), '%Y-%m-01'))) AS totalDays, down.daysInactive
         FROM Device AS d
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
         INNER JOIN Site AS s ON s.id = d.siteId
         LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         LEFT OUTER JOIN (
@@ -1253,6 +1260,7 @@ module.exports = {
           GROUP BY dmsl.deviceId
         ) AS down ON d.id = down.deviceId
         WHERE d.createdOn <= NOW()
+        AND dt.externalId = 'CepheidGeneXpert'
       ) AS innerQuery
       `,
       sqlForStatUnit: `
@@ -1260,6 +1268,7 @@ module.exports = {
       FROM (
         SELECT GetWeekdaysInRange(LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)), GREATEST(d.createdOn, DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01'))) AS totalDays, down.daysInactive
         FROM Device AS d
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
         INNER JOIN Site AS s ON s.id = d.siteId
         LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         LEFT OUTER JOIN (
@@ -1276,6 +1285,7 @@ module.exports = {
           GROUP BY dmsl.deviceId
         ) AS down ON d.id = down.deviceId
         WHERE d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND dt.externalId = 'CepheidGeneXpert'
       ) AS innerQuery
       `,
       statUnit: '{unit} last month',
