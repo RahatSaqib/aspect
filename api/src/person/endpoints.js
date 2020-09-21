@@ -36,9 +36,8 @@ function listContactBaseConfig() {
           .allow('')
           .description('File format for exporting data'),
         geographicLevel: Joi.string()
-          .allow('')
           .valid('', 'lab', 'state', 'lga')
-          .description('The geography scope level'),
+          .description('The geographic scope level'),
         tags: Joi.array()
           .items(Joi.string())
           .single()

@@ -37,40 +37,35 @@ async function listPeople(request) {
       siteId: 'jc.siteId',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
-    .where(queryBuilder => {
+    .where(qb => {
       if (dataConstraints.partner.id) {
-        queryBuilder
-          .whereNull('p.partnerId')
-          .orWhere('p.partnerId', dataConstraints.partner.id)
+        qb.whereNull('p.partnerId').orWhere(
+          'p.partnerId',
+          dataConstraints.partner.id
+        )
       }
     })
 
-  if (geographicLevel) {
-    personQuery.modify(queryBuilder => {
-      switch (geographicLevel) {
-        case 'state':
-          queryBuilder.andWhere(qb =>
-            qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId')
-          )
-          break
-        case 'lga':
-          queryBuilder.andWhere(qb =>
-            qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId')
-          )
-          break
-        case 'lab':
-          queryBuilder.andWhere(qb => qb.whereNotNull('jc.siteId'))
-          break
-        default:
-          break
-      }
-    })
+  switch (geographicLevel) {
+    case 'state':
+      personQuery.andWhere(qb =>
+        qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId')
+      )
+      break
+    case 'lga':
+      personQuery.andWhere(qb =>
+        qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId')
+      )
+      break
+    case 'lab':
+      personQuery.andWhere(qb => qb.whereNotNull('jc.siteId'))
+      break
+    default:
+      break
   }
 
   if (tags) {
-    personQuery.andWhere(queryBuilder => {
-      queryBuilder.whereIn('t.title', tags)
-    })
+    personQuery.andWhere(qb => qb.whereIn('t.title', tags))
   }
 
   // get total count for paging
