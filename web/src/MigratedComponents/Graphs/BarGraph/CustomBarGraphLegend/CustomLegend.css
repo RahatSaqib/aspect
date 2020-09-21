@@ -23,7 +23,7 @@
 }
 
 .legend__container--popover:hover {
-  cursor: help;
+  cursor: pointer;
   background: rgba(216, 216, 216, 0.4);
 }
 
@@ -36,6 +36,7 @@
 .legend__color--circle {
   border-radius: 50%;
 }
+
 .legend__label {
   display: flex;
   justify-content: space-between;
