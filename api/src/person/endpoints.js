@@ -35,6 +35,14 @@ function listContactBaseConfig() {
         format: Joi.string()
           .allow('')
           .description('File format for exporting data'),
+        geographicLevel: Joi.string()
+          .allow('')
+          .valid('', 'lab', 'state', 'lga')
+          .description('The geography scope level'),
+        tags: Joi.array()
+          .items(Joi.string())
+          .single()
+          .description('The tags assigned to persons'),
         ...validateAllGeographyFilterParams(),
         ...validateSortPageParams('name', 'level', 'state', 'lga'),
       },
