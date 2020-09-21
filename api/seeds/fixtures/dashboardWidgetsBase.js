@@ -1239,34 +1239,57 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-      SELECT CONCAT(IFNULL(ROUND(SUM(daysinactive)/SUM(totalDays) * 100), 0), '%') AS cnt
-      FROM (
-        SELECT GetWeekdaysInRange(NOW(), GREATEST(d.createdOn, DATE_FORMAT(NOW(), '%Y-%m-01'))) AS totalDays, down.daysInactive
-        FROM Device AS d
-        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-        INNER JOIN Site AS s ON s.id = d.siteId
-        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-        LEFT OUTER JOIN (
-          SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
-          FROM DeviceMaintenanceStatusLog AS dmsl
-          INNER JOIN Device AS d ON dmsl.deviceId = d.id
-          INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
-          WHERE YEAR(dmsl.day) = YEAR(NOW())
-          AND MONTH(dmsl.day) = MONTH(NOW())
-          AND d.createdOn <= NOW()
-          AND dms.externalId = 'inactiveDownForRepair'
-          AND DAYOFWEEK(dmsl.day) <> 1
-          AND DAYOFWEEK(dmsl.day) <> 7
-          GROUP BY dmsl.deviceId
-        ) AS down ON d.id = down.deviceId
-        WHERE d.createdOn <= NOW()
+      SELECT CONCAT(
+        IFNULL(
+          ROUND(
+            SUM(down.daysInactive)
+            /
+            SUM(
+              GetWeekdaysInRange(NOW(),
+                GREATEST(d.createdOn,
+                  DATE_FORMAT(NOW(), '%Y-%m-01')
+                )
+              )
+            )
+          * 100),
+        0),
+      '%') AS cnt
+          FROM Device AS d
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN Site AS s ON s.id = d.siteId
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          LEFT OUTER JOIN (
+            SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+            FROM DeviceMaintenanceStatusLog AS dmsl
+            INNER JOIN Device AS d ON dmsl.deviceId = d.id
+            INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+            WHERE YEAR(dmsl.day) = YEAR(NOW())
+            AND MONTH(dmsl.day) = MONTH(NOW())
+            AND d.createdOn <= NOW()
+            AND dms.externalId = 'inactiveDownForRepair'
+            AND DAYOFWEEK(dmsl.day) <> 1
+            AND DAYOFWEEK(dmsl.day) <> 7
+            GROUP BY dmsl.deviceId
+          ) AS down ON d.id = down.deviceId
+          WHERE d.createdOn <= NOW()
         AND dt.externalId = 'CepheidGeneXpert'
-      ) AS innerQuery
       `,
       sqlForStatUnit: `
-      SELECT CONCAT(IFNULL(ROUND(SUM(daysinactive)/SUM(totalDays) * 100), 0), '%') AS cnt
-      FROM (
-        SELECT GetWeekdaysInRange(LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)), GREATEST(d.createdOn, DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01'))) AS totalDays, down.daysInactive
+      SELECT CONCAT(
+        IFNULL(
+          ROUND(
+            SUM(down.daysInactive)
+            /
+            SUM(
+              GetWeekdaysInRange(LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)),
+                GREATEST(d.createdOn,
+                  DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+                )
+              )
+            )
+          * 100),
+        0),
+      '%') AS cnt
         FROM Device AS d
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
         INNER JOIN Site AS s ON s.id = d.siteId
@@ -1286,7 +1309,6 @@ module.exports = {
         ) AS down ON d.id = down.deviceId
         WHERE d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
         AND dt.externalId = 'CepheidGeneXpert'
-      ) AS innerQuery
       `,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'percentageOfDaysWithServiceInterruptionUnit',
