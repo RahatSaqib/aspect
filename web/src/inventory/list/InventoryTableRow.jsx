@@ -53,10 +53,7 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
   ]
 
   return (
-    <TableRow
-      key={key}
-      className={cssClasses('TableRow')}
-    >
+    <TableRow key={key} className={cssClasses('TableRow')}>
       {inventoryItem.get('visibleProperties').includes('siteName') ? (
         <TableCell
           className={cssClasses('TableCell')}
@@ -91,8 +88,8 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
               </small>
             </span>
           ) : (
-              inventoryItem.get('quantityOnHand')
-            )}
+            inventoryItem.get('quantityOnHand')
+          )}
         </TableCell>
       ) : null}
       {inventoryItem.get('visibleProperties').includes('expiresOn') ? (
