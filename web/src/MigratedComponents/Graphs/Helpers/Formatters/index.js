@@ -1,4 +1,5 @@
 import first from 'lodash/first'
+import filter from 'lodash/filter'
 import findIndex from 'lodash/findIndex'
 import forOwn from 'lodash/forOwn'
 import includes from 'lodash/includes'
@@ -231,8 +232,13 @@ const removeStringsFromArray = string => {
   return newString.length > 1 ? newString[1] : newString[0]
 }
 
-const translateLabel = (string, assaysFromState, type = false) => {
-  const dictionary = []
+const translateLabel = (
+  string,
+  assaysFromState,
+  legendsToRename,
+  type = false
+) => {
+  const dictionary = legendsToRename ? [...legendsToRename] : []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
@@ -240,6 +246,7 @@ const translateLabel = (string, assaysFromState, type = false) => {
         dictionary.push({ externalId, name })
       )
   )
+
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
@@ -254,11 +261,12 @@ const generateLegend = (
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = false
+  legendsNotToRender = false,
+  legendsToRename = false
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {
-      label: translateLabel(string, assaysFromState, type),
+      label: translateLabel(string, assaysFromState, legendsToRename, type),
       color: generateColorForLegend(string, type),
     }
   }

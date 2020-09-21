@@ -19,7 +19,7 @@ const availableGroupI18nKeys = [
 
 const groupWidgets = (data, dashboard) => {
   const widgetGroups = []
-  const nonGroupedWidgets = data
+  const nonGroupedWidgets = [...data]
   availableGroupI18nKeys.map(group => {
     const items = filter(data, item => {
       const { dashboards } = item

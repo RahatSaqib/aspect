@@ -3,21 +3,23 @@ import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 
 import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
-import AspectWidgets from '../../MigratedComponents/AspectWidgets'
+import {
+  AspectWidgets,
+  EmptyWidgets,
+} from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import DASHBOARD_SUMMARY_WIDGETS from '../../MigratedComponents/QueryFetch/Dashboard/index'
+import SUMMARY_STATUS_WIDGETS from '../../MigratedComponents/QueryFetch/Dashboard/index'
 
 export const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
-
   const {
     isLoading,
     isError,
     data: { data: widgetData } = false,
     error,
-  } = useQuery(DASHBOARD_SUMMARY_WIDGETS.KEY, async () =>
+  } = useQuery([SUMMARY_STATUS_WIDGETS.KEY, { dashboard }], async () =>
     fetchWrapperForQueries({
-      endpoint: DASHBOARD_SUMMARY_WIDGETS.ENDPOINT,
+      endpoint: SUMMARY_STATUS_WIDGETS.ENDPOINT,
       params: { dashboard },
     })
   )
@@ -34,9 +36,8 @@ export const SummaryStatus = ({ className, dashboard }) => {
 
   return (
     <div className={className}>
-      {!isLoading && !isError && widgets ? (
-        <AspectWidgets data={widgets} />
-      ) : null}
+      {isLoading && !widgets ? <EmptyWidgets /> : null}
+      {!isLoading && widgets ? <AspectWidgets data={widgets} /> : null}
     </div>
   )
 }

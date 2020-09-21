@@ -107,8 +107,12 @@ async function listSites(request) {
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
-  const getCount = siteQuery.clone().count('s.id as count').first()
-
+  const getCount = knex
+    .count('siteId as count')
+    .from(
+      siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery')
+    )
+    .first()
   // get rows
   const getItems = siteQuery
     .clone()
