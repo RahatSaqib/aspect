@@ -269,7 +269,7 @@
                             "label": "Sample Collection Site"
                         },
                         {
-                            "id": "collectedBy",
+                            "id": "senderOperator",
                             "controlType": {
                                 "component": "textField"
                             },
