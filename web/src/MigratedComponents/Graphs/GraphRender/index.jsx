@@ -7,8 +7,9 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isEmpty from 'lodash/isEmpty'
+import _ from 'lodash'
 
-import fetchGraphDataFromConfig from './Queries'
+import fetchWrapperForQueries from '../../QueryFetch'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
@@ -18,14 +19,40 @@ import EmptyGraph from '../EmptyData'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
+const prepAssaysForParams = (whiteListed, method) => {
+  const assays = []
+  _.map(whiteListed, (value, key) => assays.push({ assay: value }))
+  return assays
+}
+
+const prepParamsForEndPoint = (urlParams, updatedParams) => {
+  const params = []
+  const paramsToUse =
+    updatedParams && !_.isNull(_.values(updatedParams)[0])
+      ? updatedParams
+      : urlParams
+
+  _.map(paramsToUse, (value, key) =>
+    _.isArray(value)
+      ? _.map(value, v => params.push({ [key]: v }))
+      : params.push({ [key]: value })
+  )
+  return params
+}
+
 const Loading = () => (
   <div className={cssClasses('graphrender__spinner')}>
     <CircularProgress />
   </div>
 )
 
-const GraphRender = ({ assays, config, updatedParams = {} }) => {
+const GraphRender = ({
+  assays: { assaysFromState, whiteListed } = false,
+  config,
+  updatedParams = {},
+}) => {
   const {
+    api: { endpoint, params, method } = false,
     averages,
     component: Component,
     size,
@@ -37,7 +64,11 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
     keyToConsume,
     type,
   } = config
-  const { assaysFromState } = assays
+  const assayParams = prepAssaysForParams(whiteListed, method)
+  const endpointParams = prepParamsForEndPoint(params, updatedParams)
+
+  const mergedParams = [...assayParams, ...endpointParams]
+  const [rawData, setRawData] = useState(false)
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
   const { culture } = useSelector(({ user }) => {
@@ -47,19 +78,15 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
     }
   })
 
-  const { isLoading, isError, data, error } = useQuery(
-    [
-      id,
-      {
-        ...updatedParams,
-      },
-    ],
-    async (key, { ...updatedParams }) =>
-      fetchGraphDataFromConfig({
-        assays,
-        config,
-        updatedParams,
-      })
+  const { isLoading, isError, error } = useQuery(
+    [id, { mergedParams }],
+    async (key, { mergedParams }) =>
+      fetchWrapperForQueries({
+        endpoint,
+        method,
+        params: mergedParams,
+      }),
+    { onSuccess: ({ data }) => setRawData(data) }
   )
 
   if (isError) {
@@ -67,9 +94,9 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
   }
 
   useEffect(() => {
-    if (data && !isLoading) {
+    if (rawData && !isLoading) {
       const grouped = formatDataByGraphType(
-        data,
+        rawData,
         displayMethod,
         filterBy,
         formatDate,
@@ -83,7 +110,7 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
         setGraphKeys(keysFromGrouped)
       }
     }
-  }, [data])
+  }, [rawData])
 
   return (
     <Grid item xs={12} lg={size}>
