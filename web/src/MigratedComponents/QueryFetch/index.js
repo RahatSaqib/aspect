@@ -1,4 +1,8 @@
-import _ from 'lodash'
+import isArray from 'lodash/isArray'
+import map from 'lodash/map'
+import keys from 'lodash/keys'
+import values from 'lodash/values'
+
 import { aspectFetch } from '../../shared/utils/fetch'
 import defaultErrors from './errors'
 
@@ -6,10 +10,10 @@ const buildEndpointAndQueryString = (endpoint, params) => {
   if (Object.keys(params).length !== 0 && params.constructor === Object) {
     return `${endpoint}?${new URLSearchParams(params).toString()}`
   }
-  if (_.isArray(params)) {
-    return `${endpoint}?${_.map(
+  if (isArray(params)) {
+    return `${endpoint}?${map(
       params,
-      v => `${_.keys(v)[0]}=${_.values(v)[0]}`
+      v => `${keys(v)[0]}=${values(v)[0]}`
     ).join('&')}`
   }
   return endpoint
@@ -32,7 +36,6 @@ const fetchWrapperForQueries = ({
   customErrorNotifications = {},
 }) => {
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
-
   let body = null
 
   switch (method) {
