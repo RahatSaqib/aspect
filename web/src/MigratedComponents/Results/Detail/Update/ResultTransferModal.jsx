@@ -51,25 +51,58 @@ const messages = defineMessages({
   note: {
     id: 'pages.transferResult.note',
     defaultMessage: `
-      By transferring this result you will no longer be able to edit
-      this result record.
-      This action cannot be undone.
+      Notice that above field 'Transfer to Clinic' lists all clinics, even those
+      which you don't have access to.
+      In a such case - by transferring this result you may no
+      longer be able to edit this result record any more and your
+      action cannot be undone.
+    `,
+  },
+  successOk: {
+    id: 'pages.transferResult.successOk',
+    defaultMessage: `Ok`,
+  },
+  successHeader: {
+    id: 'pages.transferResult.successHeader',
+    defaultMessage: `
+      Result Transfer Completed
+    `,
+  },
+  successMessage: {
+    id: 'pages.transferResult.successMessage',
+    defaultMessage: `
+      <p>
+        Result for patient <strong>"{{patientId}}"</strong> has been transferred from
+        <strong>
+          "{{oldSiteName}}"
+        </strong>
+        to
+        <strong>
+          "{{newSiteName}}"
+        </strong>
+      </p>
+      <br />
+      <p>
+        After clicking below button <strong>{{buttonOk}}</strong>
+        you will be redirected to the list of results.
+      </p>
     `,
   },
 })
 
 const ResultTransferModal = ({
   intl: { formatMessage },
-  data: { id: resultId, patientId, siteId } = {},
+  data: { id: resultId, patientId, reportableSiteId, reportableSiteName } = {},
   isOpen,
   onClose,
 }) => {
   const [allSites, setAllSites] = useState([])
-  const [selectedSiteId, setSelectedSite] = useState(null)
+  const [selectedSite, setSelectedSite] = useState(null)
   const [comment, setComment] = useState('')
   const [includeAllResults, setIncludeAllResults] = useState(true)
   const [isProcessing, setIsProcessing] = useState(false)
   const [transferError, setTransferError] = useState(null)
+  const [isSuccessAlert, setSuccessAlert] = useState(false)
   const history = useHistory()
 
   useQuery(
@@ -83,7 +116,7 @@ const ResultTransferModal = ({
       onSuccess: ({ data }) =>
         setAllSites(
           data
-            .filter(({ id }) => +id !== +siteId)
+            .filter(({ id }) => +id !== +reportableSiteId)
             .map(({ id, name }) => ({ text: name, value: id }))
         ),
     }
@@ -114,7 +147,7 @@ const ResultTransferModal = ({
     return aspectFetch(`${RESULT_TRANSFER.ENDPOINT}/${resultId}`, {
       method: 'POST',
       body: JSON.stringify({
-        siteId: selectedSiteId,
+        siteId: selectedSite.value,
         timestamp: new Date().getTime(),
         comment,
         includeAllResults,
@@ -131,12 +164,29 @@ const ResultTransferModal = ({
       },
     })
       .then(() => {
-        history.push('/browse/result')
+        setIsProcessing(false)
+        setSuccessAlert(true)
       })
       .catch(err => {
-        setTransferError(err.message)
         setIsProcessing(false)
+        setTransferError(err.message)
       })
+  }
+
+  const renderSuccessMessage = () => {
+    const html = formatMessage(messages.successMessage)
+      .replace('{{patientId}}', patientId)
+      .replace('{{oldSiteName}}', reportableSiteName)
+      .replace('{{newSiteName}}', selectedSite && selectedSite.text)
+      .replace('{{buttonOk}}', formatMessage(messages.successOk))
+    return (
+      <div
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: html,
+        }}
+      />
+    )
   }
 
   return (
@@ -152,7 +202,7 @@ const ResultTransferModal = ({
         <Button
           color="primary"
           variant="contained"
-          disabled={isProcessing || !selectedSiteId}
+          disabled={isProcessing || !selectedSite}
           onClick={onSubmit}
         >
           {formatMessage(messages.buttonTransfer)}
@@ -174,9 +224,7 @@ const ResultTransferModal = ({
           floatingLabelFixed
           dataSource={allSites}
           listStyle={{ width: 'auto' }}
-          onSelect={({ value }) => {
-            setSelectedSite(value)
-          }}
+          onSelect={selectedSite => setSelectedSite(selectedSite)}
           filter={AutoComplete.caseInsensitiveFilter}
         />
         <TextField
@@ -213,6 +261,29 @@ const ResultTransferModal = ({
 
       {transferError && (
         <div className={cssClasses('ErrorMessage')}>{transferError}</div>
+      )}
+
+      {isSuccessAlert && (
+        <AspectDialog
+          actions={[
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => {
+                history.push('/browse/result')
+              }}
+            >
+              {formatMessage(messages.successOk)}
+            </Button>,
+          ]}
+          maxWidth="xs"
+          open
+          title={formatMessage(messages.successHeader)}
+          disableBackdropClick
+          disableEscapeKeyDown
+        >
+          {renderSuccessMessage()}
+        </AspectDialog>
       )}
     </AspectDialog>
   )
