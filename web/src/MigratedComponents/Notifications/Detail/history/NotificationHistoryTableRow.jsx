@@ -3,11 +3,11 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { formatDateTime } from '../../../shared/utils/dateFormat'
+import { formatDateTime } from '../../../../shared/utils/dateFormat'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
-} from '../../../components/shared/tableBody'
+} from '../../../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
 

@@ -33,7 +33,7 @@ import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../MigratedComponents/Results/Detail'
 import NotificationList from '../../notification/list/NotificationList'
-import NotificationDetail from '../../notification/detail/NotificationDetail'
+import NotificationDetail from '../../MigratedComponents/Notifications/Detail'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
@@ -156,7 +156,7 @@ const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
-const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
+const renderNotificationDetail = loggedInFactory(NotificationDetail)
 const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
