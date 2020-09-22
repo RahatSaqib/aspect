@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import { useSelector } from 'react-redux'
+import isFunction from 'lodash/isFunction'
 
 import { useFormikState } from './Formik/Context'
 
@@ -14,7 +15,9 @@ const FormActionButton = ({ formik, action, onClick, isVisible }) => {
     <Button
       variant="contained"
       color={action.id === 'cancel' ? 'default' : 'primary'}
-      onClick={() => (action.onClick ? action.onClick() : onClick(action.id))}
+      onClick={() =>
+        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
+      }
       className={cssClasses('form__button', `form__button--${action.id}`, {
         'form__button--enabled': isVisible,
         'form__button--disabled': !isVisible,
@@ -80,7 +83,7 @@ const FormActions = ({ config }) => {
         action={action}
         onClick={setActionToAction}
         isVisible={
-          action.isVisible
+          isFunction(action.isVisible)
             ? action.isVisible(permissions, toggleEdit)
             : displayConfig[action.id]
         }
