@@ -10,7 +10,7 @@ import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import {
@@ -90,7 +90,7 @@ export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -144,7 +144,7 @@ export function exportSites(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportSites.GET.403.title',
@@ -213,7 +213,7 @@ export function fetchSitesForSelectList(forceRefresh) {
             },
           })
         ),
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchPersons.GET.403.title',
