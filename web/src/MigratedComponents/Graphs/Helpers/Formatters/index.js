@@ -14,6 +14,7 @@ import values from 'lodash/values'
 import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
+import times from 'lodash/times'
 
 import {
   dateRangeOptions,
@@ -151,6 +152,13 @@ const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
   return [roundIfNumber(first(dataOut)), roundIfNumber(last(dataOut))]
 }
 
+const incrementSplit = (boundaries, increment) => {
+  const split = Math.round(boundaries[1] / increment)
+  const values = [boundaries[0], split * increment]
+  times(split, v => values.push(v * increment))
+  return sortBy(uniq(values))
+}
+
 const generateTickValues = (
   data,
   axesTicks,
@@ -173,9 +181,18 @@ const generateTickValues = (
       values = clubsandwich(boundaries)
       break
 
+    case 'twos':
+      values = incrementSplit(boundaries, 2)
+      break
+
+    case 'threes':
+      values = incrementSplit(boundaries, 3)
+      break
+
     default:
       break
   }
+
   return values
 }
 
@@ -383,6 +400,12 @@ const extractOptionValue = (identifier, selectedOption) => {
         resultCategoryId: selectedOption
           ? split(selectedOption.id, '-', 2)[1]
           : null,
+      }
+      break
+
+    case 'consumableId':
+      optionValue = {
+        consumableId: selectedOption ? selectedOption.consumableId : null,
       }
       break
 
