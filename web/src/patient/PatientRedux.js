@@ -4,7 +4,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 
 export const PatientResults = Immutable.Record({
@@ -25,7 +25,7 @@ export function fetchResultsByPatient(patientId) {
             },
           })
         ),
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchPatientDetails.GET.403.title',

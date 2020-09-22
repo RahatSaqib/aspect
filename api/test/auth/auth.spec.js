@@ -13,6 +13,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = supertest.agent('http://localhost:8080')
+const gxAlertServer = supertest.agent(process.env.gxAlertApi)
 const { assert } = chai
 
 describe('Authentication routes', () => {
@@ -66,8 +67,19 @@ describe('Authentication routes', () => {
   )
 
   describe('/api/auth', () => {
-    before(() =>
-      runTestWithKnex(async knex => {
+    let isGxAlertAvailable
+
+    before(async () => {
+      await gxAlertServer
+        .get('')
+        .then(() => {
+          isGxAlertAvailable = true
+        })
+        .catch(() => {
+          isGxAlertAvailable = false
+        })
+
+      await runTestWithKnex(async knex => {
         const lastPartnerId = 4
         const lastCountryId = 4
 
@@ -96,7 +108,7 @@ describe('Authentication routes', () => {
           geographyId: 98,
         })
       })
-    )
+    })
     after(() =>
       runTestWithKnex(async knex => {
         await knex('RefreshToken')
@@ -257,7 +269,7 @@ describe('Authentication routes', () => {
           })
       })
 
-      it("should return 409 if user not found and GxAlert isn't available", async () => {
+      it("should return 409 if user not found and GxAlert isn't available, or 401 if GxAlert is available but the user not found", async () => {
         await server
           .post(authPath)
           .send({
@@ -267,7 +279,7 @@ describe('Authentication routes', () => {
           })
           .then(res => {
             // test returns 500 if its run offline
-            assert.equal(res.status, 409)
+            assert.equal(res.status, isGxAlertAvailable ? 401 : 409)
           })
       })
 
