@@ -235,5 +235,10 @@ module.exports = {
       ),
       sortOrder: 26,
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'percentageOfDaysWithServiceInterruption'
+      ),
+    },
   ],
 }
