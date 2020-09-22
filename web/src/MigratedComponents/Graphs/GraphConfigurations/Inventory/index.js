@@ -4,7 +4,7 @@ import AspectDropdown from '../../../AspectDropdown'
 const inventoryGraphs = {
   inventoryStatus: {
     id: 'inventoryStatus',
-    title: 'clinicalIndicatorsTBDetected',
+    title: 'inventoryGraphStatus',
     assays: [],
     selectorModifiers: [
       {
@@ -37,7 +37,7 @@ const inventoryGraphs = {
         },
         indexBy: 'increment',
         keyToConsume: 'count',
-        legendsToRename: [
+        keysToRename: [
           {
             externalId: 'outOfStock',
             name: 'Out of Stock',

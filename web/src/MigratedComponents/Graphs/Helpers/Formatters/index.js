@@ -227,7 +227,8 @@ const generateToolTip = (
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
-  const displayId = translateLabel(id, assaysFromState)
+  let displayId = translateLabel(id, assaysFromState)
+
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
@@ -235,6 +236,9 @@ const generateToolTip = (
     const displayTitle = `device${displayCount === 1 ? '' : 's'}`
     displayValue = `${displayCount} ${displayTitle}`
   } else if (type === 'solid') {
+    displayValue = value
+  } else if (type === 'barInventory') {
+    displayId = 'Locations'
     displayValue = value
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
@@ -298,6 +302,7 @@ const formatDataByGraphType = (
   formatDate,
   indexBy,
   keyToConsume,
+  keysToRename,
   type
 ) => {
   let grouped
@@ -340,7 +345,7 @@ const formatDataByGraphType = (
       break
 
     case 'barInventory':
-      grouped = groupForInvetoryStatusAPI(data)
+      grouped = groupForInvetoryStatusAPI(data, keysToRename)
       break
 
     case 'pieLegacyTreatment':
