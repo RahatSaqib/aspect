@@ -275,5 +275,10 @@ module.exports = {
         x => x.externalId === 'averageDurationServiceInterruption'
       ),
     },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'percentageOfDaysWithServiceInterruption'
+      ),
+    },
   ],
 }

@@ -1,25 +1,30 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
+import { mountWithIntl } from '../../test/common'
+
 import NotificationTableRow from './NotificationTableRow'
 
 describe('NotificationTableRow module', () => {
   const props = {
-    intl: createIntl({ locale: 'en' }),
-    notification: Immutable.fromJS({
+    className: '',
+    onClick: jest.fn(),
+    notification: {
+      id: 1,
       alertType: 'mine',
       alertName: 'Failed search devices',
-      lastTriggeredOn: Date.now(),
+      lastTriggeredOn: new Date(),
+      totalTriggers: 10,
+      contacts: 'Contact1, contact2',
+      contactsCount: 8,
       recipientsCount: 10,
       triggersCount: 10,
-      errorsCount: 10,
-    }),
+      erorsCount: 10,
+    },
   }
 
   describe('NotificationTableRow component', () => {
     it('should render without crash', () => {
-      shallow(<NotificationTableRow {...props} />)
+      mountWithIntl(<NotificationTableRow {...props} />)
     })
   })
 })

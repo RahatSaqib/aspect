@@ -1202,10 +1202,13 @@ module.exports = {
           DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
               INNER JOIN
           DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+              INNER JOIN
+          DeviceType AS dt ON dt.id = d.deviceTypeId
       WHERE
           dms.externalId = 'inactiveDownForRepair'
               AND YEAR(dmsl.day) = YEAR(CURRENT_DATE)
               AND MONTH(dmsl.day) = MONTH(CURRENT_DATE)
+              AND dt.externalId = 'CepheidGeneXpert'
       `,
       sqlForStatUnit: `
       SELECT
@@ -1220,10 +1223,13 @@ module.exports = {
           DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
               INNER JOIN
           DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+              INNER JOIN
+          DeviceType AS dt ON dt.id = d.deviceTypeId
       WHERE
           dms.externalId = 'inactiveDownForRepair'
               AND YEAR(dmsl.day) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
               AND MONTH(dmsl.day) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+              AND dt.externalId = 'CepheidGeneXpert'
       `,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
@@ -1318,6 +1324,97 @@ module.exports = {
       externalId: 'averageDurationServiceInterruption',
       description: `The average duration of a service interruption, in days.`,
       descriptionI18nKey: 'averageDurationServiceInterruptionDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
+    {
+      icon: 'MdBuild',
+      title: 'Percentage of Days with Service Interruption',
+      titleI18nKey: 'percentageOfDaysWithServiceInterruptionTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      sqlForIndicator: `
+      SELECT CONCAT(
+        IFNULL(
+          ROUND(
+            SUM(down.daysInactive)
+            /
+            SUM(
+              GetWeekdaysInRange(NOW(),
+                GREATEST(d.createdOn,
+                  DATE_FORMAT(NOW(), '%Y-%m-01')
+                )
+              )
+            )
+          * 100),
+        0),
+      '%') AS cnt
+          FROM Device AS d
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN Site AS s ON s.id = d.siteId
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          LEFT OUTER JOIN (
+            SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+            FROM DeviceMaintenanceStatusLog AS dmsl
+            INNER JOIN Device AS d ON dmsl.deviceId = d.id
+            INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+            WHERE YEAR(dmsl.day) = YEAR(NOW())
+            AND MONTH(dmsl.day) = MONTH(NOW())
+            AND d.createdOn <= NOW()
+            AND dms.externalId = 'inactiveDownForRepair'
+            AND DAYOFWEEK(dmsl.day) <> 1
+            AND DAYOFWEEK(dmsl.day) <> 7
+            GROUP BY dmsl.deviceId
+          ) AS down ON d.id = down.deviceId
+          WHERE d.createdOn <= NOW()
+        AND dt.externalId = 'CepheidGeneXpert'
+      `,
+      sqlForStatUnit: `
+      SELECT CONCAT(
+        IFNULL(
+          ROUND(
+            SUM(down.daysInactive)
+            /
+            SUM(
+              GetWeekdaysInRange(LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)),
+                GREATEST(d.createdOn,
+                  DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01')
+                )
+              )
+            )
+          * 100),
+        0),
+      '%') AS cnt
+        FROM Device AS d
+        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN Site AS s ON s.id = d.siteId
+        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+        LEFT OUTER JOIN (
+          SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+          FROM DeviceMaintenanceStatusLog AS dmsl
+          INNER JOIN Device AS d ON dmsl.deviceId = d.id
+          INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND dms.externalId = 'inactiveDownForRepair'
+          AND DAYOFWEEK(dmsl.day) <> 1
+          AND DAYOFWEEK(dmsl.day) <> 7
+          GROUP BY dmsl.deviceId
+        ) AS down ON d.id = down.deviceId
+        WHERE d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND dt.externalId = 'CepheidGeneXpert'
+      `,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'percentageOfDaysWithServiceInterruptionUnit',
+      link: '/browse/device',
+      sortOrder: 2,
+      externalId: 'percentageOfDaysWithServiceInterruption',
+      description: `The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%`,
+      descriptionI18nKey: 'percentageOfDaysWithServiceInterruptionDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,

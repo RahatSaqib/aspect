@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
 import IconProvider from '../../IconProvider'
 
 import usePrevious from '../../../Hooks/CustomHooks'
@@ -48,7 +49,7 @@ const PieInnerLegend = ({ averages, data }) => {
     }
   }, [average, averages, data, key])
 
-  return (
+  return isEmpty(average) ? null : (
     <div className={cssClasses('legend__container')}>
       <div
         className={cssClasses('legend__average')}

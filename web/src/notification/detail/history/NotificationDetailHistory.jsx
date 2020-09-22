@@ -21,7 +21,7 @@ import {
 
 import { makeSortPageSelector } from '../../../shared/selectors/searchParams'
 import fetchWrapperForQueries from '../../../MigratedComponents/QueryFetch/index'
-import NOTIFICATION_HISTORY from '../../../MigratedComponents/QueryFetch/Notification/index'
+import { NOTIFICATION_HISTORY } from '../../../MigratedComponents/QueryFetch/Notification/index'
 
 const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 

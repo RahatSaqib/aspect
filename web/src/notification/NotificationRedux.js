@@ -7,7 +7,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
 import {
@@ -51,60 +51,6 @@ function rejectNotifications() {
   }
 }
 
-export function fetchNotifications(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-    dispatch(requestNotifications(sortCol, sortDir, page, pageSize, filters))
-
-    return aspectFetch(
-      `/notification?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchNotifications.GET.400.title',
-                defaultMessage: 'Searching Notifications Failed',
-              },
-            })
-          ),
-          403: errorInsufficientScope(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.fetchNotifications.GET.default.title',
-                defaultMessage: 'Loading Notifications Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json => dispatch(receiveNotifications(json)))
-      .catch(() => dispatch(rejectNotifications()))
-  }
-}
-
 export function exportNotifications(
   filtersParams,
   sortCol,
@@ -136,7 +82,7 @@ export function exportNotifications(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportNotification.GET.403.title',

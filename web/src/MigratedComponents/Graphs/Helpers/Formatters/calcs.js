@@ -113,7 +113,7 @@ const getAverageFromData = (data, value, which, culture) => {
       }
       return avgObj
     }
-    console.error('There are no data that match your config')
+    console.warn('There are no data that match your config')
   }
   return {}
 }

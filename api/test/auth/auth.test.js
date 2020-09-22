@@ -283,30 +283,6 @@ describe('auth endpoints', () => {
       })
     })
 
-    describe("When a user is not found and GxAlert's is not available", () => {
-      beforeEach(() => {
-        dbSpy.query.for('Get basic user details').resolvesWith()
-      })
-
-      it('Should respond with 409', done => {
-        const requestData = {
-          payload: {
-            name: 'nonexistant',
-            password: 'whatevs',
-            clientId: 'request client id',
-          },
-        }
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .with(requestData)
-          .handleResponseWith(responseData => {
-            assert.equal(responseData.output.statusCode, 409)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
     describe('When the users account is locked', () => {
       beforeEach(() => {
         dbSpy.query.for('Get basic user details').resolvesWith({
@@ -671,15 +647,15 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
       })
 
-      it('should respond 403 forbidden', done => {
+      it('should respond 401 unauthorized', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(response => {
-            assert.equal(response.output.statusCode, 403)
+            assert.equal(response.output.statusCode, 401)
             assert.deepEqual(response.output.payload, {
-              statusCode: 403,
-              error: 'Forbidden',
+              statusCode: 401,
+              error: 'Unauthorized',
               message: 'Incorrect password.',
             })
           })
