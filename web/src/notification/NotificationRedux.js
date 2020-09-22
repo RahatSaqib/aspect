@@ -7,7 +7,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
 import {
@@ -80,7 +80,7 @@ export function fetchNotifications(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -136,7 +136,7 @@ export function exportNotifications(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportNotification.GET.403.title',

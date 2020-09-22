@@ -8,7 +8,7 @@ import {
   errorNotFound,
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
@@ -100,7 +100,7 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
