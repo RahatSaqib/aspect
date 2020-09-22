@@ -44,7 +44,7 @@ const treatmentStatusGraphs = {
         componentClasses: ['BARCLASS'],
         api: {
           method: 'POST',
-          endpoint: 'result/confirmed-treatment-tracking',
+          endpoint: '/result/confirmed-treatment-tracking',
           params: {},
         },
         indexBy: 'monthTested',
@@ -63,7 +63,7 @@ const treatmentStatusGraphs = {
         componentClasses: ['piegraph__container'],
         api: {
           method: 'POST',
-          endpoint: 'result/confirmed-treatment-tracking',
+          endpoint: '/result/confirmed-treatment-tracking',
           params: {},
         },
         indexBy: 'monthTested',

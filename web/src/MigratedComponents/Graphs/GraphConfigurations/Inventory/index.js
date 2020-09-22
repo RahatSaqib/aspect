@@ -1,6 +1,5 @@
 import BarGraph from '../../BarGraph'
 import AspectDropdown from '../../../AspectDropdown'
-import { getTimePeriod } from '../../Helpers/Formatters'
 
 const inventoryGraphs = {
   inventoryStatus: {
@@ -9,13 +8,15 @@ const inventoryGraphs = {
     assays: [],
     selectorModifiers: [
       {
-        selectedValue: 'Date Range',
+        selectedValue: 'Consumable',
         endpoint: '/dashboard/inventory-item',
-        state: 'inventoryConsumableSummaryList',
+        state: 'data.inventoryConsumableSummaryList',
         component: AspectDropdown,
-        identifier: 'dateRange',
+        identifier: 'consumableId',
         data: null,
         sortByKeys: ['consumableName'],
+        initialOption: 2,
+        keyMapping: { idKey: 'consumableId', nameKey: 'consumableName' },
       },
     ],
     componentSize: 'full',
@@ -29,15 +30,15 @@ const inventoryGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'inventory/days-by-location',
-          params: {},
+          endpoint: '/inventory/days-by-location',
+          params: {
+            consumableId: 5,
+          },
         },
         indexBy: 'increment',
         keyToConsume: 'count',
-        filterBy: {
-          consumableId: '5',
-        },
-        tickValuesYShape: 'none',
+        filterBy: {},
+        tickValuesYShape: 'twos',
         tickValuesXShape: 'all',
         displayMethod: 'actual',
         displayLegend: false,
