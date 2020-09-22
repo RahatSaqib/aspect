@@ -22,6 +22,7 @@ import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
 import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
 import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
 import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
+import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 
 import ColorDemo from './ColorDemo/ColorDemo'
@@ -33,6 +34,7 @@ const Status = ({ history, location, colorDemo }) => {
   const { hivResults } = hivGraphs
   const { tbDetected, tbResults } = tbGraphs
   const { treatmentStatus } = treatmentStatusGraphs
+  const { inventoryStatus } = inventoryStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
   const {
     covidDailyConfirmed,
@@ -84,7 +86,7 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
@@ -119,17 +121,17 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={deviceStatus} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider
           permissions={covidDailyConfirmed.graphRenderPermissions}
         >
@@ -204,7 +206,16 @@ const Status = ({ history, location, colorDemo }) => {
         countryIsoAlpha2Code={countryIsoAlpha2Code}
         className={cssClasses('Section--withStatus')}
         title={intl.formatMessage(messages.sitesTitle)}
-      />
+      /> */}
+
+      <ErrorBoundary>
+        <PermissionsProvider
+          permissions={inventoryStatus.graphRenderPermissions}
+        >
+          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
+        </PermissionsProvider>
+      </ErrorBoundary>
+
       <PermissionsProvider permissions={['dashboard']}>
         <InventoryStatus
           history={history}

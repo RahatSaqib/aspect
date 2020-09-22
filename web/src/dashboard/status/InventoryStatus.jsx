@@ -164,7 +164,7 @@ export const InventoryStatus = ({
       title={title}
       icon={<MdAssignmentTurnedIn className={cssClasses('Title__Icon')} />}
     />
-    <div>
+    {/* <div>
       {countryIsoAlpha2Code && (
         <Unit sm="1-2" lg="1-4">
           <CountryWithPoints
@@ -214,12 +214,12 @@ export const InventoryStatus = ({
           </Button>
         </div>
       </Unit>
-    </div>
-    <InventoryItems
+    </div> */}
+    {/* <InventoryItems
       intl={intl}
       history={history}
       className={cssClasses('Section--withDropdown')}
-    />
+    /> */}
   </Card>
 )
 

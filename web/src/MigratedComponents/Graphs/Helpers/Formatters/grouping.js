@@ -347,7 +347,13 @@ const groupForInvetoryStatusAPI = data => {
   const grouped = []
   map(data, ({ consumableId, consumableName, ...rest }) =>
     map(rest, (val, key) =>
-      grouped.push({ consumableId, consumableName, increment: key, [key]: val })
+      grouped.push({
+        consumableId,
+        consumableName,
+        increment: key,
+        [key]: val,
+        count: val,
+      })
     )
   )
   return grouped
