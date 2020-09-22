@@ -2168,7 +2168,7 @@ async function clinicalIndicatorAggregations(request) {
   const { auth, query } = request
 
   if (!canViewResults(auth)) {
-    throw Boom.unauthorized('You do not have access to results')
+    throw Boom.forbidden('You do not have access to results')
   }
 
   let assay = null
@@ -2286,7 +2286,7 @@ async function followUpAggregations(request) {
   const { auth, query } = request
 
   if (!canViewResults(auth)) {
-    throw Boom.unauthorized('You do not have access to results')
+    throw Boom.forbidden('You do not have access to results')
   }
 
   let assay = null
