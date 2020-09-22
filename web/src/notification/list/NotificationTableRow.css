@@ -3,3 +3,9 @@
 .TableCell--errorsCount {
   color: var(--aspect-color-mandy);
 }
+
+.table__cell--truncate {
+  width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
