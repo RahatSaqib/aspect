@@ -1,0 +1,8 @@
+.CUSTOM_PREFIX__single-value,
+.CUSTOM_PREFIX__placeholder {
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    max-width: none;
+  }

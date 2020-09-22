@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 import Select from 'react-select'
+import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 
 import fetchWrapperForQueries from '../QueryFetch'
@@ -27,7 +28,7 @@ const buildCustomStyles = defaultOption => {
     },
     control: provided => ({
       ...provided,
-      width: 200,
+      width: '100%',
       backgroundColor: aspectChillBlue1,
       display: 'flex',
       borderRadius: '5px',
@@ -67,27 +68,58 @@ const SelectComponent = ({
   selectedValue,
   action: dispatchFromRedux,
   identifier,
+  initialOption = false,
+  keyMapping: { idKey = 'id', nameKey = 'name' } = false,
 }) => {
   const [defaultOption] = useState(selectedValue)
   const [inputValue, setInputValue] = useState(false)
+
   useEffect(() => {
     if (inputValue) {
       const { selectedOption, action } = inputValue
-      dispatchFromRedux({ identifier, selectedOption, action })
+      console.log(action)
+
+      switch (action) {
+        case 'select-option':
+          console.log({ selectedOption, action })
+          dispatchFromRedux({ identifier, selectedOption, action })
+          break
+
+        case 'clear':
+          console.log({ selectedOption: data[initialOption], action })
+          dispatchFromRedux({
+            identifier,
+            selectedOption: data[initialOption],
+            action,
+          })
+
+          break
+
+        default:
+          break
+      }
     }
   }, [inputValue])
+
+  // console.log(data)
+
   return (
-    <Select
-      getOptionLabel={({ name }) => name}
-      getOptionValue={({ id }) => id}
-      isClearable
-      options={data}
-      placeholder={defaultOption}
-      styles={buildCustomStyles(defaultOption)}
-      onChange={(selectedOption, { action }) =>
-        setInputValue({ selectedOption, action })
-      }
-    />
+    <div style={{ width: '240px', marginRight: '20px' }}>
+      <Select
+        menuPlacement="auto"
+        menuPosition="fixed"
+        defaultValue={initialOption ? data[initialOption] : null}
+        getOptionLabel={val => val[nameKey]}
+        getOptionValue={val => val[idKey]}
+        isClearable={!initialOption}
+        options={data}
+        placeholder={defaultOption}
+        styles={buildCustomStyles(defaultOption)}
+        onChange={(selectedOption, { action }) =>
+          setInputValue({ selectedOption, action })
+        }
+      />
+    </div>
   )
 }
 
@@ -98,10 +130,14 @@ const AspectDropdown = ({
     identifier,
     endpoint,
     data: passedData,
-    sortByKeys = ['name'],
+    sortByKeys,
+    initialOption,
+    keyMapping,
   },
   action,
+  ...rest
 }) => {
+  const [selectOptions, setSelectOptions] = useState(false)
   const { isError, data = false, error } = useQuery(
     reduxStateId,
     async () => (endpoint ? fetchWrapperForQueries({ endpoint }) : passedData),
@@ -111,18 +147,39 @@ const AspectDropdown = ({
     }
   )
 
+  useEffect(() => {
+    if (data) {
+      const dataSet = get(data, reduxStateId)
+      if (dataSet && dataSet !== selectOptions) {
+        setSelectOptions(dataSet)
+      }
+    }
+  }, [data, selectOptions])
+
   if (isError) {
     throw new Error(error)
   }
 
-  return data && data[reduxStateId] && data[reduxStateId].length ? (
+  // console.log(selectedValue)
+
+  return selectOptions && selectOptions.length ? (
     <SelectComponent
-      data={sortBy(data[reduxStateId], sortByKeys)}
+      data={sortBy(get(data, reduxStateId), sortByKeys)}
       selectedValue={selectedValue}
       action={action}
       identifier={identifier}
+      initialOption={initialOption}
+      keyMapping={keyMapping}
     />
   ) : null
+}
+
+AspectDropdown.defaulProps = {
+  sortByKeys: ['name'],
+  keyMapping: {
+    idKey: 'id',
+    nameKey: 'name',
+  },
 }
 
 AspectDropdown.propTypes = {
@@ -135,6 +192,10 @@ AspectDropdown.propTypes = {
     sortByKeys: PropTypes.oneOf([PropTypes.array]),
   }).isRequired,
   action: PropTypes.func.isRequired,
+  keyMapping: PropTypes.shape({
+    idKey: PropTypes.string,
+    nameKey: PropTypes.string,
+  }),
 }
 
 export default AspectDropdown
