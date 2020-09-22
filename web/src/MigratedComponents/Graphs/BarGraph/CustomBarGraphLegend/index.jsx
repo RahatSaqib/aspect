@@ -36,7 +36,11 @@ const LegendKey = ({
       <div className={cssClasses('legend__label')}>
         {show ? (
           <AspectTooltip
-            title={<div>{intlFormatMessage(messages[message])}</div>}
+            title={
+              <div className={cssClasses('legend__title')}>
+                {intlFormatMessage(messages[message])}
+              </div>
+            }
             placement={placement}
             showHelpIcon
             toolTipClass="legend__container"
