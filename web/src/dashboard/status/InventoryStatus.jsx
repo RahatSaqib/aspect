@@ -25,7 +25,6 @@ import { showNewInventoryDialog } from '../../inventory/InventoryRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
-import InventoryItems from './InventoryItems'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -164,7 +163,7 @@ export const InventoryStatus = ({
       title={title}
       icon={<MdAssignmentTurnedIn className={cssClasses('Title__Icon')} />}
     />
-    {/* <div>
+    <div>
       {countryIsoAlpha2Code && (
         <Unit sm="1-2" lg="1-4">
           <CountryWithPoints
@@ -214,12 +213,7 @@ export const InventoryStatus = ({
           </Button>
         </div>
       </Unit>
-    </div> */}
-    {/* <InventoryItems
-      intl={intl}
-      history={history}
-      className={cssClasses('Section--withDropdown')}
-    /> */}
+    </div>
   </Card>
 )
 

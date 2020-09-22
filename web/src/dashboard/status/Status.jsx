@@ -86,7 +86,7 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      {/* <ErrorBoundary>
+      <ErrorBoundary>
         <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
@@ -121,17 +121,17 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary> */}
+      </ErrorBoundary>
 
-      {/* <ErrorBoundary>
+      <ErrorBoundary>
         <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={deviceStatus} />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary> */}
+      </ErrorBoundary>
 
-      {/* <ErrorBoundary>
+      <ErrorBoundary>
         <PermissionsProvider
           permissions={covidDailyConfirmed.graphRenderPermissions}
         >
@@ -206,15 +206,7 @@ const Status = ({ history, location, colorDemo }) => {
         countryIsoAlpha2Code={countryIsoAlpha2Code}
         className={cssClasses('Section--withStatus')}
         title={intl.formatMessage(messages.sitesTitle)}
-      /> */}
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={inventoryStatus.graphRenderPermissions}
-        >
-          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
-        </PermissionsProvider>
-      </ErrorBoundary>
+      />
 
       <PermissionsProvider permissions={['dashboard']}>
         <InventoryStatus
@@ -225,6 +217,15 @@ const Status = ({ history, location, colorDemo }) => {
           title={intl.formatMessage(messages.consumableTitle)}
         />
       </PermissionsProvider>
+
+      <ErrorBoundary>
+        <PermissionsProvider
+          permissions={inventoryStatus.graphRenderPermissions}
+        >
+          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
+        </PermissionsProvider>
+      </ErrorBoundary>
+
       <Reports
         intl={intl}
         location={location}

@@ -9,7 +9,6 @@ import { injectIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 
 import SummaryStatus from '../status/SummaryStatus'
-import InventoryItems from '../status/InventoryItems'
 
 import PermissionsProvider from '../../Providers/PermissionsProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
@@ -17,6 +16,7 @@ import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import resultsTransmittedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/ResultsTransmitted'
+import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 
 import ASSAY_LIST from '../../MigratedComponents/QueryFetch/Assay/index'
 
@@ -25,6 +25,7 @@ const cssClasses = classnames.bind(require('./OperationalData.css'))
 export const OperationalData = ({ intl, history, location, loading }) => {
   const { deviceStatus } = deviceStatusGraphs
   const { resultsTransmitted } = resultsTransmittedGraphs
+  const { inventoryStatus } = inventoryStatusGraphs
 
   const {
     isError,
@@ -78,12 +79,16 @@ export const OperationalData = ({ intl, history, location, loading }) => {
             </PermissionsProvider>
           </ErrorBoundary>
 
-          <InventoryItems
-            intl={intl}
-            history={history}
-            location={location}
-            className={cssClasses('Section--stock')}
-          />
+          <ErrorBoundary>
+            <PermissionsProvider
+              permissions={inventoryStatus.graphRenderPermissions}
+            >
+              <GraphsContainer
+                assaysFromState={assays}
+                config={inventoryStatus}
+              />
+            </PermissionsProvider>
+          </ErrorBoundary>
         </Fragment>
       )}
     </div>
