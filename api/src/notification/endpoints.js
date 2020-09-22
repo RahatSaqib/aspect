@@ -23,8 +23,8 @@ function listNotificationsBaseConfig() {
           'lastTriggeredOn',
           'alertCount',
           'totalTriggers',
-          'emailCount',
-          'smsCount'
+          'contactsCount',
+          'contacts'
         ),
       },
     },
