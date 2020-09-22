@@ -37,3 +37,8 @@
 .icons__proxy {
   opacity: 0.2;
 }
+
+.legendTooltip__icon {
+  padding: 3px 0 0 10px;
+  color: #666666;
+}
