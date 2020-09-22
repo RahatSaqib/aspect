@@ -275,6 +275,14 @@
                             },
                             "type": "readOnly",
                             "label": "Collected By"
+                        },
+                        {
+                            "id": "reportableSiteName",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "readOnly",
+                            "label": "Reportable Site"
                         }
                     ]
                 }
