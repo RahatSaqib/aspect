@@ -1936,22 +1936,20 @@ async function upsertDashboardWidgets(
         })
         .select('id', 'name')
 
-      await Promise.all(
-        jobFunctionsDb.map(async jf => {
-          const { jobFunctionId } =
-            (await knex('JobFunctionDashboardWidget')
-              .where('jobFunctionId', jf.id)
-              .where({ widgetId })
-              .first('jobFunctionId')) || {}
+      await Promise.each(jobFunctionsDb, async jf => {
+        const { jobFunctionId } =
+          (await knex('JobFunctionDashboardWidget')
+            .where('jobFunctionId', jf.id)
+            .where({ widgetId })
+            .first('jobFunctionId')) || {}
 
-          if (!jobFunctionId) {
-            await knex('JobFunctionDashboardWidget').insert({
-              jobFunctionId: jf.id,
-              widgetId,
-            })
-          }
-        })
-      )
+        if (!jobFunctionId) {
+          await knex('JobFunctionDashboardWidget').insert({
+            jobFunctionId: jf.id,
+            widgetId,
+          })
+        }
+      })
     })
   )
 }

@@ -1261,6 +1261,7 @@ module.exports = {
           FROM DeviceMaintenanceStatusLog AS dmsl
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
           INNER JOIN Device AS d ON dmsl.deviceId = d.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
 		      INNER JOIN Site AS s ON s.id = d.siteId
 		      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           LEFT OUTER JOIN
@@ -1276,6 +1277,7 @@ module.exports = {
         WHERE YEAR(dmsl.day) = YEAR(NOW())
         AND MONTH(dmsl.day) = MONTH(NOW())
         AND dms.externalId = 'inactiveDownForRepair'
+        AND dt.externalId = 'CepheidGeneXpert'
         GROUP BY deviceId
         ORDER BY deviceId , minInactive) AS innerQuery
       `,
@@ -1289,6 +1291,7 @@ module.exports = {
           FROM DeviceMaintenanceStatusLog AS dmsl
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
           INNER JOIN Device AS d ON dmsl.deviceId = d.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
 		      INNER JOIN Site AS s ON s.id = d.siteId
 		      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           LEFT OUTER JOIN
@@ -1304,6 +1307,7 @@ module.exports = {
         WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
         AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
         AND dms.externalId = 'inactiveDownForRepair'
+        AND dt.externalId = 'CepheidGeneXpert'
         GROUP BY deviceId
         ORDER BY deviceId , minInactive) AS innerQuery
       `,
