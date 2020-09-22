@@ -68,8 +68,7 @@ const SelectComponent = ({
   selectedValue,
   action: dispatchFromRedux,
   identifier,
-  initialOption = false,
-  keyMapping: { idKey = 'id', nameKey = 'name' } = false,
+  keyMapping: { idKey, nameKey },
 }) => {
   const [defaultOption] = useState(selectedValue)
   const [inputValue, setInputValue] = useState(false)
@@ -77,41 +76,16 @@ const SelectComponent = ({
   useEffect(() => {
     if (inputValue) {
       const { selectedOption, action } = inputValue
-      console.log(action)
-
-      switch (action) {
-        case 'select-option':
-          console.log({ selectedOption, action })
-          dispatchFromRedux({ identifier, selectedOption, action })
-          break
-
-        case 'clear':
-          console.log({ selectedOption: data[initialOption], action })
-          dispatchFromRedux({
-            identifier,
-            selectedOption: data[initialOption],
-            action,
-          })
-
-          break
-
-        default:
-          break
-      }
+      dispatchFromRedux({ identifier, selectedOption, action })
     }
   }, [inputValue])
-
-  // console.log(data)
 
   return (
     <div style={{ width: '240px', marginRight: '20px' }}>
       <Select
-        menuPlacement="auto"
-        menuPosition="fixed"
-        defaultValue={initialOption ? data[initialOption] : null}
         getOptionLabel={val => val[nameKey]}
         getOptionValue={val => val[idKey]}
-        isClearable={!initialOption}
+        isClearable
         options={data}
         placeholder={defaultOption}
         styles={buildCustomStyles(defaultOption)}
@@ -123,6 +97,21 @@ const SelectComponent = ({
   )
 }
 
+SelectComponent.defaultProps = {
+  keyMapping: {
+    idKey: 'id',
+    nameKey: 'name',
+  },
+}
+
+SelectComponent.propTypes = {
+  keyMapping: PropTypes.oneOf([PropTypes.object]),
+  data: PropTypes.oneOf([PropTypes.object]).isRequired,
+  selectedValue: PropTypes.string.isRequired,
+  action: PropTypes.func.isRequired,
+  identifier: PropTypes.string.isRequired,
+}
+
 const AspectDropdown = ({
   props: {
     selectedValue,
@@ -131,11 +120,9 @@ const AspectDropdown = ({
     endpoint,
     data: passedData,
     sortByKeys,
-    initialOption,
     keyMapping,
   },
   action,
-  ...rest
 }) => {
   const [selectOptions, setSelectOptions] = useState(false)
   const { isError, data = false, error } = useQuery(
@@ -160,25 +147,21 @@ const AspectDropdown = ({
     throw new Error(error)
   }
 
-  // console.log(selectedValue)
-
   return selectOptions && selectOptions.length ? (
     <SelectComponent
       data={sortBy(get(data, reduxStateId), sortByKeys)}
       selectedValue={selectedValue}
       action={action}
       identifier={identifier}
-      initialOption={initialOption}
       keyMapping={keyMapping}
     />
   ) : null
 }
 
 AspectDropdown.defaulProps = {
-  sortByKeys: ['name'],
-  keyMapping: {
-    idKey: 'id',
-    nameKey: 'name',
+  props: {
+    sortByKeys: ['name'],
+    keyMapping: {},
   },
 }
 
@@ -190,12 +173,12 @@ AspectDropdown.propTypes = {
     endpoint: PropTypes.string.isRequired,
     data: PropTypes.bool,
     sortByKeys: PropTypes.oneOf([PropTypes.array]),
+    keyMapping: PropTypes.shape({
+      idKey: PropTypes.string,
+      nameKey: PropTypes.string,
+    }),
   }).isRequired,
   action: PropTypes.func.isRequired,
-  keyMapping: PropTypes.shape({
-    idKey: PropTypes.string,
-    nameKey: PropTypes.string,
-  }),
 }
 
 export default AspectDropdown
