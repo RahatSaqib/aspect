@@ -106,9 +106,21 @@ export const messages = defineMessages({
   },
   averageTimeToModuleReplacementDescription: {
     id: 'pages.OperationalData.averageTimeToModuleReplacementDescription',
-    defaultMessage: `The average time (in days) between module replacement - i.e. 
+    defaultMessage: `The average time (in days) between module replacement - i.e.
       between day module serial was marked as disabled until a
       different module serial detected in that slot.`,
+  },
+  percentageOfDaysWithServiceInterruptionTitle: {
+    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle',
+    defaultMessage: 'Percentage of Days with Service Interruption'
+  },
+  percentageOfDaysWithServiceInterruptionUnit: {
+    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionUnit',
+    defaultMessage: '{unit} last month'
+  },
+  percentageOfDaysWithServiceInterruptionDescription: {
+    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription',
+    defaultMessage: 'The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%'
   },
 })
 

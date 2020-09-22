@@ -9,9 +9,9 @@ async function seed(knex) {
     .pluck('id')
   await knex('PartnerAssay').whereIn('assayId', covid19AssayIds).update({
     reliableCaseExternalIdTemplate:
-      '{{coalesce result.formData.caseId result.data.caseId result.patientData.caseId}}',
+      '{{coalesce result.formData.caseId result.data.caseId result.patient.caseId}}',
     reliablePatientExternalIdTemplate:
-      '{{coalesce result.formData.patientId result.data.patientId result.patientData.id}}',
+      '{{coalesce result.formData.patientId result.data.patientId result.patient.id}}',
   })
 
   const { id: abbottM2000DeviceTypeId } = await knex('DeviceType')
