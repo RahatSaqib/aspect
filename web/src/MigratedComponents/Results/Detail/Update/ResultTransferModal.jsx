@@ -97,6 +97,7 @@ const ResultTransferModal = ({
   onClose,
 }) => {
   const [allSites, setAllSites] = useState([])
+  const [sourceSite, setSourceSite] = useState(null)
   const [selectedSite, setSelectedSite] = useState(null)
   const [comment, setComment] = useState('')
   const [includeAllResults, setIncludeAllResults] = useState(true)
@@ -129,6 +130,13 @@ const ResultTransferModal = ({
     setIsProcessing(false)
     setTransferError(null)
   }
+
+  useEffect(() => {
+    setSourceSite({
+      name: reportableSiteName,
+      id: reportableSiteId,
+    })
+  }, [])
 
   useEffect(() => {
     if (isOpen) {
@@ -176,7 +184,7 @@ const ResultTransferModal = ({
   const renderSuccessMessage = () => {
     const html = formatMessage(messages.successMessage)
       .replace('{{patientId}}', patientId)
-      .replace('{{oldSiteName}}', reportableSiteName)
+      .replace('{{oldSiteName}}', sourceSite.name)
       .replace('{{newSiteName}}', selectedSite && selectedSite.text)
       .replace('{{buttonOk}}', formatMessage(messages.successOk))
     return (
