@@ -7,38 +7,18 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isEmpty from 'lodash/isEmpty'
-import _ from 'lodash'
 
 import fetchWrapperForQueries from '../../QueryFetch'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
+  prepAssaysForParams,
+  prepParamsForEndPoint,
 } from '../Helpers/Formatters'
 
 import EmptyGraph from '../EmptyData'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
-
-const prepAssaysForParams = (whiteListed, method) => {
-  const assays = []
-  _.map(whiteListed, (value, key) => assays.push({ assay: value }))
-  return assays
-}
-
-const prepParamsForEndPoint = (urlParams, updatedParams) => {
-  const params = []
-  const paramsToUse =
-    updatedParams && !_.isNull(_.values(updatedParams)[0])
-      ? updatedParams
-      : urlParams
-
-  _.map(paramsToUse, (value, key) =>
-    _.isArray(value)
-      ? _.map(value, v => params.push({ [key]: v }))
-      : params.push({ [key]: value })
-  )
-  return params
-}
 
 const Loading = () => (
   <div className={cssClasses('graphrender__spinner')}>
@@ -62,6 +42,7 @@ const GraphRender = ({
     id,
     indexBy,
     keyToConsume,
+    keysToRename,
     type,
   } = config
   const assayParams = prepAssaysForParams(whiteListed, method)
@@ -102,6 +83,7 @@ const GraphRender = ({
         formatDate,
         indexBy,
         keyToConsume,
+        keysToRename,
         type
       )
       if (grouped) {

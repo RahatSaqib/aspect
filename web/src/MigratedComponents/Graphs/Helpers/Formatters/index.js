@@ -1,10 +1,11 @@
 import first from 'lodash/first'
-import filter from 'lodash/filter'
 import findIndex from 'lodash/findIndex'
 import forOwn from 'lodash/forOwn'
 import includes from 'lodash/includes'
 import keys from 'lodash/keys'
 import last from 'lodash/last'
+import isArray from 'lodash/isArray'
+import isNull from 'lodash/isNull'
 import map from 'lodash/map'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
@@ -428,6 +429,27 @@ const extractOptionValue = (identifier, selectedOption) => {
   return optionValue
 }
 
+const prepAssaysForParams = (whiteListed, method) => {
+  const assays = []
+  map(whiteListed, (value, key) => assays.push({ assay: value }))
+  return assays
+}
+
+const prepParamsForEndPoint = (urlParams, updatedParams) => {
+  const params = []
+  const paramsToUse =
+    updatedParams && !isNull(values(updatedParams)[0])
+      ? updatedParams
+      : urlParams
+
+  map(paramsToUse, (value, key) =>
+    isArray(value)
+      ? map(value, v => params.push({ [key]: v }))
+      : params.push({ [key]: value })
+  )
+  return params
+}
+
 export {
   calcPercentageSplitBar,
   dateRangeOptions,
@@ -461,5 +483,7 @@ export {
   normaliseKeys,
   negateTimeZoneOffset,
   percentageOrActualForPie,
+  prepAssaysForParams,
+  prepParamsForEndPoint,
   validateGraphConfig,
 }
