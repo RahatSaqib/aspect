@@ -8,14 +8,6 @@ import { defineMessages } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
 
-import MenuItem from '@material-ui/core/MenuItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import AddIcon from '@material-ui/icons/Add'
-import TransferIcon from '@material-ui/icons/SwapHoriz'
-import RemoveIcon from '@material-ui/icons/Remove'
-import DoneIcon from '@material-ui/icons/Done'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
 import TableBody from '@material-ui/core/TableBody'
 
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
@@ -29,7 +21,6 @@ import {
   reduceFiltersConfig,
 } from '../../filter/utils'
 import CheckboxField from '../../components/shared/CheckboxField'
-import IconMenu from '../../components/shared/IconMenu'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -75,69 +66,6 @@ import { useQuery, useMutation, queryCache } from 'react-query'
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
 const EMPTY_MAP = Immutable.Map()
-
-const messages = defineMessages({
-  inventoryItemsTitle: {
-    id: 'pages.InventoryItemsList.inventoryItemsTitle',
-    defaultMessage: 'Inventory on Hand',
-  },
-  groupBySite: {
-    id: 'pages.InventoryItemsList.groupBySite',
-    defaultMessage: 'Group by Site',
-  },
-  siteName: {
-    id: 'pages.InventoryItemsList.siteName',
-    defaultMessage: 'Site Name',
-  },
-  consumableName: {
-    id: 'pages.InventoryItemsList.consumableName',
-    defaultMessage: 'Consumable',
-  },
-  quantityOnHand: {
-    id: 'pages.InventoryItemsList.quantityOnHand',
-    defaultMessage: 'Quantity on Hand',
-  },
-  expiresOn: {
-    id: 'pages.InventoryItemsList.expiresOn',
-    defaultMessage: 'Expires On',
-  },
-  expiresIn: {
-    id: 'pages.InventoryItemsList.expiresIn',
-    defaultMessage: 'Expires',
-  },
-  adjust: {
-    id: 'pages.InventoryItemsList.adjust',
-    defaultMessage: 'Adjust',
-  },
-  addInventory: {
-    id: 'pages.InventoryItemsList.addInventory',
-    defaultMessage: 'Add Inventory',
-  },
-  transferInventory: {
-    id: 'pages.InventoryItemsList.transferInventory',
-    defaultMessage: 'Transfer Inventory',
-  },
-  receiveInventory: {
-    id: 'pages.InventoryItemsList.receiveInventory',
-    defaultMessage: 'Receive Inventory in Transit',
-  },
-  removeInventory: {
-    id: 'pages.InventoryItemsList.removeInventory',
-    defaultMessage: 'Remove Inventory',
-  },
-  paginatorStatus: {
-    id: 'pages.InventoryItemsList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# supply}
-      other {# supplies}
-    }`,
-  },
-
-  inventoryAdjustedSuccessfully: {
-    id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
-    defaultMessage: 'Inventory levels have been adjusted successfully',
-  },
-})
 
 const FILTERS_CONFIG = [
   { consumable: true, requiredPermissions: [] },
@@ -398,75 +326,8 @@ export const InventoryItemsList = () => {
                 .map(inventoryItem => (
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
-                    intl={intl}
                     inventoryItem={inventoryItem}
-                  >
-                    <IconMenu icon={<MoreVertIcon />}>
-                      {inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={(val) => dispatch(showReceiveInventoryDialog(val))}
-                        >
-                          <ListItemIcon>
-                            <DoneIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(
-                              messages.receiveInventory
-                            )}
-                          />
-                        </MenuItem>
-                      )}
-                      {!inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={(val) => dispatch(showAddInventoryDialog(val))}
-                        >
-                          <ListItemIcon>
-                            <AddIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(messages.addInventory)}
-                          />
-                        </MenuItem>
-                      )}
-
-                      {!inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={(val) => dispatch(showTransferInventoryDialog(val))}
-                        >
-                          <ListItemIcon>
-                            <TransferIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(
-                              messages.transferInventory
-                            )}
-                          />
-                        </MenuItem>
-                      )}
-                      {!inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={(val) => dispatch(showRemoveInventoryDialog(val))}
-                        >
-                          <ListItemIcon>
-                            <RemoveIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(
-                              messages.removeInventory
-                            )}
-                          />
-                        </MenuItem>
-                      )}
-                    </IconMenu>
-                  </InventoryDataTableRow>
+                  />
                 ))}
             </TableBody>
           </InventoryDataTable>
