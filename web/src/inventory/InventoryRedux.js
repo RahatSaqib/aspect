@@ -166,11 +166,7 @@ export function addInventory(data, dispatch, inventoryState) {
   } = inventoryState
 
   if (isString(inventoryItemId)) {
-    const consumableId = items.getIn([
-      'byId',
-      inventoryItemId,
-      'consumableId',
-    ])
+    const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
     return fetchWrapperForQueries({
       endpoint: `/inventory/add/${inventoryItemId}`,
@@ -187,7 +183,8 @@ export function addInventory(data, dispatch, inventoryState) {
           onClose: () => dispatch(showAddInventoryDialog(inventoryItemId)),
         }),
       },
-    }).then(() => dispatch(hideAdjustInventoryDialog()))
+    })
+      .then(() => dispatch(hideAdjustInventoryDialog()))
       .catch(err => {
         dispatch(hideAdjustInventoryDialog())
         throw err
