@@ -1,10 +1,8 @@
-import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useIntl, defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-
 import PropTypes from 'prop-types'
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 
@@ -23,7 +21,6 @@ const messages = defineMessages({
 
 const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
-const enhance = identity
 const NotificationTableRow = ({ notification }) => {
   const intl = useIntl()
   const history = useHistory()
@@ -122,7 +119,7 @@ const NotificationTableRow = ({ notification }) => {
 }
 
 NotificationTableRow.propTypes = {
-  notification: PropTypes.instanceOf(Immutable.Record).isRequired,
+  notification: PropTypes.instanceOf(Immutable.Map).isRequired,
 }
 
-export default enhance(NotificationTableRow)
+export default NotificationTableRow
