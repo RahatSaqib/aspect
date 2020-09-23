@@ -14,7 +14,6 @@ import { useQuery } from 'react-query'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
 } from '../../error/CommonErrorNotifications'
 import {
   makeSortPageSelector,
