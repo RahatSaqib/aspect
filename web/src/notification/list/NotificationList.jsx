@@ -246,8 +246,8 @@ export const NotificationList = props => {
                 data.map(notification => (
                   <NotificationDataTableRow
                     key={notification.id}
-                    notification={notification}
-                    data-notification-id={notification.get('id')}
+                    notification={Immutable.Map(notification)}
+                    data-notification-id={notification.id}
                   />
                 ))}
             </TableBody>
