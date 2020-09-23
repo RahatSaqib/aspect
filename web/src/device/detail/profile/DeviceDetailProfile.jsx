@@ -126,10 +126,6 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.maintenance',
     defaultMessage: 'Maintenance Status',
   },
-  noResults: {
-    id: 'pages.DeviceDetailProfile.noResults',
-    defaultMessage: 'No Results',
-  },
   undefinedValue: {
     id: 'pages.DeviceDetailProfile.undefinedValue',
     defaultMessage: 'n/a',
@@ -877,7 +873,7 @@ export const DeviceDetailProfile = ({
                     }
                   />
                 ) : (
-                  intl.formatMessage(messages.noResults)
+                  intl.formatMessage(messages.undefinedValue)
                 )
               }
             />
