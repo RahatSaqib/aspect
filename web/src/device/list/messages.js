@@ -90,9 +90,9 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.reportingForDays',
     defaultMessage: 'For {period}',
   },
-  noResults: {
-    id: 'pages.DeviceList.noResults',
-    defaultMessage: 'No Results',
+  notAvailable: {
+    id: 'pages.DeviceList.notAvailable',
+    defaultMessage: 'N/A',
   },
   issueCategoryDeviceHealth: {
     id: 'pages.DeviceList.deviceHealth',

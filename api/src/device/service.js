@@ -215,7 +215,7 @@ async function getListDevices(query, auth) {
         .andWhere(
           'dmsl_total.day',
           '>=',
-          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)')
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
         )
         .count(knex.raw('DISTINCT day'))
         .as('totalDays'),
@@ -230,7 +230,7 @@ async function getListDevices(query, auth) {
         .andWhere(
           'dmsl_active.day',
           '>=',
-          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)')
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
         )
         .andWhere('dms_active.externalId', 'active')
         .count(knex.raw('DISTINCT day'))
@@ -238,14 +238,15 @@ async function getListDevices(query, auth) {
     ])
     .distinct()
 
+  console.log(getItems.toString())
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   data.forEach(it => {
     it.availability = {
-      count: it.activeDays,
-      total: it.totalDays,
-      rate: it.activeDays / it.totalDays,
+      count: it.activeDays ? it.activeDays : 0,
+      total: it.totalDays ? it.totalDays : 0,
+      rate: it.totalDays && it.totalDays > 0 ? it.activeDays / it.totalDays : 1,
     }
     delete it.activeDays
     delete it.totalDays
