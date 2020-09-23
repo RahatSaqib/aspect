@@ -34,28 +34,32 @@ export const messages = defineMessages({
     defaultMessage: 'All device calibrations up to date',
   },
   numberOfDevicesExperiencingServiceInterruptionTitle: {
-    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
-    defaultMessage: 'Number of Devices Experiencing Service Interruption'
+    id:
+      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
+    defaultMessage: 'Number of Devices Experiencing Service Interruption',
   },
   numberOfDevicesExperiencingServiceInterruptionUnit: {
-    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionUnit',
-    defaultMessage: '{unit} last month'
+    id:
+      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionUnit',
+    defaultMessage: '{unit} last month',
   },
   numberOfDevicesExperiencingServiceInterruptionDescription: {
-    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
-    defaultMessage: 'The number of devices experiencing service interruption on this and the previous month.'
+    id:
+      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
+    defaultMessage:
+      'The number of devices experiencing service interruption on this and the previous month.',
   },
   averageDurationServiceInterruptionTitle: {
     id: 'pages.OperationalData.averageDurationServiceInterruptionTitle',
-    defaultMessage: 'Average Duration of Service Interruption'
+    defaultMessage: 'Average Duration of Service Interruption',
   },
   averageDurationServiceInterruptionUnit: {
     id: 'pages.OperationalData.averageDurationServiceInterruptionUnit',
-    defaultMessage: '{unit} last month'
+    defaultMessage: '{unit} last month',
   },
   averageDurationServiceInterruptionDescription: {
     id: 'pages.OperationalData.averageDurationServiceInterruptionDescription',
-    defaultMessage: 'The average duration of a service interruption, in days'
+    defaultMessage: 'The average duration of a service interruption, in days',
   },
   resultsTransmittedTitle: {
     id: 'pages.OperationalData.resultsTransmittedTitle',
