@@ -23,7 +23,12 @@ async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
+  const { geographicLevel, tags } = query
+
   const personQuery = getPeople()
+    .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
+    .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
+    .leftJoin('Tag as t', 'pt.tagId', 't.id')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -32,13 +37,36 @@ async function listPeople(request) {
       siteId: 'jc.siteId',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
-    .modify(queryBuilder => {
+    .where(qb => {
       if (dataConstraints.partner.id) {
-        queryBuilder
-          .whereNull('p.partnerId')
-          .orWhere('p.partnerId', dataConstraints.partner.id)
+        qb.whereNull('p.partnerId').orWhere(
+          'p.partnerId',
+          dataConstraints.partner.id
+        )
       }
     })
+
+  switch (geographicLevel) {
+    case 'state':
+      personQuery.andWhere(qb =>
+        qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId')
+      )
+      break
+    case 'lga':
+      personQuery.andWhere(qb =>
+        qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId')
+      )
+      break
+    case 'lab':
+      personQuery.andWhere(qb => qb.whereNotNull('jc.siteId'))
+      break
+    default:
+      break
+  }
+
+  if (tags) {
+    personQuery.andWhere(qb => qb.whereIn('t.title', tags))
+  }
 
   // get total count for paging
   const getCount = personQuery
@@ -68,8 +96,9 @@ async function listPeople(request) {
       'p.id',
       'p.name',
       getJobFunctionNames,
-      's.name as state',
+      'st.name as state',
       'l.name as lga',
+      's.name as site',
       getTags
     )
 
