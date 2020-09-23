@@ -155,6 +155,7 @@ export const NotificationList = props => {
     }
     setReducedFilters(reduceFiltersConfig(FILTERS_CONFIG, userPermissions))
   }
+
   useEffect(() => {
     setFilters()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,12 +167,6 @@ export const NotificationList = props => {
   const [reducedFilters, setReducedFilters] = useState({
     name: true,
   })
-
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { notificationId },
-    },
-  }) => history.push(`/browse/notification/${notificationId}/history`)
 
   const onExcelClick = formatType => {
     const format = formatType.id
@@ -241,6 +236,9 @@ export const NotificationList = props => {
                   label: intl.formatMessage(messages.contacts),
                   sortable: true,
                 },
+                {
+                  key: 'actions',
+                },
               ]}
             />
             <TableBody>
@@ -248,8 +246,8 @@ export const NotificationList = props => {
                 data.map(notification => (
                   <NotificationDataTableRow
                     key={notification.id}
-                    notification={notification}
-                    onClick={onRowClick}
+                    notification={Immutable.Map(notification)}
+                    data-notification-id={notification.id}
                   />
                 ))}
             </TableBody>
