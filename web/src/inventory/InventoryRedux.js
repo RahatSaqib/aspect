@@ -50,7 +50,7 @@ function requestInventoryItems(sortCol, sortDir, page, size, filters, groupBy) {
   }
 }
 
-function receiveInventoryItems(json, childrenPropertyPath) {
+export function receiveInventoryItems(json, childrenPropertyPath) {
   return {
     type: types.RECEIVE_INVENTORY_ITEMS,
     items: json.data,
