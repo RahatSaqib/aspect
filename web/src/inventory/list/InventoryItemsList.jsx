@@ -222,7 +222,7 @@ export const InventoryItemsList = () => {
     event,
     isInputChecked
   ) => {
-    toggleGroupBySite(isInputChecked)
+    dispatch(toggleGroupBySite(isInputChecked))
   }
 
   // Defining queries
