@@ -4,15 +4,39 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
+import { useIntl, defineMessages } from 'react-intl'
+
+import PropTypes from 'prop-types'
+
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
+const messages = defineMessages({
+  moreContacts: {
+    id: 'pages.NotificationListRow.moreContacts',
+    defaultMessage: 'more contacts',
+  },
+})
+
 const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 
 const enhance = identity
+const NotificationTableRow = ({
+  className,
+  onClick,
+  notification: {
+    id,
+    name,
+    lastTriggeredOn,
+    totalTriggers,
+    contacts,
+    contactsCount,
+  },
+}) => {
+  const intl = useIntl()
 
 const getItemActions = history => [
   {
@@ -63,12 +87,34 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => {
     notification.get(column) === null
       ? 'Not Configured'
       : notification.get(column)
+  
+  const addEllipsis = (words, totalCount) => {
+    const wordsArray = words ? words.split(',') : []
+    if (wordsArray.length < totalCount)
+      return (
+        <div>
+          {words}...{' '}
+          <b>
+            {totalCount - wordsArray.length}{' '}
+            {intl.formatMessage(messages.moreContacts)}
+          </b>
+        </div>
+      )
+    return words
+  }
 
   return (
-    <TableRow {...restProps} className={cssClasses(restProps.className)}>
-      <TableCell>{notification.get('name')}</TableCell>
-      <TableCell>
-        {formatRelative(intl, notification.get('lastTriggeredOn'))}
+    <TableRow
+      key={id}
+      data-notification-id={id}
+      onClick={onClick}
+      className={cssClasses(className)}
+    >
+      <TableCell>{name}</TableCell>
+      <TableCell>{formatRelative(intl, lastTriggeredOn)}</TableCell>
+      <TableCell>{totalTriggers}</TableCell>
+      <TableCell className={cssClasses('table__cell--truncate')}>
+        {addEllipsis(contacts, contactsCount)}
       </TableCell>
       <TableCell>{notification.get('totalTriggers')}</TableCell>
       <TableCell>{counter('alertCount')}</TableCell>
@@ -84,4 +130,20 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => {
   )
 }
 
+NotificationTableRow.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  notification: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string,
+    lastTriggeredOn: PropTypes.instanceOf(Date),
+    totalTriggers: PropTypes.number.isRequired,
+    contacts: PropTypes.string.isRequired,
+    contactsCount: PropTypes.number.isRequired,
+  }).isRequired,
+}
+
+NotificationTableRow.defaultProps = {
+  className: '',
+}
 export default enhance(NotificationTableRow)
