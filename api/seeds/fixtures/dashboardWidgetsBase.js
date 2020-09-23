@@ -98,7 +98,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdCheck',
-      title: 'Valid Results Pc',
+      title: 'Valid Results',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
       subTitleI18nKey: null,
@@ -510,7 +510,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdSwapVert',
-      title: 'Module swaps',
+      title: 'Module Swaps',
       titleI18nKey: 'moduleSwapsTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -558,7 +558,7 @@ module.exports = {
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 3,
+      sortOrder: 4,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
       descriptionI18nKey: 'moduleSwapsDescription',
@@ -826,9 +826,10 @@ module.exports = {
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 2,
+      sortOrder: 3,
       externalId: 'instrumentsReplaced',
-      description: 'The average days for an instrument replacement.',
+      description:
+        'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.',
       descriptionI18nKey: 'instrumentsReplacedDescription',
       dashboards: {
         operational: {
@@ -992,7 +993,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdTextsms',
-      title: 'Number of SMS Sent MTD',
+      title: 'SMS Sent MTD',
       titleI18nKey: 'dashboardWidgetSmsSentTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1185,7 +1186,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdBuild',
-      title: 'Number of Devices Experiencing Service Interruption',
+      title: 'Devices With Service Interruption',
       titleI18nKey: 'numberOfDevicesExperiencingServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1332,7 +1333,7 @@ module.exports = {
     },
     {
       icon: 'MdBuild',
-      title: 'Percentage of Days with Service Interruption',
+      title: 'Days With Service Interruption',
       titleI18nKey: 'percentageOfDaysWithServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,

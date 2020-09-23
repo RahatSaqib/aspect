@@ -21,3 +21,7 @@
 .legend__tooltip {
   display: flex;
 }
+
+.inline__tooltip{
+  display: inline
+}
