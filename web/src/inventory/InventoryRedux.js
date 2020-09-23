@@ -5,6 +5,7 @@ import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
+import fetchWrapperForQueries from '../MigratedComponents/QueryFetch'
 import { receiveList, Items } from '../shared/metaReducers/groupedItems'
 import {
   requestTable,
@@ -73,70 +74,6 @@ export function toggleGroupBySite(toggleOn) {
   return { type: types.TOGGLE_GROUP_BY_SITE, toggleOn }
 }
 
-export function fetchInventoryItems(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
-  return (dispatch, getState) => {
-    const filters = fromPairs([...filtersParams.entries()])
-    const groupBy = getGroupBy(getState())
-    const groupBySite = groupBy.includes('siteId')
-
-    dispatch(
-      requestInventoryItems(sortCol, sortDir, page, pageSize, filters, groupBy)
-    )
-    const path = groupBySite ? '/inventory/group-by-site' : '/inventory'
-
-    return aspectFetch(
-      `${path}?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchInventoryItems.GET.400.title',
-                defaultMessage: 'Searching Inventory Items Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.fetchInventoryItems.GET.default.title',
-                defaultMessage: 'Loading Inventory Items Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json =>
-        dispatch(
-          receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])
-        )
-      )
-      .catch(() => dispatch(rejectInventoryItems()))
-  }
-}
-
 export function showNewInventoryDialog() {
   return {
     type: types.SHOW_NEW_INVENTORY_DIALOG,
@@ -182,219 +119,201 @@ export function exportSupplies(
   sortCol,
   sortDir,
   page,
-  pageSize,
+  size,
   fileFormat,
-  reportName
+  reportName,
+  dispatch
 ) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-
-    return aspectFetch(
-      `/inventory/export?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        format: fileFormat,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportSupplies.GET.400.title',
-                defaultMessage: 'Exporting Supplies Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportSupplies.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportSupplies.GET.default.title',
-                defaultMessage: 'Exporting Supplies Failed',
-              },
-            })
-          ),
-        },
-      }
-    ).then(async elem => {
-      const file = await elem.blob
-      dispatch(receivedExportResponse(file, fileFormat, reportName))
-    })
-  }
+  const filters = fromPairs([...filtersParams.entries()])
+  return fetchWrapperForQueries({
+    endpoint: '/inventory/export',
+    params: {
+      sortCol,
+      sortDir,
+      page,
+      size,
+      format: fileFormat,
+      ...filters,
+    },
+    customErrorNotifications: {
+      400: filterFieldsRejectedError(
+        defineMessages({
+          title: {
+            id: 'errorResponseMessages.exportSupplies.GET.400.title',
+            defaultMessage: 'Exporting Supplies Failed',
+          },
+        })
+      ),
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id: 'errorResponseMessages.exportSupplies.GET.default.title',
+            defaultMessage: 'Exporting Supplies Failed',
+          },
+        })
+      ),
+    },
+  }).then(async elem => {
+    const file = await elem.blob
+    dispatch(receivedExportResponse(file, fileFormat, reportName))
+  })
 }
 
-export function addInventory(data) {
-  return (dispatch, getState) => {
-    const {
-      items,
-      inventoryAdjustment: { inventoryItemId },
-    } = getState().inventory
+export function addInventory(data, dispatch, inventoryState) {
+  const {
+    items,
+    inventoryAdjustment: { inventoryItemId },
+  } = inventoryState
 
-    if (isString(inventoryItemId)) {
-      const consumableId = items.getIn([
-        'byId',
-        inventoryItemId,
-        'consumableId',
-      ])
+  if (isString(inventoryItemId)) {
+    const consumableId = items.getIn([
+      'byId',
+      inventoryItemId,
+      'consumableId',
+    ])
 
-      return aspectFetch(`/inventory/add/${inventoryItemId}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          ...data,
-          consumableId,
-        }),
-        errorNotifications: {
-          default: errorPleaseTryAgainInAFewMinutes({
-            ...defineMessages({
-              title: {
-                id: 'errorResponseMessages.addInventory.PUT.default.title',
-                defaultMessage: 'Adding Inventory Failed',
-              },
-            }),
-            onClose: () => dispatch(showAddInventoryDialog(inventoryItemId)),
-          }),
-        },
-      })
-        .then(() => dispatch(hideAdjustInventoryDialog()))
-        .catch(err => {
-          dispatch(hideAdjustInventoryDialog())
-          throw err
-        })
-    }
-    // new
-    return aspectFetch('/inventory/add', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      errorNotifications: {
+    return fetchWrapperForQueries({
+      endpoint: `/inventory/add/${inventoryItemId}`,
+      method: 'PUT',
+      params: { ...data, consumableId },
+      customErrorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({
           ...defineMessages({
             title: {
-              id: 'errorResponseMessages.addInventory.POST.default.title',
+              id: 'errorResponseMessages.addInventory.PUT.default.title',
               defaultMessage: 'Adding Inventory Failed',
             },
           }),
-          onClose: () => dispatch(showNewInventoryDialog()),
+          onClose: () => dispatch(showAddInventoryDialog(inventoryItemId)),
         }),
       },
-    })
-      .then(() => dispatch(hideAdjustInventoryDialog()))
+    }).then(() => dispatch(hideAdjustInventoryDialog()))
       .catch(err => {
         dispatch(hideAdjustInventoryDialog())
         throw err
       })
   }
+  // new
+  return fetchWrapperForQueries({
+    endpoint: '/inventory/add',
+    method: 'POST',
+    params: data,
+    customErrorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes({
+        ...defineMessages({
+          title: {
+            id: 'errorResponseMessages.addInventory.POST.default.title',
+            defaultMessage: 'Adding Inventory Failed',
+          },
+        }),
+        onClose: () => dispatch(showNewInventoryDialog()),
+      }),
+    },
+  })
+    .then(() => dispatch(hideAdjustInventoryDialog()))
+    .catch(err => {
+      dispatch(hideAdjustInventoryDialog())
+      throw err
+    })
 }
 
-export function removeInventory(data) {
-  return (dispatch, getState) => {
-    const {
-      items,
-      inventoryAdjustment: { inventoryItemId },
-    } = getState().inventory
-    const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+export function removeInventory(data, dispatch, inventoryState) {
+  const {
+    items,
+    inventoryAdjustment: { inventoryItemId },
+  } = inventoryState
+  const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
-    return aspectFetch(`/inventory/remove/${inventoryItemId}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        ...data,
-        consumableId,
-      }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          ...defineMessages({
-            title: {
-              id: 'errorResponseMessages.removeInventory.PUT.default.title',
-              defaultMessage: 'Removing Inventory Failed',
-            },
-          }),
-          onClose: () => dispatch(showRemoveInventoryDialog(inventoryItemId)),
+  return fetchWrapperForQueries({
+    endpoint: `/inventory/remove/${inventoryItemId}`,
+    method: 'PUT',
+    params: {
+      ...data,
+      consumableId,
+    },
+    customErrorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes({
+        ...defineMessages({
+          title: {
+            id: 'errorResponseMessages.removeInventory.PUT.default.title',
+            defaultMessage: 'Removing Inventory Failed',
+          },
         }),
-      },
+        onClose: () => dispatch(showRemoveInventoryDialog(inventoryItemId)),
+      }),
+    },
+  })
+    .then(() => dispatch(hideAdjustInventoryDialog()))
+    .catch(err => {
+      dispatch(hideAdjustInventoryDialog())
+      throw err
     })
-      .then(() => dispatch(hideAdjustInventoryDialog()))
-      .catch(err => {
-        dispatch(hideAdjustInventoryDialog())
-        throw err
-      })
-  }
 }
 
-export function transferInventory(data) {
-  return (dispatch, getState) => {
-    const {
-      items,
-      inventoryAdjustment: { inventoryItemId },
-    } = getState().inventory
-    const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+export function transferInventory(data, dispatch, inventoryState) {
+  const {
+    items,
+    inventoryAdjustment: { inventoryItemId },
+  } = inventoryState
+  const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
-    return aspectFetch(`/inventory/transfer/${inventoryItemId}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        ...data,
-        consumableId,
-      }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          ...defineMessages({
-            title: {
-              id: 'errorResponseMessages.transferInventory.PUT.default.title',
-              defaultMessage: 'Transferring Inventory Failed',
-            },
-          }),
-          onClose: () => dispatch(showTransferInventoryDialog(inventoryItemId)),
+  return fetchWrapperForQueries({
+    endpoint: `/inventory/transfer/${inventoryItemId}`,
+    method: 'PUT',
+    params: {
+      ...data,
+      consumableId,
+    },
+    customErrorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes({
+        ...defineMessages({
+          title: {
+            id: 'errorResponseMessages.transferInventory.PUT.default.title',
+            defaultMessage: 'Transferring Inventory Failed',
+          },
         }),
-      },
+        onClose: () => dispatch(showTransferInventoryDialog(inventoryItemId)),
+      }),
+    },
+  })
+    .then(() => dispatch(hideAdjustInventoryDialog()))
+    .catch(err => {
+      dispatch(hideAdjustInventoryDialog())
+      throw err
     })
-      .then(() => dispatch(hideAdjustInventoryDialog()))
-      .catch(err => {
-        dispatch(hideAdjustInventoryDialog())
-        throw err
-      })
-  }
 }
 
-export function receiveInventory(data) {
-  return (dispatch, getState) => {
-    const {
-      items,
-      inventoryAdjustment: { inventoryItemId },
-    } = getState().inventory
-    const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+export function receiveInventory(data, dispatch, inventoryState) {
+  const {
+    items,
+    inventoryAdjustment: { inventoryItemId },
+  } = inventoryState
+  const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
-    return aspectFetch(`/inventory/receive/${inventoryItemId}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        ...data,
-        consumableId,
-      }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          ...defineMessages({
-            title: {
-              id: 'errorResponseMessages.receiveInventory.PUT.default.title',
-              defaultMessage: 'Receiving Inventory Failed',
-            },
-          }),
-          onClose: () => dispatch(showReceiveInventoryDialog(inventoryItemId)),
+  return fetchWrapperForQueries({
+    endpoint: `/inventory/receive/${inventoryItemId}`,
+    method: 'PUT',
+    body: {
+      ...data,
+      consumableId,
+    },
+    customErrorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes({
+        ...defineMessages({
+          title: {
+            id: 'errorResponseMessages.receiveInventory.PUT.default.title',
+            defaultMessage: 'Receiving Inventory Failed',
+          },
         }),
-      },
+        onClose: () => dispatch(showReceiveInventoryDialog(inventoryItemId)),
+      }),
+    },
+  })
+    .then(() => dispatch(hideAdjustInventoryDialog()))
+    .catch(err => {
+      dispatch(hideAdjustInventoryDialog())
+      throw err
     })
-      .then(() => dispatch(hideAdjustInventoryDialog()))
-      .catch(err => {
-        dispatch(hideAdjustInventoryDialog())
-        throw err
-      })
-  }
 }
 
 export function updateStockLevel(siteId, consumableId, data) {

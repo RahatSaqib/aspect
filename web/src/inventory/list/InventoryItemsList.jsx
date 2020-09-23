@@ -4,10 +4,11 @@ import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { useEffect } from 'react'
-import { defineMessages } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux'
+import { useHistory, useLocation } from "react-router-dom";
+import { useIntl } from 'react-intl'
+import { useQuery, useMutation, queryCache } from 'react-query'
 import { Helmet } from 'react-helmet'
-
 import TableBody from '@material-ui/core/TableBody'
 
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
@@ -39,10 +40,6 @@ import {
   types,
   toggleGroupBySite,
   showNewInventoryDialog,
-  showAddInventoryDialog,
-  showRemoveInventoryDialog,
-  showTransferInventoryDialog,
-  showReceiveInventoryDialog,
   hideAdjustInventoryDialog,
   addInventory,
   removeInventory,
@@ -59,9 +56,7 @@ import {
 import requirePermissions from '../../components/shared/requirePermissions'
 import AspectButton from '../../components/shared/AspectButton'
 import { INVENTORY_LIST, INVENTORY_LIST_GROUP_BY_SITE } from '../../MigratedComponents/QueryFetch/Inventory'
-import { useHistory, useLocation } from "react-router-dom";
-import { useIntl } from 'react-intl'
-import { useQuery, useMutation, queryCache } from 'react-query'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
@@ -80,18 +75,20 @@ const FILTERS_CONFIG = [
 ]
 
 export const InventoryItemsList = () => {
-  // Defining Redux selectors 
+  // >>>>>> Defining hooks <<<<<<
+  const dispatch = useDispatch()
   const history = useHistory()
   const location = useLocation()
   const intl = useIntl()
-  const { table, items } = useSelector(state => state.inventory)
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
-  const inventoryAdjustment = useSelector(state => state.inventory.inventoryAdjustment)
-  const groupBySite = useSelector(state => state.inventory.getIn(['table', 'groupBy']).includes('siteId'))
-  const consumableReasons = useSelector(state => state.consumable.consumableReasons)
-  const dispatch = useDispatch()
 
-  // Defining callbacks and props
+  // >>>>>> Defining selectors <<<<<<
+  const inventory = useSelector(state => state.inventory)
+  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const consumableReasons = useSelector(state => state.consumable.consumableReasons)
+
+  // >>>>>> Structuring data <<<<<<
+  const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+  const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
   })
@@ -105,7 +102,6 @@ export const InventoryItemsList = () => {
     searchParams.get('filters') || ''
   )
   const filters = fromPairs([...filtersParams.entries()])
-
   const searchSanitizer = makeSearchParamsSanitizer({
     availableSortCol: [
       'siteName',
@@ -115,7 +111,6 @@ export const InventoryItemsList = () => {
     ],
   })
   const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-
   const filtersFromLocation = composeSanitizer(
     flowRight(
       filtersSanitizer,
@@ -124,6 +119,7 @@ export const InventoryItemsList = () => {
     searchSanitizer
   )
 
+  // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = formatType => {
     const format = formatType.id
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
@@ -135,34 +131,42 @@ export const InventoryItemsList = () => {
         pageAt,
         table.get('total') > 0 ? table.get('total') : 1,
         format,
-        'supplies'
+        'supplies',
+        dispatch
       )
     }
   }
-
   const onAdjustInventorySucceeded = () => {
     showAcknowledgement({
       title: messages.inventoryAdjustedSuccessfully,
     })
   }
-
   const onGroupBySiteChange = (
-    event,
+    _,
     isInputChecked
   ) => {
     dispatch(toggleGroupBySite(isInputChecked))
   }
 
-  // Defining queries
+  // >>>>>> Defining queries <<<<<<
   const endpointConfig = groupBySite ? INVENTORY_LIST_GROUP_BY_SITE : INVENTORY_LIST
   const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
   const {
     isError,
+    isLoading,
     data = false,
     error,
   } = useQuery([endpointConfig.KEY, params, filters], async () =>
     fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
   )
+
+  // >>>>>> Defining mutations <<<<<<
+  // onSuccess
+  const onSuccess = () => {
+    queryCache.invalidateQueries(endpointConfig.KEY)
+    onAdjustInventorySucceeded()
+  }
+  // Remove
   const [onRemoveInventorySubmit] = useMutation(values => {
     const selectedAdjustmentReason = consumableReasons.items.find(
       reason => reason.get('id') === values.reasonId
@@ -171,47 +175,41 @@ export const InventoryItemsList = () => {
       selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
     ) {
       return removeInventory(
-        omit(values, ['canExpire', 'dateAdjusted'])
+        omit(values, ['canExpire', 'dateAdjusted']),
+        dispatch,
+        inventory
       ).then(onAdjustInventorySucceeded)
     }
     return removeInventory(
-      omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo'])
+      omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo']),
+      dispatch,
+      inventory
     )
-  }, {
+  }, { onSuccess })
+  // Add
+  const [onAddInventorySubmit] = useMutation(values =>
+    addInventory(omit(values, ['canExpire']), dispatch, inventory), {
     onSuccess: () => {
       queryCache.invalidateQueries(endpointConfig.KEY)
       onAdjustInventorySucceeded()
     }
   })
-  const [onAddInventorySubmit] = useMutation(values =>
-    addInventory(omit(values, ['canExpire'])), {
-      onSuccess: () => {
-        queryCache.invalidateQueries(endpointConfig.KEY)
-        onAdjustInventorySucceeded()
-      }
-  })
+  // Transfer
   const [onTransferInventorySubmit] = useMutation(values =>
-    transferInventory(omit(values, ['canExpire'])), {
-      onSuccess: () => {
-        queryCache.invalidateQueries(endpointConfig.KEY)
-        onAdjustInventorySucceeded()
-      }
+    transferInventory(omit(values, ['canExpire']), dispatch, this.getState), {
+    onSuccess
   })
+  // Receive
   const [onReceiveInventorySubmit] = useMutation(values =>
-    receiveInventory(omit(values, ['canExpire'])), {
-      onSuccess: () => {
-        queryCache.invalidateQueries(endpointConfig.KEY)
-        onAdjustInventorySucceeded()
-      }
+    receiveInventory(omit(values, ['canExpire']), dispatch, this.getState), {
+    onSuccess
   })
 
-
+  // >>>>>> Lifecycle hooks <<<<<<
   useEffect(() => {
     if (data)
       dispatch(receiveInventoryItems(data, groupBySite ? ['inventoryItems'] : []))
   }, [data])
-
-  // Defining local state and lifecycle
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(
       location
@@ -233,6 +231,7 @@ export const InventoryItemsList = () => {
   if (isError)
     throw new Error(error)
 
+  // >>>>>> UI <<<<<<
   const AddNewButton = requirePermissions({
     permissions: ['inventory:edit'],
   })(AspectButton)
@@ -262,7 +261,7 @@ export const InventoryItemsList = () => {
         <CheckboxField
           className={cssClasses('Checkbox')}
           name="groupBySite"
-          checked={table.get('groupBy').includes('siteId')}
+          checked={groupBySite}
           label={intl.formatMessage(messages.groupBySite)}
           onChange={onGroupBySiteChange}
         />
@@ -271,7 +270,7 @@ export const InventoryItemsList = () => {
         key={`DataTableCard--table-${location.key}`}
         className={cssClasses('DataTableCard--table')}
       >
-        <DataTableProgressBar disabled={!table.loading} />
+        <DataTableProgressBar disabled={!isLoading} />
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
