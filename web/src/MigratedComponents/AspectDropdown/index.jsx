@@ -1,12 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import Select from 'react-select'
 import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 
 import fetchWrapperForQueries from '../QueryFetch'
+
+const cssClasses = classnames.bind(require('./Dropdown.css'))
 
 const {
   '--aspect-color-chill-blue-1': aspectChillBlue1,
@@ -81,7 +84,7 @@ const SelectComponent = ({
   }, [inputValue])
 
   return (
-    <div style={{ width: '240px', marginRight: '20px' }}>
+    <div className={cssClasses('select__container')}>
       <Select
         getOptionLabel={val => val[nameKey]}
         getOptionValue={val => val[idKey]}
