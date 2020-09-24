@@ -1,7 +1,7 @@
 const _ = require('lodash')
 
 async function shouldSendResultToItis(knex, action) {
-  if (action.resultId) {
+  if (action.resultId && parseInt(action.resultErrorCode, 10) === 5007) {
     const result = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
       .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', `rwl.id`)
