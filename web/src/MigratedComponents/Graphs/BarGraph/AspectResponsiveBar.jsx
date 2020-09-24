@@ -43,8 +43,10 @@ const AspectResponsiveBar = ({
       case type === 'divergent':
         return {
           legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
+          ylegend: false,
           yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          gridYValues: null,
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
             layout: 'horisontal',
@@ -57,13 +59,16 @@ const AspectResponsiveBar = ({
           symbolShape: 'circle',
           theme: {},
           enableGridY: false,
+          enableGridX: false,
+          layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
           margin: { top: 5, right: 0, bottom: 60, left: 0 },
           markers: [],
         }
 
-      case type === 'stackedDeviceActivity':
+      case type === 'barInventory':
         return {
-          legend: false,
+          legend: 'Number of Locations',
+          ylegend: 'Supply in Stock',
           yTickValues: generateTickValues(
             data,
             tickValuesYShape,
@@ -71,6 +76,39 @@ const AspectResponsiveBar = ({
             'Y',
             true
           ),
+          gridYValues: generateTickValues(
+            data,
+            tickValuesYShape,
+            keys,
+            'Y',
+            true
+          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          extraConfig: {},
+          padding: 0.3,
+          translateX: -25,
+          itemWidth: 120,
+          itemDirection: 'right-to-left',
+          symbolShape: 'circle',
+          enableGridY: true,
+          enableGridX: true,
+          layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
+          margin: { top: 50, right: 0, bottom: 60, left: 100 },
+          markers: [],
+        }
+
+      case type === 'stackedDeviceActivity':
+        return {
+          legend: false,
+          ylegend: false,
+          yTickValues: generateTickValues(
+            data,
+            tickValuesYShape,
+            keys,
+            'Y',
+            true
+          ),
+          gridYValues: null,
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
           extraConfig: {},
           padding: 0.03,
@@ -80,6 +118,8 @@ const AspectResponsiveBar = ({
           symbolShape: 'square',
           theme: { grid: { line: { stroke: 'white', strokeWidth: 2 } } },
           enableGridY: true,
+          enableGridX: false,
+          layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
           margin: { top: 5, right: 70, bottom: 100, left: 70 },
           markers: [
             {
@@ -108,6 +148,7 @@ const AspectResponsiveBar = ({
       default:
         return {
           legend: false,
+          ylegend: false,
           yTickValues: generateTickValues(
             data,
             tickValuesYShape,
@@ -115,15 +156,18 @@ const AspectResponsiveBar = ({
             'Y',
             true
           ),
+          gridYValues: null,
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
           itemWidth: 120,
+          layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
           theme: {},
           enableGridY: false,
+          enableGridX: false,
           margin: { top: 5, right: 0, bottom: 60, left: 0 },
           markers: [],
         }
@@ -160,6 +204,8 @@ const AspectResponsiveBar = ({
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
+  // console.log(data)
+
   return (
     <div style={{ height: '100%', maxHeight: '350px' }}>
       <ResponsiveBar
@@ -169,6 +215,8 @@ const AspectResponsiveBar = ({
         colorBy="index"
         enableLabel={false}
         enableGridY={config(type, data, displayMethod).enableGridY}
+        enableGridX={config(type, data, displayMethod).enableGridX}
+        gridYValues={config(type, data, displayMethod).gridYValues}
         {...config(type, data, displayMethod).extraConfig}
         padding={config(type, data, displayMethod).padding}
         borderWidth={0}
@@ -180,7 +228,7 @@ const AspectResponsiveBar = ({
         animate
         motionStiffness={90}
         motionDamping={15}
-        layers={['axes', 'bars', 'grid', 'markers', GraphLegend]}
+        layers={config(type, data, displayMethod).layers}
         colors={v => generateColorForValue(v)}
         margin={config(type, data, displayMethod).margin}
         tooltip={v =>
@@ -208,12 +256,13 @@ const AspectResponsiveBar = ({
           legend: config(type, data, displayMethod).legend,
         }}
         axisBottom={{
+          legend: config(type, data, displayMethod).ylegend,
           tickSize: 5,
           tickValues: config(type, data, displayMethod).xTickValues,
           tickPadding: 10,
           tickRotation: 0,
           legendPosition: 'middle',
-          legendOffset: 32,
+          legendOffset: 50,
           format: v => format(v, displayMethod, intlFormatNumber),
         }}
         legends={baseLegend}

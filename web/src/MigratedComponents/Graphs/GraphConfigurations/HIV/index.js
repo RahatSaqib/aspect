@@ -27,7 +27,7 @@ const hivGraphs = {
         size: 8,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
             minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
@@ -49,7 +49,7 @@ const hivGraphs = {
         size: 4,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
             minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),

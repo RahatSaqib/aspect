@@ -17,12 +17,7 @@ const resultsTransmittedGraphs = {
     title: 'resultsTransmittedTitle',
     componentSize: 'row',
     group: 'assaysNotNeeded',
-    assays: [
-      // 'GxHiv1Vl',
-      // 'GxMtbRif',
-      // 'QHivVL',
-      // todo: add filtered assays
-    ],
+    assays: [],
     selectorModifiers: [
       {
         selectedValue: 'Date Range',
@@ -44,7 +39,7 @@ const resultsTransmittedGraphs = {
         componentClasses: ['piegraph__container--nobg'],
         api: {
           method: 'GET',
-          endpoint: 'dashboard/results-transmitted',
+          endpoint: '/dashboard/results-transmitted',
           params: {
             currentMonth,
           },

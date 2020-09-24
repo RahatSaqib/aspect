@@ -8,10 +8,12 @@ import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isEmpty from 'lodash/isEmpty'
 
-import fetchGraphDataFromConfig from './Queries'
+import fetchWrapperForQueries from '../../QueryFetch'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
+  prepAssaysForParams,
+  prepParamsForEndPoint,
 } from '../Helpers/Formatters'
 
 import EmptyGraph from '../EmptyData'
@@ -24,8 +26,13 @@ const Loading = () => (
   </div>
 )
 
-const GraphRender = ({ assays, config, updatedParams = {} }) => {
+const GraphRender = ({
+  assays: { assaysFromState, whiteListed } = false,
+  config,
+  updatedParams = {},
+}) => {
   const {
+    api: { endpoint, params, method } = false,
     averages,
     component: Component,
     size,
@@ -35,20 +42,32 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
     id,
     indexBy,
     keyToConsume,
+    keysToRename,
     type,
   } = config
-  const { assaysFromState } = assays
+  const assayParams = prepAssaysForParams(whiteListed, method)
+  const endpointParams = prepParamsForEndPoint(params, updatedParams)
+
+  const mergedParams = [...assayParams, ...endpointParams]
+  const [rawData, setRawData] = useState(false)
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
   const { culture } = useSelector(({ user }) => {
     const { culture } = user.toJS()
-    return { culture }
+    return {
+      culture,
+    }
   })
 
-  const { isLoading, isError, data, error } = useQuery(
-    [id, { ...updatedParams }],
-    async (key, { ...updatedParams }) =>
-      fetchGraphDataFromConfig({ assays, config, updatedParams })
+  const { isLoading, isError, error } = useQuery(
+    [id, { mergedParams }],
+    async (key, { mergedParams }) =>
+      fetchWrapperForQueries({
+        endpoint,
+        method,
+        params: mergedParams,
+      }),
+    { onSuccess: ({ data }) => setRawData(data) }
   )
 
   if (isError) {
@@ -56,14 +75,15 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
   }
 
   useEffect(() => {
-    if (data && !isLoading) {
+    if (rawData && !isLoading) {
       const grouped = formatDataByGraphType(
-        data,
+        rawData,
         displayMethod,
         filterBy,
         formatDate,
         indexBy,
         keyToConsume,
+        keysToRename,
         type
       )
       if (grouped) {
@@ -72,7 +92,7 @@ const GraphRender = ({ assays, config, updatedParams = {} }) => {
         setGraphKeys(keysFromGrouped)
       }
     }
-  }, [data])
+  }, [rawData])
 
   return (
     <Grid item xs={12} lg={size}>
