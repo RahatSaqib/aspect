@@ -3,11 +3,12 @@ import React from 'react'
 import classnames from 'classnames/bind'
 
 import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+
+import IconProvider from '../../MigratedComponents/IconProvider'
 
 const cssClasses = classnames.bind(require('./AspectDialog.css'))
 
@@ -40,7 +41,7 @@ const AspectDialog = ({
             className={cssClasses('button-close')}
             onClick={onRequestClose}
           >
-            <CloseIcon />
+            <IconProvider icon="MdClose" />
           </IconButton>
         ) : null}
       </DialogTitle>
