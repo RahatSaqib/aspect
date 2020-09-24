@@ -33,7 +33,7 @@ const deviceStatusGraphs = {
         componentClasses: ['BARCLASS'],
         api: {
           method: 'GET',
-          endpoint: 'dashboard/operational-data/activity-over-time',
+          endpoint: '/dashboard/operational-data/activity-over-time',
           params: {
             minDate,
             maxDate,
