@@ -13,7 +13,7 @@ import Shell from '../../../Shell'
 import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
-import RESULT_DETAIL from '../../../QueryFetch/Result/index'
+import { RESULT_DETAIL } from '../../../QueryFetch/Result/index'
 import fetchWrapperForQueries from '../../../QueryFetch/index.js'
 import errors from './errors'
 

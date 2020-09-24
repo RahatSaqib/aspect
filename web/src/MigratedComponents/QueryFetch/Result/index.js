@@ -3,4 +3,9 @@ const RESULT_DETAIL = {
   KEY: 'RESULT_DETAIL',
 }
 
-export default RESULT_DETAIL
+const RESULT_LIST = {
+  ENDPOINT: '/result',
+  KEY: 'RESULT_LIST',
+}
+
+export { RESULT_DETAIL, RESULT_LIST }

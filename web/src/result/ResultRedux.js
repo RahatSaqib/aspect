@@ -5,12 +5,10 @@ import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
-  errorNotFound,
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorForbidden,
 } from '../error/CommonErrorNotifications'
-import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
+import { receiveList, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
@@ -20,10 +18,6 @@ import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
-  REQUEST_RESULTS: 'REQUEST_RESULTS',
-  RECEIVE_RESULTS: 'RECEIVE_RESULTS',
-  REJECTED_RESULTS: 'REJECTED_RESULTS',
-
   REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
   RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
 
@@ -48,82 +42,10 @@ export const types = {
   SAVING_RESULT_FORM_DATA_COMPLETE: 'SAVING_RESULT_FORM_DATA_COMPLETE',
   SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
+
 /*
  * ---------------- Action Creators -----------------
  */
-function requestResults(sortCol, sortDir, page, size, filters) {
-  return {
-    type: types.REQUEST_RESULTS,
-    sortCol,
-    sortDir,
-    page,
-    size,
-    filters,
-  }
-}
-
-function receiveResults(json) {
-  return {
-    type: types.RECEIVE_RESULTS,
-    items: json.data,
-    total: json.total,
-    extraColumns: json.extraColumns,
-  }
-}
-
-function rejectResults() {
-  return {
-    type: types.REJECTED_RESULTS,
-  }
-}
-
-export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-    dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
-    sortCol = sortCol || 'endedOn'
-    return aspectFetch(
-      `/result?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchResults.GET.400.title',
-                defaultMessage: 'Searching Results Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchResults.GET.default.title',
-                defaultMessage: 'Loading Results Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json => dispatch(receiveResults(json)))
-      .catch(() => dispatch(rejectResults()))
-  }
-}
-
 // updating a single result with given resultId and data
 function requestCreatingTreatmentStatusLog(resultId) {
   return {
@@ -535,14 +457,6 @@ export const WorkflowLogModel = Immutable.Record({
 })
 
 export const Result = Immutable.Record({
-  items: new Items(),
-  table: new Table({
-    sortCol: 'endedOn',
-    sortDir: 'desc',
-    pageSize: 10,
-    filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
-    extraColumns: Immutable.List(),
-  }),
   workflowLog: new WorkflowLogModel(),
   deviceLogs: Immutable.List(),
   screenSchema: Immutable.fromJS(screenSchema),
@@ -555,22 +469,6 @@ const initialState = new Result()
 
 export default function resultReducer(state = initialState, action) {
   switch (action.type) {
-    case types.REQUEST_RESULTS:
-      return state.set('table', requestTable(state.table, action))
-    case types.RECEIVE_RESULTS:
-      return state.withMutations(mutState => {
-        const immutList = Immutable.fromJS(action.items)
-        mutState.set('items', receiveList(mutState.items, immutList))
-        mutState.set(
-          'table',
-          receiveTableItems(mutState.table, action.total, action.extraColumns)
-        )
-      })
-    case types.REJECTED_RESULTS:
-      return state.withMutations(mutState => {
-        mutState.set('items', mutState.get('items').clear())
-        mutState.set('table', mutState.get('table').clear())
-      })
     case types.SET_RESULT_FORM_DATA_VALUE:
       return state
         .withMutations(mutState => {
