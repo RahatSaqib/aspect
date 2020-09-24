@@ -51,10 +51,10 @@ const messages = defineMessages({
   note: {
     id: 'pages.transferResult.note',
     defaultMessage: `
-      Notice that above field 'Transfer to Clinic' lists all clinics, even those
-      which you don't have access to.
-      In a such case - by transferring this result you may no
-      longer be able to edit this result record any more and your
+      Please notice that above field 'Transfer to Clinic' lists all clinics, even those
+      which you may not have access to.
+      In a such case - by transferring this result you won't
+      be able to edit this result record any more, and your
       action cannot be undone.
     `,
   },
