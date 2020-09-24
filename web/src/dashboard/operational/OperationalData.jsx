@@ -2,10 +2,8 @@
 import React, { Fragment } from 'react'
 
 import classnames from 'classnames/bind'
-import flowRight from 'lodash/flowRight'
-import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { injectIntl } from 'react-intl'
+
 import { useQuery } from 'react-query'
 
 import SummaryStatus from '../status/SummaryStatus'
@@ -22,7 +20,7 @@ import ASSAY_LIST from '../../MigratedComponents/QueryFetch/Assay/index'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
-export const OperationalData = ({ intl, history, location, loading }) => {
+export const OperationalData = () => {
   const { deviceStatus } = deviceStatusGraphs
   const { resultsTransmitted } = resultsTransmittedGraphs
   const { inventoryStatus } = inventoryStatusGraphs
@@ -42,63 +40,50 @@ export const OperationalData = ({ intl, history, location, loading }) => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title="Operational Data" />
-      {loading ? (
-        <div className={cssClasses({ 'Content--loading': loading })} />
-      ) : (
-        <Fragment>
-          <ErrorBoundary>
-            <PermissionsProvider permissions={['operationalData']}>
-              <SummaryStatus
-                intl={intl}
-                history={history}
-                location={location}
-                className={cssClasses('Section--summary')}
-                dashboard="operational"
-              />
-            </PermissionsProvider>
-          </ErrorBoundary>
+      <Fragment>
+        <ErrorBoundary>
+          <PermissionsProvider permissions={['operationalData']}>
+            <SummaryStatus
+              className={cssClasses('Section--summary')}
+              dashboard="operational"
+            />
+          </PermissionsProvider>
+        </ErrorBoundary>
 
-          <ErrorBoundary>
-            <PermissionsProvider
-              permissions={resultsTransmitted.graphRenderPermissions}
-            >
-              {assays && assays.length ? (
-                <GraphsContainer
-                  assaysFromState={assays}
-                  config={resultsTransmitted}
-                />
-              ) : null}
-            </PermissionsProvider>
-          </ErrorBoundary>
-
-          <ErrorBoundary>
-            <PermissionsProvider
-              permissions={deviceStatus.graphRenderPermissions}
-            >
-              <GraphsContainer assaysFromState={[]} config={deviceStatus} />
-            </PermissionsProvider>
-          </ErrorBoundary>
-
-          <ErrorBoundary>
-            <PermissionsProvider
-              permissions={inventoryStatus.graphRenderPermissions}
-            >
+        <ErrorBoundary>
+          <PermissionsProvider
+            permissions={resultsTransmitted.graphRenderPermissions}
+          >
+            {assays && assays.length ? (
               <GraphsContainer
                 assaysFromState={assays}
-                config={inventoryStatus}
+                config={resultsTransmitted}
               />
-            </PermissionsProvider>
-          </ErrorBoundary>
-        </Fragment>
-      )}
+            ) : null}
+          </PermissionsProvider>
+        </ErrorBoundary>
+
+        <ErrorBoundary>
+          <PermissionsProvider
+            permissions={deviceStatus.graphRenderPermissions}
+          >
+            <GraphsContainer assaysFromState={[]} config={deviceStatus} />
+          </PermissionsProvider>
+        </ErrorBoundary>
+
+        <ErrorBoundary>
+          <PermissionsProvider
+            permissions={inventoryStatus.graphRenderPermissions}
+          >
+            <GraphsContainer
+              assaysFromState={assays}
+              config={inventoryStatus}
+            />
+          </PermissionsProvider>
+        </ErrorBoundary>
+      </Fragment>
     </div>
   )
 }
 
-export default flowRight(
-  injectIntl,
-  connect(state => ({
-    loading: !!state.getIn(['dashboard', 'requestedAt']),
-    operational: state.getIn(['dashboard', 'operational']),
-  }))
-)(OperationalData)
+export default OperationalData
