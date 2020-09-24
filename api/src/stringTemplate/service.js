@@ -367,15 +367,34 @@ function processDynamicMessage(message) {
 
 // helpers
 function processUsingDynamicHelpers(template, ds) {
+  /**
+   * if template contains mustached string 'numberOfDays' then process it in few steps
+   * - replace mustaches with some tokens, i.e. '${openMustaches}' and '${closeMustaches}'
+   *   Such odd tokens - '${...}' - to make sure template never has such strings
+   * - replace captured value of 'numberOfDays' section with handlebar function {{isoDate ...}}
+   * - process template - this replaces {{isoDate ...}} and all other placeholders with actual values
+   * - then replace tokens '${openMustaches}' and '${closeMustaches}' with corresponding mustaches
+   * - process template - this replaces {{numberOfDays ...}} with actual value
+   * otherwise - process template in one step
+   */
+  const regexNumberOfDays = /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g
   const dynamicTemplate = template.replace(
-    /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
+    regexNumberOfDays,
     (str, match) =>
       `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
   )
-  const message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+  let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+
+  if (regexNumberOfDays.test(template)) {
+    message = processUsingHandlebarsSyntax(
+      message
+        .replace(/\${openMustaches}/g, '{{')
+        .replace(/\${closeMustaches}/g, '}}'),
+      ds
+    )
+  }
+
   return message
-    .replace(/\${openMustaches}/g, '{{')
-    .replace(/\${closeMustaches}/g, '}}')
 }
 
 function curlyBrace(object, open) {
