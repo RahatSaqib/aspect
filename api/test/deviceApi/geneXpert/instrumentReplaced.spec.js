@@ -39,10 +39,7 @@ describe('Backward update db after getting tests from offline device', () => {
 
     const instrumentSerial1 = '123456'
     const instrumentSerial2 = `${instrumentSerial1}-2`
-    const moduleProps = {
-      serial: '234',
-      name: 'A1',
-    }
+    const moduleName = 'A1'
 
     /**
      * 1. create new device with result
@@ -65,7 +62,10 @@ describe('Backward update db after getting tests from offline device', () => {
           },
           instrument: {
             serial: instrumentSerial1,
-            module: moduleProps,
+            module: {
+              name: moduleName,
+              serial: '123',
+            },
           },
         },
       }),
@@ -104,7 +104,10 @@ describe('Backward update db after getting tests from offline device', () => {
           },
           instrument: {
             serial: instrumentSerial2, // new instrument serial
-            module: moduleProps, // same module name/serial
+            module: {
+              name: moduleName,
+              serial: '456',
+            },
           },
         },
       }),
@@ -133,8 +136,7 @@ describe('Backward update db after getting tests from offline device', () => {
 
     const issueData = JSON.parse(issue.data)
     expect(issueData).to.containSubset({
-      moduleName: moduleProps.name,
-      moduleSerial: moduleProps.serial,
+      moduleName,
       newInstrumentSerial: instrumentSerial2,
       replacedInstrumentSerial: instrumentSerial1,
     })
