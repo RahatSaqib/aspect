@@ -25,7 +25,7 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
   const intl = useIntl()
   const dispatch = useDispatch()
 
-  const getActions = (isInTransit) => [
+  const getActions = isInTransit => [
     {
       icon: 'FaCheck',
       text: intl.formatMessage(messages.receiveInventory),

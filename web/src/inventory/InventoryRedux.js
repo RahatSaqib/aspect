@@ -285,7 +285,7 @@ export function receiveInventory(data, dispatch, inventoryState) {
     items,
     inventoryAdjustment: { inventoryItemId },
   } = inventoryState
-  
+
   const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
   return fetchWrapperForQueries({
     endpoint: `/inventory/receive/${inventoryItemId}`,
