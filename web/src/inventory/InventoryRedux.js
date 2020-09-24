@@ -51,7 +51,7 @@ function requestInventoryItems(sortCol, sortDir, page, size, filters, groupBy) {
   }
 }
 
-export function receiveInventoryItems(json, childrenPropertyPath) {
+function receiveInventoryItems(json, childrenPropertyPath) {
   return {
     type: types.RECEIVE_INVENTORY_ITEMS,
     items: json.data,
@@ -70,51 +70,51 @@ function getGroupBy(state) {
   return state.inventory.getIn(['table', 'groupBy'])
 }
 
-export function toggleGroupBySite(toggleOn) {
+function toggleGroupBySite(toggleOn) {
   return { type: types.TOGGLE_GROUP_BY_SITE, toggleOn }
 }
 
-export function showNewInventoryDialog() {
+function showNewInventoryDialog() {
   return {
     type: types.SHOW_NEW_INVENTORY_DIALOG,
   }
 }
 
-export function showAddInventoryDialog(inventoryItemId) {
+function showAddInventoryDialog(inventoryItemId) {
   return {
     type: types.SHOW_ADD_INVENTORY_DIALOG,
     inventoryItemId,
   }
 }
 
-export function showRemoveInventoryDialog(inventoryItemId) {
+function showRemoveInventoryDialog(inventoryItemId) {
   return {
     type: types.SHOW_REMOVE_INVENTORY_DIALOG,
     inventoryItemId,
   }
 }
 
-export function showTransferInventoryDialog(inventoryItemId) {
+function showTransferInventoryDialog(inventoryItemId) {
   return {
     type: types.SHOW_TRANSFER_INVENTORY_DIALOG,
     inventoryItemId,
   }
 }
 
-export function showReceiveInventoryDialog(inventoryItemId) {
+function showReceiveInventoryDialog(inventoryItemId) {
   return {
     type: types.SHOW_RECEIVE_INVENTORY_DIALOG,
     inventoryItemId,
   }
 }
 
-export function hideAdjustInventoryDialog() {
+function hideAdjustInventoryDialog() {
   return {
     type: types.HIDE_ADJUST_INVENTORY_DIALOG,
   }
 }
 
-export function exportSupplies(
+function exportSupplies(
   filtersParams,
   sortCol,
   sortDir,
@@ -159,7 +159,7 @@ export function exportSupplies(
   })
 }
 
-export function addInventory(data, dispatch, inventoryState) {
+function addInventory(data, dispatch, inventoryState) {
   const {
     items,
     inventoryAdjustment: { inventoryItemId },
@@ -214,7 +214,7 @@ export function addInventory(data, dispatch, inventoryState) {
     })
 }
 
-export function removeInventory(data, dispatch, inventoryState) {
+function removeInventory(data, dispatch, inventoryState) {
   const {
     items,
     inventoryAdjustment: { inventoryItemId },
@@ -247,7 +247,7 @@ export function removeInventory(data, dispatch, inventoryState) {
     })
 }
 
-export function transferInventory(data, dispatch, inventoryState) {
+function transferInventory(data, dispatch, inventoryState) {
   const {
     items,
     inventoryAdjustment: { inventoryItemId },
@@ -280,7 +280,7 @@ export function transferInventory(data, dispatch, inventoryState) {
     })
 }
 
-export function receiveInventory(data, dispatch, inventoryState) {
+function receiveInventory(data, dispatch, inventoryState) {
   const {
     items,
     inventoryAdjustment: { inventoryItemId },
@@ -313,7 +313,7 @@ export function receiveInventory(data, dispatch, inventoryState) {
     })
 }
 
-export function updateStockLevel(siteId, consumableId, data) {
+function updateStockLevel(siteId, consumableId, data) {
   return () =>
     aspectFetch(`/inventory/${siteId}/${consumableId}`, {
       method: 'PUT',
@@ -396,4 +396,21 @@ export default function inventoryItemsReducer(state = initialState, action) {
     default:
       return state
   }
+}
+
+export {
+  receiveInventoryItems,
+  toggleGroupBySite,
+  showNewInventoryDialog,
+  showAddInventoryDialog,
+  showRemoveInventoryDialog,
+  showTransferInventoryDialog,
+  showReceiveInventoryDialog,
+  hideAdjustInventoryDialog,
+  exportSupplies,
+  addInventory,
+  removeInventory,
+  transferInventory,
+  receiveInventory,
+  updateStockLevel
 }
