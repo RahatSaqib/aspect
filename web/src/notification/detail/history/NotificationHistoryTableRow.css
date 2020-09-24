@@ -6,6 +6,7 @@
 
 .TableCell {
   composes: TableCell from '../../../task/list/TaskTableRow.css';
+  color: var(--mine-shaft);
 }
 
 .TableCell--hasError {
