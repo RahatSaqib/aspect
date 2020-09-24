@@ -54,5 +54,6 @@ describe('Sending Alert via Message Queue', () => {
         !message.includes('{{') && !message.includes('}}'),
         'Alert message template has not been parsed well'
       )
+      assert.equal(message.indexOf('{{numberOfDays'), -1)
     }))
 })
