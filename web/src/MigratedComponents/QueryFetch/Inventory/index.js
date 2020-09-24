@@ -1,9 +1,11 @@
-export const INVENTORY_LIST = {
+const INVENTORY_LIST = {
   ENDPOINT: '/inventory',
   KEY: 'INVENTORY_LIST',
 }
 
-export const INVENTORY_LIST_GROUP_BY_SITE = {
+const INVENTORY_LIST_GROUP_BY_SITE = {
   ENDPOINT: '/inventory/group-by-site',
   KEY: 'INVENTORY_LIST_GROUP_BY_SITE',
 }
+
+export { INVENTORY_LIST, INVENTORY_LIST_GROUP_BY_SITE }
