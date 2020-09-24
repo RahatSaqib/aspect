@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import Create from './Create'
 import Update from './Update'
@@ -10,12 +10,12 @@ const AspectResultDetail = ({ match }) => {
   const formSchema = resultId === 'add' ? null : editActions
 
   return formSchema ? (
-    <>
+    <Fragment>
       {resultId === 'add' ? <Create formSchema={formSchema} /> : null}
       {resultId !== 'add' && formSchema ? (
         <Update formSchema={formSchema} resultId={resultId} />
       ) : null}
-    </>
+    </Fragment>
   ) : null
 }
 
