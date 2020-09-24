@@ -47,8 +47,12 @@ const GraphsContainer = ({ assaysFromState, config }) => {
   )
 }
 
+GraphsContainer.defaultProps = {
+  assaysFromState: [],
+}
+
 GraphsContainer.propTypes = {
-  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]),
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

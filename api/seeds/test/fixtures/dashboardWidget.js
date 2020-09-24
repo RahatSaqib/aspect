@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     {
-      icon: 'MdComputer',
+      icon: 'MdDesktopWindows',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,

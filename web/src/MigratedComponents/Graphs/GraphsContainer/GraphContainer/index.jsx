@@ -24,10 +24,8 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
     ? [...whiteListed, ...graphRenderPermissions]
     : graphRenderPermissions
 
-  const updateFromActionComponent = params => {
-    const { identifier, selectedOption } = params
+  const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setGraphParams(extractOptionValue(identifier, selectedOption))
-  }
 
   return (
     <PermissionsProvider permissions={permissions}>
