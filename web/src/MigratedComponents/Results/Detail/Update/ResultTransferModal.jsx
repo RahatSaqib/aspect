@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -181,21 +181,54 @@ const ResultTransferModal = ({
       })
   }
 
-  const renderSuccessMessage = () => {
+  const renderSpinner = useCallback(
+    () => (
+      <div className={cssClasses('processing')}>
+        <div className={cssClasses('processing-spinner')}>
+          <CircularProgress size="100%" thickness="1" disableShrink />
+        </div>
+        <div className={cssClasses('processing-label')}>
+          {formatMessage(messages.processing)}
+        </div>
+      </div>
+    ),
+    [formatMessage]
+  )
+
+  const renderSuccessAlert = useCallback(() => {
     const html = formatMessage(messages.successMessage)
       .replace('{{patientId}}', patientId)
-      .replace('{{oldSiteName}}', sourceSite.name)
+      .replace('{{oldSiteName}}', sourceSite && sourceSite.name)
       .replace('{{newSiteName}}', selectedSite && selectedSite.text)
       .replace('{{buttonOk}}', formatMessage(messages.successOk))
     return (
-      <div
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: html,
-        }}
-      />
+      <AspectDialog
+        actions={[
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              history.push('/browse/result')
+            }}
+          >
+            {formatMessage(messages.successOk)}
+          </Button>,
+        ]}
+        maxWidth="xs"
+        open
+        title={formatMessage(messages.successHeader)}
+        disableBackdropClick
+        disableEscapeKeyDown
+      >
+        <div
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: html,
+          }}
+        />
+      </AspectDialog>
     )
-  }
+  }, [history, patientId, formatMessage, sourceSite, selectedSite])
 
   return (
     <AspectDialog
@@ -256,43 +289,13 @@ const ResultTransferModal = ({
         {formatMessage(messages.note)}
       </div>
 
-      {isProcessing && (
-        <div className={cssClasses('processing')}>
-          <div className={cssClasses('processing-spinner')}>
-            <CircularProgress size="100%" thickness="1" disableShrink />
-          </div>
-          <div className={cssClasses('processing-label')}>
-            {formatMessage(messages.processing)}
-          </div>
-        </div>
-      )}
+      {isProcessing && renderSpinner()}
 
       {transferError && (
         <div className={cssClasses('ErrorMessage')}>{transferError}</div>
       )}
 
-      {isSuccessAlert && (
-        <AspectDialog
-          actions={[
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                history.push('/browse/result')
-              }}
-            >
-              {formatMessage(messages.successOk)}
-            </Button>,
-          ]}
-          maxWidth="xs"
-          open
-          title={formatMessage(messages.successHeader)}
-          disableBackdropClick
-          disableEscapeKeyDown
-        >
-          {renderSuccessMessage()}
-        </AspectDialog>
-      )}
+      {isSuccessAlert && renderSuccessAlert()}
     </AspectDialog>
   )
 }
