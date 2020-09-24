@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useCallback } from 'react'
 import classnames from 'classnames/bind'
 
 import IconButton from '@material-ui/core/IconButton'
@@ -22,17 +22,9 @@ const AspectDialog = ({
   showCrossIcon,
   title,
   ...restProps
-}) => (
-  <Dialog
-    disableEscapeKeyDown={modal}
-    fullWidth
-    maxWidth={maxWidth}
-    scroll={autoScrollBodyContent ? 'paper' : 'body'}
-    onClose={onRequestClose}
-    aria-labelledby="dialog-title"
-    {...restProps}
-  >
-    {title && (
+}) => {
+  const renderTitle = useCallback(
+    () => (
       <DialogTitle id="dialog-title">
         {title}
         {showCrossIcon && onRequestClose ? (
@@ -45,14 +37,30 @@ const AspectDialog = ({
           </IconButton>
         ) : null}
       </DialogTitle>
-    )}
-    <DialogContent>{children}</DialogContent>
+    ),
+    [title, showCrossIcon, onRequestClose]
+  )
 
-    {React.Children.count(actions) > 0 && (
-      <DialogActions>{React.Children.toArray(actions)}</DialogActions>
-    )}
-  </Dialog>
-)
+  return (
+    <Dialog
+      disableEscapeKeyDown={modal}
+      fullWidth
+      maxWidth={maxWidth}
+      scroll={autoScrollBodyContent ? 'paper' : 'body'}
+      onClose={onRequestClose}
+      aria-labelledby="dialog-title"
+      {...restProps}
+    >
+      {title && renderTitle()}
+
+      <DialogContent>{children}</DialogContent>
+
+      {React.Children.count(actions) > 0 && (
+        <DialogActions>{React.Children.toArray(actions)}</DialogActions>
+      )}
+    </Dialog>
+  )
+}
 
 AspectDialog.propTypes = {
   actions: PropTypes.node, // eslint-disable-line
