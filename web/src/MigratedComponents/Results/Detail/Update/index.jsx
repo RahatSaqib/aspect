@@ -15,7 +15,7 @@ import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
 import { RESULT_DETAIL } from '../../../QueryFetch/Result'
 import fetchWrapperForQueries from '../../../QueryFetch'
-import errors from './errors'
+import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
 
 const AspectResultDetail = ({ formSchema, resultId }) => {
@@ -29,7 +29,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
     async (key, { resultId }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-        errors: errors.ResultDetails,
+        errors: ResultDetailsErrors,
       }),
     { onSuccess: setFormData }
   )

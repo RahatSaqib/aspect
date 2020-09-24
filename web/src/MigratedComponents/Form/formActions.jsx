@@ -10,8 +10,7 @@ import { useFormikState } from './Formik/Context'
 const cssClasses = classnames.bind(require('./Form.css'))
 
 const FormActionButton = ({ formik, action, onClick, isVisible }) => {
-  if (!formik) return null
-  return (
+  return formik ? (
     <Button
       variant="contained"
       color={action.id === 'cancel' ? 'default' : 'primary'}
@@ -25,7 +24,7 @@ const FormActionButton = ({ formik, action, onClick, isVisible }) => {
     >
       {action.text}
     </Button>
-  )
+  ) : null
 }
 
 const getDefaultDisplayState = defaultAction => {

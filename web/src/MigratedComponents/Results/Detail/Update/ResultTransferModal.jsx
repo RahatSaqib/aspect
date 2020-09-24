@@ -15,7 +15,7 @@ import { SITE_ALL } from '../../../QueryFetch/Site'
 import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
 import { aspectFetch } from '../../../../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
-import errors from './errors'
+import { SitesAllErrors } from './errors'
 
 const cssClasses = classnames.bind(require('../Detail.css'))
 
@@ -111,7 +111,7 @@ const ResultTransferModal = ({
     async key =>
       fetchWrapperForQueries({
         endpoint: `${SITE_ALL.ENDPOINT}`,
-        errors: errors.SitesAll,
+        errors: SitesAllErrors,
       }),
     {
       onSuccess: ({ data }) =>
