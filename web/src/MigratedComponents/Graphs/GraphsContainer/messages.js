@@ -29,6 +29,10 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsTBDetected.title',
     defaultMessage: 'TB Detected',
   },
+  inventoryGraphStatus: {
+    id: 'pages.Status.inventoryGraphStatus.title',
+    defaultMessage: 'Supply in Stock',
+  },
   clinicalIndicatorsTBDetectedPie: {
     id: 'pages.Status.clinicalIndicatorsTBDetectedPie.title',
     defaultMessage: 'Average monthly TB Detected Rate',
