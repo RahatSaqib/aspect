@@ -377,15 +377,14 @@ function processUsingDynamicHelpers(template, ds) {
    * - process template - this replaces {{numberOfDays ...}} with actual value
    * otherwise - process template in one step
    */
-  const regexNumberOfDays = /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g
   const dynamicTemplate = template.replace(
-    regexNumberOfDays,
+    /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
     (str, match) =>
       `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
   )
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
 
-  if (regexNumberOfDays.test(template)) {
+  if (dynamicTemplate !== template) {
     message = processUsingHandlebarsSyntax(
       message
         .replace(/\${openMustaches}/g, '{{')
