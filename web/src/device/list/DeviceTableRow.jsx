@@ -24,7 +24,7 @@ const enhance = identity(injectIntl)
 const Rate = ({ intl, it, messageId, threshold }) => (
   <span>
     {it.total === 0 ? (
-      intl.formatMessage(messages.noResults)
+      intl.formatMessage(messages.notAvailable)
     ) : (
       <ColoredNumber
         number={it.rate}
