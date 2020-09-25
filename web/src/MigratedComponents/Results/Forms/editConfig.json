@@ -19,6 +19,11 @@
                 "id": "save",
                 "text": "Save Result",
                 "action": "saveEdit"
+            },
+            {
+                "id": "transfer",
+                "text": "Transfer Result",
+                "action": "transferResult"
             }
         ]
     },
@@ -270,6 +275,14 @@
                             },
                             "type": "readOnly",
                             "label": "Collected By"
+                        },
+                        {
+                            "id": "reportableSiteName",
+                            "controlType": {
+                                "component": "textField"
+                            },
+                            "type": "readOnly",
+                            "label": "Reportable Site"
                         }
                     ]
                 }

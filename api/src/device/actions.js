@@ -185,6 +185,7 @@ function deviceInstrumentReplaced(device, options) {
     'siteId',
     'geographyId',
     'partnerId',
+    'resultId',
   ])
   return {
     ...issueProps,

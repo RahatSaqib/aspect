@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const shared = require('../utils/sharedToken')
+const { knex } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -68,19 +69,17 @@ describe('Result Transfer', () => {
       assert.isNotNull(newSite2)
     })
 
-    after(() =>
-      runTestWithKnex(async knex => {
-        // restore initial data
-        await knex('Result')
-          .where('id', result.id)
-          .update({ reportableSiteId, resultStatusLogId })
-        await knex('ResultStatusLog')
-          // assume resultStatusLogId is 0 if `result` didn't have any record in ResultStatusLog
-          .where('id', '>', resultStatusLogId || 0)
-          .where({ resultId: result.id })
-          .del()
-      })
-    )
+    after(async () => {
+      // restore initial data
+      await knex('Result')
+        .where('id', result.id)
+        .update({ reportableSiteId, resultStatusLogId })
+      await knex('ResultStatusLog')
+        // assume resultStatusLogId is 0 if `result` didn't have any record in ResultStatusLog
+        .where('id', '>', resultStatusLogId || 0)
+        .where({ resultId: result.id })
+        .del()
+    })
 
     it('Should change result.reportableSiteId and add ResultStatusLog', async () => {
       // transfer result to newSite1
@@ -130,17 +129,30 @@ describe('Result Transfer', () => {
       assert.equal(testResult.reportableSiteId, newSite1.id)
     })
 
-    it('Should transfer result to newSite2 with a newer timeStamp', async () => {
+    it('Should transfer result to newSite2 with comment and newer timeStamp', async () => {
+      const comment = 'Some comment'
       const response = await server
         .set('Authorization', `Bearer ${shared.token}`)
         .post(`${path}/transfer/${result.id}`)
         // try transfer same result to 2nd site with newer timeStamp
-        .send({ siteId: newSite2.id, timestamp: timeStampNewest })
+        .send({
+          siteId: newSite2.id,
+          timestamp: timeStampNewest,
+          comment,
+        })
 
       assertResult(response)
       const testResult = response.body.data
       // reportableSiteId is equal to requested newSite2
       assert.equal(testResult.reportableSiteId, newSite2.id)
+
+      // check if comment stored
+      const { resultStatusLogId } = testResult
+      const logData = await knex('ResultStatusLog')
+        .where('id', resultStatusLogId)
+        .first('data')
+      const log = JSON.parse(logData.data)
+      assert.equal(comment, log.comment)
     })
   })
 })

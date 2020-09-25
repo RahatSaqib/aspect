@@ -4,7 +4,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
 } from '../../../../error/CommonErrorNotifications'
 
-const ERRORS = {
+const ResultDetailsErrors = {
   404: errorNotFound(
     defineMessages({
       title: {
@@ -23,4 +23,42 @@ const ERRORS = {
   ),
 }
 
-export default ERRORS
+const SitesAllErrors = {
+  404: errorNotFound(
+    defineMessages({
+      title: {
+        id: 'errorResponseMessages.fetchAllSites.GET.404.title',
+        defaultMessage: 'Could Not Load All Sites',
+      },
+    })
+  ),
+  default: errorPleaseTryAgainInAFewMinutes(
+    defineMessages({
+      title: {
+        id: 'errorResponseMessages.fetchAllSites.GET.default.title',
+        defaultMessage: 'Error Loading All Sites',
+      },
+    })
+  ),
+}
+
+const TransferResultErrors = {
+  404: errorNotFound(
+    defineMessages({
+      title: {
+        id: 'errorResponseMessages.transferResult.GET.404.title',
+        defaultMessage: 'Could Not Transfer Result',
+      },
+    })
+  ),
+  default: errorPleaseTryAgainInAFewMinutes(
+    defineMessages({
+      title: {
+        id: 'errorResponseMessages.transferResult.GET.default.title',
+        defaultMessage: 'Error Transferring Result',
+      },
+    })
+  ),
+}
+
+export { ResultDetailsErrors, SitesAllErrors, TransferResultErrors }
