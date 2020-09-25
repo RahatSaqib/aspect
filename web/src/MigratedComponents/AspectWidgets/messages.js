@@ -23,7 +23,7 @@ export const messages = defineMessages({
   },
   dashboardWidgetSmsSentTitle: {
     id: 'pages.Status.dashboardWidgetSmsSentTitle',
-    defaultMessage: 'Number of SMS Sent MTD',
+    defaultMessage: 'SMS Sent MTD',
   },
   dashboardWidgetSmsSentDescription: {
     id: 'pages.Status.dashboardWidgetSmsSentDescription',

@@ -98,7 +98,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdCheck',
-      title: 'Valid Results Pc',
+      title: 'Valid Results',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
       subTitleI18nKey: null,
@@ -510,7 +510,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdSwapVert',
-      title: 'Module swaps',
+      title: 'Module Swaps',
       titleI18nKey: 'moduleSwapsTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -558,7 +558,7 @@ module.exports = {
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 3,
+      sortOrder: 4,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
       descriptionI18nKey: 'moduleSwapsDescription',
@@ -787,48 +787,55 @@ module.exports = {
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-      SELECT
-        ROUND(IFNULL(SUM(days)/count(deviceId), 0)) AS cnt
+      SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
       FROM (
-      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
-      FROM Result AS r1
-          INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
-          INNER JOIN Device AS d ON d.id = r1.deviceId
-          INNER JOIN Site AS s ON d.siteId = s.id
-          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      WHERE YEAR(r1.endedOn) = YEAR(NOW())
-                AND
-                MONTH(r1.endedOn) = MONTH(NOW())
-                AND
-                dt.externalId = 'CepheidGeneXpert'
-      GROUP BY deviceId) AS innerQuery`,
+		    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
+		    FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as instrumentSerial, i.deviceId, r.endedOn
+				      FROM Issue AS i
+				      INNER JOIN Result AS r on i.resultId = r.id
+              INNER JOIN Device AS d on r.deviceId = d.id
+              INNER JOIN Site AS s ON d.siteId = s.id
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+				      INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+				      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+				      WHERE it.externalId = 'InstrumentReplaced'
+				      AND YEAR(r.endedOn) = YEAR(NOW())
+				      AND MONTH(r.endedOn) = MONTH(NOW())
+				      AND dt.externalId = 'CepheidGeneXpert'
+            )
+            AS issueData
+		    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial
+        GROUP by r.deviceId, r.instrumentSerial
+      ) as innerQuery`,
       sqlForStatUnit: `
-      SELECT
-      ROUND(IFNULL(
-        SUM(days)/count(deviceId), 0)) AS cnt
+      SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
       FROM (
-      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
-      FROM Result AS r1
-        INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
-        INNER JOIN Device AS d ON d.id = r1.deviceId
-        INNER JOIN Site AS s ON d.siteId = s.id
-        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      WHERE
-            YEAR(r1.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-            AND
-            MONTH(r1.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-            AND
-            dt.externalId = 'CepheidGeneXpert'
-      GROUP BY deviceId) AS innerQuery`,
+		    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
+		    FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as instrumentSerial, i.deviceId, r.endedOn
+				      FROM Issue AS i
+				      INNER JOIN Result AS r on i.resultId = r.id
+              INNER JOIN Device AS d on r.deviceId = d.id
+              INNER JOIN Site AS s ON d.siteId = s.id
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+				      INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+				      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+				      WHERE it.externalId = 'InstrumentReplaced'
+				      AND YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+				      AND MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+				      AND dt.externalId = 'CepheidGeneXpert'
+            )
+            AS issueData
+		    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial
+        GROUP by r.deviceId, r.instrumentSerial
+      ) as innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 2,
+      sortOrder: 3,
       externalId: 'instrumentsReplaced',
-      description: 'The average days for an instrument replacement.',
+      description:
+        'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.',
       descriptionI18nKey: 'instrumentsReplacedDescription',
       dashboards: {
         operational: {
@@ -992,7 +999,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdTextsms',
-      title: 'Number of SMS Sent MTD',
+      title: 'SMS Sent MTD',
       titleI18nKey: 'dashboardWidgetSmsSentTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1185,7 +1192,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdBuild',
-      title: 'Number of Devices Experiencing Service Interruption',
+      title: 'Devices With Service Interruption',
       titleI18nKey: 'numberOfDevicesExperiencingServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1332,7 +1339,7 @@ module.exports = {
     },
     {
       icon: 'MdBuild',
-      title: 'Percentage of Days with Service Interruption',
+      title: 'Days With Service Interruption',
       titleI18nKey: 'percentageOfDaysWithServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,
