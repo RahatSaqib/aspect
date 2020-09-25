@@ -1872,7 +1872,7 @@ async function transferResult(request) {
   const {
     auth,
     params: { resultId },
-    payload: { siteId, timestamp },
+    payload: { siteId, timestamp, comment, includeAllResults },
   } = request
   const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
@@ -1929,6 +1929,7 @@ async function transferResult(request) {
         siteId: result.siteId,
         reportableSiteId: siteId,
         sampleOriginSiteId: result.sampleOriginSiteId,
+        comment,
       }),
       timestamp,
     })
@@ -1992,6 +1993,32 @@ async function transferResult(request) {
     'data',
   ])
   result.data.followUps = []
+
+  const { patientId } = result.data
+  if (includeAllResults && patientId) {
+    // get all other results of the same Patient Id
+    const otherResultsForPatient = await knex('Result')
+      .whereNot('id', resultId)
+      .whereRaw(
+        'LOWER(JSON_EXTRACT(patientData, "$.id")) = LOWER(JSON_QUOTE(?))',
+        [patientId]
+      )
+      .select('id')
+    // transfer them all to new siteId
+    await Promise.each(otherResultsForPatient, ({ id }) =>
+      transferResult({
+        auth,
+        params: { resultId: id },
+        payload: {
+          siteId,
+          timestamp,
+          comment,
+          // make sure to pass `false` here - to use this recursion only once
+          includeAllResults: false,
+        },
+      })
+    )
+  }
 
   return result
 }

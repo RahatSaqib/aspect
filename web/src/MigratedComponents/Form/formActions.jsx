@@ -2,20 +2,24 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
+import { useSelector } from 'react-redux'
+import isFunction from 'lodash/isFunction'
 
 import { useFormikState } from './Formik/Context'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const FormActionButton = ({ formik, action, localAction, displayConfig }) => {
+const FormActionButton = ({ formik, action, onClick, isVisible }) => {
   return formik ? (
     <Button
       variant="contained"
       color={action.id === 'cancel' ? 'default' : 'primary'}
-      onClick={() => localAction(action.id)}
+      onClick={() =>
+        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
+      }
       className={cssClasses('form__button', `form__button--${action.id}`, {
-        'form__button--enabled': displayConfig[action.id],
-        'form__button--disabled': !displayConfig[action.id],
+        'form__button--enabled': isVisible,
+        'form__button--disabled': !isVisible,
       })}
     >
       {action.text}
@@ -32,6 +36,7 @@ const getDefaultDisplayState = defaultAction => {
 }
 
 const FormActions = ({ config }) => {
+  const permissions = useSelector(({ user }) => user.jwt.permissions)
   const { actions } = config
   const { items: formActions, default: defaultAction } = actions
   const { formik, toggleEdit, setToggleEdit } = useFormikState()
@@ -75,8 +80,12 @@ const FormActions = ({ config }) => {
       <FormActionButton
         formik={formik}
         action={action}
-        localAction={setActionToAction}
-        displayConfig={displayConfig}
+        onClick={setActionToAction}
+        isVisible={
+          isFunction(action.isVisible)
+            ? action.isVisible(permissions, toggleEdit)
+            : displayConfig[action.id]
+        }
       />
     ))
   )

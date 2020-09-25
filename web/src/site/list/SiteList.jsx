@@ -46,7 +46,7 @@ import {
 } from './SiteDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
-import SITE_LIST from '../../MigratedComponents/QueryFetch/Site/index'
+import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
 
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
