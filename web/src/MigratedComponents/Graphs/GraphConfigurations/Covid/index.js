@@ -24,7 +24,7 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day'],
             followUp: 'died',
@@ -48,7 +48,7 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day'],
             followUp: 'recovered',
@@ -85,7 +85,7 @@ const covidGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender', 'age'],
             followUpType: 'outcome',
@@ -124,7 +124,7 @@ const covidGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['day', 'resultCategory1'],
             minDate: getTimePeriod(15, 'days', 'yyyy-MM-dd'),
@@ -162,7 +162,7 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
@@ -192,7 +192,7 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
@@ -235,7 +235,7 @@ const covidGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',

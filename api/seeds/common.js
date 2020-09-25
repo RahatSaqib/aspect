@@ -1936,7 +1936,7 @@ async function upsertDashboardWidgets(
         })
         .select('id', 'name')
 
-      jobFunctionsDb.map(async jf => {
+      await Promise.each(jobFunctionsDb, async jf => {
         const { jobFunctionId } =
           (await knex('JobFunctionDashboardWidget')
             .where('jobFunctionId', jf.id)

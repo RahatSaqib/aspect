@@ -7,6 +7,7 @@ exports[`RawDataDialog module RawDataDialog component should render correctly 1`
     maxWidth="md"
     modal={false}
     open={true}
+    showCrossIcon={false}
     title="Raw Result Data"
   >
     <div

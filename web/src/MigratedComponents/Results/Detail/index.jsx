@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import Create from './Create'
 import Update from './Update'

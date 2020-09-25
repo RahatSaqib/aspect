@@ -98,7 +98,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdCheck',
-      title: 'Valid Results Pc',
+      title: 'Valid Results',
       titleI18nKey: 'dashboardWidgetValidResultsPc',
       subTitle: null,
       subTitleI18nKey: null,
@@ -137,6 +137,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdInsertChart',
       title: 'Utilization Rate',
       titleI18nKey: 'utilizationRateTitle',
@@ -254,6 +255,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdInbox',
       title: 'Stockouts',
       titleI18nKey: 'StockoutsTitle',
@@ -337,6 +339,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdEventAvailable',
       title: 'Days active',
       titleI18nKey: 'deviceDaysActiveTitle',
@@ -397,6 +400,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdWarning',
       title: 'Error Rate',
       titleI18nKey: 'errorRateTitle',
@@ -469,6 +473,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdInbox',
       title: 'Stock not recorded',
       titleI18nKey: 'stockNotRecordedTitle',
@@ -505,7 +510,7 @@ module.exports = {
     {
       jobFunctions: ['all'],
       icon: 'MdSwapVert',
-      title: 'Module swaps',
+      title: 'Module Swaps',
       titleI18nKey: 'moduleSwapsTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -553,7 +558,7 @@ module.exports = {
       statUnitI18nKey: 'dashboardWidgetModuleSwaps',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 1,
+      sortOrder: 4,
       externalId: 'moduleSwaps',
       description: 'The number of module swaps made at the current month',
       descriptionI18nKey: 'moduleSwapsDescription',
@@ -564,8 +569,8 @@ module.exports = {
       },
     },
     {
-      icon: 'MdNotificationsNone',
       jobFunctions: ['all'],
+      icon: 'MdNotificationsNone',
       title: 'Positive Results Notified',
       titleI18nKey: 'gxPositiveResultsNotifiedTitle',
       externalId: 'gxPositiveResultsNotified',
@@ -650,6 +655,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'FaCloudUploadAlt',
       title: 'Average Delay to Upload',
       titleI18nKey: 'avgTimeToUploadTitle',
@@ -720,6 +726,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       title: 'Devices with Unused Modules',
       titleI18nKey: 'unusedModulesTitle',
       subTitle: null,
@@ -760,7 +767,7 @@ module.exports = {
       statUnitI18nKey: 'unusedModulesStats',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 3,
+      sortOrder: 6,
       externalId: 'unusedModules',
       description:
         "Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module.",
@@ -773,54 +780,62 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdSwapVert',
       title: 'Average Days for Instrument Replacement',
       titleI18nKey: 'instrumentsReplaced',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
-      SELECT
-        ROUND(IFNULL(SUM(days)/count(deviceId), 0)) AS cnt
+      SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
       FROM (
-      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
-      FROM Result AS r1
-          INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
-          INNER JOIN Device AS d ON d.id = r1.deviceId
-          INNER JOIN Site AS s ON d.siteId = s.id
-          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      WHERE YEAR(r1.endedOn) = YEAR(NOW())
-                AND
-                MONTH(r1.endedOn) = MONTH(NOW())
-                AND
-                dt.externalId = 'CepheidGeneXpert'
-      GROUP BY deviceId) AS innerQuery`,
+		    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
+		    FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as instrumentSerial, i.deviceId, r.endedOn
+				      FROM Issue AS i
+				      INNER JOIN Result AS r on i.resultId = r.id
+              INNER JOIN Device AS d on r.deviceId = d.id
+              INNER JOIN Site AS s ON d.siteId = s.id
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+				      INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+				      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+				      WHERE it.externalId = 'InstrumentReplaced'
+				      AND YEAR(r.endedOn) = YEAR(NOW())
+				      AND MONTH(r.endedOn) = MONTH(NOW())
+				      AND dt.externalId = 'CepheidGeneXpert'
+            )
+            AS issueData
+		    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial
+        GROUP by r.deviceId, r.instrumentSerial
+      ) as innerQuery`,
       sqlForStatUnit: `
-      SELECT
-      ROUND(IFNULL(
-        SUM(days)/count(deviceId), 0)) AS cnt
+      SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
       FROM (
-      SELECT r1.deviceId, DATEDIFF(Min(r2.createdOn), Max(r1.createdOn)) AS days
-      FROM Result AS r1
-        INNER JOIN Result AS r2 ON r1.deviceId=r2.deviceId AND r1.id<>r2.id AND r1.instrumentSerial<> r2.instrumentSerial and r1.createdOn < r2.createdOn
-        INNER JOIN Device AS d ON d.id = r1.deviceId
-        INNER JOIN Site AS s ON d.siteId = s.id
-        LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-        INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      WHERE
-            YEAR(r1.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-            AND
-            MONTH(r1.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-            AND
-            dt.externalId = 'CepheidGeneXpert'
-      GROUP BY deviceId) AS innerQuery`,
+		    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
+		    FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as instrumentSerial, i.deviceId, r.endedOn
+				      FROM Issue AS i
+				      INNER JOIN Result AS r on i.resultId = r.id
+              INNER JOIN Device AS d on r.deviceId = d.id
+              INNER JOIN Site AS s ON d.siteId = s.id
+              LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+				      INNER JOIN IssueType AS it ON i.issueTypeId = it.id
+				      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+				      WHERE it.externalId = 'InstrumentReplaced'
+				      AND YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+				      AND MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+				      AND dt.externalId = 'CepheidGeneXpert'
+            )
+            AS issueData
+		    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial
+        GROUP by r.deviceId, r.instrumentSerial
+      ) as innerQuery`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
       link: '/browse/device',
       linkParams: {},
-      sortOrder: 4,
+      sortOrder: 3,
       externalId: 'instrumentsReplaced',
-      description: 'The average days for an instrument replacement.',
+      description:
+        'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.',
       descriptionI18nKey: 'instrumentsReplacedDescription',
       dashboards: {
         operational: {
@@ -829,6 +844,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdEmail',
       title: 'Average email recipients per positive result',
       titleI18nKey: 'averageRecipientsOfEmail',
@@ -879,6 +895,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdTextsms',
       title: 'Average SMS recipients per positive result',
       titleI18nKey: 'averageRecipientsOfSms',
@@ -929,6 +946,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdTextsms',
       title: 'Average length of SMS',
       titleI18nKey: 'averageLengthOfSms',
@@ -979,8 +997,9 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdTextsms',
-      title: 'Number of SMS Sent MTD',
+      title: 'SMS Sent MTD',
       titleI18nKey: 'dashboardWidgetSmsSentTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1024,6 +1043,7 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdSwapVert',
       title: 'Average days between module swaps',
       titleI18nKey: 'averageDaysModuleSwap',
@@ -1068,7 +1088,7 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardAverageDaysModuleSwap',
       link: '/browse/notification',
-      sortOrder: 2,
+      sortOrder: 4,
       externalId: 'averageDaysModuleSwap',
       description:
         'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
@@ -1080,8 +1100,9 @@ module.exports = {
       },
     },
     {
+      jobFunctions: ['all'],
       icon: 'MdSwapVert',
-      title: 'Average time to module replacement',
+      title: 'Average time to replace disabled module',
       titleI18nKey: 'averageTimeToModuleReplacementTitle',
       subTitle: null,
       subTitleI18nKey: null,
@@ -1158,11 +1179,9 @@ module.exports = {
       statUnit: '{unit} last month',
       statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
       link: '/browse/notification',
-      sortOrder: 25,
+      sortOrder: 5,
       externalId: 'averageTimeToModuleReplacement',
-      description: `The average time (in days) between module replacement - i.e.
-        between day module serial was marked as disabled until a
-        different module serial detected in that slot.`,
+      description: `The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.`,
       descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
       dashboards: {
         operational: {
@@ -1171,9 +1190,10 @@ module.exports = {
       },
     },
     {
-      icon: 'MdSwapVert',
-      title: 'Number of Devices Experiencing Service Interruption',
-      titleI18nKey: 'numberOfDevicesExperiencingServiceInterrumptionTitle',
+      jobFunctions: ['all'],
+      icon: 'MdBuild',
+      title: 'Devices With Service Interruption',
+      titleI18nKey: 'numberOfDevicesExperiencingServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `
@@ -1219,13 +1239,98 @@ module.exports = {
               AND dt.externalId = 'CepheidGeneXpert'
       `,
       statUnit: '{unit} last month',
-      statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterrumptionUnit',
+      statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
       link: '/browse/device',
-      sortOrder: 26,
-      externalId: 'numberOfDevicesExperiencingServiceInterrumption',
-      description: `The number of devices experiencing service interrumption on this and the previous month.`,
+      sortOrder: 0,
+      externalId: 'numberOfDevicesExperiencingServiceInterruption',
+      description: `The number of devices experiencing service interruption on this and the previous month.`,
       descriptionI18nKey:
-        'numberOfDevicesExperiencingServiceInterrumptionDescription',
+        'numberOfDevicesExperiencingServiceInterruptionDescription',
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+        },
+      },
+    },
+    {
+      jobFunctions: ['all'],
+      icon: 'MdBuild',
+      title: 'Average Duration of Service Interruption',
+      titleI18nKey: 'averageDurationServiceInterruptionTitle',
+      subTitle: null,
+      subTitleI18nKey: null,
+      /*
+        The innermost query gets the number of times the device was down for repair if it wasn't down the entire month
+        The "middle-query" combines that with the devices that were down the entire month so we have the total number of times a device was down
+        That then allows us at the top level to calculate the average number of days a device was down
+      */
+      sqlForIndicator: `
+      SELECT IFNULL(ROUND(AVG(days/times)), 0) AS cnt
+      FROM
+          (
+          SELECT MIN(dmsl.day) AS minInactive, MAX(dmsl.day) AS maxInactive, dmsl.deviceId,
+            COUNT(CASE WHEN DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7 THEN dmsl.deviceId ELSE NULL END) AS days,
+                  CASE WHEN o.times IS NULL THEN 1 ELSE o.times + (CASE WHEN MIN(dmsl.day) = DATE_FORMAT(NOW(), '%Y-%m-01') AND MAX(dmsl.day) = LAST_DAY(NOW()) THEN 1 ELSE 0 END) END AS times
+          FROM DeviceMaintenanceStatusLog AS dmsl
+          INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN Device AS d ON dmsl.deviceId = d.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+		      INNER JOIN Site AS s ON s.id = d.siteId
+		      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          LEFT OUTER JOIN
+          (
+              SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
+              FROM DeviceMaintenanceStatusLog AS dmsl
+              LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
+                  LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
+              WHERE YEAR(dmsl.day) = YEAR(NOW())
+                  AND MONTH(dmsl.day) = MONTH(NOW())
+                  AND dms.externalId = 'inactiveDownForRepair'
+              GROUP BY dmsl.deviceId) AS o ON dmsl.deviceId = o.deviceId
+        WHERE YEAR(dmsl.day) = YEAR(NOW())
+        AND MONTH(dmsl.day) = MONTH(NOW())
+        AND dms.externalId = 'inactiveDownForRepair'
+        AND dt.externalId = 'CepheidGeneXpert'
+        GROUP BY deviceId
+        ORDER BY deviceId , minInactive) AS innerQuery
+      `,
+      sqlForStatUnit: `
+      SELECT IFNULL(ROUND(AVG(days/times)), 0) AS cnt
+      FROM
+          (
+          SELECT MIN(dmsl.day) AS minInactive, MAX(dmsl.day) AS maxInactive, dmsl.deviceId,
+            COUNT(CASE WHEN DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7 THEN dmsl.deviceId ELSE NULL END) AS days,
+                  CASE WHEN o.times IS NULL THEN 1 ELSE o.times + (CASE WHEN MIN(dmsl.day) = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m-01') AND MAX(dmsl.day) = LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH)) THEN 1 ELSE 0 END) END AS times
+          FROM DeviceMaintenanceStatusLog AS dmsl
+          INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN Device AS d ON dmsl.deviceId = d.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+		      INNER JOIN Site AS s ON s.id = d.siteId
+		      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          LEFT OUTER JOIN
+          (
+              SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
+          FROM DeviceMaintenanceStatusLog AS dmsl
+          LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
+              LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
+          WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+              AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+              AND dms.externalId = 'inactiveDownForRepair'
+          GROUP BY dmsl.deviceId) AS o ON dmsl.deviceId = o.deviceId
+        WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND dms.externalId = 'inactiveDownForRepair'
+        AND dt.externalId = 'CepheidGeneXpert'
+        GROUP BY deviceId
+        ORDER BY deviceId , minInactive) AS innerQuery
+      `,
+      statUnit: '{unit} last month',
+      statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
+      link: '/browse/device',
+      sortOrder: 1,
+      externalId: 'averageDurationServiceInterruption',
+      description: `The average duration of a service interruption, in days.`,
+      descriptionI18nKey: 'averageDurationServiceInterruptionDescription',
       dashboards: {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
@@ -1234,7 +1339,7 @@ module.exports = {
     },
     {
       icon: 'MdBuild',
-      title: 'Percentage of Days with Service Interruption',
+      title: 'Days With Service Interruption',
       titleI18nKey: 'percentageOfDaysWithServiceInterruptionTitle',
       subTitle: null,
       subTitleI18nKey: null,
