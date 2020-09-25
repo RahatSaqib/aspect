@@ -355,83 +355,39 @@ function addConstraints(queryBuilder, constraints, aliases) {
       }
     }
   }
-  if (device) {
-    const forceApproved = !showUnapprovedDevices
-    const forceNonDecommissioned = !showDecommissionedDevices
-    // -------------
-    // table DeviceApproval - take only 'approved' or non-'decommissioned' devices
-    // -------------
-    if (forceApproved || forceNonDecommissioned) {
-      queryBuilder.leftOuterJoin(
-        `DeviceApproval as __da`,
-        `${device}.deviceApprovalId`,
-        `__da.id`
+  if (device && !showUnapprovedDevices) {
+    queryBuilder.leftOuterJoin(
+      `DeviceApproval as deviceApproval`,
+      `${device}.deviceApprovalId`,
+      `deviceApproval.id`
+    )
+    queryBuilder.where(function () {
+      this.where({ [`deviceApproval.token`]: 'approved' }).orWhere(
+        knex.raw('isnull(`deviceApproval`.`token`)')
       )
-      queryBuilder.where(function () {
-        this.whereNull(`__da.token`)
-          .orWhere(function () {
-            if (forceApproved) {
-              this.where(`__da.token`, 'approved')
-            }
-          })
-          .orWhere(function () {
-            if (forceNonDecommissioned) {
-              this.whereNot(`__da.token`, 'decommissioned')
-            }
-          })
-      })
-    }
-    // -------------
-    // table DeviceMaintenanceStatusLog - latest device maintenance status for device is NOT 'inactiveDecommissioned'
-    // -------------
-    if (forceNonDecommissioned) {
-      queryBuilder
-        .leftOuterJoin(
-          `DeviceMaintenanceStatusLog as __dm_log`,
-          `${device}.id`,
-          `__dm_log.deviceId`
-        )
-        /**
-         * join to same table and set conditions in 'ON' to take latest item from __dm_log.
-         * see '__dm_log2.id IS NULL' in WHERE clause which makes sure we get
-         * latest (single) item from __dm_log
-         */
-        .leftOuterJoin(`DeviceMaintenanceStatusLog as __dm_log2`, function () {
-          this.on(`__dm_log.deviceId`, `__dm_log2.deviceId`)
-            .andOn('__dm_log.day', '__dm_log2.day')
-            .andOn(function () {
-              this.on('__dm_log.createdOn', '<', '__dm_log2.createdOn').orOn(
-                function () {
-                  this.on(
-                    '__dm_log.createdOn',
-                    '=',
-                    '__dm_log2.createdOn'
-                  ).andOn('__dm_log.id', '<', '__dm_log2.id')
-                }
-              )
-            })
-        })
-        .leftOuterJoin(
-          'DeviceMaintenanceStatus AS __dm_status',
-          '__dm_log.deviceMaintenanceStatusId',
-          '__dm_status.id'
-        )
-
-      queryBuilder.where(function () {
-        // this makes sure we take latest (single) item from __dm_log
-        this.whereNull('__dm_log2.id')
-          // and corresponding __dm_status.externalId, i.e. ...
-          .where(function () {
-            // ... means no join occurred between __dm_log and __dm_status
-            // because of missing __dm_log item
-            this.whereNull('__dm_status.externalId')
-              // ... (we got latest item from __dm_log joint to __dm_status)
-              // skip items with latest device maintenance status ='inactiveDecommissioned'
-              .orWhereNot('__dm_status.externalId', 'inactiveDecommissioned')
-          })
-      })
-    }
+    })
   }
+  if (device && !showDecommissionedDevices) {
+    // latest maintenance status for device is NOT 'inactiveDecommissioned'
+    queryBuilder
+      .leftOuterJoin(
+        `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
+        `${device}.deviceMaintenanceStatusLogId`,
+        `deviceMaintenanceStatusLog.id`
+      )
+      .leftOuterJoin(
+        'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
+        'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+        'deviceMaintenanceStatus.id'
+      )
+    queryBuilder.where(function () {
+      this.whereNull('deviceMaintenanceStatus.externalId').orWhereNot(
+        'deviceMaintenanceStatus.externalId',
+        'inactiveDecommissioned'
+      )
+    })
+  }
+
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
