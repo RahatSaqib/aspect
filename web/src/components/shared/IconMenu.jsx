@@ -24,6 +24,7 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
   const open = Boolean(anchorEl)
 
   const handleMenu = event => {
+    event.stopPropagation()
     setAnchorEl(event.currentTarget)
   }
 

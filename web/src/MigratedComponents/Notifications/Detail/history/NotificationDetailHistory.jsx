@@ -1,7 +1,6 @@
-import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { defineMessages, injectIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -16,7 +15,7 @@ import {
 
 import { makeSortPageSelector } from '../../../../shared/selectors/searchParams'
 import fetchWrapperForQueries from '../../../QueryFetch/index'
-import NOTIFICATION_HISTORY from '../../../QueryFetch/Notification/index'
+import { NOTIFICATION_HISTORY } from '../../../QueryFetch/Notification/index'
 
 const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 
@@ -30,15 +29,12 @@ const messages = defineMessages({
   },
 })
 
-const enhance = identity(injectIntl)
-
 export const NotificationDetailHistory = ({
-  intl,
   history,
   location,
   notificationId,
-  // --- injected by recompose ---
 }) => {
+  const intl = useIntl()
   const { pageAt, pageSize } = makeSortPageSelector()({ location })
   const { data: { data, total } = false, isError, error } = useQuery(
     [NOTIFICATION_HISTORY.KEY, notificationId, pageAt, pageSize],
@@ -83,14 +79,14 @@ export const NotificationDetailHistory = ({
             ]}
           />
           <TableBody>
-            {data &&
-              data.map(delivery => (
-                <NotificationHistoryDataTableRow
-                  key={delivery.id}
-                  intl={intl}
-                  delivery={delivery}
-                />
-              ))}
+            {data
+              ? data.map(({ id, ...delivery }) => (
+                  <NotificationHistoryDataTableRow
+                    key={id}
+                    delivery={delivery}
+                  />
+                ))
+              : null}
           </TableBody>
         </NotificationHistoryDataTable>
         <BrowseTablePaginator
@@ -108,11 +104,9 @@ export const NotificationDetailHistory = ({
 }
 
 NotificationDetailHistory.propTypes = {
-  intl: PropTypes.object.isRequired, // eslint-disable-line
-  location: PropTypes.object.isRequired, // eslint-disable-line
-  history: PropTypes.object.isRequired, // eslint-disable-line
-  match: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
   notificationId: PropTypes.number.isRequired,
 }
 
-export default enhance(NotificationDetailHistory)
+export default NotificationDetailHistory

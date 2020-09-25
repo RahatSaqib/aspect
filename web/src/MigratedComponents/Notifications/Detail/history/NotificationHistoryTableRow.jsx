@@ -9,11 +9,9 @@ import {
   DataTableCell as TableCell,
 } from '../../../../components/shared/tableBody'
 
-const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
+const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 
-const enhance = identity
-
-const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
+const NotificationHistoryTableRow = ({ delivery, ...restProps }) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -34,7 +32,6 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
 )
 
 NotificationHistoryTableRow.propTypes = {
-  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
   delivery: PropTypes.shape({
     date: PropTypes.string,
     webhookSent: PropTypes.string,
@@ -43,4 +40,4 @@ NotificationHistoryTableRow.propTypes = {
   }).isRequired,
 }
 
-export default enhance(NotificationHistoryTableRow)
+export default NotificationHistoryTableRow

@@ -92,6 +92,9 @@ const NotificationTableRow = ({ notification }) => {
     <TableRow
       key={notification.get('id')}
       data-notification-id={notification.get('id')}
+      onClick={() => {
+        history.push(`/browse/notification/${notification.get('id')}/history`)
+      }}
     >
       <TableCell>{notification.get('name')}</TableCell>
       <TableCell>
