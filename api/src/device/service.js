@@ -346,6 +346,7 @@ async function getDeviceByDeviceId({
       deviceType: 'dt',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .first(fields)
 
@@ -911,6 +912,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .first('d.id')
 
@@ -1315,6 +1317,7 @@ async function deviceMaintenanceStatus(request) {
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         showUnapprovedDevices: true,
+        showDecommissionedDevices: true,
       })
       .where('d.id', deviceId)
       .first('dmsl.*')) || {}

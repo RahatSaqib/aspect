@@ -174,6 +174,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     person,
     sample,
     showUnapprovedDevices = false,
+    showDecommissionedDevices = false,
     result: resultAlias,
   } = aliases
 
@@ -354,17 +355,29 @@ function addConstraints(queryBuilder, constraints, aliases) {
       }
     }
   }
-  if (device && !showUnapprovedDevices) {
-    queryBuilder.leftOuterJoin(
-      `DeviceApproval as deviceApproval`,
-      `${device}.deviceApprovalId`,
-      `deviceApproval.id`
-    )
-    queryBuilder.where(function () {
-      this.where({ [`deviceApproval.token`]: 'approved' }).orWhere(
-        knex.raw('isnull(`deviceApproval`.`token`)')
+  if (device) {
+    const forceApproved = !showUnapprovedDevices
+    const forceNonDecommissioned = !showDecommissionedDevices
+    if (forceApproved || forceNonDecommissioned) {
+      queryBuilder.leftOuterJoin(
+        `DeviceApproval as deviceApproval`,
+        `${device}.deviceApprovalId`,
+        `deviceApproval.id`
       )
-    })
+      queryBuilder.where(function () {
+        this.whereNull(`deviceApproval.token`)
+          .orWhere(function () {
+            if (forceApproved) {
+              this.where(`deviceApproval.token`, 'approved')
+            }
+          })
+          .orWhere(function () {
+            if (forceNonDecommissioned) {
+              this.whereNot(`deviceApproval.token`, 'decommissioned')
+            }
+          })
+      })
+    }
   }
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })
