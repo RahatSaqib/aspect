@@ -143,7 +143,7 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .where('r.id', resultId)
     .first(
-      'r.id',
+      'r.id as resultId',
       'r.moduleName',
       'r.moduleSerial',
       'r.instrumentSerial',
@@ -180,41 +180,36 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
     .then(items => items.map(x => x.replacedInstrumentSerial))
 
   // check if instrument was just now replaced and trigger replacement issue.
-  // Notice that we assume new instrument has same modules as old (replaced) one.
-  // Otherwise, if instrument and all it's modules have new serials then
-  // this is a totally new device.
   if (
-    result.moduleName &&
-    result.moduleSerial &&
+    result.instrumentSerial &&
     result.createdOn.getTime() === result.updatedOn.getTime()
   ) {
-    // get the most recent result from the same moduleName as the current result
-    const [{ moduleSerial, instrumentSerial } = {}] = await knex('Result as r')
-      .leftOuterJoin('Result as r2', qb => {
-        qb.on('r.deviceId', 'r2.deviceId')
-          .on('r.moduleName', 'r2.moduleName')
-          .on('r.moduleSerial', 'r2.moduleSerial')
-          .on('r.id', '<>', 'r2.id')
-          .on('r2.id', '<>', result.id)
-          .on('r.endedOn', '<', 'r2.endedOn')
-          .on('r2.endedOn', '<', knex.raw('?', [result.endedOn]))
-      })
+    // Get the most recent result from the same device and module name as the current result.
+    // We have to filter by module name here to account for devices with multiple instruments.
+    // We don't want to trigger an instrument replaced issue if the instrument serial comes from
+    // another module because it could mean that it's just another instrument that belongs to the same device.
+    // Note that this means that we may not trigger an instrument replaced issue immediately
+    // when a new result comes in, if the result comes from a different module name than the
+    // latest result on that serial, but it will trigger as soon as theres a new result with
+    // a different instrument serial on the same module name.
+    const previousResultOnInstrument = await knex('Result as r')
       .where('r.deviceId', result.deviceId)
       .where('r.moduleName', result.moduleName)
       .where('r.endedOn', '<', result.endedOn)
-      .whereNotNull('r.moduleSerial')
-      .whereNot('r.id', result.id)
-      .whereNull('r2.id')
-      .select('r.*')
+      .whereNot('r.id', result.resultId)
+      .orderBy('endedOn', 'desc')
+      .first('r.instrumentSerial')
+
     if (
-      moduleSerial &&
-      moduleSerial === result.moduleSerial &&
-      !replacedInstrumentSerials.includes(instrumentSerial)
+      previousResultOnInstrument &&
+      previousResultOnInstrument.instrumentSerial !== result.instrumentSerial &&
+      !replacedInstrumentSerials.includes(
+        previousResultOnInstrument.instrumentSerial
+      )
     ) {
       messageContext.deviceInstrumentReplaced(result, {
         moduleName: result.moduleName,
-        moduleSerial: result.moduleSerial,
-        replacedInstrumentSerial: instrumentSerial,
+        replacedInstrumentSerial: previousResultOnInstrument.instrumentSerial,
         newInstrumentSerial: result.instrumentSerial,
       })
     }

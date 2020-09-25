@@ -1257,6 +1257,13 @@ const routes = [
             .integer()
             .positive()
             .description('UTC timestamp'),
+          comment: Joi.string()
+            .allow(null, '')
+            .description('Comment about this transfer'),
+          includeAllResults: Joi.boolean()
+            .optional()
+            .allow(null)
+            .description('Include all results related to Patient ID'),
         },
       },
       response: {
