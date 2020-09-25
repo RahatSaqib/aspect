@@ -144,6 +144,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
     maxWidth="md"
     modal={false}
     open={false}
+    showCrossIcon={false}
     title="Enter Current Password"
   >
     <p>
@@ -320,6 +321,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     maxWidth="md"
     modal={false}
     open={false}
+    showCrossIcon={false}
     title="Enter Current Password"
   >
     <p>
@@ -496,6 +498,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     maxWidth="md"
     modal={false}
     open={false}
+    showCrossIcon={false}
     title="Enter Current Password"
   >
     <p>
@@ -672,6 +675,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     maxWidth="md"
     modal={false}
     open={false}
+    showCrossIcon={false}
     title="Enter Current Password"
   >
     <p>
@@ -848,6 +852,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
     maxWidth="md"
     modal={false}
     open={false}
+    showCrossIcon={false}
     title="Enter Current Password"
   >
     <p>
@@ -1024,6 +1029,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
     maxWidth="md"
     modal={false}
     open={false}
+    showCrossIcon={false}
     title="Enter Current Password"
   >
     <p>

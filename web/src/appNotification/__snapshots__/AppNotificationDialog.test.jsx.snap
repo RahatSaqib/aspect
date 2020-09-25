@@ -8,6 +8,7 @@ exports[`App Notification Dialog component should shallow render correctly 1`] =
   modal={false}
   onRequestClose={[Function]}
   open={false}
+  showCrossIcon={false}
   title=""
 >
   <div

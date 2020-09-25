@@ -13,21 +13,23 @@ import Shell from '../../../Shell'
 import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
-import RESULT_DETAIL from '../../../QueryFetch/Result/index'
-import fetchWrapperForQueries from '../../../QueryFetch/index.js'
-import errors from './errors'
+import { RESULT_DETAIL } from '../../../QueryFetch/Result'
+import fetchWrapperForQueries from '../../../QueryFetch'
+import { ResultDetailsErrors } from './errors'
+import ResultTransferModal from './ResultTransferModal'
 
 const AspectResultDetail = ({ formSchema, resultId }) => {
   const [patienId, setPatientId] = useState()
   const [formData, setFormData] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
+  const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
 
   const { isLoading, isError, data, error } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
     async (key, { resultId }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-        errors,
+        errors: ResultDetailsErrors,
       }),
     { onSuccess: setFormData }
   )
@@ -35,6 +37,14 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
   if (isError) {
     throw new Error(error)
   }
+
+  useEffect(() => {
+    // define few extra props for `transfer` button
+    const action = formSchema.actions.items.find(x => x.id === 'transfer')
+    action.onClick = () => setTransferResultOpen(true)
+    action.isVisible = (permissions, isEditMode) =>
+      !isEditMode && !!permissions.get('result:edit')
+  }, [])
 
   useEffect(() => {
     if (formData) {
@@ -58,6 +68,11 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
             <AspectForm config={formConfig} />
           </ShellContent>
           <ShellFooter />
+          <ResultTransferModal
+            data={formData.data}
+            isOpen={isTransferResultOpenOpen}
+            onClose={() => setTransferResultOpen(false)}
+          />
         </FormikProvider>
       ) : (
         <CircularProgress />

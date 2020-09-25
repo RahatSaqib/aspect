@@ -36,7 +36,7 @@ export const messages = defineMessages({
   numberOfDevicesExperiencingServiceInterruptionTitle: {
     id:
       'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
-    defaultMessage: 'Number of Devices Experiencing Service Interruption',
+    defaultMessage: 'Devices Experiencing Service Interruption',
   },
   numberOfDevicesExperiencingServiceInterruptionUnit: {
     id:
@@ -95,7 +95,7 @@ export const messages = defineMessages({
   },
   averageDaysForInstrumentReplacement: {
     id: 'pages.OperationalData.instrumentsReplaced',
-    defaultMessage: 'Average Days for Instrument Replacement',
+    defaultMessage: 'Days for Instrument Replacement',
   },
   withinTwoHoursOfTesting: {
     id: 'pages.OperationalData.withinTwoHoursOfTesting',
@@ -105,7 +105,7 @@ export const messages = defineMessages({
 
   dashboardWidgetSmsSentTitle: {
     id: 'pages.Status.dashboardWidgetSmsSentTitle',
-    defaultMessage: 'Number of SMS Sent MTD',
+    defaultMessage: 'SMS Sent MTD',
   },
   dashboardWidgetSmsSentDescription: {
     id: 'pages.Status.dashboardWidgetSmsSentDescription',

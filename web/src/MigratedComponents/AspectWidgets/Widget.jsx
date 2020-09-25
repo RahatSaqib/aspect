@@ -110,7 +110,12 @@ const AspectWidget = ({
         <div className={cssClasses('Summary__Card__Title')}>
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
-            {title}
+            <AspectTooltip
+              title={title}
+              toolTipContainerClass="inline__tooltip"
+            >
+              {title}
+            </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
               {subTitle}
             </span>
