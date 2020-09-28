@@ -188,6 +188,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
                 geography: 'g',
                 partner: 'p',
                 showUnapprovedDevices: true,
+                showDecommissionedDevices: true,
               })
               .where({ 'i.id': issueId })
               .first('i.id')

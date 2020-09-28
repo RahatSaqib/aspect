@@ -174,6 +174,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
     person,
     sample,
     showUnapprovedDevices = false,
+    showDecommissionedDevices = false,
     result: resultAlias,
   } = aliases
 
@@ -366,6 +367,27 @@ function addConstraints(queryBuilder, constraints, aliases) {
       )
     })
   }
+  if (device && !showDecommissionedDevices) {
+    // latest maintenance status for device is NOT 'inactiveDecommissioned'
+    queryBuilder
+      .leftOuterJoin(
+        `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
+        `${device}.deviceMaintenanceStatusLogId`,
+        `deviceMaintenanceStatusLog.id`
+      )
+      .leftOuterJoin(
+        'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
+        'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+        'deviceMaintenanceStatus.id'
+      )
+    queryBuilder.where(function () {
+      this.whereNull('deviceMaintenanceStatus.externalId').orWhereNot(
+        'deviceMaintenanceStatus.externalId',
+        'inactiveDecommissioned'
+      )
+    })
+  }
+
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
