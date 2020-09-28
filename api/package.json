@@ -87,7 +87,7 @@
     "amqplib": "^0.5.6",
     "babel-eslint": "^10.1.0",
     "base32": "^0.0.6",
-    "bcrypt": "4.0.1",
+    "bcrypt": "5.0.0",
     "bluebird": "^3.7.2",
     "date-fns": "^2.13.0",
     "date-fns-timezone": "^0.1.4",
