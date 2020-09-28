@@ -39,18 +39,6 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestInventoryItems(sortCol, sortDir, page, size, filters, groupBy) {
-  return {
-    type: types.REQUEST_INVENTORY_ITEMS,
-    sortCol,
-    sortDir,
-    page,
-    size,
-    filters,
-    groupBy,
-  }
-}
-
 function receiveInventoryItems(json, childrenPropertyPath) {
   return {
     type: types.RECEIVE_INVENTORY_ITEMS,
@@ -58,16 +46,6 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     total: json.total,
     childrenPropertyPath,
   }
-}
-
-function rejectInventoryItems() {
-  return {
-    type: types.REJECTED_INVENTORY_ITEMS,
-  }
-}
-
-function getGroupBy(state) {
-  return state.inventory.getIn(['table', 'groupBy'])
 }
 
 function toggleGroupBySite(toggleOn) {
@@ -412,5 +390,5 @@ export {
   removeInventory,
   transferInventory,
   receiveInventory,
-  updateStockLevel
+  updateStockLevel,
 }

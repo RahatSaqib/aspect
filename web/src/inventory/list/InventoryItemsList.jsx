@@ -219,7 +219,7 @@ export const InventoryItemsList = () => {
       dispatch(
         receiveInventoryItems(data, groupBySite ? ['inventoryItems'] : [])
       )
-  }, [data, groupBySite])
+  }, [data, groupBySite, dispatch])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -234,7 +234,7 @@ export const InventoryItemsList = () => {
         search: searchParams.toString(),
       })
     }
-  }, [location])
+  }, [location, history, dispatch])
 
   if (isError) throw new Error(error)
 
