@@ -962,7 +962,7 @@ describe('Device routes', () => {
     })
   })
 
-  describe.only('Skips decommissioned device', () => {
+  describe('Skips decommissioned device', () => {
     let deviceMaintenanceStatuses
     let devices
     let deviceDecommissioned
@@ -975,7 +975,11 @@ describe('Device routes', () => {
         .set('Authorization', `Bearer ${shared.token}`)
       devices = res.body.data
       // get first device with defined maintenanceStatus
-      ;[deviceDecommissioned] = devices.filter(d => !!d.maintenanceStatus)
+      ;[deviceDecommissioned] = devices.filter(
+        d =>
+          d.maintenanceStatus &&
+          d.maintenanceStatus !== 'inactiveDecommissioned'
+      )
     })
 
     after(async () => {
