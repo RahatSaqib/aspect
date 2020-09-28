@@ -1006,14 +1006,10 @@ describe('Device routes', () => {
       const res = await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-
       const devicesNew = res.body.data
 
-      // we set one device to have status 'decommissioned' and
-      // just returned list of devices should not contain it
-      assert.equal(devices.length - 1, devicesNew.length)
       assert(
-        !devicesNew.find(d => d.id === deviceDecommissioned.id),
+        !devicesNew.find(d => d.maintenanceStatus === 'inactiveDecommissioned'),
         'Decommissioned devices should not be in the list'
       )
     })
