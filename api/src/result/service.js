@@ -2244,12 +2244,12 @@ async function clinicalIndicatorAggregations(request) {
     groupBy = query.groupBy
   }
 
-  const data = await processGrouppedQuery(resultQuery, groupBy)
+  const data = await processGroupedQuery(resultQuery, groupBy)
 
   return { data }
 }
 
-async function processGrouppedQuery(resultQuery, groupBy) {
+async function processGroupedQuery(resultQuery, groupBy) {
   // handle possible groups:
   const paramToDb = {
     resultCategory1: 'rc1.externalId as resultCategory1',
@@ -2413,7 +2413,7 @@ async function followUpAggregations(request) {
     groupBy.push('followUp')
   }
 
-  const data = await processGrouppedQuery(resultQuery, groupBy)
+  const data = await processGroupedQuery(resultQuery, groupBy)
 
   return { data }
 }

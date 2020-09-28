@@ -181,6 +181,8 @@ async function getListDevices(query, auth) {
       geography: 'g',
       site: 's',
       disease: 'dis',
+      showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
