@@ -223,6 +223,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
           sample: 'sample',
           site: 's',
           showUnapprovedDevices: true,
+          showDecommissionedDevices: true,
         })
       }
     })
