@@ -961,4 +961,57 @@ describe('Device routes', () => {
       })
     })
   })
+
+  describe.only('Skips decommissioned device', () => {
+    let deviceMaintenanceStatuses
+    let devices
+    let deviceDecommissioned
+
+    before(async () => {
+      deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+      // get all devices
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+      devices = res.body.data
+      // get first device with defined maintenanceStatus
+      ;[deviceDecommissioned] = devices.filter(d => !!d.maintenanceStatus)
+    })
+
+    after(async () => {
+      // restore original value of deviceMaintenanceStatusLogId
+      const deviceMaintenanceStatusLogId =
+        deviceMaintenanceStatuses[deviceDecommissioned.maintenanceStatus]
+      await knex('Device')
+        .where('id', deviceDecommissioned.id)
+        .update({ deviceMaintenanceStatusLogId })
+    })
+
+    it('should set device maintenance status to "inactiveDecommissioned" and check that endpoint skips it', async () => {
+      assert(
+        !devices.find(d => d.maintenanceStatus === 'inactiveDecommissioned'),
+        'Decommissioned devices should not be in the list'
+      )
+
+      // set device to be 'decommissioned'
+      await knex('Device').where('id', deviceDecommissioned.id).update({
+        deviceMaintenanceStatusLogId:
+          deviceMaintenanceStatuses.inactiveDecommissioned,
+      })
+      // read new list of devices
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      const devicesNew = res.body.data
+
+      // we set one device to have status 'decommissioned' and
+      // just returned list of devices should not contain it
+      assert.equal(devices.length - 1, devicesNew.length)
+      assert(
+        !devicesNew.find(d => d.id === deviceDecommissioned.id),
+        'Decommissioned devices should not be in the list'
+      )
+    })
+  })
 })
