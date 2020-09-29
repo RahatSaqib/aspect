@@ -181,6 +181,8 @@ async function getListDevices(query, auth) {
       geography: 'g',
       site: 's',
       disease: 'dis',
+      showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
@@ -238,7 +240,6 @@ async function getListDevices(query, auth) {
     ])
     .distinct()
 
-  console.log(getItems.toString())
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -346,6 +347,7 @@ async function getDeviceByDeviceId({
       deviceType: 'dt',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .first(fields)
 
@@ -911,6 +913,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .first('d.id')
 
@@ -1315,6 +1318,7 @@ async function deviceMaintenanceStatus(request) {
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         showUnapprovedDevices: true,
+        showDecommissionedDevices: true,
       })
       .where('d.id', deviceId)
       .first('dmsl.*')) || {}
