@@ -6,7 +6,7 @@ import { useQueryCache } from 'react-query'
 import Shell from '../../Shell'
 import ShellHeader from '../../Shell/Header'
 import ShellContent from '../../Shell/Content'
-import NotificationDetailHistory from './history/NotificationDetailHistory'
+import NotificationDetailHistory from './History/NotificationDetailHistory'
 import AspectButton from '../../../components/shared/AspectButton'
 
 const AspectNotificationDetails = ({ location, history }) => {
