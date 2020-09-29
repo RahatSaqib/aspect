@@ -98,6 +98,13 @@ const NotificationTableRow = ({ notification }) => {
     }
   }
 
+  console.log(
+    '*****',
+    notification.get('contacts'),
+    '****%%%',
+    notification.get('contactsCount')
+  )
+
   return (
     <TableRow
       key={notification.get('id')}
@@ -113,12 +120,8 @@ const NotificationTableRow = ({ notification }) => {
         {addEllipsis(
           notification.get('contacts'),
           notification.get('contactsCount')
-        )}
+        ) || 'Not Configured'}
       </TableCell>
-      <TableCell>{notification.get('totalTriggers')}</TableCell>
-      <TableCell>{counter('alertCount')}</TableCell>
-      <TableCell>{counter('smsCount')}</TableCell>
-      <TableCell>{counter('emailCount')}</TableCell>
       <TableCell>
         <AspectVertMenu
           params={notification}
