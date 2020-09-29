@@ -102,7 +102,7 @@ const NotificationTableRow = ({ notification }) => {
     <TableRow
       key={notification.get('id')}
       data-notification-id={notification.get('id')}
-      onClick={e => clickRow(e, 'notifications-tablerow')}
+      onClick={e => clickRow(e)}
     >
       <TableCell>{notification.get('name')}</TableCell>
       <TableCell>
