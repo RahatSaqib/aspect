@@ -1,233 +1,53 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Result List component should shallow render correctly when filter for assay id 1`] = `
-<div
-  className="Container"
->
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
-    title="Results"
-  />
-  <Connect(lifecycle(Component))
-    title="Results"
-  />
-  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    askConfirmationForExport={false}
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "formatDate": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
         },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
     }
+  }
+>
+  <ResultList
     location={
       Object {
         "search": "?filters=assayId%3D9",
       }
     }
-  >
-    <requirePermissions(AspectButton)
-      browseButton={true}
-      color="primary"
-      extraPermissions={Array []}
-      overriddenPermissions={Array []}
-      type="button"
-      variant="contained"
-    >
-      New Result
-    </requirePermissions(AspectButton)>
-  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
-  <DataTableCard
-    key="DataTableCard--table-undefined"
-  >
-    <DataTableProgressBar
-      disabled={true}
-    />
-    <Connect(withState(withHandlers(ExportListButton)))
-      reportName="Results"
-      visible={false}
-    />
-    <pure(withHandlers(EmptyList))
-      intl={
-        Object {
-          "defaultFormats": Object {},
-          "defaultLocale": "en",
-          "formatDate": [Function],
-          "formatDateToParts": [Function],
-          "formatDisplayName": [Function],
-          "formatList": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatNumberToParts": [Function],
-          "formatPlural": [Function],
-          "formatRelativeTime": [Function],
-          "formatTime": [Function],
-          "formatTimeToParts": [Function],
-          "formats": Object {},
-          "formatters": Object {
-            "getDateTimeFormat": [Function],
-            "getDisplayNames": [Function],
-            "getListFormat": [Function],
-            "getMessageFormat": [Function],
-            "getNumberFormat": [Function],
-            "getPluralRules": [Function],
-            "getRelativeTimeFormat": [Function],
-          },
-          "locale": "en",
-          "messages": Object {},
-          "onError": [Function],
-          "textComponent": Symbol(react.fragment),
-          "timeZone": undefined,
-        }
-      }
-      location={
-        Object {
-          "search": "?filters=assayId%3D9",
-        }
-      }
-    />
-  </DataTableCard>
-</div>
+  />
+</ContextProvider>
 `;
 
 exports[`Result List component should shallow render correctly when filter for assay type 1`] = `
-<div
-  className="Container"
->
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
-    title="Results"
-  />
-  <Connect(lifecycle(Component))
-    title="Results"
-  />
-  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    askConfirmationForExport={false}
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "formatDate": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
+<ResultList
+  location={
+    Object {
+      "search": "?filters=assayType%3DTB",
     }
-    location={
-      Object {
-        "search": "?filters=assayType%3DTB",
-      }
-    }
-  >
-    <requirePermissions(AspectButton)
-      browseButton={true}
-      color="primary"
-      extraPermissions={Array []}
-      overriddenPermissions={Array []}
-      type="button"
-      variant="contained"
-    >
-      New Result
-    </requirePermissions(AspectButton)>
-  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
-  <DataTableCard
-    key="DataTableCard--table-undefined"
-  >
-    <DataTableProgressBar
-      disabled={true}
-    />
-    <Connect(withState(withHandlers(ExportListButton)))
-      reportName="Results"
-      visible={false}
-    />
-    <pure(withHandlers(EmptyList))
-      intl={
-        Object {
-          "defaultFormats": Object {},
-          "defaultLocale": "en",
-          "formatDate": [Function],
-          "formatDateToParts": [Function],
-          "formatDisplayName": [Function],
-          "formatList": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatNumberToParts": [Function],
-          "formatPlural": [Function],
-          "formatRelativeTime": [Function],
-          "formatTime": [Function],
-          "formatTimeToParts": [Function],
-          "formats": Object {},
-          "formatters": Object {
-            "getDateTimeFormat": [Function],
-            "getDisplayNames": [Function],
-            "getListFormat": [Function],
-            "getMessageFormat": [Function],
-            "getNumberFormat": [Function],
-            "getPluralRules": [Function],
-            "getRelativeTimeFormat": [Function],
-          },
-          "locale": "en",
-          "messages": Object {},
-          "onError": [Function],
-          "textComponent": Symbol(react.fragment),
-          "timeZone": undefined,
-        }
-      }
-      location={
-        Object {
-          "search": "?filters=assayType%3DTB",
-        }
-      }
-    />
-  </DataTableCard>
-</div>
+  }
+/>
 `;
