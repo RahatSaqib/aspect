@@ -173,7 +173,7 @@ export const ResultList = () => {
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const searchParams = new URLSearchParams(location.search)
-  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+  const filtersParams = searchParams.get('filters') ? new URLSearchParams(searchParams.get('filters')) : ''
   const filters = fromPairs([...filtersParams.entries()])
   const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
   
