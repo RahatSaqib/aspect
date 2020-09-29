@@ -179,7 +179,7 @@ export const ResultList = () => {
   
   // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
-    [RESULT_LIST.KEY, params],
+    [RESULT_LIST.KEY, { params }],
     async () => fetchWrapperForQueries({
       endpoint: RESULT_LIST.ENDPOINT,
       params
