@@ -17,7 +17,7 @@ import {
   receiveTableItems,
   Table,
 } from '../../shared/metaReducers/table'
-import { receiveList, items } from '../../shared/metaReducers/items'
+import { receiveList, Items } from '../../shared/metaReducers/items'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -173,7 +173,7 @@ export const ResultList = () => {
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const searchParams = new URLSearchParams(location.search)
-  const filtersParams = searchParams.get('filters') ? new URLSearchParams(searchParams.get('filters')) : ''
+  const filtersParams = searchParams.get('filters') ? new URLSearchParams(searchParams.get('filters')) : []
   const filters = fromPairs([...filtersParams.entries()])
   const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
   
@@ -189,8 +189,8 @@ export const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      const { data: items, total: totalItems, extraColumns } = data
-      setItems(receiveList(items, Immutable.fromJS(items)))
+      const { data: list, total: totalItems, extraColumns } = data
+      setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems, extraColumns))
     }
