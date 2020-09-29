@@ -16,7 +16,7 @@ const inventoryGraphs = {
         data: null,
         sortByKeys: ['consumableName'],
         keyMapping: { idKey: 'consumableId', nameKey: 'consumableName' },
-        clearable: false,
+        isClearable: false,
         defaultSelectedOption: 1,
       },
     ],

@@ -21,7 +21,7 @@ const deviceStatusGraphs = {
         identifier: 'dateRange',
         data: dateRangeOptions('deviceDateRange'),
         sortByKeys: ['id'],
-        clearable: false,
+        isClearable: false,
         defaultSelectedOption: 2,
       },
     ],

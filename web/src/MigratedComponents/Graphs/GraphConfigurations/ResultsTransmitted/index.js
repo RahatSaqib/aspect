@@ -27,7 +27,7 @@ const resultsTransmittedGraphs = {
         identifier: 'currentMonth',
         data: dateRangeOptions('resultsDateRange'),
         sortByKeys: ['id'],
-        clearable: false,
+        isClearable: false,
         defaultSelectedOption: 2,
       },
     ],

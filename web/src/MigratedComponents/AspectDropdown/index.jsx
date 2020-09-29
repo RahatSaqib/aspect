@@ -72,7 +72,7 @@ const SelectComponent = ({
   action: dispatchFromRedux,
   identifier,
   keyMapping: { idKey, nameKey },
-  clearable,
+  isClearable,
   defaultSelectedOption,
 }) => {
   const [defaultOption] = useState(selectedValue)
@@ -90,7 +90,7 @@ const SelectComponent = ({
       <Select
         getOptionLabel={val => val[nameKey]}
         getOptionValue={val => val[idKey]}
-        isClearable={clearable}
+        isClearable={isClearable}
         defaultValue={!defaultSelectedOption || data[defaultSelectedOption]}
         options={data}
         placeholder={defaultOption}
@@ -108,7 +108,7 @@ SelectComponent.defaultProps = {
     idKey: 'id',
     nameKey: 'name',
   },
-  clearable: true,
+  isClearable: true,
   defaultSelectedOption: false,
 }
 
@@ -118,7 +118,7 @@ SelectComponent.propTypes = {
   selectedValue: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
   identifier: PropTypes.string.isRequired,
-  clearable: PropTypes.bool,
+  isClearable: PropTypes.bool,
   defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
 }
 
@@ -131,7 +131,7 @@ const AspectDropdown = ({
     data: passedData,
     sortByKeys,
     keyMapping,
-    clearable,
+    isClearable,
     defaultSelectedOption,
   },
   action,
@@ -166,7 +166,7 @@ const AspectDropdown = ({
       action={action}
       identifier={identifier}
       keyMapping={keyMapping}
-      clearable={clearable}
+      isClearable={isClearable}
       defaultSelectedOption={defaultSelectedOption}
     />
   ) : null
@@ -177,7 +177,7 @@ AspectDropdown.defaulProps = {
     sortByKeys: ['name'],
     keyMapping: {},
   },
-  clearable: true,
+  isClearable: true,
   defaultSelectedOption: false,
 }
 
@@ -193,7 +193,7 @@ AspectDropdown.propTypes = {
       idKey: PropTypes.string,
       nameKey: PropTypes.string,
     }),
-    clearable: PropTypes.bool,
+    isClearable: PropTypes.bool,
     defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
   }).isRequired,
   action: PropTypes.func.isRequired,
