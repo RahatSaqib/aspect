@@ -14,6 +14,9 @@ import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
 import {
+  exportResults
+} from '../ResultRedux'
+import {
   receiveTableItems,
   Table,
 } from '../../shared/metaReducers/table'
@@ -77,29 +80,6 @@ const FILTERS_CONFIG = [
 
 const onAddNewButtonClick = ({ history }) => {
   history.push('/browse/result/add')
-}
-
-const onExportClick = ({
-  location,
-  exportResults,
-  sortCol,
-  sortDir,
-  pageAt,
-  pageSize,
-}) => formatType => {
-  const { sanitized, value: filtersParams } = filtersFromLocation(location)
-  if (!sanitized) {
-    exportResults(
-      filtersParams,
-      formatType.id,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-      formatType.id,
-      'results'
-    )
-  }
 }
 
 const onRowClick = ({ history }) => ({
@@ -168,13 +148,8 @@ export const ResultList = () => {
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({ })
 
-  // >>>>>> Paginating, sorting and filtering <<<<<<
-  const sortPage = makeSortPageSelector({
-    sortCol: 'endedOn',
-  })
-
   // >>>>>> Constants <<<<<<
-  const { sortCol, sortDir, pageAt, pageSize } = pagination
+  const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
     
@@ -211,12 +186,33 @@ export const ResultList = () => {
       })
     }
 
+    const sortPage = makeSortPageSelector({
+      sortCol: 'endedOn',
+    })
     const urlSearchParams = new URLSearchParams(location.search)
     const urlFilters = urlSearchParams.get('filters') ? new URLSearchParams(urlSearchParams.get('filters')) : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    console.log(pagination)
   }, [location])
+
+  // >>>>>> Lifecycles <<<<<<
+  const onExportClick = formatType => {
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    if (!sanitized) {
+      exportResults(
+        filtersParams,
+        formatType.id,
+        sortCol,
+        sortDir,
+        page,
+        size,
+        formatType.id,
+        'results'
+      )
+    }
+  }
 
   if (isError)
     throw new Error(error)
@@ -363,8 +359,8 @@ export const ResultList = () => {
             timedMessageUsed={sortCol === 'endedOn'}
             paginatorStatus={messages.paginatorStatus}
             total={total}
-            pageAt={pageAt}
-            pageSize={pageSize}
+            pageAt={page}
+            pageSize={size}
             pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
           />
         )}
