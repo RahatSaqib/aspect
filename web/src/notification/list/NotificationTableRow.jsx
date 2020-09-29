@@ -98,13 +98,6 @@ const NotificationTableRow = ({ notification }) => {
     }
   }
 
-  console.log(
-    '*****',
-    notification.get('contacts'),
-    '****%%%',
-    notification.get('contactsCount')
-  )
-
   return (
     <TableRow
       key={notification.get('id')}
