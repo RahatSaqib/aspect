@@ -164,7 +164,7 @@ export const ResultList = () => {
     filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
     extraColumns: Immutable.List(),
   }))
-  const [total, setTotal] = useState(null)
+  const [total, setTotal] = useState()
 
   // >>>>>> Paginating, sorting and filtering <<<<<<
   const sortPage = makeSortPageSelector({
