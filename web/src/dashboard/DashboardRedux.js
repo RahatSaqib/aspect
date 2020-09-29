@@ -2,7 +2,6 @@
 import { stringify } from 'querystring'
 import fromPairs from 'lodash/fromPairs'
 import forEach from 'lodash/forEach'
-import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 

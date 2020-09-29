@@ -27,9 +27,9 @@ export function receiveItem(items, item) {
   return items.mergeDeepIn(['byId', item.get('id')], item)
 }
 
-export const items = Immutable.Record({
+export const Items = Immutable.Record({
   byId: Immutable.Map(),
   currentIdList: Immutable.List(),
 })
 
-export const makeItems = flowRight(items, Immutable.fromJS)
+export const makeItems = flowRight(Items, Immutable.fromJS)
