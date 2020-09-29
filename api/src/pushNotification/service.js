@@ -159,6 +159,7 @@ async function createPushNotificationMessageFromTemplate(
       sample: 'sample',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .where({ 'm.id': pushNotificationMessageId })
     .first(
