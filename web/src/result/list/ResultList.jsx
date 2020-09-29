@@ -165,18 +165,19 @@ export const ResultList = () => {
     extraColumns: Immutable.List(),
   }))
   const [total, setTotal] = useState()
+  const [filters, setFilters] = useState()
+  const [pagination, setPagination] = useState()
 
   // >>>>>> Paginating, sorting and filtering <<<<<<
   const sortPage = makeSortPageSelector({
     sortCol: 'endedOn',
   })
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+
+  // >>>>>> Constants <<<<<<
+  const { sortCol, sortDir, pageAt, pageSize } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-  const searchParams = new URLSearchParams(location.search)
-  const filtersParams = searchParams.get('filters') ? new URLSearchParams(searchParams.get('filters')) : []
-  const filters = fromPairs([...filtersParams.entries()])
-  const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
-  
+  const params = { ...pagination, ...filters }
+    
   // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
     [RESULT_LIST.KEY, { params }],
@@ -201,6 +202,7 @@ export const ResultList = () => {
       sanitized: filtersSanitized,
       value: filtersParams,
     } = filtersSanitizer(searchParams.get('filters') || '')
+    
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
       history.replace({
@@ -208,6 +210,12 @@ export const ResultList = () => {
         search: searchParams.toString(),
       })
     }
+
+    const urlSearchParams = new URLSearchParams(location.search)
+    const urlFilters = urlSearchParams.get('filters') ? new URLSearchParams(urlSearchParams.get('filters')) : []
+    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+    setFilters(fromPairs([...urlFilters.entries()]))
+    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
   }, [location])
 
   if (isError)
