@@ -7,7 +7,7 @@ import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation } from "react-router-dom";
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
@@ -134,6 +134,7 @@ export const ResultList = () => {
   const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
+  const dispatch = useDispatch()
   const userPermissions = useSelector(state => state.user.jwt.permissions)
 
   // >>>>>> Local state <<<<<<
@@ -197,7 +198,7 @@ export const ResultList = () => {
     console.log(pagination)
   }, [location])
 
-  // >>>>>> Lifecycles <<<<<<
+  // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
@@ -210,7 +211,7 @@ export const ResultList = () => {
         size,
         formatType.id,
         'results'
-      )
+      )(dispatch)
     }
   }
 
