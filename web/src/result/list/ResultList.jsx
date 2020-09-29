@@ -189,9 +189,10 @@ export const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      setItems(receiveList(items, Immutable.fromJS(data.data)))
-      setTotal(data.total)
-      setTable(receiveTableItems(table, data.total, data.extraColumns))
+      const { data: items, total: totalItems, extraColumns } = data
+      setItems(receiveList(items, Immutable.fromJS(items)))
+      setTotal(totalItems)
+      setTable(receiveTableItems(table, totalItems, extraColumns))
     }
   }, [data])
   useEffect(() => {
