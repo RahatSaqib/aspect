@@ -39,7 +39,7 @@ import BrowseTablePaginator, {
 } from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import ExportListButton from '../../globals/components/ExportListButton'
+import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 import requirePermissions from '../../components/shared/requirePermissions'
 import {
   ResultDataTable,
@@ -202,7 +202,7 @@ export const ResultList = () => {
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
-      exportResults(
+      return exportResults(
         filtersParams,
         formatType.id,
         sortCol,
@@ -315,7 +315,7 @@ export const ResultList = () => {
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!isLoading} />
 
-        <ExportListButton
+        <AspectExportListButton
           onExcelClick={onExportClick}
           onCsvClick={onExportClick}
           visible={!items.currentIdList.isEmpty()}

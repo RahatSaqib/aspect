@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { Table } from '../../shared/metaReducers/table'
 import { Items } from '../../shared/metaReducers/items'
-import ExportListButton from '../../globals/components/ExportListButton'
+import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 
 import { ResultList } from './ResultList'
 
@@ -18260,7 +18260,7 @@ describe('Result List component', () => {
     )
 
     expect(element).toMatchSnapshot()
-    expect(element.find(ExportListButton)).toHaveLength(1)
+    expect(element.find(AspectExportListButton)).toHaveLength(1)
   })
 
   it('should shallow render correctly when filter for assay id', () => {
