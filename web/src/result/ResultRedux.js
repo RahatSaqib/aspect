@@ -175,6 +175,53 @@ function receiveUpdatedSingleResult(item) {
   }
 }
 
+export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
+  return dispatch => {
+    const filters = fromPairs([...filtersParams.entries()])
+    dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
+    sortCol = sortCol || 'endedOn'
+    return aspectFetch(
+      `/result?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchResults.GET.400.title',
+                defaultMessage: 'Searching Results Failed',
+              },
+            })
+          ),
+          403: errorForbidden(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchResults.GET.default.title',
+                defaultMessage: 'Loading Results Failed',
+              },
+            })
+          ),
+        },
+      }
+    )
+      .then(json => dispatch(receiveResults(json)))
+      .catch(() => dispatch(rejectResults()))
+  }
+}
+
 // update a single result with given resultId and data
 export function updateSingleResult(resultId, data) {
   return dispatch => {

@@ -166,7 +166,7 @@ export const ResultList = () => {
   }))
   const [total, setTotal] = useState()
   const [filters, setFilters] = useState()
-  const [pagination, setPagination] = useState()
+  const [pagination, setPagination] = useState({ })
 
   // >>>>>> Paginating, sorting and filtering <<<<<<
   const sortPage = makeSortPageSelector({
