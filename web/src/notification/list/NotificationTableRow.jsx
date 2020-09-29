@@ -88,13 +88,21 @@ const NotificationTableRow = ({ notification }) => {
     return words
   }
 
+  function clickRow(e) {
+    if (
+      e &&
+      e.target &&
+      e.target.getAttribute('class').includes('NotificationTableRow')
+    ) {
+      history.push(`/browse/notification/${notification.get('id')}/history`)
+    }
+  }
+
   return (
     <TableRow
       key={notification.get('id')}
       data-notification-id={notification.get('id')}
-      onClick={() => {
-        history.push(`/browse/notification/${notification.get('id')}/history`)
-      }}
+      onClick={e => clickRow(e, 'notifications-tablerow')}
     >
       <TableCell>{notification.get('name')}</TableCell>
       <TableCell>
