@@ -72,6 +72,8 @@ const SelectComponent = ({
   action: dispatchFromRedux,
   identifier,
   keyMapping: { idKey, nameKey },
+  clearable,
+  defaultSelectedOption,
 }) => {
   const [defaultOption] = useState(selectedValue)
   const [inputValue, setInputValue] = useState(false)
@@ -88,7 +90,8 @@ const SelectComponent = ({
       <Select
         getOptionLabel={val => val[nameKey]}
         getOptionValue={val => val[idKey]}
-        isClearable
+        isClearable={clearable}
+        defaultValue={!defaultSelectedOption || data[defaultSelectedOption]}
         options={data}
         placeholder={defaultOption}
         styles={buildCustomStyles(defaultOption)}
@@ -105,6 +108,8 @@ SelectComponent.defaultProps = {
     idKey: 'id',
     nameKey: 'name',
   },
+  clearable: true,
+  defaultSelectedOption: false,
 }
 
 SelectComponent.propTypes = {
@@ -113,6 +118,8 @@ SelectComponent.propTypes = {
   selectedValue: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
   identifier: PropTypes.string.isRequired,
+  clearable: PropTypes.bool,
+  defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
 }
 
 const AspectDropdown = ({
@@ -124,6 +131,8 @@ const AspectDropdown = ({
     data: passedData,
     sortByKeys,
     keyMapping,
+    clearable,
+    defaultSelectedOption,
   },
   action,
 }) => {
@@ -157,6 +166,8 @@ const AspectDropdown = ({
       action={action}
       identifier={identifier}
       keyMapping={keyMapping}
+      clearable={clearable}
+      defaultSelectedOption={defaultSelectedOption}
     />
   ) : null
 }
@@ -166,6 +177,8 @@ AspectDropdown.defaulProps = {
     sortByKeys: ['name'],
     keyMapping: {},
   },
+  clearable: true,
+  defaultSelectedOption: false,
 }
 
 AspectDropdown.propTypes = {
@@ -180,6 +193,8 @@ AspectDropdown.propTypes = {
       idKey: PropTypes.string,
       nameKey: PropTypes.string,
     }),
+    clearable: PropTypes.bool,
+    defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
   }).isRequired,
   action: PropTypes.func.isRequired,
 }
