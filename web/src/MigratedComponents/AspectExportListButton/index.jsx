@@ -41,7 +41,9 @@ export const AspectExportListButtonWithProps = ({
   }
 
   // >>>>>> Components <<<<<<
-  return visible ? (
+  if (!visible) return null
+
+  return (
     <div>
       {downloadStarted && <LinearProgress />}
       <IconButton
@@ -98,7 +100,7 @@ export const AspectExportListButtonWithProps = ({
         </ol>
       </Popover>
     </div>
-  ) : null
+  )
 }
 
 const AspectExportListButton = ({ onExport, visible }) => {
