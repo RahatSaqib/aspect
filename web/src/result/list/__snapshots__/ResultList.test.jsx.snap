@@ -57,7 +57,6 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "",
       }
     }
-    onClickExport={[Function]}
   >
     <requirePermissions(AspectButton)
       browseButton={true}
@@ -77,9 +76,8 @@ exports[`Result List component should shallow render correctly when filter for a
     <DataTableProgressBar
       disabled={true}
     />
-    <_default
-      onCsvClick={[Function]}
-      onExcelClick={[Function]}
+    <AspectExportListButton
+      onExport={[Function]}
       reportName="Results"
       visible={false}
     />

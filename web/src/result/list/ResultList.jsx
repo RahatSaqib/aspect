@@ -13,7 +13,7 @@ import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
-import { getExportableFile } from '../ResultQueries'
+import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveList, Items } from '../../shared/metaReducers/items'
 import {
@@ -329,7 +329,7 @@ const ResultList = () => {
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems, extraColumns))
     }
-  }, [data])
+  }, [data, items, table])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -356,7 +356,7 @@ const ResultList = () => {
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // console.log(pagination)
-  }, [location])
+  }, [location, history])
 
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {

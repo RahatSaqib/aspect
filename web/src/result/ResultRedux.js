@@ -15,6 +15,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
@@ -205,6 +206,7 @@ function rejectResults() {
   }
 }
 
+// TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE COMPONENTS WHICH CALLS IT. WE SHOULD USE REACT QUERY INSTEAD OF THIS.
 export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = fromPairs([...filtersParams.entries()])
@@ -469,6 +471,55 @@ export function fetchWorkflowStatusLogs(
         },
       }
     ).then(json => dispatch(receiveWorkflowStatusLogsAction(json)))
+  }
+}
+
+// TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
+export function exportResults(
+  filtersParams,
+  format,
+  sortCol,
+  sortDir,
+  page,
+  pageSize,
+  fileFormat,
+  reportName
+) {
+  return dispatch => {
+    const filters = fromPairs([...filtersParams.entries()])
+    return aspectFetch(
+      `/result/export?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        format,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.400.title',
+                defaultMessage: 'Exporting Results Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.default.title',
+                defaultMessage: 'Exporting Results Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem.blob
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
   }
 }
 

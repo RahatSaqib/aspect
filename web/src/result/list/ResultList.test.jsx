@@ -8,7 +8,7 @@ import { Items } from '../../shared/metaReducers/items'
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 
 describe('Result List component', () => {
-  const { ResultList } = require('./ResultList')
+  const { ResultListWithProps } = require('./ResultList')
 
   let props
 
@@ -43,7 +43,7 @@ describe('Result List component', () => {
   })
 
   it('should shallow render correctly when filter for assay type', () => {
-    const element = shallow(<ResultList {...props} />)
+    const element = shallow(<ResultListWithProps {...props} />)
 
     // const element = shallow(
     //   <ResultList location={{ search: '?filters=assayType%3DTB' }} />

@@ -136,7 +136,7 @@ const ResultTransferModal = ({
       name: reportableSiteName,
       id: reportableSiteId,
     })
-  }, [])
+  }, [reportableSiteId, reportableSiteName])
 
   useEffect(() => {
     if (isOpen) {

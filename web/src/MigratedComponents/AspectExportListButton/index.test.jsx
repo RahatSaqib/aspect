@@ -1,12 +1,11 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import AspectExportListButton from '.'
+import { AspectExportListButtonWithProps } from '.'
 
 describe('ExportListButton', () => {
   const props = {
-    onExcelClick: () => {},
-    onCsvClick: () => {},
+    onExport: () => {},
     visible: false,
     downloadStarted: false,
     setDownloadStarted: () => {},
@@ -15,14 +14,14 @@ describe('ExportListButton', () => {
   }
 
   it('should not render the button', () => {
-    const element = shallow(<AspectExportListButton {...props} />)
+    const element = shallow(<AspectExportListButtonWithProps {...props} />)
 
     expect(element).toMatchSnapshot()
     expect(element.find('div')).toHaveLength(0)
   })
 
   it('should shallow render export list correctly', () => {
-    const element = shallow(<AspectExportListButton {...props} />)
+    const element = shallow(<AspectExportListButtonWithProps {...props} />)
     element.setProps({
       visible: true,
     })

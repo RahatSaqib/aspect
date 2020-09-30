@@ -26,4 +26,4 @@ async function getExportableFile(
   return { elem, fileFormat, reportName }
 }
 
-export default { getExportableFile }
+export default getExportableFile
