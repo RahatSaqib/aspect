@@ -537,6 +537,14 @@ export const WorkflowLogModel = Immutable.Record({
 })
 
 export const Result = Immutable.Record({
+  items: new Items(),
+  table: new Table({
+    sortCol: 'endedOn',
+    sortDir: 'desc',
+    pageSize: 10,
+    filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
+    extraColumns: Immutable.List(),
+  }),
   workflowLog: new WorkflowLogModel(),
   deviceLogs: Immutable.List(),
   screenSchema: Immutable.fromJS(screenSchema),
@@ -549,6 +557,22 @@ const initialState = new Result()
 
 export default function resultReducer(state = initialState, action) {
   switch (action.type) {
+    case types.REQUEST_RESULTS:
+      return state.set('table', requestTable(state.table, action))
+    case types.RECEIVE_RESULTS:
+      return state.withMutations(mutState => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set(
+          'table',
+          receiveTableItems(mutState.table, action.total, action.extraColumns)
+        )
+      })
+    case types.REJECTED_RESULTS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
+      })
     case types.SET_RESULT_FORM_DATA_VALUE:
       return state
         .withMutations(mutState => {
