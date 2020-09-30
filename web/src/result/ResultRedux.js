@@ -15,7 +15,6 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
@@ -471,49 +470,6 @@ export function fetchWorkflowStatusLogs(
       }
     ).then(json => dispatch(receiveWorkflowStatusLogsAction(json)))
   }
-}
-
-export async function getExportableFile(
-  filtersParams,
-  fileFormat,
-  sortCol,
-  sortDir,
-  page,
-  pageSize,
-  reportName
-) {
-  const filters = fromPairs([...filtersParams.entries()])
-  const elem = await aspectFetch(
-    `/result/export?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
-      format: fileFormat,
-      ...filters,
-    })}`,
-    {
-      errorNotifications: {
-        400: filterFieldsRejectedError(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportResults.GET.400.title',
-              defaultMessage: 'Exporting Results Failed',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.exportResults.GET.default.title',
-              defaultMessage: 'Exporting Results Failed',
-            },
-          })
-        ),
-      },
-    })
-    
-    return { elem, fileFormat, reportName }
 }
 
 /*

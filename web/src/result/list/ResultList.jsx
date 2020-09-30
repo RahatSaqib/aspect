@@ -13,7 +13,7 @@ import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
-import { getExportableFile } from '../ResultRedux'
+import { getExportableFile } from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveList, Items } from '../../shared/metaReducers/items'
 import {
