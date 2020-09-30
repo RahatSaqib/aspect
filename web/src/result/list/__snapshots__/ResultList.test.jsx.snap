@@ -4,37 +4,59 @@ exports[`Result List component should shallow render correctly when filter for a
 <div
   className="Container"
 >
-  <mockConstructor
-    title={[MockFunction]}
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Results"
   />
-  <Component
-    title={[MockFunction]}
+  <Connect(lifecycle(Component))
+    title="Results"
   />
-  <Component
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     askConfirmationForExport={false}
-    config={
+    config={[Function]}
+    history={
       Object {
-        "assayAndResultCategory": true,
-        "date": true,
-        "deviceName": true,
-        "errorCode": true,
-        "geography": true,
-        "lga": true,
-        "patientOrResearchId": true,
-        "sampleId": true,
-        "sampleOriginSite": true,
-        "siteName": true,
-        "state": true,
-        "treatmentStatus": true,
-        "workflowStatus": true,
+        "push": [Function],
       }
     }
     intl={
       Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatDateToParts": [Function],
+        "formatDisplayName": [Function],
+        "formatList": [Function],
         "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatNumberToParts": [Function],
+        "formatPlural": [Function],
+        "formatRelativeTime": [Function],
+        "formatTime": [Function],
+        "formatTimeToParts": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getDisplayNames": [Function],
+          "getListFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralRules": [Function],
+          "getRelativeTimeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "onError": [Function],
+        "textComponent": Symbol(react.fragment),
+        "timeZone": undefined,
       }
     }
-    location={[MockFunction]}
+    location={
+      Object {
+        "search": "",
+      }
+    }
     onClickExport={[Function]}
   >
     <requirePermissions(AspectButton)
@@ -46,14 +68,14 @@ exports[`Result List component should shallow render correctly when filter for a
       type="button"
       variant="contained"
     >
-      <Component />
+      New Result
     </requirePermissions(AspectButton)>
-  </Component>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     key="DataTableCard--table-undefined"
   >
     <DataTableProgressBar
-      disabled={false}
+      disabled={true}
     />
     <AspectExportListButton
       onCsvClick={[Function]}
@@ -61,13 +83,49 @@ exports[`Result List component should shallow render correctly when filter for a
       reportName="Results"
       visible={false}
     />
-    <Component
-      intl={
+    <pure(withHandlers(EmptyList))
+      history={
         Object {
-          "formatMessage": [Function],
+          "push": [Function],
         }
       }
-      location={[MockFunction]}
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "formatDate": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
     />
   </DataTableCard>
 </div>
