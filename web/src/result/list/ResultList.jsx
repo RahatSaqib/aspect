@@ -189,7 +189,7 @@ const getBaseColumns = intl => {
   ])
 }
 
-export const ResultList = ({
+export const ResultListWithProps = ({
   intl,
   history,
   location,
@@ -281,7 +281,7 @@ export const ResultList = ({
   </div>
 )
 
-const ResultListWithProps = () => {
+const ResultList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
   const history = useHistory()
@@ -401,7 +401,7 @@ const ResultListWithProps = () => {
     pageAt: page,
     pageSize: size,
   }
-  return <ResultList {...baseProps} />
+  return <ResultListWithProps {...baseProps} />
 }
 
-export default ResultListWithProps
+export default ResultList

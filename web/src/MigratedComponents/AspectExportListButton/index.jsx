@@ -10,7 +10,7 @@ import { downloadFile } from '../../shared/utils/files'
 
 const cssClasses = classnames.bind(require('./AspectExportListButton.css'))
 
-export const AspectExportListButton = ({
+export const AspectExportListButtonWithProps = ({
   onExport,
   visible = false,
   downloadStarted,
@@ -101,7 +101,7 @@ export const AspectExportListButton = ({
   ) : null
 }
 
-const AspectExportListButtonWithProps = ({ onExport, visible }) => {
+const AspectExportListButton = ({ onExport, visible }) => {
   const [downloadStarted, setDownloadStarted] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -114,16 +114,16 @@ const AspectExportListButtonWithProps = ({ onExport, visible }) => {
     setAnchorEl,
   }
 
-  return <AspectExportListButton {...props} />
+  return <AspectExportListButtonWithProps {...props} />
 }
 
-AspectExportListButtonWithProps.defaultProps = {
-  visible: true
+AspectExportListButton.defaultProps = {
+  visible: true,
 }
 
-AspectExportListButtonWithProps.propTypes = {
+AspectExportListButton.propTypes = {
   onExport: PropTypes.func.isRequired,
   visible: PropTypes.bool,
 }
 
-export default AspectExportListButtonWithProps
+export default AspectExportListButton

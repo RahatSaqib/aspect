@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import { AspectExportListButton } from '.'
+import AspectExportListButton from '.'
 
 describe('ExportListButton', () => {
   const props = {

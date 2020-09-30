@@ -5,46 +5,7 @@ import Immutable from 'immutable'
 
 import { Table } from '../../shared/metaReducers/table'
 import { Items } from '../../shared/metaReducers/items'
-import ExportListButton from '../../globals/components/ExportListButton'
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
-
-// import mockState from './ResultList.mocked-data'
-
-// jest.mock('react-helmet', () => ({
-//   Helmet: jest.fn(),
-// }))
-
-// jest.mock('./messages', () => ({}))
-
-// jest.mock('react-intl', () => ({
-//   injectIntl: jest.fn(),
-//   createIntl: jest.fn(),
-//   defineMessages: jest.fn(),
-//   useIntl: () => ({
-//     formatMessage: () => jest.fn(),
-//   }),
-// }))
-// jest.mock('react-router-dom', () => ({
-//   useHistory: jest.fn(),
-//   useLocation: () => jest.fn(),
-// }))
-// jest.mock('react-redux', () => ({
-//   connect: () => jest.fn(),
-//   useDispatch: jest.fn(),
-//   useSelector: jest.fn().mockImplementation(cb => cb(mockState)),
-// }))
-// jest.mock('recompose', () => ({
-//   compose: jest.fn(() => jest.fn()),
-//   defaultProps: jest.fn(),
-//   lifecycle: jest.fn(),
-//   mapProps: jest.fn(),
-//   pure: jest.fn(),
-//   setPropTypes: jest.fn(),
-//   withHandlers: jest.fn(),
-//   withProps: jest.fn(),
-//   withState: jest.fn(),
-//   withStateHandlers: jest.fn(),
-// }))
 
 describe('Result List component', () => {
   const { ResultList } = require('./ResultList')

@@ -11,7 +11,7 @@ async function getExportableFile(
   reportName
 ) {
   const filters = fromPairs([...filtersParams.entries()])
-  const elem = await fetchWrapperForQueries({ 
+  const elem = await fetchWrapperForQueries({
     endpoint: '/result/export',
     params: {
       sortCol,
@@ -20,10 +20,10 @@ async function getExportableFile(
       size: pageSize,
       format: fileFormat,
       ...filters,
-    }
+    },
   })
 
   return { elem, fileFormat, reportName }
 }
 
-export { getExportableFile }
+export default { getExportableFile }
