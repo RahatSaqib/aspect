@@ -1,53 +1,74 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Result List component should shallow render correctly when filter for assay id 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
+exports[`Result List component should shallow render correctly when filter for assay type 1`] = `
+<div
+  className="Container"
 >
-  <ResultList
-    location={
+  <mockConstructor
+    title={[MockFunction]}
+  />
+  <Component
+    title={[MockFunction]}
+  />
+  <Component
+    askConfirmationForExport={false}
+    config={
       Object {
-        "search": "?filters=assayId%3D9",
+        "assayAndResultCategory": true,
+        "date": true,
+        "deviceName": true,
+        "errorCode": true,
+        "geography": true,
+        "lga": true,
+        "patientOrResearchId": true,
+        "sampleId": true,
+        "sampleOriginSite": true,
+        "siteName": true,
+        "state": true,
+        "treatmentStatus": true,
+        "workflowStatus": true,
       }
     }
-  />
-</ContextProvider>
-`;
-
-exports[`Result List component should shallow render correctly when filter for assay type 1`] = `
-<ResultList
-  location={
-    Object {
-      "search": "?filters=assayType%3DTB",
+    intl={
+      Object {
+        "formatMessage": [Function],
+      }
     }
-  }
-/>
+    location={[MockFunction]}
+    onClickExport={[Function]}
+  >
+    <requirePermissions(AspectButton)
+      browseButton={true}
+      color="primary"
+      extraPermissions={Array []}
+      onClick={[Function]}
+      overriddenPermissions={Array []}
+      type="button"
+      variant="contained"
+    >
+      <Component />
+    </requirePermissions(AspectButton)>
+  </Component>
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
+    <DataTableProgressBar
+      disabled={false}
+    />
+    <AspectExportListButton
+      onCsvClick={[Function]}
+      onExcelClick={[Function]}
+      reportName="Results"
+      visible={false}
+    />
+    <Component
+      intl={
+        Object {
+          "formatMessage": [Function],
+        }
+      }
+      location={[MockFunction]}
+    />
+  </DataTableCard>
+</div>
 `;

@@ -6,20 +6,15 @@ import partial from 'lodash/partial'
 import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
-import {
-  exportResults
-} from '../ResultRedux'
-import {
-  receiveTableItems,
-  Table,
-} from '../../shared/metaReducers/table'
+import { exportResults } from '../ResultRedux'
+import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveList, Items } from '../../shared/metaReducers/items'
 import {
   makeSortPageSelector,
@@ -139,28 +134,35 @@ export const ResultList = () => {
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
-  const [table, setTable] = useState(new Table({
-    sortCol: 'endedOn',
-    sortDir: 'desc',
-    filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
-    extraColumns: Immutable.List(),
-  }))
+  const [table, setTable] = useState(
+    new Table({
+      sortCol: 'endedOn',
+      sortDir: 'desc',
+      filters: Immutable.fromJS({
+        sampleId: '',
+        sampleGroup: '',
+        assayId: null,
+      }),
+      extraColumns: Immutable.List(),
+    })
+  )
   const [total, setTotal] = useState()
   const [filters, setFilters] = useState()
-  const [pagination, setPagination] = useState({ })
+  const [pagination, setPagination] = useState({})
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
-    
+
   // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
     [RESULT_LIST.KEY, { params }],
-    async () => fetchWrapperForQueries({
-      endpoint: RESULT_LIST.ENDPOINT,
-      params
-    })
+    async () =>
+      fetchWrapperForQueries({
+        endpoint: RESULT_LIST.ENDPOINT,
+        params,
+      })
   )
 
   // >>>>>> Lifecycles <<<<<<
@@ -178,7 +180,7 @@ export const ResultList = () => {
       sanitized: filtersSanitized,
       value: filtersParams,
     } = filtersSanitizer(searchParams.get('filters') || '')
-    
+
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
       history.replace({
@@ -191,11 +193,13 @@ export const ResultList = () => {
       sortCol: 'endedOn',
     })
     const urlSearchParams = new URLSearchParams(location.search)
-    const urlFilters = urlSearchParams.get('filters') ? new URLSearchParams(urlSearchParams.get('filters')) : []
+    const urlFilters = urlSearchParams.get('filters')
+      ? new URLSearchParams(urlSearchParams.get('filters'))
+      : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    console.log(pagination)
+    // console.log(pagination)
   }, [location])
 
   // >>>>>> Callbacks <<<<<<
@@ -215,8 +219,7 @@ export const ResultList = () => {
     }
   }
 
-  if (isError)
-    throw new Error(error)
+  if (isError) throw new Error(error)
 
   const columns = Immutable.List([
     {
@@ -278,10 +281,7 @@ export const ResultList = () => {
   ]).concat(
     table.extraColumns.map(column => ({
       key: column.get('db'),
-      label: messageByI18nKey(column.get('i18nKey'))(
-        column.get('title'),
-        intl
-      ),
+      label: messageByI18nKey(column.get('i18nKey'))(column.get('title'), intl),
       sortable: true,
       hiddenOn: 'md',
     }))
