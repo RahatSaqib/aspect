@@ -7,13 +7,13 @@ import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
-import { exportResults } from '../ResultRedux'
+import { getExportableFile } from '../ResultRedux'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveList, Items } from '../../shared/metaReducers/items'
 import {
@@ -213,7 +213,6 @@ export const ResultList = ({
       location={location}
       intl={intl}
       config={reducedFilters}
-      onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     >
       <AddNewButton
@@ -230,8 +229,7 @@ export const ResultList = ({
       <DataTableProgressBar disabled={!isLoading} />
 
       <AspectExportListButton
-        onExcelClick={onExportClick}
-        onCsvClick={onExportClick}
+        onExport={onExportClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="Results"
       />
@@ -283,12 +281,11 @@ export const ResultList = ({
   </div>
 )
 
-export default () => {
+const ResultListWithProps = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
-  const dispatch = useDispatch()
   const userPermissions = useSelector(state => state.user.jwt.permissions)
 
   // >>>>>> Local state <<<<<<
@@ -365,16 +362,15 @@ export default () => {
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
-      return exportResults(
+      return getExportableFile(
         filtersParams,
-        formatType.id,
+        formatType,
         sortCol,
         sortDir,
         page,
         size,
-        formatType.id,
         'results'
-      )(dispatch)
+      )
     }
   }
 
@@ -407,3 +403,5 @@ export default () => {
   }
   return <ResultList {...baseProps} />
 }
+
+export default ResultListWithProps

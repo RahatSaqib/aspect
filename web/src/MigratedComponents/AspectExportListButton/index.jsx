@@ -4,35 +4,43 @@ import IconButton from '@material-ui/core/IconButton'
 import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import PropTypes from 'prop-types'
+
+import { downloadFile } from '../../shared/utils/files'
 
 const cssClasses = classnames.bind(require('./AspectExportListButton.css'))
 
 export const AspectExportListButton = ({
-  onExcelClick,
-  onCsvClick,
+  onExport,
   visible = false,
   downloadStarted,
   setDownloadStarted,
   anchorEl,
   setAnchorEl,
 }) => {
-  const onMyExport = e => {
+  // >>>>>> Events <<<<<<
+  const onReportClicked = e => {
     e.preventDefault()
     setAnchorEl(null)
     setDownloadStarted(true)
 
-    const onExport =
-      e.currentTarget.id === 'csv'
-        ? onCsvClick(e.currentTarget)
-        : onExcelClick(e.currentTarget)
+    const getExport = onExport(e.currentTarget.id)
 
-    onExport
-      .then(() => setDownloadStarted(false))
-      .catch(() => setDownloadStarted(false))
+    getExport
+      .then(async ({ elem, fileFormat, reportName }) => {
+        setDownloadStarted(false)
+        const file = await elem.blob
+        downloadFile(file, reportName, fileFormat)
+      })
+      .catch(error => {
+        setDownloadStarted(false)
+        throw error
+      })
 
     return true
   }
 
+  // >>>>>> Components <<<<<<
   return visible ? (
     <div>
       {downloadStarted && <LinearProgress />}
@@ -70,7 +78,7 @@ export const AspectExportListButton = ({
               type="button"
               className={cssClasses('Reports_Button')}
               inverse
-              onClick={onMyExport}
+              onClick={onReportClicked}
               id="xlsx"
             >
               Excel
@@ -81,7 +89,7 @@ export const AspectExportListButton = ({
               type="button"
               className={cssClasses('Reports_Button')}
               inverse
-              onClick={onMyExport}
+              onClick={onReportClicked}
               id="csv"
             >
               CSV
@@ -93,13 +101,12 @@ export const AspectExportListButton = ({
   ) : null
 }
 
-export default ({ onExcelClick, onCsvClick, visible = false }) => {
+const AspectExportListButtonWithProps = ({ onExport, visible }) => {
   const [downloadStarted, setDownloadStarted] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
   const props = {
-    onExcelClick,
-    onCsvClick,
+    onExport,
     visible,
     downloadStarted,
     setDownloadStarted,
@@ -109,3 +116,14 @@ export default ({ onExcelClick, onCsvClick, visible = false }) => {
 
   return <AspectExportListButton {...props} />
 }
+
+AspectExportListButtonWithProps.defaultProps = {
+  visible: true
+}
+
+AspectExportListButtonWithProps.propTypes = {
+  onExport: PropTypes.func.isRequired,
+  visible: PropTypes.bool,
+}
+
+export default AspectExportListButtonWithProps

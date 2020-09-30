@@ -473,52 +473,47 @@ export function fetchWorkflowStatusLogs(
   }
 }
 
-export function exportResults(
+export async function getExportableFile(
   filtersParams,
-  format,
+  fileFormat,
   sortCol,
   sortDir,
   page,
   pageSize,
-  fileFormat,
   reportName
 ) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-    return aspectFetch(
-      `/result/export?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        format,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportResults.GET.400.title',
-                defaultMessage: 'Exporting Results Failed',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportResults.GET.default.title',
-                defaultMessage: 'Exporting Results Failed',
-              },
-            })
-          ),
-        },
-      }
-    ).then(async elem => {
-      const file = await elem.blob
-      dispatch(receivedExportResponse(file, fileFormat, reportName))
+  const filters = fromPairs([...filtersParams.entries()])
+  const elem = await aspectFetch(
+    `/result/export?${stringify({
+      sortCol,
+      sortDir,
+      page,
+      size: pageSize,
+      format: fileFormat,
+      ...filters,
+    })}`,
+    {
+      errorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportResults.GET.400.title',
+              defaultMessage: 'Exporting Results Failed',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.exportResults.GET.default.title',
+              defaultMessage: 'Exporting Results Failed',
+            },
+          })
+        ),
+      },
     })
-  }
+    
+    return { elem, fileFormat, reportName }
 }
 
 /*
