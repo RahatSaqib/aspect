@@ -355,7 +355,6 @@ const ResultList = () => {
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    // console.log(pagination)
   }, [location, history])
 
   // >>>>>> Callbacks <<<<<<
@@ -373,8 +372,6 @@ const ResultList = () => {
       )
     }
   }
-
-  if (isError) throw new Error(error)
 
   const columns = getBaseColumns(intl).concat(
     table.extraColumns.map(column => ({
@@ -401,6 +398,9 @@ const ResultList = () => {
     pageAt: page,
     pageSize: size,
   }
+
+  if (isError) throw new Error(error)
+
   return <ResultListWithProps {...baseProps} />
 }
 
