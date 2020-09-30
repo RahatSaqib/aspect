@@ -7,6 +7,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
 import {
@@ -18,6 +19,10 @@ import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
+  REQUEST_RESULTS: 'REQUEST_RESULTS',
+  RECEIVE_RESULTS: 'RECEIVE_RESULTS',
+  REJECTED_RESULTS: 'REJECTED_RESULTS',
+
   REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
   RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
 
@@ -172,6 +177,32 @@ function receiveUpdatedSingleResult(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_RESULT,
     item,
+  }
+}
+
+function requestResults(sortCol, sortDir, page, size, filters) {
+  return {
+    type: types.REQUEST_RESULTS,
+    sortCol,
+    sortDir,
+    page,
+    size,
+    filters,
+  }
+}
+
+function receiveResults(json) {
+  return {
+    type: types.RECEIVE_RESULTS,
+    items: json.data,
+    total: json.total,
+    extraColumns: json.extraColumns,
+  }
+}
+
+function rejectResults() {
+  return {
+    type: types.REJECTED_RESULTS,
   }
 }
 

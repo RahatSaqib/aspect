@@ -77,7 +77,7 @@ exports[`Result List component should shallow render correctly when filter for a
     <DataTableProgressBar
       disabled={true}
     />
-    <AspectExportListButton
+    <_default
       onCsvClick={[Function]}
       onExcelClick={[Function]}
       reportName="Results"
