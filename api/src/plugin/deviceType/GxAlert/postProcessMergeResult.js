@@ -8,6 +8,7 @@ async function postProcessMergeResult(context, result, previousResult) {
     result,
     previousResult
   )
+  console.log('entro post merge')
   const { knex } = context
   const resultFromDatabase = await knex('Result as r')
     .where('r.id', result.id)

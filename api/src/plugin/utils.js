@@ -55,12 +55,16 @@ async function shouldTriggerResultErrorAnalysis(
   moduleSerial
 ) {
   const errorsToAnalyze = [5007]
+  console.log(
+    'entro',
+    _.findIndex(errorsToAnalyze, parseInt(resultErrorCode, 10))
+  )
   if (_.findIndex(errorsToAnalyze, parseInt(resultErrorCode, 10)) >= 0)
     if (!messageContext.resultAnalyzeProbes) {
       messageContext = messageContext.bindActionCreators({
         resultAnalyzeProbes,
       })
-
+      console.log('paso')
       messageContext.analyzeProbes(resultId, {
         moduleSerial,
         resultErrorCode,

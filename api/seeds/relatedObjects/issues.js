@@ -3,8 +3,8 @@ const {
   allMessageSeverityToId,
 } = require('../../src/shared/dictionary')
 
-const msgInstrumentReplaced = `{{device.name}}: 
-  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to 
+const msgInstrumentReplaced = `{{device.name}}:
+  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
 
@@ -492,6 +492,64 @@ async function getBaseIssues(auditFields) {
         subject: 'Module has been disabled',
         body: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+      },
+    },
+    ProbesTooLow: {
+      issueType: {
+        name: 'Probes Too Low',
+        externalId: 'ProbesTooLow',
+        i18nKey: 'issueStatusProbesTooLow',
+        issueCategoryId: issueCategories.DataHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: 'Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: 'Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}',
+        body: `
+          Probe Check Too Low (5007) on (Module/Lot) at site.name
+
+          Total errors 5007 in the last 30 days: {errorCounts}
+
+          Country: {issue.data.CountryName}
+
+          Lab contacts: {issue.data.personSites}
+
+
+
+          Module Serial: {issue.data.moduleSerial}
+
+          Module Slot: {issue.data.moduleName}
+
+          OR
+
+          Reagent Lot: {reagentlot}`,
+        htmlBody: `Probe Check Too Low (5007) on (Module/Lot) at site.name
+
+          Total errors 5007 in the last 30 days: {errorCounts}
+
+          Country: {issue.data.CountryName}
+
+          Lab contacts: {issue.data.personSites}
+
+
+
+          Module Serial: {issue.data.moduleSerial}
+
+          Module Slot: {issue.data.moduleName}
+
+          OR
+
+          Reagent Lot: {reagentlot}`,
+        ...auditFields,
       },
     },
     InventoryStockExpiring: {

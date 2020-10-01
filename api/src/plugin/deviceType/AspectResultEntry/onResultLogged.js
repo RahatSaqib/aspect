@@ -33,6 +33,7 @@ async function updateCovidResultFromFormData(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
+  console.log('aqui')
   return messageContext.transact(async knex => {
     // check if a module was replaced and trigger replacement-issue if it was
     await shouldTriggerModuleReplaced(knex, messageContext, resultId)
@@ -72,6 +73,8 @@ async function updateCovidResultFromFormData(
         resultData,
         resultErrorCode,
       } = result
+
+      console.log('shouldTriggerResultErrorAnalysis', resultId, resultErrorCode)
       await shouldTriggerResultErrorAnalysis(
         knex,
         messageContext,

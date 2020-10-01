@@ -761,7 +761,7 @@ async function addHivVlResults(
       notes: 'This is an HIV test result',
       errorCode:
         result.category1 === resultCategories.resultCategoryErrorId
-          ? errorCodes[_.random(errorCodes.length)]
+          ? _.sample(errorCodes)
           : null,
       errorNotes:
         result.category1 === resultCategories.resultCategoryErrorId
@@ -993,7 +993,7 @@ async function addTBResults(
       notes: 'This is a test... result',
       errorCode:
         result.category1 === resultCategories.resultCategoryErrorId
-          ? errorCodes[_.random(errorCodes.length)]
+          ? _.sample(errorCodes)
           : null,
       errorNotes:
         result.category1 === resultCategories.resultCategoryErrorId
@@ -1202,7 +1202,7 @@ async function addEbolaResults(
         notes: 'This is an Ebola test result',
         errorCode:
           result.category1 === resultCategories.resultCategoryErrorId
-            ? errorCodes[_.random(errorCodes.length)]
+            ? _.sample(errorCodes)
             : null,
         errorNotes:
           result.category1 === resultCategories.resultCategoryErrorId
