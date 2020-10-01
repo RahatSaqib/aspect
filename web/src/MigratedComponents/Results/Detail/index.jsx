@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import Create from './Create'
 import Update from './Update'
-import editActions from '../Forms/editConfig.json'
+import editActions from '../Forms/editConfig'
 
 const AspectResultDetail = ({ match }) => {
   const { params } = match
