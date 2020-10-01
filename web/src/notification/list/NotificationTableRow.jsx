@@ -92,7 +92,7 @@ const NotificationTableRow = ({ notification }) => {
     if (
       e &&
       e.target &&
-      e.target.getAttribute('class').includes('NotificationTableRow')
+      e.target.getAttribute('class').includes('MuiTableCellroot')
     ) {
       history.push(`/browse/notification/${notification.get('id')}/history`)
     }
