@@ -1,5 +1,9 @@
+const _ = require('lodash')
 const { knex } = require('../db')
-const { resultModuleReplaced } = require('../result/actions')
+const {
+  resultModuleReplaced,
+  resultAnalyzeProbes,
+} = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
@@ -41,6 +45,27 @@ async function getReplacedModuleSerials(knex, deviceId) {
     .then(items => items.map(s => s.replacedModuleSerial))
 
   return replacedModuleSerials
+}
+
+async function shouldTriggerResultErrorAnalysis(
+  knex,
+  messageContext,
+  resultId,
+  resultErrorCode,
+  moduleSerial
+) {
+  const errorsToAnalyze = [5007]
+  if (_.findIndex(errorsToAnalyze, parseInt(resultErrorCode, 10)) >= 0)
+    if (!messageContext.resultAnalyzeProbes) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeProbes,
+      })
+
+      messageContext.analyzeProbes(resultId, {
+        moduleSerial,
+        resultErrorCode,
+      })
+    }
 }
 
 async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
@@ -223,4 +248,5 @@ module.exports = {
   shouldTriggerModuleReplaced,
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
+  shouldTriggerResultErrorAnalysis,
 }

@@ -14,7 +14,10 @@ const {
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('../../../result/querySelectors')
 
-const { shouldTriggerModuleReplaced } = require('../../utils')
+const {
+  shouldTriggerModuleReplaced,
+  shouldTriggerResultErrorAnalysis,
+} = require('../../utils')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -67,7 +70,15 @@ async function updateCovidResultFromFormData(
         resultPatientData,
         resultCategory1,
         resultData,
+        resultErrorCode,
       } = result
+      await shouldTriggerResultErrorAnalysis(
+        knex,
+        messageContext,
+        resultId,
+        resultErrorCode
+      )
+
       const covid19AssayExternalIds = await knex('AssayType as at')
         .join('Assay as a', 'at.id', 'a.assayTypeId')
         .where('at.externalId', 'covid19')

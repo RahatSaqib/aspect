@@ -13,6 +13,7 @@ const types = {
   RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
+  RESULT_ANALYZE_PROBES: 'RESULT_ANALYZE_PROBES',
 }
 
 // ----------- Action Creators -------------------
@@ -35,6 +36,20 @@ function resultUpdated(resultId, deviceLogId, userId) {
     resultId,
     deviceLogId,
     userId,
+  }
+}
+
+function resultAnalyzeProbes(resultId, moduleSerial, resultErrorCode) {
+  if (!resultId && !moduleSerial && resultErrorCode) {
+    throw new Error(
+      'Must specify resultId, moduleserial and resultErrorCode for resultAnalyzeProbes'
+    )
+  }
+  return {
+    type: types.RESULT_ANALYZE_PROBES,
+    resultId,
+    moduleSerial,
+    resultErrorCode,
   }
 }
 
@@ -274,4 +289,5 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
+  resultAnalyzeProbes,
 }

@@ -2,16 +2,8 @@ const { subDays } = require('date-fns')
 
 const { startOfDayUtc } = require('../shared/date')
 
-const probesTooLow = (resultsWithErrors, totalResults) => {
-  console.log(
-    resultsWithErrors,
-    totalResults,
-    resultsWithErrors / parseFloat(totalResults)
-  )
-  return (
-    totalResults >= 3 && resultsWithErrors / parseFloat(totalResults) >= 0.03
-  )
-}
+const probesTooLow = (resultsWithErrors, totalResults) =>
+  totalResults >= 3 && resultsWithErrors / parseFloat(totalResults) >= 0.03
 
 async function analyzeProbes(knex, action) {
   const data = JSON.parse(action.issue.data)
@@ -21,11 +13,16 @@ async function analyzeProbes(knex, action) {
       .andWhere('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
       .fitst(
         knex.raw(
-          "sum(case when errorcode='5007' then 1 else 0 end) as resultsWithErrors, count(id) as totalResults"
+          "sum(case when errorcode='?' then 1 else 0 end) as resultsWithErrors, count(id) as totalResults",
+          data.resultErrorCode
         )
       )
-
-    return probesTooLow(resultsWithErrors, totalResults)
+    switch (parseInt(data.resultErrorCode, 10)) {
+      case 5007:
+        return probesTooLow(resultsWithErrors, totalResults)
+      default:
+        return false
+    }
   }
 }
 module.exports = {
