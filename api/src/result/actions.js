@@ -58,7 +58,6 @@ function resultAnalyzeProbes(resultId, moduleSerial, resultErrorCode) {
       'Must specify resultId, moduleserial and resultErrorCode for resultAnalyzeProbes'
     )
   }
-  console.log('in  the event', resultId, moduleSerial, resultErrorCode)
 
   return {
     type: types.RESULT_ANALYZE_PROBES,

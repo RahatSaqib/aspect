@@ -11,7 +11,6 @@ const evaluationMethods = {
 }
 
 async function actionConditionsMet(knex, action, partnerId, conditions) {
-  console.log('actionConditionsMet', action, partnerId, conditions)
   if (_.isEmpty(conditions)) {
     return Promise.resolve(true)
   }

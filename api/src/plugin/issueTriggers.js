@@ -6,7 +6,6 @@ const probesTooLow = (resultsWithErrors, totalResults) =>
   totalResults >= 3 && resultsWithErrors / parseFloat(totalResults) >= 0.03
 
 async function analyzeProbes(knex, action) {
-  console.log('analyzeProbes', action)
   const { moduleSerial, resultErrorCode } = action.options.data
 
   if (parseInt(resultErrorCode, 10) === 5007) {

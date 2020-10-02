@@ -53,10 +53,6 @@ async function shouldTriggerResultErrorAnalysis(
   moduleSerial
 ) {
   const errorsToAnalyze = [5007]
-  console.log(
-    'shouldTrigger',
-    errorsToAnalyze.includes(parseInt(resultErrorCode, 10))
-  )
   if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
     if (!messageContext.resultAnalyzeProbes) {
       messageContext = messageContext.bindActionCreators({
