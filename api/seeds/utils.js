@@ -3090,7 +3090,6 @@ async function seedIssueType(knex, issueType, { userName }) {
     updatedBy: adminId,
   }
 
-  // get previously defined data for ModuleReplaced issue type
   const issue = (await getBaseIssues(auditFields))[issueType]
 
   // ------------------------------------------
@@ -3142,7 +3141,6 @@ async function seedIssueType(knex, issueType, { userName }) {
     defaultMessageTypeId: moduleMessageTypeId,
   })
 }
-
 module.exports = {
   addReports,
 

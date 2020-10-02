@@ -45,7 +45,7 @@ const getIssues = (deviceId, issueTypeId) =>
     .where({ deviceId, issueTypeId })
     .orderBy('createdOn', 'DESC')
     .select()
-describe.only('This test is for testing different triggers conditions', async () => {
+describe('This test is for testing different triggers conditions', async () => {
   let macAddress
   const adminUsername = 'admin'
   const adminPassword = 'test07'
