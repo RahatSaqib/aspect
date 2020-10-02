@@ -333,6 +333,21 @@ const ResultList = () => {
     () => receiveTableItems(initialTable, data.total, data.extraColumns),
     [data]
   )
+  const columns = useMemo(
+    () =>
+      getBaseColumns(intl).concat(
+        table.extraColumns.map(column => ({
+          key: column.get('db'),
+          label: messageByI18nKey(column.get('i18nKey'))(
+            column.get('title'),
+            intl
+          ),
+          sortable: true,
+          hiddenOn: 'md',
+        }))
+      ),
+    [table]
+  )
 
   /**
    * define 'filters' and 'pagination'
@@ -379,15 +394,6 @@ const ResultList = () => {
       )
     }
   }
-
-  const columns = getBaseColumns(intl).concat(
-    table.extraColumns.map(column => ({
-      key: column.get('db'),
-      label: messageByI18nKey(column.get('i18nKey'))(column.get('title'), intl),
-      sortable: true,
-      hiddenOn: 'md',
-    }))
-  )
 
   const baseProps = {
     intl,
