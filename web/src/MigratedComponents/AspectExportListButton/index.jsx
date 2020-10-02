@@ -1,7 +1,7 @@
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import Popover from '@material-ui/core/Popover'
 import IconButton from '@material-ui/core/IconButton'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import classnames from 'classnames/bind'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import PropTypes from 'prop-types'
@@ -19,7 +19,7 @@ export const AspectExportListButtonWithProps = ({
   setAnchorEl,
 }) => {
   // >>>>>> Events <<<<<<
-  const onReportClicked = e => {
+  const onReportClicked = useCallback(e => {
     e.preventDefault()
     setAnchorEl(null)
     setDownloadStarted(true)
@@ -38,7 +38,7 @@ export const AspectExportListButtonWithProps = ({
       })
 
     return true
-  }
+  })
 
   // >>>>>> Components <<<<<<
   if (!visible) return null

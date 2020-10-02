@@ -77,10 +77,9 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-const onAddNewButtonClick = ({ history }) => () =>
-  history.push('/browse/result/add')
+const onAddNewButtonClick = history => () => history.push('/browse/result/add')
 
-const onRowClick = ({ history }) => ({
+const onRowClick = history => ({
   currentTarget: {
     dataset: { resultId },
   },
@@ -219,7 +218,7 @@ export const ResultListWithProps = ({
         color="primary"
         variant="contained"
         browseButton
-        onClick={onAddNewButtonClick({ history })}
+        onClick={onAddNewButtonClick(history)}
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
@@ -256,7 +255,7 @@ export const ResultListWithProps = ({
                   intl={intl}
                   extraColumns={table.extraColumns}
                   result={result}
-                  onClick={onRowClick({ history })}
+                  onClick={onRowClick(history)}
                   data-result-id={result.get('id')}
                 />
               ))}
@@ -328,7 +327,7 @@ const ResultList = () => {
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems, extraColumns))
     }
-  }, [data, items, table])
+  }, [data])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -354,7 +353,7 @@ const ResultList = () => {
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-  }, [location, table])
+  }, [location])
 
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {
