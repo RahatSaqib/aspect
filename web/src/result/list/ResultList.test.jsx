@@ -16,7 +16,7 @@ describe('Result List component', () => {
     props = {
       intl: createIntl({ locale: 'en' }),
       history: {
-        push: () => {},
+        push: jest.fn(),
       },
       location: {
         search: '',
@@ -27,13 +27,13 @@ describe('Result List component', () => {
       sortDir: 'desc',
       pageAt: 0,
       pageSize: 10,
-      onHeadColumnClick: () => {},
-      onRowClick: () => {},
-      onExcelClick: () => {},
+      onHeadColumnClick: jest.fn(),
+      onRowClick: jest.fn(),
+      onExcelClick: jest.fn(),
       isLoading: false,
       columns: Immutable.List([]),
-      reducedFilters: () => {},
-      onExportClick: () => {},
+      reducedFilters: jest.fn(),
+      onExportClick: jest.fn(),
       total: 0,
     }
   })
