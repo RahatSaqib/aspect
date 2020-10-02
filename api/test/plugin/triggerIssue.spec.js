@@ -6,12 +6,12 @@ const supertest = require('supertest')
 const { subDays } = require('date-fns')
 const { resultAnalyzeProbes } = require('../../src/result/actions')
 const { knex } = require('../../src/db')
-/*
+
 const {
   issueTypeToId,
   issueStatusToId,
 } = require('../../src/shared/dictionary')
-*/
+
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -22,7 +22,7 @@ const {
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
 const {
-  // waitForIdle,
+  waitForIdle,
   waitForAction,
   // dispatchAndWaitForAction,
 } = require('../utils/mqUtils')
@@ -40,6 +40,11 @@ const getResults = async errorCode =>
       'd.macAddress as macAddress'
     )
 
+const getIssues = (deviceId, issueTypeId) =>
+  knex('Issue')
+    .where({ deviceId, issueTypeId })
+    .orderBy('createdOn', 'DESC')
+    .select()
 describe.only('This test is for testing different triggers conditions', async () => {
   let macAddress
   const adminUsername = 'admin'
@@ -66,7 +71,13 @@ describe.only('This test is for testing different triggers conditions', async ()
     })
     beforeEach(() => context.beforeRegisterAndSetDevice())
     afterEach(() => context.afterCleanUp())
-    it('probesTooLow issue creation', async () => {
+    it('probesTooLow issue creation, should only create one issue', async () => {
+      /**
+       * in this testcase we are testing:
+       * 1) issueFilter function for this testCondition
+       * 2) Trigger condition based on a function.
+       * 3) the creation of the issue.
+       */
       // eslint-disable-next-line prefer-destructuring
       ;({ deviceName, deviceSerialNumber, macAddress, hostId } = results5007[0])
 
@@ -113,10 +124,40 @@ describe.only('This test is for testing different triggers conditions', async ()
         payload: firstPayload,
       })
       await waitForAnalyze
+      await waitForIdle()
       assert.equal(response.status, 200)
       assert.typeOf(response.body, 'Object')
+      const issueTypeId = await issueTypeToId('ProbesTooLow')
+      const issues = await getIssues(response.body.device.id, issueTypeId)
+      assert.equal(issues.length, 1)
 
-      console.log(firstPayload, response.body)
+      assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
+
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      const response2 = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(firstPayload, {
+          result: {
+            id: 'Error-5007-result2',
+            startedOn: subDays(new Date(), 2),
+            endedOn: subDays(new Date(), 2),
+            error: {
+              code: '5007',
+              notes: 'some ,notes',
+            },
+            instrument: {
+              serial: results5007[0].instrumentSerial,
+              module: {
+                serial: results5007[0].moduleSerial,
+                name: results5007[0].moduleName,
+              },
+            },
+          },
+        }),
+      })
+      await waitForIdle()
+      const issues2 = await getIssues(response2.body.device.id, issueTypeId)
+      assert.equal(issues2.length, 1)
       assert.isTrue(true)
     })
   })

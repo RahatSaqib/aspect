@@ -149,6 +149,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeProbes"
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {

@@ -7,17 +7,19 @@ const probesTooLow = (resultsWithErrors, totalResults) =>
 
 async function analyzeProbes(knex, action) {
   console.log('analyzeProbes', action)
-  if (parseInt(action.resultErrorCode, 10) === 5007) {
+  const { moduleSerial, resultErrorCode } = action.options.data
+
+  if (parseInt(resultErrorCode, 10) === 5007) {
     const { resultsWithErrors, totalResults } = await knex('Result')
-      .where('moduleSerial', action.moduleSerial)
+      .where('moduleSerial', moduleSerial)
       .andWhere('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
       .first(
         knex.raw(
           'sum(case when errorcode=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
-          action.resultErrorCode
+          resultErrorCode
         )
       )
-    switch (parseInt(action.resultErrorCode, 10)) {
+    switch (parseInt(resultErrorCode, 10)) {
       case 5007:
         return probesTooLow(resultsWithErrors, totalResults)
       default:

@@ -238,7 +238,7 @@ async function getIssueFilter(knex, partnerId, deviceId) {
       .where({ 'd.id': deviceId })
       .first('dt.plugin'))
   }
-  return loadPlugin([plugin], 'filterModuleDisabledIssue')
+  return loadPlugin([plugin], 'filtersOpenIssues')
 }
 
 async function createNewIssue(knex, issueType, action) {

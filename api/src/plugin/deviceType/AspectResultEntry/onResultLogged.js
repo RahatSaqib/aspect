@@ -78,10 +78,8 @@ async function updateCovidResultFromFormData(
       } = result
 
       await shouldTriggerResultErrorAnalysis(
-        knex,
         messageContext,
         resultId,
-
         resultErrorCode,
         resultModuleSerial
       )

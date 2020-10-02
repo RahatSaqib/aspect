@@ -47,7 +47,6 @@ async function getReplacedModuleSerials(knex, deviceId) {
 }
 
 async function shouldTriggerResultErrorAnalysis(
-  knex,
   messageContext,
   resultId,
   resultErrorCode,

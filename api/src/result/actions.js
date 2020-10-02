@@ -39,8 +39,21 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
+/**
+ *
+ * @param {*} resultId
+ * is the id of the result to be analyzed
+ * @param {*} options
+ * options should have moduleSerial and resultErrorCode
+ * Creates an action to notify the result with given id
+ * has been logged with an error code.
+ *
+ * resultId,  options.resultErrorCode and options.moduleSerial are required.
+
+ */
+
 function resultAnalyzeProbes(resultId, moduleSerial, resultErrorCode) {
-  if (!resultId && !moduleSerial && resultErrorCode) {
+  if (!resultId && !moduleSerial && !resultErrorCode) {
     throw new Error(
       'Must specify resultId, moduleserial and resultErrorCode for resultAnalyzeProbes'
     )
@@ -50,8 +63,7 @@ function resultAnalyzeProbes(resultId, moduleSerial, resultErrorCode) {
   return {
     type: types.RESULT_ANALYZE_PROBES,
     resultId,
-    moduleSerial,
-    resultErrorCode,
+    options: { data: { moduleSerial, resultErrorCode } },
   }
 }
 
