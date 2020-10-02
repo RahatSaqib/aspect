@@ -18,6 +18,9 @@ async function analyzeProbes(knex, action) {
           resultErrorCode
         )
       )
+    action.options.data.resultsWithErrors = resultsWithErrors
+    action.options.data.totalResults = totalResults
+
     switch (parseInt(resultErrorCode, 10)) {
       case 5007:
         return probesTooLow(resultsWithErrors, totalResults)

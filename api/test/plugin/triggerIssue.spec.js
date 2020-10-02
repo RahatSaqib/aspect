@@ -45,7 +45,7 @@ const getIssues = (deviceId, issueTypeId) =>
     .where({ deviceId, issueTypeId })
     .orderBy('createdOn', 'DESC')
     .select()
-describe('This test is for testing different triggers conditions', async () => {
+describe.only('This test is for testing different triggers conditions', async () => {
   let macAddress
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -131,6 +131,7 @@ describe('This test is for testing different triggers conditions', async () => {
       const issues = await getIssues(response.body.device.id, issueTypeId)
       assert.equal(issues.length, 1)
 
+      console.log(issues[0].data)
       assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
 
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module

@@ -515,40 +515,40 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: 'Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}',
         body: `
-          Probe Check Too Low (5007) on (Module/Lot) at site.name
+          Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}
 
-          Total errors 5007 in the last 30 days: {errorCounts}
+          Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 
-          Country: {issue.data.CountryName}
+          Country: {{issue.data.CountryName}}
 
-          Lab contacts: {issue.data.personSites}
-
-
-
-          Module Serial: {issue.data.moduleSerial}
-
-          Module Slot: {issue.data.moduleName}
-
-          OR
-
-          Reagent Lot: {reagentlot}`,
-        htmlBody: `Probe Check Too Low (5007) on (Module/Lot) at site.name
-
-          Total errors 5007 in the last 30 days: {errorCounts}
-
-          Country: {issue.data.CountryName}
-
-          Lab contacts: {issue.data.personSites}
+          Lab contacts: {{issue.data.personSites}}
 
 
 
-          Module Serial: {issue.data.moduleSerial}
+          Module Serial: {{issue.data.moduleSerial}}
 
-          Module Slot: {issue.data.moduleName}
+          Module Slot: {{issue.data.moduleName}}
 
           OR
 
-          Reagent Lot: {reagentlot}`,
+          Reagent Lot: {{reagentlot}}`,
+        htmlBody: `Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}
+
+          Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
+
+          Country: {{issue.data.CountryName}}
+
+          Lab contacts: {{issue.data.personSites}}
+
+
+
+          Module Serial: {{issue.data.moduleSerial}}
+
+          Module Slot: {{issue.data.moduleName}}
+
+          OR
+
+          Reagent Lot: {{reagentlot}}`,
         ...auditFields,
       },
     },

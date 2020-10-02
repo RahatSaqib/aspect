@@ -74,6 +74,7 @@ async function updateCovidResultFromFormData(
         resultCategory1,
         resultData,
         resultModuleSerial,
+        resultModuleName,
         resultErrorCode,
       } = result
 
@@ -81,7 +82,8 @@ async function updateCovidResultFromFormData(
         messageContext,
         resultId,
         resultErrorCode,
-        resultModuleSerial
+        resultModuleSerial,
+        resultModuleName
       )
       if (!'Aspect' !== deviceLogDeviceTypeExternalId) {
         return
