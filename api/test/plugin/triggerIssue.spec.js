@@ -1,16 +1,17 @@
 const chai = require('chai')
 
-const { knex } = require('../../src/db')
-
 const { assert } = chai
 const _ = require('lodash')
 const supertest = require('supertest')
-
 const { subDays } = require('date-fns')
+const { resultAnalyzeProbes } = require('../../src/result/actions')
+const { knex } = require('../../src/db')
+/*
 const {
   issueTypeToId,
   issueStatusToId,
 } = require('../../src/shared/dictionary')
+*/
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -21,9 +22,9 @@ const {
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
 const {
-  waitForIdle,
+  // waitForIdle,
   waitForAction,
-  dispatchAndWaitForAction,
+  // dispatchAndWaitForAction,
 } = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
@@ -61,6 +62,7 @@ describe.only('This test is for testing different triggers conditions', async ()
         deviceName: results5007[0].deviceName,
         macAddress: results5007[0].macAddress,
       })
+      assert.isAtLeast(results5007.length, 1)
     })
     beforeEach(() => context.beforeRegisterAndSetDevice())
     afterEach(() => context.afterCleanUp())
@@ -89,6 +91,10 @@ describe.only('This test is for testing different triggers conditions', async ()
             id: 'Error-5007-result',
             startedOn: subDays(new Date(), 2),
             endedOn: subDays(new Date(), 2),
+            error: {
+              code: '5007',
+              notes: 'some ,notes',
+            },
             instrument: {
               serial: results5007[0].instrumentSerial,
               module: {
@@ -100,12 +106,13 @@ describe.only('This test is for testing different triggers conditions', async ()
         }
       )
 
+      const waitForAnalyze = waitForAction(resultAnalyzeProbes)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
         payload: firstPayload,
       })
-
+      await waitForAnalyze
       assert.equal(response.status, 200)
       assert.typeOf(response.body, 'Object')
 

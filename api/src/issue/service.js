@@ -74,12 +74,19 @@ function onIssueEventTrigger(
 ) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
+    console.log('arrive here', issueType, triggerConditions)
     return context.transact(async knex => {
       const shouldTriggerEvent = await actionConditionsMet(
         knex,
         action,
         partnerId,
         JSON.parse(triggerConditions).conditions
+      )
+      console.log(
+        'shouldTriggerEvent',
+        shouldTriggerEvent,
+        action,
+        triggerConditions
       )
       if (shouldTriggerEvent) {
         const now = new Date()
@@ -89,6 +96,7 @@ function onIssueEventTrigger(
           action,
           JSON.parse(filterIssueCondition)
         )
+        console.log('openIssue', openIssue, issueType)
         let issue = null
         if (openIssue != null) {
           // ----------------------
@@ -115,6 +123,7 @@ function onIssueEventTrigger(
           // ----------------------
           issue = await mergeActionData(knex, openIssue, action)
         } else {
+          console.log('Create new issue', issueType, action)
           issue = await createNewIssue(knex, issueType, action)
           if (issue != null) {
             context.issueCreated(issue.id)

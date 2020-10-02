@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -56,20 +55,21 @@ async function shouldTriggerResultErrorAnalysis(
 ) {
   const errorsToAnalyze = [5007]
   console.log(
-    'entro',
-    _.findIndex(errorsToAnalyze, parseInt(resultErrorCode, 10))
+    'shouldTrigger',
+    errorsToAnalyze.includes(parseInt(resultErrorCode, 10))
   )
-  if (_.findIndex(errorsToAnalyze, parseInt(resultErrorCode, 10)) >= 0)
+  if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
     if (!messageContext.resultAnalyzeProbes) {
       messageContext = messageContext.bindActionCreators({
         resultAnalyzeProbes,
       })
-      console.log('paso')
-      messageContext.analyzeProbes(resultId, {
-        moduleSerial,
-        resultErrorCode,
-      })
     }
+    console.log('before dispatch')
+    await messageContext.resultAnalyzeProbes(resultId, {
+      moduleSerial,
+      resultErrorCode,
+    })
+  }
 }
 
 async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {

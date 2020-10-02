@@ -33,7 +33,6 @@ async function updateCovidResultFromFormData(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
-  console.log('aqui')
   return messageContext.transact(async knex => {
     // check if a module was replaced and trigger replacement-issue if it was
     await shouldTriggerModuleReplaced(knex, messageContext, resultId)
@@ -51,7 +50,10 @@ async function updateCovidResultFromFormData(
         })
         .orderBy('dl.id', 'desc')
         .first('dt.externalId')) || {}
-    if (deviceLogDeviceTypeExternalId !== 'Aspect') {
+
+    if (
+      !['Aspect', 'CepheidGeneXpert'].includes(deviceLogDeviceTypeExternalId)
+    ) {
       return
     }
     const result = await getResultForStringTemplateProcessing(
@@ -71,17 +73,21 @@ async function updateCovidResultFromFormData(
         resultPatientData,
         resultCategory1,
         resultData,
+        resultModuleSerial,
         resultErrorCode,
       } = result
 
-      console.log('shouldTriggerResultErrorAnalysis', resultId, resultErrorCode)
       await shouldTriggerResultErrorAnalysis(
         knex,
         messageContext,
         resultId,
-        resultErrorCode
-      )
 
+        resultErrorCode,
+        resultModuleSerial
+      )
+      if (!'Aspect' !== deviceLogDeviceTypeExternalId) {
+        return
+      }
       const covid19AssayExternalIds = await knex('AssayType as at')
         .join('Assay as a', 'at.id', 'a.assayTypeId')
         .where('at.externalId', 'covid19')
