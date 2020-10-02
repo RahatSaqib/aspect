@@ -77,9 +77,8 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-const onAddNewButtonClick = ({ history }) => {
+const onAddNewButtonClick = ({ history }) => () =>
   history.push('/browse/result/add')
-}
 
 const onRowClick = ({ history }) => ({
   currentTarget: {
@@ -220,7 +219,7 @@ export const ResultListWithProps = ({
         color="primary"
         variant="contained"
         browseButton
-        onClick={onAddNewButtonClick}
+        onClick={onAddNewButtonClick({ history })}
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
@@ -257,7 +256,7 @@ export const ResultListWithProps = ({
                   intl={intl}
                   extraColumns={table.extraColumns}
                   result={result}
-                  onClick={onRowClick}
+                  onClick={onRowClick({ history })}
                   data-result-id={result.get('id')}
                 />
               ))}
@@ -364,7 +363,7 @@ const ResultList = () => {
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-  }, [location, history])
+  }, [location, table])
 
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {
