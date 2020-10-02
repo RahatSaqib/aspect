@@ -88,10 +88,21 @@ const NotificationTableRow = ({ notification }) => {
     return words
   }
 
+  function clickRow(e) {
+    if (
+      e &&
+      e.target &&
+      e.target.getAttribute('class').includes('MuiTableCellroot')
+    ) {
+      history.push(`/browse/notification/${notification.get('id')}/history`)
+    }
+  }
+
   return (
     <TableRow
       key={notification.get('id')}
       data-notification-id={notification.get('id')}
+      onClick={e => clickRow(e)}
     >
       <TableCell>{notification.get('name')}</TableCell>
       <TableCell>
@@ -102,12 +113,8 @@ const NotificationTableRow = ({ notification }) => {
         {addEllipsis(
           notification.get('contacts'),
           notification.get('contactsCount')
-        )}
+        ) || 'Not Configured'}
       </TableCell>
-      <TableCell>{notification.get('totalTriggers')}</TableCell>
-      <TableCell>{counter('alertCount')}</TableCell>
-      <TableCell>{counter('smsCount')}</TableCell>
-      <TableCell>{counter('emailCount')}</TableCell>
       <TableCell>
         <AspectVertMenu
           params={notification}
