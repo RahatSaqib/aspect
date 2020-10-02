@@ -64,11 +64,11 @@ async function shouldTriggerResultErrorAnalysis(
         resultAnalyzeProbes,
       })
     }
-    console.log('before dispatch')
-    await messageContext.resultAnalyzeProbes(resultId, {
+    await messageContext.resultAnalyzeProbes(
+      resultId,
       moduleSerial,
-      resultErrorCode,
-    })
+      resultErrorCode
+    )
   }
 }
 

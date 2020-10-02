@@ -11,9 +11,9 @@ async function analyzeProbes(knex, action) {
     const { resultsWithErrors, totalResults } = await knex('Result')
       .where('moduleSerial', action.moduleSerial)
       .andWhere('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
-      .fitst(
+      .first(
         knex.raw(
-          "sum(case when errorcode='?' then 1 else 0 end) as resultsWithErrors, count(id) as totalResults",
+          'sum(case when errorcode=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
           action.resultErrorCode
         )
       )
