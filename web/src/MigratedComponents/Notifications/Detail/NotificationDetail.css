@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import '../../../globals/variables.css';
 
 .Section {
   padding: 10px var(--aspect-detail-horizontal-padding);
@@ -82,5 +82,21 @@
 
 .NotificationDeliveryDataTable,
 .NotificationHistoryDataTable {
-  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+  composes: ComponentDataTable from '../../../components/shared/DataTable.css';
+}
+
+.TableRow {
+  composes: TableRow from '../../../task/list/TaskTableRow.css';
+}
+
+.TableCell {
+  composes: TableCell from '../../../task/list/TaskTableRow.css';
+}
+
+.TableCell--hasError {
+  color: var(--aspect-color-mandy);
+}
+
+.FaCircle {
+  composes: FaCircle from '../../../task/list/TaskTableRow.css';
 }

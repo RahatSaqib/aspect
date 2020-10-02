@@ -1,6 +1,6 @@
 import Table from '@material-ui/core/Table'
 
-import { DataTableHead } from '../../../components/shared/tableHead'
+import { DataTableHead } from '../../../../components/shared/tableHead'
 import NotificationHistoryTableRow from './NotificationHistoryTableRow'
 
 export {

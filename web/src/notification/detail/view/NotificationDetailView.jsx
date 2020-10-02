@@ -18,7 +18,9 @@ import {
 } from './NotificationDeliveryDataTable'
 import AspectButton from '../../../components/shared/AspectButton'
 
-const cssClasses = classnames.bind(require('../NotificationDetail.css'))
+const cssClasses = classnames.bind(
+  require('../../../MigratedComponents/Notifications/Detail/NotificationDetail.css')
+)
 
 // TODO: Switch back to just using Button directly. This is demo only
 const MockTogglBtn = withStateHandlers(
