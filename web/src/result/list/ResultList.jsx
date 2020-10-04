@@ -279,23 +279,6 @@ export const ResultListWithProps = ({
   </div>
 )
 
-const emptyData = {
-  data: [],
-  total: 0,
-  extraColumns: [],
-}
-const initialItems = new Items()
-const initialTable = new Table({
-  sortCol: 'endedOn',
-  sortDir: 'desc',
-  filters: Immutable.fromJS({
-    sampleId: '',
-    sampleGroup: '',
-    assayId: null,
-  }),
-  extraColumns: Immutable.List(),
-})
-
 const ResultList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
@@ -304,8 +287,23 @@ const ResultList = () => {
   const userPermissions = useSelector(state => state.user.jwt.permissions)
 
   // >>>>>> Local state <<<<<<
+  const [items, setItems] = useState(new Items())
+  const [table, setTable] = useState(
+    new Table({
+      sortCol: 'endedOn',
+      sortDir: 'desc',
+      filters: Immutable.fromJS({
+        sampleId: '',
+        sampleGroup: '',
+        assayId: null,
+      }),
+      extraColumns: Immutable.List(),
+    })
+  )
+  const [total, setTotal] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
+  const [columns, setColumns] = useState([])
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
@@ -313,7 +311,7 @@ const ResultList = () => {
   const params = { ...pagination, ...filters }
 
   // >>>>>> Queries <<<<<<
-  const { isLoading, isError, data = emptyData, error } = useQuery(
+  const { isLoading, isError, data, error } = useQuery(
     [RESULT_LIST.KEY, { params }],
     async () =>
       fetchWrapperForQueries({
@@ -322,36 +320,29 @@ const ResultList = () => {
       })
   )
 
-  /**
-   * cache normalized 'items' and 'table'
-   */
-  const items = useMemo(
-    () => receiveList(initialItems, Immutable.fromJS(data.data)),
-    [data]
-  )
-  const table = useMemo(
-    () => receiveTableItems(initialTable, data.total, data.extraColumns),
-    [data]
-  )
-  const columns = useMemo(
-    () =>
-      getBaseColumns(intl).concat(
-        table.extraColumns.map(column => ({
-          key: column.get('db'),
-          label: messageByI18nKey(column.get('i18nKey'))(
-            column.get('title'),
-            intl
-          ),
-          sortable: true,
-          hiddenOn: 'md',
-        }))
-      ),
-    [table]
-  )
+  // >>>>>> Lifecycles <<<<<<
+  useEffect(() => {
+    if (data) {
+      const { data: list, total: totalItems, extraColumns } = data
+      setItems(receiveList(items, Immutable.fromJS(list)))
+      setTotal(totalItems)
+      setTable(receiveTableItems(table, totalItems, extraColumns))
+      setColumns(
+        getBaseColumns(intl).concat(
+          table.extraColumns.map(column => ({
+            key: column.get('db'),
+            label: messageByI18nKey(column.get('i18nKey'))(
+              column.get('title'),
+              intl
+            ),
+            sortable: true,
+            hiddenOn: 'md',
+          }))
+        )
+      )
+    }
+  }, [data])
 
-  /**
-   * define 'filters' and 'pagination'
-   */
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -407,7 +398,7 @@ const ResultList = () => {
     reducedFilters,
     onExportClick,
     table,
-    total: data.total,
+    total,
     pageAt: page,
     pageSize: size,
   }
