@@ -3,7 +3,7 @@ import fromPairs from 'lodash/fromPairs'
 import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useIntl } from 'react-intl'
@@ -318,22 +318,25 @@ export const InventoryItemsList = () => {
   const filters = fromPairs([...filtersParams.entries()])
 
   // >>>>>> Defining callbacks <<<<<<
-  const onExcelClick = formatType => {
-    const format = formatType.id
-    const { sanitized, value: filtersParams } = filtersFromLocation(location)
-    if (!sanitized) {
-      exportSupplies(
-        filtersParams,
-        sortCol,
-        sortDir,
-        pageAt,
-        table.get('total') > 0 ? table.get('total') : 1,
-        format,
-        'supplies',
-        dispatch
-      )
-    }
-  }
+  const onExcelClick = useCallback(
+    formatType => {
+      const format = formatType.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSupplies(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'supplies',
+          dispatch
+        )
+      }
+    },
+    [location, sortCol, sortDir, pageAt, table]
+  )
   const onAdjustInventorySucceeded = () => {
     showAcknowledgement({
       title: messages.inventoryAdjustedSuccessfully,
