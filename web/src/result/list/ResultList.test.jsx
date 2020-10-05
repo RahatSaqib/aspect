@@ -45,12 +45,7 @@ describe('Result List component', () => {
   it('should shallow render correctly when filter for assay type', () => {
     const element = shallow(<ResultListWithProps {...props} />)
 
-    // const element = shallow(
-    //   <ResultList location={{ search: '?filters=assayType%3DTB' }} />
-    // )
-
     expect(element).toMatchSnapshot()
     expect(element.find(AspectExportListButton)).toHaveLength(1)
-    // expect(element.find(ExportListButton)).toHaveLength(1)
   })
 })
