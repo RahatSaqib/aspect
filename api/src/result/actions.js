@@ -15,7 +15,7 @@ const types = {
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
   RESULT_ANALYZE_PROBES_LOT: 'RESULT_ANALYZE_PROBES_LOT',
-  RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
+  RESULT_ANALYZE_PROBES_MODULES: 'RESULT_ANALYZE_PROBES_MODULES',
 }
 
 // ----------- Action Creators -------------------
@@ -63,7 +63,7 @@ function resultAnalyzeProbes(resultId, resultErrorCode, data) {
   const moduleName = _.get(data, 'moduleName')
   return {
     type: moduleName
-      ? types.RESULT_ANALYZE_PROBES_MODULE
+      ? types.RESULT_ANALYZE_PROBES_MODULES
       : types.RESULT_ANALYZE_PROBES_LOT,
     resultId,
     options: {

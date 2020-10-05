@@ -4,7 +4,7 @@ const { resultAnalyzeProbes } = require('../../src/result/actions')
 
 const { assert } = chai
 
-describe.only('This test is for testing different triggers conditions', () => {
+describe('This test is for testing different triggers conditions', () => {
   it('probesTooLow', async () => {
     assert.isTrue(probesTooLow(3, 100))
     assert.isTrue(probesTooLow(20, 200))
@@ -29,7 +29,7 @@ describe.only('This test is for testing different triggers conditions', () => {
     })
     assert.isObject(analyzeProbesModule)
     assert.property(analyzeProbesModule, 'type')
-    assert.equal(analyzeProbesModule.type, 'RESULT_ANALYZE_PROBES_MODULE')
+    assert.equal(analyzeProbesModule.type, 'RESULT_ANALYZE_PROBES_MODULES')
     assert.equal(analyzeProbesTop.type, 'RESULT_ANALYZE_PROBES_LOT')
   })
 })

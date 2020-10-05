@@ -20,7 +20,6 @@ const filterByLotAndAssay = (
       `${aliases.issue}.data->>"$.assayId"=? and ${aliases.issue}.data->>"$.reagentLot"=?`,
       [assayId, reagentLot]
     )
-  console.log('filterbylot and assay')
   return queryBuilder
 }
 

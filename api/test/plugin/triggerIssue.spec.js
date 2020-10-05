@@ -42,11 +42,11 @@ const getResults = async errorCode =>
 
 const getIssues = (deviceId, issueTypeId) =>
   knex('Issue')
-    .where({ deviceId })
-    .whereIn('issueTypeId', issueTypeId)
+    .where({ deviceId, issueTypeId })
     .orderBy('createdOn', 'DESC')
     .select()
-describe.only('This test is for testing different triggers conditions', async () => {
+
+describe('This test is for testing different triggers conditions', async () => {
   let macAddress
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -54,7 +54,7 @@ describe.only('This test is for testing different triggers conditions', async ()
   let deviceSerialNumber
   let hostId
   let deviceName
-
+  let consumableLot
   let results5007
 
   describe.only('error 5007', async () => {
@@ -80,7 +80,13 @@ describe.only('This test is for testing different triggers conditions', async ()
        * 3) the creation of the issue.
        */
       // eslint-disable-next-line prefer-destructuring
-      ;({ deviceName, deviceSerialNumber, macAddress, hostId } = results5007[0])
+      ;({
+        deviceName,
+        deviceSerialNumber,
+        macAddress,
+        hostId,
+        consumableLot,
+      } = results5007[0])
 
       const { basicDevicePayload, deviceAuth } = context
 
@@ -104,7 +110,7 @@ describe.only('This test is for testing different triggers conditions', async ()
             startedOn: subDays(new Date(), 2),
             endedOn: subDays(new Date(), 2),
             consumable: {
-              lot: 'Lot A',
+              lot: consumableLot,
             },
             error: {
               code: '5007',
@@ -131,13 +137,27 @@ describe.only('This test is for testing different triggers conditions', async ()
       await waitForIdle()
       assert.equal(response.status, 200)
       assert.typeOf(response.body, 'Object')
-      const issueTypeId = [
-        await issueTypeToId('ProbesTooLowLot'),
-        await issueTypeToId('ProbesTooLowModule'),
-      ]
-      const issues = await getIssues(response.body.device.id, issueTypeId)
-      assert.equal(issues.length, 1)
-      assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
+      const issueTypeId = await issueTypeToId('ProbesTooLowModule')
+      const issuesForModules = await getIssues(
+        response.body.device.id,
+        issueTypeId
+      )
+
+      // const issuesForLot = await getIssues(
+      //   response.body.device.id,
+      //   await issueTypeToId('ProbesTooLowLot')
+      // )
+      /* assert.equal(issuesForLot.length, 1)
+      assert.equal(
+        issuesForLot[0].issueStatusId,
+        await issueStatusToId('Active')
+      )
+*/
+      assert.equal(issuesForModules.length, 1)
+      assert.equal(
+        issuesForModules[0].issueStatusId,
+        await issueStatusToId('Active')
+      )
 
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       const response2 = await postToDeviceApi({
@@ -148,7 +168,7 @@ describe.only('This test is for testing different triggers conditions', async ()
             startedOn: subDays(new Date(), 2),
             endedOn: subDays(new Date(), 2),
             consumable: {
-              lot: 'Lot A',
+              lot: consumableLot,
             },
             error: {
               code: '5007',
