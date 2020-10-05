@@ -141,10 +141,10 @@
       }
     },
     {
-      "issueType": "ProbesTooLow",
+      "issueType": "ProbesTooLowModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "RESULT_ANALYZE_PROBES",
+        "action": "RESULT_ANALYZE_PROBES_MODULES",
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeProbes"
@@ -152,6 +152,20 @@
       },
       "filterIssueCondition": {
         "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "ProbesTooLowLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeProbes"
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {

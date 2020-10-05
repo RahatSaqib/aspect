@@ -64,6 +64,13 @@ async function updateCovidResultFromFormData(
         'r.resultCategory1',
         'r.consumableLot as resultLotNumber',
         'r.assayId',
+        'r.senderVersion as softwareVersion',
+        'r.senderOperator as senderUser',
+        'a.name as assayName',
+        'r.instrumentSerial',
+        knex.raw(
+          "case when rc1.externalid='Error' or rc1.externalid='Invalid' then rc1.externalid else 'Success' end as resultOutcome"
+        ),
       ],
       knex
     )
@@ -84,11 +91,21 @@ async function updateCovidResultFromFormData(
         resultModuleName,
         resultErrorCode,
         resultLotNumber,
+        instrumentSerial,
+        softwareVersion,
+        assayName,
+        senderUser,
+        resultOutcome,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
         messageContext,
         resultId,
+        instrumentSerial,
+        softwareVersion,
+        assayName,
+        senderUser,
+        resultOutcome,
         resultErrorCode,
         resultModuleSerial,
         resultModuleName,

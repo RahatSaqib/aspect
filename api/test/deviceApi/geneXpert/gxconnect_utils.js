@@ -61,7 +61,11 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
     .pluck('id')
-
+  await knex('EmailMessage').whereIn('resultId', resultIds).delete()
+  await knex('AlertMessage').whereIn('resultId', resultIds).delete()
+  await knex('SmsMessage').whereIn('resultId', resultIds).delete()
+  await knex('PushNotificationMessage').whereIn('resultId', resultIds).delete()
+  await knex('WebhookMessage').whereIn('resultId', resultIds).delete()
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()

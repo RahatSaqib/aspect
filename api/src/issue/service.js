@@ -90,6 +90,7 @@ function onIssueEventTrigger(
           JSON.parse(filterIssueCondition)
         )
         let issue = null
+        console.log('openIssue', openIssue, action, issueType)
         if (openIssue != null) {
           // ----------------------
           // check special usecase
@@ -115,6 +116,7 @@ function onIssueEventTrigger(
           // ----------------------
           issue = await mergeActionData(knex, openIssue, action)
         } else {
+          console.log('Create New Issue', action)
           issue = await createNewIssue(knex, issueType, action)
           if (issue != null) {
             context.issueCreated(issue.id)

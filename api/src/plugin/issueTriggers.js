@@ -14,7 +14,8 @@ async function analyzeProbes(knex, action) {
   const assayId = _.get(action.options.data, 'assayId')
 
   if (parseInt(resultErrorCode, 10) === 5007) {
-    const { resultsWithErrors, totalResults } = await knex('Result')
+    console.log('ACTION', action)
+    const query = knex('Result')
       .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
       .first(
         knex.raw(
@@ -31,11 +32,14 @@ async function analyzeProbes(knex, action) {
         reagentLot,
         assayId
       )
+    console.log('query', query.toString())
+    const { resultsWithErrors, totalResults } = await query
     action.options.data.resultsWithErrors = resultsWithErrors
     action.options.data.totalResults = totalResults
 
     switch (parseInt(resultErrorCode, 10)) {
       case 5007:
+        console.log('resultsWithErrors', resultsWithErrors, totalResults)
         return probesTooLow(resultsWithErrors, totalResults)
       default:
         return false

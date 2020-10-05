@@ -1,3 +1,4 @@
+const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
@@ -13,7 +14,8 @@ const types = {
   RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
-  RESULT_ANALYZE_PROBES: 'RESULT_ANALYZE_PROBES',
+  RESULT_ANALYZE_PROBES_LOT: 'RESULT_ANALYZE_PROBES_LOT',
+  RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
 }
 
 // ----------- Action Creators -------------------
@@ -58,9 +60,11 @@ function resultAnalyzeProbes(resultId, resultErrorCode, data) {
       'Must specify resultId resultErrorCode for resultAnalyzeProbes'
     )
   }
-
+  const moduleName = _.get(data, 'moduleName')
   return {
-    type: types.RESULT_ANALYZE_PROBES,
+    type: moduleName
+      ? types.RESULT_ANALYZE_PROBES_MODULE
+      : types.RESULT_ANALYZE_PROBES_LOT,
     resultId,
     options: {
       data: {

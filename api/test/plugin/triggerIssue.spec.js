@@ -42,7 +42,8 @@ const getResults = async errorCode =>
 
 const getIssues = (deviceId, issueTypeId) =>
   knex('Issue')
-    .where({ deviceId, issueTypeId })
+    .where({ deviceId })
+    .whereIn('issueTypeId', issueTypeId)
     .orderBy('createdOn', 'DESC')
     .select()
 describe.only('This test is for testing different triggers conditions', async () => {
@@ -130,11 +131,12 @@ describe.only('This test is for testing different triggers conditions', async ()
       await waitForIdle()
       assert.equal(response.status, 200)
       assert.typeOf(response.body, 'Object')
-      const issueTypeId = await issueTypeToId('ProbesTooLow')
+      const issueTypeId = [
+        await issueTypeToId('ProbesTooLowLot'),
+        await issueTypeToId('ProbesTooLowModule'),
+      ]
       const issues = await getIssues(response.body.device.id, issueTypeId)
       assert.equal(issues.length, 1)
-
-      console.log(issues[0].data)
       assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
 
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
