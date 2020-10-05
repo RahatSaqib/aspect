@@ -5,12 +5,11 @@ import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
-  errorNotFound,
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../error/CommonErrorNotifications'
-import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
+import { receiveList, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
@@ -48,82 +47,10 @@ export const types = {
   SAVING_RESULT_FORM_DATA_COMPLETE: 'SAVING_RESULT_FORM_DATA_COMPLETE',
   SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
+
 /*
  * ---------------- Action Creators -----------------
  */
-function requestResults(sortCol, sortDir, page, size, filters) {
-  return {
-    type: types.REQUEST_RESULTS,
-    sortCol,
-    sortDir,
-    page,
-    size,
-    filters,
-  }
-}
-
-function receiveResults(json) {
-  return {
-    type: types.RECEIVE_RESULTS,
-    items: json.data,
-    total: json.total,
-    extraColumns: json.extraColumns,
-  }
-}
-
-function rejectResults() {
-  return {
-    type: types.REJECTED_RESULTS,
-  }
-}
-
-export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
-  return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
-    dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
-    sortCol = sortCol || 'endedOn'
-    return aspectFetch(
-      `/result?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchResults.GET.400.title',
-                defaultMessage: 'Searching Results Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchResults.GET.default.title',
-                defaultMessage: 'Loading Results Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json => dispatch(receiveResults(json)))
-      .catch(() => dispatch(rejectResults()))
-  }
-}
-
 // updating a single result with given resultId and data
 function requestCreatingTreatmentStatusLog(resultId) {
   return {
@@ -250,6 +177,80 @@ function receiveUpdatedSingleResult(item) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_RESULT,
     item,
+  }
+}
+
+function requestResults(sortCol, sortDir, page, size, filters) {
+  return {
+    type: types.REQUEST_RESULTS,
+    sortCol,
+    sortDir,
+    page,
+    size,
+    filters,
+  }
+}
+
+function receiveResults(json) {
+  return {
+    type: types.RECEIVE_RESULTS,
+    items: json.data,
+    total: json.total,
+    extraColumns: json.extraColumns,
+  }
+}
+
+function rejectResults() {
+  return {
+    type: types.REJECTED_RESULTS,
+  }
+}
+
+// TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE COMPONENTS WHICH CALLS IT. WE SHOULD USE REACT QUERY INSTEAD OF THIS.
+export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
+  return dispatch => {
+    const filters = fromPairs([...filtersParams.entries()])
+    dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
+    sortCol = sortCol || 'endedOn'
+    return aspectFetch(
+      `/result?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchResults.GET.400.title',
+                defaultMessage: 'Searching Results Failed',
+              },
+            })
+          ),
+          403: errorForbidden(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchResults.GET.default.title',
+                defaultMessage: 'Loading Results Failed',
+              },
+            })
+          ),
+        },
+      }
+    )
+      .then(json => dispatch(receiveResults(json)))
+      .catch(() => dispatch(rejectResults()))
   }
 }
 
@@ -473,6 +474,7 @@ export function fetchWorkflowStatusLogs(
   }
 }
 
+// TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
 export function exportResults(
   filtersParams,
   format,
