@@ -108,3 +108,5 @@ code but test should pass, then probably you have to update snapshot.
 Run command ```yarn run test:snapshot``` which regenerates snapshot artifacts in ```__snapshots__``` folders
 
 Another possible way to update snapshots is running ```jest --updateSnapshot``` (make sure ```jest``` is globally installed)
+
+## Tables Placeholder
