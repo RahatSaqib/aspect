@@ -56,7 +56,7 @@ describe.only('This test is for testing different triggers conditions', async ()
 
   let results5007
 
-  describe('error 5007', async () => {
+  describe.only('error 5007', async () => {
     let context
     before(async () => {
       results5007 = await getResults(5007)
@@ -102,6 +102,9 @@ describe.only('This test is for testing different triggers conditions', async ()
             id: 'Error-5007-result',
             startedOn: subDays(new Date(), 2),
             endedOn: subDays(new Date(), 2),
+            consumable: {
+              lot: 'Lot A',
+            },
             error: {
               code: '5007',
               notes: 'some ,notes',
@@ -142,6 +145,9 @@ describe.only('This test is for testing different triggers conditions', async ()
             id: 'Error-5007-result2',
             startedOn: subDays(new Date(), 2),
             endedOn: subDays(new Date(), 2),
+            consumable: {
+              lot: 'Lot A',
+            },
             error: {
               code: '5007',
               notes: 'some ,notes',

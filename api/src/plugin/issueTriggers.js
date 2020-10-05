@@ -1,22 +1,35 @@
 const { subDays } = require('date-fns')
 
+const _ = require('lodash')
 const { startOfDayUtc } = require('../shared/date')
 
 const probesTooLow = (resultsWithErrors, totalResults) =>
   totalResults >= 3 && resultsWithErrors / parseFloat(totalResults) >= 0.03
 
 async function analyzeProbes(knex, action) {
-  const { moduleSerial, resultErrorCode } = action.options.data
+  const { resultErrorCode } = action.options.data
+
+  const moduleSerial = _.get(action.options.data, 'moduleSerial')
+  const reagentLot = _.get(action.options.data, 'reagentLot')
+  const assayId = _.get(action.options.data, 'assayId')
 
   if (parseInt(resultErrorCode, 10) === 5007) {
     const { resultsWithErrors, totalResults } = await knex('Result')
-      .where('moduleSerial', moduleSerial)
-      .andWhere('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
+      .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
       .first(
         knex.raw(
           'sum(case when errorcode=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
           resultErrorCode
         )
+      )
+      .modify(
+        (builder, moduleSerial, reagentLot, assayId) => {
+          if (moduleSerial) builder.where('moduleSerial', moduleSerial)
+          else builder.where({ consumableLot: reagentLot, assayId })
+        },
+        moduleSerial,
+        reagentLot,
+        assayId
       )
     action.options.data.resultsWithErrors = resultsWithErrors
     action.options.data.totalResults = totalResults

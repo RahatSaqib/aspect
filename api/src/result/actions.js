@@ -52,22 +52,22 @@ function resultUpdated(resultId, deviceLogId, userId) {
 
  */
 
-function resultAnalyzeProbes(
-  resultId,
-  moduleSerial,
-  moduleName,
-  resultErrorCode
-) {
-  if (!resultId && !moduleSerial && !resultErrorCode && !moduleName) {
+function resultAnalyzeProbes(resultId, resultErrorCode, data) {
+  if (!resultId) {
     throw new Error(
-      'Must specify resultId, moduleserial and resultErrorCode for resultAnalyzeProbes'
+      'Must specify resultId resultErrorCode for resultAnalyzeProbes'
     )
   }
 
   return {
     type: types.RESULT_ANALYZE_PROBES,
     resultId,
-    options: { data: { moduleSerial, moduleName, resultErrorCode } },
+    options: {
+      data: {
+        ...data,
+        resultErrorCode,
+      },
+    },
   }
 }
 

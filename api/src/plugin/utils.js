@@ -51,7 +51,9 @@ async function shouldTriggerResultErrorAnalysis(
   resultId,
   resultErrorCode,
   moduleSerial,
-  moduleName
+  moduleName,
+  assayId,
+  reagentLot
 ) {
   const errorsToAnalyze = [5007]
   if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
@@ -62,10 +64,14 @@ async function shouldTriggerResultErrorAnalysis(
     }
     await messageContext.resultAnalyzeProbes(
       resultId,
-      moduleSerial,
-      moduleName,
-      resultErrorCode
+      resultErrorCode,
+
+      { moduleSerial, moduleName }
     )
+    await messageContext.resultAnalyzeProbes(resultId, resultErrorCode, {
+      assayId,
+      reagentLot,
+    })
   }
 }
 

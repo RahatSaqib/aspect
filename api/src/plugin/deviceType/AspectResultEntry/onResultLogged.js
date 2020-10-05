@@ -58,11 +58,18 @@ async function updateCovidResultFromFormData(
     }
     const result = await getResultForStringTemplateProcessing(
       resultId,
-      [...RESULT_STRING_TEMPLATE_FIELDS, 'rf.formSchema', 'r.resultCategory1'],
+      [
+        ...RESULT_STRING_TEMPLATE_FIELDS,
+        'rf.formSchema',
+        'r.resultCategory1',
+        'r.consumableLot as resultLotNumber',
+        'r.assayId',
+      ],
       knex
     )
     if (result) {
       const {
+        assayId,
         assayExternalId,
         caseExternalIdTemplate,
         resultStartedOn,
@@ -76,6 +83,7 @@ async function updateCovidResultFromFormData(
         resultModuleSerial,
         resultModuleName,
         resultErrorCode,
+        resultLotNumber,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
@@ -83,7 +91,9 @@ async function updateCovidResultFromFormData(
         resultId,
         resultErrorCode,
         resultModuleSerial,
-        resultModuleName
+        resultModuleName,
+        assayId,
+        resultLotNumber
       )
       if (!'Aspect' !== deviceLogDeviceTypeExternalId) {
         return
