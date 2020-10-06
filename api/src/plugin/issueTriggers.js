@@ -6,13 +6,13 @@ const { startOfDayUtc } = require('../shared/date')
 const probesTooLow = (resultsWithErrors, totalResults) =>
   totalResults >= 3 && resultsWithErrors / parseFloat(totalResults) >= 0.03
 
-async function analyzeErrors(knex, action) {
+async function analyzeErrors(knex, action, { errorCode }) {
   const { resultErrorCode } = action.options.data
 
   const moduleSerial = _.get(action.options.data, 'moduleSerial')
   const consumableLot = _.get(action.options.data, 'consumableLot')
   const assayId = _.get(action.options.data, 'assayId')
-  if (parseInt(resultErrorCode, 10) === 5007) {
+  if (parseInt(resultErrorCode, 10) === errorCode) {
     const query = knex('Result')
       .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
       .first(
@@ -34,13 +34,9 @@ async function analyzeErrors(knex, action) {
     action.options.data.resultsWithErrors = resultsWithErrors
     action.options.data.totalResults = totalResults
 
-    switch (parseInt(resultErrorCode, 10)) {
-      case 5007:
-        return probesTooLow(resultsWithErrors, totalResults)
-      default:
-        return false
-    }
+    return probesTooLow(resultsWithErrors, totalResults)
   }
+  return false
 }
 module.exports = {
   analyzeErrors,

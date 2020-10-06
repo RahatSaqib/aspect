@@ -148,7 +148,9 @@
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameter": 5007
+          "evaluationFilterParameters": {
+            "errorCode": 5007
+          }
         }
       },
       "filterIssueCondition": {
@@ -163,7 +165,9 @@
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameter": 5007
+          "evaluationFilterParameters": {
+            "errorCode": 5007
+          }
         }
       },
       "filterIssueCondition": {

@@ -8,6 +8,18 @@ async function seed(knex) {
     .innerJoin('User as u')
     .where('u.name', 'admin')
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
-
-  await generateResults(knex, userId, partnerId, patients, [5007])
+  // console.log(knex, userId, partnerId, patients, generateResults)
+  await generateResults(
+    knex,
+    userId,
+    partnerId,
+    patients,
+    [5007],
+    'US',
+    false,
+    1,
+    0,
+    0,
+    0
+  )
 }

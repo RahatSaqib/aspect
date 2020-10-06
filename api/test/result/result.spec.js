@@ -35,7 +35,7 @@ const getClinicianAccessToken = () =>
     })
     .then(res => res.body.access)
 
-describe.only('Result routes', () => {
+describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
@@ -1103,7 +1103,7 @@ describe.only('Result routes', () => {
           )
         })
 
-        it.only('Should NOT overwrite diagnostic data if the result has already come from an instrument', async () => {
+        it('Should NOT overwrite diagnostic data if the result has already come from an instrument', async () => {
           const dateAndTimeOfTest = new Date(2020, 3, 14)
           const testReasonText =
             'Ill Seeking Healthcare due to suspicion of COVID-19'
