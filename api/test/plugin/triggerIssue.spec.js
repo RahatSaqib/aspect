@@ -70,7 +70,7 @@ describe('This test is for testing different triggers conditions', async () => {
   let consumableLot
   let results5007
 
-  describe.only('error 5007', async () => {
+  describe('error 5007', async () => {
     let context
     before(async () => {
       results5007 = await getResults(5007)
