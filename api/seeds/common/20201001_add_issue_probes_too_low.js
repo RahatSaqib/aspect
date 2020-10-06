@@ -13,16 +13,16 @@ async function seed(knex) {
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
   //
-  await seedIssueType(knex, 'ProbesTooLowModule', {
+  await seedIssueType(knex, 'ProbeCheckTooLowModule', {
     userName: 'admin',
   })
-  await seedIssueType(knex, 'ProbesTooLowLot', {
+  await seedIssueType(knex, 'ProbeCheckTooLowLot', {
     userName: 'admin',
   })
 
   //
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['ProbesTooLowLot', 'ProbesTooLowModule'],
+    issueTypeWhitelist: ['ProbeCheckTooLowLot', 'ProbeCheckTooLowModule'],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -30,11 +30,11 @@ async function seed(knex) {
     updatedOn: new Date(),
     updatedBy: userId,
   }
-  const issueTypeProbesTooLowModule = await knex('IssueType')
-    .where({ id: await issueTypeToId('ProbesTooLowModule') })
+  const issueTypeProbeCheckTooLowModule = await knex('IssueType')
+    .where({ id: await issueTypeToId('ProbeCheckTooLowModule') })
     .first()
-  const issueTypeProbesTooLowLot = await knex('IssueType')
-    .where({ id: await issueTypeToId('ProbesTooLowLot') })
+  const issueTypeProbeCheckTooLowLot = await knex('IssueType')
+    .where({ id: await issueTypeToId('ProbeCheckTooLowLot') })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
@@ -44,21 +44,21 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: issueTypeProbesTooLowModule.id,
-      messageTypeId: issueTypeProbesTooLowModule.defaultMessageTypeId,
+      issueTypeId: issueTypeProbeCheckTooLowModule.id,
+      messageTypeId: issueTypeProbeCheckTooLowModule.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probes Too Low Alert',
+      name: 'Probe Check Too Low - Module',
       ...auditFields,
     },
     {
-      issueTypeId: issueTypeProbesTooLowLot.id,
-      messageTypeId: issueTypeProbesTooLowLot.defaultMessageTypeId,
+      issueTypeId: issueTypeProbeCheckTooLowLot.id,
+      messageTypeId: issueTypeProbeCheckTooLowLot.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probes Too Low Alert',
+      name: 'Probe Check Too Low - Lot',
       ...auditFields,
     },
   ])

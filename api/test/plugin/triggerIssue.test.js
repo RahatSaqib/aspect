@@ -1,6 +1,6 @@
 const chai = require('chai')
 const { probesTooLow } = require('../../src/plugin/issueTriggers')
-const { resultAnalyzeProbes } = require('../../src/result/actions')
+const { resultAnalyzeErrors } = require('../../src/result/actions')
 
 const { assert } = chai
 
@@ -19,12 +19,12 @@ describe('This test is for testing different triggers conditions', () => {
   })
 
   it('Should analyze different scenarios based on the data for triggering an action', () => {
-    const analyzeProbesModule = resultAnalyzeProbes(1, 5007, {
+    const analyzeProbesModule = resultAnalyzeErrors(1, 5007, {
       moduleName: 'Test1',
       moduleSerial: 'Module2',
     })
-    const analyzeProbesTop = resultAnalyzeProbes(1, 5007, {
-      reagentLot: 1234,
+    const analyzeProbesTop = resultAnalyzeErrors(1, 5007, {
+      consumableLot: 1234,
       assayId: 1,
     })
     assert.isObject(analyzeProbesModule)

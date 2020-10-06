@@ -69,7 +69,7 @@ async function updateCovidResultFromFormData(
         'a.name as assayName',
         'r.instrumentSerial',
         knex.raw(
-          "case when rc1.externalid='Error' or rc1.externalid='Invalid' then rc1.externalid else 'Success' end as resultOutcome"
+          "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
         ),
       ],
       knex
@@ -101,7 +101,7 @@ async function updateCovidResultFromFormData(
           resultOutcome,
           moduleSerial: resultModuleSerial,
           assayId,
-          reagentLot: resultLotNumber,
+          consumableLot: resultLotNumber,
         }
       )
       if (!'Aspect' !== deviceLogDeviceTypeExternalId) {

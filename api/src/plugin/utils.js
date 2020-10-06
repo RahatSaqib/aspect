@@ -1,7 +1,7 @@
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
-  resultAnalyzeProbes,
+  resultAnalyzeErrors,
 } = require('../result/actions')
 const {
   deviceInstrumentReplaced,
@@ -50,22 +50,22 @@ async function shouldTriggerResultErrorAnalysis(
   messageContext,
   resultId,
   resultErrorCode,
-  { resultOutcome, moduleSerial, assayId, reagentLot }
+  { resultOutcome, moduleSerial, assayId, consumableLot }
 ) {
   const errorsToAnalyze = [5007]
   if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
-    if (!messageContext.resultAnalyzeProbes) {
+    if (!messageContext.resultAnalyzeErrors) {
       messageContext = messageContext.bindActionCreators({
-        resultAnalyzeProbes,
+        resultAnalyzeErrors,
       })
     }
-    await messageContext.resultAnalyzeProbes(resultId, resultErrorCode, {
+    await messageContext.resultAnalyzeErrors(resultId, resultErrorCode, {
       moduleSerial,
       resultOutcome,
     })
-    await messageContext.resultAnalyzeProbes(resultId, resultErrorCode, {
+    await messageContext.resultAnalyzeErrors(resultId, resultErrorCode, {
       assayId,
-      reagentLot,
+      consumableLot,
       resultOutcome,
     })
   }

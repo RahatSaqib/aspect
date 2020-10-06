@@ -5,7 +5,7 @@ const { assert } = chai
 const _ = require('lodash')
 const supertest = require('supertest')
 const { subDays } = require('date-fns')
-const { resultAnalyzeProbes } = require('../../src/result/actions')
+const { resultAnalyzeErrors } = require('../../src/result/actions')
 const { knex } = require('../../src/db')
 
 const {
@@ -23,11 +23,7 @@ const {
   basicResultPayload,
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
-const {
-  waitForIdle,
-  waitForAction,
-  // dispatchAndWaitForAction,
-} = require('../utils/mqUtils')
+const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const checkNotificationsForIssue = async issueId => {
@@ -141,7 +137,7 @@ describe('This test is for testing different triggers conditions', async () => {
           },
         }
       )
-      const waitForAnalyze = waitForAction(resultAnalyzeProbes)
+      const waitForAnalyze = waitForAction(resultAnalyzeErrors)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -151,7 +147,7 @@ describe('This test is for testing different triggers conditions', async () => {
       await waitForIdle()
       assert.equal(response.status, 200)
       assert.typeOf(response.body, 'Object')
-      const issueTypeId = await issueTypeToId('ProbesTooLowModule')
+      const issueTypeId = await issueTypeToId('ProbeCheckTooLowModule')
       const issuesForModules = await getIssues(
         response.body.device.id,
         issueTypeId
@@ -184,7 +180,7 @@ describe('This test is for testing different triggers conditions', async () => {
       )
       const issuesForLot = await getIssues(
         response.body.device.id,
-        await issueTypeToId('ProbesTooLowLot')
+        await issueTypeToId('ProbeCheckTooLowLot')
       )
       assert.equal(issuesForLot.length, 1)
 

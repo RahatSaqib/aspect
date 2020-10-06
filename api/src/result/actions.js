@@ -54,10 +54,10 @@ function resultUpdated(resultId, deviceLogId, userId) {
 
  */
 
-function resultAnalyzeProbes(resultId, resultErrorCode, data) {
+function resultAnalyzeErrors(resultId, resultErrorCode, data) {
   if (!resultId) {
     throw new Error(
-      'Must specify resultId resultErrorCode for resultAnalyzeProbes'
+      'Must specify resultId resultErrorCode for resultAnalyzeErrors'
     )
   }
 
@@ -313,5 +313,5 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
-  resultAnalyzeProbes,
+  resultAnalyzeErrors,
 }

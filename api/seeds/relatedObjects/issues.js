@@ -494,12 +494,12 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
-    ProbesTooLowModule: {
+    ProbeCheckTooLowModule: {
       issueType: {
-        name: 'Probes Too Low On Module',
-        externalId: 'ProbesTooLowModule',
-        i18nKey: 'issueStatusProbesTooLowModule',
-        issueCategoryId: issueCategories.DataHealth,
+        name: 'Probe Check Too Low On Module',
+        externalId: 'ProbeCheckTooLowModule',
+        i18nKey: 'issueStatusProbeCheckTooLowModule',
+        issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -519,9 +519,9 @@ async function getBaseIssues(auditFields) {
           'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
         body: `Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}
 
-        Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
+        Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
-        Country: {{issue.data.country.name}}
+        Country: {{country.name}}
 
         Lab contacts: {{site.contacts}}
 
@@ -540,7 +540,7 @@ async function getBaseIssues(auditFields) {
         Module Slot: {{result.moduleName}}`,
         htmlBody: `Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}
 
-          Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
+          Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
           Country: {{issue.data.country.name}}
 
@@ -563,12 +563,12 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    ProbesTooLowLot: {
+    ProbeCheckTooLowLot: {
       issueType: {
-        name: 'Probes Too Low',
-        externalId: 'ProbesTooLowLot',
+        name: 'Probe Check Too Low On Lot',
+        externalId: 'ProbeCheckTooLowLot',
         i18nKey: 'issueStatusProbesTooLow',
-        issueCategoryId: issueCategories.DataHealth,
+        issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -588,7 +588,7 @@ async function getBaseIssues(auditFields) {
           'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
         body: `Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}
 
-        Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
+        Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
         Country: {{country.name}}
 
@@ -604,12 +604,12 @@ async function getBaseIssues(auditFields) {
 
         Test Outcome: {{issue.data.resultOutcome}},
 
-        Reagent Lot: {{issue.data.reagentlot}}`,
+        Reagent Lot: {{result.consumableLot}}`,
         htmlBody: `Probe Check Too Low (5007) on Lot ({{result.consumableLot}}) at {{site.name}}
 
-          Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
+          Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
-          Country: {{issue.data.country.name}}
+          Country: {{country.name}}
 
           Lab contacts: {{site.contacts}}
 
@@ -623,7 +623,7 @@ async function getBaseIssues(auditFields) {
 
           Test Outcome: {{issue.data.resultOutcome}},
 
-          Reagent Lot: {{issue.data.reagentlot}}`,
+          Reagent Lot: {{result.consumableLot}}`,
 
         ...auditFields,
       },

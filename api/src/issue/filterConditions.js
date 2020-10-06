@@ -12,13 +12,13 @@ const filterByModuleSerial = (
 
 const filterByLotAndAssay = (
   queryBuilder,
-  { assayId, reagentLot },
+  { assayId, consumableLot },
   aliases = { issue: 'i' }
 ) => {
-  if (assayId && reagentLot)
+  if (assayId && consumableLot)
     queryBuilder.whereRaw(
-      `${aliases.issue}.data->>"$.assayId"=? and ${aliases.issue}.data->>"$.reagentLot"=?`,
-      [assayId, reagentLot]
+      `${aliases.issue}.data->>"$.assayId"=? and ${aliases.issue}.data->>"$.consumableLot"=?`,
+      [assayId, consumableLot]
     )
   return queryBuilder
 }
