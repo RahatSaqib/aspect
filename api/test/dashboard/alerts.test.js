@@ -36,7 +36,7 @@ describe.only('dashboard widgets alerts', () => {
     }
   })
 
-  it('Should set alert to true when dependant field value is greater than 5', () => {
+  it('Should set alert to true when dependant field value is greater than the provided value', () => {
     const alert = {
       whenIs: 'greaterThan',
       dependsOn: 'count',
@@ -57,7 +57,7 @@ describe.only('dashboard widgets alerts', () => {
     })
   })
 
-  it('Should set alert to true when dependant field value is greater than unit value', () => {
+  it('Should set alert to true when dependant field value is greater than unit field value', () => {
     const alert = {
       whenIs: 'greaterThan',
       dependsOn: 'count',
@@ -77,8 +77,8 @@ describe.only('dashboard widgets alerts', () => {
       value: true,
     })
   })
-  
-  it("Should set alert to false when dependant field value isn't greater than unit value", () => {
+
+  it("Should set alert to false when dependant field value isn't greater than unit field value", () => {
     const alert = {
       whenIs: 'greaterThan',
       dependsOn: 'count',
@@ -100,7 +100,7 @@ describe.only('dashboard widgets alerts', () => {
     })
   })
 
-  it('Should set alert to true when dependant field value is less than 100', () => {
+  it('Should set alert to true when dependant field value is less than the provided value', () => {
     const alert = {
       whenIs: 'lessThan',
       dependsOn: 'count',
@@ -121,7 +121,7 @@ describe.only('dashboard widgets alerts', () => {
     })
   })
 
-  it('Should set alert to true when dependant field value is one of 1, 5, 6 and 54', () => {
+  it('Should set alert to true when dependant field value is one of the provided collection', () => {
     const alert = {
       whenIs: 'containedIn',
       dependsOn: 'count',
@@ -142,7 +142,7 @@ describe.only('dashboard widgets alerts', () => {
     })
   })
 
-  it("Should set alert to false when dependant field value isn't one of 1, 5, 6 and 10", () => {
+  it("Should set alert to false when dependant field value isn't one of the provided collection", () => {
     const alert = {
       whenIs: 'containedIn',
       dependsOn: 'count',
@@ -163,7 +163,7 @@ describe.only('dashboard widgets alerts', () => {
     })
   })
 
-  it('Should set alert to true when dependant field value is between 1 and 100', () => {
+  it('Should set alert to true when dependant field value is between range', () => {
     const alert = {
       whenIs: 'between',
       dependsOn: 'count',
@@ -184,7 +184,7 @@ describe.only('dashboard widgets alerts', () => {
     })
   })
 
-  it("Should set alert to false when dependant field value isn't between 80 and 100", () => {
+  it("Should set alert to false when dependant field value isn't between range", () => {
     const alert = {
       whenIs: 'between',
       dependsOn: 'count',
