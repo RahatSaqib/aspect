@@ -77,28 +77,7 @@ describe.only('dashboard widgets alerts', () => {
       value: true,
     })
   })
-
-  it('Should set alert to true when dependant field value is greater than unit value', () => {
-    const alert = {
-      whenIs: 'greaterThan',
-      dependsOn: 'count',
-      comparedTo: 'unit',
-      representing: 'numberOfGxDevices',
-    }
-    widget.options = {
-      extraFields: {
-        alert,
-      },
-    }
-
-    addExtraData(widget)
-
-    assert.deepEqual(widget.alert, {
-      config: alert,
-      value: true,
-    })
-  })
-
+  
   it("Should set alert to false when dependant field value isn't greater than unit value", () => {
     const alert = {
       whenIs: 'greaterThan',
