@@ -1,13 +1,6 @@
 const _ = require('lodash')
 
-// /**
-//  * Receiving a widget and a value/field to search on it, this function will return the value of the field if exists. If it doesn't, will return the value itself.
-//  * For example, if the valueField provided is 'count', the field with that name will be searched in the widget. If the field exist, the value assigned to it will be returned. If not, 'count' is returned as the value.
-//  * @param {object} widget widget where the field will be searched.
-//  * @param {any} n The power, must be a natural number.
-//  * @return {number} x raised to the n-th power.
-//  */
-const getValue = (widget, valueField) => _.get(widget, valueField)
+const getValue = (widget, field) => _.get(widget, field)
 
 const getAlertValue = widget => {
   const { alert } = widget.options.extraFields
@@ -45,6 +38,7 @@ const getAlertValue = widget => {
       value = false
   }
 
+  // Sets the alert into the widget
   widget.alert = { config: alert, value }
 }
 
