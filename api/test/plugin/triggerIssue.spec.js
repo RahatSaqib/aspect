@@ -89,9 +89,10 @@ describe('This test is for testing different triggers conditions', async () => {
 
       /**
        * in this testcase we are testing:
-       * 1) issueFilter function for this testCondition
-       * 2) Trigger condition based on a function.
-       * 3) the creation of the issue.
+       * 1) issueFilter function for this testCondition (With error 5007)
+       * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
+       * 3) the creation of the issue
+       * 4) check if the different noifications were generated.
        */
       // eslint-disable-next-line prefer-destructuring
       ;({
@@ -164,7 +165,7 @@ describe('This test is for testing different triggers conditions', async () => {
 
       await checkNotificationsForIssue(issuesForModules[0].id)
 
-      // Post 4 lot results (shouldn't trigger another issue)
+      // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
       await Promise.each(_.range(1, 4), i =>
         postToDeviceApi({
           authHeader: deviceAuth,
