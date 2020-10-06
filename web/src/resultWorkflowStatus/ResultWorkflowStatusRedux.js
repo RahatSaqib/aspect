@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-import _ from 'lodash'
+import sortBy from 'lodash/sortBy'
+import reduce from 'lodash/reduce'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -88,9 +89,9 @@ function requestWorkflowStatuses(state) {
 }
 
 function sortWorkFlowStatuses(workflowStatusArr) {
-  const sortedWorkflowStatusArr = _.sortBy(workflowStatusArr, obj => obj.name)
+  const sortedWorkflowStatusArr = sortBy(workflowStatusArr, obj => obj.name)
   const errorStatusArr = []
-  const reducedWorkFlowArray = _.reduce(
+  const reducedWorkFlowArray = reduce(
     sortedWorkflowStatusArr,
     (result, item) => {
       result.push(item)

@@ -1,18 +1,31 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
-import { startOfDay, format as dateFnFormat, parseISO } from 'date-fns'
+import startOfDay from 'date-fns/startOfDay'
+import format from 'date-fns/format'
 import { withProps } from 'recompose'
-import differenceInDays from 'date-fns/differenceInDays'
 
-import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
+import {
+  getAspectDisplayPreferences,
+  getTimezoneId,
+} from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
+import { getTimezoneById } from './timezone'
 
-function format(date, displayPreferenceKey) {
+function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
-  const dateFormat = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  return date == null
+  const userSetTimeZone = getTimezoneId()
+  const { code: localeCode } = getLocale()
+  const timeZone = getTimezoneById(userSetTimeZone)
+  const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
+  const timeToFormat = isString(date)
+    ? new Date(date).toLocaleString(localeCode, {
+        timeZone,
+      })
+    : date
+
+  return timeToFormat === null
     ? ''
-    : dateFnFormat(parseISO(date.toISOString()), dateFormat)
+    : format(new Date(timeToFormat), dateFormatPreference)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
@@ -23,13 +36,6 @@ export const WEEK_IN_MILLISECONDS = 7 * DAY_IN_MILLISECONDS
 export const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
 export const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
 export const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
-
-function formatBase(date, unit) {
-  if (isString(date)) {
-    date = parseISO(date)
-  }
-  return format(date, unit)
-}
 
 export function formatDate(date) {
   return formatBase(date, 'dateFormat')
@@ -44,7 +50,7 @@ export function formatDateTime(date) {
 }
 
 export const formatWithLocale = locale => (date, formatStr) =>
-  dateFnFormat(date, formatStr, { locale: getLocale(locale) })
+  format(date, formatStr, { locale: getLocale(locale) })
 
 export const withDateFormatProps = withProps(() => {
   const prefs = getAspectDisplayPreferences()
@@ -72,7 +78,7 @@ export const withTodayProps = withProps(() => ({
 }))
 
 export const formatRelative = (intl, date, defaultMessage = '') => {
-  const dateInMilliseconds = Date.parse(date)
+  const dateInMilliseconds = new Date(date).getTime()
   if (isNaN(dateInMilliseconds)) return defaultMessage
 
   const getParams = timeDiffInMilliseconds => {

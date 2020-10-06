@@ -101,6 +101,7 @@
   font-weight: var(--lato-font-weight-bold);
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
   padding-right: 2px;
   width: 90%;
 }
@@ -162,4 +163,11 @@
 .Summary__Card__Item--right {
   composes: Summary__Card__Item;
   text-align: right;
+}
+
+.empty__widget {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 93px;
 }

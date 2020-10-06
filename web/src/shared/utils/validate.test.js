@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import each from 'lodash/each'
 import emailAddress from './validate'
 
 describe('validate', () => {
@@ -57,25 +57,25 @@ describe('validate', () => {
       'mg@ns.i',
     ]
 
-    _.each(validEmailAddresses, address => {
+    each(validEmailAddresses, address => {
       it(`should return true for valid email address (${address})`, () => {
         expect(emailAddress(address).isValid()).toBe(true)
       })
     })
 
-    _.each(invalidEmailAddresses, address => {
+    each(invalidEmailAddresses, address => {
       it(`should return false for invalid email address (${address})`, () => {
         expect(emailAddress(address).isValid()).toBe(false)
       })
     })
 
-    _.each(['', null, undefined], address => {
+    each(['', null, undefined], address => {
       it(`should return false for blank email address (${address}) by default`, () => {
         expect(emailAddress(address).isValid()).toBe(false)
       })
     })
 
-    _.each(['', null, undefined], address => {
+    each(['', null, undefined], address => {
       it(`should return true for blank email address (${address}) when is optional was called`, () => {
         expect(
           emailAddress(address)

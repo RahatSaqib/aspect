@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import TextField from '@material-ui/core/TextField'
@@ -11,13 +11,13 @@ describe('ResetPasswordEnterEmail module', () => {
   const intl = { formatMessage: message => message.defaultMessage }
   const props = {
     intl,
-    onShowAdminHelpDialog: _.noop,
+    onShowAdminHelpDialog: noop,
     values: {},
     meta: {
       emailAddress: {},
     },
-    onEmailAddressChange: _.noop,
-    handleSubmit: _.noop,
+    onEmailAddressChange: noop,
+    handleSubmit: noop,
   }
 
   describe('ResetPasswordEnterEmail component', () => {

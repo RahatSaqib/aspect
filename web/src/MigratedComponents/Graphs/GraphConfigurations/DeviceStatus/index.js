@@ -21,6 +21,8 @@ const deviceStatusGraphs = {
         identifier: 'dateRange',
         data: dateRangeOptions('deviceDateRange'),
         sortByKeys: ['id'],
+        isClearable: false,
+        defaultSelectedOption: 2,
       },
     ],
     graphRenderPermissions: ['dashboard', 'operationalData'],
@@ -33,7 +35,7 @@ const deviceStatusGraphs = {
         componentClasses: ['BARCLASS'],
         api: {
           method: 'GET',
-          endpoint: 'dashboard/operational-data/activity-over-time',
+          endpoint: '/dashboard/operational-data/activity-over-time',
           params: {
             minDate,
             maxDate,
@@ -41,10 +43,30 @@ const deviceStatusGraphs = {
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
+        legendsToRename: [
+          {
+            externalId: 'devicesActive',
+            name: 'Active',
+          },
+          {
+            externalId: 'inactiveUnknown',
+            name: 'Unknown ',
+          },
+        ],
+        legendsToPopover: [
+          {
+            externalId: 'inactiveUnknown',
+            tooltip: {
+              show: true,
+              placement: 'top',
+              message: 'statusUnknownLegend',
+            },
+          },
+        ],
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
-        displayLegend: false,
+        displayLegend: true,
         formatDate: 'LLLL do',
       },
     ],

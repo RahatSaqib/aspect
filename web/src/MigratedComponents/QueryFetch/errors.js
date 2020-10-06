@@ -1,22 +1,31 @@
 import { defineMessages } from 'react-intl'
 import {
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
+  errorUnauthorized,
 } from '../../error/CommonErrorNotifications'
 
 const defaultErrors = endpoint => ({
-  403: errorInsufficientScope(
+  401: errorUnauthorized(
     defineMessages({
       title: {
-        id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.403.title',
-        defaultMessage: 'Insufficient Permissions',
+        id: 'queryFetch.errorResponseMessages.GET.401.title',
+        defaultMessage: 'Invalid Credentials',
+      },
+    })
+  ),
+  403: errorForbidden(
+    defineMessages({
+      title: {
+        id: 'queryFetch.errorResponseMessages.GET.403.title',
+        defaultMessage: 'Access denied',
       },
     })
   ),
   default: errorPleaseTryAgainInAFewMinutes(
     defineMessages({
       title: {
-        id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
+        id: 'queryFetch.errorResponseMessages.GET.default.title',
         defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
       },
     })

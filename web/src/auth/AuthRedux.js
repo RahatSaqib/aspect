@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import forEach from 'lodash/forEach'
+import isNil from 'lodash/isNil'
+import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import jwtDecode from 'jwt-decode'
@@ -105,6 +107,70 @@ export function loginStart({ user, password }) {
         clientName: getClientName(),
       }),
       errorNotifications: {
+        401: {
+          'Authentication failed. Wrong username or password.': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
+                defaultMessage: 'Login Failed',
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                defaultMessage: 'Invalid username or password',
+              },
+              resolution: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                defaultMessage:
+                  "We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
+              },
+            }),
+          },
+          'Authentication failed. Wrong password.': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
+                defaultMessage: 'Login Failed',
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                defaultMessage: 'Incorrect password',
+              },
+              resolution: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                defaultMessage:
+                  'Please, correct the credentials your entered and try again.',
+              },
+            }),
+          },
+          'Incorrect password': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.incorrectPassword.title',
+                defaultMessage: 'Could not update your credentials',
+              },
+              message: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                defaultMessage: 'The password you entered is incorrect',
+              },
+              resolution: {
+                id:
+                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                defaultMessage: 'Please, re-enter your password and try again.',
+              },
+            }),
+          },
+        },
         409: {
           "Couldn't connect to GxAlert": {
             severity: 'warn',
@@ -112,13 +178,13 @@ export function loginStart({ user, password }) {
               title: {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
-                defaultMessage: "Couldn't connect to GxAlert",
+                defaultMessage: 'Login failed',
               },
               message: {
                 id:
                   'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
                 defaultMessage:
-                  "If your credentials are from GxAlert, please contact your administrator for support. If they're not, try to login again.",
+                  "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
               },
             }),
           },
@@ -139,23 +205,23 @@ export function loginStart({ user, password }) {
             }),
           },
         },
-        401: {
+        403: {
           'Your account is locked.': {
             severity: 'warn',
             ...defineMessages({
               title: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.accountLocked.title',
-                defaultMessage: 'Login Failed',
+                  'errorResponseMessages.loginStart.POST.403.accountLocked.title',
+                defaultMessage: 'Login failed',
               },
               message: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.accountLocked.message',
+                  'errorResponseMessages.loginStart.POST.403.accountLocked.message',
                 defaultMessage: 'Your user account has been locked',
               },
               resolution: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
+                  'errorResponseMessages.loginStart.POST.403.accountLocked.resolution',
                 defaultMessage:
                   'You can contact us to unlock your account for you by email ({supportEmail})',
               },
@@ -163,27 +229,6 @@ export function loginStart({ user, password }) {
             messageValues: {
               supportEmail: config.supportEmail,
             },
-          },
-          default: {
-            severity: 'warn',
-            ...defineMessages({
-              title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.default.default.title',
-                defaultMessage: 'Login Failed',
-              },
-              message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.default.default.message',
-                defaultMessage:
-                  'The details that you have entered are incorrect',
-              },
-              resolution: {
-                id: 'errorResponseMessages.loginStart.POST.default.resolution',
-                defaultMessage:
-                  'Please re-enter your login details and try again?',
-              },
-            }),
           },
         },
         default: errorPleaseTryAgainInAFewMinutes(
@@ -487,14 +532,14 @@ export default function authReducer(state = initialState, action) {
         mutState.delete('requestedAt')
         mutState.delete('licenseContent')
 
-        _.forEach(action.data, (v, k) => {
-          if (!_.isNil(v)) {
+        forEach(action.data, (v, k) => {
+          if (!isNil(v)) {
             mutState.set(k, v)
           }
         })
         mutState.mergeDeepIn(
           ['jwt'],
-          _.pick(jwtDecode(action.data.access), [
+          pick(jwtDecode(action.data.access), [
             'name',
             'permissions',
             'hasToAcceptLicenseId',

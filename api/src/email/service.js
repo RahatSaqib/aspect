@@ -126,6 +126,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       sample: 'sample',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .where({ 'm.id': emailMessageId })
     .first(

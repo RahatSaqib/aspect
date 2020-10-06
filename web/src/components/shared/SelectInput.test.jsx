@@ -1,7 +1,7 @@
 import React from 'react'
 import { Field } from 'redux-form/immutable'
 import { shallow } from 'enzyme'
-import _ from 'lodash'
+import each from 'lodash/each'
 import MenuItem from '@material-ui/core/MenuItem'
 import SelectInput from './SelectInput'
 
@@ -73,7 +73,7 @@ describe('SelectInput', () => {
     expect(SelectInputWrapper.find(MenuItem).length).toEqual(
       props.dataSource.length
     )
-    _.each(props.dataSource, item => {
+    each(props.dataSource, item => {
       expect(
         SelectInputWrapper.findWhere(
           element =>

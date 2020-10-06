@@ -7,7 +7,9 @@ import {
 } from '../../Helpers/Formatters/datetime'
 import AspectDropdown from '../../../AspectDropdown'
 
-const currentMonth = formatISO(negateTimeZoneOffset(addMonths(new Date(), -1)))
+// get previous month by default
+const dateRanges = dateRangeOptions()
+const currentMonth = dateRanges[Object.keys(dateRanges)][2].value.minDate
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
@@ -15,12 +17,7 @@ const resultsTransmittedGraphs = {
     title: 'resultsTransmittedTitle',
     componentSize: 'row',
     group: 'assaysNotNeeded',
-    assays: [
-      // 'GxHiv1Vl',
-      // 'GxMtbRif',
-      // 'QHivVL',
-      // todo: add filtered assays
-    ],
+    assays: [],
     selectorModifiers: [
       {
         selectedValue: 'Date Range',
@@ -30,6 +27,8 @@ const resultsTransmittedGraphs = {
         identifier: 'currentMonth',
         data: dateRangeOptions('resultsDateRange'),
         sortByKeys: ['id'],
+        isClearable: false,
+        defaultSelectedOption: 2,
       },
     ],
     graphRenderPermissions: ['dashboard', 'operationalData'],
@@ -42,7 +41,7 @@ const resultsTransmittedGraphs = {
         componentClasses: ['piegraph__container--nobg'],
         api: {
           method: 'GET',
-          endpoint: 'dashboard/results-transmitted',
+          endpoint: '/dashboard/results-transmitted',
           params: {
             currentMonth,
           },

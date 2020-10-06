@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -7,7 +7,7 @@ import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedFileResponse } from '../globals/GlobalsRedux'
 
@@ -43,7 +43,7 @@ function rejectReports() {
 
 export function fetchReports(filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestReports(filters))
     return aspectFetch(
       `/reports?${stringify({
@@ -59,7 +59,7 @@ export function fetchReports(filtersParams) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchReports.GET.403.title',
@@ -85,7 +85,7 @@ export function fetchReports(filtersParams) {
 
 export function getReportFile(externalId, filtersParams) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     return aspectFetchFile(
       `/reports/${externalId}?${stringify({
         ...filters,
@@ -100,7 +100,7 @@ export function getReportFile(externalId, filtersParams) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.getReportFile.GET.403.title',

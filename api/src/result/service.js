@@ -1872,7 +1872,7 @@ async function transferResult(request) {
   const {
     auth,
     params: { resultId },
-    payload: { siteId, timestamp },
+    payload: { siteId, timestamp, comment, includeAllResults },
   } = request
   const { partnerId, countryId, id: currentUserId, userName } = await getUser(
     auth.credentials.name
@@ -1929,6 +1929,7 @@ async function transferResult(request) {
         siteId: result.siteId,
         reportableSiteId: siteId,
         sampleOriginSiteId: result.sampleOriginSiteId,
+        comment,
       }),
       timestamp,
     })
@@ -1992,6 +1993,32 @@ async function transferResult(request) {
     'data',
   ])
   result.data.followUps = []
+
+  const { patientId } = result.data
+  if (includeAllResults && patientId) {
+    // get all other results of the same Patient Id
+    const otherResultsForPatient = await knex('Result')
+      .whereNot('id', resultId)
+      .whereRaw(
+        'LOWER(JSON_EXTRACT(patientData, "$.id")) = LOWER(JSON_QUOTE(?))',
+        [patientId]
+      )
+      .select('id')
+    // transfer them all to new siteId
+    await Promise.each(otherResultsForPatient, ({ id }) =>
+      transferResult({
+        auth,
+        params: { resultId: id },
+        payload: {
+          siteId,
+          timestamp,
+          comment,
+          // make sure to pass `false` here - to use this recursion only once
+          includeAllResults: false,
+        },
+      })
+    )
+  }
 
   return result
 }
@@ -2141,7 +2168,7 @@ async function clinicalIndicatorAggregations(request) {
   const { auth, query } = request
 
   if (!canViewResults(auth)) {
-    throw Boom.unauthorized('You do not have access to results')
+    throw Boom.forbidden('You do not have access to results')
   }
 
   let assay = null
@@ -2217,31 +2244,53 @@ async function clinicalIndicatorAggregations(request) {
     groupBy = query.groupBy
   }
 
+  const data = await processGroupedQuery(resultQuery, groupBy)
+
+  return { data }
+}
+
+async function processGroupedQuery(resultQuery, groupBy) {
   // handle possible groups:
   const paramToDb = {
     resultCategory1: 'rc1.externalId as resultCategory1',
     resultCategory2: 'rc2.externalId as resultCategory2',
-    week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
-    month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
-    year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
-    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day'),
+
+    week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
+    month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),
+    year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year_value'),
+    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day_value'),
+
     gender: knex.raw(
       'replace(r.patientData ->> "$.gender", "null", null) as gender'
     ),
     age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
+    followUp: `fu.externalId as followUp`,
   }
+
+  const reservedWords = ['day', 'month', 'week', 'year']
 
   groupBy.forEach(g => {
     resultQuery.modify(qb => {
+      const name = reservedWords.includes(g) ? `${g}_value` : g
       qb.select(paramToDb[g])
-      qb.groupBy(g)
-      qb.orderBy(g)
+      qb.groupBy(name)
+      qb.orderBy(name)
     })
   })
-  return {
-    data: await resultQuery,
-  }
+
+  const data = (await resultQuery).map(item => {
+    groupBy.forEach(g => {
+      if (reservedWords.includes(g)) {
+        // set value for originally intended prop name and delete temporal prop
+        item[g] = item[`${g}_value`]
+        delete item[`${g}_value`]
+      }
+    })
+    return item
+  })
+
+  return data
 }
 
 function queryResultFollowUpLastItems(followUpType) {
@@ -2259,7 +2308,7 @@ async function followUpAggregations(request) {
   const { auth, query } = request
 
   if (!canViewResults(auth)) {
-    throw Boom.unauthorized('You do not have access to results')
+    throw Boom.forbidden('You do not have access to results')
   }
 
   let assay = null
@@ -2364,32 +2413,9 @@ async function followUpAggregations(request) {
     groupBy.push('followUp')
   }
 
-  // handle possible groups:
-  const paramToDb = {
-    resultCategory1: 'rc1.externalId as resultCategory1',
-    resultCategory2: 'rc2.externalId as resultCategory2',
-    week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week'),
-    month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month'),
-    year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year'),
-    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day'),
-    gender: knex.raw(
-      'replace(r.patientData ->> "$.gender", "null", null) as gender'
-    ),
-    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
-    state: 'st.name as state',
-    followUp: `fu.externalId as followUp`,
-  }
+  const data = await processGroupedQuery(resultQuery, groupBy)
 
-  groupBy.forEach(g => {
-    resultQuery.modify(qb => {
-      qb.select(paramToDb[g])
-      qb.groupBy(g)
-      qb.orderBy(g)
-    })
-  })
-  return {
-    data: await resultQuery,
-  }
+  return { data }
 }
 
 async function createResult(request) {

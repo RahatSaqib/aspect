@@ -73,7 +73,6 @@ const getAverageFromData = (data, value, which, culture) => {
             }
           }
         } else {
-          // eslint-disable-next-line no-console
           console.warn(
             `There are no results to match your config for item: ${curr}`
           )
@@ -114,8 +113,7 @@ const getAverageFromData = (data, value, which, culture) => {
       }
       return avgObj
     }
-    // eslint-disable-next-line no-console
-    console.error('There are no data that match your config')
+    console.warn('There are no data that match your config')
   }
   return {}
 }

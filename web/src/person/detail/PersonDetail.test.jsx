@@ -1,5 +1,5 @@
 import Immutable from 'immutable'
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
@@ -28,16 +28,16 @@ describe('PersonDetail module', () => {
       state: 'Lagos',
       lga: 'Apapa',
     }),
-    showAcknowledgement: _.noop,
-    fetchSinglePerson: _.noop,
-    createPerson: _.noop,
-    updateSinglePerson: _.noop,
-    updateSinglePersonLoginDetails: _.noop,
-    updateSinglePersonUserPreferences: _.noop,
-    fetchPartnersAndJobFunctionsForSelectList: _.noop,
+    showAcknowledgement: noop,
+    fetchSinglePerson: noop,
+    createPerson: noop,
+    updateSinglePerson: noop,
+    updateSinglePersonLoginDetails: noop,
+    updateSinglePersonUserPreferences: noop,
+    fetchPartnersAndJobFunctionsForSelectList: noop,
     isNew: false,
-    addPersonAssignment: _.noop,
-    deletePersonAssignment: _.noop,
+    addPersonAssignment: noop,
+    deletePersonAssignment: noop,
   }
 
   describe('Person Detail component', () => {

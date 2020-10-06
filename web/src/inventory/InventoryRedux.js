@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import isString from 'lodash/isString'
+import fromPairs from 'lodash/fromPairs'
 import { defineMessages } from 'react-intl'
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
@@ -13,7 +14,7 @@ import {
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 
@@ -80,7 +81,7 @@ export function fetchInventoryItems(
   pageSize
 ) {
   return (dispatch, getState) => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     const groupBy = getGroupBy(getState())
     const groupBySite = groupBy.includes('siteId')
 
@@ -107,7 +108,7 @@ export function fetchInventoryItems(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -186,7 +187,7 @@ export function exportSupplies(
   reportName
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/inventory/export?${stringify({
@@ -207,7 +208,7 @@ export function exportSupplies(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportSupplies.GET.403.title',
@@ -239,7 +240,7 @@ export function addInventory(data) {
       inventoryAdjustment: { inventoryItemId },
     } = getState().inventory
 
-    if (_.isString(inventoryItemId)) {
+    if (isString(inventoryItemId)) {
       const consumableId = items.getIn([
         'byId',
         inventoryItemId,

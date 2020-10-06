@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -25,7 +25,7 @@ export const ReadOnlyField = ({
   hideLabel = false,
   linkButton = null,
   to,
-  format = _.identity,
+  format = identity,
   nullText = '-',
 }) =>
   label && (

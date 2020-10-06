@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
@@ -9,9 +9,9 @@ import { Login } from './Login'
 describe('Login component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
-    onUserChange: _.noop,
-    onPasswordChange: _.noop,
-    handleSubmit: _.noop,
+    onUserChange: noop,
+    onPasswordChange: noop,
+    handleSubmit: noop,
     values: { user: '', password: '' },
     meta: {
       user: { touched: '', error: '' },

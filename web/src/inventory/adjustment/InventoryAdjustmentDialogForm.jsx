@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import has from 'lodash/has'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -15,6 +16,7 @@ import ConsumableSelectField from '../../filter/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../filter/resource/ConsumableReasonSelectField'
+import messages from './messages'
 
 const cssClasses = classnames.bind(
   require('./InventoryAdjustmentDialogForm.css')
@@ -69,11 +71,11 @@ export const sharedFields = {
   },
   canExpire: {
     fieldName: 'canExpire',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: identity,
   },
   expiresOn: {
     fieldName: 'expiresOn',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: identity,
   },
   quantity: {
     fieldName: 'quantity',
@@ -86,7 +88,7 @@ export const sharedFields = {
   },
   dateAdjusted: {
     fieldName: 'dateAdjusted',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: identity,
   },
   notes: {
     fieldName: 'notes',
@@ -95,11 +97,11 @@ export const sharedFields = {
   // Partial:
   toSiteId: {
     fieldName: 'toSiteId',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: identity,
   },
   fromSiteId: {
     fieldName: 'fromSiteId',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: identity,
   },
 }
 
@@ -112,53 +114,6 @@ export const connectConsumableFromInventoryItem = connect(
     ),
   })
 )
-
-const messages = defineMessages({
-  submit: {
-    id: 'pages.InventoryAdjustmentDialogForm.submit',
-    defaultMessage: 'Submit',
-  },
-  cancel: {
-    id: 'pages.InventoryAdjustmentDialogForm.cancel',
-    defaultMessage: 'Cancel',
-  },
-  consumable: {
-    id: 'pages.InventoryAdjustmentDialogForm.consumable',
-    defaultMessage: 'Consumable',
-  },
-  lotNumber: {
-    id: 'pages.InventoryAdjustmentDialogForm.lotNumber',
-    defaultMessage: 'Lot Number',
-  },
-  expiryDate: {
-    id: 'pages.InventoryAdjustmentDialogForm.expiryDate',
-    defaultMessage: 'Expiry Date',
-  },
-  toSiteName: {
-    id: 'pages.InventoryAdjustmentDialogForm.toSiteName',
-    defaultMessage: 'To Site',
-  },
-  fromSiteName: {
-    id: 'pages.InventoryAdjustmentDialogForm.fromSiteName',
-    defaultMessage: 'From Site',
-  },
-  reason: {
-    id: 'pages.InventoryAdjustmentDialogForm.reason',
-    defaultMessage: 'Reason',
-  },
-  testsRunBetween: {
-    id: 'pages.InventoryAdjustmentDialogForm.testsRunBetween',
-    defaultMessage: 'Tests Run Between',
-  },
-  and: {
-    id: 'pages.InventoryAdjustmentDialogForm.and',
-    defaultMessage: 'and',
-  },
-  notes: {
-    id: 'pages.InventoryAdjustmentDialogForm.notes',
-    defaultMessage: 'Notes',
-  },
-})
 
 export const InventoryAdjustmentDialogForm = ({
   intl,
@@ -208,7 +163,7 @@ export const InventoryAdjustmentDialogForm = ({
     <form className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
         <section>
-          {_.has(values, 'consumableId') && (
+          {has(values, 'consumableId') && (
             <ConsumableSelectField
               name="consumableId"
               floatingLabelText={intl.formatMessage(messages.consumable)}
@@ -261,7 +216,7 @@ export const InventoryAdjustmentDialogForm = ({
           )}
         </section>
         <section>
-          {_.has(values, 'fromSiteId') && (
+          {has(values, 'fromSiteId') && (
             <SiteSelectField
               name="fromSiteId"
               floatingLabelText={intl.formatMessage(messages.fromSiteName)}
@@ -280,7 +235,7 @@ export const InventoryAdjustmentDialogForm = ({
               aria-haspopup
             />
           )}
-          {_.has(values, 'toSiteId') && (
+          {has(values, 'toSiteId') && (
             <SiteSelectField
               name="toSiteId"
               floatingLabelText={intl.formatMessage(messages.toSiteName)}
@@ -324,7 +279,7 @@ export const InventoryAdjustmentDialogForm = ({
             <span>{labels.nextQuantityStatus}</span>
           </p>
         </section>
-        {_.has(values, 'reasonId') && (
+        {has(values, 'reasonId') && (
           <section>
             <ConsumableReasonSelectField
               intl={intl}
@@ -381,7 +336,7 @@ export const InventoryAdjustmentDialogForm = ({
               </FormGroup>
             </section>
           )}
-        {_.has(values, 'dateAdjusted') && (
+        {has(values, 'dateAdjusted') && (
           <section>
             <FormGroup label={labels.dateAdjusted}>
               <DateTimeInput

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
@@ -65,6 +66,17 @@ const buildWidgetToLinkParams = (link, linkParams) => {
   return link
 }
 
+const EmptyWidget = () => (
+  <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
+    <CircularProgress
+      variant="indeterminate"
+      disableShrink
+      size={24}
+      thickness={4}
+    />
+  </Card>
+)
+
 const AspectWidget = ({
   data,
   data: {
@@ -98,7 +110,12 @@ const AspectWidget = ({
         <div className={cssClasses('Summary__Card__Title')}>
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
-            {title}
+            <AspectTooltip
+              title={title}
+              toolTipContainerClass="inline__tooltip"
+            >
+              {title}
+            </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
               {subTitle}
             </span>
@@ -160,4 +177,4 @@ AspectWidget.propTypes = {
   }).isRequired,
 }
 
-export default AspectWidget
+export { AspectWidget, EmptyWidget }

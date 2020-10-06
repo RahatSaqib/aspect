@@ -17,3 +17,11 @@
   float: right;
   color: #91949d;
 }
+
+.legend__tooltip {
+  display: flex;
+}
+
+.inline__tooltip {
+  display: inline;
+}

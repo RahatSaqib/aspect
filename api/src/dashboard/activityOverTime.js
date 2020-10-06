@@ -1,18 +1,20 @@
-const _ = require('lodash')
-const { isWeekend, addMinutes } = require('date-fns')
+const min = require('lodash/min')
+const omit = require('lodash/omit')
+const isWeekend = require('date-fns/isWeekend')
 const format = require('date-fns/format')
+const addDays = require('date-fns/addDays')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getArrayOfDaysInRange } = require('../shared/date')
+const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
 
 async function activityOverTimeDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // build up array of days in date range. makes querying easier:
+  // build up array of days in date range, excluding today because it could be incomplete. It makes querying easier:
   let days = getArrayOfDaysInRange(
     query.minDate,
-    _.min([query.maxDate, new Date()]),
+    min([query.maxDate, addDays(new Date(), -1)]),
     {
       devicesActive: 0,
       devicesInactive: 0,
@@ -24,15 +26,6 @@ async function activityOverTimeDashboard(request) {
       inactiveConnectivity: 0,
       inactiveDecommissioned: 0,
     }
-  )
-
-  const minDateUtc = addMinutes(
-    query.minDate,
-    query.minDate.getTimezoneOffset()
-  )
-  const maxDateUtc = addMinutes(
-    query.maxDate,
-    query.maxDate.getTimezoneOffset()
   )
 
   // base query for all actual devices
@@ -107,8 +100,8 @@ async function activityOverTimeDashboard(request) {
       'dms.id'
     )
     .whereRaw('dmsl.day >= ? AND dmsl.day <= ?', [
-      format(minDateUtc, 'yyyy-MM-dd'),
-      format(maxDateUtc, 'yyyy-MM-dd'),
+      formatDateOrDefault(query.minDate, 'yyyy-MM-dd'),
+      formatDateOrDefault(query.maxDate, 'yyyy-MM-dd'),
     ])
     .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)
@@ -164,7 +157,7 @@ async function activityOverTimeDashboard(request) {
     if (dayCounts) {
       day = {
         ...day,
-        ..._.omit(dayCounts, ['dayDate']),
+        ...omit(dayCounts, ['dayDate']),
       }
       day.devicesInactive = day.devicesTotal - day.devicesActive
     } else {

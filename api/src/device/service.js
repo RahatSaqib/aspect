@@ -3,14 +3,13 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const {
   addDays,
-  startOfToday,
-  startOfDay,
   subMonths,
   startOfMonth,
   endOfMonth,
   getDaysInMonth,
   format,
   isWeekend,
+  parseISO,
 } = require('date-fns')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
@@ -28,7 +27,12 @@ const {
   resultCategoryToId,
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
-const { parseDateOrDefault } = require('../shared/date')
+const {
+  parseDateOrDefault,
+  startOfDayUtc,
+  startOfTodayUtc,
+} = require('../shared/date')
+const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -177,6 +181,8 @@ async function getListDevices(query, auth) {
       geography: 'g',
       site: 's',
       disease: 'dis',
+      showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
@@ -185,6 +191,7 @@ async function getListDevices(query, auth) {
   const getItems = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
+    .groupBy('d.id')
     .select([
       ...SELECT_LIST_FIELDS,
       'frd30.resultCount as resultCountThisMonth',
@@ -204,6 +211,32 @@ async function getListDevices(query, auth) {
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
+      // Gets the count of days the device was logged
+      knex('DeviceMaintenanceStatusLog as dmsl_total')
+        .whereRaw('dmsl_total.deviceId = d.id')
+        .andWhere(
+          'dmsl_total.day',
+          '>=',
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
+        )
+        .count(knex.raw('DISTINCT day'))
+        .as('totalDays'),
+      // Gets the count of days the device was in status 'Active'
+      knex('DeviceMaintenanceStatusLog as dmsl_active')
+        .innerJoin(
+          'DeviceMaintenanceStatus as dms_active',
+          'dmsl_active.deviceMaintenanceStatusId',
+          'dms_active.id'
+        )
+        .whereRaw('dmsl_active.deviceId = d.id')
+        .andWhere(
+          'dmsl_active.day',
+          '>=',
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
+        )
+        .andWhere('dms_active.externalId', 'active')
+        .count(knex.raw('DISTINCT day'))
+        .as('activeDays'),
     ])
     .distinct()
 
@@ -211,13 +244,13 @@ async function getListDevices(query, auth) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   data.forEach(it => {
-    // FIXME: Use actual data instead
-    const availabilityCount = _.random(25, 30)
     it.availability = {
-      count: availabilityCount,
-      total: 30,
-      rate: availabilityCount / 30,
+      count: it.activeDays ? it.activeDays : 0,
+      total: it.totalDays ? it.totalDays : 0,
+      rate: it.totalDays && it.totalDays > 0 ? it.activeDays / it.totalDays : 1,
     }
+    delete it.activeDays
+    delete it.totalDays
 
     it.error = {
       count: it.thisMonthErrors || 0,
@@ -314,6 +347,7 @@ async function getDeviceByDeviceId({
       deviceType: 'dt',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .first(fields)
 
@@ -861,7 +895,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     payload,
     plugins: { messageContext },
   } = request
-  const { externalId, day = startOfToday(), notes } = payload
+  const { externalId, day = startOfTodayUtc(), notes } = payload
   const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus')
     .where({ externalId })
     .first()
@@ -879,6 +913,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .first('d.id')
 
@@ -893,7 +928,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     deviceId,
     currentlyLoggedInUser.id,
     deviceMaintenanceStatus.id,
-    startOfDay(day),
+    startOfDayUtc(day),
     payload,
     messageContext
   )
@@ -918,7 +953,7 @@ async function automaticallySetDeviceMaintenanceStatus(
   data,
   messageContext
 ) {
-  const dayDate = startOfDay(day)
+  const dayDate = startOfDayUtc(day)
   const latestDeviceMaintenanceStatusForDay =
     (await knex('DeviceMaintenanceStatusLog as dmsl')
       .join(
@@ -995,18 +1030,29 @@ async function onDeviceMaintenanceStatusLogged(
 async function onResultLogged(action, { messageContext }) {
   const { resultId } = action
   return messageContext.run(async knex => {
-    const { deviceId, startedOn, endedOn } =
-      (await knex('Result')
-        .where('id', resultId)
-        .first('deviceId', 'startedOn', 'endedOn')) || {}
+    const { deviceId, startedOn, endedOn, approvalToken } =
+      (await knex('Result as r')
+        .leftJoin('Device as d', 'r.deviceId', 'd.id')
+        .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+        .where('r.id', resultId)
+        .first(
+          'r.deviceId',
+          'r.startedOn',
+          'r.endedOn',
+          'da.token as approvalToken'
+        )) || {}
     if (deviceId && (endedOn || startedOn)) {
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,
         endedOn || startedOn,
-        'active',
+        approvalToken === 'decommissioned'
+          ? 'inactiveDecommissioned'
+          : 'active',
         action,
         messageContext
       )
+
+      await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
   })
 }
@@ -1016,7 +1062,7 @@ async function onDeviceMaintenanceResolved(action, { messageContext }) {
   if (deviceId) {
     return automaticallySetDeviceMaintenanceStatus(
       deviceId,
-      startOfToday(),
+      startOfTodayUtc(),
       'reportedActive',
       action,
       messageContext
@@ -1033,8 +1079,8 @@ async function onDeviceUpdateMaintenanceStatusNoResults(
   if (deviceId) {
     const daysSinceLastResult = []
     let day = options.lastResultOn
-      ? startOfDay(parseDateOrDefault(options.lastResultOn))
-      : startOfDay(new Date())
+      ? startOfDayUtc(parseDateOrDefault(options.lastResultOn))
+      : startOfDayUtc(new Date())
     while (day < new Date()) {
       daysSinceLastResult.push(day)
       day = addDays(day, 1)
@@ -1065,7 +1111,7 @@ async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
       }[maintenanceReasonFromSource] || 'inactiveUnknown'
     return automaticallySetDeviceMaintenanceStatus(
       deviceId,
-      startOfToday(),
+      startOfTodayUtc(),
       aspectMaintenanceReason,
       action,
       messageContext
@@ -1081,7 +1127,7 @@ async function deviceMaintenanceStatusHistory(request) {
 
   const days = []
   let day = minDate || startOfMonth(new Date())
-  while (day <= (maxDate || startOfToday())) {
+  while (day <= (maxDate || startOfTodayUtc())) {
     days.push(day)
     day = addDays(day, 1)
   }
@@ -1220,6 +1266,8 @@ async function deviceMaintenanceStatusHistory(request) {
           'dms.id'
         )
         .orderBy(['dmsl.deviceId', 'dmsl.day'])
+        .orderBy('dmsl.createdOn', 'desc')
+        .orderBy('dmsl.id', 'desc')
         .select('dmsl.deviceId', 'dmsl.day', 'dmsl.data', 'dms.externalId')
   const result = {
     ok: true,
@@ -1270,6 +1318,7 @@ async function deviceMaintenanceStatus(request) {
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         showUnapprovedDevices: true,
+        showDecommissionedDevices: true,
       })
       .where('d.id', deviceId)
       .first('dmsl.*')) || {}
@@ -1294,6 +1343,18 @@ async function onDeviceMaintenanceStatusLogScheduled(
   { messageContext }
 ) {
   return messageContext.run(async knex => {
+    const getCustomToday = today => {
+      if (today) {
+        if (_.isDate(today)) {
+          return startOfDayUtc(today)
+        }
+        if (_.isString(today)) {
+          return parseISO(action.today)
+        }
+      }
+      return startOfTodayUtc()
+    }
+    const today = getCustomToday(action.today)
     const devicesWithNoMaintenanceLogForTheDay = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -1310,7 +1371,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
         queryBuilder
           .on('d.id', 'today_dmsl.deviceId')
-          .andOn('today_dmsl.day', knex.raw('?', [startOfToday()]))
+          .andOn('today_dmsl.day', knex.raw('?', [today]))
       })
       .leftJoin(
         'DeviceMaintenanceStatus as today_dms',
@@ -1346,7 +1407,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       }
       await automaticallySetDeviceMaintenanceStatus(
         id,
-        startOfToday(),
+        today,
         deviceMaintenanceStatusForTheDay,
         {
           ...JSON.parse(currentMaintenanceStatusLogData),

@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import omit from 'lodash/omit'
+import get from 'lodash/get'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle } from 'recompose'
@@ -57,10 +59,10 @@ const enhance = compose(
       hasToAcceptLicenseId,
     }) => () => {
       acceptLicenseStart(hasToAcceptLicenseId).then(() => {
-        const referrer = _.flowRight(
-          x => _.omit(x, 'search'),
+        const referrer = flowRight(
+          x => omit(x, 'search'),
           x =>
-            _.get(x, 'state.referrer', {
+            get(x, 'state.referrer', {
               pathname: '/',
             })
         )(location)

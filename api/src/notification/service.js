@@ -34,6 +34,8 @@ async function listNotifications(request) {
 
   const getItems = notificationQuery
     .clone()
+    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
+    .leftJoin('Person as per', 'j.personId', 'per.id')
     .select(
       'n.notificationTypeId as id',
       'nt.name',
@@ -41,8 +43,10 @@ async function listNotifications(request) {
         'SUM(CASE WHEN n.issueId IS NULL then 0 ELSE 1 END) as totalTriggers'
       ),
       columnCount('alert'),
-      columnCount('sms'),
-      columnCount('email')
+      knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
+      knex.raw(
+        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
+      )
     )
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')
@@ -184,6 +188,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
                 geography: 'g',
                 partner: 'p',
                 showUnapprovedDevices: true,
+                showDecommissionedDevices: true,
               })
               .where({ 'i.id': issueId })
               .first('i.id')

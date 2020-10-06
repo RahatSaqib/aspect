@@ -125,6 +125,7 @@ async function summaryDashboard(request) {
       )
     })
   )
+
   return { ok: true, data }
 }
 
@@ -563,7 +564,6 @@ async function getDeviceList(auth, dataConstraints) {
         []
       )
     )
-
   return deviceList
 }
 
@@ -575,7 +575,6 @@ async function deviceDashboard(request) {
 
   const siteList = await getSiteList(auth, dataConstraints)
   const deviceList = await getDeviceList(auth, dataConstraints)
-
   const siteById = _.keyBy(siteList, 'id')
   _.forEach(deviceList, it => {
     const site = siteById[it.siteId]

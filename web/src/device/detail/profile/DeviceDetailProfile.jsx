@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
@@ -126,10 +126,6 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.maintenance',
     defaultMessage: 'Maintenance Status',
   },
-  noResults: {
-    id: 'pages.DeviceDetailProfile.noResults',
-    defaultMessage: 'No Results',
-  },
   undefinedValue: {
     id: 'pages.DeviceDetailProfile.undefinedValue',
     defaultMessage: 'n/a',
@@ -215,7 +211,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -877,7 +873,7 @@ export const DeviceDetailProfile = ({
                     }
                   />
                 ) : (
-                  intl.formatMessage(messages.noResults)
+                  intl.formatMessage(messages.undefinedValue)
                 )
               }
             />

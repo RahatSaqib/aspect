@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 // ----------- Action Types ---------------------
 const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
@@ -11,6 +13,7 @@ const types = {
   DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED:
     'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
+  DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
 }
 
 // ----------- Action Creators -------------------
@@ -165,6 +168,33 @@ function deviceModuleDisabled(device, moduleSerial, disabledOn) {
 }
 
 /**
+ * Creates an action to notify that an instrument in the given device
+ * was replaced
+ *
+ * @param {*} device
+ * @param {*} instrumentSerial the serial number of the instrument replaced
+ */
+function deviceInstrumentReplaced(device, options) {
+  if (!device && !options) {
+    throw new Error(
+      'Must specify device and options for deviceInstrumentReplaced'
+    )
+  }
+  const issueProps = _.pick(device, [
+    'deviceId',
+    'siteId',
+    'geographyId',
+    'partnerId',
+    'resultId',
+  ])
+  return {
+    ...issueProps,
+    type: types.DEVICE_INSTRUMENT_REPLACED,
+    options: { data: options },
+  }
+}
+
+/**
  * Creates an action to notify the device has a
  * maintenance status update
  *
@@ -187,9 +217,10 @@ function deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId) {
  * to log the maintenance status of unlogged
  * devices
  */
-function logDeviceMaintenanceStatus() {
+function logDeviceMaintenanceStatus(today = null) {
   return {
     type: types.DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED,
+    today,
   }
 }
 
@@ -205,4 +236,5 @@ module.exports = {
   deviceMaintenanceStatusLogged,
   logDeviceMaintenanceStatus,
   deviceModuleDisabled,
+  deviceInstrumentReplaced,
 }

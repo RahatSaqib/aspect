@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
+import deburr from 'lodash/deburr'
+import noop from 'lodash/noop'
 import Downshift from 'downshift'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
@@ -52,7 +53,7 @@ function renderSuggestion({
 }
 
 function getSuggestions(suggestions, value = '') {
-  const inputValue = _.deburr(value.trim()).toLowerCase()
+  const inputValue = deburr(value.trim()).toLowerCase()
 
   return inputValue.length === 0
     ? []
@@ -222,8 +223,8 @@ AutoComplete.defaultProps = {
   floatingLabelText: '',
   floatingLabelFixed: false,
   fullWidth: false,
-  onSelect: _.noop,
-  onUpdateInput: _.noop,
+  onSelect: noop,
+  onUpdateInput: noop,
 }
 
 export default withStyles(styles)(AutoComplete)

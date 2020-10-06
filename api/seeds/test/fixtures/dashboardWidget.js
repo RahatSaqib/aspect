@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     {
-      icon: 'MdComputer',
+      icon: 'MdDesktopWindows',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,
@@ -30,7 +30,8 @@ module.exports = {
       link: '/browse/device',
       sortOrder: 1,
       externalId: 'devicesTitle',
-      description: 'The number of lab devices',
+      description:
+        'The number of approved lab devices (excluding decommissioned devices)',
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},

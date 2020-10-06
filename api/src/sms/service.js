@@ -118,6 +118,7 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       sample: 'sample',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .where({ 'm.id': smsMessageId })
     .first(

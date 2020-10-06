@@ -1,8 +1,7 @@
 import React from 'react'
-import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
-
+import { shallow } from 'enzyme'
 import { NotificationList } from './NotificationList'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
@@ -19,7 +18,6 @@ describe('NotificationList module', () => {
     history: {
       push: () => {},
     },
-    fetchNotifications: () => {},
     exportNotifications: () => {},
     userPermissions: Immutable.Set([
       'notification:edit',

@@ -4112,6 +4112,13 @@ async function seed(knex) {
     _.map(
       [
         'Admin',
+        'Admin1',
+        'Admin2',
+        'Admin3',
+        'Admin4',
+        'Admin5',
+        'Admin6',
+        'Admin7',
         'Bill',
         'Bob',
         'Frank',
@@ -5254,10 +5261,37 @@ async function seed(knex) {
   )
 
   // crate jobs for users
-  const jobIdAdmin = await knex('Job').insert({
-    personId: personIds.admin,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
+
+  const jobIdAdmin = await knex('Job').insert([
+    {
+      personId: personIds.admin,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin1,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin2,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin3,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin4,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin5,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+    {
+      personId: personIds.admin6,
+      jobFunctionId: jobFunctionIdAdmin,
+    },
+  ])
 
   const jobIdJason = await knex('Job').insert({
     personId: personIds.jason,
@@ -5331,23 +5365,21 @@ async function seed(knex) {
   // Fill device flags with random data
   // TODO: Remove when we implemented the jobs that calculate these flags
   const devices = await knex('Device').select('id')
-  await Promise.all(
-    _.map(devices, async device => {
-      await knex('FactDeviceFlag').insert({
-        deviceId: device.id,
-        offline: _.random(10) === 0,
-        service: _.random(10) === 0,
-        calibration: _.random(10) === 0,
-        errorRate: _.random(10) === 0,
-        qcProblem: _.random(10) === 0,
-        lowInventory: _.random(10) === 0,
-        outOfInventory: _.random(10) === 0,
-        expiringInventory: _.random(10) === 0,
-        expiringWarranty: _.random(10) === 0,
-        updatedOn: now,
-      })
+  await Promise.each(devices, async device => {
+    await knex('FactDeviceFlag').insert({
+      deviceId: device.id,
+      offline: _.random(10) === 0,
+      service: _.random(10) === 0,
+      calibration: _.random(10) === 0,
+      errorRate: _.random(10) === 0,
+      qcProblem: _.random(10) === 0,
+      lowInventory: _.random(10) === 0,
+      outOfInventory: _.random(10) === 0,
+      expiringInventory: _.random(10) === 0,
+      expiringWarranty: _.random(10) === 0,
+      updatedOn: now,
     })
-  )
+  })
 
   // Create tag
   const [tagOneId] = await knex('Tag').insert({
@@ -5442,6 +5474,14 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.avgTimeToUpload },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.unusedModules },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.gxPositiveResultsNotified,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.numberOfDevicesExperiencingServiceInterruption,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.instrumentsReplaced,

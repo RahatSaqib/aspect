@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
@@ -10,10 +10,14 @@ import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
+  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
-import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
+import {
+  receiveItem,
+  Items,
+  receiveListWithSet,
+} from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,
@@ -65,7 +69,7 @@ function rejectSites() {
 
 export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -86,7 +90,7 @@ export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -119,7 +123,7 @@ export function exportSites(
   reportName
 ) {
   return dispatch => {
-    const filters = _.fromPairs([...filtersParams.entries()])
+    const filters = fromPairs([...filtersParams.entries()])
 
     return aspectFetch(
       `/site/export?${stringify({
@@ -140,7 +144,7 @@ export function exportSites(
               },
             })
           ),
-          403: errorInsufficientScope(
+          403: errorForbidden(
             defineMessages({
               title: {
                 id: 'errorResponseMessages.exportSites.GET.403.title',
@@ -209,7 +213,7 @@ export function fetchSitesForSelectList(forceRefresh) {
             },
           })
         ),
-        403: errorInsufficientScope(
+        403: errorForbidden(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchPersons.GET.403.title',
@@ -384,7 +388,8 @@ export default function siteReducer(state = initialState, action) {
     case types.RECEIVE_SITES:
       return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
-        mutState.set('items', receiveList(mutState.items, immutList))
+
+        mutState.set('items', receiveListWithSet(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
     case types.REJECTED_SITES:

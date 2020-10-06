@@ -9,7 +9,6 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
-import InventoryStatus from './InventoryStatus'
 import SiteStatus from './SiteStatus'
 import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
@@ -22,6 +21,7 @@ import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
 import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
 import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
 import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
+import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 
 import ColorDemo from './ColorDemo/ColorDemo'
@@ -33,6 +33,7 @@ const Status = ({ history, location, colorDemo }) => {
   const { hivResults } = hivGraphs
   const { tbDetected, tbResults } = tbGraphs
   const { treatmentStatus } = treatmentStatusGraphs
+  const { inventoryStatus } = inventoryStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
   const {
     covidDailyConfirmed,
@@ -205,15 +206,15 @@ const Status = ({ history, location, colorDemo }) => {
         className={cssClasses('Section--withStatus')}
         title={intl.formatMessage(messages.sitesTitle)}
       />
-      <PermissionsProvider permissions={['dashboard']}>
-        <InventoryStatus
-          history={history}
-          intl={intl}
-          countryIsoAlpha2Code={countryIsoAlpha2Code}
-          className={cssClasses('Section--withStatus')}
-          title={intl.formatMessage(messages.consumableTitle)}
-        />
-      </PermissionsProvider>
+
+      <ErrorBoundary>
+        <PermissionsProvider
+          permissions={inventoryStatus.graphRenderPermissions}
+        >
+          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
+        </PermissionsProvider>
+      </ErrorBoundary>
+
       <Reports
         intl={intl}
         location={location}

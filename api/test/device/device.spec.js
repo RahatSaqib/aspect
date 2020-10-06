@@ -961,4 +961,69 @@ describe('Device routes', () => {
       })
     })
   })
+
+  describe('Skips decommissioned device', () => {
+    let deviceMaintenanceStatuses
+    let devices
+    let deviceDecommissioned
+    let deviceMaintenanceStatusLog
+
+    before(async () => {
+      deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+      // get all devices
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+      devices = res.body.data
+      // get first device with non-Decommissioned maintenance status
+      ;[deviceDecommissioned] = devices.filter(
+        d =>
+          d.maintenanceStatus &&
+          d.maintenanceStatus !== 'inactiveDecommissioned'
+      )
+      // ... and it's current maintenance status log
+      deviceMaintenanceStatusLog = await knex('Device as d')
+        .innerJoin(
+          'DeviceMaintenanceStatusLog as dml',
+          'd.deviceMaintenanceStatusLogId',
+          'dml.id'
+        )
+        .where('d.id', deviceDecommissioned.id)
+        .first('dml.*')
+    })
+
+    after(async () => {
+      const { id, deviceMaintenanceStatusId } = deviceMaintenanceStatusLog
+      await knex('DeviceMaintenanceStatusLog')
+        .where({ id })
+        .update({ deviceMaintenanceStatusId })
+    })
+
+    it('should set device maintenance status to "inactiveDecommissioned" and check that endpoint skips it', async () => {
+      const liveDevices = devices.filter(
+        d => d.maintenanceStatus !== 'inactiveDecommissioned'
+      )
+      expect(liveDevices.length).to.be.greaterThan(0)
+
+      // set device maintenance status to 'decommissioned'
+      await knex('DeviceMaintenanceStatusLog')
+        .where('id', deviceMaintenanceStatusLog.id)
+        .update({
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveDecommissioned,
+        })
+
+      // read new list of devices
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+      const devicesNew = res.body.data
+      const liveDevicesNew = devicesNew.filter(
+        d => d.maintenanceStatus !== 'inactiveDecommissioned'
+      )
+      // we set live device to 'decommissioned' state, so new
+      // list of devices should be less than original list
+      expect(liveDevicesNew.length).to.be.lessThan(liveDevices.length)
+    })
+  })
 })

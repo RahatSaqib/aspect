@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import get from 'lodash/get'
+import camelCase from 'lodash/camelCase'
 import enUs from 'date-fns/locale/en-US/'
 
 // FIXME: date-fns-alpha.8 has not supported yet
@@ -10,5 +11,5 @@ const locales = {
 }
 
 export default function getLocale(locale = 'en-US') {
-  return _.get(locales, [_.camelCase(locale)]) || locales.enUs
+  return get(locales, [camelCase(locale)]) || locales.enUs
 }

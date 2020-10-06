@@ -1,6 +1,6 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
-const { WIDGET_GROUP_KEYS } = dashboardWidgetsBase
+const { WIDGET_GROUP_KEYS, WIDGET_FILTER_KEYS } = dashboardWidgetsBase
 
 module.exports = {
   stat: [
@@ -23,16 +23,20 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'MdComputer',
+      icon: 'MdDesktopWindows',
       title: 'Devices',
       titleI18nKey: 'devicesTitle',
       subTitle: null,
       subTitleI18nKey: null,
       sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1`,
       link: '/browse/device',
-      sortOrder: 0,
+      linkParams: {
+        dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+      },
+      sortOrder: 1,
       externalId: 'devicesTitle',
-      description: 'The number of lab devices.',
+      description:
+        'The number of approved lab devices (excluding decommissioned devices)',
       descriptionI18nKey: 'devicesDescription',
       dashboards: {
         home: {},
@@ -49,7 +53,7 @@ module.exports = {
       link: '/browse/result',
       sortOrder: 2,
       externalId: 'resultsTitle',
-      description: 'The number of results in the last 30 days.',
+      description: 'The number of results in the last 30 days',
       descriptionI18nKey: 'resultsDescription',
       dashboards: {
         home: {},
@@ -74,7 +78,7 @@ module.exports = {
     },
     {
       jobFunctions: ['all'],
-      icon: 'MdComputer',
+      icon: 'MdDesktopWindows',
       title: 'GeneXpert Devices',
       titleI18nKey: 'geneXpertDevicesTitle',
       subTitle: null,
@@ -87,7 +91,8 @@ module.exports = {
       link: '/browse/device',
       sortOrder: 0,
       externalId: 'geneXpertDevices',
-      description: 'The number of approved GeneXpert devices.',
+      description:
+        'The number of approved GeneXpert devices (excluding decommissioned devices).',
       descriptionI18nKey: 'geneXpertDevices',
       dashboards: {
         operational: {
@@ -137,53 +142,9 @@ module.exports = {
       },
     },
     {
-      icon: 'MdNotificationsNone',
-      jobFunctions: ['all'],
-      title: 'Positive Results Notified',
-      titleI18nKey: 'gxPositiveResultsNotifiedTitle',
-      externalId: 'gxPositiveResultsNotified',
-      sqlForIndicator: `
-          SELECT
-          CONCAT(IFNULL(ROUND(SUM(HasNotifications) * 100 / COUNT(*),
-            0),
-               0),
-          '%') AS cnt
-          FROM
-          (SELECT
-              IFNULL(COUNT(n.id), 0) > 0 AS HasNotifications
-          FROM
-              Result AS r
-          INNER JOIN Device d ON d.id = r.deviceId
-          INNER JOIN Site s ON s.id = d.siteId
-          INNER JOIN Partner p ON p.id = s.partnerId
-          INNER JOIN Assay a ON r.assayId = a.id
-          INNER JOIN ResultCategory rc ON r.resultCategory1 = rc.id
-          INNER JOIN DeviceType dt ON a.deviceTypeId = dt.id
-          LEFT JOIN Geography g ON s.geographyId = g.id
-          LEFT JOIN Issue i ON r.id = i.resultId
-          LEFT JOIN IssueType it ON i.issueTypeId = it.id
-          LEFT JOIN Notification n ON i.id = n.issueId
-          WHERE
-              rc.externalid IN ('Detected' , 'Trace Detected', 'Positive', 'MoreThan1000')
-                  AND it.externalId = 'ResultReceived'
-                  AND dt.externalId = 'CepheidGeneXpert'
-                  AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
-                  AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
-          GROUP BY r.id) AS q
-      `,
-      sqlForStatUnit: `SELECT CONCAT(ROUND(100 * 11/312), '%') as cnt`,
-      statUnit: '{unit} last month',
-      statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
-      sortOrder: 7,
-      description:
-        'The percentage of positive GeneXpert TB and HIV results that were notified via SMS or email.',
-      descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
-      link: '/operational-data#resultsTransmitted',
-      dashboards: {
-        operational: {
-          groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
-        },
-      },
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'gxPositiveResultsNotified'
+      ),
     },
     {
       ...dashboardWidgetsBase.stat.find(
@@ -223,55 +184,60 @@ module.exports = {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'avgTimeToUpload'
       ),
-      sortOrder: 6,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'moduleSwaps'),
-      sortOrder: 1,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'instrumentsReplaced'
       ),
-      sortOrder: 4,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'unusedModules'),
-      sortOrder: 3,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageRecipientsOfEmail'
       ),
-      sortOrder: 9,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageRecipientsOfSms'
       ),
-      sortOrder: 10,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageLengthOfSms'
       ),
-      sortOrder: 11,
     },
     {
       ...dashboardWidgetsBase.stat.find(x => x.externalId === 'smsSent'),
-      sortOrder: 12,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageDaysModuleSwap'
       ),
-      sortOrder: 2,
     },
     {
       ...dashboardWidgetsBase.stat.find(
         x => x.externalId === 'averageTimeToModuleReplacement'
       ),
-      sortOrder: 25,
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'numberOfDevicesExperiencingServiceInterruption'
+      ),
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'averageDurationServiceInterruption'
+      ),
+    },
+    {
+      ...dashboardWidgetsBase.stat.find(
+        x => x.externalId === 'percentageOfDaysWithServiceInterruption'
+      ),
     },
   ],
 }

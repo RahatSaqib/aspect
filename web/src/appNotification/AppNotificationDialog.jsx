@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
 
 // Material-UI
@@ -41,7 +41,7 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = _.flowRight(
+const enhance = flowRight(
   injectIntl,
   connect(mapStateToProps, mapDispatchToProps)
 )

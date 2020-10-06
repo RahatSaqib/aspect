@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import isNumber from 'lodash/isNumber'
 import React from 'react'
 import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
@@ -50,7 +50,7 @@ const mapStateToProps = state => {
   let { loggedOutReason } = state.user
 
   const jwtExp = state.user.jwt.exp
-  if (_.isNumber(jwtExp) && state.globals.lastServerResponseTime) {
+  if (isNumber(jwtExp) && state.globals.lastServerResponseTime) {
     const isExpired =
       jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
     if (isExpired) {

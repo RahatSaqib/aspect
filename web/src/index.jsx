@@ -1,7 +1,7 @@
 // This is the entry point for our app
 import 'whatwg-fetch'
 import 'url-search-params-polyfill'
-import _ from 'lodash'
+import noop from 'lodash/noop'
 import { render } from 'react-dom'
 
 import config from './config'
@@ -51,7 +51,7 @@ if (!window.Intl) {
 
 const appDom = document.getElementById('app')
 
-const renderApp = () => render(appFactory(_.noop)({ store }), appDom)
+const renderApp = () => render(appFactory(noop)({ store }), appDom)
 
 // let's see if we can get culture from local storage
 store.dispatch(hydrateFromLocalStorage(getAspectHydrateData()))

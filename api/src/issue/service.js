@@ -418,7 +418,7 @@ async function updateIssueStatus(request) {
       })
       .first('n.id')
     if (notification == null) {
-      throw Boom.unauthorized('No Active Issue to Acknowledge')
+      throw Boom.forbidden('No Active Issue to Acknowledge')
     }
 
     ;({ issueStatusId, issueStatusSeverityExternalId } = await knex(
@@ -645,6 +645,12 @@ async function triggerIssue(request) {
       break
     }
     case 'ResultDataEntered'.toLowerCase(): {
+      break
+    }
+    case 'InstrumentReplaced'.toLowerCase(): {
+      const { device, options } = data
+      await messageContext.deviceInstrumentReplaced(device, options)
+      triggered = true
       break
     }
   }

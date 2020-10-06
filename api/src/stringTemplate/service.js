@@ -367,15 +367,33 @@ function processDynamicMessage(message) {
 
 // helpers
 function processUsingDynamicHelpers(template, ds) {
+  /**
+   * if template contains mustached string 'numberOfDays' then process it in few steps
+   * - replace mustaches with some tokens, i.e. '${openMustaches}' and '${closeMustaches}'
+   *   Such odd tokens - '${...}' - to make sure template never has such strings
+   * - replace captured value of 'numberOfDays' section with handlebar function {{isoDate ...}}
+   * - process template - this replaces {{isoDate ...}} and all other placeholders with actual values
+   * - then replace tokens '${openMustaches}' and '${closeMustaches}' with corresponding mustaches
+   * - process template - this replaces {{numberOfDays ...}} with actual value
+   * otherwise - process template in one step
+   */
   const dynamicTemplate = template.replace(
     /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
     (str, match) =>
       `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
   )
-  const message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+  let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+
+  if (dynamicTemplate !== template) {
+    message = processUsingHandlebarsSyntax(
+      message
+        .replace(/\${openMustaches}/g, '{{')
+        .replace(/\${closeMustaches}/g, '}}'),
+      ds
+    )
+  }
+
   return message
-    .replace(/\${openMustaches}/g, '{{')
-    .replace(/\${closeMustaches}/g, '}}')
 }
 
 function curlyBrace(object, open) {
@@ -523,7 +541,7 @@ function isRegexMatch(stringValue, options) {
     const expression = getArgumentFromOptions(options, 'expression')
     if (expression) {
       const regex = new RegExp(expression, 'g')
-      return !_.isNull(stringValue.match(regex))
+      return !_.isNull(raw.match(regex))
     }
   }
 }
@@ -534,7 +552,7 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
     const expression = getArgumentFromOptions(options, 'expression')
     const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
     if (expression) {
-      const regex = new RegExp(expression, 'gm')
+      const regex = new RegExp(expression, 'gmi')
       const match = regex.exec(stringValue)
       if (match && match.length > groupNumber) {
         return safeString(match[groupNumber])
