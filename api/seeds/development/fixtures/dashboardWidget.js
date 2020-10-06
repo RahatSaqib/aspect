@@ -182,7 +182,7 @@ module.exports = {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
         },
-      }
+      },
     },
     {
       ...dashboardWidgetsBase.stat.find(
