@@ -186,13 +186,13 @@ module.exports = {
       options: {
         extraFields: {
           alert: {
-              whenIs: "greaterThan",
-              dependsOn: "count",
-              comparedTo: 5,
-              representing: "numberOfGxDevices"
-          }
-        }
-      }
+            whenIs: 'greaterThan',
+            dependsOn: 'count',
+            comparedTo: 5,
+            representing: 'numberOfGxDevices',
+          },
+        },
+      },
     },
     {
       ...dashboardWidgetsBase.stat.find(

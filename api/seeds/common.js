@@ -1874,7 +1874,7 @@ async function upsertDashboardWidgets(
         'description',
         'descriptionI18nKey',
         'dashboards',
-        'options'
+        'options',
       ])
       widgetData.dashboards = JSON.stringify(
         widgetData.dashboards || { home: {} }

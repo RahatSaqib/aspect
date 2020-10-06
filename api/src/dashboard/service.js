@@ -125,12 +125,12 @@ async function summaryDashboard(request) {
           extra: extra ? extra.cnt : null,
         }
       )
-      
+
       if (widget.options) {
         widget.options = JSON.parse(widget.options)
         addExtraData(widget)
       }
-        
+
       return widget
     })
   )
