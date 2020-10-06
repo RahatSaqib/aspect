@@ -20,12 +20,7 @@ const messagesByOperators = defineMessages({
   },
 })
 
-const valueRepresentations = defineMessages({
-  numberOfGxDevices: {
-    id: 'widgetsAlerts.numberOfSites',
-    defaultMessage: 'number of sites',
-  },
-})
+const valueRepresentations = defineMessages({})
 
 const format = (
   formatFunc,
