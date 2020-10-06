@@ -139,9 +139,8 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     const { siteContacts } = await knex('Person as p')
       .where({ geographyId: data.geographyId })
       .first(knex.raw('GROUP_CONCAT(p.name) as siteContacts'))
-    data.sitePersons = siteContacts
+    data.siteContacts = siteContacts
   }
-  console.log('sendEmail', data.geographyId, data)
   return processUsingDataSourceQuery(data, [
     'subjectTemplate',
     'bodyTemplate',

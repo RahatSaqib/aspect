@@ -575,18 +575,18 @@ async function getBaseIssues(auditFields) {
       },
       AlertTemplate: {
         message:
-          'Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
         ...auditFields,
       },
       SmsTemplate: {
         message:
-          'Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject:
-          'Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}',
-        body: `Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}
+          'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
+        body: `Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}
 
         Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 
@@ -605,7 +605,7 @@ async function getBaseIssues(auditFields) {
         Test Outcome: {{issue.data.resultOutcome}},
 
         Reagent Lot: {{issue.data.reagentlot}}`,
-        htmlBody: `Probe Check Too Low (5007) on Lot ({{result.consumableSerial}}) at {{site.name}}
+        htmlBody: `Probe Check Too Low (5007) on Lot ({{result.consumableLot}}) at {{site.name}}
 
           Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 

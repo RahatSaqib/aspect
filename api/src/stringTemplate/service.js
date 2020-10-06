@@ -92,7 +92,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'r.startedOn as resultStartedOn',
         'r.endedOn as resultEndedOn',
         'r.notes as resultNotes',
-        'r.consumableSerial',
+        'r.consumableLot',
         'r.createdOn',
         'r.senderOperator',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
@@ -148,7 +148,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    resultStartedOn: date/time
  *    resultEndedOn: date/time
  *    resultNotes: string
- *    consumableSerial: string
+ *    consumableLot: string
  *    createdOn: date/time
  *    senderOperator: string
  *    resultModuleName: string
@@ -214,7 +214,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    resultStartedOn: date/time
  *    resultEndedOn: date/time
  *    resultNotes: string
- *    consumableSerial: string
+ *    consumableLot: string
  *    createdOn: date/time
  *    senderOperator: string
  *    resultModuleName: string
@@ -256,7 +256,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         startedOn: resultStartedOn,
         endedOn: resultEndedOn,
         notes: resultNotes,
-        consumableSerial: consumableSerial,
+        consumableLot: consumableLot,
         createdOn: createdOn,
         senderOperator: senderOperator,
         moduleName: resultModuleName,
@@ -327,7 +327,7 @@ async function getBaseDataSource(data) {
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,
-      consumableSerial: d.consumableSerial,
+      consumableLot: d.consumableLot,
       createdOn: d.createdOn,
       senderOperator: d.senderOperator,
       moduleName: d.resultModuleName,

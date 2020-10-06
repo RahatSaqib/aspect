@@ -29,7 +29,7 @@ describe('This test is for testing different triggers conditions', () => {
     })
     assert.isObject(analyzeProbesModule)
     assert.property(analyzeProbesModule, 'type')
-    assert.equal(analyzeProbesModule.type, 'RESULT_ANALYZE_PROBES_MODULES')
+    assert.equal(analyzeProbesModule.type, 'RESULT_ANALYZE_PROBES_MODULE')
     assert.equal(analyzeProbesTop.type, 'RESULT_ANALYZE_PROBES_LOT')
   })
 })

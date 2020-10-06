@@ -1,4 +1,5 @@
 const chai = require('chai')
+const Promise = require('bluebird')
 
 const { assert } = chai
 const _ = require('lodash')
@@ -10,6 +11,7 @@ const { knex } = require('../../src/db')
 const {
   issueTypeToId,
   issueStatusToId,
+  assayToId,
 } = require('../../src/shared/dictionary')
 
 const {
@@ -28,10 +30,21 @@ const {
 } = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
+const checkNotificationsForIssue = async issueId => {
+  const notification = await knex('Notification as n')
+    .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
+    .where({ 'n.issueId': issueId })
+    .first()
+
+  assert.isNotNull(notification)
+  assert.isNotNull(notification.emailMessageId)
+  assert.isNotNull(notification.alertMessageId)
+  assert.isNotNull(notification.smsMessageId)
+}
 const getResults = async errorCode =>
   knex('Result as r')
     .join('Device as d', 'd.id', 'r.deviceid')
-    .where({ errorCode })
+    .where({ errorCode, assayId: await assayToId('GxMtbRif') })
     .select(
       'r.*',
       'd.name as deviceName',
@@ -68,11 +81,12 @@ describe('This test is for testing different triggers conditions', async () => {
         deviceName: results5007[0].deviceName,
         macAddress: results5007[0].macAddress,
       })
-      assert.isAtLeast(results5007.length, 1)
     })
     beforeEach(() => context.beforeRegisterAndSetDevice())
     afterEach(() => context.afterCleanUp())
     it('probesTooLow issue creation, should only create one issue', async () => {
+      assert.isAtLeast(results5007.length, 1)
+
       /**
        * in this testcase we are testing:
        * 1) issueFilter function for this testCondition
@@ -87,7 +101,6 @@ describe('This test is for testing different triggers conditions', async () => {
         hostId,
         consumableLot,
       } = results5007[0])
-
       const { basicDevicePayload, deviceAuth } = context
 
       const firstPayload = _.merge(
@@ -109,6 +122,7 @@ describe('This test is for testing different triggers conditions', async () => {
             id: 'Error-5007-result',
             startedOn: subDays(new Date(), 2),
             endedOn: subDays(new Date(), 2),
+            assay: { id: 'GxMtbRif' },
             consumable: {
               lot: consumableLot,
             },
@@ -126,7 +140,6 @@ describe('This test is for testing different triggers conditions', async () => {
           },
         }
       )
-
       const waitForAnalyze = waitForAction(resultAnalyzeProbes)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       const response = await postToDeviceApi({
@@ -143,51 +156,45 @@ describe('This test is for testing different triggers conditions', async () => {
         issueTypeId
       )
 
-      // const issuesForLot = await getIssues(
-      //   response.body.device.id,
-      //   await issueTypeToId('ProbesTooLowLot')
-      // )
-      /* assert.equal(issuesForLot.length, 1)
-      assert.equal(
-        issuesForLot[0].issueStatusId,
-        await issueStatusToId('Active')
-      )
-*/
       assert.equal(issuesForModules.length, 1)
       assert.equal(
         issuesForModules[0].issueStatusId,
         await issueStatusToId('Active')
       )
 
-      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
-      const response2 = await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload: _.merge(firstPayload, {
-          result: {
-            id: 'Error-5007-result2',
-            startedOn: subDays(new Date(), 2),
-            endedOn: subDays(new Date(), 2),
-            consumable: {
-              lot: consumableLot,
-            },
-            error: {
-              code: '5007',
-              notes: 'some ,notes',
-            },
-            instrument: {
-              serial: results5007[0].instrumentSerial,
-              module: {
-                serial: results5007[0].moduleSerial,
-                name: results5007[0].moduleName,
+      await checkNotificationsForIssue(issuesForModules[0].id)
+
+      // Post 4 lot results (shouldn't trigger another issue)
+      await Promise.each(_.range(1, 4), i =>
+        postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(firstPayload, {
+            assay: { id: 'GxMtbRif' },
+            result: {
+              id: `Error-5007-result${i}`,
+              startedOn: subDays(new Date(), i),
+              endedOn: subDays(new Date(), i),
+              consumable: {
+                lot: consumableLot,
               },
             },
-          },
-        }),
-      })
+          }),
+        })
+      )
+      const issuesForLot = await getIssues(
+        response.body.device.id,
+        await issueTypeToId('ProbesTooLowLot')
+      )
+      assert.equal(issuesForLot.length, 1)
+
+      assert.equal(
+        issuesForLot[0].issueStatusId,
+        await issueStatusToId('Active')
+      )
+      await checkNotificationsForIssue(issuesForLot[0].id)
+
       await waitForIdle()
-      const issues2 = await getIssues(response2.body.device.id, issueTypeId)
-      assert.equal(issues2.length, 1)
-      assert.isTrue(true)
+      assert.equal(issuesForLot.length, 1)
     })
   })
 })

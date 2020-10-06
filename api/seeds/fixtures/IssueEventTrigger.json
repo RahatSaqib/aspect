@@ -144,7 +144,7 @@
       "issueType": "ProbesTooLowModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "RESULT_ANALYZE_PROBES_MODULES",
+        "action": "RESULT_ANALYZE_PROBES_MODULE",
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeProbes"
