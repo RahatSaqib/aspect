@@ -498,7 +498,7 @@ async function getBaseIssues(auditFields) {
       issueType: {
         name: 'Probes Too Low On Module',
         externalId: 'ProbesTooLowModule',
-        i18nKey: 'issueStatusProbesTooLow',
+        i18nKey: 'issueStatusProbesTooLowModule',
         issueCategoryId: issueCategories.DataHealth,
       },
       MessageType: {
@@ -506,59 +506,59 @@ async function getBaseIssues(auditFields) {
       },
       AlertTemplate: {
         message:
-          'Probe Check Too Low (5007) on ({{issue.data.moduleSerial}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
         ...auditFields,
       },
       SmsTemplate: {
         message:
-          'Probe Check Too Low (5007) on ({{issue.data.moduleSerial}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject:
-          'Probe Check Too Low (5007) on ({{issue.data.moduleSerial}}) at {{site.name}}',
-        body: `Probe Check Too Low (5007) on ({{issue.data.moduleSerial}}) at {{site.name}}
+          'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
+        body: `Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}
 
         Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 
-        Country: {{issue.data.CountryName}}
+        Country: {{issue.data.country.name}}
 
-        Lab contacts: {{issue.data.personSites}}
+        Lab contacts: {{site.contacts}}
 
-        Instrument Serial: {{issue.data.instrumentSerial}}
+        Instrument Serial: {{result.instrumentSerial}}
 
-        Software Version: {{issue.data.softwareVersion}},
+        Software Version: {{result.softwareVersion}},
 
-        Cartridge Type: {{issue.data.assayName}},
+        Cartridge Type: {{result.assay.name}},
 
-        Sender User: {{issue.data.senderUser}},
+        Sender User: {{result.senderOperator}},
 
         Test Outcome: {{issue.data.resultOutcome}},
 
-        Module Serial: {{issue.data.moduleSerial}}
+        Module Serial: {{result.moduleSerial}}
 
-        Module Slot: {{issue.data.moduleName}}`,
-        htmlBody: `Probe Check Too Low (5007) on ({{issue.data.moduleSerial}}) at {{site.name}}
+        Module Slot: {{result.moduleName}}`,
+        htmlBody: `Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}
 
           Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 
-          Country: {{issue.data.CountryName}}
+          Country: {{issue.data.country.name}}
 
-          Lab contacts: {{issue.data.personSites}}
+          Lab contacts: {{site.contacts}}
 
-          Instrument Serial: {{issue.data.instrumentSerial}}
+          Instrument Serial: {{result.instrumentSerial}}
 
-          Software Version: {{issue.data.softwareVersion}},
+          Software Version: {{result.softwareVersion}},
 
-          Cartridge Type: {{issue.data.assayName}},
+          Cartridge Type: {{result.assay.name}},
 
-          Sender User: {{issue.data.senderUser}},
+          Sender User: {{result.senderOperator}},
 
           Test Outcome: {{issue.data.resultOutcome}},
 
-          Module Serial: {{issue.data.moduleSerial}}
+          Module Serial: {{result.moduleSerial}}
 
-          Module Slot: {{issue.data.moduleName}}`,
+          Module Slot: {{result.moduleName}}`,
 
         ...auditFields,
       },
@@ -575,51 +575,51 @@ async function getBaseIssues(auditFields) {
       },
       AlertTemplate: {
         message:
-          'Probe Check Too Low (5007) on ({{issue.data.reagentlot}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}',
         ...auditFields,
       },
       SmsTemplate: {
         message:
-          'Probe Check Too Low (5007) on ({{issue.data.reagentlot}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject:
-          'Probe Check Too Low (5007) on ({{issue.data.reagentlot}}) at {{site.name}}',
-        body: `Probe Check Too Low (5007) on ({{issue.data.reagentlot}}) at {{site.name}}
+          'Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}',
+        body: `Probe Check Too Low (5007) on lot ({{result.consumableSerial}}) at {{site.name}}
 
         Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 
-        Country: {{issue.data.CountryName}}
+        Country: {{country.name}}
 
-        Lab contacts: {{issue.data.personSites}}
+        Lab contacts: {{site.contacts}}
 
-        Instrument Serial: {{issue.data.instrumentSerial}}
+        Instrument Serial: {{result.moduleSerial}}
 
-        Software Version: {{issue.data.softwareVersion}},
+        Software Version: {{result.softwareVersion}},
 
-        Cartridge Type: {{issue.data.assayName}},
+        Cartridge Type: {{result.assay.name}},
 
-        Sender User: {{issue.data.senderUser}},
+        Sender User: {{result.senderOperator}},
 
         Test Outcome: {{issue.data.resultOutcome}},
 
         Reagent Lot: {{issue.data.reagentlot}}`,
-        htmlBody: `Probe Check Too Low (5007) on (Module/Lot) at {{site.name}}
+        htmlBody: `Probe Check Too Low (5007) on Lot ({{result.consumableSerial}}) at {{site.name}}
 
           Total errors 5007 in the last 30 days: {{issue.data.resultsWithErrors}}
 
-          Country: {{issue.data.CountryName}}
+          Country: {{issue.data.country.name}}
 
-          Lab contacts: {{issue.data.personSites}}
+          Lab contacts: {{site.contacts}}
 
-          Instrument Serial: {{issue.data.instrumentSerial}}
+          Instrument Serial: {{result.moduleSerial}}
 
-          Software Version: {{issue.data.softwareVersion}},
+          Software Version: {{result.softwareVersion}},
 
-          Cartridge Type: {{issue.data.assayName}},
+          Cartridge Type: {{result.assay.name}},
 
-          Sender User: {{issue.data.senderUser}},
+          Sender User: {{result.senderOperator}},
 
           Test Outcome: {{issue.data.resultOutcome}},
 

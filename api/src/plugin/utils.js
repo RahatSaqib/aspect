@@ -49,16 +49,8 @@ async function getReplacedModuleSerials(knex, deviceId) {
 async function shouldTriggerResultErrorAnalysis(
   messageContext,
   resultId,
-  instrumentSerial,
-  softwareVersion,
-  assayName,
-  senderUser,
-  resultOutcome,
   resultErrorCode,
-  moduleSerial,
-  moduleName,
-  assayId,
-  reagentLot
+  { resultOutcome, moduleSerial, assayId, reagentLot }
 ) {
   const errorsToAnalyze = [5007]
   if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
@@ -67,27 +59,13 @@ async function shouldTriggerResultErrorAnalysis(
         resultAnalyzeProbes,
       })
     }
-    await messageContext.resultAnalyzeProbes(
-      resultId,
-      resultErrorCode,
-
-      {
-        moduleSerial,
-        moduleName,
-        instrumentSerial,
-        softwareVersion,
-        assayName,
-        senderUser,
-        resultOutcome,
-      }
-    )
+    await messageContext.resultAnalyzeProbes(resultId, resultErrorCode, {
+      moduleSerial,
+      resultOutcome,
+    })
     await messageContext.resultAnalyzeProbes(resultId, resultErrorCode, {
       assayId,
       reagentLot,
-      instrumentSerial,
-      softwareVersion,
-      assayName,
-      senderUser,
       resultOutcome,
     })
   }

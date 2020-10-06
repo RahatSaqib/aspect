@@ -88,29 +88,21 @@ async function updateCovidResultFromFormData(
         resultCategory1,
         resultData,
         resultModuleSerial,
-        resultModuleName,
         resultErrorCode,
         resultLotNumber,
-        instrumentSerial,
-        softwareVersion,
-        assayName,
-        senderUser,
         resultOutcome,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
         messageContext,
         resultId,
-        instrumentSerial,
-        softwareVersion,
-        assayName,
-        senderUser,
-        resultOutcome,
         resultErrorCode,
-        resultModuleSerial,
-        resultModuleName,
-        assayId,
-        resultLotNumber
+        {
+          resultOutcome,
+          moduleSerial: resultModuleSerial,
+          assayId,
+          reagentLot: resultLotNumber,
+        }
       )
       if (!'Aspect' !== deviceLogDeviceTypeExternalId) {
         return

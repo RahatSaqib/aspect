@@ -62,6 +62,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
     queryBuilder
       .leftJoin('Person as p', `${message}.personId`, 'p.id')
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
+      .leftJoin('Geography as g', `s.geographyId`, 'g.id')
+      .leftJoin('Country as c', `g.countryId`, 'c.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
@@ -77,7 +79,9 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         's.shortName as siteShortName',
         'p.name as personName',
         'p.cell as personCell',
+        'g.id as geographyId',
         'pu.plugin as partnerPlugin',
+        'c.name as countryName',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
@@ -92,10 +96,13 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'r.createdOn',
         'r.senderOperator',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
+        'r.instrumentSerial as resultInstrumentSerial',
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
+        'r.senderVersion as resultSoftwareVersion',
         'r.errorNotes as resultErrorNotes',
         'a.externalId as assayExternalId',
+        'a.name as assayName',
         'sample.externalId as sampleExternalId',
         'rc1.externalId as resultCategory1ExternalId',
         'rc2.externalId as resultCategory2ExternalId'
@@ -128,6 +135,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    partnerPlugin: string
  *    siteExternalId: string
  *    siteName: string
+ *    countryName: string
  *    siteShortName: string
  *    deviceName: string
  *    deviceTypeExternalId: string
@@ -148,6 +156,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    resultErrorCode: string
  *    resultErrorNotes: string
  *    assayExternalId: string
+ *    assayName: string
  *    sampleExternalId: string
  *    sampleData: string (acceptable values are undefined, null, '' or JSON parsable)
  *    sampleOriginSiteExternalId: string
@@ -295,10 +304,14 @@ async function getBaseDataSource(data) {
     'settings'
   )
   return {
+    country: {
+      name: d.countryName,
+    },
     site: {
       id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
+      contacts: d.siteContacts,
     },
     device: {
       name: d.deviceName,
@@ -319,10 +332,13 @@ async function getBaseDataSource(data) {
       senderOperator: d.senderOperator,
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
+      instrumentSerial: d.resultInstrumentSerial,
+      softwareVersion: d.resultSoftwareVersion,
       errorCode: d.resultErrorCode,
       errorNotes: d.resultErrorNotes,
       assay: {
         id: d.assayExternalId,
+        name: d.assayName,
       },
       sample: {
         id: d.sampleExternalId,

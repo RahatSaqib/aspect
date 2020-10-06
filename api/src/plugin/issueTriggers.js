@@ -12,7 +12,7 @@ async function analyzeProbes(knex, action) {
   const moduleSerial = _.get(action.options.data, 'moduleSerial')
   const reagentLot = _.get(action.options.data, 'reagentLot')
   const assayId = _.get(action.options.data, 'assayId')
-
+  console.log('action.options.data', action.options.data)
   if (parseInt(resultErrorCode, 10) === 5007) {
     const query = knex('Result')
       .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
