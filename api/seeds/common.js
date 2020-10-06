@@ -1874,11 +1874,13 @@ async function upsertDashboardWidgets(
         'description',
         'descriptionI18nKey',
         'dashboards',
+        'options'
       ])
       widgetData.dashboards = JSON.stringify(
         widgetData.dashboards || { home: {} }
       )
       widgetData.linkParams = JSON.stringify(widgetData.linkParams || {})
+      widgetData.options = JSON.stringify(widgetData.options || {})
 
       let { id: widgetId } =
         (await knex('DashboardWidget')

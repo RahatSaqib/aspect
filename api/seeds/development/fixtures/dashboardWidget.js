@@ -183,6 +183,16 @@ module.exports = {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
         },
       },
+      options: {
+        extraFields: {
+          alert: {
+              whenIs: "greaterThan",
+              dependsOn: "count",
+              comparedTo: 5,
+              representing: "numberOfGxDevices"
+          }
+        }
+      }
     },
     {
       ...dashboardWidgetsBase.stat.find(

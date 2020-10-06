@@ -93,7 +93,7 @@ module.exports = {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
         },
-      },
+      }
     },
     {
       jobFunctions: ['all'],
