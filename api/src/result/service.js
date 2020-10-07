@@ -317,6 +317,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
           'Aspect',
           'rocheMagnaPure96',
           'appliedBiosystemsQuantStudio7Flex',
+          'PhilippinesNtrl',
         ])
     }, query)
     .modify(addConstraints, dataConstraints, {
