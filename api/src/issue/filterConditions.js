@@ -24,7 +24,6 @@ const filterByLotAndAssay = (
 }
 
 module.exports = {
-  filterModuleDisabledIssue: filterByModuleSerial,
   filterByModuleSerial,
   filterByLotAndAssay,
 }
