@@ -9,7 +9,6 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
-import InventoryStatus from './InventoryStatus'
 import SiteStatus from './SiteStatus'
 import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
@@ -207,16 +206,6 @@ const Status = ({ history, location, colorDemo }) => {
         className={cssClasses('Section--withStatus')}
         title={intl.formatMessage(messages.sitesTitle)}
       />
-
-      <PermissionsProvider permissions={['dashboard']}>
-        <InventoryStatus
-          history={history}
-          intl={intl}
-          countryIsoAlpha2Code={countryIsoAlpha2Code}
-          className={cssClasses('Section--withStatus')}
-          title={intl.formatMessage(messages.consumableTitle)}
-        />
-      </PermissionsProvider>
 
       <ErrorBoundary>
         <PermissionsProvider
