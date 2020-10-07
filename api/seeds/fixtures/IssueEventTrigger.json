@@ -151,7 +151,7 @@
           "evaluationFilterParameters": {
             "errorCode": 5007,
             "threshold": 0.03,
-            "below": true,
+            "below": false,
             "daysPeriod": 30,
             "minResults": 3
           }
@@ -172,7 +172,7 @@
           "evaluationFilterParameters": {
             "errorCode": 5007,
             "threshold": 0.03,
-            "below": true,
+            "below": false,
             "daysPeriod": 30,
             "minResults": 3
           }

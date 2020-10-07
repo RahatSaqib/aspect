@@ -104,7 +104,7 @@ async function updateCovidResultFromFormData(
           consumableLot: resultLotNumber,
         }
       )
-      if (!'Aspect' !== deviceLogDeviceTypeExternalId) {
+      if (deviceLogDeviceTypeExternalId !== 'Aspect') {
         return
       }
       const covid19AssayExternalIds = await knex('AssayType as at')

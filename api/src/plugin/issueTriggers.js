@@ -16,15 +16,11 @@ const analyzeResultsWithErrors = (
     (below ? percentage <= threshold : percentage >= threshold)
   )
 }
-async function analyzeErrors(knex, action, evaluationFilterParameter) {
-  const {
-    errorCode,
-    threshold,
-    below,
-    daysPeriod,
-    minResults,
-  } = evaluationFilterParameter
-
+async function analyzeErrors(
+  knex,
+  action,
+  { errorCode, threshold, below, daysPeriod, minResults }
+) {
   const { resultErrorCode } = action.options.data
 
   const moduleSerial = _.get(action.options.data, 'moduleSerial')
@@ -51,7 +47,6 @@ async function analyzeErrors(knex, action, evaluationFilterParameter) {
     const { resultsWithErrors, totalResults } = await query
     action.options.data.resultsWithErrors = resultsWithErrors
     action.options.totalResults = totalResults
-
     return analyzeResultsWithErrors(
       resultsWithErrors,
       totalResults,
