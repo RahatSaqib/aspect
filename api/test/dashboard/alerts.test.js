@@ -1,7 +1,7 @@
 const { assert } = require('chai')
 const { addExtraData } = require('../../src/dashboard/options')
 
-describe.only('dashboard widgets alerts', () => {
+describe('dashboard widgets alerts', () => {
   let widget = null
 
   beforeEach(() => {
@@ -53,7 +53,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: true,
+      display: true,
     })
   })
 
@@ -74,7 +74,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: true,
+      display: true,
     })
   })
 
@@ -96,7 +96,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: false,
+      display: false,
     })
   })
 
@@ -117,7 +117,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: true,
+      display: true,
     })
   })
 
@@ -138,7 +138,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: true,
+      display: true,
     })
   })
 
@@ -159,7 +159,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: false,
+      display: false,
     })
   })
 
@@ -180,7 +180,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: true,
+      display: true,
     })
   })
 
@@ -201,7 +201,7 @@ describe.only('dashboard widgets alerts', () => {
 
     assert.deepEqual(widget.alert, {
       config: alert,
-      value: false,
+      display: false,
     })
   })
 })

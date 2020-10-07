@@ -20,7 +20,12 @@ const messagesByOperators = defineMessages({
   },
 })
 
-const valueRepresentations = defineMessages({})
+const valueRepresentations = defineMessages({
+  numberOfSites: {
+    id: 'widgetAlerts.numberOfSites',
+    defaultMessage: 'number of sites',
+  },
+})
 
 const format = (
   formatFunc,

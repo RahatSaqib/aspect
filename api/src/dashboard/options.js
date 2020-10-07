@@ -5,8 +5,7 @@ const getValue = (widget, field) => _.get(widget, field)
 const setAlertValueOnWidget = widget => {
   const { alert } = _.get(widget, 'options.extraFields')
 
-  if (!alert)
-    return
+  if (!alert) return
 
   // As 'dependsOn' is always a field, we get the value of it
   const dependencyValue = getValue(widget, alert.dependsOn)
