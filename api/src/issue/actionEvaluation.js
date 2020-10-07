@@ -27,7 +27,6 @@ async function actionConditionsMet(knex, action, partnerId, conditions) {
       `Unrecognised evaluation method in condition ${evaluationMethod}`
     )
   }
-  console.log('evaluationFilterParameters', evaluationFilterParameters)
   return evaluationMethods[evaluationMethod](
     knex,
     action,

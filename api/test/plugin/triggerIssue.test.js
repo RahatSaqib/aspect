@@ -5,7 +5,7 @@ const { resultAnalyzeErrors } = require('../../src/result/actions')
 const { assert } = chai
 
 describe('This test is for testing different triggers conditions', () => {
-  it('probesTooLow', async () => {
+  it('analyzeResultsWithErrors', async () => {
     assert.isTrue(analyzeResultsWithErrors(3, 100, 0.03, false, 3))
     assert.isTrue(analyzeResultsWithErrors(20, 200, 0.1, false, 3))
     assert.isTrue(analyzeResultsWithErrors(1, 100, 0.03, true, 1))

@@ -82,12 +82,6 @@ function onIssueEventTrigger(
         partnerId,
         JSON.parse(triggerConditions).conditions
       )
-      console.log(
-        'triggerConditions',
-        triggerConditions,
-        action,
-        shouldTriggerEvent
-      )
       if (shouldTriggerEvent) {
         const now = new Date()
         const openIssue = await findOpenIssue(

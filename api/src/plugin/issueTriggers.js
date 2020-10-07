@@ -11,26 +11,19 @@ const analyzeResultsWithErrors = (
   minResults
 ) => {
   const percentage = resultsWithErrors / parseFloat(totalResults)
-  return totalResults >= minResults && below
-    ? percentage >= threshold
-    : percentage <= threshold
+  return (
+    totalResults >= minResults &&
+    (below ? percentage <= threshold : percentage >= threshold)
+  )
 }
-async function analyzeErrors(
-  knex,
-  action,
-  evaluationParameter
-
-  // { errorCode, threshold, below, daysPeriod, minResults }
-) {
-  console.log('entre', action, evaluationParameter)
+async function analyzeErrors(knex, action, evaluationFilterParameter) {
   const {
     errorCode,
     threshold,
     below,
     daysPeriod,
     minResults,
-  } = evaluationParameter
-  console.log(errorCode, threshold, below, daysPeriod, minResults)
+  } = evaluationFilterParameter
 
   const { resultErrorCode } = action.options.data
 
@@ -55,7 +48,6 @@ async function analyzeErrors(
         consumableLot,
         assayId
       )
-    console.log(query.toString())
     const { resultsWithErrors, totalResults } = await query
     action.options.data.resultsWithErrors = resultsWithErrors
     action.options.totalResults = totalResults

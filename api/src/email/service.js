@@ -138,7 +138,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   if (data.geographyId) {
     const { siteContacts } = await knex('JobContext as jc')
       .join('Job as j', 'jc.jobId', 'j.id')
-      .join('Person as p', 'j.siteId', 'p.id')
+      .join('Person as p', 'jc.siteId', 'p.id')
       .where({ 'jc.geographyId': data.geographyId })
       .first(knex.raw('GROUP_CONCAT(p.name) as siteContacts'))
     data.siteContacts = siteContacts
