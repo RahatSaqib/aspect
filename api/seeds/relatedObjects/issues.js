@@ -542,7 +542,7 @@ async function getBaseIssues(auditFields) {
 
           Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
-          Country: {{issue.data.country.name}}
+          Country: {{country.name}}
 
           Lab contacts: {{site.contacts}}
 

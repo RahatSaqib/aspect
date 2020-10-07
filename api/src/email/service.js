@@ -135,7 +135,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       'tmpl.htmlBody as htmlBodyTemplate'
     )
 
-  if (data.geographyId) {
+  if (data && data.geographyId) {
     const { siteContacts } = await knex('JobContext as jc')
       .join('Job as j', 'jc.jobId', 'j.id')
       .join('Person as p', 'jc.siteId', 'p.id')

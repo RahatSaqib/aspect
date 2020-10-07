@@ -12,7 +12,6 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  //
   await seedIssueType(knex, 'ProbeCheckTooLowModule', {
     userName: 'admin',
   })
@@ -20,7 +19,6 @@ async function seed(knex) {
     userName: 'admin',
   })
 
-  //
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['ProbeCheckTooLowLot', 'ProbeCheckTooLowModule'],
   })

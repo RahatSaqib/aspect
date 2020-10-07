@@ -67,13 +67,15 @@ describe('This test is for testing different triggers conditions', async () => {
     beforeEach(async () => {
       await context.beforeRegisterAndSetDevice()
 
-      await Promise.each(_.range(0, 4), () =>
+      await Promise.each(_.range(0, 6), i =>
         context.createResultForThisDevice({
           resultDetails: {
             consumableLot: 'Lot 0',
             moduleName: 'Module A',
             moduleSerial: 'M-123456-0',
             instrumentSerial: 'S-1234-0',
+            errorCode: i === 0 ? '5007' : null,
+            errorNotes: i === 0 ? 'Some notes' : null,
           },
         })
       )
