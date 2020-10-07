@@ -11,7 +11,6 @@ const { knex } = require('../../src/db')
 const {
   issueTypeToId,
   issueStatusToId,
-  assayToId,
 } = require('../../src/shared/dictionary')
 
 const {
@@ -37,18 +36,6 @@ const checkNotificationsForIssue = async issueId => {
   assert.isNotNull(notification.alertMessageId)
   assert.isNotNull(notification.smsMessageId)
 }
-const getResults = async errorCode =>
-  knex('Result as r')
-    .join('Device as d', 'd.id', 'r.deviceid')
-    .where({ errorCode, assayId: await assayToId('GxMtbRif') })
-    .select(
-      'r.*',
-      'd.name as deviceName',
-      'd.serial as deviceSerialNumber',
-      'd.hostId',
-      'd.macAddress as macAddress'
-    )
-
 const getIssues = (deviceId, issueTypeId) =>
   knex('Issue')
     .where({ deviceId, issueTypeId })
@@ -56,33 +43,44 @@ const getIssues = (deviceId, issueTypeId) =>
     .select()
 
 describe('This test is for testing different triggers conditions', async () => {
-  let macAddress
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
-  let deviceSerialNumber
-  let hostId
-  let deviceName
-  let consumableLot
+  const macAddress = 'MAC00000000FAKE'
   let results5007
 
-  describe.only('error 5007', async () => {
+  const deviceName = 'New GeneXpert Laboratory'
+  const deviceSerialNumber = 'Cepheid-PC-BLH'
+  const hostId = 'BLH-Expert'
+
+  describe('error 5007', async () => {
     let context
     before(async () => {
-      results5007 = await getResults(5007)
       context = createGxConnectTestContext(server, {
         countryCode,
         adminUsername,
         adminPassword,
-        deviceName: results5007[0].deviceName,
-        macAddress: results5007[0].macAddress,
+        deviceName,
+        macAddress,
       })
     })
-    beforeEach(() => context.beforeRegisterAndSetDevice())
+    beforeEach(async () => {
+      await context.beforeRegisterAndSetDevice()
+
+      await Promise.each(_.range(0, 4), () =>
+        context.createResultForThisDevice({
+          resultDetails: {
+            consumableLot: 'Lot 0',
+            moduleName: 'Module A',
+            moduleSerial: 'M-123456-0',
+            instrumentSerial: 'S-1234-0',
+          },
+        })
+      )
+      ;[results5007] = await context.getAllResults()
+    })
     afterEach(() => context.afterCleanUp())
     it('probesTooLow issue creation, should only create one issue', async () => {
-      assert.isAtLeast(results5007.length, 1)
-
       /**
        * in this testcase we are testing:
        * 1) issueFilter function for this testCondition (With error 5007)
@@ -91,13 +89,7 @@ describe('This test is for testing different triggers conditions', async () => {
        * 4) check if the different noifications were generated.
        */
       // eslint-disable-next-line prefer-destructuring
-      ;({
-        deviceName,
-        deviceSerialNumber,
-        macAddress,
-        hostId,
-        consumableLot,
-      } = results5007[0])
+      const { consumableLot } = results5007
       const { basicDevicePayload, deviceAuth } = context
 
       const firstPayload = _.merge(
@@ -128,10 +120,10 @@ describe('This test is for testing different triggers conditions', async () => {
               notes: 'some ,notes',
             },
             instrument: {
-              serial: results5007[0].instrumentSerial,
+              serial: results5007.instrumentSerial,
               module: {
-                serial: results5007[0].moduleSerial,
-                name: results5007[0].moduleName,
+                serial: results5007.moduleSerial,
+                name: results5007.moduleName,
               },
             },
           },

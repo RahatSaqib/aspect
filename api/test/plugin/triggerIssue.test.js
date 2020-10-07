@@ -1,21 +1,22 @@
 const chai = require('chai')
-const { probesTooLow } = require('../../src/plugin/issueTriggers')
+const { analyzeResultsWithErrors } = require('../../src/plugin/issueTriggers')
 const { resultAnalyzeErrors } = require('../../src/result/actions')
 
 const { assert } = chai
 
 describe('This test is for testing different triggers conditions', () => {
   it('probesTooLow', async () => {
-    assert.isTrue(probesTooLow(3, 100))
-    assert.isTrue(probesTooLow(20, 200))
-    assert.isFalse(probesTooLow(1, 100))
-    assert.isFalse(probesTooLow(0, 0))
-    assert.isFalse(probesTooLow(null, 0))
-    assert.isFalse(probesTooLow(null, 100))
-    assert.isFalse(probesTooLow(0, 2))
-    assert.isFalse(probesTooLow(3, 200))
-    assert.isFalse(probesTooLow(0, 100))
-    assert.isFalse(probesTooLow(1, 1))
+    assert.isTrue(analyzeResultsWithErrors(3, 100, 0.03, false, 3))
+    assert.isTrue(analyzeResultsWithErrors(20, 200, 0.1, false, 3))
+    assert.isTrue(analyzeResultsWithErrors(1, 100, 0.03, true, 1))
+    assert.isFalse(analyzeResultsWithErrors(1, 100, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(0, 0, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(null, 0, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(null, 100, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(0, 2, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(3, 200, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(0, 100, 0.03, false, 3))
+    assert.isFalse(analyzeResultsWithErrors(1, 1, 0.03, false, 3))
   })
 
   it('Should analyze different scenarios based on the data for triggering an action', () => {

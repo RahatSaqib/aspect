@@ -149,7 +149,11 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5007
+            "errorCode": 5007,
+            "threshold": 0.03,
+            "below": true,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       },
@@ -166,7 +170,11 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5007
+            "errorCode": 5007,
+            "threshold": 0.03,
+            "below": true,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       },

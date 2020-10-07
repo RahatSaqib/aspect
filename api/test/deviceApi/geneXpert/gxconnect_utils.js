@@ -6,9 +6,17 @@ GxConnect also has the requirement to be able to  register itself as a device
 */
 const _ = require('lodash')
 const chai = require('chai')
+const { addMinutes, subDays, format: dateFormat } = require('date-fns')
 const { getSiteFromDeviceId, getDeviceFromApiKey } = require('../utils')
 const { waitForIdle } = require('../../utils/mqUtils')
-const { run } = require('../../../src/db')
+const { run, knex } = require('../../../src/db')
+
+const {
+  allResultCategoryToId,
+  resultSourceToId,
+  resultTypeToId,
+  sampleTypeToId,
+} = require('../../../src/shared/dictionary')
 
 const { assert } = chai
 
@@ -224,8 +232,10 @@ class GxConnectApiTestContext {
       'registerAndSetDevice',
       'runTest',
       'getLastResult',
+      'getAllResults',
       'afterCleanUp',
       'cleanUp',
+      'createResultForThisDevice',
     ])
   }
 
@@ -358,6 +368,65 @@ class GxConnectApiTestContext {
     })
   }
 
+  async createResultForThisDevice({
+    assayExternalId = 'GxMtbRif',
+    resultDetails = {},
+  }) {
+    const daysToSubtract = Math.ceil(Math.random() ** 4 * 60)
+    const randomDate = subDays(new Date(), daysToSubtract)
+    const randomNumber = subDays(new Date(), daysToSubtract).getTime()
+
+    const { partnerId } = this.device
+    const sampleTypeId = await sampleTypeToId('assayTypeMtbRif')
+    const sample = {
+      externalId: `${dateFormat(randomDate, 'yy')}/${randomNumber}`,
+      collectedOn: subDays(new Date(), daysToSubtract),
+      sampleTypeId,
+      originSiteId: this.site.id,
+    }
+    const assay = await knex('Assay')
+      .where('externalId', assayExternalId)
+      .first()
+    sample.id = await knex('Sample').insert(sample)
+
+    const resultSourceDiagnosticDeviceId = await resultSourceToId(
+      'DiagnosticDevice'
+    )
+    const resultCategories = await allResultCategoryToId()
+    const resultTypePatientId = await resultTypeToId('Patient')
+    const [resultId] = await knex('Result').insert(
+      _.merge(
+        {
+          externalId: `someresult-${randomNumber}`,
+          assayId: assay.id,
+          partnerId,
+          geographyId: this.site.geographyId,
+          siteId: this.site.id,
+          reportableSiteId: this.site.id,
+          deviceId: this.device.id,
+          longitude: this.site.longitude,
+          latitude: this.site.latitude,
+          resultSourceId: resultSourceDiagnosticDeviceId,
+          resultTypeId: resultTypePatientId,
+          sampleId: sample.id,
+          resultCategory1: resultCategories.Unknown,
+          resultCategory2: resultCategories.Unknown,
+          resultData: '{}',
+          formData: '{}',
+          patientData: '{}',
+          startedOn: randomDate,
+          endedOn: addMinutes(randomDate, 100),
+          createdOn: addMinutes(randomDate, 120),
+          updatedOn: addMinutes(randomDate, 180),
+          createdBy: this.device.createdBy,
+          updatedBy: this.device.createdBy,
+        },
+        resultDetails
+      )
+    )
+    return resultId
+  }
+
   getLastResult() {
     return run(async knex => {
       const resultDetails = await knex('DeviceLog as dl')
@@ -423,6 +492,10 @@ class GxConnectApiTestContext {
       }
       return resultDetails
     })
+  }
+
+  async getAllResults() {
+    return knex('Result as r').where('r.deviceId', this.device.id).select()
   }
 }
 

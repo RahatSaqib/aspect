@@ -74,6 +74,7 @@ function onIssueEventTrigger(
 ) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
+
     return context.transact(async knex => {
       const shouldTriggerEvent = await actionConditionsMet(
         knex,
@@ -81,7 +82,12 @@ function onIssueEventTrigger(
         partnerId,
         JSON.parse(triggerConditions).conditions
       )
-
+      console.log(
+        'triggerConditions',
+        triggerConditions,
+        action,
+        shouldTriggerEvent
+      )
       if (shouldTriggerEvent) {
         const now = new Date()
         const openIssue = await findOpenIssue(

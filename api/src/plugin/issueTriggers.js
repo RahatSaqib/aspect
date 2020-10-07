@@ -3,10 +3,35 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const { startOfDayUtc } = require('../shared/date')
 
-const probesTooLow = (resultsWithErrors, totalResults) =>
-  totalResults >= 3 && resultsWithErrors / parseFloat(totalResults) >= 0.03
+const analyzeResultsWithErrors = (
+  resultsWithErrors,
+  totalResults,
+  threshold,
+  below,
+  minResults
+) => {
+  const percentage = resultsWithErrors / parseFloat(totalResults)
+  return totalResults >= minResults && below
+    ? percentage >= threshold
+    : percentage <= threshold
+}
+async function analyzeErrors(
+  knex,
+  action,
+  evaluationParameter
 
-async function analyzeErrors(knex, action, { errorCode }) {
+  // { errorCode, threshold, below, daysPeriod, minResults }
+) {
+  console.log('entre', action, evaluationParameter)
+  const {
+    errorCode,
+    threshold,
+    below,
+    daysPeriod,
+    minResults,
+  } = evaluationParameter
+  console.log(errorCode, threshold, below, daysPeriod, minResults)
+
   const { resultErrorCode } = action.options.data
 
   const moduleSerial = _.get(action.options.data, 'moduleSerial')
@@ -14,7 +39,7 @@ async function analyzeErrors(knex, action, { errorCode }) {
   const assayId = _.get(action.options.data, 'assayId')
   if (parseInt(resultErrorCode, 10) === errorCode) {
     const query = knex('Result')
-      .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
+      .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .first(
         knex.raw(
           'sum(case when errorcode=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
@@ -30,15 +55,22 @@ async function analyzeErrors(knex, action, { errorCode }) {
         consumableLot,
         assayId
       )
+    console.log(query.toString())
     const { resultsWithErrors, totalResults } = await query
     action.options.data.resultsWithErrors = resultsWithErrors
-    action.options.data.totalResults = totalResults
+    action.options.totalResults = totalResults
 
-    return probesTooLow(resultsWithErrors, totalResults)
+    return analyzeResultsWithErrors(
+      resultsWithErrors,
+      totalResults,
+      threshold,
+      below,
+      minResults
+    )
   }
   return false
 }
 module.exports = {
   analyzeErrors,
-  probesTooLow,
+  analyzeResultsWithErrors,
 }
