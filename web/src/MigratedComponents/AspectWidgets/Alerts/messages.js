@@ -26,22 +26,22 @@ const format = (
   formatFunc,
   { whenIs, representing: representingKey, comparedTo }
 ) => {
-  let comparationStrings
+  let comparisonStrings
 
   switch (whenIs) {
     case 'between':
-      comparationStrings = {
+      comparisonStrings = {
         comparedToFrom: comparedTo[0],
         comparedToTo: comparedTo[1],
       }
       break
     case 'containedIn':
-      comparationStrings = {
+      comparisonStrings = {
         comparedTo: comparedTo.join(', '),
       }
       break
     default:
-      comparationStrings = { comparedTo }
+      comparisonStrings = { comparedTo }
       break
   }
 
@@ -49,7 +49,7 @@ const format = (
 
   return formatFunc(messagesByOperators[whenIs], {
     representing,
-    ...comparationStrings,
+    ...comparisonStrings,
   })
 }
 

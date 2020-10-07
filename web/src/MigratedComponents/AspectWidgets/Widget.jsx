@@ -130,7 +130,7 @@ const AspectWidget = ({
           <div className={cssClasses('Summary__Card__Item')}>
             <div className={cssClasses('Summary__Card__Item__Count')}>
               {count}{' '}
-              {alert && alert.value ? (
+              {alert && alert.display ? (
                 <WidgetAlert alert={alert.config} />
               ) : null}
             </div>
@@ -181,7 +181,7 @@ AspectWidget.propTypes = {
     statUnitI18nKey: PropTypes.string,
     alert: PropTypes.shape({
       config: PropTypes.object.isRequired,
-      value: PropTypes.isRequired,
+      display: PropTypes.isRequired,
     }),
   }).isRequired,
 }

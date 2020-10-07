@@ -126,7 +126,7 @@ async function summaryDashboard(request) {
         }
       )
 
-      if (widget.options) {
+      if (!_.isEmpty(widget.options)) {
         widget.options = JSON.parse(widget.options)
         addExtraData(widget)
       }

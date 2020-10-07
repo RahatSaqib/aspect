@@ -2,8 +2,11 @@ const _ = require('lodash')
 
 const getValue = (widget, field) => _.get(widget, field)
 
-const getAlertValue = widget => {
-  const { alert } = widget.options.extraFields
+const setAlertValueOnWidget = widget => {
+  const { alert } = _.get(widget, 'options.extraFields')
+
+  if (!alert)
+    return
 
   // As 'dependsOn' is always a field, we get the value of it
   const dependencyValue = getValue(widget, alert.dependsOn)
@@ -18,36 +21,36 @@ const getAlertValue = widget => {
   alert.comparedTo = comparedTo
 
   // Depending the action to take, we make a different comparation and get the value of the alert
-  let value = false
+  let display = false
   switch (alert.whenIs) {
     case 'greaterThan':
-      value = dependencyValue > comparedTo
+      display = dependencyValue > comparedTo
       break
     case 'lessThan':
-      value = dependencyValue < comparedTo
+      display = dependencyValue < comparedTo
       break
     case 'between':
-      value =
+      display =
         dependencyValue > alert.comparedTo[0] &&
         dependencyValue < alert.comparedTo[1]
       break
     case 'containedIn':
-      value = _.includes(alert.comparedTo, dependencyValue)
+      display = _.includes(alert.comparedTo, dependencyValue)
       break
     default:
-      value = false
+      display = false
   }
 
   // Sets the alert into the widget
-  widget.alert = { config: alert, value }
+  widget.alert = { config: alert, display }
 }
 
 const optionsByFunc = {
-  alert: getAlertValue,
+  alert: setAlertValueOnWidget,
 }
 
 const addExtraData = widget => {
-  if (widget.options && widget.options.extraFields) {
+  if (_.get(widget, 'options.extraFields')) {
     _.keys(widget.options.extraFields).forEach(k => {
       const func = _.get(optionsByFunc, k)
       func(widget)
