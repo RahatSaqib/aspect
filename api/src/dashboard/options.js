@@ -3,7 +3,7 @@ const _ = require('lodash')
 const getValue = (widget, field) => _.get(widget, field)
 
 const setAlertValueOnWidget = widget => {
-  const { alert } = _.get(widget, 'options.extraFields')
+  const alert = _.get(widget, 'options.extraFields.alert')
 
   if (!alert) return
 
