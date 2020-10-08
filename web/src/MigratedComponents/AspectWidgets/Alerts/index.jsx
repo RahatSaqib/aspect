@@ -11,10 +11,10 @@ const cssClasses = classnames.bind(require('./alerts.css'))
 
 const WidgetAlert = ({ alert }) => {
   const { formatMessage } = useIntl()
-  const explanaition = format(formatMessage, alert)
+  const explanation = format(formatMessage, alert)
   return (
     <AspectTooltip
-      title={explanaition}
+      title={explanation}
       className={cssClasses('summary_widgetAlertTooltip')}
     >
       <IconProvider
