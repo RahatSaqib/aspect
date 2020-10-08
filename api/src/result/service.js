@@ -311,14 +311,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       if (params.deviceType)
         queryBuilder.where('dt.externalId', params.deviceType)
-      else
-        queryBuilder.whereIn('dt.externalId', [
-          'CepheidGeneXpert',
-          'Aspect',
-          'rocheMagnaPure96',
-          'appliedBiosystemsQuantStudio7Flex',
-          'PhilippinesNtrl',
-        ])
     }, query)
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
