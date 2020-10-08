@@ -6,6 +6,7 @@ import { useQuery } from 'react-query'
 import Select from 'react-select'
 import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
+import filter from 'lodash/filter'
 
 import fetchWrapperForQueries from '../QueryFetch'
 
@@ -17,6 +18,21 @@ const {
   '--aspect-color-white': aspectWhite,
   '--white-lilac-2': lilac2,
 } = process.env
+
+function indexForDefaultSelected(data, defaultOption) {
+  if (typeof defaultOption === 'object') {
+    const { key, value } = defaultOption
+    const selectValue = filter(data, { [key]: value })
+    if (selectValue && selectValue.length) {
+      return selectValue[0]
+    }
+    return false
+  }
+  if (typeof defaultOption === 'number') {
+    return data[defaultOption]
+  }
+  return false
+}
 
 const buildCustomStyles = defaultOption => {
   const styles = {
@@ -75,6 +91,10 @@ const SelectComponent = ({
   isClearable,
   defaultSelectedOption,
 }) => {
+  const defaultOptionValue = indexForDefaultSelected(
+    data,
+    defaultSelectedOption
+  )
   const [defaultOption] = useState(selectedValue)
   const [inputValue, setInputValue] = useState(false)
 
@@ -91,7 +111,7 @@ const SelectComponent = ({
         getOptionLabel={val => val[nameKey]}
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
-        defaultValue={!defaultSelectedOption || data[defaultSelectedOption]}
+        defaultValue={defaultOptionValue}
         options={data}
         placeholder={defaultOption}
         styles={buildCustomStyles(defaultOption)}
