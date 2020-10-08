@@ -19,7 +19,7 @@ module.exports = {
       descriptionI18nKey: 'sitesDescription',
       dashboards: {
         home: {},
-      }
+      },
     },
     {
       jobFunctions: ['all'],

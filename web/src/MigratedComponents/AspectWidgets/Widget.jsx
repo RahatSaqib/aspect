@@ -93,7 +93,7 @@ const AspectWidget = ({
     statStatus,
     extraLabel,
     statUnitI18nKey,
-    alert,
+    alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
@@ -130,9 +130,7 @@ const AspectWidget = ({
           <div className={cssClasses('Summary__Card__Item')}>
             <div className={cssClasses('Summary__Card__Item__Count')}>
               {count}{' '}
-              {alert && alert.display ? (
-                <WidgetAlert alert={alert.config} />
-              ) : null}
+              {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
             </div>
             <div className={cssClasses('Summary__Card__Item__Messages')}>
               <div
