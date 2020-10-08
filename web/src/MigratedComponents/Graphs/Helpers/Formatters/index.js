@@ -174,7 +174,7 @@ const generateTickValues = (
   const upperBoundary = boundaries[1] || 0
 
   switch (true) {
-    case upperBoundary > 40 && axesTicks !== 'none':
+    case upperBoundary > 40 && axesTicks !== 'none' && axesTicks !== 'bookends':
       dynamicAxesTicks = 'clubsandwich'
       break
 
