@@ -169,8 +169,20 @@ const generateTickValues = (
   zeroOut = false
 ) => {
   let values
+  let dynamicAxesTicks
   const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
-  switch (axesTicks) {
+  const upperBoundary = boundaries[1] || 0
+
+  switch (true) {
+    case upperBoundary > 40 && axesTicks !== 'none':
+      dynamicAxesTicks = 'clubsandwich'
+      break
+
+    default:
+      dynamicAxesTicks = axesTicks
+  }
+
+  switch (dynamicAxesTicks) {
     case 'none':
       values = 0
       break
