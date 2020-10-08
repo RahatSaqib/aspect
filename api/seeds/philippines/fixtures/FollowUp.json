@@ -150,8 +150,8 @@
       ],
       "type": "treatment",
       "name": "Regimen 6: FQ susceptible MDR-TB (>6 years; pedia)",
-      "externalId": "fsmdr-tb-6",
-      "i18nKey": "fsmdr-tb-6"
+      "externalId": "fsmdr-tb",
+      "i18nKey": "fsmdr-tb"
     },
     {
       "assays": [
@@ -201,8 +201,8 @@
       ],
       "type": "treatment",
       "name": "Regimen 7: FQ resistant MDR-TB (>6 years; pedia)",
-      "externalId": "fr-mdr-6",
-      "i18nKey": "fr-mdr-6"
+      "externalId": "fr-mdr",
+      "i18nKey": "fr-mdr"
     },
 
     {
