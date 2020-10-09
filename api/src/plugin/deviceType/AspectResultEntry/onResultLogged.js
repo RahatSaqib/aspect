@@ -63,6 +63,7 @@ async function updateCovidResultFromFormData(
         'rf.formSchema',
         'r.resultCategory1',
         'r.assayId',
+        'r.consumableLot',
         'd.id as resultDeviceId',
         knex.raw(
           "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
@@ -86,7 +87,7 @@ async function updateCovidResultFromFormData(
         resultModuleSerial,
         resultDeviceId,
         resultErrorCode,
-        resultLotNumber,
+        consumableLot,
         resultOutcome,
       } = result
 
@@ -99,7 +100,7 @@ async function updateCovidResultFromFormData(
           resultOutcome,
           moduleSerial: resultModuleSerial,
           assayId,
-          consumableLot: resultLotNumber,
+          consumableLot,
         }
       )
       if (deviceLogDeviceTypeExternalId !== 'Aspect') {

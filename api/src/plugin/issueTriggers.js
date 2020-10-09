@@ -37,7 +37,7 @@ async function analyzeErrors(
       )
       .modify(
         (builder, moduleSerial, consumableLot, assayId) => {
-          if (moduleSerial) builder.where('moduleSerial', moduleSerial)
+          if (moduleSerial) builder.where({ moduleSerial })
           else builder.where({ consumableLot, assayId })
         },
         moduleSerial,
