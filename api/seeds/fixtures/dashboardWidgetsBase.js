@@ -1379,7 +1379,7 @@ module.exports = {
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           LEFT OUTER JOIN (
-            SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+            SELECT COUNT(DISTINCT dmsl.day) AS daysInactive, dmsl.deviceId
             FROM DeviceMaintenanceStatusLog AS dmsl
             INNER JOIN Device AS d ON dmsl.deviceId = d.id
             INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
@@ -1415,7 +1415,7 @@ module.exports = {
         INNER JOIN Site AS s ON s.id = d.siteId
         LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         LEFT OUTER JOIN (
-          SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+          SELECT COUNT(DISTINCT dmsl.day) AS daysInactive, dmsl.deviceId
           FROM DeviceMaintenanceStatusLog AS dmsl
           INNER JOIN Device AS d ON dmsl.deviceId = d.id
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
