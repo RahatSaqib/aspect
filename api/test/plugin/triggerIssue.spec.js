@@ -41,8 +41,17 @@ const getIssues = (deviceId, issueTypeId) =>
     .where({ deviceId, issueTypeId })
     .orderBy('createdOn', 'DESC')
     .select()
+const evaluateIssues = async (response, issueTypeId) => {
+  assert.equal(response.status, 200)
+  assert.typeOf(response.body, 'Object')
+  const issues = await getIssues(response.body.device.id, issueTypeId)
 
-describe('This test is for testing different triggers conditions', async () => {
+  assert.equal(issues.length, 1)
+  assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
+
+  await checkNotificationsForIssue(issues[0].id)
+}
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -52,9 +61,47 @@ describe('This test is for testing different triggers conditions', async () => {
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
-
-  describe('error 5007', async () => {
+  const getPayload = thecontext =>
+    _.merge(
+      {},
+      thecontext.basicDevicePayload,
+      { name: thecontext.device.name },
+      {
+        configuration: {
+          data: {
+            macAddress: thecontext.device.macAddress,
+            hostId: thecontext.device.hostId,
+            deviceSerialNumber: thecontext.device.deviceSerialNumber,
+          },
+        },
+      },
+      basicResultPayload,
+      {
+        result: {
+          id: 'Error-5007-result',
+          startedOn: subDays(new Date(), 2),
+          endedOn: subDays(new Date(), 2),
+          assay: { id: 'GxMtbRif' },
+          consumable: {
+            lot: 'Lot 0',
+          },
+          error: {
+            code: '5007',
+            notes: 'some ,notes',
+          },
+          instrument: {
+            serial: results5007.instrumentSerial,
+            module: {
+              serial: results5007.moduleSerial,
+              name: results5007.moduleName,
+            },
+          },
+        },
+      }
+    )
+  describe('Probes check Too Low issue creation (Module and lot), error 5007', async () => {
     let context
+    let anotherDeviceContext
     before(async () => {
       context = createGxConnectTestContext(server, {
         countryCode,
@@ -62,13 +109,24 @@ describe('This test is for testing different triggers conditions', async () => {
         adminPassword,
         deviceName,
         macAddress,
+        hostId,
+        deviceSerialNumber,
+      })
+      anotherDeviceContext = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName: `2nd${deviceName}`,
+        macAddress: `2nd${macAddress}`,
+        hostId: `2nd${hostId}`,
+        deviceSerialNumber: `2nd${deviceSerialNumber}`,
       })
     })
     beforeEach(async () => {
       await context.beforeRegisterAndSetDevice()
-
-      await Promise.each(_.range(0, 6), i =>
-        context.createResultForThisDevice({
+      await anotherDeviceContext.beforeRegisterAndSetDevice()
+      await Promise.each(_.range(0, 3), async i => {
+        await context.createResultForThisDevice({
           resultDetails: {
             consumableLot: 'Lot 0',
             moduleName: 'Module A',
@@ -78,11 +136,22 @@ describe('This test is for testing different triggers conditions', async () => {
             errorNotes: i === 0 ? 'Some notes' : null,
           },
         })
-      )
+        await anotherDeviceContext.createResultForThisDevice({
+          resultDetails: {
+            consumableLot: 'Lot 0',
+            moduleName: 'Module A',
+            moduleSerial: 'M-ANOTHERSERIAL-0',
+            instrumentSerial: 'S-ANOTHERSERIAL-0',
+            errorCode: i === 0 ? '5007' : null,
+            errorNotes: i === 0 ? 'Some notes' : null,
+          },
+        })
+      })
       ;[results5007] = await context.getAllResults()
     })
     afterEach(() => context.afterCleanUp())
-    it('probesTooLow issue creation, should only create one issue', async () => {
+
+    it('should only create one issue per device', async () => {
       /**
        * in this testcase we are testing:
        * 1) issueFilter function for this testCondition (With error 5007)
@@ -92,45 +161,11 @@ describe('This test is for testing different triggers conditions', async () => {
        */
       // eslint-disable-next-line prefer-destructuring
       const { consumableLot } = results5007
-      const { basicDevicePayload, deviceAuth } = context
+      const { deviceAuth } = context
 
-      const firstPayload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        {
-          configuration: {
-            data: {
-              macAddress,
-              hostId,
-              deviceSerialNumber,
-            },
-          },
-        },
-        basicResultPayload,
-        {
-          result: {
-            id: 'Error-5007-result',
-            startedOn: subDays(new Date(), 2),
-            endedOn: subDays(new Date(), 2),
-            assay: { id: 'GxMtbRif' },
-            consumable: {
-              lot: consumableLot,
-            },
-            error: {
-              code: '5007',
-              notes: 'some ,notes',
-            },
-            instrument: {
-              serial: results5007.instrumentSerial,
-              module: {
-                serial: results5007.moduleSerial,
-                name: results5007.moduleName,
-              },
-            },
-          },
-        }
-      )
+      const firstPayload = getPayload(context)
+
+      const anotherDevicePayload = getPayload(anotherDeviceContext)
       const waitForAnalyze = waitForAction(resultAnalyzeErrors)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       const response = await postToDeviceApi({
@@ -139,25 +174,14 @@ describe('This test is for testing different triggers conditions', async () => {
       })
       await waitForAnalyze
       await waitForIdle()
-      assert.equal(response.status, 200)
-      assert.typeOf(response.body, 'Object')
-      const issueTypeId = await issueTypeToId('ProbeCheckTooLowModule')
-      const issuesForModules = await getIssues(
-        response.body.device.id,
-        issueTypeId
+      await evaluateIssues(
+        response,
+        await issueTypeToId('ProbeCheckTooLowModule')
       )
-
-      assert.equal(issuesForModules.length, 1)
-      assert.equal(
-        issuesForModules[0].issueStatusId,
-        await issueStatusToId('Active')
-      )
-
-      await checkNotificationsForIssue(issuesForModules[0].id)
 
       // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-      await Promise.each(_.range(1, 4), i =>
-        postToDeviceApi({
+      await Promise.each(_.range(1, 4), async i => {
+        const resp = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: _.merge(firstPayload, {
             assay: { id: 'GxMtbRif' },
@@ -171,21 +195,29 @@ describe('This test is for testing different triggers conditions', async () => {
             },
           }),
         })
+        await waitForIdle()
+        await evaluateIssues(
+          resp,
+          await issueTypeToId('ProbeCheckTooLowModule')
+        )
+      })
+
+      /**
+       * We are going to push the same lot for a different device and we are going to expect to create a new issue
+       */
+      const anotherDeviceResponse = await postToDeviceApi({
+        authHeader: anotherDeviceContext.deviceAuth,
+        payload: anotherDevicePayload,
+      })
+      await waitForIdle()
+      await evaluateIssues(
+        anotherDeviceResponse,
+        await issueTypeToId('ProbeCheckTooLowModule')
       )
-      const issuesForLot = await getIssues(
-        response.body.device.id,
+      await evaluateIssues(
+        anotherDeviceResponse,
         await issueTypeToId('ProbeCheckTooLowLot')
       )
-      assert.equal(issuesForLot.length, 1)
-
-      assert.equal(
-        issuesForLot[0].issueStatusId,
-        await issueStatusToId('Active')
-      )
-      await checkNotificationsForIssue(issuesForLot[0].id)
-
-      await waitForIdle()
-      assert.equal(issuesForLot.length, 1)
     })
   })
 })
