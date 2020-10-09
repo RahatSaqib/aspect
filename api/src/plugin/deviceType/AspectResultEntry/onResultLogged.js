@@ -93,7 +93,6 @@ async function updateCovidResultFromFormData(
 
       await shouldTriggerResultErrorAnalysis(
         messageContext,
-        resultId,
         resultDeviceId,
         resultErrorCode,
         {

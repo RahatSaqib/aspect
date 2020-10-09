@@ -43,21 +43,21 @@ function resultUpdated(resultId, deviceLogId, userId) {
 
 /**
  *
- * @param {*} resultId
- * is the id of the result to be analyzed
- * @param {*} options
- * options should have moduleSerial and resultErrorCode
+ * @param {*} deviceId
+ * is the id of the device which generates the result with error
+ * @param {*} data
+ * options should have moduleSerial, resultErrorCode, lot and assay
  * Creates an action to notify the result with given id
  * has been logged with an error code.
  *
- * resultId,  options.resultErrorCode and options.moduleSerial are required.
+ * resultId,  data.resultErrorCode and data.moduleSerial or  data.consumableLot and data.assayId are required.
 
  */
 
-function resultAnalyzeErrors(resultId, deviceId, resultErrorCode, data) {
-  if (!resultId && !deviceId) {
+function resultAnalyzeErrors(deviceId, resultErrorCode, data) {
+  if (!deviceId) {
     throw new Error(
-      'Must specify resultId and deviceId resultErrorCode for resultAnalyzeErrors'
+      'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
     )
   }
 
@@ -67,7 +67,6 @@ function resultAnalyzeErrors(resultId, deviceId, resultErrorCode, data) {
     type: moduleSerial
       ? types.RESULT_ANALYZE_PROBES_MODULE
       : types.RESULT_ANALYZE_PROBES_LOT,
-    resultId,
     deviceId,
     options: {
       data: {
