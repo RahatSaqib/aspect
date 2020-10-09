@@ -8,10 +8,12 @@ async function seed(knex) {
     .where({ name: 'Zimbabwe' })
     .first('id')
 
-  let widgetsForUpdate = {
+  const widgetsForUpdate = {
     stat: {
-      dashboardWidget: dashboardWidget.stat.filter(x => x.externalId === 'percentageOfDaysWithServiceInterruption')[0]
-    }
+      dashboardWidget: dashboardWidget.stat.filter(
+        x => x.externalId === 'percentageOfDaysWithServiceInterruption'
+      )[0],
+    },
   }
 
   await upsertDashboardWidgets(knex, partnerId, widgetsForUpdate)
