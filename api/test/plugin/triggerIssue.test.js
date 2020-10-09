@@ -20,11 +20,11 @@ describe('This test is for testing different triggers conditions', () => {
   })
 
   it('Should analyze different scenarios based on the data for triggering an action', () => {
-    const analyzeProbesModule = resultAnalyzeErrors(1, 1, 5007, {
+    const analyzeProbesModule = resultAnalyzeErrors(1, 5007, {
       moduleName: 'Test1',
       moduleSerial: 'Module2',
     })
-    const analyzeProbesTop = resultAnalyzeErrors(1, 1, 5007, {
+    const analyzeProbesTop = resultAnalyzeErrors(1, 5007, {
       consumableLot: 1234,
       assayId: 1,
     })
