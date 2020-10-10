@@ -49,6 +49,7 @@ async function getReplacedModuleSerials(knex, deviceId) {
 async function shouldTriggerResultErrorAnalysis(
   messageContext,
   deviceId,
+  resultId,
   resultErrorCode,
   { resultOutcome, moduleSerial, assayId, consumableLot }
 ) {
@@ -59,15 +60,25 @@ async function shouldTriggerResultErrorAnalysis(
         resultAnalyzeErrors,
       })
     }
-    await messageContext.resultAnalyzeErrors(deviceId, resultErrorCode, {
-      moduleSerial,
-      resultOutcome,
-    })
-    await messageContext.resultAnalyzeErrors(deviceId, resultErrorCode, {
-      assayId,
-      consumableLot,
-      resultOutcome,
-    })
+    await messageContext.resultAnalyzeErrors(
+      deviceId,
+      resultId,
+      resultErrorCode,
+      {
+        moduleSerial,
+        resultOutcome,
+      }
+    )
+    await messageContext.resultAnalyzeErrors(
+      deviceId,
+      resultId,
+      resultErrorCode,
+      {
+        assayId,
+        consumableLot,
+        resultOutcome,
+      }
+    )
   }
 }
 

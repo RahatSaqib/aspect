@@ -54,7 +54,7 @@ function resultUpdated(resultId, deviceLogId, userId) {
 
  */
 
-function resultAnalyzeErrors(deviceId, resultErrorCode, data) {
+function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   if (!deviceId) {
     throw new Error(
       'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
@@ -68,6 +68,7 @@ function resultAnalyzeErrors(deviceId, resultErrorCode, data) {
       ? types.RESULT_ANALYZE_PROBES_MODULE
       : types.RESULT_ANALYZE_PROBES_LOT,
     deviceId,
+    resultId,
     options: {
       data: {
         ...data,

@@ -25,9 +25,10 @@ const {
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
-const checkNotificationsForIssue = async issueId => {
+const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const notification = await knex('Notification as n')
     .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
+    .join('SmsMessage as sms', 'n.smsMessageId', 'sms.id')
     .where({ 'n.issueId': issueId })
     .first()
 
@@ -35,6 +36,67 @@ const checkNotificationsForIssue = async issueId => {
   assert.isNotNull(notification.emailMessageId)
   assert.isNotNull(notification.alertMessageId)
   assert.isNotNull(notification.smsMessageId)
+  const regex = /[^0-9a-zA-Z():,.-]+/gm
+
+  if (issueTypeId === (await issueTypeToId('ProbeCheckTooLowModule'))) {
+    if (!notification.htmlBody.toString().indexOf('M1234560') > 0) {
+      assert.containSubset(
+        notification.message,
+        'Probe Check Too Low (5007) on Module (M-123456-0) at New GeneXpert Laboratory'
+      )
+      assert.containSubset(
+        notification.htmlBody.toString().replace(regex, ''),
+        `Probe Check Too Low (5007) on (M-ANOTHERSERIAL-0) at 2ndNew GeneXpert Laboratory
+
+    Total 5007 errors in the last 30 days: 2
+
+    Country: United States
+
+    Lab contacts:
+
+    Instrument Serial: S-ANOTHERSERIAL-0
+
+    Software Version: 4.7b,
+
+    Cartridge Type: GeneXpert MTB/Rif,
+
+    Sender User: Big Boy Baumgartner,
+
+    Test Outcome: Error,
+
+    Module Serial: M-ANOTHERSERIAL-0
+
+    Module Slot: Module A`.replace(regex, '')
+      )
+    }
+  } else if (notification.message.toString().indexOf('on Lot (Lot 0)') > 0) {
+    assert.containSubset(
+      notification.message,
+      'Probe Check Too Low (5007) on lot (Lot 0) at 2ndNew GeneXpert Laboratory'
+    )
+    assert.containSubset(
+      notification.htmlBody.toString().replace(regex, ''),
+      `Probe Check Too Low (5007) on Lot (Lot 0) at 2ndNew GeneXpert Laboratory
+
+        Total 5007 errors in the last 30 days: 6
+
+        Country: United States
+
+        Lab contacts: Admin,Gates RDT Admin
+
+      Instrument Serial: M-ANOTHERSERIAL-0
+
+      Software Version: 4.7b,
+
+      Cartridge Type: GeneXpert MTB/Rif,
+
+      Sender User: Big Boy Baumgartner,
+
+      Test Outcome: Error,
+
+      Reagent Lot: Lot 0`.replace(regex, '')
+    )
+  }
 }
 const getIssues = (deviceId, issueTypeId) =>
   knex('Issue')
@@ -49,9 +111,9 @@ const evaluateIssues = async (response, issueTypeId) => {
   assert.equal(issues.length, 1)
   assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
 
-  await checkNotificationsForIssue(issues[0].id)
+  await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
-describe.only('This test suite is for testing different triggers conditions', async () => {
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
