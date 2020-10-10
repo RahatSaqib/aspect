@@ -149,6 +149,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    resultStartedOn: date/time
  *    resultEndedOn: date/time
  *    resultNotes: string
+ *    consumableSerial: string
  *    consumableLot: string
  *    createdOn: date/time
  *    senderOperator: string
@@ -215,6 +216,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    resultStartedOn: date/time
  *    resultEndedOn: date/time
  *    resultNotes: string
+ *    consumableSerial: string
  *    consumableLot: string
  *    createdOn: date/time
  *    senderOperator: string
@@ -257,6 +259,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         startedOn: resultStartedOn,
         endedOn: resultEndedOn,
         notes: resultNotes,
+        consumableSerial: consumableSerial,
         consumableLot: consumableLot,
         createdOn: createdOn,
         senderOperator: senderOperator,

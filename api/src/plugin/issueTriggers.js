@@ -29,6 +29,7 @@ async function analyzeErrors(
   if (parseInt(resultErrorCode, 10) === errorCode) {
     const query = knex('Result')
       .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+      .andWhere('deviceId', action.deviceId)
       .first(
         knex.raw(
           'sum(case when errorcode=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',

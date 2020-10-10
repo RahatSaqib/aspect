@@ -51,7 +51,7 @@ const evaluateIssues = async (response, issueTypeId) => {
 
   await checkNotificationsForIssue(issues[0].id)
 }
-describe('This test suite is for testing different triggers conditions', async () => {
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -61,8 +61,9 @@ describe('This test suite is for testing different triggers conditions', async (
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
-  const getPayload = thecontext =>
-    _.merge(
+  const getPayload = async thecontext => {
+    ;[results5007] = await thecontext.getAllResults()
+    return _.merge(
       {},
       thecontext.basicDevicePayload,
       { name: thecontext.device.name },
@@ -78,9 +79,9 @@ describe('This test suite is for testing different triggers conditions', async (
       basicResultPayload,
       {
         result: {
-          id: 'Error-5007-result',
-          startedOn: subDays(new Date(), 2),
-          endedOn: subDays(new Date(), 2),
+          id: `Error-5007-result${_.random(1, 100, false)}`,
+          startedOn: subDays(new Date(), _.random(1, 10, false)),
+          endedOn: subDays(new Date(), _.random(1, 10, false)),
           assay: { id: 'GxMtbRif' },
           consumable: {
             lot: 'Lot 0',
@@ -99,6 +100,7 @@ describe('This test suite is for testing different triggers conditions', async (
         },
       }
     )
+  }
   describe('Probes check Too Low issue creation (Module and lot), error 5007', async () => {
     let context
     let anotherDeviceContext
@@ -147,7 +149,6 @@ describe('This test suite is for testing different triggers conditions', async (
           },
         })
       })
-      ;[results5007] = await context.getAllResults()
     })
     afterEach(() => context.afterCleanUp())
 
@@ -159,13 +160,13 @@ describe('This test suite is for testing different triggers conditions', async (
        * 3) the creation of the issue
        * 4) check if the different noifications were generated.
        */
-      // eslint-disable-next-line prefer-destructuring
-      const { consumableLot } = results5007
+
+      const consumableLot = 'Lot 0'
       const { deviceAuth } = context
 
-      const firstPayload = getPayload(context)
+      const firstPayload = await getPayload(context)
 
-      const anotherDevicePayload = getPayload(anotherDeviceContext)
+      const anotherDevicePayload = await getPayload(anotherDeviceContext)
       const waitForAnalyze = waitForAction(resultAnalyzeErrors)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       const response = await postToDeviceApi({

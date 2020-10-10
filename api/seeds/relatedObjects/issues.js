@@ -506,12 +506,12 @@ async function getBaseIssues(auditFields) {
       },
       AlertTemplate: {
         message:
-          'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on Module ({{result.moduleSerial}}) at {{site.name}}',
         ...auditFields,
       },
       SmsTemplate: {
         message:
-          'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
+          'Probe Check Too Low (5007) on Module ({{result.moduleSerial}}) at {{site.name}}',
         ...auditFields,
       },
       EmailTemplate: {

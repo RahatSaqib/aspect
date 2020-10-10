@@ -1,5 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { issueTypeToId } = require('../../src/shared/dictionary')
+
 const {
   seedIssueType,
   seedIssueEventTriggersForPartner,
@@ -12,10 +12,10 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  await seedIssueType(knex, 'ProbeCheckTooLowModule', {
+  const issueTypeModule = await seedIssueType(knex, 'ProbeCheckTooLowModule', {
     userName: 'admin',
   })
-  await seedIssueType(knex, 'ProbeCheckTooLowLot', {
+  const issueTypeLot = await seedIssueType(knex, 'ProbeCheckTooLowLot', {
     userName: 'admin',
   })
 
@@ -28,11 +28,12 @@ async function seed(knex) {
     updatedOn: new Date(),
     updatedBy: userId,
   }
+
   const issueTypeProbeCheckTooLowModule = await knex('IssueType')
-    .where({ id: await issueTypeToId('ProbeCheckTooLowModule') })
+    .where({ id: issueTypeModule })
     .first()
   const issueTypeProbeCheckTooLowLot = await knex('IssueType')
-    .where({ id: await issueTypeToId('ProbeCheckTooLowLot') })
+    .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({

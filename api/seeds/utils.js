@@ -3136,10 +3136,16 @@ async function seedIssueType(knex, issueType, { userName }) {
   // ------------------------------------------
   // IssueType
   // ------------------------------------------
-  await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
-    ...issue.issueType,
-    defaultMessageTypeId: moduleMessageTypeId,
-  })
+  const { id: issueTypeId } = await upsertSingle(
+    knex,
+    'IssueType',
+    uniqueKeys.IssueType,
+    {
+      ...issue.issueType,
+      defaultMessageTypeId: moduleMessageTypeId,
+    }
+  )
+  return issueTypeId
 }
 module.exports = {
   addReports,
