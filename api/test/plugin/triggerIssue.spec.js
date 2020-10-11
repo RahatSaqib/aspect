@@ -30,8 +30,6 @@ const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
-    /* ProbeCheckTooHighModule: ProbeCheckTooHighModuleId,
-    ProbeCheckTooHighLot: ProbeCheckTooHighLotId, */
   } = await allIssueTypeToId()
 
   const defaultMessageModule = errorCode =>
@@ -125,9 +123,11 @@ const getIssues = (deviceId, issueTypeId) =>
     .where({ deviceId, issueTypeId })
     .orderBy('createdOn', 'DESC')
     .select()
+
 const evaluateIssues = async (response, issueTypeId) => {
   assert.equal(response.status, 200)
   assert.typeOf(response.body, 'Object')
+
   const issues = await getIssues(response.body.device.id, issueTypeId)
 
   assert.equal(issues.length, 1)

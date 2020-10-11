@@ -10,7 +10,7 @@ async function seed(knex) {
   const { partnerId, userId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
     .where({ 'u.name': 'admin' })
-    .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
+    .first('p.lastPartnerId as partnerId', 'p.userId')
 
   const issueTypeModule = await seedIssueType(knex, 'ProbeCheckTooHighModule', {
     userName: 'admin',
