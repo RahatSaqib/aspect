@@ -541,6 +541,65 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
+
+    TooManyInvalidResultsModule: {
+      issueType: {
+        name: 'Too Many Invalid Results On Module',
+        externalId: 'TooManyInvalidResultsModule',
+        i18nKey: 'issueStatusTooManyInvalidResultsModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Too Many Invalid Results${errorIssueAlertModule}`,
+        body: `Too Many Invalid Results${errorIssueEmailModule}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    TooManyInvalidResultsLot: {
+      issueType: {
+        name: 'Too Many Invalid Results On Lot',
+        externalId: 'TooManyInvalidResultsLot',
+        i18nKey: 'issueStatusTooManyInvalidResultsLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Too Many Invalid Results${errorIssueAlertLot}`,
+        body: `Too Many Invalid Results${errorIssueEmailLot}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
     ProbeCheckTooLowModule: {
       issueType: {
         name: 'Probe Check Too Low On Module',
