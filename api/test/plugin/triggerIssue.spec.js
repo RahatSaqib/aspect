@@ -230,12 +230,12 @@ describe.only('This test suite is for testing different triggers conditions', as
               instrumentSerial: 'S-1234-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
-              data: {
-                resultText:
-                  i === 0 && resultCategoryExternalId
-                    ? resultCategoryExternalId.toUpperCase()
-                    : null,
-              },
+            },
+            data: {
+              resultText:
+                i === 0 && resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
             },
           })
           await anotherDeviceContext.createResultForThisDevice({
@@ -246,12 +246,12 @@ describe.only('This test suite is for testing different triggers conditions', as
               instrumentSerial: 'S-ANOTHERSERIAL-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
-              data: {
-                resultText:
-                  i === 0 && resultCategoryExternalId
-                    ? resultCategoryExternalId.toUpperCase()
-                    : null,
-              },
+            },
+            data: {
+              resultText:
+                i === 0 && resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
             },
           })
         })
@@ -305,11 +305,11 @@ describe.only('This test suite is for testing different triggers conditions', as
                 consumable: {
                   lot: consumableLot,
                 },
-                data: {
-                  resultText: resultCategoryExternalId
-                    ? resultCategoryExternalId.toUpperCase()
-                    : null,
-                },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
               },
             }),
           })
