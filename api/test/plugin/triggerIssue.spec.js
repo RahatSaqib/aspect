@@ -136,7 +136,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe('This test suite is for testing different triggers conditions', async () => {
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -190,9 +190,12 @@ describe('This test suite is for testing different triggers conditions', async (
     issueName,
     errorCode,
     issueTypeModule,
-    issueTypeLot
+    issueTypeLot,
+    resultCategoryExternalId
   ) => {
-    describe(`${issueName} issue creation (Module and lot), error ${errorCode}`, async () => {
+    describe(`${issueName} issue creation (Module and lot),${
+      errorCode ? `error ${errorCode}` : `category${resultCategoryExternalId}`
+    }`, async () => {
       let context
       let anotherDeviceContext
       before(async () => {
@@ -227,6 +230,12 @@ describe('This test suite is for testing different triggers conditions', async (
               instrumentSerial: 'S-1234-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
+              data: {
+                resultText:
+                  i === 0 && resultCategoryExternalId
+                    ? resultCategoryExternalId.toUpperCase()
+                    : null,
+              },
             },
           })
           await anotherDeviceContext.createResultForThisDevice({
@@ -237,13 +246,21 @@ describe('This test suite is for testing different triggers conditions', async (
               instrumentSerial: 'S-ANOTHERSERIAL-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
+              data: {
+                resultText:
+                  i === 0 && resultCategoryExternalId
+                    ? resultCategoryExternalId.toUpperCase()
+                    : null,
+              },
             },
           })
         })
       })
       afterEach(() => context.afterCleanUp())
 
-      it(`should only create one issue per device error ${errorCode}`, async () => {
+      it(`should only create one issue per device ${
+        errorCode ? `error ${errorCode}` : `category${resultCategoryExternalId}`
+      }`, async () => {
         /**
          * in this testcase we are testing:
          * 1) issueFilter function for this testCondition (With error 5007)
@@ -287,6 +304,11 @@ describe('This test suite is for testing different triggers conditions', async (
                 endedOn: subDays(new Date(), i),
                 consumable: {
                   lot: consumableLot,
+                },
+                data: {
+                  resultText: resultCategoryExternalId
+                    ? resultCategoryExternalId.toUpperCase()
+                    : null,
                 },
               },
             }),
@@ -334,6 +356,15 @@ describe('This test suite is for testing different triggers conditions', async (
       5007,
       'ProbeCheckTooLowModule',
       'ProbeCheckTooLowLot'
+    )
+  })
+  describe('Invalid results', async () => {
+    await testErrorCodes(
+      'Too Many Invalid Results',
+      null,
+      'TooManyInvalidResultsModule',
+      'TooManyInvalidResultsLot',
+      'Invalid'
     )
   })
 })
