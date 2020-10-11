@@ -7,51 +7,51 @@ const msgInstrumentReplaced = `{{device.name}}:
   Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
-
+const regexBreakline = /\n+/gm
 const errorIssueAlertModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}`
 
-const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}} \r\n
+const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}
 
-  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}} \r\n
+  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
-  Country: {{country.name}} \r\n
+  Country: {{country.name}}
 
-  Lab contacts: {{site.contacts}} \r\n
+  Lab contacts: {{site.contacts}}
 
-  Instrument Serial: {{result.instrumentSerial}} \r\n
+  Instrument Serial: {{result.instrumentSerial}}
 
-  Software Version: {{result.softwareVersion}} \r\n
+  Software Version: {{result.softwareVersion}}
 
-  Cartridge Type: {{result.assay.name}} \r\n
+  Cartridge Type: {{result.assay.name}}
 
-  Sender User: {{result.senderOperator}} \r\n
+  Sender User: {{result.senderOperator}}
 
-  Test Outcome: {{issue.data.resultOutcome}} \r\n
+  Test Outcome: {{issue.data.resultOutcome}}
 
-  Module Serial: {{result.moduleSerial}} \r\n
+  Module Serial: {{result.moduleSerial}}
 
-  Module Slot: {{result.moduleName}} \r\n `
+  Module Slot: {{result.moduleName}} `
 
 const errorIssueAlertLot =
   ' ({{result.errorCode}}) on lot ({{result.consumableLot}}) at {{site.name}}'
 
-const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}} \r\n
+const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}}
 
-Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}} \r\n
+Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
 
-Country: {{country.name}} \r\n
+Country: {{country.name}}
 
-Lab contacts: {{site.contacts}} \r\n
+Lab contacts: {{site.contacts}}
 
-Instrument Serial: {{result.moduleSerial}} \r\n
+Instrument Serial: {{result.moduleSerial}}
 
-Software Version: {{result.softwareVersion}} \r\n
+Software Version: {{result.softwareVersion}}
 
-Cartridge Type: {{result.assay.name}} \r\n
+Cartridge Type: {{result.assay.name}}
 
-Sender User: {{result.senderOperator}} \r\n
+Sender User: {{result.senderOperator}}
 
-Test Outcome: {{issue.data.resultOutcome}} \r\n
+Test Outcome: {{issue.data.resultOutcome}}
 
 Reagent Lot: {{result.consumableLot}}`
 
@@ -563,7 +563,7 @@ async function getBaseIssues(auditFields) {
         subject: `Probe Check Too Low${errorIssueAlertModule}`,
         body: `Probe Check Too Low${errorIssueEmailModule}`,
         htmlBody: `Probe Check Too Low${errorIssueEmailModule.replace(
-          '\r\n',
+          regexBreakline,
           '<br/>'
         )}`,
 
@@ -592,7 +592,7 @@ async function getBaseIssues(auditFields) {
         subject: `Probe Check Too Low${errorIssueAlertLot}`,
         body: `Probe Check Too Low${errorIssueEmailLot}`,
         htmlBody: `Probe Check Too Low${errorIssueEmailLot.replace(
-          '\r\n',
+          regexBreakline,
           '<br/>'
         )}`,
         ...auditFields,
@@ -620,7 +620,7 @@ async function getBaseIssues(auditFields) {
         subject: `Probe Check Too High${errorIssueAlertModule}`,
         body: `Probe Check Too High${errorIssueEmailModule}`,
         htmlBody: `Probe Check Too High${errorIssueEmailModule.replace(
-          '\r\n',
+          regexBreakline,
           '<br/>'
         )}`,
 
@@ -649,7 +649,7 @@ async function getBaseIssues(auditFields) {
         subject: `Probe Check Too High${errorIssueAlertLot}`,
         body: `Probe Check Too High${errorIssueEmailLot}`,
         htmlBody: `Probe Check Too High${errorIssueEmailLot.replace(
-          '\r\n',
+          regexBreakline,
           '<br/>'
         )}`,
         ...auditFields,
