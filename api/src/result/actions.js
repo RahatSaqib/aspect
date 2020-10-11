@@ -45,7 +45,7 @@ function resultUpdated(resultId, deviceLogId, userId) {
 
 const obtainProperAction = (moduleSerial, errorCode) => {
   if (moduleSerial) {
-    switch (errorCode) {
+    switch (parseInt(errorCode, 10)) {
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
       case 5007:
@@ -53,7 +53,7 @@ const obtainProperAction = (moduleSerial, errorCode) => {
         return types.RESULT_ANALYZE_PROBES_MODULE
     }
   } else {
-    switch (errorCode) {
+    switch (parseInt(errorCode, 10)) {
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_LOT
       case 5007:
@@ -83,9 +83,9 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   }
 
   const moduleSerial = _.get(data, 'moduleSerial')
-
+  const actionType = obtainProperAction(moduleSerial, resultErrorCode)
   return {
-    type: obtainProperAction(moduleSerial, resultErrorCode),
+    type: actionType,
     deviceId,
     resultId,
     options: {

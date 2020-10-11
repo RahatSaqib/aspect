@@ -10,48 +10,48 @@ const msgInstrumentReplaced = `{{device.name}}:
 
 const errorIssueAlertModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}`
 
-const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}} \n\r
+const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}} \r\n
 
-  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}} \n\r
+  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}} \r\n
 
-  Country: {{country.name}} \n\r
+  Country: {{country.name}} \r\n
 
-  Lab contacts: {{site.contacts}} \n\r
+  Lab contacts: {{site.contacts}} \r\n
 
-  Instrument Serial: {{result.instrumentSerial}} \n\r
+  Instrument Serial: {{result.instrumentSerial}} \r\n
 
-  Software Version: {{result.softwareVersion}} \n\r
+  Software Version: {{result.softwareVersion}} \r\n
 
-  Cartridge Type: {{result.assay.name}} \n\r
+  Cartridge Type: {{result.assay.name}} \r\n
 
-  Sender User: {{result.senderOperator}} \n\r
+  Sender User: {{result.senderOperator}} \r\n
 
-  Test Outcome: {{issue.data.resultOutcome}} \n\r
+  Test Outcome: {{issue.data.resultOutcome}} \r\n
 
-  Module Serial: {{result.moduleSerial}} \n\r
+  Module Serial: {{result.moduleSerial}} \r\n
 
-  Module Slot: {{result.moduleName}} \n\r `
+  Module Slot: {{result.moduleName}} \r\n `
 
 const errorIssueAlertLot =
   ' ({{result.errorCode}}) on lot ({{result.consumableLot}}) at {{site.name}}'
 
-const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}} \n\r
+const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}} \r\n
 
-Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}} \n\r
+Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}} \r\n
 
-Country: {{country.name}} \n\r
+Country: {{country.name}} \r\n
 
-Lab contacts: {{site.contacts}} \n\r
+Lab contacts: {{site.contacts}} \r\n
 
-Instrument Serial: {{result.moduleSerial}} \n\r
+Instrument Serial: {{result.moduleSerial}} \r\n
 
-Software Version: {{result.softwareVersion}} \n\r
+Software Version: {{result.softwareVersion}} \r\n
 
-Cartridge Type: {{result.assay.name}} \n\r
+Cartridge Type: {{result.assay.name}} \r\n
 
-Sender User: {{result.senderOperator}} \n\r
+Sender User: {{result.senderOperator}} \r\n
 
-Test Outcome: {{issue.data.resultOutcome}} \n\r
+Test Outcome: {{issue.data.resultOutcome}} \r\n
 
 Reagent Lot: {{result.consumableLot}}`
 
@@ -563,7 +563,7 @@ async function getBaseIssues(auditFields) {
         subject: `Probe Check Too Low${errorIssueAlertModule}`,
         body: `Probe Check Too Low${errorIssueEmailModule}`,
         htmlBody: `Probe Check Too Low${errorIssueEmailModule.replace(
-          '\n\r',
+          '\r\n',
           '<br/>'
         )}`,
 
@@ -592,7 +592,7 @@ async function getBaseIssues(auditFields) {
         subject: `Probe Check Too Low${errorIssueAlertLot}`,
         body: `Probe Check Too Low${errorIssueEmailLot}`,
         htmlBody: `Probe Check Too Low${errorIssueEmailLot.replace(
-          '\n\r',
+          '\r\n',
           '<br/>'
         )}`,
         ...auditFields,
@@ -619,7 +619,10 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: `Probe Check Too High${errorIssueAlertModule}`,
         body: `Probe Check Too High${errorIssueEmailModule}`,
-        htmlBody: `Probe Check Too High${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Too High${errorIssueEmailModule.replace(
+          '\r\n',
+          '<br/>'
+        )}`,
 
         ...auditFields,
       },
@@ -645,7 +648,10 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: `Probe Check Too High${errorIssueAlertLot}`,
         body: `Probe Check Too High${errorIssueEmailLot}`,
-        htmlBody: `Probe Check Too High${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Too High${errorIssueEmailLot.replace(
+          '\r\n',
+          '<br/>'
+        )}`,
         ...auditFields,
       },
     },

@@ -20,17 +20,30 @@ describe('This test is for testing different triggers conditions', () => {
   })
 
   it('Should analyze different scenarios based on the data for triggering an action', () => {
-    const analyzeProbesModule = resultAnalyzeErrors(1, 1, 5007, {
-      moduleName: 'Test1',
-      moduleSerial: 'Module2',
+    ;[
+      {
+        errorCode: 5007,
+        type1: 'RESULT_ANALYZE_PROBES_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_LOT',
+      },
+      {
+        errorCode: 5006,
+        type1: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
+      },
+    ].forEach(elem => {
+      const analyzeProbesModule = resultAnalyzeErrors(1, 1, elem.errorCode, {
+        moduleName: 'Test1',
+        moduleSerial: 'Module2',
+      })
+      const analyzeProbesLot = resultAnalyzeErrors(1, 1, elem.errorCode, {
+        consumableLot: 1234,
+        assayId: 1,
+      })
+      assert.isObject(analyzeProbesModule)
+      assert.property(analyzeProbesModule, 'type')
+      assert.equal(analyzeProbesModule.type, elem.type1)
+      assert.equal(analyzeProbesLot.type, elem.type2)
     })
-    const analyzeProbesTop = resultAnalyzeErrors(1, 1, 5007, {
-      consumableLot: 1234,
-      assayId: 1,
-    })
-    assert.isObject(analyzeProbesModule)
-    assert.property(analyzeProbesModule, 'type')
-    assert.equal(analyzeProbesModule.type, 'RESULT_ANALYZE_PROBES_MODULE')
-    assert.equal(analyzeProbesTop.type, 'RESULT_ANALYZE_PROBES_LOT')
   })
 })

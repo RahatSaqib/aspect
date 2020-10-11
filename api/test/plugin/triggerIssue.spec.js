@@ -146,7 +146,7 @@ describe.only('This test suite is for testing different triggers conditions', as
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
-  const getPayload = async thecontext => {
+  const getPayload = async (thecontext, errorCode) => {
     ;[results] = await thecontext.getAllResults()
     return _.merge(
       {},
@@ -164,7 +164,7 @@ describe.only('This test suite is for testing different triggers conditions', as
       basicResultPayload,
       {
         result: {
-          id: `Error-5007-result${_.random(1, 100, false)}`,
+          id: `Error-${errorCode}-result${_.random(1, 100, false)}`,
           startedOn: subDays(new Date(), _.random(1, 10, false)),
           endedOn: subDays(new Date(), _.random(1, 10, false)),
           assay: { id: 'GxMtbRif' },
@@ -172,7 +172,7 @@ describe.only('This test suite is for testing different triggers conditions', as
             lot: 'Lot 0',
           },
           error: {
-            code: '5007',
+            code: `${errorCode}`,
             notes: 'some ,notes',
           },
           instrument: {
@@ -255,9 +255,12 @@ describe.only('This test suite is for testing different triggers conditions', as
         const consumableLot = 'Lot 0'
         const { deviceAuth } = context
 
-        const firstPayload = await getPayload(context)
+        const firstPayload = await getPayload(context, errorCode)
 
-        const anotherDevicePayload = await getPayload(anotherDeviceContext)
+        const anotherDevicePayload = await getPayload(
+          anotherDeviceContext,
+          errorCode
+        )
         const waitForAnalyze = waitForAction(resultAnalyzeErrors)
         // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
         const response = await postToDeviceApi({
@@ -317,13 +320,20 @@ describe.only('This test suite is for testing different triggers conditions', as
       })
     })
   }
-  describe('should only create one issue per device', async () => {
+  describe('error 5006 issue', async () => {
+    await testErrorCodes(
+      'Probes check Too High',
+      5006,
+      'ProbeCheckTooHighModule',
+      'ProbeCheckTooHighLot'
+    )
+  })
+  describe('error 5007 issue', async () => {
     await testErrorCodes(
       'Probes check Too Low',
       5007,
       'ProbeCheckTooLowModule',
       'ProbeCheckTooLowLot'
     )
-    // await testErrorCodes('Probes check Too High', 5006)
   })
 })
