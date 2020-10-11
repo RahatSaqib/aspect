@@ -48,6 +48,7 @@ async function analyzeErrors(
     const { resultsWithErrors, totalResults } = await query
     action.options.data.resultsWithErrors = resultsWithErrors
     action.options.totalResults = totalResults
+    console.log('errors', action)
     return analyzeResultsWithErrors(
       resultsWithErrors,
       totalResults,

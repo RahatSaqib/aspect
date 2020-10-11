@@ -16,6 +16,8 @@ const types = {
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
   RESULT_ANALYZE_PROBES_LOT: 'RESULT_ANALYZE_PROBES_LOT',
   RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
+  RESULT_ANALYZE_PROBES_HIGH_LOT: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
+  RESULT_ANALYZE_PROBES_HIGH_MODULE: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
 }
 
 // ----------- Action Creators -------------------
@@ -41,6 +43,25 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
+const obtainProperAction = (moduleSerial, errorCode) => {
+  if (moduleSerial) {
+    switch (errorCode) {
+      case 5006:
+        return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
+      case 5007:
+      default:
+        return types.RESULT_ANALYZE_PROBES_MODULE
+    }
+  } else {
+    switch (errorCode) {
+      case 5006:
+        return types.RESULT_ANALYZE_PROBES_HIGH_LOT
+      case 5007:
+      default:
+        return types.RESULT_ANALYZE_PROBES_LOT
+    }
+  }
+}
 /**
  *
  * @param {*} deviceId
@@ -64,9 +85,7 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   const moduleSerial = _.get(data, 'moduleSerial')
 
   return {
-    type: moduleSerial
-      ? types.RESULT_ANALYZE_PROBES_MODULE
-      : types.RESULT_ANALYZE_PROBES_LOT,
+    type: obtainProperAction(moduleSerial, resultErrorCode),
     deviceId,
     resultId,
     options: {

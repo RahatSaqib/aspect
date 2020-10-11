@@ -10,9 +10,11 @@ const { knex } = require('../../src/db')
 
 const {
   issueTypeToId,
+  allIssueTypeToId,
   issueStatusToId,
 } = require('../../src/shared/dictionary')
 
+const regex = /[^0-9a-zA-Z():,.-]+/gm
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -24,31 +26,18 @@ const {
 
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 
-const server = supertest.agent('http://localhost:8080')
-const checkNotificationsForIssue = async (issueId, issueTypeId) => {
-  const notification = await knex('Notification as n')
-    .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
-    .join('SmsMessage as sms', 'n.smsMessageId', 'sms.id')
-    .where({ 'n.issueId': issueId })
-    .first()
+const getMessageTemplates = async () => {
+  const {
+    ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
+    ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
+    /* ProbeCheckTooHighModule: ProbeCheckTooHighModuleId,
+    ProbeCheckTooHighLot: ProbeCheckTooHighLotId, */
+  } = await allIssueTypeToId()
 
-  assert.isNotNull(notification)
-  assert.isNotNull(notification.emailMessageId)
-  assert.isNotNull(notification.alertMessageId)
-  assert.isNotNull(notification.smsMessageId)
-  const regex = /[^0-9a-zA-Z():,.-]+/gm
+  const defaultMessageModule = errorCode =>
+    `(${errorCode}) on (M-ANOTHERSERIAL-0) at 2ndNew GeneXpert Laboratory
 
-  if (issueTypeId === (await issueTypeToId('ProbeCheckTooLowModule'))) {
-    if (!notification.htmlBody.toString().indexOf('M1234560') > 0) {
-      assert.containSubset(
-        notification.message,
-        'Probe Check Too Low (5007) on Module (M-123456-0) at New GeneXpert Laboratory'
-      )
-      assert.containSubset(
-        notification.htmlBody.toString().replace(regex, ''),
-        `Probe Check Too Low (5007) on (M-ANOTHERSERIAL-0) at 2ndNew GeneXpert Laboratory
-
-    Total 5007 errors in the last 30 days: 2
+    Total ${errorCode} errors in the last 30 days: 2
 
     Country: United States
 
@@ -67,34 +56,67 @@ const checkNotificationsForIssue = async (issueId, issueTypeId) => {
     Module Serial: M-ANOTHERSERIAL-0
 
     Module Slot: Module A`.replace(regex, '')
-      )
-    }
-  } else if (notification.message.toString().indexOf('on Lot (Lot 0)') > 0) {
+
+  const defaultmessageLot = errorCode =>
+    `(${errorCode}) on Lot (Lot 0) at 2ndNew GeneXpert Laboratory
+
+  Total ${errorCode} errors in the last 30 days: 6
+
+  Country: United States
+
+  Lab contacts: Admin,Gates RDT Admin
+
+  Instrument Serial: M-ANOTHERSERIAL-0
+
+  Software Version: 4.7b,
+
+  Cartridge Type: GeneXpert MTB/Rif,
+
+  Sender User: Big Boy Baumgartner,
+
+  Test Outcome: Error,
+
+  Reagent Lot: Lot 0`.replace(regex, '')
+
+  const messageTemplates = {}
+  messageTemplates[ProbeCheckTooLowModuleId] = {
+    email: `Probe Check Too Low ${defaultMessageModule(5007)}`,
+    sms:
+      'Probe Check Too Low (5007) on (M-123456-0) at New GeneXpert Laboratory',
+  }
+  messageTemplates[ProbeCheckTooLowLotId] = {
+    sms:
+      'Probe Check Too Low (5007) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
+    email: `Probe Check Too Low (5007) ${defaultmessageLot(5007)}`,
+  }
+  return messageTemplates
+}
+const server = supertest.agent('http://localhost:8080')
+const checkNotificationsForIssue = async (issueId, issueTypeId) => {
+  const messageTemplates = await getMessageTemplates()
+  const notification = await knex('Notification as n')
+    .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
+    .join('SmsMessage as sms', 'n.smsMessageId', 'sms.id')
+    .where({ 'n.issueId': issueId })
+    .first()
+
+  assert.isNotNull(notification)
+  assert.isNotNull(notification.emailMessageId)
+  assert.isNotNull(notification.alertMessageId)
+  assert.isNotNull(notification.smsMessageId)
+
+  if (
+    !notification.message.indexOf('M-123456-0') > 0 &&
+    issueTypeId === (await issueTypeToId('ProbeCheckTooLowModule'))
+  ) {
+    assert.containSubset(
+      notification.body.toString().replace(regex, ''),
+      messageTemplates[issueTypeId].email
+    )
+
     assert.containSubset(
       notification.message,
-      'Probe Check Too Low (5007) on lot (Lot 0) at 2ndNew GeneXpert Laboratory'
-    )
-    assert.containSubset(
-      notification.htmlBody.toString().replace(regex, ''),
-      `Probe Check Too Low (5007) on Lot (Lot 0) at 2ndNew GeneXpert Laboratory
-
-        Total 5007 errors in the last 30 days: 6
-
-        Country: United States
-
-        Lab contacts: Admin,Gates RDT Admin
-
-      Instrument Serial: M-ANOTHERSERIAL-0
-
-      Software Version: 4.7b,
-
-      Cartridge Type: GeneXpert MTB/Rif,
-
-      Sender User: Big Boy Baumgartner,
-
-      Test Outcome: Error,
-
-      Reagent Lot: Lot 0`.replace(regex, '')
+      messageTemplates[issueTypeId].sms
     )
   }
 }
@@ -113,18 +135,19 @@ const evaluateIssues = async (response, issueTypeId) => {
 
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
-describe('This test suite is for testing different triggers conditions', async () => {
+
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
   const macAddress = 'MAC00000000FAKE'
-  let results5007
+  let results
 
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
   const getPayload = async thecontext => {
-    ;[results5007] = await thecontext.getAllResults()
+    ;[results] = await thecontext.getAllResults()
     return _.merge(
       {},
       thecontext.basicDevicePayload,
@@ -153,134 +176,154 @@ describe('This test suite is for testing different triggers conditions', async (
             notes: 'some ,notes',
           },
           instrument: {
-            serial: results5007.instrumentSerial,
+            serial: results.instrumentSerial,
             module: {
-              serial: results5007.moduleSerial,
-              name: results5007.moduleName,
+              serial: results.moduleSerial,
+              name: results.moduleName,
             },
           },
         },
       }
     )
   }
-  describe('Probes check Too Low issue creation (Module and lot), error 5007', async () => {
-    let context
-    let anotherDeviceContext
-    before(async () => {
-      context = createGxConnectTestContext(server, {
-        countryCode,
-        adminUsername,
-        adminPassword,
-        deviceName,
-        macAddress,
-        hostId,
-        deviceSerialNumber,
-      })
-      anotherDeviceContext = createGxConnectTestContext(server, {
-        countryCode,
-        adminUsername,
-        adminPassword,
-        deviceName: `2nd${deviceName}`,
-        macAddress: `2nd${macAddress}`,
-        hostId: `2nd${hostId}`,
-        deviceSerialNumber: `2nd${deviceSerialNumber}`,
-      })
-    })
-    beforeEach(async () => {
-      await context.beforeRegisterAndSetDevice()
-      await anotherDeviceContext.beforeRegisterAndSetDevice()
-      await Promise.each(_.range(0, 3), async i => {
-        await context.createResultForThisDevice({
-          resultDetails: {
-            consumableLot: 'Lot 0',
-            moduleName: 'Module A',
-            moduleSerial: 'M-123456-0',
-            instrumentSerial: 'S-1234-0',
-            errorCode: i === 0 ? '5007' : null,
-            errorNotes: i === 0 ? 'Some notes' : null,
-          },
+  const testErrorCodes = (
+    issueName,
+    errorCode,
+    issueTypeModule,
+    issueTypeLot
+  ) => {
+    describe(`${issueName} issue creation (Module and lot), error ${errorCode}`, async () => {
+      let context
+      let anotherDeviceContext
+      before(async () => {
+        context = createGxConnectTestContext(server, {
+          countryCode,
+          adminUsername,
+          adminPassword,
+          deviceName,
+          macAddress,
+          hostId,
+          deviceSerialNumber,
         })
-        await anotherDeviceContext.createResultForThisDevice({
-          resultDetails: {
-            consumableLot: 'Lot 0',
-            moduleName: 'Module A',
-            moduleSerial: 'M-ANOTHERSERIAL-0',
-            instrumentSerial: 'S-ANOTHERSERIAL-0',
-            errorCode: i === 0 ? '5007' : null,
-            errorNotes: i === 0 ? 'Some notes' : null,
-          },
+        anotherDeviceContext = createGxConnectTestContext(server, {
+          countryCode,
+          adminUsername,
+          adminPassword,
+          deviceName: `2nd${deviceName}`,
+          macAddress: `2nd${macAddress}`,
+          hostId: `2nd${hostId}`,
+          deviceSerialNumber: `2nd${deviceSerialNumber}`,
         })
       })
-    })
-    afterEach(() => context.afterCleanUp())
-
-    it('should only create one issue per device', async () => {
-      /**
-       * in this testcase we are testing:
-       * 1) issueFilter function for this testCondition (With error 5007)
-       * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
-       * 3) the creation of the issue
-       * 4) check if the different noifications were generated.
-       */
-
-      const consumableLot = 'Lot 0'
-      const { deviceAuth } = context
-
-      const firstPayload = await getPayload(context)
-
-      const anotherDevicePayload = await getPayload(anotherDeviceContext)
-      const waitForAnalyze = waitForAction(resultAnalyzeErrors)
-      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
-      const response = await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload: firstPayload,
-      })
-      await waitForAnalyze
-      await waitForIdle()
-      await evaluateIssues(
-        response,
-        await issueTypeToId('ProbeCheckTooLowModule')
-      )
-
-      // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-      await Promise.each(_.range(1, 4), async i => {
-        const resp = await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(firstPayload, {
-            assay: { id: 'GxMtbRif' },
-            result: {
-              id: `Error-5007-result${i}`,
-              startedOn: subDays(new Date(), i),
-              endedOn: subDays(new Date(), i),
-              consumable: {
-                lot: consumableLot,
-              },
+      beforeEach(async () => {
+        await context.beforeRegisterAndSetDevice()
+        await anotherDeviceContext.beforeRegisterAndSetDevice()
+        await Promise.each(_.range(0, 3), async i => {
+          await context.createResultForThisDevice({
+            resultDetails: {
+              consumableLot: 'Lot 0',
+              moduleName: 'Module A',
+              moduleSerial: 'M-123456-0',
+              instrumentSerial: 'S-1234-0',
+              errorCode: i === 0 ? errorCode : null,
+              errorNotes: i === 0 ? 'Some notes' : null,
             },
-          }),
+          })
+          await anotherDeviceContext.createResultForThisDevice({
+            resultDetails: {
+              consumableLot: 'Lot 0',
+              moduleName: 'Module A',
+              moduleSerial: 'M-ANOTHERSERIAL-0',
+              instrumentSerial: 'S-ANOTHERSERIAL-0',
+              errorCode: i === 0 ? errorCode : null,
+              errorNotes: i === 0 ? 'Some notes' : null,
+            },
+          })
+        })
+      })
+      afterEach(() => context.afterCleanUp())
+
+      it(`should only create one issue per device error ${errorCode}`, async () => {
+        /**
+         * in this testcase we are testing:
+         * 1) issueFilter function for this testCondition (With error 5007)
+         * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
+         * 3) the creation of the issue
+         * 4) check if the different noifications were generated.
+         */
+
+        const consumableLot = 'Lot 0'
+        const { deviceAuth } = context
+
+        const firstPayload = await getPayload(context)
+
+        const anotherDevicePayload = await getPayload(anotherDeviceContext)
+        const waitForAnalyze = waitForAction(resultAnalyzeErrors)
+        // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+        const response = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: firstPayload,
+        })
+        await waitForAnalyze
+        await waitForIdle()
+        await evaluateIssues(
+          response,
+          await issueTypeToId(issueTypeModule),
+          errorCode
+        )
+
+        // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
+        await Promise.each(_.range(1, 4), async i => {
+          const resp = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(firstPayload, {
+              assay: { id: 'GxMtbRif' },
+              result: {
+                id: `Error-${errorCode}-result${i}`,
+                startedOn: subDays(new Date(), i),
+                endedOn: subDays(new Date(), i),
+                consumable: {
+                  lot: consumableLot,
+                },
+              },
+            }),
+          })
+          await waitForIdle()
+          await evaluateIssues(
+            resp,
+            await issueTypeToId(issueTypeModule),
+            errorCode
+          )
+        })
+
+        /**
+         * We are going to push the same lot for a different device and we are going to expect to create a new issue
+         */
+        const anotherDeviceResponse = await postToDeviceApi({
+          authHeader: anotherDeviceContext.deviceAuth,
+          payload: anotherDevicePayload,
         })
         await waitForIdle()
         await evaluateIssues(
-          resp,
-          await issueTypeToId('ProbeCheckTooLowModule')
+          anotherDeviceResponse,
+          await issueTypeToId(issueTypeModule),
+          errorCode
+        )
+        await evaluateIssues(
+          anotherDeviceResponse,
+          await issueTypeToId(issueTypeLot),
+          errorCode
         )
       })
-
-      /**
-       * We are going to push the same lot for a different device and we are going to expect to create a new issue
-       */
-      const anotherDeviceResponse = await postToDeviceApi({
-        authHeader: anotherDeviceContext.deviceAuth,
-        payload: anotherDevicePayload,
-      })
-      await waitForIdle()
-      await evaluateIssues(
-        anotherDeviceResponse,
-        await issueTypeToId('ProbeCheckTooLowModule')
-      )
-      await evaluateIssues(
-        anotherDeviceResponse,
-        await issueTypeToId('ProbeCheckTooLowLot')
-      )
     })
+  }
+  describe('should only create one issue per device', async () => {
+    await testErrorCodes(
+      'Probes check Too Low',
+      5007,
+      'ProbeCheckTooLowModule',
+      'ProbeCheckTooLowLot'
+    )
+    // await testErrorCodes('Probes check Too High', 5006)
   })
 })

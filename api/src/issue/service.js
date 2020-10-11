@@ -82,6 +82,7 @@ function onIssueEventTrigger(
         partnerId,
         JSON.parse(triggerConditions).conditions
       )
+      console.log('shouldTriggerEvent', shouldTriggerEvent, action)
 
       if (shouldTriggerEvent) {
         const now = new Date()
