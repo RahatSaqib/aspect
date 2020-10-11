@@ -18,6 +18,8 @@ const types = {
   RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
   RESULT_ANALYZE_PROBES_HIGH_LOT: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
   RESULT_ANALYZE_PROBES_HIGH_MODULE: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
+  RESULT_ANALYZE_INVALIDS_MODULE: 'RESULT_ANALYZE_INVALIDS_MODULE',
+  RESULT_ANALYZE_INVALIDS_LOT: 'RESULT_ANALYZE_INVALIDS_LOT',
 }
 
 // ----------- Action Creators -------------------
@@ -66,6 +68,13 @@ const obtainProperAction = (moduleSerial, errorCode) => {
  *
  * @param {*} deviceId
  * is the id of the device which generates the result with error
+
+ * @param {*} resultId
+ * is the id of the result which generates the result with error
+
+ * @param {*} resultErrorCode
+ * the error code number received in the result
+
  * @param {*} data
  * options should have moduleSerial, resultErrorCode, lot and assay
  * Creates an action to notify the result with given id
@@ -93,6 +102,27 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
         ...data,
         resultErrorCode,
       },
+    },
+  }
+}
+
+function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
+  if (!deviceId && !resultCategoryId) {
+    throw new Error(
+      'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
+    )
+  }
+
+  const moduleSerial = _.get(data, 'moduleSerial')
+  const actionType = moduleSerial
+    ? types.RESULT_ANALYZE_INVALIDS_MODULE
+    : types.RESULT_ANALYZE_INVALIDS_LOT
+  return {
+    type: actionType,
+    deviceId,
+    resultId,
+    options: {
+      data: { ...data, resultCategoryId },
     },
   }
 }
@@ -334,4 +364,5 @@ module.exports = {
   resultMachineUnknownError,
   resultModuleReplaced,
   resultAnalyzeErrors,
+  resultAnalyzeCategories,
 }

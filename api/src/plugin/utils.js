@@ -2,12 +2,13 @@ const { knex } = require('../db')
 const {
   resultModuleReplaced,
   resultAnalyzeErrors,
+  resultAnalyzeCategories,
 } = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
 } = require('../device/actions')
-const { issueTypeToId } = require('../shared/dictionary')
+const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -44,6 +45,43 @@ async function getReplacedModuleSerials(knex, deviceId) {
     .then(items => items.map(s => s.replacedModuleSerial))
 
   return replacedModuleSerials
+}
+
+async function shouldTriggerResultCategoryAnalysis(
+  messageContext,
+  deviceId,
+  resultId,
+  resultCategoryId,
+  { resultOutcome, moduleSerial, assayId, consumableLot }
+) {
+  const resultCategories = await allResultCategoryToId()
+  const categoriesToAnalyze = [resultCategories.Invalid]
+  if (categoriesToAnalyze.includes(resultCategoryId)) {
+    if (!messageContext.resultAnalyzeCategories) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeCategories,
+      })
+    }
+    await messageContext.resultAnalyzeCategories(
+      deviceId,
+      resultId,
+      resultCategoryId,
+      {
+        moduleSerial,
+        resultOutcome,
+      }
+    )
+    await messageContext.resultAnalyzeCategories(
+      deviceId,
+      resultId,
+      resultCategoryId,
+      {
+        assayId,
+        consumableLot,
+        resultOutcome,
+      }
+    )
+  }
 }
 
 async function shouldTriggerResultErrorAnalysis(
@@ -263,4 +301,5 @@ module.exports = {
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
+  shouldTriggerResultCategoryAnalysis,
 }
