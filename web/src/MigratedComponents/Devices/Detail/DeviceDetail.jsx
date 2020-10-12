@@ -12,7 +12,7 @@ import {
   Route,
   useHistory,
   useParams,
-  useLocation,
+  useRouteMatch,
 } from 'react-router-dom'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
@@ -138,7 +138,7 @@ export const DeviceDetail = ({
   const intl = useIntl()
   return (
     <Shell>
-      <ShellHeader title="Devices">
+      <ShellHeader title={device.get('name') ? device.get('name') : 'Devices'}>
         {[
           {
             label: intl.formatMessage(messages.profile),
@@ -170,74 +170,76 @@ export const DeviceDetail = ({
           </AspectButton>
         ))}
       </ShellHeader>
-      {device.get('id') && (
-        <Switch>
-          <Route
-            exact
-            path={match.path}
-            render={props => (
-              <DeviceDetailProfile
-                intl={intl}
-                {...props}
-                dateRange={dateRange}
-                onDateRangeChange={onDateRangeChange}
-                device={device}
-                disabled={!editable}
-                displayPreferences={displayPreferences}
-                updateSingleDevice={updateSingleDevice}
-              />
-            )}
-          />
-          <Route
-            exact
-            path={`${match.path}/operation`}
-            render={props => (
-              <DeviceDetailOperation
-                intl={intl}
-                {...props}
-                device={device}
-                disabled={!editable}
-              />
-            )}
-          />
-          <Route
-            exact
-            path={`${match.path}/alerts`}
-            render={props => (
-              <DeviceDetailAlerts
-                intl={intl}
-                {...props}
-                device={device}
-                disabled={!editable}
-              />
-            )}
-          />
-          <Route
-            exact
-            path={`${match.path}/edit`}
-            render={props =>
-              editable ? (
-                <DeviceDetailEdit
+      <ShellContent>
+        {device.get('id') && (
+          <Switch>
+            <Route
+              exact
+              path={match.path}
+              render={props => (
+                <DeviceDetailProfile
+                  intl={intl}
+                  {...props}
+                  dateRange={dateRange}
+                  onDateRangeChange={onDateRangeChange}
+                  device={device}
+                  disabled={!editable}
+                  displayPreferences={displayPreferences}
+                  updateSingleDevice={updateSingleDevice}
+                />
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/operation`}
+              render={props => (
+                <DeviceDetailOperation
                   intl={intl}
                   {...props}
                   device={device}
-                  editable={editable}
-                  updateSingleDevice={updateSingleDevice}
+                  disabled={!editable}
                 />
-              ) : (
-                <Redirect to={match.url} />
-              )
-            }
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/alerts`}
+              render={props => (
+                <DeviceDetailAlerts
+                  intl={intl}
+                  {...props}
+                  device={device}
+                  disabled={!editable}
+                />
+              )}
+            />
+            <Route
+              exact
+              path={`${match.path}/edit`}
+              render={props =>
+                editable ? (
+                  <DeviceDetailEdit
+                    intl={intl}
+                    {...props}
+                    device={device}
+                    editable={editable}
+                    updateSingleDevice={updateSingleDevice}
+                  />
+                ) : (
+                  <Redirect to={match.url} />
+                )
+              }
+            />
+          </Switch>
+        )}
+        {loading && (
+          <DelayShowingProgressCircular
+            className={cssClasses('DelayShowingProgressCircular')}
+            disabled={false}
+            variant="indeterminate"
           />
-        </Switch>
-      )}
-      {loading && (
-        <DelayShowingProgressCircular
-          className={cssClasses('DelayShowingProgressCircular')}
-          disabled={false}
-          variant="indeterminate"
-        />
-      )}
+        )}
+      </ShellContent>
     </Shell>
   )
 }

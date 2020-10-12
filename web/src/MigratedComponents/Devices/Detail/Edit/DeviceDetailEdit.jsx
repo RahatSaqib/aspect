@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 import { Helmet } from 'react-helmet'
-import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import recomposeForm from '../../../../components/recomposeForm'
 import FormGroup from '../../../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../../../components/themedReactToolbox/ButtonGroup'
@@ -131,13 +130,6 @@ export const DeviceDetailEdit = ({
   return (
     <div>
       <Helmet title={deviceName} />
-      <DeviceDetailBackBar
-        intl={intl}
-        history={history}
-        location={location}
-        match={match}
-        title={deviceName}
-      />
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <form onSubmit={handleSubmit}>

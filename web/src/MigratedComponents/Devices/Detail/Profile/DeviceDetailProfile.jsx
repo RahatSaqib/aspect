@@ -31,7 +31,6 @@ import {
   updateDeviceMaintenance,
   updateDeviceMaintenanceStatus,
 } from '../../../../device/DeviceRedux'
-import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../../../../globals/components/Summary'
 import requirePermissions from '../../../../components/shared/requirePermissions'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
@@ -698,15 +697,6 @@ export const DeviceDetailProfile = ({
 
   return (
     <div>
-      {/* <Helmet title={deviceName} />
-      <DeviceDetailBackBar
-        intl={intl}
-        history={history}
-        location={location}
-        match={match}
-        disabled={disabled}
-        title={deviceName}
-      /> */}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <div>

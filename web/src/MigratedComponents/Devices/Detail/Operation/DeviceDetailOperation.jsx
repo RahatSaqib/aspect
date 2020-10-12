@@ -21,7 +21,6 @@ import DataTableProgressBar from '../../../../components/shared/DataTableProgres
 import BrowseTablePaginator from '../../../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../../../globals/components/BrowseEmptyList'
 import { fetchDeviceOperations } from '../../../../deviceOperation/DeviceOperationRedux'
-import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../../../../globals/components/Summary'
 import {
   DeviceOperationDataTable,
@@ -175,14 +174,6 @@ export const DeviceDetailOperation = ({
 }) => (
   <div>
     <Helmet title={device.get('name')} />
-    <DeviceDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      disabled={disabled}
-      title={device.get('name')}
-    />
     <section className={cssClasses('Section', 'Section--first')}>
       <Card className={cssClasses('Section__Content')}>
         <div>
