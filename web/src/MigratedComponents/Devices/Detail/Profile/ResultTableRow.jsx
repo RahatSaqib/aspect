@@ -1,14 +1,14 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { formatDate } from '../../../../../shared/utils/dateFormat'
+import { formatDate } from '../../../../shared/utils/dateFormat'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
-} from '../../../../../components/shared/tableBody'
+} from '../../../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(
-  require('../../../components/shared/DataTableRow.css')
+  require('../../../../components/shared/DataTableRow.css')
 )
 
 const enhance = identity

@@ -5,10 +5,10 @@ import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import DeviceMaintenanceStatusSelectField from '../../filter/resource/DeviceMaintenanceStatusSelectField'
-import recomposeForm from '../../components/recomposeForm'
+import DeviceMaintenanceStatusSelectField from '../../../filter/resource/DeviceMaintenanceStatusSelectField'
+import recomposeForm from '../../../components/recomposeForm'
 
-import AspectDialog from '../../components/shared/AspectDialog'
+import AspectDialog from '../../../components/shared/AspectDialog'
 
 const cssClasses = classnames.bind(require('./BaseDialog.css'))
 

@@ -11,7 +11,7 @@ import { defineMessages } from 'react-intl'
 import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
-import { fetchDeviceMaintenanceStatus as fetchStatuses } from '../../device/maintenance/DeviceMaintenanceStatusRedux'
+import { fetchDeviceMaintenanceStatus as fetchStatuses } from '../../MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
 
 const messages = defineMessages({
   active: {

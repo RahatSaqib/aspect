@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import '../../../globals/variables.css';
 
 .Section {
   padding: 10px var(--aspect-detail-horizontal-padding);
@@ -116,7 +116,7 @@
 
 .ResultDataTable,
 .DeviceOperationDataTable {
-  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+  composes: ComponentDataTable from '../../../components/shared/DataTable.css';
 }
 
 .DelayShowingProgressCircular {

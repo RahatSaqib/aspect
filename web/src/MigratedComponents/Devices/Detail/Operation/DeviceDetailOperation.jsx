@@ -15,14 +15,14 @@ import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
-} from '../../../shared/selectors/searchParams'
-import { formatDate } from '../../../shared/utils/dateFormat'
-import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
-import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
-import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
-import { fetchDeviceOperations } from '../../../deviceOperation/DeviceOperationRedux'
+} from '../../../../shared/selectors/searchParams'
+import { formatDate } from '../../../../shared/utils/dateFormat'
+import DataTableProgressBar from '../../../../components/shared/DataTableProgressBar'
+import BrowseTablePaginator from '../../../../globals/components/BrowseTablePaginator'
+import BrowseEmptyList from '../../../../globals/components/BrowseEmptyList'
+import { fetchDeviceOperations } from '../../../../deviceOperation/DeviceOperationRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../../../globals/components/Summary'
+import Summary from '../../../../globals/components/Summary'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,

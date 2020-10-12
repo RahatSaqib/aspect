@@ -34,7 +34,7 @@ import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatus
 import report from './report/ReportRedux'
 import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
-import deviceMaintenanceStatus from './device/maintenance/DeviceMaintenanceStatusRedux'
+import deviceMaintenanceStatus from './MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
 import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({

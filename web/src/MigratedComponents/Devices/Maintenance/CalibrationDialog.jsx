@@ -3,9 +3,9 @@ import pick from 'lodash/pick'
 import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
 
-import recomposeForm from '../../components/recomposeForm'
+import recomposeForm from '../../../components/recomposeForm'
 import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
-import { withDateFormatProps } from '../../shared/utils/dateFormat'
+import { withDateFormatProps } from '../../../shared/utils/dateFormat'
 
 const messages = defineMessages({
   dialogTitle: {

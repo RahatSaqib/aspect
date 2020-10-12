@@ -17,26 +17,26 @@ import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
-} from '../../../shared/selectors/searchParams'
-import { formatDate, formatRelative } from '../../../shared/utils/dateFormat'
-import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import Results from '../../../result/historyResults/HistoryResults'
-import ColoredNumber from '../../../components/shared/ColoredNumber'
-import AspectTooltip from '../../../components/shared/AspectTooltip'
-import { fetchResults, exportResults } from '../../../result/ResultRedux'
-import { tokens } from '../../../deviceApproval/DeviceApprovalRedux'
+} from '../../../../shared/selectors/searchParams'
+import { formatDate, formatRelative } from '../../../../shared/utils/dateFormat'
+import { sanitizeFiltersStringBy } from '../../../../filter/utils'
+import Results from '../../../../result/historyResults/HistoryResults'
+import ColoredNumber from '../../../../components/shared/ColoredNumber'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
+import { fetchResults, exportResults } from '../../../../result/ResultRedux'
+import { tokens } from '../../../../deviceApproval/DeviceApprovalRedux'
 import {
   showDialog,
   hideDialog,
   updateDeviceMaintenance,
   updateDeviceMaintenanceStatus,
-} from '../../DeviceRedux'
+} from '../../../../device/DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../../../globals/components/Summary'
-import requirePermissions from '../../../components/shared/requirePermissions'
-import CalibrationDialog from '../../maintenance/CalibrationDialog'
-import WarrantyDialog from '../../maintenance/WarrantyDialog'
-import DeviceMaintenanceStatusDialog from '../../maintenance/DeviceMaintenanceStatusDialog'
+import Summary from '../../../../globals/components/Summary'
+import requirePermissions from '../../../../components/shared/requirePermissions'
+import CalibrationDialog from '../../Maintenance/CalibrationDialog'
+import WarrantyDialog from '../../Maintenance/WarrantyDialog'
+import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -698,7 +698,7 @@ export const DeviceDetailProfile = ({
 
   return (
     <div>
-      <Helmet title={deviceName} />
+      {/* <Helmet title={deviceName} />
       <DeviceDetailBackBar
         intl={intl}
         history={history}
@@ -706,7 +706,7 @@ export const DeviceDetailProfile = ({
         match={match}
         disabled={disabled}
         title={deviceName}
-      />
+      /> */}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <div>
