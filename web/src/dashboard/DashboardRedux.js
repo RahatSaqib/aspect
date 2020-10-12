@@ -2,7 +2,6 @@
 import { stringify } from 'querystring'
 import fromPairs from 'lodash/fromPairs'
 import forEach from 'lodash/forEach'
-import omit from 'lodash/omit'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
@@ -545,11 +544,11 @@ export default function dashboardReducer(state = initialState, action) {
     case RECEIVE_DEVICE_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(
+          mutState.setIn(
             ['deviceList'],
             Immutable.fromJS(action.data.deviceList)
           )
-          mutState.mergeDeepIn(
+          mutState.setIn(
             ['deviceSummaryMap'],
             Immutable.fromJS(action.data.deviceSummaryMap)
           )
@@ -558,15 +557,12 @@ export default function dashboardReducer(state = initialState, action) {
     case RECEIVE_SITE_DASHBOARD:
       return state.withMutations(mutState => {
         onRequested(action, mutState, () => {
-          mutState.mergeDeepIn(
-            ['siteList'],
-            Immutable.fromJS(action.data.siteList)
-          )
-          mutState.mergeDeepIn(
+          mutState.setIn(['siteList'], Immutable.fromJS(action.data.siteList))
+          mutState.setIn(
             ['assayResultCategoryList'],
             Immutable.fromJS(action.data.assayResultCategoryList)
           )
-          mutState.mergeDeepIn(
+          mutState.setIn(
             ['siteSummaryMap'],
             Immutable.fromJS(action.data.siteSummaryMap)
           )
