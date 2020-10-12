@@ -303,9 +303,4 @@ NotificationList.propTypes = {
   pageSize: PropTypes.number.isRequired,
 }
 
-export default flowRight(
-  injectIntl,
-  connect(mapStateToProps, {
-    exportNotifications,
-  })
-)(NotificationList)
+export default NotificationList
