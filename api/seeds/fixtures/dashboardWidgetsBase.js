@@ -479,20 +479,35 @@ module.exports = {
       titleI18nKey: 'stockNotRecordedTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: `SELECT CONCAT(ROUND(SUM(ii.siteId IS NULL) / COUNT(s.id) * 100), '%') AS cnt
-      FROM Device AS d
+      sqlForIndicator: `SELECT
+      CONCAT(
+        ROUND(
+          100 - (COUNT(
+            DISTINCT CASE WHEN cr.i18nKey IS NOT NULL AND cr.i18nKey <> 'ConsumableReason_TestConducted' THEN s.id ELSE NULL END) * 100 / COUNT(DISTINCT s.id))), '%') AS cnt
+      FROM Site AS s
+      INNER JOIN Partner AS p ON s.partnerId = p.id
+      INNER JOIN Device AS d on d.siteId = s.id
       INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
-      INNER JOIN Site AS s on d.siteId = s.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-      LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId
-      WHERE dt.externalId = 'CepheidGeneXpert'`,
-      sqlForStatUnit: `SELECT CONCAT(ROUND(SUM(ii.siteId IS NULL) / COUNT(s.id) * 100), '%') AS cnt
-      FROM Device AS d
+      LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId 
+      LEFT OUTER JOIN Consumable AS c ON ii.consumableId = c.id
+      LEFT OUTER JOIN InventoryLog AS il ON ii.id = il.inventoryItemId AND c.manufacturer = 'Cepheid'
+      LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
+      WHERE dt.externalId = 'CepheidGeneXpert';`,
+      sqlForStatUnit: `SELECT
+      CONCAT(
+        ROUND(100 - (COUNT(
+          DISTINCT CASE WHEN cr.i18nKey IS NOT NULL AND cr.i18nKey <> 'ConsumableReason_TestConducted' THEN s.id ELSE NULL END) * 100 / COUNT(DISTINCT s.id))), '%') AS cnt
+      FROM Site AS s
+      INNER JOIN Partner AS p ON s.partnerId = p.id
+      INNER JOIN Device AS d on d.siteId = s.id
       INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
-      INNER JOIN Site AS s on d.siteId = s.id
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-      LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId AND ii.createdON < DATE_FORMAT(NOW(), '%Y-%m-01')
-      WHERE dt.externalId = 'CepheidGeneXpert'`,
+      LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId 
+      LEFT OUTER JOIN Consumable AS c ON ii.consumableId = c.id
+      LEFT OUTER JOIN InventoryLog AS il ON ii.id = il.inventoryItemId AND il.createdON < DATE_FORMAT(NOW(), '%Y-%m-01') AND c.manufacturer = 'Cepheid'
+      LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
+      WHERE dt.externalId = 'CepheidGeneXpert';`,
       statUnit: '{unit} last month',
       statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
       link: '/operational-data#inventoryStatus',
@@ -1364,7 +1379,7 @@ module.exports = {
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           LEFT OUTER JOIN (
-            SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+            SELECT COUNT(DISTINCT dmsl.day) AS daysInactive, dmsl.deviceId
             FROM DeviceMaintenanceStatusLog AS dmsl
             INNER JOIN Device AS d ON dmsl.deviceId = d.id
             INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
@@ -1400,7 +1415,7 @@ module.exports = {
         INNER JOIN Site AS s ON s.id = d.siteId
         LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         LEFT OUTER JOIN (
-          SELECT COUNT(DISTINCT day) AS daysInactive, dmsl.deviceId
+          SELECT COUNT(DISTINCT dmsl.day) AS daysInactive, dmsl.deviceId
           FROM DeviceMaintenanceStatusLog AS dmsl
           INNER JOIN Device AS d ON dmsl.deviceId = d.id
           INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
