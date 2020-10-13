@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NotificationList module NotificationList component should render correctly 1`] = `
+exports[`Notification List component should shallow render correctly 1`] = `
 <div
   className="Container"
 >
@@ -13,14 +13,10 @@ exports[`NotificationList module NotificationList component should render correc
     title="Notifications"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={
-      Object {
-        "name": true,
-      }
-    }
+    config={[MockFunction]}
     history={
       Object {
-        "push": [Function],
+        "push": [MockFunction],
       }
     }
     intl={
@@ -67,16 +63,14 @@ exports[`NotificationList module NotificationList component should render correc
     <DataTableProgressBar
       disabled={true}
     />
-    <Connect(withState(withHandlers(ExportListButton)))
-      onCsvClick={[Function]}
-      onExcelClick={[Function]}
-      reportName="Notifications"
+    <AspectExportListButton
+      onExport={[MockFunction]}
       visible={false}
     />
     <pure(withHandlers(EmptyList))
       history={
         Object {
-          "push": [Function],
+          "push": [MockFunction],
         }
       }
       intl={
