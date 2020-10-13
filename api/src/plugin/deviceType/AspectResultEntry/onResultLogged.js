@@ -52,7 +52,9 @@ async function updateCovidResultFromFormData(
         .first('dt.externalId')) || {}
 
     if (
-      !['Aspect', 'CepheidGeneXpert'].includes(deviceLogDeviceTypeExternalId)
+      !['Aspect', 'CepheidGeneXpert', 'GxAlert'].includes(
+        deviceLogDeviceTypeExternalId
+      )
     ) {
       return
     }
