@@ -1,0 +1,9 @@
+.summary_widgetAlertIcon {
+  color: rgb(252, 51, 22);
+  font-size: 25px;
+}
+
+.summary_widgetAlertTooltip {
+  float: right;
+  margin-left: 5px;
+}

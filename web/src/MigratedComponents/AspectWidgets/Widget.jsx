@@ -13,6 +13,7 @@ import {
   getTimePeriod,
   getAllDaysInCurrentMonth,
 } from '../Graphs/Helpers/Formatters/datetime'
+import WidgetAlert from './Alerts'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
@@ -92,6 +93,7 @@ const AspectWidget = ({
     statStatus,
     extraLabel,
     statUnitI18nKey,
+    alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
@@ -127,7 +129,8 @@ const AspectWidget = ({
         <div className={cssClasses('Summary__Card__Content')}>
           <div className={cssClasses('Summary__Card__Item')}>
             <div className={cssClasses('Summary__Card__Item__Count')}>
-              {count}
+              {count}{' '}
+              {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
             </div>
             <div className={cssClasses('Summary__Card__Item__Messages')}>
               <div
@@ -174,6 +177,10 @@ AspectWidget.propTypes = {
     statStatus: PropTypes.object,
     extraLabel: PropTypes.object,
     statUnitI18nKey: PropTypes.string,
+    alert: PropTypes.shape({
+      config: PropTypes.object.isRequired,
+      display: PropTypes.isRequired,
+    }),
   }).isRequired,
 }
 
