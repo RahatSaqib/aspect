@@ -13,7 +13,6 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     title="Inventory on Hand"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={null}
     dateFilterLabel="Expires On"
     history={
       Object {
@@ -74,7 +73,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     className="DataTableCard--action"
   >
     <WithStyles(CheckboxField)
-      checked={true}
+      checked={false}
       className="Checkbox"
       label="Group by Site"
       name="groupBySite"
@@ -89,8 +88,6 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       disabled={true}
     />
     <Connect(withState(withHandlers(ExportListButton)))
-      onCsvClick={[Function]}
-      onExcelClick={[Function]}
       reportName="Supplies"
       visible={false}
     />
@@ -288,6 +285,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     inventoryItem={Immutable.Map {}}
     isDialogActive={false}
     onCancel={[Function]}
+    onSubmit={[Function]}
   />
   <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
     intl={

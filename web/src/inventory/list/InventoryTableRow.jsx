@@ -25,32 +25,28 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
   const intl = useIntl()
   const dispatch = useDispatch()
 
-  const getActions = isInTransit => [
+  const actions = [
     {
       icon: 'FaCheck',
       text: intl.formatMessage(messages.receiveInventory),
-      disabled: !isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showReceiveInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaPlus',
       text: intl.formatMessage(messages.addInventory),
-      disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showAddInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaExchangeAlt',
       text: intl.formatMessage(messages.transferInventory),
-      disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showTransferInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaMinus',
       text: intl.formatMessage(messages.removeInventory),
-      disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showRemoveInventoryDialog(inventoryItemId)),
     },
@@ -119,7 +115,7 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
       <TableCell className={cssClasses('TableCell')}>
         <AspectVertMenu
           params={{ inventoryItemId: inventoryItem.get('id') }}
-          actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
+          actions={actions}
         />
       </TableCell>
     </TableRow>
