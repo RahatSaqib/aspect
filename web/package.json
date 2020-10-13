@@ -25,7 +25,9 @@
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json"
+    "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "husky": {
     "hooks": {
@@ -95,6 +97,10 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
+    "@storybook/addon-actions": "^6.0.26",
+    "@storybook/addon-essentials": "^6.0.26",
+    "@storybook/addon-links": "^6.0.26",
+    "@storybook/react": "^6.0.26",
     "autodll-webpack-plugin": "^0.4.2",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
@@ -149,6 +155,7 @@
     "postcss-pxtorem": "^4.0.1",
     "prettier": "^1.19.1",
     "react-intl-po": "^2.2.2",
+    "react-is": "^16.13.1",
     "react-query-devtools": "^2.4.2",
     "react-styleguidist": "^11.0.6",
     "react-test-renderer": "^16.13.1",
