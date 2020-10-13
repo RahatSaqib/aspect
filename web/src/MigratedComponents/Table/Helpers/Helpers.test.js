@@ -1,22 +1,13 @@
 import { buildColumnsFromData } from './index'
+import config from '../../Notifications/List/config'
 
 describe('Table Helpers', () => {
   describe('Build Columns', () => {
     it('should build correct column details based on the config', () => {
-      const input = {
-        columns: [
-          { key: 'name', label: 'Name', disableSortBy: true },
-          { key: 'lastTriggeredOn', label: 'Last Triggered' },
-          { key: 'totalTriggers', label: 'Total Triggers' },
-          { key: 'contacts', label: 'Contacts' },
-        ],
-      }
-
       const output = [
         {
           Header: 'Name',
           accessor: 'name',
-          disableSortBy: true,
         },
         {
           Header: 'Last Triggered',
@@ -29,10 +20,11 @@ describe('Table Helpers', () => {
         {
           Header: 'Contacts',
           accessor: 'contacts',
+          disableSortBy: true,
         },
       ]
 
-      const grouped = buildColumnsFromData(input)
+      const grouped = buildColumnsFromData(config)
       expect(grouped).toEqual(output)
     })
   })
