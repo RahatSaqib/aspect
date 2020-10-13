@@ -37,7 +37,7 @@ async function listNotifications(request) {
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
     .leftJoin('Person as per', 'j.personId', 'per.id')
     .select(
-      'n.notificationTypeId as id',
+      'n.id as id',
       'nt.name',
       knex.raw(
         'SUM(CASE WHEN n.issueId IS NULL then 0 ELSE 1 END) as totalTriggers'
@@ -64,9 +64,8 @@ async function listNotifications(request) {
     )
   }
 
-  const getCount = getItems
-    .clone()
-    .countDistinct('n.notificationTypeId as count')
+  const getCount = knex.count('* as count')
+    .from(getItems.clone().as('mainQuery'))
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
