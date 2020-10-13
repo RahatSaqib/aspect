@@ -1,0 +1,23 @@
+.table__header {
+    display: flex;
+    justify-content: flex-start;
+    min-height: 20px;
+    align-items: center;
+}
+
+.table__headerTitle {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.table__headerTitle--bold {
+    font-size: 0.75rem;
+    font-weight: 900 !important;
+}
+
+.table__headerIcon {
+    min-width: 30px;
+    font-size: 1.5em;
+    padding: 4px 0 0 5px;
+}
+
