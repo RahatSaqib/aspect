@@ -71,8 +71,6 @@ async function listNotifications(request) {
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  console.log(total)
-
   return { ok: true, total, data, length: data.length }
 }
 
