@@ -18,7 +18,7 @@ function AspectTable({ tableData: data, config }) {
     useSortBy
   )
 
-  return (
+  return data ? (
     <Table {...getTableProps()}>
       <TableHead>
         {headerGroups.map(({ headers, getHeaderGroupProps }) => (
@@ -61,7 +61,7 @@ function AspectTable({ tableData: data, config }) {
         })}
       </TableBody>
     </Table>
-  )
+  ) : null
 }
 
 AspectTable.proptTypes = {

@@ -26,10 +26,14 @@ function TableColumnHeader({ render, isSorted, isSortedDesc }) {
   )
 }
 
+TableColumnHeader.defaultProps = {
+  isSortedDesc: false,
+}
+
 TableColumnHeader.propTypes = {
-  render: PropTypes.func.isRequired,
+  render: PropTypes.string.isRequired,
   isSorted: PropTypes.bool.isRequired,
-  isSortedDesc: PropTypes.bool.isRequired,
+  isSortedDesc: PropTypes.bool,
 }
 
 export default TableColumnHeader

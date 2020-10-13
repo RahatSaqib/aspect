@@ -4,9 +4,9 @@ import formatDistance from 'date-fns/formatDistance'
 import times from 'lodash/times'
 import random from 'lodash/random'
 
-function mockDatafetch() {
+function mockDatafetch(cnt = 10) {
   const data = []
-  times(256, index => {
+  times(cnt, index => {
     const triggerRandom = random(0, 120000)
     const contactRandom = random(0, 100)
 
