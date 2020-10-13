@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import PropTypes from 'prop-types'
 import { useTable, useSortBy } from 'react-table'
 
 import Table from '@material-ui/core/Table'
@@ -12,13 +13,10 @@ import { buildColumnsFromData } from './Helpers'
 
 function AspectTable({ tableData: data, config }) {
   const columns = useMemo(() => buildColumnsFromData(config), [config])
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data }, useSortBy)
+  const { getTableProps, headerGroups, rows, prepareRow } = useTable(
+    { columns, data },
+    useSortBy
+  )
 
   return (
     <Table {...getTableProps()}>
@@ -64,6 +62,11 @@ function AspectTable({ tableData: data, config }) {
       </TableBody>
     </Table>
   )
+}
+
+AspectTable.proptTypes = {
+  data: PropTypes.oneOf([PropTypes.array]).isRequired,
+  config: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
 export default AspectTable

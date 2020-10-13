@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import classnames from 'classnames/bind'
 
@@ -23,6 +24,12 @@ function TableColumnHeader({ render, isSorted, isSortedDesc }) {
       </span>
     </div>
   )
+}
+
+TableColumnHeader.propTypes = {
+  render: PropTypes.func.isRequired,
+  isSorted: PropTypes.bool.isRequired,
+  isSortedDesc: PropTypes.bool.isRequired,
 }
 
 export default TableColumnHeader
