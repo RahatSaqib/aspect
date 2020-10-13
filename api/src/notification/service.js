@@ -64,12 +64,14 @@ async function listNotifications(request) {
     )
   }
 
-  const getCount = notificationQuery
+  const getCount = getItems
     .clone()
     .countDistinct('n.notificationTypeId as count')
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  console.log(total)
 
   return { ok: true, total, data, length: data.length }
 }

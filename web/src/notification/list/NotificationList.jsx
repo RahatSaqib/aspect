@@ -146,7 +146,7 @@ export const NotificationListWithProps = ({
           location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          total={table.total}
+          total={total}
           pageAt={pageAt}
           pageSize={pageSize}
         />
@@ -169,9 +169,8 @@ export const NotificationList = () => {
       sortCol: 'name',
       sortDir: 'desc',
       filters: Immutable.fromJS({
-        name: true,
+        name: '',
       }),
-      extraColumns: Immutable.List(),
     })
   )
   const [total, setTotal] = useState()
@@ -199,6 +198,7 @@ export const NotificationList = () => {
       const { data: list, total: totalItems } = data
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
+
       setTable(receiveTableItems(table, totalItems))
     }
   }, [data])
