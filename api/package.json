@@ -23,6 +23,7 @@
     "start": "nodemon src/server.js",
     "start:background": "forever start -o out.log -e err.log src/server.js",
     "start:background:quiet": "forever start src/server.js",
+    "start:fresh": "yarn && yarn db:reseed && yarn start",
     "stop:background": "forever stop src/server.js",
     "stop:background:quiet": "forever stop src/server.js",
     "test": "npm-run-all test:json test:unit test:contract",
