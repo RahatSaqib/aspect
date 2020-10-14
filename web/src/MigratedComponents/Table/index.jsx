@@ -11,7 +11,7 @@ import TableRow from '@material-ui/core/TableRow'
 import TableColumnHeader from './TableColumnHeader'
 import { buildColumnsFromData } from './Helpers'
 
-function AspectTable({ tableData: data, config }) {
+const AspectTable = ({ tableData: data, config }) => {
   const columns = useMemo(() => buildColumnsFromData(config), [config])
   const { getTableProps, headerGroups, rows, prepareRow } = useTable(
     { columns, data },
