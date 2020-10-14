@@ -1,24 +1,24 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 
 import NotificationDetailView from '../../notification/detail/view/NotificationDetailView'
 import NotificationDetailHistory from './Detail'
+import NotificationList from './List'
 
 const AspectNotificationDetails = ({ match }) => {
-  const intl = useIntl()
   return (
     <div>
       <Switch>
+        <Route exact path={match?.path} render={() => <NotificationList />} />
         <Route
           exact
-          path={match?.path}
-          render={props => <NotificationDetailView intl={intl} {...props} />}
+          path={`${match?.path}/:notificationId`}
+          render={props => <NotificationDetailView {...props} />}
         />
         <Route
           exact
-          path={`${match?.path}/history`}
+          path={`${match?.path}/:notificationId/history`}
           render={({ location, history }) => (
             <NotificationDetailHistory location={location} history={history} />
           )}
