@@ -3,8 +3,8 @@ const {
   allMessageSeverityToId,
 } = require('../../src/shared/dictionary')
 
-const msgInstrumentReplaced = `{{device.name}}: 
-  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to 
+const msgInstrumentReplaced = `{{device.name}}:
+  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
 
@@ -492,6 +492,140 @@ async function getBaseIssues(auditFields) {
         subject: 'Module has been disabled',
         body: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+      },
+    },
+    ProbeCheckTooLowModule: {
+      issueType: {
+        name: 'Probe Check Too Low On Module',
+        externalId: 'ProbeCheckTooLowModule',
+        i18nKey: 'issueStatusProbeCheckTooLowModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message:
+          'Probe Check Too Low (5007) on Module ({{result.moduleSerial}}) at {{site.name}}',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message:
+          'Probe Check Too Low (5007) on Module ({{result.moduleSerial}}) at {{site.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject:
+          'Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}',
+        body: `Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}
+
+        Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+        Country: {{country.name}}
+
+        Lab contacts: {{site.contacts}}
+
+        Instrument Serial: {{result.instrumentSerial}}
+
+        Software Version: {{result.softwareVersion}},
+
+        Cartridge Type: {{result.assay.name}},
+
+        Sender User: {{result.senderOperator}},
+
+        Test Outcome: {{issue.data.resultOutcome}},
+
+        Module Serial: {{result.moduleSerial}}
+
+        Module Slot: {{result.moduleName}}`,
+        htmlBody: `Probe Check Too Low (5007) on ({{result.moduleSerial}}) at {{site.name}}
+
+          Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+          Country: {{country.name}}
+
+          Lab contacts: {{site.contacts}}
+
+          Instrument Serial: {{result.instrumentSerial}}
+
+          Software Version: {{result.softwareVersion}},
+
+          Cartridge Type: {{result.assay.name}},
+
+          Sender User: {{result.senderOperator}},
+
+          Test Outcome: {{issue.data.resultOutcome}},
+
+          Module Serial: {{result.moduleSerial}}
+
+          Module Slot: {{result.moduleName}}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooLowLot: {
+      issueType: {
+        name: 'Probe Check Too Low On Lot',
+        externalId: 'ProbeCheckTooLowLot',
+        i18nKey: 'issueStatusProbesTooLow',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message:
+          'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message:
+          'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject:
+          'Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}',
+        body: `Probe Check Too Low (5007) on lot ({{result.consumableLot}}) at {{site.name}}
+
+        Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+        Country: {{country.name}}
+
+        Lab contacts: {{site.contacts}}
+
+        Instrument Serial: {{result.moduleSerial}}
+
+        Software Version: {{result.softwareVersion}},
+
+        Cartridge Type: {{result.assay.name}},
+
+        Sender User: {{result.senderOperator}},
+
+        Test Outcome: {{issue.data.resultOutcome}},
+
+        Reagent Lot: {{result.consumableLot}}`,
+        htmlBody: `Probe Check Too Low (5007) on Lot ({{result.consumableLot}}) at {{site.name}}
+
+          Total 5007 errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+          Country: {{country.name}}
+
+          Lab contacts: {{site.contacts}}
+
+          Instrument Serial: {{result.moduleSerial}}
+
+          Software Version: {{result.softwareVersion}},
+
+          Cartridge Type: {{result.assay.name}},
+
+          Sender User: {{result.senderOperator}},
+
+          Test Outcome: {{issue.data.resultOutcome}},
+
+          Reagent Lot: {{result.consumableLot}}`,
+
+        ...auditFields,
       },
     },
     InventoryStockExpiring: {

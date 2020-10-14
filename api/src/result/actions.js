@@ -1,3 +1,4 @@
+const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
@@ -13,6 +14,8 @@ const types = {
   RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
+  RESULT_ANALYZE_PROBES_LOT: 'RESULT_ANALYZE_PROBES_LOT',
+  RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
 }
 
 // ----------- Action Creators -------------------
@@ -35,6 +38,43 @@ function resultUpdated(resultId, deviceLogId, userId) {
     resultId,
     deviceLogId,
     userId,
+  }
+}
+
+/**
+ *
+ * @param {*} deviceId
+ * is the id of the device which generates the result with error
+ * @param {*} data
+ * options should have moduleSerial, resultErrorCode, lot and assay
+ * Creates an action to notify the result with given id
+ * has been logged with an error code.
+ *
+ * resultId,  data.resultErrorCode and data.moduleSerial or  data.consumableLot and data.assayId are required.
+
+ */
+
+function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
+  if (!deviceId) {
+    throw new Error(
+      'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
+    )
+  }
+
+  const moduleSerial = _.get(data, 'moduleSerial')
+
+  return {
+    type: moduleSerial
+      ? types.RESULT_ANALYZE_PROBES_MODULE
+      : types.RESULT_ANALYZE_PROBES_LOT,
+    deviceId,
+    resultId,
+    options: {
+      data: {
+        ...data,
+        resultErrorCode,
+      },
+    },
   }
 }
 
@@ -274,4 +314,5 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
+  resultAnalyzeErrors,
 }

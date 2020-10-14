@@ -692,9 +692,17 @@ async function addHivVlResults(
     const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
     const rnd = _.random(0, 100)
+    const selectionConditionNoErrors = r =>
+      rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+    const selectionConditionWithErros = r =>
+      r.category1 === resultCategories.resultCategoryErrorId
+
+    // we make sure to have at least one error result if error codes are passed
     const result = _.find(
       possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+      errorCodes.length > 0 && i === 0
+        ? selectionConditionWithErros
+        : selectionConditionNoErrors
     )
 
     let copies = 0
@@ -761,7 +769,7 @@ async function addHivVlResults(
       notes: 'This is an HIV test result',
       errorCode:
         result.category1 === resultCategories.resultCategoryErrorId
-          ? errorCodes[_.random(errorCodes.length)]
+          ? _.sample(errorCodes)
           : null,
       errorNotes:
         result.category1 === resultCategories.resultCategoryErrorId
@@ -932,9 +940,17 @@ async function addTBResults(
 
     const rnd = _.random(0, 100)
 
+    const selectionConditionNoErrors = r =>
+      rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+    const selectionConditionWithErros = r =>
+      r.category1 === resultCategories.resultCategoryErrorId
+
+    // we make sure to have at least one error result if error codes are passed
     const result = _.find(
       possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+      errorCodes.length > 0 && i === 0
+        ? selectionConditionWithErros
+        : selectionConditionNoErrors
     )
 
     const patientNumber = patients.length - 1
@@ -993,7 +1009,7 @@ async function addTBResults(
       notes: 'This is a test... result',
       errorCode:
         result.category1 === resultCategories.resultCategoryErrorId
-          ? errorCodes[_.random(errorCodes.length)]
+          ? _.sample(errorCodes)
           : null,
       errorNotes:
         result.category1 === resultCategories.resultCategoryErrorId
@@ -1202,7 +1218,7 @@ async function addEbolaResults(
         notes: 'This is an Ebola test result',
         errorCode:
           result.category1 === resultCategories.resultCategoryErrorId
-            ? errorCodes[_.random(errorCodes.length)]
+            ? _.sample(errorCodes)
             : null,
         errorNotes:
           result.category1 === resultCategories.resultCategoryErrorId

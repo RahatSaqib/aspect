@@ -173,6 +173,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'r.endedOn as resultEndedOn',
   'r.notes as resultNotes',
   'r.consumableSerial',
+  'r.consumableLot',
   'r.createdOn',
   'r.senderOperator',
   'r.moduleName as resultModuleName',
