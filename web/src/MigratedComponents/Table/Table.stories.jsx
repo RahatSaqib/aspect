@@ -9,7 +9,7 @@ import config from '../Notifications/List/config'
 const { data } = mockDatafetch(90)
 
 export default {
-  title: 'Layouts/AspectTable/Kitchen Sink',
+  title: 'Layouts/AspectTable/Examples/Kitchen Sink',
   component: AspectTable,
 }
 
