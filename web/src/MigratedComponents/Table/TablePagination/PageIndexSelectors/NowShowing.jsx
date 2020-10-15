@@ -10,7 +10,7 @@ const cssClasses = classnames.bind(require('../../Table.css'))
 
 const NowShowing = ({ dataLength, page, name }) => {
   const intl = useIntl()
-  const boundaries = getCurrentVisibleRows(dataLength, page)
+  const boundaries = getCurrentVisibleRows(page)
   const countName = intl.formatMessage(messages.nowShowing, {
     firstItemIndex: boundaries[0],
     lastItemIndex: boundaries[1],
@@ -22,7 +22,7 @@ const NowShowing = ({ dataLength, page, name }) => {
 
 NowShowing.propTypes = {
   dataLength: PropTypes.number.isRequired,
-  page: PropTypes.oneOf([PropTypes.array]).isRequired,
+  page: PropTypes.oneOfType([PropTypes.array]).isRequired,
   name: PropTypes.string.isRequired,
 }
 

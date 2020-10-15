@@ -67,8 +67,8 @@
 .pagesize__button {
     margin: 0 10px;
     padding: 0;
-    width: 40px;
-    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     font-weight: var(--lato-font-weight-bold, 700);
     text-align: center;
     text-transform: capitalize;

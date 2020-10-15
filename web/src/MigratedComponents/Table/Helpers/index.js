@@ -42,7 +42,7 @@ function buildColumnsFromData({ columns }) {
   return output
 }
 
-function getCurrentVisibleRows(dataLength, page) {
+function getCurrentVisibleRows(page) {
   const output = []
   map(page, ({ index }) => output.push(index + 1))
   const boundaries = [min(output), max(output)]

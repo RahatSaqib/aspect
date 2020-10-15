@@ -1,10 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import classnames from 'classnames/bind'
 
-import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
@@ -19,7 +17,7 @@ const IndexButton = ({ modifier, disabled, action, icon, label }) => {
       disabled={disabled}
       onClick={action}
     >
-      <IconProvider icon={icon} />
+      <IconProvider icon={icon} className="indexButton__icon" />
       {label}
     </Button>
   )

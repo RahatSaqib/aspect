@@ -20,36 +20,32 @@ const AspectPagination = ({
   pageSize,
   previousPage,
   page,
-}) => {
-  return (
-    <Fragment>
-      <div className={cssClasses('pagination__container')}>
-        <div className={cssClasses('pagination__leftActions')}>
-          <PageIndexSelectors
-            canNextPage={canNextPage}
-            canPreviousPage={canPreviousPage}
-            dataLength={dataLength}
-            gotoPage={gotoPage}
-            nextPage={nextPage}
-            name={name}
-            pageCount={pageCount}
-            pageIndex={pageIndex}
-            previousPage={previousPage}
-            pageSize={pageSize}
-            page={page}
-          />
-        </div>
-        <div className={cssClasses('pagination__rightActions')}>
-          <PageSizeSelectors
-            dataLength={dataLength}
-            pageSize={pageSize}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </div>
-      </div>
-    </Fragment>
-  )
-}
+}) => (
+  <div className={cssClasses('pagination__container')}>
+    <div className={cssClasses('pagination__leftActions')}>
+      <PageIndexSelectors
+        canNextPage={canNextPage}
+        canPreviousPage={canPreviousPage}
+        dataLength={dataLength}
+        gotoPage={gotoPage}
+        nextPage={nextPage}
+        name={name}
+        pageCount={pageCount}
+        pageIndex={pageIndex}
+        previousPage={previousPage}
+        pageSize={pageSize}
+        page={page}
+      />
+    </div>
+    <div className={cssClasses('pagination__rightActions')}>
+      <PageSizeSelectors
+        dataLength={dataLength}
+        pageSize={pageSize}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </div>
+  </div>
+)
 
 AspectPagination.propTypes = {
   dataLength: PropTypes.number.isRequired,
@@ -60,7 +56,7 @@ AspectPagination.propTypes = {
   gotoPage: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   nextPage: PropTypes.func.isRequired,
-  page: PropTypes.oneOf([PropTypes.array]).isRequired,
+  page: PropTypes.oneOfType([PropTypes.array]).isRequired,
   pageCount: PropTypes.number.isRequired,
   previousPage: PropTypes.func.isRequired,
   handleChangeRowsPerPage: PropTypes.func.isRequired,

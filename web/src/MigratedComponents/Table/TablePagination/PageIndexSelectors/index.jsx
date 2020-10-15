@@ -63,7 +63,7 @@ PageIndexSelectors.propTypes = {
   gotoPage: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   nextPage: PropTypes.func.isRequired,
-  page: PropTypes.oneOf([PropTypes.array]).isRequired,
+  page: PropTypes.oneOfType([PropTypes.array]).isRequired,
   pageCount: PropTypes.number.isRequired,
   previousPage: PropTypes.func.isRequired,
 }
