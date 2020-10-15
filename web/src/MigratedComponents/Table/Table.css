@@ -21,3 +21,60 @@
     padding: 4px 0 0 5px;
 }
 
+
+.pagination__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 66px;
+    padding: 20px 0;
+    margin: 20px 0;
+}
+
+.pagination__leftActions {
+    width: 50%;
+    padding: 0 20px;
+}
+
+.pageindex__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pageindex__button {
+    padding: 0 20px;
+}
+
+.pageindex__button--left span {
+    flex-direction: row;
+}
+
+.pageindex__button--right span {
+    flex-direction: row-reverse;
+}
+
+.pageindex__button--left div {
+    font-size: 16px;
+    padding: 5px 5px 0;
+}
+
+.pageindex__button--right div {
+    font-size: 16px;
+    padding: 6px 0 0 5px;
+}
+
+.pagesize__button {
+    margin: 0 10px;
+    padding: 0;
+    min-width: 40px;
+    min-height: 40px;
+    font-weight: var(--lato-font-weight-bold, 700);
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.pagesize__button:not(.selected) {
+    color: var(--aspect-color-chill-blue-1);
+    background-color: var(--aspect-color-grey-7);
+}
