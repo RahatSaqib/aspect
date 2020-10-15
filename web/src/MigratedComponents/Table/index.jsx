@@ -13,6 +13,7 @@ import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData } from './Helpers'
 
 const AspectTable = ({ tableData: data, config }) => {
+  const { name } = config
   const columns = useMemo(() => buildColumnsFromData(config), [config])
   const {
     canNextPage,
@@ -78,16 +79,18 @@ const AspectTable = ({ tableData: data, config }) => {
         </TableBody>
       </Table>
       <AspectTablePagination
-        dataLength={data.length}
-        pageSize={pageSize}
-        pageIndex={pageIndex}
-        pageCount={pageCount}
-        gotoPage={gotoPage}
-        nextPage={nextPage}
-        previousPage={previousPage}
         canNextPage={canNextPage}
         canPreviousPage={canPreviousPage}
+        dataLength={data.length}
+        gotoPage={gotoPage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        nextPage={nextPage}
+        pageCount={pageCount}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        previousPage={previousPage}
+        page={page}
+        name={name}
       />
     </Fragment>
   ) : null
