@@ -1,8 +1,6 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
-import { MuiThemeProvider } from '@material-ui/core/styles'
 
-import theme from '../../theme'
 import AspectTable from './index'
 
 import { mockDatafetch } from './Helpers'
@@ -16,14 +14,13 @@ export default {
 }
 
 const Template = args => (
-  <MuiThemeProvider theme={theme}>
-    <IntlProvider locale="en">
-      <AspectTable {...args} />
-    </IntlProvider>
-  </MuiThemeProvider>
+  <IntlProvider locale="en">
+    <AspectTable {...args} />
+  </IntlProvider>
 )
 
 export const Default = Template.bind({})
+
 Default.args = {
   tableData: data,
   config,
