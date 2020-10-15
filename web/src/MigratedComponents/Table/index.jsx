@@ -7,30 +7,30 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import TablePagination from '@material-ui/core/TablePagination'
 
 import TableColumnHeader from './TableColumnHeader'
+import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData } from './Helpers'
 
 const AspectTable = ({ tableData: data, config }) => {
   const columns = useMemo(() => buildColumnsFromData(config), [config])
   const {
+    canNextPage,
+    canPreviousPage,
     getTableProps,
     gotoPage,
     headerGroups,
+    nextPage,
     page,
     pageCount,
     prepareRow,
+    previousPage,
     setPageSize,
     state: { pageIndex, pageSize },
   } = useTable({ columns, data }, useSortBy, usePagination)
 
-  const handleChangePage = (event, newPage) => {
-    gotoPage(newPage)
-  }
-
-  function handleChangeRowsPerPage(event) {
-    setPageSize(Number(event.target.value))
+  function handleChangeRowsPerPage(val) {
+    setPageSize(typeof val !== 'number' ? data.length : Number(val))
   }
 
   return data ? (
@@ -77,20 +77,17 @@ const AspectTable = ({ tableData: data, config }) => {
           })}
         </TableBody>
       </Table>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={data.length}
-        rowsPerPage={pageSize}
-        page={pageIndex}
-        backIconButtonProps={{
-          'aria-label': 'Previous Page',
-        }}
-        nextIconButtonProps={{
-          'aria-label': 'Next Page',
-        }}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+      <AspectTablePagination
+        dataLength={data.length}
+        pageSize={pageSize}
+        pageIndex={pageIndex}
+        pageCount={pageCount}
+        gotoPage={gotoPage}
+        nextPage={nextPage}
+        previousPage={previousPage}
+        canNextPage={canNextPage}
+        canPreviousPage={canPreviousPage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
     </Fragment>
   ) : null
