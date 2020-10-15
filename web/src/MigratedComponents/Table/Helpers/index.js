@@ -42,11 +42,11 @@ function buildColumnsFromData({ columns }) {
   return output
 }
 
-function getCurrentVisibleRows(dataLength, page, name) {
+function getCurrentVisibleRows(dataLength, page) {
   const output = []
   map(page, ({ index }) => output.push(index + 1))
   const boundaries = [min(output), max(output)]
-  return `showing ${boundaries[0]} to ${boundaries[1]} of ${dataLength} ${name}`
+  return boundaries
 }
 
 export { buildColumnsFromData, getCurrentVisibleRows, mockDatafetch }
