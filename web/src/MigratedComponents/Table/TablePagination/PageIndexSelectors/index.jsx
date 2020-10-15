@@ -1,12 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import Button from '@material-ui/core/Button'
 import classnames from 'classnames/bind'
 
 import messages from '../messages'
 import IndexButton from './IndexButton'
-import { getCurrentVisibleRows } from '../../Helpers'
+import NowShowing from './NowShowing'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
 
@@ -18,13 +17,11 @@ const PageIndexSelectors = ({
   name,
   nextPage,
   pageCount,
-  pageIndex,
-  pageSize,
   previousPage,
   page,
 }) => {
   const intl = useIntl()
-  const nowShowing = getCurrentVisibleRows(dataLength, page, name)
+
   return (
     <div className={cssClasses('pageindex__container')}>
       <IndexButton
@@ -41,7 +38,7 @@ const PageIndexSelectors = ({
         icon="FaAngleLeft"
         label={intl.formatMessage(messages.previous)}
       />
-      <div>{nowShowing}</div>
+      <NowShowing dataLength={dataLength} page={page} name={name} />
       <IndexButton
         modifier="right"
         disabled={!canNextPage}
@@ -63,8 +60,11 @@ const PageIndexSelectors = ({
 PageIndexSelectors.propTypes = {
   canNextPage: PropTypes.bool.isRequired,
   canPreviousPage: PropTypes.bool.isRequired,
+  dataLength: PropTypes.number.isRequired,
   gotoPage: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
   nextPage: PropTypes.func.isRequired,
+  page: PropTypes.oneOf([PropTypes.array]).isRequired,
   pageCount: PropTypes.number.isRequired,
   previousPage: PropTypes.func.isRequired,
 }
