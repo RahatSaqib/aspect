@@ -1,4 +1,4 @@
-import { buildColumnsFromData, getCurrentVisibleRows } from './index'
+import { buildColumnsFromData, getFirstAndLastVisibleRowNumbers } from './index'
 import config from '../../Notifications/List/config'
 
 describe('Table Helpers', () => {
@@ -38,7 +38,7 @@ describe('Table Helpers', () => {
         { id: '4w', index: 24, depth: 0, cells: [] },
       ]
 
-      const grouped = getCurrentVisibleRows(input)
+      const grouped = getFirstAndLastVisibleRowNumbers(input)
       expect(grouped).toEqual([21, 25])
     })
   })

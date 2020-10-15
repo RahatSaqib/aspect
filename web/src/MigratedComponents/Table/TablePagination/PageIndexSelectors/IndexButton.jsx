@@ -24,7 +24,7 @@ const IndexButton = ({ modifier, disabled, action, icon, label }) => {
 }
 
 IndexButton.propTypes = {
-  modifier: PropTypes.string.isRequired,
+  modifier: PropTypes.oneOf(['left', 'right']).isRequired,
   disabled: PropTypes.bool.isRequired,
   action: PropTypes.func.isRequired,
   icon: PropTypes.string.isRequired,

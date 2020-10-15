@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from 'react'
+import React, { Fragment, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { useTable, useSortBy, usePagination } from 'react-table'
 

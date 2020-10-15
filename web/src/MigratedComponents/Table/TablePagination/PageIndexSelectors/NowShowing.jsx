@@ -4,13 +4,13 @@ import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
 import messages from '../messages'
-import { getCurrentVisibleRows } from '../../Helpers'
+import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
 
 const NowShowing = ({ dataLength, page, name }) => {
   const intl = useIntl()
-  const boundaries = getCurrentVisibleRows(page)
+  const boundaries = getFirstAndLastVisibleRowNumbers(page)
   const countName = intl.formatMessage(messages.nowShowing, {
     firstItemIndex: boundaries[0],
     lastItemIndex: boundaries[1],
