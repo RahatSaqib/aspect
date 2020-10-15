@@ -5,45 +5,26 @@ import Button from '@material-ui/core/Button'
 import classnames from 'classnames/bind'
 
 import messages from '../messages'
-import IconProvider from '../../../IconProvider'
+import IndexButton from './IndexButton'
+import { getCurrentVisibleRows } from '../../Helpers'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
-
-const IndexButton = ({ modifier, disabled, action, icon, label }) => {
-  return (
-    <Button
-      className={cssClasses([
-        'pageindex__button',
-        `pageindex__button--${modifier}`,
-      ])}
-      disabled={disabled}
-      onClick={action}
-    >
-      <IconProvider icon={icon} />
-      {label}
-    </Button>
-  )
-}
-
-IndexButton.propTypes = {
-  modifier: PropTypes.string.isRequired,
-  disabled: PropTypes.bool.isRequired,
-  action: PropTypes.func.isRequired,
-  icon: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-}
 
 const PageIndexSelectors = ({
   canNextPage,
   canPreviousPage,
   dataLength,
   gotoPage,
+  name,
   nextPage,
   pageCount,
   pageIndex,
+  pageSize,
   previousPage,
+  page,
 }) => {
   const intl = useIntl()
+  const nowShowing = getCurrentVisibleRows(dataLength, page, name)
   return (
     <div className={cssClasses('pageindex__container')}>
       <IndexButton
@@ -60,13 +41,13 @@ const PageIndexSelectors = ({
         icon="FaAngleLeft"
         label={intl.formatMessage(messages.previous)}
       />
-      <div>{`showing page ${pageIndex} of ${pageCount}`}</div>
+      <div>{nowShowing}</div>
       <IndexButton
         modifier="right"
         disabled={!canNextPage}
         action={() => nextPage()}
         icon="FaAngleRight"
-        label={intl.formatMessage(messages.previous)}
+        label={intl.formatMessage(messages.next)}
       />
       <IndexButton
         modifier="right"
