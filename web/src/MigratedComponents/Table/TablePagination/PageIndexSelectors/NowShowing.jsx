@@ -6,6 +6,8 @@ import classnames from 'classnames/bind'
 import messages from '../messages'
 import { getCurrentVisibleRows } from '../../Helpers'
 
+const cssClasses = classnames.bind(require('../../Table.css'))
+
 const NowShowing = ({ dataLength, page, name }) => {
   const intl = useIntl()
   const boundaries = getCurrentVisibleRows(dataLength, page)
@@ -15,7 +17,7 @@ const NowShowing = ({ dataLength, page, name }) => {
     itemCount: dataLength,
     name,
   })
-  return <div>{countName}</div>
+  return <div className={cssClasses('nowShowing__container')}>{countName}</div>
 }
 
 NowShowing.propTypes = {
