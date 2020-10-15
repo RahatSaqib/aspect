@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
 import PageSizeSelectors from './PageSizeSelectors'
@@ -8,21 +7,19 @@ import PageIndexSelectors from './PageIndexSelectors'
 
 const cssClasses = classnames.bind(require('../Table.css'))
 
-const ShowingOfCount = ({ from, to, count }) => (
-  <div>{`${from}-${to} of ${count} items`}</div>
-)
-
 const AspectPagination = ({
   canNextPage,
   canPreviousPage,
-  gotoPage,
   dataLength,
+  gotoPage,
+  handleChangeRowsPerPage,
+  name,
   nextPage,
   pageCount,
-  pageSize,
   pageIndex,
+  pageSize,
   previousPage,
-  handleChangeRowsPerPage,
+  page,
 }) => {
   return (
     <Fragment>
@@ -34,9 +31,12 @@ const AspectPagination = ({
             dataLength={dataLength}
             gotoPage={gotoPage}
             nextPage={nextPage}
+            name={name}
             pageCount={pageCount}
             pageIndex={pageIndex}
             previousPage={previousPage}
+            pageSize={pageSize}
+            page={page}
           />
         </div>
         <div className={cssClasses('pagination__rightActions')}>
@@ -47,22 +47,6 @@ const AspectPagination = ({
           />
         </div>
       </div>
-      <pre>
-        <code>
-          {JSON.stringify(
-            {
-              dataLength,
-              pageIndex,
-              pageSize,
-              pageCount,
-              canNextPage,
-              canPreviousPage,
-            },
-            null,
-            2
-          )}
-        </code>
-      </pre>
     </Fragment>
   )
 }
@@ -74,7 +58,9 @@ AspectPagination.propTypes = {
   canNextPage: PropTypes.bool.isRequired,
   canPreviousPage: PropTypes.bool.isRequired,
   gotoPage: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
   nextPage: PropTypes.func.isRequired,
+  page: PropTypes.oneOf([PropTypes.array]).isRequired,
   pageCount: PropTypes.number.isRequired,
   previousPage: PropTypes.func.isRequired,
   handleChangeRowsPerPage: PropTypes.func.isRequired,
