@@ -21,7 +21,6 @@ const PageIndexSelectors = ({
   page,
 }) => {
   const intl = useIntl()
-
   return (
     <div className={cssClasses('pageindex__container')}>
       <IndexButton
