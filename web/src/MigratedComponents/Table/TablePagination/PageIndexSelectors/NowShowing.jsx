@@ -17,7 +17,14 @@ const NowShowing = ({ dataLength, page, name }) => {
     itemCount: dataLength,
     name,
   })
-  return <div className={cssClasses('nowShowing__container')}>{countName}</div>
+  return (
+    <div
+      className={cssClasses('nowShowing__container')}
+      data-testid="now-showing"
+    >
+      {countName}
+    </div>
+  )
 }
 
 NowShowing.propTypes = {
