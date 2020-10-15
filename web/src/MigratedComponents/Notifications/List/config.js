@@ -1,4 +1,5 @@
 const config = {
+  name: 'notification',
   columns: [
     { key: 'name', label: 'Name' },
     { key: 'lastTriggeredOn', label: 'Last Triggered' },
