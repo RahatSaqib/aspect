@@ -136,7 +136,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe.only('This test suite is for testing different triggers conditions', async () => {
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -146,7 +146,11 @@ describe.only('This test suite is for testing different triggers conditions', as
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
-  const getPayload = async (thecontext, errorCode) => {
+  const getPayload = async (
+    thecontext,
+    errorCode,
+    resultCategoryExternalId
+  ) => {
     ;[results] = await thecontext.getAllResults()
     return _.merge(
       {},
@@ -175,6 +179,11 @@ describe.only('This test suite is for testing different triggers conditions', as
             code: `${errorCode}`,
             notes: 'some ,notes',
           },
+          data: {
+            resultText: resultCategoryExternalId
+              ? resultCategoryExternalId.toUpperCase()
+              : null,
+          },
           instrument: {
             serial: results.instrumentSerial,
             module: {
@@ -194,7 +203,7 @@ describe.only('This test suite is for testing different triggers conditions', as
     resultCategoryExternalId
   ) => {
     describe(`${issueName} issue creation (Module and lot),${
-      errorCode ? `error ${errorCode}` : `category${resultCategoryExternalId}`
+      errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
     }`, async () => {
       let context
       let anotherDeviceContext
@@ -230,11 +239,9 @@ describe.only('This test suite is for testing different triggers conditions', as
               instrumentSerial: 'S-1234-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
-            },
-            data: {
-              resultText:
+              resultCategory1:
                 i === 0 && resultCategoryExternalId
-                  ? resultCategoryExternalId.toUpperCase()
+                  ? await issueTypeToId(resultCategoryExternalId)
                   : null,
             },
           })
@@ -246,11 +253,9 @@ describe.only('This test suite is for testing different triggers conditions', as
               instrumentSerial: 'S-ANOTHERSERIAL-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
-            },
-            data: {
-              resultText:
+              resultCategory1:
                 i === 0 && resultCategoryExternalId
-                  ? resultCategoryExternalId.toUpperCase()
+                  ? await issueTypeToId(resultCategoryExternalId)
                   : null,
             },
           })
@@ -272,11 +277,16 @@ describe.only('This test suite is for testing different triggers conditions', as
         const consumableLot = 'Lot 0'
         const { deviceAuth } = context
 
-        const firstPayload = await getPayload(context, errorCode)
+        const firstPayload = await getPayload(
+          context,
+          errorCode,
+          resultCategoryExternalId
+        )
 
         const anotherDevicePayload = await getPayload(
           anotherDeviceContext,
-          errorCode
+          errorCode,
+          resultCategoryExternalId
         )
         const waitForAnalyze = waitForAction(resultAnalyzeErrors)
         // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module

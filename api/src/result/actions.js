@@ -112,7 +112,6 @@ function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
       'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
     )
   }
-
   const moduleSerial = _.get(data, 'moduleSerial')
   const actionType = moduleSerial
     ? types.RESULT_ANALYZE_INVALIDS_MODULE

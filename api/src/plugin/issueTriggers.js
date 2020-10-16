@@ -45,7 +45,6 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-  console.log(query.toString())
   const { resultsWithErrors, totalResults } = await query
 
   action.options.data.resultsWithErrors = resultsWithErrors
@@ -62,11 +61,11 @@ async function analyzeWithQuery(
 async function analyzeCategories(
   knex,
   action,
-
   { categoryId, threshold, below, daysPeriod, minResults }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
   const { resultCategoryId } = action.options.data
+
   if (resultCategoryId === categoryToCompare)
     return analyzeWithQuery(
       knex,
@@ -78,7 +77,7 @@ async function analyzeCategories(
       builder =>
         builder.first(
           knex.raw(
-            'sum(case when resultCategoryId=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
+            'sum(case when resultCategory1=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
             categoryToCompare
           )
         )
