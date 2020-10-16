@@ -45,9 +45,15 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
-const obtainProperAction = (moduleSerial, errorCode) => {
+const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
+  const valueToCompare = errorCode
+    ? parseInt(errorCode, 10)
+    : resultCategoryId.toUpperCase()
+
   if (moduleSerial) {
-    switch (parseInt(errorCode, 10)) {
+    switch (valueToCompare) {
+      case 'INVALID':
+        return types.RESULT_ANALYZE_INVALIDS_MODULE
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
       case 5007:
@@ -55,7 +61,9 @@ const obtainProperAction = (moduleSerial, errorCode) => {
         return types.RESULT_ANALYZE_PROBES_MODULE
     }
   } else {
-    switch (parseInt(errorCode, 10)) {
+    switch (valueToCompare) {
+      case 'INVALID':
+        return types.RESULT_ANALYZE_INVALIDS_LOT
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_LOT
       case 5007:
@@ -92,7 +100,9 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   }
 
   const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = obtainProperAction(moduleSerial, resultErrorCode)
+  const actionType = obtainProperAction(moduleSerial, {
+    errorCode: resultErrorCode,
+  })
   return {
     type: actionType,
     deviceId,
@@ -113,9 +123,7 @@ function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
     )
   }
   const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = moduleSerial
-    ? types.RESULT_ANALYZE_INVALIDS_MODULE
-    : types.RESULT_ANALYZE_INVALIDS_LOT
+  const actionType = obtainProperAction(moduleSerial, { resultCategoryId })
   return {
     type: actionType,
     deviceId,

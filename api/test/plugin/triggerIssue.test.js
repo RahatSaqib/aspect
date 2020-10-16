@@ -1,6 +1,9 @@
 const chai = require('chai')
 const { analyzeResultsWithErrors } = require('../../src/plugin/issueTriggers')
-const { resultAnalyzeErrors } = require('../../src/result/actions')
+const {
+  resultAnalyzeErrors,
+  resultAnalyzeCategories,
+} = require('../../src/result/actions')
 
 const { assert } = chai
 
@@ -19,7 +22,7 @@ describe('This test is for testing different triggers conditions', () => {
     assert.isFalse(analyzeResultsWithErrors(1, 1, 0.03, false, 3))
   })
 
-  it('Should analyze different scenarios based on the data for triggering an action', () => {
+  it('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
     ;[
       {
         errorCode: 5007,
@@ -31,6 +34,12 @@ describe('This test is for testing different triggers conditions', () => {
         type1: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
         type2: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
       },
+      {
+        // on non existing code it should return default values
+        errorCode: 5555,
+        type1: 'RESULT_ANALYZE_PROBES_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_LOT',
+      },
     ].forEach(elem => {
       const analyzeProbesModule = resultAnalyzeErrors(1, 1, elem.errorCode, {
         moduleName: 'Test1',
@@ -40,6 +49,43 @@ describe('This test is for testing different triggers conditions', () => {
         consumableLot: 1234,
         assayId: 1,
       })
+      assert.isObject(analyzeProbesModule)
+      assert.property(analyzeProbesModule, 'type')
+      assert.equal(analyzeProbesModule.type, elem.type1)
+      assert.equal(analyzeProbesLot.type, elem.type2)
+    })
+  })
+  it('Should analyze different scenarios based on the data for triggering an action', () => {
+    ;[
+      {
+        resultCategoryId: 'Invalid',
+        type1: 'RESULT_ANALYZE_INVALIDS_MODULE',
+        type2: 'RESULT_ANALYZE_INVALIDS_LOT',
+      },
+      {
+        resultCategoryId: 'Non-existing',
+        type1: 'RESULT_ANALYZE_PROBES_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_LOT',
+      },
+    ].forEach(elem => {
+      const analyzeProbesModule = resultAnalyzeCategories(
+        1,
+        1,
+        elem.resultCategoryId,
+        {
+          moduleName: 'Test1',
+          moduleSerial: 'Module2',
+        }
+      )
+      const analyzeProbesLot = resultAnalyzeCategories(
+        1,
+        1,
+        elem.resultCategoryId,
+        {
+          consumableLot: 1234,
+          assayId: 1,
+        }
+      )
       assert.isObject(analyzeProbesModule)
       assert.property(analyzeProbesModule, 'type')
       assert.equal(analyzeProbesModule.type, elem.type1)

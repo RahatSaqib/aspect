@@ -203,7 +203,7 @@ describe('This test suite is for testing different triggers conditions', async (
       }
     )
   }
-  const testErrorCodes = (
+  const testCategoriesAndErrorCodes = (
     issueName,
     errorCode,
     issueTypeModule,
@@ -361,7 +361,7 @@ describe('This test suite is for testing different triggers conditions', async (
     })
   }
   describe('error 5006 issue', async () => {
-    await testErrorCodes(
+    await testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
       'ProbeCheckTooHighModule',
@@ -369,7 +369,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
   describe('error 5007 issue', async () => {
-    await testErrorCodes(
+    await testCategoriesAndErrorCodes(
       'Probes check Too Low',
       5007,
       'ProbeCheckTooLowModule',
@@ -377,7 +377,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
   describe('Invalid results', async () => {
-    await testErrorCodes(
+    await testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
       'TooManyInvalidResultsModule',
