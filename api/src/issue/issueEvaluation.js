@@ -83,7 +83,12 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   return true
 }
 
-async function evaluatePluginFunction(knex, issue, functionName) {
+async function evaluatePluginFunction(
+  knex,
+  issue,
+  functionName,
+  evaluationFunctionParameter = {}
+) {
   const partner = await knex('Partner')
     .where({ id: issue.partnerId })
     .first('plugin')
@@ -95,7 +100,7 @@ async function evaluatePluginFunction(knex, issue, functionName) {
   const escalations = await loadPlugin([partner.plugin], 'issueEscalations')
   const plugins = { ...resolutions, ...escalations }
   const func = plugins[functionName]
-  return func != null && func(knex, issue)
+  return func != null && func(knex, issue, evaluationFunctionParameter)
 }
 
 async function evaluateInlineSql(knex, issue, inlineSql) {

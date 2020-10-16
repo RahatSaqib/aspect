@@ -64,9 +64,9 @@ async function listNotifications(request) {
     )
   }
 
-  const getCount = notificationQuery
-    .clone()
-    .countDistinct('n.notificationTypeId as count')
+  const getCount = knex
+    .count('* as count')
+    .from(getItems.clone().as('mainQuery'))
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

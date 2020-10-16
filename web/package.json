@@ -246,6 +246,7 @@
     "redux-form": "^8.3.5",
     "redux-idle-monitor": "^0.10.2",
     "redux-immutable": "^4.0.0",
+    "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0",
     "topojson-client": "^3.1.0",
     "url-search-params-polyfill": "^8.1.0",
