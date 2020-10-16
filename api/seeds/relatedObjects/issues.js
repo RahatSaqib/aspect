@@ -553,20 +553,31 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertModule}`,
+        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
         ...auditFields,
       },
       SmsTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertModule}`,
+        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
         ...auditFields,
       },
       EmailTemplate: {
-        subject: `Too Many Invalid Results${errorIssueAlertModule}`,
-        body: `Too Many Invalid Results${errorIssueEmailModule}`,
-        htmlBody: `Too Many Invalid Results${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
+        subject: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
         )}`,
+        body: `Too Many Invalid Results${errorIssueEmailModule
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailModule
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')
+          .replace(regexBreakline, '<br/>')}`,
 
         ...auditFields,
       },
@@ -582,20 +593,32 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertLot}`,
+        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
         ...auditFields,
       },
       SmsTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertLot}`,
+        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
         ...auditFields,
       },
       EmailTemplate: {
-        subject: `Too Many Invalid Results${errorIssueAlertLot}`,
-        body: `Too Many Invalid Results${errorIssueEmailLot}`,
-        htmlBody: `Too Many Invalid Results${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
+        subject: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
         )}`,
+        body: `Too Many Invalid Results${errorIssueEmailLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailLot
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')
+          .replace(regexBreakline, '<br/>')}`,
 
         ...auditFields,
       },

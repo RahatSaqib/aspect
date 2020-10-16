@@ -102,6 +102,14 @@ const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   assert.isNotNull(notification.emailMessageId)
   assert.isNotNull(notification.alertMessageId)
   assert.isNotNull(notification.smsMessageId)
+  assert.isTrue(notification.message.indexOf('null') < 0)
+  assert.isTrue(
+    notification.message.indexOf('{{') < 0 &&
+      notification.message.indexOf('}}') < 0
+  )
+  assert.isTrue(
+    notification.body.indexOf('{{') < 0 && notification.body.indexOf('}}') < 0
+  )
 
   if (
     !notification.message.indexOf('M-123456-0') > 0 &&
