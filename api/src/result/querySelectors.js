@@ -180,6 +180,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'r.moduleSerial as resultModuleSerial',
   'r.errorCode as resultErrorCode',
   'r.errorNotes as resultErrorNotes',
+  'r.id as resultId',
   'a.externalId as assayExternalId',
   'sample.id as sampleId',
   'sample.externalId as sampleExternalId',
