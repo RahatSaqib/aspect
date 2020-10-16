@@ -3,6 +3,8 @@ import subMinutes from 'date-fns/subMinutes'
 import formatDistance from 'date-fns/formatDistance'
 import times from 'lodash/times'
 import random from 'lodash/random'
+import min from 'lodash/min'
+import max from 'lodash/max'
 
 function mockDatafetch(cnt = 10) {
   const data = []
@@ -39,4 +41,11 @@ function buildColumnsFromData({ columns }) {
   return output
 }
 
-export { buildColumnsFromData, mockDatafetch }
+function getFirstAndLastVisibleRowNumbers(page) {
+  const output = []
+  map(page, ({ index }) => output.push(index + 1))
+  const boundaries = [min(output), max(output)]
+  return boundaries
+}
+
+export { buildColumnsFromData, getFirstAndLastVisibleRowNumbers, mockDatafetch }
