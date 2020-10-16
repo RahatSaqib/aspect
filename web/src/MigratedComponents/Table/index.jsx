@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react'
+import React, { Fragment, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useTable, useSortBy, usePagination } from 'react-table'
 
@@ -14,7 +14,12 @@ import { buildColumnsFromData } from './Helpers'
 
 const AspectTable = ({ tableData: data, config }) => {
   const { name } = config
-  const columns = useMemo(() => buildColumnsFromData(config), [config])
+  const { columns, initialSortBy } = useMemo(
+    () => buildColumnsFromData(config),
+    [config]
+  )
+
+  const table = useTable({ columns, data }, useSortBy, usePagination)
   const {
     canNextPage,
     canPreviousPage,
@@ -27,12 +32,19 @@ const AspectTable = ({ tableData: data, config }) => {
     prepareRow,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
-  } = useTable({ columns, data }, useSortBy, usePagination)
+    setSortBy,
+    state: { pageIndex, pageSize, sortBy },
+  } = table
 
   function handleChangeRowsPerPage(val) {
     setPageSize(typeof val !== 'number' ? data.length : Number(val))
   }
+
+  useEffect(() => {
+    if (!sortBy.length && initialSortBy) {
+      setSortBy([initialSortBy])
+    }
+  }, [sortBy, setSortBy, initialSortBy])
 
   return data ? (
     <Fragment>
