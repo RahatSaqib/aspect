@@ -1,6 +1,5 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
-
 import AspectTable from './index'
 
 import { mockDatafetch } from './Helpers'
@@ -20,7 +19,6 @@ const Template = args => (
 )
 
 export const Default = Template.bind({})
-
 Default.args = {
   tableData: data,
   config,

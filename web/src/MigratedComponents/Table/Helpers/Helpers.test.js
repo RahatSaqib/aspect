@@ -23,6 +23,7 @@ describe('Table Helpers', () => {
           disableSortBy: true,
         },
       ]
+
       const grouped = buildColumnsFromData(config)
       expect(grouped).toEqual(output)
     })
