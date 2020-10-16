@@ -3,10 +3,57 @@ const {
   allMessageSeverityToId,
 } = require('../../src/shared/dictionary')
 
-const msgInstrumentReplaced = `{{device.name}}: 
-  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to 
+const msgInstrumentReplaced = `{{device.name}}:
+  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
+const regexBreakline = /\n+/gm
+const errorIssueAlertModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}`
+
+const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}
+
+  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+  Country: {{country.name}}
+
+  Lab contacts: {{site.contacts}}
+
+  Instrument Serial: {{result.instrumentSerial}}
+
+  Software Version: {{result.softwareVersion}}
+
+  Cartridge Type: {{result.assay.name}}
+
+  Sender User: {{result.senderOperator}}
+
+  Test Outcome: {{issue.data.resultOutcome}}
+
+  Module Serial: {{result.moduleSerial}}
+
+  Module Slot: {{result.moduleName}} `
+
+const errorIssueAlertLot =
+  ' ({{result.errorCode}}) on lot ({{result.consumableLot}}) at {{site.name}}'
+
+const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}}
+
+Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+Country: {{country.name}}
+
+Lab contacts: {{site.contacts}}
+
+Instrument Serial: {{result.moduleSerial}}
+
+Software Version: {{result.softwareVersion}}
+
+Cartridge Type: {{result.assay.name}}
+
+Sender User: {{result.senderOperator}}
+
+Test Outcome: {{issue.data.resultOutcome}}
+
+Reagent Lot: {{result.consumableLot}}`
 
 async function getBaseIssues(auditFields) {
   // Issues
@@ -492,6 +539,120 @@ async function getBaseIssues(auditFields) {
         subject: 'Module has been disabled',
         body: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
+      },
+    },
+    ProbeCheckTooLowModule: {
+      issueType: {
+        name: 'Probe Check Too Low On Module',
+        externalId: 'ProbeCheckTooLowModule',
+        i18nKey: 'issueStatusProbeCheckTooLowModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too Low${errorIssueAlertModule}`,
+        body: `Probe Check Too Low${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Too Low${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooLowLot: {
+      issueType: {
+        name: 'Probe Check Too Low On Lot',
+        externalId: 'ProbeCheckTooLowLot',
+        i18nKey: 'issueStatusProbesTooLow',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too Low${errorIssueAlertLot}`,
+        body: `Probe Check Too Low${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Too Low${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighModule: {
+      issueType: {
+        name: 'Probe Check Too High On Module',
+        externalId: 'ProbeCheckTooHighModule',
+        i18nKey: 'issueStatusProbeCheckTooHighModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too High${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too High${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too High${errorIssueAlertModule}`,
+        body: `Probe Check Too High${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Too High${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighLot: {
+      issueType: {
+        name: 'Probe Check Too High On Lot',
+        externalId: 'ProbeCheckTooHighLot',
+        i18nKey: 'issueStatusProbesTooHigh',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too High${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too High${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too High${errorIssueAlertLot}`,
+        body: `Probe Check Too High${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Too High${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
       },
     },
     InventoryStockExpiring: {

@@ -37,11 +37,11 @@ const plugins = {
   default: {
     settings: DEFAULT_SETTINGS,
     handlerOptions: DEFAULT_HANDLER_OPTIONS,
-    issueTriggers: {},
+    issueTriggers: require('./issueTriggers'),
     issueResolutions: require('./issueResolutions'),
     issueEscalations: {},
     dataCategories: {},
-    filterModuleDisabledIssue: require('../issue/filterConditions'),
+    filtersOpenIssues: require('../issue/filterConditions'),
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,

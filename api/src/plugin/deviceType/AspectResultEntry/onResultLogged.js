@@ -14,7 +14,10 @@ const {
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('../../../result/querySelectors')
 
-const { shouldTriggerModuleReplaced } = require('../../utils')
+const {
+  shouldTriggerModuleReplaced,
+  shouldTriggerResultErrorAnalysis,
+} = require('../../utils')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
@@ -47,16 +50,31 @@ async function updateCovidResultFromFormData(
         })
         .orderBy('dl.id', 'desc')
         .first('dt.externalId')) || {}
-    if (deviceLogDeviceTypeExternalId !== 'Aspect') {
+
+    if (
+      !['Aspect', 'CepheidGeneXpert', 'GxAlert'].includes(
+        deviceLogDeviceTypeExternalId
+      )
+    ) {
       return
     }
     const result = await getResultForStringTemplateProcessing(
       resultId,
-      [...RESULT_STRING_TEMPLATE_FIELDS, 'rf.formSchema', 'r.resultCategory1'],
+      [
+        ...RESULT_STRING_TEMPLATE_FIELDS,
+        'rf.formSchema',
+        'r.resultCategory1',
+        'r.assayId',
+        'd.id as resultDeviceId',
+        knex.raw(
+          "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
+        ),
+      ],
       knex
     )
     if (result) {
       const {
+        assayId,
         assayExternalId,
         caseExternalIdTemplate,
         resultStartedOn,
@@ -67,7 +85,28 @@ async function updateCovidResultFromFormData(
         resultPatientData,
         resultCategory1,
         resultData,
+        resultModuleSerial,
+        resultDeviceId,
+        resultErrorCode,
+        consumableLot,
+        resultOutcome,
       } = result
+
+      await shouldTriggerResultErrorAnalysis(
+        messageContext,
+        resultDeviceId,
+        resultId,
+        resultErrorCode,
+        {
+          resultOutcome,
+          moduleSerial: resultModuleSerial,
+          assayId,
+          consumableLot,
+        }
+      )
+      if (deviceLogDeviceTypeExternalId !== 'Aspect') {
+        return
+      }
       const covid19AssayExternalIds = await knex('AssayType as at')
         .join('Assay as a', 'at.id', 'a.assayTypeId')
         .where('at.externalId', 'covid19')

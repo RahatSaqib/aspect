@@ -1,3 +1,4 @@
+const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
@@ -13,6 +14,10 @@ const types = {
   RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
+  RESULT_ANALYZE_PROBES_LOT: 'RESULT_ANALYZE_PROBES_LOT',
+  RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
+  RESULT_ANALYZE_PROBES_HIGH_LOT: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
+  RESULT_ANALYZE_PROBES_HIGH_MODULE: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
 }
 
 // ----------- Action Creators -------------------
@@ -35,6 +40,60 @@ function resultUpdated(resultId, deviceLogId, userId) {
     resultId,
     deviceLogId,
     userId,
+  }
+}
+
+const obtainProperAction = (moduleSerial, errorCode) => {
+  if (moduleSerial) {
+    switch (parseInt(errorCode, 10)) {
+      case 5006:
+        return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
+      case 5007:
+      default:
+        return types.RESULT_ANALYZE_PROBES_MODULE
+    }
+  } else {
+    switch (parseInt(errorCode, 10)) {
+      case 5006:
+        return types.RESULT_ANALYZE_PROBES_HIGH_LOT
+      case 5007:
+      default:
+        return types.RESULT_ANALYZE_PROBES_LOT
+    }
+  }
+}
+/**
+ *
+ * @param {*} deviceId
+ * is the id of the device which generates the result with error
+ * @param {*} data
+ * options should have moduleSerial, resultErrorCode, lot and assay
+ * Creates an action to notify the result with given id
+ * has been logged with an error code.
+ *
+ * resultId,  data.resultErrorCode and data.moduleSerial or  data.consumableLot and data.assayId are required.
+
+ */
+
+function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
+  if (!deviceId) {
+    throw new Error(
+      'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
+    )
+  }
+
+  const moduleSerial = _.get(data, 'moduleSerial')
+  const actionType = obtainProperAction(moduleSerial, resultErrorCode)
+  return {
+    type: actionType,
+    deviceId,
+    resultId,
+    options: {
+      data: {
+        ...data,
+        resultErrorCode,
+      },
+    },
   }
 }
 
@@ -274,4 +333,5 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
+  resultAnalyzeErrors,
 }
