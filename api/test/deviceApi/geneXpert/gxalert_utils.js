@@ -141,6 +141,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
+  await knex('AlertMessage').whereIn('resultId', resultIds).delete()
+
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('ResultGeneratedResult')
