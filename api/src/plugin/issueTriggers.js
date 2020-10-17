@@ -64,9 +64,10 @@ async function analyzeCategories(
   { categoryId, threshold, below, daysPeriod, minResults }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-  const { resultCategoryId } = action.options.data
 
-  if (resultCategoryId === categoryToCompare)
+  const { resultCategoryId } = action.options.data
+  const categoryReceivedId = await resultCategoryToId(resultCategoryId)
+  if (categoryReceivedId === categoryToCompare)
     return analyzeWithQuery(
       knex,
       action,

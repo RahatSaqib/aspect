@@ -56,17 +56,21 @@ async function shouldTriggerResultCategoryAnalysis(
 ) {
   const resultCategories = await allResultCategoryToId()
   const categoriesToAnalyze = [resultCategories.Invalid]
-
   if (categoriesToAnalyze.includes(resultCategoryId)) {
     if (!messageContext.resultAnalyzeCategories) {
       messageContext = messageContext.bindActionCreators({
         resultAnalyzeCategories,
       })
     }
+    const { resultCategoryExternalId } = await knex('ResultCategory')
+      .where({
+        id: resultCategoryId,
+      })
+      .first('externalId as resultCategoryExternalId')
     await messageContext.resultAnalyzeCategories(
       deviceId,
       resultId,
-      resultCategoryId,
+      resultCategoryExternalId,
       {
         moduleSerial,
         resultOutcome,
@@ -75,7 +79,7 @@ async function shouldTriggerResultCategoryAnalysis(
     await messageContext.resultAnalyzeCategories(
       deviceId,
       resultId,
-      resultCategoryId,
+      resultCategoryExternalId,
       {
         assayId,
         consumableLot,

@@ -5,7 +5,6 @@ const { assert } = chai
 const _ = require('lodash')
 const supertest = require('supertest')
 const { subDays } = require('date-fns')
-const { resultAnalyzeErrors } = require('../../src/result/actions')
 const { knex } = require('../../src/db')
 
 const {
@@ -24,7 +23,7 @@ const {
   basicResultPayload,
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
-const { waitForIdle, waitForAction } = require('../utils/mqUtils')
+const { waitForIdle } = require('../utils/mqUtils')
 
 const getMessageTemplates = async () => {
   const {
@@ -296,14 +295,13 @@ describe('This test suite is for testing different triggers conditions', async (
           errorCode,
           resultCategoryExternalId
         )
-        const waitForAnalyze = waitForAction(resultAnalyzeErrors)
+
         // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: firstPayload,
         })
-        await waitForAnalyze
-        await waitForIdle()
+        await waitForIdle(1000)
         await evaluateIssues(
           response,
           await issueTypeToId(issueTypeModule),
