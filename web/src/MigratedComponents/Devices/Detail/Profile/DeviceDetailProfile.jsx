@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -464,7 +464,7 @@ const PerformanceBarChart = ({
     motionDamping={15}
   />
 )
-const PerformanceReport = enhance(({ performanceReport, culture }) => {
+const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
@@ -607,7 +607,7 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
       </Card>
     </section>
   )
-})
+}
 
 export const DeviceDetailProfile = ({
   intl,
@@ -616,7 +616,8 @@ export const DeviceDetailProfile = ({
   match,
   device,
   disabled,
-  displayPreferences,
+  // displayPreferences,
+  devicePerformance,
   // --- injected by recompose ---
   onToggleDeviceApproval,
   sortCol,
@@ -636,6 +637,7 @@ export const DeviceDetailProfile = ({
   onRowClick,
   onExportClick,
 }) => {
+  const user = useSelector(state => state.user)
   const deviceName = device.get('name')
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
@@ -644,6 +646,9 @@ export const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
+
+  const { displayPreferences } = user
+
   const maintenanceStatusNotes =
     !device.get('maintenanceStatusNotes') ||
     device.get('maintenanceStatusNotes') === ''
@@ -691,6 +696,7 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
+
   const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
     ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
     : intl.formatMessage(messages.undefinedValue)
@@ -905,7 +911,14 @@ export const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
-      <PerformanceReport match={match} location={location} />
+
+      <PerformanceReport
+        performanceReport={devicePerformance}
+        match={match}
+        location={location}
+        culture={user?.culture}
+      />
+
       <AuthenticatedResults
         match={match}
         history={history}

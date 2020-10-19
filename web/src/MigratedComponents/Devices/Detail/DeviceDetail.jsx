@@ -1,9 +1,7 @@
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, withProps } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
 import {
@@ -12,15 +10,11 @@ import {
   Route,
   useHistory,
   useParams,
-  useRouteMatch,
+  useLocation,
 } from 'react-router-dom'
+import { useQuery, useMutation } from 'react-query'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
-import {
-  fetchSingleDevice,
-  updateSingleDevice,
-  fetchPerformanceReport,
-} from '../../../device/DeviceRedux'
 import DeviceDetailProfile from './profile/DeviceDetailProfile'
 import DeviceDetailOperation from './operation/DeviceDetailOperation'
 import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
@@ -30,78 +24,14 @@ import Shell from '../../Shell'
 import ShellHeader from '../../Shell/Header'
 import ShellContent from '../../Shell/Content'
 import AspectButton from '../../../components/shared/AspectButton'
+import fetchWrapperForQueries from '../../QueryFetch/index'
+import {
+  DEVICE_DETAIL,
+  DEVICE_PERFORMANCE,
+} from '../../QueryFetch/Device/index'
 
 const cssClasses = classnames.bind(require('./DeviceDetail.css'))
 
-const EMPTY_MAP = Immutable.Map()
-
-const enhance = compose(
-  connect(
-    (state, props) => {
-      const device = state.device.items.byId.get(
-        props.match.params.deviceId,
-        EMPTY_MAP
-      )
-
-      const { displayPreferences } = state.user
-
-      return {
-        editable: isEditable(state.user, 'device'),
-        loading: !!state.device.requestedAt,
-        device,
-        displayPreferences,
-        performanceReport: state.device.performanceReport,
-      }
-    },
-    bindActionCreators.bind(null, {
-      fetchSingleDevice,
-      updateSingleDevice,
-      fetchPerformanceReport,
-    })
-  ),
-  withHandlers({
-    onInitialLoad: ({
-      location,
-      match,
-      fetchSingleDevice,
-      fetchPerformanceReport,
-    }) => () => {
-      const searchParams = new URLSearchParams(location.search)
-      fetchSingleDevice(match.params.deviceId, searchParams)
-      fetchPerformanceReport(match.params.deviceId)
-    },
-
-    onDateRangeChange: ({ history, location }) => ({
-      target: { value: dateRange },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-      searchParams.set('dateRange', dateRange)
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-  }),
-  lifecycle({
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
-  }),
-  withProps(({ location }) => {
-    const searchParams = new URLSearchParams(location.search)
-
-    return {
-      dateRange: searchParams.get('dateRange') || '30',
-    }
-  })
-)
 
 const messages = defineMessages({
   profile: {
@@ -122,23 +52,52 @@ const messages = defineMessages({
   },
 })
 
-export const DeviceDetail = ({
-  match,
-  // --- injected by recompose ---
-  loading,
-  editable,
-  dateRange,
-  onDateRangeChange,
-  device,
-  displayPreferences,
-  updateSingleDevice,
-}) => {
+export const DeviceDetail = ({ match }) => {
+  const user = useSelector(state => state.user)
+  const editable = isEditable(user, 'device')
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
   const history = useHistory()
   const { deviceId } = useParams()
   const intl = useIntl()
+
+  const {
+    data: { device = {}, devicePerformance = {} } = {},
+    isLoading,
+  } = useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
+    const { data: device = false } = await fetchWrapperForQueries({
+      endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
+    })
+    const devicePerformance = await fetchWrapperForQueries({
+      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
+      params: searchParams,
+    })
+    return { device, devicePerformance }
+  })
+
+  const [updateSingleDevice] = useMutation(data =>
+    fetchWrapperForQueries({
+      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
+      method: 'PUT',
+      params: data,
+    })
+  )
+
+  const dateRange = searchParams.get('dateRange') || '30'
+
+  const onDateRangeChange = ({ target: { value: dateRange } }) => {
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set('dateRange', dateRange)
+
+    history.replace({
+      ...location,
+      search: searchParams.toString(),
+    })
+  }
+
   return (
     <Shell>
-      <ShellHeader title={device.get('name') ? device.get('name') : 'Devices'}>
+      <ShellHeader title={device.name ? device.name : 'Devices'}>
         {[
           {
             label: intl.formatMessage(messages.profile),
@@ -171,7 +130,7 @@ export const DeviceDetail = ({
         ))}
       </ShellHeader>
       <ShellContent>
-        {device.get('id') && (
+        {device.id && (
           <Switch>
             <Route
               exact
@@ -182,9 +141,9 @@ export const DeviceDetail = ({
                   {...props}
                   dateRange={dateRange}
                   onDateRangeChange={onDateRangeChange}
-                  device={device}
+                  device={Immutable.fromJS(device)}
+                  devicePerformance={Immutable.fromJS(devicePerformance)}
                   disabled={!editable}
-                  displayPreferences={displayPreferences}
                   updateSingleDevice={updateSingleDevice}
                 />
               )}
@@ -196,7 +155,7 @@ export const DeviceDetail = ({
                 <DeviceDetailOperation
                   intl={intl}
                   {...props}
-                  device={device}
+                  device={Immutable.fromJS(device)}
                   disabled={!editable}
                 />
               )}
@@ -208,7 +167,7 @@ export const DeviceDetail = ({
                 <DeviceDetailAlerts
                   intl={intl}
                   {...props}
-                  device={device}
+                  device={Immutable.fromJS(device)}
                   disabled={!editable}
                 />
               )}
@@ -221,7 +180,7 @@ export const DeviceDetail = ({
                   <DeviceDetailEdit
                     intl={intl}
                     {...props}
-                    device={device}
+                    device={Immutable.fromJS(device)}
                     editable={editable}
                     updateSingleDevice={updateSingleDevice}
                   />
@@ -232,7 +191,7 @@ export const DeviceDetail = ({
             />
           </Switch>
         )}
-        {loading && (
+        {isLoading && (
           <DelayShowingProgressCircular
             className={cssClasses('DelayShowingProgressCircular')}
             disabled={false}
@@ -244,4 +203,4 @@ export const DeviceDetail = ({
   )
 }
 
-export default enhance(DeviceDetail)
+export default DeviceDetail
