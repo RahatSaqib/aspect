@@ -17,6 +17,8 @@ const PageIndexSelectors = ({
   name,
   nextPage,
   pageCount,
+  pageIndex,
+  pageSize,
   previousPage,
   page,
 }) => {
@@ -37,7 +39,12 @@ const PageIndexSelectors = ({
         icon="FaAngleLeft"
         label={intl.formatMessage(messages.previous)}
       />
-      <NowShowing dataLength={dataLength} page={page} name={name} />
+      <NowShowing
+        dataLength={dataLength}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        name={name}
+      />
       <IndexButton
         modifier="right"
         disabled={!canNextPage}

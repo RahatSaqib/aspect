@@ -5,7 +5,7 @@ import AspectTable from './index'
 import { mockDatafetch } from './Helpers'
 import config from '../Notifications/List/config'
 
-const { data } = mockDatafetch(90)
+const { data } = mockDatafetch(87)
 
 export default {
   title: 'Layouts/AspectTable/Examples/Kitchen Sink',

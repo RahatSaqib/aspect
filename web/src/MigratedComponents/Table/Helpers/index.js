@@ -50,10 +50,10 @@ function buildColumnsFromData({ columns }) {
 }
 
 function getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize) {
-  if ((dataLength, pageIndex, pageSize)) {
-    const dataRange = range(1, Number(dataLength) + 1)
-    const pageChunks = chunk(dataRange, Number(pageSize))
-    const pageChunk = pageChunks[pageIndex]
+  const dataRange = range(1, Number(dataLength) + 1)
+  const pageChunks = chunk(dataRange, Number(pageSize))
+  const pageChunk = pageChunks[pageIndex]
+  if (pageChunk) {
     const boundaries = [min(pageChunk), max(pageChunk)]
     return boundaries
   }

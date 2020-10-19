@@ -14,9 +14,9 @@ export default {
   component: AspectTablePagination,
 }
 
-const Template = ({ tableData, config }) => {
+const Template = ({ config }) => {
   const { name } = config
-  const columns = useMemo(() => buildColumnsFromData(config), [config])
+  const { columns } = useMemo(() => buildColumnsFromData(config), [config])
   const table = useTable({ columns, data }, useSortBy, usePagination)
   const {
     canNextPage,
