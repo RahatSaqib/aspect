@@ -35,7 +35,7 @@ function mockDatafetch(cnt = 10) {
   return { data }
 }
 
-function buildColumnsFromData({ columns }) {
+function buildColumnsFromData({ columns, columnOrder }) {
   const output = []
   const { key, intitalSortBy } = filter(columns, 'intitalSortBy')[0] || false
   if (columns) {
@@ -46,6 +46,7 @@ function buildColumnsFromData({ columns }) {
   return {
     columns: output,
     initialSortBy: intitalSortBy ? { id: key, ...intitalSortBy } : false,
+    columnOrder,
   }
 }
 

@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useTable, useSortBy, usePagination } from 'react-table'
+import { useTable, useSortBy, usePagination, useColumnOrder } from 'react-table'
 
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -14,12 +14,11 @@ import { buildColumnsFromData } from './Helpers'
 
 const AspectTable = ({ tableData: data, config }) => {
   const { name } = config
-  const { columns, initialSortBy } = useMemo(
+  const { columns, initialSortBy, columnOrder } = useMemo(
     () => buildColumnsFromData(config),
     [config]
   )
 
-  const table = useTable({ columns, data }, useSortBy, usePagination)
   const {
     canNextPage,
     canPreviousPage,
@@ -31,12 +30,14 @@ const AspectTable = ({ tableData: data, config }) => {
     pageCount,
     prepareRow,
     previousPage,
+    setColumnOrder,
     setPageSize,
     setSortBy,
+    visibleColumns,
     state: { pageIndex, pageSize, sortBy },
-  } = table
+  } = useTable({ columns, data }, useSortBy, usePagination, useColumnOrder)
 
-  function handleChangeRowsPerPage(val) {
+  const handleChangeRowsPerPage = val => {
     setPageSize(typeof val !== 'number' ? data.length : Number(val))
   }
 
@@ -45,6 +46,12 @@ const AspectTable = ({ tableData: data, config }) => {
       setSortBy([initialSortBy])
     }
   }, [sortBy, setSortBy, initialSortBy])
+
+  useEffect(() => {
+    if (visibleColumns && columnOrder) {
+      setColumnOrder(columnOrder)
+    }
+  }, [visibleColumns, columnOrder, setColumnOrder])
 
   return data ? (
     <Fragment>

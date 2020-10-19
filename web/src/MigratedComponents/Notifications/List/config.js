@@ -1,3 +1,10 @@
+/**
+ * name
+ * columns
+ * columnOrder: ['contacts', 'name', 'lastTriggeredOn', 'totalTriggers'],
+ * hiddenColumns
+ */
+
 const config = {
   name: 'notification',
   columns: [
