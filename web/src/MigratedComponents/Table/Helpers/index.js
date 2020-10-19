@@ -5,6 +5,8 @@ import filter from 'lodash/filter'
 import get from 'lodash/get'
 import times from 'lodash/times'
 import random from 'lodash/random'
+import chunk from 'lodash/chunk'
+import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
 
@@ -47,13 +49,15 @@ function buildColumnsFromData({ columns }) {
   }
 }
 
-function getFirstAndLastVisibleRowNumbers(page) {
-  const output = []
-  console.log(page)
-
-  map(page, ({ index }) => output.push(index + 1))
-  const boundaries = [min(output), max(output)]
-  return boundaries
+function getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize) {
+  if ((dataLength, pageIndex, pageSize)) {
+    const dataRange = range(1, Number(dataLength) + 1)
+    const pageChunks = chunk(dataRange, Number(pageSize))
+    const pageChunk = pageChunks[pageIndex]
+    const boundaries = [min(pageChunk), max(pageChunk)]
+    return boundaries
+  }
+  return false
 }
 
 export { buildColumnsFromData, getFirstAndLastVisibleRowNumbers, mockDatafetch }
