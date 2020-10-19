@@ -541,6 +541,88 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
+
+    TooManyInvalidResultsModule: {
+      issueType: {
+        name: 'Too Many Invalid Results On Module',
+        externalId: 'TooManyInvalidResultsModule',
+        i18nKey: 'issueStatusTooManyInvalidResultsModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        body: `Too Many Invalid Results${errorIssueEmailModule
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailModule
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')
+          .replace(regexBreakline, '<br/>')}`,
+
+        ...auditFields,
+      },
+    },
+    TooManyInvalidResultsLot: {
+      issueType: {
+        name: 'Too Many Invalid Results On Lot',
+        externalId: 'TooManyInvalidResultsLot',
+        i18nKey: 'issueStatusTooManyInvalidResultsLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        body: `Too Many Invalid Results${errorIssueEmailLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailLot
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')
+          .replace(regexBreakline, '<br/>')}`,
+
+        ...auditFields,
+      },
+    },
     ProbeCheckTooLowModule: {
       issueType: {
         name: 'Probe Check Too Low On Module',
