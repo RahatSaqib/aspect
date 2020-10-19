@@ -40,6 +40,7 @@ const AspectPagination = ({
     <div className={cssClasses('pagination__rightActions')}>
       <PageSizeSelectors
         dataLength={dataLength}
+        pageIndex={pageIndex}
         pageSize={pageSize}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
