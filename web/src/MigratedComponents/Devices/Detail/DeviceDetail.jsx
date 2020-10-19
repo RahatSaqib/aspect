@@ -32,7 +32,6 @@ import {
 
 const cssClasses = classnames.bind(require('./DeviceDetail.css'))
 
-
 const messages = defineMessages({
   profile: {
     id: 'pages.DeviceDetail.profile',
