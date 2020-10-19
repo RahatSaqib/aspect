@@ -134,6 +134,15 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       'tmpl.body as bodyTemplate',
       'tmpl.htmlBody as htmlBodyTemplate'
     )
+
+  if (data && data.geographyId) {
+    const { siteContacts } = await knex('JobContext as jc')
+      .join('Job as j', 'jc.jobId', 'j.id')
+      .join('Person as p', 'jc.siteId', 'p.id')
+      .where({ 'jc.geographyId': data.geographyId })
+      .first(knex.raw('GROUP_CONCAT(p.name) as siteContacts'))
+    data.siteContacts = siteContacts
+  }
   return processUsingDataSourceQuery(data, [
     'subjectTemplate',
     'bodyTemplate',

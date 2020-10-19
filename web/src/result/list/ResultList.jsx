@@ -323,10 +323,10 @@ const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      const { data: list, total: totalItems, extraColumns } = data
+      const { data: list, total: totalItems } = data
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems, extraColumns))
+      setTable(receiveTableItems(table, totalItems))
       setColumns(
         getBaseColumns(intl).concat(
           table.extraColumns.map(column => ({

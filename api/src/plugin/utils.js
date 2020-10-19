@@ -1,5 +1,8 @@
 const { knex } = require('../db')
-const { resultModuleReplaced } = require('../result/actions')
+const {
+  resultModuleReplaced,
+  resultAnalyzeErrors,
+} = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
@@ -41,6 +44,42 @@ async function getReplacedModuleSerials(knex, deviceId) {
     .then(items => items.map(s => s.replacedModuleSerial))
 
   return replacedModuleSerials
+}
+
+async function shouldTriggerResultErrorAnalysis(
+  messageContext,
+  deviceId,
+  resultId,
+  resultErrorCode,
+  { resultOutcome, moduleSerial, assayId, consumableLot }
+) {
+  const errorsToAnalyze = [5007, 5006]
+  if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
+    if (!messageContext.resultAnalyzeErrors) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeErrors,
+      })
+    }
+    await messageContext.resultAnalyzeErrors(
+      deviceId,
+      resultId,
+      resultErrorCode,
+      {
+        moduleSerial,
+        resultOutcome,
+      }
+    )
+    await messageContext.resultAnalyzeErrors(
+      deviceId,
+      resultId,
+      resultErrorCode,
+      {
+        assayId,
+        consumableLot,
+        resultOutcome,
+      }
+    )
+  }
 }
 
 async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
@@ -223,4 +262,5 @@ module.exports = {
   shouldTriggerModuleReplaced,
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
+  shouldTriggerResultErrorAnalysis,
 }

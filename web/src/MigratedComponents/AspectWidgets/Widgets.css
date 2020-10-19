@@ -133,7 +133,7 @@
 .Summary__Card__Item__Count {
   padding-right: 10px;
   line-height: 0.8;
-  font-size: var(--aspect-font-size-lg);
+  font-size: 30px;
 }
 
 .Summary__Card__Item__Messages {

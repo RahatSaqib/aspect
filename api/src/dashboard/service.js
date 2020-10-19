@@ -18,6 +18,7 @@ const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { queryValue } = require('../shared/sql-2-knex')
 const { canView } = require('../auth/constraints')
+const { addExtraData } = require('./options')
 
 const resultsTransmittedDashboard = require('./resultsTransmitted')
 const activityOverTimeDashboard = require('./activityOverTime')
@@ -109,8 +110,9 @@ async function summaryDashboard(request) {
         dataConstraints,
         query
       )
+
       const extra = await queryValue(widget.sqlForExtra, dataConstraints, query)
-      return _.assign(
+      widget = _.assign(
         _.omit(widget, [
           'sqlForIndicator',
           'sqlForStatUnit',
@@ -123,6 +125,13 @@ async function summaryDashboard(request) {
           extra: extra ? extra.cnt : null,
         }
       )
+
+      if (!_.isEmpty(widget.options)) {
+        widget.options = JSON.parse(widget.options)
+        addExtraData(widget)
+      }
+
+      return widget
     })
   )
 
