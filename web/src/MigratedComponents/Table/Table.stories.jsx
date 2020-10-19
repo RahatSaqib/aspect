@@ -7,6 +7,8 @@ import config from '../Notifications/List/config'
 
 const { data } = mockDatafetch(87)
 
+config.columnOrder = ['contacts', 'name', 'lastTriggeredOn', 'totalTriggers']
+
 export default {
   title: 'Layouts/AspectTable/Examples/Kitchen Sink',
   component: AspectTable,

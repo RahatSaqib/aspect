@@ -1,11 +1,13 @@
 import React from 'react'
-import { render, screen, within } from '@testing-library/react'
+import { render, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
 
 import { Default } from './Table.stories'
 
-const { getByRole, getByTestId } = render(<Default {...Default.args} />)
+const { getAllByRole, getByRole, getByTestId } = render(
+  <Default {...Default.args} />
+)
 describe('test headers and sortable states', () => {
   const table = getByRole('table')
   const [columns] = within(table).getAllByRole('rowgroup')
@@ -33,5 +35,14 @@ describe('tests header clicks and states', () => {
 
   it('sort columns, change page size, move to next page and verify correct values and states', () => {
     expect(nowShowing).toHaveTextContent('Showing 26-50 of 87 notifications')
+  })
+})
+
+describe('tests column ordering and states', () => {
+  const columns = getAllByRole('columnheader')
+  it('should render the columns in the correct order', () => {
+    const { getByText } = within(columns[0])
+    expect(columns).toHaveLength(4)
+    expect(getByText(/contacts/i))
   })
 })
