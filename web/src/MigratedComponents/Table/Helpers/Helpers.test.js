@@ -33,17 +33,32 @@ describe('Table Helpers', () => {
   })
 
   describe('Calculate Now Showing', () => {
-    it('should display the correct values when pagination is used', () => {
-      const input = [
-        { id: '0', index: 20, depth: 0, cells: [] },
-        { id: '1', index: 21, depth: 0, cells: [] },
-        { id: '2', index: 22, depth: 0, cells: [] },
-        { id: '3', index: 23, depth: 0, cells: [] },
-        { id: '4w', index: 24, depth: 0, cells: [] },
-      ]
+    it('should display nothing if incorrect values passed', () => {
+      const { dataLength, pageIndex, pageSize } = {
+        dataLength: 48,
+        pageIndex: 2, // will not have a page three
+        pageSize: 50,
+      }
+      const grouped = getFirstAndLastVisibleRowNumbers(
+        dataLength,
+        pageIndex,
+        pageSize
+      )
+      expect(grouped).toEqual(false)
+    })
 
-      const grouped = getFirstAndLastVisibleRowNumbers(input)
-      expect(grouped).toEqual([21, 25])
+    it('should display the correct values when pagination is used', () => {
+      const { dataLength, pageIndex, pageSize } = {
+        dataLength: 148,
+        pageIndex: 2,
+        pageSize: 25,
+      }
+      const grouped = getFirstAndLastVisibleRowNumbers(
+        dataLength,
+        pageIndex,
+        pageSize
+      )
+      expect(grouped).toEqual([51, 75])
     })
   })
 })
