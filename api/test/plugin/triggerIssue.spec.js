@@ -374,6 +374,14 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckTooLowLot'
     )
   })
+  describe.only('error 5017 issue', async () => {
+    await testCategoriesAndErrorCodes(
+      'Probes Check Invalid',
+      5017,
+      'ProbeCheckInvalidModule',
+      'ProbeCheckInvalidLot'
+    )
+  })
   describe('Invalid results', async () => {
     await testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
