@@ -59,7 +59,7 @@ async function seed(knex) {
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Too Many Invalid Results - Module',
+      name: 'Signal Loss Detected in the Amplification Curve - Module',
       ...auditFields,
     },
     {

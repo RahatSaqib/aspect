@@ -358,6 +358,16 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
+  describe('Invalid results', async () => {
+    await testCategoriesAndErrorCodes(
+      'Too Many Invalid Results',
+      null,
+      'TooManyInvalidResultsModule',
+      'TooManyInvalidResultsLot',
+      'Invalid'
+    )
+  })
+
   describe('error 5006 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Probes check Too High',
@@ -380,15 +390,6 @@ describe('This test suite is for testing different triggers conditions', async (
       5011,
       'SignalLossDetectedInAmplificationCurveModule',
       'SignalLossDetectedInAmplificationCurveLot'
-    )
-  })
-  describe('Invalid results', async () => {
-    await testCategoriesAndErrorCodes(
-      'Too Many Invalid Results',
-      null,
-      'TooManyInvalidResultsModule',
-      'TooManyInvalidResultsLot',
-      'Invalid'
     )
   })
 })
