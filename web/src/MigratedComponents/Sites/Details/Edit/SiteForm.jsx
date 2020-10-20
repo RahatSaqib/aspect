@@ -5,7 +5,7 @@ import Card from '@material-ui/core/Card'
 
 import { EditableFieldsFormContainer } from './EditableFieldsForm'
 import messages from '../messages'
-import { Site } from '../../SiteRedux'
+import { Site } from '../../../../site/SiteRedux'
 import SiteDetailBackBar from '../SiteDetailBackBar'
 
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
@@ -70,16 +70,6 @@ const SiteForm = props => {
   }
   return (
     <div>
-      {site && (
-        <SiteDetailBackBar
-          formatMessage={formatMessage}
-          history={history}
-          location={location}
-          match={match}
-          title={site.get('name')}
-          disabled={disabled}
-        />
-      )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <EditableFieldsFormContainer

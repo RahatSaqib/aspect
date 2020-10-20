@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import SiteDetailBackBar from '../SiteDetailBackBar'
-import TaskList from '../../../task/list/TaskList'
+import TaskList from '../../../../task/list/TaskList'
 
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
 
@@ -11,16 +11,6 @@ const SiteDetailAlert = props => {
 
   return (
     <div>
-      {site && (
-        <SiteDetailBackBar
-          formatMessage={intl.formatMessage}
-          history={history}
-          location={location}
-          match={match}
-          title={site.get('name')}
-          disabled={disabled}
-        />
-      )}
       <section className={cssClasses('Section', 'Section--first')}>
         <TaskList
           intl={intl}

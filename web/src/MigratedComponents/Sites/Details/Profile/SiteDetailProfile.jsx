@@ -7,8 +7,8 @@ import Card from '@material-ui/core/Card'
 // Our own imports
 import Contacts from '../contacts/Contacts'
 import messages from '../messages'
-import { Site } from '../../SiteRedux'
-import Summary from '../../../globals/components/Summary'
+import { Site } from '../../../../site/SiteRedux'
+import Summary from '../../../../globals/components/Summary'
 import SiteDetailBackBar from '../SiteDetailBackBar'
 
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
@@ -80,16 +80,6 @@ const SiteDetailProfile = ({
   ]
   return (
     <div>
-      {site && (
-        <SiteDetailBackBar
-          formatMessage={formatMessage}
-          history={history}
-          location={location}
-          match={match}
-          title={site.get('name')}
-          disabled={disabled}
-        />
-      )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           {fields.map((field, idx) => (
