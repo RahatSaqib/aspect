@@ -294,9 +294,9 @@
         "action": "RESULT_ANALYZE_PROBES_FAILED_LOT",
         "conditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeCategories",
+          "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "categoryId": "Invalid",
+            "errorCode": 5017,
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,

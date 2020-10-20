@@ -350,7 +350,7 @@ describe.only('This test suite is for testing different triggers conditions', as
           authHeader: anotherDeviceContext.deviceAuth,
           payload: anotherDevicePayload,
         })
-        await waitForIdle()
+        await waitForIdle(1000)
         await evaluateIssues(
           anotherDeviceResponse,
           await issueTypeToId(issueTypeModule),
@@ -380,7 +380,7 @@ describe.only('This test suite is for testing different triggers conditions', as
       'ProbeCheckTooLowLot'
     )
   })
-  describe('error 5017 issue', async () => {
+  describe.only('error 5017 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Probes Check Failed',
       5017,

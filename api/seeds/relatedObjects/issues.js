@@ -770,7 +770,7 @@ async function getBaseIssues(auditFields) {
       issueType: {
         name: 'Probe Check Failed On Lot',
         externalId: 'ProbeCheckFailedLot',
-        i18nKey: 'issueStatusProbesFailed',
+        i18nKey: 'issueStatusProbeCheckFailedLot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {

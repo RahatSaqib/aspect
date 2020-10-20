@@ -92,6 +92,7 @@ function onIssueEventTrigger(
           JSON.parse(filterIssueCondition)
         )
         let issue = null
+
         if (openIssue != null) {
           // ----------------------
           // check special usecase

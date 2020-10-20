@@ -22,7 +22,7 @@ describe('This test is for testing different triggers conditions', () => {
     assert.isFalse(analyzeResultsWithErrors(1, 1, 0.03, false, 3))
   })
 
-  it('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
+  it.only('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
     ;[
       {
         errorCode: 5007,
@@ -33,6 +33,11 @@ describe('This test is for testing different triggers conditions', () => {
         errorCode: 5006,
         type1: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
         type2: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
+      },
+      {
+        errorCode: 5017,
+        type1: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
       },
       {
         // on non existing code it should return default values
