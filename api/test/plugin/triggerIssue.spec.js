@@ -374,6 +374,14 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckTooLowLot'
     )
   })
+  describe('error 5011 issue', async () => {
+    await testCategoriesAndErrorCodes(
+      'Signal Loss Detected in the Amplification Curve',
+      5011,
+      'SignalLossDetectedInAmplificationCurveModule',
+      'SignalLossDetectedInAmplificationCurveLot'
+    )
+  })
   describe('Invalid results', async () => {
     await testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
