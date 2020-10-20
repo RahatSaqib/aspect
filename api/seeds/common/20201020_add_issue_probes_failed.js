@@ -32,7 +32,7 @@ async function seed(knex) {
   const issueTypeProbeCheckFailedModule = await knex('IssueType')
     .where({ id: issueTypeModule })
     .first()
-  const issueTypeProbeCheckFailedhLot = await knex('IssueType')
+  const issueTypeProbeCheckFailedLot = await knex('IssueType')
     .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
@@ -52,8 +52,8 @@ async function seed(knex) {
       ...auditFields,
     },
     {
-      issueTypeId: issueTypeProbeCheckFailedhLot.id,
-      messageTypeId: issueTypeProbeCheckFailedhLot.defaultMessageTypeId,
+      issueTypeId: issueTypeProbeCheckFailedLot.id,
+      messageTypeId: issueTypeProbeCheckFailedLot.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,

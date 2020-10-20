@@ -29,6 +29,7 @@ const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
+    ProbeCheckFailedModuleLot: ProbeCheckFailedModuleId,
   } = await allIssueTypeToId()
 
   const defaultMessageModule = errorCode =>
@@ -85,6 +86,11 @@ const getMessageTemplates = async () => {
     sms:
       'Probe Check Too Low (5007) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
     email: `Probe Check Too Low (5007) ${defaultmessageLot(5007)}`,
+  }
+  messageTemplates[ProbeCheckFailedModuleId] = {
+    email: `Probe Check Failed ${defaultMessageModule(5017)}`,
+    sms:
+      'Probe Check Failed (5017) on (M-123456-0) at New GeneXpert Laboratory',
   }
   return messageTemplates
 }
@@ -143,7 +149,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe('This test suite is for testing different triggers conditions', async () => {
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -374,12 +380,12 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckTooLowLot'
     )
   })
-  describe.only('error 5017 issue', async () => {
+  describe('error 5017 issue', async () => {
     await testCategoriesAndErrorCodes(
-      'Probes Check Invalid',
+      'Probes Check Failed',
       5017,
-      'ProbeCheckInvalidModule',
-      'ProbeCheckInvalidLot'
+      'ProbeCheckFailedModule',
+      'ProbeCheckFailedLot'
     )
   })
   describe('Invalid results', async () => {
