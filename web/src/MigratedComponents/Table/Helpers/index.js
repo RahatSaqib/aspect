@@ -61,4 +61,16 @@ function getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize) {
   return false
 }
 
-export { buildColumnsFromData, getFirstAndLastVisibleRowNumbers, mockDatafetch }
+function getCurrentColumnIndexAndShift(columns, column, direction) {
+  const columnToShift = direction === 'left' ? column - 1 : column + 1
+  const newColumnOrder = columns[column]
+  columns[column] = columns[columnToShift]
+  columns[columnToShift] = newColumnOrder
+}
+
+export {
+  buildColumnsFromData,
+  getCurrentColumnIndexAndShift,
+  getFirstAndLastVisibleRowNumbers,
+  mockDatafetch,
+}
