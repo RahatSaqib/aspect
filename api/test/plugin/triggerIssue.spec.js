@@ -31,6 +31,8 @@ const getMessageTemplates = async () => {
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
     ProbeCheckFailedBackgroundErrorForAnalyteModule: ProbeCheckFailedBackgroundErrorForAnalyteModuleId,
     ProbeCheckFailedBackgroundErrorForAnalyteLot: ProbeCheckFailedBackgroundErrorForAnalyteLotId,
+    ProbeCheckFailedModule: ProbeCheckFailedModuleId,
+    ProbeCheckFailedLot: ProbeCheckFailedLotId,
   } = await allIssueTypeToId()
 
   const defaultMessageModule = errorCode =>
@@ -101,6 +103,15 @@ const getMessageTemplates = async () => {
     email: `Failed To Verify Valid Background Error For Analyte (5016) ${defaultmessageLot(
       5016
     )}`,
+  messageTemplates[ProbeCheckFailedModuleId] = {
+    email: `Probe Check Failed ${defaultMessageModule(5017)}`,
+    sms:
+      'Probe Check Failed (5017) on (M-123456-0) at New GeneXpert Laboratory',
+  }
+  messageTemplates[ProbeCheckFailedLotId] = {
+    sms:
+      'Probe Check Failed (5017) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
+    email: `Probe Check Failed (5017) ${defaultmessageLot(5017)}`,
   }
   return messageTemplates
 }
@@ -360,7 +371,7 @@ describe.only('This test suite is for testing different triggers conditions', as
           authHeader: anotherDeviceContext.deviceAuth,
           payload: anotherDevicePayload,
         })
-        await waitForIdle()
+        await waitForIdle(1000)
         await evaluateIssues(
           anotherDeviceResponse,
           await issueTypeToId(issueTypeModule),
@@ -396,6 +407,14 @@ describe.only('This test suite is for testing different triggers conditions', as
       5007,
       'ProbeCheckTooLowModule',
       'ProbeCheckTooLowLot'
+    )
+  })
+  describe('error 5017 issue', async () => {
+    await testCategoriesAndErrorCodes(
+      'Probes Check Failed',
+      5017,
+      'ProbeCheckFailedModule',
+      'ProbeCheckFailedLot'
     )
   })
   describe('Invalid results', async () => {
