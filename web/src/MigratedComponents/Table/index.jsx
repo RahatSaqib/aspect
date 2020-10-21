@@ -9,15 +9,18 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 
 import TableColumnHeader from './TableColumnHeader'
+import TableColumnOrderButtons from './TableColumnOrderButtons'
+
 import AspectTablePagination from './TablePagination'
-import { buildColumnsFromData } from './Helpers'
+import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
 
 const AspectTable = ({ tableData: data, config }) => {
   const { name } = config
-  const { columns, initialSortBy, columnOrder } = useMemo(
-    () => buildColumnsFromData(config),
-    [config]
-  )
+  const {
+    columns,
+    initialSortBy,
+    columnOrder: { allow: allowColumnReOrder, initialOrder } = false,
+  } = useMemo(() => buildColumnsFromData(config), [config])
 
   const {
     canNextPage,
@@ -34,11 +37,17 @@ const AspectTable = ({ tableData: data, config }) => {
     setPageSize,
     setSortBy,
     visibleColumns,
-    state: { pageIndex, pageSize, sortBy },
+    state: { pageIndex, pageSize, sortBy, columnOrder },
   } = useTable({ columns, data }, useSortBy, usePagination, useColumnOrder)
 
   const handleChangeRowsPerPage = val => {
     setPageSize(typeof val !== 'number' ? data.length : Number(val))
+  }
+
+  const handleChangeColumnOrder = (e, direction, id) => {
+    e.stopPropagation()
+    const newOrder = getCurrentColumnIndexAndShift(columnOrder, id, direction)
+    setColumnOrder(newOrder)
   }
 
   useEffect(() => {
@@ -48,31 +57,50 @@ const AspectTable = ({ tableData: data, config }) => {
   }, [sortBy, setSortBy, initialSortBy])
 
   useEffect(() => {
-    if (visibleColumns && columnOrder) {
-      setColumnOrder(columnOrder)
+    if (visibleColumns && allowColumnReOrder) {
+      setColumnOrder(initialOrder)
     }
-  }, [visibleColumns, columnOrder, setColumnOrder])
+  }, [visibleColumns, allowColumnReOrder, initialOrder, setColumnOrder])
 
   return data ? (
     <Fragment>
-      <Table {...getTableProps()}>
+      <Table {...getTableProps()} style={{ tableLayout: 'auto' }}>
         <TableHead>
           {headerGroups.map(({ headers, getHeaderGroupProps }) => (
             <TableRow {...getHeaderGroupProps()}>
               {headers.map(
-                ({
-                  getHeaderProps,
-                  getSortByToggleProps,
-                  isSorted,
-                  isSortedDesc,
-                  render,
-                }) => {
+                (
+                  {
+                    canSort,
+                    getHeaderProps,
+                    getSortByToggleProps,
+                    isSorted,
+                    isSortedDesc,
+                    render,
+                    width,
+                  },
+                  index
+                ) => {
                   return (
-                    <TableCell {...getHeaderProps(getSortByToggleProps())}>
+                    <TableCell
+                      {...getHeaderProps(getSortByToggleProps())}
+                      style={{ width: `${width}%` }}
+                    >
                       <TableColumnHeader
+                        width={width}
                         render={render('Header')}
+                        canSort={canSort}
                         isSorted={isSorted}
                         isSortedDesc={isSortedDesc}
+                        headerOrderComponent={() =>
+                          allowColumnReOrder ? (
+                            <TableColumnOrderButtons
+                              headerIndex={index}
+                              headersLength={headers.length}
+                              handleChangeColumnOrder={handleChangeColumnOrder}
+                            />
+                          ) : null
+                        }
                       />
                     </TableCell>
                   )

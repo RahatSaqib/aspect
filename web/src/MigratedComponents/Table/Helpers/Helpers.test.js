@@ -7,12 +7,12 @@ describe('Table Helpers', () => {
       const output = {
         columns: [
           {
-            Header: 'Name',
-            accessor: 'name',
-          },
-          {
             Header: 'Last Triggered',
             accessor: 'lastTriggeredOn',
+          },
+          {
+            Header: 'Name',
+            accessor: 'name',
           },
           {
             Header: 'Total Triggers',
@@ -25,10 +25,23 @@ describe('Table Helpers', () => {
           },
         ],
         initialSortBy: false,
+        columnOrder: {
+          allow: true,
+          initialOrder: [
+            'name',
+            'lastTriggeredOn',
+            'totalTriggers',
+            'contacts',
+          ],
+        },
       }
 
       const grouped = buildColumnsFromData(config)
-      expect(grouped).toEqual(output)
+      /**
+       * toMatchObject only loosely matches on expected keys.
+       * toStrictEqual will match exact keys to exact values
+       */
+      expect(grouped).toMatchObject(output)
     })
   })
 
