@@ -22,7 +22,7 @@ describe('This test is for testing different triggers conditions', () => {
     assert.isFalse(analyzeResultsWithErrors(1, 1, 0.03, false, 3))
   })
 
-  it.only('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
+  it('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
     ;[
       {
         errorCode: 5007,
