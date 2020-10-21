@@ -96,7 +96,8 @@ async function shouldTriggerResultErrorAnalysis(
   resultErrorCode,
   { resultOutcome, moduleSerial, assayId, consumableLot }
 ) {
-  const errorsToAnalyze = [5007, 5006]
+  console.log(resultErrorCode)
+  const errorsToAnalyze = [5007, 5006, 5016]
   if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
     if (!messageContext.resultAnalyzeErrors) {
       messageContext = messageContext.bindActionCreators({

@@ -18,6 +18,10 @@ const types = {
   RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
   RESULT_ANALYZE_PROBES_HIGH_LOT: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
   RESULT_ANALYZE_PROBES_HIGH_MODULE: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
+  PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_LOT:
+    'PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_LOT',
+  PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_MODULE:
+    'PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_MODULE',
   RESULT_ANALYZE_INVALIDS_MODULE: 'RESULT_ANALYZE_INVALIDS_MODULE',
   RESULT_ANALYZE_INVALIDS_LOT: 'RESULT_ANALYZE_INVALIDS_LOT',
 }
@@ -56,6 +60,8 @@ const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
         return types.RESULT_ANALYZE_INVALIDS_MODULE
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
+      case 5016:
+        return types.PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_MODULE
       case 5007:
       default:
         return types.RESULT_ANALYZE_PROBES_MODULE
@@ -66,6 +72,8 @@ const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
         return types.RESULT_ANALYZE_INVALIDS_LOT
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_LOT
+      case 5016:
+        return types.PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_LOT
       case 5007:
       default:
         return types.RESULT_ANALYZE_PROBES_LOT
@@ -103,6 +111,9 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   const actionType = obtainProperAction(moduleSerial, {
     errorCode: resultErrorCode,
   })
+
+  console.log(actionType)
+
   return {
     type: actionType,
     deviceId,
