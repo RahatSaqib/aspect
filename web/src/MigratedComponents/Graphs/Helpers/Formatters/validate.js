@@ -13,7 +13,7 @@ const validateGraphConfig = config => {
 
     return ajv.validate(graphSchema, config)
       ? res(true)
-      : console.error(`Graph config error for ${id}: ${ajv.errorsText()}`)
+      : rej(console.error(`Graph config error for ${id}: ${ajv.errorsText()}`))
   })
 }
 

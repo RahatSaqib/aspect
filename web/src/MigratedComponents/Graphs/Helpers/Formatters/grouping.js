@@ -235,7 +235,7 @@ const groupForOldTreatmentAPI = (
   return normaliseKeys(grouped)
 }
 
-const groupForPieOldTreatmentAPI = (data, keyToConsume, indexBy, filterBy) => {
+const groupForPieOldTreatmentAPI = (data, keyToConsume) => {
   const groupedConfirmed = []
   const groupedNotConfirmed = []
   data.reduce((acc, curr) => {
@@ -273,8 +273,7 @@ const groupForDeviceStatusAPI = (
   keyToConsume,
   indexBy,
   formatDate,
-  filterBy,
-  displayMethod = 'percentage'
+  filterBy
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {

@@ -11,10 +11,7 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./PieRowGraph.css'))
 
 const AspectResponsiveRow = ({ data, componentClasses }) => {
-  const {
-    formatNumber: intlFormatNumber,
-    formatMessage: intlFormatMessage,
-  } = useIntl()
+  const { formatMessage: intlFormatMessage } = useIntl()
 
   const headings = graphData => map(graphData[0], 'heading')
 

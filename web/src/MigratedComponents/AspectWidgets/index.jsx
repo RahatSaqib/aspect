@@ -5,7 +5,7 @@ import { Unit } from '../../components/pureGrids'
 import Group from './Group'
 import { AspectWidget, EmptyWidget } from './Widget'
 
-const EmptyWidgets = ({ key }) =>
+const EmptyWidgets = () =>
   [0, 1, 2, 3].map(key => (
     <Unit key={key} sm="1-2" lg="1-4">
       <EmptyWidget />

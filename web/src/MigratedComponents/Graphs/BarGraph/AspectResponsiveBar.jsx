@@ -38,7 +38,7 @@ const AspectResponsiveBar = ({
   ]
   const { formatNumber: intlFormatNumber } = useIntl()
 
-  const config = (type, data, displayMethod) => {
+  const config = (type, data) => {
     switch (true) {
       case type === 'divergent':
         return {

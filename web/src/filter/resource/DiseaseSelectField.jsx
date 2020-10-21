@@ -87,7 +87,6 @@ const textForDiseaseItem = (diseaseItem, formatMessage) => {
 export const DiseaseSelectField = ({
   allItemText,
   intl,
-  fetchDiseases,
   onlyWithResults,
   diseases,
   onChange,
@@ -96,7 +95,6 @@ export const DiseaseSelectField = ({
   const validDisease = onlyWithResults
     ? diseases.items.filter(a => a.get('hasResults'))
     : diseases.items
-  const isSingleDisease = validDisease.size <= 1
 
   return (
     <SelectField

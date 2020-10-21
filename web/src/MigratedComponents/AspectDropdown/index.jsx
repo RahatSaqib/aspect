@@ -34,7 +34,7 @@ function indexForDefaultSelected(data, defaultOption) {
   return false
 }
 
-const buildCustomStyles = defaultOption => {
+const buildCustomStyles = () => {
   const styles = {
     option: (provided, state) => {
       const { isSelected, isFocused } = state
@@ -63,7 +63,7 @@ const buildCustomStyles = defaultOption => {
       ':hover': aspectWhite,
       color: aspectWhite,
     }),
-    dropdownIndicator: (provided, state) => ({
+    dropdownIndicator: provided => ({
       ...provided,
       ':hover': aspectWhite,
       color: aspectWhite,
@@ -73,7 +73,7 @@ const buildCustomStyles = defaultOption => {
       ...provided,
       color: aspectWhite,
     }),
-    singleValue: (provided, state) => ({
+    singleValue: provided => ({
       ...provided,
       color: aspectWhite,
     }),
