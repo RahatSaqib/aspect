@@ -40,12 +40,12 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const probeCheckBackgroundErrorForAnalyteFailedModule = await knex(
+  const probeCheckFailedBackgroundErrorForAnalyteModule = await knex(
     'IssueType'
   )
     .where({ id: issueTypeModule })
     .first()
-  const probeCheckBackgroundErrorForAnalyteFailedLot = await knex('IssueType')
+  const probeCheckFailedBackgroundErrorForAnalyteLot = await knex('IssueType')
     .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
@@ -56,9 +56,9 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: probeCheckBackgroundErrorForAnalyteFailedModule.id,
+      issueTypeId: probeCheckFailedBackgroundErrorForAnalyteModule.id,
       messageTypeId:
-        probeCheckBackgroundErrorForAnalyteFailedModule.defaultMessageTypeId,
+        probeCheckFailedBackgroundErrorForAnalyteModule.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
@@ -66,9 +66,9 @@ async function seed(knex) {
       ...auditFields,
     },
     {
-      issueTypeId: probeCheckBackgroundErrorForAnalyteFailedLot.id,
+      issueTypeId: probeCheckFailedBackgroundErrorForAnalyteLot.id,
       messageTypeId:
-        probeCheckBackgroundErrorForAnalyteFailedLot.defaultMessageTypeId,
+        probeCheckFailedBackgroundErrorForAnalyteLot.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,

@@ -29,8 +29,8 @@ const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
-    ProbeCheckFailedBackgroundErrorForAnalyteModule: ProbeCheckFailedBackgroundErrorForAnalyteModuleId,
-    ProbeCheckFailedBackgroundErrorForAnalyteLot: ProbeCheckFailedBackgroundErrorForAnalyteLotId,
+    ProbeCheckBackgroundErrorForAnalyteFailedModule: ProbeCheckBackgroundErrorForAnalyteFailedModuleId,
+    ProbeCheckBackgroundErrorForAnalyteFailedLot: ProbeCheckBackgroundErrorForAnalyteFailedLotId,
     ProbeCheckFailedModule: ProbeCheckFailedModuleId,
     ProbeCheckFailedLot: ProbeCheckFailedLotId,
   } = await allIssueTypeToId()
@@ -90,19 +90,20 @@ const getMessageTemplates = async () => {
       'Probe Check Too Low (5007) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
     email: `Probe Check Too Low (5007) ${defaultmessageLot(5007)}`,
   }
-  messageTemplates[ProbeCheckFailedBackgroundErrorForAnalyteModuleId] = {
+  messageTemplates[ProbeCheckBackgroundErrorForAnalyteFailedModuleId] = {
     email: `Failed To Verify Valid Background Error For Analyte ${defaultMessageModule(
       5016
     )}`,
     sms:
       'Failed To Verify Valid Background Error For Analyte (5016) on (M-123456-0) at New GeneXpert Laboratory',
   }
-  messageTemplates[ProbeCheckFailedBackgroundErrorForAnalyteLotId] = {
+  messageTemplates[ProbeCheckBackgroundErrorForAnalyteFailedLotId] = {
     sms:
       'Failed To Verify Valid Background Error For Analyte (5016) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
     email: `Failed To Verify Valid Background Error For Analyte (5016) ${defaultmessageLot(
       5016
     )}`,
+  }
   messageTemplates[ProbeCheckFailedModuleId] = {
     email: `Probe Check Failed ${defaultMessageModule(5017)}`,
     sms:
@@ -170,7 +171,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe.only('This test suite is for testing different triggers conditions', async () => {
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -236,7 +237,7 @@ describe.only('This test suite is for testing different triggers conditions', as
     issueTypeLot,
     resultCategoryExternalId
   ) => {
-    describe.only(`${issueName} issue creation (Module and lot),${
+    describe(`${issueName} issue creation (Module and lot),${
       errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
     }`, async () => {
       let context
@@ -397,8 +398,8 @@ describe.only('This test suite is for testing different triggers conditions', as
     await testCategoriesAndErrorCodes(
       'Failed To Verify Valid Background Error For Analyte',
       5016,
-      'ProbeCheckFailedBackgroundErrorForAnalyteModule',
-      'ProbeCheckFailedBackgroundErrorForAnalyteLot'
+      'ProbeCheckBackgroundErrorForAnalyteFailedModule',
+      'ProbeCheckBackgroundErrorForAnalyteFailedLot'
     )
   })
   describe('error 5007 issue', async () => {

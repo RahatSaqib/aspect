@@ -118,8 +118,6 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
     errorCode: resultErrorCode,
   })
 
-  console.log(actionType)
-
   return {
     type: actionType,
     deviceId,
