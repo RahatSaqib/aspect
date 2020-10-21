@@ -1,6 +1,5 @@
 import React from 'react'
 import identity from 'lodash/identity'
-import template from 'lodash/template'
 import split from 'lodash/split'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'

@@ -24,7 +24,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
   const [formConfig, setFormConfig] = useState(false)
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
 
-  const { isLoading, isError, data, error } = useQuery(
+  const { isLoading, isError, error } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
     async (key, { resultId }) =>
       fetchWrapperForQueries({

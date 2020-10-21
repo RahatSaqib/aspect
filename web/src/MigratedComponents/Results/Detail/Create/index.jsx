@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -24,6 +22,7 @@ const AspectResultDetail = ({ formSchema }) => {
     if (formSchema || formSchema !== prevFormSchema) {
       setFormConfig(mergeFormConfigWithData({}, formSchema))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formSchema])
 
   return (
