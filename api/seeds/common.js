@@ -350,7 +350,7 @@ async function clonePermissions(knex, fromModule, toModule) {
   })
 }
 
-async function copyPermissionsFromJobFunction(
+async function copyPermissionsAndDashboardWidgetsFromJobFunction(
   knex,
   externalIdFrom,
   externalIdTo,
@@ -364,6 +364,26 @@ async function copyPermissionsFromJobFunction(
     .where({ externalId: externalIdTo })
     .first('id')
 
+  await copyPermissionsFromJobFunction(
+    knex,
+    jobFunctionIdFrom,
+    jobFunctionIdTo,
+    modulesToExclude
+  )
+
+  await copyDashboardWidgetsFromJobFunction(
+    knex,
+    jobFunctionIdFrom,
+    jobFunctionIdTo
+  )
+}
+
+async function copyPermissionsFromJobFunction(
+  knex,
+  jobFunctionIdFrom,
+  jobFunctionIdTo,
+  modulesToExclude = []
+) {
   await knex('JobFunctionPermission')
     .where({ jobFunctionId: jobFunctionIdTo })
     .del()
@@ -385,17 +405,9 @@ async function copyPermissionsFromJobFunction(
 
 async function copyDashboardWidgetsFromJobFunction(
   knex,
-  externalIdFrom,
-  externalIdTo
+  jobFunctionIdFrom,
+  jobFunctionIdTo
 ) {
-  const { id: jobFunctionIdFrom } = await knex('JobFunction')
-    .where({ externalId: externalIdFrom })
-    .first('id')
-
-  const { id: jobFunctionIdTo } = await knex('JobFunction')
-    .where({ externalId: externalIdTo })
-    .first('id')
-
   await knex('JobFunctionDashboardWidget')
     .where({ jobFunctionId: jobFunctionIdTo })
     .del()
@@ -2067,8 +2079,7 @@ module.exports = {
   upsertAssayResultCategories,
   upsertJobFunction,
   clonePermissions,
-  copyPermissionsFromJobFunction,
-  copyDashboardWidgetsFromJobFunction,
+  copyPermissionsAndDashboardWidgetsFromJobFunction,
   baseGxAlertMigration,
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,

@@ -2,8 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const {
   upsertJobFunction,
-  copyPermissionsFromJobFunction,
-  copyDashboardWidgetsFromJobFunction,
+  copyPermissionsAndDashboardWidgetsFromJobFunction,
 } = require('../common')
 
 async function seed(knex) {
@@ -27,8 +26,11 @@ async function seed(knex) {
     'SystemOne',
     partnerId
   )
-  await copyPermissionsFromJobFunction(knex, 'admin', 'systemOne')
-  await copyDashboardWidgetsFromJobFunction(knex, 'admin', 'systemOne')
+  await copyPermissionsAndDashboardWidgetsFromJobFunction(
+    knex,
+    'admin',
+    'systemOne'
+  )
 
   // reassign existing admin user:
   await knex('Job')
@@ -44,8 +46,12 @@ async function seed(knex) {
     'NTP - No Results',
     partnerId
   )
-  await copyPermissionsFromJobFunction(knex, 'ntp', 'ntpNoResults', ['result'])
-  await copyDashboardWidgetsFromJobFunction(knex, 'ntp', 'ntpNoResults')
+  await copyPermissionsAndDashboardWidgetsFromJobFunction(
+    knex,
+    'ntp',
+    'ntpNoResults',
+    ['result']
+  )
 
   // --- ----------------------
   // --- Move everyone in the admin role to NTP, except
