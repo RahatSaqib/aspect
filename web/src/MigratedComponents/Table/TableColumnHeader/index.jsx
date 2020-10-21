@@ -1,27 +1,42 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { MdExpandMore, MdExpandLess } from 'react-icons/md'
+import TableSortLabel from '@material-ui/core/TableSortLabel'
 import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('../Table.css'))
 
-function TableColumnHeader({ render, isSorted, isSortedDesc }) {
+function TableColumnHeader({
+  canSort,
+  isSorted,
+  isSortedDesc,
+  headerOrderComponent: HeaderOrderComponent,
+  render,
+}) {
   return (
-    <div className={cssClasses('table__header')}>
-      <span
-        className={cssClasses(
-          `${
-            isSorted
-              ? 'table__headerTitle table__headerTitle--bold'
-              : 'table__headerTitle'
-          }`
-        )}
-      >
-        {render}
-      </span>
-      <span className={cssClasses('table__headerIcon')}>
-        {isSorted ? isSortedDesc ? <MdExpandMore /> : <MdExpandLess /> : ''}
-      </span>
+    <div className={cssClasses('table__container')}>
+      <div className={cssClasses('table__header')}>
+        <TableSortLabel
+          active={isSorted}
+          direction={isSortedDesc ? 'desc' : 'asc'}
+          hideSortIcon
+          className={cssClasses(
+            `${canSort ? 'table__headerLabel' : 'table__headerLabel--nohover'}`
+          )}
+        >
+          <div
+            className={cssClasses(
+              `${
+                isSorted
+                  ? 'table__headerTitle table__headerTitle--bold'
+                  : 'table__headerTitle'
+              }`
+            )}
+          >
+            {render}
+          </div>
+        </TableSortLabel>
+      </div>
+      <HeaderOrderComponent />
     </div>
   )
 }
@@ -31,9 +46,11 @@ TableColumnHeader.defaultProps = {
 }
 
 TableColumnHeader.propTypes = {
-  render: PropTypes.string.isRequired,
+  canSort: PropTypes.bool.isRequired,
   isSorted: PropTypes.bool.isRequired,
   isSortedDesc: PropTypes.bool,
+  headerOrderComponent: PropTypes.func.isRequired,
+  render: PropTypes.string.isRequired,
 }
 
 export default TableColumnHeader
