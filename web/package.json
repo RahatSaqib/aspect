@@ -32,20 +32,11 @@
     }
   },
   "lint-staged": {
-    "./cfg/**/*.js": [
-      "eslint --fix"
-    ],
     "./src/**/*.css": [
       "prettier --write"
     ],
-    "./src/**/*.js": [
-      "yarn lint --fix"
-    ],
-    "./src/**/*.jsx": [
-      "yarn lint --fix"
-    ],
-    "./*.js": [
-      "eslint --fix"
+    "./{cfg,src}/**/*.{js,jsx}": [
+      "eslint . --fix"
     ]
   },
   "jest": {
