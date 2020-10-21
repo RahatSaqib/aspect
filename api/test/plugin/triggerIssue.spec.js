@@ -29,7 +29,8 @@ const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
-    ProbeCheckFailedModuleLot: ProbeCheckFailedModuleId,
+    ProbeCheckFailedModule: ProbeCheckFailedModuleId,
+    ProbeCheckFailedLot: ProbeCheckFailedLotId,
   } = await allIssueTypeToId()
 
   const defaultMessageModule = errorCode =>
@@ -92,6 +93,11 @@ const getMessageTemplates = async () => {
     sms:
       'Probe Check Failed (5017) on (M-123456-0) at New GeneXpert Laboratory',
   }
+  messageTemplates[ProbeCheckFailedLotId] = {
+    sms:
+      'Probe Check Failed (5017) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
+    email: `Probe Check Failed (5017) ${defaultmessageLot(5017)}`,
+  }
   return messageTemplates
 }
 const server = supertest.agent('http://localhost:8080')
@@ -149,7 +155,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe('This test suite is for testing different triggers conditions', async () => {
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
