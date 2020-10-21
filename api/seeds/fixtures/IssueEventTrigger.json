@@ -267,6 +267,48 @@
       }
     },
     {
+      "issueType": "ProbeCheckFailedModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_FAILED_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5017,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "ProbeCheckFailedLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_FAILED_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5017,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
       "issueType": "ModuleDisabled",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
