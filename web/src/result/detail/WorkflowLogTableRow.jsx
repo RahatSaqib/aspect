@@ -14,7 +14,7 @@ const cssClasses = classnames.bind(
 
 const enhance = identity
 
-const WorkflowLogTableRow = ({ workflowLog, ...restProps }) => (
+const WorkflowLogTableRow = ({ intl, workflowLog, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(workflowLog.get('changedOn'))}</TableCell>
     <TableCell>{workflowLog.get('statusName')}</TableCell>
