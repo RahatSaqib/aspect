@@ -5,7 +5,6 @@ const { assert } = chai
 const _ = require('lodash')
 const supertest = require('supertest')
 const { subDays } = require('date-fns')
-const { resultAnalyzeErrors } = require('../../src/result/actions')
 const { knex } = require('../../src/db')
 
 const {
@@ -24,7 +23,7 @@ const {
   basicResultPayload,
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
-const { waitForIdle, waitForAction } = require('../utils/mqUtils')
+const { waitForIdle } = require('../utils/mqUtils')
 
 const getMessageTemplates = async () => {
   const {
@@ -102,6 +101,14 @@ const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   assert.isNotNull(notification.emailMessageId)
   assert.isNotNull(notification.alertMessageId)
   assert.isNotNull(notification.smsMessageId)
+  assert.isTrue(notification.message.indexOf('null') < 0)
+  assert.isTrue(
+    notification.message.indexOf('{{') < 0 &&
+      notification.message.indexOf('}}') < 0
+  )
+  assert.isTrue(
+    notification.body.indexOf('{{') < 0 && notification.body.indexOf('}}') < 0
+  )
 
   if (
     !notification.message.indexOf('M-123456-0') > 0 &&
@@ -146,7 +153,11 @@ describe('This test suite is for testing different triggers conditions', async (
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
-  const getPayload = async (thecontext, errorCode) => {
+  const getPayload = async (
+    thecontext,
+    errorCode,
+    resultCategoryExternalId
+  ) => {
     ;[results] = await thecontext.getAllResults()
     return _.merge(
       {},
@@ -175,6 +186,11 @@ describe('This test suite is for testing different triggers conditions', async (
             code: `${errorCode}`,
             notes: 'some ,notes',
           },
+          data: {
+            resultText: resultCategoryExternalId
+              ? resultCategoryExternalId.toUpperCase()
+              : null,
+          },
           instrument: {
             serial: results.instrumentSerial,
             module: {
@@ -186,13 +202,16 @@ describe('This test suite is for testing different triggers conditions', async (
       }
     )
   }
-  const testErrorCodes = (
+  const testCategoriesAndErrorCodes = (
     issueName,
     errorCode,
     issueTypeModule,
-    issueTypeLot
+    issueTypeLot,
+    resultCategoryExternalId
   ) => {
-    describe(`${issueName} issue creation (Module and lot), error ${errorCode}`, async () => {
+    describe(`${issueName} issue creation (Module and lot),${
+      errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
+    }`, async () => {
       let context
       let anotherDeviceContext
       before(async () => {
@@ -227,6 +246,10 @@ describe('This test suite is for testing different triggers conditions', async (
               instrumentSerial: 'S-1234-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
+              resultCategory1:
+                i === 0 && resultCategoryExternalId
+                  ? await issueTypeToId(resultCategoryExternalId)
+                  : null,
             },
           })
           await anotherDeviceContext.createResultForThisDevice({
@@ -237,13 +260,19 @@ describe('This test suite is for testing different triggers conditions', async (
               instrumentSerial: 'S-ANOTHERSERIAL-0',
               errorCode: i === 0 ? errorCode : null,
               errorNotes: i === 0 ? 'Some notes' : null,
+              resultCategory1:
+                i === 0 && resultCategoryExternalId
+                  ? await issueTypeToId(resultCategoryExternalId)
+                  : null,
             },
           })
         })
       })
       afterEach(() => context.afterCleanUp())
 
-      it(`should only create one issue per device error ${errorCode}`, async () => {
+      it(`should only create one issue per device ${
+        errorCode ? `error ${errorCode}` : `category${resultCategoryExternalId}`
+      }`, async () => {
         /**
          * in this testcase we are testing:
          * 1) issueFilter function for this testCondition (With error 5007)
@@ -255,20 +284,24 @@ describe('This test suite is for testing different triggers conditions', async (
         const consumableLot = 'Lot 0'
         const { deviceAuth } = context
 
-        const firstPayload = await getPayload(context, errorCode)
+        const firstPayload = await getPayload(
+          context,
+          errorCode,
+          resultCategoryExternalId
+        )
 
         const anotherDevicePayload = await getPayload(
           anotherDeviceContext,
-          errorCode
+          errorCode,
+          resultCategoryExternalId
         )
-        const waitForAnalyze = waitForAction(resultAnalyzeErrors)
+
         // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: firstPayload,
         })
-        await waitForAnalyze
-        await waitForIdle()
+        await waitForIdle(1000)
         await evaluateIssues(
           response,
           await issueTypeToId(issueTypeModule),
@@ -288,6 +321,11 @@ describe('This test suite is for testing different triggers conditions', async (
                 consumable: {
                   lot: consumableLot,
                 },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
               },
             }),
           })
@@ -321,7 +359,7 @@ describe('This test suite is for testing different triggers conditions', async (
     })
   }
   describe('error 5006 issue', async () => {
-    await testErrorCodes(
+    await testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
       'ProbeCheckTooHighModule',
@@ -329,11 +367,20 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
   describe('error 5007 issue', async () => {
-    await testErrorCodes(
+    await testCategoriesAndErrorCodes(
       'Probes check Too Low',
       5007,
       'ProbeCheckTooLowModule',
       'ProbeCheckTooLowLot'
+    )
+  })
+  describe('Invalid results', async () => {
+    await testCategoriesAndErrorCodes(
+      'Too Many Invalid Results',
+      null,
+      'TooManyInvalidResultsModule',
+      'TooManyInvalidResultsLot',
+      'Invalid'
     )
   })
 })

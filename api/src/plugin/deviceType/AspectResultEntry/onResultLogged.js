@@ -17,6 +17,7 @@ const {
 const {
   shouldTriggerModuleReplaced,
   shouldTriggerResultErrorAnalysis,
+  shouldTriggerResultCategoryAnalysis,
 } = require('../../utils')
 
 async function onResultLogged(
@@ -69,6 +70,7 @@ async function onResultLogged(
         resultErrorCode,
         consumableLot,
         resultOutcome,
+        resultCategory1,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
@@ -83,6 +85,19 @@ async function onResultLogged(
           consumableLot,
         }
       )
+      await shouldTriggerResultCategoryAnalysis(
+        messageContext,
+        resultDeviceId,
+        resultId,
+        resultCategory1,
+        {
+          resultOutcome,
+          moduleSerial: resultModuleSerial,
+          assayId,
+          consumableLot,
+        }
+      )
+
       if (deviceLogDeviceTypeExternalId === 'Aspect') {
         await updateCovidResultFromFormData(
           { result, deviceLogId, userId },
