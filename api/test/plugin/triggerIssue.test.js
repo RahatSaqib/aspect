@@ -40,6 +40,11 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
       },
       {
+        errorCode: 5016,
+        type1: 'PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_MODULE',
+        type2: 'PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_LOT',
+      },
+      {
         // on non existing code it should return default values
         errorCode: 5555,
         type1: 'RESULT_ANALYZE_PROBES_MODULE',
