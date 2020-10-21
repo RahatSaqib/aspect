@@ -737,6 +737,50 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    InventoryStockExpiring: {
+      issueType: {
+        name: 'Inventory Stock Expiring',
+        externalId: 'InventoryStockExpiring',
+        i18nKey: 'issueStatusInventoryStockExpiring',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+      SmsTemplate: {
+        message: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+      EmailTemplate: {
+        subject: 'stock expiring at {{site.name}}',
+        htmlBody: '{{issue.data.totalWasted}} consumables likely to expire.',
+        body: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+    },
+    InstrumentReplaced: {
+      issueType: {
+        name: 'Instrument Replaced',
+        externalId: 'InstrumentReplaced',
+        i18nKey: 'issueTypeInstrumentReplaced',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: msgInstrumentReplaced,
+      },
+      SmsTemplate: {
+        message: msgInstrumentReplaced,
+      },
+      EmailTemplate: {
+        subject: 'Instrument has been replaced',
+        body: msgInstrumentReplaced,
+        htmlBody: msgInstrumentReplaced,
+      },
+    },
     ProbeCheckFailedBackgroundErrorForAnalyteModule: {
       issueType: {
         name: 'Failed To Verify Valid Background Error For Analyte On Module',
@@ -791,50 +835,6 @@ async function getBaseIssues(auditFields) {
           '<br/>'
         )}`,
         ...auditFields,
-      },
-    },
-    InventoryStockExpiring: {
-      issueType: {
-        name: 'Inventory Stock Expiring',
-        externalId: 'InventoryStockExpiring',
-        i18nKey: 'issueStatusInventoryStockExpiring',
-        issueCategoryId: issueCategories.ReagentHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: '{{issue.data.totalWasted}} consumables likely to expire.',
-      },
-      SmsTemplate: {
-        message: '{{issue.data.totalWasted}} consumables likely to expire.',
-      },
-      EmailTemplate: {
-        subject: 'stock expiring at {{site.name}}',
-        htmlBody: '{{issue.data.totalWasted}} consumables likely to expire.',
-        body: '{{issue.data.totalWasted}} consumables likely to expire.',
-      },
-    },
-    InstrumentReplaced: {
-      issueType: {
-        name: 'Instrument Replaced',
-        externalId: 'InstrumentReplaced',
-        i18nKey: 'issueTypeInstrumentReplaced',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: msgInstrumentReplaced,
-      },
-      SmsTemplate: {
-        message: msgInstrumentReplaced,
-      },
-      EmailTemplate: {
-        subject: 'Instrument has been replaced',
-        body: msgInstrumentReplaced,
-        htmlBody: msgInstrumentReplaced,
       },
     },
   }
