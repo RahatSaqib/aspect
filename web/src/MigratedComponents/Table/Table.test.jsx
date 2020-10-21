@@ -8,8 +8,8 @@ import { Default } from './Table.stories'
 const { getAllByRole, getByRole, getByTestId } = render(
   <Default {...Default.args} />
 )
+const table = getByRole('table')
 describe('test headers and sortable states', () => {
-  const table = getByRole('table')
   const [columns] = within(table).getAllByRole('rowgroup')
   const columnNames = within(columns)
   it('renders a table with expected headers', () => {
@@ -25,10 +25,9 @@ describe('test headers and sortable states', () => {
 })
 
 describe('tests header clicks and states', () => {
-  const table = getByRole('table')
   const [columns] = within(table).getAllByRole('rowgroup')
-  const columnNames = within(columns)
-  userEvent.click(columnNames.getByText(/last triggered/i).closest('th'))
+  const { getByText } = within(columns)
+  userEvent.click(getByText(/last triggered/i).closest('th'))
   userEvent.click(getByRole('button', { name: /25/i }))
   userEvent.click(getByRole('button', { name: /next/i }))
   const nowShowing = getByTestId('now-showing')
@@ -40,9 +39,24 @@ describe('tests header clicks and states', () => {
 
 describe('tests column ordering and states', () => {
   const columns = getAllByRole('columnheader')
-  it('should render the columns in the correct order', () => {
-    const { getByText } = within(columns[0])
+
+  it('should render 4 columns in the correct order', () => {
     expect(columns).toHaveLength(4)
-    expect(getByText(/contacts/i))
+    expect(columns.map(d => d.textContent)).toEqual([
+      'Contacts',
+      'Name',
+      'Last Triggered',
+      'Total Triggers',
+    ])
+  })
+
+  it('reorder column and test correct states', () => {
+    const { getAllByRole } = within(columns[1])
+    const columnTwoButtons = getAllByRole('button')
+    userEvent.click(columnTwoButtons[1])
+    const buttonsFarLeft = within(columns[0]).getAllByRole('button')
+    const buttonsFarRight = within(columns[3]).getAllByRole('button')
+    expect(buttonsFarLeft[0].getAttribute('class')).toMatch(/--nohover/i)
+    expect(buttonsFarRight[1].getAttribute('class')).not.toMatch(/--nohover/i)
   })
 })

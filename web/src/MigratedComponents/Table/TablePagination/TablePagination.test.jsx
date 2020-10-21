@@ -21,9 +21,9 @@ it('renders correct "Now Showing" counts', () => {
 })
 
 it('update row count and verify correct values', () => {
-  const rendered = render(<Default {...Default.args} />)
-  userEvent.click(rendered.getByRole('button', { name: /25/i }))
-  expect(rendered.getByTestId('now-showing')).toHaveTextContent(
+  const { getByRole, getByTestId } = render(<Default {...Default.args} />)
+  userEvent.click(getByRole('button', { name: /25/i }))
+  expect(getByTestId('now-showing')).toHaveTextContent(
     'Showing 1-25 of 90 notifications'
   )
 })
