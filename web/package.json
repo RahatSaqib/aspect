@@ -39,10 +39,10 @@
       "prettier --write"
     ],
     "./src/**/*.js": [
-      "eslint --fix"
+      "yarn lint --fix"
     ],
     "./src/**/*.jsx": [
-      "eslint --fix"
+      "yarn lint --fix"
     ],
     "./*.js": [
       "eslint --fix"
