@@ -50,9 +50,13 @@ const IconProvider = memo(({ icon, className }) => {
   )
 })
 
+IconProvider.defaultProps = {
+  className: '',
+}
+
 IconProvider.propTypes = {
   icon: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
 }
 
 export default IconProvider

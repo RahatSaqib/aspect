@@ -11,6 +11,7 @@ const TableColumnHideButton = ({ headerId, handleHideColumnToggle }) => {
     <IconButton
       onClick={e => handleHideColumnToggle(e, headerId)}
       className={cssClasses('tableheader__hidebutton')}
+      data-testid={`hide_column_${headerId}`}
     >
       <IconProvider icon="MdVisibilityOff" />
     </IconButton>
@@ -18,7 +19,7 @@ const TableColumnHideButton = ({ headerId, handleHideColumnToggle }) => {
 }
 
 TableColumnHideButton.propTypes = {
-  headerId: PropTypes.number.isRequired,
+  headerId: PropTypes.string.isRequired,
   handleHideColumnToggle: PropTypes.func.isRequired,
 }
 

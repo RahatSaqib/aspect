@@ -23,8 +23,8 @@ const TableHiddenColumns = ({
       Hidden Columns:
       {hiddenColumns.map(column => (
         <Chip
+          key={column}
           label={`${getProperColumnLabelFromKey(column, columns)}`}
-          // onClick={handleClick}
           onDelete={e => handleHideColumnToggle(e, column)}
           className={cssClasses('hiddenColumn__chip')}
         />

@@ -19,6 +19,7 @@ const TableColumnOrderButtons = ({
         disabled={headerIndex <= 0}
         onClick={e => handleChangeColumnOrder(e, 'left', headerIndex)}
         className={cssClasses('tableheader__orderbutton')}
+        data-testid={`order_left_${headerIndex}`}
       >
         <IconProvider icon="MdChevronLeft" />
       </IconButton>
@@ -26,6 +27,7 @@ const TableColumnOrderButtons = ({
         disabled={headerIndex + 1 >= headersLength}
         onClick={e => handleChangeColumnOrder(e, 'right', headerIndex)}
         className={cssClasses('tableheader__orderbutton')}
+        data-testid={`order_right_${headerIndex}`}
       >
         <IconProvider icon="MdChevronRight" />
       </IconButton>

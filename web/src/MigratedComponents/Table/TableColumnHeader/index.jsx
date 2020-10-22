@@ -56,7 +56,7 @@ TableColumnHeader.propTypes = {
   headerVisibilityComponent: PropTypes.func.isRequired,
   isSorted: PropTypes.bool.isRequired,
   isSortedDesc: PropTypes.bool,
-  toggleHidden: PropTypes.bool.isRequired,
+  toggleHidden: PropTypes.func.isRequired,
   render: PropTypes.string.isRequired,
 }
 
