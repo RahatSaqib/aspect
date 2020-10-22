@@ -10,6 +10,8 @@ import TableRow from '@material-ui/core/TableRow'
 
 import TableColumnHeader from './TableColumnHeader'
 import TableColumnOrderButtons from './TableColumnOrderButtons'
+import TableHiddenColumns from './TableHiddenColumns'
+import TableColumnHideButton from './TableColumnHideButton'
 
 import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
@@ -21,6 +23,13 @@ const AspectTable = ({ tableData: data, config }) => {
     initialSortBy,
     columnOrder: { allow: allowColumnReOrder, initialOrder } = false,
   } = useMemo(() => buildColumnsFromData(config), [config])
+
+  const table = useTable(
+    { columns, data },
+    useSortBy,
+    usePagination,
+    useColumnOrder
+  )
 
   const {
     canNextPage,
@@ -36,18 +45,25 @@ const AspectTable = ({ tableData: data, config }) => {
     setColumnOrder,
     setPageSize,
     setSortBy,
+    toggleHideColumn,
     visibleColumns,
-    state: { pageIndex, pageSize, sortBy, columnOrder },
-  } = useTable({ columns, data }, useSortBy, usePagination, useColumnOrder)
+    state: { pageIndex, pageSize, sortBy, columnOrder, hiddenColumns },
+  } = table
 
   const handleChangeRowsPerPage = val => {
     setPageSize(typeof val !== 'number' ? data.length : Number(val))
   }
 
-  const handleChangeColumnOrder = (e, direction, id) => {
+  const handleChangeColumnOrder = (e, direction, index) => {
     e.stopPropagation()
-    const newOrder = getCurrentColumnIndexAndShift(columnOrder, id, direction)
-    setColumnOrder(newOrder)
+    setColumnOrder(
+      getCurrentColumnIndexAndShift(visibleColumns, direction, index)
+    )
+  }
+
+  const handleHideColumnToggle = (e, id) => {
+    e.stopPropagation()
+    toggleHideColumn(id)
   }
 
   useEffect(() => {
@@ -57,13 +73,26 @@ const AspectTable = ({ tableData: data, config }) => {
   }, [sortBy, setSortBy, initialSortBy])
 
   useEffect(() => {
-    if (visibleColumns && allowColumnReOrder) {
+    if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
       setColumnOrder(initialOrder)
     }
-  }, [visibleColumns, allowColumnReOrder, initialOrder, setColumnOrder])
+  }, [
+    visibleColumns,
+    allowColumnReOrder,
+    columnOrder,
+    initialOrder,
+    setColumnOrder,
+  ])
 
   return data ? (
     <Fragment>
+      {hiddenColumns && hiddenColumns.length ? (
+        <TableHiddenColumns
+          columns={columns}
+          hiddenColumns={hiddenColumns}
+          handleHideColumnToggle={handleHideColumnToggle}
+        />
+      ) : null}
       <Table {...getTableProps()} style={{ tableLayout: 'auto' }}>
         <TableHead>
           {headerGroups.map(({ headers, getHeaderGroupProps }) => (
@@ -72,11 +101,14 @@ const AspectTable = ({ tableData: data, config }) => {
                 (
                   {
                     canSort,
+                    disableHide,
                     getHeaderProps,
                     getSortByToggleProps,
+                    id,
                     isSorted,
                     isSortedDesc,
                     render,
+                    toggleHidden,
                     width,
                   },
                   index
@@ -92,12 +124,21 @@ const AspectTable = ({ tableData: data, config }) => {
                         canSort={canSort}
                         isSorted={isSorted}
                         isSortedDesc={isSortedDesc}
+                        toggleHidden={toggleHidden}
                         headerOrderComponent={() =>
                           allowColumnReOrder ? (
                             <TableColumnOrderButtons
                               headerIndex={index}
                               headersLength={headers.length}
                               handleChangeColumnOrder={handleChangeColumnOrder}
+                            />
+                          ) : null
+                        }
+                        headerVisibilityComponent={() =>
+                          !disableHide ? (
+                            <TableColumnHideButton
+                              headerId={id}
+                              handleHideColumnToggle={handleHideColumnToggle}
                             />
                           ) : null
                         }

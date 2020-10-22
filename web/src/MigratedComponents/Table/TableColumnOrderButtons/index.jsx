@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
 
 import classnames from 'classnames/bind'
+
+import IconProvider from '../../IconProvider'
 
 const cssClasses = classnames.bind(require('../Table.css'))
 
@@ -19,14 +20,14 @@ const TableColumnOrderButtons = ({
         onClick={e => handleChangeColumnOrder(e, 'left', headerIndex)}
         className={cssClasses('tableheader__orderbutton')}
       >
-        <MdChevronLeft />
+        <IconProvider icon="MdChevronLeft" />
       </IconButton>
       <IconButton
         disabled={headerIndex + 1 >= headersLength}
         onClick={e => handleChangeColumnOrder(e, 'right', headerIndex)}
         className={cssClasses('tableheader__orderbutton')}
       >
-        <MdChevronRight />
+        <IconProvider icon="MdChevronRight" />
       </IconButton>
     </div>
   )
