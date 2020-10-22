@@ -14,14 +14,14 @@ async function seed(knex) {
 
   const issueTypeModule = await seedIssueType(
     knex,
-    'ProbeCheckBackgroundErrorForAnalyteFailedModule',
+    'FailedToVerifyValidBackgroundErrorForAnalyteModule',
     {
       userName: 'admin',
     }
   )
   const issueTypeLot = await seedIssueType(
     knex,
-    'ProbeCheckBackgroundErrorForAnalyteFailedLot',
+    'FailedToVerifyValidBackgroundErrorForAnalyteLot',
     {
       userName: 'admin',
     }
@@ -29,8 +29,8 @@ async function seed(knex) {
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: [
-      'ProbeCheckBackgroundErrorForAnalyteFailedLot',
-      'ProbeCheckBackgroundErrorForAnalyteFailedModule',
+      'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+      'FailedToVerifyValidBackgroundErrorForAnalyteModule',
     ],
   })
   const auditFields = {

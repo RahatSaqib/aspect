@@ -29,8 +29,8 @@ const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
-    ProbeCheckBackgroundErrorForAnalyteFailedModule: ProbeCheckBackgroundErrorForAnalyteFailedModuleId,
-    ProbeCheckBackgroundErrorForAnalyteFailedLot: ProbeCheckBackgroundErrorForAnalyteFailedLotId,
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: FailedToVerifyValidBackgroundErrorForAnalyteModuleId,
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: FailedToVerifyValidBackgroundErrorForAnalyteLotId,
     ProbeCheckFailedModule: ProbeCheckFailedModuleId,
     ProbeCheckFailedLot: ProbeCheckFailedLotId,
   } = await allIssueTypeToId()
@@ -90,14 +90,14 @@ const getMessageTemplates = async () => {
       'Probe Check Too Low (5007) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
     email: `Probe Check Too Low (5007) ${defaultmessageLot(5007)}`,
   }
-  messageTemplates[ProbeCheckBackgroundErrorForAnalyteFailedModuleId] = {
+  messageTemplates[FailedToVerifyValidBackgroundErrorForAnalyteModuleId] = {
     email: `Failed To Verify Valid Background Error For Analyte ${defaultMessageModule(
       5016
     )}`,
     sms:
       'Failed To Verify Valid Background Error For Analyte (5016) on (M-123456-0) at New GeneXpert Laboratory',
   }
-  messageTemplates[ProbeCheckBackgroundErrorForAnalyteFailedLotId] = {
+  messageTemplates[FailedToVerifyValidBackgroundErrorForAnalyteLotId] = {
     sms:
       'Failed To Verify Valid Background Error For Analyte (5016) on lot (Lot 0) at 2ndNew GeneXpert Laboratory',
     email: `Failed To Verify Valid Background Error For Analyte (5016) ${defaultmessageLot(
@@ -398,8 +398,8 @@ describe('This test suite is for testing different triggers conditions', async (
     await testCategoriesAndErrorCodes(
       'Failed To Verify Valid Background Error For Analyte',
       5016,
-      'ProbeCheckBackgroundErrorForAnalyteFailedModule',
-      'ProbeCheckBackgroundErrorForAnalyteFailedLot'
+      'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+      'FailedToVerifyValidBackgroundErrorForAnalyteLot'
     )
   })
   describe('error 5007 issue', async () => {

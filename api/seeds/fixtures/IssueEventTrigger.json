@@ -354,10 +354,10 @@
       }
     },
     {
-      "issueType": "ProbeCheckBackgroundErrorForAnalyteFailedModule",
+      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_MODULE",
+        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE",
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
@@ -375,10 +375,10 @@
       }
     },
     {
-      "issueType": "ProbeCheckBackgroundErrorForAnalyteFailedLot",
+      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteLot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "PROBE_CHECK_BACKGROUND_ERROR_FOR_ANALYTE_FAILED_LOT",
+        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT",
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",

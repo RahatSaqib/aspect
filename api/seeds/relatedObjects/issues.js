@@ -838,11 +838,12 @@ async function getBaseIssues(auditFields) {
         htmlBody: msgInstrumentReplaced,
       },
     },
-    ProbeCheckBackgroundErrorForAnalyteFailedModule: {
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: {
       issueType: {
         name: 'Failed To Verify Valid Background Error For Analyte On Module',
-        externalId: 'ProbeCheckBackgroundErrorForAnalyteFailedModule',
-        i18nKey: 'issueStatusProbeCheckBackgroundErrorForAnalyteFailedModule',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey:
+          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -866,11 +867,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    ProbeCheckBackgroundErrorForAnalyteFailedLot: {
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: {
       issueType: {
         name: 'Failed To Verify Valid Background Error For Analyte On Lot',
-        externalId: 'ProbeCheckBackgroundErrorForAnalyteFailedLot',
-        i18nKey: 'issueStatusProbeCheckBackgroundErrorForAnalyteFailedLot',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteLot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
