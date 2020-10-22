@@ -117,7 +117,6 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   const actionType = obtainProperAction(moduleSerial, {
     errorCode: resultErrorCode,
   })
-
   return {
     type: actionType,
     deviceId,
