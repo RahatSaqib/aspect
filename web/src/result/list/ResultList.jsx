@@ -360,6 +360,7 @@ const ResultList = () => {
 
     const sortPage = makeSortPageSelector({
       sortCol: 'endedOn',
+      sortDir: 'desc',
     })
     const urlSearchParams = new URLSearchParams(location.search)
     const urlFilters = urlSearchParams.get('filters')
