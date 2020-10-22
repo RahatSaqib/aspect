@@ -30,6 +30,11 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_LOT',
       },
       {
+        errorCode: 5011,
+        type1: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
+        type2: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
+      },
+      {
         errorCode: 5006,
         type1: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
         type2: 'RESULT_ANALYZE_PROBES_HIGH_LOT',

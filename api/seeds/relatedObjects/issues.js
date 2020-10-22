@@ -895,6 +895,63 @@ async function getBaseIssues(auditFields) {
         htmlBody: msgInstrumentReplaced,
       },
     },
+    SignalLossDetectedInAmplificationCurveModule: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Module',
+        externalId: 'SignalLossDetectedInAmplificationCurveModule',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule}`,
+        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveLot: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Lot',
+        externalId: 'SignalLossDetectedInAmplificationCurveLot',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot}`,
+        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
   }
   return IssueDefinition
 }
