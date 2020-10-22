@@ -22,6 +22,10 @@ const types = {
   RESULT_ANALYZE_PROBES_FAILED_MODULE: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
   RESULT_ANALYZE_INVALIDS_MODULE: 'RESULT_ANALYZE_INVALIDS_MODULE',
   RESULT_ANALYZE_INVALIDS_LOT: 'RESULT_ANALYZE_INVALIDS_LOT',
+  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT:
+    'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
+  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE:
+    'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
 }
 
 // ----------- Action Creators -------------------
@@ -58,6 +62,8 @@ const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
         return types.RESULT_ANALYZE_INVALIDS_MODULE
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
+      case 5011:
+        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE
       case 5017:
         return types.RESULT_ANALYZE_PROBES_FAILED_MODULE
       case 5007:
@@ -68,6 +74,8 @@ const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
     switch (valueToCompare) {
       case 'INVALID':
         return types.RESULT_ANALYZE_INVALIDS_LOT
+      case 5011:
+        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_LOT
       case 5017:
