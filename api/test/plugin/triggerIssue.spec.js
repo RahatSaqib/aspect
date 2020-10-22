@@ -394,7 +394,7 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckTooHighLot'
     )
   })
-  describe.only('error 5016 issue', async () => {
+  describe('error 5016 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Failed To Verify Valid Background Error For Analyte',
       5016,
