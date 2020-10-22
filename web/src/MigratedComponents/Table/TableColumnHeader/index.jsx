@@ -10,7 +10,9 @@ function TableColumnHeader({
   isSorted,
   isSortedDesc,
   headerOrderComponent: HeaderOrderComponent,
+  headerVisibilityComponent: HeaderVisibilityComponent,
   render,
+  toggleHidden,
 }) {
   return (
     <div className={cssClasses('table__container')}>
@@ -36,7 +38,10 @@ function TableColumnHeader({
           </div>
         </TableSortLabel>
       </div>
-      <HeaderOrderComponent />
+      <div className={cssClasses('tablecolumn__actions')}>
+        <HeaderVisibilityComponent onClick={toggleHidden} />
+        <HeaderOrderComponent />
+      </div>
     </div>
   )
 }
@@ -47,9 +52,11 @@ TableColumnHeader.defaultProps = {
 
 TableColumnHeader.propTypes = {
   canSort: PropTypes.bool.isRequired,
+  headerOrderComponent: PropTypes.func.isRequired,
+  headerVisibilityComponent: PropTypes.func.isRequired,
   isSorted: PropTypes.bool.isRequired,
   isSortedDesc: PropTypes.bool,
-  headerOrderComponent: PropTypes.func.isRequired,
+  toggleHidden: PropTypes.bool.isRequired,
   render: PropTypes.string.isRequired,
 }
 

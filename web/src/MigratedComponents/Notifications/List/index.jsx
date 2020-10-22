@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 
 import Shell from '../../Shell'
@@ -10,20 +10,24 @@ import { mockDatafetch } from '../../Table/Helpers'
 import config from './config'
 
 function NotificationList() {
-  const {
-    isError,
-    data: { data: tableData } = false,
-    error,
-  } = useQuery('mockTableData', async () => mockDatafetch(230))
+  const [data, setData] = useState(false)
+
+  const { isError, error } = useQuery(
+    'mockTableData',
+    async () => mockDatafetch(230),
+    {
+      onSuccess: ({ data }) => setData(data),
+    }
+  )
 
   if (isError) {
     throw new Error(error)
   }
 
-  return tableData && tableData.length ? (
+  return data && data.length ? (
     <Shell>
       <ShellContent>
-        <AspectTable tableData={tableData} config={config} />
+        <AspectTable tableData={data} config={config} />
       </ShellContent>
     </Shell>
   ) : null

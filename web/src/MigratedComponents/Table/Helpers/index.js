@@ -2,7 +2,6 @@ import map from 'lodash/map'
 import subMinutes from 'date-fns/subMinutes'
 import formatDistance from 'date-fns/formatDistance'
 import filter from 'lodash/filter'
-import get from 'lodash/get'
 import times from 'lodash/times'
 import random from 'lodash/random'
 import chunk from 'lodash/chunk'
@@ -61,11 +60,13 @@ function getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize) {
   return false
 }
 
-function getCurrentColumnIndexAndShift(columns, column, direction) {
-  const columnToShift = direction === 'left' ? column - 1 : column + 1
-  const newColumnOrder = columns[column]
-  columns[column] = columns[columnToShift]
-  columns[columnToShift] = newColumnOrder
+function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
+  const columnsToShuffle = [...visibleColumns]
+  const columns = columnsToShuffle.map(({ id }) => id)
+  const from = index
+  const to = direction === 'left' ? index - 1 : index + 1
+  columns.splice(to, 0, columns.splice(from, 1)[0])
+  return columns
 }
 
 export {
