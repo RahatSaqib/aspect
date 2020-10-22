@@ -737,6 +737,63 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Module',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey:
+          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
+        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule}`,
+        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Lot',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
+        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot}`,
+        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
     ProbeCheckFailedModule: {
       issueType: {
         name: 'Probe Check Failed On Module',
@@ -836,63 +893,6 @@ async function getBaseIssues(auditFields) {
         subject: 'Instrument has been replaced',
         body: msgInstrumentReplaced,
         htmlBody: msgInstrumentReplaced,
-      },
-    },
-    FailedToVerifyValidBackgroundErrorForAnalyteModule: {
-      issueType: {
-        name: 'Failed To Verify Valid Background Error For Analyte On Module',
-        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
-        i18nKey:
-          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
-        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule}`,
-        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-        ...auditFields,
-      },
-    },
-    FailedToVerifyValidBackgroundErrorForAnalyteLot: {
-      issueType: {
-        name: 'Failed To Verify Valid Background Error For Analyte On Lot',
-        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteLot',
-        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteLot',
-        issueCategoryId: issueCategories.ReagentHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
-        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot}`,
-        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-        ...auditFields,
       },
     },
   }

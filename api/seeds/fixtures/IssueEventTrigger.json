@@ -309,6 +309,48 @@
       }
     },
     {
+      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5016,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5016,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
       "issueType": "ModuleDisabled",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -351,48 +393,6 @@
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "DEVICE_INSTRUMENT_REPLACED"
-      }
-    },
-    {
-      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 5016,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
-      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 5016,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
       }
     }
   ]
