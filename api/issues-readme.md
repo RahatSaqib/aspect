@@ -1,0 +1,395 @@
+# ASPECT ISSUE AND NOTIFICATION SYSTEM
+
+## A simple description of the system
+
+In the next chart you are going to find a simple diagram with the objective to introduce and present the artifacts we are going to work with for the issue and notification system. The idea is to give you a general idea of what implies and what are the main entities we need to know. Later in the text we are going to provide a more detailed explanation about them:
+![Issue system diagram](readme_assets/issues-system.png)
+
+## Plugins
+
+Plugins are a way to define the custom actions we need to perform for some specific partners. These actions are related to:
+
+- Results parsing, managing, and analysis
+- Issues creation, filtering, resolution, escalation, and notification
+- Define some specific Settings and options
+- Define Data Categories.
+- Device management, registration, and configuration and operation management.
+- Add and update sites
+- Add and update cases and patients
+
+The plugin can be configured in two places. The first one is the device-type and it will be the place where we are going to look for every received message. That means for example we need to receive some new results from the Commcare devices, we are going to extend our default plugin and set up all the methods we need to understand the new and specific payload we are dealing with.
+
+The second place where we can define which plugin we should use is the partner level.
+An example of this could be Myanmar where we defined some specific issues and triggering conditions, which no other partner has. That means we are going to check the plugin here in every single event where the device is not related directly to.
+
+All these customizations must be implemented in the corresponding action where we want Aspect to do something different and specific.
+
+For checking the configuration of the plugin you should check the file
+``api/src/plugin/registration.js`` line 36 where is defined the plugin structure with all the actions we can overwrite. 
+
+
+
+### Default actions (can be overwritten) are:
+
+- Settings: all the settings related to date and time format and utilization and error rate threshold. By default, all are going to use the defined in the backend.
+- handlerOptions: Define the permissions in the following actions
+- issueTriggers: All the conditions needed to determine if an issue must be triggered or not. Refer to Issue documentation.
+- issueResolutions: All the conditions for determining if an opened issue should be resolved. Refer to Issue documentation.
+- issueEscalations: All the conditions to determine if a specific issue is not resolved, should be escalated to another person.
+- dataCategories: This is a function fully linked to an specific issue called "DataCategoryLowError". Refer [Issues section](#Issues) for more detailed information. Right now it is only used in Myanmar’s plugin.
+- filtersOpenIssues: There are some issues which need extra filtering conditions, here is the place for adding those.
+- transformInitialPayload: All the actions we need to do to transform the received payload from devices (with or without results on it)
+- getDeviceSeenOn: From the device payload or result pushed, it could be different ways to determine if a device is active since a specific date of the last action performed.
+- getDevicePingOn: Same as getDeviceSeenOn, but in more detail, trying to determine any heartbeat or ping from the device payload.
+- preProcessCreateDevice: Every time we need to create a device, we need to transform and/or obtain some specific information from the information received in the payload. This action will take place before the insertion into the database of the device and was meant for extracting and manipulating data.
+- transformNewDevicePayload: before preprocessing the device, we need to standardize the payload, to be consistent with the default payload we are expecting for GxAlert/GxConnect devices. Sometimes these differences are a few, and a simple transformation prevents us from rewriting a payload parser.
+- preProcessAddDeviceData: when the payload only contains device data and we need to insert/update a device, this action should be performed before updating the database.
+- preProcessUpdateDeviceConfiguration: when the payload only contains device configuration information and we need to insert/update a device, this action should be performed before updating the database.
+- postProcessUpdateDeviceConfiguration: This action will take place after updating the data into the DB and you need to perform some extra actions once the data is in the DB.
+- postProcessAddDeviceOperation: This action will take place after inserting the device operation data into the DB. The common use case for this is to trigger an action from the message queue.
+- preProcessUpdateSite: This action will take place when we receive Site information we need to parse for inserting/updating the site into the DB. This action will take place before the DB operation.
+- postProcessUpdateSite: After updating the site into the DB we can trigger an action.
+- preProcessMergeResult: When we have a result received from the devices, sometimes it is a repeated one or sometimes it brings extra and further information about it. That is why we need this action to perform some actions before merging those results, the one received and the one already inserted into the DB.
+- transformMergeResultPayload: Based on the description made before in preProcessMergeResult, this place was meant for performing all the merge activities needed for storing/updating a result in the DB.
+- postProcessMergeResult: After storing a result in the DB probably we need to analyze or trigger some issues, so basically we are pushing the result updated/inserted into the message queue for future actions.
+- onResultLogged: every time a result is updated/inserted into the DB this action will take place. Here we can decide what is the next step in the workflow for a result.
+- onGxAlertAuthenticated: When we link aspect with GxAlert, we are going to still use GxAlert credentials, so this action will take place when GxAlert authenticates a user and grant access to aspect. We can perform for example here the creation of the new user in Aspect DB.
+- onCaseAdded: For every single result we receive, we need to assign to an existing or new case, so every time we create a new case this action will be triggered.
+- onCaseUpdated: For every single result we receive, we need to assign to an existing or new case, so every time we update a new case this action will be triggered.
+- onPatientAdded: If we receive a new result where the demographic data determines it is a new patient, we added into the DB. Doing that will trigger this action.
+- onPatientUpdated: If we receive a result data that we can link into an existing patient, we will update the patient with the new details or extra information and then will trigger this action.
+
+There are a lot of other actions during the process. The other actions are fixed as a part of the workflow. I will try to describe the most important ones:
+
+- issueCreated: This action will be triggered when a new issue is created. 
+- issueTriggered: This action will be triggered when the condition for triggering is met no matters if the Issue was created or not.
+- issueAcknowledged: this action will be triggered when the user in the website updates the issue status to acknowledge. 
+- onIssueEscalated: This action will be triggered after an escalation of the current issue.
+- issueResolved: This action will be triggered after resolving the issue automatically.
+
+### Lifecycle of the Actions
+
+![Life cycle diagram](readme_assets/life-cycle.png)
+
+## Issue Category
+
+There are 4 types of issue categories:
+
+- Device health: Refer to any possible problem or risk related to the device.
+- Data health: Refer to any possible problem or risk related to the quality of the data received.
+- Connectivity health: Refer to any possible problem or risk related to devices, but in specific if they are disconnected or offline for a couple of days.
+- Reagent health: Refer to any possible problem or risk related to Reagents data.
+
+## Message Queue and Actions
+
+A message queue (MQ) is a tool typically used for inter-process communication (IPC), or inter-thread communication within the same process (2 or more). It is used in many cases as an asynchronous pattern for processing data whereas the sending and receiving party do not need to interact with the message queue at the same time. (urgent vs delayed actions) MQ is the common tool used for addressing the pattern producer/consumer
+
+Messages placed onto the queue are stored until the recipient retrieves them. 
+
+
+We are using the message queue exactly for what is described above. As you can read the plugin’s action most of them are subscribed to a specific action or message type in the queue and those actions dispatch a function to be executed.
+
+
+### Message queue implementation
+
+In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit  doesn’t fit our needs, it could be easily replaced by another one. 
+ 
+This class has some methods, but the most important are:
+
+- Subscribe: Subscribes to messages with the named service. This can be a single subscription, an array, or a function, Dispatch it, emit the corresponding message and call the function which should catch it.
+
+The current implementation of the MQ uses only one queue and different actions on it. These actions are an identifier of the event you want to subscribe to (Filtering and categorization of the event)
+
+You can check all the queues and subscriptions in file ``api/src/subscriptions.js``. Refer to the README on how to access the RabbitMQ UI.
+
+Also, after creating the message queue, we start the scheduler (see ``scheduler.js``) which will trigger some scheduled tasks that are going to dispatch messages to the message queue, like daily device maintenance status.
+
+## Issues
+
+Issues are a way to register some anomalies, a discovery, or an expected event (like results, new device, etc). This system was meant to create a new record in the DB for tracking future actions or just to notify the user by some channel that some condition was met in the system.
+
+There are some issue types defined right now in the system, some of them are Scheduled, some of then are triggered during the processor workflow and some of them have this dual behaviour. 
+
+The scheduled are:
+
+- DeviceOffline: Trigger warnings when a device is offline for more than 7 days. (default value). Is Triggered with a daily scheduled task.
+- DeviceNoResults: This is triggered when a single device has no results for the last 14 days. Is triggered with a daily scheduled task.
+
+Not scheduled or dual behaviour actions:
+
+- ResultReceived: Trigger for every single result received.
+- DeviceMaintenance: This action is triggered when a device notifies a maintenance detail update. This can be triggered when the user sets the maintenance status or when after a couple of days the device becomes offline. This is one of the actions that works dually, scheduled and not scheduled.
+- StockLevelUpdate: This is triggered when some inventory item is updated in its quantity.
+- MachineGenericError: This is triggered when we receive some generic error code from the machine. Right now it is only used in Myanmar’s plugin.
+- ModuleGenericError: This is triggered when we receive some generic error code from the module. Right now it is only used in Myanmar’s plugin.
+- ModuleReplaced: This is triggered when the same device pushes a result with a different module serial than the previous one in the same slot.
+- ModuleDisabled: All devices (GxConnect) as a daily basis action push if a module was marked as disabled in the GeneXpert software. If that happens we will trigger this issue.
+- TooManyInvalidResultsModule: This is triggered when there are more than 3 results invalid in the last 30 days for the same device/module pair.
+- TooManyInvalidResultsLot: This is triggered when there are more than 3 results invalid in the last 30 days for the same device/lot/assay trio.
+- ProbeCheckTooLowModule: This is triggered when there are more than 3 results with the error code 5006 in the last 30 days for the same device/module pair.
+- ProbeCheckTooLowLot: This is triggered when there are more than 3 results with the error code 5006 in the last 30 days for the same device/lot/assay trio.
+- ProbeCheckTooHighModule: This is triggered when there are more than 3 results with the error code 5007 in the last 30 days for the same device/module pair.
+- ProbeCheckTooHighLot: This is triggered when there are more than 3 results with the error code 5007 in the last 30 days for the same device/lot/assay trio.
+- InventoryStockExpiring: This is triggered when there are some inventory items near to expire. 30 days before (default value) we are going to notify the user about the exception. This is a partner configuration setting.
+- InstrumentReplaced: This is triggered when the same device pushes a result with a different instrument serial than the previous one.
+
+**Custom Actions (Myanmar)**
+- ModuleFailureError: it is triggered when a result arrives with an error code related to the module. Right now it’s only used in Myanmar’s plugin.
+- ModuleTemperatureError: This issue is triggered when there are some error codes related to module temperature and when those error codes arrive we trigger this issue. Right now it is only used in Myanmar’s plugin.
+- ModulePowerError: it is triggered when some error code related to module power arrives. Right now it is only used in Myanmar’s plugin.
+- MachineTemperatureError: It is triggered when some error code related to Machine Temperature error arrives. Right now it is only used in Myanmar’s plugin.
+- MachinePowerError:  It is triggered when some error code related to Machine Power error arrives. Right now it is only used in Myanmar’s plugin.
+- ModuleProceduralError:  It is triggered when some error code related to Module Procedural error arrives. Right now it is only used in Myanmar’s plugin.
+- MachineProceduralError: It is triggered when some error code related to Machine procedural error arrives. Right now it is only used in Myanmar’s plugin.
+- DataCategoryLowError: It Triggers when the percentage of results that have a custom field completed falls below a certain threshold. For example, if less than 90% of results have "null" for "gender" in the custom fields, trigger the data category low error.  Right now it is only used in Myanmar’s plugin.
+- ReagentHealthError: It triggers if there's a certain number of errors with error codes that they consider reagent-related.This is triggered when a reagent lot has any issue.Right now it is only used in Myanmar’s plugin.
+
+
+### Triggering
+
+For triggering an issue it is important to define the trigger condition in the table IssueEventTrigger. This table has a JSON field called triggerConditions where we need to define what the action to subscribe to is and the conditions to trigger that issue. Basically, after specifying the correspondent MQ Action, we can set no conditions (we are going to trigger a new issue for every single action we received) or with some more complex conditions defined in this property.
+Before creating the new issue, the system is going to to check if there is already an open issue of the same type and the same result/site/device/partner. If there isn’t any then It will create a new issue otherwise the issue is not duplicated.
+
+The triggerConditions Object can have the next shape:
+```JSON
+{
+  "action": “Is the action where the function is subscribed.”,
+  "conditions": {
+    "evaluationMethod":  “the way we are going to evaluate the condition (inline-sql/sql-script/plugin-function/child-conditions)”
+,
+    "evaluationParameter": “Name of the function/ path of the file/ sql script”,
+    "evaluationFilterParameters": “(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)”
+  }
+}
+```
+An example would be:
+```JSON
+{
+  "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
+  "conditions": {
+    "evaluationMethod": "plugin-function",
+    "evaluationParameter": "analyzeErrors",
+    "evaluationFilterParameters": {
+      "below": false,
+      "errorCode": 5011,
+      "threshold": 0.03,
+      "daysPeriod": 30,
+      "minResults": 3
+    }
+  }
+}
+```
+
+The evaluation methods could be:
+
+- Inline-sql: in the evaluationParameter property we are going to write a query that should return a row. If it returns a row then it will be true. If empty, false.
+- Sql-script: when this option is configured the evaluationParameter should have the relative path of the file where the sql script is placed. Aspect is going to execute and wait for a true or false
+- Plugin-function: Based on the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
+
+### Filtering
+For filtering and detecting open issues is needed to extend the default behavior for filtering them.
+The default filtering is going to depend on the fields the action has. If the action has one of these parameters, it is going to filter by them (They are mutually exclusive) and the order is the one presented here:
+deviceId
+resultId
+siteId
+partnerId
+
+If these filters are not sufficient, you can extend it with a custom and defined filter function. Right now we are storing extra information in the data field of the issue and with those fields, we are creating extra filtering rules. 
+
+This function should be saved in the table IssueEventTrigger field filterIssueCondition (JSON field) which has the shape:
+```JSON
+{"evaluationFunction": "filterByLotAndAssay"} 
+```
+
+Where ``filterByLotAndAssay`` is the function called for filtering. 
+This function should be located in the file ``filterConditions.js`` of the specific partner. The issue folder is the place for saving the default functions.
+
+## Resolution
+
+Resolution is the process of updating the issue statuses from any other open status, to “resolved”. This will be executed in different ways: automatically when a new message is received, something scheduled or an action triggered from the UI. For configuring the resolution conditions again we need to define a resolution function similar to the one described in “Triggering” 
+
+Example:
+```JSON
+{
+"evaluationMethod": "plugin-function", 
+"evaluationParameter": "resolveDataCategoryLow"
+}
+```
+
+
+Where in this case resolveDataCategoryLow is going to be the function which will return true or false based on some conditions to determine whether the issue should be resolved or not.
+
+For finding the issue it will use the filtering condition described before.
+
+
+
+### Escalation
+
+Escalation is the process of elevating the severity of an issue, which means that the issue can move from normal to critical.
+For the escalation, we can also notify via alert message, email, SMS, or another type channel of communication.
+Similar to resolution and triggering, we can define a function to evaluate a condition and determine if the issue should be escalated.
+In this case, we have a new option for the evaluation method which is the issue-age. This function the evaluationParameter field is the number of days passed from the creation of the issue.
+
+Example:
+```JSON
+{"evaluationMethod": "issue-age", "evaluationParameter": {"days": 20}}
+```
+
+Escalate to level: The escalation level is the Severity of the Issue. It goes from 1 to 5 being 5 the highest severity.
+
+## Notifications
+
+The notification system was meant to communicate to the users about any issue generated, updated or escalated in Aspect.
+
+It has 5 different channels to communicate:
+- Email: The user is going to receive an email with the description of the issue triggered.
+- Sms: The user is going to receive notifications in his phone with an SMS.
+- Push notifications: It is working right now for reporter app users only. If the user has the app installed it will receive notifications through this channel.
+- Webhook: if we need to notify another software with the issue generated we can post issue details through this channel. 
+- Alert: Is the visual and graphical notification in Aspect system.
+
+The notifications are going to be fired after analyzing if we have configured the DB in the ``NotificationType`` table any row for that issue Type. We can also filter by partner and jobfunction. That means we can have different message types per partner or jobfunction for the same issue Type. The ``MessageType`` Table has the configuration of the templates we are going to send through the different channels. We need at least one message type configuration for producing the notification. 
+
+## Configuring new Issue with notification.
+
+For configure a new issue type the first thing we need to do is to add the new issue type in the file ``api/seeds/relatedObjects/issues.js``
+
+We need to add a new json object in the JSON Array with the following shape:
+
+```javascript
+ DeviceNoResults: { //This is the external id
+      issueType: {
+        name: 'Device No Results', // name of the issue
+        externalId: 'DeviceNoResults', // externalid
+        i18nKey: 'issueStatusDeviceNoResults', // i18n key 
+        issueCategoryId: issueCategories.ConnectivityHealth, // the categorization of the issue.
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert, // the severity of the issue.
+      },
+      AlertTemplate: {
+        message: 'No testing for {{numberOfDays issue.data.lastResultOn}}', // the string template of the alert
+        ...auditFields,
+      },
+
+      SmsTemplate: {
+        message:
+          '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
+// the sms string template
+        ...auditFields,
+      },
+      EmailTemplate: { // email configuration.
+        subject: '{{device.name}}: No Testing', 
+        body:
+          '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
+        htmlBody:
+          '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
+        ...auditFields,
+      },
+    },
+```
+Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json with the following shape.
+```javascript
+
+{
+      "issueType": "DeviceNoResults",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_NO_RESULTS"
+      }
+},
+```
+Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.
+
+If the trigger has some resolution configuration we need to seed the table IssueResolutionTrigger with the next helper function
+```javascript
+ await upsertIssueResolutionTrigger(knex, {
+    issueTypeId,
+    partnerId,
+    resolutionConditions: JSON.stringify({
+      evaluationMethod: 'plugin-function',
+      evaluationParameter: 'resolveDeviceNoResults', //The name of the function to evaluate if it should be resolved or not.
+    }),
+    createdOn: now,
+    updatedOn: now,
+  })
+
+```
+
+The next step is to insert all records to the database. For doing that we have some helper functions:
+
+```javascript
+const { partnerId, userId } = await knex('User as u')
+    .join('Person as p', 'p.userId', 'u.id')
+    .where({ 'u.name': 'admin' })
+    .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
+
+  const issueType = await seedIssueType(
+    knex,
+    ‘DeviceNoResults’,
+    {
+      userName: 'admin',
+    }
+  )
+
+
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: [
+      'DeviceNoResults',
+    ],
+  })
+  const auditFields = {
+    createdOn: new Date(),
+    createdBy: userId,
+    updatedOn: new Date(),
+    updatedBy: userId,
+  }
+
+  const issueTypeObject = await knex('IssueType')
+    .where({ id: issueType })
+    .first()
+
+  const { jobFunctionAdminId } = await knex('JobFunction')
+    .where({
+      externalId: 'admin',
+      partnerId,
+    })
+    .first('id as jobFunctionAdminId')
+  await upsertNotificationTypes(knex, [
+    {
+      issueTypeId: issueTypeObject.id,
+      messageTypeId: issueTypeObject.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: 'Device No Results',
+      ...auditFields,
+    },
+  ])
+
+```
+## Creating a new Action
+For creating a new Action you need to subscribe to the message queue.  For doing it you should add it in the file ``api/src/subscriptions.js`` a new action:function pair, With the next format: 
+
+```javascript
+queue.subscribe('case', require('./case/endpoints').subscriptions)
+```
+Where ``require('./case/endpoints')`` is the file location where all the key pairs are written.
+
+And subscriptions is an array of JSON object with an actions dictionary.
+```javascript
+const subscriptions = [
+  {
+    actions: {
+      CASE_ADDED: onCaseAdded,
+      CASE_UPDATED: onCaseUpdated,
+      RESULT_LOGGED: onResultLogged,
+    },
+  },
+]
+```
+In this example CASE_ADDED is the action (Constant string) we are going to subscribe the function name onCaseAdded
+      ``CASE_ADDED: onCaseAdded,``
+
+
+This means if an action ``CASE_ADDED`` was queued on the MQ, the message queue dispatcher is going to call ``onCaseAdded`` function.

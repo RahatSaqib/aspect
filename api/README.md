@@ -315,3 +315,5 @@ To update all to the latest version (this is not the same as the "Wanted" versio
 ```bash
 yarn upgrade
 ```
+## For Issues and notification system check the next link
+[Issues and notification system](issues-readme.md#A-simple-description-of-the-system)
