@@ -1,6 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Chip from '@material-ui/core/Chip'
-
 import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('../Table.css'))
@@ -31,6 +31,12 @@ const TableHiddenColumns = ({
       ))}
     </div>
   )
+}
+
+TableHiddenColumns.propTypes = {
+  columns: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  hiddenColumns: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  handleHideColumnToggle: PropTypes.func.isRequired,
 }
 
 export default TableHiddenColumns
