@@ -13,7 +13,6 @@ const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
 const enhance = identity
 
 const DeviceApiKeyTableRow = ({
-  intl,
   deviceApiKey,
   disabled,
   checked,

@@ -38,7 +38,7 @@ const formatTags = tagsStr => {
   ))
 }
 
-const PersonTableRow = ({ intl, person, ...restProps }) => (
+const PersonTableRow = ({ person, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{person.get('name')}</TableCell>
     <TableCell>{person.get('level')}</TableCell>

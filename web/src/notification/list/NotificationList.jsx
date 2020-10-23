@@ -90,7 +90,6 @@ export const NotificationListWithProps = ({
   sortDir,
   reducedFilters,
   onExportClick,
-  table,
   columns,
   total,
   pageAt,
@@ -201,7 +200,9 @@ export const NotificationList = () => {
 
       setTable(receiveTableItems(table, totalItems))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
+
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -227,6 +228,7 @@ export const NotificationList = () => {
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   // >>>>>> Callbacks <<<<<<

@@ -13,7 +13,7 @@ const cssClasses = classnames.bind(
 
 const enhance = identity
 
-const ResultTableRow = ({ intl, result, ...restProps }) => (
+const ResultTableRow = ({ result, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(result.get('endedOn'))}</TableCell>
     <TableCell>{result.get('sampleOriginSiteName')}</TableCell>

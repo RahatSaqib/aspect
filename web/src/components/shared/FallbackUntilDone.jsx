@@ -85,7 +85,7 @@ class FallbackUntilDone extends PureComponent {
   }
 
   render() {
-    const { component, className, fallbacks, isDone, ...restProps } = this.props
+    const { component, className, fallbacks, ...restProps } = this.props
     const fallback = fallbacks[this.state.fallbackIndex]
 
     return React.createElement(component, {
