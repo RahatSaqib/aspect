@@ -352,6 +352,48 @@
       "triggerConditions": {
         "action": "DEVICE_INSTRUMENT_REPLACED"
       }
+    },
+    {
+      "issueType": "SignalLossDetectedInAmplificationCurveModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5011,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "SignalLossDetectedInAmplificationCurveLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5011,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
     }
   ]
 }
