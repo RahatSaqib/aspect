@@ -45,6 +45,11 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
       },
       {
+        errorCode: 5016,
+        type1: 'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE',
+        type2: 'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT',
+      },
+      {
         // on non existing code it should return default values
         errorCode: 5555,
         type1: 'RESULT_ANALYZE_PROBES_MODULE',
