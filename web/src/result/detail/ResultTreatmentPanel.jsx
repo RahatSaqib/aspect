@@ -4,7 +4,6 @@ import { format as date } from 'date-fns/format'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import parseISO from 'date-fns/parseISO'
 import { compose, pure, withHandlers, withState } from 'recompose'
-import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 
 import requirePermission from '../../components/shared/requirePermissions'
@@ -16,10 +15,6 @@ import {
 import CheckboxField from '../../components/shared/CheckboxField'
 import AspectButton from '../../components/shared/AspectButton'
 import ResultTreatmentNoteModal from './ResultTreatmentNoteModal'
-
-const cssClasses = classnames.bind(
-  require('../../components/shared/ReadOnlyField.css')
-)
 
 const messages = defineMessages({
   linkedToTreatment: {

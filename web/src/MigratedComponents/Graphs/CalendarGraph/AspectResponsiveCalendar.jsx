@@ -6,13 +6,10 @@ import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip } from '../GraphToolTip'
 
 import {
-  formatValuesForGraphs,
   generateColorForValue,
   generateMargin,
-  generateTickValues,
   generateToolTip,
   generateLegend,
-  getMaxValueForDivergent,
 } from '../Helpers/Formatters'
 
 const AspectResponsiveCalendar = ({
@@ -24,8 +21,6 @@ const AspectResponsiveCalendar = ({
   indexBy,
   keys,
   tickValuesYShape,
-  tickValuesXShape,
-  type,
 }) => {
   const { formatNumber: intlFormatNumber } = useIntl()
   const legends = displayLegend
@@ -95,8 +90,6 @@ const AspectResponsiveCalendar = ({
 
 AspectResponsiveCalendar.defaultProps = {
   tickValuesYShape: 'all',
-  tickValuesXShape: 'all',
-  type: 'bar',
 }
 
 AspectResponsiveCalendar.propTypes = {
@@ -112,14 +105,6 @@ AspectResponsiveCalendar.propTypes = {
     'clubsandwich',
     'all',
     'none',
-  ]),
-  tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
-  type: PropTypes.oneOf([
-    'bar',
-    'stacked',
-    'divergent',
-    'barLegacyTreatment',
-    'stackedDeviceActivity',
   ]),
 }
 

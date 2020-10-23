@@ -28,12 +28,7 @@ export const useSortFilter = ({
   return { onSortColumn }
 }
 
-const BrowseDataTableHead = ({
-  history,
-  location,
-  onHeadColumnClick,
-  ...restProps
-}) => {
+const BrowseDataTableHead = ({ history, location, ...restProps }) => {
   const { sortColumnKey, sortColumnDir } = restProps
   const { onSortColumn } = useSortFilter({
     history,

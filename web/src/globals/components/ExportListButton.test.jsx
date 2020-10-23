@@ -1,12 +1,9 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { IntlProvider } from 'react-intl'
 
 import { ExportListButton } from './ExportListButton'
 
 describe('ExportListButton', () => {
-  const intlProvider = new IntlProvider({ locale: 'en' }, {})
-
   const props = {
     onMyExport: () => {},
     visible: false,

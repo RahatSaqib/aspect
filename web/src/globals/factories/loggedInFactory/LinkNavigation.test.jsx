@@ -3,7 +3,6 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { LinkNavigation } from './LinkNavigation'
-import Link from '../../../components/shared/Link'
 
 describe('LinkNavigation component', () => {
   const intl = createIntl({ locale: 'en' })

@@ -20,14 +20,7 @@ const enhance = compose(
   pure
 )
 
-const Link = ({
-  label,
-  history,
-  location,
-  onLinkClick,
-  theme,
-  ...restProps
-}) => (
+const Link = ({ label, location, onLinkClick, theme, ...restProps }) => (
   <MUILink
     {...restProps}
     onClick={onLinkClick}

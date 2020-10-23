@@ -124,7 +124,6 @@ const textForAssayTypeItem = (assayTypeItem, formatMessage) => {
 export const AssayTypeSelectField = ({
   allItemText,
   intl,
-  fetchAssayTypes,
   assayTypes,
   onChange,
   diseaseId,

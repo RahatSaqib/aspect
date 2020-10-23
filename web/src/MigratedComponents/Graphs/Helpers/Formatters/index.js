@@ -52,7 +52,7 @@ const makeProperCase = string => startCase(string)
 
 const normaliseKeys = data => {
   const normalised = []
-  for (const [key, value] of Object.entries(data)) {
+  for (const [keyIgnored, value] of Object.entries(data)) {
     normalised.push({ ...value })
   }
   return normalised
@@ -267,12 +267,7 @@ const removeStringsFromArray = string => {
   return newString.length > 1 ? newString[1] : newString[0]
 }
 
-const translateLabel = (
-  string,
-  assaysFromState,
-  legendsToRename,
-  type = false
-) => {
+const translateLabel = (string, assaysFromState, legendsToRename) => {
   const dictionary = legendsToRename ? [...legendsToRename] : []
   assaysFromState.map(
     ({ resultCategories }) =>
@@ -441,9 +436,9 @@ const extractOptionValue = (identifier, selectedOption) => {
   return optionValue
 }
 
-const prepAssaysForParams = (whiteListed, method) => {
+const prepAssaysForParams = whiteListed => {
   const assays = []
-  map(whiteListed, (value, key) => assays.push({ assay: value }))
+  map(whiteListed, value => assays.push({ assay: value }))
   return assays
 }
 
