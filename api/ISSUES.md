@@ -25,11 +25,9 @@ An example of this could be Myanmar where we defined some specific issues and tr
 All these customizations must be implemented in the corresponding action where we want Aspect to do something different and specific.
 
 For checking the configuration of the plugin you should check the file
-``api/src/plugin/registration.js`` line 36 where is defined the plugin structure with all the actions we can overwrite. 
+``api/src/plugin/registration.js`` line 36 where is defined the plugin structure with all the actions we can overwrite.
 
-
-
-### Default actions (can be overwritten) are:
+### Default actions (can be overwritten) are
 
 - Settings: all the settings related to date and time format and utilization and error rate threshold. By default, all are going to use the defined in the backend.
 - handlerOptions: Define the permissions in the following actions
@@ -61,9 +59,9 @@ For checking the configuration of the plugin you should check the file
 
 There are a lot of other actions during the process. The other actions are fixed as a part of the workflow. I will try to describe the most important ones:
 
-- issueCreated: This action will be triggered when a new issue is created. 
+- issueCreated: This action will be triggered when a new issue is created.
 - issueTriggered: This action will be triggered when the condition for triggering is met no matters if the Issue was created or not.
-- issueAcknowledged: this action will be triggered when the user in the website updates the issue status to acknowledge. 
+- issueAcknowledged: this action will be triggered when the user in the website updates the issue status to acknowledge.
 - onIssueEscalated: This action will be triggered after an escalation of the current issue.
 - issueResolved: This action will be triggered after resolving the issue automatically.
 
@@ -84,16 +82,14 @@ There are 4 types of issue categories:
 
 A message queue (MQ) is a tool typically used for inter-process communication (IPC), or inter-thread communication within the same process (2 or more). It is used in many cases as an asynchronous pattern for processing data whereas the sending and receiving party do not need to interact with the message queue at the same time. (urgent vs delayed actions) MQ is the common tool used for addressing the pattern producer/consumer
 
-Messages placed onto the queue are stored until the recipient retrieves them. 
-
+Messages placed onto the queue are stored until the recipient retrieves them.
 
 We are using the message queue exactly for what is described above. As you can read the plugin’s action most of them are subscribed to a specific action or message type in the queue and those actions dispatch a function to be executed.
 
-
 ### Message queue implementation
 
-In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit  doesn’t fit our needs, it could be easily replaced by another one. 
- 
+In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit  doesn’t fit our needs, it could be easily replaced by another one.
+
 This class has some methods, but the most important are:
 
 - Subscribe: Subscribes to messages with the named service. This can be a single subscription, an array, or a function, Dispatch it, emit the corresponding message and call the function which should catch it.
@@ -108,7 +104,7 @@ Also, after creating the message queue, we start the scheduler (see ``scheduler.
 
 Issues are a way to register some anomalies, a discovery, or an expected event (like results, new device, etc). This system was meant to create a new record in the DB for tracking future actions or just to notify the user by some channel that some condition was met in the system.
 
-There are some issue types defined right now in the system, some of them are Scheduled, some of then are triggered during the processor workflow and some of them have this dual behaviour. 
+There are some issue types defined right now in the system, some of them are Scheduled, some of then are triggered during the processor workflow and some of them have this dual behaviour.
 
 The scheduled are:
 
@@ -133,7 +129,8 @@ Not scheduled or dual behaviour actions:
 - InventoryStockExpiring: This is triggered when there are some inventory items near to expire. 30 days before (default value) we are going to notify the user about the exception. This is a partner configuration setting.
 - InstrumentReplaced: This is triggered when the same device pushes a result with a different instrument serial than the previous one.
 
-**Custom Actions (Myanmar)**
+### Custom Actions (Myanmar)
+
 - ModuleFailureError: it is triggered when a result arrives with an error code related to the module. Right now it’s only used in Myanmar’s plugin.
 - ModuleTemperatureError: This issue is triggered when there are some error codes related to module temperature and when those error codes arrive we trigger this issue. Right now it is only used in Myanmar’s plugin.
 - ModulePowerError: it is triggered when some error code related to module power arrives. Right now it is only used in Myanmar’s plugin.
@@ -144,25 +141,27 @@ Not scheduled or dual behaviour actions:
 - DataCategoryLowError: It Triggers when the percentage of results that have a custom field completed falls below a certain threshold. For example, if less than 90% of results have "null" for "gender" in the custom fields, trigger the data category low error.  Right now it is only used in Myanmar’s plugin.
 - ReagentHealthError: It triggers if there's a certain number of errors with error codes that they consider reagent-related.This is triggered when a reagent lot has any issue.Right now it is only used in Myanmar’s plugin.
 
-
 ### Triggering
 
 For triggering an issue it is important to define the trigger condition in the table IssueEventTrigger. This table has a JSON field called triggerConditions where we need to define what the action to subscribe to is and the conditions to trigger that issue. Basically, after specifying the correspondent MQ Action, we can set no conditions (we are going to trigger a new issue for every single action we received) or with some more complex conditions defined in this property.
 Before creating the new issue, the system is going to to check if there is already an open issue of the same type and the same result/site/device/partner. If there isn’t any then It will create a new issue otherwise the issue is not duplicated.
 
 The triggerConditions Object can have the next shape:
+
 ```JSON
 {
-  "action": “Is the action where the function is subscribed.”,
+  "action": "Is the action where the function is subscribed.",
   "conditions": {
-    "evaluationMethod":  “the way we are going to evaluate the condition (inline-sql/sql-script/plugin-function/child-conditions)”
+    "evaluationMethod":  "the way we are going to evaluate the condition (inline-sql/sql-script/plugin-function/child-conditions)"
 ,
-    "evaluationParameter": “Name of the function/ path of the file/ sql script”,
-    "evaluationFilterParameters": “(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)”
+    "evaluationParameter": "Name of the function/ path of the file/ sql script",
+    "evaluationFilterParameters": "(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)"
   }
 }
 ```
+
 An example would be:
+
 ```JSON
 {
   "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
@@ -187,6 +186,7 @@ The evaluation methods could be:
 - Plugin-function: Based on the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
 
 ### Filtering
+
 For filtering and detecting open issues is needed to extend the default behavior for filtering them.
 The default filtering is going to depend on the fields the action has. If the action has one of these parameters, it is going to filter by them (They are mutually exclusive) and the order is the one presented here:
 deviceId
@@ -194,34 +194,33 @@ resultId
 siteId
 partnerId
 
-If these filters are not sufficient, you can extend it with a custom and defined filter function. Right now we are storing extra information in the data field of the issue and with those fields, we are creating extra filtering rules. 
+If these filters are not sufficient, you can extend it with a custom and defined filter function. Right now we are storing extra information in the data field of the issue and with those fields, we are creating extra filtering rules.
 
 This function should be saved in the table IssueEventTrigger field filterIssueCondition (JSON field) which has the shape:
+
 ```JSON
-{"evaluationFunction": "filterByLotAndAssay"} 
+{"evaluationFunction": "filterByLotAndAssay"}
 ```
 
-Where ``filterByLotAndAssay`` is the function called for filtering. 
+Where ``filterByLotAndAssay`` is the function called for filtering.
 This function should be located in the file ``filterConditions.js`` of the specific partner. The issue folder is the place for saving the default functions.
 
 ## Resolution
 
-Resolution is the process of updating the issue statuses from any other open status, to “resolved”. This will be executed in different ways: automatically when a new message is received, something scheduled or an action triggered from the UI. For configuring the resolution conditions again we need to define a resolution function similar to the one described in “Triggering” 
+Resolution is the process of updating the issue statuses from any other open status, to “resolved”. This will be executed in different ways: automatically when a new message is received, something scheduled or an action triggered from the UI. For configuring the resolution conditions again we need to define a resolution function similar to the one described in “Triggering”
 
 Example:
+
 ```JSON
 {
-"evaluationMethod": "plugin-function", 
+"evaluationMethod": "plugin-function",
 "evaluationParameter": "resolveDataCategoryLow"
 }
 ```
 
-
 Where in this case resolveDataCategoryLow is going to be the function which will return true or false based on some conditions to determine whether the issue should be resolved or not.
 
 For finding the issue it will use the filtering condition described before.
-
-
 
 ### Escalation
 
@@ -231,6 +230,7 @@ Similar to resolution and triggering, we can define a function to evaluate a con
 In this case, we have a new option for the evaluation method which is the issue-age. This function the evaluationParameter field is the number of days passed from the creation of the issue.
 
 Example:
+
 ```JSON
 {"evaluationMethod": "issue-age", "evaluationParameter": {"days": 20}}
 ```
@@ -242,15 +242,16 @@ Escalate to level: The escalation level is the Severity of the Issue. It goes fr
 The notification system was meant to communicate to the users about any issue generated, updated or escalated in Aspect.
 
 It has 5 different channels to communicate:
+
 - Email: The user is going to receive an email with the description of the issue triggered.
 - Sms: The user is going to receive notifications in his phone with an SMS.
 - Push notifications: It is working right now for reporter app users only. If the user has the app installed it will receive notifications through this channel.
-- Webhook: if we need to notify another software with the issue generated we can post issue details through this channel. 
+- Webhook: if we need to notify another software with the issue generated we can post issue details through this channel.
 - Alert: Is the visual and graphical notification in Aspect system.
 
-The notifications are going to be fired after analyzing if we have configured the DB in the ``NotificationType`` table any row for that issue Type. We can also filter by partner and jobfunction. That means we can have different message types per partner or jobfunction for the same issue Type. The ``MessageType`` Table has the configuration of the templates we are going to send through the different channels. We need at least one message type configuration for producing the notification. 
+The notifications are going to be fired after analyzing if we have configured the DB in the ``NotificationType`` table any row for that issue Type. We can also filter by partner and jobfunction. That means we can have different message types per partner or jobfunction for the same issue Type. The ``MessageType`` Table has the configuration of the templates we are going to send through the different channels. We need at least one message type configuration for producing the notification.
 
-## Configuring new Issue with notification.
+## Configuring new Issue with notification
 
 For configure a new issue type the first thing we need to do is to add the new issue type in the file ``api/seeds/relatedObjects/issues.js``
 
@@ -261,7 +262,7 @@ We need to add a new json object in the JSON Array with the following shape:
       issueType: {
         name: 'Device No Results', // name of the issue
         externalId: 'DeviceNoResults', // externalid
-        i18nKey: 'issueStatusDeviceNoResults', // i18n key 
+        i18nKey: 'issueStatusDeviceNoResults', // i18n key
         issueCategoryId: issueCategories.ConnectivityHealth, // the categorization of the issue.
       },
       MessageType: {
@@ -279,7 +280,7 @@ We need to add a new json object in the JSON Array with the following shape:
         ...auditFields,
       },
       EmailTemplate: { // email configuration.
-        subject: '{{device.name}}: No Testing', 
+        subject: '{{device.name}}: No Testing',
         body:
           '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
         htmlBody:
@@ -288,7 +289,9 @@ We need to add a new json object in the JSON Array with the following shape:
       },
     },
 ```
+
 Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json with the following shape.
+
 ```javascript
 
 {
@@ -299,9 +302,11 @@ Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json
       }
 },
 ```
+
 Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.
 
 If the trigger has some resolution configuration we need to seed the table IssueResolutionTrigger with the next helper function
+
 ```javascript
  await upsertIssueResolutionTrigger(knex, {
     issueTypeId,
@@ -368,15 +373,19 @@ const { partnerId, userId } = await knex('User as u')
   ])
 
 ```
+
 ## Creating a new Action
-For creating a new Action you need to subscribe to the message queue.  For doing it you should add it in the file ``api/src/subscriptions.js`` a new action:function pair, With the next format: 
+
+For creating a new Action you need to subscribe to the message queue.  For doing it you should add it in the file ``api/src/subscriptions.js`` a new action:function pair, With the next format:
 
 ```javascript
 queue.subscribe('case', require('./case/endpoints').subscriptions)
 ```
+
 Where ``require('./case/endpoints')`` is the file location where all the key pairs are written.
 
 And subscriptions is an array of JSON object with an actions dictionary.
+
 ```javascript
 const subscriptions = [
   {
@@ -388,8 +397,8 @@ const subscriptions = [
   },
 ]
 ```
+
 In this example CASE_ADDED is the action (Constant string) we are going to subscribe the function name onCaseAdded
       ``CASE_ADDED: onCaseAdded,``
-
 
 This means if an action ``CASE_ADDED`` was queued on the MQ, the message queue dispatcher is going to call ``onCaseAdded`` function.
