@@ -98,13 +98,13 @@
 
 .tableheader__orderbutton {
   font-size: 10px;
-  padding: 3px;
+  padding: 3px 3px 2px 3px;
 }
 
 .tableheader__hidebutton {
   font-size: 14px;
   margin: -2px 3px 0 0;
-  padding: 3px;
+  padding: 3px 3px 0px 3px;
 }
 
 .tablecolumn__actions {
