@@ -2,12 +2,13 @@ const { knex } = require('../db')
 const {
   resultModuleReplaced,
   resultAnalyzeErrors,
+  resultAnalyzeCategories,
 } = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
 } = require('../device/actions')
-const { issueTypeToId } = require('../shared/dictionary')
+const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -46,6 +47,48 @@ async function getReplacedModuleSerials(knex, deviceId) {
   return replacedModuleSerials
 }
 
+async function shouldTriggerResultCategoryAnalysis(
+  messageContext,
+  deviceId,
+  resultId,
+  resultCategoryId,
+  { resultOutcome, moduleSerial, assayId, consumableLot }
+) {
+  const resultCategories = await allResultCategoryToId()
+  const categoriesToAnalyze = [resultCategories.Invalid]
+  if (categoriesToAnalyze.includes(resultCategoryId)) {
+    if (!messageContext.resultAnalyzeCategories) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeCategories,
+      })
+    }
+    const { resultCategoryExternalId } = await knex('ResultCategory')
+      .where({
+        id: resultCategoryId,
+      })
+      .first('externalId as resultCategoryExternalId')
+    await messageContext.resultAnalyzeCategories(
+      deviceId,
+      resultId,
+      resultCategoryExternalId,
+      {
+        moduleSerial,
+        resultOutcome,
+      }
+    )
+    await messageContext.resultAnalyzeCategories(
+      deviceId,
+      resultId,
+      resultCategoryExternalId,
+      {
+        assayId,
+        consumableLot,
+        resultOutcome,
+      }
+    )
+  }
+}
+
 async function shouldTriggerResultErrorAnalysis(
   messageContext,
   deviceId,
@@ -53,7 +96,7 @@ async function shouldTriggerResultErrorAnalysis(
   resultErrorCode,
   { resultOutcome, moduleSerial, assayId, consumableLot }
 ) {
-  const errorsToAnalyze = [5007, 5006]
+  const errorsToAnalyze = [5007, 5006, 5011, 5017]
   if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
     if (!messageContext.resultAnalyzeErrors) {
       messageContext = messageContext.bindActionCreators({
@@ -263,4 +306,5 @@ module.exports = {
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
+  shouldTriggerResultCategoryAnalysis,
 }
