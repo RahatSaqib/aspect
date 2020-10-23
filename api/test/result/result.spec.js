@@ -959,6 +959,7 @@ describe('Result routes', () => {
                 .put(`${path}/form-data/${resultId}`)
                 .send(formDataToSend)
                 .set('Authorization', shared.token)
+              expect(response.status).to.equal(200)
               expect(response.body.data.id).to.equal(resultId)
               const result = await getResult(resultId)
               result.patientData = JSON.parse(result.patientData)
@@ -1061,6 +1062,8 @@ describe('Result routes', () => {
                 .put(`${path}/form-data/${resultId}`)
                 .send(formDataToSend)
                 .set('Authorization', shared.token)
+
+              expect(response.status).to.equal(200)
               expect(response.body.data.id).to.equal(resultId)
               const result = await getResult(resultId)
               result.patientData = JSON.parse(result.patientData)
@@ -1194,6 +1197,8 @@ describe('Result routes', () => {
                 .put(`${path}/form-data/${resultId}`)
                 .send(formDataToSend)
                 .set('Authorization', shared.token)
+
+              expect(response.status).to.equal(200)
               expect(response.body.data.id).to.equal(resultId)
               const result = await getResult(resultId)
               result.patientData = JSON.parse(result.patientData)

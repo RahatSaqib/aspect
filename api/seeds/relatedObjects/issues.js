@@ -737,6 +737,63 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    ProbeCheckFailedModule: {
+      issueType: {
+        name: 'Probe Check Failed On Module',
+        externalId: 'ProbeCheckFailedModule',
+        i18nKey: 'issueStatusProbeCheckFailedModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Failed${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Failed${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Failed${errorIssueAlertModule}`,
+        body: `Probe Check Failed${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Failed${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckFailedLot: {
+      issueType: {
+        name: 'Probe Check Failed On Lot',
+        externalId: 'ProbeCheckFailedLot',
+        i18nKey: 'issueStatusProbeCheckFailedLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Failed${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Failed${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Failed${errorIssueAlertLot}`,
+        body: `Probe Check Failed${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Failed${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
     InventoryStockExpiring: {
       issueType: {
         name: 'Inventory Stock Expiring',
@@ -779,6 +836,63 @@ async function getBaseIssues(auditFields) {
         subject: 'Instrument has been replaced',
         body: msgInstrumentReplaced,
         htmlBody: msgInstrumentReplaced,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveModule: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Module',
+        externalId: 'SignalLossDetectedInAmplificationCurveModule',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule}`,
+        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveLot: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Lot',
+        externalId: 'SignalLossDetectedInAmplificationCurveLot',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot}`,
+        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
       },
     },
   }
