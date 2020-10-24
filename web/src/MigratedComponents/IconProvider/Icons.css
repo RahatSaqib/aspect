@@ -42,3 +42,10 @@
   padding: 3px 0 0 10px;
   color: #666666;
 }
+
+.deviceSummary__helpIcon {
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 2px 0 2px 3px;
+  color: #91949d;
+}
