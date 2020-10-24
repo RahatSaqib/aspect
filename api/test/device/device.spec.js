@@ -34,7 +34,7 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe.only('Device routes', () => {
+describe('Device routes', () => {
   const path = '/api/device'
   let deviceId
 
