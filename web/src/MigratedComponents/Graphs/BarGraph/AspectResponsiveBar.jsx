@@ -204,8 +204,6 @@ const AspectResponsiveBar = ({
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
-  // console.log(data)
-
   return (
     <div style={{ height: '100%', maxHeight: '350px' }}>
       <ResponsiveBar
