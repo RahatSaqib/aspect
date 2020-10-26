@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
 

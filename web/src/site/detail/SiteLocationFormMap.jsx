@@ -54,7 +54,7 @@ export class SiteLocationFormMap extends PureComponent {
 
   // query geocoder again if no valid latLng in nextProps or
   // the use just changed some field of address part in the form
-  componentDidUpdate(nextProps) {
+  componentDidUpdate() {
     const noValidLatLng = !this.getValidLatLng(this.props)
 
     if (noValidLatLng) {

@@ -17,7 +17,10 @@ const inventoryGraphs = {
         sortByKeys: ['consumableName'],
         keyMapping: { idKey: 'consumableId', nameKey: 'consumableName' },
         isClearable: false,
-        defaultSelectedOption: 1,
+        defaultSelectedOption: {
+          key: 'consumableName',
+          value: 'GeneXpert TB Cartridge',
+        },
       },
     ],
     componentSize: 'full',
