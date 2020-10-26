@@ -29,17 +29,6 @@ const i18nKeys = {
   devicesTitle: 'devicesTitle',
   runningLowStatus: 'runningLowStatus',
   expiringStockStatus: 'expiringStockStatus',
-  fullyOperationalStatus: 'fullyOperationalStatus',
-  notReportingStatus: 'notReportingStatus',
-  warrantyExpiringStatus: 'warrantyExpiringStatus',
-  needCalibrationStatus: 'needCalibrationStatus',
-  highFailuresRatesStatus: 'highFailuresRatesStatus',
-  reportingStatus: 'reportingStatus',
-  withStockIssues: 'withStockIssues',
-  withDeviceIssues: 'withDeviceIssues',
-  withQualityIssues: 'withQualityIssues',
-  ofTotalDevicesTitle: 'ofTotalDevicesTitle',
-  ofTotalSitesTitle: 'ofTotalSitesTitle',
   // Operational
   stockOutsTitle: 'stockOutsTitle',
   expiringTitle: 'expiringTitle',
@@ -327,49 +316,6 @@ async function resultDashboard(request) {
   }
 
   return result
-}
-
-async function getInventoryItemList(auth, dataConstraints) {
-  if (!canViewInventories(auth)) {
-    return []
-  }
-  const inventoryItemList = await knex('InventoryItem as ii')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .innerJoin('Country as co', 'g.countryId', 'co.id')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
-    })
-    .select(
-      'co.inventoryDaysThreshold',
-      'ii.id',
-      'ii.expiresOn',
-      'ii.quantityOnHand',
-      'ii.siteId',
-      'ii.consumableId',
-      'c.name as consumableName'
-    )
-
-  const MOCK_CURRENT_CONSUMPTION_RATE = 20
-
-  inventoryItemList.forEach(it => {
-    it.runningLow =
-      it.quantityOnHand <=
-      it.inventoryDaysThreshold * MOCK_CURRENT_CONSUMPTION_RATE
-    it.remainingDays = Math.floor(
-      it.quantityOnHand / MOCK_CURRENT_CONSUMPTION_RATE
-    )
-    if (_.isDate(it.expiresOn)) {
-      it.expiring = isAfter(
-        addDays(parseISO(it.expiresOn), it.remainingDays),
-        it.expiresOn
-      )
-    }
-  })
-
-  return inventoryItemList
 }
 
 async function getConsumablesList(auth, dataConstraints) {
