@@ -592,54 +592,9 @@ async function deviceDashboard(request) {
     it.longitude = site.longitude
   })
 
-  const operationalDeviceList = _.filter(deviceList, 'fullyOperational')
-  const offlineDeviceList = _.filter(deviceList, 'offline')
-  const highErrorRateDeviceList = _.filter(deviceList, 'errorRate')
-
-  const deviceSummaryMap = {
-    operational: {
-      deviceIds: _.map(operationalDeviceList, 'id'),
-      siteIds: _.uniq(_.map(operationalDeviceList, 'siteId')),
-      items: [
-        {
-          key: 0,
-          count: operationalDeviceList.length,
-          total: deviceList.length,
-          titleI18nKey: i18nKeys.ofTotalDevicesTitle,
-          subI18nKey: i18nKeys.fullyOperationalStatus,
-        },
-      ],
-    },
-    uploadingData: {
-      deviceIds: _.map(offlineDeviceList, 'id'),
-      siteIds: _.uniq(_.map(offlineDeviceList, 'siteId')),
-      items: [
-        {
-          key: 0,
-          count: offlineDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.notReportingStatus,
-        },
-      ],
-    },
-    testFailures: {
-      deviceIds: _.map(highErrorRateDeviceList, 'id'),
-      siteIds: _.uniq(_.map(highErrorRateDeviceList, 'siteId')),
-      items: [
-        {
-          key: 0,
-          count: highErrorRateDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.highFailuresRatesStatus,
-        },
-      ],
-    },
-  }
-
   const result = {
     data: {
       deviceList,
-      deviceSummaryMap,
     },
   }
 
@@ -656,114 +611,11 @@ async function siteDashboard(request) {
   const assayResultCategoryList = await getAssayResultCategoryList(
     dataConstraints
   )
-  const deviceList = await getDeviceList(auth, dataConstraints)
-  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
-
-  const filteredLength = _.flowRight(_.size, _.filter)
-  const siteIdAccumulator = (acc, it, siteId) => {
-    if (it) {
-      acc.push(siteId)
-    }
-    return acc
-  }
-
-  const allDeviceOnlineBySiteId = _.mapValues(
-    _.groupBy(deviceList, 'siteId'),
-    list => _.every(list, { offline: false })
-  )
-  const allDeviceOnlineSiteIds = _.reduce(
-    allDeviceOnlineBySiteId,
-    siteIdAccumulator,
-    []
-  )
-
-  const anyStockIssueBySiteId = _.mapValues(
-    _.groupBy(inventoryItemList, 'siteId'),
-    list =>
-      _.some(
-        list,
-        it => it.runningLow || it.expiring || it.quantityOnHand === 0
-      )
-  )
-  const anyStockIssueSiteIds = _.reduce(
-    anyStockIssueBySiteId,
-    siteIdAccumulator,
-    []
-  )
-
-  const oneDeviceOfflineBySiteId = _.mapValues(
-    _.groupBy(deviceList, 'siteId'),
-    list => filteredLength(list, 'offline') === 1
-  )
-  const oneDeviceOfflineSiteIds = _.reduce(
-    oneDeviceOfflineBySiteId,
-    siteIdAccumulator,
-    []
-  )
-
-  const anyDeviceWithIssueBySiteId = _.mapValues(
-    _.groupBy(_.uniqBy(deviceList, 'siteId'), 'siteId'),
-    list => _.every(list, { fullyOperational: false })
-  )
-
-  const sitesWithIssueSiteIds = _.sortedUniq(
-    _.reduce(anyDeviceWithIssueBySiteId, siteIdAccumulator, []),
-    'siteId'
-  )
-
-  const siteSummaryMap = {
-    onlineNow: {
-      siteIds: allDeviceOnlineSiteIds,
-      items: [
-        {
-          key: 0,
-          count: allDeviceOnlineSiteIds.length,
-          total: siteList.length,
-          titleI18nKey: i18nKeys.ofTotalSitesTitle,
-          subI18nKey: i18nKeys.reportingStatus,
-        },
-      ],
-    },
-    stockManagement: {
-      siteIds: anyStockIssueSiteIds,
-      items: [
-        {
-          key: 0,
-          count: anyStockIssueSiteIds.length,
-          titleI18nKey: i18nKeys.sitesTitle,
-          subI18nKey: i18nKeys.withStockIssues,
-        },
-      ],
-    },
-    deviceManagement: {
-      siteIds: sitesWithIssueSiteIds,
-      items: [
-        {
-          key: 0,
-          count: sitesWithIssueSiteIds.length /* TODO: ASP-520 */,
-          titleI18nKey: i18nKeys.sitesTitle,
-          subI18nKey: i18nKeys.withDeviceIssues,
-        },
-      ],
-    },
-    uploadingData: {
-      siteIds: oneDeviceOfflineSiteIds,
-      items: [
-        {
-          key: 0,
-          count: oneDeviceOfflineSiteIds.length,
-          titleI18nKey: i18nKeys.sitesTitle,
-          subI18nKey: i18nKeys.notReportingStatus,
-        },
-      ],
-    },
-  }
 
   const result = {
     data: {
       assayResultCategoryList,
       siteList,
-      siteSummaryMap,
     },
   }
 
