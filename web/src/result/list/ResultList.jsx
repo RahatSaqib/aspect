@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import without from 'lodash/without'
@@ -341,6 +341,7 @@ const ResultList = () => {
         )
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   useEffect(() => {
@@ -369,6 +370,7 @@ const ResultList = () => {
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   // >>>>>> Callbacks <<<<<<

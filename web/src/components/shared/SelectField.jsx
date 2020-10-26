@@ -26,7 +26,6 @@ const styles = theme => ({
 })
 
 const SelectField = ({
-  autoWidth,
   classes: classesMap,
   className,
   errorText,

@@ -67,7 +67,7 @@ class AspectTabs extends Component {
   }
 
   render() {
-    const { children, initialSelectedIndex, ...restProps } = this.props
+    const { children, ...restProps } = this.props
     const { selectedIndex } = this.state
 
     const tabContent = []

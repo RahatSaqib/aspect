@@ -335,6 +335,7 @@ export const InventoryItemsList = () => {
         )
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [location, sortCol, sortDir, pageAt, table]
   )
   const onAdjustInventorySucceeded = () => {
