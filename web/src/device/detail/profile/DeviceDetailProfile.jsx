@@ -811,6 +811,8 @@ export const DeviceDetailProfile = ({
               <Summary
                 title={
                   <AspectTooltip
+                    className={cssClasses('deviceSummary__container')}
+                    iconClass="deviceSummary__helpIcon"
                     showHelpIcon
                     title={
                       <React.Fragment>
@@ -844,6 +846,8 @@ export const DeviceDetailProfile = ({
             <Summary
               title={
                 <AspectTooltip
+                  className={cssClasses('deviceSummary__container')}
+                  iconClass="deviceSummary__helpIcon"
                   showHelpIcon
                   title={
                     <React.Fragment>
