@@ -110,7 +110,6 @@ const enhance = compose(
         toSiteId: inventoryItem.get('siteId'),
         quantity: inventoryItem.get('quantityOnHand'),
         dateAdjusted: today,
-        action: 'receive',
       })
     },
   }),

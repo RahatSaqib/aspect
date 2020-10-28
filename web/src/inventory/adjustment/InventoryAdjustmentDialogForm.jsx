@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-
+import { types } from '../InventoryRedux'
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
@@ -112,6 +112,7 @@ export const connectConsumableFromInventoryItem = connect(
       null,
       EMPTY_MAP
     ),
+    action: state.inventory.inventoryAdjustment.get('actionType'),
   })
 )
 
@@ -120,6 +121,7 @@ export const InventoryAdjustmentDialogForm = ({
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
+  action,
   consumable,
   consumableReason,
   dateFormat = 'yyyy-MM-dd',
@@ -149,7 +151,9 @@ export const InventoryAdjustmentDialogForm = ({
         color="primary"
         variant="contained"
         disabled={
-          (values.action !== 'receive' ? form.pristine : false) ||
+          (action !== types.SHOW_RECEIVE_INVENTORY_DIALOG
+            ? form.pristine
+            : false) ||
           !form.valid ||
           form.submitting
         }
