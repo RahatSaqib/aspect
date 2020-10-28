@@ -29,8 +29,6 @@ import BrowseTablePaginator, {
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchCases } from '../CaseRedux'
-import requirePermissions from '../../components/shared/requirePermissions'
-import AspectButton from '../../components/shared/AspectButton'
 import DataTableHead from '../../components/shared/tableHead'
 import CaseTableRow from './CaseTableRow'
 

@@ -19,6 +19,8 @@ export const AspectExportListButtonWithProps = ({
   setAnchorEl,
 }) => {
   // >>>>>> Events <<<<<<
+  // this needs fixing: https://github.com/SystemOneId/aspect/issues/1422
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onReportClicked = useCallback(e => {
     e.preventDefault()
     setAnchorEl(null)

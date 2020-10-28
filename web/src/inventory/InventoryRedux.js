@@ -1,7 +1,6 @@
 import isString from 'lodash/isString'
 import fromPairs from 'lodash/fromPairs'
 import { defineMessages } from 'react-intl'
-import { stringify } from 'querystring'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
@@ -15,7 +14,6 @@ import {
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-  errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 

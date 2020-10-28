@@ -108,7 +108,7 @@ const ResultTransferModal = ({
 
   useQuery(
     [SITE_ALL.KEY],
-    async key =>
+    async () =>
       fetchWrapperForQueries({
         endpoint: `${SITE_ALL.ENDPOINT}`,
         errors: SitesAllErrors,
@@ -136,6 +136,7 @@ const ResultTransferModal = ({
       name: reportableSiteName,
       id: reportableSiteId,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

@@ -11,7 +11,7 @@ const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const CaseTableRow = ({ intl, _case, ...restProps }) => (
+const CaseTableRow = ({ _case, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(_case.get('createdOn'))}</TableCell>
     <TableCell>{_case.get('externalId')}</TableCell>

@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
 
@@ -808,6 +807,8 @@ export const DeviceDetailProfile = ({
               <Summary
                 title={
                   <AspectTooltip
+                    className={cssClasses('deviceSummary__container')}
+                    iconClass="deviceSummary__helpIcon"
                     showHelpIcon
                     title={
                       <React.Fragment>
@@ -841,6 +842,8 @@ export const DeviceDetailProfile = ({
             <Summary
               title={
                 <AspectTooltip
+                  className={cssClasses('deviceSummary__container')}
+                  iconClass="deviceSummary__helpIcon"
                   showHelpIcon
                   title={
                     <React.Fragment>

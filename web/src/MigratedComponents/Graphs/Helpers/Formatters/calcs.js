@@ -35,6 +35,7 @@ const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
             d[key] = calcPercentageForGraphs(value, dSum)
           }
         })
+        d.totalCnt = dSum
         return d
       })
 }
@@ -43,7 +44,7 @@ const percentageOrActualForPie = (data, displayMethod) => {
   let newData = []
   if (displayMethod === 'percentage') {
     const total = data.reduce((acc, curr) => acc + curr.value, 0)
-    data.map((d, i) =>
+    data.map(d =>
       newData.push({
         ...d,
         value: total < 1 ? total : calcPercentageForGraphs(d.value, total),

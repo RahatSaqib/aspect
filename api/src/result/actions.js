@@ -18,6 +18,18 @@ const types = {
   RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
   RESULT_ANALYZE_PROBES_HIGH_LOT: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
   RESULT_ANALYZE_PROBES_HIGH_MODULE: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
+  FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT:
+    'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT',
+  FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE:
+    'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE',
+  RESULT_ANALYZE_PROBES_FAILED_LOT: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
+  RESULT_ANALYZE_PROBES_FAILED_MODULE: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
+  RESULT_ANALYZE_INVALIDS_MODULE: 'RESULT_ANALYZE_INVALIDS_MODULE',
+  RESULT_ANALYZE_INVALIDS_LOT: 'RESULT_ANALYZE_INVALIDS_LOT',
+  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT:
+    'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
+  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE:
+    'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
 }
 
 // ----------- Action Creators -------------------
@@ -43,19 +55,39 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
-const obtainProperAction = (moduleSerial, errorCode) => {
+const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
+  const valueToCompare = errorCode
+    ? parseInt(errorCode, 10)
+    : resultCategoryId.toUpperCase()
+
   if (moduleSerial) {
-    switch (parseInt(errorCode, 10)) {
+    switch (valueToCompare) {
+      case 'INVALID':
+        return types.RESULT_ANALYZE_INVALIDS_MODULE
+      case 5011:
+        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
+      case 5016:
+        return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE
+      case 5017:
+        return types.RESULT_ANALYZE_PROBES_FAILED_MODULE
       case 5007:
       default:
         return types.RESULT_ANALYZE_PROBES_MODULE
     }
   } else {
-    switch (parseInt(errorCode, 10)) {
+    switch (valueToCompare) {
+      case 'INVALID':
+        return types.RESULT_ANALYZE_INVALIDS_LOT
+      case 5011:
+        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT
       case 5006:
         return types.RESULT_ANALYZE_PROBES_HIGH_LOT
+      case 5016:
+        return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT
+      case 5017:
+        return types.RESULT_ANALYZE_PROBES_FAILED_LOT
       case 5007:
       default:
         return types.RESULT_ANALYZE_PROBES_LOT
@@ -66,6 +98,13 @@ const obtainProperAction = (moduleSerial, errorCode) => {
  *
  * @param {*} deviceId
  * is the id of the device which generates the result with error
+
+ * @param {*} resultId
+ * is the id of the result which generates the result with error
+
+ * @param {*} resultErrorCode
+ * the error code number received in the result
+
  * @param {*} data
  * options should have moduleSerial, resultErrorCode, lot and assay
  * Creates an action to notify the result with given id
@@ -83,7 +122,9 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
   }
 
   const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = obtainProperAction(moduleSerial, resultErrorCode)
+  const actionType = obtainProperAction(moduleSerial, {
+    errorCode: resultErrorCode,
+  })
   return {
     type: actionType,
     deviceId,
@@ -93,6 +134,24 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
         ...data,
         resultErrorCode,
       },
+    },
+  }
+}
+
+function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
+  if (!deviceId && !resultCategoryId) {
+    throw new Error(
+      'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
+    )
+  }
+  const moduleSerial = _.get(data, 'moduleSerial')
+  const actionType = obtainProperAction(moduleSerial, { resultCategoryId })
+  return {
+    type: actionType,
+    deviceId,
+    resultId,
+    options: {
+      data: { ...data, resultCategoryId },
     },
   }
 }
@@ -334,4 +393,5 @@ module.exports = {
   resultMachineUnknownError,
   resultModuleReplaced,
   resultAnalyzeErrors,
+  resultAnalyzeCategories,
 }

@@ -80,7 +80,7 @@ const renderMenuItem = ({ index, style, key, getItemProps, selectedItem }) => {
 
 const itemToString = item => (item ? item.dialCode : '')
 
-export const DialCodeDropdown = ({ className, ...props }) => {
+export const DialCodeDropdown = ({ ...props }) => {
   const popperNode = useRef(null)
   const initialDialcode =
     props.value.length > 0 && props.value.length < 6 ? props.value : ''

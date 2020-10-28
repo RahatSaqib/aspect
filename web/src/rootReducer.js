@@ -6,7 +6,6 @@ import globals from './globals/GlobalsRedux'
 import appNotification from './appNotification/AppNotificationRedux'
 import filter from './filter/FilterRedux'
 import user, { types as authTypes } from './auth/AuthRedux'
-import dashboard from './dashboard/DashboardRedux'
 import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
 import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
@@ -43,7 +42,6 @@ const appReducer = combineReducers({
   assayType,
   case: _case,
   consumable,
-  dashboard,
   demo,
   device,
   deviceApiKey,
@@ -81,7 +79,6 @@ const App = Immutable.Record({
   case: undefined,
   clinicalIndicators: undefined,
   consumable: undefined,
-  dashboard: undefined,
   demo: undefined,
   device: undefined,
   deviceApiKey: undefined,

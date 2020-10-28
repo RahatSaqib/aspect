@@ -2,7 +2,7 @@
 
 This is the web api for all aspect clients.
 
-Swagger UI is available for testing the UI manually and viewing route documentation at http://localhost:8080/documentation .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
+Swagger UI is available for testing the UI manually and viewing route documentation at <http://localhost:8080/documentation> .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
 ## Recommended versions
 
@@ -251,10 +251,10 @@ Unlike migrations ALL seed files are run every time.  You should structure your 
 
 ## Stress test with siege
 
-Install siege: http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/
+Install siege: <http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/>
 
 To test the auth endpoint, run this command:
-siege --concurrent=25 --content-type="application/json" 'http://localhost:8080/api/auth POST { "name": "sbaumgartner", "password": "test07", "clientName": "SIEGE", "clientId": "1234" }'
+siege --concurrent=25 --content-type="application/json" '<http://localhost:8080/api/auth> POST { "name": "sbaumgartner", "password": "test07", "clientName": "SIEGE", "clientId": "1234" }'
 
 ### Creating seeds for migrating from GxAlert to Aspect
 
@@ -277,7 +277,7 @@ You can manually trigger issues using the endpoint /issue/trigger.
 See the `triggerIssue` function in issue/service.js for which issue types are supported.
 You can also see here what data an issue type expects.
 You can use curl or Postman to issue a POST to this endpoint and trigger an issue and any associated notifications.
-For example, to trigger a "Device No Results" issue post to http://localhost:8080/api/issue/trigger with this body:
+For example, to trigger a "Device No Results" issue post to <http://localhost:8080/api/issue/trigger> with this body:
 
 ```json
 {
@@ -292,6 +292,8 @@ For example, to trigger a "Device No Results" issue post to http://localhost:808
 This will only work if there is an IssueType with the externalId "DeviceNoResults".
 It will also only trigger an issue if IssueEventTrigger contains an entry for that issue type and the partner you're logged in as.
 If you would like to test notifications, make sure you have them set up in the "NotificationType" table (and associated Message tables).
+
+For further information please refer the Issue Readme ## For Issues and notification system check the next link [Issues](ISSUES.md#Issues)
 
 ## Deploying
 
@@ -315,3 +317,7 @@ To update all to the latest version (this is not the same as the "Wanted" versio
 ```bash
 yarn upgrade
 ```
+
+## For Issues and notification system check the next link
+
+[Issues and notification system](ISSUES.md#A-simple-description-of-the-system)

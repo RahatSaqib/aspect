@@ -48,7 +48,7 @@ async function seed(knex) {
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probe Check High Low - Module',
+      name: 'Probe Check Too High - Module',
       ...auditFields,
     },
     {
@@ -57,7 +57,7 @@ async function seed(knex) {
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probe Check High Low - Lot',
+      name: 'Probe Check Too High - Lot',
       ...auditFields,
     },
   ])

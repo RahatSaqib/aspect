@@ -68,11 +68,6 @@ const NotificationTableRow = ({ notification }) => {
     },
   ]
 
-  const counter = column =>
-    notification.get(column) === null
-      ? 'Not Configured'
-      : notification.get(column)
-
   const addEllipsis = (words, totalCount) => {
     const wordsArray = words ? words.split(',') : []
     if (wordsArray.length < totalCount)
