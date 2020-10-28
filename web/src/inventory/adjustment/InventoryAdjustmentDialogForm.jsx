@@ -148,7 +148,7 @@ export const InventoryAdjustmentDialogForm = ({
       <Button
         color="primary"
         variant="contained"
-        disabled={form.pristine || !form.valid || form.submitting}
+        disabled={!form.valid || form.submitting}
         onClick={handleSubmit}
       >
         {intl.formatMessage(messages.submit)}
