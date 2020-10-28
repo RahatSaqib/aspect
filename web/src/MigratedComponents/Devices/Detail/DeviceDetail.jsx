@@ -15,10 +15,10 @@ import {
 import { useQuery, useMutation } from 'react-query'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
-import DeviceDetailProfile from './profile/DeviceDetailProfile'
-import DeviceDetailOperation from './operation/DeviceDetailOperation'
+import DeviceDetailProfile from './Profile/DeviceDetailProfile'
+import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
-import DeviceDetailEdit from './edit/DeviceDetailEdit'
+import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 
 import Shell from '../../Shell'
 import ShellHeader from '../../Shell/Header'
