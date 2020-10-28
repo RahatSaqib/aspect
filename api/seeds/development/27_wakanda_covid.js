@@ -28,7 +28,7 @@ const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormS
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultNumber = resultMultiplier * 10
+const resultNumber = resultMultiplier * 8
 const now = new Date()
 
 async function seed(knex) {
