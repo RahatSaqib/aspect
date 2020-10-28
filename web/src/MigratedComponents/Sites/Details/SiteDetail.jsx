@@ -14,7 +14,6 @@ import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
 import { injectIntl, defineMessages } from 'react-intl'
 
-// Material-UI
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Shell from '../../Shell'
@@ -128,8 +127,8 @@ export const SiteDetail = props => {
       </ShellHeader>
       <ShellContent>
         <Helmet title={intl.formatMessage(messages.title)} />
-        {!hasSiteWithLocation() && <LinearProgress />}
-        {hasSiteWithLocation() && (
+        {!hasSiteWithLocation() ? <LinearProgress /> : null}
+        {hasSiteWithLocation() ? (
           <Switch>
             <Route
               exact
@@ -180,10 +179,10 @@ export const SiteDetail = props => {
               }
             />
           </Switch>
-        )}
+        ) : null}
         <section className={cssClasses('Section', 'Section--first')}>
           <Paper>
-            {hasSiteWithLocation() && <SiteLocationFormMap site={site} />}
+            {hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}
           </Paper>
         </section>
       </ShellContent>
@@ -216,9 +215,9 @@ SiteDetail.propTypes = {
     path: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
   }).isRequired,
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   editable: PropTypes.bool.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
