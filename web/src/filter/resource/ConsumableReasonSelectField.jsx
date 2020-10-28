@@ -67,7 +67,6 @@ const enhance = compose(
 export const ConsumableReasonSelectField = ({
   allItemText,
   intl,
-  fetchConsumableReasons,
   consumableReasons,
   onChange,
   ...restProps

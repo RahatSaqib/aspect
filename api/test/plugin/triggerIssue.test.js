@@ -30,9 +30,24 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_LOT',
       },
       {
+        errorCode: 5011,
+        type1: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
+        type2: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
+      },
+      {
         errorCode: 5006,
         type1: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
         type2: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
+      },
+      {
+        errorCode: 5017,
+        type1: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
+      },
+      {
+        errorCode: 5016,
+        type1: 'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE',
+        type2: 'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT',
       },
       {
         // on non existing code it should return default values

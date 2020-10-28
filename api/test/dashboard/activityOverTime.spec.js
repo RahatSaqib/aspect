@@ -226,73 +226,73 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     await reset('Sample', initialState.sampleId || 0)
   })
 
-  it('should return data for Activity Over Time graph', async () =>
-    server
+  it('should return data for Activity Over Time graph', async () => {
+    const res = await server
       .get(`${path}`)
       .query({
         minDate,
         maxDate,
       })
       .set('Authorization', `Bearer ${shared.token}`)
-      .then(res => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
 
-        const { data } = res.body
-        data.forEach(d => {
-          d.date = new Date(d.date)
-        })
-        assert.typeOf(data, 'array')
-        // has items for at least 28 days (February)
-        assert.isAtLeast(data.length, 28)
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+    assert.property(res.body, 'data')
 
-        const item = data[0]
-        assert.property(item, 'date')
-        //
-        assert.property(item, 'devicesActive')
-        assert.property(item, 'devicesInactive')
-        assert.property(item, 'devicesTotal')
-        //
-        assert.property(item, 'inactiveUnknown')
-        assert.property(item, 'inactiveNoResultsReported')
-        assert.property(item, 'inactiveOutOfInventory')
-        assert.property(item, 'inactiveDownForRepair')
-        assert.property(item, 'inactiveConnectivity')
-        assert.property(item, 'inactiveDecommissioned')
-        assert.property(item, 'isWeekendOrHoliday')
+    const { data } = res.body
+    data.forEach(d => {
+      d.date = new Date(d.date)
+    })
+    assert.typeOf(data, 'array')
+    // has items for at least 28 days (February)
+    assert.isAtLeast(data.length, 28)
 
-        // helper func
-        const getItem = weekdayIndex =>
-          data.find(
-            ({ date }) =>
-              format(date, 'yyyy-MM-dd') ===
-              format(weekDays[weekdayIndex], 'yyyy-MM-dd')
-          )
-        // ----------------
-        // assert statuses to corresponding week-days by week-day indices
-        // ----------------
+    const item = data[0]
+    assert.property(item, 'date')
+    //
+    assert.property(item, 'devicesActive')
+    assert.property(item, 'devicesInactive')
+    assert.property(item, 'devicesTotal')
+    //
+    assert.property(item, 'inactiveUnknown')
+    assert.property(item, 'inactiveNoResultsReported')
+    assert.property(item, 'inactiveOutOfInventory')
+    assert.property(item, 'inactiveDownForRepair')
+    assert.property(item, 'inactiveConnectivity')
+    assert.property(item, 'inactiveDecommissioned')
+    assert.property(item, 'isWeekendOrHoliday')
 
-        assert.isAtLeast(getItem(1).devicesTotal, 1)
-        assert.isAtLeast(getItem(1).devicesActive, 1)
-        //
-        assert.isAtLeast(getItem(2).inactiveUnknown, 1)
-        assert.isAtLeast(getItem(3).inactiveUnknown, 1)
-        //
-        assert.isAtLeast(getItem(4).inactiveNoResultsReported, 1)
-        assert.isAtLeast(getItem(5).inactiveNoResultsReported, 1)
-        assert.isAtLeast(getItem(6).inactiveNoResultsReported, 1)
-        //
-        assert.isAtLeast(getItem(7).inactiveOutOfInventory, 1)
-        assert.isAtLeast(getItem(8).inactiveOutOfInventory, 1)
-        assert.isAtLeast(getItem(9).inactiveOutOfInventory, 1)
-        //
-        assert.isAtLeast(getItem(10).inactiveDownForRepair, 1)
-        assert.isAtLeast(getItem(11).inactiveDownForRepair, 1)
-        //
-        assert.isAtLeast(getItem(12).inactiveConnectivity, 1)
-        assert.isAtLeast(getItem(13).inactiveConnectivity, 1)
-        //
-        assert.isAtLeast(getItem(14).inactiveDecommissioned, 1)
-      }))
+    // helper func
+    const getItem = weekdayIndex =>
+      data.find(
+        ({ date }) =>
+          format(date, 'yyyy-MM-dd') ===
+          format(weekDays[weekdayIndex], 'yyyy-MM-dd')
+      )
+    // ----------------
+    // assert statuses to corresponding week-days by week-day indices
+    // ----------------
+
+    assert.isAtLeast(getItem(1).devicesTotal, 1)
+    assert.isAtLeast(getItem(1).devicesActive, 1)
+    //
+    assert.isAtLeast(getItem(2).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(3).inactiveUnknown, 1)
+    //
+    assert.isAtLeast(getItem(4).inactiveNoResultsReported, 1)
+    assert.isAtLeast(getItem(5).inactiveNoResultsReported, 1)
+    assert.isAtLeast(getItem(6).inactiveNoResultsReported, 1)
+    //
+    assert.isAtLeast(getItem(7).inactiveOutOfInventory, 1)
+    assert.isAtLeast(getItem(8).inactiveOutOfInventory, 1)
+    assert.isAtLeast(getItem(9).inactiveOutOfInventory, 1)
+    //
+    assert.isAtLeast(getItem(10).inactiveDownForRepair, 1)
+    assert.isAtLeast(getItem(11).inactiveDownForRepair, 1)
+    //
+    assert.isAtLeast(getItem(12).inactiveConnectivity, 1)
+    assert.isAtLeast(getItem(13).inactiveConnectivity, 1)
+    //
+    assert.isAtLeast(getItem(14).inactiveDecommissioned, 1)
+  })
 })

@@ -25,7 +25,76 @@ const {
 const server = supertest.agent('http://localhost:8080')
 
 const { assert, expect } = chai
+// helper func for percentages
+const getPercent = (numerator, denominator) => {
+  return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
+}
+const getChange = (pcCurr, pcPrev = null) => {
+  if (pcPrev === null) {
+    return 0
+  }
+  return pcCurr - pcPrev
+}
+//
+const getExpected = totalResults => {
+  const cntAll = totalResults
+  // total Detected are 50% of all results
+  const cntPositive = Math.round(totalResults / 2)
+  // total Reported via email OR sms
+  let cntAllReported = 0
+  // total Reported via email are 33% of all Detected results
+  let cntReportedViaEmail = 0
+  // total Reported via sms are 25% of all Detected results
+  let cntReportedViaSms = 0
+  // 50% of reported via email are reported within 2 hours
+  // 50% of reported via sms are reported within 2 hours
+  let cntWithin2Hours = 0
+  _.range(cntPositive).forEach(i => {
+    const num = i + 1
+    if (num % 3 === 0 || num % 4 === 0) {
+      cntAllReported += 1
+      let emailWithin2Hours = false
+      let smsWithin2Hours = false
 
+      if (num % 3 === 0) {
+        cntReportedViaEmail += 1
+        if (cntReportedViaEmail % 2 === 0) {
+          emailWithin2Hours = true
+        }
+      }
+      if (num % 4 === 0) {
+        cntReportedViaSms += 1
+        if (cntReportedViaSms % 2 === 0) {
+          smsWithin2Hours = true
+        }
+      }
+
+      if (emailWithin2Hours || smsWithin2Hours) {
+        cntWithin2Hours += 1
+      }
+    }
+  })
+
+  const percentPositive = getPercent(cntPositive, cntAll)
+  const percentReported = getPercent(cntAllReported, cntPositive)
+  const percentViaEmail = getPercent(cntReportedViaEmail, cntAllReported)
+  const percentViaSms = getPercent(cntReportedViaSms, cntAllReported)
+  const percentWithin2Hours = getPercent(cntWithin2Hours, cntAllReported)
+
+  return {
+    cntAll,
+    cntPositive,
+    cntAllReported,
+    cntReportedViaEmail,
+    cntReportedViaSms,
+    cntWithin2Hours,
+    percentPositive,
+    percentReported,
+    percentViaEmail,
+    percentViaSms,
+    percentWithin2Hours,
+  }
+}
 describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
   shared.checkToken(server, path)
@@ -275,172 +344,90 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     await reset('Sample', initialState.sampleId || 0)
   })
 
-  it('should return data for Results Transmitted graph', async () =>
-    server
+  it('should return data for Results Transmitted graph', async () => {
+    const res = await server
       .get(`${path}`)
       .query({
         currentMonth: format(currentMonth, 'yyyy-MM-dd'),
       })
       .set('Authorization', `Bearer ${shared.token}`)
-      .then(res => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.property(res.body, 'currentMonth')
 
-        const { data } = res.body
-        assert.typeOf(data, 'array')
-        // minimum 1 assay for current month
-        assert.isAtLeast(data.length, 1)
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+    assert.property(res.body, 'data')
+    assert.property(res.body, 'currentMonth')
 
-        const item = data.find(
-          ({ assayName }) => assayName === assayGeneXpertMtbRif.name
-        )
-        assert.property(item, 'assayName')
-        //
-        assert.property(item, 'cntAll')
-        assert.property(item, 'cntPositive')
-        assert.property(item, 'cntReportedViaEmail')
-        assert.property(item, 'cntReportedViaSms')
-        assert.property(item, 'cntAllReported')
-        assert.property(item, 'cntWithin2Hours')
-        //
-        assert.property(item, 'percentPositive')
-        assert.property(item, 'percentReported')
-        assert.property(item, 'percentViaEmail')
-        assert.property(item, 'percentViaSms')
-        assert.property(item, 'percentWithin2Hours')
-        //
-        assert.property(item, 'percentPositiveChange')
-        assert.property(item, 'percentReportedChange')
-        assert.property(item, 'percentViaEmailChange')
-        assert.property(item, 'percentViaSmsChange')
-        assert.property(item, 'percentWithin2HoursChange')
+    const { data } = res.body
+    assert.typeOf(data, 'array')
+    // minimum 1 assay for current month
+    assert.isAtLeast(data.length, 1)
 
-        // helper func for percentages
-        const getPercent = (numerator, denominator) => {
-          return denominator === 0
-            ? 0
-            : Math.round((100 * numerator) / denominator)
-        }
-        const getChange = (pcCurr, pcPrev = null) => {
-          if (pcPrev === null) {
-            return 0
-          }
-          return pcCurr - pcPrev
-        }
-        //
-        const getExpected = totalResults => {
-          const cntAll = totalResults
-          // total Detected are 50% of all results
-          const cntPositive = Math.round(totalResults / 2)
-          // total Reported via email OR sms
-          let cntAllReported = 0
-          // total Reported via email are 33% of all Detected results
-          let cntReportedViaEmail = 0
-          // total Reported via sms are 25% of all Detected results
-          let cntReportedViaSms = 0
-          // 50% of reported via email are reported within 2 hours
-          // 50% of reported via sms are reported within 2 hours
-          let cntWithin2Hours = 0
-          _.range(cntPositive).forEach(i => {
-            const num = i + 1
-            if (num % 3 === 0 || num % 4 === 0) {
-              cntAllReported += 1
-              let emailWithin2Hours = false
-              let smsWithin2Hours = false
+    const item = data.find(
+      ({ assayName }) => assayName === assayGeneXpertMtbRif.name
+    )
+    assert.property(item, 'assayName')
+    //
+    assert.property(item, 'cntAll')
+    assert.property(item, 'cntPositive')
+    assert.property(item, 'cntReportedViaEmail')
+    assert.property(item, 'cntReportedViaSms')
+    assert.property(item, 'cntAllReported')
+    assert.property(item, 'cntWithin2Hours')
+    //
+    assert.property(item, 'percentPositive')
+    assert.property(item, 'percentReported')
+    assert.property(item, 'percentViaEmail')
+    assert.property(item, 'percentViaSms')
+    assert.property(item, 'percentWithin2Hours')
+    //
+    assert.property(item, 'percentPositiveChange')
+    assert.property(item, 'percentReportedChange')
+    assert.property(item, 'percentViaEmailChange')
+    assert.property(item, 'percentViaSmsChange')
+    assert.property(item, 'percentWithin2HoursChange')
+    // counts for current month
+    const curr = getExpected(dataToSeed[0].totalResults)
+    // counts for previous month
+    const prev = getExpected(dataToSeed[1].totalResults)
 
-              if (num % 3 === 0) {
-                cntReportedViaEmail += 1
-                if (cntReportedViaEmail % 2 === 0) {
-                  emailWithin2Hours = true
-                }
-              }
-              if (num % 4 === 0) {
-                cntReportedViaSms += 1
-                if (cntReportedViaSms % 2 === 0) {
-                  smsWithin2Hours = true
-                }
-              }
+    // changes since previous month
+    curr.percentPositiveChange = getChange(
+      curr.percentPositive,
+      prev.percentPositive
+    )
+    curr.percentReportedChange = getChange(
+      curr.percentReported,
+      prev.percentReported
+    )
+    curr.percentViaEmailChange = getChange(
+      curr.percentViaEmail,
+      prev.percentViaEmail
+    )
+    curr.percentViaSmsChange = getChange(curr.percentViaSms, prev.percentViaSms)
+    curr.percentWithin2HoursChange = getChange(
+      curr.percentWithin2Hours,
+      prev.percentWithin2Hours
+    )
 
-              if (emailWithin2Hours || smsWithin2Hours) {
-                cntWithin2Hours += 1
-              }
-            }
-          })
+    expect(item).to.containSubset({
+      cntAll: curr.cntAll,
+      cntPositive: curr.cntPositive,
+      cntAllReported: curr.cntAllReported,
+      cntReportedViaEmail: curr.cntReportedViaEmail,
+      cntReportedViaSms: curr.cntReportedViaSms,
+      cntWithin2Hours: curr.cntWithin2Hours,
 
-          const percentPositive = getPercent(cntPositive, cntAll)
-          const percentReported = getPercent(cntAllReported, cntPositive)
-          const percentViaEmail = getPercent(
-            cntReportedViaEmail,
-            cntAllReported
-          )
-          const percentViaSms = getPercent(cntReportedViaSms, cntAllReported)
-          const percentWithin2Hours = getPercent(
-            cntWithin2Hours,
-            cntAllReported
-          )
+      percentPositive: curr.percentPositive,
+      percentReported: curr.percentReported,
+      percentViaEmail: curr.percentViaEmail,
+      percentViaSms: curr.percentViaSms,
+      percentWithin2Hours: curr.percentWithin2Hours,
 
-          return {
-            cntAll,
-            cntPositive,
-            cntAllReported,
-            cntReportedViaEmail,
-            cntReportedViaSms,
-            cntWithin2Hours,
-            percentPositive,
-            percentReported,
-            percentViaEmail,
-            percentViaSms,
-            percentWithin2Hours,
-          }
-        }
-        // counts for current month
-        const curr = getExpected(dataToSeed[0].totalResults)
-        // counts for previous month
-        const prev = getExpected(dataToSeed[1].totalResults)
-
-        // changes since previous month
-        curr.percentPositiveChange = getChange(
-          curr.percentPositive,
-          prev.percentPositive
-        )
-        curr.percentReportedChange = getChange(
-          curr.percentReported,
-          prev.percentReported
-        )
-        curr.percentViaEmailChange = getChange(
-          curr.percentViaEmail,
-          prev.percentViaEmail
-        )
-        curr.percentViaSmsChange = getChange(
-          curr.percentViaSms,
-          prev.percentViaSms
-        )
-        curr.percentWithin2HoursChange = getChange(
-          curr.percentWithin2Hours,
-          prev.percentWithin2Hours
-        )
-
-        expect(item).to.containSubset({
-          cntAll: curr.cntAll,
-          cntPositive: curr.cntPositive,
-          cntAllReported: curr.cntAllReported,
-          cntReportedViaEmail: curr.cntReportedViaEmail,
-          cntReportedViaSms: curr.cntReportedViaSms,
-          cntWithin2Hours: curr.cntWithin2Hours,
-
-          percentPositive: curr.percentPositive,
-          percentReported: curr.percentReported,
-          percentViaEmail: curr.percentViaEmail,
-          percentViaSms: curr.percentViaSms,
-          percentWithin2Hours: curr.percentWithin2Hours,
-
-          percentPositiveChange: curr.percentPositiveChange,
-          percentReportedChange: curr.percentReportedChange,
-          percentViaEmailChange: curr.percentViaEmailChange,
-          percentViaSmsChange: curr.percentViaSmsChange,
-          percentWithin2HoursChange: curr.percentWithin2HoursChange,
-        })
-      }))
+      percentPositiveChange: curr.percentPositiveChange,
+      percentReportedChange: curr.percentReportedChange,
+      percentViaEmailChange: curr.percentViaEmailChange,
+      percentViaSmsChange: curr.percentViaSmsChange,
+      percentWithin2HoursChange: curr.percentWithin2HoursChange,
+    })
+  })
 })

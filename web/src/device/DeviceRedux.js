@@ -12,7 +12,7 @@ import {
   errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
-import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
+import { receiveItem, Items } from '../shared/metaReducers/items'
 import {
   requestTable,
   receiveTableItems,

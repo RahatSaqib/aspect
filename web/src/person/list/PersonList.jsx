@@ -8,9 +8,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
-import AddIcon from '@material-ui/icons/Add'
 
 import {
   getCustomMessage,

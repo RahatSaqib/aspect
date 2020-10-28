@@ -78,7 +78,7 @@ const enhance = compose(
   injectIntl,
   pure,
   connect(
-    (state, props) => {
+    state => {
       const countries = state.geography.countriesForLocationSelector
       const partnerList =
         state.jobs.partnersAndJobFunctionsForSelectList.partners

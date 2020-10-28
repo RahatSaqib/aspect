@@ -66,7 +66,7 @@ const enhance = compose(
           }
         })
         .then(bind(this.setState, this))
-        .catch(err =>
+        .catch(() =>
           console.warn(
             "Couldn't find topo-file for ",
             `../../../map/topo/${countryIsoAlpha2Code}.json`
