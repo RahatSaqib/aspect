@@ -112,7 +112,9 @@ export const connectConsumableFromInventoryItem = connect(
       null,
       EMPTY_MAP
     ),
-    action: state.inventory.inventoryAdjustment.get('actionType'),
+    isReceiveInventoryDialog:
+      state.inventory.inventoryAdjustment.get('actionType') ===
+      types.SHOW_RECEIVE_INVENTORY_DIALOG,
   })
 )
 
@@ -121,7 +123,7 @@ export const InventoryAdjustmentDialogForm = ({
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
-  action,
+  isReceiveInventoryDialog,
   consumable,
   consumableReason,
   dateFormat = 'yyyy-MM-dd',
@@ -151,9 +153,7 @@ export const InventoryAdjustmentDialogForm = ({
         color="primary"
         variant="contained"
         disabled={
-          (action !== types.SHOW_RECEIVE_INVENTORY_DIALOG
-            ? form.pristine
-            : false) ||
+          (isReceiveInventoryDialog ? form.pristine : false) ||
           !form.valid ||
           form.submitting
         }
