@@ -1,5 +1,6 @@
 import isString from 'lodash/isString'
 import isNaN from 'lodash/isNaN'
+import isNil from 'lodash/isNil'
 import startOfDay from 'date-fns/startOfDay'
 import format from 'date-fns/format'
 import { withProps } from 'recompose'
@@ -79,7 +80,7 @@ export const withTodayProps = withProps(() => ({
 
 export const formatRelative = (intl, date, defaultMessage = '') => {
   const dateInMilliseconds = new Date(date).getTime()
-  if (isNaN(dateInMilliseconds)) return defaultMessage
+  if (isNil(date) || isNaN(dateInMilliseconds)) return defaultMessage
 
   const getParams = timeDiffInMilliseconds => {
     const timeInMilliseconds = Math.abs(timeDiffInMilliseconds)
