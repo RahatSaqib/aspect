@@ -136,7 +136,6 @@ export const DeviceDetail = ({ match }) => {
               path={match.path}
               render={props => (
                 <DeviceDetailProfile
-                  intl={intl}
                   {...props}
                   dateRange={dateRange}
                   onDateRangeChange={onDateRangeChange}
@@ -177,7 +176,6 @@ export const DeviceDetail = ({ match }) => {
               render={props =>
                 editable ? (
                   <DeviceDetailEdit
-                    intl={intl}
                     {...props}
                     device={Immutable.fromJS(device)}
                     editable={editable}
