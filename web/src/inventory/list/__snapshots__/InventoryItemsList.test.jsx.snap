@@ -324,6 +324,12 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     }
     inventoryItem={Immutable.Map {}}
     isDialogActive={false}
+    items={
+      Immutable.Record {
+        "byId": Immutable.Map {},
+        "currentIdList": Immutable.List [],
+      }
+    }
     onCancel={[Function]}
     onSubmit={[Function]}
   />
