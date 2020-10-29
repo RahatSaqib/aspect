@@ -8,26 +8,35 @@ const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json
 const geographyFromGxAlert = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
 const labClinic = require('./fixtures/labClinic.json')
-
+const partnerData = require('./fixtures/partnerData.json')
 const {
   baseGxAlertMigration,
   seedLabClinicFixture,
   upsertDashboardWidgets,
 } = require('../common')
 
+const {
+  partnerName,
+  serverUrl,
+  adminPassword,
+  deviceApiToken,
+  adminUserName,
+} = partnerData
+
 async function seed(knex) {
   const migrationSeededData = await baseGxAlertMigration(
     {
       admin: {
-        name: 'pakistan',
+        name: adminUserName,
+        password: adminPassword,
       },
       partner: {
-        name: 'Pakistan',
-        serverUrl: 'https://pakistan.aspect.id',
+        name: partnerName,
+        serverUrl,
       },
       geographyFromGxAlert,
       gxAlertDevice: {
-        deviceApiKeyToken: '77zc0ar862xcys2626w6',
+        deviceApiKeyToken: deviceApiToken,
       },
       sitesFromGxAlert,
       jobFunctions,
@@ -49,7 +58,7 @@ async function seed(knex) {
   )
 
   const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Pakistan' })
+    .where({ name: partnerName })
     .first('id')
 
   await upsertDashboardWidgets(knex, partnerId)

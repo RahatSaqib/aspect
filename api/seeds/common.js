@@ -446,6 +446,12 @@ async function upsertJobFunctionPermission(
   return knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
 
+async function upsertJobFunctionsFromJson(knex, jobFunctions, partnerId) {
+  await Promise.each(jobFunctions, async jf =>
+    upsertJobFunction(knex, jf.name, partnerId, jf.permissions)
+  )
+}
+
 async function upsertGxAlertDevice(
   knex,
   countryId,
@@ -2078,6 +2084,7 @@ module.exports = {
   upsertStatesAndLgas,
   upsertAssayResultCategories,
   upsertJobFunction,
+  upsertJobFunctionsFromJson,
   clonePermissions,
   copyPermissionsAndDashboardWidgetsFromJobFunction,
   baseGxAlertMigration,

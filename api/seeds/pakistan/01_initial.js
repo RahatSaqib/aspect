@@ -3,44 +3,54 @@ const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
+const partnerData = require('./fixtures/partnerData.json')
+const jobFunctions = require('./fixtures/jobFunctions')
 const {
   commonUpserts,
+  upsertJobFunctionsFromJson,
   upsertGeneXpertDeviceTypeAndAssays,
 } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const adminPassword = 'x2KusKKEqR8M'
-const lowerLevelUserPassword = '324PoCbqIeBG'
 const now = new Date()
 
 async function seed(knex) {
-  const deviceApiToken = '77zc0ar862xcys2626w6'
+  const {
+    partnerName,
+    serverUrl,
+    adminPassword,
+    adminUserName,
+    lowerLevelUserPassword,
+    deviceApiToken,
+    partnerAbbreviation,
+    assayTypes,
+  } = partnerData
 
   const [partnerId] = await knex('Partner').insert({
-    name: 'Pakistan',
+    name: partnerName,
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://pakistan.aspect.id',
+    serverUrl,
   })
 
   const [adminId] = await knex('User').insert({
-    name: 'admin',
+    name: adminUserName,
     password: bcrypt.hashSync(adminPassword, saltRounds),
     approved: 1,
     lockedOut: 0,
     failedPasswordAttempts: 0,
     createdOn: now,
   })
-
+  await upsertJobFunctionsFromJson(knex, jobFunctions, partnerId)
   // Common upserts
   await commonUpserts(
     knex,
     partnerId,
     adminId,
     geography,
-    'PK',
+    partnerAbbreviation,
     deviceApiToken,
     {
       password: lowerLevelUserPassword,
@@ -48,15 +58,5 @@ async function seed(knex) {
   )
 
   // GeneXpert
-  await upsertGeneXpertDeviceTypeAndAssays(knex, [
-    'GxUnknown',
-    'GxHcv',
-    'GxHiv',
-    'GxMtbRif',
-    'GxMtbRifUltra',
-    'GxHiv1Vl',
-    'GxHiv1Qual',
-    'GxEbola',
-    'assayGXCovid19',
-  ])
+  await upsertGeneXpertDeviceTypeAndAssays(knex, assayTypes)
 }
