@@ -1,14 +1,14 @@
+import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import React, { Fragment } from 'react'
-import { defineMessages, injectIntl } from 'react-intl'
+import { defineMessages, injectIntl, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
-import { Helmet } from 'react-helmet'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
 
@@ -463,6 +463,16 @@ const PerformanceBarChart = ({
     motionDamping={15}
   />
 )
+
+PerformanceBarChart.propTypes = {
+  data: PropTypes.string.isRequired,
+  series: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  avgValue: PropTypes.string.isRequired,
+  maxValue: PropTypes.string.isRequired,
+  info: PropTypes.string.isRequired,
+}
+
 const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
@@ -608,8 +618,12 @@ const PerformanceReport = ({ performanceReport, culture }) => {
   )
 }
 
-export const DeviceDetailProfile = ({
-  intl,
+PerformanceReport.propTypes = {
+  performanceReport: PropTypes.string.isRequired,
+  culture: PropTypes.string.isRequired,
+}
+
+const DeviceDetailProfile = ({
   history,
   location,
   match,
@@ -636,8 +650,8 @@ export const DeviceDetailProfile = ({
   onRowClick,
   onExportClick,
 }) => {
+  const intl = useIntl()
   const user = useSelector(state => state.user)
-  const deviceName = device.get('name')
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')
@@ -940,6 +954,32 @@ export const DeviceDetailProfile = ({
       />
     </div>
   )
+}
+
+DeviceDetailProfile.propTypes = {
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  match: PropTypes.oneOf([PropTypes.object]).isRequired,
+  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  disabled: PropTypes.bool.isRequired,
+  devicePerformance: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onToggleDeviceApproval: PropTypes.func.isRequired,
+  sortCol: PropTypes.string.isRequired,
+  sortDir: PropTypes.string.isRequired,
+  pageAt: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  activeDialog: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onShowMaintenanceDialog: PropTypes.func.isRequired,
+  onShowCalibrationDialog: PropTypes.func.isRequired,
+  onShowWarrantyDialog: PropTypes.func.isRequired,
+  onHideDialog: PropTypes.func.isRequired,
+  onMaintenanceSubmit: PropTypes.func.isRequired,
+  onCalibrationSubmit: PropTypes.func.isRequired,
+  onWarrantySubmit: PropTypes.func.isRequired,
+  table: PropTypes.oneOf([PropTypes.object]).isRequired,
+  items: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onRowClick: PropTypes.string.isRequired,
+  onExportClick: PropTypes.func.isRequired,
 }
 
 export default enhance(DeviceDetailProfile)
