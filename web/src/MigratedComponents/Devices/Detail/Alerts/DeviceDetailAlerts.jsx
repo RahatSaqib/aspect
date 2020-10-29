@@ -1,7 +1,10 @@
+import React from 'react'
+import PropTypes from 'prop-types'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import React from 'react'
+import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
+
 import TaskList from '../../../../task/list/TaskList'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
@@ -9,16 +12,13 @@ const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 const enhance = identity
 
 export const DeviceDetailAlerts = ({
-  intl,
   history,
   location,
-  match,
+  match: { params: { deviceId = false } } = false,
   device,
-  disabled,
-  // --- injected by recompose ---
 }) => {
+  const intl = useIntl()
   const deviceName = device.get('name')
-  const { deviceId } = match.params
   return (
     <div>
       <Helmet title={deviceName} />
@@ -34,6 +34,17 @@ export const DeviceDetailAlerts = ({
       </section>
     </div>
   )
+}
+
+DeviceDetailAlerts.propTypes = {
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      deviceId: PropTypes.string,
+    }),
+  }).isRequired,
+  device: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
 export default enhance(DeviceDetailAlerts)
