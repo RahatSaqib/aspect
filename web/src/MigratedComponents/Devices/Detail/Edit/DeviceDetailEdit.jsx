@@ -1,13 +1,15 @@
+import React from 'react'
+import PropTypes from 'prop-types'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import { defineMessages, injectIntl } from 'react-intl'
-import React from 'react'
+import { defineMessages, injectIntl, useIntl } from 'react-intl'
 import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 import { Helmet } from 'react-helmet'
+
 import recomposeForm from '../../../../components/recomposeForm'
 import FormGroup from '../../../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../../../components/themedReactToolbox/ButtonGroup'
@@ -110,10 +112,6 @@ const enhance = compose(
 )
 
 export const DeviceDetailEdit = ({
-  intl,
-  history,
-  location,
-  match,
   device,
   editable,
   // --- injected by recompose ---
@@ -126,7 +124,9 @@ export const DeviceDetailEdit = ({
   handleSubmit,
   onDeviceTagChange,
 }) => {
+  const intl = useIntl()
   const deviceName = device.get('name')
+
   return (
     <div>
       <Helmet title={deviceName} />
@@ -186,6 +186,19 @@ export const DeviceDetailEdit = ({
       </section>
     </div>
   )
+}
+
+DeviceDetailEdit.propTypes = {
+  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  editable: PropTypes.bool.isRequired,
+  deviceTags: PropTypes.oneOf([PropTypes.object]).isRequired,
+  form: PropTypes.oneOf([PropTypes.object]).isRequired,
+  meta: PropTypes.oneOf([PropTypes.object]).isRequired,
+  values: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onSiteIdChange: PropTypes.func.isRequired,
+  onDiscardClick: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  onDeviceTagChange: PropTypes.func.isRequired,
 }
 
 export default enhance(DeviceDetailEdit)
