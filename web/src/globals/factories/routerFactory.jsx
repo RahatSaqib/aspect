@@ -225,7 +225,7 @@ const AppRoutes = ({ props }) => {
         render={
           renderRedirectToLoginOr(props) ||
           renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task']) ||
+          renderRedirectToNotFound(props, ['task:view']) ||
           renderTaskList
         }
       />

@@ -4,10 +4,10 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const partnerData = require('./fixtures/partnerData.json')
-const jobFunctions = require('./fixtures/jobFunctions')
+// const jobFunctions = require('./fixtures/jobFunctions')
 const {
   commonUpserts,
-  upsertJobFunctionsFromJson,
+  // upsertJobFunctionsFromJson,
   upsertGeneXpertDeviceTypeAndAssays,
 } = require('../common')
 
@@ -43,7 +43,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
     createdOn: now,
   })
-  await upsertJobFunctionsFromJson(knex, jobFunctions, partnerId)
+  // / await upsertJobFunctionsFromJson(knex, jobFunctions, partnerId)
   // Common upserts
   await commonUpserts(
     knex,

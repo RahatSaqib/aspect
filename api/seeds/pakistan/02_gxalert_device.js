@@ -9,6 +9,7 @@ const geographyFromGxAlert = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
 const labClinic = require('./fixtures/labClinic.json')
 const partnerData = require('./fixtures/partnerData.json')
+const dashboardWidget = require('./fixtures/dashboardWidget')
 const {
   baseGxAlertMigration,
   seedLabClinicFixture,
@@ -61,5 +62,5 @@ async function seed(knex) {
     .where({ name: partnerName })
     .first('id')
 
-  await upsertDashboardWidgets(knex, partnerId)
+  await upsertDashboardWidgets(knex, partnerId, dashboardWidget)
 }

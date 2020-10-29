@@ -1532,6 +1532,7 @@ async function baseGxAlertMigration(
     )
     await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
   })
+
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
@@ -1667,55 +1668,57 @@ async function baseGxAlertMigration(
     }
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
-        const existingJob = await knex('Job')
-          .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
-          .first()
-        if (!existingJob) {
-          const [jobId] = await knex('Job').insert({
-            personId,
-            jobFunctionId: jobFunctions[jobFunctionName],
-          })
-          if (
-            jobFunctionName === 'Lab User' &&
-            person.sites &&
-            person.sites.length > 0 &&
-            siteIds[person.sites[0].shortName]
-          ) {
-            await knex('JobContext').insert({
-              jobId,
-              siteId: siteIds[person.sites[0].shortName],
+        if (!_.isEmpty(jobFunctionName)) {
+          const existingJob = await knex('Job')
+            .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
+            .first()
+          if (!existingJob) {
+            const [jobId] = await knex('Job').insert({
+              personId,
+              jobFunctionId: jobFunctions[jobFunctionName],
             })
-          } else if (!_.isEmpty(person.geographies)) {
-            await Promise.each(person.geographies, async geography => {
-              const jobState = geography.stateName
-                ? statesByName[geography.stateName.toLowerCase()] || {
-                    id: null,
-                    lgas: {},
-                  }
-                : {
-                    id: null,
-                    lgas: {},
-                  }
-              const jobLga =
-                jobState.lgas && geography.lgaName
-                  ? jobState.lgas[geography.lgaName.toLowerCase()] || {
+            if (
+              jobFunctionName === 'Lab User' &&
+              person.sites &&
+              person.sites.length > 0 &&
+              siteIds[person.sites[0].shortName]
+            ) {
+              await knex('JobContext').insert({
+                jobId,
+                siteId: siteIds[person.sites[0].shortName],
+              })
+            } else if (!_.isEmpty(person.geographies)) {
+              await Promise.each(person.geographies, async geography => {
+                const jobState = geography.stateName
+                  ? statesByName[geography.stateName.toLowerCase()] || {
                       id: null,
+                      lgas: {},
                     }
                   : {
                       id: null,
+                      lgas: {},
                     }
-              const { id: jobGeographyId } = await knex('Geography')
-                .where({
-                  countryId,
-                  stateId: jobState.id,
-                  lgaId: jobLga.id,
+                const jobLga =
+                  jobState.lgas && geography.lgaName
+                    ? jobState.lgas[geography.lgaName.toLowerCase()] || {
+                        id: null,
+                      }
+                    : {
+                        id: null,
+                      }
+                const { id: jobGeographyId } = await knex('Geography')
+                  .where({
+                    countryId,
+                    stateId: jobState.id,
+                    lgaId: jobLga.id,
+                  })
+                  .first()
+                await knex('JobContext').insert({
+                  jobId,
+                  geographyId: jobGeographyId,
                 })
-                .first()
-              await knex('JobContext').insert({
-                jobId,
-                geographyId: jobGeographyId,
               })
-            })
+            }
           }
         }
       })

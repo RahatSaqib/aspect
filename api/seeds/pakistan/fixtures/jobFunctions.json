@@ -3,6 +3,18 @@
     "name": "Admin",
     "permissions": [
       {
+        "module": "inventory",
+        "activity": "edit"
+      },
+      {
+        "module": "notification",
+        "activity": "edit"
+      },
+      {
+        "module": "deviceApiKey",
+        "activity": "edit"
+      },
+      {
         "module": "assay",
         "activity": "edit"
       },
@@ -53,6 +65,18 @@
       {
         "module": "reporter",
         "activity": "edit"
+      },
+      {
+        "module": "task",
+        "activity": "edit"
+      },
+      {
+        "module": "operationalData",
+        "activity": "view"
+      },
+      {
+        "module": "taskMenu",
+        "activity": "view"
       }
     ]
   },
@@ -61,6 +85,14 @@
     "permissions": [
       {
         "module": "assay",
+        "activity": "view"
+      },
+      {
+        "module": "task",
+        "activity": "view"
+      },
+      {
+        "module": "taskMenu",
         "activity": "view"
       },
       {
@@ -98,6 +130,18 @@
       {
         "module": "dashboard",
         "activity": "result"
+      },
+      {
+        "module": "inventory",
+        "activity": "edit"
+      },
+      {
+        "module": "notification",
+        "activity": "edit"
+      },
+      {
+        "module": "deviceApiKey",
+        "activity": "edit"
       }
     ]
   },
