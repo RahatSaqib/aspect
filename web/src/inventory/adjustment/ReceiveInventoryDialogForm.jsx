@@ -154,6 +154,7 @@ const enhance = compose(
       sharedFields.notes,
     ],
     validate,
+    isValidByDefault: true,
   })
 )
 export default enhance(InventoryAdjustmentDialogForm)

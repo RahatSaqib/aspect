@@ -123,7 +123,6 @@ export const InventoryAdjustmentDialogForm = ({
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
-  isReceiveInventoryDialog,
   consumable,
   consumableReason,
   dateFormat = 'yyyy-MM-dd',
@@ -152,11 +151,7 @@ export const InventoryAdjustmentDialogForm = ({
       <Button
         color="primary"
         variant="contained"
-        disabled={
-          (isReceiveInventoryDialog ? form.pristine : false) ||
-          !form.valid ||
-          form.submitting
-        }
+        disabled={!form.valid || form.submitting}
         onClick={handleSubmit}
       >
         {intl.formatMessage(messages.submit)}
