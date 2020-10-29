@@ -1,6 +1,7 @@
+import React from 'react'
+import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React from 'react'
 import { useSelector } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
@@ -198,6 +199,10 @@ export const DeviceDetail = ({ match }) => {
       </ShellContent>
     </Shell>
   )
+}
+
+DeviceDetail.propTypes = {
+  match: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
 export default DeviceDetail
