@@ -1,12 +1,15 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
+
 import SiteDetailBackBar from '../SiteDetailBackBar'
 import TaskList from '../../../task/list/TaskList'
 
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
 
-const SiteDetailAlert = props => {
-  const { history, location, match, disabled, site, intl } = props
+const SiteDetailAlert = ({ history, location, match, disabled, site }) => {
+  const intl = useIntl()
   const { siteId } = match.params
 
   return (
@@ -33,6 +36,14 @@ const SiteDetailAlert = props => {
       </section>
     </div>
   )
+}
+
+SiteDetailAlert.propTypes = {
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  match: PropTypes.oneOf([PropTypes.object]).isRequired,
+  disabled: PropTypes.bool.isRequired,
+  site: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 
 export default SiteDetailAlert

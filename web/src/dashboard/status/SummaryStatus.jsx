@@ -44,10 +44,11 @@ export const SummaryStatus = ({ className, dashboard }) => {
 
 SummaryStatus.defaultProps = {
   dashboard: 'home',
+  className: '',
 }
 
 SummaryStatus.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   dashboard: PropTypes.string,
 }
 

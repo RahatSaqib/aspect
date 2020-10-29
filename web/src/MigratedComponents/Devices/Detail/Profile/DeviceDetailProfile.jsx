@@ -465,11 +465,11 @@ const PerformanceBarChart = ({
 )
 
 PerformanceBarChart.propTypes = {
-  data: PropTypes.string.isRequired,
-  series: PropTypes.string.isRequired,
+  data: PropTypes.oneOf([PropTypes.object]).isRequired,
+  series: PropTypes.oneOf([PropTypes.object]).isRequired,
   color: PropTypes.string.isRequired,
-  avgValue: PropTypes.string.isRequired,
-  maxValue: PropTypes.string.isRequired,
+  avgValue: PropTypes.number.isRequired,
+  maxValue: PropTypes.number.isRequired,
   info: PropTypes.string.isRequired,
 }
 
@@ -619,7 +619,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
 }
 
 PerformanceReport.propTypes = {
-  performanceReport: PropTypes.string.isRequired,
+  performanceReport: PropTypes.oneOf([PropTypes.object]).isRequired,
   culture: PropTypes.string.isRequired,
 }
 
