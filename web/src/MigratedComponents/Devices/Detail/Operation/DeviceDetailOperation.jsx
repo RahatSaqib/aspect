@@ -1,7 +1,8 @@
+import React from 'react'
+import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React from 'react'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -157,12 +158,9 @@ const enhance = compose(
 )
 
 export const DeviceDetailOperation = ({
-  intl,
   history,
   location,
-  match,
   device,
-  disabled,
   // --- injected by recompose ---
   table,
   items,
@@ -171,119 +169,138 @@ export const DeviceDetailOperation = ({
   pageAt,
   pageSize,
   onExportClick,
-}) => (
-  <div>
-    <Helmet title={device.get('name')} />
-    <section className={cssClasses('Section', 'Section--first')}>
-      <Card className={cssClasses('Section__Content')}>
-        <div>
-          <Summary title="Firmware" description="TODO: 72.43.102" />
-          <Summary
-            title={intl.formatMessage(messages.requirePrinter)}
-            description={device.getIn(['configurationData', 'requirePrinter'])}
-          />
-          <Summary
-            title={intl.formatMessage(messages.hostId)}
-            description={device.get('hostId')}
-          />
-          <Summary
-            title={intl.formatMessage(messages.serialNumber)}
-            description={device.get('serial')}
-          />
-          <Summary
-            title={intl.formatMessage(messages.firstApproved)}
-            description={`${device.get('approvedBy')} (${formatDate(
-              device.get('approvedOn', EMPTY_DATE)
-            )})`}
-          />
-        </div>
-      </Card>
-    </section>
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <header className={cssClasses('Header')}>
-          <div className={cssClasses('Header__Title')}>Operation history</div>
-          <div className={cssClasses('Header__Actions')}>
-            <IconButton onClick={onExportClick}>
-              <MdFileDownload />
-            </IconButton>
-          </div>
-        </header>
-        <div>
-          <DataTableProgressBar disabled={!table.loading} />
-          {items.currentIdList.isEmpty() && (
-            <BrowseEmptyList
-              history={history}
-              location={location}
-              intl={intl}
+}) => {
+  const intl = useIntl()
+  return (
+    <div>
+      <Helmet title={device.get('name')} />
+      <section className={cssClasses('Section', 'Section--first')}>
+        <Card className={cssClasses('Section__Content')}>
+          <div>
+            <Summary title="Firmware" description="TODO: 72.43.102" />
+            <Summary
+              title={intl.formatMessage(messages.requirePrinter)}
+              description={device.getIn([
+                'configurationData',
+                'requirePrinter',
+              ])}
             />
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <DeviceOperationDataTable
-              selectable={false}
-              className={cssClasses('DeviceOperationDataTable')}
-            >
-              <DeviceOperationDataTableHead
+            <Summary
+              title={intl.formatMessage(messages.hostId)}
+              description={device.get('hostId')}
+            />
+            <Summary
+              title={intl.formatMessage(messages.serialNumber)}
+              description={device.get('serial')}
+            />
+            <Summary
+              title={intl.formatMessage(messages.firstApproved)}
+              description={`${device.get('approvedBy')} (${formatDate(
+                device.get('approvedOn', EMPTY_DATE)
+              )})`}
+            />
+          </div>
+        </Card>
+      </section>
+      <section className={cssClasses('Section')}>
+        <Card className={cssClasses('Section__Content')}>
+          <header className={cssClasses('Header')}>
+            <div className={cssClasses('Header__Title')}>Operation history</div>
+            <div className={cssClasses('Header__Actions')}>
+              <IconButton onClick={onExportClick}>
+                <MdFileDownload />
+              </IconButton>
+            </div>
+          </header>
+          <div>
+            <DataTableProgressBar disabled={!table.loading} />
+            {items.currentIdList.isEmpty() && (
+              <BrowseEmptyList
                 history={history}
                 location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={Immutable.List([
-                  {
-                    key: 'startedOn',
-                    label: intl.formatMessage(messages.startedOn),
-                    sortable: true,
-                  },
-                  {
-                    key: 'id',
-                    label: intl.formatMessage(messages.id),
-                    sortable: true,
-                  },
-                ]).concat(
-                  device
-                    .getIn(['deviceType', 'deviceOperationSchema'])
-                    .map((schema, key) => ({
-                      key,
-                      label: intl.formatMessage(
-                        /* available keys: messages.voltage, messages.temperature */
-                        messages[key]
-                      ),
-                    }))
-                    .valueSeq()
-                )}
+                intl={intl}
               />
-              <TableBody>
-                {items.currentIdList
-                  .map(id => items.byId.get(id))
-                  .map(deviceOperation => (
-                    <DeviceOperationDataTableRow
-                      key={deviceOperation.get('id')}
-                      intl={intl}
-                      deviceOperation={deviceOperation}
-                      deviceOperationSchema={device.getIn([
-                        'deviceType',
-                        'deviceOperationSchema',
-                      ])}
-                    />
-                  ))}
-              </TableBody>
-            </DeviceOperationDataTable>
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <BrowseTablePaginator
-              history={history}
-              location={location}
-              intl={intl}
-              paginatorStatus={messages.paginatorStatus}
-              total={table.total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          )}
-        </div>
-      </Card>
-    </section>
-  </div>
-)
+            )}
+            {!items.currentIdList.isEmpty() && (
+              <DeviceOperationDataTable
+                selectable={false}
+                className={cssClasses('DeviceOperationDataTable')}
+              >
+                <DeviceOperationDataTableHead
+                  history={history}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={Immutable.List([
+                    {
+                      key: 'startedOn',
+                      label: intl.formatMessage(messages.startedOn),
+                      sortable: true,
+                    },
+                    {
+                      key: 'id',
+                      label: intl.formatMessage(messages.id),
+                      sortable: true,
+                    },
+                  ]).concat(
+                    device
+                      .getIn(['deviceType', 'deviceOperationSchema'])
+                      .map((schema, key) => ({
+                        key,
+                        label: intl.formatMessage(
+                          /* available keys: messages.voltage, messages.temperature */
+                          messages[key]
+                        ),
+                      }))
+                      .valueSeq()
+                  )}
+                />
+                <TableBody>
+                  {items.currentIdList
+                    .map(id => items.byId.get(id))
+                    .map(deviceOperation => (
+                      <DeviceOperationDataTableRow
+                        key={deviceOperation.get('id')}
+                        intl={intl}
+                        deviceOperation={deviceOperation}
+                        deviceOperationSchema={device.getIn([
+                          'deviceType',
+                          'deviceOperationSchema',
+                        ])}
+                      />
+                    ))}
+                </TableBody>
+              </DeviceOperationDataTable>
+            )}
+            {!items.currentIdList.isEmpty() && (
+              <BrowseTablePaginator
+                history={history}
+                location={location}
+                intl={intl}
+                paginatorStatus={messages.paginatorStatus}
+                total={table.total}
+                pageAt={pageAt}
+                pageSize={pageSize}
+              />
+            )}
+          </div>
+        </Card>
+      </section>
+    </div>
+  )
+}
+
+DeviceDetailOperation.propTypes = {
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  table: PropTypes.oneOf([PropTypes.object]).isRequired,
+  items: PropTypes.oneOf([PropTypes.object]).isRequired,
+  sortCol: PropTypes.string.isRequired,
+  sortDir: PropTypes.string.isRequired,
+  pageAt: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  onExportClick: PropTypes.func.isRequired,
+}
 
 export default enhance(DeviceDetailOperation)
