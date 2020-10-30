@@ -4,7 +4,7 @@ import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { LinkNavigation } from './LinkNavigation'
 
-const extraProps = {
+const defaultProps = {
   onClick: () => false,
 }
 
@@ -14,7 +14,7 @@ describe('LinkNavigation component', () => {
   it('should shallow render without crash', () => {
     const props = {
       intl,
-      ...extraProps,
+      ...defaultProps,
       userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
     }
     shallow(<LinkNavigation {...props} />)
@@ -23,7 +23,7 @@ describe('LinkNavigation component', () => {
   it('should change the direction of Nav with different `type` prop', () => {
     const props = {
       intl,
-      ...extraProps,
+      ...defaultProps,
       userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
     }
     const wrapper = shallow(<LinkNavigation {...props} />)
