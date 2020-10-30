@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
-import Contacts from '../contacts/Contacts'
+import Contacts from '../Contacts/Contacts'
 import messages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
 import Summary from '../../../../globals/components/Summary'
