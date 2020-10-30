@@ -38,36 +38,42 @@ const tickDataForBarDisplayMethodPercentageIn = [
     month: 'Nov 19',
     LessThan1000: '52.9412',
     MoreThan1000: '47.0588',
+    totalCnt: 17,
   },
   {
     month: 'Dec 19',
     LessThan1000: '40.9091',
     MoreThan1000: '54.5455',
     NotDetected: '4.5455',
+    totalCnt: 22,
   },
   {
     month: 'Jan 20',
     LessThan1000: '68.7500',
     MoreThan1000: '25.0000',
     NotDetected: '6.2500',
+    totalCnt: 16,
   },
   {
     month: 'Feb 20',
     NotDetected: '11.1111',
     LessThan1000: '50.0000',
     MoreThan1000: '38.8889',
+    totalCnt: 18,
   },
   {
     month: 'Mar 20',
     LessThan1000: '40.0000',
     NotDetected: '15.0000',
     MoreThan1000: '45.0000',
+    totalCnt: 20,
   },
   {
     month: 'Apr 20',
     MoreThan1000: '47.0588',
     LessThan1000: '35.2941',
     NotDetected: '17.6471',
+    totalCnt: 17,
   },
 ]
 

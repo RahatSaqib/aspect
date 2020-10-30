@@ -6,7 +6,6 @@ import globals from './globals/GlobalsRedux'
 import appNotification from './appNotification/AppNotificationRedux'
 import filter from './filter/FilterRedux'
 import user, { types as authTypes } from './auth/AuthRedux'
-import dashboard from './dashboard/DashboardRedux'
 import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
 import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
@@ -33,7 +32,7 @@ import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatus
 import report from './report/ReportRedux'
 import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
-import deviceMaintenanceStatus from './device/maintenance/DeviceMaintenanceStatusRedux'
+import deviceMaintenanceStatus from './MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
 import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({
@@ -43,7 +42,6 @@ const appReducer = combineReducers({
   assayType,
   case: _case,
   consumable,
-  dashboard,
   demo,
   device,
   deviceApiKey,
@@ -81,7 +79,6 @@ const App = Immutable.Record({
   case: undefined,
   clinicalIndicators: undefined,
   consumable: undefined,
-  dashboard: undefined,
   demo: undefined,
   device: undefined,
   deviceApiKey: undefined,

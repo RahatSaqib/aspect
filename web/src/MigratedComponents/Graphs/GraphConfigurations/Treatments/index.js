@@ -71,7 +71,7 @@ const treatmentStatusGraphs = {
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {
-          showTotal: true,
+          showTotal: false,
           title: 'treatmentStatusTotalTitle',
           key: ['Confirmed'],
           subTitle: 'treatmentStatusTotalValidTitle',
