@@ -338,8 +338,8 @@ describe('Device routes', () => {
       })
 
       it('should show a device status for each day in between the date filters', async () => {
-        const fromDate = new Date(2020, 3, 5)
-        const toDate = new Date(2020, 4, 13)
+        const fromDate = subMonths(new Date(), 1)
+        const toDate = new Date()
         const devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
