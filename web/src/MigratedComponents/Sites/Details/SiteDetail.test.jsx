@@ -5,7 +5,7 @@ import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
-import { Site } from '../SiteRedux'
+import { Site } from '../../../site/SiteRedux'
 import { SiteDetail } from './SiteDetail'
 
 const SiteDetailComponent = props => (
@@ -20,7 +20,7 @@ describe('SiteDetail component', () => {
       params: {
         siteId: '1',
       },
-      path: '/browse/site/1/alerts',
+      path: '/browse/site/:siteId/alerts',
       url: '/browe/site',
     },
     history: {},

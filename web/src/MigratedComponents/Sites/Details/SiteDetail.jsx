@@ -2,17 +2,11 @@ import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import {
-  Switch,
-  Route,
-  Redirect,
-  useHistory,
-  useParams,
-} from 'react-router-dom'
+import { Switch, Route, Redirect, useHistory } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
-import { injectIntl, defineMessages } from 'react-intl'
+import { injectIntl, defineMessages, useIntl } from 'react-intl'
 
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -55,40 +49,43 @@ const titleMessages = defineMessages({
 })
 
 export const SiteDetail = props => {
-  const history = useHistory()
-  const { siteId } = useParams()
-
-  useEffect(
-    () => {
-      const handleFetchSite = ({ match }) => {
-        props.fetchSingleSite(match.params.siteId)
-        props.fetchSiteContacts(match.params.siteId)
-        props.fetchTags(match.params.siteId, 'site')
-      }
-
-      handleFetchSite(props)
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.match.params.siteId]
-  )
-  const onSiteTagChange = (qryId, qryType, tags) => {
-    props.updateTags(qryId, qryType, tags.join(','))
-  }
-
-  const hasSiteWithLocation = () => {
-    const { site } = props
-    return site && site.has('longitude') && site.has('latitude')
-  }
   const {
-    intl,
     updateSingleSiteFromForm,
     site,
-    match,
+    match: {
+      params: { siteId },
+      path,
+      url,
+    },
     siteTags,
     editable,
     siteContacts,
     updateLatLongFromFormAddress,
+    fetchSingleSite,
+    fetchSiteContacts,
+    fetchTags,
+    updateTags,
   } = props
+
+  const intl = useIntl()
+  const history = useHistory()
+
+  useEffect(() => {
+    const handleFetchSite = siteId => {
+      fetchSingleSite(siteId)
+      fetchSiteContacts(siteId)
+      fetchTags(siteId, 'site')
+    }
+
+    handleFetchSite(siteId)
+  }, [siteId, fetchSingleSite, fetchSiteContacts, fetchTags])
+
+  const onSiteTagChange = (qryId, qryType, tags) => {
+    updateTags(qryId, qryType, tags.join(','))
+  }
+
+  const hasSiteWithLocation = () =>
+    site && site.has('longitude') && site.has('latitude')
 
   return (
     <Shell>
@@ -132,7 +129,7 @@ export const SiteDetail = props => {
           <Switch>
             <Route
               exact
-              path={match.path}
+              path={path}
               render={props => (
                 <SiteDetailProfile
                   formatMessage={intl.formatMessage}
@@ -147,7 +144,7 @@ export const SiteDetail = props => {
             />
             <Route
               exact
-              path={`${match.path}/alerts`}
+              path={`${path}/alerts`}
               render={props => (
                 <SiteDetailAlert
                   {...props}
@@ -159,7 +156,7 @@ export const SiteDetail = props => {
             />
             <Route
               exact
-              path={`${match.path}/edit`}
+              path={`${path}/edit`}
               render={props =>
                 editable ? (
                   <SiteForm
@@ -174,7 +171,7 @@ export const SiteDetail = props => {
                     siteContacts={siteContacts.toJS()}
                   />
                 ) : (
-                  <Redirect to={match.url} />
+                  <Redirect to={url} />
                 )
               }
             />
@@ -217,7 +214,6 @@ SiteDetail.propTypes = {
   }).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   editable: PropTypes.bool.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
