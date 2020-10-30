@@ -23,7 +23,7 @@ import TaskDetail from '../../task/detail/TaskDetail'
 import OperationalData from '../../dashboard/operational/OperationalData'
 import DeviceDemo from '../../demo/device/DeviceDemo'
 import DeviceList from '../../device/list/DeviceList'
-import DeviceDetail from '../../device/detail/DeviceDetail'
+import DeviceDetail from '../../MigratedComponents/Devices/Detail/DeviceDetail'
 import DeviceApiKeyList from '../../deviceApiKey/list/DeviceApiKeyList'
 import CaseList from '../../case/list/CaseList'
 import SiteList from '../../site/list/SiteList'
@@ -142,7 +142,7 @@ const renderReports = loggedInFactory(ReportIndex)
 const renderManage = notImplementedLoggedInFactory('Manage')
 /* END-TODO: real components */
 const renderDeviceList = loggedInFactory(DeviceList)
-const renderDeviceDetail = loggedInDetailFactory(DeviceDetail)
+const renderDeviceDetail = loggedInFactory(DeviceDetail)
 const renderDeviceApiKeyList = loggedInFactory(DeviceApiKeyList)
 const renderCaseList = loggedInFactory(CaseList)
 const renderRouterList = loggedInFactory(RouterList)
