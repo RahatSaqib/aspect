@@ -106,7 +106,7 @@ const messageQueuePlugin = {
   name: 'messageQueue',
   version,
   register: async server =>
-    createMessageQueue('aspect')
+    createMessageQueue(config.amqp.name)
       .then(queue => {
         addLoggers(server, queue)
         addSubscriptions(queue)
