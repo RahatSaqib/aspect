@@ -3,18 +3,6 @@
     "name": "Admin",
     "permissions": [
       {
-        "module": "inventory",
-        "activity": "edit"
-      },
-      {
-        "module": "notification",
-        "activity": "edit"
-      },
-      {
-        "module": "deviceApiKey",
-        "activity": "edit"
-      },
-      {
         "module": "assay",
         "activity": "edit"
       },
@@ -77,6 +65,18 @@
       {
         "module": "taskMenu",
         "activity": "view"
+      },
+      {
+        "module": "inventory",
+        "activity": "edit"
+      },
+      {
+        "module": "notification",
+        "activity": "edit"
+      },
+      {
+        "module": "deviceApiKey",
+        "activity": "edit"
       }
     ]
   },
@@ -85,14 +85,6 @@
     "permissions": [
       {
         "module": "assay",
-        "activity": "view"
-      },
-      {
-        "module": "task",
-        "activity": "view"
-      },
-      {
-        "module": "taskMenu",
         "activity": "view"
       },
       {
@@ -130,6 +122,18 @@
       {
         "module": "dashboard",
         "activity": "result"
+      },
+      {
+        "module": "task",
+        "activity": "edit"
+      },
+      {
+        "module": "operationalData",
+        "activity": "view"
+      },
+      {
+        "module": "taskMenu",
+        "activity": "view"
       },
       {
         "module": "inventory",
@@ -187,6 +191,30 @@
       {
         "module": "dashboard",
         "activity": "result"
+      },
+      {
+        "module": "task",
+        "activity": "view"
+      },
+      {
+        "module": "operationalData",
+        "activity": "view"
+      },
+      {
+        "module": "taskMenu",
+        "activity": "view"
+      },
+      {
+        "module": "inventory",
+        "activity": "view"
+      },
+      {
+        "module": "notification",
+        "activity": "view"
+      },
+      {
+        "module": "deviceApiKey",
+        "activity": "view"
       }
     ]
   },
@@ -232,6 +260,30 @@
       {
         "module": "dashboard",
         "activity": "result"
+      },
+      {
+        "module": "task",
+        "activity": "view"
+      },
+      {
+        "module": "operationalData",
+        "activity": "view"
+      },
+      {
+        "module": "taskMenu",
+        "activity": "view"
+      },
+      {
+        "module": "inventory",
+        "activity": "view"
+      },
+      {
+        "module": "notification",
+        "activity": "view"
+      },
+      {
+        "module": "deviceApiKey",
+        "activity": "view"
       }
     ]
   }
