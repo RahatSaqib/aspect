@@ -3,11 +3,11 @@ import React, { useEffect } from 'react'
 import Immutable from 'immutable'
 import { connect } from 'react-redux'
 
-import TagInput from '../../../components/shared/TagInput'
+import TagInput from '../../../../components/shared/TagInput'
 import {
   fetchAvailablePersons,
   fetchUpdateSiteContacts,
-} from '../../../person/PersonRedux'
+} from '../../../../person/PersonRedux'
 
 const ContactsTag = ({
   siteId,

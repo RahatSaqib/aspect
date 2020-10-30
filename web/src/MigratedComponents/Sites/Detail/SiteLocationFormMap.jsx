@@ -7,12 +7,12 @@ import { reduxForm, formValueSelector } from 'redux-form/immutable'
 import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import { latLng, address } from '../../shared/selectors/site'
+import { latLng, address } from '../../../shared/selectors/site'
 import {
   isValidLatLng,
   isValidFullAddress,
   formatFullAddressToAddressQuery,
-} from '../utils/address'
+} from '../../../site/utils/address'
 import SiteMap from './SiteMap'
 import styles from './SiteLocationFormMap.css'
 

@@ -1,15 +1,12 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
-// Our own imports
-import Contacts from '../contacts/Contacts'
+import Contacts from '../Contacts/Contacts'
 import messages from '../messages'
-import { Site } from '../../SiteRedux'
-import Summary from '../../../globals/components/Summary'
-import SiteDetailBackBar from '../SiteDetailBackBar'
+import { Site } from '../../../../site/SiteRedux'
+import Summary from '../../../../globals/components/Summary'
 
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
 
@@ -18,9 +15,6 @@ const SiteDetailProfile = ({
   siteTags,
   siteContacts,
   formatMessage,
-  history,
-  location,
-  match,
   disabled,
 }) => {
   const fields = [
@@ -80,24 +74,13 @@ const SiteDetailProfile = ({
   ]
   return (
     <div>
-      {site && (
-        <SiteDetailBackBar
-          formatMessage={formatMessage}
-          history={history}
-          location={location}
-          match={match}
-          title={site.get('name')}
-          disabled={disabled}
-        />
-      )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
-          {fields.map((field, idx) => (
+          {fields.map(({ label, value }) => (
             <Summary
-              // eslint-disable-next-line react/no-array-index-key
-              key={idx}
-              title={field.label}
-              description={field.value}
+              key={`${label}_${site.get('id')}`}
+              title={label}
+              description={value}
               cols="4"
             />
           ))}
@@ -123,9 +106,6 @@ SiteDetailProfile.defaultProps = {
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   siteContacts: PropTypes.arrayOf(PropTypes.object),
