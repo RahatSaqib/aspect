@@ -1,14 +1,14 @@
+import React, { Fragment } from 'react'
+import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import React, { Fragment } from 'react'
-import { defineMessages, injectIntl } from 'react-intl'
+import { defineMessages, injectIntl, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
-import { Helmet } from 'react-helmet'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
 
@@ -16,26 +16,25 @@ import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
-} from '../../../shared/selectors/searchParams'
-import { formatDate, formatRelative } from '../../../shared/utils/dateFormat'
-import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import Results from '../../../result/historyResults/HistoryResults'
-import ColoredNumber from '../../../components/shared/ColoredNumber'
-import AspectTooltip from '../../../components/shared/AspectTooltip'
-import { fetchResults, exportResults } from '../../../result/ResultRedux'
-import { tokens } from '../../../deviceApproval/DeviceApprovalRedux'
+} from '../../../../shared/selectors/searchParams'
+import { formatDate, formatRelative } from '../../../../shared/utils/dateFormat'
+import { sanitizeFiltersStringBy } from '../../../../filter/utils'
+import Results from '../../../../result/historyResults/HistoryResults'
+import ColoredNumber from '../../../../components/shared/ColoredNumber'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
+import { fetchResults, exportResults } from '../../../../result/ResultRedux'
+import { tokens } from '../../../../deviceApproval/DeviceApprovalRedux'
 import {
   showDialog,
   hideDialog,
   updateDeviceMaintenance,
   updateDeviceMaintenanceStatus,
-} from '../../DeviceRedux'
-import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../../../globals/components/Summary'
-import requirePermissions from '../../../components/shared/requirePermissions'
-import CalibrationDialog from '../../maintenance/CalibrationDialog'
-import WarrantyDialog from '../../maintenance/WarrantyDialog'
-import DeviceMaintenanceStatusDialog from '../../maintenance/DeviceMaintenanceStatusDialog'
+} from '../../../../device/DeviceRedux'
+import Summary from '../../../../globals/components/Summary'
+import requirePermissions from '../../../../components/shared/requirePermissions'
+import CalibrationDialog from '../../Maintenance/CalibrationDialog'
+import WarrantyDialog from '../../Maintenance/WarrantyDialog'
+import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -464,7 +463,17 @@ const PerformanceBarChart = ({
     motionDamping={15}
   />
 )
-const PerformanceReport = enhance(({ performanceReport, culture }) => {
+
+PerformanceBarChart.propTypes = {
+  data: PropTypes.oneOf([PropTypes.object]).isRequired,
+  series: PropTypes.oneOf([PropTypes.object]).isRequired,
+  color: PropTypes.string.isRequired,
+  avgValue: PropTypes.number.isRequired,
+  maxValue: PropTypes.number.isRequired,
+  info: PropTypes.string.isRequired,
+}
+
+const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
@@ -607,16 +616,20 @@ const PerformanceReport = enhance(({ performanceReport, culture }) => {
       </Card>
     </section>
   )
-})
+}
 
-export const DeviceDetailProfile = ({
-  intl,
+PerformanceReport.propTypes = {
+  performanceReport: PropTypes.oneOf([PropTypes.object]).isRequired,
+  culture: PropTypes.string.isRequired,
+}
+
+const DeviceDetailProfile = ({
   history,
   location,
   match,
   device,
   disabled,
-  displayPreferences,
+  devicePerformance,
   // --- injected by recompose ---
   onToggleDeviceApproval,
   sortCol,
@@ -636,7 +649,8 @@ export const DeviceDetailProfile = ({
   onRowClick,
   onExportClick,
 }) => {
-  const deviceName = device.get('name')
+  const intl = useIntl()
+  const user = useSelector(state => state.user)
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')
@@ -644,6 +658,9 @@ export const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
+
+  const { displayPreferences } = user
+
   const maintenanceStatusNotes =
     !device.get('maintenanceStatusNotes') ||
     device.get('maintenanceStatusNotes') === ''
@@ -691,21 +708,13 @@ export const DeviceDetailProfile = ({
   const AuthenticatedResults = requirePermissions({
     permissions: ['result:view'],
   })(Results)
+
   const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
     ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
     : intl.formatMessage(messages.undefinedValue)
 
   return (
     <div>
-      <Helmet title={deviceName} />
-      <DeviceDetailBackBar
-        intl={intl}
-        history={history}
-        location={location}
-        match={match}
-        disabled={disabled}
-        title={deviceName}
-      />
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <div>
@@ -918,7 +927,14 @@ export const DeviceDetailProfile = ({
           onSubmit={onWarrantySubmit}
         />
       </section>
-      <PerformanceReport match={match} location={location} />
+
+      <PerformanceReport
+        performanceReport={devicePerformance}
+        match={match}
+        location={location}
+        culture={user?.culture}
+      />
+
       <AuthenticatedResults
         match={match}
         history={history}
@@ -937,6 +953,32 @@ export const DeviceDetailProfile = ({
       />
     </div>
   )
+}
+
+DeviceDetailProfile.propTypes = {
+  history: PropTypes.oneOf([PropTypes.object]).isRequired,
+  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  match: PropTypes.oneOf([PropTypes.object]).isRequired,
+  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  disabled: PropTypes.bool.isRequired,
+  devicePerformance: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onToggleDeviceApproval: PropTypes.func.isRequired,
+  sortCol: PropTypes.string.isRequired,
+  sortDir: PropTypes.string.isRequired,
+  pageAt: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  activeDialog: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onShowMaintenanceDialog: PropTypes.func.isRequired,
+  onShowCalibrationDialog: PropTypes.func.isRequired,
+  onShowWarrantyDialog: PropTypes.func.isRequired,
+  onHideDialog: PropTypes.func.isRequired,
+  onMaintenanceSubmit: PropTypes.func.isRequired,
+  onCalibrationSubmit: PropTypes.func.isRequired,
+  onWarrantySubmit: PropTypes.func.isRequired,
+  table: PropTypes.oneOf([PropTypes.object]).isRequired,
+  items: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onRowClick: PropTypes.string.isRequired,
+  onExportClick: PropTypes.func.isRequired,
 }
 
 export default enhance(DeviceDetailProfile)

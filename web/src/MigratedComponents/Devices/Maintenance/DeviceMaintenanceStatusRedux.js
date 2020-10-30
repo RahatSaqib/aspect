@@ -1,11 +1,11 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { aspectFetch } from '../../shared/utils/fetch'
+import { aspectFetch } from '../../../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
-} from '../../error/CommonErrorNotifications'
+} from '../../../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_DEVICE_MAINTENCE_STATUS: 'REQUEST_DEVICE_MAINTENCE_STATUS',

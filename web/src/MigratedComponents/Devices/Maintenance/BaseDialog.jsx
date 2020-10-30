@@ -7,8 +7,8 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import InputLabel from '@material-ui/core/InputLabel'
 
-import AspectDialog from '../../components/shared/AspectDialog'
-import DateTimeInput from '../../components/shared/DateTimeInput'
+import AspectDialog from '../../../components/shared/AspectDialog'
+import DateTimeInput from '../../../components/shared/DateTimeInput'
 
 const cssClasses = classnames.bind(require('./BaseDialog.css'))
 
