@@ -629,7 +629,6 @@ const DeviceDetailProfile = ({
   match,
   device,
   disabled,
-  // displayPreferences,
   devicePerformance,
   // --- injected by recompose ---
   onToggleDeviceApproval,

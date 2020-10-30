@@ -14,7 +14,7 @@ const enhance = identity
 export const DeviceDetailAlerts = ({
   history,
   location,
-  match: { params: { deviceId = false } } = false,
+  match: { params: { deviceId = false } = false },
   device,
 }) => {
   const intl = useIntl()
@@ -40,9 +40,12 @@ DeviceDetailAlerts.propTypes = {
   history: PropTypes.oneOf([PropTypes.object]).isRequired,
   location: PropTypes.oneOf([PropTypes.object]).isRequired,
   match: PropTypes.shape({
-    params: PropTypes.shape({
-      deviceId: PropTypes.string,
-    }),
+    params: PropTypes.oneOf([
+      PropTypes.bool,
+      PropTypes.shape({
+        deviceId: PropTypes.oneOf([PropTypes.bool, PropTypes.string]),
+      }),
+    ]),
   }).isRequired,
   device: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
