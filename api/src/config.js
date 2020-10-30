@@ -27,6 +27,7 @@ module.exports = {
   },
   amqp: {
     url: process.env['amqp.url'],
+    name: process.env['amqp.name'] || 'aspect',
   },
   swagger: {
     enabled: process.env['swagger.enabled'] === 'true',
