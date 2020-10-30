@@ -44,6 +44,7 @@ const SELECT_LIST_FIELDS = [
   'st.name as state',
   'dt.name as type',
   's.name as siteName',
+  knex.raw("CASE WHEN da.token = 'approved' AND ISNULL(dms.name) = 0 THEN dms.name ELSE da.name END as status"),
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
@@ -239,6 +240,8 @@ async function getListDevices(query, auth) {
         .as('activeDays'),
     ])
     .distinct()
+
+  console.log(getItems.toString())
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

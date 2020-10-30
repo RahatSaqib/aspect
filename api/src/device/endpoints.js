@@ -89,7 +89,7 @@ function listDevicesBaseRequest() {
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
           'state',
-          'approval',
+          'status',
           'errorRate',
           'createdOn',
           'lastSeen',
@@ -160,6 +160,9 @@ function listDevicesBaseResponse() {
               approval: Joi.string()
                 .required()
                 .description('The current approval status of the device'),
+              status: Joi.string()
+                .required()
+                .description('The current status of the device'),
               maintenanceStatus: Joi.string()
                 .allow('', null)
                 .description('The current maintenance status of the device'),

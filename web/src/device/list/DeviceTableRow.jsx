@@ -51,7 +51,7 @@ const DeviceTableRow = ({
     className={cssClasses('TableRow', restProps.className)}
   >
     <TableCell>{device.get('name')}</TableCell>
-    <TableCell>{device.get('approval')}</TableCell>
+    <TableCell>{device.get('status')}</TableCell>
     <TableCell>
       <Rate
         intl={intl}
