@@ -22,7 +22,7 @@ const {
 } = require('./deviceApi/deviceApiKeyPlugin')
 const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
-const port = process.env.PORT || 8080
+const { port } = config
 const server = new Hapi.server({
   port,
   host: '127.0.0.1',

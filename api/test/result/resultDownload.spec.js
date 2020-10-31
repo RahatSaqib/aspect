@@ -1,11 +1,11 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { waitForApproximately } = require('../utils/generatorFunctionUtils')
 const { knex } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 const getClinicianAccessToken = async () => {
   const res = await server.post('/api/auth').send({

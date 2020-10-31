@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const {
   format,
@@ -22,7 +22,7 @@ const {
   messageStatusToId,
 } = require('../../src/shared/dictionary')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 // helper func for percentages

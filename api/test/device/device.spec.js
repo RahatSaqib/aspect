@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const {
@@ -31,7 +30,8 @@ const {
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device routes', () => {

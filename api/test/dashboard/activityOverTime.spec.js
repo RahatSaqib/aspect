@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const {
   addDays,
@@ -11,6 +11,7 @@ const {
   parseISO,
 } = require('date-fns')
 const Promise = require('bluebird')
+const server = require('../utils/testUtils')
 
 const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
@@ -22,8 +23,6 @@ const {
   allResultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
-
-const server = supertest.agent('http://localhost:8080')
 
 const { assert } = chai
 

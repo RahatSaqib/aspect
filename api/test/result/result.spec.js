@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { addMinutes, parseISO, format: dateFormat } = require('date-fns')
@@ -22,7 +21,8 @@ const {
 } = require('../deviceApi/utils')
 const { getAdminId } = require('../utils/authUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 const getClinicianAccessToken = () =>

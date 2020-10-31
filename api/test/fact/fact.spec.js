@@ -1,10 +1,10 @@
 const chai = require('chai')
-const supertest = require('supertest')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { createTestContext } = require('../deviceApi/utils')
 const { waitForIdle } = require('../utils/mqUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 const devicePostResultPath = '/device/result'

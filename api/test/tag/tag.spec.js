@@ -1,11 +1,11 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
 const { createTestContext } = require('../deviceApi/utils')
 const { run } = require('../../src/db')
 
 // This agent refers to PORT where program is runninng.
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 const context = createTestContext(server, {

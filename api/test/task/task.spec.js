@@ -1,9 +1,9 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
 const { createAlertTestContext } = require('./util')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 const context = createAlertTestContext({ user: 'admin' })
 describe('Task Routes', () => {
