@@ -1,12 +1,11 @@
-import PropTypes from 'prop-types'
 import React from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
 import { EditableFieldsFormContainer } from './EditableFieldsForm'
 import messages from '../messages'
-import { Site } from '../../SiteRedux'
-import SiteDetailBackBar from '../SiteDetailBackBar'
+import { Site } from '../../../../site/SiteRedux'
 
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
 
@@ -24,10 +23,6 @@ const SiteForm = props => {
     formatMessage,
     onSiteTagChange,
     updateLatLongFromFormAddress,
-    history,
-    location,
-    match,
-    disabled,
   } = props
   const extraValuesForMap = {
     // SiteLocationFormMap reads the values from redux-form to construct names for Geocoder
@@ -70,16 +65,6 @@ const SiteForm = props => {
   }
   return (
     <div>
-      {site && (
-        <SiteDetailBackBar
-          formatMessage={formatMessage}
-          history={history}
-          location={location}
-          match={match}
-          title={site.get('name')}
-          disabled={disabled}
-        />
-      )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <EditableFieldsFormContainer
@@ -106,10 +91,6 @@ SiteForm.propTypes = {
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  disabled: PropTypes.bool.isRequired,
 }
 SiteForm.defaultProps = {
   siteTags: [],
