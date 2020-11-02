@@ -1,4 +1,5 @@
 /**
+ * WIP
  * name: 'string'
  * columns: 'array'
  *  { key: 'string', label: 'string', disableSortBy: 'bool' [optional], width: 'number' [optional] }
@@ -6,23 +7,38 @@
  * hiddenColumns
  */
 
-const config = {
+import messages from './messages'
+
+const baseConfig = intl => ({
   name: 'notification',
   columns: [
     {
       key: 'lastTriggeredOn',
-      label: 'Last Triggered',
+      label: intl.formatMessage(messages.notificationsTableHeaderLastTriggered),
       width: 20,
       disableHide: true,
     },
-    { key: 'name', label: 'Name', width: 35 },
-    { key: 'totalTriggers', label: 'Total Triggers', width: 20 },
-    { key: 'contacts', label: 'Contacts', disableSortBy: true, width: 25 },
+    {
+      key: 'name',
+      label: intl.formatMessage(messages.notificationsTableHeaderName),
+      width: 35,
+    },
+    {
+      key: 'totalTriggers',
+      label: intl.formatMessage(messages.notificationsTableHeaderTotalTriggers),
+      width: 20,
+    },
+    {
+      key: 'contacts',
+      label: intl.formatMessage(messages.notificationsTableHeaderContacts),
+      disableSortBy: true,
+      width: 25,
+    },
   ],
   columnOrder: {
     allow: true,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
   },
-}
+})
 
-export default config
+export default baseConfig

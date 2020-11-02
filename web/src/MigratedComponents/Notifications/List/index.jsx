@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import { useQuery } from 'react-query'
+import { useIntl } from 'react-intl'
 
 import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
-import AspectTable from '../../Table'
+import AspectTable from '../../AspectTable'
 
 import { mockDatafetch } from '../../Table/Helpers'
-
-import config from './config'
+import baseConfig from './config'
 
 function NotificationList() {
+  const intl = useIntl()
   const [data, setData] = useState(false)
+  const config = baseConfig(intl)
 
   const { isError, error } = useQuery(
     'mockTableData',
