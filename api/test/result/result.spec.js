@@ -801,7 +801,7 @@ describe('Result routes', () => {
         })
       })
 
-      describe('COVID-19 Result Updates', () => {
+      describe.skip('COVID-19 Result Updates', () => {
         shared.checkToken(server, path)
         const covidDeviceTypeDevices = {
           CepheidGeneXpert: null,

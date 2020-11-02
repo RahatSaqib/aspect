@@ -229,6 +229,7 @@ const groupForOldTreatmentAPI = (
         curr[keyToConsume] < 1
           ? curr.total
           : Number(100 - curr[keyToConsume]).toFixed(1),
+      totalCnt: curr.total,
     }
     return acc
   }, {})

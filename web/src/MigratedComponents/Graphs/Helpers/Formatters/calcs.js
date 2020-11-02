@@ -35,6 +35,7 @@ const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
             d[key] = calcPercentageForGraphs(value, dSum)
           }
         })
+        d.totalCnt = dSum
         return d
       })
 }

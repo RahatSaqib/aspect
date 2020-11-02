@@ -253,6 +253,16 @@ const generateToolTip = (
   } else if (type === 'barInventory') {
     displayId = 'Locations'
     displayValue = value
+  } else if (type === 'bar' || type === 'barLegacyTreatment') {
+    const { totalCnt } = data
+    const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
+    const percentageToValue = Math.round(
+      (parseFloat(percentage) / 100) * totalCnt
+    )
+    displayValue = {
+      percentage,
+      actual: { totalCnt, percentageToValue },
+    }
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   }
