@@ -43,7 +43,7 @@ const positiveResultCategories = [
 const currentMonth = new Date().getMonth()
 const canProceed = date => {
   const percentPositiveResultNotified =
-    new Date(date).getMonth() === currentMonth ? 80 : 60
+    new Date(date).getMonth() === currentMonth ? 75 : 60
   return _.random(0, 100) <= percentPositiveResultNotified
 }
 const getMessage = async (result, messageTemplate) => {
