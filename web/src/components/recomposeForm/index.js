@@ -144,6 +144,7 @@ const createFieldListHandlers = _fp.reduce(
 const recomposeForm = ({
   fields: fieldNameLikeList,
   validate,
+  isValidByDefault = false,
 }) => BaseComponent => {
   const fieldNameList = mapFieldNames(fieldNameLikeList)
   const factory = React.createFactory(BaseComponent)
@@ -155,7 +156,10 @@ const recomposeForm = ({
       super(...args)
 
       const { state, handlers } = createFieldListHandlers(fieldNameList)
-      this.state = state
+      this.state = {
+        ...state,
+        form: { ...state.form, valid: isValidByDefault },
+      }
       this.handlers = _fp.mapValues(_fp.bind(_fp.placeholder, this), handlers)
     }
 
