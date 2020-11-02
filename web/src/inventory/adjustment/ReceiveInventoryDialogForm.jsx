@@ -38,7 +38,7 @@ const messages = defineMessages({
   },
   nextQuantityStatus: {
     id: 'pages.ReceiveInventoryDialogForm.nextQuantityStatus',
-    defaultMessage: '(New quantity on hand: {nextQuantity} {unitShortName})',
+    defaultMessage: '(Quantity Transferred: {nextQuantity} {unitShortName})',
   },
 })
 
@@ -114,34 +114,19 @@ const enhance = compose(
     },
   }),
   connectConsumableFromInventoryItem,
-  withProps(({ intl, values, consumable, items }) => {
-    // Get the destination inventory item
-    const destination = items.byId.findEntry(
-      o =>
-        o.get('siteId') === values.toSiteId &&
-        new Date(o.get('expiresOn')).getTime() === values.expiresOn.getTime() &&
-        o.get('lotNumber') === values.lotNumber &&
-        o.get('inTransitFromSiteId') === null
-    )
-    // If the inventory item already exist, get the actual quantity. If not, set 0.
-    const quantityOnHand = destination
-      ? destination[1].get('quantityOnHand')
-      : 0
-
-    return {
-      labels: {
-        dialogTitle: intl.formatMessage(messages.dialogTitle, {
-          consumableName: consumable.get('name'),
-        }),
-        quantity: intl.formatMessage(messages.quantity),
-        dateAdjusted: intl.formatMessage(messages.dateAdjusted),
-        nextQuantityStatus: intl.formatMessage(messages.nextQuantityStatus, {
-          nextQuantity: quantityOnHand + values.quantity,
-          unitShortName: consumable.get('unitShortName'),
-        }),
-      },
-    }
-  }),
+  withProps(({ intl, inventoryItem, values, consumable }) => ({
+    labels: {
+      dialogTitle: intl.formatMessage(messages.dialogTitle, {
+        consumableName: consumable.get('name'),
+      }),
+      quantity: intl.formatMessage(messages.quantity),
+      dateAdjusted: intl.formatMessage(messages.dateAdjusted),
+      nextQuantityStatus: intl.formatMessage(messages.nextQuantityStatus, {
+        nextQuantity: inventoryItem.get('quantityOnHand', 0) + values.quantity,
+        unitShortName: consumable.get('unitShortName'),
+      }),
+    },
+  })),
   recomposeForm({
     fields: [
       sharedFields.lotNumber,
@@ -154,7 +139,6 @@ const enhance = compose(
       sharedFields.notes,
     ],
     validate,
-    isValidByDefault: true,
   })
 )
 export default enhance(InventoryAdjustmentDialogForm)

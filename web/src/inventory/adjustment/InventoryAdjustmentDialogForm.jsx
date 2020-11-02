@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { types } from '../InventoryRedux'
+
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
@@ -112,9 +112,6 @@ export const connectConsumableFromInventoryItem = connect(
       null,
       EMPTY_MAP
     ),
-    isReceiveInventoryDialog:
-      state.inventory.inventoryAdjustment.get('actionType') ===
-      types.SHOW_RECEIVE_INVENTORY_DIALOG,
   })
 )
 
@@ -151,7 +148,7 @@ export const InventoryAdjustmentDialogForm = ({
       <Button
         color="primary"
         variant="contained"
-        disabled={!form.valid || form.submitting}
+        disabled={form.pristine || !form.valid || form.submitting}
         onClick={handleSubmit}
       >
         {intl.formatMessage(messages.submit)}
