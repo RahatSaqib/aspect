@@ -55,7 +55,7 @@ Test Outcome: {{issue.data.resultOutcome}}
 
 Reagent Lot: {{result.consumableLot}}`
 
-const messagePositiveResultReceived = `Positive Result Received on {{device.name}}, {{site.name}}`
+const messagePositiveResultReceived = `Positive Result Received from device '{{device.name}}'`
 
 async function getBaseIssues(auditFields) {
   // Issues

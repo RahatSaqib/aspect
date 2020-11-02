@@ -46,6 +46,19 @@ const canProceed = date => {
     new Date(date).getMonth() === currentMonth ? 80 : 60
   return _.random(0, 100) <= percentPositiveResultNotified
 }
+const getMessage = async (result, messageTemplate) => {
+  const { message } = await processUsingDataSourceQuery(
+    {
+      ...result,
+      messageTemplate,
+    },
+    ['messageTemplate'],
+    {
+      dynamic: true,
+    }
+  )
+  return message
+}
 
 async function seed(knex) {
   const { partnerId, userId, personId } = await knex('User as u')
@@ -218,13 +231,6 @@ async function seed(knex) {
     let smsMessageId
 
     if (canProceed(date)) {
-      const { message } = await processUsingDataSourceQuery(
-        { ...r, messageTemplate: alertTemplate.message },
-        ['messageTemplate'],
-        {
-          dynamic: true,
-        }
-      )
       ;[{ id: alertMessageId }] = [
         await upsertSingle(
           knex,
@@ -232,7 +238,7 @@ async function seed(knex) {
           ['alertTemplateId', ...sharedWhere],
           {
             alertTemplateId: alertTemplate.id,
-            message,
+            message: await getMessage(r, alertTemplate.message),
             ...sharedMessageProperties,
           }
         ),
@@ -247,9 +253,9 @@ async function seed(knex) {
           ['emailTemplateId', ...sharedWhere],
           {
             emailTemplateId: emailTemplate.id,
-            subject: 'Positive Result',
-            body: 'Positive Result',
-            htmlBody: 'Positive Result',
+            subject: await getMessage(r, smsTemplate.subject),
+            body: await getMessage(r, smsTemplate.body),
+            htmlBody: await getMessage(r, smsTemplate.htmlBody),
             ...sharedMessageProperties,
           }
         ),
@@ -257,13 +263,6 @@ async function seed(knex) {
     }
 
     if (canProceed(date)) {
-      const { message } = await processUsingDataSourceQuery(
-        { ...r, messageTemplate: smsTemplate.message },
-        ['messageTemplate'],
-        {
-          dynamic: true,
-        }
-      )
       ;[{ id: smsMessageId }] = [
         await upsertSingle(
           knex,
@@ -271,7 +270,7 @@ async function seed(knex) {
           ['smsTemplateId', ...sharedWhere],
           {
             smsTemplateId: smsTemplate.id,
-            message,
+            message: await getMessage(r, smsTemplate.message),
             ...sharedMessageProperties,
           }
         ),
