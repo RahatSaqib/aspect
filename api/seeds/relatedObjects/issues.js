@@ -3,10 +3,57 @@ const {
   allMessageSeverityToId,
 } = require('../../src/shared/dictionary')
 
-const msgInstrumentReplaced = `{{device.name}}: 
-  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to 
+const msgInstrumentReplaced = `{{device.name}}:
+  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
+const regexBreakline = /\n+/gm
+const errorIssueAlertModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}`
+
+const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}
+
+  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+  Country: {{country.name}}
+
+  Lab contacts: {{site.contacts}}
+
+  Instrument Serial: {{result.instrumentSerial}}
+
+  Software Version: {{result.softwareVersion}}
+
+  Cartridge Type: {{result.assay.name}}
+
+  Sender User: {{result.senderOperator}}
+
+  Test Outcome: {{issue.data.resultOutcome}}
+
+  Module Serial: {{result.moduleSerial}}
+
+  Module Slot: {{result.moduleName}} `
+
+const errorIssueAlertLot =
+  ' ({{result.errorCode}}) on lot ({{result.consumableLot}}) at {{site.name}}'
+
+const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}}
+
+Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
+
+Country: {{country.name}}
+
+Lab contacts: {{site.contacts}}
+
+Instrument Serial: {{result.moduleSerial}}
+
+Software Version: {{result.softwareVersion}}
+
+Cartridge Type: {{result.assay.name}}
+
+Sender User: {{result.senderOperator}}
+
+Test Outcome: {{issue.data.resultOutcome}}
+
+Reagent Lot: {{result.consumableLot}}`
 
 async function getBaseIssues(auditFields) {
   // Issues
@@ -494,6 +541,316 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
+
+    TooManyInvalidResultsModule: {
+      issueType: {
+        name: 'Too Many Invalid Results On Module',
+        externalId: 'TooManyInvalidResultsModule',
+        i18nKey: 'issueStatusTooManyInvalidResultsModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Too Many Invalid Results${errorIssueAlertModule.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        body: `Too Many Invalid Results${errorIssueEmailModule
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailModule
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')
+          .replace(regexBreakline, '<br/>')}`,
+
+        ...auditFields,
+      },
+    },
+    TooManyInvalidResultsLot: {
+      issueType: {
+        name: 'Too Many Invalid Results On Lot',
+        externalId: 'TooManyInvalidResultsLot',
+        i18nKey: 'issueStatusTooManyInvalidResultsLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Too Many Invalid Results${errorIssueAlertLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        body: `Too Many Invalid Results${errorIssueEmailLot.replace(
+          '({{result.errorCode}})',
+          ''
+        )}`,
+        htmlBody: `Too Many Invalid Results${errorIssueEmailLot
+          .replace('({{result.errorCode}})', '')
+          .replace('{{result.errorCode}} errors', 'Invalid results')
+          .replace(regexBreakline, '<br/>')}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooLowModule: {
+      issueType: {
+        name: 'Probe Check Too Low On Module',
+        externalId: 'ProbeCheckTooLowModule',
+        i18nKey: 'issueStatusProbeCheckTooLowModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too Low${errorIssueAlertModule}`,
+        body: `Probe Check Too Low${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Too Low${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooLowLot: {
+      issueType: {
+        name: 'Probe Check Too Low On Lot',
+        externalId: 'ProbeCheckTooLowLot',
+        i18nKey: 'issueStatusProbesTooLow',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too Low${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too Low${errorIssueAlertLot}`,
+        body: `Probe Check Too Low${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Too Low${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighModule: {
+      issueType: {
+        name: 'Probe Check Too High On Module',
+        externalId: 'ProbeCheckTooHighModule',
+        i18nKey: 'issueStatusProbeCheckTooHighModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too High${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too High${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too High${errorIssueAlertModule}`,
+        body: `Probe Check Too High${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Too High${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighLot: {
+      issueType: {
+        name: 'Probe Check Too High On Lot',
+        externalId: 'ProbeCheckTooHighLot',
+        i18nKey: 'issueStatusProbesTooHigh',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Too High${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Too High${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Too High${errorIssueAlertLot}`,
+        body: `Probe Check Too High${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Too High${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Module',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey:
+          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
+        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule}`,
+        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Lot',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
+        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot}`,
+        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    ProbeCheckFailedModule: {
+      issueType: {
+        name: 'Probe Check Failed On Module',
+        externalId: 'ProbeCheckFailedModule',
+        i18nKey: 'issueStatusProbeCheckFailedModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Failed${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Failed${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Failed${errorIssueAlertModule}`,
+        body: `Probe Check Failed${errorIssueEmailModule}`,
+        htmlBody: `Probe Check Failed${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    ProbeCheckFailedLot: {
+      issueType: {
+        name: 'Probe Check Failed On Lot',
+        externalId: 'ProbeCheckFailedLot',
+        i18nKey: 'issueStatusProbeCheckFailedLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Probe Check Failed${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Probe Check Failed${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Probe Check Failed${errorIssueAlertLot}`,
+        body: `Probe Check Failed${errorIssueEmailLot}`,
+        htmlBody: `Probe Check Failed${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
     InventoryStockExpiring: {
       issueType: {
         name: 'Inventory Stock Expiring',
@@ -536,6 +893,63 @@ async function getBaseIssues(auditFields) {
         subject: 'Instrument has been replaced',
         body: msgInstrumentReplaced,
         htmlBody: msgInstrumentReplaced,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveModule: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Module',
+        externalId: 'SignalLossDetectedInAmplificationCurveModule',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
+        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule}`,
+        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveLot: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Lot',
+        externalId: 'SignalLossDetectedInAmplificationCurveLot',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
+        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot}`,
+        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
       },
     },
   }

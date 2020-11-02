@@ -32,7 +32,7 @@ const {
   dispatchAndWaitForAction,
 } = require('../../utils/mqUtils')
 
-describe('Myanmar Issue endpoints', () => {
+describe.skip('Myanmar Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }

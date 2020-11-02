@@ -19,7 +19,6 @@ import {
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
-import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 import { fetchReports, getReportFile } from '../ReportRedux'
 
 const cssClasses = classnames.bind(require('./ReportIndex.css'))
@@ -30,7 +29,6 @@ const messages = defineMessages({
     defaultMessage: 'Reports',
   },
 })
-const token = getAspectAccess()
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },

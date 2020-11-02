@@ -7,15 +7,15 @@ const { knex } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
-const getClinicianAccessToken = () =>
-  server
-    .post('/api/auth')
-    .send({
-      name: 'clinician',
-      password: 'test07',
-      clientName: 'Mocha web',
-    })
-    .then(res => res.body.access)
+const getClinicianAccessToken = async () => {
+  const res = await server.post('/api/auth').send({
+    name: 'clinician',
+    password: 'test07',
+    clientName: 'Mocha web',
+  })
+  return res.body.access
+}
+
 describe('Result download routes', () => {
   const path = '/api/result/download'
 
@@ -115,7 +115,7 @@ describe('Result download routes', () => {
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res)
 
-      await waitForApproximately(2, 'seconds')
+      await waitForApproximately(3, 'seconds')
 
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')

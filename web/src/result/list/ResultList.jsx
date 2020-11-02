@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import without from 'lodash/without'
@@ -323,10 +323,10 @@ const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      const { data: list, total: totalItems, extraColumns } = data
+      const { data: list, total: totalItems } = data
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems, extraColumns))
+      setTable(receiveTableItems(table, totalItems))
       setColumns(
         getBaseColumns(intl).concat(
           table.extraColumns.map(column => ({
@@ -341,6 +341,7 @@ const ResultList = () => {
         )
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   useEffect(() => {
@@ -360,6 +361,7 @@ const ResultList = () => {
 
     const sortPage = makeSortPageSelector({
       sortCol: 'endedOn',
+      sortDir: 'desc',
     })
     const urlSearchParams = new URLSearchParams(location.search)
     const urlFilters = urlSearchParams.get('filters')
@@ -368,6 +370,7 @@ const ResultList = () => {
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setFilters(fromPairs([...urlFilters.entries()]))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   // >>>>>> Callbacks <<<<<<

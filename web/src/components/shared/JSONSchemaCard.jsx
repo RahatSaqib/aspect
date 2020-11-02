@@ -7,14 +7,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
-import classnames from 'classnames/bind'
 
 // Our own imports
 import { Unit } from '../pureGrids'
-
-const cssClasses = classnames.bind(
-  require('./expansionPanel/ExpansionPanel.css')
-)
 
 export const PropertiesSchemaCard = compose(
   pure,
