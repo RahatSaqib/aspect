@@ -18,26 +18,24 @@ describe('Task Routes', () => {
         const date = new Date().toISOString()
         const statusId = 3
 
-        await server
+        const res = await server
           .get(
             `${path}?alertTemplateId=${alertTemplateId}&date=${date}&categoryId=${statusId}`
           )
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.isNotNull(res.body.data)
-            assert.isAbove(res.body.data.length, 1)
+        assert.isNotNull(res.body.data)
+        assert.isAbove(res.body.data.length, 1)
 
-            assert.typeOf(res.body.data, 'Array')
-            assert.property(res.body.data[0], 'issueStatus')
-            assert.property(res.body.data[0], 'issueCategory')
-            assert.property(res.body.data[0], 'message')
-            assert.property(res.body.data[0], 'site')
-            assert.property(res.body.data[0], 'time')
-            assert.property(res.body.data[0], 'id')
-            assert.property(res.body, 'total')
-            assert.property(res.body, 'countByAlert')
-            assert.typeOf(res.body.countByAlert, 'Object')
-          })
+        assert.typeOf(res.body.data, 'Array')
+        assert.property(res.body.data[0], 'issueStatus')
+        assert.property(res.body.data[0], 'issueCategory')
+        assert.property(res.body.data[0], 'message')
+        assert.property(res.body.data[0], 'site')
+        assert.property(res.body.data[0], 'time')
+        assert.property(res.body.data[0], 'id')
+        assert.property(res.body, 'total')
+        assert.property(res.body, 'countByAlert')
+        assert.typeOf(res.body.countByAlert, 'Object')
       })
     })
   })
@@ -45,62 +43,58 @@ describe('Task Routes', () => {
   describe('/task/{taskId}', () => {
     const path = '/api/task/'
     describe('GET', () => {
-      it('should return an alert and issues by specific id', done => {
+      it('should return an alert and issues by specific id', async () => {
         const taskId = context.getMessageId()
-        server
+        const res = await server
           .get(`${path}${taskId}`)
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.typeOf(res.body, 'object')
-            assert.isNotNull(res.body)
-            assert.property(res.body, 'issueStatus')
-            assert.property(res.body, 'title')
-            assert.property(res.body, 'issueCategory')
-            assert.property(res.body, 'message')
-            assert.property(res.body, 'device')
-            assert.property(res.body, 'deviceId')
-            assert.property(res.body, 'site')
-            assert.property(res.body, 'siteId')
-            assert.property(res.body, 'time')
-            assert.property(res.body, 'id')
-            assert.property(res.body, 'issueStatusId')
-            assert.property(res.body, 'issueStatus')
-            assert.property(res.body, 'personName')
-            assert.isNotNull(res.body.jobPersons)
-            assert.typeOf(res.body.jobPersons, 'array')
 
-            assert.isAbove(res.body.jobPersons.length, 0)
-            assert.property(res.body.jobPersons[0], 'personId')
-            assert.property(res.body.jobPersons[0], 'personName')
-            done()
-          })
+        assert.typeOf(res.body, 'object')
+        assert.isNotNull(res.body)
+        assert.property(res.body, 'issueStatus')
+        assert.property(res.body, 'title')
+        assert.property(res.body, 'issueCategory')
+        assert.property(res.body, 'message')
+        assert.property(res.body, 'device')
+        assert.property(res.body, 'deviceId')
+        assert.property(res.body, 'site')
+        assert.property(res.body, 'siteId')
+        assert.property(res.body, 'time')
+        assert.property(res.body, 'id')
+        assert.property(res.body, 'issueStatusId')
+        assert.property(res.body, 'issueStatus')
+        assert.property(res.body, 'personName')
+        assert.isNotNull(res.body.jobPersons)
+        assert.typeOf(res.body.jobPersons, 'array')
+
+        assert.isAbove(res.body.jobPersons.length, 0)
+        assert.property(res.body.jobPersons[0], 'personId')
+        assert.property(res.body.jobPersons[0], 'personName')
       })
     })
   })
   describe('/task', () => {
     const path = '/api/task'
     describe('GET', () => {
-      it('should return a list of alerts and issues grouped by days', done => {
-        server
+      it('should return a list of alerts and issues grouped by days', async () => {
+        const res = await server
           .get(`${path}?sortCol=time&sortDir=desc&page=0&size=10`)
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.isNotNull(res.body.data)
 
-            assert.isAbove(res.body.data.length, 0)
-            assert.typeOf(res.body.data, 'Array')
-            assert.property(res.body.data[0], 'issueStatus')
-            assert.property(res.body.data[0], 'issueCategory')
-            assert.property(res.body.data[0], 'message')
-            assert.property(res.body.data[0], 'site')
-            assert.property(res.body.data[0], 'time')
-            assert.property(res.body.data[0], 'issueCount')
-            assert.property(res.body.data[0], 'id')
-            assert.property(res.body, 'total')
-            assert.property(res.body, 'countByAlert')
-            assert.typeOf(res.body.countByAlert, 'Object')
-            done()
-          })
+        assert.isNotNull(res.body.data)
+
+        assert.isAbove(res.body.data.length, 0)
+        assert.typeOf(res.body.data, 'Array')
+        assert.property(res.body.data[0], 'issueStatus')
+        assert.property(res.body.data[0], 'issueCategory')
+        assert.property(res.body.data[0], 'message')
+        assert.property(res.body.data[0], 'site')
+        assert.property(res.body.data[0], 'time')
+        assert.property(res.body.data[0], 'issueCount')
+        assert.property(res.body.data[0], 'id')
+        assert.property(res.body, 'total')
+        assert.property(res.body, 'countByAlert')
+        assert.typeOf(res.body.countByAlert, 'Object')
       })
     })
   })

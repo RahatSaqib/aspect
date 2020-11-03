@@ -1,14 +1,13 @@
 require('dotenv-safe').config()
 
-const supertest = require('supertest')
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const shared = require('./sharedToken')
 const config = require('../../src/config')
 const { queuePurge } = require('./mqUtils')
 
-const serverUrl = 'http://localhost:8080'
-const server = supertest.agent(serverUrl)
+const server = require('./testUtils')
+
 let attemptsToConnect = 0
 const { assert } = chai
 chai.should()

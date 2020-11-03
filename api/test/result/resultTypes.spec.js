@@ -12,19 +12,18 @@ describe('Result type routes', () => {
     shared.checkToken(server, path)
 
     it('should return a list of result types when using valid token', async () => {
-      await server
+      const res = await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 5)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'name')
-          assert.property(res.body, 'total')
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAtLeast(res.body.data.length, 5)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'name')
+      assert.property(res.body, 'total')
     })
   })
 })
