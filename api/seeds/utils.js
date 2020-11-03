@@ -54,6 +54,7 @@ const uniqueKeys = {
     'level',
     'messageTypeId',
   ],
+  IssueEventTrigger: ['issueTypeId', 'partnerId', 'issueEventStatusId'],
   IssueResolutionTrigger: ['issueTypeId', 'partnerId'],
   IssueEscalationTrigger: ['issueTypeId', 'partnerId', 'escalateToLevel'],
   MessageType: [
@@ -767,7 +768,7 @@ async function seedIssueEventTriggersForPartner(
           await upsertSingle(
             knex,
             'IssueEventTrigger',
-            ['partnerId', 'issueTypeId', 'issueEventStatusId'],
+            uniqueKeys.IssueEventTrigger,
             {
               ...triggerData,
               triggerConditions: JSON.stringify(triggerConditions),
@@ -824,7 +825,7 @@ async function seedIssueEscalationTriggersForPartner(
           await upsertSingle(
             knex,
             'IssueEscalationTrigger',
-            ['partnerId', 'issueTypeId', 'escalateToLevel'],
+            uniqueKeys.IssueEscalationTrigger,
             {
               ...triggerData,
               escalationConditions: JSON.stringify(escalationConditions),
