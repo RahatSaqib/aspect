@@ -27,7 +27,7 @@ import DeviceDetail from '../../MigratedComponents/Devices/Detail/DeviceDetail'
 import DeviceApiKeyList from '../../deviceApiKey/list/DeviceApiKeyList'
 import CaseList from '../../case/list/CaseList'
 import SiteList from '../../site/list/SiteList'
-import SiteDetail from '../../site/detail/SiteDetail'
+import SiteDetail from '../../MigratedComponents/Sites/Detail/SiteDetail'
 import PersonList from '../../person/list/PersonList'
 import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
@@ -151,7 +151,7 @@ const renderReporterList = loggedInFactory(ReporterList)
 const renderResultList = loggedInFactory(ResultList)
 const renderResultDetail = loggedInFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
-const renderSiteDetail = loggedInDetailFactory(SiteDetail)
+const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)

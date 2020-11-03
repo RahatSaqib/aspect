@@ -12,11 +12,11 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 // Our own imports
-import TimezoneSelect from '../../../components/shared/TimezoneSelect'
-import LocationSelector from '../../../components/shared/LocationSelector'
-import ConnectedTagInput from '../../../tag/ConnectedTagInput'
-import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
-import AspectButton from '../../../components/shared/AspectButton'
+import TimezoneSelect from '../../../../components/shared/TimezoneSelect'
+import LocationSelector from '../../../../components/shared/LocationSelector'
+import ConnectedTagInput from '../../../../tag/ConnectedTagInput'
+import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
+import AspectButton from '../../../../components/shared/AspectButton'
 
 import messages from '../messages'
 

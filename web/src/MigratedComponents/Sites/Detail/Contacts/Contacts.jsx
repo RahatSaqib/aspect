@@ -8,11 +8,11 @@ import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 // Our own imports
 import ContactsTag from './ContactTags'
 import messages from '../messages'
-import { Unit } from '../../../components/pureGrids'
-import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
+import { Unit } from '../../../../components/pureGrids'
+import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 
 const cssClasses = classnames.bind(
-  require('../../../globals/components/Summary.css')
+  require('../../../../globals/components/Summary.css')
 )
 
 const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
