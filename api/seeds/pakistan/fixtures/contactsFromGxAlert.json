@@ -182,9 +182,6 @@
   },
   {
     "personName": "Fahad Waseem",
-    "jobFunctions": [
-      ""
-    ],
     "username": "fahad.waseem@ihsinformatics.com",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
@@ -194,9 +191,6 @@
   },
   {
     "personName": "Dr Thair Yakub",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "thairyakub@uvas.edu.pk",
     "personCell": "+923006950418",
     "timezone": "Pakistan Standard Time",
@@ -221,9 +215,6 @@
   },
   {
     "personName": "Saqib Amjad",
-    "jobFunctions": [
-      ""
-    ],
     "username": "saqib.amjad@ihsinformatics.com",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
@@ -360,9 +351,6 @@
   },
   {
     "personName": "Syed Arif",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "arifhassan338@gmail.com",
     "personCell": "+923134259947",
     "timezone": "Pakistan Standard Time",
@@ -911,9 +899,6 @@
   {
     "personName": "DR AFSAR KHAN",
     "personTitle": "Lab Contact",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "afsarafridik@yahoo.com",
     "personCell": "+923339397861",
     "timezone": "Pakistan Standard Time",
@@ -1263,9 +1248,6 @@
   },
   {
     "personName": "Syed Naveed Hussain shad",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "nvdmze95@yahoo.com",
     "personCell": "+923449539579",
     "timezone": "Pakistan Standard Time",
@@ -1352,9 +1334,6 @@
   },
   {
     "personName": "Khalil Ahmad",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "khalil3221@yahoo.com",
     "personCell": "+923225133459",
     "timezone": "Pakistan Standard Time",
@@ -1406,9 +1385,6 @@
   },
   {
     "personName": "SABIR SAGHIR",
-    "jobFunctions": [
-      ""
-    ],
     "personCell": "+923452530995",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
@@ -1568,9 +1544,6 @@
   },
   {
     "personName": "Dr Thair Yakub",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "thairyakub@uvas.edu.pk",
     "personCell": "+923006950418",
     "timezone": "Pakistan Standard Time",
@@ -2097,9 +2070,6 @@
   },
   {
     "personName": "Muhammad Siddique",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "siddique.labs@gmail.com",
     "personCell": "+923007818064",
     "timezone": "Pakistan Standard Time",
@@ -2706,9 +2676,6 @@
   {
     "personName": "Yawar Ali",
     "personTitle": "Lab Contact",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "yawaralipk@gmail.com",
     "personCell": "+923142080110",
     "timezone": "Pakistan Standard Time",
@@ -3053,9 +3020,6 @@
   },
   {
     "personName": "WAHEEDULLAH",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "waheedsb15@gmail.com",
     "personCell": "+923331582008",
     "timezone": "Pakistan Standard Time",
@@ -3336,9 +3300,6 @@
   {
     "personName": "Waheed",
     "personTitle": "Lab Technician",
-    "jobFunctions": [
-      ""
-    ],
     "personCell": "+92333-5545995",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
@@ -5254,9 +5215,6 @@
   },
   {
     "personName": "Mujahid",
-    "jobFunctions": [
-      ""
-    ],
     "personCell": "+92 300-7393214",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
@@ -5887,9 +5845,6 @@
   },
   {
     "personName": "Abdull Shakoor",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "umermumer786@yahoo.com",
     "personCell": "+923326250581",
     "timezone": "Pakistan Standard Time",
@@ -5919,9 +5874,6 @@
   },
   {
     "personName": "Muhammad Rafiq Bhatti",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "mrafiqbhatti@hotmail.com",
     "personCell": "+923023819479",
     "timezone": "Pakistan Standard Time",
@@ -7508,9 +7460,6 @@
   },
   {
     "personName": "Muhammad Amir",
-    "jobFunctions": [
-      ""
-    ],
     "personEmailAddress": "amirrrkhans@gmail.com",
     "personCell": "+923325398194",
     "timezone": "Pakistan Standard Time",
@@ -8089,9 +8038,6 @@
   },
   {
     "personName": "Nasir Mahmood",
-    "jobFunctions": [
-      ""
-    ],
     "personCell": "+92 3455776497",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
@@ -8394,9 +8340,6 @@
   },
   {
     "personName": "Ashiq Hussain",
-    "jobFunctions": [
-      ""
-    ],
     "personCell": "+92 3002083950",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
@@ -9490,9 +9433,6 @@
   },
   {
     "personName": "Mahmood Hussain*",
-    "jobFunctions": [
-      ""
-    ],
     "personCell": "+92 3054293144",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
