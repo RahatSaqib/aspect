@@ -65,11 +65,6 @@ const uniqueKeys = {
     'webhookTemplateId',
   ],
   IssueType: ['externalId'],
-  AlertTemplate: ['message'],
-  SmsTemplate: ['message'],
-  EmailTemplate: ['subject', 'body'],
-  WebhookTemplate: ['method', 'url'],
-  PushNotificationTemplate: ['title', 'body'],
 }
 
 const foreignKeys = {

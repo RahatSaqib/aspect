@@ -7,8 +7,6 @@ const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
   seedIssueEventTriggersForPartner,
   seedIssueEscalationTriggersForPartner,
-  upsertSingle,
-  uniqueKeys,
 } = require('../utils')
 const {
   generateResults,
@@ -26,28 +24,12 @@ const {
 } = require('../../src/shared/dictionary')
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-
-const positiveResultCategories = [
-  'Detected',
-  'Trace Detected',
-  'MoreThan40',
-  'MoreThan150',
-  'MoreThan550',
-  'MoreThan1000',
-  'Resistant',
-  'Positive1',
-  'Positive2',
-  'Positive3',
-  'Scanty',
-  'PositiveMOTT',
-  'PositiveMTB',
-  'Positive',
-]
+const getPositiveCategoriesExternalIds = require('../../src/resultCategory/service')
 
 const currentMonth = new Date().getMonth()
 const canProceed = date => {
   const percentPositiveResultNotified =
-    new Date(date).getMonth() === currentMonth ? 75 : 60
+    new Date(date).getMonth() === currentMonth ? 40 : 30
   return _.random(0, 100) <= percentPositiveResultNotified
 }
 const getMessage = async (result, messageTemplate) => {
@@ -65,10 +47,10 @@ const getMessage = async (result, messageTemplate) => {
 }
 
 async function seed(knex) {
-  const { partnerId, userId, personId } = await knex('User as u')
+  const { partnerId, userId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
     .where({ 'u.name': 'admin' })
-    .first('p.lastPartnerId as partnerId', 'p.userId', 'p.id as personId')
+    .first('p.lastPartnerId as partnerId', 'p.userId')
 
   const messageStatuses = await allMessageStatusToId()
   const issueStatuses = await allIssueStatusToId()
@@ -86,6 +68,7 @@ async function seed(knex) {
   const issueTypeId = issueTypes.ResultReceived
   await seedIssueTypeForMtb(knex, 'ResultReceived', { partnerId, userId })
 
+  // add 100 records to have more positive results
   const results = await generateResults(
     knex,
     userId,
@@ -94,8 +77,7 @@ async function seed(knex) {
     errorCodes,
     'US',
     true,
-    300, // resultMtbNumber = 20,
-    100 // resultHivVlNumber = 20,
+    100 // resultMtbNumber
   )
   // generate random treatment
   await normalizeTreatmentStatusDistributionByResults(knex, results)
@@ -114,6 +96,14 @@ async function seed(knex) {
       messageTypeId,
     })
     .first()
+
+  const persons = await knex('NotificationType as nt')
+    .join('Job as j', 'nt.jobFunctionId', 'j.jobFunctionId')
+    .join('Person as p', 'j.personId', 'p.Id')
+    .where('nt.partnerId', partnerId)
+    .where('nt.issueTypeId', issueTypeId)
+    .where('nt.messageTypeId', messageTypeId)
+    .select('p.id as personId', 'p.name as personName')
 
   // get all positive results for last 2 months and randomly 'send' email/sms
   // Notice that here we use same query as sub-query for widget 'Positive Results Notified' (externalId: 'gxPositiveResultsNotified') but
@@ -148,7 +138,7 @@ async function seed(knex) {
     })
     .leftOuterJoin('Job as job', 'nt.jobFunctionId', 'job.jobFunctionId')
     .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
-    .whereIn('rc.externalid', positiveResultCategories)
+    .whereIn('rc.externalid', getPositiveCategoriesExternalIds())
     .whereRaw(
       `
       (
@@ -188,96 +178,77 @@ async function seed(knex) {
       'dt.externalId as deviceType'
     )
 
-  await Promise.each(positiveResults, async r => {
-    const date = r.endedOn
+  await Promise.each(positiveResults, async result => {
+    const date = result.endedOn
     let issueId
-    if (!r.issueId) {
+    if (!result.issueId) {
       // if result doesn't have an Issue defined - insert issue with
       // issue type 'PositiveResultReceived' and status 'Active'
       ;[issueId] = await knex('Issue').insert({
         issueTypeId,
         issueStatusId: issueStatuses.Active,
-        deviceId: r.deviceId,
-        siteId: r.siteId,
-        geographyId: r.geographyId,
-        resultId: r.resultId, // <-- important
+        deviceId: result.deviceId,
+        siteId: result.siteId,
+        geographyId: result.geographyId,
+        resultId: result.resultId, // <-- important
         createdOn: date,
         updatedOn: date,
-        consumableId: consumableByAssay[r.assayId],
+        consumableId: consumableByAssay[result.assayId],
         level: 1,
         partnerId,
       })
     }
 
-    const sharedMessageProperties = {
-      messageStatusId: messageStatuses.Sent,
-      personId,
-      siteId: r.siteId,
-      deviceId: r.deviceId,
-      resultId: r.resultId,
-      createdOn: date,
-      updatedOn: date,
-    }
-    const sharedWhere = ['personId', 'siteId', 'deviceId', 'resultId']
+    await Promise.each(persons, async ({ personId, personName }) => {
+      if (!canProceed(date)) {
+        return
+      }
 
-    let alertMessageId
-    let emailMessageId
-    let smsMessageId
+      const resultData = { ...result, personName }
+      const sharedMessageProperties = {
+        messageStatusId: messageStatuses.Sent,
+        personId,
+        siteId: result.siteId,
+        deviceId: result.deviceId,
+        resultId: result.resultId,
+        createdOn: date,
+        updatedOn: date,
+      }
+      // const sharedWhere = ['personId', 'siteId', 'deviceId', 'resultId']
 
-    if (alertTemplate && canProceed(date)) {
-      ;[{ id: alertMessageId }] = [
-        await upsertSingle(
-          knex,
-          'AlertMessage',
-          ['alertTemplateId', ...sharedWhere],
-          {
-            alertTemplateId: alertTemplate.id,
-            message: await getMessage(r, alertTemplate.message),
-            ...sharedMessageProperties,
-          }
-        ),
-      ]
-    }
+      let alertMessageId
+      let emailMessageId
+      let smsMessageId
 
-    if (emailTemplate && canProceed(date)) {
-      ;[{ id: emailMessageId }] = [
-        await upsertSingle(
-          knex,
-          'EmailMessage',
-          ['emailTemplateId', ...sharedWhere],
-          {
-            emailTemplateId: emailTemplate.id,
-            subject: await getMessage(r, smsTemplate.subject),
-            body: await getMessage(r, smsTemplate.body),
-            htmlBody: await getMessage(r, smsTemplate.htmlBody),
-            ...sharedMessageProperties,
-          }
-        ),
-      ]
-    }
+      if (alertTemplate) {
+        ;[alertMessageId] = await knex('AlertMessage').insert({
+          alertTemplateId: alertTemplate.id,
+          message: await getMessage(resultData, alertTemplate.message),
+          ...sharedMessageProperties,
+        })
+      }
 
-    if (smsTemplate && canProceed(date)) {
-      ;[{ id: smsMessageId }] = [
-        await upsertSingle(
-          knex,
-          'SmsMessage',
-          ['smsTemplateId', ...sharedWhere],
-          {
-            smsTemplateId: smsTemplate.id,
-            message: await getMessage(r, smsTemplate.message),
-            ...sharedMessageProperties,
-          }
-        ),
-      ]
-    }
+      if (emailTemplate) {
+        ;[emailMessageId] = await knex('EmailMessage').insert({
+          emailTemplateId: emailTemplate.id,
+          subject: await getMessage(resultData, smsTemplate.subject),
+          body: await getMessage(resultData, smsTemplate.body),
+          htmlBody: await getMessage(resultData, smsTemplate.htmlBody),
+          ...sharedMessageProperties,
+        })
+      }
 
-    // if at least one message defined - add a Notification
-    if (alertMessageId || emailMessageId || smsMessageId) {
-      await upsertSingle(
-        knex,
-        'Notification',
-        ['notificationTypeId', 'issueId', 'personId'],
-        {
+      if (smsTemplate) {
+        ;[smsMessageId] = await knex('SmsMessage').insert({
+          smsTemplateId: smsTemplate.id,
+          message: await getMessage(resultData, smsTemplate.message),
+          ...sharedMessageProperties,
+        })
+      }
+
+      // if at least one message defined - add a Notification
+      if (alertMessageId || emailMessageId || smsMessageId) {
+        await knex('Notification').insert({
           notificationTypeId,
           issueId,
           personId,
@@ -285,9 +256,9 @@ async function seed(knex) {
           emailMessageId,
           smsMessageId,
           createdOn: date,
-        }
-      )
-    }
+        })
+      }
+    })
   })
 }
 
@@ -334,12 +305,6 @@ async function seedIssueTypeForMtb(
     updatedBy: userId,
   }
 
-  // -----------------
-  // local helpers
-  const upsert = async (tableName, data) =>
-    upsertSingle(knex, tableName, uniqueKeys[tableName], data)
-  // -----------------
-
   // seed the issue type itself
   await addIssueTypes(knex, partnerId, userId, [issueTypeExternalId])
 
@@ -363,18 +328,18 @@ async function seedIssueTypeForMtb(
   // Result 1 positive only via email.
   const result1PositiveMessage =
     'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
-  const { id: result1PositiveEmailTemplateId } = await upsert('EmailTemplate', {
+  const [result1PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
     subject: 'MTB+ Result',
     body: result1PositiveMessage,
     htmlBody: result1PositiveMessage.replace('\n', '<br/>'),
     ...auditFields,
   })
-  const { id: resul1PositiveMessageTypeId } = await upsert('MessageType', {
+  const [resul1PositiveMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId,
     emailTemplateId: result1PositiveEmailTemplateId,
   })
 
-  await upsert('NotificationType', {
+  await knex('NotificationType').insert({
     partnerId,
     issueTypeId,
     jobFunctionId,
@@ -389,18 +354,18 @@ async function seedIssueTypeForMtb(
   // If 1 and 2 positive, email and sms
   const result2PositiveMessage =
     'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected, RIF Resistance Detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
-  const { id: result2PositiveEmailTemplateId } = await upsert('EmailTemplate', {
+  const [result2PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
     subject: 'MTB+ RIF+ Result',
     body: result2PositiveMessage,
     htmlBody: result2PositiveMessage.replace('\n', '<br/>'),
     ...auditFields,
   })
-  const { id: result2PositiveSmsTemplateId } = await upsert('SmsTemplate', {
+  const [result2PositiveSmsTemplateId] = await knex('SmsTemplate').insert({
     message: result2PositiveMessage,
     ...auditFields,
   })
 
-  const { id: resul2PositiveMessageTypeId } = await upsert('MessageType', {
+  const [resul2PositiveMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId,
     emailTemplateId: result2PositiveEmailTemplateId,
     smsTemplateId: result2PositiveSmsTemplateId,
@@ -410,7 +375,7 @@ async function seedIssueTypeForMtb(
     .where('id', issueTypeId)
     .update({ defaultMessageTypeId: resul2PositiveMessageTypeId })
 
-  await upsert('NotificationType', {
+  await knex('NotificationType').insert({
     partnerId,
     issueTypeId,
     jobFunctionId,
