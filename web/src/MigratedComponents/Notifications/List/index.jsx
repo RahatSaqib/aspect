@@ -6,7 +6,7 @@ import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
 import AspectTable from '../../AspectTable'
 
-import { mockDatafetch } from '../../Table/Helpers'
+import { mockDatafetch } from '../../AspectTable/Helpers'
 import baseConfig from './config'
 
 function NotificationList() {
@@ -16,7 +16,7 @@ function NotificationList() {
 
   const { isError, error } = useQuery(
     'mockTableData',
-    async () => mockDatafetch(230),
+    async () => mockDatafetch(86),
     {
       onSuccess: ({ data }) => setData(data),
     }

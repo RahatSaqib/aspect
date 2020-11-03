@@ -9,6 +9,21 @@ import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
 
+const mockedDataNames = [
+  'Amherst',
+  'Atlanta',
+  'Beaverton',
+  'Boston',
+  'Carter',
+  'Clearwater',
+  'Deerfield',
+  'Exeter',
+  'Lowell',
+  'Selma',
+  'Warren',
+  'Winston',
+]
+
 function mockDatafetch(cnt = 10) {
   const data = []
   times(cnt, index => {
@@ -17,7 +32,7 @@ function mockDatafetch(cnt = 10) {
 
     data.push({
       id: index,
-      name: `Notification trigger ${index}`,
+      name: `Notification trigger ${mockedDataNames[random(0, 11)]}`,
       totalTriggers: triggerRandom,
       alertCount: triggerRandom,
       contactsCount: contactRandom,
