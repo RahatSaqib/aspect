@@ -1,20 +1,13 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const _ = require('lodash')
-
 const jobFunctions = require('./fixtures/jobFunctions.json')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const geographyFromGxAlert = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
-const labClinic = require('./fixtures/labClinic.json')
 const partnerData = require('./fixtures/partnerData.json')
 const dashboardWidget = require('./fixtures/dashboardWidget')
-const {
-  baseGxAlertMigration,
-  seedLabClinicFixture,
-  upsertDashboardWidgets,
-} = require('../common')
+const { baseGxAlertMigration, upsertDashboardWidgets } = require('../common')
 
 const {
   partnerName,
@@ -25,7 +18,7 @@ const {
 } = partnerData
 
 async function seed(knex) {
-  const migrationSeededData = await baseGxAlertMigration(
+  await baseGxAlertMigration(
     {
       admin: {
         name: adminUserName,
@@ -44,17 +37,6 @@ async function seed(knex) {
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },
-    knex
-  )
-
-  await seedLabClinicFixture(
-    labClinic,
-    _.pick(migrationSeededData, [
-      'adminId',
-      'partnerId',
-      'countryId',
-      'statesByName',
-    ]),
     knex
   )
 

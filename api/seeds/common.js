@@ -446,12 +446,6 @@ async function upsertJobFunctionPermission(
   return knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
 
-async function upsertJobFunctionsFromJson(knex, jobFunctions, partnerId) {
-  await Promise.each(jobFunctions, async jf =>
-    upsertJobFunction(knex, jf.name, partnerId, jf.permissions)
-  )
-}
-
 async function upsertGxAlertDevice(
   knex,
   countryId,
@@ -1544,129 +1538,134 @@ async function baseGxAlertMigration(
     )
 
   // -------------------------------------
-  // Contacts & User Accounts from GxAlert
+  // Contacts & User Accounts from GxAlert (filtering users without jobFunctions)
   // -------------------------------------
-  await Promise.each(contactsFromGxAlert, async person => {
-    let userId = null
-    if (person.username) {
-      const existingUser = await knex('User')
-        .where('name', person.username)
-        .first('id')
-      if (existingUser) {
-        userId = existingUser.id
-      } else {
-        const pw = bcrypt.hashSync(
-          person.password || 'WelcomeToAspect',
-          saltRounds
-        )
-        const baseUserData = {
-          password: pw,
-          failedPasswordAttempts: 0,
-          legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
-          lockedOut: 0,
+  await Promise.each(
+    _.filter(
+      contactsFromGxAlert,
+      gxAlertContact => !_.isEmpty(gxAlertContact.jobFunctions)
+    ),
+    async person => {
+      let userId = null
+      if (person.username) {
+        const existingUser = await knex('User')
+          .where('name', person.username)
+          .first('id')
+        if (existingUser) {
+          userId = existingUser.id
+        } else {
+          const pw = bcrypt.hashSync(
+            person.password || 'WelcomeToAspect',
+            saltRounds
+          )
+          const baseUserData = {
+            password: pw,
+            failedPasswordAttempts: 0,
+            legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
+            lockedOut: 0,
+          }
+          ;[userId] = await knex('User').insert({
+            name: person.username,
+            approved: 1,
+            createdOn: now,
+            ...baseUserData,
+          })
         }
-        ;[userId] = await knex('User').insert({
-          name: person.username,
-          approved: 1,
-          createdOn: now,
-          ...baseUserData,
+      }
+      const state =
+        !_.isEmpty(person.geographies) && person.geographies[0].stateName
+          ? statesByName[person.geographies[0].stateName.toLowerCase()] || {
+              id: null,
+              lgas: {},
+            }
+          : {
+              id: null,
+              lgas: {},
+            }
+      const lga =
+        state.lgas &&
+        !_.isEmpty(person.geographies) &&
+        person.geographies[0].lgaName
+          ? state.lgas[person.geographies[0].lgaName.toLowerCase()] || {
+              id: null,
+            }
+          : {
+              id: null,
+            }
+      const { id: geographyId } = !_.isEmpty(person.geographies)
+        ? await knex('Geography')
+            .where({
+              countryId,
+              stateId: state.id,
+              lgaId: lga.id,
+            })
+            .first()
+        : { id: countryGeography.id }
+      let personId = null
+      const existingPerson = await knex('Person')
+        .where('userId', userId || -1)
+        .orWhere(function () {
+          this.where('name', person.personName)
+          if (person.personEmailAddress) {
+            this.andWhere('email', person.personEmailAddress)
+          }
+        })
+        .first()
+      if (existingPerson) {
+        if (
+          existingPerson.name !== person.personName ||
+          existingPerson.partnerId !== partnerId ||
+          existingPerson.timezone !== person.timezone ||
+          existingPerson.title !== person.title ||
+          existingPerson.geographyId !== geographyId ||
+          existingPerson.email !== person.personEmailAddress ||
+          existingPerson.cell !== person.personCell ||
+          existingPerson.phone !== person.personPhone ||
+          existingPerson.hidePatientId !== person.hidePatientId ||
+          existingPerson.hideSampleId !== person.hideSampleId ||
+          existingPerson.hideNotes !== person.hideNotes
+        ) {
+          await knex('Person')
+            .where('id', existingPerson.id)
+            .update({
+              ...existingPerson,
+              name: person.personName,
+              partnerId,
+              timezone: person.timezone,
+              title: person.title,
+              geographyId,
+              email: person.personEmailAddress,
+              cell: person.personCell,
+              phone: person.personPhone,
+              hidePatientId: person.hidePatientId,
+              hideSampleId: person.hideSampleId,
+              hideNotes: person.hideNotes,
+              updatedOn: now,
+              updatedBy: adminId,
+            })
+        }
+        personId = existingPerson.id
+      } else {
+        ;[personId] = await knex('Person').insert({
+          name: person.personName,
+          partnerId,
+          timezone: person.timezone || countries[0].timezone,
+          geographyId,
+          title: person.title,
+          email: person.personEmailAddress,
+          cell: person.personCell,
+          phone: person.personPhone,
+          userId,
+          lastPartnerId: partnerId,
+          lastCountryId: countryId,
+          hidePatientId: person.hidePatientId,
+          hideSampleId: person.hideSampleId,
+          hideNotes: person.hideNotes,
+          culture: 'en',
+          ...auditFields,
         })
       }
-    }
-    const state =
-      !_.isEmpty(person.geographies) && person.geographies[0].stateName
-        ? statesByName[person.geographies[0].stateName.toLowerCase()] || {
-            id: null,
-            lgas: {},
-          }
-        : {
-            id: null,
-            lgas: {},
-          }
-    const lga =
-      state.lgas &&
-      !_.isEmpty(person.geographies) &&
-      person.geographies[0].lgaName
-        ? state.lgas[person.geographies[0].lgaName.toLowerCase()] || {
-            id: null,
-          }
-        : {
-            id: null,
-          }
-    const { id: geographyId } = !_.isEmpty(person.geographies)
-      ? await knex('Geography')
-          .where({
-            countryId,
-            stateId: state.id,
-            lgaId: lga.id,
-          })
-          .first()
-      : { id: countryGeography.id }
-    let personId = null
-    const existingPerson = await knex('Person')
-      .where('userId', userId || -1)
-      .orWhere(function () {
-        this.where('name', person.personName)
-        if (person.personEmailAddress) {
-          this.andWhere('email', person.personEmailAddress)
-        }
-      })
-      .first()
-    if (existingPerson) {
-      if (
-        existingPerson.name !== person.personName ||
-        existingPerson.partnerId !== partnerId ||
-        existingPerson.timezone !== person.timezone ||
-        existingPerson.title !== person.title ||
-        existingPerson.geographyId !== geographyId ||
-        existingPerson.email !== person.personEmailAddress ||
-        existingPerson.cell !== person.personCell ||
-        existingPerson.phone !== person.personPhone ||
-        existingPerson.hidePatientId !== person.hidePatientId ||
-        existingPerson.hideSampleId !== person.hideSampleId ||
-        existingPerson.hideNotes !== person.hideNotes
-      ) {
-        await knex('Person')
-          .where('id', existingPerson.id)
-          .update({
-            ...existingPerson,
-            name: person.personName,
-            partnerId,
-            timezone: person.timezone,
-            title: person.title,
-            geographyId,
-            email: person.personEmailAddress,
-            cell: person.personCell,
-            phone: person.personPhone,
-            hidePatientId: person.hidePatientId,
-            hideSampleId: person.hideSampleId,
-            hideNotes: person.hideNotes,
-            updatedOn: now,
-            updatedBy: adminId,
-          })
-      }
-      personId = existingPerson.id
-    } else {
-      ;[personId] = await knex('Person').insert({
-        name: person.personName,
-        partnerId,
-        timezone: person.timezone || countries[0].timezone,
-        geographyId,
-        title: person.title,
-        email: person.personEmailAddress,
-        cell: person.personCell,
-        phone: person.personPhone,
-        userId,
-        lastPartnerId: partnerId,
-        lastCountryId: countryId,
-        hidePatientId: person.hidePatientId,
-        hideSampleId: person.hideSampleId,
-        hideNotes: person.hideNotes,
-        culture: 'en',
-        ...auditFields,
-      })
-    }
-    if (!_.isEmpty(person.jobFunctions)) {
+
       await Promise.each(person.jobFunctions, async jobFunctionName => {
         if (!_.isEmpty(jobFunctionName)) {
           const existingJob = await knex('Job')
@@ -1723,7 +1722,7 @@ async function baseGxAlertMigration(
         }
       })
     }
-  })
+  )
 
   return returnValue
 }
@@ -2087,7 +2086,6 @@ module.exports = {
   upsertStatesAndLgas,
   upsertAssayResultCategories,
   upsertJobFunction,
-  upsertJobFunctionsFromJson,
   clonePermissions,
   copyPermissionsAndDashboardWidgetsFromJobFunction,
   baseGxAlertMigration,

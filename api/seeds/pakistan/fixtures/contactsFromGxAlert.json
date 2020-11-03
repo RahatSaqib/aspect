@@ -4,11 +4,11 @@
     "jobFunctions": [
       "Admin"
     ],
-    "personEmailAddress": "nsabaj@systemone.id",
+    "personEmailAddress": "sbaumgartner@systemone.id",
     "personCell": "+1 413 548 5003",
     "username": "admin",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": true,
+    "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
@@ -76,64 +76,10 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "A-KTL-DHQ-KOTLI"
+        "shortName": "S-SBN-TH-PMCH"
       },
       {
-        "shortName": "A-MRP-DHQ-MIRPUR"
-      },
-      {
-        "shortName": "A-MZD-TH-AIMS"
-      },
-      {
-        "shortName": "DHQ-Abbottabad"
-      },
-      {
-        "shortName": "DHQ-BAGH"
-      },
-      {
-        "shortName": "F-ISB-TH-PIMS"
-      },
-      {
-        "shortName": "G-DMR-DHQ-CHILAS"
-      },
-      {
-        "shortName": "K-DIK-TH-MMMTH"
-      },
-      {
-        "shortName": "K-HRP-DHQ-HARIPR"
-      },
-      {
-        "shortName": "K-KRK-DHQ-KARAK"
-      },
-      {
-        "shortName": "K-MNS-DTO-MNSHRA"
-      },
-      {
-        "shortName": "K-SWB-DTO-SWABI"
-      },
-      {
-        "shortName": "K-SWT-DTO-SWAT"
-      },
-      {
-        "shortName": "P-BNG-DHQ-BWLNGR"
-      },
-      {
-        "shortName": "P-KHN-DHQ-KHNWAL"
-      },
-      {
-        "shortName": "P-MNW-DHQ-MNWALI"
-      },
-      {
-        "shortName": "P-NNK-DHQ-NNKSHB"
-      },
-      {
-        "shortName": "P-RWP-RHC-PHCKSS"
-      },
-      {
-        "shortName": "P-RWP-TBH-SAMLI"
-      },
-      {
-        "shortName": "P-SKT-DHQ-SIALKT"
+        "shortName": "S-SNG-TH-SIMS"
       },
       {
         "shortName": "S-DDU-DHQ-DADU"
@@ -142,19 +88,46 @@
         "shortName": "S-JCB-TH-JIMS"
       },
       {
-        "shortName": "S-KCH-TBC-MCC"
+        "shortName": "G-DMR-DHQ-CHILAS"
       },
       {
-        "shortName": "S-MTR-THQ-HALA"
+        "shortName": "K-SWB-DTO-SWABI"
       },
       {
-        "shortName": "S-SBN-TH-PMCH"
+        "shortName": "K-KRK-DHQ-KARAK"
       },
       {
-        "shortName": "S-SNG-TH-SIMS"
+        "shortName": "P-MNW-DHQ-MNWALI"
+      },
+      {
+        "shortName": "P-NNK-DHQ-NNKSHB"
+      },
+      {
+        "shortName": "F-ISB-TH-PIMS"
+      },
+      {
+        "shortName": "DHQ-BAGH"
+      },
+      {
+        "shortName": "K-DIK-TH-MMMTH"
+      },
+      {
+        "shortName": "P-BNG-DHQ-BWLNGR"
+      },
+      {
+        "shortName": "K-SWT-DTO-SWAT"
+      },
+      {
+        "shortName": "P-KHN-DHQ-KHNWAL"
       },
       {
         "shortName": "SIMS Lahore"
+      },
+      {
+        "shortName": "S-KCH-TBC-MCC"
+      },
+      {
+        "shortName": "DHQ-Abbottabad"
       }
     ]
   },
@@ -274,10 +247,16 @@
     "getPasswordFromGxAlert": true,
     "geographies": [
       {
-        "stateName": "Azad Jammu & Kashmir"
+        "stateName": "Punjab"
+      },
+      {
+        "stateName": "Sindh"
       },
       {
         "stateName": "Balochistan"
+      },
+      {
+        "stateName": "Azad Jammu & Kashmir"
       },
       {
         "stateName": "Federally Administered TA"
@@ -286,16 +265,10 @@
         "stateName": "Gilgit-Baltistan"
       },
       {
-        "stateName": "Islamabad & CT"
-      },
-      {
         "stateName": "Khyber Pakhtunkhwa"
       },
       {
-        "stateName": "Punjab"
-      },
-      {
-        "stateName": "Sindh"
+        "stateName": "Islamabad & CT"
       }
     ]
   },
@@ -321,7 +294,7 @@
       "Lab User"
     ],
     "personEmailAddress": "s.iram@hotmail.com",
-    "personCell": "+923224110541",
+    "personCell": "+923217743814",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
     "hideSampleId": true,
@@ -387,9 +360,8 @@
   },
   {
     "personName": "Syed Arif",
-    "personTitle": "Lab Contact",
     "jobFunctions": [
-      "Lab User"
+      ""
     ],
     "personEmailAddress": "arifhassan338@gmail.com",
     "personCell": "+923134259947",
@@ -397,12 +369,7 @@
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "sites": [
-      {
-        "shortName": "P-RWP-TBH-SAMLI"
-      }
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr Khawar Pervez",
@@ -506,12 +473,7 @@
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "sites": [
-      {
-        "shortName": "S-MPK-CH-MPK"
-      }
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "DR Uzma Pervaiz",
@@ -661,22 +623,22 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "ATH-ABBOTTABAD"
-      },
-      {
-        "shortName": "DHQ-Abbottabad"
-      },
-      {
         "shortName": "K-ABT-TH-ATH"
       },
       {
-        "shortName": "K-BTG-DTO-BATGRM"
+        "shortName": "ATH-ABBOTTABAD"
       },
       {
         "shortName": "K-HRP-DHQ-HARIPR"
       },
       {
         "shortName": "K-MNS-DTO-MNSHRA"
+      },
+      {
+        "shortName": "K-BTG-DTO-BATGRM"
+      },
+      {
+        "shortName": "DHQ-Abbottabad"
       }
     ]
   },
@@ -755,7 +717,7 @@
     ]
   },
   {
-    "personName": "Zaheer Abbas *",
+    "personName": "Zaheer Abbas",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -1056,7 +1018,7 @@
     ]
   },
   {
-    "personName": "DR JAVED AKTHAR SHAH *",
+    "personName": "DR JAVED AKTHAR SHAH",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -1188,7 +1150,7 @@
     ]
   },
   {
-    "personName": "MUHAMMAD IMRAN SARWAR",
+    "personName": "Imran Sarwer",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -1203,6 +1165,9 @@
     "sites": [
       {
         "shortName": "P-RYK-TH-SZH"
+      },
+      {
+        "shortName": "P-BWP-TH-BVH"
       }
     ]
   },
@@ -1264,7 +1229,7 @@
     ]
   },
   {
-    "personName": "Umme-rubab Zahra*",
+    "personName": "Umme-rubab Zahra",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -1275,12 +1240,7 @@
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "sites": [
-      {
-        "shortName": "P-BWP-TH-BVH"
-      }
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "yar rmuhammad",
@@ -1302,10 +1262,9 @@
     ]
   },
   {
-    "personName": "Syed Naveed Hussain shad *",
-    "personTitle": "Lab Contact",
+    "personName": "Syed Naveed Hussain shad",
     "jobFunctions": [
-      "Lab User"
+      ""
     ],
     "personEmailAddress": "nvdmze95@yahoo.com",
     "personCell": "+923449539579",
@@ -1313,12 +1272,7 @@
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "sites": [
-      {
-        "shortName": "A-MZD-TH-AIMS"
-      }
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Imran Aslam",
@@ -1410,7 +1364,7 @@
     "getPasswordFromGxAlert": true
   },
   {
-    "personName": "Anees Ali *",
+    "personName": "anees ali",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -1443,30 +1397,24 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-MTR-DHQ-MTIARI"
+        "shortName": "S-THT-CH-THATHA"
       },
       {
-        "shortName": "S-THT-CH-THATHA"
+        "shortName": "S-MTR-DHQ-MTIARI"
       }
     ]
   },
   {
     "personName": "SABIR SAGHIR",
-    "personTitle": "Lab Contact",
     "jobFunctions": [
-      "Lab User"
+      ""
     ],
     "personCell": "+923452530995",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "sites": [
-      {
-        "shortName": "A-KTL-DHQ-KOTLI"
-      }
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Ammir Shahzad",
@@ -1512,6 +1460,7 @@
       "Lab User"
     ],
     "personEmailAddress": "nauman.sharif5632102@gmail.com",
+    "personPhone": "+925827921492",
     "personCell": "+923464357532",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
@@ -1669,7 +1618,7 @@
     ]
   },
   {
-    "personName": "Muzafar Ahmad Baig",
+    "personName": "Muzafar Ahmead Baig",
     "personTitle": "SLS",
     "jobFunctions": [
       "Lab User"
@@ -2355,6 +2304,9 @@
     "getPasswordFromGxAlert": true,
     "geographies": [
       {
+        "stateName": "Punjab"
+      },
+      {
         "stateName": "Azad Jammu & Kashmir"
       },
       {
@@ -2362,9 +2314,6 @@
       },
       {
         "stateName": "Islamabad & CT"
-      },
-      {
-        "stateName": "Punjab"
       }
     ]
   },
@@ -2384,13 +2333,13 @@
     "getPasswordFromGxAlert": true,
     "geographies": [
       {
+        "stateName": "Sindh"
+      },
+      {
         "stateName": "Balochistan"
       },
       {
         "stateName": "Khyber Pakhtunkhwa"
-      },
-      {
-        "stateName": "Sindh"
       }
     ]
   },
@@ -2709,10 +2658,10 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "A-SDN-DHQ-PLNDRI"
+        "shortName": "DHQ-PALANDRI"
       },
       {
-        "shortName": "DHQ-PALANDRI"
+        "shortName": "A-SDN-DHQ-PLNDRI"
       }
     ]
   },
@@ -2742,7 +2691,7 @@
       "Lab User"
     ],
     "personEmailAddress": "chnomi158@gmail.com",
-    "personCell": "+923557305325",
+    "personCell": "+92923557305325",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": true,
     "hideSampleId": true,
@@ -2826,7 +2775,7 @@
     ]
   },
   {
-    "personName": "Amir Bux *",
+    "personName": "Amir Bux",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -2844,7 +2793,7 @@
     ]
   },
   {
-    "personName": "Imran Hussain *",
+    "personName": "Imran Hussain",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -2977,7 +2926,7 @@
     ]
   },
   {
-    "personName": "GHULAM FAROOQ *",
+    "personName": "GHULAM FAROOQ",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -3103,7 +3052,7 @@
     ]
   },
   {
-    "personName": "Waheedullah",
+    "personName": "WAHEEDULLAH",
     "jobFunctions": [
       ""
     ],
@@ -3173,17 +3122,17 @@
     ]
   },
   {
-    "personName": "NAVEED AHMAD",
+    "personName": "Naveed Ahmad",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
     ],
-    "personEmailAddress": "naveed_tarnab@yahoo.com",
+    "personEmailAddress": "NAVEED_TARNAB@YAHOO.COM",
     "personCell": "+923459192533",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
       {
@@ -3230,7 +3179,7 @@
     ]
   },
   {
-    "personName": "Ghulam Rasool *",
+    "personName": "Ghulam Rasool",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -3301,10 +3250,10 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-NFZ-THQ-KNDIAR"
+        "shortName": "S-NFZ-THQ-MRBPUR"
       },
       {
-        "shortName": "S-NFZ-THQ-MRBPUR"
+        "shortName": "S-NFZ-THQ-KNDIAR"
       }
     ]
   },
@@ -3347,7 +3296,7 @@
     ]
   },
   {
-    "personName": "Heera Lal *",
+    "personName": "Heera Lal",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -3584,10 +3533,10 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "K-DIK-DHQ-DIKHAN"
+        "shortName": "K-DIK-TH-MMMTH"
       },
       {
-        "shortName": "K-DIK-TH-MMMTH"
+        "shortName": "K-DIK-DHQ-DIKHAN"
       },
       {
         "shortName": "K-LKM-DHQ-L-MRWT"
@@ -3609,37 +3558,37 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "K-PSH-TH-KTH"
+      },
+      {
+        "shortName": "K-PSH-TH-LRH"
+      },
+      {
+        "shortName": "K-KRK-DHQ-KARAK"
+      },
+      {
         "shortName": "K-BNU-DTO-BANNU"
+      },
+      {
+        "shortName": "K-CHT-DHQ-CHITRL"
+      },
+      {
+        "shortName": "K-PSH-TH-CITY-H"
+      },
+      {
+        "shortName": "K-PSH-PRL-KP-HMC"
+      },
+      {
+        "shortName": "K-KHT-DHQ-KOHAT"
+      },
+      {
+        "shortName": "K-HNG-DHQ-HANGU"
       },
       {
         "shortName": "K-BNU-TH-KGNTH"
       },
       {
         "shortName": "K-CHR-DHQ-CHRSDA"
-      },
-      {
-        "shortName": "K-CHT-DHQ-CHITRL"
-      },
-      {
-        "shortName": "K-HNG-DHQ-HANGU"
-      },
-      {
-        "shortName": "K-KHT-DHQ-KOHAT"
-      },
-      {
-        "shortName": "K-KRK-DHQ-KARAK"
-      },
-      {
-        "shortName": "K-PSH-PRL-KP-HMC"
-      },
-      {
-        "shortName": "K-PSH-TH-CITY-H"
-      },
-      {
-        "shortName": "K-PSH-TH-KTH"
-      },
-      {
-        "shortName": "K-PSH-TH-LRH"
       }
     ]
   },
@@ -3658,13 +3607,13 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "K-MDN-DHQ-MARDAN"
+        "shortName": "K-SWB-DTO-SWABI"
       },
       {
         "shortName": "K-MDN-TH-MMCH"
       },
       {
-        "shortName": "K-SWB-DTO-SWABI"
+        "shortName": "K-MDN-DHQ-MARDAN"
       }
     ]
   },
@@ -3683,13 +3632,13 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "K-BNR-DHQ-BUNER"
+        "shortName": "K-SWT-DTO-SWAT"
       },
       {
         "shortName": "K-SNG-DHQ-SHNGLA"
       },
       {
-        "shortName": "K-SWT-DTO-SWAT"
+        "shortName": "K-BNR-DHQ-BUNER"
       }
     ]
   },
@@ -3727,25 +3676,25 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-KCH-PRL-SINDH"
-      },
-      {
-        "shortName": "S-KCH-TBC-MCC"
-      },
-      {
-        "shortName": "S-KCH-TBC-NCC"
+        "shortName": "S-THT-CH-THATHA"
       },
       {
         "shortName": "S-KCH-TBC-OCC"
       },
       {
-        "shortName": "S-KCH-TH-LYRGH"
-      },
-      {
-        "shortName": "S-THT-CH-THATHA"
+        "shortName": "S-KCH-TBC-NCC"
       },
       {
         "shortName": "S-THT-RHC-GHARO"
+      },
+      {
+        "shortName": "S-KCH-TBC-MCC"
+      },
+      {
+        "shortName": "S-KCH-PRL-SINDH"
+      },
+      {
+        "shortName": "S-KCH-TH-LYRGH"
       }
     ]
   },
@@ -3764,22 +3713,22 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-KCH-PRL-SINDH"
-      },
-      {
-        "shortName": "S-KCH-TBC-MCC"
-      },
-      {
-        "shortName": "S-KCH-TBC-NCC"
+        "shortName": "S-THT-CH-THATHA"
       },
       {
         "shortName": "S-KCH-TBC-OCC"
       },
       {
-        "shortName": "S-THT-CH-THATHA"
+        "shortName": "S-KCH-TBC-NCC"
       },
       {
         "shortName": "S-THT-RHC-GHARO"
+      },
+      {
+        "shortName": "S-KCH-TBC-MCC"
+      },
+      {
+        "shortName": "S-KCH-PRL-SINDH"
       }
     ]
   },
@@ -3798,25 +3747,25 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-KCH-PRL-SINDH"
-      },
-      {
-        "shortName": "S-KCH-TBC-MCC"
-      },
-      {
-        "shortName": "S-KCH-TBC-NCC"
+        "shortName": "S-THT-CH-THATHA"
       },
       {
         "shortName": "S-KCH-TBC-OCC"
       },
       {
-        "shortName": "S-KCH-TH-LYRGH"
-      },
-      {
-        "shortName": "S-THT-CH-THATHA"
+        "shortName": "S-KCH-TBC-NCC"
       },
       {
         "shortName": "S-THT-RHC-GHARO"
+      },
+      {
+        "shortName": "S-KCH-TBC-MCC"
+      },
+      {
+        "shortName": "S-KCH-PRL-SINDH"
+      },
+      {
+        "shortName": "S-KCH-TH-LYRGH"
       }
     ]
   },
@@ -3835,13 +3784,13 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-KCH-CH-KARCHI"
-      },
-      {
         "shortName": "S-KCH-TH-JPMC"
       },
       {
         "shortName": "S-KCH-TH-SIUT"
+      },
+      {
+        "shortName": "S-KCH-CH-KARCHI"
       }
     ]
   },
@@ -3882,10 +3831,10 @@
         "shortName": "S-KCH-SGH-KORNGI"
       },
       {
-        "shortName": "S-KCH-SGH-SAUDBD"
+        "shortName": "S-KCH-UHC-LANDHI"
       },
       {
-        "shortName": "S-KCH-UHC-LANDHI"
+        "shortName": "S-KCH-SGH-SAUDBD"
       }
     ]
   },
@@ -3907,10 +3856,10 @@
         "shortName": "S-KCH-SGH-KORNGI"
       },
       {
-        "shortName": "S-KCH-SGH-SAUDBD"
+        "shortName": "S-KCH-UHC-LANDHI"
       },
       {
-        "shortName": "S-KCH-UHC-LANDHI"
+        "shortName": "S-KCH-SGH-SAUDBD"
       }
     ]
   },
@@ -3977,10 +3926,10 @@
         "shortName": "S-TPK-RHC-ISLAMK"
       },
       {
-        "shortName": "S-TPK-THQ-CHCHRO"
+        "shortName": "S-TPK-THQ-NPARKR"
       },
       {
-        "shortName": "S-TPK-THQ-NPARKR"
+        "shortName": "S-TPK-THQ-CHCHRO"
       }
     ]
   },
@@ -4005,10 +3954,10 @@
         "shortName": "S-TPK-RHC-ISLAMK"
       },
       {
-        "shortName": "S-TPK-THQ-CHCHRO"
+        "shortName": "S-TPK-THQ-NPARKR"
       },
       {
-        "shortName": "S-TPK-THQ-NPARKR"
+        "shortName": "S-TPK-THQ-CHCHRO"
       }
     ]
   },
@@ -4027,22 +3976,37 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-BDN-DHQ-BADIN"
+        "shortName": "S-HBD-SGH-SGHQS"
       },
       {
-        "shortName": "S-BDN-THQ-GOLRCH"
+        "shortName": "S-JMS-TBH-ICDK"
       },
       {
-        "shortName": "S-BDN-THQ-MATLI"
-      },
-      {
-        "shortName": "S-BDN-THQ-T-BAGO"
+        "shortName": "S-HBD-TH-LUMS"
       },
       {
         "shortName": "S-DDU-DHQ-DADU"
       },
       {
-        "shortName": "S-DDU-THQ-JOHI"
+        "shortName": "S-MTR-THQ-HALA"
+      },
+      {
+        "shortName": "S-TMK-DHQ-TMKHAN"
+      },
+      {
+        "shortName": "S-JMS-THQ-SEHWAN"
+      },
+      {
+        "shortName": "S-BDN-THQ-GOLRCH"
+      },
+      {
+        "shortName": "S-BDN-DHQ-BADIN"
+      },
+      {
+        "shortName": "S-JMS-THQ-KOTRI"
+      },
+      {
+        "shortName": "S-JMS-THQ-TBKHAN"
       },
       {
         "shortName": "S-HBD-CH-SBH"
@@ -4051,37 +4015,22 @@
         "shortName": "S-HBD-GH-RMH"
       },
       {
-        "shortName": "S-HBD-SGH-SGHQS"
+        "shortName": "S-SJW-THQ-SUJAWL"
       },
       {
-        "shortName": "S-HBD-TH-LUMS"
+        "shortName": "S-BDN-THQ-MATLI"
       },
       {
         "shortName": "S-HBD-THQ-T-JAM"
       },
       {
-        "shortName": "S-JMS-TBH-ICDK"
+        "shortName": "S-BDN-THQ-T-BAGO"
       },
       {
-        "shortName": "S-JMS-THQ-KOTRI"
-      },
-      {
-        "shortName": "S-JMS-THQ-SEHWAN"
-      },
-      {
-        "shortName": "S-JMS-THQ-TBKHAN"
+        "shortName": "S-DDU-THQ-JOHI"
       },
       {
         "shortName": "S-MTR-DHQ-MTIARI"
-      },
-      {
-        "shortName": "S-MTR-THQ-HALA"
-      },
-      {
-        "shortName": "S-SJW-THQ-SUJAWL"
-      },
-      {
-        "shortName": "S-TMK-DHQ-TMKHAN"
       }
     ]
   },
@@ -4100,22 +4049,37 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-BDN-DHQ-BADIN"
+        "shortName": "S-HBD-SGH-SGHQS"
       },
       {
-        "shortName": "S-BDN-THQ-GOLRCH"
+        "shortName": "S-JMS-TBH-ICDK"
       },
       {
-        "shortName": "S-BDN-THQ-MATLI"
-      },
-      {
-        "shortName": "S-BDN-THQ-T-BAGO"
+        "shortName": "S-HBD-TH-LUMS"
       },
       {
         "shortName": "S-DDU-DHQ-DADU"
       },
       {
-        "shortName": "S-DDU-THQ-JOHI"
+        "shortName": "S-MTR-THQ-HALA"
+      },
+      {
+        "shortName": "S-TMK-DHQ-TMKHAN"
+      },
+      {
+        "shortName": "S-JMS-THQ-SEHWAN"
+      },
+      {
+        "shortName": "S-BDN-THQ-GOLRCH"
+      },
+      {
+        "shortName": "S-BDN-DHQ-BADIN"
+      },
+      {
+        "shortName": "S-JMS-THQ-KOTRI"
+      },
+      {
+        "shortName": "S-JMS-THQ-TBKHAN"
       },
       {
         "shortName": "S-HBD-CH-SBH"
@@ -4124,37 +4088,22 @@
         "shortName": "S-HBD-GH-RMH"
       },
       {
-        "shortName": "S-HBD-SGH-SGHQS"
+        "shortName": "S-SJW-THQ-SUJAWL"
       },
       {
-        "shortName": "S-HBD-TH-LUMS"
+        "shortName": "S-BDN-THQ-MATLI"
       },
       {
         "shortName": "S-HBD-THQ-T-JAM"
       },
       {
-        "shortName": "S-JMS-TBH-ICDK"
+        "shortName": "S-BDN-THQ-T-BAGO"
       },
       {
-        "shortName": "S-JMS-THQ-KOTRI"
-      },
-      {
-        "shortName": "S-JMS-THQ-SEHWAN"
-      },
-      {
-        "shortName": "S-JMS-THQ-TBKHAN"
+        "shortName": "S-DDU-THQ-JOHI"
       },
       {
         "shortName": "S-MTR-DHQ-MTIARI"
-      },
-      {
-        "shortName": "S-MTR-THQ-HALA"
-      },
-      {
-        "shortName": "S-SJW-THQ-SUJAWL"
-      },
-      {
-        "shortName": "S-TMK-DHQ-TMKHAN"
       }
     ]
   },
@@ -4195,22 +4144,22 @@
         "shortName": "S-MPK-CH-MPK"
       },
       {
-        "shortName": "S-MPK-THQ-DIGRI"
+        "shortName": "S-UMK-DHQ-UMERKT"
       },
       {
         "shortName": "S-MPK-THQ-KGM"
       },
       {
-        "shortName": "S-MPK-THQ-PITHRO"
-      },
-      {
-        "shortName": "S-UMK-DHQ-UMERKT"
-      },
-      {
-        "shortName": "S-UMK-THQ-KUNRI"
+        "shortName": "S-MPK-THQ-DIGRI"
       },
       {
         "shortName": "S-UMK-THQ-SAMARO"
+      },
+      {
+        "shortName": "S-UMK-THQ-UMERKT"
+      },
+      {
+        "shortName": "S-UMK-THQ-KUNRI"
       }
     ]
   },
@@ -4248,28 +4197,28 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-NFZ-THQ-MRBPUR"
-      },
-      {
-        "shortName": "S-SBN-RHC-DAUR"
-      },
-      {
-        "shortName": "S-SBN-RHC-QAHMAD"
-      },
-      {
         "shortName": "S-SBN-TH-PMCH"
       },
       {
-        "shortName": "S-SBN-THQ-SAKRND"
-      },
-      {
-        "shortName": "S-SBN-THQ-T-ADAM"
+        "shortName": "S-SNG-TH-SIMS"
       },
       {
         "shortName": "S-SNG-DHQ-SANGHR"
       },
       {
-        "shortName": "S-SNG-TH-SIMS"
+        "shortName": "S-SBN-RHC-DAUR"
+      },
+      {
+        "shortName": "S-SBN-THQ-T-ADAM"
+      },
+      {
+        "shortName": "S-SBN-RHC-QAHMAD"
+      },
+      {
+        "shortName": "S-NFZ-THQ-MRBPUR"
+      },
+      {
+        "shortName": "S-SBN-THQ-SAKRND"
       }
     ]
   },
@@ -4288,28 +4237,28 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "S-SKR-TH-GMMCH"
+      },
+      {
         "shortName": "S-GTK-DHQ-GHOTKI"
-      },
-      {
-        "shortName": "S-GTK-TBC-MARIPH"
-      },
-      {
-        "shortName": "S-GTK-THQ-UBAURO"
-      },
-      {
-        "shortName": "S-KHR-RHC-PJGHOT"
-      },
-      {
-        "shortName": "S-KHR-THQ-GAMBAT"
       },
       {
         "shortName": "S-NFZ-DHQ-NFEROZ"
       },
       {
-        "shortName": "S-NFZ-THQ-KNDIAR"
+        "shortName": "S-KHR-RHC-PJGHOT"
       },
       {
-        "shortName": "S-SKR-TH-GMMCH"
+        "shortName": "S-GTK-THQ-UBAURO"
+      },
+      {
+        "shortName": "S-GTK-TBC-MARIPH"
+      },
+      {
+        "shortName": "S-KHR-THQ-GAMBAT"
+      },
+      {
+        "shortName": "S-NFZ-THQ-KNDIAR"
       }
     ]
   },
@@ -4385,22 +4334,37 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-BDN-DHQ-BADIN"
+        "shortName": "S-HBD-SGH-SGHQS"
       },
       {
-        "shortName": "S-BDN-THQ-GOLRCH"
+        "shortName": "S-JMS-TBH-ICDK"
       },
       {
-        "shortName": "S-BDN-THQ-MATLI"
-      },
-      {
-        "shortName": "S-BDN-THQ-T-BAGO"
+        "shortName": "S-HBD-TH-LUMS"
       },
       {
         "shortName": "S-DDU-DHQ-DADU"
       },
       {
-        "shortName": "S-DDU-THQ-JOHI"
+        "shortName": "S-MTR-THQ-HALA"
+      },
+      {
+        "shortName": "S-TMK-DHQ-TMKHAN"
+      },
+      {
+        "shortName": "S-JMS-THQ-SEHWAN"
+      },
+      {
+        "shortName": "S-BDN-THQ-GOLRCH"
+      },
+      {
+        "shortName": "S-BDN-DHQ-BADIN"
+      },
+      {
+        "shortName": "S-JMS-THQ-KOTRI"
+      },
+      {
+        "shortName": "S-JMS-THQ-TBKHAN"
       },
       {
         "shortName": "S-HBD-CH-SBH"
@@ -4409,37 +4373,22 @@
         "shortName": "S-HBD-GH-RMH"
       },
       {
-        "shortName": "S-HBD-SGH-SGHQS"
+        "shortName": "S-SJW-THQ-SUJAWL"
       },
       {
-        "shortName": "S-HBD-TH-LUMS"
+        "shortName": "S-BDN-THQ-MATLI"
       },
       {
         "shortName": "S-HBD-THQ-T-JAM"
       },
       {
-        "shortName": "S-JMS-TBH-ICDK"
+        "shortName": "S-BDN-THQ-T-BAGO"
       },
       {
-        "shortName": "S-JMS-THQ-KOTRI"
-      },
-      {
-        "shortName": "S-JMS-THQ-SEHWAN"
-      },
-      {
-        "shortName": "S-JMS-THQ-TBKHAN"
+        "shortName": "S-DDU-THQ-JOHI"
       },
       {
         "shortName": "S-MTR-DHQ-MTIARI"
-      },
-      {
-        "shortName": "S-MTR-THQ-HALA"
-      },
-      {
-        "shortName": "S-SJW-THQ-SUJAWL"
-      },
-      {
-        "shortName": "S-TMK-DHQ-TMKHAN"
       }
     ]
   },
@@ -4457,22 +4406,37 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-BDN-DHQ-BADIN"
+        "shortName": "S-HBD-SGH-SGHQS"
       },
       {
-        "shortName": "S-BDN-THQ-GOLRCH"
+        "shortName": "S-JMS-TBH-ICDK"
       },
       {
-        "shortName": "S-BDN-THQ-MATLI"
-      },
-      {
-        "shortName": "S-BDN-THQ-T-BAGO"
+        "shortName": "S-HBD-TH-LUMS"
       },
       {
         "shortName": "S-DDU-DHQ-DADU"
       },
       {
-        "shortName": "S-DDU-THQ-JOHI"
+        "shortName": "S-MTR-THQ-HALA"
+      },
+      {
+        "shortName": "S-TMK-DHQ-TMKHAN"
+      },
+      {
+        "shortName": "S-JMS-THQ-SEHWAN"
+      },
+      {
+        "shortName": "S-BDN-THQ-GOLRCH"
+      },
+      {
+        "shortName": "S-BDN-DHQ-BADIN"
+      },
+      {
+        "shortName": "S-JMS-THQ-KOTRI"
+      },
+      {
+        "shortName": "S-JMS-THQ-TBKHAN"
       },
       {
         "shortName": "S-HBD-CH-SBH"
@@ -4481,37 +4445,22 @@
         "shortName": "S-HBD-GH-RMH"
       },
       {
-        "shortName": "S-HBD-SGH-SGHQS"
+        "shortName": "S-SJW-THQ-SUJAWL"
       },
       {
-        "shortName": "S-HBD-TH-LUMS"
+        "shortName": "S-BDN-THQ-MATLI"
       },
       {
         "shortName": "S-HBD-THQ-T-JAM"
       },
       {
-        "shortName": "S-JMS-TBH-ICDK"
+        "shortName": "S-BDN-THQ-T-BAGO"
       },
       {
-        "shortName": "S-JMS-THQ-KOTRI"
-      },
-      {
-        "shortName": "S-JMS-THQ-SEHWAN"
-      },
-      {
-        "shortName": "S-JMS-THQ-TBKHAN"
+        "shortName": "S-DDU-THQ-JOHI"
       },
       {
         "shortName": "S-MTR-DHQ-MTIARI"
-      },
-      {
-        "shortName": "S-MTR-THQ-HALA"
-      },
-      {
-        "shortName": "S-SJW-THQ-SUJAWL"
-      },
-      {
-        "shortName": "S-TMK-DHQ-TMKHAN"
       }
     ]
   },
@@ -4529,22 +4478,37 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-BDN-DHQ-BADIN"
+        "shortName": "S-HBD-SGH-SGHQS"
       },
       {
-        "shortName": "S-BDN-THQ-GOLRCH"
+        "shortName": "S-JMS-TBH-ICDK"
       },
       {
-        "shortName": "S-BDN-THQ-MATLI"
-      },
-      {
-        "shortName": "S-BDN-THQ-T-BAGO"
+        "shortName": "S-HBD-TH-LUMS"
       },
       {
         "shortName": "S-DDU-DHQ-DADU"
       },
       {
-        "shortName": "S-DDU-THQ-JOHI"
+        "shortName": "S-MTR-THQ-HALA"
+      },
+      {
+        "shortName": "S-TMK-DHQ-TMKHAN"
+      },
+      {
+        "shortName": "S-JMS-THQ-SEHWAN"
+      },
+      {
+        "shortName": "S-BDN-THQ-GOLRCH"
+      },
+      {
+        "shortName": "S-BDN-DHQ-BADIN"
+      },
+      {
+        "shortName": "S-JMS-THQ-KOTRI"
+      },
+      {
+        "shortName": "S-JMS-THQ-TBKHAN"
       },
       {
         "shortName": "S-HBD-CH-SBH"
@@ -4553,37 +4517,22 @@
         "shortName": "S-HBD-GH-RMH"
       },
       {
-        "shortName": "S-HBD-SGH-SGHQS"
+        "shortName": "S-SJW-THQ-SUJAWL"
       },
       {
-        "shortName": "S-HBD-TH-LUMS"
+        "shortName": "S-BDN-THQ-MATLI"
       },
       {
         "shortName": "S-HBD-THQ-T-JAM"
       },
       {
-        "shortName": "S-JMS-TBH-ICDK"
+        "shortName": "S-BDN-THQ-T-BAGO"
       },
       {
-        "shortName": "S-JMS-THQ-KOTRI"
-      },
-      {
-        "shortName": "S-JMS-THQ-SEHWAN"
-      },
-      {
-        "shortName": "S-JMS-THQ-TBKHAN"
+        "shortName": "S-DDU-THQ-JOHI"
       },
       {
         "shortName": "S-MTR-DHQ-MTIARI"
-      },
-      {
-        "shortName": "S-MTR-THQ-HALA"
-      },
-      {
-        "shortName": "S-SJW-THQ-SUJAWL"
-      },
-      {
-        "shortName": "S-TMK-DHQ-TMKHAN"
       }
     ]
   },
@@ -4605,22 +4554,22 @@
         "shortName": "S-MPK-CH-MPK"
       },
       {
-        "shortName": "S-MPK-THQ-DIGRI"
+        "shortName": "S-UMK-DHQ-UMERKT"
       },
       {
         "shortName": "S-MPK-THQ-KGM"
       },
       {
-        "shortName": "S-MPK-THQ-PITHRO"
-      },
-      {
-        "shortName": "S-UMK-DHQ-UMERKT"
-      },
-      {
-        "shortName": "S-UMK-THQ-KUNRI"
+        "shortName": "S-MPK-THQ-DIGRI"
       },
       {
         "shortName": "S-UMK-THQ-SAMARO"
+      },
+      {
+        "shortName": "S-UMK-THQ-UMERKT"
+      },
+      {
+        "shortName": "S-UMK-THQ-KUNRI"
       }
     ]
   },
@@ -4642,22 +4591,22 @@
         "shortName": "S-MPK-CH-MPK"
       },
       {
-        "shortName": "S-MPK-THQ-DIGRI"
+        "shortName": "S-UMK-DHQ-UMERKT"
       },
       {
         "shortName": "S-MPK-THQ-KGM"
       },
       {
-        "shortName": "S-MPK-THQ-PITHRO"
-      },
-      {
-        "shortName": "S-UMK-DHQ-UMERKT"
-      },
-      {
-        "shortName": "S-UMK-THQ-KUNRI"
+        "shortName": "S-MPK-THQ-DIGRI"
       },
       {
         "shortName": "S-UMK-THQ-SAMARO"
+      },
+      {
+        "shortName": "S-UMK-THQ-UMERKT"
+      },
+      {
+        "shortName": "S-UMK-THQ-KUNRI"
       }
     ]
   },
@@ -4675,25 +4624,22 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-MPK-CH-MPK"
-      },
-      {
-        "shortName": "S-MPK-THQ-DIGRI"
+        "shortName": "S-UMK-DHQ-UMERKT"
       },
       {
         "shortName": "S-MPK-THQ-KGM"
       },
       {
-        "shortName": "S-MPK-THQ-PITHRO"
-      },
-      {
-        "shortName": "S-UMK-DHQ-UMERKT"
-      },
-      {
-        "shortName": "S-UMK-THQ-KUNRI"
+        "shortName": "S-MPK-THQ-DIGRI"
       },
       {
         "shortName": "S-UMK-THQ-SAMARO"
+      },
+      {
+        "shortName": "S-UMK-THQ-UMERKT"
+      },
+      {
+        "shortName": "S-UMK-THQ-KUNRI"
       }
     ]
   },
@@ -4711,25 +4657,22 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-MPK-CH-MPK"
-      },
-      {
-        "shortName": "S-MPK-THQ-DIGRI"
+        "shortName": "S-UMK-DHQ-UMERKT"
       },
       {
         "shortName": "S-MPK-THQ-KGM"
       },
       {
-        "shortName": "S-MPK-THQ-PITHRO"
-      },
-      {
-        "shortName": "S-UMK-DHQ-UMERKT"
-      },
-      {
-        "shortName": "S-UMK-THQ-KUNRI"
+        "shortName": "S-MPK-THQ-DIGRI"
       },
       {
         "shortName": "S-UMK-THQ-SAMARO"
+      },
+      {
+        "shortName": "S-UMK-THQ-UMERKT"
+      },
+      {
+        "shortName": "S-UMK-THQ-KUNRI"
       }
     ]
   },
@@ -4748,28 +4691,28 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-NFZ-THQ-MRBPUR"
-      },
-      {
-        "shortName": "S-SBN-RHC-DAUR"
-      },
-      {
-        "shortName": "S-SBN-RHC-QAHMAD"
-      },
-      {
         "shortName": "S-SBN-TH-PMCH"
       },
       {
-        "shortName": "S-SBN-THQ-SAKRND"
-      },
-      {
-        "shortName": "S-SBN-THQ-T-ADAM"
+        "shortName": "S-SNG-TH-SIMS"
       },
       {
         "shortName": "S-SNG-DHQ-SANGHR"
       },
       {
-        "shortName": "S-SNG-TH-SIMS"
+        "shortName": "S-SBN-RHC-DAUR"
+      },
+      {
+        "shortName": "S-SBN-THQ-T-ADAM"
+      },
+      {
+        "shortName": "S-SBN-RHC-QAHMAD"
+      },
+      {
+        "shortName": "S-NFZ-THQ-MRBPUR"
+      },
+      {
+        "shortName": "S-SBN-THQ-SAKRND"
       }
     ]
   },
@@ -4788,28 +4731,28 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-NFZ-THQ-MRBPUR"
-      },
-      {
-        "shortName": "S-SBN-RHC-DAUR"
-      },
-      {
-        "shortName": "S-SBN-RHC-QAHMAD"
-      },
-      {
         "shortName": "S-SBN-TH-PMCH"
       },
       {
-        "shortName": "S-SBN-THQ-SAKRND"
-      },
-      {
-        "shortName": "S-SBN-THQ-T-ADAM"
+        "shortName": "S-SNG-TH-SIMS"
       },
       {
         "shortName": "S-SNG-DHQ-SANGHR"
       },
       {
-        "shortName": "S-SNG-TH-SIMS"
+        "shortName": "S-SBN-RHC-DAUR"
+      },
+      {
+        "shortName": "S-SBN-THQ-T-ADAM"
+      },
+      {
+        "shortName": "S-SBN-RHC-QAHMAD"
+      },
+      {
+        "shortName": "S-NFZ-THQ-MRBPUR"
+      },
+      {
+        "shortName": "S-SBN-THQ-SAKRND"
       }
     ]
   },
@@ -4827,31 +4770,31 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "S-SKR-TH-GMMCH"
+      },
+      {
         "shortName": "S-GTK-DHQ-GHOTKI"
-      },
-      {
-        "shortName": "S-GTK-TBC-MARIPH"
-      },
-      {
-        "shortName": "S-GTK-THQ-UBAURO"
-      },
-      {
-        "shortName": "S-KHR-RHC-PJGHOT"
-      },
-      {
-        "shortName": "S-KHR-THQ-GAMBAT"
       },
       {
         "shortName": "S-NFZ-DHQ-NFEROZ"
       },
       {
-        "shortName": "S-NFZ-THQ-KNDIAR"
-      },
-      {
         "shortName": "S-SKP-PVT-RBUT"
       },
       {
-        "shortName": "S-SKR-TH-GMMCH"
+        "shortName": "S-KHR-RHC-PJGHOT"
+      },
+      {
+        "shortName": "S-GTK-THQ-UBAURO"
+      },
+      {
+        "shortName": "S-GTK-TBC-MARIPH"
+      },
+      {
+        "shortName": "S-KHR-THQ-GAMBAT"
+      },
+      {
+        "shortName": "S-NFZ-THQ-KNDIAR"
       }
     ]
   },
@@ -4869,34 +4812,34 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-DDU-THQ-MEHAR"
+        "shortName": "S-LKN-TH-CMCH"
       },
       {
         "shortName": "S-JCB-TH-JIMS"
       },
       {
-        "shortName": "S-KSM-RHC-BUXAPR"
-      },
-      {
         "shortName": "S-KSM-THQ-KANDHK"
-      },
-      {
-        "shortName": "S-KSM-THQ-KASHMR"
       },
       {
         "shortName": "S-LKN-DHQ-LARKNA"
       },
       {
-        "shortName": "S-LKN-TH-CMCH"
+        "shortName": "S-KSM-THQ-KASHMR"
+      },
+      {
+        "shortName": "S-KSM-RHC-BUXAPR"
+      },
+      {
+        "shortName": "S-DDU-THQ-MEHAR"
+      },
+      {
+        "shortName": "S-QMB-THQ-SHDKOT"
       },
       {
         "shortName": "S-LKN-THQ-DOKRI"
       },
       {
         "shortName": "S-LKN-THQ-RATODR"
-      },
-      {
-        "shortName": "S-QMB-THQ-SHDKOT"
       }
     ]
   },
@@ -4918,25 +4861,25 @@
         "shortName": "A-BGH-DHQ-BAGH"
       },
       {
-        "shortName": "A-BMB-DHQ-BHIMBR"
-      },
-      {
-        "shortName": "A-HVL-DHQ-HAVELI"
-      },
-      {
         "shortName": "A-KTL-DHQ-KOTLI"
       },
       {
         "shortName": "A-MRP-DHQ-MIRPUR"
       },
       {
-        "shortName": "A-MZD-TH-AIMS"
+        "shortName": "A-BMB-DHQ-BHIMBR"
+      },
+      {
+        "shortName": "A-SDN-DHQ-PLNDRI"
       },
       {
         "shortName": "A-PNC-DHQ-RWLKOT"
       },
       {
-        "shortName": "A-SDN-DHQ-PLNDRI"
+        "shortName": "A-HVL-DHQ-HAVELI"
+      },
+      {
+        "shortName": "A-MZD-TH-AIMS"
       }
     ]
   },
@@ -4955,22 +4898,22 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "P-CHK-DHQ-CHAKWL"
+        "shortName": "P-RWP-RHC-PHCKSS"
       },
       {
         "shortName": "P-JHM-DHQ-JHELUM"
       },
       {
-        "shortName": "P-RWP-AMC-MH"
-      },
-      {
         "shortName": "P-RWP-DHQ-RWPNDI"
       },
       {
-        "shortName": "P-RWP-RHC-PHCKSS"
+        "shortName": "P-RWP-TBH-FGTBH"
       },
       {
-        "shortName": "P-RWP-TBH-FGTBH"
+        "shortName": "P-RWP-AMC-MH"
+      },
+      {
+        "shortName": "P-CHK-DHQ-CHAKWL"
       }
     ]
   },
@@ -5005,48 +4948,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "sites": [
-      {
-        "shortName": "A-BGH-DHQ-BAGH"
-      },
-      {
-        "shortName": "A-BMB-DHQ-BHIMBR"
-      },
-      {
-        "shortName": "A-HVL-DHQ-HAVELI"
-      },
-      {
-        "shortName": "A-KTL-DHQ-KOTLI"
-      },
-      {
-        "shortName": "A-MRP-DHQ-MIRPUR"
-      },
-      {
-        "shortName": "A-MZD-TH-AIMS"
-      },
-      {
-        "shortName": "A-PNC-DHQ-RWLKOT"
-      },
-      {
-        "shortName": "A-SDN-DHQ-PLNDRI"
-      },
-      {
-        "shortName": "F-ISB-NRL-NRLISB"
-      },
-      {
-        "shortName": "F-ISB-TH-CDAH"
-      },
-      {
-        "shortName": "F-ISB-TH-FGPC"
-      },
-      {
-        "shortName": "F-ISB-TH-PIMS"
-      },
-      {
-        "shortName": "P-RWP-TBH-SAMLI"
-      }
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Brad Cunningham",
@@ -5082,16 +4984,16 @@
         "shortName": "P-BNG-DHQ-BWLNGR"
       },
       {
-        "shortName": "P-BWP-TH-BVH"
-      },
-      {
-        "shortName": "P-LDR-DHQ-LODHRN"
+        "shortName": "P-VHR-PVT-SMH-MC"
       },
       {
         "shortName": "P-VHR-DHQ-VEHARI"
       },
       {
-        "shortName": "P-VHR-PVT-SMH-MC"
+        "shortName": "P-LDR-DHQ-LODHRN"
+      },
+      {
+        "shortName": "P-BWP-TH-BVH"
       }
     ]
   },
@@ -5110,13 +5012,16 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "P-FSB-TH-AHPMC"
+      },
+      {
+        "shortName": "P-TTS-DHQ-TTSING"
+      },
+      {
         "shortName": "P-FSB-DHQ-FSLABD"
       },
       {
         "shortName": "P-FSB-PVT-PATA"
-      },
-      {
-        "shortName": "P-FSB-TH-AHPMC"
       },
       {
         "shortName": "P-FSB-THQ-JRNWAL"
@@ -5126,9 +5031,6 @@
       },
       {
         "shortName": "P-JNG-DHQ-JHANG"
-      },
-      {
-        "shortName": "P-TTS-DHQ-TTSING"
       }
     ]
   },
@@ -5147,10 +5049,7 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "P-BHK-DHQ-BHAKAR"
-      },
-      {
-        "shortName": "P-KHS-DHQ-KHUSHB"
+        "shortName": "P-SGD-DHQ-SARGDA"
       },
       {
         "shortName": "P-MBD-DHQ-MBDIN"
@@ -5159,7 +5058,10 @@
         "shortName": "P-MNW-DHQ-MNWALI"
       },
       {
-        "shortName": "P-SGD-DHQ-SARGDA"
+        "shortName": "P-KHS-DHQ-KHUSHB"
+      },
+      {
+        "shortName": "P-BHK-DHQ-BHAKAR"
       }
     ]
   },
@@ -5178,13 +5080,13 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "P-SKT-DHQ-SIALKT"
+      },
+      {
         "shortName": "P-GJT-DHQ-Gujrat"
       },
       {
         "shortName": "P-NRW-DHQ-NAROWL"
-      },
-      {
-        "shortName": "P-SKT-DHQ-SIALKT"
       }
     ]
   },
@@ -5203,19 +5105,19 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "P-KSR-DHQ-KASUR"
+        "shortName": "P-LHR-TH-LGH"
       },
       {
         "shortName": "P-LHR-PRL-PUNJAB"
       },
       {
+        "shortName": "P-LHR-TH-SIMS"
+      },
+      {
         "shortName": "P-LHR-TH-GDH"
       },
       {
-        "shortName": "P-LHR-TH-LGH"
-      },
-      {
-        "shortName": "P-LHR-TH-SIMS"
+        "shortName": "P-KSR-DHQ-KASUR"
       }
     ]
   },
@@ -5234,16 +5136,16 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "P-LHR-TH-JHL"
-      },
-      {
-        "shortName": "P-OKR-DHQ-OKARA"
+        "shortName": "P-SHW-DHQ-SAHIWL"
       },
       {
         "shortName": "P-OKR-THQ-H-LKHA"
       },
       {
-        "shortName": "P-SHW-DHQ-SAHIWL"
+        "shortName": "P-OKR-DHQ-OKARA"
+      },
+      {
+        "shortName": "P-LHR-TH-JHL"
       }
     ]
   },
@@ -5262,19 +5164,19 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "P-LHR-TH-MHL"
+      },
+      {
         "shortName": "P-GJN-DHQ-GJRNWL"
       },
       {
-        "shortName": "P-GJN-PVT-MNH-MC"
+        "shortName": "P-NNK-DHQ-NNKSHB"
       },
       {
         "shortName": "P-HFZ-PVT-CLY-MC"
       },
       {
-        "shortName": "P-LHR-TH-MHL"
-      },
-      {
-        "shortName": "P-NNK-DHQ-NNKSHB"
+        "shortName": "P-GJN-PVT-MNH-MC"
       },
       {
         "shortName": "P-SKP-DHQ-SHKPUR"
@@ -5296,16 +5198,16 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "P-KHN-DHQ-KHNWAL"
+        "shortName": "P-MTN-PRL-PUNJAB"
+      },
+      {
+        "shortName": "P-MZG-DHQ-MZFRGR"
       },
       {
         "shortName": "P-LYA-DHQ-LAYYAH"
       },
       {
-        "shortName": "P-MTN-PRL-PUNJAB"
-      },
-      {
-        "shortName": "P-MZG-DHQ-MZFRGR"
+        "shortName": "P-KHN-DHQ-KHNWAL"
       }
     ]
   },
@@ -5449,9 +5351,9 @@
     "personEmailAddress": "shaamkashmiri27@gmail.com",
     "personCell": "+923335854732",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
       {
@@ -5625,7 +5527,7 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-MPK-THQ-PITHRO"
+        "shortName": "S-UMK-THQ-UMERKT"
       }
     ]
   },
@@ -5700,7 +5602,7 @@
     ]
   },
   {
-    "personName": "Musaddiq Ashraf *",
+    "personName": "musadiq asharf",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -6124,7 +6026,7 @@
     ]
   },
   {
-    "personName": "Habib Ahmad *",
+    "personName": "Habib Ahmad",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -6204,12 +6106,12 @@
     "jobFunctions": [
       "Lab User"
     ],
-    "personEmailAddress": "jazibali293@gmail.com",
+    "personEmailAddress": "mzamir381@gmail.com",
     "personCell": "+923009709809",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
       {
@@ -6553,7 +6455,7 @@
     ]
   },
   {
-    "personName": "Zaffar Abbas *",
+    "personName": "Zaffar Abbas",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -6722,11 +6624,7 @@
     "geographies": [
       {
         "stateName": "Punjab",
-        "lgaName": "Attock"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Gujrat"
+        "lgaName": "Lahore"
       },
       {
         "stateName": "Punjab",
@@ -6738,11 +6636,15 @@
       },
       {
         "stateName": "Punjab",
-        "lgaName": "Lahore"
+        "lgaName": "Attock"
       },
       {
         "stateName": "Punjab",
         "lgaName": "Nankana"
+      },
+      {
+        "stateName": "Punjab",
+        "lgaName": "Gujrat"
       },
       {
         "stateName": "Punjab",
@@ -6767,6 +6669,10 @@
     "geographies": [
       {
         "stateName": "Punjab",
+        "lgaName": "Lahore"
+      },
+      {
+        "stateName": "Punjab",
         "lgaName": "Faisalabad"
       },
       {
@@ -6775,7 +6681,7 @@
       },
       {
         "stateName": "Punjab",
-        "lgaName": "Lahore"
+        "lgaName": "Sargodha"
       },
       {
         "stateName": "Punjab",
@@ -6784,10 +6690,6 @@
       {
         "stateName": "Punjab",
         "lgaName": "Rawalpindi"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Sargodha"
       }
     ]
   },
@@ -6808,14 +6710,6 @@
     "geographies": [
       {
         "stateName": "Punjab",
-        "lgaName": "Gujranwala"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Hafizabad"
-      },
-      {
-        "stateName": "Punjab",
         "lgaName": "Lahore"
       },
       {
@@ -6824,11 +6718,19 @@
       },
       {
         "stateName": "Punjab",
-        "lgaName": "Okara"
+        "lgaName": "Gujranwala"
       },
       {
         "stateName": "Punjab",
         "lgaName": "Toba Tek Singh"
+      },
+      {
+        "stateName": "Punjab",
+        "lgaName": "Hafizabad"
+      },
+      {
+        "stateName": "Punjab",
+        "lgaName": "Okara"
       }
     ]
   },
@@ -6849,6 +6751,10 @@
     "geographies": [
       {
         "stateName": "Punjab",
+        "lgaName": "Lahore"
+      },
+      {
+        "stateName": "Punjab",
         "lgaName": "Chakwal"
       },
       {
@@ -6857,15 +6763,11 @@
       },
       {
         "stateName": "Punjab",
-        "lgaName": "Lahore"
+        "lgaName": "Sialkot"
       },
       {
         "stateName": "Punjab",
         "lgaName": "Rawalpindi"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Sialkot"
       }
     ]
   },
@@ -6886,14 +6788,6 @@
     "geographies": [
       {
         "stateName": "Punjab",
-        "lgaName": "Bahawalnagar"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Bahwalpur"
-      },
-      {
-        "stateName": "Punjab",
         "lgaName": "Bhakkar"
       },
       {
@@ -6903,6 +6797,14 @@
       {
         "stateName": "Punjab",
         "lgaName": "Multan"
+      },
+      {
+        "stateName": "Punjab",
+        "lgaName": "Bahwalpur"
+      },
+      {
+        "stateName": "Punjab",
+        "lgaName": "Bahawalnagar"
       },
       {
         "stateName": "Punjab",
@@ -6927,15 +6829,7 @@
     "geographies": [
       {
         "stateName": "Punjab",
-        "lgaName": "DG Khan"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Jhang"
-      },
-      {
-        "stateName": "Punjab",
-        "lgaName": "Pakpattan"
+        "lgaName": "Sahiwal"
       },
       {
         "stateName": "Punjab",
@@ -6943,15 +6837,23 @@
       },
       {
         "stateName": "Punjab",
+        "lgaName": "Pakpattan"
+      },
+      {
+        "stateName": "Punjab",
         "lgaName": "RY Khan"
       },
       {
         "stateName": "Punjab",
-        "lgaName": "Sahiwal"
+        "lgaName": "DG Khan"
       },
       {
         "stateName": "Punjab",
         "lgaName": "Vihari"
+      },
+      {
+        "stateName": "Punjab",
+        "lgaName": "Jhang"
       }
     ]
   },
@@ -6981,11 +6883,11 @@
       "Lab User"
     ],
     "personEmailAddress": "6044147@gmail.com",
-    "personCell": "+923469660417",
+    "personCell": "+923420792641",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
       {
@@ -7097,9 +6999,9 @@
     "personEmailAddress": "aurangzebhaidar@yahoo.com",
     "personCell": "+923457604040",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
       {
@@ -7202,7 +7104,7 @@
     ]
   },
   {
-    "personName": "Muhammad Farhan *",
+    "personName": "Muhammad Farhan",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -7373,7 +7275,7 @@
     ]
   },
   {
-    "personName": "MAHBOOB ALI *",
+    "personName": "MAHBOOB ALI",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -7430,19 +7332,22 @@
     ]
   },
   {
-    "personName": "Nazeer Ahmed",
+    "personName": "Haji Abdul Waheed",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
     ],
     "personEmailAddress": "akt.691@gmail.com",
-    "personCell": "+923337960674",
+    "personCell": "+923333415222",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
     "sites": [
+      {
+        "shortName": "B-CGH-DHQ-CHAGHI"
+      },
       {
         "shortName": "B-KRN-DHQ-KHARAN"
       },
@@ -7750,7 +7655,7 @@
     ]
   },
   {
-    "personName": "Shahjahan *",
+    "personName": "MR. SHAHJAHAN",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -8056,13 +7961,13 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "K-ABT-TH-ATH"
+      },
+      {
         "shortName": "ATH-ABBOTTABAD"
       },
       {
         "shortName": "DHQ-Abbottabad"
-      },
-      {
-        "shortName": "K-ABT-TH-ATH"
       }
     ]
   },
@@ -8285,12 +8190,13 @@
     ]
   },
   {
-    "personName": "Amin *",
+    "personName": "Amin",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
     ],
-    "personPhone": "+92 3227204506",
+    "personEmailAddress": "kaleem.c922@gmail.com",
+    "personCell": "+923227204506",
     "timezone": "Pakistan Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -8339,7 +8245,7 @@
     ]
   },
   {
-    "personName": "Lashari",
+    "personName": "Abdul ghani Lashari *",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -8406,10 +8312,10 @@
     "getPasswordFromGxAlert": true,
     "geographies": [
       {
-        "stateName": "Azad Jammu & Kashmir"
+        "stateName": "Balochistan"
       },
       {
-        "stateName": "Balochistan"
+        "stateName": "Azad Jammu & Kashmir"
       }
     ]
   },
@@ -8476,8 +8382,8 @@
     "personEmailAddress": "rrasheedarustamali@gmail.com",
     "personCell": "+923063408344",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
@@ -8639,25 +8545,25 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-KCH-PRL-SINDH"
-      },
-      {
-        "shortName": "S-KCH-TBC-MCC"
-      },
-      {
-        "shortName": "S-KCH-TBC-NCC"
+        "shortName": "S-THT-CH-THATHA"
       },
       {
         "shortName": "S-KCH-TBC-OCC"
       },
       {
-        "shortName": "S-KCH-TH-LYRGH"
-      },
-      {
-        "shortName": "S-THT-CH-THATHA"
+        "shortName": "S-KCH-TBC-NCC"
       },
       {
         "shortName": "S-THT-RHC-GHARO"
+      },
+      {
+        "shortName": "S-KCH-TBC-MCC"
+      },
+      {
+        "shortName": "S-KCH-PRL-SINDH"
+      },
+      {
+        "shortName": "S-KCH-TH-LYRGH"
       }
     ]
   },
@@ -8679,10 +8585,10 @@
         "shortName": "S-KCH-SGH-KORNGI"
       },
       {
-        "shortName": "S-KCH-SGH-SAUDBD"
+        "shortName": "S-KCH-UHC-LANDHI"
       },
       {
-        "shortName": "S-KCH-UHC-LANDHI"
+        "shortName": "S-KCH-SGH-SAUDBD"
       }
     ]
   },
@@ -8701,13 +8607,16 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
+        "shortName": "S-SKR-TH-GMMCH"
+      },
+      {
         "shortName": "S-GTK-DHQ-GHOTKI"
       },
       {
-        "shortName": "S-GTK-TBC-MARIPH"
+        "shortName": "S-NFZ-DHQ-NFEROZ"
       },
       {
-        "shortName": "S-GTK-THQ-UBAURO"
+        "shortName": "S-SKP-PVT-RBUT"
       },
       {
         "shortName": "S-KHR-RHC-PJGHOT"
@@ -8716,22 +8625,19 @@
         "shortName": "S-KHR-RHC-TMIRWA"
       },
       {
-        "shortName": "S-KHR-TBH-KHAIRP"
+        "shortName": "S-GTK-THQ-UBAURO"
+      },
+      {
+        "shortName": "S-GTK-TBC-MARIPH"
       },
       {
         "shortName": "S-KHR-THQ-GAMBAT"
       },
       {
-        "shortName": "S-NFZ-DHQ-NFEROZ"
+        "shortName": "S-KHR-TBH-KHAIRP"
       },
       {
         "shortName": "S-NFZ-THQ-KNDIAR"
-      },
-      {
-        "shortName": "S-SKP-PVT-RBUT"
-      },
-      {
-        "shortName": "S-SKR-TH-GMMCH"
       }
     ]
   },
@@ -8750,34 +8656,34 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "S-DDU-THQ-MEHAR"
+        "shortName": "S-LKN-TH-CMCH"
       },
       {
         "shortName": "S-JCB-TH-JIMS"
       },
       {
-        "shortName": "S-KSM-RHC-BUXAPR"
-      },
-      {
         "shortName": "S-KSM-THQ-KANDHK"
-      },
-      {
-        "shortName": "S-KSM-THQ-KASHMR"
       },
       {
         "shortName": "S-LKN-DHQ-LARKNA"
       },
       {
-        "shortName": "S-LKN-TH-CMCH"
+        "shortName": "S-KSM-THQ-KASHMR"
+      },
+      {
+        "shortName": "S-KSM-RHC-BUXAPR"
+      },
+      {
+        "shortName": "S-DDU-THQ-MEHAR"
+      },
+      {
+        "shortName": "S-QMB-THQ-SHDKOT"
       },
       {
         "shortName": "S-LKN-THQ-DOKRI"
       },
       {
         "shortName": "S-LKN-THQ-RATODR"
-      },
-      {
-        "shortName": "S-QMB-THQ-SHDKOT"
       }
     ]
   },
@@ -9082,10 +8988,10 @@
     "getPasswordFromGxAlert": true,
     "geographies": [
       {
-        "stateName": "Balochistan"
+        "stateName": "Sindh"
       },
       {
-        "stateName": "Sindh"
+        "stateName": "Balochistan"
       }
     ]
   },
@@ -9205,8 +9111,8 @@
     "personEmailAddress": "asimgillani50@gmail.com",
     "personCell": "+923435980759",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
     "sites": [
@@ -9279,9 +9185,9 @@
     "personEmailAddress": "BKGHOTO21@GMAIL.COM",
     "personCell": "+92923012325033",
     "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
     "getPasswordFromGxAlert": true,
     "sites": [
       {
@@ -9771,7 +9677,7 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "Holy Famil Hospital"
+        "shortName": "P-RWP-TCH-HOLY-F"
       }
     ]
   },
@@ -9869,7 +9775,7 @@
     ]
   },
   {
-    "personName": "Imran Yaseen *",
+    "personName": "Imran Yaseen",
     "personTitle": "Lab Contact",
     "jobFunctions": [
       "Lab User"
@@ -9884,6 +9790,203 @@
     "sites": [
       {
         "shortName": "P-LDR-DHQ-LODHRN"
+      }
+    ]
+  },
+  {
+    "personName": "Komal *",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+92 3321133464",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "S-KCH-CH-KARCHI"
+      }
+    ]
+  },
+  {
+    "personName": "Abdul Rehman *",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+923120700086",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "P-TTS-DHQ-TTSING"
+      }
+    ]
+  },
+  {
+    "personName": "Shahzeray",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "shahzeray@hotmail.com",
+    "personCell": "+923314505850",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "P-LHR-TH-GDH"
+      }
+    ]
+  },
+  {
+    "personName": "Jehanzada",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "jehanzada56@gmail.com",
+    "personCell": "+923449017274",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "K-SNG-THQ-BESHAM"
+      }
+    ]
+  },
+  {
+    "personName": "Dilshad Naveed *",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+923009144378",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "P-JHM-DHQ-JHELUM"
+      }
+    ]
+  },
+  {
+    "personName": "Arif  Hussain *",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+92 3555671403",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "G-DMR-DHQ-CHILAS"
+      }
+    ]
+  },
+  {
+    "personName": "Shuaa Naureen",
+    "personTitle": "Molecular biologist",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "Shuaa.naureen@gmail.com",
+    "personCell": "+92 03344555311",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mehmood Riaz Meer *",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+92 3009128602",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "A-KTL-DHQ-KOTLI"
+      }
+    ]
+  },
+  {
+    "personName": "Umer Siyam Abbasi *",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+92 3025138016",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "P-RWP-TBH-SAMLI"
+      }
+    ]
+  },
+  {
+    "personName": "Musa Khan",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kmusa1228@gmail.com",
+    "personCell": "+923159556621",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "K-PSH-DTO-PSHWAR"
+      }
+    ]
+  },
+  {
+    "personName": "Marvi Muzaffar",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+923005509348",
+    "timezone": "Pakistan Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "S-LKN-TH-CMCH"
       }
     ]
   }
