@@ -6,7 +6,7 @@ import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
 import AspectTable from '../../AspectTable'
 
-import { mockDatafetch } from '../../Table/Helpers'
+import { mockDatafetch } from '../../AspectTable/Helpers'
 import baseConfig from './config'
 
 function NotificationList() {
