@@ -27,6 +27,8 @@ async function addIssueTypes(
     'NewResultsAvailable',
   ]
 ) {
+  const { upsertSingle, uniqueKeys } = require('./utils')
+
   // here is preferible to add an enviroment variable just
   // for defining the admin user name and remove the hardcoded one
   let adminId = _adminId
@@ -72,44 +74,72 @@ async function addIssueTypes(
       let pushNotificationTemplateId
       let webhookTemplateId
 
-      if (issues[elem].AlertTemplate) {
-        ;[alertTemplateId] = await knex('AlertTemplate').insert(
-          issues[elem].AlertTemplate
-        )
+      const issue = issues[elem]
+      if (issue.AlertTemplate) {
+        ;[{ id: alertTemplateId }] = [
+          await upsertSingle(
+            knex,
+            'AlertTemplate',
+            uniqueKeys.AlertTemplate,
+            issue.AlertTemplate
+          ),
+        ]
       }
-      if (issues[elem].SmsTemplate) {
-        ;[smsTemplateId] = await knex('SmsTemplate').insert(
-          issues[elem].SmsTemplate
-        )
+      if (issue.SmsTemplate) {
+        ;[{ id: smsTemplateId }] = [
+          await upsertSingle(
+            knex,
+            'SmsTemplate',
+            uniqueKeys.SmsTemplate,
+            issue.SmsTemplate
+          ),
+        ]
       }
-      if (issues[elem].EmailTemplate) {
-        ;[emailTemplateId] = await knex('EmailTemplate').insert(
-          issues[elem].EmailTemplate
-        )
+      if (issue.EmailTemplate) {
+        ;[{ id: emailTemplateId }] = [
+          await upsertSingle(
+            knex,
+            'EmailTemplate',
+            uniqueKeys.EmailTemplate,
+            issue.EmailTemplate
+          ),
+        ]
       }
 
-      if (issues[elem].PushNotificationTemplate) {
-        ;[pushNotificationTemplateId] = await knex(
-          'PushNotificationTemplate'
-        ).insert(issues[elem].PushNotificationTemplate)
+      if (issue.PushNotificationTemplate) {
+        ;[{ id: pushNotificationTemplateId }] = [
+          await upsertSingle(
+            knex,
+            'PushNotificationTemplate',
+            uniqueKeys.PushNotificationTemplate,
+            issue.PushNotificationTemplate
+          ),
+        ]
       }
-      if (issues[elem].WebhookTemplate) {
-        ;[webhookTemplateId] = await knex('WebhookTemplate').insert(
-          issues[elem].WebhookTemplate
-        )
+      if (issue.WebhookTemplate) {
+        ;[{ id: webhookTemplateId }] = [
+          await upsertSingle(
+            knex,
+            'WebhookTemplate',
+            uniqueKeys.WebhookTemplate,
+            issue.WebhookTemplate
+          ),
+        ]
       }
-      if (issues[elem].MessageType) {
-        ;[messageTypeId] = await knex('MessageType').insert({
-          ...issues[elem].MessageType,
-          alertTemplateId,
-          smsTemplateId,
-          emailTemplateId,
-          pushNotificationTemplateId,
-          webhookTemplateId,
-        })
+      if (issue.MessageType) {
+        ;[{ id: messageTypeId }] = [
+          await upsertSingle(knex, 'MessageType', uniqueKeys.MessageType, {
+            ...issue.MessageType,
+            alertTemplateId,
+            smsTemplateId,
+            emailTemplateId,
+            pushNotificationTemplateId,
+            webhookTemplateId,
+          }),
+        ]
       }
-      await knex('IssueType').insert({
-        ...issues[elem].issueType,
+      await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
+        ...issue.issueType,
         defaultMessageTypeId: messageTypeId,
       })
     }

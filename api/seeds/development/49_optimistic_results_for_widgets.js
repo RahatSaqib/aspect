@@ -2,12 +2,13 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
+
+const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
-  seedIssueType,
-  // seedIssueEventTriggersForPartner,
-  // seedIssueEscalationTriggersForPartner,
-  upsertNotificationTypes,
+  seedIssueEventTriggersForPartner,
+  seedIssueEscalationTriggersForPartner,
   upsertSingle,
+  uniqueKeys,
 } = require('../utils')
 const {
   generateResults,
@@ -17,8 +18,11 @@ const {
   processUsingDataSourceQuery,
 } = require('../../src/stringTemplate/service')
 const {
+  messageSeverityToId,
+  issueTypeToId,
   allMessageStatusToId,
   allIssueStatusToId,
+  allIssueTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
@@ -65,14 +69,10 @@ async function seed(knex) {
     .join('Person as p', 'p.userId', 'u.id')
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.userId', 'p.id as personId')
-  const auditFields = {
-    createdOn: new Date(),
-    createdBy: userId,
-    updatedOn: new Date(),
-    updatedBy: userId,
-  }
+
   const messageStatuses = await allMessageStatusToId()
   const issueStatuses = await allIssueStatusToId()
+  const issueTypes = await allIssueTypeToId()
   //
   const consumableByAssay = await knex('ConsumableAssay')
     .select()
@@ -83,12 +83,13 @@ async function seed(knex) {
       }, {})
     )
 
-  const partnerOne = await knex('Partner').first()
-  const partnerOneId = partnerOne.id
+  const issueTypeId = issueTypes.ResultReceived
+  await seedIssueTypeForMtb(knex, 'ResultReceived', { partnerId, userId })
+
   const results = await generateResults(
     knex,
     userId,
-    partnerOneId,
+    partnerId,
     patients,
     errorCodes,
     'US',
@@ -99,8 +100,23 @@ async function seed(knex) {
   // generate random treatment
   await normalizeTreatmentStatusDistributionByResults(knex, results)
 
-  // get all positive results for last 2 months -
-  // use same query as sub-query for widget 'Positive Results Notified' (externalId: 'gxPositiveResultsNotified') but
+  const {
+    alertTemplate,
+    emailTemplate,
+    smsTemplate,
+    messageTypeId,
+  } = await getPositiveResultIssueProps(knex, issueTypeId)
+  // get notificationTypeId
+  const { id: notificationTypeId } = await knex('NotificationType')
+    .where({
+      partnerId,
+      issueTypeId,
+      messageTypeId,
+    })
+    .first()
+
+  // get all positive results for last 2 months and randomly 'send' email/sms
+  // Notice that here we use same query as sub-query for widget 'Positive Results Notified' (externalId: 'gxPositiveResultsNotified') but
   // without few WHERE parts
   const positiveResults = await knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
@@ -124,6 +140,14 @@ async function seed(knex) {
       'd.deviceApprovalId',
       'deviceApproval.id'
     )
+    // additional joins to get job persons to send email/sms to
+    .leftOuterJoin('NotificationType as nt', function () {
+      this.on('nt.partnerId', partnerId)
+        .andOn('nt.issueTypeId', issueTypeId)
+        .andOn('nt.messageTypeId', messageTypeId)
+    })
+    .leftOuterJoin('Job as job', 'nt.jobFunctionId', 'job.jobFunctionId')
+    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
     .whereIn('rc.externalid', positiveResultCategories)
     .whereRaw(
       `
@@ -150,10 +174,12 @@ async function seed(knex) {
     .select(
       'r.id as resultId',
       'r.deviceId',
+      'r.endedOn as resultEndedOn',
+      'r.patientData as resultPatientData',
       'd.name as deviceName',
       'r.endedOn',
       'd.siteId',
-      's.name as siteName',
+      'jobperson.name as personName',
       's.partnerId',
       's.geographyId',
       'r.assayId',
@@ -161,38 +187,6 @@ async function seed(knex) {
       'it.externalId as issueType',
       'dt.externalId as deviceType'
     )
-
-  // upsert issue type, all templates and messageType
-  const issueTypeId = await seedIssueType(knex, 'PositiveResultReceived', {
-    userName: 'admin',
-  })
-  // upsert NotificationType and get templates
-  const {
-    alertTemplate,
-    emailTemplate,
-    smsTemplate,
-    messageTypeId,
-  } = await getPositiveResultIssueProps(knex, {
-    auditFields,
-    issueTypeId,
-    partnerId,
-  })
-  // get notificationTypeId
-  const { id: notificationTypeId } = await knex('NotificationType')
-    .where({
-      name: 'LU Positive Result',
-      partnerId,
-      issueTypeId,
-      messageTypeId,
-    })
-    .first()
-
-  // await seedIssueEventTriggersForPartner(knex, partnerId, {
-  //   issueTypeWhitelist: ['PositiveResultReceived'],
-  // })
-  // await seedIssueEscalationTriggersForPartner(knex, partnerId, [
-  //   'PositiveResultReceived',
-  // ])
 
   await Promise.each(positiveResults, async r => {
     const date = r.endedOn
@@ -230,7 +224,7 @@ async function seed(knex) {
     let emailMessageId
     let smsMessageId
 
-    if (canProceed(date)) {
+    if (alertTemplate && canProceed(date)) {
       ;[{ id: alertMessageId }] = [
         await upsertSingle(
           knex,
@@ -245,7 +239,7 @@ async function seed(knex) {
       ]
     }
 
-    if (canProceed(date)) {
+    if (emailTemplate && canProceed(date)) {
       ;[{ id: emailMessageId }] = [
         await upsertSingle(
           knex,
@@ -262,7 +256,7 @@ async function seed(knex) {
       ]
     }
 
-    if (canProceed(date)) {
+    if (smsTemplate && canProceed(date)) {
       ;[{ id: smsMessageId }] = [
         await upsertSingle(
           knex,
@@ -297,13 +291,11 @@ async function seed(knex) {
   })
 }
 
-async function getPositiveResultIssueProps(
-  knex,
-  { auditFields, issueTypeId, partnerId }
-) {
+async function getPositiveResultIssueProps(knex, issueTypeId) {
   const baseQuery = knex('IssueType as it')
     .innerJoin('MessageType as mt', 'it.defaultMessageTypeId', 'mt.id')
     .where('it.id', issueTypeId)
+  //
   const [{ messageTypeId }] = await baseQuery
     .clone()
     .select('mt.id as messageTypeId')
@@ -320,76 +312,113 @@ async function getPositiveResultIssueProps(
     .innerJoin('SmsTemplate as st', 'mt.smsTemplateId', 'st.id')
     .select('st.*')
 
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where('partnerId', partnerId)
-    .whereIn('name', ['Regional Officer', 'Manager'])
-    .first()
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where('partnerId', partnerId)
-    .whereIn('name', ['Lab User', 'Clinician'])
-    .first()
-
-  // ------------
-  // NotificationType
-  // ------------
-  await upsertNotificationTypes(knex, [
-    {
-      name: 'LU Positive Result',
-      partnerId,
-      issueTypeId,
-      jobFunctionId: jobFunctionIdLabUser,
-      level: 1,
-      canAcknowledge: 1,
-      messageTypeId,
-      ...auditFields,
-    },
-    {
-      name: 'LU Escalated Positive Result',
-      partnerId,
-      issueTypeId,
-      jobFunctionId: jobFunctionIdLabUser,
-      level: 2,
-      canAcknowledge: 0,
-      messageTypeId,
-      ...auditFields,
-    },
-    {
-      name: 'LU Positive Result - RO View',
-      partnerId,
-      issueTypeId,
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      level: 1,
-      canAcknowledge: 0,
-      messageTypeId,
-      ...auditFields,
-    },
-    {
-      name: 'LU Escalated Positive Result - RO View',
-      partnerId,
-      issueTypeId,
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      level: 2,
-      canAcknowledge: 0,
-      messageTypeId,
-      ...auditFields,
-    },
-    {
-      name: 'RO Positive Result',
-      partnerId,
-      issueTypeId,
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      level: 1,
-      canAcknowledge: 1,
-      messageTypeId,
-      ...auditFields,
-    },
-  ])
-
   return {
     alertTemplate,
     emailTemplate,
     smsTemplate,
     messageTypeId,
   }
+}
+
+// ***********************************************************************
+async function seedIssueTypeForMtb(
+  knex,
+  issueTypeExternalId,
+  { partnerId, userId }
+) {
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: userId,
+    updatedOn: now,
+    updatedBy: userId,
+  }
+
+  // -----------------
+  // local helpers
+  const upsert = async (tableName, data) =>
+    upsertSingle(knex, tableName, uniqueKeys[tableName], data)
+  // -----------------
+
+  // seed the issue type itself
+  await addIssueTypes(knex, partnerId, userId, [issueTypeExternalId])
+
+  // seed issue event trigger
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: [issueTypeExternalId],
+  })
+
+  // use escalation triggers to notify about new MTB+ Rif- and MTB+ Rif+ results:
+  await seedIssueEscalationTriggersForPartner(knex, partnerId, [
+    'ResultCategory1DetectedResultCategory2NotDetected',
+    'ResultCategory1DetectedResultCategory2Detected',
+  ])
+
+  const messageSeverityId = await messageSeverityToId('Alert')
+  const issueTypeId = await issueTypeToId(issueTypeExternalId)
+  const { id: jobFunctionId } = await knex('JobFunction')
+    .where('externalId', 'regionalOfficer')
+    .first('id')
+
+  // Result 1 positive only via email.
+  const result1PositiveMessage =
+    'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
+  const { id: result1PositiveEmailTemplateId } = await upsert('EmailTemplate', {
+    subject: 'MTB+ Result',
+    body: result1PositiveMessage,
+    htmlBody: result1PositiveMessage.replace('\n', '<br/>'),
+    ...auditFields,
+  })
+  const { id: resul1PositiveMessageTypeId } = await upsert('MessageType', {
+    messageSeverityId,
+    emailTemplateId: result1PositiveEmailTemplateId,
+  })
+
+  await upsert('NotificationType', {
+    partnerId,
+    issueTypeId,
+    jobFunctionId,
+    level: 2,
+    canAcknowledge: 0,
+    messageTypeId: resul1PositiveMessageTypeId,
+    name: 'MTB+ Result',
+    ...auditFields,
+    sendToContactsWithMatchingTags: 0,
+  })
+
+  // If 1 and 2 positive, email and sms
+  const result2PositiveMessage =
+    'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected, RIF Resistance Detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
+  const { id: result2PositiveEmailTemplateId } = await upsert('EmailTemplate', {
+    subject: 'MTB+ RIF+ Result',
+    body: result2PositiveMessage,
+    htmlBody: result2PositiveMessage.replace('\n', '<br/>'),
+    ...auditFields,
+  })
+  const { id: result2PositiveSmsTemplateId } = await upsert('SmsTemplate', {
+    message: result2PositiveMessage,
+    ...auditFields,
+  })
+
+  const { id: resul2PositiveMessageTypeId } = await upsert('MessageType', {
+    messageSeverityId,
+    emailTemplateId: result2PositiveEmailTemplateId,
+    smsTemplateId: result2PositiveSmsTemplateId,
+  })
+  // set defaultMessageTypeId in IssueType to have both email and sms templates defined
+  await knex('IssueType')
+    .where('id', issueTypeId)
+    .update({ defaultMessageTypeId: resul2PositiveMessageTypeId })
+
+  await upsert('NotificationType', {
+    partnerId,
+    issueTypeId,
+    jobFunctionId,
+    level: 3,
+    canAcknowledge: 0,
+    messageTypeId: resul2PositiveMessageTypeId,
+    name: 'MTB+ Rif+ Result',
+    ...auditFields,
+    sendToContactsWithMatchingTags: 0,
+  })
 }

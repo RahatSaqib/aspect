@@ -614,7 +614,7 @@ module.exports = {
             LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
           WHERE
             rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
-            AND it.externalId = 'PositiveResultReceived'
+            AND it.externalId = 'ResultReceived'
             AND dt.externalId = 'CepheidGeneXpert'
             AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
             AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
@@ -646,7 +646,7 @@ module.exports = {
             LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
           WHERE
             rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
-            AND it.externalId = 'PositiveResultReceived'
+            AND it.externalId = 'ResultReceived'
             AND dt.externalId = 'CepheidGeneXpert'
             AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
             AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))

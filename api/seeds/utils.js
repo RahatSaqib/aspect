@@ -64,6 +64,11 @@ const uniqueKeys = {
     'webhookTemplateId',
   ],
   IssueType: ['externalId'],
+  AlertTemplate: ['message'],
+  SmsTemplate: ['message'],
+  EmailTemplate: ['subject', 'body'],
+  WebhookTemplate: ['method', 'url'],
+  PushNotificationTemplate: ['title', 'body'],
 }
 
 const foreignKeys = {
@@ -759,13 +764,18 @@ async function seedIssueEventTriggersForPartner(
           .where(triggerData)
           .first('id')
         if (existingTrigger == null) {
-          await knex('IssueEventTrigger').insert({
-            ...triggerData,
-            triggerConditions: JSON.stringify(triggerConditions),
-            filterIssueCondition: JSON.stringify(filterIssueCondition),
-            createdOn: now,
-            updatedOn: now,
-          })
+          await upsertSingle(
+            knex,
+            'IssueEventTrigger',
+            ['partnerId', 'issueTypeId', 'issueEventStatusId'],
+            {
+              ...triggerData,
+              triggerConditions: JSON.stringify(triggerConditions),
+              filterIssueCondition: JSON.stringify(filterIssueCondition),
+              createdOn: now,
+              updatedOn: now,
+            }
+          )
         }
       }
     }
@@ -811,12 +821,17 @@ async function seedIssueEscalationTriggersForPartner(
           .where(triggerData)
           .first('id')
         if (existingTrigger == null) {
-          await knex('IssueEscalationTrigger').insert({
-            ...triggerData,
-            escalationConditions: JSON.stringify(escalationConditions),
-            createdOn: now,
-            updatedOn: now,
-          })
+          await upsertSingle(
+            knex,
+            'IssueEscalationTrigger',
+            ['partnerId', 'issueTypeId', 'escalateToLevel'],
+            {
+              ...triggerData,
+              escalationConditions: JSON.stringify(escalationConditions),
+              createdOn: now,
+              updatedOn: now,
+            }
+          )
         }
       }
     }
@@ -894,8 +909,19 @@ async function upsertSingle(knex, tableName, whereClause, item) {
     const fieldKey = whereClause
     whereClause = { [fieldKey]: item[fieldKey] }
   } else if (_.isArray(whereClause)) {
-    // array of field names, 'item' is required param
-    whereClause = _.pick(item, whereClause)
+    // when whereClause is an array of field names then 'item' is required param
+    const fields = whereClause
+    whereClause = builder => {
+      fields.forEach(name => {
+        if (item[name] === null) {
+          builder.whereNull(name)
+        } else if (item[name] === undefined) {
+          // skip this field because it is missing in 'item'
+        } else {
+          builder.where(name, item[name])
+        }
+      })
+    }
   } else {
     // 'whereClause' is json, if 'item' is missing set it to 'whereClause'
     item = item || whereClause
