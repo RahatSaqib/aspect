@@ -55,8 +55,6 @@ Test Outcome: {{issue.data.resultOutcome}}
 
 Reagent Lot: {{result.consumableLot}}`
 
-const messagePositiveResultReceived = `Positive Result Received from device '{{device.name}}'`
-
 async function getBaseIssues(auditFields) {
   // Issues
   const issueCategories = await allIssueCategoryToId()
@@ -951,31 +949,6 @@ async function getBaseIssues(auditFields) {
           regexBreakline,
           '<br/>'
         )}`,
-        ...auditFields,
-      },
-    },
-    PositiveResultReceived: {
-      issueType: {
-        name: 'Positive Result Received',
-        externalId: 'PositiveResultReceived',
-        i18nKey: 'issueStatusPositiveResultReceived',
-        issueCategoryId: issueCategories.DataHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: messagePositiveResultReceived,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: messagePositiveResultReceived,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: messagePositiveResultReceived,
-        body: messagePositiveResultReceived,
-        htmlBody: messagePositiveResultReceived,
         ...auditFields,
       },
     },
