@@ -3,15 +3,6 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const { addIssueTypes } = require('../relativeObjectsSeeds')
-const {
-  seedIssueEventTriggersForPartner,
-  seedIssueEscalationTriggersForPartner,
-} = require('../utils')
-const {
-  generateResults,
-  normalizeTreatmentStatusDistributionByResults,
-} = require('../commonGenerateResults')
 const {
   processUsingDataSourceQuery,
 } = require('../../src/stringTemplate/service')
@@ -22,14 +13,14 @@ const {
   allIssueStatusToId,
   allIssueTypeToId,
 } = require('../../src/shared/dictionary')
-const patients = require('./fixtures/patients.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
+// const patients = require('./fixtures/patients.json')
+// const { errorCodes } = require('./fixtures/errorCodes.js')
 const getPositiveCategoriesExternalIds = require('../../src/resultCategory/service')
 
 const currentMonth = new Date().getMonth()
 const canProceed = date => {
   const percentPositiveResultNotified =
-    new Date(date).getMonth() === currentMonth ? 40 : 30
+    new Date(date).getMonth() === currentMonth ? 15 : 10
   return _.random(0, 100) <= percentPositiveResultNotified
 }
 const getMessage = async (result, messageTemplate) => {
@@ -68,19 +59,19 @@ async function seed(knex) {
   const issueTypeId = issueTypes.ResultReceived
   await seedIssueTypeForMtb(knex, 'ResultReceived', { partnerId, userId })
 
-  // add 100 records to have more positive results
-  const results = await generateResults(
-    knex,
-    userId,
-    partnerId,
-    patients,
-    errorCodes,
-    'US',
-    true,
-    100 // resultMtbNumber
-  )
-  // generate random treatment
-  await normalizeTreatmentStatusDistributionByResults(knex, results)
+  // // add 100 records to have more positive results
+  // const results = await generateResults(
+  //   knex,
+  //   userId,
+  //   partnerId,
+  //   patients,
+  //   errorCodes,
+  //   'US',
+  //   true,
+  //   100 // resultMtbNumber
+  // )
+  // // generate random treatment
+  // await normalizeTreatmentStatusDistributionByResults(knex, results)
 
   const {
     alertTemplate,
@@ -214,7 +205,6 @@ async function seed(knex) {
         createdOn: date,
         updatedOn: date,
       }
-      // const sharedWhere = ['personId', 'siteId', 'deviceId', 'resultId']
 
       let alertMessageId
       let emailMessageId
@@ -266,7 +256,7 @@ async function getPositiveResultIssueProps(knex, issueTypeId) {
   const baseQuery = knex('IssueType as it')
     .innerJoin('MessageType as mt', 'it.defaultMessageTypeId', 'mt.id')
     .where('it.id', issueTypeId)
-  //
+
   const [{ messageTypeId }] = await baseQuery
     .clone()
     .select('mt.id as messageTypeId')
@@ -304,28 +294,13 @@ async function seedIssueTypeForMtb(
     updatedOn: now,
     updatedBy: userId,
   }
-
-  // seed the issue type itself
-  await addIssueTypes(knex, partnerId, userId, [issueTypeExternalId])
-
-  // seed issue event trigger
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: [issueTypeExternalId],
-  })
-
-  // use escalation triggers to notify about new MTB+ Rif- and MTB+ Rif+ results:
-  await seedIssueEscalationTriggersForPartner(knex, partnerId, [
-    'ResultCategory1DetectedResultCategory2NotDetected',
-    'ResultCategory1DetectedResultCategory2Detected',
-  ])
-
   const messageSeverityId = await messageSeverityToId('Alert')
   const issueTypeId = await issueTypeToId(issueTypeExternalId)
   const { id: jobFunctionId } = await knex('JobFunction')
     .where('externalId', 'regionalOfficer')
     .first('id')
 
-  // Result 1 positive only via email.
+  // only Result 1 positive - send email and sms
   const result1PositiveMessage =
     'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
   const [result1PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
@@ -334,10 +309,19 @@ async function seedIssueTypeForMtb(
     htmlBody: result1PositiveMessage.replace('\n', '<br/>'),
     ...auditFields,
   })
+  const [result1PositiveSmsTemplateId] = await knex('SmsTemplate').insert({
+    message: result1PositiveMessage,
+    ...auditFields,
+  })
   const [resul1PositiveMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId,
     emailTemplateId: result1PositiveEmailTemplateId,
+    smsTemplateId: result1PositiveSmsTemplateId,
   })
+  // set defaultMessageTypeId in IssueType to have both email and sms templates defined
+  await knex('IssueType')
+    .where('id', issueTypeId)
+    .update({ defaultMessageTypeId: resul1PositiveMessageTypeId })
 
   await knex('NotificationType').insert({
     partnerId,
@@ -347,42 +331,6 @@ async function seedIssueTypeForMtb(
     canAcknowledge: 0,
     messageTypeId: resul1PositiveMessageTypeId,
     name: 'MTB+ Result',
-    ...auditFields,
-    sendToContactsWithMatchingTags: 0,
-  })
-
-  // If 1 and 2 positive, email and sms
-  const result2PositiveMessage =
-    'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected, RIF Resistance Detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
-  const [result2PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
-    subject: 'MTB+ RIF+ Result',
-    body: result2PositiveMessage,
-    htmlBody: result2PositiveMessage.replace('\n', '<br/>'),
-    ...auditFields,
-  })
-  const [result2PositiveSmsTemplateId] = await knex('SmsTemplate').insert({
-    message: result2PositiveMessage,
-    ...auditFields,
-  })
-
-  const [resul2PositiveMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    emailTemplateId: result2PositiveEmailTemplateId,
-    smsTemplateId: result2PositiveSmsTemplateId,
-  })
-  // set defaultMessageTypeId in IssueType to have both email and sms templates defined
-  await knex('IssueType')
-    .where('id', issueTypeId)
-    .update({ defaultMessageTypeId: resul2PositiveMessageTypeId })
-
-  await knex('NotificationType').insert({
-    partnerId,
-    issueTypeId,
-    jobFunctionId,
-    level: 3,
-    canAcknowledge: 0,
-    messageTypeId: resul2PositiveMessageTypeId,
-    name: 'MTB+ Rif+ Result',
     ...auditFields,
     sendToContactsWithMatchingTags: 0,
   })
