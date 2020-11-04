@@ -3,10 +3,6 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-// const {
-//   generateResults,
-//   normalizeTreatmentStatusDistributionByResults,
-// } = require('../commonGenerateResults')
 const {
   processUsingDataSourceQuery,
 } = require('../../src/stringTemplate/service')
@@ -17,8 +13,6 @@ const {
   allIssueStatusToId,
   allIssueTypeToId,
 } = require('../../src/shared/dictionary')
-// const patients = require('./fixtures/patients.json')
-// const { errorCodes } = require('./fixtures/errorCodes.js')
 const getPositiveCategoriesExternalIds = require('../../src/resultCategory/service')
 
 const currentMonth = new Date().getMonth()
@@ -50,36 +44,8 @@ async function seed(knex) {
   const messageStatuses = await allMessageStatusToId()
   const issueStatuses = await allIssueStatusToId()
   const issueTypes = await allIssueTypeToId()
-  //
-  const consumableByAssay = await knex('ConsumableAssay')
-    .select()
-    .then(items =>
-      items.reduce((memo, { consumableId, assayId }) => {
-        memo[assayId] = consumableId
-        return memo
-      }, {})
-    )
-
   const issueTypeId = issueTypes.ResultReceived
   await seedIssueTypeTemplates(knex, 'ResultReceived', { partnerId, userId })
-
-  // // add 100 records to have more positive results
-  // const results = await generateResults(
-  //   knex,
-  //   userId,
-  //   partnerId,
-  //   patients.map(p => ({
-  //     ...p,
-  //     id: `${p.id}-1`,
-  //     sampleId: `${p.sampleId}-1`,
-  //   })),
-  //   errorCodes,
-  //   'US',
-  //   true,
-  //   100 // resultMtbNumber
-  // )
-  // // generate random treatment
-  // await normalizeTreatmentStatusDistributionByResults(knex, results)
 
   const {
     alertTemplate,
@@ -176,17 +142,16 @@ async function seed(knex) {
         resultId: result.resultId, // <-- important
         createdOn: date,
         updatedOn: date,
-        consumableId: consumableByAssay[result.assayId],
         level: 1,
         partnerId,
       })
     }
 
-    await Promise.each(persons, async ({ personId, personName }) => {
-      if (!canProceed(date)) {
-        return
-      }
+    if (!canProceed(date)) {
+      return
+    }
 
+    await Promise.each(persons, async ({ personId, personName }) => {
       const resultData = { ...result, personName }
       const sharedMessageProperties = {
         messageStatusId: messageStatuses.Sent,
