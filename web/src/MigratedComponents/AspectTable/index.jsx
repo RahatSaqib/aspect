@@ -1,6 +1,13 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useTable, useSortBy, usePagination, useColumnOrder } from 'react-table'
+import {
+  useTable,
+  useSortBy,
+  usePagination,
+  useColumnOrder,
+  useGroupBy,
+  useExpanded,
+} from 'react-table'
 
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -11,6 +18,7 @@ import TableRow from '@material-ui/core/TableRow'
 import TableColumnHeader from './TableColumnHeader'
 import TableColumnOrderButtons from './TableColumnOrderButtons'
 import TableHiddenColumns from './TableHiddenColumns'
+import TableColumnGroupBy from './TableColumnGroupBy'
 import TableColumnHideButton from './TableColumnHideButton'
 
 import AspectTablePagination from './TablePagination'
@@ -26,9 +34,11 @@ const AspectTable = ({ tableData: data, config }) => {
 
   const table = useTable(
     { columns, data },
+    useColumnOrder,
+    useGroupBy,
     useSortBy,
-    usePagination,
-    useColumnOrder
+    useExpanded,
+    usePagination
   )
 
   const {
@@ -45,6 +55,7 @@ const AspectTable = ({ tableData: data, config }) => {
     setColumnOrder,
     setPageSize,
     setSortBy,
+    toggleGroupBy,
     toggleHideColumn,
     visibleColumns,
     state: { pageIndex, pageSize, sortBy, columnOrder, hiddenColumns },
@@ -64,6 +75,11 @@ const AspectTable = ({ tableData: data, config }) => {
   const handleHideColumnToggle = (e, id) => {
     e.stopPropagation()
     toggleHideColumn(id)
+  }
+
+  const handleGroupByColumnToggle = (e, id) => {
+    e.stopPropagation()
+    toggleGroupBy(id)
   }
 
   useEffect(() => {
@@ -101,30 +117,35 @@ const AspectTable = ({ tableData: data, config }) => {
                 (
                   {
                     canSort,
+                    canGroupBy,
                     disableHide,
                     getHeaderProps,
+                    getGroupByToggleProps,
                     getSortByToggleProps,
                     id,
+                    isGrouped,
                     isSorted,
                     isSortedDesc,
                     render,
-                    toggleHidden,
                     width,
                   },
                   index
                 ) => {
                   return (
                     <TableCell
-                      {...getHeaderProps(getSortByToggleProps())}
+                      {...getHeaderProps(
+                        getSortByToggleProps(),
+                        getGroupByToggleProps()
+                      )}
                       style={{ width: `${width}%` }}
                     >
                       <TableColumnHeader
                         width={width}
                         render={render('Header')}
                         canSort={canSort}
+                        canGroupBy={canGroupBy}
                         isSorted={isSorted}
                         isSortedDesc={isSortedDesc}
-                        toggleHidden={toggleHidden}
                         headerOrderComponent={() =>
                           allowColumnReOrder ? (
                             <TableColumnOrderButtons
@@ -137,8 +158,19 @@ const AspectTable = ({ tableData: data, config }) => {
                         headerVisibilityComponent={() =>
                           !disableHide ? (
                             <TableColumnHideButton
-                              headerId={id}
+                              headerIndex={id}
                               handleHideColumnToggle={handleHideColumnToggle}
+                            />
+                          ) : null
+                        }
+                        headerGroupByComponent={() =>
+                          canGroupBy ? (
+                            <TableColumnGroupBy
+                              headerIndex={id}
+                              handleGroupByColumnToggle={
+                                handleGroupByColumnToggle
+                              }
+                              isGrouped={isGrouped}
                             />
                           ) : null
                         }
