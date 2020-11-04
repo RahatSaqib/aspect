@@ -12,6 +12,7 @@ const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
       onClick={e => handleHideColumnToggle(e, headerIndex)}
       className={cssClasses('tableheader__hidebutton')}
       data-testid={`hide_column_${headerIndex}`}
+      title="Hide Column"
     >
       <IconProvider icon="MdVisibilityOff" />
     </IconButton>

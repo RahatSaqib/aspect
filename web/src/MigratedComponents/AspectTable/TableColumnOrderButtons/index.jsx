@@ -20,6 +20,7 @@ const TableColumnOrderButtons = ({
         onClick={e => handleChangeColumnOrder(e, 'left', headerIndex)}
         className={cssClasses('tableheader__orderbutton')}
         data-testid={`order_left_${headerIndex}`}
+        title="Move Column Left"
       >
         <IconProvider icon="MdChevronLeft" />
       </IconButton>
@@ -28,6 +29,7 @@ const TableColumnOrderButtons = ({
         onClick={e => handleChangeColumnOrder(e, 'right', headerIndex)}
         className={cssClasses('tableheader__orderbutton')}
         data-testid={`order_right_${headerIndex}`}
+        title="Move Column Right"
       >
         <IconProvider icon="MdChevronRight" />
       </IconButton>
