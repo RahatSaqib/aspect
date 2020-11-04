@@ -221,9 +221,9 @@ async function seed(knex) {
       if (emailTemplate) {
         ;[emailMessageId] = await knex('EmailMessage').insert({
           emailTemplateId: emailTemplate.id,
-          subject: await getMessage(resultData, smsTemplate.subject),
-          body: await getMessage(resultData, smsTemplate.body),
-          htmlBody: await getMessage(resultData, smsTemplate.htmlBody),
+          subject: await getMessage(resultData, emailTemplate.subject),
+          body: await getMessage(resultData, emailTemplate.body),
+          htmlBody: await getMessage(resultData, emailTemplate.htmlBody),
           ...sharedMessageProperties,
         })
       }
