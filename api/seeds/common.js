@@ -1660,7 +1660,7 @@ async function baseGxAlertMigration(
         ...auditFields,
       })
     }
-    if (person.userId) {
+    if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
         const existingJob = await knex('Job')
           .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
