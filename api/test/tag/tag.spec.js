@@ -16,10 +16,9 @@ const context = createTestContext(server, {
 
 describe('Tag routes', () => {
   const path = '/api/tag'
-  shared.checkToken(server, `${path}/result`)
 
   describe('GET', () => {
-    before(async () => {
+    beforeEach(async () => {
       await context.createDeviceWithResult()
       const { deviceId } = context
       const { id: resultId } = await knex('Result as r')
@@ -39,7 +38,7 @@ describe('Tag routes', () => {
       assert.property(res.body.data[0], 'partnerId')
     })
 
-    after(async () => {
+    afterEach(async () => {
       await context.afterEach()
     })
 
@@ -56,5 +55,7 @@ describe('Tag routes', () => {
       assert.property(res.body.data[0], 'title')
       assert.property(res.body.data[0], 'partnerId')
     })
+    // check the endpoint routes and authorizations
+    shared.checkToken(server, `${path}/result`)
   })
 })

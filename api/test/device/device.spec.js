@@ -564,7 +564,7 @@ describe('Device routes', () => {
       }
 
       // -----------------------------
-      async function checkMaintenance(externalId, datePropName, notesPropName) {
+      function checkMaintenance(externalId, datePropName, notesPropName) {
         it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, async () => {
           const options = { datePropName, notesPropName }
           let notes = 'Some sample notes'
