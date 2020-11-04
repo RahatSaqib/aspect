@@ -38,16 +38,16 @@ describe('Excel reports', () => {
   it('should return CSV files when using valid token', async () => {
     // must specify param 'format' = `csv`
     const queries = [
-      '/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&hasResults=1',
-      '/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&diseaseId=3',
-      '/inventory/export?sortCol=siteName&sortDir=asc&page=0&size=10&format=csv',
-      '/person/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
-      '/site/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
-      '/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
-      '/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
-      '/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
-      '/result/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
-      '/result/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&diseaseId=3',
+      '/api/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&hasResults=1',
+      '/api/device/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&diseaseId=3',
+      '/api/inventory/export?sortCol=siteName&sortDir=asc&page=0&size=10&format=csv',
+      '/api/person/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
+      '/api/site/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
+      '/api/report/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
+      '/api/notification/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv',
+      '/api/deviceApiKey/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
+      '/api/result/export?sortCol=createdOn&sortDir=asc&page=0&size=10&format=csv',
+      '/api/result/export?sortCol=name&sortDir=asc&page=0&size=10&format=csv&diseaseId=3',
     ]
     shared.checkToken(server, queries[0])
     await Promise.each(queries, async query => {
