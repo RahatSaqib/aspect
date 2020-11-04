@@ -6,12 +6,12 @@ import IconProvider from '../../IconProvider'
 
 const cssClasses = classnames.bind(require('../Table.css'))
 
-const TableColumnHideButton = ({ headerId, handleHideColumnToggle }) => {
+const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
   return (
     <IconButton
-      onClick={e => handleHideColumnToggle(e, headerId)}
+      onClick={e => handleHideColumnToggle(e, headerIndex)}
       className={cssClasses('tableheader__hidebutton')}
-      data-testid={`hide_column_${headerId}`}
+      data-testid={`hide_column_${headerIndex}`}
     >
       <IconProvider icon="MdVisibilityOff" />
     </IconButton>
@@ -19,7 +19,7 @@ const TableColumnHideButton = ({ headerId, handleHideColumnToggle }) => {
 }
 
 TableColumnHideButton.propTypes = {
-  headerId: PropTypes.string.isRequired,
+  headerIndex: PropTypes.string.isRequired,
   handleHideColumnToggle: PropTypes.func.isRequired,
 }
 
