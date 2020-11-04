@@ -15,10 +15,10 @@ const context = createTestContext(server, {
 })
 
 describe('Tag routes', () => {
-  describe('GET', () => {
-    const path = '/api/tag'
-    shared.checkToken(server, `${path}/result`)
+  const path = '/api/tag'
+  shared.checkToken(server, `${path}/result`)
 
+  describe('GET', () => {
     before(async () => {
       await context.createDeviceWithResult()
       const { deviceId } = context

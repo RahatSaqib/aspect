@@ -12,10 +12,11 @@ describe('Site routes', () => {
   describe('/site', () => {
     const path = '/api/site'
     let siteId = 1
-    let siteData
-    describe('GET', () => {
-      shared.checkToken(server, path)
 
+    let siteData
+    shared.checkToken(server, path)
+
+    describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
         const res = await server
           .get(path)
