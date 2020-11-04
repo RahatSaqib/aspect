@@ -68,13 +68,13 @@
 }
 
 .pageindex__button--left div {
-  font-size: 16px;
-  padding: 5px 5px 0;
+  font-size: 20px;
+  padding: 7px 5px 0;
 }
 
 .pageindex__button--right div {
-  font-size: 16px;
-  padding: 6px 0 0 5px;
+  font-size: 20px;
+  padding: 7px 0 0 5px;
 }
 
 .pagesize__button {
