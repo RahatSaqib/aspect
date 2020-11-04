@@ -3,6 +3,10 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+// const {
+//   generateResults,
+//   normalizeTreatmentStatusDistributionByResults,
+// } = require('../commonGenerateResults')
 const {
   processUsingDataSourceQuery,
 } = require('../../src/stringTemplate/service')
@@ -20,7 +24,7 @@ const getPositiveCategoriesExternalIds = require('../../src/resultCategory/servi
 const currentMonth = new Date().getMonth()
 const canProceed = date => {
   const percentPositiveResultNotified =
-    new Date(date).getMonth() === currentMonth ? 15 : 10
+    new Date(date).getMonth() === currentMonth ? 90 : 80
   return _.random(0, 100) <= percentPositiveResultNotified
 }
 const getMessage = async (result, messageTemplate) => {
@@ -57,14 +61,18 @@ async function seed(knex) {
     )
 
   const issueTypeId = issueTypes.ResultReceived
-  await seedIssueTypeForMtb(knex, 'ResultReceived', { partnerId, userId })
+  await seedIssueTypeTemplates(knex, 'ResultReceived', { partnerId, userId })
 
   // // add 100 records to have more positive results
   // const results = await generateResults(
   //   knex,
   //   userId,
   //   partnerId,
-  //   patients,
+  //   patients.map(p => ({
+  //     ...p,
+  //     id: `${p.id}-1`,
+  //     sampleId: `${p.sampleId}-1`,
+  //   })),
   //   errorCodes,
   //   'US',
   //   true,
@@ -98,7 +106,7 @@ async function seed(knex) {
 
   // get all positive results for last 2 months and randomly 'send' email/sms
   // Notice that here we use same query as sub-query for widget 'Positive Results Notified' (externalId: 'gxPositiveResultsNotified') but
-  // without few WHERE parts
+  // without few parts
   const positiveResults = await knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
@@ -109,26 +117,11 @@ async function seed(knex) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Issue as i', 'r.id', 'i.resultId')
     .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-    .leftOuterJoin('Notification as n', 'i.id', 'n.issueId')
-    .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('n.smsMessageId', 'sm.id').andOn('sm.messageStatusId', 3)
-    })
-    .leftOuterJoin('EmailMessage as em', function () {
-      this.on('n.emailMessageId', 'em.id').andOn('em.messageStatusId', 3)
-    })
     .leftOuterJoin(
       'DeviceApproval as deviceApproval',
       'd.deviceApprovalId',
       'deviceApproval.id'
     )
-    // additional joins to get job persons to send email/sms to
-    .leftOuterJoin('NotificationType as nt', function () {
-      this.on('nt.partnerId', partnerId)
-        .andOn('nt.issueTypeId', issueTypeId)
-        .andOn('nt.messageTypeId', messageTypeId)
-    })
-    .leftOuterJoin('Job as job', 'nt.jobFunctionId', 'job.jobFunctionId')
-    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
     .whereIn('rc.externalid', getPositiveCategoriesExternalIds())
     .whereRaw(
       `
@@ -160,7 +153,6 @@ async function seed(knex) {
       'd.name as deviceName',
       'r.endedOn',
       'd.siteId',
-      'jobperson.name as personName',
       's.partnerId',
       's.geographyId',
       'r.assayId',
@@ -282,7 +274,7 @@ async function getPositiveResultIssueProps(knex, issueTypeId) {
 }
 
 // ***********************************************************************
-async function seedIssueTypeForMtb(
+async function seedIssueTypeTemplates(
   knex,
   issueTypeExternalId,
   { partnerId, userId }
@@ -297,7 +289,8 @@ async function seedIssueTypeForMtb(
   const messageSeverityId = await messageSeverityToId('Alert')
   const issueTypeId = await issueTypeToId(issueTypeExternalId)
   const { id: jobFunctionId } = await knex('JobFunction')
-    .where('externalId', 'regionalOfficer')
+    .where({ partnerId })
+    .whereIn('externalId', ['manager', 'regionalOfficer'])
     .first('id')
 
   // only Result 1 positive - send email and sms
