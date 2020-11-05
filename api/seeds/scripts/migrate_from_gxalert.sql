@@ -67,11 +67,12 @@ GROUP BY deployment.DeploymentId;
 
 -- Query Contacts in GxAlert
 -- This is for the contactsFromGxAlert.json fixture
-SELECT CONCAT(
+SELECT
+CONCAT(
 '{ "personName": "',  person.Name,
 COALESCE(CONCAT('", "personTitle": "', person.Title), ''),
-'", "jobFunctions": [ "', CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
-'" ], ', COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
+CASE WHEN role.`Name` IS NOT NULL THEN '", "jobFunctions": [ "' ELSE '",' END, CASE WHEN role.Name = 'National Level' THEN 'Admin' WHEN role.Name IN ('State Level', 'LGA Level') THEN 'Regional Officer' WHEN role.Name = 'Lab Level' THEN 'Lab User' ELSE '' END,
+CASE WHEN role.`Name` IS NOT NULL THEN '" ], ' ELSE '' END, COALESCE(CONCAT('"personEmailAddress": "', person.Email, '", '), ''),
 COALESCE(CONCAT('"personPhone": "', person.Phone, '", '), ''),
 COALESCE(CONCAT('"personCell": "', person.Cell, '", '), ''),
 COALESCE(CONCAT('"username": "', my_aspnet_users.name, '", '), ''),
@@ -93,12 +94,12 @@ LEFT JOIN lga ON lga.LgaId = person.LgaId
 LEFT JOIN deployment ON deployment.DeploymentId = person.DeploymentId
 LEFT JOIN role ON role.RoleId = person.RoleId
 LEFT JOIN persondeployment ON persondeployment.PersonId = person.PersonId
-LEFT JOIN deployment as persondeployment_deployment ON persondeployment_deployment.DeploymentId = persondeployment.DeploymentId
+LEFT JOIN deployment AS persondeployment_deployment ON persondeployment_deployment.DeploymentId = persondeployment.DeploymentId
 LEFT JOIN personlga ON personlga.PersonId = person.PersonId
-LEFT JOIN lga as personlga_lga ON personlga_lga.LgaId = personlga.LgaId
-LEFT JOIN state as personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
+LEFT JOIN lga AS personlga_lga ON personlga_lga.LgaId = personlga.LgaId
+LEFT JOIN state AS personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
 LEFT JOIN personstate ON personstate.PersonId = person.PersonId
-LEFT JOIN state as personstate_state ON personstate_state.StateId = personstate.StateId
+LEFT JOIN state AS personstate_state ON personstate_state.StateId = personstate.StateId
 GROUP BY person.PersonId;
 
 -- Query Custom Fields in GxAlert

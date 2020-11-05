@@ -1,0 +1,5558 @@
+[
+  {
+    "externalId": "A-BGH-DHQ-Bagh",
+    "latitude": 74.747002,
+    "longitude": 32.785999,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Bagh",
+    "name": "A-BGH-DHQ-Bagh",
+    "shortname": "A-BGH-DHQ-BAGH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-BGH-DHQ-Bagh",
+        "shortName": "A-BGH-DHQ-BAGH",
+        "macAddress": "MAC98E7F45D33C3",
+        "hostId": "DHQ-BAGH",
+        "serial": "Cepheid-64261M5",
+        "gxAlertDeviceId": 1347
+      }
+    ]
+  },
+  {
+    "externalId": "A-BMB-DHQ-Bhimber",
+    "latitude": 74.747002,
+    "longitude": 32.785999,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Bhimber",
+    "name": "A-BMB-DHQ-Bhimber",
+    "shortname": "A-BMB-DHQ-BHIMBR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-BMB-DHQ-Bhimber",
+        "shortName": "A-BMB-DHQ-BHIMBR",
+        "macAddress": "MAC98E7F468D64A",
+        "hostId": "DHQ Hospital Bhimber",
+        "serial": "Cepheid-6426231",
+        "gxAlertDeviceId": 1392
+      }
+    ]
+  },
+  {
+    "externalId": "A-HBL-DHQ-Hattian-Bala",
+    "latitude": 34.169102,
+    "longitude": 73.743202,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Hattian Bala",
+    "name": "A-HBL-DHQ-Hattian-Bala",
+    "shortname": "A-HBL-DHQ-H-BALA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-HBL-DHQ-Hattian-Bala",
+        "shortName": "A-HBL-DHQ-H-BALA",
+        "macAddress": "MAC98E7F4531632",
+        "hostId": "DHQ Hattian Bala",
+        "serial": "Cepheid-6360P00",
+        "gxAlertDeviceId": 1535
+      }
+    ]
+  },
+  {
+    "externalId": "A-HVL-DHQ-Haveli",
+    "latitude": 32.785999,
+    "longitude": 74.747002,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Haveli",
+    "name": "A-HVL-DHQ-Haveli",
+    "shortname": "A-HVL-DHQ-HAVELI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-HVL-DHQ-Haveli",
+        "shortName": "A-HVL-DHQ-HAVELI",
+        "macAddress": "MAC",
+        "hostId": "DHQ-HAVELI",
+        "serial": "Cepheid-64261SK",
+        "gxAlertDeviceId": 1395
+      }
+    ]
+  },
+  {
+    "externalId": "A-KTL-DHQ-Kotli",
+    "latitude": 74.747002,
+    "longitude": 32.785999,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Kotli",
+    "name": "A-KTL-DHQ-Kotli",
+    "shortname": "A-KTL-DHQ-KOTLI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-KTL-DHQ-Kotli",
+        "shortName": "A-KTL-DHQ-KOTLI",
+        "macAddress": "MACF0D5BF0CDDFC",
+        "hostId": "DHQ-Kotli",
+        "serial": "Cepheid-642628S",
+        "gxAlertDeviceId": 1351
+      }
+    ]
+  },
+  {
+    "externalId": "A-MRP-DHQ-Mirpur",
+    "latitude": 74.747002,
+    "longitude": 32.785999,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Mirpur",
+    "name": "A-MRP-DHQ-Mirpur",
+    "shortname": "A-MRP-DHQ-MIRPUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-MRP-DHQ-Mirpur",
+        "shortName": "A-MRP-DHQ-MIRPUR",
+        "macAddress": "MACECB1D72FA08D",
+        "hostId": "DHQ-MIRPUR CITY",
+        "serial": "Cepheid-528266F",
+        "gxAlertDeviceId": 1354
+      }
+    ]
+  },
+  {
+    "externalId": "A-MZD-TH-Abbas-Institute-Of-Medical-Sciences",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Muzaffarabad",
+    "name": "A-MZD-TH-Abbas-Institute-Of-Medical-Sciences",
+    "shortname": "A-MZD-TH-AIMS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-MZD-TH-Abbas-Institute-Of-Medical-Sciences",
+        "shortName": "A-MZD-TH-AIMS",
+        "macAddress": "MAC98E7F452FB5A",
+        "hostId": "A-MZD-TH-AIMS",
+        "serial": "Cepheid-642624T",
+        "gxAlertDeviceId": 1596
+      }
+    ]
+  },
+  {
+    "externalId": "A-NLM-DHQ-Neelum",
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Neelum",
+    "name": "A-NLM-DHQ-Neelum",
+    "shortname": "A-NLM-DHQ-NEELUM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-NLM-DHQ-Neelum",
+        "shortName": "A-NLM-DHQ-NEELUM",
+        "macAddress": "MACF0D5BF0CD8B6",
+        "hostId": "DHQ Hospital Neelum",
+        "serial": "Cepheid-642628J",
+        "gxAlertDeviceId": 1537
+      }
+    ]
+  },
+  {
+    "externalId": "A-PNC-DHQ-Poonch-Rawalakot",
+    "latitude": 74.747002,
+    "longitude": 32.785999,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Poonch",
+    "name": "A-PNC-DHQ-Poonch-Rawalakot",
+    "shortname": "A-PNC-DHQ-RWLKOT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-PNC-DHQ-Poonch-Rawalakot",
+        "shortName": "A-PNC-DHQ-RWLKOT",
+        "macAddress": "MAC98E7F468D6C6",
+        "hostId": "DHQ-RAWALAKOT",
+        "serial": "Cepheid-642628P",
+        "gxAlertDeviceId": 1394
+      }
+    ]
+  },
+  {
+    "externalId": "A-SDN-DHQ-Sudhnoti-Palandri",
+    "latitude": 74.747002,
+    "longitude": 32.785999,
+    "stateName": "Azad Jammu & Kashmir",
+    "lgaName": "Sudhnoti",
+    "name": "A-SDN-DHQ-Sudhnoti-Palandri",
+    "shortname": "A-SDN-DHQ-PLNDRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "A-SDN-DHQ-Sudhnoti-Palandri",
+        "shortName": "A-SDN-DHQ-PLNDRI",
+        "macAddress": "MAC98E7F45C8139",
+        "hostId": "DHQ-PALANDRI",
+        "serial": "Cepheid-64261NK",
+        "gxAlertDeviceId": 1393
+      }
+    ]
+  },
+  {
+    "externalId": "ATH-ABBOTTABAD",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Abbottabad",
+    "name": "ATH-ABBOTTABAD",
+    "shortname": "ATH-ABBOTTABAD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "ATH-ABBOTTABAD",
+        "shortName": "ATH-ABBOTTABAD",
+        "macAddress": "MAC1C659D239C53",
+        "hostId": "ATH-ABBOTTABAD",
+        "serial": "DGRM2SM1",
+        "gxAlertDeviceId": 1608
+      }
+    ]
+  },
+  {
+    "externalId": "B-BLN-DHQ-Bolan",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Bolan",
+    "name": "B-BLN-DHQ-Bolan",
+    "shortname": "B-BLN-DHQ-BOLAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-BLN-DHQ-Bolan",
+        "shortName": "B-BLN-DHQ-BOLAN",
+        "macAddress": "MAC98E7F45DDB53",
+        "hostId": "DHQ HOSPITAL BOLAN",
+        "serial": "Cepheid-64261P3",
+        "gxAlertDeviceId": 1490
+      }
+    ]
+  },
+  {
+    "externalId": "B-CGH-DHQ-Chaghai-Dalbandin",
+    "latitude": 28.883881,
+    "longitude": 64.439278,
+    "stateName": "Balochistan",
+    "lgaName": "Chaghai",
+    "name": "B-CGH-DHQ-Chaghai-Dalbandin",
+    "shortname": "B-CGH-DHQ-CHAGHI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-CGH-DHQ-Chaghai-Dalbandin",
+        "shortName": "B-CGH-DHQ-CHAGHI",
+        "macAddress": "MACEC8EB54F75BF",
+        "hostId": "DHQ-HOSPITAL-DALBANDIN",
+        "serial": "Cepheid-6290QSC",
+        "gxAlertDeviceId": 1519
+      }
+    ]
+  },
+  {
+    "externalId": "B-JFB-DHQ-Jaffarabad",
+    "latitude": 65.883003,
+    "longitude": 28.316999,
+    "stateName": "Balochistan",
+    "lgaName": "Jaffarabad",
+    "name": "B-JFB-DHQ-Jaffarabad",
+    "shortname": "B-JFB-DHQ-JAFRBD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-JFB-DHQ-Jaffarabad",
+        "shortName": "B-JFB-DHQ-JAFRBD",
+        "macAddress": "MAC98E7F468D5B4",
+        "hostId": "DHQ-JAFRABAD",
+        "serial": "Cepheid-642628H",
+        "gxAlertDeviceId": 1368
+      }
+    ]
+  },
+  {
+    "externalId": "B-JMG-RHC-Jhal-Magsi",
+    "latitude": 28.500000,
+    "longitude": 67.500000,
+    "stateName": "Balochistan",
+    "lgaName": "Jhal Magsi",
+    "name": "B-JMG-RHC-Jhal-Magsi",
+    "shortname": "B-JMG-RHC-JMAGSI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-JMG-RHC-Jhal-Magsi",
+        "shortName": "B-JMG-RHC-JMAGSI",
+        "macAddress": "MAC98E7F45313E0",
+        "hostId": "RHC JHAL MAGSI",
+        "serial": "Cepheid-6360NZQ",
+        "gxAlertDeviceId": 1489
+      }
+    ]
+  },
+  {
+    "externalId": "B-KHL-DHQ-Kohlu",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Kohlu",
+    "name": "B-KHL-DHQ-Kohlu",
+    "shortname": "B-KHL-DHQ-KOHLU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-KHL-DHQ-Kohlu",
+        "shortName": "B-KHL-DHQ-KOHLU",
+        "macAddress": "MAC98E7F45DDB94",
+        "hostId": "DHQ-HOSPITAL-KOHLU",
+        "serial": "Cepheid-64261N5",
+        "gxAlertDeviceId": 1486
+      }
+    ]
+  },
+  {
+    "externalId": "B-KRN-DHQ-Kharan",
+    "latitude": 28.570240,
+    "longitude": 65.415222,
+    "stateName": "Balochistan",
+    "lgaName": "Kharan",
+    "name": "B-KRN-DHQ-Kharan",
+    "shortname": "B-KRN-DHQ-KHARAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-KRN-DHQ-Kharan",
+        "shortName": "B-KRN-DHQ-KHARAN",
+        "macAddress": "MAC98E7F45C811D",
+        "hostId": "DHQ-HOSPITAL-KHARAN",
+        "serial": "Cepheid-64261PR",
+        "gxAlertDeviceId": 1525
+      }
+    ]
+  },
+  {
+    "externalId": "B-KSF-DHQ-Killa-Saifullah",
+    "stateName": "Balochistan",
+    "lgaName": "Killa Saifullah",
+    "name": "B-KSF-DHQ-Killa-Saifullah",
+    "shortname": "B-KSF-DHQ-K-SAIF",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-KSF-DHQ-Killa-Saifullah",
+        "shortName": "B-KSF-DHQ-K-SAIF",
+        "macAddress": "MACEC8EB54EF052",
+        "hostId": "DHQ-HOSPITAL-KILLASAIFULLAH",
+        "serial": "Cepheid-62873Q6",
+        "gxAlertDeviceId": 1467
+      }
+    ]
+  },
+  {
+    "externalId": "B-KZD-DHQ-Khuzdar",
+    "latitude": 65.883003,
+    "longitude": 28.316999,
+    "stateName": "Balochistan",
+    "lgaName": "Khuzdar",
+    "name": "B-KZD-DHQ-Khuzdar",
+    "shortname": "B-KZD-DHQ-KHUZDR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-KZD-DHQ-Khuzdar",
+        "shortName": "B-KZD-DHQ-KHUZDR",
+        "macAddress": "MACF0D5BF16EDBF",
+        "hostId": "DHQ-KHUZDAR",
+        "serial": "Cepheid-64262Y6",
+        "gxAlertDeviceId": 1366
+      }
+    ]
+  },
+  {
+    "externalId": "B-LRL-DHQ-Loralai",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Loralai",
+    "name": "B-LRL-DHQ-Loralai",
+    "shortname": "B-LRL-DHQ-LORALI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-LRL-DHQ-Loralai",
+        "shortName": "B-LRL-DHQ-LORALI",
+        "macAddress": "MACE86A648EED7D",
+        "hostId": "B-LRL-DHQ-Loralai",
+        "serial": "CPHD-F1JX8T1",
+        "gxAlertDeviceId": 1614
+      }
+    ]
+  },
+  {
+    "externalId": "B-LSB-DHQ-Hub-(JGQH)",
+    "latitude": 65.883003,
+    "longitude": 28.316999,
+    "stateName": "Balochistan",
+    "lgaName": "Lasbella",
+    "name": "B-LSB-DHQ-Hub-(JGQH)",
+    "shortname": "B-LSB-DHQ-LASBLA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-LSB-DHQ-Hub-(JGQH)",
+        "shortName": "B-LSB-DHQ-LASBLA",
+        "macAddress": "MAC98E7F468CFEA",
+        "hostId": "JGQ Hospital-Hub",
+        "serial": "Cepheid-64262XS",
+        "gxAlertDeviceId": 1363
+      }
+    ]
+  },
+  {
+    "externalId": "B-MST-TH-Nawab-Ghous-Buksh-Raisani-Memorial-Hospital-Mastung",
+    "latitude": 29.799500,
+    "longitude": 66.846817,
+    "stateName": "Balochistan",
+    "lgaName": "Mastung",
+    "name": "B-MST-TH-Nawab-Ghous-Buksh-Raisani-Memorial-Hospital-Mastung",
+    "shortname": "B-MST-TH-NGBRMH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-MST-TH-Nawab-Ghous-Buksh-Raisani-Memorial-Hospital-Mastung",
+        "shortName": "B-MST-TH-NGBRMH",
+        "macAddress": "MAC98E7F4531819",
+        "hostId": "NAWAB-GHOUS-BUKSH-RAISANI-MEMORIAL-HOSPITAL-MASTUNG",
+        "serial": "Cepheid-6360NXJ",
+        "gxAlertDeviceId": 1532
+      }
+    ]
+  },
+  {
+    "externalId": "B-NSB-DHQ-Nasirabad",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Nasirabad",
+    "name": "B-NSB-DHQ-Nasirabad",
+    "shortname": "B-NSB-DHQ-NASRBD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-NSB-DHQ-Nasirabad",
+        "shortName": "B-NSB-DHQ-NASRBD",
+        "macAddress": "MAC",
+        "hostId": "DHQ NASIRABAD",
+        "serial": "Cepheid-6290QFC",
+        "gxAlertDeviceId": 1487
+      }
+    ]
+  },
+  {
+    "externalId": "B-NSK-DHQ-Nushki",
+    "latitude": 29.528860,
+    "longitude": 66.011093,
+    "stateName": "Balochistan",
+    "lgaName": "Nushki",
+    "name": "B-NSK-DHQ-Nushki",
+    "shortname": "B-NSK-DHQ-NUSHKI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-NSK-DHQ-Nushki",
+        "shortName": "B-NSK-DHQ-NUSHKI",
+        "macAddress": "MAC",
+        "hostId": "DHQ-HOSPITAL-NUSHKI",
+        "serial": "Cepheid-6426KQM",
+        "gxAlertDeviceId": 1517
+      }
+    ]
+  },
+  {
+    "externalId": "B-PSH-DHQ-Pishin",
+    "latitude": 30.586781,
+    "longitude": 66.985031,
+    "stateName": "Balochistan",
+    "lgaName": "Pishin",
+    "name": "B-PSH-DHQ-Pishin",
+    "shortname": "B-PSH-DHQ-PISHIN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-PSH-DHQ-Pishin",
+        "shortName": "B-PSH-DHQ-PISHIN",
+        "macAddress": "MAC98E7F45C8103",
+        "hostId": "DHQ-HOSPITAL-PISHIN",
+        "serial": "Cepheid-6426KM4",
+        "gxAlertDeviceId": 1466
+      }
+    ]
+  },
+  {
+    "externalId": "B-QTA-GH-Sandeman-Provincial-Hospital",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Quetta",
+    "name": "B-QTA-GH-Sandeman-Provincial-Hospital",
+    "shortname": "B-QTA-GH-SPH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-QTA-GH-Sandeman-Provincial-Hospital",
+        "shortName": "B-QTA-GH-SPH",
+        "macAddress": "MAC98E7F45C801A",
+        "hostId": "SANDEMEN-PROVINCIAL-QUETTA",
+        "serial": "Cepheid-64261QS",
+        "gxAlertDeviceId": 1460
+      }
+    ]
+  },
+  {
+    "externalId": "B-QTA-GH-Sheikh-Zayed-Hospital",
+    "latitude": 30.221041,
+    "longitude": 67.008781,
+    "stateName": "Balochistan",
+    "lgaName": "Quetta",
+    "name": "B-QTA-GH-Sheikh-Zayed-Hospital",
+    "shortname": "B-QTA-GH-SZH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-QTA-GH-Sheikh-Zayed-Hospital",
+        "shortName": "B-QTA-GH-SZH",
+        "macAddress": "MAC1062E5EC46C6",
+        "hostId": "SHEIKH-ZAYED-HOSPITAL-QUETTA",
+        "serial": "Cepheid-82846P4",
+        "gxAlertDeviceId": 1536
+      }
+    ]
+  },
+  {
+    "externalId": "B-QTA-PRL-Balochistan-Quetta-FJCH",
+    "latitude": 65.883003,
+    "longitude": 28.316999,
+    "stateName": "Balochistan",
+    "lgaName": "Quetta",
+    "name": "B-QTA-PRL-Balochistan-Quetta-FJCH",
+    "shortname": "B-QTA-PRL-B-TAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-QTA-PRL-Balochistan-Quetta-FJCH",
+        "shortName": "B-QTA-PRL-B-TAN",
+        "macAddress": "MAC48BA4EEBF842",
+        "hostId": "PRL-Quetta",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 1364
+      }
+    ]
+  },
+  {
+    "externalId": "B-QTA-TBC-TB-Clinic-Quetta",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Quetta",
+    "name": "B-QTA-TBC-TB-Clinic-Quetta",
+    "shortname": "B-QTA-TBC-QUETTA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-QTA-TBC-TB-Clinic-Quetta",
+        "shortName": "B-QTA-TBC-QUETTA",
+        "macAddress": "MACB88A60F35D7C",
+        "hostId": "TB-CLINIC-QUETTA",
+        "serial": "Cepheid-6426KPM",
+        "gxAlertDeviceId": 1465
+      }
+    ]
+  },
+  {
+    "externalId": "B-QTA-TH-Bolan-Medical-Complex",
+    "latitude": 30.221041,
+    "longitude": 67.008781,
+    "stateName": "Balochistan",
+    "lgaName": "Quetta",
+    "name": "B-QTA-TH-Bolan-Medical-Complex",
+    "shortname": "B-QTA-TH-BMC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-QTA-TH-Bolan-Medical-Complex",
+        "shortName": "B-QTA-TH-BMC",
+        "macAddress": "MACEC8EB54F75C8",
+        "hostId": "BOLAN-MEDICAL-COMPLEX-HOSPITAL-QUETTA",
+        "serial": "Cepheid-6290QSX",
+        "gxAlertDeviceId": 1464
+      }
+    ]
+  },
+  {
+    "externalId": "B-SBI-DHQ-Sibi",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Sibi",
+    "name": "B-SBI-DHQ-Sibi",
+    "shortname": "B-SBI-DHQ-SIBI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-SBI-DHQ-Sibi",
+        "shortName": "B-SBI-DHQ-SIBI",
+        "macAddress": "MAC98E7F468D779",
+        "hostId": "DHQ-HOSPITAL-SIBI",
+        "serial": "Cepheid-642622G",
+        "gxAlertDeviceId": 1485
+      }
+    ]
+  },
+  {
+    "externalId": "B-WSK-DHQ-Washuk",
+    "stateName": "Balochistan",
+    "lgaName": "Washuk",
+    "name": "B-WSK-DHQ-Washuk",
+    "shortname": "B-WSK-DHQ-WASHUK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-WSK-DHQ-Washuk",
+        "shortName": "B-WSK-DHQ-WASHUK",
+        "macAddress": "MACE4A4715D3F2C",
+        "hostId": "DHQ-HOSPITAL-WASHUK",
+        "serial": "Cepheid-6290Q22",
+        "gxAlertDeviceId": 1533
+      }
+    ]
+  },
+  {
+    "externalId": "B-ZHB-DHQ-Zhob",
+    "latitude": 28.316839,
+    "longitude": 65.883011,
+    "stateName": "Balochistan",
+    "lgaName": "Zhob",
+    "name": "B-ZHB-DHQ-Zhob",
+    "shortname": "B-ZHB-DHQ-ZHOB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-ZHB-DHQ-Zhob",
+        "shortName": "B-ZHB-DHQ-ZHOB",
+        "macAddress": "MACB88A60F35D3B",
+        "hostId": "DHQ-HOSPITAL-ZHOB",
+        "serial": "Cepheid-6426KMM",
+        "gxAlertDeviceId": 1488
+      }
+    ]
+  },
+  {
+    "externalId": "B-ZRT-DHQ-Ziarat",
+    "latitude": 30.385220,
+    "longitude": 67.728027,
+    "stateName": "Balochistan",
+    "lgaName": "Ziarat",
+    "name": "B-ZRT-DHQ-Ziarat",
+    "shortname": "B-ZRT-DHQ-ZIARAT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "B-ZRT-DHQ-Ziarat",
+        "shortName": "B-ZRT-DHQ-ZIARAT",
+        "macAddress": "MAC98E7F45D3262",
+        "hostId": "DHQ-HOSPITAL-ZIARAT",
+        "serial": "Cepheid-6426KNC",
+        "gxAlertDeviceId": 1491
+      }
+    ]
+  },
+  {
+    "externalId": "DHQ-Abbottabad",
+    "latitude": 34.150799,
+    "longitude": 73.203110,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Abbottabad",
+    "name": "DHQ-Abbottabad",
+    "shortname": "DHQ-Abbottabad",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "DHQ-Abbottabad",
+        "shortName": "DHQ-Abbottabad",
+        "macAddress": "MACA02BB830E627",
+        "hostId": "ATH-Abbotabad",
+        "serial": "Cepheid-412BWCN",
+        "gxAlertDeviceId": 1598
+      }
+    ]
+  },
+  {
+    "externalId": "F-ISB-BHU-Civil-Surgeon-Dispensary",
+    "latitude": 33.657219,
+    "longitude": 73.077332,
+    "stateName": "Islamabad & CT",
+    "lgaName": "Islamabad",
+    "name": "F-ISB-BHU-Civil-Surgeon-Dispensary",
+    "shortname": "F-ISB-BHU-CS-DIS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "F-ISB-BHU-Civil-Surgeon-Dispensary",
+        "shortName": "F-ISB-BHU-CS-DIS",
+        "macAddress": "MACE4A4715D2776",
+        "hostId": "CIVIL-SURGEON-DISPENSORY",
+        "serial": "Cepheid-6290QL5",
+        "gxAlertDeviceId": 1479
+      }
+    ]
+  },
+  {
+    "externalId": "F-ISB-NRL-Islamabad",
+    "latitude": 33.707680,
+    "longitude": 73.070473,
+    "stateName": "Islamabad & CT",
+    "lgaName": "Islamabad",
+    "name": "NRL-ISLAMABAD-2",
+    "shortname": "NRL-ISLAMABAD-2",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "NRL-ISLAMABAD-2",
+        "shortName": "NRL-ISLAMABAD-2",
+        "macAddress": "MAC6805CA21DE97",
+        "hostId": "NRL-ISLAMABAD-2",
+        "serial": "Cepheid-406124V",
+        "gxAlertDeviceId": 1422
+      }
+    ]
+  },
+  {
+    "externalId": "F-ISB-NRL-Islamabad",
+    "latitude": 73.077003,
+    "longitude": 33.657001,
+    "stateName": "Islamabad & CT",
+    "lgaName": "Islamabad",
+    "name": "F-ISB-NRL-Islamabad",
+    "shortname": "F-ISB-NRL-NRLISB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "F-ISB-NRL-Islamabad",
+        "shortName": "F-ISB-NRL-NRLISB",
+        "macAddress": "MACA02BB82E1F06",
+        "hostId": "NRL Islamabad",
+        "serial": "NRLXpertSystem",
+        "gxAlertDeviceId": 1371
+      }
+    ]
+  },
+  {
+    "externalId": "F-ISB-TH-CDA-Hospital",
+    "latitude": 73.077003,
+    "longitude": 33.657001,
+    "stateName": "Islamabad & CT",
+    "lgaName": "Islamabad",
+    "name": "F-ISB-TH-CDA-Hospital",
+    "shortname": "F-ISB-TH-CDAH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "F-ISB-TH-CDA-Hospital",
+        "shortName": "F-ISB-TH-CDAH",
+        "macAddress": "MACF0D5BF0E0CAE",
+        "hostId": "CDA-HOSPITAL",
+        "serial": "Cepheid-642621B",
+        "gxAlertDeviceId": 1435
+      }
+    ]
+  },
+  {
+    "externalId": "F-ISB-TH-Federal-General-Poly-Clinic",
+    "latitude": 73.070000,
+    "longitude": 33.708000,
+    "stateName": "Islamabad & CT",
+    "lgaName": "Islamabad",
+    "name": "F-ISB-TH-Federal-General-Poly-Clinic",
+    "shortname": "F-ISB-TH-FGPC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "F-ISB-TH-Federal-General-Poly-Clinic",
+        "shortName": "F-ISB-TH-FGPC",
+        "macAddress": "MAC98E7F468D809",
+        "hostId": "FGPC Islamabad",
+        "serial": "Cepheid-642623V",
+        "gxAlertDeviceId": 1388
+      }
+    ]
+  },
+  {
+    "externalId": "F-ISB-TH-Pakistan-Institute-Of-Medical-Sciences",
+    "latitude": 73.077003,
+    "longitude": 33.657001,
+    "stateName": "Islamabad & CT",
+    "lgaName": "Islamabad",
+    "name": "F-ISB-TH-Pakistan-Institute-Of-Medical-Sciences",
+    "shortname": "F-ISB-TH-PIMS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "F-ISB-TH-Pakistan-Institute-Of-Medical-Sciences",
+        "shortName": "F-ISB-TH-PIMS",
+        "macAddress": "MACE4A4715D2578",
+        "hostId": "PIMS-Islamabad",
+        "serial": "Cepheid-6290QKM",
+        "gxAlertDeviceId": 1337
+      }
+    ]
+  },
+  {
+    "externalId": "G-AST-DHQ-Astore",
+    "latitude": 74.510002,
+    "longitude": 35.220001,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Astore",
+    "name": "G-AST-DHQ-Astore",
+    "shortname": "G-AST-DHQ-ASTORE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-AST-DHQ-Astore",
+        "shortName": "G-AST-DHQ-ASTORE",
+        "macAddress": "MACB88A60EB71A7",
+        "hostId": "DHQ-ASTORE",
+        "serial": "Cepheid-64261YX",
+        "gxAlertDeviceId": 1397
+      }
+    ]
+  },
+  {
+    "externalId": "G-DMR-DHQ-Chillas",
+    "latitude": 75.003998,
+    "longitude": 35.821999,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Diamir",
+    "name": "G-DMR-DHQ-Chillas",
+    "shortname": "G-DMR-DHQ-CHILAS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-DMR-DHQ-Chillas",
+        "shortName": "G-DMR-DHQ-CHILAS",
+        "macAddress": "MACF0D5BF0CDE29",
+        "hostId": "DHQ - Chillas",
+        "serial": "Cepheid-642628T",
+        "gxAlertDeviceId": 1312
+      }
+    ]
+  },
+  {
+    "externalId": "G-GKC-DHQ-Gahkuch",
+    "latitude": 75.003998,
+    "longitude": 35.821999,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Gahkuch",
+    "name": "G-GKC-DHQ-Gahkuch",
+    "shortname": "G-GKC-DHQ-GAHKCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-GKC-DHQ-Gahkuch",
+        "shortName": "G-GKC-DHQ-GAHKCH",
+        "macAddress": "MACB88A60F35D68",
+        "hostId": "DHQ-GAHKUCH",
+        "serial": "Cepheid-6426KPN",
+        "gxAlertDeviceId": 1398
+      }
+    ]
+  },
+  {
+    "externalId": "G-GLG-DHQ-Gilgit",
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Gilgit",
+    "name": "G-GLG-DHQ-Gilgit",
+    "shortname": "G-GLG-DHQ-GILGIT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-GLG-DHQ-Gilgit",
+        "shortName": "G-GLG-DHQ-GILGIT",
+        "macAddress": "MAC180373263F8A",
+        "hostId": "DHQ - Gilgit",
+        "serial": "Cepheid2H6B7V1",
+        "gxAlertDeviceId": 1314
+      }
+    ]
+  },
+  {
+    "externalId": "G-GNC-DHQ-Khaplu",
+    "latitude": 35.153839,
+    "longitude": 76.345963,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Ghanche",
+    "name": "G-GNC-DHQ-Khaplu",
+    "shortname": "G-GNC-DHQ-KHAPLU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-GNC-DHQ-Khaplu",
+        "shortName": "G-GNC-DHQ-KHAPLU",
+        "macAddress": "MAC98E7F452FC3D",
+        "hostId": "DHQ-KHAPLU",
+        "serial": "Cepheid-642624Q",
+        "gxAlertDeviceId": 1544
+      }
+    ]
+  },
+  {
+    "externalId": "G-HNZ-CH-Hunza",
+    "latitude": 75.003998,
+    "longitude": 35.821999,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Hunza",
+    "name": "G-HNZ-CH-Hunza",
+    "shortname": "G-HNZ-CH-HUNZA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-HNZ-CH-Hunza",
+        "shortName": "G-HNZ-CH-HUNZA",
+        "macAddress": "MAC",
+        "hostId": "CH-HUNZA",
+        "serial": "Cepheid-6426241",
+        "gxAlertDeviceId": 1399
+      }
+    ]
+  },
+  {
+    "externalId": "G-SGR-RHC-Shigar",
+    "latitude": 35.816261,
+    "longitude": 74.902451,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Shigar",
+    "name": "G-SGR-RHC-Shigar",
+    "shortname": "G-SGR-RHC-SHIGAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-SGR-RHC-Shigar",
+        "shortName": "G-SGR-RHC-SHIGAR",
+        "macAddress": "MAC",
+        "hostId": "RHC-SHIGAR",
+        "serial": "Cepheid-642615T",
+        "gxAlertDeviceId": 1546
+      }
+    ]
+  },
+  {
+    "externalId": "G-SKD-DHQ-Skardu",
+    "latitude": 35.821999,
+    "longitude": 75.003998,
+    "stateName": "Gilgit-Baltistan",
+    "lgaName": "Skardu",
+    "name": "G-SKD-DHQ-Skardu",
+    "shortname": "G-SKD-DHQ-SKARDU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "G-SKD-DHQ-Skardu",
+        "shortName": "G-SKD-DHQ-SKARDU",
+        "macAddress": "MAC98E7F45DDB9A",
+        "hostId": "DHQ - Skardu",
+        "serial": "Cepheid-64261MZ",
+        "gxAlertDeviceId": 1309
+      }
+    ]
+  },
+  {
+    "externalId": "K-ABT-DHQ-Abbotabad",
+    "latitude": 34.471630,
+    "longitude": 72.082527,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Abbottabad",
+    "name": "K-ABT-DHQ-Abbotabad",
+    "shortname": "K-ABT-DHQ-ABTABD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-ABT-DHQ-Abbotabad",
+        "shortName": "K-ABT-DHQ-ABTABD",
+        "macAddress": "MAC98E7F45C801B",
+        "hostId": "DHQ-Abbottabad",
+        "serial": "Cepheid-64261QR",
+        "gxAlertDeviceId": 1600
+      }
+    ]
+  },
+  {
+    "externalId": "K-ABT-TH-Ayub-Teaching-Hospital",
+    "latitude": 33.992371,
+    "longitude": 71.449699,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Abbottabad",
+    "name": "K-ABT-TH-Ayub-Teaching-Hospital",
+    "shortname": "K-ABT-TH-ATH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-ABT-TH-Ayub-Teaching-Hospital",
+        "shortName": "K-ABT-TH-ATH",
+        "macAddress": "MACA02BB830E627",
+        "hostId": "DHQ- Abbottabad",
+        "serial": "Cepheid-412BWCN",
+        "gxAlertDeviceId": 1302
+      }
+    ]
+  },
+  {
+    "externalId": "K-BNR-DHQ-Buner",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Buner",
+    "name": "K-BNR-DHQ-Buner",
+    "shortname": "K-BNR-DHQ-BUNER",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-BNR-DHQ-Buner",
+        "shortName": "K-BNR-DHQ-BUNER",
+        "macAddress": "MAC",
+        "hostId": "DHQ-BUNER",
+        "serial": "Cepheid-6360NZK",
+        "gxAlertDeviceId": 1432
+      }
+    ]
+  },
+  {
+    "externalId": "K-BNU-DTO-Bannu",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Bannu",
+    "name": "K-BNU-DTO-Bannu",
+    "shortname": "K-BNU-DTO-BANNU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-BNU-DTO-Bannu",
+        "shortName": "K-BNU-DTO-BANNU",
+        "macAddress": "MAC98E7F4531565",
+        "hostId": "DTO BANNU",
+        "serial": "Cepheid-6360NZ6",
+        "gxAlertDeviceId": 1328
+      }
+    ]
+  },
+  {
+    "externalId": "K-BNU-TH-Khalifa-Gulnawaz-Teaching-Hospital",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Bannu",
+    "name": "K-BNU-TH-Khalifa-Gulnawaz-Teaching-Hospital",
+    "shortname": "K-BNU-TH-KGNTH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-BNU-TH-Khalifa-Gulnawaz-Teaching-Hospital",
+        "shortName": "K-BNU-TH-KGNTH",
+        "macAddress": "MACE4B318DCAAF5",
+        "hostId": "KGN-HOSPITAL-BANNU",
+        "serial": "Cepheid-6290PNB",
+        "gxAlertDeviceId": 1424
+      }
+    ]
+  },
+  {
+    "externalId": "K-BTG-DTO-Battagram",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Battagram",
+    "name": "DTO-BATTAGRAM",
+    "shortname": "DTO-BATTAGRAM",
+    "timeZoneId": "Pakistan Standard Time"
+  },
+  {
+    "externalId": "K-BTG-DTO-Battagram",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Battagram",
+    "name": "K-BTG-DTO-Battagram",
+    "shortname": "K-BTG-DTO-BATGRM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-BTG-DTO-Battagram",
+        "shortName": "K-BTG-DTO-BATGRM",
+        "macAddress": "MAC5C260A0B9B24",
+        "hostId": "DTO-BATTAGRAM",
+        "serial": "D5SL2SM1",
+        "gxAlertDeviceId": 1313
+      }
+    ]
+  },
+  {
+    "externalId": "K-CHR-DHQ-Charsadda",
+    "latitude": 34.486866,
+    "longitude": 72.089493,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Charsadda",
+    "name": "K-CHR-DHQ-Charsadda",
+    "shortname": "K-CHR-DHQ-CHRSDA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-CHR-DHQ-Charsadda",
+        "shortName": "K-CHR-DHQ-CHRSDA",
+        "macAddress": "MAC7C2A3145A443",
+        "hostId": "K-CHR-DHQ-Charsadda",
+        "serial": "Cepheid-8295N9G",
+        "gxAlertDeviceId": 1627
+      }
+    ]
+  },
+  {
+    "externalId": "K-CHT-DHQ-Chitral",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Chitral",
+    "name": "K-CHT-DHQ-Chitral",
+    "shortname": "K-CHT-DHQ-CHITRL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-CHT-DHQ-Chitral",
+        "shortName": "K-CHT-DHQ-CHITRL",
+        "macAddress": "MACA02BB82F5C99",
+        "hostId": "DHQ-CHITRAL",
+        "serial": "Cepheid-412BVJK",
+        "gxAlertDeviceId": 1362
+      }
+    ]
+  },
+  {
+    "externalId": "K-DIK-DHQ-Dera-Ismail-Khan",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "DI Khan",
+    "name": "K-DIK-DHQ-Dera-Ismail-Khan",
+    "shortname": "K-DIK-DHQ-DIKHAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-DIK-DHQ-Dera-Ismail-Khan",
+        "shortName": "K-DIK-DHQ-DIKHAN",
+        "macAddress": "MAC",
+        "hostId": "DHQ DI Khan",
+        "serial": "D16L2SM1",
+        "gxAlertDeviceId": 1356
+      }
+    ]
+  },
+  {
+    "externalId": "K-DIK-TH-Mufti-Mehmood-Memorial-Teaching-Hospital",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "DI Khan",
+    "name": "K-DIK-TH-Mufti-Mehmood-Memorial-Teaching-Hospital",
+    "shortname": "K-DIK-TH-MMMTH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-DIK-TH-Mufti-Mehmood-Memorial-Teaching-Hospital",
+        "shortName": "K-DIK-TH-MMMTH",
+        "macAddress": "MACA02BB82F7C6D",
+        "hostId": "MMMTH-DI Khan",
+        "serial": "Cepheid-412BW4X",
+        "gxAlertDeviceId": 1355
+      }
+    ]
+  },
+  {
+    "externalId": "K-HNG-DHQ-Hangu",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Hangu",
+    "name": "K-HNG-DHQ-Hangu",
+    "shortname": "K-HNG-DHQ-HANGU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-HNG-DHQ-Hangu",
+        "shortName": "K-HNG-DHQ-HANGU",
+        "macAddress": "MAC98E7F45D3202",
+        "hostId": "DHQ-HANGU",
+        "serial": "Cepheid-64261QQ",
+        "gxAlertDeviceId": 1423
+      }
+    ]
+  },
+  {
+    "externalId": "K-HRP-DHQ-Haripur",
+    "latitude": 34.472000,
+    "longitude": 72.083000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Haripur",
+    "name": "K-HRP-DHQ-Haripur",
+    "shortname": "K-HRP-DHQ-HARIPR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-HRP-DHQ-Haripur",
+        "shortName": "K-HRP-DHQ-HARIPR",
+        "macAddress": "MACE4A47158CE56",
+        "hostId": "DHQ-Haripur",
+        "serial": "Cepheid-412BVJ8",
+        "gxAlertDeviceId": 1306
+      }
+    ]
+  },
+  {
+    "externalId": "K-KHT-DHQ-Kohat",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Kohat",
+    "name": "K-KHT-DHQ-Kohat",
+    "shortname": "K-KHT-DHQ-KOHAT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-KHT-DHQ-Kohat",
+        "shortName": "K-KHT-DHQ-KOHAT",
+        "macAddress": "MACA02BB82F9866",
+        "hostId": "DHQTH KOHAT",
+        "serial": "Cepheid-412BVLV",
+        "gxAlertDeviceId": 1417
+      }
+    ]
+  },
+  {
+    "externalId": "K-KRK-DHQ-Karak",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Karak",
+    "name": "K-KRK-DHQ-Karak",
+    "shortname": "K-KRK-DHQ-KARAK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-KRK-DHQ-Karak",
+        "shortName": "K-KRK-DHQ-KARAK",
+        "macAddress": "MACA02BB82F5C2F",
+        "hostId": "DHQ-KARAK",
+        "serial": "Cepheid-412BW66",
+        "gxAlertDeviceId": 1326
+      }
+    ]
+  },
+  {
+    "externalId": "K-LKM-DHQ-Lakki-Marwat",
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Lakki Marwat",
+    "name": "K-LKM-DHQ-Lakki-Marwat",
+    "shortname": "K-LKM-DHQ-L-MRWT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-LKM-DHQ-Lakki-Marwat",
+        "shortName": "K-LKM-DHQ-L-MRWT",
+        "macAddress": "MACA02BB830F6D8",
+        "hostId": "DHQ-LAKIMARWAT",
+        "serial": "Cepheid-412BWGJ",
+        "gxAlertDeviceId": 1425
+      }
+    ]
+  },
+  {
+    "externalId": "K-MDN-DHQ-Mardan",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Mardan",
+    "name": "K-MDN-DHQ-Mardan",
+    "shortname": "K-MDN-DHQ-MARDAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-MDN-DHQ-Mardan",
+        "shortName": "K-MDN-DHQ-MARDAN",
+        "macAddress": "MACE4B318DE5CF1",
+        "hostId": "DHQ-MARDAN",
+        "serial": "Cepheid-6290Q6H",
+        "gxAlertDeviceId": 1428
+      }
+    ]
+  },
+  {
+    "externalId": "K-MDN-TH-Mardan-Medical-Complex",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Mardan",
+    "name": "K-MDN-TH-Mardan-Medical-Complex",
+    "shortname": "K-MDN-TH-MMCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-MDN-TH-Mardan-Medical-Complex",
+        "shortName": "K-MDN-TH-MMCH",
+        "macAddress": "MAC98E7F45C812F",
+        "hostId": "MMC-MARDAN",
+        "serial": "gms-359d4ecc77d",
+        "gxAlertDeviceId": 1321
+      }
+    ]
+  },
+  {
+    "externalId": "K-MDN-VAN-Mardan-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Mardan",
+    "name": "K-MDN-VAN-Mardan-(MC)",
+    "shortname": "K-MDN-VAN-MOBILE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-MDN-VAN-Mardan-(MC)",
+        "shortName": "K-MDN-VAN-MOBILE",
+        "macAddress": "MAC48BA4E8AC54E",
+        "hostId": "MOBILE-VAN-MARDAN-BASED",
+        "serial": "Cepheid-735380D",
+        "gxAlertDeviceId": 1565
+      }
+    ]
+  },
+  {
+    "externalId": "K-MLK-DHQ-Batkhela",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Malakand",
+    "name": "K-MLK-DHQ-Batkhela",
+    "shortname": "K-MLK-DHQ-BTKHLA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-MLK-DHQ-Batkhela",
+        "shortName": "K-MLK-DHQ-BTKHLA",
+        "macAddress": "MACA02BB82F8C42",
+        "hostId": "DHQ-BATKHELA",
+        "serial": "Cepheid-412BW3X",
+        "gxAlertDeviceId": 1324
+      }
+    ]
+  },
+  {
+    "externalId": "K-MNS-DTO-Mansehra",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Mansehra",
+    "name": "K-MNS-DTO-Mansehra",
+    "shortname": "K-MNS-DTO-MNSHRA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-MNS-DTO-Mansehra",
+        "shortName": "K-MNS-DTO-MNSHRA",
+        "macAddress": "MACA02BB82EED8D",
+        "hostId": "DTO-MANSEHRA",
+        "serial": "Cepheid-412C0V5",
+        "gxAlertDeviceId": 1310
+      }
+    ]
+  },
+  {
+    "externalId": "K-PSH-DTO-PESHAWAR",
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Peshawar",
+    "name": "K-PSH-DTO-PESHAWAR",
+    "shortname": "K-PSH-DTO-PSHWAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-PSH-DTO-PESHAWAR",
+        "shortName": "K-PSH-DTO-PSHWAR",
+        "macAddress": "MAC98E7F453140A",
+        "hostId": "DTO Lab Peshawar",
+        "serial": "Cepheid-6360P0Q",
+        "gxAlertDeviceId": 1624
+      }
+    ]
+  },
+  {
+    "externalId": "K-PSH-PRL-KP-HMC",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Peshawar",
+    "name": "K-PSH-PRL-KP-HMC",
+    "shortname": "K-PSH-PRL-KP-HMC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-PSH-PRL-KP-HMC",
+        "shortName": "K-PSH-PRL-KP-HMC",
+        "macAddress": "MAC98E7F45DDAC1",
+        "hostId": "HMC Peshawar",
+        "serial": "Cepheid-64261P5",
+        "gxAlertDeviceId": 1414
+      }
+    ]
+  },
+  {
+    "externalId": "K-PSH-TH-City-Hospital",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Peshawar",
+    "name": "K-PSH-TH-City-Hospital",
+    "shortname": "K-PSH-TH-CITY-H",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-PSH-TH-City-Hospital",
+        "shortName": "K-PSH-TH-CITY-H",
+        "macAddress": "MACF0D5BF0E0D7B",
+        "hostId": "CITY-HOSPITAL-PESHAWAR",
+        "serial": "Cepheid-6426223",
+        "gxAlertDeviceId": 1409
+      }
+    ]
+  },
+  {
+    "externalId": "K-PSH-TH-Khyber-Teaching-Hospital",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Peshawar",
+    "name": "K-PSH-TH-Khyber-Teaching-Hospital",
+    "shortname": "K-PSH-TH-KTH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-PSH-TH-Khyber-Teaching-Hospital",
+        "shortName": "K-PSH-TH-KTH",
+        "macAddress": "MACEC8EB54F75BB",
+        "hostId": "KTH-PESHAWAR",
+        "serial": "cepheid-697445d",
+        "gxAlertDeviceId": 1319
+      }
+    ]
+  },
+  {
+    "externalId": "K-PSH-TH-Lady-Reading-Hospital",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Peshawar",
+    "name": "K-PSH-TH-Lady-Reading-Hospital",
+    "shortname": "K-PSH-TH-LRH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-PSH-TH-Lady-Reading-Hospital",
+        "shortName": "K-PSH-TH-LRH",
+        "macAddress": "MACEC8EB5505C30",
+        "hostId": "LRH-PESHAWAR",
+        "serial": "Cepheid-62952SB",
+        "gxAlertDeviceId": 1320
+      }
+    ]
+  },
+  {
+    "externalId": "K-SNG-DHQ-Shangla",
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Shangla",
+    "name": "K-SNG-DHQ-Shangla",
+    "shortname": "K-SNG-DHQ-SHNGLA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-SNG-DHQ-Shangla",
+        "shortName": "K-SNG-DHQ-SHNGLA",
+        "macAddress": "MAC98E7F45313F8",
+        "hostId": "DHQ-SHANGLA",
+        "serial": "Cepheid-6360NZ5",
+        "gxAlertDeviceId": 1426
+      }
+    ]
+  },
+  {
+    "externalId": "K-SNG-THQ-BESHAM",
+    "latitude": 34.486870,
+    "longitude": 72.089493,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Shangla",
+    "name": "K-SNG-THQ-BESHAM",
+    "shortname": "K-SNG-THQ-BESHAM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-SNG-THQ-BESHAM",
+        "shortName": "K-SNG-THQ-BESHAM",
+        "macAddress": "MACEC8EB5512E88",
+        "hostId": "THQ Hospital Besham",
+        "serial": "Cepheid-6300G45",
+        "gxAlertDeviceId": 1619
+      }
+    ]
+  },
+  {
+    "externalId": "K-SWB-DTO-Swabi",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Swabi",
+    "name": "K-SWB-DTO-Swabi",
+    "shortname": "K-SWB-DTO-SWABI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-SWB-DTO-Swabi",
+        "shortName": "K-SWB-DTO-SWABI",
+        "macAddress": "MACA02BB82F5C7A",
+        "hostId": "DTO-Swabi",
+        "serial": "Cepheid-412BVKS",
+        "gxAlertDeviceId": 1315
+      }
+    ]
+  },
+  {
+    "externalId": "K-SWT-DTO-Swat",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Swat",
+    "name": "K-SWT-DTO-Swat",
+    "shortname": "K-SWT-DTO-SWAT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-SWT-DTO-Swat",
+        "shortName": "K-SWT-DTO-SWAT",
+        "macAddress": "MACE4A7A041AA3C",
+        "hostId": "DTO-SWAT",
+        "serial": "DCXK2SM1",
+        "gxAlertDeviceId": 1360
+      }
+    ]
+  },
+  {
+    "externalId": "K-TMG-DHQ-Timergara",
+    "latitude": 72.083000,
+    "longitude": 34.472000,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Lower Dir",
+    "name": "K-TMG-DHQ-Timergara",
+    "shortname": "K-TMG-DHQ-TMRGRA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-TMG-DHQ-Timergara",
+        "shortName": "K-TMG-DHQ-TMRGRA",
+        "macAddress": "MACEC8EB54F7C7D",
+        "hostId": "DHQ-Timergara",
+        "serial": "cphd-8aebdac35e",
+        "gxAlertDeviceId": 1361
+      }
+    ]
+  },
+  {
+    "externalId": "K-UDR-DHQ-UPPER-DIR",
+    "latitude": 34.471626,
+    "longitude": 72.082535,
+    "stateName": "Khyber Pakhtunkhwa",
+    "lgaName": "Upper Dir",
+    "name": "K-UDR-DHQ-UPPER-DIR",
+    "shortname": "K-UDR-DHQ-UPRDIR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-UDR-DHQ-UPPER-DIR",
+        "shortName": "K-UDR-DHQ-UPRDIR",
+        "macAddress": "MACF0D5BF0E0C31",
+        "hostId": "DHQ Hospital Upper Dir",
+        "serial": "Cepheid-642622Y",
+        "gxAlertDeviceId": 1571
+      }
+    ]
+  },
+  {
+    "externalId": "P-ATK-THQ-Fateh-Jhang",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Attock",
+    "name": "P-ATK-THQ-Fateh-Jhang",
+    "shortname": "P-ATK-THQ-FTHJNG",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-ATK-THQ-Fateh-Jhang",
+        "shortName": "P-ATK-THQ-FTHJNG",
+        "macAddress": "MAC98E7F4531408",
+        "hostId": "THQ Hospital Fateh Jang",
+        "serial": "Cepheid-6360P0V",
+        "gxAlertDeviceId": 1458
+      }
+    ]
+  },
+  {
+    "externalId": "P-ATK-THQ-Hassan-Abdal",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Attock",
+    "name": "P-ATK-THQ-Hassan-Abdal",
+    "shortname": "P-ATK-THQ-HABDAL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-ATK-THQ-Hassan-Abdal",
+        "shortName": "P-ATK-THQ-HABDAL",
+        "macAddress": "MAC98E7F45DDBA4",
+        "hostId": "THQ Hospital Hassan Abdal",
+        "serial": "Cepheid-64261NF",
+        "gxAlertDeviceId": 1505
+      }
+    ]
+  },
+  {
+    "externalId": "P-ATK-THQ-Hazro",
+    "latitude": 33.912281,
+    "longitude": 72.486687,
+    "stateName": "Punjab",
+    "lgaName": "Attock",
+    "name": "P-ATK-THQ-Hazro",
+    "shortname": "P-ATK-THQ-HAZRO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-ATK-THQ-Hazro",
+        "shortName": "P-ATK-THQ-HAZRO",
+        "macAddress": "MAC98E7F45313D7",
+        "hostId": "THQ Hospital Hazro",
+        "serial": "Cepheid-6360NZC",
+        "gxAlertDeviceId": 1455
+      }
+    ]
+  },
+  {
+    "externalId": "P-ATK-THQ-Pindigheb",
+    "latitude": 33.238312,
+    "longitude": 72.271950,
+    "stateName": "Punjab",
+    "lgaName": "Attock",
+    "name": "P-ATK-THQ-Pindigheb",
+    "shortname": "P-ATK-THQ-PNDGHB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-ATK-THQ-Pindigheb",
+        "shortName": "P-ATK-THQ-PNDGHB",
+        "macAddress": "MACE4A7A0427FBB",
+        "hostId": "THQ-Pindigheb",
+        "serial": "Cepheid-6360NX6",
+        "gxAlertDeviceId": 1457
+      }
+    ]
+  },
+  {
+    "externalId": "P-BHK-DHQ-Bhakkar",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Bhakkar",
+    "name": "P-BHK-DHQ-Bhakkar",
+    "shortname": "P-BHK-DHQ-BHAKAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-BHK-DHQ-Bhakkar",
+        "shortName": "P-BHK-DHQ-BHAKAR",
+        "macAddress": "MAC",
+        "hostId": "DHQ - Bhakkar",
+        "serial": "Cepheid-6360NXT",
+        "gxAlertDeviceId": 1353
+      }
+    ]
+  },
+  {
+    "externalId": "P-BNG-DHQ-Bahawalnagar",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Bahawalnagar",
+    "name": "P-BNG-DHQ-Bahawalnagar",
+    "shortname": "P-BNG-DHQ-BWLNGR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-BNG-DHQ-Bahawalnagar",
+        "shortName": "P-BNG-DHQ-BWLNGR",
+        "macAddress": "MAC8CDCD44E6F02",
+        "hostId": "DHQ-Bahawalnagar",
+        "serial": "Cepheid-528263L",
+        "gxAlertDeviceId": 1358
+      }
+    ]
+  },
+  {
+    "externalId": "P-BNG-THQ-Haroonabad",
+    "latitude": 29.612970,
+    "longitude": 73.140862,
+    "stateName": "Punjab",
+    "lgaName": "Bahawalnagar",
+    "name": "P-BNG-THQ-Haroonabad",
+    "shortname": "P-BNG-THQ-H-ABAD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-BNG-THQ-Haroonabad",
+        "shortName": "P-BNG-THQ-H-ABAD",
+        "macAddress": "MACE4A4715E7171",
+        "hostId": "THQ-HAROONABAD",
+        "serial": "Cepheid-6290QSB",
+        "gxAlertDeviceId": 1494
+      }
+    ]
+  },
+  {
+    "externalId": "P-BWP-TH-Bahawalpur-Victoria-Hospital",
+    "latitude": 30.842150,
+    "longitude": 75.416817,
+    "stateName": "Punjab",
+    "lgaName": "Bahwalpur",
+    "name": "P-BWP-TH-Bahawalpur-Victoria-Hospital",
+    "shortname": "P-BWP-TH-BVH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-BWP-TH-Bahawalpur-Victoria-Hospital",
+        "shortName": "P-BWP-TH-BVH",
+        "macAddress": "MAC98E7F4531824",
+        "hostId": "P-BWP-TH-Bahawalpur-Victoria-Hospital",
+        "serial": "Cepheid-6360NY0",
+        "gxAlertDeviceId": 1617
+      }
+    ]
+  },
+  {
+    "externalId": "P-BWP-THQ-Hasilpur",
+    "latitude": 29.705759,
+    "longitude": 72.537720,
+    "stateName": "Punjab",
+    "lgaName": "Bahwalpur",
+    "name": "P-BWP-THQ-Hasilpur",
+    "shortname": "P-BWP-THQ-HSLPUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-BWP-THQ-Hasilpur",
+        "shortName": "P-BWP-THQ-HSLPUR",
+        "macAddress": "MAC",
+        "hostId": "THQ-HASILPUR",
+        "serial": "Cepheid-6360P02",
+        "gxAlertDeviceId": 1492
+      }
+    ]
+  },
+  {
+    "externalId": "P-CHK-DHQ-Chakwal",
+    "latitude": 32.925301,
+    "longitude": 72.854507,
+    "stateName": "Punjab",
+    "lgaName": "Chakwal",
+    "name": "P-CHK-DHQ-Chakwal",
+    "shortname": "P-CHK-DHQ-CHAKWL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-CHK-DHQ-Chakwal",
+        "shortName": "P-CHK-DHQ-CHAKWL",
+        "macAddress": "MACF0D5BF43BAC0",
+        "hostId": "CHAKWAL-DHQ-HOSPITAL",
+        "serial": "Cepheid-64261NR",
+        "gxAlertDeviceId": 1497
+      }
+    ]
+  },
+  {
+    "externalId": "P-CHK-UHC-Talagang",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Chakwal",
+    "name": "P-CHK-UHC-Talagang",
+    "shortname": "P-CHK-UHC-T-GANG",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-CHK-UHC-Talagang",
+        "shortName": "P-CHK-UHC-T-GANG",
+        "macAddress": "MACC025E92C7F4A",
+        "hostId": "CITY HOSPITAL TALAGANG",
+        "serial": "cephied-PC",
+        "gxAlertDeviceId": 1588
+      }
+    ]
+  },
+  {
+    "externalId": "P-CHN-DHQ-Chiniot",
+    "latitude": 31.717760,
+    "longitude": 72.983200,
+    "stateName": "Punjab",
+    "lgaName": "Chiniot",
+    "name": "P-CHN-DHQ-Chiniot",
+    "shortname": "P-CHN-DHQ-CHNIOT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-CHN-DHQ-Chiniot",
+        "shortName": "P-CHN-DHQ-CHNIOT",
+        "macAddress": "MACE4A471543292",
+        "hostId": "DHQ Chiniot",
+        "serial": "Cepheid-6290QMP",
+        "gxAlertDeviceId": 1539
+      }
+    ]
+  },
+  {
+    "externalId": "P-CHN-THQ-Lalian",
+    "latitude": 31.832800,
+    "longitude": 72.783020,
+    "stateName": "Punjab",
+    "lgaName": "Chiniot",
+    "name": "P-CHN-THQ-Lalian",
+    "shortname": "P-CHN-THQ-LALIAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-CHN-THQ-Lalian",
+        "shortName": "P-CHN-THQ-LALIAN",
+        "macAddress": "MACE4A47155CCFB",
+        "hostId": "THQ Lalian",
+        "serial": "Cepheid-62873P9",
+        "gxAlertDeviceId": 1541
+      }
+    ]
+  },
+  {
+    "externalId": "P-DGK-DHQ-Dera-Ghazi-Khan",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "DG Khan",
+    "name": "P-DGK-DHQ-Dera-Ghazi-Khan",
+    "shortname": "P-DGK-DHQ-DGKHAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-DGK-DHQ-Dera-Ghazi-Khan",
+        "shortName": "P-DGK-DHQ-DGKHAN",
+        "macAddress": "MACD4BED98B6F9F",
+        "hostId": "DHQ-DG Khan",
+        "serial": "Cepheid9441LS1",
+        "gxAlertDeviceId": 1349
+      }
+    ]
+  },
+  {
+    "externalId": "P-DGK-THQ-Taunsa",
+    "latitude": 30.698099,
+    "longitude": 70.653084,
+    "stateName": "Punjab",
+    "lgaName": "DG Khan",
+    "name": "P-DGK-THQ-Taunsa",
+    "shortname": "P-DGK-THQ-TAUNSA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-DGK-THQ-Taunsa",
+        "shortName": "P-DGK-THQ-TAUNSA",
+        "macAddress": "MAC98E7F45313E2",
+        "hostId": "THQ Tounsa",
+        "serial": "Cepheid-6360NZW",
+        "gxAlertDeviceId": 1493
+      }
+    ]
+  },
+  {
+    "externalId": "P-FSB-DHQ-Faisalabad",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Faisalabad",
+    "name": "P-FSB-DHQ-Faisalabad",
+    "shortname": "P-FSB-DHQ-FSLABD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-FSB-DHQ-Faisalabad",
+        "shortName": "P-FSB-DHQ-FSLABD",
+        "macAddress": "MAC98E7F4531827",
+        "hostId": "DHQ - Faisalabad",
+        "serial": "Cepheid-6360NYL",
+        "gxAlertDeviceId": 1332
+      }
+    ]
+  },
+  {
+    "externalId": "P-FSB-PVT-PATA-Faisalabad",
+    "stateName": "Punjab",
+    "lgaName": "Faisalabad",
+    "name": "P-FSB-PVT-PATA-Faisalabad",
+    "shortname": "P-FSB-PVT-PATA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-FSB-PVT-PATA-Faisalabad",
+        "shortName": "P-FSB-PVT-PATA",
+        "macAddress": "MAC98E7F452F797",
+        "hostId": "PATA -TBC-FSD",
+        "serial": "Cepheid-642624G",
+        "gxAlertDeviceId": 1447
+      }
+    ]
+  },
+  {
+    "externalId": "P-FSB-TH-Allied-Hospital",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Faisalabad",
+    "name": "P-FSB-TH-Allied-Hospital",
+    "shortname": "P-FSB-TH-AHPMC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-FSB-TH-Allied-Hospital",
+        "shortName": "P-FSB-TH-AHPMC",
+        "macAddress": "MAC782BCB97A399",
+        "hostId": "FMU- FSD",
+        "serial": "Cepheid5JRHLGQ1",
+        "gxAlertDeviceId": 1293
+      }
+    ]
+  },
+  {
+    "externalId": "P-FSB-THQ-Jaranwala",
+    "latitude": 75.417000,
+    "longitude": 30.843000,
+    "stateName": "Punjab",
+    "lgaName": "Faisalabad",
+    "name": "P-FSB-THQ-Jaranwala",
+    "shortname": "P-FSB-THQ-JRNWAL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-FSB-THQ-Jaranwala",
+        "shortName": "P-FSB-THQ-JRNWAL",
+        "macAddress": "MACEC8EB54EED8B",
+        "hostId": "THQ-JARANWALA",
+        "serial": "Cepheid-62873PZ",
+        "gxAlertDeviceId": 1448
+      }
+    ]
+  },
+  {
+    "externalId": "P-FSB-THQ-Samanabad",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Faisalabad",
+    "name": "P-FSB-THQ-Samanabad",
+    "shortname": "P-FSB-THQ-SAMNBD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-FSB-THQ-Samanabad",
+        "shortName": "P-FSB-THQ-SAMNBD",
+        "macAddress": "MACF0D5BF45B406",
+        "hostId": "THQ Hospital Samanabad",
+        "serial": "Cepheid-64261NX",
+        "gxAlertDeviceId": 1568
+      }
+    ]
+  },
+  {
+    "externalId": "P-FSB-THQ-Samundari",
+    "latitude": 75.417000,
+    "longitude": 30.843000,
+    "stateName": "Punjab",
+    "lgaName": "Faisalabad",
+    "name": "P-FSB-THQ-Samundari",
+    "shortname": "P-FSB-THQ-SMNDRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-FSB-THQ-Samundari",
+        "shortName": "P-FSB-THQ-SMNDRI",
+        "macAddress": "MAC98E7F45D3184",
+        "hostId": "THQ Hospital Samundari",
+        "serial": "Cepheid-64261R1",
+        "gxAlertDeviceId": 1449
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJN-DHQ-Gujranwala",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Gujranwala",
+    "name": "P-GJN-DHQ-Gujranwala",
+    "shortname": "P-GJN-DHQ-GJRNWL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJN-DHQ-Gujranwala",
+        "shortName": "P-GJN-DHQ-GJRNWL",
+        "macAddress": "MAC6805CA2302D5",
+        "hostId": "DHQ - Gujranwala",
+        "serial": "Cepheid-4070WQY",
+        "gxAlertDeviceId": 1290
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJN-DHQ-Gujranwala-XVI",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Gujranwala",
+    "name": "P-GJN-DHQ-Gujranwala-XVI",
+    "shortname": "P-GJN-DHQ-GJRNWL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJN-DHQ-Gujranwala-XVI",
+        "shortName": "P-GJN-DHQ-GJRNWL",
+        "macAddress": "MAC",
+        "hostId": "DHQ-Gujranwala",
+        "serial": "Cepheid-6290PVP",
+        "gxAlertDeviceId": 1560
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJN-PVT-Al-Ansaar-Hospital-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Gujranwala",
+    "name": "P-GJN-PVT-Al-Ansaar-Hospital-(MC)",
+    "shortname": "P-GJN-PVT-ANS-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJN-PVT-Al-Ansaar-Hospital-(MC)",
+        "shortName": "P-GJN-PVT-ANS-MC",
+        "macAddress": "MAC1C4D7066BE12",
+        "hostId": "AL-ANSAAR-HOSPITAL-GUJRANWALA",
+        "serial": "Cepheid-7352VWV",
+        "gxAlertDeviceId": 1593
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJN-PVT-PATA-Gujranwala",
+    "latitude": 74.175003,
+    "longitude": 32.155998,
+    "stateName": "Punjab",
+    "lgaName": "Gujranwala",
+    "name": "P-GJN-PVT-PATA-Gujranwala",
+    "shortname": "P-GJN-PVT-MNH-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJN-PVT-PATA-Gujranwala",
+        "shortName": "P-GJN-PVT-MNH-MC",
+        "macAddress": "MAC98E7F468D667",
+        "hostId": "PATA-TBC-GUJ",
+        "serial": "Cepheid-642628Q",
+        "gxAlertDeviceId": 1442
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJN-THQ-Wazirabad",
+    "latitude": 32.446976,
+    "longitude": 74.103020,
+    "stateName": "Punjab",
+    "lgaName": "Gujranwala",
+    "name": "P-GJN-THQ-Wazirabad",
+    "shortname": "P-GJN-THQ-WZRABD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJN-THQ-Wazirabad",
+        "shortName": "P-GJN-THQ-WZRABD",
+        "macAddress": "MACF439097AC967",
+        "hostId": "P-GJN-THQ-Wazirabad",
+        "serial": "Cepheid-8342M0W",
+        "gxAlertDeviceId": 1623
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJT-DHQ-Gujrat",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Gujrat",
+    "name": "P-GJT-DHQ-Gujrat",
+    "shortname": "P-GJT-DHQ-Gujrat",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJT-DHQ-Gujrat",
+        "shortName": "P-GJT-DHQ-Gujrat",
+        "macAddress": "MAC98E7F4531828",
+        "hostId": "DHQ-GRT",
+        "serial": "Cepheid-6360NYM",
+        "gxAlertDeviceId": 1296
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJT-THQ-Dinga",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Gujrat",
+    "name": "P-GJT-THQ-Dinga",
+    "shortname": "P-GJT-THQ-DINGA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJT-THQ-Dinga",
+        "shortName": "P-GJT-THQ-DINGA",
+        "macAddress": "MACB88A60F35DD6",
+        "hostId": "THQ Dinga Gujrat",
+        "serial": "Cepheid-6426KNL",
+        "gxAlertDeviceId": 1470
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJT-THQ-Kunjah",
+    "latitude": 32.535549,
+    "longitude": 73.981354,
+    "stateName": "Punjab",
+    "lgaName": "Gujrat",
+    "name": "P-GJT-THQ-Kunjah",
+    "shortname": "P-GJT-THQ-KUNJAH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJT-THQ-Kunjah",
+        "shortName": "P-GJT-THQ-KUNJAH",
+        "macAddress": "MACE4A47158CD98",
+        "hostId": "THQ Hospital Kunjah",
+        "serial": "Cepheid-6300G1M",
+        "gxAlertDeviceId": 1576
+      }
+    ]
+  },
+  {
+    "externalId": "P-GJT-THQ-Sarai-Alamgir",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Gujrat",
+    "name": "P-GJT-THQ-Sarai-Alamgir",
+    "shortname": "P-GJT-THQ-SALMGR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJT-THQ-Sarai-Alamgir",
+        "shortName": "P-GJT-THQ-SALMGR",
+        "macAddress": "MACB88A60B2F485",
+        "hostId": "THQ Hospital Sarai Alamgir",
+        "serial": "Cepheid-6426KQQ",
+        "gxAlertDeviceId": 1481
+      }
+    ]
+  },
+  {
+    "externalId": "P-HFZ-DHQ-Hafizabad",
+    "latitude": 32.072269,
+    "longitude": 73.685654,
+    "stateName": "Punjab",
+    "lgaName": "Hafizabad",
+    "name": "P-HFZ-DHQ-Hafizabad",
+    "shortname": "P-HFZ-DHQ-HFZBAD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-HFZ-DHQ-Hafizabad",
+        "shortName": "P-HFZ-DHQ-HFZBAD",
+        "macAddress": "MAC98E7F45DDAC2",
+        "hostId": "DHQ-HAFIZABAD",
+        "serial": "Cepheid-64261P4",
+        "gxAlertDeviceId": 1451
+      }
+    ]
+  },
+  {
+    "externalId": "P-HFZ-PVT-Yasin-Clinic-(MC)",
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Hafizabad",
+    "name": "P-HFZ-PVT-Yasin-Clinic-(MC)",
+    "shortname": "P-HFZ-PVT-CLY-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-HFZ-PVT-Yasin-Clinic-(MC)",
+        "shortName": "P-HFZ-PVT-CLY-MC",
+        "macAddress": "MAC",
+        "hostId": "DHQ - Hafizabad",
+        "serial": "Cepheid-6426283",
+        "gxAlertDeviceId": 1377
+      }
+    ]
+  },
+  {
+    "externalId": "P-HFZ-THQ-Pindi-Bhattian",
+    "latitude": 31.896721,
+    "longitude": 73.270752,
+    "stateName": "Punjab",
+    "lgaName": "Hafizabad",
+    "name": "P-HFZ-THQ-Pindi-Bhattian",
+    "shortname": "P-HFZ-THQ-PNDBHT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-HFZ-THQ-Pindi-Bhattian",
+        "shortName": "P-HFZ-THQ-PNDBHT",
+        "macAddress": "MAC98E7F45D329F",
+        "hostId": "THQ-HOSPITAL-PINDI BHATTIAN",
+        "serial": "Cepheid-64262KJ",
+        "gxAlertDeviceId": 1495
+      }
+    ]
+  },
+  {
+    "externalId": "P-JHM-DHQ-Jhelum",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Jhelum",
+    "name": "P-JHM-DHQ-Jhelum",
+    "shortname": "P-JHM-DHQ-JHELUM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-JHM-DHQ-Jhelum",
+        "shortName": "P-JHM-DHQ-JHELUM",
+        "macAddress": "MACEC8EB54EF080",
+        "hostId": "DHQ-JLM",
+        "serial": "Cepheid-6290Q4C",
+        "gxAlertDeviceId": 1297
+      }
+    ]
+  },
+  {
+    "externalId": "P-JHM-THQ-Pind-Dadan-Khan",
+    "latitude": 32.589691,
+    "longitude": 73.047142,
+    "stateName": "Punjab",
+    "lgaName": "Jhelum",
+    "name": "P-JHM-THQ-Pind-Dadan-Khan",
+    "shortname": "P-JHM-THQ-PDKHAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-JHM-THQ-Pind-Dadan-Khan",
+        "shortName": "P-JHM-THQ-PDKHAN",
+        "macAddress": "MACE4A47155CC83",
+        "hostId": "THQ-Hospital-Pind-Dadan-Khan",
+        "serial": "Cepheid-62873PB",
+        "gxAlertDeviceId": 1496
+      }
+    ]
+  },
+  {
+    "externalId": "P-JHM-THQ-Sohawa",
+    "latitude": 33.127819,
+    "longitude": 73.421333,
+    "stateName": "Punjab",
+    "lgaName": "Jhelum",
+    "name": "P-JHM-THQ-Sohawa",
+    "shortname": "P-JHM-THQ-SOHAWA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-JHM-THQ-Sohawa",
+        "shortName": "P-JHM-THQ-SOHAWA",
+        "macAddress": "MACEC8EB54F7728",
+        "hostId": "THQ Hospital Sohawa",
+        "serial": "Cepheid-6287324",
+        "gxAlertDeviceId": 1450
+      }
+    ]
+  },
+  {
+    "externalId": "P-JNG-DHQ-Jhang",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Jhang",
+    "name": "P-JNG-DHQ-Jhang",
+    "shortname": "P-JNG-DHQ-JHANG",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-JNG-DHQ-Jhang",
+        "shortName": "P-JNG-DHQ-JHANG",
+        "macAddress": "MAC98E7F453175D",
+        "hostId": "DHQ  Jhang",
+        "serial": "Cepheid-6360NY2",
+        "gxAlertDeviceId": 1543
+      }
+    ]
+  },
+  {
+    "externalId": "P-JNG-THQ-Athara-Hazari",
+    "latitude": 30.410000,
+    "longitude": 71.459999,
+    "stateName": "Punjab",
+    "lgaName": "Jhang",
+    "name": "P-JNG-THQ-Athara-Hazari",
+    "shortname": "P-JNG-THQ-A-HZRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-JNG-THQ-Athara-Hazari",
+        "shortName": "P-JNG-THQ-A-HZRI",
+        "macAddress": "MAC98E7F45C8138",
+        "hostId": "THQ 18 Hazari",
+        "serial": "Cepheid-64261NL",
+        "gxAlertDeviceId": 1522
+      }
+    ]
+  },
+  {
+    "externalId": "P-JNG-THQ-Shorkot",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Jhang",
+    "name": "P-JNG-THQ-Shorkot",
+    "shortname": "P-JNG-THQ-SHRKOT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-JNG-THQ-Shorkot",
+        "shortName": "P-JNG-THQ-SHRKOT",
+        "macAddress": "MAC98E7F4531758",
+        "hostId": "THQ Shorkot",
+        "serial": "Cepheid-6360NY8",
+        "gxAlertDeviceId": 1520
+      }
+    ]
+  },
+  {
+    "externalId": "P-KHN-DHQ-Khanewal (MC)",
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Khanewal",
+    "name": "P-KHN-DHQ-Khanewal (MC)",
+    "shortname": "P-KHN-DHQ-KHNWAL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KHN-DHQ-Khanewal (MC)",
+        "shortName": "P-KHN-DHQ-KHNWAL",
+        "macAddress": "MACF0D5BF158F6F",
+        "hostId": "DHQ-Khanewal",
+        "serial": "Cepheid-6426255",
+        "gxAlertDeviceId": 1380
+      }
+    ]
+  },
+  {
+    "externalId": "P-KHS-DHQ-Khushab",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Khusahab",
+    "name": "P-KHS-DHQ-Khushab",
+    "shortname": "P-KHS-DHQ-KHUSHB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KHS-DHQ-Khushab",
+        "shortName": "P-KHS-DHQ-KHUSHB",
+        "macAddress": "MACE4A7A041B0EA",
+        "hostId": "DHQ-KHUSHAB",
+        "serial": "Cepheid-6360NZ1",
+        "gxAlertDeviceId": 1331
+      }
+    ]
+  },
+  {
+    "externalId": "P-KHS-THQ-Naushehra",
+    "latitude": 31.489710,
+    "longitude": 74.637779,
+    "stateName": "Punjab",
+    "lgaName": "Khusahab",
+    "name": "P-KHS-THQ-Naushehra",
+    "shortname": "P-KHS-THQ-NUSHRA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KHS-THQ-Naushehra",
+        "shortName": "P-KHS-THQ-NUSHRA",
+        "macAddress": "MAC98E7F45D31FF",
+        "hostId": "THQ Hospital Noshehra",
+        "serial": "Cepheid-64261QM",
+        "gxAlertDeviceId": 1508
+      }
+    ]
+  },
+  {
+    "externalId": "P-KHS-THQ-Noorpur",
+    "latitude": 31.497110,
+    "longitude": 75.331512,
+    "stateName": "Punjab",
+    "lgaName": "Khusahab",
+    "name": "P-KHS-THQ-Noorpur",
+    "shortname": "P-KHS-THQ-NOORPR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KHS-THQ-Noorpur",
+        "shortName": "P-KHS-THQ-NOORPR",
+        "macAddress": "MAC98E7F45C8032",
+        "hostId": "THQ Hospital Noorpur",
+        "serial": "Cepheid-6426KPW",
+        "gxAlertDeviceId": 1509
+      }
+    ]
+  },
+  {
+    "externalId": "P-KSR-DHQ-Kasur",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Kasur",
+    "name": "P-KSR-DHQ-Kasur",
+    "shortname": "P-KSR-DHQ-KASUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KSR-DHQ-Kasur",
+        "shortName": "P-KSR-DHQ-KASUR",
+        "macAddress": "MAC98E7F468CFB7",
+        "hostId": "Dhq-kasur",
+        "serial": "Cepheid-642618K",
+        "gxAlertDeviceId": 1418
+      }
+    ]
+  },
+  {
+    "externalId": "P-KSR-THQ-Chunian",
+    "latitude": 30.959660,
+    "longitude": 73.977913,
+    "stateName": "Punjab",
+    "lgaName": "Kasur",
+    "name": "P-KSR-THQ-Chunian",
+    "shortname": "P-KSR-THQ-CHNIAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KSR-THQ-Chunian",
+        "shortName": "P-KSR-THQ-CHNIAN",
+        "macAddress": "MACF0D5BF158AB5",
+        "hostId": "THQ Hospital Chunian",
+        "serial": "Cepheid-642623W",
+        "gxAlertDeviceId": 1475
+      }
+    ]
+  },
+  {
+    "externalId": "P-LDR-DHQ-Lodhran",
+    "latitude": 30.842146,
+    "longitude": 75.416824,
+    "stateName": "Punjab",
+    "lgaName": "Lodhran",
+    "name": "P-LDR-DHQ-Lodhran",
+    "shortname": "P-LDR-DHQ-LODHRN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LDR-DHQ-Lodhran",
+        "shortName": "P-LDR-DHQ-LODHRN",
+        "macAddress": "MAC98FA9B3B995A",
+        "hostId": "P-LDR-DHQ-Lodhran",
+        "serial": "CPHD-9F02990",
+        "gxAlertDeviceId": 1615
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-AMC-CMH-Lahore",
+    "latitude": 31.539450,
+    "longitude": 74.303482,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-AMC-CMH-Lahore",
+    "shortname": "P-LHR-AMC-CMH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-AMC-CMH-Lahore",
+        "shortName": "P-LHR-AMC-CMH",
+        "macAddress": "MAC",
+        "hostId": "CMH-Lahore",
+        "serial": "Cepheid-6426KNZ",
+        "gxAlertDeviceId": 1531
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-PRL-Punjab-Lahore-DTL",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-PRL-Punjab-Lahore-DTL",
+    "shortname": "P-LHR-PRL-PUNJAB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-PRL-Punjab-Lahore-DTL",
+        "shortName": "P-LHR-PRL-PUNJAB",
+        "macAddress": "MAC98E7F45C8130",
+        "hostId": "PRL-IPH-Lahore",
+        "serial": "Cepheid-64261NS",
+        "gxAlertDeviceId": 1359
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Ganga-Ram-Hospital",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Ganga-Ram-Hospital",
+    "shortname": "P-LHR-TH-SGRH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Ganga-Ram-Hospital",
+        "shortName": "P-LHR-TH-SGRH",
+        "macAddress": "MAC98E7F468D2AA",
+        "hostId": "GANGA-RAM-HOSPITAL",
+        "serial": "Cepheid-6426253",
+        "gxAlertDeviceId": 1471
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Gulab-Devi-Hospital",
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Gulab-Devi-Hospital",
+    "shortname": "P-LHR-TH-GDH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Gulab-Devi-Hospital",
+        "shortName": "P-LHR-TH-GDH",
+        "macAddress": "MACE4A4717CAE39",
+        "hostId": "GDH Lahore",
+        "serial": "Cepheid-62952T4",
+        "gxAlertDeviceId": 1385
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Jinnah-Hospital-Lahore",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Jinnah-Hospital-Lahore",
+    "shortname": "P-LHR-TH-JHL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Jinnah-Hospital-Lahore",
+        "shortName": "P-LHR-TH-JHL",
+        "macAddress": "MAC782BCB978028",
+        "hostId": "JHL-LHR",
+        "serial": "Cepheidhzfq1",
+        "gxAlertDeviceId": 1528
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Jinnah-Hospital-Lahore-XVI",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Jinnah-Hospital-Lahore-XVI",
+    "shortname": "P-LHR-TH-JHL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Jinnah-Hospital-Lahore-XVI",
+        "shortName": "P-LHR-TH-JHL",
+        "macAddress": "MAC98E7F45C1FA0",
+        "hostId": "Jinnah hospital, Lahore",
+        "serial": "Cepheid-64261PB",
+        "gxAlertDeviceId": 1452
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Lahore-General-Hospital",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Lahore-General-Hospital",
+    "shortname": "P-LHR-TH-LGH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Lahore-General-Hospital",
+        "shortName": "P-LHR-TH-LGH",
+        "macAddress": "MACF0D5BF0E0D0D",
+        "hostId": "LGH-LHR",
+        "serial": "Cepheid-642622X",
+        "gxAlertDeviceId": 1282
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Mayo-Hospital",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Mayo-Hospital",
+    "shortname": "P-LHR-TH-MHL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Mayo-Hospital",
+        "shortName": "P-LHR-TH-MHL",
+        "macAddress": "MAC98E7F45C80E2",
+        "hostId": "MH - LHR",
+        "serial": "Cepheid-6426KP3",
+        "gxAlertDeviceId": 1283
+      }
+    ]
+  },
+  {
+    "externalId": "P-LHR-TH-Services-Institute-Of-Medical-Sciences",
+    "stateName": "Punjab",
+    "lgaName": "Lahore",
+    "name": "P-LHR-TH-Services-Institute-Of-Medical-Sciences",
+    "shortname": "P-LHR-TH-SIMS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LHR-TH-Services-Institute-Of-Medical-Sciences",
+        "shortName": "P-LHR-TH-SIMS",
+        "macAddress": "MAC48BA4E8A84F7",
+        "hostId": "SIMS Lahore",
+        "serial": "Cepheid-6426246",
+        "gxAlertDeviceId": 1383
+      }
+    ]
+  },
+  {
+    "externalId": "P-LYA-DHQ-Layyah",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Layyah",
+    "name": "P-LYA-DHQ-Layyah",
+    "shortname": "P-LYA-DHQ-LAYYAH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LYA-DHQ-Layyah",
+        "shortName": "P-LYA-DHQ-LAYYAH",
+        "macAddress": "MACF0D5BF43BDD6",
+        "hostId": "DHQ-Layyah",
+        "serial": "Cepheid-64261QT",
+        "gxAlertDeviceId": 1352
+      }
+    ]
+  },
+  {
+    "externalId": "P-LYA-THQ-Chowk-Azam",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Layyah",
+    "name": "P-LYA-THQ-Chowk-Azam",
+    "shortname": "LAYYAH-TH-C-AZAM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LYA-THQ-Chowk-Azam",
+        "shortName": "LAYYAH-TH-C-AZAM",
+        "macAddress": "MAC98E7F45DDB5B",
+        "hostId": "THQ-CHOWKAZAM",
+        "serial": "Cepheid-64261PD",
+        "gxAlertDeviceId": 1513
+      }
+    ]
+  },
+  {
+    "externalId": "P-LYA-THQ-Fatehpur",
+    "latitude": 30.948891,
+    "longitude": 73.743332,
+    "stateName": "Punjab",
+    "lgaName": "Layyah",
+    "name": "P-LYA-THQ-Fatehpur",
+    "shortname": "P-LYA-THQ-FTEHPR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LYA-THQ-Fatehpur",
+        "shortName": "P-LYA-THQ-FTEHPR",
+        "macAddress": "MACEC8EB54EEF25",
+        "hostId": "THQ-FATEHPUR",
+        "serial": "Cepheid-6290Q0M",
+        "gxAlertDeviceId": 1512
+      }
+    ]
+  },
+  {
+    "externalId": "P-LYA-THQ-Karor-Lal-Esan",
+    "latitude": 31.129999,
+    "longitude": 70.570000,
+    "stateName": "Punjab",
+    "lgaName": "Layyah",
+    "name": "P-LYA-THQ-Karor-Lal-Esan",
+    "shortname": "P-LYA-THQ-KARORL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-LYA-THQ-Karor-Lal-Esan",
+        "shortName": "P-LYA-THQ-KARORL",
+        "macAddress": "MACB88A60B2F331",
+        "hostId": "THQ-KAROOR",
+        "serial": "Cepheid-6426KPV",
+        "gxAlertDeviceId": 1510
+      }
+    ]
+  },
+  {
+    "externalId": "P-MBD-DHQ-Mandi-Bahauddin",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Mandi Bahauddin",
+    "name": "P-MBD-DHQ-Mandi-Bahauddin",
+    "shortname": "P-MBD-DHQ-MBDIN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MBD-DHQ-Mandi-Bahauddin",
+        "shortName": "P-MBD-DHQ-MBDIN",
+        "macAddress": "MAC8CDCD450B704",
+        "hostId": "DHQ-MBD",
+        "serial": "Cepheid-5282663",
+        "gxAlertDeviceId": 1318
+      }
+    ]
+  },
+  {
+    "externalId": "P-MBD-PVT-Suleman-Chest-Care-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Mandi Bahauddin",
+    "name": "P-MBD-PVT-Suleman-Chest-Care-(MC)",
+    "shortname": "P-MBD-PVT-SMN-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MBD-PVT-Suleman-Chest-Care-(MC)",
+        "shortName": "P-MBD-PVT-SMN-MC",
+        "macAddress": "MAC34F64BC6AA2F",
+        "hostId": "SULEMAN-CHEST-CARE-HOSPITAL-MBDIN",
+        "serial": "Cepheid-72960F8",
+        "gxAlertDeviceId": 1583
+      }
+    ]
+  },
+  {
+    "externalId": "P-MNW-DHQ-Mianwali",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Mianwali",
+    "name": "P-MNW-DHQ-Mianwali",
+    "shortname": "P-MNW-DHQ-MNWALI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MNW-DHQ-Mianwali",
+        "shortName": "P-MNW-DHQ-MNWALI",
+        "macAddress": "MAC6805CA21DE10",
+        "hostId": "DHQ-MIANWALI",
+        "serial": "Cepheid-406124J",
+        "gxAlertDeviceId": 1330
+      }
+    ]
+  },
+  {
+    "externalId": "P-MTN-PRL-Punjab-Multan-NHM",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Multan",
+    "name": "P-MTN-PRL-Punjab-Multan-NHM",
+    "shortname": "P-MTN-PRL-PUNJAB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MTN-PRL-Punjab-Multan-NHM",
+        "shortName": "P-MTN-PRL-PUNJAB",
+        "macAddress": "MACE4A4717CAEED",
+        "hostId": "PRL-Multan",
+        "serial": "Cepheid-62952R2",
+        "gxAlertDeviceId": 1343
+      }
+    ]
+  },
+  {
+    "externalId": "P-MTN-PRL-Punjab-Multan-NHM2",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Multan",
+    "name": "P-MTN-PRL-Punjab-Multan-NHM2",
+    "shortname": "P-MTN-PRL-PUNJAB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MTN-PRL-Punjab-Multan-NHM2",
+        "shortName": "P-MTN-PRL-PUNJAB",
+        "macAddress": "MAC782BCB97AEDA",
+        "hostId": "PRL-Multan 2",
+        "serial": "CepheidJRHRGQ1",
+        "gxAlertDeviceId": 1344
+      }
+    ]
+  },
+  {
+    "externalId": "P-MTN-PVT-Multan-South-Punjab-Hospital-(MC)",
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Multan",
+    "name": "P-MTN-PVT-Multan-South-Punjab-Hospital-(MC)",
+    "shortname": "P-MTN-PVT-SPH-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MTN-PVT-Multan-South-Punjab-Hospital-(MC)",
+        "shortName": "P-MTN-PVT-SPH-MC",
+        "macAddress": "MAC98E7F452FCA6",
+        "hostId": "South Punjab Hospita",
+        "serial": "Cepheid-6426244",
+        "gxAlertDeviceId": 1381
+      }
+    ]
+  },
+  {
+    "externalId": "P-MZG-DHQ-Muzaffargarh",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Muzaffar Garh",
+    "name": "P-MZG-DHQ-Muzaffargarh",
+    "shortname": "P-MZG-DHQ-MZFRGR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MZG-DHQ-Muzaffargarh",
+        "shortName": "P-MZG-DHQ-MZFRGR",
+        "macAddress": "MACF0D5BF43BAAC",
+        "hostId": "DHQ-Muzaffargarh",
+        "serial": "Cepheid-64261N4",
+        "gxAlertDeviceId": 1346
+      }
+    ]
+  },
+  {
+    "externalId": "P-MZG-THQ-Alipur",
+    "latitude": 29.379370,
+    "longitude": 70.905701,
+    "stateName": "Punjab",
+    "lgaName": "Muzaffar Garh",
+    "name": "P-MZG-THQ-Alipur",
+    "shortname": "P-MZG-THQ-ALIPUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MZG-THQ-Alipur",
+        "shortName": "P-MZG-THQ-ALIPUR",
+        "macAddress": "MAC98E7F45D3264",
+        "hostId": "THQ-ALIPUR",
+        "serial": "Cepheid-6426KNF",
+        "gxAlertDeviceId": 1480
+      }
+    ]
+  },
+  {
+    "externalId": "P-MZG-THQ-Jatoi",
+    "latitude": 29.510830,
+    "longitude": 70.837646,
+    "stateName": "Punjab",
+    "lgaName": "Muzaffar Garh",
+    "name": "P-MZG-THQ-Jatoi",
+    "shortname": "P-MZG-THQ-JATOI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MZG-THQ-Jatoi",
+        "shortName": "P-MZG-THQ-JATOI",
+        "macAddress": "MAC98E7F468CFAA",
+        "hostId": "THQ-JATOI",
+        "serial": "Cepheid-642622C",
+        "gxAlertDeviceId": 1482
+      }
+    ]
+  },
+  {
+    "externalId": "P-MZG-THQ-Kot-Addu",
+    "latitude": 30.460039,
+    "longitude": 70.968513,
+    "stateName": "Punjab",
+    "lgaName": "Muzaffar Garh",
+    "name": "P-MZG-THQ-Kot-Addu",
+    "shortname": "P-MZG-THQ-K-ADDU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MZG-THQ-Kot-Addu",
+        "shortName": "P-MZG-THQ-K-ADDU",
+        "macAddress": "MAC98E7F45C80A1",
+        "hostId": "THQ-KOT-ADDU",
+        "serial": "Cepheid-6426KPZ",
+        "gxAlertDeviceId": 1484
+      }
+    ]
+  },
+  {
+    "externalId": "P-NNK-DHQ-Nankana-Sahib",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Nankana",
+    "name": "P-NNK-DHQ-Nankana-Sahib",
+    "shortname": "P-NNK-DHQ-NNKSHB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-NNK-DHQ-Nankana-Sahib",
+        "shortName": "P-NNK-DHQ-NNKSHB",
+        "macAddress": "MACD4BED98CFE47",
+        "hostId": "DHQ - Nankana Sahib",
+        "serial": "GeneXpert-PC",
+        "gxAlertDeviceId": 1333
+      }
+    ]
+  },
+  {
+    "externalId": "P-NRW-DHQ-Narowal",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Narowal",
+    "name": "P-NRW-DHQ-Narowal",
+    "shortname": "P-NRW-DHQ-NAROWL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-NRW-DHQ-Narowal",
+        "shortName": "P-NRW-DHQ-NAROWL",
+        "macAddress": "MAC",
+        "hostId": "DHQ Narowal",
+        "serial": "Cepheid-6300G1L",
+        "gxAlertDeviceId": 1378
+      }
+    ]
+  },
+  {
+    "externalId": "P-OKR-DHQ-Okara",
+    "latitude": 75.417000,
+    "longitude": 30.843000,
+    "stateName": "Punjab",
+    "lgaName": "Okara",
+    "name": "P-OKR-DHQ-Okara",
+    "shortname": "P-OKR-DHQ-OKARA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-OKR-DHQ-Okara",
+        "shortName": "P-OKR-DHQ-OKARA",
+        "macAddress": "MAC98E7F45C803F",
+        "hostId": "DHQ-OKARA",
+        "serial": "Cepheid-64261Q5",
+        "gxAlertDeviceId": 1446
+      }
+    ]
+  },
+  {
+    "externalId": "P-OKR-THQ-Haveli-Lakha",
+    "latitude": 75.417000,
+    "longitude": 30.843000,
+    "stateName": "Punjab",
+    "lgaName": "Okara",
+    "name": "P-OKR-THQ-Haveli-Lakha",
+    "shortname": "P-OKR-THQ-H-LKHA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-OKR-THQ-Haveli-Lakha",
+        "shortName": "P-OKR-THQ-H-LKHA",
+        "macAddress": "MAC98E7F45C80C9",
+        "hostId": "THQ HOSPITAL HAVELI LAKHA",
+        "serial": "Cepheid-6426KQ3",
+        "gxAlertDeviceId": 1445
+      }
+    ]
+  },
+  {
+    "externalId": "P-OKR-VAN-Okara-(MC)",
+    "latitude": 30.799669,
+    "longitude": 73.445084,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Okara",
+    "name": "P-OKR-VAN-Okara-(MC)",
+    "shortname": "MOBILE-VAN-OKARA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-OKR-VAN-Okara-(MC)",
+        "shortName": "MOBILE-VAN-OKARA",
+        "macAddress": "MAC48BA4E8AA538",
+        "hostId": "MOBILE-VAN-OKARA-BASED",
+        "serial": "Cepheid-7352VVJ",
+        "gxAlertDeviceId": 1564
+      }
+    ]
+  },
+  {
+    "externalId": "P-PKP-DHQ-Pakpattan",
+    "latitude": 30.344971,
+    "longitude": 73.389977,
+    "stateName": "Punjab",
+    "lgaName": "Pakpattan",
+    "name": "P-PKP-DHQ-Pakpattan",
+    "shortname": "P-PKP-DHQ-PAKPTN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-PKP-DHQ-Pakpattan",
+        "shortName": "P-PKP-DHQ-PAKPTN",
+        "macAddress": "MAC98E7F453175C",
+        "hostId": "DHQ Pakpattan",
+        "serial": "Cepheid-6360NY1",
+        "gxAlertDeviceId": 1507
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-AMC-AFIP-Rawalpindi",
+    "latitude": 33.588741,
+    "longitude": 73.045486,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-AMC-AFIP-Rawalpindi",
+    "shortname": "P-RWP-AMC-AFIP",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-AMC-AFIP-Rawalpindi",
+        "shortName": "P-RWP-AMC-AFIP",
+        "macAddress": "MAC98E7F45C8044",
+        "hostId": "AFIP Rawalpindi",
+        "serial": "Cepheid-6426KPT",
+        "gxAlertDeviceId": 1518
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-AMC-MH-Rawalpindi",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-AMC-MH-Rawalpindi",
+    "shortname": "P-RWP-AMC-MH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-AMC-MH-Rawalpindi",
+        "shortName": "P-RWP-AMC-MH",
+        "macAddress": "MAC1062E55B947F",
+        "hostId": "RAWALPINDI-MH",
+        "serial": "Cepheid-8232014",
+        "gxAlertDeviceId": 1472
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-BBH-Rawalpindi",
+    "latitude": 33.588741,
+    "longitude": 73.045486,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-BBH-Rawalpindi",
+    "shortname": "P-RWP-BBH-RWPNDI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-BBH-Rawalpindi",
+        "shortName": "P-RWP-BBH-RWPNDI",
+        "macAddress": "MACE4A471650BB2",
+        "hostId": "Benazir Bhutto Hospital Rawalpindi",
+        "serial": "Cepheid-6300FNM",
+        "gxAlertDeviceId": 1577
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-DHQ-Attock",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Attock",
+    "name": "P-RWP-DHQ-Attock",
+    "shortname": "P-RWP-DHQ-ATTOCK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-DHQ-Attock",
+        "shortName": "P-RWP-DHQ-ATTOCK",
+        "macAddress": "MACF0D5BF0CDCF8",
+        "hostId": "DHQ Hospital Attock",
+        "serial": "Cepheid-64262T0",
+        "gxAlertDeviceId": 1566
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-DHQ-Rawalpindi",
+    "latitude": 73.054001,
+    "longitude": 33.612999,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-DHQ-Rawalpindi",
+    "shortname": "P-RWP-DHQ-RWPNDI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-DHQ-Rawalpindi",
+        "shortName": "P-RWP-DHQ-RWPNDI",
+        "macAddress": "MACF0D5BF45B41A",
+        "hostId": "DHQ Rawalpindi",
+        "serial": "Cepheid-64261NW",
+        "gxAlertDeviceId": 1384
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-RHC-Rawalpindi-Khayaban-E-Sir-Syed",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-RHC-Rawalpindi-Khayaban-E-Sir-Syed",
+    "shortname": "P-RWP-RHC-PHCKSS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-RHC-Rawalpindi-Khayaban-E-Sir-Syed",
+        "shortName": "P-RWP-RHC-PHCKSS",
+        "macAddress": "MAC8CDCD44E5991",
+        "hostId": "RHCKSS-RAWALPINDI",
+        "serial": "RHCKSS-RAWALPINDI",
+        "gxAlertDeviceId": 1285
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-RLH-Rawalpindi",
+    "latitude": 33.588741,
+    "longitude": 73.045486,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-RLH-Rawalpindi",
+    "shortname": "P-RWP-RLH-RWPNDI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-RLH-Rawalpindi",
+        "shortName": "P-RWP-RLH-RWPNDI",
+        "macAddress": "MAC98E7F468D7F4",
+        "hostId": "Rawalpindi Leprosy Hospital",
+        "serial": "Cepheid-6360NXW",
+        "gxAlertDeviceId": 1579
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-TBH-Federal-General-TB-Hospital",
+    "latitude": 73.044998,
+    "longitude": 33.589001,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-TBH-Federal-General-TB-Hospital",
+    "shortname": "P-RWP-TBH-FGTBH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-TBH-Federal-General-TB-Hospital",
+        "shortName": "P-RWP-TBH-FGTBH",
+        "macAddress": "MACF0D5BF158A38",
+        "hostId": "FGTBC Rawalpindi",
+        "serial": "Cepheid-642623Y",
+        "gxAlertDeviceId": 1387
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-TBH-SAMLI-Sanatorium-Murree",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-TBH-SAMLI-Sanatorium-Murree",
+    "shortname": "P-RWP-TBH-SAMLI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-TBH-SAMLI-Sanatorium-Murree",
+        "shortName": "P-RWP-TBH-SAMLI",
+        "macAddress": "MACE4A4717CAF38",
+        "hostId": "Saamli Hospital",
+        "serial": "Cepheid-62952S4",
+        "gxAlertDeviceId": 1288
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-TCH-Holy-Family-Hospital",
+    "latitude": 33.601921,
+    "longitude": 73.038078,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-TCH-Holy-Family-Hospital",
+    "shortname": "P-RWP-TCH-HOLY-F",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-TCH-Holy-Family-Hospital",
+        "shortName": "P-RWP-TCH-HOLY-F",
+        "macAddress": "MAC98E7F468D5AF",
+        "hostId": "Holy Famil Hospital",
+        "serial": "Cepheid-642623J",
+        "gxAlertDeviceId": 1611
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-THQ-Gujar-Khan",
+    "latitude": 33.258652,
+    "longitude": 73.305328,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-THQ-Gujar-Khan",
+    "shortname": "P-RWP-THQ-GJRKHN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-THQ-Gujar-Khan",
+        "shortName": "P-RWP-THQ-GJRKHN",
+        "macAddress": "MAC",
+        "hostId": "THQ-GUJAR-KHAN",
+        "serial": "Cepheid-64261QH",
+        "gxAlertDeviceId": 1453
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-THQ-Kahuta",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-THQ-Kahuta",
+    "shortname": "P-RWP-THQ-KAHUTA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-THQ-Kahuta",
+        "shortName": "P-RWP-THQ-KAHUTA",
+        "macAddress": "MACEC8EB54EF026",
+        "hostId": "THQ-Hospital-Kahuta",
+        "serial": "Cepheid-62873B1",
+        "gxAlertDeviceId": 1500
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-THQ-Kallar-Syedan",
+    "latitude": 33.414440,
+    "longitude": 73.378609,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-THQ-Kallar-Syedan",
+    "shortname": "P-RWP-THQ-K-SYDN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-THQ-Kallar-Syedan",
+        "shortName": "P-RWP-THQ-K-SYDN",
+        "macAddress": "MAC6C3BE5F4FD5E",
+        "hostId": "P-RWP-THQ-Kallar-Syedan",
+        "serial": "THQ-KS-PC",
+        "gxAlertDeviceId": 1626
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-THQ-Kotli-Sattian",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-THQ-Kotli-Sattian",
+    "shortname": "P-RWP-THQ-K-SATN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-THQ-Kotli-Sattian",
+        "shortName": "P-RWP-THQ-K-SATN",
+        "macAddress": "MACB88A60F36100",
+        "hostId": "THQ-Hospital-Kotli-Sattian",
+        "serial": "Cepheid-6426KN0",
+        "gxAlertDeviceId": 1504
+      }
+    ]
+  },
+  {
+    "externalId": "P-RWP-THQ-Taxila",
+    "latitude": 33.748508,
+    "longitude": 72.815514,
+    "stateName": "Punjab",
+    "lgaName": "Rawalpindi",
+    "name": "P-RWP-THQ-Taxila",
+    "shortname": "P-RWP-THQ-TAXILA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RWP-THQ-Taxila",
+        "shortName": "P-RWP-THQ-TAXILA",
+        "macAddress": "MAC",
+        "hostId": "THQ-Hospital-Taxila",
+        "serial": "Cepheid-64261R6",
+        "gxAlertDeviceId": 1498
+      }
+    ]
+  },
+  {
+    "externalId": "P-RYK-TH-Sheikh-Zayed-Hospital",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "RY Khan",
+    "name": "P-RYK-TH-Sheikh-Zayed-Hospital",
+    "shortname": "P-RYK-TH-SZH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-RYK-TH-Sheikh-Zayed-Hospital",
+        "shortName": "P-RYK-TH-SZH",
+        "macAddress": "MACEC8EB5512EFD",
+        "hostId": "Sheikh Zayed Hospital Rahim Yar Khan",
+        "serial": "Cepheid-6300G4D",
+        "gxAlertDeviceId": 1584
+      }
+    ]
+  },
+  {
+    "externalId": "P-SGD-AMC-PAF-Sargodha",
+    "stateName": "Punjab",
+    "lgaName": "Sargodha",
+    "name": "P-SGD-AMC-PAF-Sargodha",
+    "shortname": "P-SGD-AMC-PAF-H",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SGD-AMC-PAF-Sargodha",
+        "shortName": "P-SGD-AMC-PAF-H",
+        "macAddress": "MACE4B318DCA276",
+        "hostId": "PAF Hospital Sargodha",
+        "serial": "Cepheid-6290Q5C",
+        "gxAlertDeviceId": 1526
+      }
+    ]
+  },
+  {
+    "externalId": "P-SGD-DHQ-Sargodha",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Sargodha",
+    "name": "P-SGD-DHQ-Sargodha",
+    "shortname": "P-SGD-DHQ-SARGDA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SGD-DHQ-Sargodha",
+        "shortName": "P-SGD-DHQ-SARGDA",
+        "macAddress": "MACE4A7A0428588",
+        "hostId": "DHQ-SGD",
+        "serial": "Cepheid2GZC7V1",
+        "gxAlertDeviceId": 1301
+      }
+    ]
+  },
+  {
+    "externalId": "P-SGD-THQ-BHERA",
+    "latitude": 31.759821,
+    "longitude": 75.934593,
+    "stateName": "Punjab",
+    "lgaName": "Sargodha",
+    "name": "P-SGD-THQ-BHERA",
+    "shortname": "P-SGD-THQ-BHERA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SGD-THQ-BHERA",
+        "shortName": "P-SGD-THQ-BHERA",
+        "macAddress": "MACEC8EB54EEA55",
+        "hostId": "THQ Hospital Bhera",
+        "serial": "Cepheid-62873Q0",
+        "gxAlertDeviceId": 1574
+      }
+    ]
+  },
+  {
+    "externalId": "P-SGD-THQ-Chak-9-SB",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Sargodha",
+    "name": "P-SGD-THQ-Chak-9-SB",
+    "shortname": "P-SGD-THQ-CHK9SB",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SGD-THQ-Chak-9-SB",
+        "shortName": "P-SGD-THQ-CHK9SB",
+        "macAddress": "MACB88A60F35D63",
+        "hostId": "THQ Hospital Chack 90 SB Sargodha",
+        "serial": "Cepheid-6426KP8",
+        "gxAlertDeviceId": 1503
+      }
+    ]
+  },
+  {
+    "externalId": "P-SGD-THQ-Kot Momin",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Sargodha",
+    "name": "P-SGD-THQ-Kot Momin",
+    "shortname": "P-SGD-THQ-KMOMIN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SGD-THQ-Kot Momin",
+        "shortName": "P-SGD-THQ-KMOMIN",
+        "macAddress": "MAC98E7F45DDB5E",
+        "hostId": "THQ Hospital Kot Momin",
+        "serial": "Cepheid-6426KS2",
+        "gxAlertDeviceId": 1454
+      }
+    ]
+  },
+  {
+    "externalId": "P-SHW-DHQ-Sahiwal",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Sahiwal",
+    "name": "P-SHW-DHQ-Sahiwal",
+    "shortname": "P-SHW-DHQ-SAHIWL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SHW-DHQ-Sahiwal",
+        "shortName": "P-SHW-DHQ-SAHIWL",
+        "macAddress": "MAC8416F90A0EC7",
+        "hostId": "DHQ-SWL",
+        "serial": "Cepheid-4070WRJ",
+        "gxAlertDeviceId": 1299
+      }
+    ]
+  },
+  {
+    "externalId": "P-SHW-THQ-Chichawatni",
+    "latitude": 30.528469,
+    "longitude": 72.682137,
+    "stateName": "Punjab",
+    "lgaName": "Sahiwal",
+    "name": "P-SHW-THQ-Chichawatni",
+    "shortname": "P-SHW-THQ-C-WTNI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SHW-THQ-Chichawatni",
+        "shortName": "P-SHW-THQ-C-WTNI",
+        "macAddress": "MACB88A60F35D9A",
+        "hostId": "THQ Chichawatni",
+        "serial": "Cepheid-6426KNN",
+        "gxAlertDeviceId": 1506
+      }
+    ]
+  },
+  {
+    "externalId": "P-SKP-DHQ-Sheikhupura",
+    "latitude": 30.842150,
+    "longitude": 75.416817,
+    "stateName": "Punjab",
+    "lgaName": "Sheikhu pura",
+    "name": "P-SKP-DHQ-Sheikhupura",
+    "shortname": "P-SKP-DHQ-SHKPUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SKP-DHQ-Sheikhupura",
+        "shortName": "P-SKP-DHQ-SHKPUR",
+        "macAddress": "MACEC8EB54EEF38",
+        "hostId": "P-SKP-DHQ-Sheikhupura",
+        "serial": "Cepheid-6290Q0C",
+        "gxAlertDeviceId": 1625
+      }
+    ]
+  },
+  {
+    "externalId": "P-SKP-THQ-Sharakpur",
+    "latitude": 31.138371,
+    "longitude": 75.504013,
+    "stateName": "Punjab",
+    "lgaName": "Sheikhu pura",
+    "name": "P-SKP-THQ-Sharakpur",
+    "shortname": "P-SKP-THQ-SHRKPR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SKP-THQ-Sharakpur",
+        "shortName": "P-SKP-THQ-SHRKPR",
+        "macAddress": "MACE4A7A041B0F4",
+        "hostId": "THQ-Hospital Sharakpur",
+        "serial": "Cepheid-6360NYP",
+        "gxAlertDeviceId": 1483
+      }
+    ]
+  },
+  {
+    "externalId": "P-SKT-AMC-CMH-Sialkot",
+    "stateName": "Punjab",
+    "lgaName": "Sialkot",
+    "name": "P-SKT-AMC-CMH-Sialkot",
+    "shortname": "P-SKT-AMC-CMH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SKT-AMC-CMH-Sialkot",
+        "shortName": "P-SKT-AMC-CMH",
+        "macAddress": "MAC98E7F468D057",
+        "hostId": "CMH-Sialkot",
+        "serial": "Cepheid-6426188",
+        "gxAlertDeviceId": 1476
+      }
+    ]
+  },
+  {
+    "externalId": "P-SKT-DHQ-Sialkot",
+    "latitude": 72.144997,
+    "longitude": 30.806999,
+    "stateName": "Punjab",
+    "lgaName": "Sialkot",
+    "name": "P-SKT-DHQ-Sialkot",
+    "shortname": "P-SKT-DHQ-SIALKT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SKT-DHQ-Sialkot",
+        "shortName": "P-SKT-DHQ-SIALKT",
+        "macAddress": "MAC98E7F45C1F93",
+        "hostId": "DHQ-Sialkot",
+        "serial": "Cepheid2GZ47V1",
+        "gxAlertDeviceId": 1294
+      }
+    ]
+  },
+  {
+    "externalId": "P-SKT-THQ-DASKA",
+    "latitude": 32.387051,
+    "longitude": 74.349632,
+    "stateName": "Punjab",
+    "lgaName": "Sialkot",
+    "name": "P-SKT-THQ-DASKA",
+    "shortname": "P-SKT-THQ-DASKA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SKT-THQ-DASKA",
+        "shortName": "P-SKT-THQ-DASKA",
+        "macAddress": "MAC98E7F4531759",
+        "hostId": "P-SKT-THQ-DASKA",
+        "serial": "Cepheid-6360NY7",
+        "gxAlertDeviceId": 1591
+      }
+    ]
+  },
+  {
+    "externalId": "P-SKT-THQ-Sambrial",
+    "latitude": 30.843241,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Sialkot",
+    "name": "P-SKT-THQ-Sambrial",
+    "shortname": "P-SKT-THQ-SMBRAL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-SKT-THQ-Sambrial",
+        "shortName": "P-SKT-THQ-SMBRAL",
+        "macAddress": "MACEC8EB551383C",
+        "hostId": "THQ-Hospital-Sambrial",
+        "serial": "Cepheid-6300FM1",
+        "gxAlertDeviceId": 1477
+      }
+    ]
+  },
+  {
+    "externalId": "P-TTS-DHQ-Toba-Tek-Singh",
+    "latitude": 75.418999,
+    "longitude": 30.837000,
+    "stateName": "Punjab",
+    "lgaName": "Toba Tek Singh",
+    "name": "P-TTS-DHQ-Toba-Tek-Singh",
+    "shortname": "P-TTS-DHQ-TTSING",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-TTS-DHQ-Toba-Tek-Singh",
+        "shortName": "P-TTS-DHQ-TTSING",
+        "macAddress": "MACEC8EB54EE960",
+        "hostId": "DTO-TTSINGH",
+        "serial": "Cepheid-6290Q9C",
+        "gxAlertDeviceId": 1327
+      }
+    ]
+  },
+  {
+    "externalId": "P-TTS-THQ-Gojra",
+    "latitude": 31.149599,
+    "longitude": 72.687576,
+    "stateName": "Punjab",
+    "lgaName": "Toba Tek Singh",
+    "name": "P-TTS-THQ-Gojra",
+    "shortname": "P-TTS-THQ-GOJRA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-TTS-THQ-Gojra",
+        "shortName": "P-TTS-THQ-GOJRA",
+        "macAddress": "MACB88A60F35C55",
+        "hostId": "THQ-HOSPITAL-GOJRA",
+        "serial": "Cepheid-6426KNH",
+        "gxAlertDeviceId": 1501
+      }
+    ]
+  },
+  {
+    "externalId": "P-TTS-THQ-Kamalia",
+    "latitude": 30.716230,
+    "longitude": 72.657204,
+    "stateName": "Punjab",
+    "lgaName": "Toba Tek Singh",
+    "name": "P-TTS-THQ-Kamalia",
+    "shortname": "P-TTS-THQ-KMALIA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-TTS-THQ-Kamalia",
+        "shortName": "P-TTS-THQ-KMALIA",
+        "macAddress": "MAC98E7F45316E9",
+        "hostId": "THQ Hospital Kamalia",
+        "serial": "Cepheid-6360NY5",
+        "gxAlertDeviceId": 1572
+      }
+    ]
+  },
+  {
+    "externalId": "P-VHR-DHQ-Vehari",
+    "latitude": 30.843243,
+    "longitude": 75.417480,
+    "stateName": "Punjab",
+    "lgaName": "Vihari",
+    "name": "P-VHR-DHQ-Vehari",
+    "shortname": "P-VHR-DHQ-VEHARI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-VHR-DHQ-Vehari",
+        "shortName": "P-VHR-DHQ-VEHARI",
+        "macAddress": "MACE4A4715E9D45",
+        "hostId": "P-VHR-DHQ-Vehari",
+        "serial": "Cepheid-6290QT2",
+        "gxAlertDeviceId": 1585
+      }
+    ]
+  },
+  {
+    "externalId": "P-VHR-PVT-Sughra-Memorial-Hospital-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Vehari",
+    "name": "P-VHR-PVT-Sughra-Memorial-Hospital-(MC)",
+    "shortname": "P-VHR-PVT-SMH-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-VHR-PVT-Sughra-Memorial-Hospital-(MC)",
+        "shortName": "P-VHR-PVT-SMH-MC",
+        "macAddress": "MAC",
+        "hostId": "DMC-Burewala",
+        "serial": "Cepheid-6426256",
+        "gxAlertDeviceId": 1379
+      }
+    ]
+  },
+  {
+    "externalId": "P-VHR-THQ-Mailsi",
+    "latitude": 29.788349,
+    "longitude": 72.178574,
+    "stateName": "Punjab",
+    "lgaName": "Vihari",
+    "name": "P-VHR-THQ-Mailsi",
+    "shortname": "P-VHR-THQ-MAILSI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-VHR-THQ-Mailsi",
+        "shortName": "P-VHR-THQ-MAILSI",
+        "macAddress": "MAC98E7F4531409",
+        "hostId": "THQ Malsi",
+        "serial": "Cepheid-6360P0T",
+        "gxAlertDeviceId": 1502
+      }
+    ]
+  },
+  {
+    "externalId": "S-BDM-THQ-Talhar",
+    "latitude": 24.890890,
+    "longitude": 68.809799,
+    "stateName": "Sindh",
+    "lgaName": "Badin",
+    "name": "S-BDM-THQ-Talhar",
+    "shortname": "S-BDM-THQ-TALHAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-BDM-THQ-Talhar",
+        "shortName": "S-BDM-THQ-TALHAR",
+        "macAddress": "MACB88A60B2F444",
+        "hostId": "BADIN RHC TALHAR",
+        "serial": "Cepheid-6426KQ5",
+        "gxAlertDeviceId": 1573
+      }
+    ]
+  },
+  {
+    "externalId": "S-BDN-DHQ-Badin",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Badin",
+    "name": "S-BDN-DHQ-Badin",
+    "shortname": "S-BDN-DHQ-BADIN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-BDN-DHQ-Badin",
+        "shortName": "S-BDN-DHQ-BADIN",
+        "macAddress": "MACB88A60B2F552",
+        "hostId": "DHQ-BADIN",
+        "serial": "Cepheid-6426KRS",
+        "gxAlertDeviceId": 1404
+      }
+    ]
+  },
+  {
+    "externalId": "S-BDN-THQ-Golarchi",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Badin",
+    "name": "S-BDN-THQ-Golarchi",
+    "shortname": "S-BDN-THQ-GOLRCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-BDN-THQ-Golarchi",
+        "shortName": "S-BDN-THQ-GOLRCH",
+        "macAddress": "MAC98E7F45315CE",
+        "hostId": "TH GOLARCHI",
+        "serial": "Cepheid-6360P05",
+        "gxAlertDeviceId": 1402
+      }
+    ]
+  },
+  {
+    "externalId": "S-BDN-THQ-Matli",
+    "latitude": 24.649740,
+    "longitude": 68.850792,
+    "stateName": "Sindh",
+    "lgaName": "Badin",
+    "name": "S-BDN-THQ-Matli",
+    "shortname": "S-BDN-THQ-MATLI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-BDN-THQ-Matli",
+        "shortName": "S-BDN-THQ-MATLI",
+        "macAddress": "MACE4A7A042734A",
+        "hostId": "THQ- Matli",
+        "serial": "Cepheid-6360NY4",
+        "gxAlertDeviceId": 1473
+      }
+    ]
+  },
+  {
+    "externalId": "S-BDN-THQ-Tando-Bago",
+    "latitude": 24.782261,
+    "longitude": 68.973389,
+    "stateName": "Sindh",
+    "lgaName": "Badin",
+    "name": "S-BDN-THQ-Tando-Bago",
+    "shortname": "S-BDN-THQ-T-BAGO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-BDN-THQ-Tando-Bago",
+        "shortName": "S-BDN-THQ-T-BAGO",
+        "macAddress": "MAC98E7F45313EB",
+        "hostId": "THQ HOSPITAL TANDO BAGO",
+        "serial": "Cepheid-6360NZZ",
+        "gxAlertDeviceId": 1530
+      }
+    ]
+  },
+  {
+    "externalId": "S-DDU-DHQ-Dadu",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Dadu",
+    "name": "S-DDU-DHQ-Dadu",
+    "shortname": "S-DDU-DHQ-DADU",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-DDU-DHQ-Dadu",
+        "shortName": "S-DDU-DHQ-DADU",
+        "macAddress": "MACEC8EB5512EE0",
+        "hostId": "DHQCH - DADU",
+        "serial": "Cepheid-6300G3C",
+        "gxAlertDeviceId": 1308
+      }
+    ]
+  },
+  {
+    "externalId": "S-DDU-THQ-Johi",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Dadu",
+    "name": "S-DDU-THQ-Johi",
+    "shortname": "S-DDU-THQ-JOHI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-DDU-THQ-Johi",
+        "shortName": "S-DDU-THQ-JOHI",
+        "macAddress": "MACEC8EB54F7797",
+        "hostId": "THQ JOHI",
+        "serial": "Cepheid-6290QQQ",
+        "gxAlertDeviceId": 1534
+      }
+    ]
+  },
+  {
+    "externalId": "S-DDU-THQ-Mehar",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Dadu",
+    "name": "S-DDU-THQ-Mehar",
+    "shortname": "S-DDU-THQ-MEHAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-DDU-THQ-Mehar",
+        "shortName": "S-DDU-THQ-MEHAR",
+        "macAddress": "MAC98E7F45C8144",
+        "hostId": "DADU- THQ MEHAR",
+        "serial": "Cepheid-6426KMK",
+        "gxAlertDeviceId": 1554
+      }
+    ]
+  },
+  {
+    "externalId": "S-GTK-DHQ-Mirpur-Mathelo",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Ghotki",
+    "name": "S-GTK-DHQ-Mirpur-Mathelo",
+    "shortname": "S-GTK-DHQ-GHOTKI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-GTK-DHQ-Mirpur-Mathelo",
+        "shortName": "S-GTK-DHQ-GHOTKI",
+        "macAddress": "MAC",
+        "hostId": "DHQ-Mirpur Mathelo",
+        "serial": "Cepheid-6300G20",
+        "gxAlertDeviceId": 1336
+      }
+    ]
+  },
+  {
+    "externalId": "S-GTK-TBC-Mari-Petroleum-Hospital",
+    "latitude": 24.926710,
+    "longitude": 67.034370,
+    "stateName": "Sindh",
+    "lgaName": "Ghotki",
+    "name": "S-GTK-TBC-Mari-Petroleum-Hospital",
+    "shortname": "S-GTK-TBC-MARIPH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-GTK-TBC-Mari-Petroleum-Hospital",
+        "shortName": "S-GTK-TBC-MARIPH",
+        "macAddress": "MAC98E7F468D473",
+        "hostId": "Mari Petroluem MPCL",
+        "serial": "Cepheid-6426258",
+        "gxAlertDeviceId": 1550
+      }
+    ]
+  },
+  {
+    "externalId": "S-GTK-THQ-Ghotki",
+    "latitude": 28.004999,
+    "longitude": 69.325653,
+    "stateName": "Sindh",
+    "lgaName": "Ghotki",
+    "name": "S-GTK-THQ-Ghotki",
+    "shortname": " S-GTK-TH-GHOTKI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-GTK-THQ-Ghotki",
+        "shortName": " S-GTK-TH-GHOTKI",
+        "macAddress": "MAC98E7F45C8068",
+        "hostId": "THQ GHOTKI",
+        "serial": "Cepheid-6426KPR",
+        "gxAlertDeviceId": 1597
+      }
+    ]
+  },
+  {
+    "externalId": "S-GTK-THQ-Ubauro",
+    "latitude": 28.162050,
+    "longitude": 69.738411,
+    "stateName": "Sindh",
+    "lgaName": "Ghotki",
+    "name": "S-GTK-THQ-Ubauro",
+    "shortname": "S-GTK-THQ-UBAURO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-GTK-THQ-Ubauro",
+        "shortName": "S-GTK-THQ-UBAURO",
+        "macAddress": "MAC98E7F45D3185",
+        "hostId": "THQ Hospital Ubauro",
+        "serial": "Cepheid-64261R0",
+        "gxAlertDeviceId": 1521
+      }
+    ]
+  },
+  {
+    "externalId": "S-HBD-CH-Shah-Bhitai-Hospital",
+    "stateName": "Sindh",
+    "lgaName": "Hyderabad",
+    "name": "S-HBD-CH-Shah-Bhitai-Hospital",
+    "shortname": "S-HBD-CH-SBH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-HBD-CH-Shah-Bhitai-Hospital",
+        "shortName": "S-HBD-CH-SBH",
+        "macAddress": "MAC",
+        "hostId": "Shah Bhittai Hospital Hyd",
+        "serial": "Cepheid-642628F",
+        "gxAlertDeviceId": 1416
+      }
+    ]
+  },
+  {
+    "externalId": "S-HBD-GH-Rafique-Memorial-Hospital",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Hyderabad",
+    "name": "S-HBD-GH-Rafique-Memorial-Hospital",
+    "shortname": "S-HBD-GH-RMH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-HBD-GH-Rafique-Memorial-Hospital",
+        "shortName": "S-HBD-GH-RMH",
+        "macAddress": "MAC",
+        "hostId": "Rafiq Mem Hospital Hyd",
+        "serial": "Cepheid-642628X",
+        "gxAlertDeviceId": 1419
+      }
+    ]
+  },
+  {
+    "externalId": "S-HBD-SGH-SGH-Qasimabad",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Hyderabad",
+    "name": "S-HBD-SGH-SGH-Qasimabad",
+    "shortname": "S-HBD-SGH-SGHQS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-HBD-SGH-SGH-Qasimabad",
+        "shortName": "S-HBD-SGH-SGHQS",
+        "macAddress": "MAC98E7F468D6E9",
+        "hostId": "SGH-QHYD",
+        "serial": "Cepheid-6426230",
+        "gxAlertDeviceId": 1279
+      }
+    ]
+  },
+  {
+    "externalId": "S-HBD-TH-Liaquat-University-Hospital",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Hyderabad",
+    "name": "S-HBD-TH-Liaquat-University-Hospital",
+    "shortname": "S-HBD-TH-LUMS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-HBD-TH-Liaquat-University-Hospital",
+        "shortName": "S-HBD-TH-LUMS",
+        "macAddress": "MAC",
+        "hostId": "LUH-HYD",
+        "serial": "Cepheid-64261MT",
+        "gxAlertDeviceId": 1281
+      }
+    ]
+  },
+  {
+    "externalId": "S-HBD-THQ-Tando-Jam",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Hyderabad",
+    "name": "S-HBD-THQ-Tando-Jam",
+    "shortname": "S-HBD-THQ-T-JAM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-HBD-THQ-Tando-Jam",
+        "shortName": "S-HBD-THQ-T-JAM",
+        "macAddress": "MACE4A47162278F",
+        "hostId": "THQ Hospital Tando Jam",
+        "serial": "Cepheid-6300G39",
+        "gxAlertDeviceId": 1524
+      }
+    ]
+  },
+  {
+    "externalId": "S-JCB-PPH-PPHI-Lab",
+    "latitude": 26.034477,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Jacobabad",
+    "name": "S-JCB-PPH-PPHI-Lab",
+    "shortname": "S-JCB-PPH-PPHI-L",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JCB-PPH-PPHI-Lab",
+        "shortName": "S-JCB-PPH-PPHI-L",
+        "macAddress": "MAC98E7F4531591",
+        "hostId": "PPHI Lab Jacobabad",
+        "serial": "Cepheid-6360NYW",
+        "gxAlertDeviceId": 1601
+      }
+    ]
+  },
+  {
+    "externalId": "S-JCB-TH-Jacobabad-Institute-Of-Medical-Sciences",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Jacobabad",
+    "name": "S-JCB-TH-Jacobabad-Institute-Of-Medical-Sciences",
+    "shortname": "S-JCB-TH-JIMS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JCB-TH-Jacobabad-Institute-Of-Medical-Sciences",
+        "shortName": "S-JCB-TH-JIMS",
+        "macAddress": "MAC8CDCD44E5B18",
+        "hostId": "JIMS-Jacobabad",
+        "serial": "Cepheid-5212D4X",
+        "gxAlertDeviceId": 1311
+      }
+    ]
+  },
+  {
+    "externalId": "S-JCB-THQ-Thul",
+    "latitude": 28.270195,
+    "longitude": 68.775681,
+    "stateName": "Sindh",
+    "lgaName": "Jacobabad",
+    "name": "S-JCB-THQ-Thul",
+    "shortname": "S-JCB-THQ-THUL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JCB-THQ-Thul",
+        "shortName": "S-JCB-THQ-THUL",
+        "macAddress": "MACF0D5BF158A47",
+        "hostId": "THQ THUL",
+        "serial": "Cepheid-642624N",
+        "gxAlertDeviceId": 1599
+      }
+    ]
+  },
+  {
+    "externalId": "S-JMS-TBH-Institute-Of-Chest-Diseases-Kotri",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Jamshoro",
+    "name": "S-JMS-TBH-Institute-Of-Chest-Diseases-Kotri",
+    "shortname": "S-JMS-TBH-ICDK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JMS-TBH-Institute-Of-Chest-Diseases-Kotri",
+        "shortName": "S-JMS-TBH-ICDK",
+        "macAddress": "MACEC8EB5505D86",
+        "hostId": "ICD-Kotri",
+        "serial": "cephied-PC",
+        "gxAlertDeviceId": 1280
+      }
+    ]
+  },
+  {
+    "externalId": "S-JMS-THQ-Kotri",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Jamshoro",
+    "name": "S-JMS-THQ-Kotri",
+    "shortname": "S-JMS-THQ-KOTRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JMS-THQ-Kotri",
+        "shortName": "S-JMS-THQ-KOTRI",
+        "macAddress": "MAC98E7F452FB72",
+        "hostId": "THQ Hospital kotri",
+        "serial": "Cepheid-642620S",
+        "gxAlertDeviceId": 1408
+      }
+    ]
+  },
+  {
+    "externalId": "S-JMS-THQ-Sehwan",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Jamshoro",
+    "name": "S-JMS-THQ-Sehwan",
+    "shortname": "S-JMS-THQ-SEHWAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JMS-THQ-Sehwan",
+        "shortName": "S-JMS-THQ-SEHWAN",
+        "macAddress": "MAC98E7F45C811A",
+        "hostId": "T.H-SEHWAN",
+        "serial": "Cepheid-6426KMH",
+        "gxAlertDeviceId": 1373
+      }
+    ]
+  },
+  {
+    "externalId": "S-JMS-THQ-Thana-Bola-Khan",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Jamshoro",
+    "name": "S-JMS-THQ-Thana-Bola-Khan",
+    "shortname": "S-JMS-THQ-TBKHAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-JMS-THQ-Thana-Bola-Khan",
+        "shortName": "S-JMS-THQ-TBKHAN",
+        "macAddress": "MAC98E7F468D77A",
+        "hostId": "THQ Hospital Thana Bola Khan",
+        "serial": "Cepheid-642622K",
+        "gxAlertDeviceId": 1410
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-AMC-PNS-Shifa-Karachi",
+    "latitude": 24.926710,
+    "longitude": 67.034370,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-AMC-PNS-Shifa-Karachi",
+    "shortname": "S-KCH-AMC-SHIFA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-AMC-PNS-Shifa-Karachi",
+        "shortName": "S-KCH-AMC-SHIFA",
+        "macAddress": "MAC98E7F45C8023",
+        "hostId": "PNS Shifa Karachi",
+        "serial": "Cepheid-6426KPS",
+        "gxAlertDeviceId": 1551
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-CH-Karachi",
+    "latitude": 24.926710,
+    "longitude": 67.034370,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-CH-Karachi",
+    "shortname": "S-KCH-CH-KARCHI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-CH-Karachi",
+        "shortName": "S-KCH-CH-KARCHI",
+        "macAddress": "MAC48BA4E8AA5DF",
+        "hostId": "KARACHI-CIVIL-HOSPITAL",
+        "serial": "Cepheid-7352W31",
+        "gxAlertDeviceId": 1553
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-PRL-Sindh-Karachi-OICD",
+    "latitude": 67.033997,
+    "longitude": 24.927000,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-PRL-Sindh-Karachi-OICD",
+    "shortname": "S-KCH-PRL-SINDH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-PRL-Sindh-Karachi-OICD",
+        "shortName": "S-KCH-PRL-SINDH",
+        "macAddress": "MACACE2D39ACBAC",
+        "hostId": "PRL-Sindh",
+        "serial": "Cepheid-7453H6Q",
+        "gxAlertDeviceId": 1511
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-SGH-Saudabad",
+    "latitude": 24.926710,
+    "longitude": 67.034370,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-SGH-Saudabad",
+    "shortname": "S-KCH-SGH-SAUDBD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-SGH-Saudabad",
+        "shortName": "S-KCH-SGH-SAUDBD",
+        "macAddress": "MAC98E7F45DDA9E",
+        "hostId": "SG Hospital Saudabad",
+        "serial": "Cepheid-64261WN",
+        "gxAlertDeviceId": 1540
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-SGH-SGH-Korangi-5",
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-SGH-SGH-Korangi-5",
+    "shortname": "S-KCH-SGH-KORNGI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-SGH-SGH-Korangi-5",
+        "shortName": "S-KCH-SGH-KORNGI",
+        "macAddress": "MAC98E7F45DDAB0",
+        "hostId": "SG Hospital Korangi 5",
+        "serial": "Cepheid-64261NP",
+        "gxAlertDeviceId": 1436
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-TBC-Malir-Chest-Clinic",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-TBC-Malir-Chest-Clinic",
+    "shortname": "S-KCH-TBC-MCC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-TBC-Malir-Chest-Clinic",
+        "shortName": "S-KCH-TBC-MCC",
+        "macAddress": "MACF0D5BF158A65",
+        "hostId": "Malir Chest Clinic",
+        "serial": "Cepheid2H0D7V1",
+        "gxAlertDeviceId": 1429
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-TBC-Nazimabad-Chest-Clinic",
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-TBC-Nazimabad-Chest-Clinic",
+    "shortname": "S-KCH-TBC-NCC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-TBC-Nazimabad-Chest-Clinic",
+        "shortName": "S-KCH-TBC-NCC",
+        "macAddress": "MAC98E7F453158F",
+        "hostId": "NAZIMABAD CHEST CLINIC",
+        "serial": "Cepheid-6360NZR",
+        "gxAlertDeviceId": 1415
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-TBC-Orangi-Chest-Clinic",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-TBC-Orangi-Chest-Clinic",
+    "shortname": "S-KCH-TBC-OCC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-TBC-Orangi-Chest-Clinic",
+        "shortName": "S-KCH-TBC-OCC",
+        "macAddress": "MAC",
+        "hostId": "ORANGI CHEST CLINIC",
+        "serial": "Cepheid-6426247",
+        "gxAlertDeviceId": 1407
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-TH-Jinnah-Post-Graduate-Medical-Institute",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-TH-Jinnah-Post-Graduate-Medical-Institute",
+    "shortname": "S-KCH-TH-JPMC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-TH-Jinnah-Post-Graduate-Medical-Institute",
+        "shortName": "S-KCH-TH-JPMC",
+        "macAddress": "MAC98E7F45DDAB7",
+        "hostId": "JPMC",
+        "serial": "Cepheid-6422JXR",
+        "gxAlertDeviceId": 1269
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-TH-Layari-General-Hospital",
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-TH-Layari-General-Hospital",
+    "shortname": "S-KCH-TH-LYRGH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-TH-Layari-General-Hospital",
+        "shortName": "S-KCH-TH-LYRGH",
+        "macAddress": "MACE4A47162251E",
+        "hostId": "LAYARI GENERAL HOSPITAL",
+        "serial": "Cepheid-6300G2T",
+        "gxAlertDeviceId": 1542
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-TH-Sindh-Institute-Of-Urology-And-Transplant",
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-TH-Sindh-Institute-Of-Urology-And-Transplant",
+    "shortname": "S-KCH-TH-SIUT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-TH-Sindh-Institute-Of-Urology-And-Transplant",
+        "shortName": "S-KCH-TH-SIUT",
+        "macAddress": "MACF0D5BF0CE39C",
+        "hostId": "SIUT- KARACHI",
+        "serial": "Cepheid-64262QH",
+        "gxAlertDeviceId": 1439
+      }
+    ]
+  },
+  {
+    "externalId": "S-KCH-UHC-Landhi",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Karachi",
+    "name": "S-KCH-UHC-Landhi",
+    "shortname": "S-KCH-UHC-LANDHI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KCH-UHC-Landhi",
+        "shortName": "S-KCH-UHC-LANDHI",
+        "macAddress": "MAC98E7F45C8031",
+        "hostId": "Urban Health Center Landhi",
+        "serial": "Cepheid-6426KP0",
+        "gxAlertDeviceId": 1538
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-PPH-KOUSAR-HOSPITAL-PPHI",
+    "latitude": 27.520590,
+    "longitude": 68.746529,
+    "stateName": "Sindh",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-PPH-KOUSAR-HOSPITAL-PPHI",
+    "shortname": "S-KHR-PPH-KOUSAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-PPH-KOUSAR-HOSPITAL-PPHI",
+        "shortName": "S-KHR-PPH-KOUSAR",
+        "macAddress": "MAC98E7F45D32E4",
+        "hostId": "Khairpur Kousar Hospital",
+        "serial": "Cepheid-6426KP7",
+        "gxAlertDeviceId": 1590
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-RHC-Faiz-Ganj",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-RHC-Faiz-Ganj",
+    "shortname": "S-KHR-RHC-FAIZ-G",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-RHC-Faiz-Ganj",
+        "shortName": "S-KHR-RHC-FAIZ-G",
+        "macAddress": "MAC",
+        "hostId": "RHC FAIZ GANJ",
+        "serial": "Cepheid-64261Z2",
+        "gxAlertDeviceId": 1605
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-RHC-Pir-Jo-Ghot",
+    "stateName": "Sindh",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-RHC-Pir-Jo-Ghot",
+    "shortname": "S-KHR-RHC-PJGHOT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-RHC-Pir-Jo-Ghot",
+        "shortName": "S-KHR-RHC-PJGHOT",
+        "macAddress": "MAC98E7F452F788",
+        "hostId": "RHC Pir jo Ghot",
+        "serial": "Cepheid-642624L",
+        "gxAlertDeviceId": 1431
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-RHC-Thari-Mirwah",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-RHC-Thari-Mirwah",
+    "shortname": "S-KHR-RHC-TMIRWA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-RHC-Thari-Mirwah",
+        "shortName": "S-KHR-RHC-TMIRWA",
+        "macAddress": "MAC98E7F452FC38",
+        "hostId": "RHC-TEHRI-MIRWA",
+        "serial": "Cepheid-6426242",
+        "gxAlertDeviceId": 1441
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-TBH-TB-Hospital-Khairpur",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-TBH-TB-Hospital-Khairpur",
+    "shortname": "S-KHR-TBH-KHAIRP",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-TBH-TB-Hospital-Khairpur",
+        "shortName": "S-KHR-TBH-KHAIRP",
+        "macAddress": "MACF0D5BF43BA93",
+        "hostId": "S-KHR-TBH-TB-Hospital-Khairpur",
+        "serial": "Cepheid",
+        "gxAlertDeviceId": 1586
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-THQ-Gambat",
+    "latitude": 27.346800,
+    "longitude": 68.514183,
+    "stateName": "Sindh",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-THQ-Gambat",
+    "shortname": "S-KHR-THQ-GAMBAT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-THQ-Gambat",
+        "shortName": "S-KHR-THQ-GAMBAT",
+        "macAddress": "MAC48BA4EEC1753",
+        "hostId": "TBC GAMBAT",
+        "serial": "Cepheid-7391JXK",
+        "gxAlertDeviceId": 1563
+      }
+    ]
+  },
+  {
+    "externalId": "S-KHR-VAN-KHAIRPUR-(MC)",
+    "latitude": 27.520590,
+    "longitude": 68.746529,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-VAN-KHAIRPUR-(MC)",
+    "shortname": "S-KHR-VAN-MOBILE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-VAN-KHAIRPUR-(MC)",
+        "shortName": "S-KHR-VAN-MOBILE",
+        "macAddress": "MACF430B9D26F38",
+        "hostId": "MOBILE-VAN-KHAIRPUR-BASED",
+        "serial": "Cepheid-7295ZSK",
+        "gxAlertDeviceId": 1570
+      }
+    ]
+  },
+  {
+    "externalId": "S-KSM-RHC-Bakhshapur",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Kashmore",
+    "name": "S-KSM-RHC-Bakhshapur",
+    "shortname": "S-KSM-RHC-BUXAPR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KSM-RHC-Bakhshapur",
+        "shortName": "S-KSM-RHC-BUXAPR",
+        "macAddress": "MACEC8EB54F75CE",
+        "hostId": "RHC  hospital Buxapur",
+        "serial": "Cepheid-6290QT1",
+        "gxAlertDeviceId": 1547
+      }
+    ]
+  },
+  {
+    "externalId": "S-KSM-THQ-Kandhkot",
+    "stateName": "Sindh",
+    "lgaName": "Kashmore",
+    "name": "S-KSM-THQ-Kandhkot",
+    "shortname": "S-KSM-THQ-KANDHK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KSM-THQ-Kandhkot",
+        "shortName": "S-KSM-THQ-KANDHK",
+        "macAddress": "MACE4A47158CDDE",
+        "hostId": "THQ-Kandhkot",
+        "serial": "Cepheid-6300G10",
+        "gxAlertDeviceId": 1338
+      }
+    ]
+  },
+  {
+    "externalId": "S-KSM-THQ-Kashmor",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Kashmore",
+    "name": "S-KSM-THQ-Kashmor",
+    "shortname": "S-KSM-THQ-KASHMR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KSM-THQ-Kashmor",
+        "shortName": "S-KSM-THQ-KASHMR",
+        "macAddress": "MAC98E7F452FC33",
+        "hostId": "THQ Hospital Kashmor",
+        "serial": "Cepheid-642624B",
+        "gxAlertDeviceId": 1545
+      }
+    ]
+  },
+  {
+    "externalId": "S-LKN-DHQ-Larkana-Garhi-Khairo",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Jacobabad",
+    "name": "S-LKN-DHQ-Larkana-Garhi-Khairo",
+    "shortname": "S-LKN-DHQ-LARKNA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-LKN-DHQ-Larkana-Garhi-Khairo",
+        "shortName": "S-LKN-DHQ-LARKNA",
+        "macAddress": "MACF0D5BF43A553",
+        "hostId": "DHQ GARHI KHAIRO",
+        "serial": "Cepheid-64261ND",
+        "gxAlertDeviceId": 1474
+      }
+    ]
+  },
+  {
+    "externalId": "S-LKN-RHC-Nasirabad",
+    "stateName": "Sindh",
+    "lgaName": "Larkana",
+    "name": "S-LKN-RHC-Nasirabad",
+    "shortname": "S-LKN-RHC-NASRBD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-LKN-RHC-Nasirabad",
+        "shortName": "S-LKN-RHC-NASRBD",
+        "macAddress": "MACF0D5BF43BCCD",
+        "hostId": "RHC Nasirabad",
+        "serial": "Cepheid-64261P8",
+        "gxAlertDeviceId": 1443
+      }
+    ]
+  },
+  {
+    "externalId": "S-LKN-TH-Chandka-Medical-College",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Larkana",
+    "name": "S-LKN-TH-Chandka-Medical-College",
+    "shortname": "S-LKN-TH-CMCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-LKN-TH-Chandka-Medical-College",
+        "shortName": "S-LKN-TH-CMCH",
+        "macAddress": "MAC",
+        "hostId": "TB DOTS CMCH-LARKANA",
+        "serial": "Cepheid-628732Z",
+        "gxAlertDeviceId": 1307
+      }
+    ]
+  },
+  {
+    "externalId": "S-LKN-TH-Chandka-Medical-College-2",
+    "latitude": 26.090019,
+    "longitude": 68.819740,
+    "stateName": "Sindh",
+    "lgaName": "Larkana",
+    "name": "S-LKN-TH-Chandka-Medical-College-2",
+    "shortname": "S-LKN-TH-CMCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-LKN-TH-Chandka-Medical-College-2",
+        "shortName": "S-LKN-TH-CMCH",
+        "macAddress": "MAC6C4B90E0894A",
+        "hostId": "S-LKN-TH-CMCH",
+        "serial": "CPHD-0F05244",
+        "gxAlertDeviceId": 1630
+      }
+    ]
+  },
+  {
+    "externalId": "S-LKN-THQ-Dokri",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Larkana",
+    "name": "S-LKN-THQ-Dokri",
+    "shortname": "S-LKN-THQ-DOKRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-LKN-THQ-Dokri",
+        "shortName": "S-LKN-THQ-DOKRI",
+        "macAddress": "MACB88A60EB6955",
+        "hostId": "THQ Hospital Dokri",
+        "serial": "Cepheid-64261X8",
+        "gxAlertDeviceId": 1581
+      }
+    ]
+  },
+  {
+    "externalId": "S-LKN-THQ-Rato-Dero",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Larkana",
+    "name": "S-LKN-THQ-Rato-Dero",
+    "shortname": "S-LKN-THQ-RATODR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-LKN-THQ-Rato-Dero",
+        "shortName": "S-LKN-THQ-RATODR",
+        "macAddress": "MAC98E7F4531937",
+        "hostId": "THQ Hospital Rato Dero",
+        "serial": "Cepheid-6360NYJ",
+        "gxAlertDeviceId": 1582
+      }
+    ]
+  },
+  {
+    "externalId": "S-MPK-CH-Mirpur-Khas",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Mirpurkhas",
+    "name": "S-MPK-CH-Mirpur-Khas",
+    "shortname": "S-MPK-CH-MPK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-MPK-CH-Mirpur-Khas",
+        "shortName": "S-MPK-CH-MPK",
+        "macAddress": "MAC98E7F468D713",
+        "hostId": "CH-Mirpurkhas",
+        "serial": "Cepheid945YKS1",
+        "gxAlertDeviceId": 1295
+      }
+    ]
+  },
+  {
+    "externalId": "S-MPK-THQ-Digri",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Mirpurkhas",
+    "name": "S-MPK-THQ-Digri",
+    "shortname": "S-MPK-THQ-DIGRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-MPK-THQ-Digri",
+        "shortName": "S-MPK-THQ-DIGRI",
+        "macAddress": "MAC98E7F45313D9",
+        "hostId": "THQ-DIGRI",
+        "serial": "Cepheid-6360NZG",
+        "gxAlertDeviceId": 1406
+      }
+    ]
+  },
+  {
+    "externalId": "S-MPK-THQ-Kot-Ghulam-Muhammad",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Mirpurkhas",
+    "name": "S-MPK-THQ-Kot-Ghulam-Muhammad",
+    "shortname": "S-MPK-THQ-KGM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-MPK-THQ-Kot-Ghulam-Muhammad",
+        "shortName": "S-MPK-THQ-KGM",
+        "macAddress": "MACE4A7A041AA91",
+        "hostId": "THQ Kot Ghulam Muhammad",
+        "serial": "Cepheid-6360NZP",
+        "gxAlertDeviceId": 1405
+      }
+    ]
+  },
+  {
+    "externalId": "S-MTR-DHQ-Matiari",
+    "latitude": 25.595779,
+    "longitude": 68.443581,
+    "stateName": "Sindh",
+    "lgaName": "Matiari",
+    "name": "S-MTR-DHQ-Matiari",
+    "shortname": "S-MTR-DHQ-MTIARI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-MTR-DHQ-Matiari",
+        "shortName": "S-MTR-DHQ-MTIARI",
+        "macAddress": "MACE4A4715432DD",
+        "hostId": "DHQ Hospital Matiari",
+        "serial": "Cepheid-6290QM6",
+        "gxAlertDeviceId": 1575
+      }
+    ]
+  },
+  {
+    "externalId": "S-MTR-THQ-Hala",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Matiari",
+    "name": "S-MTR-THQ-Hala",
+    "shortname": "S-MTR-THQ-HALA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-MTR-THQ-Hala",
+        "shortName": "S-MTR-THQ-HALA",
+        "macAddress": "MACEC8EB5512E87",
+        "hostId": "THQ-HALA",
+        "serial": "Cepheid-6300G3N",
+        "gxAlertDeviceId": 1340
+      }
+    ]
+  },
+  {
+    "externalId": "S-NFZ-DHQ-Naushehro-Feroz",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Nausheroferoze",
+    "name": "S-NFZ-DHQ-Naushehro-Feroz",
+    "shortname": "S-NFZ-DHQ-NFEROZ",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-NFZ-DHQ-Naushehro-Feroz",
+        "shortName": "S-NFZ-DHQ-NFEROZ",
+        "macAddress": "MACE4A7A041B14E",
+        "hostId": "DHQCH- NAUSHEHRO FER",
+        "serial": "CepheidAdmin-PC",
+        "gxAlertDeviceId": 1341
+      }
+    ]
+  },
+  {
+    "externalId": "S-NFZ-THQ-Kandiaro",
+    "latitude": 27.058790,
+    "longitude": 68.205521,
+    "stateName": "Sindh",
+    "lgaName": "Nausheroferoze",
+    "name": "S-NFZ-THQ-Kandiaro",
+    "shortname": "S-NFZ-THQ-KNDIAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-NFZ-THQ-Kandiaro",
+        "shortName": "S-NFZ-THQ-KNDIAR",
+        "macAddress": "MAC98FA9B7FA954",
+        "hostId": "TH KANDIARO",
+        "serial": "CPHD-9F03482",
+        "gxAlertDeviceId": 1607
+      }
+    ]
+  },
+  {
+    "externalId": "S-NFZ-THQ-Mehrabpur",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Nausheroferoze",
+    "name": "S-NFZ-THQ-Mehrabpur",
+    "shortname": "S-NFZ-THQ-MRBPUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-NFZ-THQ-Mehrabpur",
+        "shortName": "S-NFZ-THQ-MRBPUR",
+        "macAddress": "MAC98E7F45DDAA8",
+        "hostId": "THQ Mehrabpur",
+        "serial": "Cepheid-6426KS6",
+        "gxAlertDeviceId": 1555
+      }
+    ]
+  },
+  {
+    "externalId": "S-NFZ-THQ-Moro",
+    "latitude": 26.655359,
+    "longitude": 67.996437,
+    "stateName": "Sindh",
+    "lgaName": "Nausheroferoze",
+    "name": "S-NFZ-THQ-Moro",
+    "shortname": "S-NFZ-THQ-MORO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-NFZ-THQ-Moro",
+        "shortName": "S-NFZ-THQ-MORO",
+        "macAddress": "MAC98E7F45D318C",
+        "hostId": "TH MORO NOSHEROFEROZ",
+        "serial": "Cepheid-6426KN4",
+        "gxAlertDeviceId": 1603
+      }
+    ]
+  },
+  {
+    "externalId": "S-QMB-THQ-Qambar",
+    "latitude": 27.842819,
+    "longitude": 67.896873,
+    "stateName": "Sindh",
+    "lgaName": "Qambar Shahdadkot",
+    "name": "S-QMB-THQ-Qambar",
+    "shortname": "S-QMB-THQ-SHDKOT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-QMB-THQ-Qambar",
+        "shortName": "S-QMB-THQ-SHDKOT",
+        "macAddress": "MAC98E7F45C8048",
+        "hostId": "THQ Hospital Shahdadkot",
+        "serial": "Cepheid-64261NV",
+        "gxAlertDeviceId": 1578
+      }
+    ]
+  },
+  {
+    "externalId": "S-QMB-THQ-Warah",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Qambar Shahdadkot",
+    "name": "S-QMB-THQ-Warah",
+    "shortname": "S-QMB-THQ-WARAH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-QMB-THQ-Warah",
+        "shortName": "S-QMB-THQ-WARAH",
+        "macAddress": "MAC",
+        "hostId": "THQ Hospital Warah",
+        "serial": "Cepheid-6290QST",
+        "gxAlertDeviceId": 1580
+      }
+    ]
+  },
+  {
+    "externalId": "S-SBN-RHC-Daur",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Shaheed Benazirabad",
+    "name": "S-SBN-RHC-Daur",
+    "shortname": "S-SBN-RHC-DAUR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SBN-RHC-Daur",
+        "shortName": "S-SBN-RHC-DAUR",
+        "macAddress": "MACE4A7A041AAD2",
+        "hostId": "RHC-DOUR",
+        "serial": "Cepheid-6360NZ8",
+        "gxAlertDeviceId": 1403
+      }
+    ]
+  },
+  {
+    "externalId": "S-SBN-RHC-Qazi-Ahmad",
+    "latitude": 26.299650,
+    "longitude": 68.095901,
+    "stateName": "Sindh",
+    "lgaName": "Shaheed Benazirabad",
+    "name": "S-SBN-RHC-Qazi-Ahmad",
+    "shortname": "S-SBN-RHC-QAHMAD",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SBN-RHC-Qazi-Ahmad",
+        "shortName": "S-SBN-RHC-QAHMAD",
+        "macAddress": "MAC48BA4E8B4FB5",
+        "hostId": "RHC-QAZI AHMED",
+        "serial": "Cepheid-7352TYC",
+        "gxAlertDeviceId": 1549
+      }
+    ]
+  },
+  {
+    "externalId": "S-SBN-TH-Peoples-Medical-College",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Shaheed Benazirabad",
+    "name": "S-SBN-TH-Peoples-Medical-College",
+    "shortname": "S-SBN-TH-PMCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SBN-TH-Peoples-Medical-College",
+        "shortName": "S-SBN-TH-PMCH",
+        "macAddress": "MAC98E7F453159A",
+        "hostId": "PMCH-Nawabshah",
+        "serial": "Cepheid-6360NZ2",
+        "gxAlertDeviceId": 1291
+      }
+    ]
+  },
+  {
+    "externalId": "S-SBN-THQ-Sakrand",
+    "stateName": "Sindh",
+    "lgaName": "Shaheed Benazirabad",
+    "name": "S-SBN-THQ-Sakrand",
+    "shortname": "S-SBN-THQ-SAKRND",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SBN-THQ-Sakrand",
+        "shortName": "S-SBN-THQ-SAKRND",
+        "macAddress": "MAC98E7F468D668",
+        "hostId": "TH-Sakrand",
+        "serial": "Cepheid-642628R",
+        "gxAlertDeviceId": 1594
+      }
+    ]
+  },
+  {
+    "externalId": "S-SBN-THQ-Tando-Adam",
+    "latitude": 25.768120,
+    "longitude": 68.663612,
+    "stateName": "Sindh",
+    "lgaName": "Sanghar",
+    "name": "S-SBN-THQ-Tando-Adam",
+    "shortname": "S-SBN-THQ-T-ADAM",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SBN-THQ-Tando-Adam",
+        "shortName": "S-SBN-THQ-T-ADAM",
+        "macAddress": "MAC98E7F45313DC",
+        "hostId": "THQ-TANDO ADAM",
+        "serial": "Cepheid-6360NZJ",
+        "gxAlertDeviceId": 1433
+      }
+    ]
+  },
+  {
+    "externalId": "S-SJW-THQ-Sujawal",
+    "latitude": 68.078003,
+    "longitude": 24.604000,
+    "stateName": "Sindh",
+    "lgaName": "Sujawal",
+    "name": "S-SJW-THQ-Sujawal",
+    "shortname": "S-SJW-THQ-SUJAWL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SJW-THQ-Sujawal",
+        "shortName": "S-SJW-THQ-SUJAWL",
+        "macAddress": "MAC",
+        "hostId": "THQ Hospital Sujawal",
+        "serial": "Cepheid-64262CS",
+        "gxAlertDeviceId": 1440
+      }
+    ]
+  },
+  {
+    "externalId": "S-SKP-PVT-RBUT-Shikarpur",
+    "stateName": "Sindh",
+    "lgaName": "Shikarpur",
+    "name": "S-SKP-PVT-RBUT-Shikarpur",
+    "shortname": "S-SKP-PVT-RBUT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SKP-PVT-RBUT-Shikarpur",
+        "shortName": "S-SKP-PVT-RBUT",
+        "macAddress": "MAC98E7F452FCA5",
+        "hostId": "RBUT-Shikarpur",
+        "serial": "tgm-06b653044b4",
+        "gxAlertDeviceId": 1369
+      }
+    ]
+  },
+  {
+    "externalId": "S-SKP-THQ-Lakhi",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Shikarpur",
+    "name": "S-SKP-THQ-Lakhi",
+    "shortname": "S-SKP-THQ-LAKHI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SKP-THQ-Lakhi",
+        "shortName": "S-SKP-THQ-LAKHI",
+        "macAddress": "MACF0D5BF0E0C18",
+        "hostId": "THQ Lakhi Shikarpur",
+        "serial": "Cepheid-642621J",
+        "gxAlertDeviceId": 1602
+      }
+    ]
+  },
+  {
+    "externalId": "S-SKR-TH-Ghulam-Muhammad-Mehar-Medical-College",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Sukkur",
+    "name": "S-SKR-TH-Ghulam-Muhammad-Mehar-Medical-College",
+    "shortname": "S-SKR-TH-GMMCH",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SKR-TH-Ghulam-Muhammad-Mehar-Medical-College",
+        "shortName": "S-SKR-TH-GMMCH",
+        "macAddress": "MACE4A471543247",
+        "hostId": "GMC Hospital- Sukkur",
+        "serial": "Cepheid-6290QPQ",
+        "gxAlertDeviceId": 1303
+      }
+    ]
+  },
+  {
+    "externalId": "S-SKR-TH-PANO-AQIL",
+    "stateName": "Sindh",
+    "lgaName": "Sukkur",
+    "name": "S-SKR-TH-PANO-AQIL",
+    "shortname": "S-SKR-THQ-P-AQIL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SKR-TH-PANO-AQIL",
+        "shortName": "S-SKR-THQ-P-AQIL",
+        "macAddress": "MAC98E7F468D6B0",
+        "hostId": "SUKKUR TH PANO AQIL",
+        "serial": "Cepheid-642614L",
+        "gxAlertDeviceId": 1589
+      }
+    ]
+  },
+  {
+    "externalId": "S-SNG-DHQ-Sanghar",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Sanghar",
+    "name": "S-SNG-DHQ-Sanghar",
+    "shortname": "S-SNG-DHQ-SANGHR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SNG-DHQ-Sanghar",
+        "shortName": "S-SNG-DHQ-SANGHR",
+        "macAddress": "MAC98E7F4531918",
+        "hostId": "DHQ-SANGHAR",
+        "serial": "Cepheid-6360NY3",
+        "gxAlertDeviceId": 1374
+      }
+    ]
+  },
+  {
+    "externalId": "S-SNG-TH-Shahdadpur-Institute-Of-Medical-Sciences",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Sanghar",
+    "name": "S-SNG-TH-Shahdadpur-Institute-Of-Medical-Sciences",
+    "shortname": "S-SNG-TH-SIMS",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SNG-TH-Shahdadpur-Institute-Of-Medical-Sciences",
+        "shortName": "S-SNG-TH-SIMS",
+        "macAddress": "MAC8CDCD44E6EBB",
+        "hostId": "SIMS-Shahdadpur",
+        "serial": "Cepheid-528264J",
+        "gxAlertDeviceId": 1298
+      }
+    ]
+  },
+  {
+    "externalId": "S-SNG-THQ-Khipro",
+    "latitude": 25.822758,
+    "longitude": 69.376411,
+    "stateName": "Sindh",
+    "lgaName": "Sanghar",
+    "name": "S-SNG-THQ-Khipro",
+    "shortname": "S-SNG-THQ-KHIPRO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SNG-THQ-Khipro",
+        "shortName": "S-SNG-THQ-KHIPRO",
+        "macAddress": "MAC",
+        "hostId": "THQ KHIPRO",
+        "serial": "Cepheid-6360NZD",
+        "gxAlertDeviceId": 1604
+      }
+    ]
+  },
+  {
+    "externalId": "S-SNG-VAN-SANGHAR-(MC)",
+    "latitude": 26.044180,
+    "longitude": 68.936897,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Sanghar",
+    "name": "S-SNG-VAN-SANGHAR-(MC)",
+    "shortname": "S-SNG-VAN-MOBILE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SNG-VAN-SANGHAR-(MC)",
+        "shortName": "S-SNG-VAN-MOBILE",
+        "macAddress": "MAC48BA4E8CB294",
+        "hostId": "MOBILE-VAN-SANGHAR-BASED",
+        "serial": "Cepheid-7352VM9",
+        "gxAlertDeviceId": 1569
+      }
+    ]
+  },
+  {
+    "externalId": "S-TAY-RHC-Chambar",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Tando Allahyar",
+    "name": "S-TAY-RHC-Chambar",
+    "shortname": "S-TAY-RHC-CHAMBR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-TAY-RHC-Chambar",
+        "shortName": "S-TAY-RHC-CHAMBR",
+        "macAddress": "MACE4A7A041AA5F",
+        "hostId": "RHC CHAMBER",
+        "serial": "Cepheid-6360P0B",
+        "gxAlertDeviceId": 1587
+      }
+    ]
+  },
+  {
+    "externalId": "S-THT-CH-Thatha",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Thatta",
+    "name": "S-THT-CH-Thatha",
+    "shortname": "S-THT-CH-THATHA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-THT-CH-Thatha",
+        "shortName": "S-THT-CH-THATHA",
+        "macAddress": "MAC98E7F45DDAB4",
+        "hostId": "CH - THATTA",
+        "serial": "Cepheid-64261NG",
+        "gxAlertDeviceId": 1350
+      }
+    ]
+  },
+  {
+    "externalId": "S-THT-RHC-Gharo",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Thatta",
+    "name": "S-THT-RHC-Gharo",
+    "shortname": "S-THT-RHC-GHARO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-THT-RHC-Gharo",
+        "shortName": "S-THT-RHC-GHARO",
+        "macAddress": "MAC98E7F453193F",
+        "hostId": "RHC-GHARO",
+        "serial": "Cepheid-6360NYH",
+        "gxAlertDeviceId": 1420
+      }
+    ]
+  },
+  {
+    "externalId": "S-TMK-DHQ-Tando-Muhammad-Khan",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Tando Muhammad Khan",
+    "name": "S-TMK-DHQ-Tando-Muhammad-Khan",
+    "shortname": "S-TMK-DHQ-TMKHAN",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-TMK-DHQ-Tando-Muhammad-Khan",
+        "shortName": "S-TMK-DHQ-TMKHAN",
+        "macAddress": "MAC98E7F45DDB96",
+        "hostId": "DHQH - TM KHAN",
+        "serial": "Cepheid-64261N3",
+        "gxAlertDeviceId": 1348
+      }
+    ]
+  },
+  {
+    "externalId": "S-TPK-CH-Mithi",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Tharparkar ",
+    "name": "S-TPK-CH-Mithi",
+    "shortname": "S-TPK-CH-MITHI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-TPK-CH-Mithi",
+        "shortName": "S-TPK-CH-MITHI",
+        "macAddress": "MACECB1D72F9E7D",
+        "hostId": "CH-Mithi",
+        "serial": "Cepheid-528265G",
+        "gxAlertDeviceId": 1300
+      }
+    ]
+  },
+  {
+    "externalId": "S-TPK-RHC-Islamkot",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Tharparkar ",
+    "name": "S-TPK-RHC-Islamkot",
+    "shortname": "S-TPK-RHC-ISLAMK",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-TPK-RHC-Islamkot",
+        "shortName": "S-TPK-RHC-ISLAMK",
+        "macAddress": "MACEC8EB5512F6A",
+        "hostId": "RHC Islamkot",
+        "serial": "Cepheid-6300G23",
+        "gxAlertDeviceId": 1437
+      }
+    ]
+  },
+  {
+    "externalId": "S-TPK-THQ-Chachro",
+    "latitude": 25.112940,
+    "longitude": 70.239243,
+    "stateName": "Sindh",
+    "lgaName": "Tharparkar ",
+    "name": "S-TPK-THQ-Chachro",
+    "shortname": "S-TPK-THQ-CHCHRO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-TPK-THQ-Chachro",
+        "shortName": "S-TPK-THQ-CHCHRO",
+        "macAddress": "MACEC8EB54EEDFB",
+        "hostId": "THQ-CHACHRO",
+        "serial": "Cepheid-62873QM",
+        "gxAlertDeviceId": 1463
+      }
+    ]
+  },
+  {
+    "externalId": "S-TPK-THQ-Nangarparkar",
+    "stateName": "Sindh",
+    "lgaName": "Tharparkar ",
+    "name": "S-TPK-THQ-Nangarparkar",
+    "shortname": "S-TPK-THQ-NPARKR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-TPK-THQ-Nangarparkar",
+        "shortName": "S-TPK-THQ-NPARKR",
+        "macAddress": "MACEC8EB54EEAAC",
+        "hostId": "THQ Hospital Nagarparkar",
+        "serial": "Cepheid-628749V",
+        "gxAlertDeviceId": 1438
+      }
+    ]
+  },
+  {
+    "externalId": "S-UMK-DHQ-Umerkot",
+    "latitude": 68.795998,
+    "longitude": 26.034000,
+    "stateName": "Sindh",
+    "lgaName": "Umerkot",
+    "name": "S-UMK-DHQ-Umerkot",
+    "shortname": "S-UMK-DHQ-UMERKT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-UMK-DHQ-Umerkot",
+        "shortName": "S-UMK-DHQ-UMERKT",
+        "macAddress": "MAC98E7F4531826",
+        "hostId": "DHQ - UMERKOT",
+        "serial": "Cepheid-6360NYK",
+        "gxAlertDeviceId": 1345
+      }
+    ]
+  },
+  {
+    "externalId": "S-UMK-THQ-Kunri",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Umerkot",
+    "name": "S-UMK-THQ-Kunri",
+    "shortname": "S-UMK-THQ-KUNRI",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-UMK-THQ-Kunri",
+        "shortName": "S-UMK-THQ-KUNRI",
+        "macAddress": "MACEC8EB54F76C0",
+        "hostId": "THQ Hospital Kunri",
+        "serial": "Cepheid-6290PV2",
+        "gxAlertDeviceId": 1567
+      }
+    ]
+  },
+  {
+    "externalId": "S-UMK-THQ-Samaro",
+    "latitude": 25.369801,
+    "longitude": 69.737679,
+    "stateName": "Sindh",
+    "lgaName": "Umerkot",
+    "name": "S-UMK-THQ-Samaro",
+    "shortname": "S-UMK-THQ-SAMARO",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-UMK-THQ-Samaro",
+        "shortName": "S-UMK-THQ-SAMARO",
+        "macAddress": "MAC98E7F45C80A0",
+        "hostId": "THQ HospitalSamaro",
+        "serial": "Cepheid-6426KPY",
+        "gxAlertDeviceId": 1456
+      }
+    ]
+  },
+  {
+    "externalId": "S-UMK-THQ-UMERKOT",
+    "latitude": 26.034479,
+    "longitude": 68.795662,
+    "stateName": "Sindh",
+    "lgaName": "Umerkot",
+    "name": "S-UMK-THQ-UMERKOT",
+    "shortname": "S-UMK-THQ-UMERKT",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-UMK-THQ-UMERKOT",
+        "shortName": "S-UMK-THQ-UMERKT",
+        "macAddress": "MAC",
+        "hostId": "THQ Hospital Pithoro",
+        "serial": "Cepheid-6360NY9",
+        "gxAlertDeviceId": 1459
+      }
+    ]
+  },
+  {
+    "externalId": "THQ-QAMBAR",
+    "latitude": 26.090025,
+    "longitude": 68.819740,
+    "stateName": "Sindh",
+    "lgaName": "Qambar Shahdadkot",
+    "name": "THQ-QAMBAR",
+    "shortname": "THQ-QAMBAR",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "THQ-QAMBAR",
+        "shortName": "THQ-QAMBAR",
+        "macAddress": "MACEC8EB54EEB0D",
+        "hostId": "THQ-QAMBAR",
+        "serial": "Cepheid-6290Q5V",
+        "gxAlertDeviceId": 1613
+      }
+    ]
+  }
+]
