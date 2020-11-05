@@ -14,18 +14,20 @@ const TableColumnGroupBy = ({
   return isGrouped ? (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}
-      className={cssClasses('tableheader__orderbutton')}
+      className={cssClasses('tableheader__groupbybutton')}
       data-testid={`ungroup_${headerIndex}`}
+      title="Ungroup Column"
     >
-      <IconProvider icon="MdUnfoldMore" />
+      <IconProvider icon="FaCheckSquare" />
     </IconButton>
   ) : (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}
-      className={cssClasses('tableheader__orderbutton')}
+      className={cssClasses('tableheader__groupbybutton')}
       data-testid={`group_${headerIndex}`}
+      title="Group by Column"
     >
-      <IconProvider icon="MdUnfoldLess" />
+      <IconProvider icon="FaRegCheckSquare" />
     </IconButton>
   )
 }
