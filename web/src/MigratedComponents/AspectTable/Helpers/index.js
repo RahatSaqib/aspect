@@ -2,6 +2,9 @@ import map from 'lodash/map'
 import subMinutes from 'date-fns/subMinutes'
 import addMinutes from 'date-fns/addMinutes'
 import formatDistance from 'date-fns/formatDistance'
+import isPast from 'date-fns/isPast'
+import getUnixTime from 'date-fns/getUnixTime'
+import fromUnixTime from 'date-fns/fromUnixTime'
 import filter from 'lodash/filter'
 import times from 'lodash/times'
 import random from 'lodash/random'
@@ -72,9 +75,7 @@ function mockDatafetch(cnt = 10) {
       alertCount: triggerRandom,
       contactsCount: contacts.length,
       contacts,
-      lastTriggeredOn: formatDistance(mutatedDate, new Date(), {
-        addSuffix: true,
-      }),
+      lastTriggeredOn: getUnixTime(mutatedDate),
     })
   })
   return { data }
@@ -115,9 +116,34 @@ function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
   return columns
 }
 
+function timeClassification(vals) {
+  const future = []
+  const past = []
+  vals.map(val =>
+    isPast(fromUnixTime(val)) ? past.push(val) : future.push(val)
+  )
+  return `${past.length} elapsed, ${future.length} upcoming`
+}
+
+function totalItemCount(vals) {
+  return vals.reduce((acc, curr) => acc + curr.length, 0)
+}
+
+function timeSinceFromUnix(val) {
+  return {
+    isPast: isPast(fromUnixTime(val)),
+    timeSince: formatDistance(fromUnixTime(val), new Date(), {
+      addSuffix: true,
+    }),
+  }
+}
+
 export {
   buildColumnsFromData,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
   mockDatafetch,
+  timeClassification,
+  timeSinceFromUnix,
+  totalItemCount,
 }
