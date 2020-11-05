@@ -1,0 +1,522 @@
+{
+  "countries": [
+    {
+      "abbreviation": "PK",
+      "name": "Pakistan",
+      "a3": "PAK",
+      "culture": "en-GB",
+      "countryCode": "92",
+      "timezone": "Pakistan Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Punjab",
+          "abbreviation": "PB",
+          "lgas": [
+            {
+              "name": "Lahore"
+            },
+            {
+              "name": "Chakwal"
+            },
+            {
+              "name": "Mianwali"
+            },
+            {
+              "name": "Jhelum"
+            },
+            {
+              "name": "Sahiwal"
+            },
+            {
+              "name": "Faisalabad"
+            },
+            {
+              "name": "Kasur"
+            },
+            {
+              "name": "Khusahab"
+            },
+            {
+              "name": "Bhakkar"
+            },
+            {
+              "name": "Attock"
+            },
+            {
+              "name": "Layyah"
+            },
+            {
+              "name": "Rajanpur"
+            },
+            {
+              "name": "Nankana"
+            },
+            {
+              "name": "Gujrat"
+            },
+            {
+              "name": "Pakpattan"
+            },
+            {
+              "name": "RY Khan"
+            },
+            {
+              "name": "Multan"
+            },
+            {
+              "name": "Sargodha"
+            },
+            {
+              "name": "Murree"
+            },
+            {
+              "name": "Sialkot"
+            },
+            {
+              "name": "Bahwalpur"
+            },
+            {
+              "name": "Bahawalnagar"
+            },
+            {
+              "name": "DG Khan"
+            },
+            {
+              "name": "Vihari"
+            },
+            {
+              "name": "Muzaffar Garh"
+            },
+            {
+              "name": "Jhang"
+            },
+            {
+              "name": "Mandi Bahauddin"
+            },
+            {
+              "name": "Rawalpindi"
+            },
+            {
+              "name": "Sheikhu pura"
+            },
+            {
+              "name": "Gujranwala"
+            },
+            {
+              "name": "Toba Tek Singh"
+            },
+            {
+              "name": "Chiniot"
+            },
+            {
+              "name": "Khanewal"
+            },
+            {
+              "name": "Hafizabad"
+            },
+            {
+              "name": "Lodhran"
+            },
+            {
+              "name": "Narowal"
+            },
+            {
+              "name": "Okara"
+            }
+          ]
+        },
+        {
+          "name": "Sindh",
+          "abbreviation": "SD",
+          "lgas": [
+            {
+              "name": "Jamshoro"
+            },
+            {
+              "name": "Hyderabad"
+            },
+            {
+              "name": "Mirpurkhas"
+            },
+            {
+              "name": "Shaheed Benazirabad"
+            },
+            {
+              "name": "Sukkur"
+            },
+            {
+              "name": "Larkana"
+            },
+            {
+              "name": "Jacobabad"
+            },
+            {
+              "name": "Sanghar"
+            },
+            {
+              "name": "Tharparkar "
+            },
+            {
+              "name": "Khairpur"
+            },
+            {
+              "name": "Kashmore"
+            },
+            {
+              "name": "Karachi"
+            },
+            {
+              "name": "Nausheroferoze"
+            },
+            {
+              "name": "Thatta"
+            },
+            {
+              "name": "Dadu"
+            },
+            {
+              "name": "Nawabshah"
+            },
+            {
+              "name": "Matiari"
+            },
+            {
+              "name": "Badin"
+            },
+            {
+              "name": "Ghotki"
+            },
+            {
+              "name": "Qambar Shahdadkot"
+            },
+            {
+              "name": "Shikarpur"
+            },
+            {
+              "name": "Sujawal"
+            },
+            {
+              "name": "Tando Allahyar"
+            },
+            {
+              "name": "Tando Muhammad Khan"
+            },
+            {
+              "name": "Umerkot"
+            }
+          ]
+        },
+        {
+          "name": "Balochistan",
+          "abbreviation": "BN",
+          "lgas": [
+            {
+              "name": "Khuzdar"
+            },
+            {
+              "name": "Lasbella"
+            },
+            {
+              "name": "Turbat"
+            },
+            {
+              "name": "Quetta"
+            },
+            {
+              "name": "Loralai"
+            },
+            {
+              "name": "Nasirabad"
+            },
+            {
+              "name": "Chaghai"
+            },
+            {
+              "name": "Gwadar"
+            },
+            {
+              "name": "Harnai"
+            },
+            {
+              "name": "Jaffarabad"
+            },
+            {
+              "name": "Jhal Magsi"
+            },
+            {
+              "name": "Kacchi"
+            },
+            {
+              "name": "Kalat"
+            },
+            {
+              "name": "Kharan"
+            },
+            {
+              "name": "Killa Saifullah"
+            },
+            {
+              "name": "Kohlu"
+            },
+            {
+              "name": "Mastung"
+            },
+            {
+              "name": "Musakhel"
+            },
+            {
+              "name": "Nushki"
+            },
+            {
+              "name": "Panjgur"
+            },
+            {
+              "name": "Pishin"
+            },
+            {
+              "name": "Sibi"
+            },
+            {
+              "name": "Washuk"
+            },
+            {
+              "name": "Zhob"
+            },
+            {
+              "name": "Ziarat"
+            },
+            {
+              "name": "Bolan"
+            }
+          ]
+        },
+        {
+          "name": "Azad Jammu & Kashmir",
+          "abbreviation": "AJK",
+          "lgas": [
+            {
+              "name": "Mirpur"
+            },
+            {
+              "name": "Muzaffarabad"
+            },
+            {
+              "name": "Bagh"
+            },
+            {
+              "name": "Kotli"
+            },
+            {
+              "name": "Bhimber"
+            },
+            {
+              "name": "Haveli"
+            },
+            {
+              "name": "Hattian Bala"
+            },
+            {
+              "name": "Neelum"
+            },
+            {
+              "name": "Poonch"
+            },
+            {
+              "name": "Sudhnoti"
+            }
+          ]
+        },
+        {
+          "name": "Federally Administered TA",
+          "abbreviation": "FATA",
+          "lgas": [
+            {
+              "name": "Khyber Agency"
+            },
+            {
+              "name": "Bajaur Agency"
+            },
+            {
+              "name": "Mohmand Agency"
+            },
+            {
+              "name": "Kurrum Agency"
+            },
+            {
+              "name": "South Waziristan Agency"
+            },
+            {
+              "name": "North Waziristan"
+            }
+          ]
+        },
+        {
+          "name": "Gilgit-Baltistan",
+          "abbreviation": "GB",
+          "lgas": [
+            {
+              "name": "Skardu"
+            },
+            {
+              "name": "Diamir"
+            },
+            {
+              "name": "Gilgit"
+            },
+            {
+              "name": "Astore"
+            },
+            {
+              "name": "Ghanche"
+            },
+            {
+              "name": "Ghizer"
+            },
+            {
+              "name": "Hunza"
+            },
+            {
+              "name": "Kharmung"
+            },
+            {
+              "name": "Nagar"
+            },
+            {
+              "name": "Shigar"
+            },
+            {
+              "name": "Khaplu"
+            },
+            {
+              "name": "Gahkuch"
+            }
+          ]
+        },
+        {
+          "name": "Khyber Pakhtunkhwa",
+          "abbreviation": "KPK",
+          "lgas": [
+            {
+              "name": "Peshawar"
+            },
+            {
+              "name": "Mardan"
+            },
+            {
+              "name": "Swabi"
+            },
+            {
+              "name": "Nowshera"
+            },
+            {
+              "name": "Haripur"
+            },
+            {
+              "name": "Abbottabad"
+            },
+            {
+              "name": "Mansehra"
+            },
+            {
+              "name": "Battagram"
+            },
+            {
+              "name": "Malakand"
+            },
+            {
+              "name": "Lower Dir"
+            },
+            {
+              "name": "Swat"
+            },
+            {
+              "name": "Kohat"
+            },
+            {
+              "name": "Karak"
+            },
+            {
+              "name": "Bannu"
+            },
+            {
+              "name": "DI Khan"
+            },
+            {
+              "name": "Chitral"
+            },
+            {
+              "name": "Buner"
+            },
+            {
+              "name": "Charsadda"
+            },
+            {
+              "name": "Hangu"
+            },
+            {
+              "name": "Kohistan"
+            },
+            {
+              "name": "Lakki Marwat"
+            },
+            {
+              "name": "Shangla"
+            },
+            {
+              "name": "Upper Dir"
+            }
+          ]
+        },
+        {
+          "name": "Islamabad & CT",
+          "abbreviation": "ISL-ICT",
+          "lgas": [
+            {
+              "name": "Islamabad"
+            }
+          ]
+        },
+        {
+          "name": "Mercy Corps Sites",
+          "abbreviation": "Mercy",
+          "lgas": [
+            {
+              "name": "Gujranwala"
+            },
+            {
+              "name": "Hafizabad"
+            },
+            {
+              "name": "Vehari"
+            },
+            {
+              "name": "Multan"
+            },
+            {
+              "name": "Khanewal"
+            },
+            {
+              "name": "Sanghar"
+            },
+            {
+              "name": "Khairpur"
+            },
+            {
+              "name": "Mandi Bahauddin"
+            },
+            {
+              "name": "Mardan"
+            },
+            {
+              "name": "Okara"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

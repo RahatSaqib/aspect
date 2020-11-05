@@ -1526,6 +1526,7 @@ async function baseGxAlertMigration(
     )
     await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
   })
+
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
@@ -1537,7 +1538,7 @@ async function baseGxAlertMigration(
     )
 
   // -------------------------------------
-  // Contacts & User Accounts from GxAlert
+  // Contacts & User Accounts from GxAlert (filtering users without jobFunctions)
   // -------------------------------------
   await Promise.each(contactsFromGxAlert, async person => {
     let userId = null
@@ -1547,7 +1548,7 @@ async function baseGxAlertMigration(
         .first('id')
       if (existingUser) {
         userId = existingUser.id
-      } else {
+      } else if (!_.isEmpty(person.jobFunctions)) {
         const pw = bcrypt.hashSync(
           person.password || 'WelcomeToAspect',
           saltRounds
