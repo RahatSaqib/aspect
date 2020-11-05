@@ -2,6 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { addMinutes } = require('date-fns')
 
 const {
   processUsingDataSourceQuery,
@@ -18,7 +19,7 @@ const getPositiveCategoriesExternalIds = require('../../src/resultCategory/servi
 const currentMonth = new Date().getMonth()
 const canProceed = date => {
   const percentPositiveResultNotified =
-    new Date(date).getMonth() === currentMonth ? 90 : 80
+    new Date(date).getMonth() === currentMonth ? 90 : 85
   return _.random(0, 100) <= percentPositiveResultNotified
 }
 const getMessage = async (result, messageTemplate) => {
@@ -128,7 +129,7 @@ async function seed(knex) {
     )
 
   await Promise.each(positiveResults, async result => {
-    const date = result.endedOn
+    const date = addMinutes(result.endedOn, _.random(140))
     let issueId
     if (!result.issueId) {
       // if result doesn't have an Issue defined - insert issue with
@@ -150,6 +151,8 @@ async function seed(knex) {
     if (!canProceed(date)) {
       return
     }
+
+    const sendSms = _.random(100) < 90
 
     await Promise.each(persons, async ({ personId, personName }) => {
       const resultData = { ...result, personName }
@@ -185,7 +188,7 @@ async function seed(knex) {
         })
       }
 
-      if (smsTemplate) {
+      if (sendSms && smsTemplate) {
         ;[smsMessageId] = await knex('SmsMessage').insert({
           smsTemplateId: smsTemplate.id,
           message: await getMessage(resultData, smsTemplate.message),
@@ -260,9 +263,9 @@ async function seedIssueTypeTemplates(
 
   // only Result 1 positive - send email and sms
   const result1PositiveMessage =
-    'Dear {{person.name}},\nThis is a Positive GeneXpert MTB detected notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
+    'Dear {{person.name}},\nThis is a positive result notification for {{ result.patient.id }} processed on {{ result.endedOn }} at {{ device.name }}'
   const [result1PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
-    subject: 'MTB+ Result',
+    subject: 'Positive Result',
     body: result1PositiveMessage,
     htmlBody: result1PositiveMessage.replace('\n', '<br/>'),
     ...auditFields,
@@ -288,7 +291,7 @@ async function seedIssueTypeTemplates(
     level: 2,
     canAcknowledge: 0,
     messageTypeId: resul1PositiveMessageTypeId,
-    name: 'MTB+ Result',
+    name: 'Positive Result',
     ...auditFields,
     sendToContactsWithMatchingTags: 0,
   })
