@@ -89,7 +89,8 @@ function listDevicesBaseRequest() {
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
           'state',
-          'statusI18nKey',
+          'approval',
+          'status',
           'errorRate',
           'createdOn',
           'lastSeen',

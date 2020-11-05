@@ -290,7 +290,7 @@ export const DeviceList = ({
                 sortable: true,
               },
               {
-                key: 'status',
+                key: 'statusI18nKey',
                 label: intl.formatMessage(messages.status),
                 sortable: true,
               },
