@@ -32,6 +32,7 @@ const resultsTransmittedGraphs = {
         id: 'resultsTransmittedDials',
         component: PieRowGraph,
         type: 'pieRow',
+        linkRowTo: 'www.google.com',
         size: 12,
         componentClasses: ['piegraph__container--nobg'],
         api: {

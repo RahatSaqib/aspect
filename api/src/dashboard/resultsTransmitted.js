@@ -46,6 +46,11 @@ async function getResultQuery(query, dataConstraints) {
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+    .innerJoin('ResultCategory as rcPositive', function()  {
+      this.on('rca.resultCategoryId', 'rcPositive.id')
+      .andOn(knex.raw(`rcPositive.id IN (${positiveResultCategories})`))
+    })
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
@@ -106,6 +111,7 @@ async function getResultQuery(query, dataConstraints) {
     .select(
       'a.name as assayName',
       'a.externalId as assayExternalId',
+      'rcPositive.id as resultCategoryPositiveId',
       // YYYY_MM field for grouping by
       knex.raw(`
         CONCAT_WS(
@@ -248,11 +254,12 @@ async function resultsTransmittedDashboard(request) {
   const findItem = (yearMonth, assayExternalId) => item =>
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
 
-  const data = assays.map(({ assayName, assayExternalId }) => {
+  const data = assays.map(({ assayId, assayName, assayExternalId }) => {
     // get items for current and previous month
     const currItem = items.find(findItem(currMonth, assayExternalId))
     const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
     const {
+      resultCategoryPositiveId,
       cntAll = 0,
       cntPositive = 0,
       cntAllReported = 0,
@@ -267,7 +274,9 @@ async function resultsTransmittedDashboard(request) {
     } = currItem || {}
 
     return {
+      assayId,
       assayName,
+      resultCategoryPositiveId,
       // totals in current month
       cntAll,
       cntPositive,

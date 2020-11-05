@@ -8,6 +8,7 @@ import {
   PieInnerLegendSolid,
   PieInnerLegendDoughNut,
 } from '../GraphLegend'
+import AspectLink from '../../../components/shared/AspectLink'
 
 import {
   generateColorForValue,
@@ -27,6 +28,7 @@ const AspectResponsivePie = ({
   componentClasses,
   keys,
   type = false,
+  linkTo,
 }) => {
   const { formatNumber: intlFormatNumber } = useIntl()
 
@@ -63,55 +65,60 @@ const AspectResponsivePie = ({
 
   return (
     <div className={cssClasses(componentClasses)}>
-      <ResponsivePie
-        data={config(type, data, displayMethod).data}
-        keys={keys}
-        margin={config(type).margin}
-        innerRadius={config(type).radius}
-        enableRadialLabels={false}
-        enableSlicesLabels={false}
-        padAngle={-1}
-        startAngle={0}
-        endAngle={config(type).endAngle}
-        isInteractive={config(type).interactive}
-        cornerRadius={3}
-        borderWidth={0}
-        borderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
-        radialLabelsSkipAngle={10}
-        radialLabelsTextXOffset={6}
-        radialLabelsTextColor="#333333"
-        radialLabelsLinkOffset={0}
-        radialLabelsLinkDiagonalLength={16}
-        radialLabelsLinkHorizontalLength={24}
-        radialLabelsLinkStrokeWidth={1}
-        radialLabelsLinkColor={{ from: 'color' }}
-        slicesLabelsSkipAngle={10}
-        slicesLabelsTextColor="#333333"
-        animate
-        motionStiffness={90}
-        motionDamping={15}
-        tooltip={v => (
-          <GraphToolTip
-            values={generateToolTip(
-              v,
-              displayMethod,
-              assaysFromState,
-              intlFormatNumber,
-              type
-            )}
-          />
+      <AspectLink to={linkTo}>
+        <ResponsivePie
+          data={config(type, data, displayMethod).data}
+          keys={keys}
+          margin={config(type).margin}
+          innerRadius={config(type).radius}
+          enableRadialLabels={false}
+          enableSlicesLabels={false}
+          padAngle={-1}
+          startAngle={0}
+          endAngle={config(type).endAngle}
+          isInteractive={config(type).interactive}
+          cornerRadius={3}
+          borderWidth={0}
+          borderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
+          radialLabelsSkipAngle={10}
+          radialLabelsTextXOffset={6}
+          radialLabelsTextColor="#333333"
+          radialLabelsLinkOffset={0}
+          radialLabelsLinkDiagonalLength={16}
+          radialLabelsLinkHorizontalLength={24}
+          radialLabelsLinkStrokeWidth={1}
+          radialLabelsLinkColor={{ from: 'color' }}
+          slicesLabelsSkipAngle={10}
+          slicesLabelsTextColor="#333333"
+          animate
+          motionStiffness={90}
+          motionDamping={15}
+          tooltip={v => (
+            <GraphToolTip
+              values={generateToolTip(
+                v,
+                displayMethod,
+                assaysFromState,
+                intlFormatNumber,
+                type
+              )}
+            />
+          )}
+          colors={v => generateColorForValue(v)}
+        />
+        {averages && !type && (
+          <PieInnerLegend averages={averages} data={data} />
         )}
-        colors={v => generateColorForValue(v)}
-      />
-      {averages && !type && <PieInnerLegend averages={averages} data={data} />}
-      {type === 'solid' && <PieInnerLegendSolid data={data} />}
-      {type === 'doughnut' && <PieInnerLegendDoughNut data={data} />}
+        {type === 'solid' && <PieInnerLegendSolid data={data} />}
+        {type === 'doughnut' && <PieInnerLegendDoughNut data={data} />}
+      </AspectLink>
     </div>
   )
 }
 
 AspectResponsivePie.defaultProps = {
   type: false,
+  linkTo: null,
 }
 
 AspectResponsivePie.propTypes = {
@@ -122,6 +129,7 @@ AspectResponsivePie.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  linkTo: PropTypes.oneOfType([PropTypes.string]),
 }
 
 export default AspectResponsivePie

@@ -153,17 +153,36 @@ const groupForPieRow = data => {
 
   const pieRows = []
   data.map(row => {
+    const { assayId, resultCategoryPositiveId } = row
     const pieRow = {}
     for (const [key, value] of Object.entries(row)) {
       if (keysToRenderOrder.includes(key)) {
         const hasChange = row[`${key}Change`]
         const type = pieWidgetType(key, value, hasChange)
         const format = pieValueFormat(key)
+
+        let linkTo
+        switch (key) {
+          case 'cntAll':
+            linkTo = `/browse/result?filters=${encodeURIComponent(
+              `assayId=${assayId}`
+            )}`
+            break
+          case 'cntPositive':
+            linkTo = `/browse/result?filters=${encodeURIComponent(
+              `assayId=${assayId}&resultCategoryId=${resultCategoryPositiveId}`
+            )}`
+            break
+          default:
+            linkTo = null
+        }
+
         pieRow[key] = {
           heading: `${key}`,
           type,
           format,
           value: valueSplit(key, value, type, hasChange),
+          linkTo,
         }
       }
     }
