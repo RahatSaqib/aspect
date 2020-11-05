@@ -242,7 +242,7 @@ describe('This test suite is for testing different triggers conditions', async (
     }`, async () => {
       let context
       let anotherDeviceContext
-      before(async () => {
+      before(() => {
         context = createGxConnectTestContext(server, {
           countryCode,
           adminUsername,
