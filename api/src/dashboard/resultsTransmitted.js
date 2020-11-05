@@ -300,7 +300,7 @@ async function resultsTransmittedDashboard(request) {
         prevItem.percentWithin2Hours
       ),
     }
-  })
+  }).sort((a, b) => b.cntAll - a.cntAll)
 
   return {
     ok: true,
