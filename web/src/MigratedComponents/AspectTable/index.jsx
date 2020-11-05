@@ -21,6 +21,10 @@ import TableHiddenColumns from './TableHiddenColumns'
 import TableColumnGroupBy from './TableColumnGroupBy'
 import TableColumnHideButton from './TableColumnHideButton'
 
+import Cell from './TableCell/Cell'
+import GroupedCell from './TableCell/GroupedCell'
+import PlaceholderCell from './TableCell/PlaceholderCell'
+
 import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
 
@@ -58,7 +62,15 @@ const AspectTable = ({ tableData: data, config }) => {
     toggleGroupBy,
     toggleHideColumn,
     visibleColumns,
-    state: { pageIndex, pageSize, sortBy, columnOrder, hiddenColumns },
+    state: {
+      pageIndex,
+      pageSize,
+      sortBy,
+      columnOrder,
+      hiddenColumns,
+      groupBy,
+      expanded,
+    },
   } = table
 
   const handleChangeRowsPerPage = val => {
@@ -185,14 +197,49 @@ const AspectTable = ({ tableData: data, config }) => {
         <TableBody>
           {page.map(row => {
             prepareRow(row)
-            const { getRowProps, cells } = row
+            const {
+              getRowProps,
+              cells,
+              getToggleRowExpandedProps,
+              isExpanded,
+              subRows,
+            } = row
             return (
               <TableRow {...getRowProps()}>
-                {cells.map(({ getCellProps, render }) => {
-                  return (
-                    <TableCell {...getCellProps()}>{render('Cell')}</TableCell>
-                  )
-                })}
+                {cells.map(
+                  ({
+                    getCellProps,
+                    column: { format = false },
+                    render,
+                    isGrouped,
+                    isAggregated,
+                    isPlaceholder,
+                    value,
+                  }) => {
+                    return (
+                      <TableCell {...getCellProps()}>
+                        {isGrouped ? (
+                          <GroupedCell
+                            format={format}
+                            getToggleRowExpandedProps={
+                              getToggleRowExpandedProps
+                            }
+                            isExpanded={isExpanded}
+                            render={render}
+                            subRows={subRows}
+                            value={value}
+                          />
+                        ) : isAggregated ? (
+                          render('Aggregated')
+                        ) : isPlaceholder ? (
+                          <PlaceholderCell />
+                        ) : (
+                          <Cell render={render} format={format} value={value} />
+                        )}
+                      </TableCell>
+                    )
+                  }
+                )}
               </TableRow>
             )
           })}
@@ -202,15 +249,17 @@ const AspectTable = ({ tableData: data, config }) => {
         canNextPage={canNextPage}
         canPreviousPage={canPreviousPage}
         dataLength={data.length}
+        expanded={expanded}
         gotoPage={gotoPage}
+        groupBy={groupBy}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        name={name}
         nextPage={nextPage}
         pageCount={pageCount}
         pageIndex={pageIndex}
         pageSize={pageSize}
         previousPage={previousPage}
         page={page}
-        name={name}
       />
     </Fragment>
   ) : null
