@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
 
+import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 import Cell from '../Cell'
 
@@ -16,12 +18,13 @@ const GroupedCell = ({
   subRows: { length: subRowsLength },
   value,
 }) => {
+  const { formatMessage } = useIntl()
   return (
     <div className={cssClasses('tablecell__grouped')}>
       <IconButton
         {...getToggleRowExpandedProps()}
         className={cssClasses('tablecell__expandbutton')}
-        title="Expand Row"
+        title={formatMessage(messages.expandRow)}
       >
         {isExpanded ? (
           <IconProvider icon="MdUnfoldLess" />

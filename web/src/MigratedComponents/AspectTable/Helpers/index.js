@@ -122,7 +122,7 @@ function timeClassification(vals) {
   vals.map(val =>
     isPast(fromUnixTime(val)) ? past.push(val) : future.push(val)
   )
-  return `${past.length} elapsed, ${future.length} upcoming`
+  return [past.length, future.length]
 }
 
 function totalItemCount(vals) {
