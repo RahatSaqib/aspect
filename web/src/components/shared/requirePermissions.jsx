@@ -164,7 +164,7 @@ export function isPermittedUser(
 
   return (
     // ALL items in `required` must be found in userPermissions
-    (required.length === 0 || cntMatches(required) === required.length) &&
+    (required.length === 0 || cntMatches(required) >= required.length) &&
     // NO ONE item in `forbidden` must be found in userPermissions
     (forbidden.length === 0 || cntMatches(forbidden) === 0) &&
     // at least one item from `optional` must be found in userPermissions
