@@ -71,17 +71,18 @@ async function seed(knex) {
   // ----------------------------
   const getStatusId = date => {
     /**
+     * ASP-1772:
      * Should be 80% Active on average, with some variation from day to day
      * The remaining 20% should be distributed as follows:
-     * -  Seed "Out of Inventory" for the previous month so that it slightly increases over time.
-     *    Maybe from around 5% to around 15% by the 22nd of the month and drop it to 0 after that.
-     * -  "Down for Repair" between 3-5%
-     * -  The rest "Unknown", but this category should grow larger towards the end of the month, up to 20%.
+     * - Seed "Out of Inventory" for the previous month so that it slightly increases over time.
+     *   Maybe from around 5% to around 15% by the 22nd of the month and drop it to 0 after that.
+     * - "Down for Repair" between 3-5%
+     * - The rest "Unknown", but this category should grow larger towards the end of the month, up to 20%.
      */
     const getPcInactiveDownForRepair = dayNum => {
       if (dayNum <= 22) {
         // ranges from 5 (beginning of the month) to 15 (around 22nd)
-        return 4 + Math.round((dayNumber % 23) / 2)
+        return 4 + Math.round((dayNum % 23) / 2)
       }
       return 0
     }
