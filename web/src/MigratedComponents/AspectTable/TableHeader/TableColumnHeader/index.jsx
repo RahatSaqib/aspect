@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+const cssClasses = classnames.bind(require('../../Table.css'))
 
 function TableColumnHeader({
   canSort,

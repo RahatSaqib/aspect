@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Chip from '@material-ui/core/Chip'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+const cssClasses = classnames.bind(require('../../Table.css'))
 
 const getProperColumnLabelFromKey = (key, columns) => {
   const columnArray = columns.filter(({ accessor }) => accessor === key)

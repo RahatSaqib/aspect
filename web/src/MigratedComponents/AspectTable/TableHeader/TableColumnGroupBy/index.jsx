@@ -2,9 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
-import IconProvider from '../../IconProvider'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+import IconProvider from '../../../IconProvider'
+
+const cssClasses = classnames.bind(require('../../Table.css'))
 
 const TableColumnGroupBy = ({
   headerIndex,

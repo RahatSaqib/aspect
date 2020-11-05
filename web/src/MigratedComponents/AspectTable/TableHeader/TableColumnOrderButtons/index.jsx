@@ -4,9 +4,9 @@ import IconButton from '@material-ui/core/IconButton'
 
 import classnames from 'classnames/bind'
 
-import IconProvider from '../../IconProvider'
+import IconProvider from '../../../IconProvider'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+const cssClasses = classnames.bind(require('../../Table.css'))
 
 const TableColumnOrderButtons = ({
   headerIndex,
