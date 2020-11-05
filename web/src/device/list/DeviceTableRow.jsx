@@ -51,7 +51,9 @@ const DeviceTableRow = ({
     className={cssClasses('TableRow', restProps.className)}
   >
     <TableCell>{device.get('name')}</TableCell>
-    <TableCell>{device.get('status')}</TableCell>
+    <TableCell>
+      {intl.formatMessage(messages[device.get('statusI18nKey')])}
+    </TableCell>
     <TableCell>
       <Rate
         intl={intl}

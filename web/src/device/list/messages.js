@@ -110,6 +110,54 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.connectivityHealth',
     defaultMessage: 'Connectivity',
   },
+  active: {
+    id: 'pages.DeviceList.status.active',
+    defaultMessage: 'Active',
+  },
+  inactiveConnectivity: {
+    id: 'pages.DeviceList.status.inactiveConnectivity',
+    defaultMessage: 'Connectivity',
+  },
+  inactiveDecommissioned: {
+    id: 'pages.DeviceList.status.inactiveDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  inactiveDownForRepair: {
+    id: 'pages.DeviceList.status.inactiveDownForRepair',
+    defaultMessage: 'Down For Repair',
+  },
+  inactiveNoResultsReported: {
+    id: 'pages.DeviceList.status.inactiveNoResultsReported',
+    defaultMessage: 'No Results Reported',
+  },
+  inactiveOutOfInventory: {
+    id: 'pages.DeviceList.status.inactiveOutOfInventory',
+    defaultMessage: 'Out Of Inventory',
+  },
+  inactiveUnknown: {
+    id: 'pages.DeviceList.status.inactiveUnknown',
+    defaultMessage: 'Unknown',
+  },
+  reportedActive: {
+    id: 'pages.DeviceList.status.reportedActive',
+    defaultMessage: 'Active',
+  },
+  deviceApprovalProvisioned: {
+    id: 'pages.DeviceList.status.provisioned',
+    defaultMessage: 'Provisioned',
+  },
+  deviceApprovalAssigned: {
+    id: 'pages.DeviceList.status.assigned',
+    defaultMessage: 'Assigned',
+  },
+  deviceApprovalApproved: {
+    id: 'pages.DeviceList.status.approved',
+    defaultMessage: 'Approved',
+  },
+  deviceApprovalDecommissioned: {
+    id: 'pages.DeviceList.status.decommissioned',
+    defaultMessage: 'Decommissioned',
+  },
 })
 
 export default messages
