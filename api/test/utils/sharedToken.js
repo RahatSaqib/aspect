@@ -4,12 +4,12 @@ const { assert } = chai
 
 module.exports = {
   checkToken(server, path) {
-    it('should return 401 and error message when trying to get without access token', () =>
-      server.get(path).then(res => {
-        assert.equal(res.status, 401)
-        assert.isString(res.body.message)
-        assert.notEqual(res.body.message, '')
-      }))
+    it('should return 401 and error message when trying to get without access token', async () => {
+      const res = await server.get(path).set({})
+      assert.equal(res.status, 401)
+      assert.isString(res.body.message)
+      assert.notEqual(res.body.message, '')
+    })
 
     it('should return 401 and error message when using invalid token', async () => {
       const res = await server
