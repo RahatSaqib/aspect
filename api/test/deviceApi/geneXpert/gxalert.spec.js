@@ -50,7 +50,7 @@ const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe('Device API routes for GxAlert Device', () => {
+describe.only('Device API routes for GxAlert Device', () => {
   shared.checkToken(server, '/api/device')
   function createContext() {
     return createGxAlertTestContext(server)

@@ -43,6 +43,7 @@ const GraphRender = ({
     indexBy,
     keyToConsume,
     keysToRename,
+    keys,
     type,
   } = config
   const assayParams = prepAssaysForParams(whiteListed, method)
@@ -84,7 +85,9 @@ const GraphRender = ({
         indexBy,
         keyToConsume,
         keysToRename,
-        type
+        keys,
+        type,
+        mergedParams
       )
       if (grouped) {
         const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)

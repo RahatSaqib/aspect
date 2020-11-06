@@ -1,3 +1,8 @@
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
+import addDays from 'date-fns/addDays'
+import { formatDate } from '../../../../shared/utils/dateFormat'
+
 import PieRowGraph from '../../PieRowGraph'
 import { dateRangeOptions } from '../../Helpers/Formatters/datetime'
 import AspectDropdown from '../../../AspectDropdown'
@@ -32,7 +37,6 @@ const resultsTransmittedGraphs = {
         id: 'resultsTransmittedDials',
         component: PieRowGraph,
         type: 'pieRow',
-        linkRowTo: 'www.google.com',
         size: 12,
         componentClasses: ['piegraph__container--nobg'],
         api: {
@@ -41,6 +45,61 @@ const resultsTransmittedGraphs = {
           params: {
             currentMonth,
           },
+        },
+        keys: {
+          assayName: true,
+          cntAll: {
+            linkTo: {
+              url: '/browse/result',
+              search: {
+                filters: [
+                  ['assayId', 'assayId'],
+                  [
+                    'minDate',
+                    ({ currentMonth }) =>
+                      formatDate(startOfMonth(new Date(currentMonth))),
+                  ],
+                  [
+                    'maxDate',
+                    ({ currentMonth }) =>
+                      formatDate(
+                        addDays(endOfMonth(new Date(currentMonth)), 1)
+                      ),
+                  ],
+                ],
+              },
+            },
+          },
+          cntPositive: {
+            linkTo: {
+              url: '/browse/result',
+              search: {
+                filters: [
+                  ['assayId', 'assayId'],
+                  ['resultCategoryId', 'resultCategoryPositiveId'],
+                  [
+                    'minDate',
+                    ({ currentMonth }) =>
+                      formatDate(startOfMonth(new Date(currentMonth))),
+                  ],
+                  [
+                    'maxDate',
+                    ({ currentMonth }) =>
+                      formatDate(
+                        addDays(endOfMonth(new Date(currentMonth)), 1)
+                      ),
+                  ],
+                ],
+              },
+            },
+          },
+          // cntAll: { linkTo: ['https://www.google.com'] },
+          // cntPositive: { linkTo: ['https://www.google.com'] },
+          percentPositive: true,
+          percentReported: true,
+          percentViaSms: true,
+          percentViaEmail: true,
+          percentWithin2Hours: true,
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',

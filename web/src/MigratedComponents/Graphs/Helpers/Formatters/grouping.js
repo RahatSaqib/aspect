@@ -64,17 +64,8 @@ const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
   return grouped
 }
 
-const groupForPieRow = data => {
-  const keysToRenderOrder = [
-    'assayName',
-    'cntAll',
-    'cntPositive',
-    'percentPositive',
-    'percentReported',
-    'percentViaSms',
-    'percentViaEmail',
-    'percentWithin2Hours',
-  ]
+const groupForPieRow = (data, keys, mergedParams) => {
+  const keysToRender = Object.keys(keys)
 
   const pieValueFormat = key => {
     let type
@@ -153,36 +144,31 @@ const groupForPieRow = data => {
 
   const pieRows = []
   data.map(row => {
-    const { assayId, resultCategoryPositiveId } = row
     const pieRow = {}
     for (const [key, value] of Object.entries(row)) {
-      if (keysToRenderOrder.includes(key)) {
+      if (keysToRender.includes(key)) {
         const hasChange = row[`${key}Change`]
         const type = pieWidgetType(key, value, hasChange)
         const format = pieValueFormat(key)
 
-        let linkTo
-        switch (key) {
-          case 'cntAll':
-            linkTo = `/browse/result?filters=${encodeURIComponent(
-              `assayId=${assayId}`
-            )}`
-            break
-          case 'cntPositive':
-            linkTo = `/browse/result?filters=${encodeURIComponent(
-              `assayId=${assayId}&resultCategoryId=${resultCategoryPositiveId}`
-            )}`
-            break
-          default:
-            linkTo = null
-        }
+        const { linkTo = false } = keys[key]
+
+        let pieLink = null
+        if (linkTo)
+          pieLink = {
+            ...linkTo,
+            data: {
+              ...row,
+              ...mergedParams.reduce((p, c) => ({ ...p, ...c })),
+            },
+          }
 
         pieRow[key] = {
           heading: `${key}`,
           type,
           format,
           value: valueSplit(key, value, type, hasChange),
-          linkTo,
+          linkTo: pieLink,
         }
       }
     }

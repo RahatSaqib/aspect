@@ -10,9 +10,14 @@ const { formatDateOrDefault } = require('../shared/date')
 
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
-async function getAssayQuery(query, dataConstraints) {
+async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
   return knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+    .innerJoin('ResultCategory as rcPositive', function()  {
+      this.on('rca.resultCategoryId', 'rcPositive.id')
+      .andOn(knex.raw(`rcPositive.id IN (${positiveResultCategories})`))
+    })
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .modify(addConstraints, dataConstraints, {
@@ -26,7 +31,8 @@ async function getAssayQuery(query, dataConstraints) {
       'a.id as assayId',
       'a.name as assayName',
       'a.externalId as assayExternalId',
-      'a.i18nKey as assayI18nKey'
+      'a.i18nKey as assayI18nKey',
+      'rcPositive.id as resultCategoryPositiveId'
     )
     .whereIn('a.id', knex('Result').select('assayId').distinct())
     .where('a.externalId', '!=', 'GxUnknown')
@@ -34,23 +40,14 @@ async function getAssayQuery(query, dataConstraints) {
     .orderBy('a.name')
 }
 
-async function getResultQuery(query, dataConstraints) {
+async function getResultQuery(query, dataConstraints, positiveResultCategories) {
   const { currentMonth = new Date() } = query
-  const resultCategories = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategories, getPositiveCategoriesExternalIds())
-  )
   const messageStatusToId = await allMessageStatusToId()
 
   const resultsQuery = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-    .innerJoin('ResultCategory as rcPositive', function()  {
-      this.on('rca.resultCategoryId', 'rcPositive.id')
-      .andOn(knex.raw(`rcPositive.id IN (${positiveResultCategories})`))
-    })
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
@@ -111,7 +108,6 @@ async function getResultQuery(query, dataConstraints) {
     .select(
       'a.name as assayName',
       'a.externalId as assayExternalId',
-      'rcPositive.id as resultCategoryPositiveId',
       // YYYY_MM field for grouping by
       knex.raw(`
         CONCAT_WS(
@@ -217,10 +213,15 @@ async function resultsTransmittedDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // get all assays which user can access
-  const assays = await getAssayQuery(query, dataConstraints)
-  const items = await getResultQuery(query, dataConstraints)
+  const resultCategories = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategories, getPositiveCategoriesExternalIds())
+  )
 
+  // get all assays which user can access
+  const assays = await getAssayQuery(query, dataConstraints, positiveResultCategories)
+  const items = await getResultQuery(query, dataConstraints, positiveResultCategories)
+  
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
     return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
@@ -239,7 +240,7 @@ async function resultsTransmittedDashboard(request) {
       item.cntAllReported
     )
   })
-
+  
   // helpers
   const { currentMonth = new Date() } = query
   const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
@@ -254,12 +255,13 @@ async function resultsTransmittedDashboard(request) {
   const findItem = (yearMonth, assayExternalId) => item =>
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
 
-  const data = assays.map(({ assayId, assayName, assayExternalId }) => {
+  const data = assays.map(({ assayId, assayName, assayExternalId, resultCategoryPositiveId }) => {
     // get items for current and previous month
+    
     const currItem = items.find(findItem(currMonth, assayExternalId))
     const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
+
     const {
-      resultCategoryPositiveId,
       cntAll = 0,
       cntPositive = 0,
       cntAllReported = 0,
@@ -272,6 +274,8 @@ async function resultsTransmittedDashboard(request) {
       percentViaSms = 0,
       percentWithin2Hours = 0,
     } = currItem || {}
+
+    console.log(resultCategoryPositiveId)
 
     return {
       assayId,
@@ -310,6 +314,8 @@ async function resultsTransmittedDashboard(request) {
       ),
     }
   }).sort((a, b) => b.cntAll - a.cntAll)
+
+  console.log(data[0])
 
   return {
     ok: true,
