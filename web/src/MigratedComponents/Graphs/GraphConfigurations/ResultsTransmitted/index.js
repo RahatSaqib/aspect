@@ -93,8 +93,6 @@ const resultsTransmittedGraphs = {
               },
             },
           },
-          // cntAll: { linkTo: ['https://www.google.com'] },
-          // cntPositive: { linkTo: ['https://www.google.com'] },
           percentPositive: true,
           percentReported: true,
           percentViaSms: true,
