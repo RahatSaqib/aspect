@@ -9,28 +9,28 @@
 
 import messages from './messages'
 
-const baseConfig = intl => ({
+const baseConfig = ({ formatMessage }) => ({
   name: 'notification',
   columns: [
     {
       key: 'lastTriggeredOn',
-      label: intl.formatMessage(messages.notificationsTableHeaderLastTriggered),
+      label: formatMessage(messages.notificationsTableHeaderLastTriggered),
       width: 20,
       disableHide: true,
     },
     {
       key: 'name',
-      label: intl.formatMessage(messages.notificationsTableHeaderName),
+      label: formatMessage(messages.notificationsTableHeaderName),
       width: 35,
     },
     {
       key: 'totalTriggers',
-      label: intl.formatMessage(messages.notificationsTableHeaderTotalTriggers),
+      label: formatMessage(messages.notificationsTableHeaderTotalTriggers),
       width: 20,
     },
     {
       key: 'contacts',
-      label: intl.formatMessage(messages.notificationsTableHeaderContacts),
+      label: formatMessage(messages.notificationsTableHeaderContacts),
       disableSortBy: true,
       width: 25,
     },
