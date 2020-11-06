@@ -1,6 +1,6 @@
 import BarGraph from '../../BarGraph'
 import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
 
 const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
 const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
@@ -17,7 +17,7 @@ const deviceStatusGraphs = {
         selectedValue: 'Date Range',
         endpoint: false,
         state: 'deviceDateRange',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'dateRange',
         data: dateRangeOptions('deviceDateRange'),
         sortByKeys: ['id'],

@@ -8,15 +8,21 @@ import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
 
-const NowShowing = ({ dataLength, page, name }) => {
+const NowShowing = ({ dataLength, pageIndex, pageSize, name }) => {
   const intl = useIntl()
-  const boundaries = getFirstAndLastVisibleRowNumbers(page)
-  const countName = intl.formatMessage(messages.nowShowing, {
-    firstItemIndex: boundaries[0],
-    lastItemIndex: boundaries[1],
-    itemCount: dataLength,
-    name,
-  })
+  const boundaries = getFirstAndLastVisibleRowNumbers(
+    dataLength,
+    pageIndex,
+    pageSize
+  )
+  const countName = boundaries
+    ? intl.formatMessage(messages.nowShowing, {
+        firstItemIndex: boundaries[0],
+        lastItemIndex: boundaries[1],
+        itemCount: dataLength,
+        name,
+      })
+    : null
   return (
     <div
       className={cssClasses('nowShowing__container')}
@@ -29,7 +35,8 @@ const NowShowing = ({ dataLength, page, name }) => {
 
 NowShowing.propTypes = {
   dataLength: PropTypes.number.isRequired,
-  page: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  pageIndex: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
 }
 

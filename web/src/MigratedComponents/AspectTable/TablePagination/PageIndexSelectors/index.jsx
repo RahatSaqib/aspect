@@ -17,8 +17,9 @@ const PageIndexSelectors = ({
   name,
   nextPage,
   pageCount,
+  pageIndex,
+  pageSize,
   previousPage,
-  page,
 }) => {
   const intl = useIntl()
   return (
@@ -37,7 +38,12 @@ const PageIndexSelectors = ({
         icon="FaAngleLeft"
         label={intl.formatMessage(messages.previous)}
       />
-      <NowShowing dataLength={dataLength} page={page} name={name} />
+      <NowShowing
+        dataLength={dataLength}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        name={name}
+      />
       <IndexButton
         modifier="right"
         disabled={!canNextPage}
@@ -63,7 +69,8 @@ PageIndexSelectors.propTypes = {
   gotoPage: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   nextPage: PropTypes.func.isRequired,
-  page: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  pageIndex: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
   pageCount: PropTypes.number.isRequired,
   previousPage: PropTypes.func.isRequired,
 }
