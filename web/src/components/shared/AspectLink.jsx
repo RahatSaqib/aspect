@@ -41,20 +41,7 @@ const urlFromShape = ({ url, search, data = null }) => {
     link = link.substring(0, link.length - 1)
   }
 
-  // console.log(link)
   return link
-
-  // const [urlSection, paramsSection,  ...paramsKeys] = linkTo
-  // if (paramsKeys && paramsKeys.length > 0) {
-  //   console.log(row)
-  //   const params = paramsKeys.map(k => row[k])
-  //   paramsSection = paramsSection.format(...params)
-  // } else
-  //   linkTo = urlSection
-
-  // const urlSections = linkTo.split('?')
-  // if (urlSections.length > 1)
-  //   linkTo = `${urlSection}?${encodeURIComponent(paramsSection)}`
 }
 
 const AspectLink = ({ to = '#', children, ...restProps }) => {
