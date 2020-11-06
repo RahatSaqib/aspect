@@ -275,8 +275,6 @@ async function resultsTransmittedDashboard(request) {
       percentWithin2Hours = 0,
     } = currItem || {}
 
-    console.log(resultCategoryPositiveId)
-
     return {
       assayId,
       assayName,
@@ -314,8 +312,6 @@ async function resultsTransmittedDashboard(request) {
       ),
     }
   }).sort((a, b) => b.cntAll - a.cntAll)
-
-  console.log(data[0])
 
   return {
     ok: true,
