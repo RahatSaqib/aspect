@@ -1096,6 +1096,18 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         'Xavier University Community Health Care Center PMDT TC',
       'zamboanga city medical center pmdt tc':
         'Zamboanga City Medical Center PMDT TC',
+      'City of Malolos Health OfficeV': 'City of Malolos Health OfficeV',
+      'Premiere Medical Center': 'Premiere Medical Center',
+      'La Paz Rural Health Unit (RHU) II': 'La Paz Rural Health Unit (RHU) II',
+      'Mabalacat RHU III': 'Mabalacat RHU III',
+      'Santa Maria RHU III': 'Santa Maria RHU III',
+      'Lian RHU': 'Lian RHU',
+      'Antipolo Health Units': 'Antipolo Health Units',
+      'San Mateo IV': 'San Mateo IV',
+      'Magdalena RHU': 'Magdalena RHU',
+      'Rodriguez RHU IV': 'IVA - RODRIGUEZ RHU',
+      'Siniloan RHU': 'Siniloan RHU',
+      'Dasmarinas CHO II': 'Dasmarinas CHO II',
     }
   }
 
