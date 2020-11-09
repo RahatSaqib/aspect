@@ -9,6 +9,7 @@ const { knex } = require('../../src/db')
 
 const {
   issueTypeToId,
+  resultCategoryToId,
   allIssueTypeToId,
   issueStatusToId,
 } = require('../../src/shared/dictionary')
@@ -257,7 +258,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.beforeRegisterAndSetDevice()
 
           // Post 4 new results older than 30 days.
-          await Promise.each(_.range(1, 4), async i => {
+          await Promise.each(_.range(1, 4), async () => {
             const daysForSubstracting = _.random(200, 300, false)
 
             await context.createResultForThisDevice({
@@ -266,14 +267,13 @@ describe('This test suite is for testing different triggers conditions', async (
                 moduleName: 'Module A',
                 moduleSerial: 'M-123456-0',
                 instrumentSerial: 'S-1234-0',
-                errorCode: i === 0 ? errorCode : null,
+                errorCode,
                 startedOn: subDays(new Date(), daysForSubstracting),
                 endedOn: subDays(new Date(), daysForSubstracting),
-                errorNotes: i === 0 ? 'Some notes' : null,
-                resultCategory1:
-                  i === 0 && resultCategoryExternalId
-                    ? await issueTypeToId(resultCategoryExternalId)
-                    : null,
+                errorNotes: errorCode ? 'Some notes' : null,
+                resultCategory1: resultCategoryExternalId
+                  ? await resultCategoryToId(resultCategoryExternalId)
+                  : null,
               },
             })
           })
@@ -363,32 +363,35 @@ describe('This test suite is for testing different triggers conditions', async (
           })
           await context.beforeRegisterAndSetDevice()
           await anotherDeviceContext.beforeRegisterAndSetDevice()
-          await Promise.each(_.range(0, 3), async i => {
+          await Promise.each(_.range(0, 7), async i => {
+            const resultDetails = {
+              consumableLot: 'Lot 0',
+              moduleName: 'Module A',
+              moduleSerial: 'M-123456-0',
+              instrumentSerial: 'S-1234-0',
+              endedOn: subDays(new Date(), i),
+              errorCode: i % 2 === 0 ? errorCode : null,
+              errorNotes: i % 2 === 0 ? 'Some notes' : null,
+              resultCategory1:
+                i % 2 === 0 && resultCategoryExternalId
+                  ? await resultCategoryToId(resultCategoryExternalId)
+                  : null,
+            }
             await context.createResultForThisDevice({
-              resultDetails: {
-                consumableLot: 'Lot 0',
-                moduleName: 'Module A',
-                moduleSerial: 'M-123456-0',
-                instrumentSerial: 'S-1234-0',
-                errorCode: i === 0 ? errorCode : null,
-                errorNotes: i === 0 ? 'Some notes' : null,
-                resultCategory1:
-                  i === 0 && resultCategoryExternalId
-                    ? await issueTypeToId(resultCategoryExternalId)
-                    : null,
-              },
+              resultDetails,
             })
             await anotherDeviceContext.createResultForThisDevice({
               resultDetails: {
                 consumableLot: 'Lot 0',
                 moduleName: 'Module A',
                 moduleSerial: 'M-ANOTHERSERIAL-0',
+                endedOn: subDays(new Date(), i),
                 instrumentSerial: 'S-ANOTHERSERIAL-0',
-                errorCode: i === 0 ? errorCode : null,
-                errorNotes: i === 0 ? 'Some notes' : null,
+                errorCode: i % 2 === 0 ? errorCode : null,
+                errorNotes: i % 2 === 0 ? 'Some notes' : null,
                 resultCategory1:
-                  i === 0 && resultCategoryExternalId
-                    ? await issueTypeToId(resultCategoryExternalId)
+                  i % 2 === 0 && resultCategoryExternalId
+                    ? await resultCategoryToId(resultCategoryExternalId)
                     : null,
               },
             })
@@ -441,7 +444,7 @@ describe('This test suite is for testing different triggers conditions', async (
           )
 
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-          await Promise.each(_.range(1, 4), async i => {
+          await Promise.each(_.range(0, 8), async i => {
             const resp = await postToDeviceApi({
               authHeader: deviceAuth,
               payload: _.merge(firstPayload, {

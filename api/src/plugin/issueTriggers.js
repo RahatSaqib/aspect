@@ -13,7 +13,7 @@ const analyzeResultsWithErrors = (
 ) => {
   const percentage = resultsWithErrors / parseFloat(totalResults)
   return (
-    totalResults >= minResults &&
+    resultsWithErrors >= minResults &&
     (below ? percentage <= threshold : percentage >= threshold)
   )
 }
