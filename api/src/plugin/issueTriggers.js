@@ -45,9 +45,8 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-  console.log('query', query.toString())
+
   const { resultsWithErrors, totalResults } = await query
-  console.log('resultsWithErrors', resultsWithErrors, totalResults)
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(

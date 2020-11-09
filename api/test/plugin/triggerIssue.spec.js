@@ -171,7 +171,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe.only('This test suite is for testing different triggers conditions', async () => {
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -286,12 +286,10 @@ describe.only('This test suite is for testing different triggers conditions', as
               }),
             })
           })
-          console.log('Termino BeforeEach older')
         })
 
-        afterEach(() => {
-          context.afterCleanUp()
-          console.log('termina afterEach older')
+        afterEach(async () => {
+          await context.cleanUp()
         })
 
         it(`should not create issue when it has less than 3 results for the last 30 days ${
@@ -299,7 +297,6 @@ describe.only('This test suite is for testing different triggers conditions', as
             ? `error ${errorCode}`
             : `category${resultCategoryExternalId}`
         }`, async () => {
-          console.log('Arranco Test Older')
           /**
            * in this testcase we are testing:
            * 1) issueFilter function for this testCondition (With error 5007)
@@ -338,7 +335,6 @@ describe.only('This test suite is for testing different triggers conditions', as
 
           assert.equal(issuesForModule.length, 0)
           assert.equal(issuesForLot.length, 0)
-          console.log('Termino Test Older')
         })
       })
 
@@ -399,9 +395,9 @@ describe.only('This test suite is for testing different triggers conditions', as
           })
         })
 
-        afterEach(() => {
-          context.afterCleanUp()
-          anotherDeviceContext.afterCleanUp()
+        afterEach(async () => {
+          await context.cleanUp()
+          await anotherDeviceContext.cleanUp()
         })
 
         it(`should only create one issue per device ${
