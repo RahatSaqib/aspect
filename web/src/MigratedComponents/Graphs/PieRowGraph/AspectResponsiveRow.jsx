@@ -44,7 +44,10 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
           {data.map(row => (
             <div className={cssClasses('piegraphs__row')}>
               {row.map(pie => {
-                const { value, type } = pie
+                const { value, type, link } = pie
+                if (link) {
+                  // console.log({ link })
+                }
                 return (
                   <div className={cssClasses('piegraphs__column')}>
                     <div className={cssClasses('piegraphs__columnGraph')}>
