@@ -171,7 +171,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe('This test suite is for testing different triggers conditions', async () => {
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -203,7 +203,7 @@ describe('This test suite is for testing different triggers conditions', async (
       basicResultPayload,
       {
         result: {
-          id: `Error-${errorCode}-result${_.random(1, 100, false)}`,
+          id: `Error-${errorCode}-result${_.random(1, 10000, false)}`,
           startedOn: subDays(new Date(), _.random(1, 10, false)),
           endedOn: subDays(new Date(), _.random(1, 10, false)),
           assay: { id: 'GxMtbRif' },
@@ -255,35 +255,26 @@ describe('This test suite is for testing different triggers conditions', async (
           })
 
           await context.beforeRegisterAndSetDevice()
-          const consumableLot = 'Lot 0'
-          const { deviceAuth } = context
 
-          // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
+          // Post 4 new results older than 30 days.
           await Promise.each(_.range(1, 4), async i => {
             const daysForSubstracting = _.random(200, 300, false)
-            const firstPayload = await getPayload(
-              context,
-              errorCode,
-              resultCategoryExternalId
-            )
-            await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload: _.merge(firstPayload, {
-                assay: { id: 'GxMtbRif' },
-                result: {
-                  id: `Error-${errorCode}-result${i}`,
-                  startedOn: subDays(new Date(), daysForSubstracting),
-                  endedOn: subDays(new Date(), daysForSubstracting),
-                  consumable: {
-                    lot: consumableLot,
-                  },
-                },
-                data: {
-                  resultText: resultCategoryExternalId
-                    ? resultCategoryExternalId.toUpperCase()
+
+            await context.createResultForThisDevice({
+              resultDetails: {
+                consumableLot: 'Lot 0',
+                moduleName: 'Module A',
+                moduleSerial: 'M-123456-0',
+                instrumentSerial: 'S-1234-0',
+                errorCode: i === 0 ? errorCode : null,
+                startedOn: subDays(new Date(), daysForSubstracting),
+                endedOn: subDays(new Date(), daysForSubstracting),
+                errorNotes: i === 0 ? 'Some notes' : null,
+                resultCategory1:
+                  i === 0 && resultCategoryExternalId
+                    ? await issueTypeToId(resultCategoryExternalId)
                     : null,
-                },
-              }),
+              },
             })
           })
         })
@@ -307,6 +298,15 @@ describe('This test suite is for testing different triggers conditions', async (
 
           const { deviceAuth } = context
 
+          const results = await context.getAllResults()
+          assert.equal(results.length, 3)
+          assert.equal(
+            _.filter(
+              results,
+              result => result.endedOn >= subDays(new Date(), 30)
+            ),
+            0
+          )
           const anotherPayload = await getPayload(
             context,
             errorCode,
@@ -347,19 +347,19 @@ describe('This test suite is for testing different triggers conditions', async (
             countryCode,
             adminUsername,
             adminPassword,
-            deviceName,
-            macAddress,
-            hostId,
-            deviceSerialNumber,
+            deviceName: `2nd${deviceName}`,
+            macAddress: `2nd${macAddress}`,
+            hostId: `2nd${hostId}`,
+            deviceSerialNumber: `2nd${deviceSerialNumber}`,
           })
           anotherDeviceContext = createGxConnectTestContext(server, {
             countryCode,
             adminUsername,
             adminPassword,
-            deviceName: `2nd${deviceName}`,
-            macAddress: `2nd${macAddress}`,
-            hostId: `2nd${hostId}`,
-            deviceSerialNumber: `2nd${deviceSerialNumber}`,
+            deviceName: `3nd${deviceName}`,
+            macAddress: `3nd${macAddress}`,
+            hostId: `3nd${hostId}`,
+            deviceSerialNumber: `3nd${deviceSerialNumber}`,
           })
           await context.beforeRegisterAndSetDevice()
           await anotherDeviceContext.beforeRegisterAndSetDevice()
@@ -447,7 +447,7 @@ describe('This test suite is for testing different triggers conditions', async (
               payload: _.merge(firstPayload, {
                 assay: { id: 'GxMtbRif' },
                 result: {
-                  id: `Error-${errorCode}-result${i}`,
+                  id: `Error-${errorCode || `category${i}`}-result${i}`,
                   startedOn: subDays(new Date(), i),
                   endedOn: subDays(new Date(), i),
                   consumable: {
