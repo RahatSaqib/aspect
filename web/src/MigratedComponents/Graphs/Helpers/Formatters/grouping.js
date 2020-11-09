@@ -111,9 +111,8 @@ const groupForPieRow = (data, mergedParams) => {
     return type
   }
 
-  const buildLink = (id, assayId, mergedParams) => {
+  const buildLink = (id, assayId, resultCategoryPositiveId, mergedParams) => {
     let link
-    const linkBase = '/browse/result?filters='
     const getDateRanges = dateRangeOptions()
     const dateRanges = getDateRanges[Object.keys(getDateRanges)]
     const dateMonthStart =
@@ -125,18 +124,25 @@ const groupForPieRow = (data, mergedParams) => {
           })[0].value.maxDate
         : false
 
+    const linkBase = '/browse/result?filters='
+    const assayUrl = `assayId%3D${assayId}`
+    const minDateUrl = `minDate%3D${dateMonthStart}`
+    const maxDateUrl = `maxDate%3D${dateMonthEnd}`
+    const resultCategoryUrl = `resultCategoryId%3D${resultCategoryPositiveId}`
+
     switch (true) {
       case id === 'cntAll':
-        // console.log(id === 'cntAll', dateMonthStart, dateMonthEnd)
-        link = `${linkBase}assayId%3D16%26minDate%3D${dateMonthStart}%26maxDate%3D${dateMonthEnd}`
+        link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}`
+        break
+
+      case id === 'cntPositive':
+        link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}%26${resultCategoryUrl}`
         break
 
       default:
         link = false
         break
     }
-
-    // console.log(link)
 
     return link
   }
@@ -183,14 +189,19 @@ const groupForPieRow = (data, mergedParams) => {
 
   const pieRows = []
 
-  data.map(({ assayId, ...rest }) => {
+  data.map(({ assayId, resultCategoryPositiveId, ...rest }) => {
     const pieRow = {}
     for (const [key, value] of Object.entries(rest)) {
       if (keysToRenderOrder.includes(key)) {
         const hasChange = rest[`${key}Change`]
         const type = pieWidgetType(key, value, hasChange)
         const format = pieValueFormat(key)
-        const link = buildLink(key, assayId, mergedParams)
+        const link = buildLink(
+          key,
+          assayId,
+          resultCategoryPositiveId,
+          mergedParams
+        )
         pieRow[key] = {
           heading: `${key}`,
           type,
