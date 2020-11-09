@@ -42,13 +42,10 @@ async function seed(knex) {
       stateName: state.name,
     })
     if (stateLgas) {
-      stateMemo[state.name.toLowerCase()].lgas = stateLgas.reduce(
-        (lgaMemo, lga) => {
-          lgaMemo[lga.name.toLowerCase()] = lga
-          return lgaMemo
-        },
-        {}
-      )
+      state.lgas = stateLgas.reduce((lgaMemo, lga) => {
+        lgaMemo[lga.name.toLowerCase()] = lga
+        return lgaMemo
+      }, {})
     }
     return stateMemo
   }, {})
