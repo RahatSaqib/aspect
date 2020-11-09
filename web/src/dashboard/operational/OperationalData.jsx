@@ -41,14 +41,14 @@ export const OperationalData = () => {
     <div className={cssClasses('Container')}>
       <Helmet title="Operational Data" />
       <Fragment>
-        <ErrorBoundary>
+        {/* <ErrorBoundary>
           <PermissionsProvider permissions={['operationalData']}>
             <SummaryStatus
               className={cssClasses('Section--summary')}
               dashboard="operational"
             />
           </PermissionsProvider>
-        </ErrorBoundary>
+        </ErrorBoundary> */}
 
         <ErrorBoundary>
           <PermissionsProvider
@@ -63,7 +63,7 @@ export const OperationalData = () => {
           </PermissionsProvider>
         </ErrorBoundary>
 
-        <ErrorBoundary>
+        {/* <ErrorBoundary>
           <PermissionsProvider
             permissions={deviceStatus.graphRenderPermissions}
           >
@@ -80,7 +80,7 @@ export const OperationalData = () => {
               config={inventoryStatus}
             />
           </PermissionsProvider>
-        </ErrorBoundary>
+        </ErrorBoundary> */}
       </Fragment>
     </div>
   )
