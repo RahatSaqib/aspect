@@ -28,14 +28,14 @@ const PageIndexSelectors = ({
         modifier="left"
         disabled={!canPreviousPage}
         action={() => gotoPage(0)}
-        icon="FaAngleDoubleLeft"
+        icon="MdFirstPage"
         label={intl.formatMessage(messages.first)}
       />
       <IndexButton
         modifier="left"
         disabled={!canPreviousPage}
         action={() => previousPage()}
-        icon="FaAngleLeft"
+        icon="MdChevronLeft"
         label={intl.formatMessage(messages.previous)}
       />
       <NowShowing
@@ -48,14 +48,14 @@ const PageIndexSelectors = ({
         modifier="right"
         disabled={!canNextPage}
         action={() => nextPage()}
-        icon="FaAngleRight"
+        icon="MdChevronRight"
         label={intl.formatMessage(messages.next)}
       />
       <IndexButton
         modifier="right"
         disabled={!canNextPage}
         action={() => gotoPage(pageCount - 1)}
-        icon="FaAngleDoubleRight"
+        icon="MdLastPage"
         label={intl.formatMessage(messages.last)}
       />
     </div>

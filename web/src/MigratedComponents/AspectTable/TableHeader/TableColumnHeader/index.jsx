@@ -3,16 +3,16 @@ import PropTypes from 'prop-types'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+const cssClasses = classnames.bind(require('../../Table.css'))
 
 function TableColumnHeader({
   canSort,
   isSorted,
   isSortedDesc,
+  headerGroupByComponent: HeaderGroupByComponent,
   headerOrderComponent: HeaderOrderComponent,
   headerVisibilityComponent: HeaderVisibilityComponent,
   render,
-  toggleHidden,
 }) {
   return (
     <div className={cssClasses('table__container')}>
@@ -39,7 +39,8 @@ function TableColumnHeader({
         </TableSortLabel>
       </div>
       <div className={cssClasses('tablecolumn__actions')}>
-        <HeaderVisibilityComponent onClick={toggleHidden} />
+        <HeaderGroupByComponent />
+        <HeaderVisibilityComponent />
         <HeaderOrderComponent />
       </div>
     </div>
@@ -52,11 +53,11 @@ TableColumnHeader.defaultProps = {
 
 TableColumnHeader.propTypes = {
   canSort: PropTypes.bool.isRequired,
+  headerGroupByComponent: PropTypes.func.isRequired,
   headerOrderComponent: PropTypes.func.isRequired,
   headerVisibilityComponent: PropTypes.func.isRequired,
   isSorted: PropTypes.bool.isRequired,
   isSortedDesc: PropTypes.bool,
-  toggleHidden: PropTypes.func.isRequired,
   render: PropTypes.string.isRequired,
 }
 

@@ -16,7 +16,7 @@ function NotificationList() {
 
   const { isError, error } = useQuery(
     'mockTableData',
-    async () => mockDatafetch(230),
+    async () => mockDatafetch(86),
     {
       onSuccess: ({ data }) => setData(data),
     }

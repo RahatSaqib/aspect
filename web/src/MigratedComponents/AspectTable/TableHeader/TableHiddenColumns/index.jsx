@@ -1,9 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import Chip from '@material-ui/core/Chip'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+import messages from '../messages'
+
+const cssClasses = classnames.bind(require('../../Table.css'))
 
 const getProperColumnLabelFromKey = (key, columns) => {
   const columnArray = columns.filter(({ accessor }) => accessor === key)
@@ -18,9 +21,10 @@ const TableHiddenColumns = ({
   hiddenColumns,
   handleHideColumnToggle,
 }) => {
+  const { formatMessage } = useIntl()
   return (
     <div className={cssClasses('hiddenColumn__container')}>
-      Hidden Columns:
+      {formatMessage(messages.hiddenColumns)}
       {hiddenColumns.map(column => (
         <Chip
           key={column}

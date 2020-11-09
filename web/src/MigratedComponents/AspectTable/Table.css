@@ -69,13 +69,13 @@
 }
 
 .pageindex__button--left div {
-  font-size: 16px;
-  padding: 5px 5px 0;
+  font-size: 20px;
+  padding: 7px 5px 0;
 }
 
 .pageindex__button--right div {
-  font-size: 16px;
-  padding: 6px 0 0 5px;
+  font-size: 20px;
+  padding: 7px 0 0 5px;
 }
 
 .pagesize__button {
@@ -102,6 +102,12 @@
   padding: 3px 3px 2px 3px;
 }
 
+.tableheader__groupbybutton {
+  font-size: 10px;
+  padding: 3px 3px 2px 3px;
+  margin: 0 5px 0;
+}
+
 .tableheader__hidebutton {
   font-size: 14px;
   margin: -2px 3px 0 0;
@@ -119,4 +125,34 @@
 
 .hiddenColumn__chip {
   margin: 0 0 0 10px;
+}
+
+.tablecell__grouped {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.tablecell__expandbutton {
+  padding: 7px 7px 2px 7px;
+  margin: 1px 8px 0 0;
+}
+
+.contactsrow__more {
+  font-weight: 700;
+}
+
+.date__cell {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.date__cell--past {
+  color: var('--thunderbird', #db2f17) !important;
+}
+
+.placeholder__cell {
+  width: 100%;
+  height: 30px;
+  max-height: 100%;
+  background: #f9f9f9;
 }

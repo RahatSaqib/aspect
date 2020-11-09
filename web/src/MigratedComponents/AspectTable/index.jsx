@@ -1,6 +1,13 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useTable, useSortBy, usePagination, useColumnOrder } from 'react-table'
+import {
+  useTable,
+  useSortBy,
+  usePagination,
+  useColumnOrder,
+  useGroupBy,
+  useExpanded,
+} from 'react-table'
 
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -8,10 +15,15 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 
-import TableColumnHeader from './TableColumnHeader'
-import TableColumnOrderButtons from './TableColumnOrderButtons'
-import TableHiddenColumns from './TableHiddenColumns'
-import TableColumnHideButton from './TableColumnHideButton'
+import TableColumnHeader from './TableHeader/TableColumnHeader'
+import TableColumnOrderButtons from './TableHeader/TableColumnOrderButtons'
+import TableHiddenColumns from './TableHeader/TableHiddenColumns'
+import TableColumnGroupBy from './TableHeader/TableColumnGroupBy'
+import TableColumnHideButton from './TableHeader/TableColumnHideButton'
+
+import Cell from './TableCell/Cell'
+import GroupedCell from './TableCell/GroupedCell'
+import PlaceholderCell from './TableCell/PlaceholderCell'
 
 import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
@@ -26,9 +38,11 @@ const AspectTable = ({ tableData: data, config }) => {
 
   const table = useTable(
     { columns, data },
+    useColumnOrder,
+    useGroupBy,
     useSortBy,
-    usePagination,
-    useColumnOrder
+    useExpanded,
+    usePagination
   )
 
   const {
@@ -45,9 +59,18 @@ const AspectTable = ({ tableData: data, config }) => {
     setColumnOrder,
     setPageSize,
     setSortBy,
+    toggleGroupBy,
     toggleHideColumn,
     visibleColumns,
-    state: { pageIndex, pageSize, sortBy, columnOrder, hiddenColumns },
+    state: {
+      pageIndex,
+      pageSize,
+      sortBy,
+      columnOrder,
+      hiddenColumns,
+      groupBy,
+      expanded,
+    },
   } = table
 
   const handleChangeRowsPerPage = val => {
@@ -64,6 +87,11 @@ const AspectTable = ({ tableData: data, config }) => {
   const handleHideColumnToggle = (e, id) => {
     e.stopPropagation()
     toggleHideColumn(id)
+  }
+
+  const handleGroupByColumnToggle = (e, id) => {
+    e.stopPropagation()
+    toggleGroupBy(id)
   }
 
   useEffect(() => {
@@ -101,30 +129,35 @@ const AspectTable = ({ tableData: data, config }) => {
                 (
                   {
                     canSort,
+                    canGroupBy,
                     disableHide,
                     getHeaderProps,
+                    getGroupByToggleProps,
                     getSortByToggleProps,
                     id,
+                    isGrouped,
                     isSorted,
                     isSortedDesc,
                     render,
-                    toggleHidden,
                     width,
                   },
                   index
                 ) => {
                   return (
                     <TableCell
-                      {...getHeaderProps(getSortByToggleProps())}
+                      {...getHeaderProps(
+                        getSortByToggleProps(),
+                        getGroupByToggleProps()
+                      )}
                       style={{ width: `${width}%` }}
                     >
                       <TableColumnHeader
                         width={width}
                         render={render('Header')}
                         canSort={canSort}
+                        canGroupBy={canGroupBy}
                         isSorted={isSorted}
                         isSortedDesc={isSortedDesc}
-                        toggleHidden={toggleHidden}
                         headerOrderComponent={() =>
                           allowColumnReOrder ? (
                             <TableColumnOrderButtons
@@ -137,8 +170,19 @@ const AspectTable = ({ tableData: data, config }) => {
                         headerVisibilityComponent={() =>
                           !disableHide ? (
                             <TableColumnHideButton
-                              headerId={id}
+                              headerIndex={id}
                               handleHideColumnToggle={handleHideColumnToggle}
+                            />
+                          ) : null
+                        }
+                        headerGroupByComponent={() =>
+                          canGroupBy ? (
+                            <TableColumnGroupBy
+                              headerIndex={id}
+                              handleGroupByColumnToggle={
+                                handleGroupByColumnToggle
+                              }
+                              isGrouped={isGrouped}
                             />
                           ) : null
                         }
@@ -153,14 +197,49 @@ const AspectTable = ({ tableData: data, config }) => {
         <TableBody>
           {page.map(row => {
             prepareRow(row)
-            const { getRowProps, cells } = row
+            const {
+              getRowProps,
+              cells,
+              getToggleRowExpandedProps,
+              isExpanded,
+              subRows,
+            } = row
             return (
               <TableRow {...getRowProps()}>
-                {cells.map(({ getCellProps, render }) => {
-                  return (
-                    <TableCell {...getCellProps()}>{render('Cell')}</TableCell>
-                  )
-                })}
+                {cells.map(
+                  ({
+                    getCellProps,
+                    column: { format = false },
+                    render,
+                    isGrouped,
+                    isAggregated,
+                    isPlaceholder,
+                    value,
+                  }) => {
+                    return (
+                      <TableCell {...getCellProps()}>
+                        {isGrouped ? (
+                          <GroupedCell
+                            format={format}
+                            getToggleRowExpandedProps={
+                              getToggleRowExpandedProps
+                            }
+                            isExpanded={isExpanded}
+                            render={render}
+                            subRows={subRows}
+                            value={value}
+                          />
+                        ) : isAggregated ? (
+                          render('Aggregated')
+                        ) : isPlaceholder ? (
+                          <PlaceholderCell />
+                        ) : (
+                          <Cell render={render} format={format} value={value} />
+                        )}
+                      </TableCell>
+                    )
+                  }
+                )}
               </TableRow>
             )
           })}
@@ -170,15 +249,17 @@ const AspectTable = ({ tableData: data, config }) => {
         canNextPage={canNextPage}
         canPreviousPage={canPreviousPage}
         dataLength={data.length}
+        expanded={expanded}
         gotoPage={gotoPage}
+        groupBy={groupBy}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
+        name={name}
         nextPage={nextPage}
         pageCount={pageCount}
         pageIndex={pageIndex}
         pageSize={pageSize}
         previousPage={previousPage}
         page={page}
-        name={name}
       />
     </Fragment>
   ) : null
