@@ -223,10 +223,9 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         // -----------------------------
         const resultElement = {
           ...auditFields,
-          externalId: `UQTB-${i}-${format(
-            new Date(new Date() * _.random(1, 10)),
-            'tt'
-          )}-D`,
+          externalId: `UQTB-${_.times(8, () =>
+            _.toUpper(_.random(36).toString(36))
+          ).join('')}`,
           assayId: assayGeneXpertMtbRif.id,
           partnerId,
           geographyId,
