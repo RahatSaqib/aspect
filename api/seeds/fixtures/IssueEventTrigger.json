@@ -1,189 +1,441 @@
 {
-	"data": [
-		{
-			"issueType": "DeviceMaintenance",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "DEVICE_MAINTENANCE"
-			}
-		},
-		{
-			"issueType": "DeviceMaintenance",
-			"issueEventStatus": "Resolved",
-			"triggerConditions": {
-				"action": "DEVICE_MAINTENANCE_RESOLVED"
-			}
-		},
-		{
-			"issueType": "DeviceNoResults",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "DEVICE_NO_RESULTS"
-			}
-		},
-		{
-			"issueType": "DeviceNoResults",
-			"issueEventStatus": "Resolved",
-			"triggerConditions": {
-				"action": "DEVICE_HAS_NEW_RESULTS"
-			}
-		},
-		{
-			"issueType": "DeviceOffline",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "DEVICE_OFFLINE"
-			}
-		},
-		{
-			"issueType": "DeviceOffline",
-			"issueEventStatus": "Resolved",
-			"triggerConditions": {
-				"action": "DEVICE_ONLINE"
-			}
-		},
-		{
-			"issueType": "ReagentHealthError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "INVENTORY_REAGENT_HEALTH"
-			}
-		},
-		{
-			"issueType": "InventoryStockout",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "INVENTORY_STOCKOUT"
-			}
-		},
-		{
-			"issueType": "InventoryStockExpiring",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "INVENTORY_STOCK_EXPIRING"
-			}
-		},
-		{
-			"issueType": "ResultReceived",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_LOGGED"
-			}
-		},
-		{
-			"issueType": "MachinePowerError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MACHINE_POWER_ERROR"
-			}
-		},
-		{
-			"issueType": "MachineProceduralError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MACHINE_PROCEDURAL_ERROR"
-			}
-		},
-		{
-			"issueType": "MachineTemperatureError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MACHINE_TEMPERATURE_ERROR"
-			}
-		},
-		{
-			"issueType": "ModuleFailureError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MODULE_FAILURE_ERROR"
-			}
-		},
-		{
-			"issueType": "ModulePowerError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MODULE_POWER_ERROR"
-			}
-		},
-		{
-			"issueType": "ModuleProceduralError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MODULE_PROCEDURAL_ERROR"
-			}
-		},
-		{
-			"issueType": "ModuleTemperatureError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MODULE_TEMPERATURE_ERROR"
-			}
-		},
-		{
-			"issueType": "ModuleUnknownError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MODULE_UNKNOWN_ERROR"
-			}
-		},
-		{
-			"issueType": "MachineUnknownError",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MACHINE_UNKNOWN_ERROR"
-			}
-		},
-		{
-			"issueType": "ModuleReplaced",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "RESULT_MODULE_REPLACED"
-			}
-		},
-		{
-			"issueType": "ModuleDisabled",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "DEVICE_MODULE_DISABLE_RECEIVED"
-			},
-			"filterIssueCondition": {
-				"evaluationFunction": "filterModuleDisabledIssue"
-			}
-		},
-		{
-			"issueType": "DataCategoryLowForHivStatus",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS"
-			}
-		},
-		{
-			"issueType": "DataCategoryLowForPreviouslyTreated",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED"
-			}
-		},
-		{
-			"issueType": "DataCategoryLowForMicroscopyResult",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT"
-			}
-		},
-		{
-			"issueType": "DataCategoryLowForOther",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "FACT_DATA_CATEGORY_IS_LOW_OTHER"
-			}
-		},
-		{
-			"issueType": "InstrumentReplaced",
-			"issueEventStatus": "Triggered",
-			"triggerConditions": {
-				"action": "DEVICE_INSTRUMENT_REPLACED"
-			}
-		}
-	]
+  "data": [
+    {
+      "issueType": "DeviceMaintenance",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_MAINTENANCE"
+      }
+    },
+    {
+      "issueType": "DeviceMaintenance",
+      "issueEventStatus": "Resolved",
+      "triggerConditions": {
+        "action": "DEVICE_MAINTENANCE_RESOLVED"
+      }
+    },
+    {
+      "issueType": "DeviceNoResults",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_NO_RESULTS"
+      }
+    },
+    {
+      "issueType": "DeviceNoResults",
+      "issueEventStatus": "Resolved",
+      "triggerConditions": {
+        "action": "DEVICE_HAS_NEW_RESULTS"
+      }
+    },
+    {
+      "issueType": "DeviceOffline",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_OFFLINE"
+      }
+    },
+    {
+      "issueType": "DeviceOffline",
+      "issueEventStatus": "Resolved",
+      "triggerConditions": {
+        "action": "DEVICE_ONLINE"
+      }
+    },
+    {
+      "issueType": "ReagentHealthError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "INVENTORY_REAGENT_HEALTH"
+      }
+    },
+    {
+      "issueType": "InventoryStockout",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "INVENTORY_STOCKOUT"
+      }
+    },
+    {
+      "issueType": "InventoryStockExpiring",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "INVENTORY_STOCK_EXPIRING"
+      }
+    },
+    {
+      "issueType": "ResultReceived",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_LOGGED"
+      }
+    },
+    {
+      "issueType": "MachinePowerError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MACHINE_POWER_ERROR"
+      }
+    },
+    {
+      "issueType": "MachineProceduralError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MACHINE_PROCEDURAL_ERROR"
+      }
+    },
+    {
+      "issueType": "MachineTemperatureError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MACHINE_TEMPERATURE_ERROR"
+      }
+    },
+    {
+      "issueType": "ModuleFailureError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_FAILURE_ERROR"
+      }
+    },
+    {
+      "issueType": "ModulePowerError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_POWER_ERROR"
+      }
+    },
+    {
+      "issueType": "ModuleProceduralError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_PROCEDURAL_ERROR"
+      }
+    },
+    {
+      "issueType": "ModuleTemperatureError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_TEMPERATURE_ERROR"
+      }
+    },
+    {
+      "issueType": "ModuleUnknownError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_UNKNOWN_ERROR"
+      }
+    },
+    {
+      "issueType": "MachineUnknownError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MACHINE_UNKNOWN_ERROR"
+      }
+    },
+    {
+      "issueType": "ModuleReplaced",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_REPLACED"
+      }
+    },
+    {
+      "issueType": "ProbeCheckTooLowModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5007,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "ProbeCheckTooLowLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5007,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "ProbeCheckTooHighModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_HIGH_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5006,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "ProbeCheckTooHighLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_HIGH_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5006,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "TooManyInvalidResultsModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_INVALIDS_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeCategories",
+          "evaluationFilterParameters": {
+            "categoryId": "Invalid",
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "TooManyInvalidResultsLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_INVALIDS_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeCategories",
+          "evaluationFilterParameters": {
+            "categoryId": "Invalid",
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "ProbeCheckFailedModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_FAILED_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5017,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "ProbeCheckFailedLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_PROBES_FAILED_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5017,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5016,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5016,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "ModuleDisabled",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_MODULE_DISABLE_RECEIVED"
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForHivStatus",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForPreviouslyTreated",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForMicroscopyResult",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForOther",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_OTHER"
+      }
+    },
+    {
+      "issueType": "InstrumentReplaced",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_INSTRUMENT_REPLACED"
+      }
+    },
+    {
+      "issueType": "SignalLossDetectedInAmplificationCurveModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5011,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "SignalLossDetectedInAmplificationCurveLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 5011,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    }
+  ]
 }

@@ -373,7 +373,7 @@ export class RouterDetail extends PureComponent {
                 format={() => (
                   <img
                     alt="utilization rate"
-                    src={require('../../device/detail/utilization_rate.png')}
+                    src={require('../../MigratedComponents/Devices/Detail/utilization_rate.png')}
                     style={{ width: '100%' }}
                   />
                 )}
@@ -386,7 +386,7 @@ export class RouterDetail extends PureComponent {
                 format={() => (
                   <img
                     alt="error rates"
-                    src={require('../../device/detail/error_rates.png')}
+                    src={require('../../MigratedComponents/Devices/Detail/error_rates.png')}
                     style={{ width: '100%' }}
                   />
                 )}

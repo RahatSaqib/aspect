@@ -350,6 +350,82 @@ async function clonePermissions(knex, fromModule, toModule) {
   })
 }
 
+async function copyPermissionsAndDashboardWidgetsFromJobFunction(
+  knex,
+  externalIdFrom,
+  externalIdTo,
+  modulesToExclude = []
+) {
+  const { id: jobFunctionIdFrom } = await knex('JobFunction')
+    .where({ externalId: externalIdFrom })
+    .first('id')
+
+  const { id: jobFunctionIdTo } = await knex('JobFunction')
+    .where({ externalId: externalIdTo })
+    .first('id')
+
+  await copyPermissionsFromJobFunction(
+    knex,
+    jobFunctionIdFrom,
+    jobFunctionIdTo,
+    modulesToExclude
+  )
+
+  await copyDashboardWidgetsFromJobFunction(
+    knex,
+    jobFunctionIdFrom,
+    jobFunctionIdTo
+  )
+}
+
+async function copyPermissionsFromJobFunction(
+  knex,
+  jobFunctionIdFrom,
+  jobFunctionIdTo,
+  modulesToExclude = []
+) {
+  await knex('JobFunctionPermission')
+    .where({ jobFunctionId: jobFunctionIdTo })
+    .del()
+
+  const permissions = _.map(
+    await knex('JobFunctionPermission as jfp')
+      .join('Permission as p', 'jfp.permissionId', 'p.id')
+      .where('jfp.jobFunctionId', jobFunctionIdFrom)
+      .whereNotIn('p.module', modulesToExclude)
+      .select('permissionId'),
+    permission => ({
+      jobFunctionId: jobFunctionIdTo,
+      permissionId: permission.permissionId,
+    })
+  )
+
+  await knex('JobFunctionPermission').insert(permissions)
+}
+
+async function copyDashboardWidgetsFromJobFunction(
+  knex,
+  jobFunctionIdFrom,
+  jobFunctionIdTo
+) {
+  await knex('JobFunctionDashboardWidget')
+    .where({ jobFunctionId: jobFunctionIdTo })
+    .del()
+
+  const permissions = _.map(
+    await knex('JobFunctionDashboardWidget as jfd')
+      .join('DashboardWidget as w', 'jfd.widgetId', 'w.id')
+      .where('jfd.jobFunctionId', jobFunctionIdFrom)
+      .select('widgetId'),
+    widget => ({
+      jobFunctionId: jobFunctionIdTo,
+      widgetId: widget.widgetId,
+    })
+  )
+
+  await knex('JobFunctionDashboardWidget').insert(permissions)
+}
+
 async function upsertJobFunctionPermission(
   knex,
   jobFunctionId,
@@ -1450,6 +1526,7 @@ async function baseGxAlertMigration(
     )
     await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
   })
+
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
@@ -1461,7 +1538,7 @@ async function baseGxAlertMigration(
     )
 
   // -------------------------------------
-  // Contacts & User Accounts from GxAlert
+  // Contacts & User Accounts from GxAlert (filtering users without jobFunctions)
   // -------------------------------------
   await Promise.each(contactsFromGxAlert, async person => {
     let userId = null
@@ -1471,7 +1548,7 @@ async function baseGxAlertMigration(
         .first('id')
       if (existingUser) {
         userId = existingUser.id
-      } else {
+      } else if (!_.isEmpty(person.jobFunctions)) {
         const pw = bcrypt.hashSync(
           person.password || 'WelcomeToAspect',
           saltRounds
@@ -2003,6 +2080,7 @@ module.exports = {
   upsertAssayResultCategories,
   upsertJobFunction,
   clonePermissions,
+  copyPermissionsAndDashboardWidgetsFromJobFunction,
   baseGxAlertMigration,
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,

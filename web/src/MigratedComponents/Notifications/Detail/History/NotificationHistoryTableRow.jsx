@@ -1,4 +1,3 @@
-import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PropTypes from 'prop-types'

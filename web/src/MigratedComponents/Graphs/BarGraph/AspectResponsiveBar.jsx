@@ -38,7 +38,7 @@ const AspectResponsiveBar = ({
   ]
   const { formatNumber: intlFormatNumber } = useIntl()
 
-  const config = (type, data, displayMethod) => {
+  const config = (type, data) => {
     switch (true) {
       case type === 'divergent':
         return {
@@ -203,8 +203,6 @@ const AspectResponsiveBar = ({
     type === 'stackedDeviceActivity'
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
-
-  // console.log(data)
 
   return (
     <div style={{ height: '100%', maxHeight: '350px' }}>

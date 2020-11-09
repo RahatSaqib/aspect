@@ -22,9 +22,6 @@ import Paper from '@material-ui/core/Paper'
 import MenuList from '@material-ui/core/MenuList'
 import Popper from '@material-ui/core/Popper'
 
-import toDate from 'date-fns/toDate'
-import parseISO from 'date-fns/parseISO'
-
 import { formatWithLocale } from '../../../shared/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'

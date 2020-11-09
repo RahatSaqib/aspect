@@ -74,6 +74,7 @@ function onIssueEventTrigger(
 ) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
+
     return context.transact(async knex => {
       const shouldTriggerEvent = await actionConditionsMet(
         knex,
@@ -81,6 +82,7 @@ function onIssueEventTrigger(
         partnerId,
         JSON.parse(triggerConditions).conditions
       )
+
       if (shouldTriggerEvent) {
         const now = new Date()
         const openIssue = await findOpenIssue(
@@ -189,10 +191,10 @@ async function findOpenIssue(
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .orderBy('i.updatedOn', 'desc')
 
-  if (action.resultId) {
-    findOpenIssue.where({ 'i.resultId': action.resultId })
-  } else if (action.deviceId) {
+  if (action.deviceId) {
     findOpenIssue.where({ 'i.deviceId': action.deviceId })
+  } else if (action.resultId) {
+    findOpenIssue.where({ 'i.resultId': action.resultId })
   } else if (action.siteId) {
     findOpenIssue.where({ 'i.siteId': action.siteId })
   } else if (action.geographyId) {
@@ -229,7 +231,7 @@ async function getIssueFilter(knex, partnerId, deviceId) {
       .where({ 'd.id': deviceId })
       .first('dt.plugin'))
   }
-  return loadPlugin([plugin], 'filterModuleDisabledIssue')
+  return loadPlugin([plugin], 'filtersOpenIssues')
 }
 
 async function createNewIssue(knex, issueType, action) {

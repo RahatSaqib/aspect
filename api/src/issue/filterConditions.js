@@ -1,4 +1,4 @@
-const filterModuleDisabled = (
+const filterByModuleSerial = (
   queryBuilder,
   { moduleSerial },
   aliases = { issue: 'i' }
@@ -10,6 +10,20 @@ const filterModuleDisabled = (
   return queryBuilder
 }
 
+const filterByLotAndAssay = (
+  queryBuilder,
+  { assayId, consumableLot },
+  aliases = { issue: 'i' }
+) => {
+  if (assayId && consumableLot)
+    queryBuilder.whereRaw(
+      `${aliases.issue}.data->>"$.assayId"=? and ${aliases.issue}.data->>"$.consumableLot"=?`,
+      [assayId, consumableLot]
+    )
+  return queryBuilder
+}
+
 module.exports = {
-  filterModuleDisabledIssue: filterModuleDisabled,
+  filterByModuleSerial,
+  filterByLotAndAssay,
 }

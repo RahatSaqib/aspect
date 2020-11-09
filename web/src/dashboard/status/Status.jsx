@@ -9,9 +9,6 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
-import SiteStatus from './SiteStatus'
-import ActionStatus from './ActionStatus'
-import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
@@ -41,10 +38,10 @@ const Status = ({ history, location, colorDemo }) => {
     covidMortalityAndRecoveryConfig,
     covidMortalityAndRecoveryByGender,
   } = covidGraphs
-  const [marginBottom, setMarginBottom] = useState(0)
+  const [marginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2Code = useSelector(
+  const countryIsoAlpha2CodeIgnored = useSelector(
     ({ user }) => user.countryAbbreviation
   )
   const assays = useSelector(({ assay }) =>
@@ -183,29 +180,6 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       {colorDemo && <ColorDemo vars={process.env} />}
-      <TargetStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--withDropdown')}
-        title={intl.formatMessage(messages.targetsTitle)}
-      />
-      <ActionStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--withDropdown')}
-        title={intl.formatMessage(messages.actionTitle)}
-        marginBottom={marginBottom}
-        setMarginBottom={setMarginBottom}
-      />
-      <SiteStatus
-        history={history}
-        intl={intl}
-        countryIsoAlpha2Code={countryIsoAlpha2Code}
-        className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.sitesTitle)}
-      />
 
       <ErrorBoundary>
         <PermissionsProvider

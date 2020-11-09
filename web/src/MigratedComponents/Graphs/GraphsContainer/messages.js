@@ -68,7 +68,7 @@ export const messages = defineMessages({
   },
   treatmentStatusTotalTitle: {
     id: 'pages.Status.treatmentStatusTotalTitle.graph',
-    defaultMessage: 'Total',
+    defaultMessage: 'Average Confirmed Response',
   },
   treatmentStatusTotalValidTitle: {
     id: 'pages.Status.treatmentStatusTotalValidTitle.graph',

@@ -1,10 +1,14 @@
 const { knex } = require('../db')
-const { resultModuleReplaced } = require('../result/actions')
+const {
+  resultModuleReplaced,
+  resultAnalyzeErrors,
+  resultAnalyzeCategories,
+} = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
 } = require('../device/actions')
-const { issueTypeToId } = require('../shared/dictionary')
+const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -41,6 +45,84 @@ async function getReplacedModuleSerials(knex, deviceId) {
     .then(items => items.map(s => s.replacedModuleSerial))
 
   return replacedModuleSerials
+}
+
+async function shouldTriggerResultCategoryAnalysis(
+  messageContext,
+  deviceId,
+  resultId,
+  resultCategoryId,
+  { resultOutcome, moduleSerial, assayId, consumableLot }
+) {
+  const resultCategories = await allResultCategoryToId()
+  const categoriesToAnalyze = [resultCategories.Invalid]
+  if (categoriesToAnalyze.includes(resultCategoryId)) {
+    if (!messageContext.resultAnalyzeCategories) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeCategories,
+      })
+    }
+    const { resultCategoryExternalId } = await knex('ResultCategory')
+      .where({
+        id: resultCategoryId,
+      })
+      .first('externalId as resultCategoryExternalId')
+    await messageContext.resultAnalyzeCategories(
+      deviceId,
+      resultId,
+      resultCategoryExternalId,
+      {
+        moduleSerial,
+        resultOutcome,
+      }
+    )
+    await messageContext.resultAnalyzeCategories(
+      deviceId,
+      resultId,
+      resultCategoryExternalId,
+      {
+        assayId,
+        consumableLot,
+        resultOutcome,
+      }
+    )
+  }
+}
+
+async function shouldTriggerResultErrorAnalysis(
+  messageContext,
+  deviceId,
+  resultId,
+  resultErrorCode,
+  { resultOutcome, moduleSerial, assayId, consumableLot }
+) {
+  const errorsToAnalyze = [5007, 5006, 5016, 5017, 5011]
+  if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
+    if (!messageContext.resultAnalyzeErrors) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeErrors,
+      })
+    }
+    await messageContext.resultAnalyzeErrors(
+      deviceId,
+      resultId,
+      resultErrorCode,
+      {
+        moduleSerial,
+        resultOutcome,
+      }
+    )
+    await messageContext.resultAnalyzeErrors(
+      deviceId,
+      resultId,
+      resultErrorCode,
+      {
+        assayId,
+        consumableLot,
+        resultOutcome,
+      }
+    )
+  }
 }
 
 async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
@@ -223,4 +305,6 @@ module.exports = {
   shouldTriggerModuleReplaced,
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
+  shouldTriggerResultErrorAnalysis,
+  shouldTriggerResultCategoryAnalysis,
 }

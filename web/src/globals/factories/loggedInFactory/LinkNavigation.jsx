@@ -44,13 +44,7 @@ const rawLinks = [
   },
 ]
 
-export const LinkNavigation = ({
-  history,
-  location,
-  type,
-  onClick,
-  children,
-}) => (
+export const LinkNavigation = ({ type, onClick, children }) => (
   <nav
     type={type}
     className={cssClasses('Navigation', {
@@ -59,13 +53,7 @@ export const LinkNavigation = ({
     })}
   >
     {rawLinks.map(link => (
-      <ThemedLink
-        key={link.label}
-        {...link}
-        history={history}
-        location={location}
-        onClick={onClick}
-      />
+      <ThemedLink key={link.label} {...link} onClick={onClick} />
     ))}
     {children}
   </nav>
@@ -76,8 +64,6 @@ LinkNavigation.defaultProps = {
 }
 
 LinkNavigation.propTypes = {
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   type: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   children: PropTypes.oneOfType([PropTypes.object]),
