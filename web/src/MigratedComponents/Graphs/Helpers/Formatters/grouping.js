@@ -18,7 +18,7 @@ import {
   filterByMultiple,
 } from './index'
 import { calcPercentageForGraphs } from './calcs'
-import { negateTimeZoneOffset } from './datetime'
+import { dateRangeOptions, negateTimeZoneOffset } from './datetime'
 
 const groupByKey = (
   data,
@@ -64,7 +64,7 @@ const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
   return grouped
 }
 
-const groupForPieRow = data => {
+const groupForPieRow = (data, mergedParams) => {
   const keysToRenderOrder = [
     'assayName',
     'cntAll',
@@ -111,6 +111,36 @@ const groupForPieRow = data => {
     return type
   }
 
+  const buildLink = (id, assayId, mergedParams) => {
+    let link
+    const linkBase = '/browse/result?filters='
+    const getDateRanges = dateRangeOptions()
+    const dateRanges = getDateRanges[Object.keys(getDateRanges)]
+    const dateMonthStart =
+      mergedParams && mergedParams.length ? mergedParams[0].currentMonth : false
+    const dateMonthEnd =
+      dateRanges && dateRanges.length
+        ? filter(dateRanges, {
+            value: { minDate: dateMonthStart },
+          })[0].value.maxDate
+        : false
+
+    switch (true) {
+      case id === 'cntAll':
+        // console.log(id === 'cntAll', dateMonthStart, dateMonthEnd)
+        link = `${linkBase}assayId%3D16%26minDate%3D${dateMonthStart}%26maxDate%3D${dateMonthEnd}`
+        break
+
+      default:
+        link = false
+        break
+    }
+
+    // console.log(link)
+
+    return link
+  }
+
   const valueSplit = (key, value, type, difference) => {
     switch (true) {
       case type === 'doughnut':
@@ -152,17 +182,20 @@ const groupForPieRow = data => {
   }
 
   const pieRows = []
-  data.map(row => {
+
+  data.map(({ assayId, ...rest }) => {
     const pieRow = {}
-    for (const [key, value] of Object.entries(row)) {
+    for (const [key, value] of Object.entries(rest)) {
       if (keysToRenderOrder.includes(key)) {
-        const hasChange = row[`${key}Change`]
+        const hasChange = rest[`${key}Change`]
         const type = pieWidgetType(key, value, hasChange)
         const format = pieValueFormat(key)
+        const link = buildLink(key, assayId, mergedParams)
         pieRow[key] = {
           heading: `${key}`,
           type,
           format,
+          link,
           value: valueSplit(key, value, type, hasChange),
         }
       }
