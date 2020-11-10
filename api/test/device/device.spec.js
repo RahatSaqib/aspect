@@ -111,7 +111,7 @@ describe('Device routes', () => {
       await knex('Device').where({ id }).delete()
     })
 
-    it.only('should return a list of devices with the correspondant status', async () => {
+    it('should return a list of devices with the correspondant status', async () => {
       await Promise.each(statusesToTest, async ([deviceApprovalId, deviceMaintenanceStatusId, expectedStatus]) => {
         if (deviceMaintenanceStatusId) {
           const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
