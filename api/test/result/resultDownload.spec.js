@@ -58,6 +58,8 @@ describe('Result download routes', () => {
     ) {
       assertReporterResultDownloadResponse(response)
 
+      assert.isAtLeast(response.body.total, minimumNumberOfRestults)
+      assert.isAtLeast(response.body.length, minimumNumberOfRestults)
       expect(response).to.containSubset({
         body: {
           data: [
@@ -69,8 +71,7 @@ describe('Result download routes', () => {
           ],
         },
       })
-      assert.isAtLeast(response.body.total, minimumNumberOfRestults)
-      assert.isAtLeast(response.body.length, minimumNumberOfRestults)
+
       assert.equal(Object.keys(response.body.data[0]).length, 24)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')

@@ -296,7 +296,10 @@ describe('This test suite is for testing different triggers conditions', async (
           })
         })
       })
-      afterEach(() => context.afterCleanUp())
+      afterEach(async () => {
+        await context.cleanUp()
+        await anotherDeviceContext.cleanUp()
+      })
 
       it(`should only create one issue per device ${
         errorCode ? `error ${errorCode}` : `category${resultCategoryExternalId}`

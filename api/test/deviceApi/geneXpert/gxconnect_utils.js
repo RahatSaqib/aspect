@@ -356,16 +356,14 @@ class GxConnectApiTestContext {
   }
 
   async cleanUp() {
-    return run(async knex => {
-      await waitForIdle()
-      if (!_.isEmpty(this.apiKeys)) {
-        await deleteDeviceSiteDataAndRefreshTokens(
-          knex,
-          _.map(this.apiKeys, apiKey => ({ token: apiKey })),
-          this.clientId
-        )
-      }
-    })
+    await waitForIdle()
+    if (!_.isEmpty(this.apiKeys)) {
+      await deleteDeviceSiteDataAndRefreshTokens(
+        knex,
+        _.map(this.apiKeys, apiKey => ({ token: apiKey })),
+        this.clientId
+      )
+    }
   }
 
   async createResultForThisDevice({
