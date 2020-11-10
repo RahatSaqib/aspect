@@ -159,7 +159,7 @@ const groupForPieRow = (data, keys, mergedParams) => {
             ...linkTo,
             data: {
               ...row,
-              ...mergedParams.reduce((p, c) => ({ ...p, ...c })),
+              ...mergedParams.reduce((acc, curr) => ({ ...acc, ...curr })),
             },
           }
 
