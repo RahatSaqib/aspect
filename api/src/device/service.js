@@ -776,7 +776,7 @@ async function getDevicesForReport(auth, query) {
     .clone()
     .modify(sortPageParams, query, 'name')
     .select([
-      ...SELECT_LIST_FIELDS,
+      ..._.filter(SELECT_LIST_FIELDS, elem => elem.indexOf('dms') < 0),
       'd.serial',
       queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults
