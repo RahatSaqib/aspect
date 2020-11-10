@@ -285,6 +285,7 @@ async function seed(knex) {
       `/DATE_OF_RELEASE/{{defaultTo (formatDate result.data.encodedResult.dateReleased formatString='${itisDateFormat}') 'NULL'}}` +
       `/PERFORMED_BY/{{urlEncode (defaultTo (coalesce result.data.encodedResult.examiner result.data.encodedResult.labTech result.senderOperator) 'NULL')}}`,
     fileContentTypeId: await fileContentTypeToId('formUrlEncoded'),
+    okResponseSuccessRegex: 'Add\\sTB\\sExam\\ssuccessfully',
     ...auditFields,
   })
 
