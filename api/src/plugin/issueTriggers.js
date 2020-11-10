@@ -13,7 +13,7 @@ const analyzeResultsWithErrors = (
 ) => {
   const percentage = resultsWithErrors / parseFloat(totalResults)
   return (
-    totalResults >= minResults &&
+    resultsWithErrors >= minResults &&
     (below ? percentage <= threshold : percentage >= threshold)
   )
 }
@@ -45,8 +45,8 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-  const { resultsWithErrors, totalResults } = await query
 
+  const { resultsWithErrors, totalResults } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(
