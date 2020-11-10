@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-async function getDeliverableTbResult(knex, resultId, fields) {
+async function getDeliverableTbResult(knex, resultId) {
   return knex('Result as r')
     .join('Assay as a', 'r.assayId', 'a.id')
     .join('ResultWorkflowLog as rwl', 'r.id', `rwl.resultId`)
@@ -18,7 +18,7 @@ async function getDeliverableTbResult(knex, resultId, fields) {
     ])
     .andWhere('r.id', resultId)
     .andWhere('rws.externalId', 'Deliverable')
-    .first(...fields)
+    .first('r.id', 'r.patientData')
 }
 
 async function resultHasActiveIssue(knex, resultId, issueTypeExternalId) {
@@ -36,8 +36,12 @@ async function resultHasActiveIssue(knex, resultId, issueTypeExternalId) {
 
 async function shouldSendResultToItis(knex, action) {
   if (action.resultId) {
-    const result = await getDeliverableTbResult(knex, action.resultId, ['r.id'])
+    const result = await getDeliverableTbResult(knex, action.resultId)
     if (_.isEmpty(result)) {
+      return false
+    }
+    const patientData = JSON.parse(result.patientData || '{}')
+    if (!patientData.id && !patientData.tbCaseNumber) {
       return false
     }
     const hasActiveIssues = await resultHasActiveIssue(
@@ -54,10 +58,7 @@ async function shouldSendResultToItis(knex, action) {
 
 async function shouldSendResultToPatientAsSms(knex, action) {
   if (action.resultId) {
-    const result = await getDeliverableTbResult(knex, action.resultId, [
-      'r.id',
-      'r.patientData',
-    ])
+    const result = await getDeliverableTbResult(knex, action.resultId)
     if (_.isEmpty(result)) {
       return false
     }
