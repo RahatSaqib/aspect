@@ -28,10 +28,23 @@ async function seed(knex) {
     phoneNumber: `{{result.patient.phone}}`,
     ...auditFields,
   })
+  const [referrerSmsTemplateId] = await knex('SmsTemplate').insert({
+    externalId: 'patientAdvisorySms',
+    message: `Your {{result.assay.name}} result tested last {{formatDate result.patient.dateReceived formatString='${smsDateFormat}}} is already available. Please contact {{result.patient.referringHealthFacility}} to schedule a follow-up consultation`,
+    phoneNumber: `{{result.patient.phone}}`,
+    ...auditFields,
+  })
 
   const messageSeverityAlertId = await messageSeverityToId('Alert')
 
   const [patientAdvisoryMessageTypeId] = await knex('MessageType').insert([
+    {
+      messageSeverityId: messageSeverityAlertId,
+      smsTemplateId: patientSmsTemplateId,
+    },
+  ])
+
+  const [refererAdvisoryMessageTypeId] = await knex('MessageType').insert([
     {
       messageSeverityId: messageSeverityAlertId,
       smsTemplateId: patientSmsTemplateId,
