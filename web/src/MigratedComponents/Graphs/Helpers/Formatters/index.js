@@ -321,7 +321,6 @@ const formatDataByGraphType = (
   indexBy,
   keyToConsume,
   keysToRename,
-  keys,
   type,
   mergedParams
 ) => {
@@ -382,7 +381,7 @@ const formatDataByGraphType = (
       break
 
     case 'pieRow':
-      grouped = groupForPieRow(data, keys, mergedParams)
+      grouped = groupForPieRow(data, mergedParams)
       break
 
     default:

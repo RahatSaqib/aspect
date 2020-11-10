@@ -43,7 +43,6 @@ const GraphRender = ({
     indexBy,
     keyToConsume,
     keysToRename,
-    keys,
     type,
   } = config
   const assayParams = prepAssaysForParams(whiteListed, method)
@@ -59,7 +58,6 @@ const GraphRender = ({
       culture,
     }
   })
-
   const { isLoading, isError, error } = useQuery(
     [id, { mergedParams }],
     async (key, { mergedParams }) =>
@@ -85,7 +83,6 @@ const GraphRender = ({
         indexBy,
         keyToConsume,
         keysToRename,
-        keys,
         type,
         mergedParams
       )

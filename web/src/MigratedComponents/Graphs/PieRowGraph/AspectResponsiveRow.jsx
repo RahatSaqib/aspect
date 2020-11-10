@@ -44,7 +44,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
           {data.map(row => (
             <div className={cssClasses('piegraphs__row')}>
               {row.map(pie => {
-                const { value, type, linkTo } = pie
+                const { value, type, link } = pie
                 return (
                   <div className={cssClasses('piegraphs__column')}>
                     <div className={cssClasses('piegraphs__columnGraph')}>
@@ -55,7 +55,6 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
                       ) : null}
                       {type === 'doughnut' || type === 'solid' ? (
                         <AspectResponsivePie
-                          linkTo={linkTo}
                           assaysFromState={[]}
                           averages={false}
                           data={value}
@@ -63,6 +62,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
                           componentClasses={componentClasses}
                           keys={[]}
                           type={type}
+                          link={link}
                         />
                       ) : null}
                     </div>
