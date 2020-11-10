@@ -9,6 +9,7 @@ const {
   subHours,
   addDays,
   subDays,
+  startOfToday,
   startOfDay,
   addYears,
   format: dateFormat,
@@ -2285,9 +2286,9 @@ describe('Device API routes for GxAlert Device', () => {
           ).insert({
             deviceId: geneXpertDevice.id,
             deviceMaintenanceStatusId: deviceMaintenanceStatuses.reportedActive,
-            day: startOfDayUtc(subDays(new Date(), 1)),
+            day: startOfToday(),
             data: '{}',
-            createdOn: startOfDayUtc(subDays(new Date(), 1)),
+            createdOn: new Date(),
           })
           await knex('Device').where('id', geneXpertDevice.id).update({
             deviceMaintenanceStatusLogId,
@@ -2322,7 +2323,7 @@ describe('Device API routes for GxAlert Device', () => {
             .orderBy(['createdOn', 'id'], 'desc')
             .first()
           expect(latestMaintenanceStatusLog).to.containSubset({
-            day: startOfDayUtc(subDays(new Date(), 1)),
+            day: getLocalDateInUtc(startOfToday()),
             deviceMaintenanceStatusId:
               deviceMaintenanceStatuses.inactiveOutOfInventory,
           })
