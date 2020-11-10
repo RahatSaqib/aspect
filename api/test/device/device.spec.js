@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const chai = require('chai')
+const Promise = require('bluebird')
 const _ = require('lodash')
 const {
   addDays,
@@ -10,7 +11,6 @@ const {
   endOfMonth,
   setMilliseconds,
 } = require('date-fns')
-const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 const {
   createMessageContext,
