@@ -37,7 +37,6 @@ const enhance = compose(
         nextFilters,
         new URLSearchParams(searchParams.get('filters') || '')
       )
-
       searchParams.set('filters', filtersParams)
       searchParams.delete('pageAt')
       history.replace({

@@ -14,9 +14,10 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
   return knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-    .innerJoin('ResultCategory as rcPositive', function()  {
-      this.on('rca.resultCategoryId', 'rcPositive.id')
-      .andOn(knex.raw(`rcPositive.id IN (${positiveResultCategories})`))
+    .innerJoin('ResultCategory as rcPositive', function () {
+      this.on('rca.resultCategoryId', 'rcPositive.id').andOn(
+        knex.raw(`rcPositive.id IN (${positiveResultCategories})`)
+      )
     })
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -32,15 +33,20 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
       'a.name as assayName',
       'a.externalId as assayExternalId',
       'a.i18nKey as assayI18nKey',
-      'rcPositive.id as resultCategoryPositiveId'
+      knex.raw('MAX(rcPositive.id) as resultCategoryPositiveId')
     )
     .whereIn('a.id', knex('Result').select('assayId').distinct())
     .where('a.externalId', '!=', 'GxUnknown')
     .where('dt.externalId', 'CepheidGeneXpert')
     .orderBy('a.name')
+    .groupBy('a.id', 'a.name', 'a.externalId', 'a.i18nKey')
 }
 
-async function getResultQuery(query, dataConstraints, positiveResultCategories) {
+async function getResultQuery(
+  query,
+  dataConstraints,
+  positiveResultCategories
+) {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
 
@@ -219,9 +225,17 @@ async function resultsTransmittedDashboard(request) {
   )
 
   // get all assays which user can access
-  const assays = await getAssayQuery(query, dataConstraints, positiveResultCategories)
-  const items = await getResultQuery(query, dataConstraints, positiveResultCategories)
-  
+  const assays = await getAssayQuery(
+    query,
+    dataConstraints,
+    positiveResultCategories
+  )
+  const items = await getResultQuery(
+    query,
+    dataConstraints,
+    positiveResultCategories
+  )
+
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
     return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
@@ -240,7 +254,7 @@ async function resultsTransmittedDashboard(request) {
       item.cntAllReported
     )
   })
-  
+
   // helpers
   const { currentMonth = new Date() } = query
   const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
@@ -255,63 +269,67 @@ async function resultsTransmittedDashboard(request) {
   const findItem = (yearMonth, assayExternalId) => item =>
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
 
-  const data = assays.map(({ assayId, assayName, assayExternalId, resultCategoryPositiveId }) => {
-    // get items for current and previous month
-    
-    const currItem = items.find(findItem(currMonth, assayExternalId))
-    const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
+  const data = assays
+    .map(
+      ({ assayId, assayName, assayExternalId, resultCategoryPositiveId }) => {
+        // get items for current and previous month
 
-    const {
-      cntAll = 0,
-      cntPositive = 0,
-      cntAllReported = 0,
-      cntReportedViaEmail = 0,
-      cntReportedViaSms = 0,
-      cntWithin2Hours = 0,
-      percentPositive = 0,
-      percentReported = 0,
-      percentViaEmail = 0,
-      percentViaSms = 0,
-      percentWithin2Hours = 0,
-    } = currItem || {}
+        const currItem = items.find(findItem(currMonth, assayExternalId))
+        const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
 
-    return {
-      assayId,
-      assayName,
-      resultCategoryPositiveId,
-      // totals in current month
-      cntAll,
-      cntPositive,
-      cntAllReported,
-      cntReportedViaEmail,
-      cntReportedViaSms,
-      cntWithin2Hours,
-      // percent in current month
-      percentPositive,
-      percentReported,
-      percentViaEmail,
-      percentViaSms,
-      percentWithin2Hours,
-      // changes since previous month
-      percentPositiveChange: getChange(
-        percentPositive,
-        prevItem.percentPositive
-      ),
-      percentReportedChange: getChange(
-        percentReported,
-        prevItem.percentReported
-      ),
-      percentViaEmailChange: getChange(
-        percentViaEmail,
-        prevItem.percentViaEmail
-      ),
-      percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
-      percentWithin2HoursChange: getChange(
-        percentWithin2Hours,
-        prevItem.percentWithin2Hours
-      ),
-    }
-  }).sort((a, b) => b.cntAll - a.cntAll)
+        const {
+          cntAll = 0,
+          cntPositive = 0,
+          cntAllReported = 0,
+          cntReportedViaEmail = 0,
+          cntReportedViaSms = 0,
+          cntWithin2Hours = 0,
+          percentPositive = 0,
+          percentReported = 0,
+          percentViaEmail = 0,
+          percentViaSms = 0,
+          percentWithin2Hours = 0,
+        } = currItem || {}
+
+        return {
+          assayId,
+          assayName,
+          resultCategoryPositiveId,
+          // totals in current month
+          cntAll,
+          cntPositive,
+          cntAllReported,
+          cntReportedViaEmail,
+          cntReportedViaSms,
+          cntWithin2Hours,
+          // percent in current month
+          percentPositive,
+          percentReported,
+          percentViaEmail,
+          percentViaSms,
+          percentWithin2Hours,
+          // changes since previous month
+          percentPositiveChange: getChange(
+            percentPositive,
+            prevItem.percentPositive
+          ),
+          percentReportedChange: getChange(
+            percentReported,
+            prevItem.percentReported
+          ),
+          percentViaEmailChange: getChange(
+            percentViaEmail,
+            prevItem.percentViaEmail
+          ),
+          percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
+          percentWithin2HoursChange: getChange(
+            percentWithin2Hours,
+            prevItem.percentWithin2Hours
+          ),
+        }
+      }
+    )
+    .sort((a, b) => b.cntAll - a.cntAll)
 
   return {
     ok: true,
