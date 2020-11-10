@@ -321,7 +321,7 @@ async function seed(knex) {
     issueTypeId: issueTypeResultUpdatedId,
     issueEventStatusId: await issueEventStatusToId('Triggered'),
     triggerConditions: JSON.stringify({
-      action: 'RESULT_UPDATED',
+      action: 'RESULT_LOGGED',
       conditions: {
         evaluationMethod: 'plugin-function',
         evaluationParameter: 'shouldSendResultToItis',

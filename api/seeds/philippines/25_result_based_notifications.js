@@ -28,23 +28,9 @@ async function seed(knex) {
     phoneNumber: `{{result.patient.phone}}`,
     ...auditFields,
   })
-  const [referrerSmsTemplateId] = await knex('SmsTemplate').insert({
-    externalId: 'patientAdvisorySms',
-    message: `Your {{result.assay.name}} result tested last {{formatDate result.patient.dateReceived formatString='${smsDateFormat}}} is already available. Please contact {{result.patient.referringHealthFacility}} to schedule a follow-up consultation`,
-    phoneNumber: `{{result.patient.phone}}`,
-    ...auditFields,
-  })
-
   const messageSeverityAlertId = await messageSeverityToId('Alert')
 
   const [patientAdvisoryMessageTypeId] = await knex('MessageType').insert([
-    {
-      messageSeverityId: messageSeverityAlertId,
-      smsTemplateId: patientSmsTemplateId,
-    },
-  ])
-
-  const [refererAdvisoryMessageTypeId] = await knex('MessageType').insert([
     {
       messageSeverityId: messageSeverityAlertId,
       smsTemplateId: patientSmsTemplateId,
@@ -61,7 +47,7 @@ async function seed(knex) {
   })
 
   await knex('NotificationType').insert({
-    name: 'Result Updated',
+    name: 'Result Patient SMS',
     partnerId,
     issueTypeId: issueTypePatientSmsResultUpdatedId,
     level: 1,
@@ -70,12 +56,14 @@ async function seed(knex) {
     ...auditFields,
   })
 
+  const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
+
   await knex('IssueEventTrigger').insert({
     partnerId,
     issueTypeId: issueTypePatientSmsResultUpdatedId,
-    issueEventStatusId: await issueEventStatusToId('Triggered'),
+    issueEventStatusId: triggeredIssueEventStatusId,
     triggerConditions: JSON.stringify({
-      action: 'RESULT_UPDATED',
+      action: 'RESULT_LOGGED',
       conditions: {
         evaluationMethod: 'plugin-function',
         evaluationParameter: 'shouldSendResultToPatientAsSms',
@@ -84,6 +72,30 @@ async function seed(knex) {
     createdOn: auditFields.createdOn,
     updatedOn: auditFields.updatedOn,
   })
+
+  const { id: issueTypeResultUpdatedId } = await knex('IssueType')
+    .where('externalId', 'ResultUpdated')
+    .first('id')
+
+  const { id: resultUpdatedIssueEventTriggerId } = await knex(
+    'IssueEventTrigger'
+  )
+    .where('issueTypeId', issueTypeResultUpdatedId)
+    .andWhere('issueEventStatusId', triggeredIssueEventStatusId)
+    .andWhere('partnerId', partnerId)
+    .first('id')
+  await knex('IssueEventTrigger')
+    .where('id', resultUpdatedIssueEventTriggerId)
+    .update({
+      triggerConditions: JSON.stringify({
+        action: 'RESULT_LOGGED',
+        conditions: {
+          evaluationMethod: 'plugin-function',
+          evaluationParameter: 'shouldSendResultToItis',
+        },
+      }),
+      updatedOn: auditFields.updatedOn,
+    })
 
   await knex('IssueResolutionTrigger').insert({
     issueTypeId: issueTypePatientSmsResultUpdatedId,
