@@ -10,6 +10,7 @@ const {
   endOfMonth,
   setMilliseconds,
 } = require('date-fns')
+const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 const {
   createMessageContext,
@@ -30,8 +31,9 @@ const {
 } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
-const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
-const Promise = require('bluebird')
+const {
+  createGxConnectTestContext,
+} = require('../deviceApi/geneXpert/gxconnect_utils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -50,7 +52,6 @@ describe('Device routes', () => {
     const daktariManagerPassword = 'daktari-manager-pass'
     let daktariManagerUserId
     let daktariManagerAuthAccessToken
-    let daktariManagerPerson
 
     // Status test
     let statusesToTest
@@ -76,35 +77,44 @@ describe('Device routes', () => {
         daktariManagerUsername,
         daktariManagerPassword
       )
-      daktariManagerPerson = await knex('Person').where({ userId: daktariManagerUserId }).first()
-      
+
       // Status test
       statusesToTest = [
         // [approval status, maintenance status, expected status]
         [deviceApprovals.provisioned, null, 'Provisioned'],
-        [deviceApprovals.provisioned, deviceMaintenanceStatuses.active, 'Provisioned'],
+        [
+          deviceApprovals.provisioned,
+          deviceMaintenanceStatuses.active,
+          'Provisioned',
+        ],
         [deviceApprovals.approved, null, 'Approved'],
         [deviceApprovals.approved, deviceMaintenanceStatuses.active, 'Active'],
-        [deviceApprovals.approved, deviceMaintenanceStatuses.inactiveOutOfInventory, 'Out of Inventory']
+        [
+          deviceApprovals.approved,
+          deviceMaintenanceStatuses.inactiveOutOfInventory,
+          'Out of Inventory',
+        ],
       ]
-      const statusTestDeviceContext = createGxConnectTestContext(server, 
-        {
-          macAddress: 'A really cool mac address',
-          adminUsername: 'admin',
-          adminPassword: 'test07',
-          countryCode: 'US',
-          deviceName: 'The greatest device I ever created',
-          deviceSerialNumber: 'A very cool device serial number',
-          hostId: 'The best host id ever'
-        })
+      const statusTestDeviceContext = createGxConnectTestContext(server, {
+        macAddress: 'A really cool mac address',
+        adminUsername: 'admin',
+        adminPassword: 'test07',
+        countryCode: 'US',
+        deviceName: 'The greatest device I ever created',
+        deviceSerialNumber: 'A very cool device serial number',
+        hostId: 'The best host id ever',
+      })
       await statusTestDeviceContext.registerAndSetDevice()
-      theGreatestDeviceIEverCreated = await knex('Device').where({ name: 'The greatest device I ever created' }).first()
-      console.log('before')
+      theGreatestDeviceIEverCreated = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first()
     })
 
-    after(async () => { 
+    after(async () => {
       removeUser(daktariManagerUserId)
-      const { id } = await knex('Device').where({ name: 'The greatest device I ever created' }).first()
+      const { id } = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first()
       await knex('DeviceApiKey').where({ deviceId: id }).delete()
       await knex('DeviceLog').where({ deviceId: id }).delete()
       await knex('DeviceApprovalLog').where({ deviceId: id }).delete()
@@ -112,24 +122,43 @@ describe('Device routes', () => {
     })
 
     it('should return a list of devices with the correspondant status', async () => {
-      await Promise.each(statusesToTest, async ([deviceApprovalId, deviceMaintenanceStatusId, expectedStatus]) => {
-        if (deviceMaintenanceStatusId) {
-          const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
-            deviceId: theGreatestDeviceIEverCreated.id,
-            deviceMaintenanceStatusId,
-            day: new Date(),
-            createdOn: new Date()
-          })
-          await knex('Device').where({ id: theGreatestDeviceIEverCreated.id }).update({ deviceMaintenanceStatusLogId: deviceMaintenanceStatusLogId, deviceApprovalId: deviceApprovalId })
-        } else {
-          await knex('Device').where({ id: theGreatestDeviceIEverCreated.id }).update({ deviceMaintenanceStatusLogId: null, deviceApprovalId: deviceApprovalId })
-        }
+      await Promise.each(
+        statusesToTest,
+        async ([
+          deviceApprovalId,
+          deviceMaintenanceStatusId,
+          expectedStatus,
+        ]) => {
+          if (deviceMaintenanceStatusId) {
+            const [deviceMaintenanceStatusLogId] = await knex(
+              'DeviceMaintenanceStatusLog'
+            ).insert({
+              deviceId: theGreatestDeviceIEverCreated.id,
+              deviceMaintenanceStatusId,
+              day: new Date(),
+              createdOn: new Date(),
+            })
+            await knex('Device')
+              .where({ id: theGreatestDeviceIEverCreated.id })
+              .update({
+                deviceMaintenanceStatusLogId,
+                deviceApprovalId,
+              })
+          } else {
+            await knex('Device')
+              .where({ id: theGreatestDeviceIEverCreated.id })
+              .update({
+                deviceMaintenanceStatusLogId: null,
+                deviceApprovalId,
+              })
+          }
 
-        const res = await server
-          .get(`${path}?deviceName=The greatest device I ever created`)
-          .set('Authorization', `Bearer ${shared.token}`)
-        assert.equal(res.body.data[0].status, expectedStatus)
-      })
+          const res = await server
+            .get(`${path}?deviceName=The greatest device I ever created`)
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(res.body.data[0].status, expectedStatus)
+        }
+      )
     })
 
     it('should return a list of devices when using valid token "approved"', async () => {
