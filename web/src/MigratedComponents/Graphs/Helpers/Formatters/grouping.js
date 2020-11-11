@@ -258,7 +258,8 @@ const groupForOldTreatmentAPI = (
   keyToConsume,
   indexBy,
   formatDate,
-  filterBy
+  filterBy,
+  displayMethod
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
@@ -268,10 +269,15 @@ const groupForOldTreatmentAPI = (
 
     acc[curr[indexBy]] = {
       monthTested: dateFormatted,
-      Confirmed: Number(curr[keyToConsume]).toFixed(1),
+      Confirmed:
+        displayMethod === 'percentage'
+          ? Number(curr[keyToConsume]).toFixed(1)
+          : curr[keyToConsume],
       NotConfirmed:
         curr[keyToConsume] < 1
-          ? curr.total
+          ? displayMethod === 'percentage'
+            ? 100
+            : curr.total
           : Number(100 - curr[keyToConsume]).toFixed(1),
       totalCnt: curr.total,
     }
