@@ -984,7 +984,7 @@ async function getBaseIssues(auditFields) {
     CartridgeIntegrityTestFailureLot: {
       issueType: {
         name: 'Cartridge Integrity Test Failure On Lot',
-        externalId: 'ProbeCheckTooLowLot',
+        externalId: 'CartridgeIntegrityTestFailureLot',
         i18nKey: 'cartridgeIntegrityTestFailureLot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
@@ -1009,7 +1009,7 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    SyringePressureTooHigh: {
+    SyringePressureTooHighModule: {
       issueType: {
         name: 'Syringe Pressure Too High On Module',
         externalId: 'SyringePressureTooHighModule',
@@ -1180,10 +1180,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    UltrasonicHornTuningError: {
+
+    UltrasonicHornTuningErrorModule: {
       issueType: {
         name: 'Ultrasonic Horn Tuning Error On Module',
-        externalId: 'UltrasonicHornTuningError',
+        externalId: 'UltrasonicHornTuningErrorModule',
         i18nKey: 'issueStatusUltrasonicHornTuningError',
         issueCategoryId: issueCategories.DeviceHealth,
       },
@@ -1212,7 +1213,7 @@ async function getBaseIssues(auditFields) {
     UltrasonicHornTuningErrorLot: {
       issueType: {
         name: 'Ultrasonic Horn Tuning Error On Lot',
-        externalId: 'UltrasonicHornTuningError',
+        externalId: 'UltrasonicHornTuningErrorLot',
         i18nKey: 'issueStatusUltrasonicHornTuningError',
         issueCategoryId: issueCategories.ReagentHealth,
       },
