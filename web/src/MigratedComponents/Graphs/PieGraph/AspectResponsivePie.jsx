@@ -27,6 +27,7 @@ const AspectResponsivePie = ({
   componentClasses,
   keys,
   type = false,
+  link,
 }) => {
   const { formatNumber: intlFormatNumber } = useIntl()
 
@@ -104,7 +105,7 @@ const AspectResponsivePie = ({
         colors={v => generateColorForValue(v)}
       />
       {averages && !type && <PieInnerLegend averages={averages} data={data} />}
-      {type === 'solid' && <PieInnerLegendSolid data={data} />}
+      {type === 'solid' && <PieInnerLegendSolid data={data} link={link} />}
       {type === 'doughnut' && <PieInnerLegendDoughNut data={data} />}
     </div>
   )
@@ -112,6 +113,7 @@ const AspectResponsivePie = ({
 
 AspectResponsivePie.defaultProps = {
   type: false,
+  link: false,
 }
 
 AspectResponsivePie.propTypes = {
@@ -122,6 +124,7 @@ AspectResponsivePie.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 }
 
 export default AspectResponsivePie
