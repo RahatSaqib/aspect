@@ -952,6 +952,462 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    CartridgeIntegrityTestFailureModule: {
+      issueType: {
+        name: 'Cartridge Integrity Test Failure On Module',
+        externalId: 'CartridgeIntegrityTestFailureModule',
+        i18nKey: 'cartridgeIntegrityTestFailureModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Cartridge Integrity Test Failure${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Cartridge Integrity Test Failure${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Cartridge Integrity Test Failure${errorIssueAlertModule}`,
+        body: `Cartridge Integrity Test FailureerrorIssueEmailModule}`,
+        htmlBody: `Cartridge Integrity Test Failure${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    CartridgeIntegrityTestFailureLot: {
+      issueType: {
+        name: 'Cartridge Integrity Test Failure On Lot',
+        externalId: 'ProbeCheckTooLowLot',
+        i18nKey: 'cartridgeIntegrityTestFailureLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Cartridge Integrity Test Failure${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Cartridge Integrity Test Failure${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Cartridge Integrity Test Failure${errorIssueAlertLot}`,
+        body: `Cartridge Integrity Test Failure${errorIssueEmailLot}`,
+        htmlBody: `Cartridge Integrity Test Failure${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    SyringePressureTooHigh: {
+      issueType: {
+        name: 'Syringe Pressure Too High On Module',
+        externalId: 'SyringePressureTooHighModule',
+        i18nKey: 'syringePressureTooHighModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Syringe Pressure Too High${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Syringe Pressure Too High${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Syringe Pressure Too High${errorIssueAlertModule}`,
+        body: `Syringe Pressure Too High${errorIssueEmailModule}`,
+        htmlBody: `Syringe Pressure Too High${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    SyringePressureTooHighLot: {
+      issueType: {
+        name: 'Syringe Pressure Too High On Lot',
+        externalId: 'SyringePressureTooHighLot',
+        i18nKey: 'SyringePressureTooHighLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Syringe Pressure Too High On Lot${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Syringe Pressure Too High On Lot${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Syringe Pressure Too High On Lot${errorIssueAlertLot}`,
+        body: `Syringe Pressure Too High On Lot${errorIssueEmailLot}`,
+        htmlBody: `Syringe Pressure Too High On Lot${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    SyringeStallErrorModule: {
+      issueType: {
+        name: 'Syringe Stall Error On Module',
+        externalId: 'SyringeStallErrorModule',
+        i18nKey: 'SyringeStallErrorModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Syringe Stall Error${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Syringe Stall Error${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Syringe Stall Error${errorIssueAlertModule}`,
+        body: `Syringe Stall Error${errorIssueEmailModule}`,
+        htmlBody: `Syringe Stall Error${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    SyringeStallErrorLot: {
+      issueType: {
+        name: 'Syringe Stall Error On Lot',
+        externalId: 'SyringeStallErrorLot',
+        i18nKey: 'SyringeStallErrorLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Syringe Stall Error${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Syringe Stall Error${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Syringe Stall Error${errorIssueAlertLot}`,
+        body: `Syringe Stall Error${errorIssueEmailLot}`,
+        htmlBody: `Syringe Stall Error${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornFailureModule: {
+      issueType: {
+        name: 'Ultrasonic Horn Failure On Module',
+        externalId: 'UltrasonicHornFailureModule',
+        i18nKey: 'issueStatusUltrasonicHornFailureModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Ultrasonic Horn Failure${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Ultrasonic Horn Failure${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Ultrasonic Horn Failure${errorIssueAlertModule}`,
+        body: `Ultrasonic Horn Failure${errorIssueEmailModule}`,
+        htmlBody: `Ultrasonic Horn Failure${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    UltrasonicHornFailureLot: {
+      issueType: {
+        name: 'Ultrasonic Horn Failure On Lot',
+        externalId: 'UltrasonicHornFailureLot',
+        i18nKey: 'issueStatusUltrasonicHornFailureLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Ultrasonic Horn Failure${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Ultrasonic Horn Failure${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Ultrasonic Horn Failure${errorIssueAlertLot}`,
+        body: `Ultrasonic Horn Failure${errorIssueEmailLot}`,
+        htmlBody: `Ultrasonic Horn Failure${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornTuningError: {
+      issueType: {
+        name: 'Ultrasonic Horn Tuning Error On Module',
+        externalId: 'UltrasonicHornTuningError',
+        i18nKey: 'issueStatusUltrasonicHornTuningError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Ultrasonic Horn Tuning Error${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Ultrasonic Horn Tuning Error${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Ultrasonic Horn Tuning Error${errorIssueAlertModule}`,
+        body: `Ultrasonic Horn Tuning Error${errorIssueEmailModule}`,
+        htmlBody: `Ultrasonic Horn Tuning Error${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    UltrasonicHornTuningErrorLot: {
+      issueType: {
+        name: 'Ultrasonic Horn Tuning Error On Lot',
+        externalId: 'UltrasonicHornTuningError',
+        i18nKey: 'issueStatusUltrasonicHornTuningError',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Ultrasonic Horn Tuning Error${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Ultrasonic Horn Tuning Error${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Ultrasonic Horn Tuning Error${errorIssueAlertLot}`,
+        body: `Ultrasonic Horn Tuning Error${errorIssueEmailLot}`,
+        htmlBody: `Ultrasonic Horn Tuning Error${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornCurrentOutRangeModule: {
+      issueType: {
+        name: 'Ultrasonic Horn Current Out of Range On Module',
+        externalId: 'UltrasonicHornCurrentOutRangeModule',
+        i18nKey: 'issueStatusUltrasonicHornCurrentOutRangeModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Ultrasonic Horn Current Out of Range${errorIssueAlertModule}`,
+        body: `Ultrasonic Horn Current Out of Range${errorIssueEmailModule}`,
+        htmlBody: `Ultrasonic Horn Current Out of Range${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    UltrasonicHornCurrentOutRangeLot: {
+      issueType: {
+        name: 'Ultrasonic Horn Current Out of Range On Lot',
+        externalId: 'UltrasonicHornCurrentOutRangeLot',
+        i18nKey: 'issueStatusUltrasonicHornCurrentOutRangeLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Ultrasonic Horn Current Out of Range${errorIssueAlertLot}`,
+        body: `Ultrasonic Horn Current Out of Range${errorIssueEmailLot}`,
+        htmlBody: `Ultrasonic Horn Current Out of Range${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationErrorModule: {
+      issueType: {
+        name: 'Assay Specific Termination Error On Module',
+        externalId: 'AssaySpecificTerminationErrorModule',
+        i18nKey: 'issueStatusAssaySpecificTerminationErrorModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Assay Specific Termination Error${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Assay Specific Termination Error${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Assay Specific Termination Error${errorIssueAlertModule}`,
+        body: `Assay Specific Termination Error${errorIssueEmailModule}`,
+        htmlBody: `Assay Specific Termination Error${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationErrorLot: {
+      issueType: {
+        name: 'Assay Specific Termination Error On Lot',
+        externalId: 'AssaySpecificTerminationErrorLot',
+        i18nKey: 'issueStatusAssaySpecificTerminationErrorLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Assay Specific Termination Error${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Assay Specific Termination Error${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Assay Specific Termination Error${errorIssueAlertLot}`,
+        body: `Assay Specific Termination Error${errorIssueEmailLot}`,
+        htmlBody: `Assay Specific Termination Error${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationModule: {
+      issueType: {
+        name: 'Assay-Specific Termination #2 On Module',
+        externalId: 'AssaySpecificTerminationModule',
+        i18nKey: 'issueStatusAssaySpecificTerminationModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Assay-Specific Termination #2${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Assay-Specific Termination #2${errorIssueAlertModule}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Assay-Specific Termination #2${errorIssueAlertModule}`,
+        body: `Assay-Specific Termination #2${errorIssueEmailModule}`,
+        htmlBody: `Assay-Specific Termination #2${errorIssueEmailModule.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationLot: {
+      issueType: {
+        name: 'Assay-Specific Termination #2 On Lot',
+        externalId: 'AssaySpecificTerminationLot',
+        i18nKey: 'issueStatusAssaySpecificTerminationLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `Assay-Specific Termination #2${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `Assay-Specific Termination #2${errorIssueAlertLot}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `Assay-Specific Termination #2${errorIssueAlertLot}`,
+        body: `Assay-Specific Termination #2${errorIssueEmailLot}`,
+        htmlBody: `Assay-Specific Termination #2${errorIssueEmailLot.replace(
+          regexBreakline,
+          '<br/>'
+        )}`,
+        ...auditFields,
+      },
+    },
   }
   return IssueDefinition
 }
