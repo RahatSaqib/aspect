@@ -239,7 +239,8 @@ async function addDeviceDataWithContext(context) {
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
-  const { name, site, result, configuration, operation } = payload
+  const { name, site, result, configuration, log } = payload
+  let { operation } = payload
 
   if (name) {
     await knex('Device')
@@ -274,6 +275,33 @@ async function addDeviceDataWithContext(context) {
     response = {
       ...response,
       ...(await mergeResultWithContext(context.withPayload(result))),
+    }
+  }
+
+  if (log) {
+    let { data } = log
+    if (log.source === 'GeneXpert' && data) {
+      if (_.isString(data)) {
+        data = JSON.parse(data)
+      }
+
+      operation = {
+        id: data.externalId,
+        startedOn: data.occurredOn,
+        data: {
+          type: 'gx-log',
+          logFileName: data.logFileName,
+          logLevel: data.logLevel,
+          details: data.details,
+        },
+      }
+
+      response = {
+        ...response,
+        ...(await addDeviceOperationWithContext(
+          context.withPayload(operation)
+        )),
+      }
     }
   }
 
