@@ -9,6 +9,7 @@ import IconProvider from '../../IconProvider'
 
 import usePrevious from '../../../Hooks/CustomHooks'
 import { getAverageFromData } from '../Helpers/Formatters'
+import AspectLink from '../../../components/shared/AspectLink'
 
 import messages from '../GraphsContainer/messages'
 
@@ -81,7 +82,7 @@ PieInnerLegend.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
-const PieInnerLegendSolid = ({ data }) => {
+const PieInnerLegendSolidBase = ({ data }) => {
   const { valueLabel } = data && data[0]
   return data && data.length ? (
     <div
@@ -96,6 +97,15 @@ const PieInnerLegendSolid = ({ data }) => {
     </div>
   ) : null
 }
+
+const PieInnerLegendSolid = ({ data, link }) =>
+  link ? (
+    <AspectLink to={link}>
+      <PieInnerLegendSolidBase data={data} />
+    </AspectLink>
+  ) : (
+    <PieInnerLegendSolidBase data={data} />
+  )
 
 const PieInnerLegendDoughNut = ({ data }) => {
   const { value, difference } = data && data[0]
