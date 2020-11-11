@@ -8,6 +8,11 @@ import {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedActualDataOut,
 } from './barData'
 import { pieDataActualFromAPIIn, pieDataActualFromAPIOut } from './pieData'
 import {
@@ -40,4 +45,9 @@ export {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedActualDataOut,
 }

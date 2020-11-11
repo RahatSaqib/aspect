@@ -86,6 +86,141 @@ const tickDataForBarDisplayMethodActualIn = [
   { month: 'Apr 20', MoreThan1000: 8, LessThan1000: 6, NotDetected: 3 },
 ]
 
+const treatmentAPIOptimumDataIn = [
+  { total: 26, cntConfirmed: 17, monthTested: '2020-05', pcConfirmed: 65.4 },
+  { total: 29, cntConfirmed: 18, monthTested: '2020-06', pcConfirmed: 62.1 },
+  { total: 36, cntConfirmed: 21, monthTested: '2020-07', pcConfirmed: 58.3 },
+  { total: 27, cntConfirmed: 13, monthTested: '2020-08', pcConfirmed: 48.1 },
+  { total: 25, cntConfirmed: 15, monthTested: '2020-09', pcConfirmed: 60 },
+  { total: 25, cntConfirmed: 17, monthTested: '2020-10', pcConfirmed: 68 },
+]
+
+const treatmentAPIOptimumDataOut = [
+  {
+    monthTested: 'May 20',
+    Confirmed: '65.4',
+    NotConfirmed: '34.6',
+    totalCnt: 26,
+  },
+  {
+    monthTested: 'Jun 20',
+    Confirmed: '62.1',
+    NotConfirmed: '37.9',
+    totalCnt: 29,
+  },
+  {
+    monthTested: 'Jul 20',
+    Confirmed: '58.3',
+    NotConfirmed: '41.7',
+    totalCnt: 36,
+  },
+  {
+    monthTested: 'Aug 20',
+    Confirmed: '48.1',
+    NotConfirmed: '51.9',
+    totalCnt: 27,
+  },
+  {
+    monthTested: 'Sep 20',
+    Confirmed: '60.0',
+    NotConfirmed: '40.0',
+    totalCnt: 25,
+  },
+  {
+    monthTested: 'Oct 20',
+    Confirmed: '68.0',
+    NotConfirmed: '32.0',
+    totalCnt: 25,
+  },
+]
+
+const treatmentAPISkewedDataIn = [
+  { total: 26, cntConfirmed: 0, monthTested: '2020-05', pcConfirmed: 0 },
+  { total: 29, cntConfirmed: 0, monthTested: '2020-06', pcConfirmed: 0 },
+  { total: 36, cntConfirmed: 0, monthTested: '2020-07', pcConfirmed: 0 },
+  { total: 27, cntConfirmed: 0, monthTested: '2020-08', pcConfirmed: 0 },
+  { total: 25, cntConfirmed: 0, monthTested: '2020-09', pcConfirmed: 0 },
+  { total: 25, cntConfirmed: 0, monthTested: '2020-10', pcConfirmed: 0 },
+]
+
+const treatmentAPISkewedPercentageDataOut = [
+  {
+    monthTested: 'May 20',
+    Confirmed: '0.0',
+    NotConfirmed: 100,
+    totalCnt: 26,
+  },
+  {
+    monthTested: 'Jun 20',
+    Confirmed: '0.0',
+    NotConfirmed: 100,
+    totalCnt: 29,
+  },
+  {
+    monthTested: 'Jul 20',
+    Confirmed: '0.0',
+    NotConfirmed: 100,
+    totalCnt: 36,
+  },
+  {
+    monthTested: 'Aug 20',
+    Confirmed: '0.0',
+    NotConfirmed: 100,
+    totalCnt: 27,
+  },
+  {
+    monthTested: 'Sep 20',
+    Confirmed: '0.0',
+    NotConfirmed: 100,
+    totalCnt: 25,
+  },
+  {
+    monthTested: 'Oct 20',
+    Confirmed: '0.0',
+    NotConfirmed: 100,
+    totalCnt: 25,
+  },
+]
+
+const treatmentAPISkewedActualDataOut = [
+  {
+    monthTested: 'May 20',
+    Confirmed: 0,
+    NotConfirmed: 26,
+    totalCnt: 26,
+  },
+  {
+    monthTested: 'Jun 20',
+    Confirmed: 0,
+    NotConfirmed: 29,
+    totalCnt: 29,
+  },
+  {
+    monthTested: 'Jul 20',
+    Confirmed: 0,
+    NotConfirmed: 36,
+    totalCnt: 36,
+  },
+  {
+    monthTested: 'Aug 20',
+    Confirmed: 0,
+    NotConfirmed: 27,
+    totalCnt: 27,
+  },
+  {
+    monthTested: 'Sep 20',
+    Confirmed: 0,
+    NotConfirmed: 25,
+    totalCnt: 25,
+  },
+  {
+    monthTested: 'Oct 20',
+    Confirmed: 0,
+    NotConfirmed: 25,
+    totalCnt: 25,
+  },
+]
+
 const tickDataForBarYAxisShapeBookendsDisplayPercentageOut = [0, 100]
 const tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut = [0, 50, 100]
 const tickDataForBarYAxisShapeBookendsDisplayActualOut = [0, 22]
@@ -102,4 +237,9 @@ export {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedActualDataOut,
 }

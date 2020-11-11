@@ -5,6 +5,7 @@ import {
   groupForPieRow,
   groupForDeviceStatusAPI,
   groupForDivergent,
+  groupForOldTreatmentAPI,
   generateTickValues,
   normaliseKeys,
 } from '../Formatters'
@@ -28,6 +29,11 @@ import {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedActualDataOut,
 } from './mocks/data.js'
 
 describe('Graph Helpers', () => {
@@ -71,6 +77,63 @@ describe('Graph Helpers', () => {
         const mergedParams = [{ currentMonth: '2020-10-01' }]
         const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
         expect(grouped).toEqual(pieRowDataFromAPIOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - for old treatment API bar', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'percentage'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPIOptimumDataIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPIOptimumDataOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - Skewed data as percentage', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'percentage'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPISkewedDataIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPISkewedPercentageDataOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - Skewed data as actual', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'actual'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPISkewedDataIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPISkewedActualDataOut)
       })
     })
 
