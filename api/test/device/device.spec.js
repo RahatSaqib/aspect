@@ -329,7 +329,6 @@ describe('Device routes', () => {
         const devicesReponse = await server
           .get(maintenanceStatusPath)
           .set('Authorization', `Bearer ${shared.token}`)
-        console.log(devicesResponse)
         assert.isOk(devicesReponse.body.ok)
         assert.equal(devicesReponse.body.length, devicesReponse.body.total)
         assert.equal(
