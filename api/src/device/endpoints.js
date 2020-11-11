@@ -772,6 +772,12 @@ const routes = [
                 maintenanceStatusManuallySet: Joi.number()
                   .allow(null)
                   .description('Whether the device status was manually set'),
+                status: Joi.string()
+                  .required()
+                  .description('The current status of the device'),
+                statusI18nKey: Joi.string()
+                  .required()
+                  .description('The i18n key for the name of the status'),
                 category: Joi.string()
                   .required()
                   .description('The device category'),

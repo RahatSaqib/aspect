@@ -38,7 +38,7 @@ const {
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe('Device routes', () => {
+describe.only('Device routes', () => {
   const path = '/api/device'
   let deviceId
   let deviceMaintenanceStatuses
@@ -329,6 +329,7 @@ describe('Device routes', () => {
         const devicesReponse = await server
           .get(maintenanceStatusPath)
           .set('Authorization', `Bearer ${shared.token}`)
+        console.log(devicesResponse)
         assert.isOk(devicesReponse.body.ok)
         assert.equal(devicesReponse.body.length, devicesReponse.body.total)
         assert.equal(
