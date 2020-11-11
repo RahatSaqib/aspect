@@ -68,7 +68,8 @@ describe('Graph Helpers', () => {
 
     describe('PieRowchart: groupForPieRow', () => {
       it('should group data by types correctly', () => {
-        const grouped = groupForPieRow(pieRowDataFromAPIIn)
+        const mergedParams = [{ currentMonth: '2020-10-01' }]
+        const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
         expect(grouped).toEqual(pieRowDataFromAPIOut)
       })
     })
