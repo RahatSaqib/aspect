@@ -11,7 +11,9 @@ import {
   treatmentAPIOptimumDataIn,
   treatmentAPIOptimumDataOut,
   treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
   treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 } from './barData'
 import { pieDataActualFromAPIIn, pieDataActualFromAPIOut } from './pieData'
@@ -48,6 +50,8 @@ export {
   treatmentAPIOptimumDataIn,
   treatmentAPIOptimumDataOut,
   treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
   treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 }

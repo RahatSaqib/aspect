@@ -143,6 +143,15 @@ const treatmentAPISkewedDataIn = [
   { total: 25, cntConfirmed: 0, monthTested: '2020-10', pcConfirmed: 0 },
 ]
 
+const treatmentAPISkewedDataOppositeIn = [
+  { total: 26, cntConfirmed: 26, monthTested: '2020-05', pcConfirmed: 100 },
+  { total: 29, cntConfirmed: 29, monthTested: '2020-06', pcConfirmed: 100 },
+  { total: 36, cntConfirmed: 36, monthTested: '2020-07', pcConfirmed: 100 },
+  { total: 27, cntConfirmed: 27, monthTested: '2020-08', pcConfirmed: 100 },
+  { total: 25, cntConfirmed: 25, monthTested: '2020-09', pcConfirmed: 100 },
+  { total: 25, cntConfirmed: 25, monthTested: '2020-10', pcConfirmed: 100 },
+]
+
 const treatmentAPISkewedPercentageDataOut = [
   {
     monthTested: 'May 20',
@@ -178,6 +187,45 @@ const treatmentAPISkewedPercentageDataOut = [
     monthTested: 'Oct 20',
     Confirmed: '0.0',
     NotConfirmed: 100,
+    totalCnt: 25,
+  },
+]
+
+const treatmentAPISkewedDataOppositePercentageOut = [
+  {
+    monthTested: 'May 20',
+    Confirmed: '100.0',
+    NotConfirmed: '0.0',
+    totalCnt: 26,
+  },
+  {
+    monthTested: 'Jun 20',
+    Confirmed: '100.0',
+    NotConfirmed: '0.0',
+    totalCnt: 29,
+  },
+  {
+    monthTested: 'Jul 20',
+    Confirmed: '100.0',
+    NotConfirmed: '0.0',
+    totalCnt: 36,
+  },
+  {
+    monthTested: 'Aug 20',
+    Confirmed: '100.0',
+    NotConfirmed: '0.0',
+    totalCnt: 27,
+  },
+  {
+    monthTested: 'Sep 20',
+    Confirmed: '100.0',
+    NotConfirmed: '0.0',
+    totalCnt: 25,
+  },
+  {
+    monthTested: 'Oct 20',
+    Confirmed: '100.0',
+    NotConfirmed: '0.0',
     totalCnt: 25,
   },
 ]
@@ -240,6 +288,8 @@ export {
   treatmentAPIOptimumDataIn,
   treatmentAPIOptimumDataOut,
   treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
   treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 }

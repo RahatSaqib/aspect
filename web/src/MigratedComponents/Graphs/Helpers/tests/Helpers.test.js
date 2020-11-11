@@ -32,7 +32,9 @@ import {
   treatmentAPIOptimumDataIn,
   treatmentAPIOptimumDataOut,
   treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
   treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 } from './mocks/data.js'
 
@@ -115,6 +117,25 @@ describe('Graph Helpers', () => {
           displayMethod
         )
         expect(grouped).toEqual(treatmentAPISkewedPercentageDataOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - Skewed data as percentage opposite', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'percentage'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPISkewedDataOppositeIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPISkewedDataOppositePercentageOut)
       })
     })
 
