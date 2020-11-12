@@ -156,37 +156,37 @@ const treatmentAPISkewedPercentageDataOut = [
   {
     monthTested: 'May 20',
     Confirmed: '0.0',
-    NotConfirmed: 100,
+    NotConfirmed: '100.0',
     totalCnt: 26,
   },
   {
     monthTested: 'Jun 20',
     Confirmed: '0.0',
-    NotConfirmed: 100,
+    NotConfirmed: '100.0',
     totalCnt: 29,
   },
   {
     monthTested: 'Jul 20',
     Confirmed: '0.0',
-    NotConfirmed: 100,
+    NotConfirmed: '100.0',
     totalCnt: 36,
   },
   {
     monthTested: 'Aug 20',
     Confirmed: '0.0',
-    NotConfirmed: 100,
+    NotConfirmed: '100.0',
     totalCnt: 27,
   },
   {
     monthTested: 'Sep 20',
     Confirmed: '0.0',
-    NotConfirmed: 100,
+    NotConfirmed: '100.0',
     totalCnt: 25,
   },
   {
     monthTested: 'Oct 20',
     Confirmed: '0.0',
-    NotConfirmed: 100,
+    NotConfirmed: '100.0',
     totalCnt: 25,
   },
 ]

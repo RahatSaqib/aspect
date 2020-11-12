@@ -276,7 +276,7 @@ const groupForOldTreatmentAPI = (
       NotConfirmed:
         curr[keyToConsume] < 1
           ? displayMethod === 'percentage'
-            ? 100
+            ? '100.0'
             : curr.total
           : Number(100 - curr[keyToConsume]).toFixed(1),
       totalCnt: curr.total,
