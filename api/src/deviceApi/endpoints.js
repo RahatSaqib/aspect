@@ -35,7 +35,8 @@ const logPayload = {
     .try(
       // either GeneXpert log ...
       Joi.object().keys({
-        externalId: Joi.string()
+        externalId: Joi.alternatives()
+          .try(Joi.string(), Joi.number())
           .allow('', null)
           .description('External unique id of the entry in remote system'),
         occurredOn: Joi.date()
@@ -416,7 +417,7 @@ const routes = [
     },
   },
   {
-    // POST /device {  configuration, operation, result }
+    // POST /device {  configuration, operation, result, log }
     method: 'POST',
     path: '/',
     handler: addDeviceDataHandler,
