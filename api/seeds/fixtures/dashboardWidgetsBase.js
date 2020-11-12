@@ -460,6 +460,7 @@ module.exports = {
       link: '/browse/result',
       linkParams: {
         deviceName: 'GeneXpert',
+        workflowStatusId: 2,
         dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
       },
       sortOrder: 3,
