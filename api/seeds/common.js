@@ -434,6 +434,7 @@ async function upsertJobFunctionPermission(
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
+  await knex('JobFunctionPermission').where({ jobFunctionId }).whereIn('permissionId', jobPermissions).delete()
   const JobFunctionPermission = _.map(
     jobPermissions.filter(
       permissionId => !existingJobFunctionPermissions.includes(permissionId)
@@ -443,7 +444,7 @@ async function upsertJobFunctionPermission(
       permissionId,
     })
   )
-  return knex('JobFunctionPermission').insert(JobFunctionPermission)
+  await knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
 
 async function upsertGxAlertDevice(
@@ -1731,8 +1732,6 @@ async function upsertJobFunctionFixture(
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
-        console.log(permission)
-        console.log(await knex('Permission').where({ module: permission.module, activity: permission.activity }).first())
         const { id: permissionId } = await getPermissonByModuleAndActivity(
           knex,
           permission.module,

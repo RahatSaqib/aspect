@@ -4,7 +4,7 @@
       "permissions": [
         {
           "module": "assay",
-          "activity": "edit"
+          "activity": "view"
         },
         {
           "module": "device",
@@ -17,6 +17,10 @@
         {
           "module": "result",
           "activity": "edit"
+        },
+        {
+          "module": "router",
+          "activity": "view"
         },
         {
           "module": "treatmentStatus",
@@ -47,16 +51,12 @@
           "activity": "edit"
         },
         {
-          "module": "browse",
-          "activity": "view"
-        },
-        {
           "module": "reporter",
           "activity": "edit"
         },
         {
           "module": "task",
-          "activity": "edit"
+          "activity": "view"
         },
         {
           "module": "operationalData",
@@ -71,11 +71,11 @@
           "activity": "edit"
         },
         {
-          "module": "deviceApiKey",
+          "module": "notification",
           "activity": "edit"
         },
         {
-          "module": "notification",
+          "module": "deviceApiKey",
           "activity": "edit"
         }
       ]
@@ -125,7 +125,7 @@
         },
         {
           "module": "task",
-          "activity": "edit"
+          "activity": "view"
         },
         {
           "module": "operationalData",

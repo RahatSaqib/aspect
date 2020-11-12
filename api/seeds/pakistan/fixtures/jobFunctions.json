@@ -47,10 +47,6 @@
         "activity": "edit"
       },
       {
-        "module": "browse",
-        "activity": "view"
-      },
-      {
         "module": "reporter",
         "activity": "edit"
       },
