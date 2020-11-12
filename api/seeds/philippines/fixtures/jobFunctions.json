@@ -32,7 +32,7 @@
           },
           {
             "module":"account",
-            "activity":"view"
+            "activity":"edit"
           },
           {
             "module":"dashboard",
@@ -114,7 +114,7 @@
           },
           {
             "module":"account",
-            "activity":"view"
+            "activity":"edit"
           },
           {
             "module":"dashboard",
@@ -127,7 +127,7 @@
     "permissions":[
       {
         "module":"account",
-        "activity":"view"
+        "activity":"edit"
       }
     ]
   },
@@ -164,7 +164,7 @@
         },
         {
           "module":"account",
-          "activity":"view"
+          "activity":"edit"
         },
         {
           "module":"reporter",
@@ -209,7 +209,7 @@
           },
           {
             "module":"account",
-            "activity":"view"
+            "activity":"edit"
           },
           {
             "module":"reporter",

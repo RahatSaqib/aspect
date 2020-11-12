@@ -8,6 +8,8 @@ const { query } = require('../src/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
+const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const defaultJobFunctionsFixture = require('./common/fixtures/jobFunctions.json')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
@@ -47,7 +49,8 @@ async function commonUpserts(
   geography,
   countryAbbreviation,
   deviceApiToken = null,
-  usersInsertConfig = null
+  usersInsertConfig = null,
+  partnerData = false
 ) {
   const now = new Date()
   utils.hasSeededStaticData = true
@@ -59,7 +62,6 @@ async function commonUpserts(
   }
 
   // Reuse previously seeded "static" data
-  const modules = await utils.getPermissionModules(knex)
   const countries = {}
   await Promise.each(geography.countries, async country => {
     const countryData = _.pick(country, [
@@ -125,21 +127,12 @@ async function commonUpserts(
       ...auditFields,
     })
   }
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.demo.edit,
-    modules.issue.edit,
-    modules.assay.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.reporter.edit,
-    modules.browse.view,
-    modules.person.edit,
-  ])
+
+  const { fixtures = false } = partnerData
+  // upsertJobFunctionFixture by using the job functions set at 
+  await upsertJobFunctionFixture(knex, fixtures.jobFunctions || defaultJobFunctionsFixture, partnerId)
+
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin' }).first()
   let { id: jobIdAdmin } =
     (await knex('Job')
       .where({
@@ -166,46 +159,6 @@ async function commonUpserts(
       geographyId,
     })
   }
-  await upsertJobFunction(knex, 'Regional Officer', partnerId, [
-    modules.browse.view,
-    modules.assay.view,
-    modules.result.edit,
-    modules.device.view,
-    modules.treatmentStatus.view,
-    modules.site.view,
-    modules.person.view,
-    modules.case.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-  ])
-  await upsertJobFunction(knex, 'Lab User', partnerId, [
-    modules.browse.view,
-    modules.result.edit,
-    modules.assay.view,
-    modules.device.view,
-    modules.site.view,
-    modules.treatmentStatus.view,
-    modules.account.view,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.case.edit,
-    modules.person.view,
-  ])
-  await upsertJobFunction(knex, 'Clinician', partnerId, [
-    modules.site.view,
-    modules.device.view,
-    modules.assay.view,
-    modules.inventory.view,
-    modules.result.edit,
-    modules.browse.view,
-    modules.treatmentStatus.edit,
-    modules.dashboard.result,
-    modules.dashboard.summary,
-    modules.case.edit,
-    modules.account.edit,
-    modules.router.edit,
-    modules.person.view,
-  ])
 
   if (deviceApiToken) {
     await upsertGxAlertDevice(
@@ -434,7 +387,7 @@ async function upsertJobFunctionPermission(
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
-  await knex('JobFunctionPermission').where({ jobFunctionId }).whereIn('permissionId', jobPermissions).delete()
+  await knex('JobFunctionPermission').where({ jobFunctionId }).whereNotIn('permissionId', jobPermissions).delete()
   const JobFunctionPermission = _.map(
     jobPermissions.filter(
       permissionId => !existingJobFunctionPermissions.includes(permissionId)
@@ -1083,13 +1036,13 @@ async function baseGxAlertMigration(
     { ...defaultGxAlertMigrationVariables },
     variables
   )
-  const {
+  let {
     admin,
     partner,
     geographyFromGxAlert,
     gxAlertDevice,
     sitesFromGxAlert,
-    jobFunctions: jobFunctionsFixture,
+    jobFunctions = defaultJobFunctionsFixture,
     contactsFromGxAlert,
     geneXpertAssayExternalIds,
     customFieldsFromGxAlert,
@@ -1508,27 +1461,9 @@ async function baseGxAlertMigration(
     )
   returnValue.siteIds = siteIds
 
-  // -----------------------------
-  // Job Functions and Permissions
-  // -----------------------------
-  const { getPermissonByModuleAndActivity } = utils
-  await Promise.each(jobFunctionsFixture, async jf => {
-    const jobFunction = _.omit(jf, ['permissions'])
-    const permissionIds = await Promise.map(
-      jf.permissions || [],
-      async permission => {
-        const { id: permissionId } = await getPermissonByModuleAndActivity(
-          knex,
-          permission.module,
-          permission.activity
-        )
-        return permissionId
-      }
-    )
-    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
-  })
+  await upsertJobFunctionFixture(knex, jobFunctions, partnerId)
 
-  const jobFunctions = await knex('JobFunction')
+  jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
     .then(items =>
@@ -2094,6 +2029,31 @@ async function upsertConsumables(
   }
 }
 
+async function upsertPermissionFixture(knex) {
+  const currentPermissions = await knex('Permission')
+
+  // Remove deprecated permissions
+  const permissionsDeletions = currentPermissions.map(async ({ module, activity, id }) => {
+    const shouldRemovePermission = permissionsFixture.find(p => p.module === module && p.activity === activity) === null
+    if (shouldRemovePermission) {
+      await knex('JobFunctionPermission').where({ permissionId: id }).delete()
+      await knex('Permission').where({ id }).delete()
+    } 
+  })
+  await Promise.all(permissionsDeletions)
+
+  // Add or update permissions
+  const permissionsInsertionsAndUpdates = permissionsFixture.map(async ({ module, activity, description }) => {
+    const currentPermission = currentPermissions.find(up => up.module === module && up.activity === activity)
+    if (currentPermission) {
+      await knex('Permission').where({ module, activity }).update({ description })
+    } else {
+      await knex('Permission').insert({ module, activity, description })
+    }
+  })
+  await Promise.all(permissionsInsertionsAndUpdates)
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -2111,4 +2071,5 @@ module.exports = {
   upsertDashboardWidgets,
   upsertConsumables,
   upsertJobFunctionFixture,
+  upsertPermissionFixture,
 }
