@@ -5189,7 +5189,6 @@ async function seed(knex) {
       modules.case.edit,
       modules.account.edit,
       modules.router.edit,
-      modules.manage.view,
     ]
   )
 

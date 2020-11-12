@@ -30,7 +30,7 @@ const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial
 
   Module Serial: {{result.moduleSerial}}
 
-  Module Slot: {{result.moduleName}} `
+  Module Name or Serial: {{result.moduleName}} `
 
 const errorIssueAlertLot =
   ' ({{result.errorCode}}) on lot ({{result.consumableLot}}) at {{site.name}}'
