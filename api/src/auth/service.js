@@ -333,6 +333,10 @@ async function getAccessToken(
   { id, name, partnerId, personId },
   clientType = 'web'
 ) {
+  console.log(id)
+  console.log(name)
+  console.log(partnerId)
+  console.log(personId)
   const permissions = await query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
@@ -343,6 +347,8 @@ async function getAccessToken(
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then(data => data.map(p => `${p.module}:${p.activity}`))
+
+  console.log('permissions', permissions)
 
   const applicableLicense = await getApplicableLicense(personId, partnerId)
   const geography = await getGeographyAccess(personId, partnerId)

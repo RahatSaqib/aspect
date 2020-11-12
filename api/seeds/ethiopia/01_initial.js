@@ -4,7 +4,7 @@ const _ = require('lodash')
 
 const geographyFromGxAlert = require('./fixtures/geographyFromGxAlert.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
-const jobFunctions = require('./fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('./fixtures/jobFunctions.json')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const labClinic = require('./fixtures/labClinic.json')
@@ -23,7 +23,7 @@ async function seed(knex) {
         deviceApiKeyToken: '1tfw5604jfn09gx7upd0',
       },
       sitesFromGxAlert,
-      jobFunctions,
+      jobFunctionsFixture,
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },

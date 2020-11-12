@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { baseGxAlertMigration } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
-const jobFunctions = require('../../common/fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('../../common/fixtures/jobFunctions.json')
 
 const { diseaseToId } = require('../../../src/shared/dictionary')
 
@@ -62,7 +62,7 @@ module.exports = async function (
         deviceApiKeyToken: gxAlertDeviceApiKey,
       },
       sitesFromGxAlert,
-      jobFunctions,
+      jobFunctionsFixture,
       contactsFromGxAlert,
       geneXpertAssayExternalIds,
       customFieldsFromGxAlert,

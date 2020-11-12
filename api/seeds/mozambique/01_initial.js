@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const jobFunctions = require('./fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('./fixtures/jobFunctions.json')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const geographyFromGxAlert = require('./fixtures/geography.json')
@@ -30,7 +30,7 @@ async function seed(knex) {
         deviceApiKeyToken: 'dwumjc2a7ke5w6a1c0e0',
       },
       sitesFromGxAlert,
-      jobFunctions,
+      jobFunctionsFixture,
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },

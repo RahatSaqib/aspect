@@ -132,7 +132,7 @@ async function commonUpserts(
   // upsertJobFunctionFixture by using the job functions set at 
   await upsertJobFunctionFixture(knex, fixtures.jobFunctions || defaultJobFunctionsFixture, partnerId)
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin' }).first()
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
   let { id: jobIdAdmin } =
     (await knex('Job')
       .where({
@@ -1042,7 +1042,7 @@ async function baseGxAlertMigration(
     geographyFromGxAlert,
     gxAlertDevice,
     sitesFromGxAlert,
-    jobFunctions = defaultJobFunctionsFixture,
+    jobFunctionsFixture = defaultJobFunctionsFixture,
     contactsFromGxAlert,
     geneXpertAssayExternalIds,
     customFieldsFromGxAlert,
@@ -1460,10 +1460,10 @@ async function baseGxAlertMigration(
       }, {})
     )
   returnValue.siteIds = siteIds
+  
+  await upsertJobFunctionFixture(knex, jobFunctionsFixture, partnerId)
 
-  await upsertJobFunctionFixture(knex, jobFunctions, partnerId)
-
-  jobFunctions = await knex('JobFunction')
+  const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
     .then(items =>
@@ -1472,7 +1472,7 @@ async function baseGxAlertMigration(
         return jobFunctionMap
       }, {})
     )
-
+  
   // -------------------------------------
   // Contacts & User Accounts from GxAlert (filtering users without jobFunctions)
   // -------------------------------------
