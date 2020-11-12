@@ -1720,6 +1720,31 @@ async function baseGxAlertMigration(
   return returnValue
 }
 
+async function upsertJobFunctionFixture(
+  knex,
+  jobFunctionFixture,
+  partnerId
+) {
+  const { getPermissonByModuleAndActivity } = utils
+  await Promise.each(jobFunctionFixture, async jf => {
+    const jobFunction = _.omit(jf, ['permissions'])
+    const permissionIds = await Promise.map(
+      jf.permissions || [],
+      async permission => {
+        console.log(permission)
+        console.log(await knex('Permission').where({ module: permission.module, activity: permission.activity }).first())
+        const { id: permissionId } = await getPermissonByModuleAndActivity(
+          knex,
+          permission.module,
+          permission.activity
+        )
+        return permissionId
+      }
+    )
+    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
+  })
+}
+
 async function seedLabClinicFixture(
   labClinics,
   seededData = { adminId: 0, partnerId: 0, countryId: 0, statesByName: {} },
@@ -2086,4 +2111,5 @@ module.exports = {
   ensureResultTreatmentStatuses,
   upsertDashboardWidgets,
   upsertConsumables,
+  upsertJobFunctionFixture,
 }
