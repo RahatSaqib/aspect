@@ -87,7 +87,8 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
         'm.fileReferenceId',
         'm.resultId',
         'fct.mimeType',
-        'fct.mimeSubType'
+        'fct.mimeSubType',
+        'tmpl.okResponseSuccessRegex'
       )
     if (message) {
       const contentType = `${message.mimeType}/${message.mimeSubType}`
@@ -135,7 +136,16 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
           if (responseText) {
             messageUpdates.response += ` ${responseText}`
           }
-          webhookError = !resp.ok
+          if (message.okResponseSuccessRegex) {
+            webhookError = !(
+              messageUpdates.response &&
+              new RegExp(message.okResponseSuccessRegex, 'im').test(
+                messageUpdates.response
+              )
+            )
+          } else {
+            webhookError = !resp.ok
+          }
         } catch (err) {
           webhookError = true
           messageUpdates.response = err.toString()

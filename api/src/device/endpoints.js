@@ -89,7 +89,7 @@ function listDevicesBaseRequest() {
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
           'state',
-          'approval',
+          'statusI18nKey',
           'errorRate',
           'createdOn',
           'lastSeen',
@@ -160,6 +160,12 @@ function listDevicesBaseResponse() {
               approval: Joi.string()
                 .required()
                 .description('The current approval status of the device'),
+              status: Joi.string()
+                .required()
+                .description('The current status of the device'),
+              statusI18nKey: Joi.string()
+                .required()
+                .description('The i18n key for the name of the status'),
               maintenanceStatus: Joi.string()
                 .allow('', null)
                 .description('The current maintenance status of the device'),
@@ -766,6 +772,12 @@ const routes = [
                 maintenanceStatusManuallySet: Joi.number()
                   .allow(null)
                   .description('Whether the device status was manually set'),
+                status: Joi.string()
+                  .required()
+                  .description('The current status of the device'),
+                statusI18nKey: Joi.string()
+                  .required()
+                  .description('The i18n key for the name of the status'),
                 category: Joi.string()
                   .required()
                   .description('The device category'),
