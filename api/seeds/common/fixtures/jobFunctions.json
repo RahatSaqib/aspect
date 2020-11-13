@@ -77,6 +77,10 @@
         {
           "module": "deviceApiKey",
           "activity": "edit"
+        },
+        {
+          "module": "report",
+          "activity": "view"
         }
       ]
     },
@@ -146,6 +150,10 @@
         {
           "module": "deviceApiKey",
           "activity": "edit"
+        },
+        {
+          "module": "report",
+          "activity": "view"
         }
       ]
     },
@@ -215,6 +223,10 @@
         {
           "module": "deviceApiKey",
           "activity": "view"
+        },
+        {
+          "module": "report",
+          "activity": "view"
         }
       ]
     },
@@ -283,6 +295,10 @@
         },
         {
           "module": "deviceApiKey",
+          "activity": "view"
+        },
+        {
+          "module": "report",
           "activity": "view"
         }
       ]
