@@ -96,7 +96,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
-    'assayName',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -320,30 +319,6 @@ const ResultList = () => {
       })
   )
 
-  // >>>>>> Lifecycles <<<<<<
-  useEffect(() => {
-    if (data) {
-      const { data: list, total: totalItems } = data
-      setItems(receiveList(items, Immutable.fromJS(list)))
-      setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems))
-      setColumns(
-        getBaseColumns(intl).concat(
-          table.extraColumns.map(column => ({
-            key: column.get('db'),
-            label: messageByI18nKey(column.get('i18nKey'))(
-              column.get('title'),
-              intl
-            ),
-            sortable: true,
-            hiddenOn: 'md',
-          }))
-        )
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
-
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -372,6 +347,30 @@ const ResultList = () => {
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
+
+  // >>>>>> Lifecycles <<<<<<
+  useEffect(() => {
+    if (data) {
+      const { data: list, total: totalItems } = data
+      setItems(receiveList(items, Immutable.fromJS(list)))
+      setTotal(totalItems)
+      setTable(receiveTableItems(table, totalItems))
+      setColumns(
+        getBaseColumns(intl).concat(
+          table.extraColumns.map(column => ({
+            key: column.get('db'),
+            label: messageByI18nKey(column.get('i18nKey'))(
+              column.get('title'),
+              intl
+            ),
+            sortable: true,
+            hiddenOn: 'md',
+          }))
+        )
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
 
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {

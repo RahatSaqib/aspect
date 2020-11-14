@@ -184,6 +184,7 @@ export class AssaySelectField extends PureComponent {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
+    assayItemsLoading: PropTypes.oneOfType(['bool']).isRequired,
     onAssayChange: PropTypes.func.isRequired,
     diseaseId: PropTypes.string,
     assayTypeId: PropTypes.string,
@@ -213,6 +214,7 @@ export class AssaySelectField extends PureComponent {
       allItemText,
       intl: { formatMessage },
       assayItems,
+      assayItemsLoading,
       onAssayChange,
     } = this.props
 
@@ -226,9 +228,16 @@ export class AssaySelectField extends PureComponent {
       'value',
     ])
     const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
-    if (isSingleAssay && value !== validAssays.first().get('id')) {
+
+    if (
+      assayItemsLoading === false &&
+      isSingleAssay &&
+      value !== validAssays.first().get('id')
+    ) {
       onAssayChange(validAssays.first().get('id'))
-    } else if (validAssays.size === 0 && value) onAssayChange()
+    } else if (assayItemsLoading === false && validAssays.size === 0 && value)
+      onAssayChange()
+
     const validFilteredAssays = assayItems =>
       assayItems.filter(
         a =>
@@ -270,6 +279,7 @@ export class AssaySelectField extends PureComponent {
 function mapStateToProps(state) {
   return {
     assayItems: state.assay.items,
+    assayItemsLoading: state.assay.loading,
   }
 }
 

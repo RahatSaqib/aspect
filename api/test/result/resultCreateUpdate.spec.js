@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { format: dateFormat } = require('date-fns')
@@ -8,7 +7,8 @@ const shared = require('../utils/sharedToken')
 const { assayToId, resultCategoryToId } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('Result create and update routes', () => {

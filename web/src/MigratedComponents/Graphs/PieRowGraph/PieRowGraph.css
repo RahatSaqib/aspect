@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   border-radius: 15px;
 }
 
@@ -34,7 +34,7 @@
   font-size: 1em;
   text-align: right;
   padding-right: 15px;
-  max-width: fit-content;
+  min-width: 100px;
 }
 
 .piegraphs__columnGraph {

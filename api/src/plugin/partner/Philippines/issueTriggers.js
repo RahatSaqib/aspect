@@ -1,42 +1,77 @@
 const _ = require('lodash')
 
+async function getDeliverableTbResult(knex, resultId) {
+  return knex('Result as r')
+    .join('Assay as a', 'r.assayId', 'a.id')
+    .join('ResultWorkflowLog as rwl', 'r.id', `rwl.resultId`)
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', `rws.id`)
+    .whereIn('a.externalId', [
+      'GxMtbRif',
+      'GxMtbRifUltra',
+      'assayBdMgitAst',
+      'assayBdMgitGnd',
+      'assayGenericDst',
+      'assayGenericCulture',
+      'assayLPA',
+      'assaySmear',
+      'assayTbLamp',
+    ])
+    .andWhere('r.id', resultId)
+    .andWhere('rws.externalId', 'Deliverable')
+    .first('r.id', 'r.patientData')
+}
+
+async function resultHasActiveIssue(knex, resultId, issueTypeExternalId) {
+  const activeIssues = await knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
+    .andWhere({
+      'i.resultId': resultId,
+      'it.externalId': issueTypeExternalId,
+    })
+    .select('i.id')
+  return !_.isEmpty(activeIssues)
+}
+
 async function shouldSendResultToItis(knex, action) {
   if (action.resultId) {
-    const result = await knex('Result as r')
-      .join('Assay as a', 'r.assayId', 'a.id')
-      .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', `rwl.id`)
-      .join(
-        'ResultWorkflowStatus as rws',
-        'rwl.resultWorkflowStatusId',
-        `rws.id`
-      )
-      .whereIn('a.externalId', [
-        'GxMtbRif',
-        'GxMtbRifUltra',
-        'assayBdMgitAst',
-        'assayBdMgitGnd',
-        'assayGenericDst',
-        'assayGenericCulture',
-        'assayLPA',
-        'assaySmear',
-        'assayTbLamp',
-      ])
-      .andWhere('r.id', action.resultId)
-      .andWhere('rws.externalId', 'Deliverable')
-      .first('r.id')
+    const result = await getDeliverableTbResult(knex, action.resultId)
     if (_.isEmpty(result)) {
       return false
     }
-    const resultUpdatedIssueResults = await knex('Issue as i')
-      .join('IssueType as it', 'i.issueTypeId', 'it.id')
-      .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-      .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
-      .andWhere({
-        'i.resultId': action.resultId,
-        'it.externalId': 'ResultUpdated',
-      })
-      .select('i.id')
-    if (_.isEmpty(resultUpdatedIssueResults)) {
+    const patientData = JSON.parse(result.patientData || '{}')
+    if (!patientData.id && !patientData.tbCaseNumber) {
+      return false
+    }
+    const hasActiveIssues = await resultHasActiveIssue(
+      knex,
+      action.resultId,
+      'ResultUpdated'
+    )
+    if (!hasActiveIssues) {
+      return true
+    }
+  }
+  return false
+}
+
+async function shouldSendResultToPatientAsSms(knex, action) {
+  if (action.resultId) {
+    const result = await getDeliverableTbResult(knex, action.resultId)
+    if (_.isEmpty(result)) {
+      return false
+    }
+    const patientData = JSON.parse(result.patientData || '{}')
+    if (!patientData.phone) {
+      return false
+    }
+    const hasActiveIssues = await resultHasActiveIssue(
+      knex,
+      action.resultId,
+      'ResultUpdatedPatientSms'
+    )
+    if (!hasActiveIssues) {
       return true
     }
   }
@@ -45,4 +80,5 @@ async function shouldSendResultToItis(knex, action) {
 
 module.exports = {
   shouldSendResultToItis,
+  shouldSendResultToPatientAsSms,
 }

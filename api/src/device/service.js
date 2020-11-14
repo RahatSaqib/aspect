@@ -44,6 +44,12 @@ const SELECT_LIST_FIELDS = [
   'st.name as state',
   'dt.name as type',
   's.name as siteName',
+  knex.raw(
+    "CASE WHEN da.token = 'approved' AND ISNULL(dms.name) = 0 THEN dms.name ELSE da.name END as status"
+  ),
+  knex.raw(
+    "CASE WHEN da.token = 'approved' AND ISNULL(dms.i18nKey) = 0 THEN dms.i18nKey ELSE da.i18nKey END as statusI18nKey"
+  ),
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
@@ -770,7 +776,7 @@ async function getDevicesForReport(auth, query) {
     .clone()
     .modify(sortPageParams, query, 'name')
     .select([
-      ...SELECT_LIST_FIELDS,
+      ..._.filter(SELECT_LIST_FIELDS, elem => elem.indexOf('dms') < 0),
       'd.serial',
       queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults

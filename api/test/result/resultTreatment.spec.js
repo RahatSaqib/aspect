@@ -1,10 +1,10 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const dateFormat = require('date-fns/format')
 const { subMonths, endOfMonth } = require('date-fns')
 const shared = require('../utils/sharedToken')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 const path = '/api/result/confirmed-treatment-tracking'

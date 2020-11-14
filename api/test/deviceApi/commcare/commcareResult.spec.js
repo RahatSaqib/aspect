@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const { getCommCarePayload } = require('./commcare_utils')
 const {
@@ -9,7 +8,8 @@ const {
 } = require('../utils')
 const { waitForIdle } = require('../../utils/mqUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert } = chai
 
 const pluginPath = '/device/plugin/commcare'
