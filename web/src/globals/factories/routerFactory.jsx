@@ -488,6 +488,16 @@ const AppRoutes = ({ props }) => {
       />
 
       <Route
+        path="/browse/notification/:notificationId"
+        render={
+          renderRedirectToLoginOr(props) ||
+          renderRedirectToLicenseOr(props) ||
+          renderRedirectToNotFound(props, ['browse', 'notification']) ||
+          renderNotificationList
+        }
+      />
+
+      <Route
         exact
         path="/browse/report"
         render={
