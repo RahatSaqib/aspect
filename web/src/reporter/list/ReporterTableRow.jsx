@@ -8,7 +8,7 @@ import {
 } from '../../components/shared/tableBody'
 import isEditable from '../../shared/selectors/isEditable'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
-import { updateSingleReporter } from '../ReporterRedux'
+import { updateSingleReporter } from '../ReporterQueries'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
