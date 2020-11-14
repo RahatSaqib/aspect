@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { format } = require('date-fns')
@@ -8,7 +7,8 @@ const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { addConstraints, getConstraints } = require('../../src/auth/constraints')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 function queryResultFollowUpLastItems(knex, followUpTypes) {

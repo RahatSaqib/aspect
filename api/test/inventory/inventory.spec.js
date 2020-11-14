@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
@@ -8,7 +7,7 @@ const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 
 const { assert } = chai
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 describe('Inventory Routes', () => {
   describe('Inventory List Route', () => {

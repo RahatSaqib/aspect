@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
 
@@ -6,7 +5,8 @@ const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('Notification routes', () => {

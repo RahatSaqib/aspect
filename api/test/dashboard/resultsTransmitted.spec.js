@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const {
   format,
@@ -22,7 +22,7 @@ const {
   messageStatusToId,
 } = require('../../src/shared/dictionary')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 // helper func for percentages
@@ -223,10 +223,9 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         // -----------------------------
         const resultElement = {
           ...auditFields,
-          externalId: `UQTB-${i}-${format(
-            new Date(new Date() * _.random(1, 10)),
-            'tt'
-          )}-D`,
+          externalId: `UQTB-${_.times(8, () =>
+            _.toUpper(_.random(36).toString(36))
+          ).join('')}`,
           assayId: assayGeneXpertMtbRif.id,
           partnerId,
           geographyId,

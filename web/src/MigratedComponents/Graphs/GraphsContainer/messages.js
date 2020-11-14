@@ -19,7 +19,7 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsVLTitle: {
     id: 'pages.Status.clinicalIndicatorsVL.title',
-    defaultMessage: 'VL Outcomes',
+    defaultMessage: 'VL Results',
   },
   clinicalIndicatorsTBTitle: {
     id: 'pages.Status.clinicalIndicatorsTB.title',
@@ -27,7 +27,7 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsTBDetected: {
     id: 'pages.Status.clinicalIndicatorsTBDetected.title',
-    defaultMessage: 'TB Detected',
+    defaultMessage: 'TB Results',
   },
   inventoryGraphStatus: {
     id: 'pages.Status.inventoryGraphStatus.title',
