@@ -103,6 +103,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withRevoked',
     defaultMessage: 'revoked is "{revokedStatus}"',
   },
+  onlyReportableResults: {
+    id: 'filter.btnGroup.onlyReportableResults',
+    defaultMessage: 'Show Only Reportable Results',
+  },
 })
 const revokedOptions = [
   {
@@ -162,6 +166,7 @@ const filtersOrdering = {
   // -1: Special orderings
   siteIds: -1,
   patientOrCaseId: 23,
+  onlyReportableResults: 23,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -361,6 +366,9 @@ const buttonBy = {
     intl.formatMessage(messages.whereSiteIdIsIn, {
       joinedIds: siteIds,
     })
+  ),
+  onlyReportableResults: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyReportableResults)
   ),
 }
 

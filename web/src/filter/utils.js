@@ -226,6 +226,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'onlyDisease':
               result.onlyDisease = true
               break
+            case 'onlyReportableResults':
+              result.onlyReportableResults = true
+              break
             default:
           }
         })
