@@ -503,7 +503,7 @@ function listResultsBaseConfig() {
         onlyReportableResults: Joi.boolean()
           .optional()
           .description(
-            'It filters only results with no "Invalid", "No result" or with "Error" categories'
+            'It filters only results with no "Invalid", "No result" or "Error" categories'
           ),
       },
     },
