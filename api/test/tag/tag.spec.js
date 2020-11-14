@@ -41,6 +41,8 @@ describe('Tag routes', () => {
     afterEach(async () => {
       await context.afterEach()
     })
+    // check the endpoint routes and authorizations
+    shared.checkToken(server, `${path}/result`)
 
     it('should return a list of tags when using valid token', async () => {
       const res = await server
@@ -55,7 +57,5 @@ describe('Tag routes', () => {
       assert.property(res.body.data[0], 'title')
       assert.property(res.body.data[0], 'partnerId')
     })
-    // check the endpoint routes and authorizations
-    shared.checkToken(server, `${path}/result`)
   })
 })
