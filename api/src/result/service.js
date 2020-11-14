@@ -2123,7 +2123,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       treatmentStatusId: 'rts.id',
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
-      onlyReportablesResults: 'rca.reportable',
+      onlyReportableResults: 'rca.reportable',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
