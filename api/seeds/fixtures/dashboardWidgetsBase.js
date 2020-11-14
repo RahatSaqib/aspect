@@ -123,6 +123,7 @@ module.exports = {
       link: '/browse/result',
       linkParams: {
         deviceName: 'GeneXpert',
+        onlyReportableResults: true,
         dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
       },
       sortOrder: 2,
