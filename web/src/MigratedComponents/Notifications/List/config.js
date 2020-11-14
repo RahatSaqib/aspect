@@ -16,6 +16,7 @@ import { timeClassification, totalItemCount } from '../../AspectTable/Helpers'
 import ContactsCell from '../../AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../AspectTable/TableCell/NumberCell'
+import NotificationsContextualMenu from './NotificationsContextualMenu'
 
 const baseConfig = ({ formatMessage, formatNumber }) => ({
   name: 'notification',
@@ -73,6 +74,7 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     allow: true,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
   },
+  contextualMenu: NotificationsContextualMenu,
 })
 
 export default baseConfig

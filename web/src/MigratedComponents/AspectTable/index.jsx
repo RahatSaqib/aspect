@@ -34,6 +34,7 @@ const AspectTable = ({ tableData: data, config }) => {
     columns,
     initialSortBy,
     columnOrder: { allow: allowColumnReOrder, initialOrder } = false,
+    contextualMenu: ContextualMenu,
   } = useMemo(() => buildColumnsFromData(config), [config])
 
   const table = useTable(
@@ -191,6 +192,7 @@ const AspectTable = ({ tableData: data, config }) => {
                   )
                 }
               )}
+              {ContextualMenu ? <TableCell /> : null}
             </TableRow>
           ))}
         </TableHead>
@@ -240,6 +242,11 @@ const AspectTable = ({ tableData: data, config }) => {
                     )
                   }
                 )}
+                {ContextualMenu ? (
+                  <TableCell>
+                    <ContextualMenu item={row} />
+                  </TableCell>
+                ) : null}
               </TableRow>
             )
           })}
