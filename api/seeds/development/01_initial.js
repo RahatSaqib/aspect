@@ -4166,7 +4166,15 @@ async function seed(knex) {
         const culture = _.includes(['Jim', 'Sam'], name)
           ? countries.NG.culture
           : countries.US.culture
+        const countryAbbreviation = _.includes(['Jim', 'Sam'], name)
+          ? countries.NG.abbreviation
+          : countries.US.abbreviation
 
+        const geographiesId = await knex('Country as c')
+          .join('Geography as g', 'c.id', 'g.countryId')
+          .where({ abbreviation: countryAbbreviation })
+          .select('g.id')
+          .pluck('g.id')
         const [personId] = await knex('Person').insert({
           userId,
           name,
@@ -4174,7 +4182,7 @@ async function seed(knex) {
           lastCountryId,
           timezone,
           culture,
-          geographyId: geographies[geographies.length % userId].id,
+          geographyId: _.sample(geographiesId),
           ...auditFields,
         })
         personIds[name.toLowerCase()] = personId

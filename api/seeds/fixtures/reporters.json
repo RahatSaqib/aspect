@@ -1,74 +1,74 @@
 [
-    {
-        "userId": 1,
-        "clientId": "7c9acea148de66d5",
-        "clientName": "moto g(6) plus",
-        "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK1E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
-        "deviceTokenId": "czCdZoZvFt4:APA91bFkYdqeWlAv9ikzM7oEjt7Hd1LyFA-CJV40uUey5rqR8eOi12kvdvJZD7Q5XqCi-s9dA06-j14fgXJezVZYGs7ai5flBQ7qsaFvVvvlz7a_Zfu8e-Hl_oW3rlyJgCXaRd0FR28q",
-        "expires": "2019-12-11 17:56:29",
-        "revoked": "0",
-        "createdOn": "2019-11-18 12:51:05",
-        "clientType": "reporter_app",
-        "updatedOn": null
-    },
-    {
-        "userId": 2,
-        "clientId": "stri5ng",
-        "clientName": "Tecno F5",
-        "token": "D7EWS+LPKVfE58dIcPA294Isc1QHwDE/hJF6DGTJMDqhUoTCytaiMvtmsrJyzDiF",
-        "deviceTokenId": "string",
-        "expires": "2019-12-07 18:49:37",
-        "revoked": "0",
-        "createdOn": "2019-11-19 18:49:37",
-        "clientType": "reporter_app",
-        "updatedOn": null
-    },
-    {
-        "userId": 3,
-        "clientId": "7c9acea298de66d5",
-        "clientName": "Samsung Galaxy",
-        "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK2E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
-        "deviceTokenId": "czCdZoZvFt4:APA91bFkYdqeWlAv9ikzM7oEjt7Hd1LyFA-CJV40uUey5rqR8eOi12kvdvJZD7Q5XqCi-s9dA06-j14fgXJezVZYGs7ai5flBQ7qsaFvVvvlz7a_Zfu8e-Hl_oW3rlyJgCXaRd0FR28q",
-        "expires": "2019-12-11 17:56:29",
-        "revoked": "0",
-        "createdOn": "2019-11-20 12:52:05",
-        "clientType": "reporter_app",
-        "updatedOn": null
-    },
-    {
-        "userId": 4,
-        "clientId": "stri1ng",
-        "clientName": "Infinix ",
-        "token": "D7EWS+LPKVfE58dIcPA294Isc1QHwDE/gJFD7GTJMDqhUoTCytaiMvtmsrJyzDiF",
-        "deviceTokenId": "string",
-        "expires": "2019-12-07 18:49:37",
-        "revoked": "0",
-        "createdOn": "2019-11-21 18:50:37",
-        "clientType": "reporter_app",
-        "updatedOn": null
-    },
-    {
-        "userId": 5,
-        "clientId": "7c9acea348de66d5",
-        "clientName": "moto g(6) plus",
-        "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK8E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
-        "deviceTokenId": "czCdZoZvFt4:APA91bFkYdqeWlAv9ikzM7oEjt7Hd1LyFA-CJV40uUey5rqR8eOi12kvdvJZD7Q5XqCi-s9dA06-j14fgXJezVZYGs7ai5flBQ7qsaFvVvvlz7a_Zfu8e-Hl_oW3rlyJgCXaRd0FR28q",
-        "expires": "2019-12-11 17:56:29",
-        "revoked": "0",
-        "createdOn": "2019-11-22 12:53:05",
-        "clientType": "reporter_app",
-        "updatedOn": null
-    },
-    {
-        "userId": 6,
-        "clientId": "strin4g",
-        "clientName": "ariel",
-        "token": "D7EWS+LPKVfE58dIcPA294Isc2QHwDE/gJF6DGTJMDqhUoTCytaiMvtmsrJyzDiF",
-        "deviceTokenId": "string",
-        "expires": "2019-12-07 18:49:37",
-        "revoked": "0",
-        "createdOn": "2019-11-23 18:54:37",
-        "clientType": "reporter_app",
-        "updatedOn": null
-    }
+  {
+    "userId": 1,
+    "clientId": "7c9acea148de66d5",
+    "clientName": "moto g(6) plus",
+    "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK1E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
+    "deviceTokenId": "czCdZoZvFt4:APA91bFkYdqeWlAv9ikzM7oEjt7Hd1LyFA-CJV40uUey5rqR8eOi12kvdvJZD7Q5XqCi-s9dA06-j14fgXJezVZYGs7ai5flBQ7qsaFvVvvlz7a_Zfu8e-Hl_oW3rlyJgCXaRd0FR28q",
+    "expires": "2019-12-11 17:56:29",
+    "revoked": "0",
+    "createdOn": "2019-11-18 12:51:05",
+    "clientType": "reporter_app",
+    "updatedOn": null
+  },
+  {
+    "userId": 2,
+    "clientId": "stri5ng",
+    "clientName": "Tecno F5",
+    "token": "D7EWS+LPKVfE58dIcPA294Isc1QHwDE/hJF6DGTJMDqhUoTCytaiMvtmsrJyzDiF",
+    "deviceTokenId": "string",
+    "expires": "2019-12-07 18:49:37",
+    "revoked": "0",
+    "createdOn": "2019-11-19 18:49:37",
+    "clientType": "reporter_app",
+    "updatedOn": null
+  },
+  {
+    "userId": 3,
+    "clientId": "7c9acea298de66d5",
+    "clientName": "Samsung Galaxy",
+    "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK2E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
+    "deviceTokenId": "czCdZoZvFt4:APA91bFkYdqeWlAv9ikzM7oEjt7Hd1LyFA-CJV40uUey5rqR8eOi12kvdvJZD7Q5XqCi-s9dA06-j14fgXJezVZYGs7ai5flBQ7qsaFvVvvlz7a_Zfu8e-Hl_oW3rlyJgCXaRd0FR28q",
+    "expires": "2019-12-11 17:56:29",
+    "revoked": "0",
+    "createdOn": "2019-11-20 12:52:05",
+    "clientType": "reporter_app",
+    "updatedOn": null
+  },
+  {
+    "userId": 4,
+    "clientId": "stri1ng",
+    "clientName": "Infinix ",
+    "token": "D7EWS+LPKVfE58dIcPA294Isc1QHwDE/gJFD7GTJMDqhUoTCytaiMvtmsrJyzDiF",
+    "deviceTokenId": "string",
+    "expires": "2019-12-07 18:49:37",
+    "revoked": "0",
+    "createdOn": "2019-11-21 18:50:37",
+    "clientType": "reporter_app",
+    "updatedOn": null
+  },
+  {
+    "userId": 5,
+    "clientId": "7c9acea348de66d5",
+    "clientName": "moto g(6) plus",
+    "token": "8E1a6O92oe7Vh/XI8222DGJrsIAWg5/ZcK8E8jZG/IMstAGKDGBCVrknCi6Ev0fS",
+    "deviceTokenId": "czCdZoZvFt4:APA91bFkYdqeWlAv9ikzM7oEjt7Hd1LyFA-CJV40uUey5rqR8eOi12kvdvJZD7Q5XqCi-s9dA06-j14fgXJezVZYGs7ai5flBQ7qsaFvVvvlz7a_Zfu8e-Hl_oW3rlyJgCXaRd0FR28q",
+    "expires": "2019-12-11 17:56:29",
+    "revoked": "0",
+    "createdOn": "2019-11-22 12:53:05",
+    "clientType": "reporter_app",
+    "updatedOn": null
+  },
+  {
+    "userId": 6,
+    "clientId": "strin4g",
+    "clientName": "ariel",
+    "token": "D7EWS+LPKVfE58dIcPA294Isc2QHwDE/gJF6DGTJMDqhUoTCytaiMvtmsrJyzDiF",
+    "deviceTokenId": "string",
+    "expires": "2019-12-07 18:49:37",
+    "revoked": "0",
+    "createdOn": "2019-11-23 18:54:37",
+    "clientType": "reporter_app",
+    "updatedOn": null
+  }
 ]
