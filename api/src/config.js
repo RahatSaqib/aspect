@@ -1,7 +1,14 @@
 require('dotenv-safe').config()
 
+const port = process.env.PORT || 8080
+const host = '127.0.0.1'
+const hostName = 'localhost'
 module.exports = {
+  port,
+  host,
+  hostName,
   secret: process.env.secret,
+  url: `http://${hostName}:${port}`,
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
@@ -27,6 +34,7 @@ module.exports = {
   },
   amqp: {
     url: process.env['amqp.url'],
+    name: process.env['amqp.name'] || 'aspect',
   },
   swagger: {
     enabled: process.env['swagger.enabled'] === 'true',
