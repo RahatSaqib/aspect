@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const addYears = require('date-fns/addYears')
 const subDays = require('date-fns/subDays')
@@ -37,7 +37,8 @@ const {
   getLocalDateInUtc,
 } = require('../../../src/shared/date')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device API routes for GxConnect Devices', () => {

@@ -1,7 +1,7 @@
-const supertest = require('supertest')
 const chai = require('chai')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 describe('Server Routes', () => {
   describe('/server', () => {
