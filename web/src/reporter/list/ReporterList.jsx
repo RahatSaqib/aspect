@@ -313,16 +313,19 @@ const ReporterList = () => {
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
-  const [onRevokedItem] = useMutation((id, value) => {
-    // eslint-disable-next-line no-console
-    console.log(id, value)
-    fetchWrapperForQueries({
-      endpoint: `${REPORTERS_LIST_REVOKE_ONE.ENDPOINT}/${id}`,
-      method: 'PUT',
-      params: { revoked: value },
-    })
-    //  queryCache.invalidateQueries(REPORTERS_LIST.ENDPOINT)
-  })
+  const [onRevokedItem] = useMutation(
+    async ({ id, revoked }) =>
+      fetchWrapperForQueries({
+        endpoint: `${REPORTERS_LIST_REVOKE_ONE.ENDPOINT}/${id}`,
+        method: 'PUT',
+        params: { revoked },
+      }),
+    {
+      onSuccess: () => {
+        queryCache.invalidateQueries([REPORTERS_LIST.KEY, { params }])
+      },
+    }
+  )
 
   // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
