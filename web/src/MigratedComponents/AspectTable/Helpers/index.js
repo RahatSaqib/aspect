@@ -4,7 +4,7 @@ import addMinutes from 'date-fns/addMinutes'
 import formatDistance from 'date-fns/formatDistance'
 import isPast from 'date-fns/isPast'
 import getUnixTime from 'date-fns/getUnixTime'
-import fromUnixTime from 'date-fns/fromUnixTime'
+import parseISO from 'date-fns/parseISO'
 import filter from 'lodash/filter'
 import times from 'lodash/times'
 import random from 'lodash/random'
@@ -124,9 +124,7 @@ function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
 function timeClassification(vals) {
   const future = []
   const past = []
-  vals.map(val =>
-    isPast(fromUnixTime(val)) ? past.push(val) : future.push(val)
-  )
+  vals.map(val => (isPast(parseISO(val)) ? past.push(val) : future.push(val)))
   return [past.length, future.length]
 }
 
@@ -134,10 +132,11 @@ function totalItemCount(vals) {
   return vals.reduce((acc, curr) => acc + curr.length, 0)
 }
 
-function timeSinceFromUnix(val) {
+function timeSinceFromUTC(val) {
+  const date = parseISO(val)
   return {
-    isPast: isPast(fromUnixTime(val)),
-    timeSince: formatDistance(fromUnixTime(val), new Date(), {
+    isPast: isPast(date),
+    timeSince: formatDistance(date, new Date(), {
       addSuffix: true,
     }),
   }
@@ -149,6 +148,6 @@ export {
   getFirstAndLastVisibleRowNumbers,
   mockDatafetch,
   timeClassification,
-  timeSinceFromUnix,
+  timeSinceFromUTC,
   totalItemCount,
 }
