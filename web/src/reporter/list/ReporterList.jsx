@@ -12,7 +12,7 @@ import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useHistory, useLocation } from 'react-router-dom'
 import fromPairs from 'lodash/fromPairs'
-import { useQuery } from 'react-query'
+import { useQuery, useMutation, queryCache } from 'react-query'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -28,7 +28,11 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { getExportableFile, REPORTERS_LIST } from '../ReporterQueries'
+import {
+  getExportableFile,
+  REPORTERS_LIST,
+  REPORTERS_LIST_REVOKE_ONE,
+} from '../ReporterQueries'
 import {
   ReporterDataTable,
   ReporterDataTableHead,
@@ -39,7 +43,6 @@ import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveList, Items } from '../../shared/metaReducers/items'
 
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
-
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 
 const cssClasses = classnames.bind(require('./ReporterList.css'))
@@ -211,6 +214,7 @@ export const ReporterListWithProps = ({
   table,
   columns,
   items,
+  onRevokedItem,
   // --- injected by recompose ---
   sortCol,
   sortDir,
@@ -258,6 +262,7 @@ export const ReporterListWithProps = ({
                   key={reporter.get('id')}
                   intl={intl}
                   reporter={reporter}
+                  onRevokedItem={onRevokedItem}
                 />
               ))}
           </TableBody>
@@ -308,6 +313,17 @@ const ReporterList = () => {
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
+  const [onRevokedItem] = useMutation((id, value) => {
+    // eslint-disable-next-line no-console
+    console.log(id, value)
+    fetchWrapperForQueries({
+      endpoint: `${REPORTERS_LIST_REVOKE_ONE.ENDPOINT}/${id}`,
+      method: 'PUT',
+      params: { revoked: value },
+    })
+    //  queryCache.invalidateQueries(REPORTERS_LIST.ENDPOINT)
+  })
+
   // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
     [REPORTERS_LIST.KEY, { params }],
@@ -351,7 +367,7 @@ const ReporterList = () => {
   useEffect(() => {
     if (data) {
       const { data: list, total: totalItems } = data
-      console.log('data', data)
+
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems))
@@ -399,6 +415,7 @@ const ReporterList = () => {
     columns,
     reducedFilters,
     onExportClick,
+    onRevokedItem,
     table,
     total,
     pageAt: page,
