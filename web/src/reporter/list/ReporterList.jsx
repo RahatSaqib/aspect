@@ -215,7 +215,7 @@ export const ReporterListWithProps = ({
   columns,
   items,
   onRevokedItem,
-  // --- injected by recompose ---
+  isLoading,
   sortCol,
   sortDir,
   pageAt,
@@ -233,7 +233,8 @@ export const ReporterListWithProps = ({
       config={reducedFilters}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
+      <DataTableProgressBar disabled={!isLoading} />
+
       <AspectExportListButton
         onExport={onExportClick}
         visible={!items.currentIdList.isEmpty()}
@@ -313,7 +314,7 @@ const ReporterList = () => {
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
-  const [onRevokedItem] = useMutation(
+  const [onRevokedItem, { isLoading: isLoadingRevoke }] = useMutation(
     async ({ id, revoked }) =>
       fetchWrapperForQueries({
         endpoint: `${REPORTERS_LIST_REVOKE_ONE.ENDPOINT}/${id}`,
@@ -411,7 +412,7 @@ const ReporterList = () => {
     intl,
     history,
     location,
-    isLoading,
+    isLoading: isLoading || isLoadingRevoke,
     items,
     sortCol,
     sortDir,
