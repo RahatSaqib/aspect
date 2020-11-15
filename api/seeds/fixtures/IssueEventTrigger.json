@@ -648,7 +648,7 @@
       }
     },
     {
-      "issueType": "UltrasonicHornCurrentOutRangeModule",
+      "issueType": "UltrasonicHornCurrentOutOfRangeModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE",
@@ -669,7 +669,7 @@
       }
     },
     {
-      "issueType": "UltrasonicHornCurrentOutRangeLot",
+      "issueType": "UltrasonicHornCurrentOutOfRangeLot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT",
@@ -690,7 +690,7 @@
       }
     },
     {
-      "issueType": "AssaySpecificTerminationErrorModule",
+      "issueType": "AssaySpecificTerminationError1Module",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE",
@@ -711,7 +711,7 @@
       }
     },
     {
-      "issueType": "AssaySpecificTerminationErrorLot",
+      "issueType": "AssaySpecificTerminationError1Lot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT",
@@ -732,7 +732,7 @@
       }
     },
     {
-      "issueType": "AssaySpecificTerminationModule",
+      "issueType": "AssaySpecificTerminationError2Module",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE",
@@ -753,7 +753,7 @@
       }
     },
     {
-      "issueType": "AssaySpecificTerminationLot",
+      "issueType": "AssaySpecificTerminationError2Lot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT",

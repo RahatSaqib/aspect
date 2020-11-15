@@ -26,10 +26,10 @@ async function seed(knex) {
     'UltrasonicHornTuningErrorLot',
     'UltrasonicHornCurrentOutOfRangeModule',
     'UltrasonicHornCurrentOutOfRangeLot',
-    'AssaySpecificTerminationErrorModule',
-    'AssaySpecificTerminationErrorLot',
-    'AssaySpecificTerminationModule',
-    'AssaySpecificTerminationLot',
+    'AssaySpecificTerminationError1Module',
+    'AssaySpecificTerminationError1Lot',
+    'AssaySpecificTerminationError2Module',
+    'AssaySpecificTerminationError2Lot',
   ]
   await Promise.each(issuesToInsert, async issue => {
     const issueTypeId = await seedIssueType(knex, issue, {

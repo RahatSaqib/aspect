@@ -1238,11 +1238,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    UltrasonicHornCurrentOutRangeModule: {
+    UltrasonicHornCurrentOutOfRangeModule: {
       issueType: {
         name: 'Ultrasonic Horn Current Out of Range On Module',
-        externalId: 'UltrasonicHornCurrentOutRangeModule',
-        i18nKey: 'issueStatusUltrasonicHornCurrentOutRangeModule',
+        externalId: 'UltrasonicHornCurrentOutOfRangeModule',
+        i18nKey: 'issueStatusUltrasonicHornCurrentOutOfRangeModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1267,11 +1267,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    UltrasonicHornCurrentOutRangeLot: {
+    UltrasonicHornCurrentOutOfRangeLot: {
       issueType: {
         name: 'Ultrasonic Horn Current Out of Range On Lot',
-        externalId: 'UltrasonicHornCurrentOutRangeLot',
-        i18nKey: 'issueStatusUltrasonicHornCurrentOutRangeLot',
+        externalId: 'UltrasonicHornCurrentOutOfRangeLot',
+        i18nKey: 'issueStatusUltrasonicHornCurrentOutOfRangeLot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
@@ -1295,11 +1295,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    AssaySpecificTerminationErrorModule: {
+    AssaySpecificTerminationError1Module: {
       issueType: {
         name: 'Assay Specific Termination Error On Module',
-        externalId: 'AssaySpecificTerminationErrorModule',
-        i18nKey: 'issueStatusAssaySpecificTerminationErrorModule',
+        externalId: 'AssaySpecificTerminationError1Module',
+        i18nKey: 'issueStatusAssaySpecificTerminationError1Module',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1324,11 +1324,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    AssaySpecificTerminationErrorLot: {
+    AssaySpecificTerminationError1Lot: {
       issueType: {
         name: 'Assay Specific Termination Error On Lot',
-        externalId: 'AssaySpecificTerminationErrorLot',
-        i18nKey: 'issueStatusAssaySpecificTerminationErrorLot',
+        externalId: 'AssaySpecificTerminationError1Lot',
+        i18nKey: 'issueStatusAssaySpecificTerminationError1Lot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
@@ -1352,11 +1352,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    AssaySpecificTerminationModule: {
+    AssaySpecificTerminationError2Module: {
       issueType: {
         name: 'Assay-Specific Termination #2 On Module',
-        externalId: 'AssaySpecificTerminationModule',
-        i18nKey: 'issueStatusAssaySpecificTerminationModule',
+        externalId: 'AssaySpecificTerminationError2Module',
+        i18nKey: 'issueStatusAssaySpecificTerminationError2Module',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1381,11 +1381,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    AssaySpecificTerminationLot: {
+    AssaySpecificTerminationError2Lot: {
       issueType: {
         name: 'Assay-Specific Termination #2 On Lot',
-        externalId: 'AssaySpecificTerminationLot',
-        i18nKey: 'issueStatusAssaySpecificTerminationLot',
+        externalId: 'AssaySpecificTerminationError2Lot',
+        i18nKey: 'issueStatusAssaySpecificTerminationError2Lot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
