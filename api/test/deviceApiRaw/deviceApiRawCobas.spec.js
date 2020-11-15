@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const { run } = require('../../src/db')
 
@@ -6,7 +5,8 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device API Raw routes for cobas', () => {

@@ -1,9 +1,9 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { createTestContext, getLastResultId } = require('../deviceApi/utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 const context = createTestContext(server, {
   user: 'admin',

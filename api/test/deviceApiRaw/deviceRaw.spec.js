@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
 const { knex } = require('../../src/db')
@@ -7,7 +6,8 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device API Raw routes', () => {

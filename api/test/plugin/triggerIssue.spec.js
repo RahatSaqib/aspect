@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 
 const { assert } = chai
 const _ = require('lodash')
-const supertest = require('supertest')
 const { subDays } = require('date-fns')
 const { knex } = require('../../src/db')
 
@@ -117,7 +116,8 @@ const getMessageTemplates = async () => {
   }
   return messageTemplates
 }
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const messageTemplates = await getMessageTemplates()
   const notification = await knex('Notification as n')

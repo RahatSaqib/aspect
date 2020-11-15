@@ -258,7 +258,7 @@ describe('Issue Escalation', () => {
     await knex('Device').whereIn('id', deviceIds).delete()
   }
 
-  describe('For Myanmar', () => {
+  describe.skip('For Myanmar', () => {
     const partnerName = 'Myanmar'
     const countryAbbreviation = 'MM'
 
