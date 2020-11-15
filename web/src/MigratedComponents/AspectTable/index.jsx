@@ -15,15 +15,9 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 
-import TableColumnHeader from './TableHeader/TableColumnHeader'
-import TableColumnOrderButtons from './TableHeader/TableColumnOrderButtons'
 import TableHiddenColumns from './TableHeader/TableHiddenColumns'
-import TableColumnGroupBy from './TableHeader/TableColumnGroupBy'
-import TableColumnHideButton from './TableHeader/TableColumnHideButton'
-
-import Cell from './TableCell/Cell'
-import GroupedCell from './TableCell/GroupedCell'
-import PlaceholderCell from './TableCell/PlaceholderCell'
+import TableHeaderRow from './TableHeader/TableHeaderRow'
+import TableBodyRow from './TableBody/TableBodyRow'
 
 import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
@@ -126,72 +120,13 @@ const AspectTable = ({ tableData: data, config }) => {
         <TableHead>
           {headerGroups.map(({ headers, getHeaderGroupProps }) => (
             <TableRow {...getHeaderGroupProps()}>
-              {headers.map(
-                (
-                  {
-                    canSort,
-                    canGroupBy,
-                    disableHide,
-                    getHeaderProps,
-                    getGroupByToggleProps,
-                    getSortByToggleProps,
-                    id,
-                    isGrouped,
-                    isSorted,
-                    isSortedDesc,
-                    render,
-                    width,
-                  },
-                  index
-                ) => {
-                  return (
-                    <TableCell
-                      {...getHeaderProps(
-                        getSortByToggleProps(),
-                        getGroupByToggleProps()
-                      )}
-                      style={{ width: `${width}%` }}
-                    >
-                      <TableColumnHeader
-                        width={width}
-                        render={render('Header')}
-                        canSort={canSort}
-                        canGroupBy={canGroupBy}
-                        isSorted={isSorted}
-                        isSortedDesc={isSortedDesc}
-                        headerOrderComponent={() =>
-                          allowColumnReOrder ? (
-                            <TableColumnOrderButtons
-                              headerIndex={index}
-                              headersLength={headers.length}
-                              handleChangeColumnOrder={handleChangeColumnOrder}
-                            />
-                          ) : null
-                        }
-                        headerVisibilityComponent={() =>
-                          !disableHide ? (
-                            <TableColumnHideButton
-                              headerIndex={id}
-                              handleHideColumnToggle={handleHideColumnToggle}
-                            />
-                          ) : null
-                        }
-                        headerGroupByComponent={() =>
-                          canGroupBy ? (
-                            <TableColumnGroupBy
-                              headerIndex={id}
-                              handleGroupByColumnToggle={
-                                handleGroupByColumnToggle
-                              }
-                              isGrouped={isGrouped}
-                            />
-                          ) : null
-                        }
-                      />
-                    </TableCell>
-                  )
-                }
-              )}
+              <TableHeaderRow
+                allowColumnReOrder={allowColumnReOrder}
+                handleChangeColumnOrder={handleChangeColumnOrder}
+                handleHideColumnToggle={handleHideColumnToggle}
+                handleGroupByColumnToggle={handleGroupByColumnToggle}
+                headers={headers}
+              />
               {ContextualMenu ? <TableCell /> : null}
             </TableRow>
           ))}
@@ -208,40 +143,12 @@ const AspectTable = ({ tableData: data, config }) => {
             } = row
             return (
               <TableRow {...getRowProps()}>
-                {cells.map(
-                  ({
-                    getCellProps,
-                    column: { format = false },
-                    render,
-                    isGrouped,
-                    isAggregated,
-                    isPlaceholder,
-                    value,
-                  }) => {
-                    return (
-                      <TableCell {...getCellProps()}>
-                        {isGrouped ? (
-                          <GroupedCell
-                            format={format}
-                            getToggleRowExpandedProps={
-                              getToggleRowExpandedProps
-                            }
-                            isExpanded={isExpanded}
-                            render={render}
-                            subRows={subRows}
-                            value={value}
-                          />
-                        ) : isAggregated ? (
-                          render('Aggregated')
-                        ) : isPlaceholder ? (
-                          <PlaceholderCell />
-                        ) : (
-                          <Cell render={render} format={format} value={value} />
-                        )}
-                      </TableCell>
-                    )
-                  }
-                )}
+                <TableBodyRow
+                  cells={cells}
+                  getToggleRowExpandedProps={getToggleRowExpandedProps}
+                  isExpanded={isExpanded}
+                  subRows={subRows}
+                />
                 {ContextualMenu ? (
                   <TableCell>
                     <ContextualMenu item={row} />
