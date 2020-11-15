@@ -1,5 +1,7 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { useHistory, useLocation } from 'react-router-dom'
+
 import {
   useTable,
   useSortBy,
@@ -20,9 +22,16 @@ import TableHeaderRow from './TableHeader/TableHeaderRow'
 import TableBodyRow from './TableBody/TableBodyRow'
 
 import AspectTablePagination from './TablePagination'
-import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
+import {
+  buildColumnsFromData,
+  getCurrentColumnIndexAndShift,
+  shapeTableParamsForApi,
+} from './Helpers'
 
-const AspectTable = ({ tableData: data, config }) => {
+const AspectTable = ({ config, tableData, setUrlParams }) => {
+  const history = useHistory()
+  const location = useLocation()
+  const { total, data } = tableData
   const { name } = config
   const {
     columns,
@@ -30,15 +39,6 @@ const AspectTable = ({ tableData: data, config }) => {
     columnOrder: { allow: allowColumnReOrder, initialOrder } = false,
     contextualMenu: ContextualMenu,
   } = useMemo(() => buildColumnsFromData(config), [config])
-
-  const table = useTable(
-    { columns, data },
-    useColumnOrder,
-    useGroupBy,
-    useSortBy,
-    useExpanded,
-    usePagination
-  )
 
   const {
     canNextPage,
@@ -66,10 +66,17 @@ const AspectTable = ({ tableData: data, config }) => {
       groupBy,
       expanded,
     },
-  } = table
+  } = useTable(
+    { columns, data },
+    useColumnOrder,
+    useGroupBy,
+    useSortBy,
+    useExpanded,
+    usePagination
+  )
 
   const handleChangeRowsPerPage = val => {
-    setPageSize(typeof val !== 'number' ? data.length : Number(val))
+    setPageSize(typeof val !== 'number' ? total : Number(val))
   }
 
   const handleChangeColumnOrder = (e, direction, index) => {
@@ -107,7 +114,37 @@ const AspectTable = ({ tableData: data, config }) => {
     setColumnOrder,
   ])
 
-  return data ? (
+  React.useMemo(() => {
+    async function buildAndSetParams() {
+      const { page = 0, size, sortCol, sortDir } = await shapeTableParamsForApi(
+        {
+          pageIndex,
+          pageSize,
+          sortBy,
+          initialOrder,
+        }
+      )
+      const newUrl = new URLSearchParams({
+        page,
+        size,
+        sortCol,
+        sortDir,
+      }).toString()
+      history.push(`${location.pathname}?${newUrl}`)
+      setUrlParams({
+        page,
+        size,
+        sortCol,
+        sortDir,
+      })
+    }
+    if (data && data.length) {
+      buildAndSetParams()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIndex, pageSize, sortBy])
+
+  return (
     <Fragment>
       {hiddenColumns && hiddenColumns.length ? (
         <TableHiddenColumns
@@ -162,7 +199,7 @@ const AspectTable = ({ tableData: data, config }) => {
       <AspectTablePagination
         canNextPage={canNextPage}
         canPreviousPage={canPreviousPage}
-        dataLength={data.length}
+        dataLength={total}
         expanded={expanded}
         gotoPage={gotoPage}
         groupBy={groupBy}
@@ -176,7 +213,7 @@ const AspectTable = ({ tableData: data, config }) => {
         page={page}
       />
     </Fragment>
-  ) : null
+  )
 }
 
 AspectTable.proptTypes = {

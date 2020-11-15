@@ -5,6 +5,7 @@ import formatDistance from 'date-fns/formatDistance'
 import isPast from 'date-fns/isPast'
 import getUnixTime from 'date-fns/getUnixTime'
 import parseISO from 'date-fns/parseISO'
+import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import times from 'lodash/times'
 import random from 'lodash/random'
@@ -12,6 +13,7 @@ import chunk from 'lodash/chunk'
 import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
+import pickBy from 'lodash/pickBy'
 
 const mockedDataNames = [
   'Amherst',
@@ -142,11 +144,25 @@ function timeSinceFromUTC(val) {
   }
 }
 
+async function shapeTableParamsForApi({
+  pageIndex,
+  pageSize,
+  sortBy,
+  initialOrder,
+}) {
+  const page = pageIndex
+  const size = pageSize
+  const sortCol = sortBy.length ? sortBy[0].id : initialOrder[0]
+  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : 'asc'
+  return pickBy({ page, size, sortCol, sortDir }, identity)
+}
+
 export {
   buildColumnsFromData,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
   mockDatafetch,
+  shapeTableParamsForApi,
   timeClassification,
   timeSinceFromUTC,
   totalItemCount,
