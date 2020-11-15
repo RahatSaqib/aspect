@@ -735,7 +735,7 @@
       "issueType": "AssaySpecificTerminationError2Module",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE",
+        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE",
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
