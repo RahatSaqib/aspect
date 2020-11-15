@@ -1,7 +1,7 @@
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
-
+import PropTypes from 'prop-types'
 import { defineMessages, useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
@@ -13,6 +13,7 @@ import Immutable from 'immutable'
 import { useHistory, useLocation } from 'react-router-dom'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery, useMutation, queryCache } from 'react-query'
+import PropTypeOf from '../../shared/types'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -429,6 +430,23 @@ const ReporterList = () => {
   if (isError) throw new Error(error)
 
   return <ReporterListWithProps {...baseProps} />
+}
+
+ReporterListWithProps.propTypes = {
+  intl: PropTypeOf.intl.isRequired,
+  history: PropTypeOf.history.isRequired,
+  location: PropTypeOf.location.isRequired,
+  table: PropTypes.instanceOf(Immutable.Record).isRequired,
+  items: PropTypes.instanceOf(Immutable.Record).isRequired,
+  sortCol: PropTypes.string.isRequired,
+  sortDir: PropTypes.string.isRequired,
+  pageAt: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  onExportClick: PropTypes.func.isRequired,
+  onRevokedItem: PropTypes.func.isRequired,
+  columns: PropTypes.instanceOf(Immutable.List).isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  reducedFilters: PropTypes.arrayOf(PropTypes.string).isRequired,
 }
 
 export default ReporterList
