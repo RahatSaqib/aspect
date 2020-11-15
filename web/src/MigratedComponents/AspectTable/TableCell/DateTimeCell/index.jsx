@@ -3,13 +3,13 @@ import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 
-import { timeSinceFromUnix } from '../../Helpers'
+import { timeSinceFromUTC } from '../../Helpers'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
 
 const DateTimeCellBase = ({ value, flagged }) => {
   const { locale } = useIntl()
-  const { isPast, timeSince } = timeSinceFromUnix(value, locale)
+  const { isPast, timeSince } = timeSinceFromUTC(value, locale)
   return (
     <div
       className={cssClasses(

@@ -13,7 +13,8 @@ const CONTACTS = {
 
 const ContactsCell = ({ value }) => {
   const { formatMessage } = useIntl()
-  if (value.length > CONTACTS.MAX_VISIBLE_COUNT) {
+  const valToArray = value ? value.split(',') : []
+  if (valToArray.length > CONTACTS.MAX_VISIBLE_COUNT) {
     const tempContacts = [...value]
     tempContacts.length = CONTACTS.MAX_VISIBLE_COUNT
     return (
@@ -28,8 +29,11 @@ const ContactsCell = ({ value }) => {
       </div>
     )
   }
-  if (value.length > 0 && value.length <= CONTACTS.MAX_VISIBLE_COUNT) {
-    return <div>{value.join(', ')}</div>
+  if (
+    valToArray.length > 0 &&
+    valToArray.length <= CONTACTS.MAX_VISIBLE_COUNT
+  ) {
+    return <div>{valToArray.join(', ')}</div>
   }
   return <div>{formatMessage(messages.notConfigured)}</div>
 }
