@@ -18,7 +18,7 @@ const { exportSites } = require('./serviceReports')
 
 function listSitesBaseConfig() {
   return {
-    auth: { scope: ['site:view'] },
+    auth: { scope: ['site'] },
     validate: {
       query: {
         siteIds: Joi.string().allow('').description('Filter for site ids'),

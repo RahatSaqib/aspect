@@ -1,9 +1,9 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Disease routes', () => {

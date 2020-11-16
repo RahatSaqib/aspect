@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const supertest = require('supertest')
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
 const {
@@ -16,7 +15,8 @@ const {
   waitForAction,
 } = require('../utils/mqUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 const baseConfig = {

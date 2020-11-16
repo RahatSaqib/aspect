@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
@@ -19,7 +18,8 @@ const {
 
 const { waitForIdle } = require('../utils/mqUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 const devicePath = '/device'
