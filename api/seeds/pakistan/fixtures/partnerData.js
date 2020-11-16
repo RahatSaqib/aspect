@@ -1,4 +1,4 @@
-const jobFunctionsFixture = require('./jobFunctions.json')
+const jobFunctionsFixture = require('./jobFunctions')
 
 module.exports = {
   partnerName: "Pakistan",

@@ -9,7 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
-const defaultJobFunctionsFixture = require('./common/fixtures/jobFunctions.json')
+const defaultJobFunctionsFixture = require('./common/fixtures/jobFunctions')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')

@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const { upsertJobFunctionFixture, upsertPermissionFixture } = require('../common')
 const { getPartnerByName } = require('../utils')
-const jobFunctionsFixture = require('./fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('./fixtures/jobFunctions')
 
 async function seed(knex) {
   await upsertPermissionFixture(knex)

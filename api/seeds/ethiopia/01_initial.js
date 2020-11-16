@@ -4,7 +4,7 @@ const _ = require('lodash')
 
 const geographyFromGxAlert = require('./fixtures/geographyFromGxAlert.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
-const jobFunctionsFixture = require('./fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('./fixtures/jobFunctions')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const labClinic = require('./fixtures/labClinic.json')

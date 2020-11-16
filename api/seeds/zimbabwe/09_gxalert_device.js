@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 
-const jobFunctionsFixture = require('./fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('./fixtures/jobFunctions')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const geographyFromGxAlert = require('./fixtures/geography.json')

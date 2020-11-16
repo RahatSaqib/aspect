@@ -1,6 +1,6 @@
 const { upsertJobFunctionFixture, upsertPermissionFixture } = require('../common')
 const { getPartnerByName } = require('../utils')
-const jobFunctionsFixture = require('../common/fixtures/jobFunctions.json')
+const jobFunctionsFixture = require('../common/fixtures/jobFunctions')
 
 module.exports = async function cleanPermissions(knex, partnerName) {
   await upsertPermissionFixture(knex)
