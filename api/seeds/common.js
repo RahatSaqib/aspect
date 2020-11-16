@@ -2030,7 +2030,7 @@ async function upsertConsumables(
 }
 
 async function upsertPermissionFixture(knex) {
-  const currentPermissions = await knex('Permission')
+  const currentPermissions = await knex('Permission').select()
 
   // Remove deprecated permissions
   const permissionsDeletions = currentPermissions.map(async ({ module, activity, id }) => {
