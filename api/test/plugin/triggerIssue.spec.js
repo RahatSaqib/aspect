@@ -548,7 +548,7 @@ describe.only('This test suite is for testing different triggers conditions', as
     )
   })
 
-  describe('modules unused', () => {
+  describe.only('modules unused', () => {
     let deviceContextForModulesUnused
     let deviceId
     
@@ -585,7 +585,7 @@ describe.only('This test suite is for testing different triggers conditions', as
       await deviceContextForModulesUnused.cleanUp()
     })
 
-    it('should only create one issue per device', async () => {
+    it('should only create one issue and one notification per device', async () => {
       const payload = await getPayload(
         deviceContextForModulesUnused,
         null,
@@ -600,12 +600,26 @@ describe.only('This test suite is for testing different triggers conditions', as
 
       await waitForIdle(1000)
 
+      console.log(knex('Issue as i')
+      .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+      .where('it.externalId', 'ModulesUnused')
+      .andWhere('i.deviceId', deviceId).toString())
       const issues = await knex('Issue as i')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
         .where('it.externalId', 'ModulesUnused')
         .andWhere('i.deviceId', deviceId)
+        .select('i.*')
       
       assert.equal(issues.length, 1)
+
+      if (issues.length === 1)
+      {
+        const [{ id: issueId }] = issues
+        console.log(issueId)
+        const notifications = await knex('Notification').where({ issueId })
+
+        assert.equal(notifications.length, 1)
+      }
     })
 
     it('should resolve the issue when all modules were used', async () => {
