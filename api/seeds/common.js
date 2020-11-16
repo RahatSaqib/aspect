@@ -130,7 +130,7 @@ async function commonUpserts(
 
   const { fixtures = { } } = partnerData
   // upsertJobFunctionFixture by using the job functions set at 
-  await upsertJobFunctionFixture(knex, fixtures.jobFunctions || defaultJobFunctionsFixture, partnerId)
+  await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
   let { id: jobIdAdmin } =
@@ -2033,17 +2033,16 @@ async function upsertPermissionFixture(knex) {
   const currentPermissions = await knex('Permission').select()
 
   // Remove deprecated permissions
-  const permissionsDeletions = currentPermissions.map(async ({ module, activity, id }) => {
+  await Promise.each(currentPermissions, async ({ module, activity, id }) => {
     const shouldRemovePermission = permissionsFixture.find(p => p.module === module && p.activity === activity) === null
     if (shouldRemovePermission) {
       await knex('JobFunctionPermission').where({ permissionId: id }).delete()
       await knex('Permission').where({ id }).delete()
     } 
   })
-  await Promise.each(permissionsDeletions)
 
   // Add or update permissions
-  const permissionsInsertionsAndUpdates = permissionsFixture.map(async ({ module, activity, description }) => {
+  await Promise.each(permissionsFixture, async ({ module, activity, description }) => {
     const currentPermission = currentPermissions.find(up => up.module === module && up.activity === activity)
     if (currentPermission) {
       await knex('Permission').where({ module, activity }).update({ description })
@@ -2051,7 +2050,6 @@ async function upsertPermissionFixture(knex) {
       await knex('Permission').insert({ module, activity, description })
     }
   })
-  await Promise.each(permissionsInsertionsAndUpdates)
 }
 
 module.exports = {

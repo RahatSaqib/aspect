@@ -5,7 +5,6 @@ module.exports = {
   deviceApiToken: "77zc0ar862xcys2626w6",
   lowerLevelUserPassword: "324PoCbqIeBG",
   serverUrl: "https://pakistan.aspect.id",
-  useCommonJobFunctions: true,
   partnerAbbreviation: "PK",
   assayTypes: [
     "GxUnknown",
