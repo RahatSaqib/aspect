@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const supertest = require('supertest')
 const chai = require('chai')
 const { subDays } = require('date-fns')
 
@@ -7,7 +6,7 @@ const shared = require('../utils/sharedToken')
 const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget')
 const dashboardWidgetMyanmar = require('../../seeds/test/fixtures/myanmarDashboardWidget')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 const { assert } = chai
 

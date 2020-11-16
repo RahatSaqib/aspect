@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 
@@ -6,7 +5,7 @@ const shared = require('../utils/sharedToken')
 
 const { assert } = chai
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 describe('/account-details', () => {
   async function getAccountDetails() {

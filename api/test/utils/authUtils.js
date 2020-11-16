@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const _ = require('lodash')
@@ -7,7 +6,7 @@ const { knex } = require('../../src/db')
 const config = require('../../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const server = supertest.agent('http://localhost:8080')
+const server = require('./testUtils')
 
 async function getAccessToken(username, password) {
   return server
