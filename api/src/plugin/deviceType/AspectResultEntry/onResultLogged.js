@@ -18,6 +18,7 @@ const {
   shouldTriggerModuleReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerResultCategoryAnalysis,
+  shouldTriggerModulesUnused,
 } = require('../../utils')
 
 async function onResultLogged(
@@ -96,6 +97,11 @@ async function onResultLogged(
           assayId,
           consumableLot,
         }
+      )
+
+      await shouldTriggerModulesUnused(
+        messageContext,
+        resultDeviceId
       )
 
       if (deviceLogDeviceTypeExternalId === 'Aspect') {

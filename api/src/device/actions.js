@@ -14,6 +14,7 @@ const types = {
     'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
   DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
+  DEVICE_MODULES_UNUSED: 'DEVICE_MODULES_UNUSED',
 }
 
 // ----------- Action Creators -------------------
@@ -168,6 +169,26 @@ function deviceModuleDisabled(device, moduleSerial, disabledOn) {
 }
 
 /**
+ * Creates an action to notify an update about modules unused
+ * @param {*} device
+ */
+function deviceModuleUnused(device) {
+  if (!device) {
+    throw new Error(
+      'Must specify the device for deviceModuleUnused'
+    )
+  }
+  return {
+    type: types.DEVICE_MODULES_UNUSED,
+    deviceId: device.id,
+    siteId: device.siteId,
+    geographyId: device.geographyId,
+    partnerId: device.partnerId,
+    options: { },
+  }
+}
+
+/**
  * Creates an action to notify that an instrument in the given device
  * was replaced
  *
@@ -237,4 +258,5 @@ module.exports = {
   logDeviceMaintenanceStatus,
   deviceModuleDisabled,
   deviceInstrumentReplaced,
+  deviceModuleUnused,
 }

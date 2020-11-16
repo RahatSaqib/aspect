@@ -537,7 +537,7 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckFailedLot'
     )
   })
-  describe('error 5011 issue', async () => {
+  describe.only('error 5011 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Signal Loss Detected in the Amplification Curve',
       5011,

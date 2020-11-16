@@ -432,9 +432,13 @@
             "minResults": 3
           }
         }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "ModulesUnused",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_MODULES_UNUSED"
       }
     }
   ]
