@@ -361,7 +361,7 @@ describe.only('This test suite is for testing different triggers conditions', as
             hostId: `3nd${hostId}`,
             deviceSerialNumber: `3nd${deviceSerialNumber}`,
           })
-          
+
           await context.beforeRegisterAndSetDevice()
           await anotherDeviceContext.beforeRegisterAndSetDevice()
 
@@ -551,7 +551,7 @@ describe.only('This test suite is for testing different triggers conditions', as
   describe.only('modules unused', () => {
     let deviceContextForModulesUnused
     let deviceId
-    
+
     beforeEach(async () => {
       deviceContextForModulesUnused = createGxConnectTestContext(server, {
         countryCode,
@@ -573,7 +573,7 @@ describe.only('This test suite is for testing different triggers conditions', as
           instrumentSerial: 'S-1234-0',
           endedOn: subDays(new Date(), i),
           errorCode: null,
-          errorNotes: null
+          errorNotes: null,
         }
         await deviceContextForModulesUnused.createResultForThisDevice({
           resultDetails,
@@ -595,27 +595,21 @@ describe.only('This test suite is for testing different triggers conditions', as
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({
         authHeader: deviceAuth,
-        payload: payload,
+        payload,
       })
 
       await waitForIdle(1000)
 
-      console.log(knex('Issue as i')
-      .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-      .where('it.externalId', 'ModulesUnused')
-      .andWhere('i.deviceId', deviceId).toString())
       const issues = await knex('Issue as i')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
         .where('it.externalId', 'ModulesUnused')
         .andWhere('i.deviceId', deviceId)
         .select('i.*')
-      
+
       assert.equal(issues.length, 1)
 
-      if (issues.length === 1)
-      {
+      if (issues.length === 1) {
         const [{ id: issueId }] = issues
-        console.log(issueId)
         const notifications = await knex('Notification').where({ issueId })
 
         assert.equal(notifications.length, 1)
@@ -623,16 +617,12 @@ describe.only('This test suite is for testing different triggers conditions', as
     })
 
     it('should resolve the issue when all modules were used', async () => {
-      let payload = await getPayload(
-        deviceContextForModulesUnused,
-        null,
-        null
-      )
+      let payload = await getPayload(deviceContextForModulesUnused, null, null)
       const { deviceAuth } = deviceContextForModulesUnused
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({
         authHeader: deviceAuth,
-        payload: payload,
+        payload,
       })
       await waitForIdle(1000)
 
@@ -643,26 +633,25 @@ describe.only('This test suite is for testing different triggers conditions', as
         instrumentSerial: 'S-1234-0',
         endedOn: subDays(new Date(), 5),
         errorCode: null,
-        errorNotes: null
+        errorNotes: null,
       }
       await deviceContextForModulesUnused.createResultForThisDevice({
-        resultDetails: { ...resultDetails, moduleName: 'A great module' }
+        resultDetails: { ...resultDetails, moduleName: 'A great module' },
       })
       await deviceContextForModulesUnused.createResultForThisDevice({
-        resultDetails: { ...resultDetails, moduleName: 'But this is better' }
+        resultDetails: { ...resultDetails, moduleName: 'But this is better' },
       })
       await deviceContextForModulesUnused.createResultForThisDevice({
-        resultDetails: { ...resultDetails, moduleName: "You are great too, don't be jealous" }
+        resultDetails: {
+          ...resultDetails,
+          moduleName: "You are great too, don't be jealous",
+        },
       })
-      payload = await getPayload(
-        deviceContextForModulesUnused,
-        null,
-        null
-      )
+      payload = await getPayload(deviceContextForModulesUnused, null, null)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({
         authHeader: deviceAuth,
-        payload: payload,
+        payload,
       })
       await waitForIdle(1000)
 
@@ -671,11 +660,14 @@ describe.only('This test suite is for testing different triggers conditions', as
         .where('it.externalId', 'ModulesUnused')
         .andWhere('i.deviceId', deviceId)
         .select(knex.raw('i.*'))
-      
+
       assert.equal(issues.length, 1)
-      
+
       const [{ issueStatusId }] = issues
-      const { externalId } = await knex('IssueStatus as is').where('is.id', issueStatusId).select('externalId').first()
+      const { externalId } = await knex('IssueStatus as is')
+        .where('is.id', issueStatusId)
+        .select('externalId')
+        .first()
 
       assert.equal(externalId, 'Resolved')
     })

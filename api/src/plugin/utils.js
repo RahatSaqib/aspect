@@ -1,5 +1,5 @@
-const { knex } = require('../db')
 const { addDays } = require('date-fns')
+const { knex } = require('../db')
 const {
   resultModuleReplaced,
   resultAnalyzeErrors,
@@ -229,17 +229,21 @@ async function shouldTriggerModulesUnused(messageContext, deviceId) {
     .where('r.endedOn', '<', new Date())
     .andWhere('r.endedOn', '>', addDays(new Date(), -30))
     .andWhere('r.deviceId', deviceId)
-    .select(knex.raw('COUNT(*) as numberOfResults'), knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules'))
+    .select(
+      knex.raw('COUNT(*) as numberOfResults'),
+      knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
+    )
     .first()
 
-  const { id: openIssueId } = (await knex('Issue as i')
-    .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-    .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
-    .where('i.deviceId', deviceId)
-    .andWhere('it.externalId', 'ModulesUnused')
-    .andWhere('is.externalId', '!=', 'Resolved')
-    .select('i.id')
-    .first()) || {}
+  const { id: openIssueId } =
+    (await knex('Issue as i')
+      .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+      .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+      .where('i.deviceId', deviceId)
+      .andWhere('it.externalId', 'ModulesUnused')
+      .andWhere('is.externalId', '!=', 'Resolved')
+      .select('i.id')
+      .first()) || {}
 
   if (!messageContext.deviceModuleUnused) {
     messageContext = messageContext.bindActionCreators({
@@ -249,10 +253,14 @@ async function shouldTriggerModulesUnused(messageContext, deviceId) {
 
   if (numberOfResults >= 20 && numberOfModules < 4 && !openIssueId)
     messageContext.deviceModuleUnused(device)
-  else if (numberOfResults >= 20 && numberOfModules === 4 && openIssueId)
-  {
-    const { id: issueStatusResolvedId } = await knex('IssueStatus').where({ externalId: 'Resolved' }).select('id').first()
-    await knex('Issue').where({ id: openIssueId }).update({ issueStatusId: issueStatusResolvedId })
+  else if (numberOfResults >= 20 && numberOfModules === 4 && openIssueId) {
+    const { id: issueStatusResolvedId } = await knex('IssueStatus')
+      .where({ externalId: 'Resolved' })
+      .select('id')
+      .first()
+    await knex('Issue')
+      .where({ id: openIssueId })
+      .update({ issueStatusId: issueStatusResolvedId })
   }
 }
 

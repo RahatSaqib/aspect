@@ -99,10 +99,7 @@ async function onResultLogged(
         }
       )
 
-      await shouldTriggerModulesUnused(
-        messageContext,
-        resultDeviceId
-      )
+      await shouldTriggerModulesUnused(messageContext, resultDeviceId)
 
       if (deviceLogDeviceTypeExternalId === 'Aspect') {
         await updateCovidResultFromFormData(

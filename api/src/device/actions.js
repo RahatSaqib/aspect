@@ -174,9 +174,7 @@ function deviceModuleDisabled(device, moduleSerial, disabledOn) {
  */
 function deviceModuleUnused(device) {
   if (!device) {
-    throw new Error(
-      'Must specify the device for deviceModuleUnused'
-    )
+    throw new Error('Must specify the device for deviceModuleUnused')
   }
   return {
     type: types.DEVICE_MODULES_UNUSED,
@@ -184,7 +182,7 @@ function deviceModuleUnused(device) {
     siteId: device.siteId,
     geographyId: device.geographyId,
     partnerId: device.partnerId,
-    options: { },
+    options: {},
   }
 }
 

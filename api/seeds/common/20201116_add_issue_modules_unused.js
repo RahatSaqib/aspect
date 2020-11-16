@@ -15,11 +15,11 @@ async function seed(knex) {
   const issueTypeId = await seedIssueType(knex, 'ModulesUnused', {
     userName: 'admin',
   })
-  
+
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['ModulesUnused'],
   })
-  
+
   const auditFields = {
     createdOn: new Date(),
     createdBy: userId,
@@ -27,10 +27,8 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueType = await knex('IssueType')
-    .where({ id: issueTypeId })
-    .first()
-  
+  const issueType = await knex('IssueType').where({ id: issueTypeId }).first()
+
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
       externalId: 'admin',
@@ -47,6 +45,7 @@ async function seed(knex) {
       level: 1,
       name: 'Modules Unused',
       ...auditFields,
-    }])
+    },
+  ])
 }
 module.exports = seed

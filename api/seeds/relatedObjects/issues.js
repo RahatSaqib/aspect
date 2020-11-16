@@ -194,19 +194,16 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-        'Module Unused in {{device.name}}: Critical errors; notify RO',
+        message: 'Module Unused in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          'Module Unused in {{device.name}}: Critical errors; notify RO',
+        message: 'Module Unused in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Modules Unused',
-        body:
-          'Modules unused in {{device.name}}: Critical errors; notify RO',
+        body: 'Modules unused in {{device.name}}: Critical errors; notify RO',
         htmlBody:
           'Modules unused in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
