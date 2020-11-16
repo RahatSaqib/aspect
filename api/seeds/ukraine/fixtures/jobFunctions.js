@@ -4,187 +4,187 @@ module.exports = [
     permissions: [
       {
         module: 'assay',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'person',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'reporter',
-        activity: 'edit'
-      }
-    ]
+        activity: 'edit',
+      },
+    ],
   },
   {
     name: 'Regional Officer',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'result'
-      }
-    ]
+        activity: 'result',
+      },
+    ],
   },
   {
     name: 'Lab User',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'result'
-      }
-    ]
+        activity: 'result',
+      },
+    ],
   },
   {
     name: 'Clinician',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'result'
-      }
-    ]
-  }
+        activity: 'result',
+      },
+    ],
+  },
 ]

@@ -50,7 +50,7 @@ async function commonUpserts(
   countryAbbreviation,
   deviceApiToken = null,
   usersInsertConfig = null,
-  partnerData = { }
+  partnerData = {}
 ) {
   const now = new Date()
   utils.hasSeededStaticData = true
@@ -128,11 +128,17 @@ async function commonUpserts(
     })
   }
 
-  const { fixtures = { } } = partnerData
-  // upsertJobFunctionFixture by using the job functions set at 
-  await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
+  const { fixtures = {} } = partnerData
+  // upsertJobFunctionFixture by using the job functions set at
+  await upsertJobFunctionFixture(
+    knex,
+    _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture,
+    partnerId
+  )
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .first()
   let { id: jobIdAdmin } =
     (await knex('Job')
       .where({
@@ -387,7 +393,10 @@ async function upsertJobFunctionPermission(
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
-  await knex('JobFunctionPermission').where({ jobFunctionId }).whereNotIn('permissionId', jobPermissions).delete()
+  await knex('JobFunctionPermission')
+    .where({ jobFunctionId })
+    .whereNotIn('permissionId', jobPermissions)
+    .delete()
   const JobFunctionPermission = _.map(
     jobPermissions.filter(
       permissionId => !existingJobFunctionPermissions.includes(permissionId)
@@ -1036,7 +1045,7 @@ async function baseGxAlertMigration(
     { ...defaultGxAlertMigrationVariables },
     variables
   )
-  let {
+  const {
     admin,
     partner,
     geographyFromGxAlert,
@@ -1460,7 +1469,7 @@ async function baseGxAlertMigration(
       }, {})
     )
   returnValue.siteIds = siteIds
-  
+
   await upsertJobFunctionFixture(knex, jobFunctionsFixture, partnerId)
 
   const jobFunctions = await knex('JobFunction')
@@ -1472,7 +1481,7 @@ async function baseGxAlertMigration(
         return jobFunctionMap
       }, {})
     )
-  
+
   // -------------------------------------
   // Contacts & User Accounts from GxAlert (filtering users without jobFunctions)
   // -------------------------------------
@@ -1656,11 +1665,7 @@ async function baseGxAlertMigration(
   return returnValue
 }
 
-async function upsertJobFunctionFixture(
-  knex,
-  jobFunctionFixture,
-  partnerId
-) {
+async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
   await Promise.each(jobFunctionFixture, async jf => {
     const jobFunction = _.omit(jf, ['permissions'])
@@ -2034,22 +2039,32 @@ async function upsertPermissionFixture(knex) {
 
   // Remove deprecated permissions
   await Promise.each(currentPermissions, async ({ module, activity, id }) => {
-    const shouldRemovePermission = permissionsFixture.find(p => p.module === module && p.activity === activity) === null
+    const shouldRemovePermission =
+      permissionsFixture.find(
+        p => p.module === module && p.activity === activity
+      ) === null
     if (shouldRemovePermission) {
       await knex('JobFunctionPermission').where({ permissionId: id }).delete()
       await knex('Permission').where({ id }).delete()
-    } 
+    }
   })
 
   // Add or update permissions
-  await Promise.each(permissionsFixture, async ({ module, activity, description }) => {
-    const currentPermission = currentPermissions.find(up => up.module === module && up.activity === activity)
-    if (currentPermission) {
-      await knex('Permission').where({ module, activity }).update({ description })
-    } else {
-      await knex('Permission').insert({ module, activity, description })
+  await Promise.each(
+    permissionsFixture,
+    async ({ module, activity, description }) => {
+      const currentPermission = currentPermissions.find(
+        up => up.module === module && up.activity === activity
+      )
+      if (currentPermission) {
+        await knex('Permission')
+          .where({ module, activity })
+          .update({ description })
+      } else {
+        await knex('Permission').insert({ module, activity, description })
+      }
     }
-  })
+  )
 }
 
 module.exports = {

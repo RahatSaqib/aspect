@@ -4,410 +4,410 @@ module.exports = [
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'person',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'reporter',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'notification',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'report',
-        activity: 'view'
-      }
-    ]
+        activity: 'view',
+      },
+    ],
   },
   {
     name: 'Lab Manager',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
-      }
-    ]
+        activity: 'view',
+      },
+    ],
   },
   {
     name: 'Lab Supervisor',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
-      }
-    ]
+        activity: 'view',
+      },
+    ],
   },
   {
     name: 'Med Tech',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
-      }
-    ]
+        activity: 'view',
+      },
+    ],
   },
   {
     name: 'Lab User',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
-      }
-    ]
+        activity: 'view',
+      },
+    ],
   },
   {
     name: 'Data Viewer',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'treatmentStatus',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
-      }
-    ]
+        activity: 'view',
+      },
+    ],
   },
   {
     name: 'Remote Health Worker',
     permissions: [
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
-      }
-    ]
-  }
+        activity: 'summary',
+      },
+    ],
+  },
 ]
