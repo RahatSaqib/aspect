@@ -393,6 +393,7 @@ class GxConnectApiTestContext {
     )
     const resultCategories = await allResultCategoryToId()
     const resultTypePatientId = await resultTypeToId('Patient')
+
     const [resultId] = await knex('Result').insert(
       _.merge(
         {

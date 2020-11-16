@@ -249,7 +249,7 @@ async function shouldTriggerModulesUnused(messageContext, deviceId) {
 
   if (numberOfResults >= 20 && numberOfModules < 4 && !openIssueId)
     messageContext.deviceModuleUnused(device)
-  else if (numberOfResults >= 20 && numberOfModules > 4 && openIssueId)
+  else if (numberOfResults >= 20 && numberOfModules === 4 && openIssueId)
   {
     const { id: issueStatusResolvedId } = await knex('IssueStatus').where({ externalId: 'Resolved' }).select('id').first()
     await knex('Issue').where({ id: openIssueId }).update({ issueStatusId: issueStatusResolvedId })

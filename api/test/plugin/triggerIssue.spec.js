@@ -172,7 +172,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe('This test suite is for testing different triggers conditions', async () => {
+describe.only('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -361,9 +361,11 @@ describe('This test suite is for testing different triggers conditions', async (
             hostId: `3nd${hostId}`,
             deviceSerialNumber: `3nd${deviceSerialNumber}`,
           })
+          
           await context.beforeRegisterAndSetDevice()
           await anotherDeviceContext.beforeRegisterAndSetDevice()
-          await Promise.each(_.range(0, 7), async i => {
+
+          await Promise.each(_.range(0, 19), async i => {
             const resultDetails = {
               consumableLot: 'Lot 0',
               moduleName: 'Module A',
@@ -537,12 +539,131 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckFailedLot'
     )
   })
-  describe.only('error 5011 issue', async () => {
+  describe('error 5011 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Signal Loss Detected in the Amplification Curve',
       5011,
       'SignalLossDetectedInAmplificationCurveModule',
       'SignalLossDetectedInAmplificationCurveLot'
     )
+  })
+
+  describe('modules unused', () => {
+    let deviceContextForModulesUnused
+    let deviceId
+    
+    beforeEach(async () => {
+      deviceContextForModulesUnused = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName: `4nd${deviceName}`,
+        macAddress: `4nd${macAddress}`,
+        hostId: `4nd${hostId}`,
+        deviceSerialNumber: `4nd${deviceSerialNumber}`,
+      })
+      await deviceContextForModulesUnused.beforeRegisterAndSetDevice()
+      const { device } = deviceContextForModulesUnused
+      deviceId = device.id
+      await Promise.each(_.range(0, 25), async i => {
+        const resultDetails = {
+          consumableLot: 'Lot 0',
+          moduleName: 'Module A',
+          moduleSerial: 'M-123456-0',
+          instrumentSerial: 'S-1234-0',
+          endedOn: subDays(new Date(), i),
+          errorCode: null,
+          errorNotes: null
+        }
+        await deviceContextForModulesUnused.createResultForThisDevice({
+          resultDetails,
+        })
+      })
+    })
+
+    afterEach(async () => {
+      await deviceContextForModulesUnused.cleanUp()
+    })
+
+    it('should only create one issue per device', async () => {
+      const payload = await getPayload(
+        deviceContextForModulesUnused,
+        null,
+        null
+      )
+      const { deviceAuth } = deviceContextForModulesUnused
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: payload,
+      })
+
+      await waitForIdle(1000)
+
+      const issues = await knex('Issue as i')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .where('it.externalId', 'ModulesUnused')
+        .andWhere('i.deviceId', deviceId)
+      
+      assert.equal(issues.length, 1)
+    })
+
+    it('should resolve the issue when all modules were used', async () => {
+      let payload = await getPayload(
+        deviceContextForModulesUnused,
+        null,
+        null
+      )
+      const { deviceAuth } = deviceContextForModulesUnused
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: payload,
+      })
+      await waitForIdle(1000)
+
+      const resultDetails = {
+        consumableLot: 'Lot 0',
+        moduleName: 'Module A',
+        moduleSerial: 'M-123456-0',
+        instrumentSerial: 'S-1234-0',
+        endedOn: subDays(new Date(), 5),
+        errorCode: null,
+        errorNotes: null
+      }
+      await deviceContextForModulesUnused.createResultForThisDevice({
+        resultDetails: { ...resultDetails, moduleName: 'A great module' }
+      })
+      await deviceContextForModulesUnused.createResultForThisDevice({
+        resultDetails: { ...resultDetails, moduleName: 'But this is better' }
+      })
+      await deviceContextForModulesUnused.createResultForThisDevice({
+        resultDetails: { ...resultDetails, moduleName: "You are great too, don't be jealous" }
+      })
+      payload = await getPayload(
+        deviceContextForModulesUnused,
+        null,
+        null
+      )
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: payload,
+      })
+      await waitForIdle(1000)
+
+      const issues = await knex('Issue as i')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .where('it.externalId', 'ModulesUnused')
+        .andWhere('i.deviceId', deviceId)
+        .select(knex.raw('i.*'))
+      
+      assert.equal(issues.length, 1)
+      
+      const [{ issueStatusId }] = issues
+      const { externalId } = await knex('IssueStatus as is').where('is.id', issueStatusId).select('externalId').first()
+
+      assert.equal(externalId, 'Resolved')
+    })
   })
 })
