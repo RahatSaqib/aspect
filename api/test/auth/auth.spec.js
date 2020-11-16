@@ -12,7 +12,8 @@ const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const gxAlertServer = supertest.agent(process.env.gxAlertApi)
 const { assert } = chai
 

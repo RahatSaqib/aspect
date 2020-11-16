@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const supertest = require('supertest')
 const chai = require('chai')
 const { addHours, subDays } = require('date-fns')
 
@@ -10,7 +9,8 @@ const { basicResultPayload } = require('./geneXpertConstants')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceInstrumentReplaced } = require('../../../src/device/actions')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Backward update db after getting tests from offline device', () => {

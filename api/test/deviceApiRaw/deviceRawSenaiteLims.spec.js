@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
 const _ = require('lodash')
@@ -8,7 +7,8 @@ const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 const { parseDateOrDefault } = require('../../src/shared/date')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device API Raw routes for Senaite LIMS', () => {

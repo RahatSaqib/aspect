@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const {
   createTestContext,
@@ -6,7 +5,8 @@ const {
   getLastDeviceOperationData,
 } = require('./utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 const context = createTestContext(server, {
   user: 'admin',

@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
 const _ = require('lodash')
@@ -35,7 +34,8 @@ const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device routes', () => {
@@ -657,7 +657,7 @@ describe('Device routes', () => {
       }
 
       // -----------------------------
-      async function checkMaintenance(externalId, datePropName, notesPropName) {
+      function checkMaintenance(externalId, datePropName, notesPropName) {
         it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, async () => {
           const options = { datePropName, notesPropName }
           let notes = 'Some sample notes'
