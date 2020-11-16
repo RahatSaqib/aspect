@@ -128,7 +128,7 @@ async function commonUpserts(
     })
   }
 
-  const { fixtures = false } = partnerData
+  const { fixtures = {} } = partnerData
   // upsertJobFunctionFixture by using the job functions set at 
   await upsertJobFunctionFixture(knex, fixtures.jobFunctions || defaultJobFunctionsFixture, partnerId)
 
