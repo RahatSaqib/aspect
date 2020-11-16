@@ -50,7 +50,7 @@ async function commonUpserts(
   countryAbbreviation,
   deviceApiToken = null,
   usersInsertConfig = null,
-  partnerData = false
+  partnerData = { }
 ) {
   const now = new Date()
   utils.hasSeededStaticData = true
@@ -128,7 +128,7 @@ async function commonUpserts(
     })
   }
 
-  const { fixtures = false } = partnerData
+  const { fixtures = { } } = partnerData
   // upsertJobFunctionFixture by using the job functions set at 
   await upsertJobFunctionFixture(knex, fixtures.jobFunctions || defaultJobFunctionsFixture, partnerId)
 

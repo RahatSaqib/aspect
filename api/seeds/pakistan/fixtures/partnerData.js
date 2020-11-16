@@ -1,5 +1,3 @@
-const jobFunctionsFixture = require('./jobFunctions')
-
 module.exports = {
   partnerName: "Pakistan",
   adminUserName: "admin",
@@ -20,7 +18,4 @@ module.exports = {
     "GxEbola",
     "assayGXCovid19"
   ],
-  // fixtures: {
-  //   jobFunctions: jobFunctionsFixture,
-  // }
 }
