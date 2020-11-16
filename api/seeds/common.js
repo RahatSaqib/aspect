@@ -2040,7 +2040,7 @@ async function upsertPermissionFixture(knex) {
       await knex('Permission').where({ id }).delete()
     } 
   })
-  await Promise.all(permissionsDeletions)
+  await Promise.each(permissionsDeletions)
 
   // Add or update permissions
   const permissionsInsertionsAndUpdates = permissionsFixture.map(async ({ module, activity, description }) => {
@@ -2051,7 +2051,7 @@ async function upsertPermissionFixture(knex) {
       await knex('Permission').insert({ module, activity, description })
     }
   })
-  await Promise.all(permissionsInsertionsAndUpdates)
+  await Promise.each(permissionsInsertionsAndUpdates)
 }
 
 module.exports = {
