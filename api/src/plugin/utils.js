@@ -226,8 +226,7 @@ async function shouldTriggerModulesUnused(messageContext, deviceId) {
   const device = await knex('Device').where({ id: deviceId }).first()
 
   const { numberOfResults, numberOfModules } = await knex('Result as r')
-    .where('r.endedOn', '<', new Date())
-    .andWhere('r.endedOn', '>', addDays(new Date(), -30))
+    .where('r.endedOn', '>', addDays(new Date(), -30))
     .andWhere('r.deviceId', deviceId)
     .select(
       knex.raw('COUNT(*) as numberOfResults'),
