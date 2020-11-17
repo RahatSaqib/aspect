@@ -179,10 +179,6 @@ function deviceModuleUnused(device) {
   return {
     type: types.DEVICE_MODULES_UNUSED,
     deviceId: device.id,
-    siteId: device.siteId,
-    geographyId: device.geographyId,
-    partnerId: device.partnerId,
-    options: {},
   }
 }
 
