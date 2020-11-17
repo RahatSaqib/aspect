@@ -311,10 +311,5 @@ module.exports = {
   regionalOfficer,
   labUser,
   clinician,
-  fixture: [
-    admin,
-    regionalOfficer,
-    labUser,
-    clinician
-  ]
+  fixture: [admin, regionalOfficer, labUser, clinician],
 }

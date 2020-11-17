@@ -3,7 +3,9 @@ const {
   upsertPermissionFixture,
 } = require('../common')
 const { getPartnerByName } = require('../utils')
-const { fixture: defaultJobFunctionsFixture } = require('./fixtures/jobFunctions')
+const {
+  fixture: defaultJobFunctionsFixture,
+} = require('./fixtures/jobFunctions')
 
 module.exports = async function cleanPermissions(
   knex,

@@ -9,7 +9,9 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
-const { fixture: defaultJobFunctionsFixture } = require('./common/fixtures/jobFunctions')
+const {
+  fixture: defaultJobFunctionsFixture,
+} = require('./common/fixtures/jobFunctions')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
@@ -256,7 +258,8 @@ async function upsertJobFunction(
   knex,
   jobFunctionName,
   partnerId,
-  permissions
+  permissions,
+  removeMissingPermissions = false
 ) {
   if (!permissions) permissions = []
   let { id: jobFunctionId } =
@@ -273,7 +276,12 @@ async function upsertJobFunction(
       partnerId,
     })
   }
-  await upsertJobFunctionPermission(knex, jobFunctionId, permissions)
+  await upsertJobFunctionPermission(
+    knex,
+    jobFunctionId,
+    permissions,
+    removeMissingPermissions
+  )
   return jobFunctionId
 }
 
@@ -388,15 +396,20 @@ async function copyDashboardWidgetsFromJobFunction(
 async function upsertJobFunctionPermission(
   knex,
   jobFunctionId,
-  jobPermissions
+  jobPermissions,
+  removeMissing = false
 ) {
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
-  await knex('JobFunctionPermission')
-    .where({ jobFunctionId })
-    .whereNotIn('permissionId', jobPermissions)
-    .delete()
+
+  if (removeMissing) {
+    await knex('JobFunctionPermission')
+      .where({ jobFunctionId })
+      .whereNotIn('permissionId', jobPermissions)
+      .delete()
+  }
+
   const JobFunctionPermission = _.map(
     jobPermissions.filter(
       permissionId => !existingJobFunctionPermissions.includes(permissionId)
@@ -1672,18 +1685,28 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
-        const { id: permissionId } = (await getPermissonByModuleAndActivity(
-          knex,
-          permission.module,
-          permission.activity
-        )) || {}
+        const { id: permissionId } =
+          (await getPermissonByModuleAndActivity(
+            knex,
+            permission.module,
+            permission.activity
+          )) || {}
 
-        if (!permissionId) throw new Error(`Unexistant permission ${permission.module}:${permission.activity}`)
-        
+        if (!permissionId)
+          throw new Error(
+            `Unexistant permission ${permission.module}:${permission.activity}`
+          )
+
         return permissionId
       }
     )
-    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds)
+    await upsertJobFunction(
+      knex,
+      jobFunction.name,
+      partnerId,
+      permissionIds,
+      true
+    )
   })
 }
 
