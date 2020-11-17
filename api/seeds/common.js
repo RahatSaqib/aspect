@@ -9,7 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
-const defaultJobFunctionsFixture = require('./common/fixtures/jobFunctions')
+const { fixture: defaultJobFunctionsFixture } = require('./common/fixtures/jobFunctions')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
@@ -1672,11 +1672,14 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
-        const { id: permissionId } = await getPermissonByModuleAndActivity(
+        const { id: permissionId } = (await getPermissonByModuleAndActivity(
           knex,
           permission.module,
           permission.activity
-        )
+        )) || {}
+
+        if (!permissionId) throw new Error(`Unexistant permission ${permission.module}:${permission.activity}`)
+        
         return permissionId
       }
     )

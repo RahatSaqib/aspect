@@ -4,9 +4,10 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
-const { upsertJobFunction, upsertJobFunctionPermission } = require('../common')
+const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
+const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
+const { upsertJobFunctionFixture, upsertPermissionFixture } = require('../common')
 const config = require('../../src/config')
-const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
@@ -1726,74 +1727,83 @@ async function seed(knex) {
       .update({ resultWorkflowStatusLogId: lastLogId })
   })
 
-  // Job Functions
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerOneId
-  )
+  await upsertPermissionFixture(knex)
+  await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerOne, partnerOneId)
+  await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerTwo, partnerTwoId)
 
-  const jobFunctionIdManager = await upsertJobFunction(
-    knex,
-    'Manager',
-    partnerOneId
-  )
+  // // Job Functions
+  // const jobFunctionIdAdmin = await upsertJobFunction(
+  //   knex,
+  //   'Admin',
+  //   partnerOneId
+  // )
 
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerOneId
-  )
+  // const jobFunctionIdManager = await upsertJobFunction(
+  //   knex,
+  //   'Manager',
+  //   partnerOneId
+  // )
 
-  const jobFunctionIdPartnerTwo = await upsertJobFunction(
-    knex,
-    'Lab Manager',
-    partnerTwoId
-  )
+  // const jobFunctionIdClinician = await upsertJobFunction(
+  //   knex,
+  //   'Clinician',
+  //   partnerOneId
+  // )
 
-  // assign permissions to job functions
-  const modules = await getPermissionModules(knex)
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.edit,
-    modules.deviceApiKey.edit,
-    modules.device.edit,
-    modules.person.edit,
-    modules.treatmentStatus.edit,
-    modules.result.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.assay.edit,
-    modules.inventory.edit,
-    modules.notification.edit,
-    modules.issue.edit,
-    modules.task.edit,
-    modules.report.edit,
-    modules.browse.view,
-    modules.reporter.edit,
-  ])
-  await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
-    modules.treatmentStatus.edit,
-    modules.site.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.inventory.edit,
-    modules.reporter.edit,
-  ])
-  await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
-    modules.treatmentStatus.edit,
-    modules.site.edit,
-    modules.device.edit,
-  ])
-  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.site.view,
-    modules.device.view,
-    modules.assay.view,
-    modules.inventory.view,
-    modules.result.edit,
-    modules.case.edit,
-    modules.browse.view,
-    modules.treatmentStatus.edit,
-  ])
+  // const jobFunctionIdPartnerTwo = await upsertJobFunction(
+  //   knex,
+  //   'Lab Manager',
+  //   partnerTwoId
+  // )
+
+  // // assign permissions to job functions
+  // const modules = await getPermissionModules(knex)
+  // await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
+  //   modules.demo.edit,
+  //   modules.deviceApiKey.edit,
+  //   modules.device.edit,
+  //   modules.person.edit,
+  //   modules.treatmentStatus.edit,
+  //   modules.result.edit,
+  //   modules.case.edit,
+  //   modules.site.edit,
+  //   modules.assay.edit,
+  //   modules.inventory.edit,
+  //   modules.notification.edit,
+  //   modules.issue.edit,
+  //   modules.task.edit,
+  //   modules.report.edit,
+  //   modules.browse.view,
+  //   modules.reporter.edit,
+  // ])
+  // await upsertJobFunctionPermission(knex, jobFunctionIdManager, [
+  //   modules.treatmentStatus.edit,
+  //   modules.site.edit,
+  //   modules.device.edit,
+  //   modules.assay.edit,
+  //   modules.inventory.edit,
+  //   modules.reporter.edit,
+  // ])
+  // await upsertJobFunctionPermission(knex, jobFunctionIdPartnerTwo, [
+  //   modules.treatmentStatus.edit,
+  //   modules.site.edit,
+  //   modules.device.edit,
+  // ])
+  // await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
+  //   modules.site.view,
+  //   modules.device.view,
+  //   modules.assay.view,
+  //   modules.inventory.view,
+  //   modules.result.edit,
+  //   modules.case.edit,
+  //   modules.browse.view,
+  //   modules.treatmentStatus.edit,
+  // ])
+
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId: partnerOneId }).first()
+  const { id: jobFunctionIdClinician } = await knex('JobFunction').where({ externalId: 'clinician', partnerId: partnerOneId }).first()
+  const { id: jobFunctionIdManager } = await knex('JobFunction').where({ externalId: 'manager', partnerId: partnerOneId }).first()
+  const { id: jobFunctionIdPartnerTwo } = await knex('JobFunction').where({ externalId: 'labManager', partnerId: partnerTwoId }).first()
 
   // crate jobs for users
   const jobIdAdmin = await knex('Job').insert({
