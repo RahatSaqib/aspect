@@ -432,6 +432,9 @@
             "minResults": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
