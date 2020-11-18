@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
 const {
@@ -13,7 +13,8 @@ const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { createTestContext } = require('./alere_utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device API routes for Alere FTP Connector Device', () => {

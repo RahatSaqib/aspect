@@ -153,6 +153,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
+  await knex('FactInventoryConsumptionRate', siteIds).delete()
   await knex('Site')
     .whereIn('id', siteIds)
     .orWhereIn(
@@ -356,16 +357,14 @@ class GxConnectApiTestContext {
   }
 
   async cleanUp() {
-    return run(async knex => {
-      await waitForIdle()
-      if (!_.isEmpty(this.apiKeys)) {
-        await deleteDeviceSiteDataAndRefreshTokens(
-          knex,
-          _.map(this.apiKeys, apiKey => ({ token: apiKey })),
-          this.clientId
-        )
-      }
-    })
+    await waitForIdle(2000)
+    if (!_.isEmpty(this.apiKeys)) {
+      await deleteDeviceSiteDataAndRefreshTokens(
+        knex,
+        _.map(this.apiKeys, apiKey => ({ token: apiKey })),
+        this.clientId
+      )
+    }
   }
 
   async createResultForThisDevice({

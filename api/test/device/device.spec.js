@@ -1,5 +1,5 @@
-const supertest = require('supertest')
 const chai = require('chai')
+const Promise = require('bluebird')
 const _ = require('lodash')
 const {
   addDays,
@@ -30,13 +30,19 @@ const {
 } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
+const {
+  createGxConnectTestContext,
+} = require('../deviceApi/geneXpert/gxconnect_utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device routes', () => {
   const path = '/api/device'
   let deviceId
+  let deviceMaintenanceStatuses
+  let deviceApprovals
 
   describe('GET', () => {
     shared.checkToken(server, path)
@@ -47,7 +53,14 @@ describe('Device routes', () => {
     let daktariManagerUserId
     let daktariManagerAuthAccessToken
 
+    // Status test
+    let statusesToTest
+    let theGreatestDeviceIEverCreated
+
     before(async () => {
+      deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+      deviceApprovals = await allDeviceApprovalToId()
+
       daktariManagerUserId = await createUser(
         'Partner One',
         'US',
@@ -64,59 +77,136 @@ describe('Device routes', () => {
         daktariManagerUsername,
         daktariManagerPassword
       )
+
+      // Status test
+      statusesToTest = [
+        // [approval status, maintenance status, expected status]
+        [deviceApprovals.provisioned, null, 'Provisioned'],
+        [
+          deviceApprovals.provisioned,
+          deviceMaintenanceStatuses.active,
+          'Provisioned',
+        ],
+        [deviceApprovals.approved, null, 'Approved'],
+        [deviceApprovals.approved, deviceMaintenanceStatuses.active, 'Active'],
+        [
+          deviceApprovals.approved,
+          deviceMaintenanceStatuses.inactiveOutOfInventory,
+          'Out of Inventory',
+        ],
+      ]
+      const statusTestDeviceContext = createGxConnectTestContext(server, {
+        macAddress: 'A really cool mac address',
+        adminUsername: 'admin',
+        adminPassword: 'test07',
+        countryCode: 'US',
+        deviceName: 'The greatest device I ever created',
+        deviceSerialNumber: 'A very cool device serial number',
+        hostId: 'The best host id ever',
+      })
+      await statusTestDeviceContext.registerAndSetDevice()
+      theGreatestDeviceIEverCreated = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first()
     })
 
-    after(async () => removeUser(daktariManagerUserId))
+    after(async () => {
+      removeUser(daktariManagerUserId)
+      const { id } = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first()
+      await knex('DeviceApiKey').where({ deviceId: id }).delete()
+      await knex('DeviceLog').where({ deviceId: id }).delete()
+      await knex('DeviceApprovalLog').where({ deviceId: id }).delete()
+      await knex('Device').where({ id }).delete()
+    })
+
+    it('should return a list of devices with the correspondant status', async () => {
+      await Promise.each(
+        statusesToTest,
+        async ([
+          deviceApprovalId,
+          deviceMaintenanceStatusId,
+          expectedStatus,
+        ]) => {
+          if (deviceMaintenanceStatusId) {
+            const [deviceMaintenanceStatusLogId] = await knex(
+              'DeviceMaintenanceStatusLog'
+            ).insert({
+              deviceId: theGreatestDeviceIEverCreated.id,
+              deviceMaintenanceStatusId,
+              day: new Date(),
+              createdOn: new Date(),
+            })
+            await knex('Device')
+              .where({ id: theGreatestDeviceIEverCreated.id })
+              .update({
+                deviceMaintenanceStatusLogId,
+                deviceApprovalId,
+              })
+          } else {
+            await knex('Device')
+              .where({ id: theGreatestDeviceIEverCreated.id })
+              .update({
+                deviceMaintenanceStatusLogId: null,
+                deviceApprovalId,
+              })
+          }
+
+          const res = await server
+            .get(`${path}?deviceName=The greatest device I ever created`)
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(res.body.data[0].status, expectedStatus)
+        }
+      )
+    })
 
     it('should return a list of devices when using valid token "approved"', async () => {
-      await server
+      const res = await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAbove(res.body.data.length, 0)
-          assertPropertiesOfListItem(res)
-          deviceId = res.body.data[0].id
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAbove(res.body.data.length, 0)
+      assertPropertiesOfListItem(res)
+      deviceId = res.body.data[0].id
     })
 
     it('should return only medical devices if hasResults=1', async () => {
-      await server
+      const res = await server
         .get(`${path}?hasResults=1&page=0&size=100`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAbove(res.body.data.length, 0)
-          assertPropertiesOfListItem(res)
-          assert.equal(
-            _.every(res.body.data, d => d.hasResults === 1),
-            true
-          )
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAbove(res.body.data.length, 0)
+      assertPropertiesOfListItem(res)
+      assert.equal(
+        _.every(res.body.data, d => d.hasResults === 1),
+        true
+      )
     })
 
     it('should return only devices that have connectivity hardware if hasConnectivity=1', async () => {
-      await server
+      const res = await server
         .get(`${path}?hasConnectivity=1&page=0&size=100`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 1)
-          assertPropertiesOfListItem(res)
-          assert.equal(
-            _.every(res.body.data, d => d.hasConnectivity === 1),
-            true
-          )
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAtLeast(res.body.data.length, 1)
+      assertPropertiesOfListItem(res)
+      assert.equal(
+        _.every(res.body.data, d => d.hasConnectivity === 1),
+        true
+      )
     })
 
     it('should return only devices that have are configured for tb disease', async () => {
@@ -151,76 +241,73 @@ describe('Device routes', () => {
     })
 
     it('should return details of a specific device', async () => {
-      await server
+      const res = await server
         .get(`${path}/1`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'id')
-          assert.property(res.body.data, 'name')
-          assert.property(res.body.data, 'shortName')
-          assert.property(res.body.data, 'createdOn')
-          assert.property(res.body.data, 'lastPingOn')
-          assert.property(res.body.data, 'lastSeen')
-          assert.property(res.body.data, 'approval')
-          assert.property(res.body.data, 'approvalToken')
-          assert.property(res.body.data, 'category')
-          assert.property(res.body.data, 'hasResults')
-          assert.property(res.body.data, 'hasConnectivity')
-          assert.property(res.body.data, 'siteId')
-          assert.property(res.body.data, 'siteName')
-          assert.property(res.body.data, 'hostId')
-          assert.property(res.body.data, 'deviceApprovalId')
-          assert.property(res.body.data, 'configurationData')
-          assert.property(res.body.data, 'notes')
-          assert.property(res.body.data, 'serial')
-          assert.property(res.body.data, 'deviceType')
-          assert.property(res.body.data, 'dailyCapacity')
-          assert.property(res.body.data, 'resultCountLastMonth')
-          assert.property(res.body.data, 'resultCountThisMonth')
-          assert.property(res.body.data, 'errorCountLastMonth')
-          assert.property(res.body.data, 'errorCountThisMonth')
-          assert.property(res.body.data, 'utilizationRateThisMonth')
-          assert.property(res.body.data, 'errorRateThisMonth')
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'Object')
+      assert.property(res.body.data, 'id')
+      assert.property(res.body.data, 'name')
+      assert.property(res.body.data, 'shortName')
+      assert.property(res.body.data, 'createdOn')
+      assert.property(res.body.data, 'lastPingOn')
+      assert.property(res.body.data, 'lastSeen')
+      assert.property(res.body.data, 'approval')
+      assert.property(res.body.data, 'approvalToken')
+      assert.property(res.body.data, 'category')
+      assert.property(res.body.data, 'hasResults')
+      assert.property(res.body.data, 'hasConnectivity')
+      assert.property(res.body.data, 'siteId')
+      assert.property(res.body.data, 'siteName')
+      assert.property(res.body.data, 'hostId')
+      assert.property(res.body.data, 'deviceApprovalId')
+      assert.property(res.body.data, 'configurationData')
+      assert.property(res.body.data, 'notes')
+      assert.property(res.body.data, 'serial')
+      assert.property(res.body.data, 'deviceType')
+      assert.property(res.body.data, 'dailyCapacity')
+      assert.property(res.body.data, 'resultCountLastMonth')
+      assert.property(res.body.data, 'resultCountThisMonth')
+      assert.property(res.body.data, 'errorCountLastMonth')
+      assert.property(res.body.data, 'errorCountThisMonth')
+      assert.property(res.body.data, 'utilizationRateThisMonth')
+      assert.property(res.body.data, 'errorRateThisMonth')
     })
 
     it('should return details of a filter device from a site', async () => {
-      await server
+      const res = await server
         .get(
           `${path}?sortCol=name&sortDir=asc&page=0&size=10&siteId=1&hasResults=1`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data[0], 'Object')
-          assertPropertiesOfListItem(res)
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data[0], 'Object')
+      assertPropertiesOfListItem(res)
     })
 
     it('should return performance report of a specific device', async () => {
-      await server
+      const res = await server
         .get(`${path}/performance/2`)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'utilizationRateAvg')
-          assert.property(res.body, 'errorRateAvg')
-          assert.property(res.body, 'data')
-          assert.equal(res.body.data.length, 13)
-          assert.typeOf(res.body.data, 'array')
-          assert.property(res.body.data[0], 'totalResult')
-          assert.property(res.body.data[0], 'errorCount')
-          assert.property(res.body.data[0], 'monthTested')
-          assert.property(res.body.data[0], 'utilizationRate')
-          assert.property(res.body.data[0], 'errorRate')
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'utilizationRateAvg')
+      assert.property(res.body, 'errorRateAvg')
+      assert.property(res.body, 'data')
+      assert.equal(res.body.data.length, 13)
+      assert.typeOf(res.body.data, 'array')
+      assert.property(res.body.data[0], 'totalResult')
+      assert.property(res.body.data[0], 'errorCount')
+      assert.property(res.body.data[0], 'monthTested')
+      assert.property(res.body.data[0], 'utilizationRate')
+      assert.property(res.body.data[0], 'errorRate')
     })
 
     it("should constrain devices returned based on the user's job context", async () => {
@@ -344,8 +431,8 @@ describe('Device routes', () => {
       })
 
       it('should show a device status for each day in between the date filters', async () => {
-        const fromDate = new Date(2020, 3, 5)
-        const toDate = new Date(2020, 4, 13)
+        const fromDate = subMonths(new Date(), 1)
+        const toDate = new Date()
         const devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
@@ -570,65 +657,59 @@ describe('Device routes', () => {
       }
 
       // -----------------------------
-      async function checkMaintenance(externalId, datePropName, notesPropName) {
-        it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, done => {
+      function checkMaintenance(externalId, datePropName, notesPropName) {
+        it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, async () => {
           const options = { datePropName, notesPropName }
           let notes = 'Some sample notes'
-          let prevDeviceMaintenanceId
           let reqData
           // ----------------------
           // post new date
           let contextDate = new Date('2077-12-31').toISOString()
           reqData = { contextDate, notes, externalId }
-          server
+          const response1 = await server
             .post(`${path}/maintenance/${deviceId}`)
             .set('Authorization', `Bearer ${shared.token}`)
             .send(reqData)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assertBase(reqData, res.body, options)
 
-              prevDeviceMaintenanceId = res.body.deviceMaintenanceId
+          assert.equal(response1.status, 200)
+          assertBase(reqData, response1.body, options)
 
-              // ----------------------
-              // post same date
-              notes = 'Another notes but date remains unchanged'
-              reqData = { contextDate, notes, externalId }
-              server
-                .post(`${path}/maintenance/${deviceId}`)
-                .set('Authorization', `Bearer ${shared.token}`)
-                .send(reqData)
-                .end((err, res) => {
-                  assert.equal(res.status, 200)
-                  assertBase(reqData, res.body, options)
-                  // we updated DeviceMaintenance, so id did not change
-                  assert.equal(
-                    prevDeviceMaintenanceId,
-                    res.body.deviceMaintenanceId
-                  )
+          const prevDeviceMaintenanceId = response1.body.deviceMaintenanceId
 
-                  // ----------------------
-                  // post new date
-                  notes = '' // empty note
-                  contextDate = new Date('2088-10-10').toISOString()
-                  reqData = { contextDate, notes, externalId }
-                  server
-                    .post(`${path}/maintenance/${deviceId}`)
-                    .set('Authorization', `Bearer ${shared.token}`)
-                    .send(reqData)
-                    .end((err, res) => {
-                      assert.equal(res.status, 200)
-                      assertBase(reqData, res.body, options)
-                      // we inserted new entry into DeviceMaintenance - so id's differ
-                      assert.notEqual(
-                        prevDeviceMaintenanceId,
-                        res.body.deviceMaintenanceId
-                      )
+          // ----------------------
+          // post same date
+          notes = 'Another notes but date remains unchanged'
+          reqData = { contextDate, notes, externalId }
+          const response2 = await server
+            .post(`${path}/maintenance/${deviceId}`)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send(reqData)
 
-                      done()
-                    })
-                })
-            })
+          assert.equal(response2.status, 200)
+          assertBase(reqData, response2.body, options)
+          // we updated DeviceMaintenance, so id did not change
+          assert.equal(
+            prevDeviceMaintenanceId,
+            response2.body.deviceMaintenanceId
+          )
+
+          // ----------------------
+          // post new date
+          notes = '' // empty note
+          contextDate = new Date('2088-10-10').toISOString()
+          reqData = { contextDate, notes, externalId }
+          const response3 = await server
+            .post(`${path}/maintenance/${deviceId}`)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .send(reqData)
+
+          assert.equal(response3.status, 200)
+          assertBase(reqData, response3.body, options)
+          // we inserted new entry into DeviceMaintenance - so id's differ
+          assert.notEqual(
+            prevDeviceMaintenanceId,
+            response3.body.deviceMaintenanceId
+          )
         })
       }
     })
@@ -801,8 +882,8 @@ describe('Device routes', () => {
           ])
           .andWhere('day', startOfTodayUtc)
           .del()
-        const deviceApprovals = await allDeviceApprovalToId()
-        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        deviceApprovals = await allDeviceApprovalToId()
+        deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
         await knex('DeviceMaintenanceStatusLog')
           .where('deviceId', decommissionedDeviceId)
           .andWhere(

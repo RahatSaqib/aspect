@@ -7,6 +7,7 @@ const {
   waitForIdle,
   waitForAction,
 } = require('../utils/mqUtils')
+const config = require('../../src/config')
 const { webhookMessageCreated } = require('../../src/webhook/actions')
 const {
   messageStatusToId,
@@ -74,7 +75,7 @@ describe('Sending Webhook Message via Message Queue', () => {
     defaultTestWebhookTemplateId = await createWebHookTemplate(
       'testWebhookTemplate',
       'POST',
-      'http://localhost:8080/device/plugin/test-webhook',
+      `${config.url}/device/plugin/test-webhook`,
       `{"Authorization":"Bearer ${deviceApiKey}"}`,
       `{ "site": {{enclose (defaultTo site.id '') with='"'}}, "assay": {{enclose (defaultTo result.assay.id '') with='"'}} }`,
       await fileContentTypeToId('applicationJson'),

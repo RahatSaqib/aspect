@@ -106,7 +106,7 @@ async function initUserAndJobs(knex, partnerId, siteId) {
   return jobContextIds
 }
 
-describe('DataCategoryLow Issues Endpoint', () => {
+describe.skip('DataCategoryLow Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
 

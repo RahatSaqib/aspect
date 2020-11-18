@@ -1,0 +1,107 @@
+[
+  {
+    "title": "Gender",
+    "type": "int",
+    "order": 20,
+    "dbColumn": "PatientGender",
+    "testType": null
+  },
+  {
+    "title": "Age",
+    "type": "int",
+    "order": 30,
+    "dbColumn": "PatientAge",
+    "testType": null
+  },
+  {
+    "title": "HIV Status",
+    "type": "int",
+    "order": 130,
+    "dbColumn": "HivStatus",
+    "testType": null
+  },
+  {
+    "title": "Age in Months",
+    "type": "int",
+    "order": 31,
+    "dbColumn": "PatientAgeMonths",
+    "testType": null
+  },
+  {
+    "title": "Repeat Test",
+    "type": "int",
+    "order": 100,
+    "dbColumn": "RepeatTest",
+    "testType": null
+  },
+  {
+    "title": "Patient Address",
+    "type": "string",
+    "order": 32,
+    "dbColumn": "PatientStreet",
+    "testType": null
+  },
+  {
+    "title": "Patient First Name",
+    "type": "string",
+    "order": 10,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Home District",
+    "type": "string",
+    "order": 40,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Sample Collection Site",
+    "type": "string",
+    "order": 50,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Disease Site",
+    "type": "string",
+    "order": 60,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Referring Physician Name",
+    "type": "string",
+    "order": 70,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Referring Physician Contact",
+    "type": "string",
+    "order": 80,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Specimen Type",
+    "type": "int",
+    "order": 90,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "AFB Microbiology Report",
+    "type": "string",
+    "order": 110,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Previous History of Treatment",
+    "type": "string",
+    "order": 120,
+    "dbColumn": null,
+    "testType": null
+  }
+]

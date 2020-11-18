@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const format = require('date-fns/format')
 const chai = require('chai')
 const { addDays, subDays, subHours } = require('date-fns')
@@ -38,7 +37,8 @@ const {
   issueEventStatusToId,
 } = require('../../src/shared/dictionary')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 const USER_LU = 'myanmar_lab1'
 const USER_RO = 'myanmar_ro1'

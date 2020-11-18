@@ -96,7 +96,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
-    'assayName',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -320,6 +319,35 @@ const ResultList = () => {
       })
   )
 
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const {
+      sanitized: filtersSanitized,
+      value: filtersParams,
+    } = filtersSanitizer(searchParams.get('filters') || '')
+
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    }
+
+    const sortPage = makeSortPageSelector({
+      sortCol: 'endedOn',
+      sortDir: 'desc',
+    })
+    const urlSearchParams = new URLSearchParams(location.search)
+    const urlFilters = urlSearchParams.get('filters')
+      ? new URLSearchParams(urlSearchParams.get('filters'))
+      : []
+    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+    setFilters(fromPairs([...urlFilters.entries()]))
+    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
+
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
@@ -343,34 +371,6 @@ const ResultList = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
-
-  useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
-
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    }
-
-    const sortPage = makeSortPageSelector({
-      sortCol: 'endedOn',
-    })
-    const urlSearchParams = new URLSearchParams(location.search)
-    const urlFilters = urlSearchParams.get('filters')
-      ? new URLSearchParams(urlSearchParams.get('filters'))
-      : []
-    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(fromPairs([...urlFilters.entries()]))
-    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
 
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {

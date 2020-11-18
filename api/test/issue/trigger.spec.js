@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const { subDays } = require('date-fns')
 
@@ -7,7 +6,7 @@ const { knex } = require('../../src/db')
 const { issueTypeToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 const baseAssert = (res, issueType) => {
   assert.equal(res.status, 200)

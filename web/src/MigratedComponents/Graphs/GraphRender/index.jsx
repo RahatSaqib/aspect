@@ -58,7 +58,6 @@ const GraphRender = ({
       culture,
     }
   })
-
   const { isLoading, isError, error } = useQuery(
     [id, { mergedParams }],
     async (key, { mergedParams }) =>
@@ -84,7 +83,8 @@ const GraphRender = ({
         indexBy,
         keyToConsume,
         keysToRename,
-        type
+        type,
+        mergedParams
       )
       if (grouped) {
         const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)

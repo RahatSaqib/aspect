@@ -515,13 +515,13 @@ async function downloadResultsList(request) {
 async function addResultDownloadLog(idsToBeRegistered, userId) {
   const now = new Date()
 
-  await Promise.each(idsToBeRegistered, async resultId => {
-    await knex('ResultDownloadLog').insert({
+  return Promise.each(idsToBeRegistered, async resultId =>
+    knex('ResultDownloadLog').insert({
       resultId,
       createdOn: now,
       createdBy: userId,
     })
-  })
+  )
 }
 
 async function updateResultWorkflowStatus(
@@ -533,7 +533,7 @@ async function updateResultWorkflowStatus(
     .where('externalId', resultWorkflowStatusExternalId)
     .first('id')
   const now = new Date()
-  await Promise.each(idsToUpdate, async resultId => {
+  return Promise.each(idsToUpdate, async resultId => {
     const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
@@ -2123,6 +2123,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       treatmentStatusId: 'rts.id',
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
+      onlyReportableResults: 'rca.reportable',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
@@ -2148,7 +2149,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       country: 'c',
       disease: 'dis',
     })
-
   return resultQuery
 }
 

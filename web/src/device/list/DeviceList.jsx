@@ -71,7 +71,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
-    'approval',
+    'statusI18nKey',
     'availabilityRate',
     'errorRate',
     'createdOn',
@@ -290,8 +290,8 @@ export const DeviceList = ({
                 sortable: true,
               },
               {
-                key: 'approval',
-                label: intl.formatMessage(messages.approval),
+                key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
+                label: intl.formatMessage(messages.status),
                 sortable: true,
               },
               {

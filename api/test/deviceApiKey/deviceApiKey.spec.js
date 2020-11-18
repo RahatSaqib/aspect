@@ -1,11 +1,11 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { run } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('Device API Key routes', () => {

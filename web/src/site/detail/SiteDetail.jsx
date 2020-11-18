@@ -1,14 +1,13 @@
-import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
+import PropTypes from 'prop-types'
+import flowRight from 'lodash/flowRight'
 import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
-import { injectIntl } from 'react-intl'
+import { injectIntl, useIntl } from 'react-intl'
 
-// Material-UI
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
@@ -31,29 +30,8 @@ import SiteLocationFormMap from './SiteLocationFormMap'
 const cssClasses = classnames.bind(require('./SiteDetail.css'))
 
 export const SiteDetail = props => {
-  useEffect(
-    () => {
-      const handleFetchSite = ({ match }) => {
-        props.fetchSingleSite(match.params.siteId)
-        props.fetchSiteContacts(match.params.siteId)
-        props.fetchTags(match.params.siteId, 'site')
-      }
-
-      handleFetchSite(props)
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.match.params.siteId]
-  )
-  const onSiteTagChange = (qryId, qryType, tags) => {
-    props.updateTags(qryId, qryType, tags.join(','))
-  }
-
-  const hasSiteWithLocation = () => {
-    const { site } = props
-    return site && site.has('longitude') && site.has('latitude')
-  }
+  const intl = useIntl()
   const {
-    intl,
     updateSingleSiteFromForm,
     site,
     match,
@@ -61,12 +39,39 @@ export const SiteDetail = props => {
     editable,
     siteContacts,
     updateLatLongFromFormAddress,
+    fetchSingleSite,
+    fetchSiteContacts,
+    fetchTags,
+    updateTags,
   } = props
+
+  useEffect(
+    () => {
+      const handleFetchSite = ({ match }) => {
+        fetchSingleSite(match.params.siteId)
+        fetchSiteContacts(match.params.siteId)
+        fetchTags(match.params.siteId, 'site')
+      }
+
+      handleFetchSite(props)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [match.params.siteId]
+  )
+
+  const onSiteTagChange = (qryId, qryType, tags) => {
+    updateTags(qryId, qryType, tags.join(','))
+  }
+
+  const hasSiteWithLocation = () => {
+    return site && site.has('longitude') && site.has('latitude')
+  }
+
   return (
     <div>
       <Helmet title={intl.formatMessage(messages.title)} />
-      {!hasSiteWithLocation() && <LinearProgress />}
-      {hasSiteWithLocation() && (
+      {!hasSiteWithLocation() ? <LinearProgress /> : null}
+      {hasSiteWithLocation() ? (
         <Switch>
           <Route
             exact
@@ -87,12 +92,7 @@ export const SiteDetail = props => {
             exact
             path={`${match.path}/alerts`}
             render={props => (
-              <SiteDetailAlert
-                {...props}
-                intl={intl}
-                disabled={!editable}
-                site={site}
-              />
+              <SiteDetailAlert {...props} disabled={!editable} site={site} />
             )}
           />
           <Route
@@ -117,10 +117,10 @@ export const SiteDetail = props => {
             }
           />
         </Switch>
-      )}
+      ) : null}
       <section className={cssClasses('Section', 'Section--first')}>
         <Paper>
-          {hasSiteWithLocation() && <SiteLocationFormMap site={site} />}
+          {hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}
         </Paper>
       </section>
     </div>
@@ -152,9 +152,6 @@ SiteDetail.propTypes = {
     path: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
   }).isRequired,
-  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  intl: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   editable: PropTypes.bool.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,

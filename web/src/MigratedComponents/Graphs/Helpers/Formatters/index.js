@@ -253,6 +253,16 @@ const generateToolTip = (
   } else if (type === 'barInventory') {
     displayId = 'Locations'
     displayValue = value
+  } else if (type === 'bar' || type === 'barLegacyTreatment') {
+    const { totalCnt } = data
+    const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
+    const percentageToValue = Math.round(
+      (parseFloat(percentage) / 100) * totalCnt
+    )
+    displayValue = {
+      percentage,
+      actual: { totalCnt, percentageToValue },
+    }
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   }
@@ -311,7 +321,8 @@ const formatDataByGraphType = (
   indexBy,
   keyToConsume,
   keysToRename,
-  type
+  type,
+  mergedParams
 ) => {
   let grouped
   switch (type) {
@@ -338,7 +349,8 @@ const formatDataByGraphType = (
         keyToConsume,
         indexBy,
         formatDate,
-        filterBy
+        filterBy,
+        displayMethod
       )
       break
 
@@ -370,7 +382,7 @@ const formatDataByGraphType = (
       break
 
     case 'pieRow':
-      grouped = groupForPieRow(data)
+      grouped = groupForPieRow(data, mergedParams)
       break
 
     default:

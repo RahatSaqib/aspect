@@ -119,177 +119,180 @@ export const InventoryItemsListWithProps = ({
   onReceiveInventorySubmit,
   onTransferInventorySubmit,
   onAddInventorySubmit,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-      dateFilterLabel={intl.formatMessage(messages.expiresOn)}
-    >
-      <AddNewButton
-        type="button"
-        color="primary"
-        variant="contained"
-        onClick={() => dispatch(showNewInventoryDialog)}
-        browseButton
+}) => {
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
+      <BrowseFilters
+        history={history}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
+        dateFilterLabel={intl.formatMessage(messages.expiresOn)}
       >
-        {intl.formatMessage(messages.addInventory)}
-      </AddNewButton>
-    </BrowseFilters>
+        <AddNewButton
+          type="button"
+          color="primary"
+          variant="contained"
+          onClick={() => dispatch(showNewInventoryDialog)}
+          browseButton
+        >
+          {intl.formatMessage(messages.addInventory)}
+        </AddNewButton>
+      </BrowseFilters>
 
-    <DataTableCard className={cssClasses('DataTableCard--action')}>
-      <CheckboxField
-        className={cssClasses('Checkbox')}
-        name="groupBySite"
-        checked={groupBySite}
-        label={intl.formatMessage(messages.groupBySite)}
-        onChange={onGroupBySiteChange}
-      />
-    </DataTableCard>
-    <DataTableCard
-      key={`DataTableCard--table-${location.key}`}
-      className={cssClasses('DataTableCard--table')}
-    >
-      <DataTableProgressBar disabled={!isLoading} />
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Supplies"
-      />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <InventoryDataTable className={cssClasses('InventoryDataTable')}>
-          <InventoryDataTableHead
+      <DataTableCard className={cssClasses('DataTableCard--action')}>
+        <CheckboxField
+          className={cssClasses('Checkbox')}
+          name="groupBySite"
+          checked={groupBySite}
+          label={intl.formatMessage(messages.groupBySite)}
+          onChange={onGroupBySiteChange}
+        />
+      </DataTableCard>
+      <DataTableCard
+        key={`DataTableCard--table-${location.key}`}
+        className={cssClasses('DataTableCard--table')}
+      >
+        <DataTableProgressBar disabled={!isLoading} />
+        <ExportListButton
+          onExcelClick={onExcelClick}
+          onCsvClick={onExcelClick}
+          visible={!items.currentIdList.isEmpty()}
+          reportName="Supplies"
+        />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList history={history} location={location} intl={intl} />
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <InventoryDataTable className={cssClasses('InventoryDataTable')}>
+            <InventoryDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={[
+                {
+                  key: 'siteName',
+                  label: intl.formatMessage(messages.siteName),
+                  sortable: true,
+                },
+                {
+                  key: 'consumableName',
+                  label: intl.formatMessage(messages.consumableName),
+                  sortable: true,
+                },
+                {
+                  key: 'quantityOnHand',
+                  label: intl.formatMessage(messages.quantityOnHand),
+                  sortable: true,
+                },
+                {
+                  key: 'expiresOn',
+                  label: intl.formatMessage(messages.expiresOn),
+                  sortable: true,
+                },
+                {
+                  key: 'expiresIn',
+                  label: intl.formatMessage(messages.expiresIn),
+                  'data-column': 'expiresOn',
+                  sortable: true,
+                },
+                {
+                  key: 'action',
+                },
+              ]}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(inventoryItem => (
+                  <InventoryDataTableRow
+                    key={inventoryItem.get('id')}
+                    inventoryItem={inventoryItem}
+                  />
+                ))}
+            </TableBody>
+          </InventoryDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             history={history}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'siteName',
-                label: intl.formatMessage(messages.siteName),
-                sortable: true,
-              },
-              {
-                key: 'consumableName',
-                label: intl.formatMessage(messages.consumableName),
-                sortable: true,
-              },
-              {
-                key: 'quantityOnHand',
-                label: intl.formatMessage(messages.quantityOnHand),
-                sortable: true,
-              },
-              {
-                key: 'expiresOn',
-                label: intl.formatMessage(messages.expiresOn),
-                sortable: true,
-              },
-              {
-                key: 'expiresIn',
-                label: intl.formatMessage(messages.expiresIn),
-                'data-column': 'expiresOn',
-                sortable: true,
-              },
-              {
-                key: 'action',
-              },
-            ]}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(inventoryItem => (
-                <InventoryDataTableRow
-                  key={inventoryItem.get('id')}
-                  inventoryItem={inventoryItem}
-                />
-              ))}
-          </TableBody>
-        </InventoryDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
-    </DataTableCard>
-    <NewInventoryDialogForm
-      intl={intl}
-      isDialogActive={
-        inventoryAdjustment.get('actionType') ===
-        types.SHOW_NEW_INVENTORY_DIALOG
-      }
-      onCancel={() => dispatch(hideAdjustInventoryDialog())}
-      onSubmit={onAddInventorySubmit}
-    />
-    <AddInventoryDialogForm
-      intl={intl}
-      inventoryItem={items.getIn(
-        ['byId', inventoryAdjustment.get('inventoryItemId')],
-        EMPTY_MAP
-      )}
-      isDialogActive={
-        inventoryAdjustment.get('actionType') ===
-        types.SHOW_ADD_INVENTORY_DIALOG
-      }
-      onCancel={() => dispatch(hideAdjustInventoryDialog())}
-      onSubmit={onAddInventorySubmit}
-    />
-    <RemoveInventoryDialogForm
-      intl={intl}
-      inventoryItem={items.getIn(
-        ['byId', inventoryAdjustment.get('inventoryItemId')],
-        EMPTY_MAP
-      )}
-      isDialogActive={
-        inventoryAdjustment.get('actionType') ===
-        types.SHOW_REMOVE_INVENTORY_DIALOG
-      }
-      onCancel={() => dispatch(hideAdjustInventoryDialog())}
-      onSubmit={onRemoveInventorySubmit}
-    />
-    <TransferInventoryDialogForm
-      intl={intl}
-      inventoryItem={items.getIn(
-        ['byId', inventoryAdjustment.get('inventoryItemId')],
-        EMPTY_MAP
-      )}
-      isDialogActive={
-        inventoryAdjustment.get('actionType') ===
-        types.SHOW_TRANSFER_INVENTORY_DIALOG
-      }
-      onCancel={() => dispatch(hideAdjustInventoryDialog())}
-      onSubmit={onTransferInventorySubmit}
-    />
-    <ReceiveInventoryDialogForm
-      intl={intl}
-      inventoryItem={items.getIn(
-        ['byId', inventoryAdjustment.get('inventoryItemId')],
-        EMPTY_MAP
-      )}
-      isDialogActive={
-        inventoryAdjustment.get('actionType') ===
-        types.SHOW_RECEIVE_INVENTORY_DIALOG
-      }
-      onCancel={() => dispatch(hideAdjustInventoryDialog())}
-      onSubmit={onReceiveInventorySubmit}
-    />
-  </div>
-)
+        )}
+      </DataTableCard>
+      <NewInventoryDialogForm
+        intl={intl}
+        isDialogActive={
+          inventoryAdjustment.get('actionType') ===
+          types.SHOW_NEW_INVENTORY_DIALOG
+        }
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
+        onSubmit={onAddInventorySubmit}
+      />
+      <AddInventoryDialogForm
+        intl={intl}
+        inventoryItem={items.getIn(
+          ['byId', inventoryAdjustment.get('inventoryItemId')],
+          EMPTY_MAP
+        )}
+        isDialogActive={
+          inventoryAdjustment.get('actionType') ===
+          types.SHOW_ADD_INVENTORY_DIALOG
+        }
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
+        onSubmit={onAddInventorySubmit}
+      />
+      <RemoveInventoryDialogForm
+        intl={intl}
+        inventoryItem={items.getIn(
+          ['byId', inventoryAdjustment.get('inventoryItemId')],
+          EMPTY_MAP
+        )}
+        isDialogActive={
+          inventoryAdjustment.get('actionType') ===
+          types.SHOW_REMOVE_INVENTORY_DIALOG
+        }
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
+        onSubmit={onRemoveInventorySubmit}
+      />
+      <TransferInventoryDialogForm
+        intl={intl}
+        inventoryItem={items.getIn(
+          ['byId', inventoryAdjustment.get('inventoryItemId')],
+          EMPTY_MAP
+        )}
+        isDialogActive={
+          inventoryAdjustment.get('actionType') ===
+          types.SHOW_TRANSFER_INVENTORY_DIALOG
+        }
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
+        onSubmit={onTransferInventorySubmit}
+      />
+      <ReceiveInventoryDialogForm
+        intl={intl}
+        items={items}
+        inventoryItem={items.getIn(
+          ['byId', inventoryAdjustment.get('inventoryItemId')],
+          EMPTY_MAP
+        )}
+        isDialogActive={
+          inventoryAdjustment.get('actionType') ===
+          types.SHOW_RECEIVE_INVENTORY_DIALOG
+        }
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
+        onSubmit={onReceiveInventorySubmit}
+      />
+    </div>
+  )
+}
 
 export const InventoryItemsList = () => {
   // >>>>>> Defining hooks <<<<<<
