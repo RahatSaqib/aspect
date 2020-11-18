@@ -502,7 +502,6 @@ async function listRefreshTokens(request) {
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
       )
     )
-
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }

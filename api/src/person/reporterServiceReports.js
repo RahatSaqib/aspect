@@ -9,6 +9,7 @@ async function exportReporters(request, reply) {
       ...item,
       // replace array of `siteIssues` with csv-string of IssueCategory shortNames
       totalOnTreatment: `${item.totalOnTreatment}/${item.requiresFollowUp}`,
+      revoked: item.revoked ? 'YES' : 'NO',
     })),
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
