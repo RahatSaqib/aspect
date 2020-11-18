@@ -500,6 +500,11 @@ function listResultsBaseConfig() {
           .description(
             'Case externalid for filtering only Results related with'
           ),
+        onlyReportableResults: Joi.boolean()
+          .optional()
+          .description(
+            'It filters only results with no "Invalid", "No result" or "Error" categories'
+          ),
       },
     },
   }

@@ -9,7 +9,7 @@ const {
   getPartnerByName,
   getPermissonByModuleAndActivity,
 } = require('../utils')
-const jobFunctions = require('./fixtures/jobFunctions.json')
+const jobFunctions = require('./fixtures/jobFunctions')
 const {
   ensureResultTreatmentStatuses,
   upsertJobFunction,

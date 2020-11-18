@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
-const partnerData = require('./fixtures/partnerData.json')
+const partnerData = require('./fixtures/partnerData')
 
 const {
   commonUpserts,
@@ -53,7 +53,8 @@ async function seed(knex) {
     deviceApiToken,
     {
       password: lowerLevelUserPassword,
-    }
+    },
+    partnerData
   )
 
   // GeneXpert
