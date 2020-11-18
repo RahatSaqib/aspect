@@ -438,10 +438,14 @@
       }
     },
     {
-      "issueType": "ModulesUnused",
+      "issueType": "UnusedModules",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "DEVICE_MODULES_UNUSED"
+        "action": "RESULT_UNUSED_MODULES",
+        "conditions":{
+          "evaluationMethod":"plugin-function",
+          "evaluationParameter":"analyzeUnusedModules"
+        }
       }
     }
   ]

@@ -1,3 +1,3 @@
-const addIssueModulesUnused = require('../common/20201116_add_issue_modules_unused')
+const addIssueUnusedModules = require('../common/20201116_add_issue_modules_unused')
 
-module.exports = require('../utils').seed(addIssueModulesUnused, __filename)
+module.exports = require('../utils').seed(addIssueUnusedModules, __filename)

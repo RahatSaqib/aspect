@@ -150,12 +150,15 @@ The triggerConditions Object can have the next shape:
 
 ```JSON
 {
-  "action": "Is the action where the function is subscribed.",
-  "conditions": {
-    "evaluationMethod":  "the way we are going to evaluate the condition (inline-sql/sql-script/plugin-function/child-conditions)"
-,
-    "evaluationParameter": "Name of the function/ path of the file/ sql script",
-    "evaluationFilterParameters": "(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)"
+  "issueType": <The issue's externalId>,
+  "issueEventStatus": <The status outcome of the issue>,
+  "triggerConditions": {
+    "action": <The action that will trigger the issue>,
+    "conditions":{
+      "evaluationMethod": <The way we are going to evaluate the condition (inline-sql/sql-script/plugin-function/child-conditions)>,
+      "evaluationParameter": <Name of the function/ path of the file/ sql script>,
+      "evaluationFilterParameters": <(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)>
+    }
   }
 }
 ```
@@ -164,16 +167,20 @@ An example would be:
 
 ```JSON
 {
-  "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
-  "conditions": {
-    "evaluationMethod": "plugin-function",
-    "evaluationParameter": "analyzeErrors",
-    "evaluationFilterParameters": {
-      "below": false,
-      "errorCode": 5011,
-      "threshold": 0.03,
-      "daysPeriod": 30,
-      "minResults": 3
+  "issueType": "UnusedModules",
+  "issueEventStatus": "Triggered",
+  "triggerConditions": {
+    "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
+    "conditions":{
+      "evaluationMethod": "plugin-function",
+      "evaluationParameter": "analyzeErrors",
+      "evaluationFilterParameters": {
+        "below": false,
+        "errorCode": 5011,
+        "threshold": 0.03,
+        "daysPeriod": 30,
+        "minResults": 3
+      }
     }
   }
 }
@@ -183,7 +190,7 @@ The evaluation methods could be:
 
 - Inline-sql: in the evaluationParameter property we are going to write a query that should return a row. If it returns a row then it will be true. If empty, false.
 - Sql-script: when this option is configured the evaluationParameter should have the relative path of the file where the sql script is placed. Aspect is going to execute and wait for a true or false
-- Plugin-function: Based on the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
+- Plugin-function: Based on  the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
 
 ### Filtering
 
@@ -293,14 +300,13 @@ We need to add a new json object in the JSON Array with the following shape:
 Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json with the following shape.
 
 ```javascript
-
 {
-      "issueType": "DeviceNoResults",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_NO_RESULTS"
-      }
-},
+  "issueType": "DeviceNoResults",
+  "issueEventStatus": "Triggered",
+  "triggerConditions": {
+    "action": "DEVICE_NO_RESULTS"
+  }
+}
 ```
 
 Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.

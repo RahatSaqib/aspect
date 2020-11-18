@@ -14,7 +14,7 @@ const types = {
     'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
   DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
-  DEVICE_MODULES_UNUSED: 'DEVICE_MODULES_UNUSED',
+  DEVICE_UNUSED_MODULES: 'DEVICE_UNUSED_MODULES',
 }
 
 // ----------- Action Creators -------------------
@@ -172,13 +172,13 @@ function deviceModuleDisabled(device, moduleSerial, disabledOn) {
  * Creates an action to notify an update about modules unused
  * @param {*} device
  */
-function deviceModuleUnused(device) {
-  if (!device) {
+function deviceModuleUnused(deviceId) {
+  if (!deviceId) {
     throw new Error('Must specify the device for deviceModuleUnused')
   }
   return {
-    type: types.DEVICE_MODULES_UNUSED,
-    deviceId: device.id,
+    type: types.DEVICE_UNUSED_MODULES,
+    deviceId,
   }
 }
 

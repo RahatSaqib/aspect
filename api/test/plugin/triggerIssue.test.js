@@ -1,5 +1,8 @@
 const chai = require('chai')
-const { analyzeResultsWithErrors } = require('../../src/plugin/issueTriggers')
+const {
+  analyzeResultsWithErrors,
+  shouldTriggerUnusedModules,
+} = require('../../src/plugin/issueTriggers')
 const {
   resultAnalyzeErrors,
   resultAnalyzeCategories,
@@ -8,6 +11,18 @@ const {
 const { assert } = chai
 
 describe('This test is for testing different triggers conditions', () => {
+  it('shouldTriggerUnusedModules', async () => {
+    assert.isFalse(
+      shouldTriggerUnusedModules({ numberOfResults: 10, numberOfModules: 2 })
+    )
+    assert.isFalse(
+      shouldTriggerUnusedModules({ numberOfResults: 20, numberOfModules: 4 })
+    )
+    assert.isTrue(
+      shouldTriggerUnusedModules({ numberOfResults: 20, numberOfModules: 1 })
+    )
+  })
+
   it('analyzeResultsWithErrors', async () => {
     assert.isTrue(analyzeResultsWithErrors(3, 100, 0.03, false, 3))
     assert.isTrue(analyzeResultsWithErrors(20, 200, 0.1, false, 3))

@@ -30,6 +30,7 @@ const types = {
     'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
   RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE:
     'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
+  RESULT_UNUSED_MODULES: 'RESULT_UNUSED_MODULES',
 }
 
 // ----------- Action Creators -------------------
@@ -377,6 +378,16 @@ function resultModuleReplaced(resultId, options) {
   }
 }
 
+function resultUnusedModules(deviceId) {
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultUnusedModules')
+  }
+  return {
+    type: types.RESULT_UNUSED_MODULES,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
@@ -394,4 +405,5 @@ module.exports = {
   resultModuleReplaced,
   resultAnalyzeErrors,
   resultAnalyzeCategories,
+  resultUnusedModules,
 }

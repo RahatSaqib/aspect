@@ -183,29 +183,31 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    ModulesUnused: {
+    UnusedModules: {
       issueType: {
-        name: 'Modules Unused',
-        externalId: 'ModulesUnused',
-        i18nKey: 'issueStatusModulesUnused',
+        name: 'Unused Modules',
+        externalId: 'UnusedModules',
+        i18nKey: 'issueStatusUnusedModules',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message: 'Module Unused in {{device.name}}: Critical errors; notify RO',
+        message:
+          'Unused Module(s) in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
       SmsTemplate: {
-        message: 'Module Unused in {{device.name}}: Critical errors; notify RO',
+        message:
+          'Unused Module(s) in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
-        subject: '{{device.name}}: Modules Unused',
-        body: 'Modules unused in {{device.name}}: Critical errors; notify RO',
+        subject: '{{device.name}}: Unused module(s)',
+        body: 'Unused module(s) in {{device.name}}: Critical errors; notify RO',
         htmlBody:
-          'Modules unused in {{device.name}}: Critical errors; notify RO',
+          'Unused module(s) in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
     },

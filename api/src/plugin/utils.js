@@ -1,4 +1,3 @@
-const { addDays } = require('date-fns')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -8,7 +7,6 @@ const {
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
-  deviceModuleUnused,
 } = require('../device/actions')
 const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
 
@@ -222,47 +220,6 @@ async function shouldTriggerModuleDisabled(
   }
 }
 
-async function shouldTriggerModulesUnused(messageContext, deviceId) {
-  const device = await knex('Device').where({ id: deviceId }).first()
-
-  const { numberOfResults, numberOfModules } = await knex('Result as r')
-    .where('r.endedOn', '>', addDays(new Date(), -30))
-    .andWhere('r.deviceId', deviceId)
-    .select(
-      knex.raw('COUNT(*) as numberOfResults'),
-      knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
-    )
-    .first()
-
-  const { id: openIssueId } =
-    (await knex('Issue as i')
-      .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-      .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
-      .where('i.deviceId', deviceId)
-      .andWhere('it.externalId', 'ModulesUnused')
-      .andWhere('is.externalId', '!=', 'Resolved')
-      .select('i.id')
-      .first()) || {}
-
-  if (!messageContext.deviceModuleUnused) {
-    messageContext = messageContext.bindActionCreators({
-      deviceModuleUnused,
-    })
-  }
-
-  if (numberOfResults >= 20 && numberOfModules < 4 && !openIssueId)
-    messageContext.deviceModuleUnused(device)
-  else if (numberOfResults >= 20 && numberOfModules === 4 && openIssueId) {
-    const { id: issueStatusResolvedId } = await knex('IssueStatus')
-      .where({ externalId: 'Resolved' })
-      .select('id')
-      .first()
-    await knex('Issue')
-      .where({ id: openIssueId })
-      .update({ issueStatusId: issueStatusResolvedId })
-  }
-}
-
 async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   const result = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -350,5 +307,4 @@ module.exports = {
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerResultCategoryAnalysis,
-  shouldTriggerModulesUnused,
 }

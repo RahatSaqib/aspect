@@ -5,6 +5,7 @@ const { assert } = chai
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 const { knex } = require('../../src/db')
+const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 
 const {
   issueTypeToId,
@@ -23,7 +24,11 @@ const {
   basicResultPayload,
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
-const { waitForIdle } = require('../utils/mqUtils')
+const {
+  createMessageContext,
+  waitForAction,
+  waitForIdle,
+} = require('../utils/mqUtils')
 
 const getMessageTemplates = async () => {
   const {
@@ -548,12 +553,16 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('modules unused', () => {
-    let deviceContextForModulesUnused
+  describe.only('unused modules', () => {
+    let deviceContextForUnusedModules
     let deviceId
+    let messageContext
 
     beforeEach(async () => {
-      deviceContextForModulesUnused = createGxConnectTestContext(server, {
+      messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ resolveIssues })
+
+      deviceContextForUnusedModules = createGxConnectTestContext(server, {
         countryCode,
         adminUsername,
         adminPassword,
@@ -562,9 +571,11 @@ describe('This test suite is for testing different triggers conditions', async (
         hostId: `4nd${hostId}`,
         deviceSerialNumber: `4nd${deviceSerialNumber}`,
       })
-      await deviceContextForModulesUnused.beforeRegisterAndSetDevice()
-      const { device } = deviceContextForModulesUnused
+      await deviceContextForUnusedModules.beforeRegisterAndSetDevice()
+      const { device } = deviceContextForUnusedModules
       deviceId = device.id
+
+      // Insert 25 results for the last month and for the same device, using the same module (will end with an issue created)
       await Promise.each(_.range(0, 25), async i => {
         const resultDetails = {
           consumableLot: 'Lot 0',
@@ -574,24 +585,25 @@ describe('This test suite is for testing different triggers conditions', async (
           endedOn: subDays(new Date(), i),
           errorCode: null,
           errorNotes: null,
+          resultCategory1: await resultCategoryToId('Positive'),
         }
-        await deviceContextForModulesUnused.createResultForThisDevice({
+        await deviceContextForUnusedModules.createResultForThisDevice({
           resultDetails,
         })
       })
     })
 
     afterEach(async () => {
-      await deviceContextForModulesUnused.cleanUp()
+      await deviceContextForUnusedModules.cleanUp()
     })
 
     it('should only create one issue and one notification per device', async () => {
       const payload = await getPayload(
-        deviceContextForModulesUnused,
+        deviceContextForUnusedModules,
         null,
         null
       )
-      const { deviceAuth } = deviceContextForModulesUnused
+      const { deviceAuth } = deviceContextForUnusedModules
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({
         authHeader: deviceAuth,
@@ -602,7 +614,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
       const issues = await knex('Issue as i')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .where('it.externalId', 'ModulesUnused')
+        .where('it.externalId', 'UnusedModules')
         .andWhere('i.deviceId', deviceId)
         .select('i.*')
 
@@ -617,8 +629,8 @@ describe('This test suite is for testing different triggers conditions', async (
     })
 
     it('should resolve the issue when all modules were used', async () => {
-      let payload = await getPayload(deviceContextForModulesUnused, null, null)
-      const { deviceAuth } = deviceContextForModulesUnused
+      let payload = await getPayload(deviceContextForUnusedModules, null, null)
+      const { deviceAuth } = deviceContextForUnusedModules
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({
         authHeader: deviceAuth,
@@ -626,6 +638,7 @@ describe('This test suite is for testing different triggers conditions', async (
       })
       await waitForIdle(1000)
 
+      // Adds 3 more results with different modules than the original, so the issue should be resolved
       const resultDetails = {
         consumableLot: 'Lot 0',
         moduleName: 'Module A',
@@ -634,20 +647,21 @@ describe('This test suite is for testing different triggers conditions', async (
         endedOn: subDays(new Date(), 5),
         errorCode: null,
         errorNotes: null,
+        resultCategory1: await resultCategoryToId('Positive'),
       }
-      await deviceContextForModulesUnused.createResultForThisDevice({
+      await deviceContextForUnusedModules.createResultForThisDevice({
         resultDetails: { ...resultDetails, moduleName: 'A great module' },
       })
-      await deviceContextForModulesUnused.createResultForThisDevice({
+      await deviceContextForUnusedModules.createResultForThisDevice({
         resultDetails: { ...resultDetails, moduleName: 'But this is better' },
       })
-      await deviceContextForModulesUnused.createResultForThisDevice({
+      await deviceContextForUnusedModules.createResultForThisDevice({
         resultDetails: {
           ...resultDetails,
           moduleName: "You are great too, don't be jealous",
         },
       })
-      payload = await getPayload(deviceContextForModulesUnused, null, null)
+      payload = await getPayload(deviceContextForUnusedModules, null, null)
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({
         authHeader: deviceAuth,
@@ -657,19 +671,24 @@ describe('This test suite is for testing different triggers conditions', async (
 
       const issues = await knex('Issue as i')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .where('it.externalId', 'ModulesUnused')
+        .where('it.externalId', 'UnusedModules')
         .andWhere('i.deviceId', deviceId)
         .select(knex.raw('i.*'))
 
       assert.equal(issues.length, 1)
 
-      const [{ issueStatusId }] = issues
-      const { externalId } = await knex('IssueStatus as is')
-        .where('is.id', issueStatusId)
-        .select('externalId')
-        .first()
+      const [{ id: issueId }] = issues
 
-      assert.equal(externalId, 'Resolved')
+      const waitForIssueResolved = waitForAction(issueResolved(issueId))
+      messageContext.resolveIssues()
+      await waitForIssueResolved
+
+      const { externalId: issueStatusExternalId } = await knex('Issue as i')
+        .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where('i.id', issueId)
+        .select('is.externalId')
+        .first()
+      assert.equal(issueStatusExternalId, 'Resolved')
     })
   })
 })

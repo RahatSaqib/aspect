@@ -4,26 +4,29 @@ const {
   seedIssueType,
   seedIssueEventTriggersForPartner,
   upsertNotificationTypes,
+  upsertIssueResolutionTrigger,
 } = require('../utils')
 
 async function seed(knex) {
+  const now = new Date()
+
   const { partnerId, userId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.userId')
 
-  const issueTypeId = await seedIssueType(knex, 'ModulesUnused', {
+  const issueTypeId = await seedIssueType(knex, 'UnusedModules', {
     userName: 'admin',
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['ModulesUnused'],
+    issueTypeWhitelist: ['UnusedModules'],
   })
 
   const auditFields = {
-    createdOn: new Date(),
+    createdOn: now,
     createdBy: userId,
-    updatedOn: new Date(),
+    updatedOn: now,
     updatedBy: userId,
   }
 
@@ -47,5 +50,16 @@ async function seed(knex) {
       ...auditFields,
     },
   ])
+
+  await upsertIssueResolutionTrigger(knex, {
+    issueTypeId: issueType.id,
+    partnerId,
+    resolutionConditions: JSON.stringify({
+      evaluationMethod: 'plugin-function',
+      evaluationParameter: 'resolveIssueUnusedModules', // The name of the function to evaluate if it should be resolved or not.
+    }),
+    createdOn: now,
+    updatedOn: now,
+  })
 }
 module.exports = seed

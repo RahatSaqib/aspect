@@ -1,5 +1,5 @@
-const { subDays } = require('date-fns')
-
+const subDays = require('date-fns/subDays')
+const addDays = require('date-fns/addDays')
 const _ = require('lodash')
 const { startOfDayUtc } = require('../shared/date')
 const { resultCategoryToId } = require('../shared/dictionary')
@@ -86,6 +86,24 @@ async function analyzeCategories(
   return false
 }
 
+function shouldTriggerUnusedModules({ numberOfResults, numberOfModules }) {
+  return numberOfResults >= 20 && numberOfModules < 4
+}
+
+async function analyzeUnusedModules(knex, action) {
+  const { deviceId } = action
+  const { numberOfResults, numberOfModules } = await knex('Result as r')
+    .where('r.endedOn', '>', addDays(new Date(), -30))
+    .andWhere('r.deviceId', deviceId)
+    .select(
+      knex.raw('COUNT(*) as numberOfResults'),
+      knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
+    )
+    .first()
+
+  return shouldTriggerUnusedModules({ numberOfResults, numberOfModules })
+}
+
 async function analyzeErrors(
   knex,
   action,
@@ -115,4 +133,6 @@ module.exports = {
   analyzeErrors,
   analyzeResultsWithErrors,
   analyzeCategories,
+  analyzeUnusedModules,
+  shouldTriggerUnusedModules,
 }
