@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
-import React from 'react'
-import { connect } from 'react-redux'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 import {
   DataTableRow as TableRow,
@@ -8,23 +8,22 @@ import {
 } from '../../components/shared/tableBody'
 import isEditable from '../../shared/selectors/isEditable'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
-import { updateSingleReporter } from '../ReporterRedux'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const ReporterTableRow = ({
-  intl,
-  reporter,
-  updateSingleReporter,
-  disabled,
-  ...restProps
-}) => {
+const ReporterTableRow = ({ intl, reporter, onRevokedItem, ...restProps }) => {
+  const [disabled, setDisabled] = useState({})
+  const user = useSelector(state => state.user)
+
   const onRevokedChange = ({ target }, revoked) => {
-    updateSingleReporter(target.dataset.id, { revoked })
+    onRevokedItem({ id: target.dataset.id, revoked })
   }
+  useEffect(() => {
+    setDisabled(!isEditable(user, 'reporter'))
+  }, [user])
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{reporter.get('user')}</TableCell>
@@ -69,10 +68,4 @@ const ReporterTableRow = ({
   )
 }
 
-const mapStateToProps = state => ({
-  disabled: !isEditable(state.user, 'reporter'),
-})
-
-export default connect(mapStateToProps, { updateSingleReporter })(
-  ReporterTableRow
-)
+export default ReporterTableRow
