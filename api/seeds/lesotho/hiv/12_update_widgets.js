@@ -1,5 +1,5 @@
 module.exports = require('../../utils').seed(seed, __filename)
-
+const dashboardWidget = require('../../fixtures/dashboardWidgetsBase')
 const { upsertDashboardWidgets } = require('../../common')
 
 async function seed(knex) {
@@ -7,5 +7,5 @@ async function seed(knex) {
     .where({ name: 'Lesotho HIV' })
     .first('id')
 
-  await upsertDashboardWidgets(knex, partnerId)
+  await upsertDashboardWidgets(knex, partnerId, dashboardWidget)
 }
