@@ -40,6 +40,42 @@ describe('This test is for testing different triggers conditions', () => {
   it('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
     ;[
       {
+        errorCode: 2005,
+        type1: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE',
+        type2: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT',
+      },
+      {
+        errorCode: 2008,
+        type1: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE',
+        type2: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT',
+      },
+      {
+        errorCode: 2035,
+        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE',
+        type2: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT',
+      },
+      {
+        errorCode: 2037,
+        type1: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE',
+        type2: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT',
+      },
+      {
+        errorCode: 2026,
+        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE',
+        type2: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT',
+      },
+      {
+        errorCode: 2096,
+        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE',
+        type2: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT',
+      },
+      {
+        errorCode: 2097,
+        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE',
+        type2: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT',
+      },
+
+      {
         errorCode: 5007,
         type1: 'RESULT_ANALYZE_PROBES_MODULE',
         type2: 'RESULT_ANALYZE_PROBES_LOT',
