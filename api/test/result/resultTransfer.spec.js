@@ -1,10 +1,10 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 const assertResult = response => {

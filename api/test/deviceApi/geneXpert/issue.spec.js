@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const { subDays } = require('date-fns')
 const {
@@ -18,7 +18,8 @@ const {
 const { deviceModuleDisabled } = require('../../../src/device/actions')
 const { resolveIssues } = require('../../../src/issue/actions')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert } = chai
 
 describe('Integration test for device status', () => {

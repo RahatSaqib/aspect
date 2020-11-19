@@ -349,7 +349,8 @@ const formatDataByGraphType = (
         keyToConsume,
         indexBy,
         formatDate,
-        filterBy
+        filterBy,
+        displayMethod
       )
       break
 

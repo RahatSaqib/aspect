@@ -1,7 +1,9 @@
 const _ = require('lodash')
 const { baseGxAlertMigration } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
-const jobFunctions = require('./fixtures/jobFunctions.json')
+const {
+  fixture: jobFunctionsFixture,
+} = require('../../common/fixtures/jobFunctions')
 
 const { diseaseToId } = require('../../../src/shared/dictionary')
 
@@ -47,7 +49,6 @@ module.exports = async function (
     .where('jf.partnerId', partnerId)
     .pluck('jc.id')
   await knex('JobContext').whereIn('id', jobContextIds).update({ diseaseId })
-
   await baseGxAlertMigration(
     {
       admin: {
@@ -62,7 +63,7 @@ module.exports = async function (
         deviceApiKeyToken: gxAlertDeviceApiKey,
       },
       sitesFromGxAlert,
-      jobFunctions,
+      jobFunctionsFixture,
       contactsFromGxAlert,
       geneXpertAssayExternalIds,
       customFieldsFromGxAlert,

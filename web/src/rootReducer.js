@@ -30,7 +30,6 @@ import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatusRedux'
 import report from './report/ReportRedux'
-import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
 import deviceMaintenanceStatus from './MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
 import _case from './case/CaseRedux'
@@ -60,7 +59,6 @@ const appReducer = combineReducers({
   patient,
   person,
   report,
-  reporter,
   result,
   resultTreatmentStatus,
   resultWorkflowStatus,

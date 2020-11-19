@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const _ = require('lodash')
 const { assert } = require('chai')
 const Promise = require('bluebird')
@@ -21,7 +20,7 @@ const { createMessageContext, waitForAction } = require('../utils/mqUtils')
 const { caseAdded, caseUpdated } = require('../../src/case/actions')
 const { createResult } = require('../result/result_utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 function assertPropsOnList(res) {
   assert.property(res.body.data[0], 'id')
