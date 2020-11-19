@@ -1047,6 +1047,34 @@ GROUP BY person.PersonId
   customFieldsFromGxAlert: [],
 }
 
+async function getStatesByName(knex, countryId) {
+  const states = await knex('Geography as g')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': countryId })
+    .select('g.countryId', 's.id', 's.name')
+  const lgas = await knex('Geography as g')
+    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': countryId })
+    .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
+  return states.reduce((stateMemo, state) => {
+    stateMemo[state.name.toLowerCase()] = state
+    const stateLgas = _.filter(lgas, {
+      stateName: state.name,
+    })
+    if (stateLgas) {
+      stateMemo[state.name.toLowerCase()].lgas = stateLgas.reduce(
+        (lgaMemo, lga) => {
+          lgaMemo[lga.name.toLowerCase()] = lga
+          return lgaMemo
+        },
+        {}
+      )
+    }
+    return stateMemo
+  }, {})
+}
+
 async function baseGxAlertMigration(
   variables = defaultGxAlertMigrationVariables,
   knex
@@ -1178,31 +1206,7 @@ async function baseGxAlertMigration(
     .first('id')
   const { id: countryId } = country
   returnValue.countryId = countryId
-  const states = await knex('Geography as g')
-    .innerJoin('State as s', 's.id', 'g.stateId')
-    .where({ 'g.countryId': country.id })
-    .select('g.countryId', 's.id', 's.name')
-  const lgas = await knex('Geography as g')
-    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
-    .innerJoin('State as s', 's.id', 'g.stateId')
-    .where({ 'g.countryId': country.id })
-    .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
-  const statesByName = states.reduce((stateMemo, state) => {
-    stateMemo[state.name.toLowerCase()] = state
-    const stateLgas = _.filter(lgas, {
-      stateName: state.name,
-    })
-    if (stateLgas) {
-      stateMemo[state.name.toLowerCase()].lgas = stateLgas.reduce(
-        (lgaMemo, lga) => {
-          lgaMemo[lga.name.toLowerCase()] = lga
-          return lgaMemo
-        },
-        {}
-      )
-    }
-    return stateMemo
-  }, {})
+  const statesByName = await getStatesByName(knex, countryId)
   returnValue.statesByName = statesByName
 
   // --------------------------------------------------------------------------------
@@ -2111,4 +2115,5 @@ module.exports = {
   upsertConsumables,
   upsertJobFunctionFixture,
   upsertPermissionFixture,
+  getStatesByName,
 }
