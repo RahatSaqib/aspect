@@ -29,7 +29,7 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'died',
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -53,7 +53,7 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'recovered',
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -89,7 +89,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender', 'age'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -166,7 +166,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -196,7 +196,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -239,7 +239,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },

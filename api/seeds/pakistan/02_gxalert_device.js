@@ -1,11 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const jobFunctions = require('./fixtures/jobFunctions.json')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const geographyFromGxAlert = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
-const partnerData = require('./fixtures/partnerData.json')
+const partnerData = require('./fixtures/partnerData')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { baseGxAlertMigration, upsertDashboardWidgets } = require('../common')
 
@@ -33,7 +32,6 @@ async function seed(knex) {
         deviceApiKeyToken: deviceApiToken,
       },
       sitesFromGxAlert,
-      jobFunctions,
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },

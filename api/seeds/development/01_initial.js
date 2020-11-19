@@ -3730,6 +3730,7 @@ async function seed(knex) {
     Error: resultCategoryErrorId,
     LessThan1000: resultCategoryLessThan1000,
     MoreThan1000: resultCategoryMoreThan1000,
+    LessThan40: resultCategoryLessThan40,
   } = await allResultCategoryToId()
 
   // assign categories to Assays
@@ -3801,6 +3802,11 @@ async function seed(knex) {
   })
 
   // GeneXpert HIV-1 Viral Load
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryLessThan40,
+    assayId: assayGeneXpertHiv1VlId,
+  })
+
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryLessThan1000,
     assayId: assayGeneXpertHiv1VlId,
@@ -4166,7 +4172,15 @@ async function seed(knex) {
         const culture = _.includes(['Jim', 'Sam'], name)
           ? countries.NG.culture
           : countries.US.culture
+        const countryAbbreviation = _.includes(['Jim', 'Sam'], name)
+          ? countries.NG.abbreviation
+          : countries.US.abbreviation
 
+        const geographiesId = await knex('Country as c')
+          .join('Geography as g', 'c.id', 'g.countryId')
+          .where({ abbreviation: countryAbbreviation })
+          .select('g.id')
+          .pluck('g.id')
         const [personId] = await knex('Person').insert({
           userId,
           name,
@@ -4174,7 +4188,7 @@ async function seed(knex) {
           lastCountryId,
           timezone,
           culture,
-          geographyId: geographies[geographies.length % userId].id,
+          geographyId: _.sample(geographiesId),
           ...auditFields,
         })
         personIds[name.toLowerCase()] = personId
@@ -4820,6 +4834,12 @@ async function seed(knex) {
           resultText: 'HIV-1 DETECTED {0} copies/mL (log {1})',
           category1: resultCategoryLessThan1000,
           minLikelihood: 41,
+          maxLikelihood: 70,
+        },
+        {
+          resultText: 'HIV-1 DETECTED < 40 copies/mL (log 1.60)',
+          category1: resultCategoryLessThan40,
+          minLikelihood: 71,
           maxLikelihood: 80,
         },
         {

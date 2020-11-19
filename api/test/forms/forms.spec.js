@@ -1,10 +1,11 @@
 const chai = require('chai')
-const supertest = require('supertest')
+
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('Forms routes', () => {

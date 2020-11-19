@@ -2,39 +2,69 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
-
+import omit from 'lodash/omit'
+import Immutable from 'immutable'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { ReporterList } from './ReporterList'
+import { ReporterListWithProps } from './ReporterList'
 import DataTableCard from '../../components/shared/DataTableCard'
-import ExportListButton from '../../globals/components/ExportListButton'
-import { Items } from '../../shared/metaReducers/items'
-import { Table } from '../../shared/metaReducers/table'
+
+import { Items, makeItems } from '../../shared/metaReducers/items'
+import { Table, makeTable } from '../../shared/metaReducers/table'
+import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 
 describe('ReporterList', () => {
-  const props = {
-    intl: createIntl({ locale: 'en' }),
-    history: jest.fn(),
-    location: { search: '?filters=assayType%3DTB' },
-    table: new Table(),
-    items: new Items(),
-    sortCol: '',
-    sortDir: 'asc',
-    pageAt: 1,
-    onExportClick: jest.fn(),
-    pageSize: 1,
-    reducedFilters: [],
-  }
+  let props = {}
+  beforeEach(() => {
+    props = {
+      intl: createIntl({ locale: 'en' }),
+      history: jest.fn(),
+      location: { search: '?filters=assayType%3DTB' },
+      table: new Table(),
+      items: new Items(),
+      sortCol: '',
+      sortDir: 'asc',
+      pageAt: 1,
+      onExportClick: jest.fn(),
+      isLoading: false,
+      columns: Immutable.List(),
+      onRevokedItem: jest.fn(),
+      pageSize: 1,
+      reducedFilters: [],
+    }
+  })
 
-  const wrapper = shallow(<ReporterList {...props} />)
+  afterAll(() => {
+    jest.restoreAllMocks()
+  })
 
   it('should render datatable card correctly', () => {
-    expect(wrapper.find(DataTableCard)).toHaveLength(1)
+    const element = shallow(<ReporterListWithProps {...props} />)
+    expect(element.find(DataTableCard)).toHaveLength(1)
   })
   it('should render helmet correctly', () => {
+    const wrapper = shallow(<ReporterListWithProps {...props} />)
     expect(wrapper.find(Helmet)).toHaveLength(1)
   })
   it('should render DataTableProgressBar correctly', () => {
+    const wrapper = shallow(
+      <ReporterListWithProps
+        {...omit(props, ['table', 'items', 'loading'])}
+        isLoading
+        table={makeTable({ total: 1 })}
+        items={makeItems({
+          currentIdList: ['1'],
+          byId: {
+            1: {
+              id: '1',
+
+              revoked: false,
+            },
+          },
+        })}
+      />
+    )
+
     expect(wrapper.find(DataTableProgressBar)).toHaveLength(1)
-    expect(wrapper.find(ExportListButton)).toHaveLength(1)
+    expect(wrapper.find(AspectExportListButton)).toHaveLength(1)
   })
 })

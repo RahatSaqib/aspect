@@ -22,7 +22,7 @@ const {
 } = require('./deviceApi/deviceApiKeyPlugin')
 const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
-const port = process.env.PORT || 8080
+const { port } = config
 const server = new Hapi.server({
   port,
   host: '127.0.0.1',
@@ -106,7 +106,7 @@ const messageQueuePlugin = {
   name: 'messageQueue',
   version,
   register: async server =>
-    createMessageQueue('aspect')
+    createMessageQueue(config.amqp.name)
       .then(queue => {
         addLoggers(server, queue)
         addSubscriptions(queue)

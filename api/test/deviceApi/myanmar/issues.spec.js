@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
 const addHours = require('date-fns/addHours')
@@ -9,7 +9,8 @@ const { postToDeviceApi } = require('../utils')
 const { basicResultPayload } = require('../geneXpert/geneXpertConstants')
 const { run } = require('../../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert } = chai
 const {
   resultModuleTemperatureError,
