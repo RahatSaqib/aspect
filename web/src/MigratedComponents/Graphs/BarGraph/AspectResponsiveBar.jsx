@@ -257,7 +257,7 @@ const AspectResponsiveBar = ({
         }}
         axisBottom={{
           legend: config(type, data, displayMethod).ylegend,
-          tickSize: 6,
+          tickSize: 5,
           tickValues: config(type, data, displayMethod).xTickValues,
           tickPadding: 10,
           tickRotation: 0,
