@@ -165,7 +165,9 @@ const AspectResponsiveBar = ({
           layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
-          theme: {},
+          theme: {
+            axis: { ticks: { text: { fontSize: 14 } } },
+          },
           enableGridY: false,
           enableGridX: false,
           margin: { top: 5, right: 0, bottom: 60, left: 0 },
@@ -255,7 +257,7 @@ const AspectResponsiveBar = ({
         }}
         axisBottom={{
           legend: config(type, data, displayMethod).ylegend,
-          tickSize: 5,
+          tickSize: 6,
           tickValues: config(type, data, displayMethod).xTickValues,
           tickPadding: 10,
           tickRotation: 0,
