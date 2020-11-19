@@ -149,7 +149,7 @@ describe('Result download routes', () => {
       assert.property(response.body.data[0], 'sample')
       assert.property(response.body.data[0], 'comments')
       assert.property(response.body.data[0], 'followUps')
-      if (response.body.data[0]) {
+      if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
         assert.property(response.body.data[0].followUps[0], 'externalId')
