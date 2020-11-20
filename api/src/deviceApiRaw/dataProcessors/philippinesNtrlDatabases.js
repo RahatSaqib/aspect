@@ -257,6 +257,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
           changedOn: utcNow,
           createdOn: utcNow,
         })
+        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+          resultId: result.id,
+          resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
+          operator: resultSignOff.laboratoryManager,
+          reason: `Data from ${site.deviceName}`,
+          changedOn: utcNow,
+          createdOn: utcNow,
+        })
         this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
       }
     }
