@@ -220,6 +220,7 @@ async function getListDevices(query, auth) {
       // Gets the count of days the device was logged
       knex('DeviceMaintenanceStatusLog as dmsl_total')
         .whereRaw('dmsl_total.deviceId = d.id')
+        .andWhereRaw('WEEKDAY(dmsl_total.day) < 5') // 5 - Saturday, 6 - Sunday
         .andWhere(
           'dmsl_total.day',
           '>=',
@@ -235,6 +236,7 @@ async function getListDevices(query, auth) {
           'dms_active.id'
         )
         .whereRaw('dmsl_active.deviceId = d.id')
+        .andWhereRaw('WEEKDAY(dmsl_active.day) < 5') // 5 - Saturday, 6 - Sunday
         .andWhere(
           'dmsl_active.day',
           '>=',
