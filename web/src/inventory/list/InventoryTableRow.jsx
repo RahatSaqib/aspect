@@ -7,7 +7,7 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatDate, formatRelative } from '../../shared/utils/dateFormat'
+import { formatDate } from '../../shared/utils/dateFormat'
 import messages from './messages'
 import {
   showAddInventoryDialog,
@@ -101,19 +101,17 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
           className={cssClasses('TableCell')}
           rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
         >
-          {inventoryItem.get('expiresOn')
-            ? formatDate(inventoryItem.get('expiresOn'))
-            : 'N/A'}
-        </TableCell>
-      ) : null}
-      {inventoryItem.get('visibleProperties').includes('expiresOn') ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
-        >
-          {inventoryItem.get('expiresOn')
-            ? formatRelative(intl, inventoryItem.get('expiresOn'))
-            : intl.formatMessage(messages.never)}
+          <span
+            className={
+              new Date(inventoryItem.get('expiresOn')) < new Date()
+                ? cssClasses('alert')
+                : null
+            }
+          >
+            {inventoryItem.get('expiresOn')
+              ? formatDate(inventoryItem.get('expiresOn'))
+              : 'N/A'}
+          </span>
         </TableCell>
       ) : null}
       <TableCell className={cssClasses('TableCell')}>
