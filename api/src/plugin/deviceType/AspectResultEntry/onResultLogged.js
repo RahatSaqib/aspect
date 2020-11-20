@@ -99,6 +99,7 @@ async function onResultLogged(
         }
       )
 
+      console.log('onResultLogged')
       if (!messageContext.resultUnusedModules) {
         messageContext = messageContext.bindActionCreators({
           resultUnusedModules,

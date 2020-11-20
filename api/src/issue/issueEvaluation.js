@@ -28,13 +28,13 @@ async function issueConditionsMet(knex, issue, conditions) {
   if (Array.isArray(conditions)) {
     return evaluateArrayOfConditions(knex, issue, conditions)
   }
-  const { evaluationMethod = null, evaluationParameter = null } = conditions
+  const { evaluationMethod = null, evaluationParameter = null, evaluationFilterParameters = null } = conditions
   if (!evaluationMethods[evaluationMethod]) {
     throw new Error(
       `Unrecognised evaluation method in condition ${evaluationMethod}`
     )
   }
-  return evaluationMethods[evaluationMethod](knex, issue, evaluationParameter)
+  return evaluationMethods[evaluationMethod](knex, issue, evaluationParameter, evaluationFilterParameters)
 }
 
 async function evaluateArrayOfConditions(knex, issue, conditions) {

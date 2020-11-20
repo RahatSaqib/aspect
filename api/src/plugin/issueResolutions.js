@@ -2,6 +2,7 @@ const compareAsc = require('date-fns/compareAsc')
 const parseISO = require('date-fns/parseISO')
 const addDays = require('date-fns/addDays')
 const { issueTypeToId } = require('../shared/dictionary')
+const { hasUnusedModules } = require('./issueTriggers')
 
 async function resolveIssueModuleDisabled(knex, issue) {
   const data = JSON.parse(issue.data)
@@ -19,12 +20,10 @@ async function resolveIssueModuleDisabled(knex, issue) {
   )
 }
 
-function wereAllModulesUsed({ numberOfResults, numberOfModules }) {
-  return numberOfResults >= 20 && numberOfModules >= 4
-}
-
-async function resolveIssueUnusedModules(knex, issue) {
+async function resolveIssueUnusedModules(knex, issue, conditions) {
   const { deviceId } = issue
+  const { minResults, expectedUsedModules } = conditions
+
   const { numberOfResults, numberOfModules } = await knex('Result as r')
     .where('r.endedOn', '>', addDays(new Date(), -30))
     .andWhere('r.deviceId', deviceId)
@@ -34,7 +33,7 @@ async function resolveIssueUnusedModules(knex, issue) {
     )
     .first()
 
-  return wereAllModulesUsed({ numberOfResults, numberOfModules })
+  return !hasUnusedModules(numberOfResults, numberOfModules, minResults, expectedUsedModules)
 }
 
 module.exports = {

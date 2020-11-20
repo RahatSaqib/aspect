@@ -574,7 +574,6 @@ describe('This test suite is for testing different triggers conditions', async (
       await deviceContextForUnusedModules.beforeRegisterAndSetDevice()
       const { device } = deviceContextForUnusedModules
       deviceId = device.id
-
       // Insert 25 results for the last month and for the same device, using the same module (will end with an issue created)
       await Promise.each(_.range(0, 25), async i => {
         const resultDetails = {

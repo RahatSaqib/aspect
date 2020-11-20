@@ -86,12 +86,16 @@ async function analyzeCategories(
   return false
 }
 
-function shouldTriggerUnusedModules({ numberOfResults, numberOfModules }) {
-  return numberOfResults >= 20 && numberOfModules < 4
+function hasUnusedModules(numberOfResults, numberOfModules, minResults = 20, expectedUsedModules = 4) {
+  if (!numberOfResults && numberOfResults !== 0 || !numberOfModules && numberOfModules !== 0)
+    throw new Error("numberOfResults and numberOfModules can't be null or undefined")
+
+  return numberOfResults >= minResults && numberOfModules < expectedUsedModules
 }
 
-async function analyzeUnusedModules(knex, action) {
+async function analyzeUnusedModules(knex, action, { minResults, expectedUsedModules }) {
   const { deviceId } = action
+
   const { numberOfResults, numberOfModules } = await knex('Result as r')
     .where('r.endedOn', '>', addDays(new Date(), -30))
     .andWhere('r.deviceId', deviceId)
@@ -100,8 +104,8 @@ async function analyzeUnusedModules(knex, action) {
       knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
     )
     .first()
-
-  return shouldTriggerUnusedModules({ numberOfResults, numberOfModules })
+  
+  return hasUnusedModules(numberOfResults, numberOfModules, minResults, expectedUsedModules)
 }
 
 async function analyzeErrors(
@@ -134,5 +138,5 @@ module.exports = {
   analyzeResultsWithErrors,
   analyzeCategories,
   analyzeUnusedModules,
-  shouldTriggerUnusedModules,
+  hasUnusedModules
 }

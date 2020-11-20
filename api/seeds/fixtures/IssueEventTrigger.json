@@ -444,9 +444,14 @@
         "action": "RESULT_UNUSED_MODULES",
         "conditions":{
           "evaluationMethod":"plugin-function",
-          "evaluationParameter":"analyzeUnusedModules"
+          "evaluationParameter":"analyzeUnusedModules",
+          "evaluationFilterParameters": {
+            "minResults": 20,
+            "expectedUsedModules": 4
+          }
         }
-    }
+      }
+    },
     {
       "issueType": "CartridgeIntegrityTestFailureModule",
       "issueEventStatus": "Triggered",

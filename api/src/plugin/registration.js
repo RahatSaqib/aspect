@@ -83,7 +83,6 @@ const plugins = {
     transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
     onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
-    issueResolutions: require('./issueResolutions'),
   },
   gxalert: {
     getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),

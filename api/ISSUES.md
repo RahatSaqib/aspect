@@ -382,87 +382,33 @@ const { partnerId, userId } = await knex('User as u')
 
 ## Configuring a result based Issue with notification
 
-This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving by the scheduler.
+This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving it by the scheduler.
 
 1) Start by adding a function for analyzing if your issue should be triggered or not. In this example, we will use plugin functions for achieving that, so let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
 
       ```javascript
+      // ...
       async function analyzeYourTrigger(knex, action) {
-        // The deviceId prop of the action object will be configured later, so don't worry about it
-        const { deviceId } = action
-
-        // If deviceId === 1, then trigger the issue
-        if (deviceId === 1)
-          return true
-
-        // If not, then do nothing
-        return false
+        // Return true or false, based on the condition evaluation, where true is "the issue will be triggered".
       }
       // ...
-      export.modules = {
-        // ...
-        analyzeYourTrigger,
-        // ...
-      }
       ```
+
+      **Important!** In this case we are using the issueTriggers.js file of the default plugin, but you may also need to set specicify the logic of specific plugins
 
 2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
 
       ```javascript
+      // ...
       async function resolveYourNewIssue(knex, issue) {
-        const { deviceId } = issue
-
-        // Replace the next lines for adding your resolution conditions
-        if (true)
-          return true
-
-        return false
+        // Return true or false, based on the condition evaluation, where true is "the issue will be resolved".
       }
       // ...
-      export.modules = {
-        // ...
-        resolveYourNewIssue,
-        // ...
-      }
       ```
 
-3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue:
+      **Important!** In this case we are using the issueResolutions.js file of the default plugin, but you may also need to set specicify the logic of specific plugins
 
-      ```javascript
-      const issueDefinition = {
-        // ...
-        YourNewIssue: {
-            issueType: {
-              name: 'Your New Issue',
-              externalId: 'YourNewIssue',
-              i18nKey: 'issueStatusYourNewIssue',
-              issueCategoryId: issueCategories.DeviceHealth, // Check the issueCategories for knowing which is the one you need
-            },
-            MessageType: {
-              messageSeverityId: messageSeverities.Alert,
-            },
-            AlertTemplate: {
-              message:
-                'Your New Issue for {{device.name}}: Something really bad happened.',
-              ...auditFields,
-            },
-            SmsTemplate: {
-              message:
-                'Your New Issue for {{device.name}}: Something really bad happened.',
-              ...auditFields,
-            },
-            EmailTemplate: {
-              subject: 'Your New Issue for {{device.name}}: Something really bad happened.',
-              body:
-                "But don't worry. {{issue.data.whoSolvesTheProblem}} will solve your issue",
-              htmlBody:
-                "<b>But don't worry.</b> {{issue.data.whoSolvesTheProblem}} will solve your issue",
-              ...auditFields,
-            },
-          },
-        // ...
-      }
-      ```
+3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue. Search for the *Configuring new Issue with notification* title for more information.
 
 4) At the api/seeds/fixtures/IssueEventTrigger.json fixture, add a new entry for describing the conditions that should be matched for triggering the issue
 
