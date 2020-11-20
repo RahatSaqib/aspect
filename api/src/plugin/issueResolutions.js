@@ -33,7 +33,12 @@ async function resolveIssueUnusedModules(knex, issue, conditions) {
     )
     .first()
 
-  return !hasUnusedModules(numberOfResults, numberOfModules, minResults, expectedUsedModules)
+  return !hasUnusedModules(
+    numberOfResults,
+    numberOfModules,
+    minResults,
+    expectedUsedModules
+  )
 }
 
 module.exports = {

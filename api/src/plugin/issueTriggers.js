@@ -86,14 +86,28 @@ async function analyzeCategories(
   return false
 }
 
-function hasUnusedModules(numberOfResults, numberOfModules, minResults = 20, expectedUsedModules = 4) {
-  if (!numberOfResults && numberOfResults !== 0 || !numberOfModules && numberOfModules !== 0)
-    throw new Error("numberOfResults and numberOfModules can't be null or undefined")
+function hasUnusedModules(
+  numberOfResults,
+  numberOfModules,
+  minResults = 20,
+  expectedUsedModules = 4
+) {
+  if (
+    (!numberOfResults && numberOfResults !== 0) ||
+    (!numberOfModules && numberOfModules !== 0)
+  )
+    throw new Error(
+      "numberOfResults and numberOfModules can't be null or undefined"
+    )
 
   return numberOfResults >= minResults && numberOfModules < expectedUsedModules
 }
 
-async function analyzeUnusedModules(knex, action, { minResults, expectedUsedModules }) {
+async function analyzeUnusedModules(
+  knex,
+  action,
+  { minResults, expectedUsedModules }
+) {
   const { deviceId } = action
 
   const { numberOfResults, numberOfModules } = await knex('Result as r')
@@ -104,8 +118,13 @@ async function analyzeUnusedModules(knex, action, { minResults, expectedUsedModu
       knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
     )
     .first()
-  
-  return hasUnusedModules(numberOfResults, numberOfModules, minResults, expectedUsedModules)
+
+  return hasUnusedModules(
+    numberOfResults,
+    numberOfModules,
+    minResults,
+    expectedUsedModules
+  )
 }
 
 async function analyzeErrors(
@@ -138,5 +157,5 @@ module.exports = {
   analyzeResultsWithErrors,
   analyzeCategories,
   analyzeUnusedModules,
-  hasUnusedModules
+  hasUnusedModules,
 }

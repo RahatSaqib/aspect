@@ -194,20 +194,17 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Unused Module(s) in {{device.name}}',
+        message: 'Unused Module(s) in {{device.name}}',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          'Unused Module(s) in {{device.name}}',
+        message: 'Unused Module(s) in {{device.name}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Unused module(s)',
         body: 'Unused module(s) in {{device.name}}',
-        htmlBody:
-          'Unused module(s) in {{device.name}}',
+        htmlBody: 'Unused module(s) in {{device.name}}',
         ...auditFields,
       },
     },

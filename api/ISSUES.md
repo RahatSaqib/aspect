@@ -394,7 +394,7 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       // ...
       ```
 
-      **Important!** In this case we are using the issueTriggers.js file of the default plugin, but you may also need to set specicify the logic of specific plugins
+      **Important!** In this case we are using the issueTriggers.js file of the default plugin, but you may also need to set specify the logic of specific plugins
 
 2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
 
@@ -406,7 +406,7 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       // ...
       ```
 
-      **Important!** In this case we are using the issueResolutions.js file of the default plugin, but you may also need to set specicify the logic of specific plugins
+      **Important!** In this case we are using the issueResolutions.js file of the default plugin, but you may also need to set specify the logic of specific plugins
 
 3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue. Search for the *Configuring new Issue with notification* title for more information.
 
@@ -414,16 +414,20 @@ This tutorial will show you the step-by-step for triggering result-based issues,
 
       ```json
       {
-        "issueType": "YourNewIssue", // This is the external id you configured on step 3
+        "issueType": "YourNewIssue",
         "issueEventStatus": "Triggered",
         "triggerConditions": {
-          "action": "THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE", // This is the name of the action that will trigger this issue and the conditions check
+          "action": "THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE",
           "conditions":{
             "evaluationMethod":"plugin-function",
-            "evaluationParameter":"analyzeMyTrigger" // The name of the plugin you configured at step 1
+            "evaluationParameter":"analyzeMyTrigger"
           }
       }
       ```
+
+      *issueType is the external id you configured on step 3
+      *action is the name of the action that will trigger this issue and the conditions check
+      *evaluationParameter is the name of the plugin you configured at step 1 
 
 5) At api/src/device/actions.js, add a new action into the types constant, and also add the action creator for your issue. This action creator will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
 

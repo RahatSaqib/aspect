@@ -1,9 +1,14 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { adminUserName, partnerName, adminPassword, serverUrl } = require('./fixtures/partnerData')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
+const {
+  adminUserName,
+  partnerName,
+  adminPassword,
+  serverUrl,
+} = require('./fixtures/partnerData')
 const config = require('../../src/config')
 const { getPermissionModules } = require('../utils')
 const geography = require('./fixtures/geography.json')
@@ -47,7 +52,7 @@ async function seed(knex) {
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 1,
     maxDaysDeviceNoResults: 1,
-    serverUrl: serverUrl,
+    serverUrl,
   })
 
   const countries = {}

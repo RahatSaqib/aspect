@@ -5,10 +5,17 @@ const {
   seedIssueEventTriggersForPartner,
   upsertNotificationTypes,
   upsertIssueResolutionTrigger,
-  getPartnerByName
+  getPartnerByName,
 } = require('../utils')
 
-module.exports = async (knex, externalId, jobFunctionsWhiteList, partnerName, adminName, resolutionConditions = null) => {
+module.exports = async (
+  knex,
+  externalId,
+  jobFunctionsWhiteList,
+  partnerName,
+  adminName,
+  resolutionConditions = null
+) => {
   const now = new Date()
   const { id: partnerId } = await getPartnerByName(knex, partnerName)
   const { userId } = await knex('User as u')
@@ -40,18 +47,19 @@ module.exports = async (knex, externalId, jobFunctionsWhiteList, partnerName, ad
     })
     .select('id')
 
-  await Promise.each(jobFunctionIds, ({ id }) => upsertNotificationTypes(knex, [
-    {
-      issueTypeId: issueType.id,
-      messageTypeId: issueType.defaultMessageTypeId,
-      partnerId,
-      jobFunctionId: id,
-      level: 1,
-      name: issueType.name,
-      ...auditFields,
-    },
-  ]))
-
+  await Promise.each(jobFunctionIds, ({ id }) =>
+    upsertNotificationTypes(knex, [
+      {
+        issueTypeId: issueType.id,
+        messageTypeId: issueType.defaultMessageTypeId,
+        partnerId,
+        jobFunctionId: id,
+        level: 1,
+        name: issueType.name,
+        ...auditFields,
+      },
+    ])
+  )
 
   // {
   //   evaluationMethod: 'plugin-function',
