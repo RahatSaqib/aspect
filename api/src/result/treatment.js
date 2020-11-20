@@ -27,7 +27,7 @@ async function confirmedTreatmentTracking(request) {
       '"endedOn" can not be greater than previous month'
     )
   }
-  const startedOn = startOfMonth(subMonths(endedOn, 5)) // 6 months period
+  const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
 
   const query = await knex('Result as r')
     // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
