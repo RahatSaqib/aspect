@@ -1930,7 +1930,7 @@ async function upsertDashboardWidgets(
   if (!dashboardWidgetJson) return Promise.resolve()
 
   await Promise.all(
-    _.map(dashboardWidgetJson.stat, async widget => {
+    _.map(dashboardWidgetJson.statDefault, async widget => {
       // insert or update the widget itself
       const widgetData = _.pick(widget, [
         'title',

@@ -2,6 +2,40 @@ const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
 const { WIDGET_GROUP_KEYS, WIDGET_FILTER_KEYS } = dashboardWidgetsBase
 
+const {
+  statByKey: {
+    gxPositiveResultsNotified,
+    dashboardWidgetTestsPerDayTitle,
+    dashboardWidgetValidResultsPc,
+    utilizationRate,
+    activeDevices,
+    stockouts,
+    deviceDaysActive,
+    errorRate,
+    stockNotRecorded,
+    avgTimeToUpload,
+    moduleSwaps,
+    instrumentsReplaced,
+    unusedModules,
+    averageRecipientsOfEmail,
+    averageRecipientsOfSms,
+    averageLengthOfSms,
+    smsSent,
+    averageDaysModuleSwap,
+    averageTimeToModuleReplacement,
+    numberOfDevicesExperiencingServiceInterruption,
+    averageDurationServiceInterruption,
+    percentageOfDaysWithServiceInterruption,
+    personTitle,
+    devicesTitle,
+    sitesTitle,
+    resultsTitle,
+    geneXpertDevices,
+    dashboardWidgetTitleTotalDeaths,
+    dashboardWidgetTitleTotalActiveCases,
+    dashboardWidgetTitleTotalRecoveredCases
+  } } = dashboardWidgetsBase
+
 module.exports = {
   stat: [
     {
@@ -66,7 +100,7 @@ module.exports = {
       titleI18nKey: 'personTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: 'SELECT COUNT(p.id) AS cnt FROM Person as p',
+      sqlForIndicator: 'SELECT COUNT(p.id) AS cnt FROM Person as p LEFT OUTER JOIN Geography AS g ON p.geographyId = g.id',
       link: '/browse/person',
       sortOrder: 3,
       externalId: 'personTitle',

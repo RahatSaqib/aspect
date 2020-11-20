@@ -62,7 +62,7 @@ module.exports = {
       titleI18nKey: 'personTitle',
       subTitle: null,
       subTitleI18nKey: null,
-      sqlForIndicator: 'SELECT COUNT(p.id) AS cnt FROM Person as p',
+      sqlForIndicator: 'SELECT COUNT(p.id) AS cnt FROM Person as p LEFT OUTER JOIN Geography AS g ON p.geographyId = g.id',
       link: '/browse/person',
       sortOrder: 3,
       externalId: 'personTitle',
