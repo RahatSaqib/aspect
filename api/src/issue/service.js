@@ -19,7 +19,7 @@ const {
 
 async function getIssueEventTriggerSubscriptions({ messageContext }) {
   return messageContext.run(async knex => {
-    const actions = await knex('IssueEventTrigger as iet')
+    const actionLists = await knex('IssueEventTrigger as iet')
       .join('IssueType as it', 'it.id', 'iet.issueTypeId')
       .join('IssueEventStatus as ies', 'ies.id', 'iet.issueEventStatusId')
       .distinct(
@@ -44,17 +44,20 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
             const { action } = JSON.parse(triggerConditions)
             if (action != null) {
               if (issueEventStatus === 'Triggered') {
-                memo[action] = onIssueEventTrigger(
-                  partnerId,
-                  issueType,
-                  triggerConditions,
-                  filterIssueCondition
-                )
+                memo[action] = [
+                  ...(memo[action] || []),
+                  onIssueEventTrigger(
+                    partnerId,
+                    issueType,
+                    triggerConditions,
+                    filterIssueCondition
+                  ),
+                ]
               } else if (issueEventStatus === 'Resolved') {
-                memo[action] = onIssueEventResolve(
-                  issueType,
-                  filterIssueCondition
-                )
+                memo[action] = [
+                  ...(memo[action] || []),
+                  onIssueEventResolve(issueType, filterIssueCondition),
+                ]
               }
             }
             return memo
@@ -62,6 +65,14 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
           {}
         )
       )
+    const actions = {}
+    Object.keys(actionLists).forEach(actionKey => {
+      actions[actionKey] = async (action, context) => {
+        actionLists[actionKey].forEach(actionHandler =>
+          actionHandler(action, context)
+        )
+      }
+    })
     return { actions }
   })
 }
@@ -75,7 +86,7 @@ function onIssueEventTrigger(
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
 
-    return context.transact(async knex => {
+    return context.run(async knex => {
       const shouldTriggerEvent = await actionConditionsMet(
         knex,
         action,
@@ -92,7 +103,7 @@ function onIssueEventTrigger(
           JSON.parse(filterIssueCondition)
         )
         let issue = null
-        if (openIssue != null) {
+        if (openIssue) {
           // ----------------------
           // check special usecase
           const { type, options = {} } = action
@@ -141,7 +152,7 @@ function onIssueEventTrigger(
 function onIssueEventResolve(issueType, filterIssueCondition) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
-    context.transact(async knex => {
+    context.run(async knex => {
       const now = new Date()
       const issue = await findOpenIssue(
         knex,
