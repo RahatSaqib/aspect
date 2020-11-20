@@ -1,5 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const { adminUserName, partnerName, adminPassword, serverUrl } = require('./fixtures/partnerData')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
@@ -23,8 +24,8 @@ async function seed(knex) {
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = await knex('User').insert({
-    name: 'admin',
-    password: bcrypt.hashSync('54wzDZPtOs', saltRounds),
+    name: adminUserName,
+    password: bcrypt.hashSync(adminPassword, saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -41,12 +42,12 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
 
   const [partnerId] = await knex('Partner').insert({
-    name: 'Zimbabwe',
+    name: partnerName,
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 1,
     maxDaysDeviceNoResults: 1,
-    serverUrl: 'https://zimbabwe.aspect.id:2843',
+    serverUrl: serverUrl,
   })
 
   const countries = {}
