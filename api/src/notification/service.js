@@ -242,24 +242,24 @@ async function createNotificationIfNotCreatedAlready(
         notification.alertMessageId = alertMessageId
         context.alertMessageCreated(alertMessageId)
       }
+    }
 
-      if (policy.emailTemplateId != null) {
-        const [emailMessageId] = await knex('EmailMessage').insert({
-          emailTemplateId: policy.emailTemplateId,
-          ...sharedMessageProperties,
-        })
-        notification.emailMessageId = emailMessageId
-        context.emailMessageCreated(emailMessageId)
-      }
+    if (policy.emailTemplateId != null) {
+      const [emailMessageId] = await knex('EmailMessage').insert({
+        emailTemplateId: policy.emailTemplateId,
+        ...sharedMessageProperties,
+      })
+      notification.emailMessageId = emailMessageId
+      context.emailMessageCreated(emailMessageId)
+    }
 
-      if (policy.smsTemplateId != null) {
-        const [smsMessageId] = await knex('SmsMessage').insert({
-          smsTemplateId: policy.smsTemplateId,
-          ...sharedMessageProperties,
-        })
-        notification.smsMessageId = smsMessageId
-        context.smsMessageCreated(smsMessageId)
-      }
+    if (policy.smsTemplateId != null) {
+      const [smsMessageId] = await knex('SmsMessage').insert({
+        smsTemplateId: policy.smsTemplateId,
+        ...sharedMessageProperties,
+      })
+      notification.smsMessageId = smsMessageId
+      context.smsMessageCreated(smsMessageId)
     }
 
     if (policy.webhookTemplateId != null) {
