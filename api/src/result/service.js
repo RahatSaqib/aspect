@@ -2242,7 +2242,6 @@ async function clinicalIndicatorAggregations(request) {
     .orderBy('r.endedOn')
     .count('r.id as cnt')
 
- 
   const data = await processGroupedQuery(resultQuery, groupBy)
 
   return { data }
