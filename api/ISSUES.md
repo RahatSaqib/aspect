@@ -483,6 +483,7 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       - Issue event trigger
       - Notification type
       - Issue resolution
+    Optionally, you can use the helper allocated at api/seeds/common/add_issue.js
 
 ## Creating a new Action
 
