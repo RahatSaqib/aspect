@@ -300,13 +300,13 @@ We need to add a new json object in the JSON Array with the following shape:
 Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json with the following shape.
 
 ```javascript
-{
-  "issueType": "DeviceNoResults",
-  "issueEventStatus": "Triggered",
-  "triggerConditions": {
-    "action": "DEVICE_NO_RESULTS"
+  {
+    "issueType": "DeviceNoResults",
+    "issueEventStatus": "Triggered",
+    "triggerConditions": {
+      "action": "DEVICE_NO_RESULTS"
+    }
   }
-}
 ```
 
 Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.
@@ -381,144 +381,157 @@ const { partnerId, userId } = await knex('User as u')
 ```
 
 ## Configuring a result based Issue with notification
+
 This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving by the scheduler.
+
 1) Start by adding a function for analyzing if your issue should be triggered or not. In this example, we will use plugin functions for achieving that, so let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
-```javascript
-async function analyzeYourTrigger(knex, action) {
-  // The deviceId prop of the action object will be configured later, so don't worry about it
-  const { deviceId } = action
-  
-  // If deviceId === 1, then trigger the issue
-  if (deviceId === 1)
-    return true
 
-  // If not, then do nothing
-  return false
-}
-// ...
-export.modules = {
-  // ...
-  analyzeYourTrigger,
-  // ...
-}
-```
+      ```javascript
+      async function analyzeYourTrigger(knex, action) {
+        // The deviceId prop of the action object will be configured later, so don't worry about it
+        const { deviceId } = action
+
+        // If deviceId === 1, then trigger the issue
+        if (deviceId === 1)
+          return true
+
+        // If not, then do nothing
+        return false
+      }
+      // ...
+      export.modules = {
+        // ...
+        analyzeYourTrigger,
+        // ...
+      }
+      ```
+
 2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
-```javascript
-async function resolveYourNewIssue(knex, issue) {
-  const { deviceId } = issue
-  
-  // Replace the next lines for adding your resolution conditions
-  if (true)
-    return true
 
-  return false
-}
-// ...
-export.modules = {
-  // ...
-  resolveYourNewIssue,
-  // ...
-}
-```
+      ```javascript
+      async function resolveYourNewIssue(knex, issue) {
+        const { deviceId } = issue
+
+        // Replace the next lines for adding your resolution conditions
+        if (true)
+          return true
+
+        return false
+      }
+      // ...
+      export.modules = {
+        // ...
+        resolveYourNewIssue,
+        // ...
+      }
+      ```
+
 3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue:
-```javascript
-const issueDefinition = {
-  // ...
-  YourNewIssue: {
-      issueType: {
-        name: 'Your New Issue',
-        externalId: 'YourNewIssue',
-        i18nKey: 'issueStatusYourNewIssue',
-        issueCategoryId: issueCategories.DeviceHealth, // Check the issueCategories for knowing which is the one you need
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message:
-          'Your New Issue for {{device.name}}: Something really bad happened.',
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message:
-          'Your New Issue for {{device.name}}: Something really bad happened.',
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: 'Your New Issue for {{device.name}}: Something really bad happened.',
-        body:
-          "But don't worry. {{issue.data.whoSolvesTheProblem}} will solve your issue",
-        htmlBody:
-          "<b>But don't worry.</b> {{issue.data.whoSolvesTheProblem}} will solve your issue",
-        ...auditFields,
-      },
-    },
-  // ...
-}
-```
+
+      ```javascript
+      const issueDefinition = {
+        // ...
+        YourNewIssue: {
+            issueType: {
+              name: 'Your New Issue',
+              externalId: 'YourNewIssue',
+              i18nKey: 'issueStatusYourNewIssue',
+              issueCategoryId: issueCategories.DeviceHealth, // Check the issueCategories for knowing which is the one you need
+            },
+            MessageType: {
+              messageSeverityId: messageSeverities.Alert,
+            },
+            AlertTemplate: {
+              message:
+                'Your New Issue for {{device.name}}: Something really bad happened.',
+              ...auditFields,
+            },
+            SmsTemplate: {
+              message:
+                'Your New Issue for {{device.name}}: Something really bad happened.',
+              ...auditFields,
+            },
+            EmailTemplate: {
+              subject: 'Your New Issue for {{device.name}}: Something really bad happened.',
+              body:
+                "But don't worry. {{issue.data.whoSolvesTheProblem}} will solve your issue",
+              htmlBody:
+                "<b>But don't worry.</b> {{issue.data.whoSolvesTheProblem}} will solve your issue",
+              ...auditFields,
+            },
+          },
+        // ...
+      }
+      ```
+
 4) At the api/seeds/fixtures/IssueEventTrigger.json fixture, add a new entry for describing the conditions that should be matched for triggering the issue
-```json
-{
-  "issueType": "YourNewIssue", // This is the external id you configured on step 3
-  "issueEventStatus": "Triggered",
-  "triggerConditions": {
-    "action": "THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE", // This is the name of the action that will trigger this issue and the conditions check
-    "conditions":{
-      "evaluationMethod":"plugin-function",
-      "evaluationParameter":"analyzeMyTrigger" // The name of the plugin you configured at step 1
-    }
-}
-```
+
+      ```json
+      {
+        "issueType": "YourNewIssue", // This is the external id you configured on step 3
+        "issueEventStatus": "Triggered",
+        "triggerConditions": {
+          "action": "THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE", // This is the name of the action that will trigger this issue and the conditions check
+          "conditions":{
+            "evaluationMethod":"plugin-function",
+            "evaluationParameter":"analyzeMyTrigger" // The name of the plugin you configured at step 1
+          }
+      }
+      ```
+
 5) At api/src/device/actions.js, add a new action into the types constant, and also add the action creator for your issue. This action creator will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
-```javascript
-const types = {
-  // ...
-  THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE_CHECKS: 'THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE',
-  // ...
-}
-// ...
-function yourNewIssueTriggerCheck(deviceId, ) {
-  if (!deviceId) {
-    throw new Error('Must specify the device for deviceModuleUnused')
-  }
-  return {
-    type: types.THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSU,
-    deviceId,
-    data: {
-      whoSolvesTheProblem: deviceId === 1 ? 'Superman' : 'Spiderman'
-    }
-  }
-}
-export.modules = {
-  // ...
-  yourNewIssueTriggerCheck,
-  // ...
-}
-```
-7) As this is a result-based issue, it should be triggered everytime a result is created. For doing this, you need to add a piece of code at 'api/src/plugin/deviceType/AspectResultEntry/onResultLogged.js', under the 'messageContext.run' callback:
-```javascript
-// ...
-async function onResultLogged({ resultId, deviceLogId, userId }, { messageContext }) {
-  return messageContext.run(async knex => { 
-  // ...
 
-  // Bind your action creator if it doesn't exist yet
-  if (!messageContext.yourNewIssueTriggerCheck) {
-    messageContext = messageContext.bindActionCreators({
-      yourNewIssueTriggerCheck,
-    })
-  }
-  await messageContext.yourNewIssueTriggerCheck(resultDeviceId)
-  // ...  
-  })
-}
-```
-6) Create a new seed file for upserting the
-  * Issue type
-  * Issue event trigger
-  * Notification type
-  * Issue resolution
+      ```javascript
+      const types = {
+        // ...
+        THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE_CHECKS: 'THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE',
+        // ...
+      }
+      // ...
+      function yourNewIssueTriggerCheck(deviceId, ) {
+        if (!deviceId) {
+          throw new Error('Must specify the device for deviceModuleUnused')
+        }
+        return {
+          type: types.THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSU,
+          deviceId,
+          data: {
+            whoSolvesTheProblem: deviceId === 1 ? 'Superman' : 'Spiderman'
+          }
+        }
+      }
+      export.modules = {
+        // ...
+        yourNewIssueTriggerCheck,
+        // ...
+      }
+      ```
 
+6) As this is a result-based issue, it should be triggered everytime a result is created. For doing this, you need to add a piece of code at 'api/src/plugin/deviceType/AspectResultEntry/onResultLogged.js', under the 'messageContext.run' callback:
+
+      ```javascript
+      // ...
+      async function onResultLogged({ resultId, deviceLogId, userId }, { messageContext }) {
+        return messageContext.run(async knex => {
+        // ...
+
+        // Bind your action creator if it doesn't exist yet
+        if (!messageContext.yourNewIssueTriggerCheck) {
+          messageContext = messageContext.bindActionCreators({
+            yourNewIssueTriggerCheck,
+          })
+        }
+        await messageContext.yourNewIssueTriggerCheck(resultDeviceId)
+        // ...
+        })
+      }
+      ```
+
+7) Create a new seed file for upserting the
+      - Issue type
+      - Issue event trigger
+      - Notification type
+      - Issue resolution
 
 ## Creating a new Action
 
