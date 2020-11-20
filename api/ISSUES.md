@@ -422,6 +422,7 @@ This tutorial will show you the step-by-step for triggering result-based issues,
             "evaluationMethod":"plugin-function",
             "evaluationParameter":"analyzeMyTrigger"
           }
+        }
       }
       ```
 
