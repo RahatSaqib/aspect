@@ -370,7 +370,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.beforeRegisterAndSetDevice()
           await anotherDeviceContext.beforeRegisterAndSetDevice()
 
-          await Promise.each(_.range(0, 19), async i => {
+          await Promise.each(_.range(0, 7), async i => {
             const resultDetails = {
               consumableLot: 'Lot 0',
               moduleName: 'Module A',
