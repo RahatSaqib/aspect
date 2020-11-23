@@ -9,6 +9,7 @@ const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
   allResultCategoryToId,
+  issueTypeToId,
 } = require('../src/shared/dictionary')
 const config = require('../src/config')
 
@@ -3164,6 +3165,116 @@ async function seedIssueType(knex, issueType, { userName }) {
   )
   return issueTypeId
 }
+
+async function deleteIssueTypes(knex, issueTypesToDelete) {
+  await Promise.each(issueTypesToDelete, async issueTypeExternalId => {
+    const issueTypeId = await issueTypeToId(issueTypeExternalId)
+    if (issueTypeId) {
+      await knex('Issue').where({ issueTypeId }).del()
+      await knex('NotificationType').where({ issueTypeId }).del()
+      await knex('IssueEventTrigger').where({ issueTypeId }).del()
+      await knex('IssueType').where({ id: issueTypeId }).del()
+    }
+  })
+}
+
+async function updateIssueNotificationTemplates(
+  knex,
+  issueTypesToDelete,
+  { userName }
+) {
+  const { id: adminId } = await knex('User')
+    .where({ name: userName })
+    .first('id')
+
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  await Promise.each(issueTypesToDelete, async issueTypeExternalId => {
+    const issueTypeId = await issueTypeToId(issueTypeExternalId)
+    const issue = (await getBaseIssues())[issueTypeExternalId]
+    if (issueTypeId && issue) {
+      // old message type (to update later)
+      const messageTypes = await knex('NotificationType')
+        .where({ issueTypeId })
+        .select()
+
+      await Promise.each(messageTypes, async messageType => {
+        // if no template, we'll set it to null in the MessageType table
+        // Alert
+        let alertTemplateId = null
+        if (issue.AlertTemplate) {
+          alertTemplateId = (
+            await upsertSingle(knex, 'AlertTemplate', ['message'], {
+              ...issue.AlertTemplate,
+              ...auditFields,
+            })
+          ).id
+        }
+        await knex('MessageType')
+          .where('id', messageType.id)
+          .update('alertTemplateId', alertTemplateId)
+
+        // Email
+        let emailTemplateId = null
+        if (issue.EmailTemplate) {
+          emailTemplateId = (
+            await upsertSingle(knex, 'EmailTemplate', ['subject', 'body'], {
+              ...issue.EmailTemplate,
+              ...auditFields,
+            })
+          ).id
+        }
+        await knex('MessageType')
+          .where('id', messageType.id)
+          .update('emailTemplateId', emailTemplateId)
+
+        // Sms
+        let smsTemplateId = null
+        if (issue.SmsTemplate) {
+          smsTemplateId = (
+            await upsertSingle(knex, 'SmsTemplate', ['message'], {
+              ...issue.SmsTemplate,
+              ...auditFields,
+            })
+          ).id
+        }
+        await knex('MessageType')
+          .where('id', messageType.id)
+          .update('smsTemplateId', smsTemplateId)
+      })
+    }
+  })
+
+  // now that we're done updating/deleting, drop any unused templates
+  const messageTypes = await knex('MessageType').select()
+  await knex('AlertTemplate')
+    .whereNotIn(
+      'id',
+      _.map(messageTypes, mt => mt.alertTemplateId || -1)
+    )
+    .del()
+
+  await knex('EmailTemplate')
+    .whereNotIn(
+      'id',
+      _.map(messageTypes, mt => mt.emailTemplateId || -1)
+    )
+    .del()
+
+  await knex('SmsTemplate')
+    .whereNotIn(
+      'id',
+      _.map(messageTypes, mt => mt.smsTemplateId || -1)
+    )
+    .del()
+}
+
 module.exports = {
   addReports,
 
@@ -3237,4 +3348,6 @@ module.exports = {
 
   seedIssueType,
   seedIssueEscalationTriggersForPartner,
+  deleteIssueTypes,
+  updateIssueNotificationTemplates,
 }
