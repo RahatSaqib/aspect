@@ -1930,13 +1930,13 @@ async function upsertDashboardWidgets(
 ) {
   if (!dashboardWidgetJson) return Promise.resolve()
 
-  if (whiteList !== null)
-    dashboardWidgetJson = _.filter(dashboardWidgetJson, widget => _.find(externalId => externalId === widget.externalId))
+  let widgets = dashboardWidgetJson.stat
 
-  console.log('dashboardWidgetJson', dashboardWidgetJson)
+  if (whitelist !== null)
+    widget = _.filter(dashboardWidgetJson.stat, widget => _.find(externalId => externalId === widget.externalId))
 
   await Promise.all(
-    _.map(dashboardWidgetJson.stat, async widget => {
+    _.map(widgets, async widget => {
       // insert or update the widget itself
       const widgetData = _.pick(widget, [
         'title',
