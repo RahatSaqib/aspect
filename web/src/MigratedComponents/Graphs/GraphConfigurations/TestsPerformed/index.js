@@ -13,7 +13,7 @@ const testsPerFormedGraphs = {
     graphRenderPermissions: ['dashboard'],
     graphType: [
       {
-        id: 'hivByCategory1Monthly',
+        id: 'testPerformedMonthlyPercentage',
         component: BarGraph,
         type: 'bar',
         size: 8,
@@ -34,31 +34,32 @@ const testsPerFormedGraphs = {
         displayLegend: true,
         formatDate: 'MMM yy',
       },
-      // {
-      //   id: 'hivByCategory1Aggregate',
-      //   component: PieGraph,
-      //   type: 'pie',
-      //   size: 4,
-      //   componentClasses: ['piegraph__container'],
-      //   api: {
-      //     endpoint: '/result/clinical-indicator-aggregations',
-      //     params: {
-      //       groupBy: ['resultCategory1'],
-      //       minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-      //       maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
-      //     },
-      //   },
-      //   indexBy: 'cnt',
-      //   keyToConsume: 'resultCategory1',
-      //   displayMethod: 'percentage',
-      //   formatDate: 'MMM yy',
-      //   averages: {
-      //     showTotal: false,
-      //     title: 'clinicalIndicatorsPieLegend',
-      //     key: ['LessThan40', 'LessThan1000', 'NotDetected'],
-      //     subTitle: 'clinicalIndicatorsPieSubLegend',
-      //   },
-      // },
+      {
+        id: 'testPerformedMonthlytotal',
+        component: PieGraph,
+        type: 'pieBasicLegend',
+        size: 4,
+        componentClasses: ['piegraph__container'],
+        api: {
+          endpoint: '/result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['month', 'assay'],
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'cnt',
+        keyToConsume: 'assay',
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        averages: {
+          showTotal: true,
+          totalDisplayMethod: 'actual',
+          title: null,
+          key: ['assay'],
+          subTitle: 'testsOverTimeTitle',
+        },
+      },
     ],
   },
 }
