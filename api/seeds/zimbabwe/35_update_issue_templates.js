@@ -6,6 +6,16 @@ const {
 } = require('../utils')
 
 async function seed(knex) {
+  // delete issue types we no longer need
+  await deleteIssueTypes(knex, [
+    'CartridgeIntegrityTestFailureModule',
+    'SyringePressureTooHighModule',
+    'SyringeStallErrorModule',
+    'UltrasonicHornFailureLot',
+    'UltrasonicHornTuningErrorLot',
+    'UltrasonicHornCurrentOutOfRangeLot',
+  ])
+
   // update templates
   await updateIssueNotificationTemplates(
     knex,
@@ -43,14 +53,4 @@ async function seed(knex) {
       userName: 'admin',
     }
   )
-
-  // delete issue types we no longer need
-  await deleteIssueTypes(knex, [
-    'CartridgeIntegrityTestFailureModule',
-    'SyringePressureTooHighModule',
-    'SyringeStallErrorModule',
-    'UltrasonicHornFailureLot',
-    'UltrasonicHornTuningErrorLot',
-    'UltrasonicHornCurrentOutOfRangeLot',
-  ])
 }

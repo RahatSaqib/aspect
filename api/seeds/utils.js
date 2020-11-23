@@ -3176,11 +3176,29 @@ async function deleteIssueTypes(knex, issueTypesToDelete) {
       await knex('IssueType').where({ id: issueTypeId }).del()
     }
   })
+
+  // delete unused message types and templates
+  await knex('MessageType')
+    .whereNotIn(
+      'id',
+      _.map(
+        await knex('NotificationType').select('messageTypeId'),
+        nt => nt.messageTypeId || -1
+      )
+    )
+    .whereNotIn(
+      'id',
+      _.map(
+        await knex('IssueType').select('defaultMessageTypeId'),
+        nt => nt.defaultMessageTypeId || -1
+      )
+    )
+    .del()
 }
 
 async function updateIssueNotificationTemplates(
   knex,
-  issueTypesToDelete,
+  issueTypesToUpdate,
   { userName }
 ) {
   const { id: adminId } = await knex('User')
@@ -3195,16 +3213,17 @@ async function updateIssueNotificationTemplates(
     updatedBy: adminId,
   }
 
-  await Promise.each(issueTypesToDelete, async issueTypeExternalId => {
+  await Promise.each(issueTypesToUpdate, async issueTypeExternalId => {
     const issueTypeId = await issueTypeToId(issueTypeExternalId)
     const issue = (await getBaseIssues())[issueTypeExternalId]
+
     if (issueTypeId && issue) {
       // old message type (to update later)
-      const messageTypes = await knex('NotificationType')
+      const notificationTypes = await knex('NotificationType')
         .where({ issueTypeId })
         .select()
 
-      await Promise.each(messageTypes, async messageType => {
+      await Promise.each(notificationTypes, async notificationType => {
         // if no template, we'll set it to null in the MessageType table
         // Alert
         let alertTemplateId = null
@@ -3217,7 +3236,7 @@ async function updateIssueNotificationTemplates(
           ).id
         }
         await knex('MessageType')
-          .where('id', messageType.id)
+          .where('id', notificationType.messageTypeId)
           .update('alertTemplateId', alertTemplateId)
 
         // Email
@@ -3231,7 +3250,7 @@ async function updateIssueNotificationTemplates(
           ).id
         }
         await knex('MessageType')
-          .where('id', messageType.id)
+          .where('id', notificationType.messageTypeId)
           .update('emailTemplateId', emailTemplateId)
 
         // Sms
@@ -3245,7 +3264,7 @@ async function updateIssueNotificationTemplates(
           ).id
         }
         await knex('MessageType')
-          .where('id', messageType.id)
+          .where('id', notificationType.messageTypeId)
           .update('smsTemplateId', smsTemplateId)
       })
     }
