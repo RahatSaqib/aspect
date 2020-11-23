@@ -1,6 +1,7 @@
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
 const {
+  WIDGET_GROUP_KEYS,
   stat: {
     gxPositiveResultsNotified,
     dashboardWidgetTestsPerDayTitle,
