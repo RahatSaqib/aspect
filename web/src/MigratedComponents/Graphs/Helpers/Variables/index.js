@@ -175,6 +175,7 @@ const graphColorMap = [
   { id: 131, externalId: 'MagNA Pure-96 COVID-19', color: covidSummerGreen },
   { id: 132, externalId: 'QuantStudio7 Flex COVID-19', color: covidOpal },
   { id: 133, externalId: 'GeneXpert COVID-19', color: covidConch },
+  { id: 134, externalId: 'totalAveragesActual', color: geneIndigo },
 
   { id: 999, externalId: 'Cases', color: colorMantis },
 ]

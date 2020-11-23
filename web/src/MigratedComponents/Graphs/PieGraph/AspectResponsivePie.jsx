@@ -30,7 +30,6 @@ const AspectResponsivePie = ({
   link,
 }) => {
   const { formatNumber: intlFormatNumber } = useIntl()
-
   const config = (type, data, displayMethod) => {
     switch (true) {
       case type === 'doughnut':
@@ -104,9 +103,16 @@ const AspectResponsivePie = ({
         )}
         colors={v => generateColorForValue(v)}
       />
-      {averages && !type && <PieInnerLegend averages={averages} data={data} />}
-      {type === 'solid' && <PieInnerLegendSolid data={data} link={link} />}
-      {type === 'doughnut' && <PieInnerLegendDoughNut data={data} />}
+      {averages && (type === 'pie' || type === 'pieLegacyTreatment') ? (
+        <PieInnerLegend averages={averages} data={data} />
+      ) : null}
+      {type === 'pieBasicLegend' ? (
+        <PieInnerLegend averages={averages} data={data} type={type} />
+      ) : null}
+      {type === 'solid' ? (
+        <PieInnerLegendSolid data={data} link={link} />
+      ) : null}
+      {type === 'doughnut' ? <PieInnerLegendDoughNut data={data} /> : null}
     </div>
   )
 }
