@@ -4334,7 +4334,8 @@ async function seed(knex) {
         }`,
         expiresOn: new Date(
           new Date(
-            now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+            now.getTime() +
+              _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
           ).setHours(0, 0, 0, 0)
         ),
         quantityOnHand: _.random(0, 1000),
@@ -4349,7 +4350,8 @@ async function seed(knex) {
           }`,
           expiresOn: new Date(
             new Date(
-              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+              now.getTime() +
+                _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
             ).setHours(0, 0, 0, 0)
           ),
           quantityOnHand: _.random(0, 1000),
@@ -4365,7 +4367,8 @@ async function seed(knex) {
           }`,
           expiresOn: new Date(
             new Date(
-              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+              now.getTime() +
+                _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
             ).setHours(0, 0, 0, 0)
           ),
           quantityOnHand: _.random(0, 1000),
