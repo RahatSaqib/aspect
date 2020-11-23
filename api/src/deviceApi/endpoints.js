@@ -47,11 +47,16 @@ const logPayload = {
         logLevel: Joi.string()
           .required()
           .description('Log Level (INFO, ERROR, etc)'),
-        details: Joi.object()
-          .required()
-          .description(
-            'Log details - error code, content of the log entry, log file name, category'
-          ),
+        details: Joi.alternatives()
+          .try(
+            Joi.object().description(
+              'Log details JSON - error code, content of the log entry, log file name, category'
+            ),
+            Joi.string().description(
+              'Log details stringified - to be parsed at run-time'
+            )
+          )
+          .required(),
       }),
       // ... or just a string with serialized data - handler use it upon 'source' value
       Joi.string().description('Some log data, i.e. serialized json object')

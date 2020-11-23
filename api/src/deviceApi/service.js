@@ -284,6 +284,9 @@ async function addDeviceDataWithContext(context) {
       if (_.isString(data)) {
         data = JSON.parse(data)
       }
+      if (_.isString(data.details)) {
+        data.details = JSON.parse(data.details)
+      }
 
       operation = {
         id: data.externalId,
