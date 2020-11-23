@@ -82,6 +82,10 @@ export const messages = defineMessages({
     id: 'pages.Status.resultsTransmittedTitle.graph',
     defaultMessage: 'Results Transmitted',
   },
+  testsOverTimeTitle: {
+    id: 'pages.Status.testsOverTimeTitle.graph',
+    defaultMessage: 'Tests Performed',
+  },
 })
 
 export default messages
