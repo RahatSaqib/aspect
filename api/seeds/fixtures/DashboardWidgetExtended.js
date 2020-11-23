@@ -23,13 +23,13 @@ const {
     averageTimeToModuleReplacement,
     numberOfDevicesExperiencingServiceInterruption,
     averageDurationServiceInterruption,
-    percentageOfDaysWithServiceInterruption,
     personTitle,
     devicesTitle,
     sitesTitle,
     resultsTitle,
     geneXpertDevices,
-  } } = dashboardWidgetsBase
+  },
+} = dashboardWidgetsBase
 
 module.exports = {
   stat: [

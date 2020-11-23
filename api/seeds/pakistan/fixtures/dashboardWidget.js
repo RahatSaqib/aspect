@@ -31,7 +31,8 @@ const {
     sitesTitle,
     resultsTitle,
     geneXpertDevices,
-  } } = dashboardWidgetsBase
+  },
+} = dashboardWidgetsBase
 
 module.exports = {
   stat: [

@@ -65,7 +65,8 @@ const personTitle = {
   titleI18nKey: 'personTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: 'SELECT COUNT(pe.id) AS cnt FROM Person as pe INNER JOIN Partner as pa ON pe.partnerId IS NULL OR pe.partnerId = pa.id LEFT OUTER JOIN Geography AS g ON pe.geographyId = g.id',
+  sqlForIndicator:
+    'SELECT COUNT(pe.id) AS cnt FROM Person as pe INNER JOIN Partner as pa ON pe.partnerId IS NULL OR pe.partnerId = pa.id LEFT OUTER JOIN Geography AS g ON pe.geographyId = g.id',
   link: '/browse/person',
   sortOrder: 3,
   externalId: 'personTitle',
@@ -1622,7 +1623,7 @@ const dashboardWidgetTitleTotalActiveCases = {
   descriptionI18nKey: 'totalActiveCasesDescription',
   dashboards: {
     home: {},
-  }
+  },
 }
 
 const dashboardWidgetTitleTotalRecoveredCases = {
@@ -1680,6 +1681,6 @@ module.exports = {
     dashboardWidgetTitleTotalDeaths,
     dashboardWidgetTitleConfirmedCases,
     dashboardWidgetTitleTotalActiveCases,
-    dashboardWidgetTitleTotalRecoveredCases
+    dashboardWidgetTitleTotalRecoveredCases,
   },
 }

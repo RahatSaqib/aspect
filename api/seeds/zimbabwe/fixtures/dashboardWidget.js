@@ -30,7 +30,8 @@ const {
     sitesTitle,
     resultsTitle,
     geneXpertDevices,
-  } } = dashboardWidgetsBase
+  },
+} = dashboardWidgetsBase
 
 module.exports = {
   stat: [
@@ -101,6 +102,6 @@ module.exports = {
           groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
         },
       },
-    }
+    },
   ],
 }

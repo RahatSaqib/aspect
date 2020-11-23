@@ -32,8 +32,9 @@ const {
     dashboardWidgetTitleTotalDeaths,
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
-    dashboardWidgetTitleConfirmedCases
-  } } = dashboardWidgetsBase
+    dashboardWidgetTitleConfirmedCases,
+  },
+} = dashboardWidgetsBase
 
 module.exports = {
   stat: [
@@ -82,6 +83,6 @@ module.exports = {
     {
       ...dashboardWidgetTitleTotalRecoveredCases,
       partnerNames: ['Wakanda'],
-    }
+    },
   ],
 }
