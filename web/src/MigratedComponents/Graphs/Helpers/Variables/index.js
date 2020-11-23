@@ -33,6 +33,38 @@ const {
   '--aspect-device-unknown': odUnknown,
   '--aspect-device-transfer-time': odTransferTime,
   '--aspect-device-weekend': odWeekend,
+  '--lightning-yellow': abbottLightning,
+  '--saffron-mango': abbottSaffronMango,
+  '--goldenrod': abbottGoldenRod,
+  '--sweet-corn': abbottSweetCorn,
+  '--cape-honey': abbottCapeHoney,
+  '--true-v': genoTrueV,
+  '--lilac-bush2': genoLilac,
+  '--dull-lavender2': genoLavender,
+  '--prelude': genoPrelude,
+  '--indigo': geneIndigo,
+  '--cornflower': geneCornflower,
+  '--jordy-blue': geneJordy,
+  '--jordy-blue2': geneJordy2,
+  '--sail': geneSail,
+  '--sail2': geneSail2,
+  '--hawkes-blue': geneHawkes,
+  '--pirate-gold': bdPirateGold,
+  '--chelsea-gem': bdChelseaGem,
+  '--sea-nymph': covidSeaNymph,
+  '--summer-green2': covidSummerGreen,
+  '--opal': covidOpal,
+  '--conch': covidConch,
+  '--hot-pink': reporterHotPink,
+  '--cotton-candy': reporterCottonCandy,
+  '--oyster-bay': alereOysterBay,
+  '--loblolly': assayLobLolly,
+  '--hit-gray': assayHitGray,
+  '--regent-gray': assayrecentGray,
+  '--rolling-stone': assayRollingStone,
+  '--texas-rose': senaiteTexasRose,
+  '--chardonnay': senaiteChardonnay,
+  '--frangipani': senaiteFrangipani,
 } = envSource
 
 const graphColorMap = [
@@ -89,6 +121,61 @@ const graphColorMap = [
   { id: 95, externalId: 'moreThan180', color: odTransferTime },
   { id: 96, externalId: 'notRecorded', color: odUnknown },
   { id: 97, externalId: 'noConsumption', color: odActive },
+
+  { id: 100, externalId: 'Abbott m2000 Plasma HIV VL', color: abbottLightning },
+  {
+    id: 101,
+    externalId: 'Abbott m2000 Plasma HBV VL',
+    color: abbottSaffronMango,
+  },
+  { id: 102, externalId: 'Abbott m2000 DBS HIV VL', color: abbottGoldenRod },
+  { id: 103, externalId: 'Abbott m2000 HIV EID', color: abbottSweetCorn },
+  {
+    id: 104,
+    externalId: 'Abbott m2000 Daan N COVID-19',
+    color: abbottCapeHoney,
+  },
+
+  { id: 121, externalId: 'Q HIV VL', color: assayLobLolly },
+  { id: 107, externalId: 'TB DST', color: assayHitGray },
+  { id: 108, externalId: 'Culture', color: assayrecentGray },
+  { id: 129, externalId: 'COBAS 4800 VL', color: assayRollingStone },
+
+  { id: 105, externalId: 'BD MGIT AST', color: bdPirateGold },
+  { id: 106, externalId: 'BD MGIT GND', color: bdChelseaGem },
+
+  { id: 110, externalId: 'GenoType MTBC VER 1.X', color: genoTrueV },
+  { id: 111, externalId: 'GenoType MTBDRplus VER 2.0', color: genoLilac },
+  { id: 112, externalId: 'GenoType MTBDRsl VER 1.0', color: genoLavender },
+  { id: 113, externalId: 'GenoType MTBDRsl VER 2.0', color: genoPrelude },
+
+  { id: 114, externalId: 'GeneXpert MTB/Rif', color: geneCornflower },
+  { id: 115, externalId: 'GeneXpert MTB/Rif Ultra', color: geneJordy },
+  { id: 116, externalId: 'GeneXpert HIV-1 VL', color: geneJordy2 },
+  { id: 117, externalId: 'GeneXpert HIV-1 Qual', color: geneSail },
+  { id: 118, externalId: 'GeneXpert Ebola', color: geneSail2 },
+  { id: 119, externalId: 'GeneXpert Unknown', color: geneHawkes },
+  { id: 120, externalId: 'GeneXpert HCV', color: geneIndigo },
+
+  { id: 122, externalId: 'Reporter HIV VL', color: reporterHotPink },
+  { id: 123, externalId: 'Reporter EID', color: reporterCottonCandy },
+
+  { id: 124, externalId: 'Alere Q HIV-1/2 Detect', color: anakiwa },
+  { id: 125, externalId: 'Alere Q HIV-1/2 VL plasma', color: alereOysterBay },
+
+  {
+    id: 126,
+    externalId: 'Senaite LIMS Smear Microscopy',
+    color: senaiteTexasRose,
+  },
+  { id: 127, externalId: 'Senaite LIMS TB Culture', color: senaiteChardonnay },
+  { id: 128, externalId: 'Senaite LIMS Unknown', color: senaiteFrangipani },
+
+  { id: 130, externalId: 'COVID-19 Generic Test', color: covidSeaNymph },
+  { id: 131, externalId: 'MagNA Pure-96 COVID-19', color: covidSummerGreen },
+  { id: 132, externalId: 'QuantStudio7 Flex COVID-19', color: covidOpal },
+  { id: 133, externalId: 'GeneXpert COVID-19', color: covidConch },
+
   { id: 999, externalId: 'Cases', color: colorMantis },
 ]
 
