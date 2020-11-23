@@ -64,6 +64,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Geography as g', `s.geographyId`, 'g.id')
       .leftJoin('Country as c', `g.countryId`, 'c.id')
+      .leftJoin('State as st', `g.stateId`, 'st.id')
+      .leftJoin('Lga as lg', `g.lgaId`, 'lg.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
@@ -77,6 +79,12 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
+        's.street1 as siteStreet1',
+        's.street2 as siteStreet2',
+        's.city as siteCity',
+        's.zip as siteZip',
+        'st.name siteState',
+        'lg.name as siteLga',
         'p.name as personName',
         'p.cell as personCell',
         'g.id as geographyId',
@@ -244,6 +252,12 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         id: siteExternalId,
         name: siteName,
         shortName: siteShortName,
+        street1: siteStreet1,
+        street2: siteStreet2,
+        city: siteCity,
+        zip: siteZip,
+        state: siteStateName,
+        lga: siteLgaName,
       },
       device: {
         name: deviceName,
@@ -316,6 +330,12 @@ async function getBaseDataSource(data) {
       name: d.siteName,
       shortName: d.siteShortName,
       contacts: d.siteContacts,
+      street1: d.siteStreet1,
+      street2: d.siteStreet2,
+      city: d.siteCity,
+      zip: d.siteZip,
+      state: d.siteStateName,
+      lga: d.siteLgaName,
     },
     device: {
       name: d.deviceName,

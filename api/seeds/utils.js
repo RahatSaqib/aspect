@@ -3114,45 +3114,40 @@ async function seedIssueType(knex, issueType, { userName }) {
 
   const issue = (await getBaseIssues(auditFields))[issueType]
 
+  if (!issue) return
+
   // ------------------------------------------
   // issue templates
   // ------------------------------------------
-  const { id: alertTemplateId } = await upsertSingle(
-    knex,
-    'AlertTemplate',
-    ['message'],
-    {
-      ...issue.AlertTemplate,
-      ...auditFields,
-    }
-  )
-  const { id: smsTemplateId } = await upsertSingle(
-    knex,
-    'SmsTemplate',
-    ['message'],
-    {
-      ...issue.SmsTemplate,
-      ...auditFields,
-    }
-  )
-  const { id: emailTemplateId } = await upsertSingle(
-    knex,
-    'EmailTemplate',
-    ['subject', 'body'],
-    {
-      ...issue.EmailTemplate,
-      ...auditFields,
-    }
-  )
+  const { id: alertTemplateId } = issue.AlertTemplate
+    ? await upsertSingle(knex, 'AlertTemplate', ['message'], {
+        ...issue.AlertTemplate,
+        ...auditFields,
+      })
+    : {}
+
+  const { id: smsTemplateId } = issue.SmsTemplate
+    ? await upsertSingle(knex, 'SmsTemplate', ['message'], {
+        ...issue.SmsTemplate,
+        ...auditFields,
+      })
+    : {}
+
+  const { id: emailTemplateId } = issue.EmailTemplate
+    ? await upsertSingle(knex, 'EmailTemplate', ['subject', 'body'], {
+        ...issue.EmailTemplate,
+        ...auditFields,
+      })
+    : {}
 
   // ------------------------------------------
   // MessageType
   // ------------------------------------------
   const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
     ...issue.MessageType,
-    alertTemplateId,
-    smsTemplateId,
-    emailTemplateId,
+    alertTemplateId: alertTemplateId || null,
+    smsTemplateId: smsTemplateId || null,
+    emailTemplateId: emailTemplateId || null,
   })
 
   // ------------------------------------------

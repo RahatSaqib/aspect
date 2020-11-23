@@ -438,27 +438,6 @@
       }
     },
     {
-      "issueType": "CartridgeIntegrityTestFailureModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2037,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
       "issueType": "CartridgeIntegrityTestFailureLot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -480,27 +459,6 @@
       }
     },
     {
-      "issueType": "SyringePressureTooHighModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2008,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
       "issueType": "SyringePressureTooHighLot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -519,27 +477,6 @@
       },
       "filterIssueCondition": {
         "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
-      "issueType": "SyringeStallErrorModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2005,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -585,27 +522,6 @@
       }
     },
     {
-      "issueType": "UltrasonicHornFailureLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2035,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
       "issueType": "UltrasonicHornTuningErrorModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -627,27 +543,6 @@
       }
     },
     {
-      "issueType": "UltrasonicHornTuningErrorLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2032,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
       "issueType": "UltrasonicHornCurrentOutOfRangeModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -666,27 +561,6 @@
       },
       "filterIssueCondition": {
         "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
-      "issueType": "UltrasonicHornCurrentOutOfRangeLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2026,
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
