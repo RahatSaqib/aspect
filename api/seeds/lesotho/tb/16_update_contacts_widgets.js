@@ -1,7 +1,9 @@
 const dashboardWidget = require('../../fixtures/DashboardWidgetExtended')
-const upsertContactsWidget = require('../../common/20201123_upsert_contacts_widget')
+const { upsertDashboardWidgets } = require('../../common')
+const { getPartnerByName } = require('../../utils')
 
 module.exports = require('../../utils').seed(
   async (knex) => {
-    await upsertContactsWidget(knex, 'Lesotho TB', dashboardWidget)
+    const { id: partnerId } = await getPartnerByName(knex, 'Lesotho TB')
+    await upsertDashboardWidgets(knex, partnerId, dashboardWidget, ['personTitle'])
   }, __filename)
