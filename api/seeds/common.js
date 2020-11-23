@@ -21,7 +21,7 @@ const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpe
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
-const dashboardWidgetCommonJson = require('./fixtures/DashboardWidget')
+const defaultDashboardWidgetsFixture = require('./fixtures/DashboardWidget')
 const {
   deviceApprovalToId,
   deviceTypeToId,
@@ -1925,12 +1925,18 @@ async function ensureResultTreatmentStatuses(
 async function upsertDashboardWidgets(
   knex,
   partnerId,
-  dashboardWidgetJson = dashboardWidgetCommonJson
+  dashboardWidgetJson = defaultDashboardWidgetsFixture,
+  whitelist = null
 ) {
   if (!dashboardWidgetJson) return Promise.resolve()
 
+  if (whiteList !== null)
+    dashboardWidgetJson = _.filter(dashboardWidgetJson, widget => _.find(externalId => externalId === widget.externalId))
+
+  console.log('dashboardWidgetJson', dashboardWidgetJson)
+
   await Promise.all(
-    _.map(dashboardWidgetJson.statDefault, async widget => {
+    _.map(dashboardWidgetJson.stat, async widget => {
       // insert or update the widget itself
       const widgetData = _.pick(widget, [
         'title',

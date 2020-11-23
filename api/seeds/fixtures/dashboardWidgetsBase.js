@@ -1649,7 +1649,7 @@ const dashboardWidgetTitleTotalRecoveredCases = {
 module.exports = {
   WIDGET_GROUP_KEYS,
   WIDGET_FILTER_KEYS,
-  statByKey: {
+  stat: {
     resultsTitle,
     personTitle,
     dashboardWidgetTestsPerDayTitle,
@@ -1681,34 +1681,5 @@ module.exports = {
     dashboardWidgetTitleConfirmedCases,
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases
-  },  
-  statDefault: [
-    resultsTitle,
-    personTitle,
-    dashboardWidgetTestsPerDayTitle,
-    dashboardWidgetValidResultsPc,
-    utilizationRate,
-    activeDevices,
-    stockouts,
-    deviceDaysActive,
-    errorRate,
-    stockNotRecorded,
-    moduleSwaps,
-    gxPositiveResultsNotified,
-    avgTimeToUpload,
-    unusedModules,
-    instrumentsReplaced,
-    averageRecipientsOfEmail,
-    averageRecipientsOfSms,
-    averageLengthOfSms,
-    smsSent,
-    averageDaysModuleSwap,
-    averageTimeToModuleReplacement,
-    numberOfDevicesExperiencingServiceInterruption,
-    averageDurationServiceInterruption,
-    percentageOfDaysWithServiceInterruption,
-    devicesTitle,
-    sitesTitle,
-    dashboardWidgetTitleTotalDeaths
-  ],
+  },
 }
