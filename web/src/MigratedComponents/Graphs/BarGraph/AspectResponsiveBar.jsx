@@ -165,7 +165,9 @@ const AspectResponsiveBar = ({
           layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
-          theme: {},
+          theme: {
+            axis: { ticks: { text: { fontSize: 14 } } },
+          },
           enableGridY: false,
           enableGridX: false,
           margin: { top: 5, right: 0, bottom: 60, left: 0 },

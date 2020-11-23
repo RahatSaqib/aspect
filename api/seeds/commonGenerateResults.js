@@ -296,7 +296,12 @@ async function generateResults(
     covidDevices,
     covidPositiveResults
   )
-  return [].concat(tbResults, ebolaResults, hivVlResults, covidResults)
+  return [].concat(
+    tbResults || [],
+    ebolaResults || [],
+    hivVlResults || [],
+    covidResults || []
+  )
 }
 
 async function addCovidResults(

@@ -2171,6 +2171,16 @@ async function clinicalIndicatorAggregations(request) {
     assay = query.assay
   }
 
+  // if no group is specified, use result category
+  let groupBy = null
+  if (!query.groupBy) {
+    groupBy = ['resultCategory1']
+  } else if (!Array.isArray(query.groupBy)) {
+    groupBy = [query.groupBy]
+  } else {
+    groupBy = query.groupBy
+  }
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -2223,19 +2233,14 @@ async function clinicalIndicatorAggregations(request) {
         qb.where('rc2.externalId', '=', query.resultCategory2)
       }
     })
-    .where('rca.reportable', true)
+    .where(function () {
+      // skip filtering by 'rca.reportable' if grouping by 'assay'
+      if (!groupBy.includes('assay')) {
+        this.where('rca.reportable', true)
+      }
+    })
     .orderBy('r.endedOn')
     .count('r.id as cnt')
-
-  // if no group is specified, use result category
-  let groupBy = null
-  if (!query.groupBy) {
-    groupBy = ['resultCategory1']
-  } else if (!Array.isArray(query.groupBy)) {
-    groupBy = [query.groupBy]
-  } else {
-    groupBy = query.groupBy
-  }
 
   const data = await processGroupedQuery(resultQuery, groupBy)
 
@@ -2247,6 +2252,7 @@ async function processGroupedQuery(resultQuery, groupBy) {
   const paramToDb = {
     resultCategory1: 'rc1.externalId as resultCategory1',
     resultCategory2: 'rc2.externalId as resultCategory2',
+    assay: 'a.name as assay',
 
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),

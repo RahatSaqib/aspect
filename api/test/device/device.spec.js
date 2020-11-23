@@ -135,6 +135,7 @@ describe('Device routes', () => {
             ).insert({
               deviceId: theGreatestDeviceIEverCreated.id,
               deviceMaintenanceStatusId,
+              data: '{}',
               day: new Date(),
               createdOn: new Date(),
             })
