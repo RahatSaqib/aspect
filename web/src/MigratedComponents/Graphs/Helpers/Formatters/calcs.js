@@ -119,6 +119,18 @@ const getAverageFromData = (data, value, which, culture) => {
   return {}
 }
 
+const getBasicAverage = (data, value, culture) => {
+  const allSum = data.reduce((acc, curr) => acc + curr.value, 0)
+  const legendTotalObj = {
+    avg: allSum,
+    color: filterColour(value),
+    totals: new Intl.NumberFormat(culture, {
+      notation: 'standard',
+    }).format(Number(sum(allSum))),
+  }
+  return legendTotalObj
+}
+
 const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
   if (filterCriteria) {
     gData = filter(gData, filterCriteria)
@@ -133,9 +145,10 @@ const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
 export {
   calcOverallRate,
   calcPercentageForGraphs,
+  calcPercentageSplitBar,
+  getAverageFromData,
+  getBasicAverage,
   getMaxValueForDivergent,
   roundIfNumber,
-  calcPercentageSplitBar,
   percentageOrActualForPie,
-  getAverageFromData,
 }

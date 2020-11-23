@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import AspectResponsivePie from './AspectResponsivePie'
 
 const PieGraph = ({ assaysFromState, averages, config, data, keys }) => {
-  const { displayMethod, componentClasses } = config
+  const { displayMethod, componentClasses, type } = config
   return (
     <AspectResponsivePie
       assaysFromState={assaysFromState}
@@ -12,6 +12,7 @@ const PieGraph = ({ assaysFromState, averages, config, data, keys }) => {
       displayMethod={displayMethod}
       componentClasses={componentClasses}
       keys={keys}
+      type={type}
     />
   )
 }

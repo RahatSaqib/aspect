@@ -27,11 +27,12 @@ import {
   negateTimeZoneOffset,
 } from './datetime'
 import {
+  calcPercentageSplitBar,
+  getAverageFromData,
+  getBasicAverage,
   getMaxValueForDivergent,
   roundIfNumber,
-  calcPercentageSplitBar,
   percentageOrActualForPie,
-  getAverageFromData,
 } from './calcs'
 
 import {
@@ -378,6 +379,7 @@ const formatDataByGraphType = (
       break
 
     case 'pie':
+    case 'pieBasicLegend':
       grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
       break
 
@@ -485,6 +487,7 @@ export {
   generateTickValues,
   generateToolTip,
   getAverageFromData,
+  getBasicAverage,
   getDayFromToday,
   getGraphKeysFromResults,
   getMaxValueForDivergent,
