@@ -1928,7 +1928,6 @@ async function upsertDashboardWidgets(
   dashboardWidgetJson = defaultDashboardWidgetsFixture,
   whitelist = null
 ) {
-  console.log(dashboardWidgetJson)
   if (!dashboardWidgetJson) return Promise.resolve()
 
   let widgets = dashboardWidgetJson.stat
