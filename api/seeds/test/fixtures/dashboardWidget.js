@@ -2,8 +2,21 @@ const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
 const {
   stat: { personTitle, devicesTitle, sitesTitle, resultsTitle },
+  WIDGET_GROUP_KEYS,
 } = dashboardWidgetsBase
 
 module.exports = {
-  stat: [sitesTitle, devicesTitle, resultsTitle, personTitle],
+  stat: [
+    sitesTitle,
+    {
+      ...devicesTitle,
+      dashboards: {
+        operational: {
+          groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+        },
+      },
+    },
+    resultsTitle,
+    personTitle,
+  ],
 }
