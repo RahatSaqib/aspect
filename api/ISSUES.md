@@ -385,7 +385,7 @@ const { partnerId, userId } = await knex('User as u')
 This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving it by the scheduler.
 *The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/registration.js*
 
- 1) Start by adding a function for analyzing if your issue should be triggered or not. In this example, we will use plugin functions for achieving that, so let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
+  1) Start by adding a function for analyzing if your issue should be triggered or not. In this example, we will use plugin functions for achieving that, so let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
 
       ```javascript
       // ...
@@ -395,39 +395,21 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       // ...
       ```
 
-2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
+  2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
 
-      ```javascript
-      // ...
-      async function resolveYourNewIssue(knex, issue) {
-        // Return true or false, based on the condition evaluation, where true is "the issue will be resolved".
-      }
-      // ...
-      ```
-
-3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue. Search for the *Configuring new Issue with notification* title for more information.
-
-4) At the api/seeds/fixtures/IssueEventTrigger.json fixture, add a new entry for describing the conditions that should be matched for triggering the issue
-
-      ```json
-      {
-        "issueType": "YourNewIssue",
-        "issueEventStatus": "Triggered",
-        "triggerConditions": {
-          "action": "THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE",
-          "conditions":{
-            "evaluationMethod":"plugin-function",
-            "evaluationParameter":"analyzeMyTrigger"
-          }
+        ```javascript
+        // ...
+        async function resolveYourNewIssue(knex, issue) {
+          // Return true or false, based on the condition evaluation, where true is "the issue will be resolved".
         }
-      }
-      ```
+        // ...
+        ```
 
-      *issueType is the external id you configured on step 3
-      *action is the name of the action that will trigger this issue and the conditions check
-      *evaluationParameter is the name of the plugin you configured at step 1 
+  3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue. *Please, refer to the Configuring new Issue With Notification section for more information*.
 
-5) At api/src/device/actions.js, add a new action into the types constant, and also add the action creator for your issue. This action creator will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
+  4) At the api/seeds/fixtures/IssueEventTrigger.json fixture, add a new entry for describing the conditions that should be matched for triggering the issue. *PLease, refer to the Triggering section for more information*.
+
+  5) At api/src/device/actions.js, add a new action into the types constant, and also add the action creator for your issue. This action creator will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
 
       ```javascript
       const types = {
@@ -455,7 +437,7 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       }
       ```
 
-6) As this is a result-based issue, it should be triggered everytime a result is created. For doing this, you need to add a piece of code at 'api/src/plugin/deviceType/AspectResultEntry/onResultLogged.js', under the 'messageContext.run' callback:
+  6) As this is a result-based issue, it should be triggered everytime a result is created. For doing this, you need to add a piece of code at 'api/src/plugin/deviceType/AspectResultEntry/onResultLogged.js', under the 'messageContext.run' callback:
 
       ```javascript
       // ...
@@ -475,7 +457,7 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       }
       ```
 
-7) Create a new seed file for upserting the
+  7) Create a new seed file for upserting the
       - Issue type
       - Issue event trigger
       - Notification type
