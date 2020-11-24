@@ -3120,21 +3120,21 @@ async function seedIssueType(knex, issueType, { userName }) {
   // ------------------------------------------
   // issue templates
   // ------------------------------------------
-  const { id: alertTemplateId } = issue.AlertTemplate
+  const { id: alertTemplateId = null } = issue.AlertTemplate
     ? await upsertSingle(knex, 'AlertTemplate', ['message'], {
         ...issue.AlertTemplate,
         ...auditFields,
       })
     : {}
 
-  const { id: smsTemplateId } = issue.SmsTemplate
+  const { id: smsTemplateId = null } = issue.SmsTemplate
     ? await upsertSingle(knex, 'SmsTemplate', ['message'], {
         ...issue.SmsTemplate,
         ...auditFields,
       })
     : {}
 
-  const { id: emailTemplateId } = issue.EmailTemplate
+  const { id: emailTemplateId = null } = issue.EmailTemplate
     ? await upsertSingle(knex, 'EmailTemplate', ['subject', 'body'], {
         ...issue.EmailTemplate,
         ...auditFields,
@@ -3146,9 +3146,9 @@ async function seedIssueType(knex, issueType, { userName }) {
   // ------------------------------------------
   const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
     ...issue.MessageType,
-    alertTemplateId: alertTemplateId || null,
-    smsTemplateId: smsTemplateId || null,
-    emailTemplateId: emailTemplateId || null,
+    alertTemplateId,
+    smsTemplateId,
+    emailTemplateId,
   })
 
   // ------------------------------------------
