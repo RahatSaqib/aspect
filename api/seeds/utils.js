@@ -3271,27 +3271,25 @@ async function updateIssueNotificationTemplates(
   })
 
   // now that we're done updating/deleting, drop any unused templates
-  const messageTypes = await knex('MessageType').select()
-  await knex('AlertTemplate')
-    .whereNotIn(
-      'id',
-      _.map(messageTypes, mt => mt.alertTemplateId || -1)
-    )
-    .del()
+  const mTypes = await knex('MessageType').select()
 
-  await knex('EmailTemplate')
-    .whereNotIn(
-      'id',
-      _.map(messageTypes, mt => mt.emailTemplateId || -1)
-    )
+  const alertTemplatesToDelete = _.map(mTypes, mt => mt.alertTemplateId || -1)
+  await knex('AlertMessage')
+    .whereNotIn('alertTemplateId', alertTemplatesToDelete)
     .del()
+  await knex('AlertTemplate').whereNotIn('id', alertTemplatesToDelete).del()
 
-  await knex('SmsTemplate')
-    .whereNotIn(
-      'id',
-      _.map(messageTypes, mt => mt.smsTemplateId || -1)
-    )
+  const emailTemplatesToDelete = _.map(mTypes, mt => mt.emailTemplateId || -1)
+  await knex('EmailMessage')
+    .whereNotIn('emailTemplateId', alertTemplatesToDelete)
     .del()
+  await knex('EmailTemplate').whereNotIn('id', emailTemplatesToDelete).del()
+
+  const smsTemplatesToDelete = _.map(mTypes, mt => mt.smsTemplateId || -1)
+  await knex('SmsMessage')
+    .whereNotIn('smsTemplateId', smsTemplatesToDelete)
+    .del()
+  await knex('SmsTemplate').whereNotIn('id', smsTemplatesToDelete).del()
 }
 
 module.exports = {

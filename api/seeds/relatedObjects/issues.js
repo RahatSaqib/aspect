@@ -20,7 +20,7 @@ Customer Site: {{site.name}}
 
 Facility Contact(s): {{site.contacts}}
 
-Location: {{site.street1}} {{site.city}} {{site.state}}, {{site.country}}
+Location: {{site.street1}} {{site.city}} {{site.zip}} {{site.state}}, {{country.name}}
 
 Instrument Serial: {{result.instrumentSerial}}
 

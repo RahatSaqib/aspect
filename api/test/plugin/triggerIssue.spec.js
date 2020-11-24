@@ -47,7 +47,7 @@ const getMessageTemplates = async () => {
 
     Facility Contact(s): Admin,Gates RDT Admin
 
-    Location: {{site.street1}} {{site.city}}, {{site.state}}, {{site.country}}
+    Location: {{site.street1}} {{site.city}} {{site.zip}} {{site.state}}, {{country.name}}
 
     Instrument Serial: M-ANOTHERSERIAL-0
 
@@ -81,7 +81,7 @@ const getMessageTemplates = async () => {
 
     Facility Contact(s): Admin,Gates RDT Admin
 
-    Location: {{site.street1}} {{site.city}}, {{site.state}}, {{site.country}}
+    Location: {{site.street1}} {{site.city}} {{site.zip}} {{site.state}}, {{country.name}}
 
     Instrument Serial: M-ANOTHERSERIAL-0
 
