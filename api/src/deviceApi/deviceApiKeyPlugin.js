@@ -5,6 +5,15 @@ const { normalizeToken } = require('./apiKey')
 
 function register(plugin) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
+  plugin.ext('onPostAuth', (request, h) => {
+    if (
+      typeof request.payload === 'string' &&
+      request.mime === 'application/json'
+    ) {
+      request.payload = JSON.parse(request.payload)
+    }
+    return h.continue
+  })
 }
 
 function authenticate(request, h) {
