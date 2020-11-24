@@ -22,15 +22,16 @@ const GraphToolTip = ({ displayMethod, values }) => {
         <div className={cssClasses('tooltip__value')}>
           {typeof displayValue === 'object' ? (
             <div className={cssClasses('tooltip__valueContainer')}>
-              <div className={cssClasses('tooltip__valuePrimary')}>
-                {displayValue.value}/{displayValue.actual.totalCnt}
-              </div>
               {displayMethod === 'percentage' ? (
                 <div className={cssClasses('tooltip__valueSecondary')}>
                   ({displayValue.actual.percentageToValue}/
                   {displayValue.actual.totalCnt} results)
                 </div>
-              ) : null}
+              ) : (
+                <div className={cssClasses('tooltip__valuePrimary')}>
+                  {displayValue.value}/{displayValue.actual.totalCnt}
+                </div>
+              )}
             </div>
           ) : (
             <div className={cssClasses('tooltip__valuePrimary')}>
