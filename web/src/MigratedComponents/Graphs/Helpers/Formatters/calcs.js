@@ -145,7 +145,6 @@ export {
   calcPercentageForGraphs,
   calcPercentageSplitBar,
   getAverageFromData,
-  // getBasicAverage,
   getMaxValueForDivergent,
   roundIfNumber,
   percentageOrActualForPie,

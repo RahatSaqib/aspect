@@ -34,7 +34,7 @@ const GraphToolTip = ({ displayMethod, values }) => {
             </div>
           ) : (
             <div className={cssClasses('tooltip__valuePrimary')}>
-              {displayValue}/
+              {displayValue}
             </div>
           )}
         </div>
