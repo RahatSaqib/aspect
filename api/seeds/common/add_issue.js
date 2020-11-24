@@ -47,13 +47,13 @@ module.exports = async (
     })
     .select('id')
 
-  await Promise.each(jobFunctionIds, ({ id }) =>
+  await Promise.each(jobFunctionIds, ({ id: jobFunctionId }) =>
     upsertNotificationTypes(knex, [
       {
         issueTypeId: issueType.id,
         messageTypeId: issueType.defaultMessageTypeId,
         partnerId,
-        jobFunctionId: id,
+        jobFunctionId,
         level: 1,
         name: issueType.name,
         ...auditFields,
