@@ -553,7 +553,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('unused modules', () => {
+  describe.only('unused modules', () => {
     let deviceContextForUnusedModules
     let deviceId
     let messageContext
