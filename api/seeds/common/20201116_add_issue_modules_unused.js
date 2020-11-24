@@ -1,15 +1,10 @@
 const addIssue = require('./add_issue')
 
-module.exports = async (
-  knex,
-  jobFunctionsWhiteList,
-  partnerName,
-  adminName
-) => {
+module.exports = async (knex, jobFunctionsToNotify, partnerName, adminName) => {
   await addIssue(
     knex,
     'UnusedModules',
-    jobFunctionsWhiteList,
+    jobFunctionsToNotify,
     partnerName,
     adminName,
     {

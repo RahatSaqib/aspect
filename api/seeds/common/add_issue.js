@@ -11,7 +11,7 @@ const {
 module.exports = async (
   knex,
   externalId,
-  jobFunctionsWhiteList,
+  jobFunctionsToNotify,
   partnerName,
   adminName,
   resolutionConditions = null
@@ -41,7 +41,7 @@ module.exports = async (
   const issueType = await knex('IssueType').where({ id: issueTypeId }).first()
 
   const jobFunctionIds = await knex('JobFunction')
-    .whereIn('externalId', jobFunctionsWhiteList)
+    .whereIn('externalId', jobFunctionsToNotify)
     .where({
       partnerId,
     })
