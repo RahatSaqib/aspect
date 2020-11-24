@@ -89,8 +89,8 @@ async function analyzeCategories(
 function hasUnusedModules(
   numberOfResults,
   numberOfModules,
-  minResults = 20,
-  expectedUsedModules = 4
+  minResults,
+  expectedUsedModules
 ) {
   if (
     (!numberOfResults && numberOfResults !== 0) ||
