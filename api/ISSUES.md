@@ -88,7 +88,7 @@ We are using the message queue exactly for what is described above. As you can r
 
 ### Message queue implementation
 
-In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit  doesn’t fit our needs, it could be easily replaced by another one.
+In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit doesn’t fit our needs, it could be easily replaced by another one.
 
 This class has some methods, but the most important are:
 
@@ -190,7 +190,7 @@ The evaluation methods could be:
 
 - Inline-sql: in the evaluationParameter property we are going to write a query that should return a row. If it returns a row then it will be true. If empty, false.
 - Sql-script: when this option is configured the evaluationParameter should have the relative path of the file where the sql script is placed. Aspect is going to execute and wait for a true or false
-- Plugin-function: Based on  the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
+- Plugin-function: Based on the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
 
 ### Filtering
 
