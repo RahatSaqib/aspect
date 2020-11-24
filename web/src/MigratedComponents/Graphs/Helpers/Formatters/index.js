@@ -30,7 +30,6 @@ import {
 import {
   calcPercentageSplitBar,
   getAverageFromData,
-  // getBasicAverage,
   getMaxValueForDivergent,
   roundIfNumber,
   percentageOrActualForPie,
@@ -497,7 +496,6 @@ export {
   generateTickValues,
   generateToolTip,
   getAverageFromData,
-  // getBasicAverage,
   getDayFromToday,
   getGraphKeysFromResults,
   getMaxValueForDivergent,
