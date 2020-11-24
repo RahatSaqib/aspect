@@ -55,7 +55,7 @@ const testsPerFormedGraphs = {
         averages: {
           showTotal: false,
           totalDisplayMethod: 'actual',
-          title: 'testsOverTimeTitle',
+          title: 'testsOverTimeAvgTitle',
           key: '*',
           subTitle: null,
         },
