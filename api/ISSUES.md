@@ -302,10 +302,8 @@ Also, it's important to mention that in this tutorial we will use plugin functio
     ```
 
     ***This step isn't needed if you won't use plugin functions.***
-  
-3) At ``api/seeds/relatedObjects/issues.js``, add a new entry for describing the new issue. *Please, refer to the Configuring new Issue With Notification section for more information*.
 
-4) Define your action creator. Our standard is to define this function in files called action.js, like we have ``api/src/device/actions.js``. Feel free of creating a new file or use an existant one, but try to follow the same concept.
+3) Define your action creator. Our standard is to define this function in files called action.js, like we have ``api/src/device/actions.js``. Feel free of creating a new file or use an existant one, but try to follow the same concept.
 The action creator is the function that will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
 
     ```javascript
@@ -317,13 +315,16 @@ The action creator is the function that will be binded to your RabbitMQ context 
     }
     ```
 
+4) At ``api/seeds/relatedObjects/issues.js``, add a new entry for describing the new issue. *Please, refer to the Defining Issues section for more information*.
+
 5) At the ``api/seeds/fixtures/IssueEventTrigger.json`` fixture, add a new entry for describing the conditions that should be matched for triggering the issue. *Please, refer to the Triggering section for more information*. 
-Also, remember that:
+Remember that:
 
     - If you are using plugin functions, you should set the function created at the step 1 as the *evaluationParameter*.
-    - The *action* property should be the same as the action type configured on step 4.
+    - The *issueType* property should be the same as the external id configured on step 4
+    - The *action* property should be the same as the action type configured on step 3
 
-6) Define the call to your action creator. This can be done in many places, like schedulers or also other plugins, like onResultLogged. This will queue the action you configured, so the issue evaluation will be triggered.
+6) Define the call to your action creator. This can be done in many places, like schedulers or also like other plugins (onResultLogged, for example). This will queue the action you configured, so the issue evaluation will be triggered.
 
     ```javascript
     // Bind your action creator if it doesn't exist yet
@@ -341,79 +342,7 @@ Also, remember that:
     - Issue event trigger
     - Notification type
     - Issue resolution
-  Optionally, you can use the helper allocated at api/seeds/common/add_issue.js
-
-
-Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.
-
-If the trigger has some resolution configuration we need to seed the table IssueResolutionTrigger with the next helper function. IMPORTANT! The issues resolution is executed every 15 minutes on the Aspect's scheduler.
-
-```javascript
- await upsertIssueResolutionTrigger(knex, {
-    issueTypeId,
-    partnerId,
-    resolutionConditions: JSON.stringify({
-      evaluationMethod: 'plugin-function',
-      evaluationParameter: 'resolveDeviceNoResults', //The name of the function to evaluate if it should be resolved or not.
-    }),
-    createdOn: now,
-    updatedOn: now,
-  })
-
-```
-
-The next step is to insert all records to the database. For doing that we have some helper functions:
-
-```javascript
-const { partnerId, userId } = await knex('User as u')
-    .join('Person as p', 'p.userId', 'u.id')
-    .where({ 'u.name': 'admin' })
-    .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
-
-  const issueType = await seedIssueType(
-    knex,
-    ‘DeviceNoResults’,
-    {
-      userName: 'admin',
-    }
-  )
-
-
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: [
-      'DeviceNoResults',
-    ],
-  })
-  const auditFields = {
-    createdOn: new Date(),
-    createdBy: userId,
-    updatedOn: new Date(),
-    updatedBy: userId,
-  }
-
-  const issueTypeObject = await knex('IssueType')
-    .where({ id: issueType })
-    .first()
-
-  const { jobFunctionAdminId } = await knex('JobFunction')
-    .where({
-      externalId: 'admin',
-      partnerId,
-    })
-    .first('id as jobFunctionAdminId')
-  await upsertNotificationTypes(knex, [
-    {
-      issueTypeId: issueTypeObject.id,
-      messageTypeId: issueTypeObject.defaultMessageTypeId,
-      partnerId,
-      jobFunctionId: jobFunctionAdminId,
-      level: 1,
-      name: 'Device No Results',
-      ...auditFields,
-    },
-  ])
-
-```
+  Optionally, you can use the helper allocated at ``api/seeds/common/add_issue.js``
 
 ## Creating a new Action
 
