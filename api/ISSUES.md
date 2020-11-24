@@ -395,8 +395,6 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       // ...
       ```
 
-      **Important!** In this case we are using the issueTriggers.js file of the default plugin, but you may also need to set specify the logic of specific plugins
-
 2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
 
       ```javascript
@@ -406,8 +404,6 @@ This tutorial will show you the step-by-step for triggering result-based issues,
       }
       // ...
       ```
-
-      **Important!** In this case we are using the issueResolutions.js file of the default plugin, but you may also need to set specify the logic of specific plugins
 
 3) At api/seeds/relatedObjects/issues.js, add a new entry for describing the new issue. Search for the *Configuring new Issue with notification* title for more information.
 
