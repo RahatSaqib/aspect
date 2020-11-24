@@ -91,7 +91,7 @@ const PieInnerLegend = ({ averages, data }) => {
 }
 
 PieInnerLegend.propTypes = {
-  averages: PropTypes.shape([PropTypes.object]).isRequired,
+  averages: PropTypes.oneOfType([PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
