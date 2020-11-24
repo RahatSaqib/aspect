@@ -20,6 +20,7 @@ import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
 import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
 import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
+import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
 
 import ColorDemo from './ColorDemo/ColorDemo'
 
@@ -32,6 +33,7 @@ const Status = ({ history, location, colorDemo }) => {
   const { treatmentStatus } = treatmentStatusGraphs
   const { inventoryStatus } = inventoryStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
+  const { testsOverTime } = testsPerFormedGraphs
   const {
     covidDailyConfirmed,
     covidCasesByAgeAndGender,
@@ -102,6 +104,14 @@ const Status = ({ history, location, colorDemo }) => {
         <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={testsOverTime.graphRenderPermissions}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={testsOverTime} />
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>

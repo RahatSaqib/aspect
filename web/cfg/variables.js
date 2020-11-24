@@ -58,7 +58,6 @@ exports.customPropertiesVariables = {
   '--wild-sand': '#f0f0f0',
 
   // Colors 2020
-  '--anakiwa': '#73EBFF',
   '--apple-green': '#439B45',
   '--azure-radiance': '#0091ff',
   '--chathams-blue': '#18527d',
@@ -75,7 +74,6 @@ exports.customPropertiesVariables = {
   '--lavender': '#d38ae7',
   '--malibu': '#7fc4fa',
   '--saffron': '#f0bc2c',
-  '--selective-yellow-2': '#F7B600',
   '--steel-blue': '#5290c1',
   '--thunderbird': '#DB2F17',
   '--tundora': '#454545',
@@ -83,6 +81,75 @@ exports.customPropertiesVariables = {
   '--malachite': '#00ca1c',
   '--web-orange': '#FEA500',
   '--web-orange-2': '#FFD970',
+
+  // Assay hues Abbot
+  '--selective-yellow-2': '#3a0000',
+  '--lightning-yellow': '#4c2000',
+  '--saffron2': '#633800',
+  '--saffron-mango': '#7e5000',
+  '--goldenrod': '#9b6900',
+  '--sweet-corn': '#c98f00',
+  '--cherokee': '#ffc928',
+  '--cape-honey': '#fff155',
+
+  // Assay hues BD
+  '--pirate-gold': '#2e3b3f',
+  '--chelsea-gem': '#97a6ab',
+
+  // Assay hues GenoType
+  '--geno-lavender1': '#380039',
+  '--geno-lavender2': '#580057',
+  '--geno-lavender3': '#780f74',
+  '--geno-lavender4': '#902e8b',
+  '--geno-lavender5': '#aa48a4',
+  '--geno-lavender6': '#c460bc',
+  '--geno-lavender7': '#de79d6',
+  '--geno-lavender8': '#f792f1',
+  '--geno-lavender9': '#ffb8ff',
+
+  // Assay hues GeneXpert
+  '--genex-blue1': '#00142b',
+  '--genex-blue2': '#102239',
+  '--genex-blue3': '#203049',
+  '--genex-blue4': '#2f3f59',
+  '--genex-blue5': '#3f4e69',
+  '--genex-blue6': '#505e7a',
+  '--genex-blue7': '#606e8b',
+  '--genex-blue8': '#717f9d',
+  '--genex-blue9': '#8291af',
+  '--genex-blue10': '#94a2c1',
+  '--genex-blue11': '#a6b4d4',
+  '--genex-blue12': '#b8c7e7',
+  '--genex-blue13': '#cbdafa',
+  '--genex-blue14': '#dfeeff,',
+
+  // Assay hues COVID
+  '--sea-nymph': '#0f3328',
+  '--summer-green': '#33574b',
+  '--summer-green2': '#597e70',
+  '--opal': '#81a799',
+  '--opal2': '#aad3c3',
+  '--conch': '#d7fff0',
+
+  // Assay hues reporter
+  '--hot-pink': '#73004b',
+  '--carnation-pink': '#ce2099',
+  '--cotton-candy': '#ffb5ff',
+
+  // Assay hues Alere
+  '--anakiwa': '#004759',
+  '--oyster-bay': '#40c1d4',
+
+  // Assay hues Senaite
+  '--texas-rose': '#723800',
+  '--chardonnay': '#c77f23',
+  '--frangipani': '#ffda7c',
+
+  // Assay hues ungrouped
+  '--loblolly': '#b8c6cb',
+  '--hit-gray': '#a3b0b4',
+  '--regent-gray': '#8f9a9e',
+  '--rolling-stone': '#7a8487',
 
   // Genrally used variables throughout the app
   '--aspect-color-cyan': 'var(--scooter, #3cc0cd)',
