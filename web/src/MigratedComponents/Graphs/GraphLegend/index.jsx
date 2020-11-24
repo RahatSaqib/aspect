@@ -40,13 +40,20 @@ GraphLegend.propTypes = {
 
 const PieInnerLegend = ({ averages, data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
-  const { title, key, subTitle, showTotal = false } = averages
+  const {
+    title,
+    key,
+    subTitle,
+    showTotal = false,
+    totalDisplayMethod = false,
+    notation = 'standard',
+  } = averages
   const [average, setAverage] = useState(0)
   const prevData = usePrevious(data)
 
   useEffect(() => {
     if ((!average && data) || data !== prevData) {
-      setAverage(getAverageFromData(data, 'value', key))
+      setAverage(getAverageFromData(data, 'value', key, notation))
     }
   }, [average, averages, data, key])
 
@@ -56,17 +63,23 @@ const PieInnerLegend = ({ averages, data }) => {
         className={cssClasses('legend__average')}
         style={{ color: average.color }}
       >
-        {average.avg}%
+        {!totalDisplayMethod || totalDisplayMethod !== 'actual'
+          ? `${average.avg}%`
+          : average.totals}
       </div>
       {showTotal ? (
         <Fragment>
-          <div className={cssClasses('legend__subTotals')}>
-            {average.totals}&nbsp;
-            {intlFormatMessage(messages[title])}
-          </div>
-          <div className={cssClasses('legend__subTitle')}>
-            {intlFormatMessage(messages[subTitle])}
-          </div>
+          {title ? (
+            <div className={cssClasses('legend__subTotals')}>
+              {average.totals}&nbsp;
+              {intlFormatMessage(messages[title])}
+            </div>
+          ) : null}
+          {subTitle ? (
+            <div className={cssClasses('legend__subTitle')}>
+              {intlFormatMessage(messages[subTitle])}
+            </div>
+          ) : null}
         </Fragment>
       ) : (
         <div className={cssClasses('legend__title')}>
