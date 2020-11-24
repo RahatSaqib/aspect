@@ -20,7 +20,11 @@ describe('This test is for testing different triggers conditions', () => {
     assert.isTrue(hasUnusedModules(20, 1, 20, 4))
     assert.isFalse(hasUnusedModules(0, 2, null, null))
     assert.isFalse(hasUnusedModules(0, 0, 20, 4))
-    chai.expect(() => hasUnusedModules(null, undefined, 20, 4)).to.throw("numberOfResults and numberOfModules can't be null or undefined")
+    chai
+      .expect(() => hasUnusedModules(null, undefined, 20, 4))
+      .to.throw(
+        "numberOfResults and numberOfModules can't be null or undefined"
+      )
   })
 
   it('analyzeResultsWithErrors', async () => {
