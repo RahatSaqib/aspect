@@ -236,6 +236,7 @@ const AspectResponsiveBar = ({
             <EmptyTooltip title={v.id} />
           ) : (
             <GraphToolTip
+              displayMethod={displayMethod}
               values={generateToolTip(
                 v,
                 displayMethod,
