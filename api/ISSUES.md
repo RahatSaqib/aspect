@@ -385,7 +385,7 @@ const { partnerId, userId } = await knex('User as u')
 This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving it by the scheduler.
 *The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/registration.js*
 
-1) Start by adding a function for analyzing if your issue should be triggered or not. In this example, we will use plugin functions for achieving that, so let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
+ 1) Start by adding a function for analyzing if your issue should be triggered or not. In this example, we will use plugin functions for achieving that, so let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
 
       ```javascript
       // ...
