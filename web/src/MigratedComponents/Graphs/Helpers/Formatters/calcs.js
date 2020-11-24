@@ -56,11 +56,15 @@ const percentageOrActualForPie = (data, displayMethod) => {
   return newData
 }
 
-const getAverageFromData = (data, value, which, culture) => {
+const getAverageFromData = (data, value, which, notation, culture) => {
   if (data.length && which) {
     let totalForFilter = []
     const total = []
     data.map(d => total.push(sum(values(pick(d, value)).map(Number))))
+    const totalSum = Number(sum(total))
+    const totalSumAvg = which === '*' ? (totalSum / 12).toFixed(1) : totalSum
+    const totalNotation = totalSum > 1000 ? 'notation' : 'standard'
+
     if (Array.isArray(which)) {
       const rangeTotal = which.reduce((acc, curr) => {
         const item = filter(data, ['label', curr])[0]
@@ -87,6 +91,12 @@ const getAverageFromData = (data, value, which, culture) => {
       ) {
         totalForFilter.push(rangeTotal)
       }
+    } else if (which === '*') {
+      totalForFilter.push({
+        id: value,
+        label: value,
+        value: data.reduce((acc, curr) => acc + curr.value, 0),
+      })
     } else {
       totalForFilter = filter(data, ['label', which]) || [{ [value]: 0 }]
     }
@@ -109,8 +119,8 @@ const getAverageFromData = (data, value, which, culture) => {
         avg: parseFloat(avg),
         color: filterColour(totalForFilter[0].id),
         totals: new Intl.NumberFormat(culture, {
-          notation: 'standard',
-        }).format(Number(sum(total))),
+          totalNotation,
+        }).format(totalSumAvg),
       }
       return avgObj
     }
@@ -133,9 +143,9 @@ const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
 export {
   calcOverallRate,
   calcPercentageForGraphs,
+  calcPercentageSplitBar,
+  getAverageFromData,
   getMaxValueForDivergent,
   roundIfNumber,
-  calcPercentageSplitBar,
   percentageOrActualForPie,
-  getAverageFromData,
 }
