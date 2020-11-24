@@ -1,5 +1,6 @@
 const subDays = require('date-fns/subDays')
 const addDays = require('date-fns/addDays')
+const startOfDay = require('date-fns/startOfDay')
 const _ = require('lodash')
 const { startOfDayUtc } = require('../shared/date')
 const { resultCategoryToId } = require('../shared/dictionary')
@@ -111,7 +112,7 @@ async function analyzeUnusedModules(
   const { deviceId } = action
 
   const { numberOfResults, numberOfModules } = await knex('Result as r')
-    .where('r.endedOn', '>', addDays(new Date(), -30))
+    .where('r.endedOn', '>', startOfDay(addDays(new Date(), -30)))
     .andWhere('r.deviceId', deviceId)
     .select(
       knex.raw('COUNT(*) as numberOfResults'),
