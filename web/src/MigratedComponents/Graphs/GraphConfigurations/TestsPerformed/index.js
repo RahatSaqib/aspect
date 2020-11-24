@@ -37,7 +37,7 @@ const testsPerFormedGraphs = {
       {
         id: 'testPerformedMonthlytotal',
         component: PieGraph,
-        type: 'pieBasicLegend',
+        type: 'pie',
         size: 4,
         componentClasses: ['piegraph__container'],
         api: {
@@ -53,11 +53,11 @@ const testsPerFormedGraphs = {
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {
-          showTotal: true,
+          showTotal: false,
           totalDisplayMethod: 'actual',
-          title: null,
-          key: ['assay'],
-          subTitle: 'testsOverTimeTitle',
+          title: 'testsOverTimeTitle',
+          key: '*',
+          subTitle: null,
         },
       },
     ],
