@@ -300,13 +300,13 @@ We need to add a new json object in the JSON Array with the following shape:
 Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json with the following shape.
 
 ```javascript
-  {
+{
     "issueType": "DeviceNoResults",
     "issueEventStatus": "Triggered",
     "triggerConditions": {
       "action": "DEVICE_NO_RESULTS"
     }
-  }
+},
 ```
 
 Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.
