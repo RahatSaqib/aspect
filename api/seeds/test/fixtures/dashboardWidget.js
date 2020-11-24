@@ -11,6 +11,7 @@ module.exports = {
     {
       ...devicesTitle,
       dashboards: {
+        home: {},
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
         },
