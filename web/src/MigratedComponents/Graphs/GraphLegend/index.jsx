@@ -8,7 +8,7 @@ import isEmpty from 'lodash/isEmpty'
 import IconProvider from '../../IconProvider'
 
 import usePrevious from '../../../Hooks/CustomHooks'
-import { getAverageFromData, getBasicAverage } from '../Helpers/Formatters'
+import { getAverageFromData } from '../Helpers/Formatters'
 import AspectLink from '../../../components/shared/AspectLink'
 
 import messages from '../GraphsContainer/messages'
@@ -38,7 +38,7 @@ GraphLegend.propTypes = {
   width: PropTypes.string.isRequired,
 }
 
-const PieInnerLegend = ({ averages, data, type = false }) => {
+const PieInnerLegend = ({ averages, data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const {
     title,
@@ -46,21 +46,14 @@ const PieInnerLegend = ({ averages, data, type = false }) => {
     subTitle,
     showTotal = false,
     totalDisplayMethod = false,
+    notation = 'standard',
   } = averages
   const [average, setAverage] = useState(0)
   const prevData = usePrevious(data)
 
   useEffect(() => {
     if ((!average && data) || data !== prevData) {
-      switch (type) {
-        case 'pieBasicLegend':
-          setAverage(getBasicAverage(data, 'totalAveragesActual', key))
-          break
-
-        default:
-          setAverage(getAverageFromData(data, 'value', key))
-          break
-      }
+      setAverage(getAverageFromData(data, 'value', key, notation))
     }
   }, [average, averages, data, key])
 
@@ -70,8 +63,9 @@ const PieInnerLegend = ({ averages, data, type = false }) => {
         className={cssClasses('legend__average')}
         style={{ color: average.color }}
       >
-        {average.avg}
-        {!totalDisplayMethod || totalDisplayMethod !== 'actual' ? '%' : ''}
+        {!totalDisplayMethod || totalDisplayMethod !== 'actual'
+          ? `${average.avg}%`
+          : average.totals}
       </div>
       {showTotal ? (
         <Fragment>
@@ -81,9 +75,11 @@ const PieInnerLegend = ({ averages, data, type = false }) => {
               {intlFormatMessage(messages[title])}
             </div>
           ) : null}
-          <div className={cssClasses('legend__subTitle')}>
-            {intlFormatMessage(messages[subTitle])}
-          </div>
+          {subTitle ? (
+            <div className={cssClasses('legend__subTitle')}>
+              {intlFormatMessage(messages[subTitle])}
+            </div>
+          ) : null}
         </Fragment>
       ) : (
         <div className={cssClasses('legend__title')}>
@@ -95,9 +91,8 @@ const PieInnerLegend = ({ averages, data, type = false }) => {
 }
 
 PieInnerLegend.propTypes = {
-  averages: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  averages: PropTypes.shape([PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  type: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 const PieInnerLegendSolidBase = ({ data }) => {

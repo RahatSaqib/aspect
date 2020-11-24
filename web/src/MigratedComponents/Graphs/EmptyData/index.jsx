@@ -48,7 +48,7 @@ const EmptyGraph = ({ type }) => {
     'barLegacyTreatment',
     'stackedDeviceActivity',
   ]
-  const pieGraphs = ['pie', 'pieBasicLegend', 'pieLegacyTreatment']
+  const pieGraphs = ['pie', 'pieLegacyTreatment']
   const { formatMessage: intlFormatMessage } = useIntl()
   return (
     <Fragment>

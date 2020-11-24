@@ -5,8 +5,9 @@ import startCase from 'lodash/startCase'
 
 const cssClasses = classnames.bind(require('./GraphTooltip.css'))
 
-const GraphToolTip = ({ values }) => {
+const GraphToolTip = ({ displayMethod, values }) => {
   const { color, displayId, indexValue = false, displayValue } = values
+
   return (
     <div className={cssClasses('tooltip__container')}>
       <div className={cssClasses('tooltip__row')}>
@@ -22,16 +23,18 @@ const GraphToolTip = ({ values }) => {
           {typeof displayValue === 'object' ? (
             <div className={cssClasses('tooltip__valueContainer')}>
               <div className={cssClasses('tooltip__valuePrimary')}>
-                {displayValue.percentage}
+                {displayValue.value}/{displayValue.actual.totalCnt}
               </div>
-              <div className={cssClasses('tooltip__valueSecondary')}>
-                ({displayValue.actual.percentageToValue}/
-                {displayValue.actual.totalCnt} results)
-              </div>
+              {displayMethod === 'percentage' ? (
+                <div className={cssClasses('tooltip__valueSecondary')}>
+                  ({displayValue.actual.percentageToValue}/
+                  {displayValue.actual.totalCnt} results)
+                </div>
+              ) : null}
             </div>
           ) : (
             <div className={cssClasses('tooltip__valuePrimary')}>
-              {displayValue}
+              {displayValue}/
             </div>
           )}
         </div>
@@ -41,6 +44,7 @@ const GraphToolTip = ({ values }) => {
 }
 
 GraphToolTip.propTypes = {
+  displayMethod: PropTypes.string.isRequired,
   values: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

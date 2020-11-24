@@ -103,11 +103,8 @@ const AspectResponsivePie = ({
         )}
         colors={v => generateColorForValue(v)}
       />
-      {averages && (type === 'pie' || type === 'pieLegacyTreatment') ? (
+      {averages && !type ? (
         <PieInnerLegend averages={averages} data={data} />
-      ) : null}
-      {type === 'pieBasicLegend' ? (
-        <PieInnerLegend averages={averages} data={data} type={type} />
       ) : null}
       {type === 'solid' ? (
         <PieInnerLegendSolid data={data} link={link} />
