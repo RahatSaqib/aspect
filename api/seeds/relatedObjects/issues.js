@@ -20,11 +20,11 @@ Customer Site: {{site.name}}
 
 Facility Contact(s): {{site.contacts}}
 
-Location: {{site.address}} {{site.city}}, {{site.state}}, {{site.country}}
+Location: {{site.street1}} {{site.city}} {{site.state}}, {{site.country}}
 
 Instrument Serial: {{result.instrumentSerial}}
 
-Date and Time: {{result.endedOn}}
+Date and Time: {{formatDate result.endedOn formatString='yyyy-MM-dd HH:mm:ss'}}
 
 Error Code: {{result.errorCode}}
 
@@ -39,13 +39,13 @@ Cartridge Type: {{result.assay.name}}
 Test Outcome: {{issue.data.resultOutcome}}
 `
 
-const errorIssueAlertModule = `Aspect Error Notification: {{issueType.name}} serial "{{result.moduleSerial}}"`
+const errorIssueAlertModule = `Aspect Error Notification: {{toLowerCase notification.type}} serial "{{result.moduleSerial}}"`
 const errorIssueEmailModule = `${errorIssueEmailBody}
 Module Serial: {{result.moduleSerial}}
 
-Module Slot (if slot n/a): {{result.moduleName}} `
+Module Slot (serial if slot n/a): {{result.moduleName}} `
 
-const errorIssueAlertLot = `Aspect Error Notification: {{issueType.name}} "{{result.consumableLot}}"`
+const errorIssueAlertLot = `Aspect Error Notification: {{toLowerCase notification.type}} "{{result.consumableLot}}"`
 const errorIssueEmailLot = `${errorIssueEmailBody}
 Reagent Lot: {{result.consumableLot}}`
 

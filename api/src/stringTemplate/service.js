@@ -83,7 +83,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         's.street2 as siteStreet2',
         's.city as siteCity',
         's.zip as siteZip',
-        'st.name siteState',
+        'st.name as siteState',
         'lg.name as siteLga',
         'p.name as personName',
         'p.cell as personCell',
@@ -146,6 +146,12 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    siteName: string
  *    countryName: string
  *    siteShortName: string
+ *    siteStreet1: string
+ *    siteStreet2: string
+ *    siteCity: string
+ *    siteZip: string
+ *    siteState: string
+ *    siteLga: string
  *    deviceName: string
  *    deviceTypeExternalId: string
  *    deviceLastSeenOn: date/time
@@ -213,6 +219,12 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    siteExternalId: string
  *    siteName: string
  *    siteShortName: string
+ *    siteStreet1: string
+ *    siteStreet2: string
+ *    siteCity: string
+ *    siteZip: string
+ *    siteState: string
+ *    siteLga: string
  *    deviceName: string
  *    deviceTypeExternalId: string
  *    deviceLastSeenOn: date/time
@@ -256,8 +268,8 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         street2: siteStreet2,
         city: siteCity,
         zip: siteZip,
-        state: siteStateName,
-        lga: siteLgaName,
+        state: siteState,
+        lga: siteLga,
       },
       device: {
         name: deviceName,
@@ -334,8 +346,8 @@ async function getBaseDataSource(data) {
       street2: d.siteStreet2,
       city: d.siteCity,
       zip: d.siteZip,
-      state: d.siteStateName,
-      lga: d.siteLgaName,
+      state: d.siteState,
+      lga: d.siteLga,
     },
     device: {
       name: d.deviceName,
