@@ -32,8 +32,6 @@ function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
 
-const fake = true
-
 function listDevicesBaseRequest() {
   return {
     auth: { scope: ['device:view', 'operationalData:view'] },
