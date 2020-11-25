@@ -1,9 +1,7 @@
+const pick = require('lodash/pick')
+const values = require('lodash/values')
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
-const {
-  stat: { activeDevices, personTitle, devicesTitle, sitesTitle, resultsTitle },
-} = dashboardWidgetsBase
-
 module.exports = {
-  stat: [sitesTitle, devicesTitle, resultsTitle, personTitle, activeDevices],
+  stat: values(pick(dashboardWidgetsBase.stat, ['sitesTitle', 'devicesTitle', 'resultsTitle', 'personTitle', 'activeDevices'])),
 }
