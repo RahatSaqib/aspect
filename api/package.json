@@ -52,18 +52,21 @@
     "all": true,
     "report-dir": "./coverage"
   },
-  "lint-staged": {
-    "./src/**/*.js": [
-      "eslint --fix --max-warnings 0","prettier --write"
-    ],
-    "./*.js": [
-      "eslint --fix --max-warnings 0"
-    ]
-  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "./src/**/*.js": [
+      "eslint --fix --max-warnings 0"
+    ],
+    "./*.js": [
+      "eslint --fix --max-warnings 0"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "author": "SystemOne",
   "license": "ISC",
