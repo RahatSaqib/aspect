@@ -58,7 +58,10 @@
     }
   },
   "lint-staged": {
-    "{./{src,test,migrations,seeds}/**/,*}*.js": [
+    "./{src,test,migrations,seeds}/**/*.js": [
+      "eslint --fix --max-warnings 0"
+    ],
+    "./*.js": [
       "eslint --fix --max-warnings 0"
     ],
     "*.{json,md}": [
