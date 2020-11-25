@@ -93,7 +93,7 @@ const groupForPieRow = (data, mergedParams) => {
     return type
   }
 
-  const pieWidgetType = (key, value, difference) => {
+  const pieWidgetType = (_key, value, difference) => {
     let type
     switch (true) {
       case typeof value === 'number' && difference !== undefined:

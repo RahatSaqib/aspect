@@ -5,6 +5,7 @@ const { assert } = chai
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 const { knex } = require('../../src/db')
+const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 
 const {
   issueTypeToId,
@@ -23,7 +24,11 @@ const {
   basicResultPayload,
 } = require('../deviceApi/geneXpert/geneXpertConstants')
 
-const { waitForIdle } = require('../utils/mqUtils')
+const {
+  createMessageContext,
+  waitForAction,
+  waitForIdle,
+} = require('../utils/mqUtils')
 
 const getMessageTemplates = async () => {
   const {
@@ -359,8 +364,10 @@ describe('This test suite is for testing different triggers conditions', async (
             hostId: `3rd${hostId}`,
             deviceSerialNumber: `3rd${deviceSerialNumber}`,
           })
+
           await context.beforeRegisterAndSetDevice()
           await anotherDeviceContext.beforeRegisterAndSetDevice()
+
           await Promise.each(_.range(0, 7), async i => {
             const resultDetails = {
               consumableLot: 'Lot 0',
@@ -542,5 +549,143 @@ describe('This test suite is for testing different triggers conditions', async (
       'SignalLossDetectedInAmplificationCurveModule',
       'SignalLossDetectedInAmplificationCurveLot'
     )
+  })
+
+  describe('unused modules', () => {
+    let deviceContextForUnusedModules
+    let deviceId
+    let messageContext
+
+    beforeEach(async () => {
+      messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ resolveIssues })
+
+      deviceContextForUnusedModules = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName: `4nd${deviceName}`,
+        macAddress: `4nd${macAddress}`,
+        hostId: `4nd${hostId}`,
+        deviceSerialNumber: `4nd${deviceSerialNumber}`,
+      })
+      await deviceContextForUnusedModules.beforeRegisterAndSetDevice()
+      const { device } = deviceContextForUnusedModules
+      deviceId = device.id
+      // Insert 25 results for the last month and for the same device, using the same module (will end with an issue created)
+      await Promise.each(_.range(0, 25), async i => {
+        const resultDetails = {
+          consumableLot: 'Lot 0',
+          moduleName: 'Module A',
+          moduleSerial: 'M-123456-0',
+          instrumentSerial: 'S-1234-0',
+          endedOn: subDays(new Date(), i),
+          errorCode: null,
+          errorNotes: null,
+          resultCategory1: await resultCategoryToId('Positive'),
+        }
+        await deviceContextForUnusedModules.createResultForThisDevice({
+          resultDetails,
+        })
+      })
+    })
+
+    afterEach(async () => {
+      await deviceContextForUnusedModules.cleanUp()
+    })
+
+    it('should only create one issue and one notification per device', async () => {
+      const payload = await getPayload(
+        deviceContextForUnusedModules,
+        null,
+        null
+      )
+      const { deviceAuth } = deviceContextForUnusedModules
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+
+      await waitForIdle(1000)
+
+      const issues = await knex('Issue as i')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .where('it.externalId', 'UnusedModules')
+        .andWhere('i.deviceId', deviceId)
+        .select('i.*')
+
+      assert.equal(issues.length, 1)
+
+      if (issues.length === 1) {
+        const [{ id: issueId }] = issues
+        const notifications = await knex('Notification').where({ issueId })
+
+        assert.equal(notifications.length, 1)
+      }
+    })
+
+    it('should resolve the issue when all modules were used', async () => {
+      let payload = await getPayload(deviceContextForUnusedModules, null, null)
+      const { deviceAuth } = deviceContextForUnusedModules
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForIdle(1000)
+
+      // Adds 3 more results with different modules than the original, so the issue should be resolved
+      const resultDetails = {
+        consumableLot: 'Lot 0',
+        moduleName: 'Module A',
+        moduleSerial: 'M-123456-0',
+        instrumentSerial: 'S-1234-0',
+        endedOn: subDays(new Date(), 5),
+        errorCode: null,
+        errorNotes: null,
+        resultCategory1: await resultCategoryToId('Positive'),
+      }
+      await deviceContextForUnusedModules.createResultForThisDevice({
+        resultDetails: { ...resultDetails, moduleName: 'A great module' },
+      })
+      await deviceContextForUnusedModules.createResultForThisDevice({
+        resultDetails: { ...resultDetails, moduleName: 'But this is better' },
+      })
+      await deviceContextForUnusedModules.createResultForThisDevice({
+        resultDetails: {
+          ...resultDetails,
+          moduleName: "You are great too, don't be jealous",
+        },
+      })
+      payload = await getPayload(deviceContextForUnusedModules, null, null)
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForIdle(1000)
+
+      const issues = await knex('Issue as i')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .where('it.externalId', 'UnusedModules')
+        .andWhere('i.deviceId', deviceId)
+        .select(knex.raw('i.*'))
+
+      assert.equal(issues.length, 1)
+
+      const [{ id: issueId }] = issues
+
+      const waitForIssueResolved = waitForAction(issueResolved(issueId))
+      messageContext.resolveIssues()
+      await waitForIssueResolved
+
+      const { externalId: issueStatusExternalId } = await knex('Issue as i')
+        .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where('i.id', issueId)
+        .select('is.externalId')
+        .first()
+      assert.equal(issueStatusExternalId, 'Resolved')
+    })
   })
 })
