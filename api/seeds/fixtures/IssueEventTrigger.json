@@ -438,6 +438,21 @@
       }
     },
     {
+      "issueType": "UnusedModules",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_UNUSED_MODULES",
+        "conditions":{
+          "evaluationMethod":"plugin-function",
+          "evaluationParameter":"analyzeUnusedModules",
+          "evaluationFilterParameters": {
+            "minResults": 20,
+            "expectedUsedModules": 4
+          }
+        }
+      }
+    },
+    {
       "issueType": "CartridgeIntegrityTestFailureModule",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
