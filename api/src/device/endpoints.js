@@ -33,6 +33,7 @@ function listDevicesBaseConfig() {
 }
 
 const fake = false
+const another = true
 
 function listDevicesBaseRequest() {
   return {

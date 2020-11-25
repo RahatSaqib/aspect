@@ -53,20 +53,11 @@
     "report-dir": "./coverage"
   },
   "lint-staged": {
-    "./src/**/*.js": [
-      "eslint --fix"
-    ],
-    "./test/**/*.js": [
-      "eslint --fix"
-    ],
-    "./migrations/**/*.js": [
-      "eslint --fix"
-    ],
-    "./seeds/**/*.js": [
-      "eslint --fix"
+    "./{src,test,migrations,seeds}/**/*.js": [
+      "eslint --fix --max-warnings 0"
     ],
     "./*.js": [
-      "eslint --fix"
+      "eslint --fix --max-warnings 0"
     ]
   },
   "husky": {
