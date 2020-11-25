@@ -759,7 +759,7 @@ module.exports = {
                     INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
                     WHERE 
 						  it.externalId = 'unusedModules' AND
-                          ist.externalId = 'Active' AND
+                          ist.externalId NOT IN ('Inactive', 'Resolved') AND
 						  (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()) AND
                           dt.externalId = 'CepheidGeneXpert'
                   GROUP BY d.id
@@ -778,7 +778,7 @@ module.exports = {
                     INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
                     WHERE 
 						  it.externalId = 'unusedModules' AND
-                          ist.externalId = 'Active' AND
+                          ist.externalId NOT IN ('Inactive', 'Resolved') AND
                           dt.externalId = 'CepheidGeneXpert'
                   GROUP BY d.id
         ) AS innerquery
