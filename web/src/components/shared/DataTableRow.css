@@ -98,24 +98,21 @@
 
 .ok {
   color: var(--aspect-color-mantis);
-  margin-left: 18px;
-  font-size: 24px;
 }
 
 .alert {
   color: var(--aspect-color-mandy);
-  margin-left: 18px;
-  font-size: 24px;
 }
 
 .na {
   color: var(--aspect-color-grey-5);
-  margin-left: 18px;
-  font-size: 24px;
 }
 
 .warning {
   color: var(--aspect-color-supernova);
+}
+
+svg.ok, svg.alert, svg.na, svg.warning {
   margin-left: 18px;
   font-size: 24px;
 }

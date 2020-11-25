@@ -4,30 +4,34 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const {
+  adminUserName,
+  adminPassword,
+  partnerName,
+  serverUrl,
+  deviceApiToken,
+} = require('./fixtures/partnerData')
+const {
   commonUpserts,
   upsertGeneXpertDeviceTypeAndAssays,
 } = require('../common')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-const adminPassword = 'F0Rbq3WtDP'
 const lowerLevelUserPassword = 'TOVpMx3nHP'
 const now = new Date()
 
 async function seed(knex) {
-  const deviceApiToken = 'qqsmc85rzlaoh9aygzh2'
-
   const [partnerId] = await knex('Partner').insert({
-    name: 'Ukraine',
+    name: partnerName,
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://ukraine.aspect.id',
+    serverUrl,
   })
 
   const [adminId] = await knex('User').insert({
-    name: 'admin',
+    name: adminUserName,
     password: bcrypt.hashSync(adminPassword, saltRounds),
     approved: 1,
     lockedOut: 0,
