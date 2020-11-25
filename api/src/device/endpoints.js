@@ -37,6 +37,20 @@ function listDevicesBaseRequest() {
     auth: { scope: ['device:view', 'operationalData:view'] },
     validate: {
       query: {
+        issueTypeId: Joi.array()
+          .optional()
+          .items(Joi.string())
+          .single()
+          .description(
+            'Optional parameter for filtering devices related to issues of this type'
+          ),
+        onlyOpenIssues: Joi.number()
+          .min(0)
+          .max(1)
+          .allow('')
+          .description(
+            'Optional parameter for filtering devices related to Open Issues only. default value is false'
+          ),
         hasResults: Joi.number()
           .allow('')
           .min(0)
