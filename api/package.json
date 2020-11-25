@@ -53,8 +53,8 @@
     "report-dir": "./coverage"
   },
   "lint-staged": {
-    "./{src,test,migrations,seeds}/**/*.js": [
-      "eslint --fix --max-warnings 0"
+    "./src/**/*.js": [
+      "eslint --fix --max-warnings 0","prettier --write"
     ],
     "./*.js": [
       "eslint --fix --max-warnings 0"
