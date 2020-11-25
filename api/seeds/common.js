@@ -1932,9 +1932,9 @@ async function upsertDashboardWidgets(
 
   let widgets = dashboardWidgetJson.stat
 
-  if (whitelist !== null)
+  if (whitelist)
     widgets = _.filter(dashboardWidgetJson.stat, widget =>
-      _.find(externalId => externalId === widget.externalId)
+      _.find(whitelist, widget.externalId)
     )
 
   await Promise.all(
