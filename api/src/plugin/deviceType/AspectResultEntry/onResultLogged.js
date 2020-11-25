@@ -13,6 +13,7 @@ const {
 const {
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('../../../result/querySelectors')
+const { resultUnusedModules } = require('../../../result/actions')
 
 const {
   shouldTriggerModuleReplaced,
@@ -97,6 +98,13 @@ async function onResultLogged(
           consumableLot,
         }
       )
+
+      if (!messageContext.resultUnusedModules) {
+        messageContext = messageContext.bindActionCreators({
+          resultUnusedModules,
+        })
+      }
+      await messageContext.resultUnusedModules(resultDeviceId)
 
       if (deviceLogDeviceTypeExternalId === 'Aspect') {
         await updateCovidResultFromFormData(

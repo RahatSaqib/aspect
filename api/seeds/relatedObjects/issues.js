@@ -183,6 +183,31 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    UnusedModules: {
+      issueType: {
+        name: 'Unused Modules',
+        externalId: 'UnusedModules',
+        i18nKey: 'issueStatusUnusedModules',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Unused Module(s) in {{device.name}}',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: 'Unused Module(s) in {{device.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: '{{device.name}}: Unused module(s)',
+        body: 'Unused module(s) in {{device.name}}',
+        htmlBody: 'Unused module(s) in {{device.name}}',
+        ...auditFields,
+      },
+    },
     ModuleTemperatureError: {
       issueType: {
         name: 'Module Temperature Error',
