@@ -36,6 +36,8 @@ async function seed(knex) {
       userName: 'admin',
     })
 
+    if (!issueTypeId) return
+
     const auditFields = {
       createdOn: new Date(),
       createdBy: userId,
