@@ -95,12 +95,14 @@ const getExpected = totalResults => {
     percentWithin2Hours,
   }
 }
-describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
+describe.only('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
   shared.checkToken(server, path)
 
   const now = new Date()
   const currentMonth = new Date(now.getFullYear(), now.getMonth(), 15)
+    .toISOString()
+    .replace('Z', '-03:00')
   const dataToSeed = [
     // mid of current month
     { midMonth: currentMonth, totalResults: 200 },
@@ -347,7 +349,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const res = await server
       .get(`${path}`)
       .query({
-        currentMonth: format(currentMonth, 'yyyy-MM-dd'),
+        currentMonth: currentMonth.replace('Z', '-03:00'),
       })
       .set('Authorization', `Bearer ${shared.token}`)
 

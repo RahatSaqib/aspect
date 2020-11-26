@@ -2,6 +2,7 @@ const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+
 const {
   allResultCategoryToId,
   allMessageStatusToId,
@@ -45,7 +46,8 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
 async function getResultQuery(
   query,
   dataConstraints,
-  positiveResultCategories
+  positiveResultCategories,
+  tz = 'GMT'
 ) {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
@@ -118,9 +120,9 @@ async function getResultQuery(
       knex.raw(`
         CONCAT_WS(
           '-',
-          CAST( YEAR(r.endedOn) AS CHAR ),
+          CAST( YEAR(CONVERT_TZ(r.endedOn,'GMT',${tz})) AS CHAR ),
           LPAD(
-            CAST( MONTH(r.endedOn) AS CHAR ),
+            CAST( MONTH(CONVERT_TZ(r.endedOn,'GMT',${tz})) AS CHAR ),
             2,
             '0'
           )
@@ -223,6 +225,9 @@ async function resultsTransmittedDashboard(request) {
   const positiveResultCategories = _.values(
     _.pick(resultCategories, getPositiveCategoriesExternalIds())
   )
+  // because all the datetimes are transformed automatically to UTC and i can't take the offset from that date,
+  // i have to parse the offset this way
+  const offset = query.currentMonth.slice(-6)
 
   // get all assays which user can access
   const assays = await getAssayQuery(
@@ -233,7 +238,8 @@ async function resultsTransmittedDashboard(request) {
   const items = await getResultQuery(
     query,
     dataConstraints,
-    positiveResultCategories
+    positiveResultCategories,
+    offset
   )
 
   // helper func for percentages

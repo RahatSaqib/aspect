@@ -197,11 +197,13 @@ const routes = [
       auth: { scope: ['site', 'result', 'dashboard'] },
       validate: {
         query: {
-          currentMonth: Joi.date()
-            .iso()
+          currentMonth: Joi.string()
+            .pattern(
+              /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+            )
             .allow(null)
             .description(
-              'Set "current" month to return data for this and previous month'
+              'Set "current" month to return data for this and previous month with the next format 2020-11-26T15:00:24.317-03:00'
             ),
         },
       },
