@@ -15,6 +15,7 @@ import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import resultsTransmittedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/ResultsTransmitted'
 import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
+import DailyStatus from '../../MigratedComponents/Graphs/DailyStatus'
 
 import ASSAY_LIST from '../../MigratedComponents/QueryFetch/Assay/index'
 
@@ -41,16 +42,22 @@ export const OperationalData = () => {
     <div className={cssClasses('Container')}>
       <Helmet title="Operational Data" />
       <Fragment>
-        <ErrorBoundary>
+        {/* <ErrorBoundary>
           <PermissionsProvider permissions={['operationalData']}>
             <SummaryStatus
               className={cssClasses('Section--summary')}
               dashboard="operational"
             />
           </PermissionsProvider>
-        </ErrorBoundary>
+        </ErrorBoundary> */}
 
         <ErrorBoundary>
+          <PermissionsProvider permissions={['operationalData']}>
+            <DailyStatus />
+          </PermissionsProvider>
+        </ErrorBoundary>
+
+        {/* <ErrorBoundary>
           <PermissionsProvider
             permissions={resultsTransmitted.graphRenderPermissions}
           >
@@ -61,9 +68,9 @@ export const OperationalData = () => {
               />
             ) : null}
           </PermissionsProvider>
-        </ErrorBoundary>
+        </ErrorBoundary> */}
 
-        <ErrorBoundary>
+        {/* <ErrorBoundary>
           <PermissionsProvider
             permissions={deviceStatus.graphRenderPermissions}
           >
@@ -80,7 +87,7 @@ export const OperationalData = () => {
               config={inventoryStatus}
             />
           </PermissionsProvider>
-        </ErrorBoundary>
+        </ErrorBoundary> */}
       </Fragment>
     </div>
   )

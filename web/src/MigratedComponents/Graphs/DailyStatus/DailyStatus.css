@@ -1,0 +1,29 @@
+.clinic__container {
+    display: flex;
+}
+
+.clinic__name { 
+    min-width: 290px; 
+    text-align: right; 
+    padding: 5px 10px 5px 0;
+}
+
+.clinic__dayrow {
+    display: flex;
+    padding: 5px 0;
+}
+
+.clinic__day {
+    width: 19px;
+    height: 15px;
+    background: red;
+    margin: 0 3px;
+}
+
+.clinic__testtotal {
+    width: 35px;
+    padding: 0 5px;
+    background: #333333;
+    color: white;
+    text-align: center;
+}
