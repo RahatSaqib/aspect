@@ -45,9 +45,9 @@ describe.only('Device Maintenance Status', () => {
         hostId: 'TAMA-001',
         deviceSerialNumber: 'Tamagochi-PC-001',
       })
-  
+
       await context.beforeRegisterAndSetDevice()
-  
+
       const { id, siteId } = context.device
       deviceId = id
       const statuses = await allDeviceMaintenanceStatusToId()
@@ -55,11 +55,11 @@ describe.only('Device Maintenance Status', () => {
       const { id: personId } = await knex('Person')
         .where({ name: 'Admin' })
         .first()
-  
+
       await knex('Site')
         .where({ id: siteId })
         .update({ latitude: 1, longitude: 5 })
-  
+
       await knex('DeviceMaintenanceStatusLog').insert({
         deviceId,
         deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
@@ -67,7 +67,7 @@ describe.only('Device Maintenance Status', () => {
         createdOn: new Date(),
         createdBy: personId,
       })
-  
+
       const [deviceMaintenanceStatusLogId] = await knex(
         'DeviceMaintenanceStatusLog'
       ).insert({
@@ -80,21 +80,23 @@ describe.only('Device Maintenance Status', () => {
       await knex('Device')
         .where({ id: deviceId })
         .update({ deviceMaintenanceStatusLogId })
-  
-      await Promise.each(range(1, 4), async num => {
+
+      await Promise.each(range(1, 4), async () => {
         const daysForSubstracting = random(0, 30, false)
         await context.createResultForThisDevice({
           resultDetails: {
             startedOn: subDays(new Date(), daysForSubstracting),
             endedOn: subDays(new Date(), daysForSubstracting),
-          }
+          },
         })
       })
-  
-      await context.createResultForThisDevice({ resultDetails: {
-        startedOn: subDays(new Date(), 33),
-        endedOn: subDays(new Date(), 33),
-      } })
+
+      await context.createResultForThisDevice({
+        resultDetails: {
+          startedOn: subDays(new Date(), 33),
+          endedOn: subDays(new Date(), 33),
+        },
+      })
     })
 
     it('should get the correct current and day status', done => {
@@ -117,23 +119,11 @@ describe.only('Device Maintenance Status', () => {
             tamagotchiLastStatus.maintenanceStatusExternalId,
             'active'
           )
-          assert.equal(
-            tamagotchiLastStatus.maintenanceStatusI18nKey,
-            'active'
-          )
-          assert.equal(
-            tamagotchiLastStatus.maintenanceStatusName,
-            'Active'
-          )
-          assert.isBoolean(
-            tamagotchiLastStatus.isWeekend
-          )
-          assert.isNumber(
-            tamagotchiLastStatus.weekNumber
-          )
-          assert.isTrue(
-            isValid(new Date(tamagotchiLastStatus.day))
-          )
+          assert.equal(tamagotchiLastStatus.maintenanceStatusI18nKey, 'active')
+          assert.equal(tamagotchiLastStatus.maintenanceStatusName, 'Active')
+          assert.isBoolean(tamagotchiLastStatus.isWeekend)
+          assert.isNumber(tamagotchiLastStatus.weekNumber)
+          assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
 
           done()
         })

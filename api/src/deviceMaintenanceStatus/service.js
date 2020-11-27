@@ -103,7 +103,7 @@ async function deviceStatusOverTime(request) {
 
       let status = {}
       if (statusData[device.id + onlyDate])
-        status = statusData[device.id + onlyDate][0]
+        [status] = statusData[device.id + onlyDate]
 
       maintenanceStatusHistory.push({
         ...omit(status, 'deviceId'),

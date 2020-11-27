@@ -35,20 +35,40 @@ const routes = [
           data: Joi.array().items(
             Joi.object().keys({
               id: Joi.number().required().description('The id of the device'),
-              name: Joi.string().required().description('The name of the device'),
-              longitude: Joi.number().allow(null).description('The longitude where the device is allocated'),
-              latitude: Joi.number().allow(null).description('The latitude where the device is allocated'),
-              totalResults: Joi.number().description('The number of results performed by the device in the date range'),
-              maintenanceStatusHistory: Joi.array().items(
-                Joi.object().keys({
-                  day: Joi.date().required().description('The date of the reported status'),
-                  isWeekend: Joi.bool().required(),
-                  weekNumber: Joi.number().required(),
-                  maintenanceStatusI18nKey: Joi.string().description('The i18nKey of the maintenance status'),
-                  maintenanceStatusName: Joi.string().description('The name of the maintenance status'),
-                  maintenanceStatusExternalId: Joi.string().description('The external id of the maintenance status'),
-                })
-              ).description('The maintenance status of the device in each day of the date range')
+              name: Joi.string()
+                .required()
+                .description('The name of the device'),
+              longitude: Joi.number()
+                .allow(null)
+                .description('The longitude where the device is allocated'),
+              latitude: Joi.number()
+                .allow(null)
+                .description('The latitude where the device is allocated'),
+              totalResults: Joi.number().description(
+                'The number of results performed by the device in the date range'
+              ),
+              maintenanceStatusHistory: Joi.array()
+                .items(
+                  Joi.object().keys({
+                    day: Joi.date()
+                      .required()
+                      .description('The date of the reported status'),
+                    isWeekend: Joi.bool().required(),
+                    weekNumber: Joi.number().required(),
+                    maintenanceStatusI18nKey: Joi.string().description(
+                      'The i18nKey of the maintenance status'
+                    ),
+                    maintenanceStatusName: Joi.string().description(
+                      'The name of the maintenance status'
+                    ),
+                    maintenanceStatusExternalId: Joi.string().description(
+                      'The external id of the maintenance status'
+                    ),
+                  })
+                )
+                .description(
+                  'The maintenance status of the device in each day of the date range'
+                ),
             })
           ),
         }),
@@ -58,4 +78,3 @@ const routes = [
 ]
 
 module.exports = { routes }
-
