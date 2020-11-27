@@ -229,6 +229,12 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'onlyReportableResults':
               result.onlyReportableResults = true
               break
+            case 'issueTypeId':
+              result.issueTypeId = true
+              break
+            case 'onlyOpenIssues':
+              result.onlyOpenIssues = true
+              break
             default:
           }
         })

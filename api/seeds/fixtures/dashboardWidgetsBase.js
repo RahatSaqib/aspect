@@ -577,6 +577,7 @@ module.exports = {
       link: '/browse/device',
       linkParams: {
         deviceName: 'GeneXpert',
+        issueTypeId: 'ModuleReplaced',
       },
       sortOrder: 4,
       externalId: 'moduleSwaps',
