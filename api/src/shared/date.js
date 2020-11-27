@@ -10,6 +10,8 @@ const {
   isEqual,
   startOfDay,
   startOfToday,
+  startOfMonth,
+  endOfMonth,
 } = require('date-fns')
 
 const { convertToLocalTime } = require('date-fns-timezone')
@@ -116,6 +118,32 @@ function getOffsetFromIsoDateString(time) {
     : '+00:00'
 }
 
+// this works with iso format dates with timezones.
+const endOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
+
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    endOfMonth(new Date(`${datepart}T23:59:59.999Z`))
+      .toISOString()
+      .replace('T23:59:59.999Z', `T23:59:59.999${offset}`)
+  )
+}
+// this works with iso format dates with timezones.
+const startOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
+
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
+      .toISOString()
+      .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
+  )
+}
 function startOfDayUtc(date) {
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
@@ -137,6 +165,8 @@ module.exports = {
   getTimeZoneById,
   startOfDayUtc,
   startOfTodayUtc,
+  startOfMonthUTC,
+  endOfMonthUTC,
   getOffsetFromIsoDateString,
   REGEX_ISODATESTRING,
 }

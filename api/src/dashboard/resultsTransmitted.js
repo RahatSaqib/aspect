@@ -2,7 +2,11 @@ const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getOffsetFromIsoDateString } = require('../shared/date')
+const {
+  getOffsetFromIsoDateString,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
 
 const {
   allResultCategoryToId,
@@ -86,18 +90,19 @@ async function getResultQuery(
     .whereRaw(
       `
         ((
-          YEAR(r.endedOn) = YEAR(?)
-          AND
-          MONTH(r.endedOn) = MONTH(?)
+          r.endedOn between ? and ?
         )
         OR
         (
-          YEAR(r.endedOn) = YEAR(DATE_SUB(?, INTERVAL 1 MONTH))
-          AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(?, INTERVAL 1 MONTH))
+         r.endedOn between ? and ?
         ))
       `,
-      [currentMonth, currentMonth, currentMonth, currentMonth]
+      [
+        startOfMonthUTC(currentMonth),
+        endOfMonthUTC(currentMonth),
+        subMonths(startOfMonthUTC(currentMonth), 1),
+        subMonths(endOfMonthUTC(currentMonth), 1),
+      ]
     )
     .where('dt.externalId', 'CepheidGeneXpert')
     .modify(addConstraints, dataConstraints, {
@@ -121,9 +126,9 @@ async function getResultQuery(
       knex.raw(`
         CONCAT_WS(
           '-',
-          CAST( YEAR(CONVERT_TZ(r.endedOn,'GMT',${tz})) AS CHAR ),
+          CAST( YEAR(CONVERT_TZ(r.endedOn,'GMT','${tz}')) AS CHAR ),
           LPAD(
-            CAST( MONTH(CONVERT_TZ(r.endedOn,'GMT',${tz})) AS CHAR ),
+            CAST( MONTH(CONVERT_TZ(r.endedOn,'GMT','${tz}')) AS CHAR ),
             2,
             '0'
           )
@@ -214,7 +219,6 @@ async function getResultQuery(
       `),
     })
     .groupBy('a.id', 'yearMonth')
-
   return resultsQuery
 }
 
@@ -228,6 +232,7 @@ async function resultsTransmittedDashboard(request) {
   )
   // because all the datetimes are transformed automatically to UTC and i can't take the offset from that date,
   // i have to parse the offset this way
+
   const offset = getOffsetFromIsoDateString(query.currentMonth)
 
   // get all assays which user can access
@@ -265,7 +270,10 @@ async function resultsTransmittedDashboard(request) {
   // helpers
   const { currentMonth = new Date() } = query
   const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
-  const prevMonth = formatDateOrDefault(subMonths(currentMonth, 1), 'yyyy-MM')
+  const prevMonth = formatDateOrDefault(
+    subMonths(new Date(currentMonth), 1),
+    'yyyy-MM'
+  )
 
   const getChange = (pcCurr, pcPrev = null) => {
     if (pcPrev === null) {
