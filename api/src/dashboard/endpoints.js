@@ -16,6 +16,8 @@ const {
   activityOverTimeDashboard,
 } = require('./service')
 
+const { REGEX_ISODATESTRING } = require('../shared/date')
+
 const routes = [
   {
     method: 'GET',
@@ -198,9 +200,7 @@ const routes = [
       validate: {
         query: {
           currentMonth: Joi.string()
-            .pattern(
-              /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
-            )
+            .pattern(REGEX_ISODATESTRING)
             .allow(null)
             .description(
               'Set "current" month to return data for this and previous month with the next format 2020-11-26T15:00:24.317-03:00'

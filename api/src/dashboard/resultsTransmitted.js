@@ -2,6 +2,7 @@ const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getOffsetFromIsoDateString } = require('../shared/date')
 
 const {
   allResultCategoryToId,
@@ -227,7 +228,7 @@ async function resultsTransmittedDashboard(request) {
   )
   // because all the datetimes are transformed automatically to UTC and i can't take the offset from that date,
   // i have to parse the offset this way
-  const offset = query.currentMonth.slice(-6)
+  const offset = getOffsetFromIsoDateString(query.currentMonth)
 
   // get all assays which user can access
   const assays = await getAssayQuery(

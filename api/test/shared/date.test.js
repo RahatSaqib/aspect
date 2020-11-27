@@ -8,6 +8,8 @@ const {
   formatDateOrDefault,
   startOfDayUtc,
   startOfTodayUtc,
+  REGEX_ISODATESTRING,
+  getOffsetFromIsoDateString,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -44,6 +46,52 @@ describe('Shared Date Utility Functions', () => {
     })
   })
 
+  describe('getIsoDateTimeStringRegex', () => {
+    it('should parse different iso format datetime strings', () => {
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000Z'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00-00:00'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00+01:00'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000-04:00'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000Z'))
+
+      assert.isFalse(REGEX_ISODATESTRING.test('2020-08-01T22:00:00+3:00'))
+      assert.isFalse(REGEX_ISODATESTRING.test('2020-08-01 22:00:00+03:00'))
+      assert.isFalse(REGEX_ISODATESTRING.test('2020-08-0122:00:00+3:00'))
+    })
+  })
+
+  describe('getOffsetFromIsoDateString', () => {
+    it('should obtain the offset of the received datetime ', () => {
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000-04:00'),
+        '-04:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000+00:00'),
+        '+00:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00-03:00'),
+        '-03:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000-04:00'),
+        '-04:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000+11:00'),
+        '+11:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000-00:00'),
+        '-00:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000Z'),
+        '+00:00'
+      )
+    })
+  })
   describe('getLocalDateInUtc', () => {
     it('should return the UTC equivalent of the given local datetime', () => {
       const utcDateTime = getLocalDateInUtc(

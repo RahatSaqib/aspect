@@ -108,6 +108,14 @@ function getTimeZoneById(allTimeZones, timeZoneId) {
   return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
 }
 
+const REGEX_ISODATESTRING = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+
+function getOffsetFromIsoDateString(time) {
+  return time.slice(-1) !== 'Z' && REGEX_ISODATESTRING.test(time)
+    ? time.slice(-6)
+    : '+00:00'
+}
+
 function startOfDayUtc(date) {
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
@@ -129,4 +137,6 @@ module.exports = {
   getTimeZoneById,
   startOfDayUtc,
   startOfTodayUtc,
+  getOffsetFromIsoDateString,
+  REGEX_ISODATESTRING,
 }
