@@ -4,55 +4,38 @@ const min = require('lodash/min')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const addDays = require('date-fns/addDays')
+const parseISO = require('date-fns/parseISO')
 const formatISO = require('date-fns/formatISO')
+const isWeekend = require('date-fns/isWeekend')
+const getISOWeek = require('date-fns/getISOWeek')
 const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
 
 async function deviceStatusOverTime(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate } = request.query
-  /*
-  Device name
-  Total Tests in time period
-  Long/Lat (for ASP-1609)
-  Days
-  day
-  Device Maintenance Status (externalId, name, i18nKey)
-  */
 
   let days = getArrayOfDaysInRange(
     minDate,
     min([maxDate, addDays(new Date(), -1)])
   )
 
-  /*
-  .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl2', function () {
-        this.on('dmsl2.deviceId', 'dmsl.deviceId')
-          .andOn('dmsl2.day', 'dmsl.day')
-          .andOn(function () {
-            this.on('dmsl2.createdOn', '>', 'dmsl.createdOn')
-            this.orOn(function () {
-              this.on('dmsl2.createdOn', '=', 'dmsl.createdOn').andOn(
-                'dmsl2.id',
-                '>',
-                'dmsl.id'
-              )
-            })
-          })
-  */
-
   const deviceData = await knex('Device as d')
+    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Result as r', query => {
         query.on('d.id', 'r.deviceId')
           .andOn('r.endedOn', '>=', knex.raw(`'${formatISO(minDate)}'`))
           .andOn('r.endedOn', '<', knex.raw(`'${formatISO(maxDate)}'`))
-
-        console.log(query.toString())
       }
     )
-    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
-    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .modify(addConstraints, dataConstraints, {
+      partner: 'p',
+      geography: 'g',
+      result: 'r',
+      site: 's',
+    })
     .groupBy('d.id')
     .orderBy('d.name')
     .select([
@@ -60,16 +43,21 @@ async function deviceStatusOverTime(request) {
       'd.name',
       's.longitude',
       's.latitude',
-      'dms.externalId as currentStatusExternalId',
-      'dms.i18nKey as currentStatusI18nKey',
-      'dms.name as currentStatusName',
       knex.raw('COUNT(r.id) as totalResults')
     ])
+
+  console.log(deviceData)
 
   const groupFunc = statusDataItem => statusDataItem.deviceId + formatDateOrDefault(statusDataItem.day)
 
   const statusData = groupBy(
     await knex('Device as d')
+      .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+      .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+      .modify(addConstraints, dataConstraints, {
+        partner: 'p',
+        geography: 'g',
+      })
       .innerJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
       .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
       // Only the statuses in range
@@ -90,8 +78,6 @@ async function deviceStatusOverTime(request) {
     , groupFunc
   )
 
-  console.log(statusData)
-
   let data = []
   deviceData.forEach(device => {
     let maintenanceStatusHistory = []
@@ -105,7 +91,9 @@ async function deviceStatusOverTime(request) {
 
       maintenanceStatusHistory.push({
         day: onlyDate,
-        ...omit(status, 'deviceId')
+        isWeekend: isWeekend(parseISO(onlyDate)),
+        weekNumber: getISOWeek(parseISO(onlyDate)),
+        ...omit(status, 'deviceId'),
       })
     })
 

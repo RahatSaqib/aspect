@@ -37,11 +37,13 @@ describe('Device Maintenance Status', () => {
 
     await context.beforeRegisterAndSetDevice()
 
-    const { id } = context.device
+    const { id, siteId } = context.device
     deviceId = id
     const statuses = await allDeviceMaintenanceStatusToId()
     const now = new Date()
     const { id: personId } = await knex('Person').where({ name: 'Admin' }).first()
+
+    await knex('Site').where({ id: siteId }).update({ latitude: 1, longitude: 5 })
 
     await knex('DeviceMaintenanceStatusLog').insert({
       deviceId,
@@ -87,7 +89,7 @@ describe('Device Maintenance Status', () => {
     await context.cleanUp()
   })
 
-  describe('GET', () => {
+  describe.only('GET', () => {
     shared.checkToken(server, path)
 
     const now = new Date()
@@ -103,11 +105,16 @@ describe('Device Maintenance Status', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
 
+          console.log(res.body.data)
+
           const tamagotchi = find(res.body.data, d => d.id === deviceId)
-          assert.equal(tamagotchi.currentStatusExternalId, 'active')
-          assert.equal(tamagotchi.currentStatusI18nKey, 'active')
-          assert.equal(tamagotchi.currentStatusName, 'Active')
+          assert.isNotNull(tamagotchi)
+          assert.equal(tamagotchi.latitude, 1)
+          assert.equal(tamagotchi.longitude, 5)
+          assert.equal(tamagotchi.totalResults, 4)
           assert.equal(last(tamagotchi.maintenanceStatusHistory).externalId, 'active')
+
+          console.log(tamagotchi)
 
           done()
         })
