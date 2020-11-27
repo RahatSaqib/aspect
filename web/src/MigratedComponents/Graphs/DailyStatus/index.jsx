@@ -21,19 +21,19 @@ const cssClasses = classnames.bind(require('./DailyStatus.css'))
 function dateRangeByWeekDay(startOfMonth) {
   // const output = []
   // const weeks = []
-  const daysArray = _.range(0, getDaysInMonth(startOfMonth))
+  // const daysArray = _.range(0, getDaysInMonth(startOfMonth))
 
-  const output = daysArray.reduce((acc, curr) => {
-    // const thisWeek = getWeek(addDays(startOfMonth, curr))
+  // const output = daysArray.reduce((acc, curr) => {
+  //   // const thisWeek = getWeek(addDays(startOfMonth, curr))
 
-    ;(
-      acc[getWeek(addDays(startOfMonth, curr))] ||
-      (acc[getWeek(addDays(startOfMonth, curr))] = [])
-    ).push({
-      week: getWeek(addDays(startOfMonth, curr)),
-    })
-    return acc
-  }, [])
+  //   ;(
+  //     acc[getWeek(addDays(startOfMonth, curr))] ||
+  //     (acc[getWeek(addDays(startOfMonth, curr))] = [])
+  //   ).push({
+  //     week: getWeek(addDays(startOfMonth, curr)),
+  //   })
+  //   return acc
+  // }, [])
 
   // _.times(getDaysInMonth(startOfMonth), id => {
   //   weeks.push(`week${getWeek(addDays(startOfMonth, id))}`)
