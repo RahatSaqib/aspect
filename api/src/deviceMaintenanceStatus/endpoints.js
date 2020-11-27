@@ -10,7 +10,7 @@ const routes = [
     handler: asyncHandler(deviceStatusOverTime),
     config: {
       description: 'Device Status Over Time',
-      notes: "List of devices and their status history over time",
+      notes: 'List of devices and their status history over time',
       auth: { scope: ['device:view'] },
       validate: {
         query: {
@@ -23,7 +23,7 @@ const routes = [
             .required()
             .description('To Date, inclusive'),
         },
-      }
+      },
     },
   },
 ]

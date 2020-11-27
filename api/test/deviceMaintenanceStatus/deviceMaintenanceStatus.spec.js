@@ -1,7 +1,9 @@
 const chai = require('chai')
+
 const { assert } = chai
 const subDays = require('date-fns/subDays')
 const formatISO = require('date-fns/formatISO')
+const isValid = require('date-fns/isValid')
 const Promise = require('bluebird')
 const find = require('lodash/find')
 const range = require('lodash/range')
@@ -18,82 +20,82 @@ const {
   allDeviceMaintenanceStatusToId,
 } = require('../../src/shared/dictionary')
 
-
-describe('Device Maintenance Status', () => {
+describe.only('Device Maintenance Status', () => {
   const path = '/api/device-maintenance-status/over-time'
   let context
   let deviceId
 
-  beforeEach(async () => {
-    context = createGxConnectTestContext(server, {
-      countryCode: 'US',
-      adminUsername: 'admin',
-      adminPassword: 'test07',
-      deviceName: 'Tamagotchi',
-      macAddress: 'MAC00000000FAKE',
-      hostId: 'TAMA-001',
-      deviceSerialNumber: 'Tamagochi-PC-001',
+  shared.checkToken(server, path)
+
+  const now = new Date()
+  const monthAgo = subDays(now, 30)
+
+  describe('GET', () => {
+    afterEach(async () => {
+      // await context.cleanUp()
     })
 
-    await context.beforeRegisterAndSetDevice()
-
-    const { id, siteId } = context.device
-    deviceId = id
-    const statuses = await allDeviceMaintenanceStatusToId()
-    const now = new Date()
-    const { id: personId } = await knex('Person').where({ name: 'Admin' }).first()
-
-    await knex('Site').where({ id: siteId }).update({ latitude: 1, longitude: 5 })
-
-    await knex('DeviceMaintenanceStatusLog').insert({
-      deviceId,
-      deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
-      day: now,
-      createdOn: new Date(),
-      createdBy: personId
-    })
-    
-    const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
-      deviceId,
-      deviceMaintenanceStatusId: statuses.active,
-      day: now,
-      createdOn: new Date(),
-      createdBy: personId
-    })
-    await knex('Device').where({ id: deviceId }).update({ deviceMaintenanceStatusLogId })
-
-    const baseResultDetails = {
-      consumableLot: 'Lot 0',
-      moduleName: 'Module A',
-      moduleSerial: 'M-123456-0',
-      instrumentSerial: 'S-1234-0',
-    }
-
-    await Promise.each(range(1, 4), async () => {
-      const daysForSubstracting = random(0, 30, false)
-      await context.createResultForThisDevice({
-        ...baseResultDetails,
-        startedOn: subDays(new Date(), daysForSubstracting),
-        endedOn: subDays(new Date(), daysForSubstracting),
+    beforeEach(async () => {
+      context = createGxConnectTestContext(server, {
+        countryCode: 'US',
+        adminUsername: 'admin',
+        adminPassword: 'test07',
+        deviceName: 'Tamagotchi',
+        macAddress: 'MAC00000000FAKE',
+        hostId: 'TAMA-001',
+        deviceSerialNumber: 'Tamagochi-PC-001',
       })
+  
+      await context.beforeRegisterAndSetDevice()
+  
+      const { id, siteId } = context.device
+      deviceId = id
+      const statuses = await allDeviceMaintenanceStatusToId()
+      const now = new Date()
+      const { id: personId } = await knex('Person')
+        .where({ name: 'Admin' })
+        .first()
+  
+      await knex('Site')
+        .where({ id: siteId })
+        .update({ latitude: 1, longitude: 5 })
+  
+      await knex('DeviceMaintenanceStatusLog').insert({
+        deviceId,
+        deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
+        day: now,
+        createdOn: new Date(),
+        createdBy: personId,
+      })
+  
+      const [deviceMaintenanceStatusLogId] = await knex(
+        'DeviceMaintenanceStatusLog'
+      ).insert({
+        deviceId,
+        deviceMaintenanceStatusId: statuses.active,
+        day: now,
+        createdOn: new Date(),
+        createdBy: personId,
+      })
+      await knex('Device')
+        .where({ id: deviceId })
+        .update({ deviceMaintenanceStatusLogId })
+  
+      await Promise.each(range(1, 4), async num => {
+        const daysForSubstracting = random(0, 30, false)
+        await context.createResultForThisDevice({
+          resultDetails: {
+            startedOn: subDays(new Date(), daysForSubstracting),
+            endedOn: subDays(new Date(), daysForSubstracting),
+          }
+        })
+      })
+  
+      await context.createResultForThisDevice({ resultDetails: {
+        startedOn: subDays(new Date(), 33),
+        endedOn: subDays(new Date(), 33),
+      } })
     })
-
-    await context.createResultForThisDevice({
-      ...baseResultDetails,
-      startedOn: subDays(new Date(), 31),
-      endedOn: subDays(new Date(), 33),
-    })
-  })
-
-  afterEach(async () => {
-    await context.cleanUp()
-  })
-
-  describe.only('GET', () => {
-    shared.checkToken(server, path)
-
-    const now = new Date()
-    const monthAgo = subDays(now, 30)
 
     it('should get the correct current and day status', done => {
       server
@@ -105,16 +107,33 @@ describe('Device Maintenance Status', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
 
-          console.log(res.body.data)
-
           const tamagotchi = find(res.body.data, d => d.id === deviceId)
           assert.isNotNull(tamagotchi)
           assert.equal(tamagotchi.latitude, 1)
           assert.equal(tamagotchi.longitude, 5)
-          assert.equal(tamagotchi.totalResults, 4)
-          assert.equal(last(tamagotchi.maintenanceStatusHistory).externalId, 'active')
-
-          console.log(tamagotchi)
+          assert.equal(tamagotchi.totalResults, 3)
+          const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
+          assert.equal(
+            tamagotchiLastStatus.externalId,
+            'active'
+          )
+          assert.equal(
+            tamagotchiLastStatus.i18nKey,
+            'active'
+          )
+          assert.equal(
+            tamagotchiLastStatus.name,
+            'Active'
+          )
+          assert.isBoolean(
+            tamagotchiLastStatus.isWeekend
+          )
+          assert.isNumber(
+            tamagotchiLastStatus.weekNumber
+          )
+          assert.isTrue(
+            isValid(new Date(tamagotchiLastStatus.day))
+          )
 
           done()
         })

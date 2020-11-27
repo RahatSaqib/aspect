@@ -16,7 +16,9 @@ function addClientRoutes(server) {
     require('./device/endpoints').routes.map(decorateClientAPI('device'))
   )
   server.route(
-    require('./deviceMaintenanceStatus/endpoints').routes.map(decorateClientAPI('device'))
+    require('./deviceMaintenanceStatus/endpoints').routes.map(
+      decorateClientAPI('device')
+    )
   )
   server.route(
     require('./deviceApiKey/endpoints').routes.map(
