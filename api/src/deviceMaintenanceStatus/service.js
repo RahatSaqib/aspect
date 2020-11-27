@@ -87,9 +87,9 @@ async function deviceStatusOverTime(request) {
       .select([
         'd.id as deviceId',
         'dmsl.day',
-        'dms.i18nKey',
-        'dms.name',
-        'dms.externalId',
+        'dms.i18nKey as maintenanceStatusI18nKey',
+        'dms.name as maintenanceStatusName',
+        'dms.externalId as maintenanceStatusExternalId',
       ]),
     groupFunc
   )
@@ -106,10 +106,10 @@ async function deviceStatusOverTime(request) {
         status = statusData[device.id + onlyDate][0]
 
       maintenanceStatusHistory.push({
+        ...omit(status, 'deviceId'),
         day: onlyDate,
         isWeekend: isWeekend(parseISO(onlyDate)),
         weekNumber: getISOWeek(parseISO(onlyDate)),
-        ...omit(status, 'deviceId'),
       })
     })
 

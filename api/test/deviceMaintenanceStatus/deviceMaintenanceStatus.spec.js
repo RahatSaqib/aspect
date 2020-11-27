@@ -32,7 +32,7 @@ describe.only('Device Maintenance Status', () => {
 
   describe('GET', () => {
     afterEach(async () => {
-      // await context.cleanUp()
+      await context.cleanUp()
     })
 
     beforeEach(async () => {
@@ -114,15 +114,15 @@ describe.only('Device Maintenance Status', () => {
           assert.equal(tamagotchi.totalResults, 3)
           const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
           assert.equal(
-            tamagotchiLastStatus.externalId,
+            tamagotchiLastStatus.maintenanceStatusExternalId,
             'active'
           )
           assert.equal(
-            tamagotchiLastStatus.i18nKey,
+            tamagotchiLastStatus.maintenanceStatusI18nKey,
             'active'
           )
           assert.equal(
-            tamagotchiLastStatus.name,
+            tamagotchiLastStatus.maintenanceStatusName,
             'Active'
           )
           assert.isBoolean(
