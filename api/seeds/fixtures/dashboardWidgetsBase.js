@@ -789,6 +789,7 @@ module.exports = {
       link: '/browse/device',
       linkParams: {
         deviceName: 'GeneXpert',
+        issueTypeId: 'UnusedModules',
       },
       sortOrder: 6,
       externalId: 'unusedModules',
@@ -856,6 +857,7 @@ module.exports = {
       link: '/browse/device',
       linkParams: {
         deviceName: 'GeneXpert',
+        issueTypeId: 'InstrumentReplaced',
       },
       sortOrder: 3,
       externalId: 'instrumentsReplaced',
@@ -1122,6 +1124,10 @@ module.exports = {
         operational: {
           groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
         },
+      },
+      linkParams: {
+        deviceName: 'GeneXpert',
+        issueTypeId: 'ModuleReplaced',
       },
     },
     {
