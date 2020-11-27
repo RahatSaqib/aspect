@@ -20,7 +20,7 @@ const {
   allDeviceMaintenanceStatusToId,
 } = require('../../src/shared/dictionary')
 
-describe.only('Device Maintenance Status', () => {
+describe('Device Maintenance Status', () => {
   const path = '/api/device-maintenance-status/over-time'
   let context
   let deviceId
