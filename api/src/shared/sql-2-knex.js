@@ -721,7 +721,6 @@ async function queryValue(sql, dataConstraints, query) {
 
     try {
       if (sqlBuilder) {
-        console.log(sqlBuilder.toString())
         firstResult = await sqlBuilder
       } else {
         firstResult = await knex.raw(sql).then(data => data[0])
