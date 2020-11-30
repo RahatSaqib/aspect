@@ -1729,6 +1729,6 @@ module.exports = {
     dashboardWidgetTitleConfirmedCases,
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
-    serverUptimeTitle
+    serverUptimeTitle,
   },
 }
