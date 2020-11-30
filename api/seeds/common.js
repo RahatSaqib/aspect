@@ -1933,11 +1933,10 @@ async function upsertDashboardWidgets(
   let widgets = dashboardWidgetJson.stat
 
   if (whitelist)
-    widgets = dashboardWidgetJson.stat.filter(widget => _.indexOf(whitelist, widget.externalId) > -1)
+    widgets = _.filter(dashboardWidgetJson.stat, widget => _.indexOf(whitelist, widget.externalId) > -1)
 
   await Promise.all(
-    widgets.map(async widget => {
-      console.log(widget)
+    _.map(widgets, async widget => {
       // insert or update the widget itself
       const widgetData = _.pick(widget, [
         'title',
