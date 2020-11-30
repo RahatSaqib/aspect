@@ -85,7 +85,6 @@ async function summaryDashboard(request) {
   const data = await Promise.all(
     widgets.map(async widget => {
       widget.link = getWidgetLink(widget, request.auth)
-      console.log(widget)
       const count = await queryValue(
         widget.sqlForIndicator,
         dataConstraints,
