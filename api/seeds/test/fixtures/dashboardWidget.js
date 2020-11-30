@@ -9,7 +9,13 @@ const {
 
 module.exports = {
   stat: [
-    ...values(pick(dashboardWidgetsBase.stat, ['sitesTitle', 'resultsTitle', 'personTitle'])),
+    ...values(
+      pick(dashboardWidgetsBase.stat, [
+        'sitesTitle',
+        'resultsTitle',
+        'personTitle',
+      ])
+    ),
     {
       ...devicesTitle,
       dashboards: {
@@ -18,6 +24,6 @@ module.exports = {
           groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
         },
       },
-    }
-  ]
+    },
+  ],
 }
