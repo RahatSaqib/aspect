@@ -1,4 +1,4 @@
-const dashboardWidget = require('./fixtures/dashboardWidget')
+const dashboardWidget = require('../../fixtures/DashboardWidgetExtended')
 const { upsertDashboardWidgets } = require('../../common')
 
 module.exports = async function (knex, partnerName) {
