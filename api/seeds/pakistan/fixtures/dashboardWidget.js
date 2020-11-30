@@ -3,9 +3,8 @@ const values = require('lodash/values')
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
 module.exports = {
-  stat: values(pick(
-    dashboardWidgetsBase.stat,
-    [
+  stat: values(
+    pick(dashboardWidgetsBase.stat, [
       'sitesTitle',
       'devicesTitle',
       'resultsTitle',
@@ -33,7 +32,7 @@ module.exports = {
       'numberOfDevicesExperiencingServiceInterruption',
       'averageDurationServiceInterruption',
       'percentageOfDaysWithServiceInterruption',
-      'serverUptimeTitle'
-    ]
-  ))
+      'serverUptimeTitle',
+    ])
+  ),
 }
