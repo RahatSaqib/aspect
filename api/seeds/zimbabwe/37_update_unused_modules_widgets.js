@@ -1,6 +1,6 @@
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { upsertDashboardWidgets } = require('../common')
-const { getPartnerByName } = require('../tils')
+const { getPartnerByName } = require('../utils')
 
 module.exports = require('../utils').seed(async knex => {
   const { id: partnerId } = await getPartnerByName(knex, 'Zimbabwe')
