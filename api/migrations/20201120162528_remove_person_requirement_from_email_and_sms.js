@@ -22,6 +22,7 @@ async function up(knex) {
       .references('id')
       .inTable('Person')
       .alter()
+    tbl.text('to')
   })
 }
 
@@ -44,5 +45,6 @@ async function down(knex) {
       .references('id')
       .inTable('Person')
       .alter()
+    tbl.dropColumn('to')
   })
 }
