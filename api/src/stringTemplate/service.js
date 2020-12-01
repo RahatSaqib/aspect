@@ -76,6 +76,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
       .select(
+        's.id as siteId',
         's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
@@ -341,13 +342,22 @@ async function getBaseDataSource(data) {
       id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
-      contacts: d.siteContacts,
       street1: d.siteStreet1,
       street2: d.siteStreet2,
       city: d.siteCity,
       zip: d.siteZip,
       state: d.siteState,
       lga: d.siteLga,
+      primaryContact:
+        d.siteContacts && d.siteContacts.length > 0
+          ? {
+              name: d.siteContacts[0].name,
+              title: d.siteContacts[0].title,
+              phone: d.siteContacts[0].phone,
+              cell: d.siteContacts[0].cell,
+              email: d.siteContacts[0].email,
+            }
+          : {},
     },
     device: {
       name: d.deviceName,
