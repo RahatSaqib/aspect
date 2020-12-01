@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import FormLabel from '@material-ui/core/FormLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
@@ -34,6 +35,12 @@ const ResultOnlyReportableResultsSelectField = ({
       </FormGroup>
     </div>
   )
+}
+
+ResultOnlyReportableResultsSelectField.propTypes = {
+  floatingLabelText: PropTypes.string.isRequired,
+  onOnlyReportableResultsChange: PropTypes.func.isRequired,
+  value: PropTypes.bool.isRequired,
 }
 
 export default ResultOnlyReportableResultsSelectField
