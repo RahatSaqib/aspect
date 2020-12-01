@@ -16,55 +16,33 @@ import {
 
 import sites from './staticSites'
 
+import data from './mockedData'
+
 const cssClasses = classnames.bind(require('./DailyStatus.css'))
 
-function dateRangeByWeekDay(startOfMonth) {
-  // const output = []
-  // const weeks = []
-  // const daysArray = _.range(0, getDaysInMonth(startOfMonth))
-
-  // const output = daysArray.reduce((acc, curr) => {
-  //   // const thisWeek = getWeek(addDays(startOfMonth, curr))
-
-  //   ;(
-  //     acc[getWeek(addDays(startOfMonth, curr))] ||
-  //     (acc[getWeek(addDays(startOfMonth, curr))] = [])
-  //   ).push({
-  //     week: getWeek(addDays(startOfMonth, curr)),
-  //   })
-  //   return acc
-  // }, [])
-
-  // _.times(getDaysInMonth(startOfMonth), id => {
-  //   weeks.push(`week${getWeek(addDays(startOfMonth, id))}`)
-  //   // _.uniq(output)[`week${getWeek(addDays(startOfMonth, id))}`].push({
-  //   //   id,
-  //   //   render: !isWeekend(addDays(startOfMonth, id)),
-  //   //   day: format(addDays(startOfMonth, id), 'dd'),
-  //   //   week: getWeek(addDays(startOfMonth, id), { weekStartsOn: 1 }),
-  //   // })
-  // })
-
-  // output.reduce((acc, curr) => {
-
-  // }, [])
-
-  // _.times(weeks, index => {
-  //   console.log(index * 7)
-
-  //   const dateInQuestion =
-  //     index > 0 ? addDays(startOfMonth, index * 7) : startOfMonth
-  //   const weekStart = startOfWeek(dateInQuestion)
-  //   output.push({
-  //     week: index,
-  //     start: weekStart,
-  //   })
-  // })
-
-  console.log(daysArray)
-  // console.log(_.uniq(weeks))
-
+const groupDateRanges = data => {
+  const output = []
+  const dateFormat = 'd/M'
+  _.map(data, (v, k) => {
+    const min = format(_.first(v), dateFormat)
+    const max = v.length > 1 ? format(_.last(v), dateFormat) : false
+    return output.push({ week: k, min, max, size: v.length })
+  })
   return output
+}
+
+function dateRangeByWeekDay(startOfMonth) {
+  const amountOfDays = _.range(0, getDaysInMonth(startOfMonth))
+  return amountOfDays.reduce((acc, curr) => {
+    const thisDay = addDays(startOfMonth, curr)
+    const weekInt = getWeek(thisDay, { weekStartsOn: 1 })
+    const weekIndicator = isWeekend(thisDay) ? `${weekInt}_we` : `${weekInt}_wd`
+    if (!acc[weekIndicator]) {
+      acc[weekIndicator] = []
+    }
+    acc[weekIndicator].push(thisDay)
+    return acc
+  }, {})
 }
 
 function mockData(cnt, startOfMonth) {
@@ -83,10 +61,23 @@ function mockData(cnt, startOfMonth) {
 }
 
 const DateRanges = ({ data }) => {
+  const days = groupDateRanges(data)
+  console.log(data, days)
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ width: '290px', paddingRight: '10px' }}>&nbsp;</div>
-      <div>|</div>
+      <div style={{ display: 'flex' }}>
+        {days.map(({ min, max, week, size }) =>
+          week.includes('we') ? (
+            <div style={{ width: `${25 * size}px` }}>&nbsp;</div>
+          ) : (
+            <div style={{ width: `${25 * size}px` }}>
+              {min}
+              {max ? ` - ${max}` : null}
+            </div>
+          )
+        )}
+      </div>
     </div>
   )
 }
@@ -110,11 +101,11 @@ const Clinic = ({ name, data, total }) => {
 }
 
 const DailyStatus = () => {
-  const startOfMonth = new Date(2020, 7, 1)
+  const startOfMonth = new Date(2020, 4, 1)
   const clinics = mockData(4, startOfMonth)
   const dateRanges = dateRangeByWeekDay(startOfMonth)
-  console.log(clinics)
-  console.log(dateRanges)
+  // console.log(clinics)
+  // console.log(dateRanges)
 
   return (
     <div>
