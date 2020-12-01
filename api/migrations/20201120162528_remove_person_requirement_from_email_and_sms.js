@@ -24,6 +24,9 @@ async function up(knex) {
       .alter()
     tbl.text('to')
   })
+  await knex.schema.table('EmailTemplate', tbl => {
+    tbl.text('to')
+  })
 }
 
 async function down(knex) {
@@ -45,6 +48,10 @@ async function down(knex) {
       .references('id')
       .inTable('Person')
       .alter()
+    tbl.dropColumn('to')
+  })
+
+  await knex.schema.table('EmailTemplate', tbl => {
     tbl.dropColumn('to')
   })
 }
