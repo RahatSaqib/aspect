@@ -89,14 +89,6 @@ const errorIssueEmailHtml = `
           </tr>
           <tr>
               <td>
-                Test Outcome
-              </td>
-              <td>
-                {{issue.data.resultOutcome}}
-              </td>
-          </tr>
-          <tr>
-              <td>
                 Date/Time
               </td>
               <td>
@@ -142,7 +134,7 @@ const errorIssueEmailHtml = `
           </tr>
           <tr>
               <td>
-                LGA
+                Local Government Area
               </td>
               <td>
                 {{site.lga}}
@@ -226,8 +218,6 @@ System Serial: {{result.instrumentSerial}}
 
 Cartridge Type: {{result.assay.name}}
 
-Test Outcome: {{issue.data.resultOutcome}}
-
 Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 
 
@@ -242,7 +232,7 @@ Address 2: {{site.street2}}
 
 State: {{site.state}}
 
-LGA: {{site.lga}}
+Local Government Area: {{site.lga}}
 
 Postal Code: {{site.zip}}
 
