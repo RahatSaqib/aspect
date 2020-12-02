@@ -91,7 +91,6 @@ const devicesTitle = {
   link: '/browse/device',
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
-    deviceName: 'GeneXpert',
   },
   sortOrder: 1,
   externalId: 'devicesTitle',
