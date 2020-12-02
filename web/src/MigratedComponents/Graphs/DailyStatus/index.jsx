@@ -18,6 +18,31 @@ import sites from './staticSites'
 
 import data from './mockedData'
 
+const CONSTS = {
+  blockSize: {
+    width: 19,
+    height: 15,
+    marginWidth: 6,
+  },
+}
+
+const statusses = [
+  'active',
+  'active',
+  'inactive',
+  'active',
+  'active',
+  'downForRepair',
+  'active',
+  'unknown',
+  'active',
+  'active',
+  'active',
+  'active',
+  'noResultsReported',
+  'unknown',
+]
+
 const cssClasses = classnames.bind(require('./DailyStatus.css'))
 
 const groupDateRanges = data => {
@@ -54,6 +79,7 @@ function mockData(cnt, startOfMonth) {
         id: dId,
         day: format(addDays(startOfMonth, dId), 'dd/MM/yy'),
         isWeekend: isWeekend(addDays(startOfMonth, dId)),
+        i18nKey: statusses[_.random(0, statusses.length - 1)],
       })
     )
   })
@@ -62,36 +88,65 @@ function mockData(cnt, startOfMonth) {
 
 const DateRanges = ({ data }) => {
   const days = groupDateRanges(data)
-  console.log(data, days)
+  const {
+    blockSize: { width: blockWidth, marginWidth },
+  } = CONSTS
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={{ width: '290px', paddingRight: '10px' }}>&nbsp;</div>
-      <div style={{ display: 'flex' }}>
-        {days.map(({ min, max, week, size }) =>
-          week.includes('we') ? (
-            <div style={{ width: `${25 * size}px` }}>&nbsp;</div>
+    <div className={cssClasses('dates__row')}>
+      <div className={cssClasses('dates__spacer')} />
+      <div className={cssClasses('dates__dayContainer')}>
+        {days.map(({ min, max, week, size }) => {
+          return week.includes('we') ? (
+            <div
+              className={cssClasses('dates__dayBlock')}
+              style={{
+                width: `${(blockWidth + marginWidth) * size}px`,
+              }}
+            />
           ) : (
-            <div style={{ width: `${25 * size}px` }}>
+            <div
+              className={cssClasses('dates__dayBlock')}
+              style={{
+                width: `${(blockWidth + marginWidth) * size}px`,
+              }}
+            >
               {min}
               {max ? ` - ${max}` : null}
             </div>
           )
-        )}
+        })}
       </div>
     </div>
   )
 }
 
 const Clinic = ({ name, data, total }) => {
+  const {
+    blockSize: { width: blockWidth, height: blockHeight, marginWidth },
+  } = CONSTS
   return (
     <div className={cssClasses('clinic__container')}>
       <div className={cssClasses('clinic__name')}>{name}</div>
       <div className={cssClasses('clinic__dayrow')}>
-        {data.map(day =>
-          day.isWeekend ? (
-            <div className={cssClasses('clinic__day')}>x</div>
+        {data.map(({ isWeekend, i18nKey }) =>
+          isWeekend ? (
+            <div
+              className={cssClasses('clinic__day', 'clinic__day--weekend')}
+              style={{
+                width: `${blockWidth}px`,
+                height: `${blockHeight}px`,
+                margin: `0 ${marginWidth / 2}px`,
+              }}
+            />
           ) : (
-            <div className={cssClasses('clinic__day')} />
+            <div
+              className={cssClasses('clinic__day', `clinic__day--${i18nKey}`)}
+              style={{
+                width: `${blockWidth}px`,
+                height: `${blockHeight}px`,
+                margin: `0 ${marginWidth / 2}px`,
+              }}
+            />
           )
         )}
         <div className={cssClasses('clinic__testtotal')}>{total}</div>
@@ -102,13 +157,13 @@ const Clinic = ({ name, data, total }) => {
 
 const DailyStatus = () => {
   const startOfMonth = new Date(2020, 4, 1)
-  const clinics = mockData(4, startOfMonth)
+  const clinics = mockData(21, startOfMonth)
   const dateRanges = dateRangeByWeekDay(startOfMonth)
   // console.log(clinics)
   // console.log(dateRanges)
 
   return (
-    <div>
+    <div style={{ background: 'white' }}>
       <DateRanges data={dateRanges} />
       {clinics.map(({ clinic: { name }, data, total }) => (
         <Clinic name={name} data={data} total={total} />
