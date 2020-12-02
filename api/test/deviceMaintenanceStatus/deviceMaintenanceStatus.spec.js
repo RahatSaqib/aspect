@@ -75,7 +75,7 @@ describe.only('Device Maintenance Status', () => {
         createdOn: new Date(),
         createdBy: personId,
       })
-      
+
       await knex('DeviceMaintenanceStatusLog').insert({
         deviceId,
         deviceMaintenanceStatusId: statuses.inactiveDownForRepair,

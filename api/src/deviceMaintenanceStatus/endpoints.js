@@ -64,9 +64,9 @@ const routes = [
                     maintenanceStatusExternalId: Joi.string().description(
                       'The external id of the maintenance status'
                     ),
-                    daysInSameStatus: Joi.number().description(
-                      'The external id of the maintenance status'
-                    ).allow(null),
+                    daysInSameStatus: Joi.number()
+                      .description('The external id of the maintenance status')
+                      .allow(null),
                   })
                 )
                 .description(
