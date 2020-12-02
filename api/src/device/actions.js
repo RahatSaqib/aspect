@@ -239,6 +239,31 @@ function logDeviceMaintenanceStatus(today = null) {
   }
 }
 
+/**
+ * Creates an action to notify that hardware error happened in the given device
+ *
+ * @param device
+ * @param actionType - action type to trigger, see prop 'triggerConditions.action'
+ *                    in /seeds/fixtures/IssueEventTrigger.json for 'Hardware*' issueTypes
+ * @param options - parameters for the hardware error
+ */
+function deviceHardwareError(device, actionType, options) {
+  if (!device || !actionType || !options) {
+    throw new Error(
+      'Must specify device, actionType and options for deviceHardwareError'
+    )
+  }
+  const { id: deviceId, siteId, geographyId, partnerId } = device
+  return {
+    type: actionType,
+    deviceId,
+    siteId,
+    geographyId,
+    partnerId,
+    options: { data: options },
+  }
+}
+
 module.exports = {
   types,
   deviceSeen,
@@ -253,4 +278,5 @@ module.exports = {
   deviceModuleDisabled,
   deviceInstrumentReplaced,
   deviceModuleUnused,
+  deviceHardwareError,
 }

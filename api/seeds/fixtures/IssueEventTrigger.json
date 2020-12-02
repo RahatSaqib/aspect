@@ -661,6 +661,123 @@
       "filterIssueCondition": {
         "evaluationFunction": "filterByLotAndAssay"
       }
+    },
+
+    {
+      "issueType": "HardwareTemperatureDriftedFromSetPoint",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_TEMPERATURE_DRIFTED_FROM_SETPOINT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 1001,
+            "mergeGroup": [1001, 1002, 1004],
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareHeaterTemperatureDifferentialError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 1002,
+            "mergeGroup": [1001, 1002, 1004],
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareThermistorTemperatureOutOfRange2014",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_2014",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2014,
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwarePowerSupplyVoltageOutOfRange",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4008,
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareHeaterATemperatureUnstable",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_HEATER_A_TEMPERATURE_UNSTABLE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4009,
+            "mergeGroup": [4009, 4012],
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareHeaterBTemperatureUnstable",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_HEATER_B_TEMPERATURE_UNSTABLE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4012,
+            "mergeGroup": [4009, 4012],
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareThermistorTemperatureOutOfRange4017",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_4017",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4017,
+            "daysPeriod": 1,
+            "minHappened": 1
+          }
+        }
+      }
     }
   ]
 }

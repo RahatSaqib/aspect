@@ -49,6 +49,17 @@ const errorIssueAlertLot = `Aspect Error Notification: {{toLowerCase notificatio
 const errorIssueEmailLot = `${errorIssueEmailBody}
 Reagent Lot: {{result.consumableLot}}`
 
+// must correspond with 'Hardware*' items in IssueEventTrigger.json
+const hardwareMessage = {
+  1001: 'Temperature Drifted From SetPoint',
+  1002: 'Heater Temperature Differential Error',
+  2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
+  4008: 'Power Supply Voltage Out of Range',
+  4009: 'Heater A Temperature Unstable',
+  4012: 'Heater B Temperature Unstable',
+  4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
+}
+
 async function getBaseIssues(auditFields) {
   // Issues
   const issueCategories = await allIssueCategoryToId()
@@ -956,6 +967,185 @@ async function getBaseIssues(auditFields) {
         subject: errorIssueAlertLot,
         body: errorIssueEmailLot,
         htmlBody: errorIssueEmailLot.replace(regexBreakline, '<br/>'),
+        ...auditFields,
+      },
+    },
+
+    // --------------------------------------------------------
+    // Hardware Issues - must correspond with 'Hardware*' items in IssueEventTrigger.json
+    // --------------------------------------------------------
+    HardwareTemperatureDriftedFromSetPoint: {
+      issueType: {
+        name: hardwareMessage[1001],
+        externalId: 'HardwareTemperatureDriftedFromSetPoint',
+        i18nKey: 'issueHardwareTemperatureDriftedFromSetPoint',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[1001]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[1001]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[1001]}`,
+        body: `${hardwareMessage[1001]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[1001]} in {{device.name}}`,
+        ...auditFields,
+      },
+    },
+    HardwareHeaterTemperatureDifferentialError: {
+      issueType: {
+        name: hardwareMessage[1002],
+        externalId: 'HardwareHeaterTemperatureDifferentialError',
+        i18nKey: 'issueHardwareHeaterTemperatureDifferentialError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[1002]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[1002]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[1002]}`,
+        body: `${hardwareMessage[1002]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[1002]} in {{device.name}}`,
+        ...auditFields,
+      },
+    },
+    HardwareThermistorTemperatureOutOfRange2014: {
+      issueType: {
+        name: hardwareMessage[2014],
+        externalId: 'HardwareThermistorTemperatureOutOfRange2014',
+        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange2014',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[2014]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[2014]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[2014]}`,
+        body: `${hardwareMessage[2014]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[2014]} in {{device.name}}`,
+        ...auditFields,
+      },
+    },
+    HardwarePowerSupplyVoltageOutOfRange: {
+      issueType: {
+        name: hardwareMessage[4008],
+        externalId: 'HardwarePowerSupplyVoltageOutOfRange',
+        i18nKey: 'issueHardwarePowerSupplyVoltageOutOfRange',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[4008]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[4008]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[4008]}`,
+        body: `${hardwareMessage[4008]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[4008]} in {{device.name}}`,
+        ...auditFields,
+      },
+    },
+    HardwareHeaterATemperatureUnstable: {
+      issueType: {
+        name: hardwareMessage[4009],
+        externalId: 'HardwareHeaterATemperatureUnstable',
+        i18nKey: 'issueHardwareHeaterATemperatureUnstable',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[4009]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[4009]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[4009]}`,
+        body: `${hardwareMessage[4009]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[4009]} in {{device.name}}`,
+        ...auditFields,
+      },
+    },
+    HardwareHeaterBTemperatureUnstable: {
+      issueType: {
+        name: hardwareMessage[4012],
+        externalId: 'HardwareHeaterBTemperatureUnstable',
+        i18nKey: 'issueHardwareHeaterBTemperatureUnstable',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[4012]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[4012]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[4012]}`,
+        body: `${hardwareMessage[4012]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[4012]} in {{device.name}}`,
+        ...auditFields,
+      },
+    },
+    HardwareThermistorTemperatureOutOfRange4017: {
+      issueType: {
+        name: hardwareMessage[4017],
+        externalId: 'HardwareThermistorTemperatureOutOfRange4017',
+        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange4017',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: `${hardwareMessage[4017]} in {{device.name}}`,
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: `${hardwareMessage[4017]} in {{device.name}}`,
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: `{{device.name}}: ${hardwareMessage[4017]}`,
+        body: `${hardwareMessage[4017]} in {{device.name}}`,
+        htmlBody: `${hardwareMessage[4017]} in {{device.name}}`,
         ...auditFields,
       },
     },

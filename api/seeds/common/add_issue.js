@@ -40,26 +40,28 @@ module.exports = async (
 
   const issueType = await knex('IssueType').where({ id: issueTypeId }).first()
 
-  const jobFunctionIds = await knex('JobFunction')
-    .whereIn('externalId', jobFunctionsToNotify)
-    .where({
-      partnerId,
-    })
-    .select('id')
-
-  await Promise.each(jobFunctionIds, async ({ id: jobFunctionId }) =>
-    upsertNotificationTypes(knex, [
-      {
-        issueTypeId: issueType.id,
-        messageTypeId: issueType.defaultMessageTypeId,
+  if (jobFunctionsToNotify && jobFunctionsToNotify.length > 0) {
+    const jobFunctionIds = await knex('JobFunction')
+      .whereIn('externalId', jobFunctionsToNotify)
+      .where({
         partnerId,
-        jobFunctionId,
-        level: 1,
-        name: issueType.name,
-        ...auditFields,
-      },
-    ])
-  )
+      })
+      .select('id')
+
+    await Promise.each(jobFunctionIds, async ({ id: jobFunctionId }) =>
+      upsertNotificationTypes(knex, [
+        {
+          issueTypeId: issueType.id,
+          messageTypeId: issueType.defaultMessageTypeId,
+          partnerId,
+          jobFunctionId,
+          level: 1,
+          name: issueType.name,
+          ...auditFields,
+        },
+      ])
+    )
+  }
 
   if (resolutionConditions) {
     await upsertIssueResolutionTrigger(knex, {

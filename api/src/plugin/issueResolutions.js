@@ -41,7 +41,31 @@ async function resolveIssueUnusedModules(knex, issue, conditions) {
   )
 }
 
+async function resolveDeviceOperationIssue(knex, issue, conditions) {
+  const { deviceId } = issue
+  const {
+    errorCode,
+    mergeGroup,
+    resolutionCondition: { minResults = 1, withinDays = 5 } = {
+      minResults: 1,
+      withinDays: 5,
+    },
+  } = conditions
+
+  // TODO: update logic for using props from 'resolutionCondition'
+
+  // for now treat issue resolved if we have 1 result within last 5 days
+  const { numberOfResults } = await knex('Result as r')
+    .where('r.endedOn', '>', addDays(new Date(), -withinDays))
+    .andWhere('r.deviceId', deviceId)
+    .select(knex.raw('COUNT(*) as numberOfResults'))
+    .first()
+
+  return numberOfResults >= minResults
+}
+
 module.exports = {
   resolveIssueModuleDisabled,
   resolveIssueUnusedModules,
+  resolveDeviceOperationIssue,
 }
