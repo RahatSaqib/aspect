@@ -86,7 +86,7 @@ function onIssueEventTrigger(
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
 
-    return context.run(async knex => {
+    return context.transact(async knex => {
       const shouldTriggerEvent = await actionConditionsMet(
         knex,
         action,
@@ -152,7 +152,7 @@ function onIssueEventTrigger(
 function onIssueEventResolve(issueType, filterIssueCondition) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
-    context.run(async knex => {
+    context.transact(async knex => {
       const now = new Date()
       const issue = await findOpenIssue(
         knex,
