@@ -7,53 +7,265 @@ const msgInstrumentReplaced = `{{device.name}}:
   Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
-const regexBreakline = /\n+/gm
-const errorIssueAlertModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}`
 
-const errorIssueEmailModule = ` ({{result.errorCode}}) on ({{result.moduleSerial}}) at {{site.name}}
+const errorIssueEmailHtml = `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style>
+          body {
+            font-family: Arial, Sans-Serif;
+          }
 
-  Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
+          table {
+            width: 600px;
+            border: solid 1px black;
+            margin-bottom: 35px;
+          }
 
-  Country: {{country.name}}
+          td {
+            border: solid 1px black;
+            padding: 2px;
+          }
+        </style>
+    </head>
+    <body>
+      <p>
+      This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
+      </p>
+      <p>
+        <strong>Notification Rule</strong>
+      </p>
+      <table cellpadding="0" cellspacing="0">
+          <tr>
+              <td>
+                Rule
+              </td>
+              <td>
+                {{notification.type}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Error Code
+              </td>
+              <td>
+                {{result.errorCode}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Occurrences
+              </td>
+              <td>
+                {{issue.data.resultsWithErrors}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Time Period Days
+              </td>
+              <td>
+                30
+              </td>
+          </tr>
+          <tr>
+              <td>
+                System Serial
+              </td>
+              <td>
+                {{result.instrumentSerial}}
+              </td>
+          </tr>
+          <<REPLACE WITH MODULE OR REAGENT>>
+          <tr>
+              <td>
+                Cartridge Type
+              </td>
+              <td>
+                {{result.assay.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Date/Time
+              </td>
+              <td>
+                {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+              </td>
+          </tr>
+      </table>
+      <p>
+        <strong>SystemOne GeneXpert System and Contact Information</strong>
+      </p>
+      <table cellpadding="0" cellspacing="0">
+          <tr>
+              <td>
+                Location Name
+              </td>
+              <td>
+                {{site.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Address 1
+              </td>
+              <td>
+                {{site.street1}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Address 2
+              </td>
+              <td>
+                {{site.street2}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                State
+              </td>
+              <td>
+                {{site.state}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Local Government Area
+              </td>
+              <td>
+                {{site.lga}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Postal Code
+              </td>
+              <td>
+                {{site.zip}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Country
+              </td>
+              <td>
+                {{country.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Name
+              </td>
+              <td>
+                {{site.primaryContact.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Title
+              </td>
+              <td>
+                {{site.primaryContact.title}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Phone
+              </td>
+              <td>
+                {{site.primaryContact.phone}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Cell
+              </td>
+              <td>
+                {{site.primaryContact.cell}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Email
+              </td>
+              <td>
+                {{site.primaryContact.email}}
+              </td>
+          </tr>
+      </table>
+    </body>
+</html>
+`
 
-  Lab contacts: {{site.contacts}}
+const errorIssueEmailText = `This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
+Notification Rule
 
-  Instrument Serial: {{result.instrumentSerial}}
+Rule: {{notification.type}}
 
-  Software Version: {{result.softwareVersion}}
+Error Code: {{result.errorCode}}
 
-  Cartridge Type: {{result.assay.name}}
+Occurrences: {{issue.data.resultsWithErrors}}
 
-  Sender User: {{result.senderOperator}}
+Time Period Days: 30
 
-  Test Outcome: {{issue.data.resultOutcome}}
+System Serial: {{result.instrumentSerial}}
 
-  Module Serial: {{result.moduleSerial}}
-
-  Module Name or Serial: {{result.moduleName}} `
-
-const errorIssueAlertLot =
-  ' ({{result.errorCode}}) on lot ({{result.consumableLot}}) at {{site.name}}'
-
-const errorIssueEmailLot = ` ({{result.errorCode}}) on Lot ({{result.consumableLot}}) at {{site.name}}
-
-Total {{result.errorCode}} errors in the last 30 days: {{issue.data.resultsWithErrors}}
-
-Country: {{country.name}}
-
-Lab contacts: {{site.contacts}}
-
-Instrument Serial: {{result.moduleSerial}}
-
-Software Version: {{result.softwareVersion}}
+<<REPLACE WITH MODULE OR REAGENT>>
 
 Cartridge Type: {{result.assay.name}}
 
-Sender User: {{result.senderOperator}}
+Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 
-Test Outcome: {{issue.data.resultOutcome}}
 
-Reagent Lot: {{result.consumableLot}}`
+
+SystemOne GeneXpert System and Contact Information
+
+Location Name: {{site.name}}
+
+Address 1: {{site.street1}}
+
+Address 2: {{site.street2}}
+
+State: {{site.state}}
+
+Local Government Area: {{site.lga}}
+
+Postal Code: {{site.zip}}
+
+Country: {{country.name}}
+
+Contact Name: {{site.primaryContact.name}}
+
+Contact Title: {{site.primaryContact.title}}
+
+Contact Phone: {{site.primaryContact.phone}}
+
+Contact Cell: {{site.primaryContact.cell}}
+
+Contact Email: {{site.primaryContact.email}}`
+
+const errorIssueSubject = `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, Error: {{notification.type}}`
+const errorIssueEmailHtmlModule = errorIssueEmailHtml.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  '<tr><td>Module</td><td>{{result.moduleSerial}}</td></tr>'
+)
+const errorIssueEmailTextModule = errorIssueEmailText.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  'Module: {{result.moduleSerial}}'
+)
+
+const errorIssueEmailHtmlLot = errorIssueEmailHtml.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  '<tr><td>Reagent Lot</td><td>{{result.consumableLot}}</td></tr>'
+)
+const errorIssueEmailTextLot = errorIssueEmailText.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  'Reagent Lot: {{result.consumableLot}}'
+)
 
 async function getBaseIssues(auditFields) {
   // Issues
@@ -111,7 +323,6 @@ async function getBaseIssues(auditFields) {
         message: 'No testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
       },
-
       SmsTemplate: {
         message:
           '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
@@ -141,12 +352,10 @@ async function getBaseIssues(auditFields) {
         message: 'Under Maintenance',
         ...auditFields,
       },
-
       SmsTemplate: {
         message: '{{site.name}} under maintenance.',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{site.name}} Maintenance',
         body: '{{site.name}} under maintenance.',
@@ -183,6 +392,31 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    UnusedModules: {
+      issueType: {
+        name: 'Unused Modules',
+        externalId: 'UnusedModules',
+        i18nKey: 'issueStatusUnusedModules',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Unused Module(s) in {{device.name}}',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: 'Unused Module(s) in {{device.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: '{{device.name}}: Unused module(s)',
+        body: 'Unused module(s) in {{device.name}}',
+        htmlBody: 'Unused module(s) in {{device.name}}',
+        ...auditFields,
+      },
+    },
     ModuleTemperatureError: {
       issueType: {
         name: 'Module Temperature Error',
@@ -192,7 +426,6 @@ async function getBaseIssues(auditFields) {
         // defaultMessageTypeId: moduleTemperatureErrorTypeId,
       },
       MessageType: { messageSeverityId: messageSeverities.Alert },
-
       AlertTemplate: {
         message:
           'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
@@ -203,7 +436,6 @@ async function getBaseIssues(auditFields) {
           '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject:
           '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
@@ -263,7 +495,6 @@ async function getBaseIssues(auditFields) {
           '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Machine Temperature Errors',
         body:
@@ -287,13 +518,11 @@ async function getBaseIssues(auditFields) {
         message: 'Power error across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       SmsTemplate: {
         message:
           '{{device.name}}: Power error across machine, conduct troubleshooting.',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Power error across machine',
         body:
@@ -324,7 +553,6 @@ async function getBaseIssues(auditFields) {
           '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Possible module failure',
         body:
@@ -348,13 +576,11 @@ async function getBaseIssues(auditFields) {
         message: 'Procedural errors across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       SmsTemplate: {
         message:
           '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Procedural Errors',
         body:
@@ -384,7 +610,6 @@ async function getBaseIssues(auditFields) {
           '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: 'Low Collection Rate',
         body:
@@ -408,12 +633,10 @@ async function getBaseIssues(auditFields) {
         message: 'Update Stock Level',
         ...auditFields,
       },
-
       SmsTemplate: {
         message: '{{site.name}} - Update Stock Level',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{site.name}} - Update Stock Level',
         body: '{{site.name}} - Update Stock Level',
@@ -435,12 +658,10 @@ async function getBaseIssues(auditFields) {
         message: 'Cartridge-specific errors exceed 5%',
         ...auditFields,
       },
-
       SmsTemplate: {
         message: '{{device.name}} - Cartridge-specific errors exceed 5%',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}} - Cartridge-specific errors exceed 5%',
         body: '{{device.name}} - Cartridge-specific errors exceed 5%',
@@ -458,15 +679,12 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-
       AlertTemplate: {
         message: 'Generic errors across machine, conduct troubleshooting',
       },
-
       SmsTemplate: {
         message: 'Generic errors across machine, conduct troubleshooting',
       },
-
       EmailTemplate: {
         subject: 'Generic Errors',
         body: 'Generic errors across machine, conduct troubleshooting',
@@ -483,7 +701,6 @@ async function getBaseIssues(auditFields) {
       AlertTemplate: {
         message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
       },
-
       SmsTemplate: {
         message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
       },
@@ -541,7 +758,6 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
-
     TooManyInvalidResultsModule: {
       issueType: {
         name: 'Too Many Invalid Results On Module',
@@ -552,33 +768,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertModule.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Too Many Invalid Results${errorIssueAlertModule.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        body: `Too Many Invalid Results${errorIssueEmailModule
-          .replace('({{result.errorCode}})', '')
-          .replace('{{result.errorCode}} errors', 'Invalid results')}`,
-        htmlBody: `Too Many Invalid Results${errorIssueEmailModule
-          .replace('({{result.errorCode}})', '')
-          .replace('{{result.errorCode}} errors', 'Invalid results')
-          .replace(regexBreakline, '<br/>')}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -592,34 +785,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Too Many Invalid Results${errorIssueAlertLot.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Too Many Invalid Results${errorIssueAlertLot.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        body: `Too Many Invalid Results${errorIssueEmailLot.replace(
-          '({{result.errorCode}})',
-          ''
-        )}`,
-        htmlBody: `Too Many Invalid Results${errorIssueEmailLot
-          .replace('({{result.errorCode}})', '')
-          .replace('{{result.errorCode}} errors', 'Invalid results')
-          .replace(regexBreakline, '<br/>')}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -633,22 +802,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Probe Check Too Low${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Probe Check Too Low${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Probe Check Too Low${errorIssueAlertModule}`,
-        body: `Probe Check Too Low${errorIssueEmailModule}`,
-        htmlBody: `Probe Check Too Low${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -662,21 +819,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Probe Check Too Low${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Probe Check Too Low${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Probe Check Too Low${errorIssueAlertLot}`,
-        body: `Probe Check Too Low${errorIssueEmailLot}`,
-        htmlBody: `Probe Check Too Low${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -690,22 +836,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Probe Check Too High${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Probe Check Too High${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Probe Check Too High${errorIssueAlertModule}`,
-        body: `Probe Check Too High${errorIssueEmailModule}`,
-        htmlBody: `Probe Check Too High${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -719,21 +853,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Probe Check Too High${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Probe Check Too High${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Probe Check Too High${errorIssueAlertLot}`,
-        body: `Probe Check Too High${errorIssueEmailLot}`,
-        htmlBody: `Probe Check Too High${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -748,21 +871,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertModule}`,
-        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule}`,
-        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -776,21 +888,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Failed To Verify Valid Background Error For Analyte${errorIssueAlertLot}`,
-        body: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot}`,
-        htmlBody: `Failed To Verify Valid Background Error For Analyte${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -804,22 +905,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Probe Check Failed${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Probe Check Failed${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Probe Check Failed${errorIssueAlertModule}`,
-        body: `Probe Check Failed${errorIssueEmailModule}`,
-        htmlBody: `Probe Check Failed${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -833,21 +922,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Probe Check Failed${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Probe Check Failed${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Probe Check Failed${errorIssueAlertLot}`,
-        body: `Probe Check Failed${errorIssueEmailLot}`,
-        htmlBody: `Probe Check Failed${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -905,22 +983,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertModule}`,
-        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule}`,
-        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -934,50 +1000,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Signal Loss Detected in the Amplification Curve${errorIssueAlertLot}`,
-        body: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot}`,
-        htmlBody: `Signal Loss Detected in the Amplification Curve${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-        ...auditFields,
-      },
-    },
-    CartridgeIntegrityTestFailureModule: {
-      issueType: {
-        name: 'Cartridge Integrity Test Failure On Module',
-        externalId: 'CartridgeIntegrityTestFailureModule',
-        i18nKey: 'cartridgeIntegrityTestFailureModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Cartridge Integrity Test Failure${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Cartridge Integrity Test Failure${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Cartridge Integrity Test Failure${errorIssueAlertModule}`,
-        body: `Cartridge Integrity Test FailureerrorIssueEmailModule}`,
-        htmlBody: `Cartridge Integrity Test Failure${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -991,50 +1017,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Cartridge Integrity Test Failure${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Cartridge Integrity Test Failure${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Cartridge Integrity Test Failure${errorIssueAlertLot}`,
-        body: `Cartridge Integrity Test Failure${errorIssueEmailLot}`,
-        htmlBody: `Cartridge Integrity Test Failure${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-        ...auditFields,
-      },
-    },
-    SyringePressureTooHighModule: {
-      issueType: {
-        name: 'Syringe Pressure Too High On Module',
-        externalId: 'SyringePressureTooHighModule',
-        i18nKey: 'syringePressureTooHighModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Syringe Pressure Too High${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Syringe Pressure Too High${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Syringe Pressure Too High${errorIssueAlertModule}`,
-        body: `Syringe Pressure Too High${errorIssueEmailModule}`,
-        htmlBody: `Syringe Pressure Too High${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -1048,50 +1034,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Syringe Pressure Too High On Lot${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Syringe Pressure Too High On Lot${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Syringe Pressure Too High On Lot${errorIssueAlertLot}`,
-        body: `Syringe Pressure Too High On Lot${errorIssueEmailLot}`,
-        htmlBody: `Syringe Pressure Too High On Lot${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-        ...auditFields,
-      },
-    },
-    SyringeStallErrorModule: {
-      issueType: {
-        name: 'Syringe Stall Error On Module',
-        externalId: 'SyringeStallErrorModule',
-        i18nKey: 'SyringeStallErrorModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Syringe Stall Error${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Syringe Stall Error${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Syringe Stall Error${errorIssueAlertModule}`,
-        body: `Syringe Stall Error${errorIssueEmailModule}`,
-        htmlBody: `Syringe Stall Error${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -1105,21 +1051,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Syringe Stall Error${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Syringe Stall Error${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Syringe Stall Error${errorIssueAlertLot}`,
-        body: `Syringe Stall Error${errorIssueEmailLot}`,
-        htmlBody: `Syringe Stall Error${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -1133,54 +1068,13 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Ultrasonic Horn Failure${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Ultrasonic Horn Failure${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Ultrasonic Horn Failure${errorIssueAlertModule}`,
-        body: `Ultrasonic Horn Failure${errorIssueEmailModule}`,
-        htmlBody: `Ultrasonic Horn Failure${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
-    UltrasonicHornFailureLot: {
-      issueType: {
-        name: 'Ultrasonic Horn Failure On Lot',
-        externalId: 'UltrasonicHornFailureLot',
-        i18nKey: 'issueStatusUltrasonicHornFailureLot',
-        issueCategoryId: issueCategories.ReagentHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Ultrasonic Horn Failure${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Ultrasonic Horn Failure${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Ultrasonic Horn Failure${errorIssueAlertLot}`,
-        body: `Ultrasonic Horn Failure${errorIssueEmailLot}`,
-        htmlBody: `Ultrasonic Horn Failure${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-        ...auditFields,
-      },
-    },
-
     UltrasonicHornTuningErrorModule: {
       issueType: {
         name: 'Ultrasonic Horn Tuning Error On Module',
@@ -1191,50 +1085,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Ultrasonic Horn Tuning Error${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Ultrasonic Horn Tuning Error${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Ultrasonic Horn Tuning Error${errorIssueAlertModule}`,
-        body: `Ultrasonic Horn Tuning Error${errorIssueEmailModule}`,
-        htmlBody: `Ultrasonic Horn Tuning Error${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
-        ...auditFields,
-      },
-    },
-    UltrasonicHornTuningErrorLot: {
-      issueType: {
-        name: 'Ultrasonic Horn Tuning Error On Lot',
-        externalId: 'UltrasonicHornTuningErrorLot',
-        i18nKey: 'issueStatusUltrasonicHornTuningError',
-        issueCategoryId: issueCategories.ReagentHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Ultrasonic Horn Tuning Error${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Ultrasonic Horn Tuning Error${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Ultrasonic Horn Tuning Error${errorIssueAlertLot}`,
-        body: `Ultrasonic Horn Tuning Error${errorIssueEmailLot}`,
-        htmlBody: `Ultrasonic Horn Tuning Error${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -1248,50 +1102,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Ultrasonic Horn Current Out of Range${errorIssueAlertModule}`,
-        body: `Ultrasonic Horn Current Out of Range${errorIssueEmailModule}`,
-        htmlBody: `Ultrasonic Horn Current Out of Range${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
-        ...auditFields,
-      },
-    },
-    UltrasonicHornCurrentOutOfRangeLot: {
-      issueType: {
-        name: 'Ultrasonic Horn Current Out of Range On Lot',
-        externalId: 'UltrasonicHornCurrentOutOfRangeLot',
-        i18nKey: 'issueStatusUltrasonicHornCurrentOutOfRangeLot',
-        issueCategoryId: issueCategories.ReagentHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      AlertTemplate: {
-        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Ultrasonic Horn Current Out of Range${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      EmailTemplate: {
-        subject: `Ultrasonic Horn Current Out of Range${errorIssueAlertLot}`,
-        body: `Ultrasonic Horn Current Out of Range${errorIssueEmailLot}`,
-        htmlBody: `Ultrasonic Horn Current Out of Range${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -1305,22 +1119,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Assay Specific Termination Error${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Assay Specific Termination Error${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Assay Specific Termination Error${errorIssueAlertModule}`,
-        body: `Assay Specific Termination Error${errorIssueEmailModule}`,
-        htmlBody: `Assay Specific Termination Error${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -1334,21 +1136,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Assay Specific Termination Error${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Assay Specific Termination Error${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Assay Specific Termination Error${errorIssueAlertLot}`,
-        body: `Assay Specific Termination Error${errorIssueEmailLot}`,
-        htmlBody: `Assay Specific Termination Error${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -1362,22 +1153,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Assay-Specific Termination #2${errorIssueAlertModule}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Assay-Specific Termination #2${errorIssueAlertModule}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Assay-Specific Termination #2${errorIssueAlertModule}`,
-        body: `Assay-Specific Termination #2${errorIssueEmailModule}`,
-        htmlBody: `Assay-Specific Termination #2${errorIssueEmailModule.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
-
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -1391,21 +1170,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `Assay-Specific Termination #2${errorIssueAlertLot}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `Assay-Specific Termination #2${errorIssueAlertLot}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `Assay-Specific Termination #2${errorIssueAlertLot}`,
-        body: `Assay-Specific Termination #2${errorIssueEmailLot}`,
-        htmlBody: `Assay-Specific Termination #2${errorIssueEmailLot.replace(
-          regexBreakline,
-          '<br/>'
-        )}`,
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },

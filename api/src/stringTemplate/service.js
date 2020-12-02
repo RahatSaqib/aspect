@@ -64,6 +64,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Geography as g', `s.geographyId`, 'g.id')
       .leftJoin('Country as c', `g.countryId`, 'c.id')
+      .leftJoin('State as st', `g.stateId`, 'st.id')
+      .leftJoin('Lga as lg', `g.lgaId`, 'lg.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
@@ -74,9 +76,16 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
       .select(
+        's.id as siteId',
         's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
+        's.street1 as siteStreet1',
+        's.street2 as siteStreet2',
+        's.city as siteCity',
+        's.zip as siteZip',
+        'st.name as siteState',
+        'lg.name as siteLga',
         'p.name as personName',
         'p.cell as personCell',
         'g.id as geographyId',
@@ -138,6 +147,12 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    siteName: string
  *    countryName: string
  *    siteShortName: string
+ *    siteStreet1: string
+ *    siteStreet2: string
+ *    siteCity: string
+ *    siteZip: string
+ *    siteState: string
+ *    siteLga: string
  *    deviceName: string
  *    deviceTypeExternalId: string
  *    deviceLastSeenOn: date/time
@@ -205,6 +220,12 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    siteExternalId: string
  *    siteName: string
  *    siteShortName: string
+ *    siteStreet1: string
+ *    siteStreet2: string
+ *    siteCity: string
+ *    siteZip: string
+ *    siteState: string
+ *    siteLga: string
  *    deviceName: string
  *    deviceTypeExternalId: string
  *    deviceLastSeenOn: date/time
@@ -244,6 +265,12 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         id: siteExternalId,
         name: siteName,
         shortName: siteShortName,
+        street1: siteStreet1,
+        street2: siteStreet2,
+        city: siteCity,
+        zip: siteZip,
+        state: siteState,
+        lga: siteLga,
       },
       device: {
         name: deviceName,
@@ -315,7 +342,22 @@ async function getBaseDataSource(data) {
       id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
-      contacts: d.siteContacts,
+      street1: d.siteStreet1,
+      street2: d.siteStreet2,
+      city: d.siteCity,
+      zip: d.siteZip,
+      state: d.siteState,
+      lga: d.siteLga,
+      primaryContact:
+        d.siteContacts && d.siteContacts.length > 0
+          ? {
+              name: d.siteContacts[0].name,
+              title: d.siteContacts[0].title,
+              phone: d.siteContacts[0].phone,
+              cell: d.siteContacts[0].cell,
+              email: d.siteContacts[0].email,
+            }
+          : {},
     },
     device: {
       name: d.deviceName,

@@ -7,6 +7,7 @@ import last from 'lodash/last'
 import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
 import map from 'lodash/map'
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
@@ -27,11 +28,11 @@ import {
   negateTimeZoneOffset,
 } from './datetime'
 import {
+  calcPercentageSplitBar,
+  getAverageFromData,
   getMaxValueForDivergent,
   roundIfNumber,
-  calcPercentageSplitBar,
   percentageOrActualForPie,
-  getAverageFromData,
 } from './calcs'
 
 import {
@@ -254,14 +255,24 @@ const generateToolTip = (
     displayId = 'Locations'
     displayValue = value
   } else if (type === 'bar' || type === 'barLegacyTreatment') {
-    const { totalCnt } = data
+    let totalOut = 0
+    const { totalCnt } = data || false
+
+    if (!totalCnt) {
+      const out = []
+      map(omit(data, ['month']), k => out.push(k))
+      totalOut = sum(out)
+    } else {
+      totalOut = totalCnt
+    }
+
     const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
     const percentageToValue = Math.round(
       (parseFloat(percentage) / 100) * totalCnt
     )
     displayValue = {
-      percentage,
-      actual: { totalCnt, percentageToValue },
+      value: percentage,
+      actual: { totalCnt: totalOut, percentageToValue },
     }
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)

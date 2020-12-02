@@ -88,7 +88,7 @@ We are using the message queue exactly for what is described above. As you can r
 
 ### Message queue implementation
 
-In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit  doesn’t fit our needs, it could be easily replaced by another one.
+In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit doesn’t fit our needs, it could be easily replaced by another one.
 
 This class has some methods, but the most important are:
 
@@ -141,7 +141,44 @@ Not scheduled or dual behaviour actions:
 - DataCategoryLowError: It Triggers when the percentage of results that have a custom field completed falls below a certain threshold. For example, if less than 90% of results have "null" for "gender" in the custom fields, trigger the data category low error.  Right now it is only used in Myanmar’s plugin.
 - ReagentHealthError: It triggers if there's a certain number of errors with error codes that they consider reagent-related.This is triggered when a reagent lot has any issue.Right now it is only used in Myanmar’s plugin.
 
-### Triggering
+### Defining issues
+
+The issues are defined in ``api/seeds/relatedObjects/issues.js``. For creating a new one, you should add there a new entry. For example:
+
+```javascript
+ YourNewIssue: { // This is the external id
+      issueType: {
+        name: 'Your New Issue',
+        externalId: 'YourNewIssue',
+        i18nKey: 'issueStatusYourNewIssue',
+        issueCategoryId: issueCategories.ConnectivityHealth, // For more information, please refer to the Issue Category section
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert, // the severity of the issue.
+      },
+      AlertTemplate: {
+        message: 'Your New Issue {{issue.data.aProp issue.data.someProp}} for the device {{device.name}}', // the string template of the alert
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message:
+          'Your New Issue {{issue.data.aProp issue.data.someProp}} for the device {{device.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: '{{device.name}}: Your New Issue',
+        body:
+          'Your New Issue {{issue.data.aProp issue.data.someProp}} for the device {{device.name}}',
+        htmlBody:
+          'Your New Issue {{issue.data.aProp issue.data.someProp}} for the device {{device.name}}',
+        ...auditFields,
+      },
+    },
+```
+
+**Be aware that the AlertTemplate, SmsTemplate and EmailTemplate are optional and are only needed in the case you want to notify your issue.**
+
+### Triggering issues
 
 For triggering an issue it is important to define the trigger condition in the table IssueEventTrigger. This table has a JSON field called triggerConditions where we need to define what the action to subscribe to is and the conditions to trigger that issue. Basically, after specifying the correspondent MQ Action, we can set no conditions (we are going to trigger a new issue for every single action we received) or with some more complex conditions defined in this property.
 Before creating the new issue, the system is going to to check if there is already an open issue of the same type and the same result/site/device/partner. If there isn’t any then It will create a new issue otherwise the issue is not duplicated.
@@ -150,30 +187,17 @@ The triggerConditions Object can have the next shape:
 
 ```JSON
 {
-  "action": "Is the action where the function is subscribed.",
-  "conditions": {
-    "evaluationMethod":  "the way we are going to evaluate the condition (inline-sql/sql-script/plugin-function/child-conditions)"
-,
-    "evaluationParameter": "Name of the function/ path of the file/ sql script",
-    "evaluationFilterParameters": "(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)"
-  }
-}
-```
-
-An example would be:
-
-```JSON
-{
-  "action": "RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT",
-  "conditions": {
-    "evaluationMethod": "plugin-function",
-    "evaluationParameter": "analyzeErrors",
-    "evaluationFilterParameters": {
-      "below": false,
-      "errorCode": 5011,
-      "threshold": 0.03,
-      "daysPeriod": 30,
-      "minResults": 3
+  "issueType": "YourNewIssue",
+  "issueEventStatus": "Triggered", // TODO: we should explain this and how it works
+  "triggerConditions": {
+    "action": "THE_ACTION_THAT_TRIGGERS_YOUR_NEW_ISSUE",
+    "conditions": {
+      "evaluationMethod": "plugin-function", // The options are inline-sql/sql-script/plugin-function/child-conditions,
+      "evaluationParameter": "evaluateYourNewIssue", // <Name of the function/ path of the file/ sql script>
+      "evaluationFilterParameters": {
+        "aGreatParameterForEvaluation": 1,
+        "anotherGreatParameterForEvaluation: "I Love Configuring Issues"
+      } // <(JSON object define the parameters to be passed to the plugin function, this should be written as key:value JSON object)>
     }
   }
 }
@@ -253,126 +277,72 @@ The notifications are going to be fired after analyzing if we have configured th
 
 ## Configuring new Issue with notification
 
-For configure a new issue type the first thing we need to do is to add the new issue type in the file ``api/seeds/relatedObjects/issues.js``
+This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving it by the scheduler.
+*The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/registration.js
+Also, it's important to mention that in this tutorial we will use plugin functions for triggering and resolving issues, but you can do it in many ways which were described in the Triggering section.*
 
-We need to add a new json object in the JSON Array with the following shape:
+1) Start by adding a function for analyzing if your issue should be triggered or not. Let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
 
-```javascript
- DeviceNoResults: { //This is the external id
-      issueType: {
-        name: 'Device No Results', // name of the issue
-        externalId: 'DeviceNoResults', // externalid
-        i18nKey: 'issueStatusDeviceNoResults', // i18n key
-        issueCategoryId: issueCategories.ConnectivityHealth, // the categorization of the issue.
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert, // the severity of the issue.
-      },
-      AlertTemplate: {
-        message: 'No testing for {{numberOfDays issue.data.lastResultOn}}', // the string template of the alert
-        ...auditFields,
-      },
-
-      SmsTemplate: {
-        message:
-          '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
-// the sms string template
-        ...auditFields,
-      },
-      EmailTemplate: { // email configuration.
-        subject: '{{device.name}}: No Testing',
-        body:
-          '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
-        htmlBody:
-          '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
-        ...auditFields,
-      },
-    },
-```
-
-Then configure the issue event trigger api/seeds/fixtures/IssueEventTrigger.json with the following shape.
-
-```javascript
-
-{
-      "issueType": "DeviceNoResults",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_NO_RESULTS"
-      }
-},
-```
-
-Remember there are extra configurations we can do here. For that, refer to the “Triggering Issue” section.
-
-If the trigger has some resolution configuration we need to seed the table IssueResolutionTrigger with the next helper function
-
-```javascript
- await upsertIssueResolutionTrigger(knex, {
-    issueTypeId,
-    partnerId,
-    resolutionConditions: JSON.stringify({
-      evaluationMethod: 'plugin-function',
-      evaluationParameter: 'resolveDeviceNoResults', //The name of the function to evaluate if it should be resolved or not.
-    }),
-    createdOn: now,
-    updatedOn: now,
-  })
-
-```
-
-The next step is to insert all records to the database. For doing that we have some helper functions:
-
-```javascript
-const { partnerId, userId } = await knex('User as u')
-    .join('Person as p', 'p.userId', 'u.id')
-    .where({ 'u.name': 'admin' })
-    .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
-
-  const issueType = await seedIssueType(
-    knex,
-    ‘DeviceNoResults’,
-    {
-      userName: 'admin',
+    ```javascript
+    // ...
+    async function analyzeYourTrigger(knex, action) {
+      // Return true or false, based on the condition evaluation, where true is "the issue will be triggered".
     }
-  )
+    // ...
+    ```
 
+2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
 
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: [
-      'DeviceNoResults',
-    ],
-  })
-  const auditFields = {
-    createdOn: new Date(),
-    createdBy: userId,
-    updatedOn: new Date(),
-    updatedBy: userId,
-  }
+    ```javascript
+    // ...
+    async function resolveYourNewIssue(knex, issue) {
+      // Return true or false, based on the condition evaluation, where true is "the issue will be resolved".
+    }
+    // ...
+    ```
 
-  const issueTypeObject = await knex('IssueType')
-    .where({ id: issueType })
-    .first()
+    ***This step isn't needed if you won't use plugin functions.***
 
-  const { jobFunctionAdminId } = await knex('JobFunction')
-    .where({
-      externalId: 'admin',
-      partnerId,
-    })
-    .first('id as jobFunctionAdminId')
-  await upsertNotificationTypes(knex, [
-    {
-      issueTypeId: issueTypeObject.id,
-      messageTypeId: issueTypeObject.defaultMessageTypeId,
-      partnerId,
-      jobFunctionId: jobFunctionAdminId,
-      level: 1,
-      name: 'Device No Results',
-      ...auditFields,
-    },
-  ])
+3) Define your action creator. Our standard is to define this function in files called action.js, like we have ``api/src/device/actions.js``. Feel free of creating a new file or use an existant one, but try to follow the same concept.
+The action creator is the function that will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
 
-```
+    ```javascript
+    function yourNewIssueTriggerCheck(someParams) {
+      return {
+        type: 'YOUR_NEW_ISSUE',
+        someParams
+      }
+    }
+    ```
+
+4) At ``api/seeds/relatedObjects/issues.js``, add a new entry for describing the new issue. *Please, refer to the Defining Issues section for more information*.
+
+5) At the ``api/seeds/fixtures/IssueEventTrigger.json`` fixture, add a new entry for describing the conditions that should be matched for triggering the issue. *Please, refer to the Triggering section for more information*. 
+Remember that:
+
+    - If you are using plugin functions, you should set the function created at the step 1 as the *evaluationParameter*.
+    - The *issueType* property should be the same as the external id configured on step 4
+    - The *action* property should be the same as the action type configured on step 3
+
+6) Define the call to your action creator. This can be done in many places, like schedulers or also like other plugins (onResultLogged, for example). This will queue the action you configured, so the issue evaluation will be triggered.
+
+    ```javascript
+    // Bind your action creator if it doesn't exist yet
+    // Where messageContext come from???
+    if (!messageContext.yourNewIssueTriggerCheck) {
+      messageContext = messageContext.bindActionCreators({
+        yourNewIssueTriggerCheck,
+      })
+    }
+    await messageContext.yourNewIssueTriggerCheck(resultDeviceId)
+    ```
+
+7) Create a new seed file for upserting the
+    - Issue type
+    - Issue event trigger
+    - Notification type
+    - Issue resolution
+  Optionally, you can use the helper allocated at ``api/seeds/common/add_issue.js``
 
 ## Creating a new Action
 

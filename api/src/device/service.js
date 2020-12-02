@@ -162,6 +162,25 @@ async function getListDevices(query, auth) {
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
           .where('rca.resultCategoryId', query.resultCategoryId)
+      if (query.onlyOpenIssues || query.issueTypeId) {
+        queryBuilder.innerJoin('Issue as issue', 'issue.deviceId', 'd.id')
+        if (query.issueTypeId)
+          queryBuilder
+            .innerJoin(
+              'IssueType as issueType',
+              'issue.issueTypeId',
+              'issueType.id'
+            )
+            .whereIn('issueType.externalId', query.issueTypeId)
+        if (query.onlyOpenIssues)
+          queryBuilder
+            .innerJoin(
+              'IssueStatus as issueStatus',
+              'issue.issueStatusId',
+              'issueStatus.id'
+            )
+            .whereNotIn('issueStatus.externalId', ['Inactive', 'Resolved'])
+      }
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
