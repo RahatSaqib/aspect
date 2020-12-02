@@ -4,7 +4,6 @@ const omit = require('lodash/omit')
 const min = require('lodash/min')
 const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
-const format = require('date-fns/format')
 const formatISO = require('date-fns/formatISO')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
@@ -63,84 +62,85 @@ async function deviceStatusOverTime(request) {
     .as('lastDayStatus')
 
   let statusData = await knex
-  // all devices
-  .from(
-    knex('Device as d')
-      .innerJoin('Geography as g', 'd.geographyId', 'g.id')
-      .innerJoin('Partner as p', 'd.partnerId', 'p.id')
-      .modify(addConstraints, dataConstraints, {
-        partner: 'p',
-        geography: 'g',
-      })
-      .innerJoin(
-        'DeviceMaintenanceStatusLog as dmsl',
-        'd.id',
-        'dmsl.deviceId'
-      )
-      .innerJoin(
-        'DeviceMaintenanceStatus as dms',
-        'dmsl.deviceMaintenanceStatusId',
-        'dms.id'
-      )
-      // Only the statuses in range
-      .where(q => {
-        q.where('dmsl.day', '>=', minDate)
-        q.where('dmsl.day', '<', addDays(maxDate, 1))
-        // Only the last status of each device and day
-        q.whereIn('dmsl.id', knex.from(lastDayStatusesIds))
-      })
-      .groupBy([
-        'd.id',
-        'dmsl.createdOn',
-        'dmsl.day',
-        'dms.i18nKey',
-        'dms.name',
-        'dms.externalId',
-      ])
-      .orderBy(['d.name', 'dmsl.day'])
-      .select([
-        'd.id as deviceId',
-        'dmsl.day',
-        'dms.i18nKey as maintenanceStatusI18nKey',
-        'dms.name as maintenanceStatusName',
-        'dms.externalId as maintenanceStatusExternalId',
-        'dms.id as maintenanceStatusId',
-      ])
-      .as('q')
-  )
-  // for each device and day, join the last log when the status was previous and different than the current one
-  .leftJoin(lastDayStatuses, query => {
-    query
-      .on('q.deviceId', 'lastDayStatus.deviceId')
-      .andOn('q.day', '>=', 'lastDayStatus.day')
-      .andOn(
-        'q.maintenanceStatusId',
-        '!=',
-        'lastDayStatus.deviceMaintenanceStatusId'
-      )
-  })
-  .groupBy([
-    'q.deviceId',
-    'q.day',
-    'q.maintenanceStatusI18nKey',
-    'q.maintenanceStatusName',
-    'q.maintenanceStatusExternalId',
-    'q.maintenanceStatusId',
-  ])
-  .select([
-    'q.deviceId',
-    'q.day',
-    'q.maintenanceStatusI18nKey',
-    'q.maintenanceStatusName',
-    'q.maintenanceStatusExternalId',
-    knex.raw(
-      'IFNULL(DATEDIFF(q.day, MAX(lastDayStatus.day)), 1) as daysInSameStatus'
-    ),
-  ])
+    // all devices
+    .from(
+      knex('Device as d')
+        .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+        .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+        .modify(addConstraints, dataConstraints, {
+          partner: 'p',
+          geography: 'g',
+        })
+        .innerJoin(
+          'DeviceMaintenanceStatusLog as dmsl',
+          'd.id',
+          'dmsl.deviceId'
+        )
+        .innerJoin(
+          'DeviceMaintenanceStatus as dms',
+          'dmsl.deviceMaintenanceStatusId',
+          'dms.id'
+        )
+        // Only the statuses in range
+        .where(q => {
+          q.where('dmsl.day', '>=', minDate)
+          q.where('dmsl.day', '<', addDays(maxDate, 1))
+          // Only the last status of each device and day
+          q.whereIn('dmsl.id', knex.from(lastDayStatusesIds))
+        })
+        .groupBy([
+          'd.id',
+          'dmsl.createdOn',
+          'dmsl.day',
+          'dms.i18nKey',
+          'dms.name',
+          'dms.externalId',
+        ])
+        .orderBy(['d.name', 'dmsl.day'])
+        .select([
+          'd.id as deviceId',
+          'dmsl.day',
+          'dms.i18nKey as maintenanceStatusI18nKey',
+          'dms.name as maintenanceStatusName',
+          'dms.externalId as maintenanceStatusExternalId',
+          'dms.id as maintenanceStatusId',
+        ])
+        .as('q')
+    )
+    // for each device and day, join the last log when the status was previous and different than the current one
+    .leftJoin(lastDayStatuses, query => {
+      query
+        .on('q.deviceId', 'lastDayStatus.deviceId')
+        .andOn('q.day', '>=', 'lastDayStatus.day')
+        .andOn(
+          'q.maintenanceStatusId',
+          '!=',
+          'lastDayStatus.deviceMaintenanceStatusId'
+        )
+    })
+    .groupBy([
+      'q.deviceId',
+      'q.day',
+      'q.maintenanceStatusI18nKey',
+      'q.maintenanceStatusName',
+      'q.maintenanceStatusExternalId',
+      'q.maintenanceStatusId',
+    ])
+    .select([
+      'q.deviceId',
+      'q.day',
+      'q.maintenanceStatusI18nKey',
+      'q.maintenanceStatusName',
+      'q.maintenanceStatusExternalId',
+      knex.raw(
+        'IFNULL(DATEDIFF(q.day, MAX(lastDayStatus.day)), 1) as daysInSameStatus'
+      ),
+    ])
 
   statusData = groupBy(
     statusData,
-    statusDataItem => statusDataItem.deviceId + format(statusDataItem.day, 'yyyy-MM-dd')
+    statusDataItem =>
+      statusDataItem.deviceId + formatDate(statusDataItem.day)
   )
 
   let data = []

@@ -30,7 +30,7 @@ describe.only('Device Maintenance Status', () => {
   const now = new Date()
   const monthAgo = subDays(now, 30)
 
-  describe('GET', () => {
+  describe.only('GET', () => {
     afterEach(async () => {
       await context.cleanUp()
     })
