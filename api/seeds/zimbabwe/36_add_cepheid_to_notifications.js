@@ -8,8 +8,6 @@ module.exports = require('../utils').seed(async knex => {
 
   // The issue types excluded are NewResultsAvailable, ResultReceived and ResultReceived
   const issueTypes = [
-    'DeviceNoResults',
-    'DeviceOffline',
     'ProbeCheckTooLowModule',
     'ProbeCheckTooLowLot',
     'ProbeCheckTooHighModule',
@@ -32,7 +30,6 @@ module.exports = require('../utils').seed(async knex => {
     'AssaySpecificTerminationError1Lot',
     'AssaySpecificTerminationError2Module',
     'AssaySpecificTerminationError2Lot',
-    'UnusedModules',
   ]
 
   const issueTypesIds = await knex('IssueType')
