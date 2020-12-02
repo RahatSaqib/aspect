@@ -78,7 +78,7 @@ const errorIssueEmailHtml = `
                 {{result.instrumentSerial}}
               </td>
           </tr>
-          {{MODULEORREAGENT}}
+          <<REPLACE WITH MODULE OR REAGENT>>
           <tr>
               <td>
                 Cartridge Type
@@ -100,7 +100,7 @@ const errorIssueEmailHtml = `
                 Date/Time
               </td>
               <td>
-              {{formatDate result.endedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+                {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
               </td>
           </tr>
       </table>
@@ -205,9 +205,6 @@ const errorIssueEmailHtml = `
               </td>
           </tr>
       </table>
-      <p>
-      For more details on the error frequency and the impacted Cepheid Part (Module, Assay, lot …)  please refer to the attached excel (CSV) file.
-      </p>
     </body>
 </html>
 `
@@ -225,13 +222,13 @@ Time Period Days: 30
 
 System Serial: {{result.instrumentSerial}}
 
-{{MODULEORREAGENT}}
+<<REPLACE WITH MODULE OR REAGENT>>
 
 Cartridge Type: {{result.assay.name}}
 
 Test Outcome: {{issue.data.resultOutcome}}
 
-Date/Time: {{formatDate result.endedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 
 
 
@@ -259,27 +256,24 @@ Contact Phone: {{site.primaryContact.phone}}
 
 Contact Cell: {{site.primaryContact.cell}}
 
-Contact Email: {{site.primaryContact.email}}
-
-
-For more details on the error frequency and the impacted Cepheid Part (Module, Assay, lot …)  please refer to the attached excel (CSV) file.`
+Contact Email: {{site.primaryContact.email}}`
 
 const errorIssueSubject = `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, Error: {{notification.type}}`
 const errorIssueEmailHtmlModule = errorIssueEmailHtml.replace(
-  '{{MODULEORREAGENT}}',
+  '<<REPLACE WITH MODULE OR REAGENT>>',
   '<tr><td>Module</td><td>{{result.moduleSerial}}</td></tr>'
 )
 const errorIssueEmailTextModule = errorIssueEmailText.replace(
-  '{{MODULEORREAGENT}}',
+  '<<REPLACE WITH MODULE OR REAGENT>>',
   'Module: {{result.moduleSerial}}'
 )
 
 const errorIssueEmailHtmlLot = errorIssueEmailHtml.replace(
-  '{{MODULEORREAGENT}}',
+  '<<REPLACE WITH MODULE OR REAGENT>>',
   '<tr><td>Reagent Lot</td><td>{{result.consumableLot}}</td></tr>'
 )
 const errorIssueEmailTextLot = errorIssueEmailText.replace(
-  '{{MODULEORREAGENT}}',
+  '<<REPLACE WITH MODULE OR REAGENT>>',
   'Reagent Lot: {{result.consumableLot}}'
 )
 
