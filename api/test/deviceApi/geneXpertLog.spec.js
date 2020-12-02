@@ -4,12 +4,7 @@ const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
 const { deviceHardwareError } = require('../../src/device/actions')
-// const { waitForIdle, waitForAction } = require('../utils/mqUtils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 const { postToDeviceApi } = require('./utils')
 const server = require('../utils/testUtils')
 
@@ -61,7 +56,7 @@ const logDataWithErrors = {
   }),
 }
 
-describe.only('Process GeneXpert Logs', () => {
+describe('Process GeneXpert Logs', () => {
   const getTotalsOfDeviceOperation = async () => {
     const [{ count }] = await knex('DeviceOperation').count('id as count')
     return count
