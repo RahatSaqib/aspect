@@ -374,7 +374,7 @@ class MessageContext {
     if (this.isFinalState) {
       throw new Error('Cannot commit after final state, create new context')
     }
-    debug(`commit ${this.id}`)
+    debug('commit ${this.id}`)
     this.transaction = null
     this.actions.forEach(({ action, bindingKey }) =>
       this.dispatch(action, bindingKey)
