@@ -23,6 +23,8 @@ async function deviceStatusOverTime(request) {
   )
 
   const deviceData = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -38,6 +40,7 @@ async function deviceStatusOverTime(request) {
       result: 'r',
       site: 's',
     })
+    .where('dtc.hasResults', 1)
     .groupBy('d.id')
     .orderBy('d.name')
     .select([
@@ -65,6 +68,8 @@ async function deviceStatusOverTime(request) {
     // all devices
     .from(
       knex('Device as d')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
         .innerJoin('Geography as g', 'd.geographyId', 'g.id')
         .innerJoin('Partner as p', 'd.partnerId', 'p.id')
         .modify(addConstraints, dataConstraints, {
@@ -87,6 +92,7 @@ async function deviceStatusOverTime(request) {
           q.where('dmsl.day', '<', addDays(maxDate, 1))
           // Only the last status of each device and day
           q.whereIn('dmsl.id', knex.from(lastDayStatusesIds))
+          q.where('dtc.hasResults', 1)
         })
         .groupBy([
           'd.id',
