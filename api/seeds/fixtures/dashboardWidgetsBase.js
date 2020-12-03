@@ -46,6 +46,9 @@ const geneXpertDevices = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+  },
   sortOrder: 0,
   externalId: 'geneXpertDevices',
   description:
@@ -225,6 +228,7 @@ const dashboardWidgetValidResultsPc = {
   link: '/browse/result',
   linkParams: {
     deviceName: 'GeneXpert',
+    onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 2,
@@ -294,6 +298,7 @@ const utilizationRate = {
   statUnitI18nKey: 'dashboardWidgetUtilizationRate',
   link: '/browse/device',
   linkParams: {
+    deviceName: 'GeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 0,
@@ -566,6 +571,7 @@ const errorRate = {
   link: '/browse/result',
   linkParams: {
     deviceName: 'GeneXpert',
+    workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 3,
@@ -681,7 +687,10 @@ const moduleSwaps = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'dashboardWidgetModuleSwaps',
   link: '/browse/device',
-  linkParams: {},
+  linkParams: {
+    deviceName: 'GeneXpert',
+    issueTypeId: 'ModuleReplaced',
+  },
   sortOrder: 4,
   externalId: 'moduleSwaps',
   description: 'The number of module swaps made at the current month',
@@ -893,7 +902,10 @@ const unusedModules = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'unusedModulesStats',
   link: '/browse/device',
-  linkParams: {},
+  linkParams: {
+    deviceName: 'GeneXpert',
+    issueTypeId: 'UnusedModules',
+  },
   sortOrder: 6,
   externalId: 'unusedModules',
   description:
@@ -959,7 +971,10 @@ const instrumentsReplaced = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
   link: '/browse/device',
-  linkParams: {},
+  linkParams: {
+    deviceName: 'GeneXpert',
+    issueTypeId: 'InstrumentReplaced',
+  },
   sortOrder: 3,
   externalId: 'instrumentsReplaced',
   description:
@@ -1376,6 +1391,9 @@ const numberOfDevicesExperiencingServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+  },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
   description: `The number of devices experiencing service interruption on this and the previous month.`,
@@ -1463,6 +1481,9 @@ const averageDurationServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+  },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
   description: `The average duration of a service interruption, in days.`,
