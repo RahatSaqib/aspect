@@ -88,6 +88,18 @@
   padding: 0 10px;
 }
 
+.checkbox__container {
+  padding: 10px 0 0 0;
+}
+
+.checkbox__label {
+  font-size: 12px;
+}
+
+.checkbox__group {
+  padding: 10px 0 0 14px;
+}
+
 @media screen and (--sm-viewport) {
   .FallbackUntilDone--sm {
     width: 600px;

@@ -66,6 +66,10 @@ const FILTERS_CONFIG = [
     deviceApproval: true,
     requiredPermissions: [],
   },
+  {
+    issueTypeId: true,
+    requiredPermissions: [],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
