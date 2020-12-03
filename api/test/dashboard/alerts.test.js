@@ -12,13 +12,15 @@ describe('dashboard widgets alerts', () => {
       subTitle: null,
       subTitleI18nKey: null,
       link: '/browse/device',
+      linkParams: {
+        deviceName: 'GeneXpert',
+      },
       externalId: 'geneXpertDevices',
       description:
         'The number of approved GeneXpert devices (excluding decommissioned devices).',
       descriptionI18nKey: 'geneXpertDevices',
       dashboards:
         '{"operational": {"groupI18nKey": "summaryWidgetGroupConnectivity"}}',
-      linkParams: '{}',
       options: {},
       icon: 'MdDesktopWindows',
       statUnit: '{unit} last month',

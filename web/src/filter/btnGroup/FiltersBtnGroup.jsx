@@ -6,6 +6,8 @@ import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
+import startCase from 'lodash/startCase'
+
 import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
@@ -103,6 +105,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withRevoked',
     defaultMessage: 'revoked is "{revokedStatus}"',
   },
+  onlyReportableResults: {
+    id: 'filter.btnGroup.onlyReportableResults',
+    defaultMessage: 'Show Only Reportable Results',
+  },
+  deviceIssueType: {
+    id: 'filter.btnGroup.deviceIssueType',
+    defaultMessage: 'Device Issue: {issueTypeId}',
+  },
 })
 const revokedOptions = [
   {
@@ -162,6 +172,8 @@ const filtersOrdering = {
   // -1: Special orderings
   siteIds: -1,
   patientOrCaseId: 23,
+  onlyReportableResults: 23,
+  issueTypeId: 24,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -360,6 +372,14 @@ const buttonBy = {
   siteIds: makeButton(({ intl }, siteIds) =>
     intl.formatMessage(messages.whereSiteIdIsIn, {
       joinedIds: siteIds,
+    })
+  ),
+  onlyReportableResults: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyReportableResults)
+  ),
+  issueTypeId: makeButton(({ intl }, issueTypeId) =>
+    intl.formatMessage(messages.deviceIssueType, {
+      issueTypeId: startCase(issueTypeId),
     })
   ),
 }
