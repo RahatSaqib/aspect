@@ -20,7 +20,7 @@ const {
   allDeviceMaintenanceStatusToId,
 } = require('../../src/shared/dictionary')
 
-describe('Device Maintenance Status', () => {
+describe.only('Device Maintenance Status', () => {
   const path = '/api/device-maintenance-status/over-time'
   let context
   let deviceId
@@ -30,7 +30,7 @@ describe('Device Maintenance Status', () => {
   const now = new Date()
   const monthAgo = subDays(now, 30)
 
-  describe('GET', () => {
+  describe.only('GET', () => {
     afterEach(async () => {
       await context.cleanUp()
     })
@@ -59,6 +59,22 @@ describe('Device Maintenance Status', () => {
       await knex('Site')
         .where({ id: siteId })
         .update({ latitude: 1, longitude: 5 })
+
+      await knex('DeviceMaintenanceStatusLog').insert({
+        deviceId,
+        deviceMaintenanceStatusId: statuses.active,
+        day: subDays(now, 2),
+        createdOn: new Date(),
+        createdBy: personId,
+      })
+
+      await knex('DeviceMaintenanceStatusLog').insert({
+        deviceId,
+        deviceMaintenanceStatusId: statuses.active,
+        day: subDays(now, 1),
+        createdOn: new Date(),
+        createdBy: personId,
+      })
 
       await knex('DeviceMaintenanceStatusLog').insert({
         deviceId,
@@ -123,6 +139,7 @@ describe('Device Maintenance Status', () => {
           assert.equal(tamagotchiLastStatus.maintenanceStatusName, 'Active')
           assert.isBoolean(tamagotchiLastStatus.isWeekend)
           assert.isNumber(tamagotchiLastStatus.weekNumber)
+          assert.isNumber(tamagotchiLastStatus.daysInSameStatus, 3)
           assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
 
           done()
