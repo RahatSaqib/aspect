@@ -52,7 +52,7 @@ async function getResultQuery(
   query,
   dataConstraints,
   positiveResultCategories,
-  tz = 'GMT'
+  tz = '+00:00'
 ) {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
@@ -126,9 +126,9 @@ async function getResultQuery(
       knex.raw(`
         CONCAT_WS(
           '-',
-          CAST( YEAR(CONVERT_TZ(r.endedOn,'GMT','${tz}')) AS CHAR ),
+          CAST(YEAR(CONVERT_TZ(r.endedOn,'+00:00','${tz}')) AS CHAR ),
           LPAD(
-            CAST( MONTH(CONVERT_TZ(r.endedOn,'GMT','${tz}')) AS CHAR ),
+            CAST(MONTH(CONVERT_TZ(r.endedOn,'+00:00','${tz}')) AS CHAR ),
             2,
             '0'
           )
@@ -230,9 +230,9 @@ async function resultsTransmittedDashboard(request) {
   const positiveResultCategories = _.values(
     _.pick(resultCategories, getPositiveCategoriesExternalIds())
   )
-  // because all the datetimes are transformed automatically to UTC and i can't take the offset from that date,
-  // i have to parse the offset this way
-
+  // Because all the datetimes are transformed automatically to UTC
+  // and it is not possible to take the offset from that date,
+  // it is needed to use this function to obtain the offset received from the querystring.
   const offset = getOffsetFromIsoDateString(query.currentMonth)
 
   // get all assays which user can access

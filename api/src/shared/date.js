@@ -109,7 +109,14 @@ function getLocalDateInUtc(dateTime) {
 function getTimeZoneById(allTimeZones, timeZoneId) {
   return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
 }
+/*
+These are the different patterns of date format this regular expression validate.
+for further information check the unit test api/test/shared/date.test.js:65
 
+2020-11-26T15:00:24.000-11:00
+2020-11-26T15:00:24.000Z
+2020-11-26T15:00:24-11:00
+*/
 const REGEX_ISODATESTRING = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
 
 function getOffsetFromIsoDateString(time) {
