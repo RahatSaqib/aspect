@@ -71,6 +71,10 @@ const FILTERS_CONFIG = [
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
+  {
+    onlyReportableResults: true,
+    requiredPermissions: ['assay:view'],
+  },
 ]
 
 const AddNewButton = requirePermissions({
@@ -306,6 +310,7 @@ const ResultList = () => {
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
+
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 

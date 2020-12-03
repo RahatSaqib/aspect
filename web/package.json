@@ -7,6 +7,7 @@
   "scripts": {
     "styleguide": "styleguidist server",
     "start": "webpack-dev-server --config cfg/dev.js --open --inline --hot --env.ASPECT_TARGET=local",
+    "start:fresh": "yarn && yarn start",
     "dist": "webpack --config cfg/dist.js --env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env TZ='Europe/Paris' ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
