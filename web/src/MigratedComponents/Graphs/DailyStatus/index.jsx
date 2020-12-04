@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useIntl } from 'react-intl'
 
-import { getIndex, dateRangeByWeekDay } from './Helpers'
+import { getIndex, getTotalDays, dateRangeByWeekDay } from './Helpers'
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
 import DateRanges from './DateRanges'
@@ -56,6 +56,7 @@ const DailyStatus = () => {
   const [params, setParams] = useState({ minDate, maxDate })
   const startOfMonth = new Date(params.minDate)
   const dateRanges = dateRangeByWeekDay(startOfMonth)
+  const totalDays = getTotalDays(params)
   const baseToggleConfig = {
     checked: true,
     label: formatMessage(messages.dailyStatusToggleAll),
@@ -153,6 +154,7 @@ const DailyStatus = () => {
                 total={totalResults}
                 statusses={visibleStatuses}
                 consts={CONSTS}
+                totalDays={totalDays}
               />
             )
           )}

@@ -86,6 +86,11 @@
   background-color: var('--aspect-device-inactiveDecommissioned');
 }
 
+.clinic__day--future {
+    border-radius: 20%;
+  border: 1px dashed #cecece;
+}
+
 .clinic__testtotal {
   display: flex;
   justify-content: center;

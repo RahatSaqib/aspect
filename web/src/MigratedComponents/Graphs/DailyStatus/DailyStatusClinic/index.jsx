@@ -1,12 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import times from 'lodash/times'
 
-import DailyStatusClinicDay from '../DailyStatusClinicDay'
+import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
-const DailyStatusClinic = ({ name, data, total, statusses, consts }) => {
+const DailyStatusClinic = ({
+  name,
+  data,
+  total,
+  statusses,
+  consts,
+  totalDays,
+}) => {
+  const dataDays = data.length
+  const fillerDays = times(totalDays - dataDays)
   const {
     blockSize: { height: blockHeight, marginWidth },
     totalBlockSize: { width: totalBlockWidth },
@@ -27,6 +37,9 @@ const DailyStatusClinic = ({ name, data, total, statusses, consts }) => {
             />
           )
         )}
+        {fillerDays.map(() => (
+          <DayBlock dayModifier="future" consts={consts} />
+        ))}
         <div
           className={cssClasses('clinic__testtotal')}
           style={{
@@ -51,6 +64,7 @@ DailyStatusClinic.propTypes = {
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
+  totalDays: PropTypes.number.isRequired,
 }
 
 export default DailyStatusClinic
