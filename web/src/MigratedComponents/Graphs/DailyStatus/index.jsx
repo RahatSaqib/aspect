@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import classnames from 'classnames/bind'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -52,16 +52,15 @@ const DailyStatus = () => {
   const { formatMessage } = useIntl()
   const [statusses, setStatusses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
-  const [toggleAll, setToggleAll] = useState(false)
+  const [toggleAll, setToggleAll] = useState({
+    checked: true,
+    label: formatMessage(messages.dailyStatusToggleAll),
+    key: 'all',
+  })
   const [params, setParams] = useState({ minDate, maxDate })
   const startOfMonth = new Date(params.minDate)
   const dateRanges = dateRangeByWeekDay(startOfMonth)
   const totalDays = getTotalDays(params)
-  const baseToggleConfig = {
-    checked: true,
-    label: formatMessage(messages.dailyStatusToggleAll),
-    key: 'all',
-  }
 
   const {
     isLoading: devicesIsLoading,
@@ -76,6 +75,7 @@ const DailyStatus = () => {
   )
 
   const {
+    isLoading: deviceStatussesIsLoading,
     isError: deviceStatussesIsError,
     error: deviceStatussesError,
   } = useQuery(
@@ -110,10 +110,9 @@ const DailyStatus = () => {
 
   useEffect(() => {
     if (!visibleStatuses) {
-      setToggleAll(baseToggleConfig)
       setVisibleStatuses(statusses)
     }
-  }, [statusses, visibleStatuses, baseToggleConfig])
+  }, [statusses, visibleStatuses])
 
   const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setParams(extractOptionValue(identifier, selectedOption))
@@ -136,10 +135,10 @@ const DailyStatus = () => {
         component: CardSelectors,
         props: selectorModifiers,
       }}
-      name="id"
+      name="dailyStatus"
     >
-      {!devicesIsLoading && visibleStatuses ? (
-        <Fragment>
+      {!devicesIsLoading && !deviceStatussesIsLoading ? (
+        <div className={cssClasses('dailystatus__container')}>
           <DailyStatusFilters
             toggleAll={toggleAll}
             statusses={visibleStatuses}
@@ -158,7 +157,7 @@ const DailyStatus = () => {
               />
             )
           )}
-        </Fragment>
+        </div>
       ) : (
         <Loading />
       )}

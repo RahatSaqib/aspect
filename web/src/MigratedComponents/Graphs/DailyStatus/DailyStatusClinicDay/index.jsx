@@ -1,9 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-
-// eslint-disable-next-line lodash/import-scope
-import _ from 'lodash'
+import filter from 'lodash/filter'
 
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 
@@ -25,6 +23,13 @@ const DayBlock = ({ dayModifier, consts }) => {
   )
 }
 
+DayBlock.propTypes = {
+  dayModifier: PropTypes.string.isRequired,
+  consts: PropTypes.shape({
+    blockSize: PropTypes.oneOfType([PropTypes.object]),
+  }).isRequired,
+}
+
 const DailyStatusClinicDay = ({
   isWeekend,
   maintenanceStatusI18nKey,
@@ -34,7 +39,7 @@ const DailyStatusClinicDay = ({
 }) => {
   const { weekend } = consts
   const { checked } =
-    _.filter(statusses, {
+    filter(statusses, {
       i18nKey: maintenanceStatusI18nKey,
     })[0] || false
 
@@ -68,7 +73,6 @@ DailyStatusClinicDay.propTypes = {
   daysInSameStatus: PropTypes.string.isRequired,
   statusses: PropTypes.string.isRequired,
   consts: PropTypes.shape({
-    blockSize: PropTypes.oneOfType([PropTypes.object]),
     weekend: PropTypes.string,
   }).isRequired,
 }
