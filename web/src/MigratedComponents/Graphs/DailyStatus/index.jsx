@@ -17,7 +17,9 @@ import {
   isValid,
 } from 'date-fns'
 
+import { groupDateRanges, dateRangeByWeekDay } from './Helpers'
 import DailyStatusFilters from './DailyStatusFilters'
+import DateRanges from './DateRanges'
 
 import Shell from '../../Shell'
 import ShellHeader from '../../Shell/Header'
@@ -40,79 +42,11 @@ const CONSTS = {
 
 const cssClasses = classnames.bind(require('./DailyStatus.css'))
 
-const groupDateRanges = data => {
-  const output = []
-  const dateFormat = 'd/M'
-  _.map(data, (v, k) => {
-    const min = format(_.first(v), dateFormat)
-    const max = v.length > 1 ? format(_.last(v), dateFormat) : false
-    return output.push({ week: k, min, max, size: v.length })
-  })
-  return output
-}
-
-function dateRangeByWeekDay(startOfMonth) {
-  const amountOfDays = _.range(0, getDaysInMonth(startOfMonth))
-  return amountOfDays.reduce((acc, curr) => {
-    const thisDay = addDays(startOfMonth, curr)
-    const weekInt = getWeek(thisDay, { weekStartsOn: 1 })
-    const weekIndicator = isWeekend(thisDay) ? `${weekInt}_we` : `${weekInt}_wd`
-    if (!acc[weekIndicator]) {
-      acc[weekIndicator] = []
-    }
-    acc[weekIndicator].push(thisDay)
-    return acc
-  }, {})
-}
-
 const Loading = () => (
   <div className={cssClasses('dailystatus__spinner')}>
     <CircularProgress />
   </div>
 )
-
-const DateRanges = ({ data }) => {
-  const days = groupDateRanges(data)
-  const {
-    blockSize: { width: blockWidth, marginWidth },
-    totalBlockSize: { width: totalBlockWidth },
-  } = CONSTS
-  return (
-    <div className={cssClasses('dates__row')}>
-      <div className={cssClasses('dates__spacer')} />
-      <div className={cssClasses('dates__dayContainer')}>
-        {days.map(({ min, max, week, size }) => {
-          return week.includes('we') ? (
-            <div
-              className={cssClasses('dates__dayBlock')}
-              style={{
-                width: `${(blockWidth + marginWidth) * size}px`,
-              }}
-            />
-          ) : (
-            <div
-              className={cssClasses('dates__dayBlock')}
-              style={{
-                width: `${(blockWidth + marginWidth) * size}px`,
-              }}
-            >
-              {min}
-              {max ? ` - ${max}` : null}
-            </div>
-          )
-        })}
-        <div
-          className={cssClasses('dates__dayBlock')}
-          style={{
-            width: `${totalBlockWidth}px`,
-          }}
-        >
-          Tests
-        </div>
-      </div>
-    </div>
-  )
-}
 
 const ClinicDay = ({
   isWeekend,
@@ -281,7 +215,7 @@ const DailyStatus = () => {
               statusses={visibleStatuses}
               action={toggleStatusVisibility}
             />
-            <DateRanges data={dateRanges} />
+            <DateRanges data={dateRanges} consts={CONSTS} />
             {devicesDaily.map(
               ({ name, maintenanceStatusHistory, totalResults }) => (
                 <Clinic

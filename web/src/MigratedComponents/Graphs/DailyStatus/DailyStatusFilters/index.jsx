@@ -7,7 +7,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
-const DailyStatusFilters = ({ toggleAll, statusses, action }) => {
+const DailyStatusFilters = ({
+  toggleAll: { checked, key },
+  statusses,
+  action,
+}) => {
   return (
     <div className={cssClasses('statusses__row')}>
       <div className={cssClasses('statusses__spacer')} />
@@ -18,9 +22,9 @@ const DailyStatusFilters = ({ toggleAll, statusses, action }) => {
               control={
                 <Checkbox
                   color="primary"
-                  checked={toggleAll.checked}
-                  onChange={() => action(toggleAll.key)}
-                  value={toggleAll.key}
+                  checked={checked}
+                  onChange={() => action(key)}
+                  value={key}
                 />
               }
               label="Toggle All"
