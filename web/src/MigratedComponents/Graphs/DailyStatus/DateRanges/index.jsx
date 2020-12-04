@@ -10,7 +10,7 @@ const cssClasses = classnames.bind(require('../DailyStatus.css'))
 const messages = defineMessages({
   totalTests: {
     id: 'pages.DailyStatus.ClinicRow.totalTests',
-    defaultMessage: 'TESTS',
+    defaultMessage: 'Tests',
   },
 })
 

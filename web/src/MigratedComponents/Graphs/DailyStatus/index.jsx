@@ -2,40 +2,43 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import classnames from 'classnames/bind'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { getIndex, dateRangeByWeekDay } from './Helpers'
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
 import DateRanges from './DateRanges'
+import messages from './messages'
+import CONSTS from './CONSTS'
 
-import Shell from '../../Shell'
-import ShellHeader from '../../Shell/Header'
-import ShellContent from '../../Shell/Content'
+import {
+  getPreviousPeriod,
+  dateRangeOptions,
+  extractOptionValue,
+} from '../Helpers/Formatters'
+import AspectDropdown from '../../AspectDropdown'
+
+import AspectCard from '../../AspectCard'
+import CardSelectors from '../CardSelectors'
 
 import fetchWrapperForQueries from '../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../QueryFetch/Device'
 
 const cssClasses = classnames.bind(require('./DailyStatus.css'))
 
-const CONSTS = {
-  weekend: 'weekend',
-  blockSize: {
-    width: 19,
-    height: 15,
-    marginWidth: 6,
+const selectorModifiers = [
+  {
+    selectedValue: 'Date Range',
+    endpoint: false,
+    state: 'deviceDateRange',
+    component: AspectDropdown,
+    identifier: 'dateRange',
+    data: dateRangeOptions('deviceDateRange'),
+    sortByKeys: ['id'],
+    isClearable: false,
+    defaultSelectedOption: 2,
   },
-  totalBlockSize: {
-    width: 55,
-  },
-}
-
-const messages = defineMessages({
-  dailyStatusToggleAll: {
-    id: 'pages.DailyStatus.dailyStatusToggleAll',
-    defaultMessage: 'Toggle All',
-  },
-})
+]
 
 const Loading = () => (
   <div className={cssClasses('dailystatus__spinner')}>
@@ -44,11 +47,13 @@ const Loading = () => (
 )
 
 const DailyStatus = () => {
+  const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
+  const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
   const { formatMessage } = useIntl()
   const [statusses, setStatusses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
   const [toggleAll, setToggleAll] = useState(false)
-  const params = { minDate: '2020-11-01', maxDate: '2020-11-30' }
+  const [params, setParams] = useState({ minDate, maxDate })
   const startOfMonth = new Date(params.minDate)
   const dateRanges = dateRangeByWeekDay(startOfMonth)
   const baseToggleConfig = {
@@ -109,6 +114,9 @@ const DailyStatus = () => {
     }
   }, [statusses, visibleStatuses, baseToggleConfig])
 
+  const updateFromActionComponent = ({ identifier, selectedOption }) =>
+    setParams(extractOptionValue(identifier, selectedOption))
+
   if (devicesIsError) {
     throw new Error(devicesError)
   }
@@ -117,36 +125,42 @@ const DailyStatus = () => {
     throw new Error(deviceStatussesError)
   }
 
-  console.log(baseToggleConfig)
-
   return (
-    <Shell>
-      <ShellContent>
-        {!devicesIsLoading && visibleStatuses ? (
-          <Fragment>
-            <DailyStatusFilters
-              toggleAll={toggleAll}
-              statusses={visibleStatuses}
-              action={toggleStatusVisibility}
-            />
-            <DateRanges data={dateRanges} consts={CONSTS} />
-            {devicesDaily.map(
-              ({ name, maintenanceStatusHistory, totalResults }) => (
-                <DailyStatusClinic
-                  name={name}
-                  data={maintenanceStatusHistory}
-                  total={totalResults}
-                  statusses={visibleStatuses}
-                  consts={CONSTS}
-                />
-              )
-            )}
-          </Fragment>
-        ) : (
-          <Loading />
-        )}
-      </ShellContent>
-    </Shell>
+    <AspectCard
+      title={formatMessage(messages.dailyStatusMainTitle)}
+      innerSize={12}
+      justify="center"
+      action={params => updateFromActionComponent({ ...params })}
+      actionComponent={{
+        component: CardSelectors,
+        props: selectorModifiers,
+      }}
+      name="id"
+    >
+      {!devicesIsLoading && visibleStatuses ? (
+        <Fragment>
+          <DailyStatusFilters
+            toggleAll={toggleAll}
+            statusses={visibleStatuses}
+            action={toggleStatusVisibility}
+          />
+          <DateRanges data={dateRanges} consts={CONSTS} />
+          {devicesDaily.map(
+            ({ name, maintenanceStatusHistory, totalResults }) => (
+              <DailyStatusClinic
+                name={name}
+                data={maintenanceStatusHistory}
+                total={totalResults}
+                statusses={visibleStatuses}
+                consts={CONSTS}
+              />
+            )
+          )}
+        </Fragment>
+      ) : (
+        <Loading />
+      )}
+    </AspectCard>
   )
 }
 
