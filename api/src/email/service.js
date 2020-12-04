@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const {
   allMessageStatusToId,
@@ -27,7 +28,7 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  const { subject, body, htmlBody } = await createEmailFieldsFromTemplate(
+  const { subject, body, htmlBody, to } = await createEmailFieldsFromTemplate(
     knex,
     emailMessageId
   )
@@ -38,6 +39,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     subject,
     body,
     htmlBody,
+    to,
     messageStatusId: pendingMessageStatusId,
     updatedOn: new Date(),
   })
@@ -64,12 +66,11 @@ function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
 // -----------------------------
 async function doSendEmailMessage(context, knex, emailMessageId) {
   // get message and cell phone
-  const d = await knex('EmailMessage as m')
-    .leftJoin('Person as p', 'm.personId', 'p.id')
-    .where({ 'm.id': emailMessageId })
-    .first('m.subject', 'm.body', 'm.htmlBody', 'p.email', 'p.email2')
+  const d = await knex('EmailMessage')
+    .where('id', emailMessageId)
+    .first('subject', 'body', 'htmlBody', 'to')
 
-  const { email, subject, htmlBody, body } = d || {}
+  const { subject, htmlBody, body, to } = d || {}
 
   // email handler
   const { sendEmail } = require('./emailUtil')
@@ -82,7 +83,7 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   let messageStatusId = messageStatusIdSent
 
   // send email
-  const sendResponse = await sendEmail(email, subject, htmlBody, body).catch(
+  const sendResponse = await sendEmail(to, subject, htmlBody, body).catch(
     err => {
       // set status to 'Error'
       messageStatusId = messageStatusIdError
@@ -104,9 +105,10 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
 }
 
 async function createEmailFieldsFromTemplate(knex, emailMessageId) {
-  const { personId } = await knex('EmailMessage')
-    .where('id', emailMessageId)
-    .first('personId')
+  const { personId, email, email2 } = await knex('EmailMessage as m')
+    .leftJoin('Person as p', 'm.personId', 'p.id')
+    .where({ 'm.id': emailMessageId })
+    .first('m.personId', 'p.email', 'p.email2')
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
@@ -132,7 +134,8 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     .first(
       'tmpl.subject as subjectTemplate',
       'tmpl.body as bodyTemplate',
-      'tmpl.htmlBody as htmlBodyTemplate'
+      'tmpl.htmlBody as htmlBodyTemplate',
+      'tmpl.to as toTemplate'
     )
 
   if (data && data.geographyId) {
@@ -144,11 +147,20 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       .where({ 'jf.externalId': 'labUser' })
       .select('p.name', 'p.title', 'p.phone', 'p.cell', 'p.email')
   }
-  return processUsingDataSourceQuery(data, [
+  const processedTemplateFields = await processUsingDataSourceQuery(data, [
     'subjectTemplate',
     'bodyTemplate',
     'htmlBodyTemplate',
+    'toTemplate',
   ])
+  if (!processedTemplateFields.to) {
+    processedTemplateFields.to = _.uniq(
+      [email, email2]
+        .filter(address => !!address && !!address.trim())
+        .map(address => address.toLowerCase().trim())
+    ).join(',')
+  }
+  return processedTemplateFields
 }
 
 module.exports = {

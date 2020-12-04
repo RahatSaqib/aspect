@@ -46,6 +46,9 @@ const geneXpertDevices = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+  },
   sortOrder: 0,
   externalId: 'geneXpertDevices',
   description:
@@ -222,6 +225,7 @@ const dashboardWidgetValidResultsPc = {
   link: '/browse/result',
   linkParams: {
     deviceName: 'GeneXpert',
+    onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 2,
@@ -291,6 +295,7 @@ const utilizationRate = {
   statUnitI18nKey: 'dashboardWidgetUtilizationRate',
   link: '/browse/device',
   linkParams: {
+    deviceName: 'GeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 0,
@@ -563,6 +568,7 @@ const errorRate = {
   link: '/browse/result',
   linkParams: {
     deviceName: 'GeneXpert',
+    workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 3,
@@ -678,7 +684,10 @@ const moduleSwaps = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'dashboardWidgetModuleSwaps',
   link: '/browse/device',
-  linkParams: {},
+  linkParams: {
+    deviceName: 'GeneXpert',
+    issueTypeId: 'ModuleReplaced',
+  },
   sortOrder: 4,
   externalId: 'moduleSwaps',
   description: 'The number of module swaps made at the current month',
@@ -856,45 +865,53 @@ const unusedModules = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `
-  SELECT COUNT(deviceid) AS cnt
+  SELECT COUNT(DISTINCT deviceid) AS cnt
     FROM(
               SELECT d.id AS deviceid
-                FROM Result AS r
-                INNER JOIN Device AS d ON d.id = r.deviceId
+                FROM Device AS d
                 INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
                 INNER JOIN Site AS s ON d.siteId = s.id
                 LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-                WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01')
-                      AND NOW()
-                      AND dt.externalId = 'CepheidGeneXpert'
+                INNER JOIN Issue as i ON d.id = i.deviceId
+                INNER JOIN IssueType as it ON i.issueTypeId = it.id
+                INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
+                WHERE 
+          it.externalId = 'unusedModules' AND
+                      ist.externalId NOT IN ('Inactive', 'Resolved') AND
+          (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()) AND
+                      dt.externalId = 'CepheidGeneXpert'
               GROUP BY d.id
-              HAVING COUNT(DISTINCT r.moduleSerial) < 4 AND COUNT(DISTINCT r.id) >= 20
     ) AS innerquery
   `,
   sqlForStatUnit: `
-  SELECT COUNT(deviceid) AS cnt
-  FROM(
-            SELECT d.id AS deviceid
-              FROM Result AS r
-              INNER JOIN Device AS d ON d.id = r.deviceId
-              INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-              INNER JOIN Site AS s ON d.siteId = s.id
-              LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-              WHERE DATE(r.endedOn) BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
-                    AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-                    AND dt.externalId = 'CepheidGeneXpert'
-            GROUP BY d.id
-            HAVING COUNT(DISTINCT r.moduleSerial) < 4 AND COUNT(DISTINCT r.id) >= 20
-  ) AS innerquery
+  SELECT COUNT(DISTINCT deviceid) AS cnt
+    FROM(
+              SELECT d.id AS deviceid
+                FROM Device AS d
+                INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+                INNER JOIN Site AS s ON d.siteId = s.id
+                LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+                INNER JOIN Issue as i ON d.id = i.deviceId
+                INNER JOIN IssueType as it ON i.issueTypeId = it.id
+                INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
+                WHERE 
+          it.externalId = 'unusedModules' AND
+                      ist.externalId NOT IN ('Inactive', 'Resolved') AND
+                      dt.externalId = 'CepheidGeneXpert'
+              GROUP BY d.id
+    ) AS innerquery
   `,
-  statUnit: '{unit} last month',
+  statUnit: 'of {unit} currently reported',
   statUnitI18nKey: 'unusedModulesStats',
   link: '/browse/device',
-  linkParams: {},
+  linkParams: {
+    deviceName: 'GeneXpert',
+    issueTypeId: 'UnusedModules',
+  },
   sortOrder: 6,
   externalId: 'unusedModules',
   description:
-    "Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module.",
+    "Counts devices that didn't use all available module bays for running the most recent 20 results during the last month. This can indicate a faulty module.",
   descriptionI18nKey: 'unusedModulesDescription',
   icon: 'MdSwapVert',
   dashboards: {
@@ -956,7 +973,10 @@ const instrumentsReplaced = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
   link: '/browse/device',
-  linkParams: {},
+  linkParams: {
+    deviceName: 'GeneXpert',
+    issueTypeId: 'InstrumentReplaced',
+  },
   sortOrder: 3,
   externalId: 'instrumentsReplaced',
   description:
@@ -1373,6 +1393,9 @@ const numberOfDevicesExperiencingServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+  },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
   description: `The number of devices experiencing service interruption on this and the previous month.`,
@@ -1460,6 +1483,9 @@ const averageDurationServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+  },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
   description: `The average duration of a service interruption, in days.`,
