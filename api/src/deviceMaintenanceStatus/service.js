@@ -4,22 +4,25 @@ const omit = require('lodash/omit')
 const min = require('lodash/min')
 const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
-const formatISO = require('date-fns/formatISO')
+const format = require('date-fns/format')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
-const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
+const { getArrayOfDaysInRange, getDateSubstring, startOfDayUtc } = require('../shared/date')
 const { formatDate } = require('../stringTemplate/service')
+
 
 async function deviceStatusOverTime(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate } = request.query
+  let { minDate, maxDate } = request.query
+  minDate = startOfDayUtc(minDate).toISOString()
+  maxDate = startOfDayUtc(min([maxDate, addDays(new Date(), 1)])).toISOString()
 
   const days = getArrayOfDaysInRange(
     minDate,
-    min([maxDate, addDays(new Date(), -1)])
+    maxDate
   )
 
   const deviceData = await knex('Device as d')
@@ -31,8 +34,8 @@ async function deviceStatusOverTime(request) {
     .leftJoin('Result as r', query => {
       query
         .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${formatISO(minDate)}'`))
-        .andOn('r.endedOn', '<', knex.raw(`'${formatISO(maxDate)}'`))
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
     })
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
@@ -53,7 +56,7 @@ async function deviceStatusOverTime(request) {
 
   const lastDayStatusesIds = knex('DeviceMaintenanceStatusLog as dmsl2')
     .where('dmsl2.day', '>=', minDate)
-    .where('dmsl2.day', '<', addDays(maxDate, 1))
+    .where('dmsl2.day', '<=', maxDate)
     .groupBy(['dmsl2.deviceId', 'dmsl2.day'])
     .select(knex.raw('MAX(dmsl2.id)'))
     .as('lastDayStatusesIds')
@@ -89,7 +92,7 @@ async function deviceStatusOverTime(request) {
         // Only the statuses in range
         .where(q => {
           q.where('dmsl.day', '>=', minDate)
-          q.where('dmsl.day', '<', addDays(maxDate, 1))
+          q.where('dmsl.day', '<=', maxDate)
           // Only the last status of each device and day
           q.whereIn('dmsl.id', knex.from(lastDayStatusesIds))
           q.where('dtc.hasResults', 1)
@@ -143,18 +146,26 @@ async function deviceStatusOverTime(request) {
       ),
     ])
 
+
+
   statusData = groupBy(
     statusData,
     statusDataItem =>
-      statusDataItem.deviceId + formatDate(statusDataItem.day)
+      statusDataItem.deviceId + getDateSubstring(statusDataItem.day.toISOString())
   )
 
   let data = []
+
+  console.log('day', days[0])
+  console.log(days[0].toISOString())
+  console.log('formatted', format(days[0], 'yyyy-MM-dd'))
+  console.log('formatted 2', getDateSubstring(days[0].toISOString()))
+
   deviceData.forEach(device => {
     const maintenanceStatusHistory = []
 
     days.forEach(day => {
-      const onlyDate = formatDateOrDefault(day)
+      const onlyDate = getDateSubstring(day.toISOString())
 
       let status = {}
       if (statusData[device.id + onlyDate])
