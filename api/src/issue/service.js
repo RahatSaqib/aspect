@@ -68,9 +68,14 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
     const actions = {}
     Object.keys(actionLists).forEach(actionKey => {
       actions[actionKey] = async (action, context) => {
-        actionLists[actionKey].forEach(actionHandler =>
-          actionHandler(action, context)
-        )
+        actionLists[actionKey].forEach((actionHandler, index) => {
+          actionHandler(
+            action,
+            index > 0
+              ? { messageContext: context.messageContext.clone() }
+              : context
+          )
+        })
       }
     })
     return { actions }

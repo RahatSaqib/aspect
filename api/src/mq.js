@@ -328,10 +328,14 @@ class MessageContext {
   constructor(queue, id) {
     this.queue = queue
     this.id = id
-    _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit'])
+    _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit', 'clone'])
     this.transaction = null
     this.actions = []
     this.isFinalState = false
+  }
+
+  clone() {
+    return new MessageContext(this.queue, `${this.id} clone`)
   }
 
   dispatch(action, bindingKey) {
@@ -374,7 +378,7 @@ class MessageContext {
     if (this.isFinalState) {
       throw new Error('Cannot commit after final state, create new context')
     }
-    debug('commit ${this.id}`)
+    debug(`commit ${this.id}`)
     this.transaction = null
     this.actions.forEach(({ action, bindingKey }) =>
       this.dispatch(action, bindingKey)
