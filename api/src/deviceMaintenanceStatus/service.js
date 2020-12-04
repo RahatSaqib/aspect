@@ -102,7 +102,7 @@ async function deviceStatusOverTime(request) {
           )
       }
     )
-    // Join for checking if the current device maintenance status log is the last of the day
+    // Join for checking if the previous different device maintenance status log is the last of it's day
     .leftJoin(
       'DeviceMaintenanceStatusLog as newerDmslOnSameDay_2',
       joinNewerDmslOnSameDay(
