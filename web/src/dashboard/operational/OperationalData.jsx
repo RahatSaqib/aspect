@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import classnames from 'classnames/bind'
+import { useHistory } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
+import find from 'lodash/find'
 
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
@@ -14,6 +16,11 @@ const currentTabStyle = (currentTab, index) =>
   currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
 export const OperationalData = () => {
+  const {
+    location: { pathname },
+    push,
+  } = useHistory()
+
   const CONSTS = {
     dashboard: {
       path: '/operational-data',
@@ -22,7 +29,16 @@ export const OperationalData = () => {
       path: '/operational-data/daily-status',
     },
   }
-  const [currentTab, setCurrentTab] = useState(CONSTS.dailyStatus.path)
+
+  const { path } = find(CONSTS, { path: pathname }) || false
+  const [currentTab, setCurrentTab] = useState(path || CONSTS.dashboard.path)
+
+  useEffect(() => {
+    if (currentTab) {
+      push(currentTab)
+    }
+  }, [currentTab])
+
   return (
     <div className={cssClasses('Container')}>
       <Helmet title="Operational Data" />
