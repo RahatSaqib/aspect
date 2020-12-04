@@ -9,6 +9,22 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
+const DayBlock = ({ dayModifier, consts }) => {
+  const {
+    blockSize: { width: blockWidth, height: blockHeight, marginWidth },
+  } = consts
+  return (
+    <div
+      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
+      style={{
+        width: `${blockWidth}px`,
+        height: `${blockHeight}px`,
+        margin: `0 ${marginWidth / 2}px`,
+      }}
+    />
+  )
+}
+
 const DailyStatusClinicDay = ({
   isWeekend,
   maintenanceStatusI18nKey,
@@ -16,11 +32,7 @@ const DailyStatusClinicDay = ({
   statusses,
   consts,
 }) => {
-  const {
-    blockSize: { width: blockWidth, height: blockHeight, marginWidth },
-    weekend,
-  } = consts
-
+  const { weekend } = consts
   const { checked } =
     _.filter(statusses, {
       i18nKey: maintenanceStatusI18nKey,
@@ -37,27 +49,16 @@ const DailyStatusClinicDay = ({
         : maintenanceStatusI18nKey
   }
 
-  const DayBlock = () => (
-    <div
-      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
-      style={{
-        width: `${blockWidth}px`,
-        height: `${blockHeight}px`,
-        margin: `0 ${marginWidth / 2}px`,
-      }}
-    />
-  )
-
   return checked && daysInSameStatus ? (
     <AspectTooltip
       title={`${daysInSameStatus} Days since last update`}
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock />
+      <DayBlock dayModifier={dayModifier} consts={consts} />
     </AspectTooltip>
   ) : (
-    <DayBlock />
+    <DayBlock dayModifier={dayModifier} consts={consts} />
   )
 }
 
@@ -72,4 +73,4 @@ DailyStatusClinicDay.propTypes = {
   }).isRequired,
 }
 
-export default DailyStatusClinicDay
+export { DailyStatusClinicDay, DayBlock }

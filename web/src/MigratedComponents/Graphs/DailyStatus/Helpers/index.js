@@ -8,6 +8,7 @@ import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import getWeek from 'date-fns/getWeek'
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 function groupDateRanges(data) {
   const output = []
@@ -38,4 +39,8 @@ function getIndex(obj, key, val) {
   return findIndex(obj, { [key]: val })
 }
 
-export { getIndex, groupDateRanges, dateRangeByWeekDay }
+function getTotalDays({ minDate, maxDate }) {
+  return differenceInCalendarDays(new Date(maxDate), new Date(minDate)) + 1
+}
+
+export { getIndex, getTotalDays, groupDateRanges, dateRangeByWeekDay }
