@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import find from 'lodash/find'
+import { defineMessages, useIntl } from 'react-intl'
 
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
@@ -15,7 +16,19 @@ const cssClasses = classnames.bind(require('./OperationalData.css'))
 const currentTabStyle = (currentTab, index) =>
   currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
+const messages = defineMessages({
+  operationalDashboardTitle: {
+    id: 'pages.OperationalDashboard.operationalDashboardTitle',
+    defaultMessage: 'Dashboard',
+  },
+  dailyStatusTitle: {
+    id: 'pages.OperationalDashboard.dailyStatusTitle',
+    defaultMessage: 'Daily Status',
+  },
+})
+
 export const OperationalData = () => {
+  const { formatMessage } = useIntl()
   const {
     location: { pathname },
     push,
@@ -24,9 +37,11 @@ export const OperationalData = () => {
   const CONSTS = {
     dashboard: {
       path: '/operational-data',
+      label: formatMessage(messages.operationalDashboardTitle),
     },
     dailyStatus: {
       path: '/operational-data/daily-status',
+      label: formatMessage(messages.dailyStatusTitle),
     },
   }
 
@@ -50,9 +65,8 @@ export const OperationalData = () => {
           onChange={(e, v) => setCurrentTab(v)}
           TabIndicatorProps={{ style: { height: '0px' } }}
         >
-          {/* TODO: translations */}
           <Tab
-            label="Dashboard"
+            label={CONSTS.dashboard.label}
             className={cssClasses(
               'tabs__tab',
               currentTabStyle(currentTab, CONSTS.dashboard.path)
@@ -60,7 +74,7 @@ export const OperationalData = () => {
             value={CONSTS.dashboard.path}
           />
           <Tab
-            label="Daily Status"
+            label={CONSTS.dailyStatus.label}
             className={cssClasses(
               'tabs__tab',
               currentTabStyle(currentTab, CONSTS.dailyStatus.path)

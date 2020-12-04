@@ -8,7 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
 const DailyStatusFilters = ({
-  toggleAll: { checked, key },
+  toggleAll: { checked, key, label },
   statusses,
   action,
 }) => {
@@ -27,7 +27,7 @@ const DailyStatusFilters = ({
                   value={key}
                 />
               }
-              label="Toggle All"
+              label={label}
             />
           </div>
         </FormGroup>

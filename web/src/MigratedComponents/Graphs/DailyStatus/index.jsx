@@ -1,23 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 import classnames from 'classnames/bind'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { defineMessages, useIntl } from 'react-intl'
 
-// eslint-disable-next-line lodash/import-scope
-import _ from 'lodash'
-import {
-  isWeekend,
-  addDays,
-  format,
-  startOfWeek,
-  getDaysInMonth,
-  getWeeksInMonth,
-  getWeek,
-  isValid,
-} from 'date-fns'
-
-import { groupDateRanges, dateRangeByWeekDay } from './Helpers'
+import { getIndex, dateRangeByWeekDay } from './Helpers'
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
 import DateRanges from './DateRanges'
@@ -28,6 +15,8 @@ import ShellContent from '../../Shell/Content'
 
 import fetchWrapperForQueries from '../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../QueryFetch/Device'
+
+const cssClasses = classnames.bind(require('./DailyStatus.css'))
 
 const CONSTS = {
   weekend: 'weekend',
@@ -41,7 +30,12 @@ const CONSTS = {
   },
 }
 
-const cssClasses = classnames.bind(require('./DailyStatus.css'))
+const messages = defineMessages({
+  dailyStatusToggleAll: {
+    id: 'pages.DailyStatus.dailyStatusToggleAll',
+    defaultMessage: 'Toggle All',
+  },
+})
 
 const Loading = () => (
   <div className={cssClasses('dailystatus__spinner')}>
@@ -50,12 +44,18 @@ const Loading = () => (
 )
 
 const DailyStatus = () => {
+  const { formatMessage } = useIntl()
   const [statusses, setStatusses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
   const [toggleAll, setToggleAll] = useState(false)
   const params = { minDate: '2020-11-01', maxDate: '2020-11-30' }
   const startOfMonth = new Date(params.minDate)
   const dateRanges = dateRangeByWeekDay(startOfMonth)
+  const baseToggleConfig = {
+    checked: true,
+    label: formatMessage(messages.dailyStatusToggleAll),
+    key: 'all',
+  }
 
   const {
     isLoading: devicesIsLoading,
@@ -95,7 +95,7 @@ const DailyStatus = () => {
       setVisibleStatuses(tempStatusses)
     } else {
       const tempStatusses = [...visibleStatuses]
-      const index = _.findIndex(tempStatusses, { i18nKey: name })
+      const index = getIndex(tempStatusses, 'i18nKey', name)
       const currentChecked = tempStatusses[index].checked
       tempStatusses[index].checked = !currentChecked
       setVisibleStatuses(tempStatusses)
@@ -104,14 +104,10 @@ const DailyStatus = () => {
 
   useEffect(() => {
     if (!visibleStatuses) {
-      setToggleAll({
-        checked: true,
-        label: 'toggleAll',
-        key: 'all',
-      })
+      setToggleAll(baseToggleConfig)
       setVisibleStatuses(statusses)
     }
-  }, [statusses, visibleStatuses])
+  }, [statusses, visibleStatuses, baseToggleConfig])
 
   if (devicesIsError) {
     throw new Error(devicesError)
@@ -120,6 +116,8 @@ const DailyStatus = () => {
   if (deviceStatussesIsError) {
     throw new Error(deviceStatussesError)
   }
+
+  console.log(baseToggleConfig)
 
   return (
     <Shell>

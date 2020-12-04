@@ -1,29 +1,27 @@
-// eslint-disable-next-line lodash/import-scope
-import _ from 'lodash'
-import {
-  isWeekend,
-  addDays,
-  format,
-  startOfWeek,
-  getDaysInMonth,
-  getWeeksInMonth,
-  getWeek,
-  isValid,
-} from 'date-fns'
+import map from 'lodash/map'
+import first from 'lodash/first'
+import last from 'lodash/last'
+import range from 'lodash/range'
+import findIndex from 'lodash/findIndex'
+import isWeekend from 'date-fns/isWeekend'
+import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
+import getWeek from 'date-fns/getWeek'
 
 function groupDateRanges(data) {
   const output = []
   const dateFormat = 'd/M'
-  _.map(data, (v, k) => {
-    const min = format(_.first(v), dateFormat)
-    const max = v.length > 1 ? format(_.last(v), dateFormat) : false
+  map(data, (v, k) => {
+    const min = format(first(v), dateFormat)
+    const max = v.length > 1 ? format(last(v), dateFormat) : false
     return output.push({ week: k, min, max, size: v.length })
   })
   return output
 }
 
 function dateRangeByWeekDay(startOfMonth) {
-  const amountOfDays = _.range(0, getDaysInMonth(startOfMonth))
+  const amountOfDays = range(0, getDaysInMonth(startOfMonth))
   return amountOfDays.reduce((acc, curr) => {
     const thisDay = addDays(startOfMonth, curr)
     const weekInt = getWeek(thisDay, { weekStartsOn: 1 })
@@ -36,4 +34,8 @@ function dateRangeByWeekDay(startOfMonth) {
   }, {})
 }
 
-export { groupDateRanges, dateRangeByWeekDay }
+function getIndex(obj, key, val) {
+  return findIndex(obj, { [key]: val })
+}
+
+export { getIndex, groupDateRanges, dateRangeByWeekDay }
