@@ -54,7 +54,18 @@ async function deviceStatusOverTime(request) {
       knex.raw('COUNT(r.id) as totalResults'),
     ])
 
-  let statusDataQ = knex('Device as d')
+  const joinNewerDmslOnSameDay = (leftAlias, rightAlias) => join =>
+    join.on(`${leftAlias}.deviceId`, `${rightAlias}.deviceId`)
+      .andOn(`${leftAlias}.day`, `${rightAlias}.day`)
+      .andOn(and => {
+        and.andOn(`${leftAlias}.createdOn`, '<', `${rightAlias}.createdOn`)
+          .orOn(or => {
+            or.andOn(`${leftAlias}.createdOn`, '=', `${rightAlias}.createdOn`)
+              .andOn(`${leftAlias}.id`, '<', `${rightAlias}.id`)
+          })
+      })
+
+  let statusData = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
@@ -74,17 +85,7 @@ async function deviceStatusOverTime(request) {
       'dms.id'
     )
     // Join for checking if the current device maintenance status log is the last of the day
-    .leftJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', join => {
-      join.on('dmsl.deviceId', 'newerDmslOnSameDay.deviceId')
-        .andOn('dmsl.day', 'newerDmslOnSameDay.day')
-        .andOn(and => {
-          and.andOn('dmsl.createdOn', '<', 'newerDmslOnSameDay.createdOn')
-            .orOn(or => {
-              or.andOn('dmsl.createdOn', '=', 'newerDmslOnSameDay.createdOn')
-                .andOn('dmsl.id', '<', 'newerDmslOnSameDay.id')
-            })
-        })
-    })
+    .leftJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', joinNewerDmslOnSameDay('dmsl', 'newerDmslOnSameDay'))
     // Join for getting the last different status before the current one, so then we can calculate the number of days in the same status
     .leftJoin('DeviceMaintenanceStatusLog as previousDmslWithDifferentStatus', join => {
       join
@@ -97,17 +98,7 @@ async function deviceStatusOverTime(request) {
         )
     })
     // Join for checking if the current device maintenance status log is the last of the day
-    .leftJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay_2', join => {
-      join.on('previousDmslWithDifferentStatus.deviceId', 'newerDmslOnSameDay_2.deviceId')
-        .andOn('previousDmslWithDifferentStatus.day', 'newerDmslOnSameDay_2.day')
-        .andOn(and => {
-          and.andOn('previousDmslWithDifferentStatus.createdOn', '<', 'newerDmslOnSameDay_2.createdOn')
-            .orOn(or => {
-              or.andOn('previousDmslWithDifferentStatus.createdOn', '=', 'newerDmslOnSameDay_2.createdOn')
-                .andOn('previousDmslWithDifferentStatus.id', '<', 'newerDmslOnSameDay_2.id')
-            })
-        })
-    })
+    .leftJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay_2', joinNewerDmslOnSameDay('previousDmslWithDifferentStatus', 'newerDmslOnSameDay_2'))
     // Where maintenance status log is in range
     .where('dmsl.day', '>=', minDate)
     .where('dmsl.day', '<=', maxDate)
@@ -135,10 +126,6 @@ async function deviceStatusOverTime(request) {
         'IFNULL(DATEDIFF(dmsl.day, MAX(previousDmslWithDifferentStatus.day)), 1) as daysInSameStatus'
       ),
     ])
-
-  console.log(statusDataQ.toString())
-
-  let statusData = await statusDataQ
 
   statusData = groupBy(
     statusData,
