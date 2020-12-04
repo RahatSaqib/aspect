@@ -19,12 +19,13 @@ import {
 
 import { groupDateRanges, dateRangeByWeekDay } from './Helpers'
 import DailyStatusFilters from './DailyStatusFilters'
+import DailyStatusClinic from './DailyStatusClinic'
 import DateRanges from './DateRanges'
 
 import Shell from '../../Shell'
 import ShellHeader from '../../Shell/Header'
 import ShellContent from '../../Shell/Content'
-import AspectTooltip from '../../../components/shared/AspectTooltip'
+
 import fetchWrapperForQueries from '../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../QueryFetch/Device'
 
@@ -47,91 +48,6 @@ const Loading = () => (
     <CircularProgress />
   </div>
 )
-
-const ClinicDay = ({
-  isWeekend,
-  maintenanceStatusI18nKey,
-  daysInSameStatus,
-  statusses,
-}) => {
-  const {
-    blockSize: { width: blockWidth, height: blockHeight, marginWidth },
-    weekend,
-  } = CONSTS
-
-  const { checked } =
-    _.filter(statusses, {
-      i18nKey: maintenanceStatusI18nKey,
-    })[0] || false
-
-  let dayModifier = isWeekend ? weekend : null
-  if (checked) {
-    dayModifier =
-      maintenanceStatusI18nKey === 'active' ||
-      maintenanceStatusI18nKey === 'reportedActive'
-        ? maintenanceStatusI18nKey
-        : isWeekend
-        ? weekend
-        : maintenanceStatusI18nKey
-  }
-
-  const DayBlock = () => (
-    <div
-      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
-      style={{
-        width: `${blockWidth}px`,
-        height: `${blockHeight}px`,
-        margin: `0 ${marginWidth / 2}px`,
-      }}
-    />
-  )
-
-  return checked && daysInSameStatus ? (
-    <AspectTooltip
-      title={`${daysInSameStatus} Days since last update`}
-      toolTipContainerClass="inline__tooltip"
-      placement="right"
-    >
-      <DayBlock />
-    </AspectTooltip>
-  ) : (
-    <DayBlock />
-  )
-}
-
-const Clinic = ({ name, data, total, statusses }) => {
-  const {
-    blockSize: { height: blockHeight, marginWidth },
-    totalBlockSize: { width: totalBlockWidth },
-  } = CONSTS
-  return (
-    <div className={cssClasses('clinic__container')}>
-      <div className={cssClasses('clinic__name')}>{name}</div>
-      <div className={cssClasses('clinic__dayrow')}>
-        {data.map(
-          ({ isWeekend, maintenanceStatusI18nKey, daysInSameStatus }) => (
-            <ClinicDay
-              isWeekend={isWeekend}
-              maintenanceStatusI18nKey={maintenanceStatusI18nKey}
-              daysInSameStatus={daysInSameStatus}
-              statusses={statusses}
-            />
-          )
-        )}
-        <div
-          className={cssClasses('clinic__testtotal')}
-          style={{
-            minWidth: totalBlockWidth,
-            height: blockHeight,
-            margin: `0 ${marginWidth / 2}px`,
-          }}
-        >
-          {total}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 const DailyStatus = () => {
   const [statusses, setStatusses] = useState(false)
@@ -218,11 +134,12 @@ const DailyStatus = () => {
             <DateRanges data={dateRanges} consts={CONSTS} />
             {devicesDaily.map(
               ({ name, maintenanceStatusHistory, totalResults }) => (
-                <Clinic
+                <DailyStatusClinic
                   name={name}
                   data={maintenanceStatusHistory}
                   total={totalResults}
                   statusses={visibleStatuses}
+                  consts={CONSTS}
                 />
               )
             )}

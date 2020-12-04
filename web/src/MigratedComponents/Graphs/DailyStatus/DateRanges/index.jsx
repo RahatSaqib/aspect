@@ -42,6 +42,7 @@ const DateRanges = ({ data, consts }) => {
             width: `${totalBlockWidth}px`,
           }}
         >
+          {/* TODO: Translations */}
           Tests
         </div>
       </div>
