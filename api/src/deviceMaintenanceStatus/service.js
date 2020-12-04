@@ -61,10 +61,21 @@ async function deviceStatusOverTime(request) {
     .select(knex.raw('MAX(dmsl2.id)'))
     .as('lastDayStatusesIds')
 
-  const lastDayStatuses = knex(`DeviceMaintenanceStatusLog`)
-    .whereIn('id', knex.from(lastDayStatusesIds))
-    .groupBy([`deviceId`, `day`])
-    .select(['deviceId', 'day', 'deviceMaintenanceStatusId'])
+  const lastDayStatuses = knex(`DeviceMaintenanceStatusLog as dmsl`)
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl2', q => {
+      q.on('dmsl.deviceId', 'dmsl2.deviceId')
+        .andOn('dmsl.day', 'dmsl2.day')
+        .andOn(q2 => {
+          q2.andOn('dmsl.createdOn', '<', 'dmsl2.day')
+            .orOn(q3 => {
+              q3.andOn('dmsl.createdOn', '=', 'dmsl2.id')
+                .andOn('dmsl.id', '<', 'dmsl2.id')
+            })
+        })
+    })
+    .whereNull('dmsl2.id')
+    .groupBy([`dmsl.deviceId`, `dmsl.day`, 'dmsl.deviceMaintenanceStatusId'])
+    .select(['dmsl.deviceId', 'dmsl.day', 'dmsl.deviceMaintenanceStatusId'])
     .as('lastDayStatus')
 
   let statusData = await knex
