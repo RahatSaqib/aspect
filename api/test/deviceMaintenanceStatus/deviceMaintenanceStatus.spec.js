@@ -20,8 +20,8 @@ const {
   allDeviceMaintenanceStatusToId,
 } = require('../../src/shared/dictionary')
 
-describe('Device Maintenance Status', () => {
-  const path = '/api/device-maintenance-status/over-time'
+describe.only('Maintenance', () => {
+  const path = '/api/maintenance/over-time'
   let context
   let deviceId
 
@@ -30,7 +30,7 @@ describe('Device Maintenance Status', () => {
   const now = new Date()
   const monthAgo = subDays(now, 30)
 
-  describe('GET', () => {
+  describe('Over Time', () => {
     afterEach(async () => {
       await context.cleanUp()
     })

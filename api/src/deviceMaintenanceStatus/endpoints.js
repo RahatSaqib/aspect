@@ -6,7 +6,7 @@ const { deviceStatusOverTime } = require('./service')
 const routes = [
   {
     method: 'GET',
-    path: '/device-maintenance-status/over-time',
+    path: '/maintenance/over-time',
     handler: asyncHandler(deviceStatusOverTime),
     config: {
       description: 'Device Status Over Time',
