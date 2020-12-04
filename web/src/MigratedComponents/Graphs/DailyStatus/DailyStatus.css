@@ -1,121 +1,149 @@
 .clinic__container {
-    display: flex;
+  display: flex;
 }
 
-.clinic__name { 
-    min-width: 290px; 
-    text-align: right; 
-    padding: 5px 10px 5px 0;
+.clinic__name {
+  min-width: 330px;
+  text-align: right;
+  padding: 5px 10px 5px 0;
 }
 
 .clinic__dayrow {
-    display: flex;
-    padding: 5px 0;
+  display: flex;
+  padding: 5px 0;
 }
 
 .clinic__day {
-    /* width: 19px;
-    height: 15px; */
-    background: white;
-    /* margin: 0 3px; */
+  background-color: white;
+  transition: background-color 5s ease;
 }
+
+.clinic__day--null {
+  background-color: transparent;
+}
+
 /* 
-  '--aspect-device-active': odActive,
-  '--aspect-device-stockout': odStockOut,
-  '--aspect-device-no-staff': odNoStaff,
-  '--aspect-device-needs-repair': odNeedsRepair,
-  '--aspect-device-connectivity': odDeviceConnectivity,
-  '--aspect-device-unknown': odUnknown,
-  '--aspect-device-transfer-time': odTransferTime,
-  '--aspect-device-weekend': odWeekend,
-
-  '--aspect-device-inactiveNoResultsReported': stormGray,
-  '--aspect-device-inactiveDecommissioned': shipCove,
-  '--aspect-device-inactiveOutOfInventory': anakiwa,
-
-  { id: 30, externalId: 'devicesActive', color: odActive },
-  { id: 31, externalId: 'weekendOrHoliday', color: odWeekend },
-  { id: 32, externalId: 'devicesNeedsRepair', color: odNeedsRepair },
-  { id: 33, externalId: 'devicesUnknown', color: odUnknown },
-  { id: 34, externalId: 'devicesStockOut', color: odStockOut },
-  { id: 40, externalId: 'inactiveUnknown', color: odUnknown },
-  { id: 41, externalId: 'inactiveConnectivity', color: odDeviceConnectivity },
-  { id: 42, externalId: 'inactiveDecommissioned', color: shipCove },
-  { id: 43, externalId: 'inactiveDownForRepair', color: odNeedsRepair },
-  { id: 44, externalId: 'inactiveNoResultsReported', color: stormGray },
-  { id: 45, externalId: 'inactiveOutOfInventory', color: anakiwa },
-  { id: 46, externalId: 'inactiveNoStaff', color: odNoStaff }, */
-
-
-  /* inactive
-downForRepair
-unknown
-noResultsReported */
+ * Statusses targeted:
+ * active
+ * reportedActive
+ * inactiveUnknown
+ * inactiveNoResultsReported
+ * inactiveOutOfInventory
+ * inactiveDownForRepair
+ * inactiveConnectivity
+ * inactiveDecommissioned
+ */
 
 .clinic__day--weekend {
-    background: var('--aspect-device-weekend');
+  background-color: var('--aspect-device-weekend');
 }
 
-.clinic__day--active {
-    background: var('--aspect-device-active');
+.clinic__day--active,
+.clinic__day--reportedActive {
+  background-color: var('--aspect-device-active');
 }
 
 .clinic__day--inactive {
-    background: var('--aspect-device-connectivity');
+  background-color: var('--aspect-device-connectivity');
 }
 
-.clinic__day--downForRepair {
-    background: var('--aspect-device-needs-repair');
+.clinic__day--inactiveNoResultsReported {
+  background-color: var('--storm-gray');
 }
 
-.clinic__day--unknown{
-    background: #ffffff;
-    border: 1px solid black;
+.clinic__day--inactiveDownForRepair {
+  background-color: var('--aspect-device-needs-repair');
 }
 
-.clinic__day--unknown:after{
-  content:"";
-  position:absolute;
+.clinic__day--inactiveUnknown {
+  background-color: #ffffff;
+  border: 1px solid black;
+}
+
+.clinic__day--inactiveUnknown:after {
+  content: '';
+  position: absolute;
   margin-top: -0.5px;
-  border-top:1px solid black;
-  width:22px;
+  border-top: 1px solid black;
+  width: 22px;
   transform: rotate(36deg);
   transform-origin: 0% 0%;
 }
 
+.clinic__day--inactiveOutOfInventory {
+  background-color: var('--aspect-device-inactiveOutOfInventory');
+}
+
 .clinic__day--noResultsReported {
-    background: var('--aspect-device-transfer-time');
+  background-color: var('--aspect-device-inactiveNoResultsReported');
+}
+
+.clinic__day--inactiveConnectivity {
+  background-color: var('--aspect-device-connectivity');
+}
+
+.clinic__day--inactiveDecommissioned {
+  background-color: var('--aspect-device-inactiveDecommissioned');
 }
 
 .clinic__testtotal {
-    width: 35px;
-    padding: 0 5px;
-    background: #333333;
-    color: white;
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 25px;
+  background: #333333;
+  color: white;
+  font-size: 11px;
 }
 
 .dates__row {
-    display: flex;
-    height: 30px;
-    /* font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center; */
+  display: flex;
+  height: 30px;
 }
 
 .dates__spacer {
-    width: 290px; 
-    padding-right: 10px;
+  width: 330px;
 }
 
-.dates__dayContainer{
-    display: flex;
+.dates__dayContainer {
+  display: flex;
 }
 
-.dates__dayBlock{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
+.dates__dayBlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.statusses__spacer {
+  width: 345px;
+}
+
+.statusses__row {
+  display: flex;
+  height: 100px;
+}
+
+.statusses__container {
+  margin: 20px 18px;
+}
+
+.statusses__status {
+  width: 70%;
+}
+
+.statusses__statusroot {
+  margin-top: 5px;
+}
+
+.statusses__statuslabel {
+  margin-right: 10px;
+}
+
+.dailystatus__spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
