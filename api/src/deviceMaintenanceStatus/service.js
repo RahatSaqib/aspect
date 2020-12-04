@@ -54,21 +54,14 @@ async function deviceStatusOverTime(request) {
       knex.raw('COUNT(r.id) as totalResults'),
     ])
 
-  const lastDayStatusesIds = knex('DeviceMaintenanceStatusLog as dmsl2')
-    .where('dmsl2.day', '>=', minDate)
-    .where('dmsl2.day', '<=', maxDate)
-    .groupBy(['dmsl2.deviceId', 'dmsl2.day'])
-    .select(knex.raw('MAX(dmsl2.id)'))
-    .as('lastDayStatusesIds')
-
   const lastDayStatuses = knex(`DeviceMaintenanceStatusLog as dmsl`)
-    .leftJoin('DeviceMaintenanceStatusLog as dmsl2', q => {
-      q.on('dmsl.deviceId', 'dmsl2.deviceId')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl2', join => {
+      join.on('dmsl.deviceId', 'dmsl2.deviceId')
         .andOn('dmsl.day', 'dmsl2.day')
-        .andOn(q2 => {
-          q2.andOn('dmsl.createdOn', '<', 'dmsl2.day')
-            .orOn(q3 => {
-              q3.andOn('dmsl.createdOn', '=', 'dmsl2.id')
+        .andOn(and => {
+          and.andOn('dmsl.createdOn', '<', 'dmsl2.day')
+            .orOn(or => {
+              or.andOn('dmsl.createdOn', '=', 'dmsl2.id')
                 .andOn('dmsl.id', '<', 'dmsl2.id')
             })
         })
@@ -78,86 +71,74 @@ async function deviceStatusOverTime(request) {
     .select(['dmsl.deviceId', 'dmsl.day', 'dmsl.deviceMaintenanceStatusId'])
     .as('lastDayStatus')
 
-  let statusData = await knex
-    // all devices
-    .from(
-      knex('Device as d')
-        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-        .innerJoin('Geography as g', 'd.geographyId', 'g.id')
-        .innerJoin('Partner as p', 'd.partnerId', 'p.id')
-        .modify(addConstraints, dataConstraints, {
-          partner: 'p',
-          geography: 'g',
-        })
-        .innerJoin(
-          'DeviceMaintenanceStatusLog as dmsl',
-          'd.id',
-          'dmsl.deviceId'
-        )
-        .innerJoin(
-          'DeviceMaintenanceStatus as dms',
-          'dmsl.deviceMaintenanceStatusId',
-          'dms.id'
-        )
-        // Only the statuses in range
-        .where(q => {
-          q.where('dmsl.day', '>=', minDate)
-          q.where('dmsl.day', '<=', maxDate)
-          // Only the last status of each device and day
-          q.whereIn('dmsl.id', knex.from(lastDayStatusesIds))
-          q.where('dtc.hasResults', 1)
-        })
-        .groupBy([
-          'd.id',
-          'dmsl.createdOn',
-          'dmsl.day',
-          'dms.i18nKey',
-          'dms.name',
-          'dms.externalId',
-        ])
-        .orderBy(['d.name', 'dmsl.day'])
-        .select([
-          'd.id as deviceId',
-          'dmsl.day',
-          'dms.i18nKey as maintenanceStatusI18nKey',
-          'dms.name as maintenanceStatusName',
-          'dms.externalId as maintenanceStatusExternalId',
-          'dms.id as maintenanceStatusId',
-        ])
-        .as('q')
+  let statusData = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .modify(addConstraints, dataConstraints, {
+      partner: 'p',
+      geography: 'g',
+    })
+    .innerJoin(
+      'DeviceMaintenanceStatusLog as dmsl',
+      'd.id',
+      'dmsl.deviceId'
     )
-    // for each device and day, join the last log when the status was previous and different than the current one
+    .innerJoin(
+      'DeviceMaintenanceStatus as dms',
+      'dmsl.deviceMaintenanceStatusId',
+      'dms.id'
+    )
+    // Join for checking if the current device maintenance status log is the last of the day
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl2', join => {
+      join.on('dmsl.deviceId', 'dmsl2.deviceId')
+        .andOn('dmsl.day', 'dmsl2.day')
+        .andOn(and => {
+          and.andOn('dmsl.createdOn', '<', 'dmsl2.day')
+            .orOn(or => {
+              or.andOn('dmsl.createdOn', '=', 'dmsl2.id')
+                .andOn('dmsl.id', '<', 'dmsl2.id')
+            })
+        })
+    })
+    // Join for getting the last different status before the current one, so then we can calculate the number of days in the same status
     .leftJoin(lastDayStatuses, query => {
       query
-        .on('q.deviceId', 'lastDayStatus.deviceId')
-        .andOn('q.day', '>=', 'lastDayStatus.day')
+        .on('dmsl.deviceId', 'lastDayStatus.deviceId')
+        .andOn('dmsl.day', '>=', 'lastDayStatus.day')
         .andOn(
-          'q.maintenanceStatusId',
+          'dms.id',
           '!=',
           'lastDayStatus.deviceMaintenanceStatusId'
         )
     })
+    // Where maintenance status log is in range
+    .where('dmsl.day', '>=', minDate)
+    .where('dmsl.day', '<=', maxDate)
+    // Only get the devices of category types that perform tests
+    .where('dtc.hasResults', 1)
+    // Only get the current device maintenance status log if the device hasn't any newer statuses the same day (Only the last status of each device and day)
+    .whereNull('dmsl2.id')
+    // Grouped by device and day
     .groupBy([
-      'q.deviceId',
-      'q.day',
-      'q.maintenanceStatusI18nKey',
-      'q.maintenanceStatusName',
-      'q.maintenanceStatusExternalId',
-      'q.maintenanceStatusId',
+      'd.id',
+      'dmsl.day',
+      'dms.i18nKey',
+      'dms.name',
+      'dms.externalId',
+      'dms.id',
     ])
     .select([
-      'q.deviceId',
-      'q.day',
-      'q.maintenanceStatusI18nKey',
-      'q.maintenanceStatusName',
-      'q.maintenanceStatusExternalId',
+      'd.id as deviceId',
+      'dmsl.day',
+      'dms.i18nKey as maintenanceStatusI18nKey',
+      'dms.name as maintenanceStatusName',
+      'dms.externalId as maintenanceStatusExternalId',
       knex.raw(
-        'IFNULL(DATEDIFF(q.day, MAX(lastDayStatus.day)), 1) as daysInSameStatus'
+        'IFNULL(DATEDIFF(dmsl.day, MAX(lastDayStatus.day)), 1) as daysInSameStatus'
       ),
     ])
-
-
 
   statusData = groupBy(
     statusData,
@@ -166,12 +147,6 @@ async function deviceStatusOverTime(request) {
   )
 
   let data = []
-
-  console.log('day', days[0])
-  console.log(days[0].toISOString())
-  console.log('formatted', format(days[0], 'yyyy-MM-dd'))
-  console.log('formatted 2', getDateSubstring(days[0].toISOString()))
-
   deviceData.forEach(device => {
     const maintenanceStatusHistory = []
 
