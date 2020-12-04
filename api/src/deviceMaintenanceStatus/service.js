@@ -4,14 +4,15 @@ const omit = require('lodash/omit')
 const min = require('lodash/min')
 const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
-const format = require('date-fns/format')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
-const { getArrayOfDaysInRange, getDateSubstring, startOfDayUtc } = require('../shared/date')
-const { formatDate } = require('../stringTemplate/service')
-
+const {
+  getArrayOfDaysInRange,
+  getDateSubstring,
+  startOfDayUtc,
+} = require('../shared/date')
 
 async function deviceStatusOverTime(request) {
   const { auth } = request
@@ -20,10 +21,7 @@ async function deviceStatusOverTime(request) {
   minDate = startOfDayUtc(minDate).toISOString()
   maxDate = startOfDayUtc(min([maxDate, addDays(new Date(), 1)])).toISOString()
 
-  const days = getArrayOfDaysInRange(
-    minDate,
-    maxDate
-  )
+  const days = getArrayOfDaysInRange(minDate, maxDate)
 
   const deviceData = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -55,13 +53,18 @@ async function deviceStatusOverTime(request) {
     ])
 
   const joinNewerDmslOnSameDay = (leftAlias, rightAlias) => join =>
-    join.on(`${leftAlias}.deviceId`, `${rightAlias}.deviceId`)
+    join
+      .on(`${leftAlias}.deviceId`, `${rightAlias}.deviceId`)
       .andOn(`${leftAlias}.day`, `${rightAlias}.day`)
       .andOn(and => {
-        and.andOn(`${leftAlias}.createdOn`, '<', `${rightAlias}.createdOn`)
+        and
+          .andOn(`${leftAlias}.createdOn`, '<', `${rightAlias}.createdOn`)
           .orOn(or => {
-            or.andOn(`${leftAlias}.createdOn`, '=', `${rightAlias}.createdOn`)
-              .andOn(`${leftAlias}.id`, '<', `${rightAlias}.id`)
+            or.andOn(
+              `${leftAlias}.createdOn`,
+              '=',
+              `${rightAlias}.createdOn`
+            ).andOn(`${leftAlias}.id`, '<', `${rightAlias}.id`)
           })
       })
 
@@ -74,31 +77,39 @@ async function deviceStatusOverTime(request) {
       partner: 'p',
       geography: 'g',
     })
-    .innerJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.id',
-      'dmsl.deviceId'
-    )
+    .innerJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
     .innerJoin(
       'DeviceMaintenanceStatus as dms',
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
     // Join for checking if the current device maintenance status log is the last of the day
-    .leftJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', joinNewerDmslOnSameDay('dmsl', 'newerDmslOnSameDay'))
+    .leftJoin(
+      'DeviceMaintenanceStatusLog as newerDmslOnSameDay',
+      joinNewerDmslOnSameDay('dmsl', 'newerDmslOnSameDay')
+    )
     // Join for getting the last different status before the current one, so then we can calculate the number of days in the same status
-    .leftJoin('DeviceMaintenanceStatusLog as previousDmslWithDifferentStatus', join => {
-      join
-        .on('dmsl.deviceId', 'previousDmslWithDifferentStatus.deviceId')
-        .andOn('dmsl.day', '>', 'previousDmslWithDifferentStatus.day')
-        .andOn(
-          'dmsl.deviceMaintenanceStatusId',
-          '!=',
-          'previousDmslWithDifferentStatus.deviceMaintenanceStatusId'
-        )
-    })
+    .leftJoin(
+      'DeviceMaintenanceStatusLog as previousDmslWithDifferentStatus',
+      join => {
+        join
+          .on('dmsl.deviceId', 'previousDmslWithDifferentStatus.deviceId')
+          .andOn('dmsl.day', '>', 'previousDmslWithDifferentStatus.day')
+          .andOn(
+            'dmsl.deviceMaintenanceStatusId',
+            '!=',
+            'previousDmslWithDifferentStatus.deviceMaintenanceStatusId'
+          )
+      }
+    )
     // Join for checking if the current device maintenance status log is the last of the day
-    .leftJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay_2', joinNewerDmslOnSameDay('previousDmslWithDifferentStatus', 'newerDmslOnSameDay_2'))
+    .leftJoin(
+      'DeviceMaintenanceStatusLog as newerDmslOnSameDay_2',
+      joinNewerDmslOnSameDay(
+        'previousDmslWithDifferentStatus',
+        'newerDmslOnSameDay_2'
+      )
+    )
     // Where maintenance status log is in range
     .where('dmsl.day', '>=', minDate)
     .where('dmsl.day', '<=', maxDate)
@@ -130,7 +141,8 @@ async function deviceStatusOverTime(request) {
   statusData = groupBy(
     statusData,
     statusDataItem =>
-      statusDataItem.deviceId + getDateSubstring(statusDataItem.day.toISOString())
+      statusDataItem.deviceId +
+      getDateSubstring(statusDataItem.day.toISOString())
   )
 
   let data = []
