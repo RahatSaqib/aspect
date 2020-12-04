@@ -19,7 +19,7 @@ const {
 
 async function getIssueEventTriggerSubscriptions({ messageContext }) {
   return messageContext.run(async knex => {
-    const actionLists = await knex('IssueEventTrigger as iet')
+    const actionParameters = await knex('IssueEventTrigger as iet')
       .join('IssueType as it', 'it.id', 'iet.issueTypeId')
       .join('IssueEventStatus as ies', 'ies.id', 'iet.issueEventStatusId')
       .distinct(
@@ -46,17 +46,22 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
               if (issueEventStatus === 'Triggered') {
                 memo[action] = [
                   ...(memo[action] || []),
-                  onIssueEventTrigger(
+                  {
                     partnerId,
                     issueType,
                     triggerConditions,
-                    filterIssueCondition
-                  ),
+                    filterIssueCondition,
+                    issueEventStatus,
+                  },
                 ]
               } else if (issueEventStatus === 'Resolved') {
                 memo[action] = [
                   ...(memo[action] || []),
-                  onIssueEventResolve(issueType, filterIssueCondition),
+                  {
+                    issueType,
+                    filterIssueCondition,
+                    issueEventStatus,
+                  },
                 ]
               }
             }
@@ -66,129 +71,118 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
         )
       )
     const actions = {}
-    Object.keys(actionLists).forEach(actionKey => {
-      actions[actionKey] = async (action, context) => {
-        actionLists[actionKey].forEach((actionHandler, index) => {
-          actionHandler(
-            action,
-            index > 0
-              ? { messageContext: context.messageContext.clone() }
-              : context
-          )
-        })
-      }
+    Object.keys(actionParameters).forEach(actionKey => {
+      actions[actionKey] = onIssueEvent(actionParameters[actionKey])
     })
     return { actions }
   })
 }
 
-function onIssueEventTrigger(
-  partnerId,
-  issueType,
-  triggerConditions,
-  filterIssueCondition = null
-) {
+function onIssueEvent(actionParametersList) {
   return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueCreated, issueTriggered })
-
+    context.bindActionCreators({ issueCreated, issueTriggered, issueResolved })
     return context.transact(async knex => {
-      const shouldTriggerEvent = await actionConditionsMet(
-        knex,
-        action,
-        partnerId,
-        JSON.parse(triggerConditions).conditions
-      )
+      return Promise.each(actionParametersList, async actionParameters => {
+        if (actionParameters.issueEventStatus === 'Triggered') {
+          const {
+            partnerId,
+            issueType,
+            triggerConditions,
+            filterIssueCondition = null,
+          } = actionParameters
+          const shouldTriggerEvent = await actionConditionsMet(
+            knex,
+            action,
+            partnerId,
+            JSON.parse(triggerConditions).conditions
+          )
 
-      if (shouldTriggerEvent) {
-        const now = new Date()
-        const openIssue = await findOpenIssue(
-          knex,
-          issueType,
-          action,
-          JSON.parse(filterIssueCondition)
-        )
-        let issue = null
-        if (openIssue) {
-          // ----------------------
-          // check special usecase
-          const { type, options = {} } = action
-          if (type === 'INVENTORY_STOCKOUT') {
-            // get new value for daysDue
-            const { daysDue: daysDueNew } = options
-            // get stringified json of saved action.options from last time
-            const { data } = openIssue
-            if (data) {
-              const d = JSON.parse(data)
-              // get old value for daysDue
-              const { daysDue: daysDueOld } = d || {}
-              // if new and old values are 0 - exit because it means we already triggered issue after StockLevel = 0
-              // (i.e. daysDueOld is already 0) and no need to re-trigger it and update Issue table with new value of
-              // 'data' column with today's date (which is used then to refresh message in AlertMessage table).
-              // This is what customer requested to not happen, see jira ticket SD-804 for details
-              if (daysDueOld === 0 && daysDueNew === 0) {
-                return
+          if (shouldTriggerEvent) {
+            const now = new Date()
+            const openIssue = await findOpenIssue(
+              knex,
+              issueType,
+              action,
+              JSON.parse(filterIssueCondition)
+            )
+            let issue = null
+            if (openIssue) {
+              // ----------------------
+              // check special usecase
+              const { type, options = {} } = action
+              if (type === 'INVENTORY_STOCKOUT') {
+                // get new value for daysDue
+                const { daysDue: daysDueNew } = options
+                // get stringified json of saved action.options from last time
+                const { data } = openIssue
+                if (data) {
+                  const d = JSON.parse(data)
+                  // get old value for daysDue
+                  const { daysDue: daysDueOld } = d || {}
+                  // if new and old values are 0 - exit because it means we already triggered issue after StockLevel = 0
+                  // (i.e. daysDueOld is already 0) and no need to re-trigger it and update Issue table with new value of
+                  // 'data' column with today's date (which is used then to refresh message in AlertMessage table).
+                  // This is what customer requested to not happen, see jira ticket SD-804 for details
+                  if (daysDueOld === 0 && daysDueNew === 0) {
+                    return
+                  }
+                }
+              }
+              // ----------------------
+              issue = await mergeActionData(knex, openIssue, action)
+            } else {
+              issue = await createNewIssue(knex, issueType, action)
+              if (issue != null) {
+                context.issueCreated(issue.id)
               }
             }
+
+            await knex('IssueEvent').insert({
+              issueId: issue == null ? null : issue.id,
+              issueEventStatusId: await issueEventStatusToId('Triggered'),
+              data: JSON.stringify(action),
+              createdOn: now,
+            })
+
+            if (issue != null) {
+              context.issueTriggered(issue.id)
+            }
           }
-          // ----------------------
-          issue = await mergeActionData(knex, openIssue, action)
-        } else {
-          issue = await createNewIssue(knex, issueType, action)
-          if (issue != null) {
-            context.issueCreated(issue.id)
+        } else if (actionParameters.issueEventStatus === 'Resolved') {
+          const { issueType, filterIssueCondition } = actionParameters
+          const now = new Date()
+          const issue = await findOpenIssue(
+            knex,
+            issueType,
+            action,
+            filterIssueCondition
+          )
+          const hasTrigger =
+            issue != null &&
+            issue.partnerId &&
+            (await hasIssueEventTrigger(knex, {
+              partnerId: issue.partnerId,
+              issueType,
+              action,
+              issueEventStatus: 'Resolved',
+            }))
+          if (hasTrigger) {
+            await knex('Issue')
+              .where({ id: issue.id })
+              .update({
+                issueStatusId: await issueStatusToId('Resolved'),
+                updatedOn: now,
+              })
+            context.issueResolved(issue.id)
+            await knex('IssueEvent').insert({
+              issueId: issue.id,
+              issueEventStatusId: await issueEventStatusToId('Resolved'),
+              data: JSON.stringify(action),
+              createdOn: now,
+            })
           }
         }
-
-        await knex('IssueEvent').insert({
-          issueId: issue == null ? null : issue.id,
-          issueEventStatusId: await issueEventStatusToId('Triggered'),
-          data: JSON.stringify(action),
-          createdOn: now,
-        })
-
-        if (issue != null) {
-          context.issueTriggered(issue.id)
-        }
-      }
-    })
-  }
-}
-
-function onIssueEventResolve(issueType, filterIssueCondition) {
-  return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueResolved })
-    context.transact(async knex => {
-      const now = new Date()
-      const issue = await findOpenIssue(
-        knex,
-        issueType,
-        action,
-        filterIssueCondition
-      )
-      const hasTrigger =
-        issue != null &&
-        issue.partnerId &&
-        (await hasIssueEventTrigger(knex, {
-          partnerId: issue.partnerId,
-          issueType,
-          action,
-          issueEventStatus: 'Resolved',
-        }))
-      if (hasTrigger) {
-        await knex('Issue')
-          .where({ id: issue.id })
-          .update({
-            issueStatusId: await issueStatusToId('Resolved'),
-            updatedOn: now,
-          })
-        context.issueResolved(issue.id)
-        await knex('IssueEvent').insert({
-          issueId: issue.id,
-          issueEventStatusId: await issueEventStatusToId('Resolved'),
-          data: JSON.stringify(action),
-          createdOn: now,
-        })
-      }
+      })
     })
   }
 }
