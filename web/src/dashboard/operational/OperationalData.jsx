@@ -14,7 +14,15 @@ const currentTabStyle = (currentTab, index) =>
   currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
 export const OperationalData = () => {
-  const [currentTab, setCurrentTab] = useState(1)
+  const CONSTS = {
+    dashboard: {
+      path: '/operational-data',
+    },
+    dailyStatus: {
+      path: '/operational-data/daily-status',
+    },
+  }
+  const [currentTab, setCurrentTab] = useState(CONSTS.dailyStatus.path)
   return (
     <div className={cssClasses('Container')}>
       <Helmet title="Operational Data" />
@@ -29,16 +37,26 @@ export const OperationalData = () => {
           {/* TODO: translations */}
           <Tab
             label="Dashboard"
-            className={cssClasses('tabs__tab', currentTabStyle(currentTab, 0))}
+            className={cssClasses(
+              'tabs__tab',
+              currentTabStyle(currentTab, CONSTS.dashboard.path)
+            )}
+            value={CONSTS.dashboard.path}
           />
           <Tab
             label="Daily Status"
-            className={cssClasses('tabs__tab', currentTabStyle(currentTab, 1))}
+            className={cssClasses(
+              'tabs__tab',
+              currentTabStyle(currentTab, CONSTS.dailyStatus.path)
+            )}
+            value={CONSTS.dailyStatus.path}
           />
         </Tabs>
       </div>
-      {currentTab === 0 ? <OperationalDashBoard /> : null}
-      {currentTab === 1 ? <OperationalDailyStatus /> : null}
+      {currentTab === CONSTS.dashboard.path ? <OperationalDashBoard /> : null}
+      {currentTab === CONSTS.dailyStatus.path ? (
+        <OperationalDailyStatus />
+      ) : null}
     </div>
   )
 }
