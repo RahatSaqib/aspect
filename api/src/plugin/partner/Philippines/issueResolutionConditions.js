@@ -17,7 +17,7 @@ async function shouldResolveResultUpdatedIssue(knex, issue) {
   return !_.isNil(sentCheckTbAppNotification)
 }
 
-async function wasSmsSent(knex, issueId, partnerId, smsTemplateExternalId) {
+async function wasSmsSent(knex, issueId, partnerId) {
   const sentPatientAdvisory = await knex('Issue as i')
     .join('Result as r', 'i.resultId', 'r.id')
     .join('Notification as n', 'i.id', 'n.issueId')
@@ -28,19 +28,13 @@ async function wasSmsSent(knex, issueId, partnerId, smsTemplateExternalId) {
     .whereIn('ms.externalId', ['Sent', 'Error'])
     .andWhere('i.id', issueId)
     .andWhere('nt.partnerId', partnerId)
-    .andWhere('st.externalId', smsTemplateExternalId)
     .first('sm.id as smsMessageId')
   return !_.isNil(sentPatientAdvisory)
 }
 
 async function shouldResolveResultUpdatedPatientSmsIssue(knex, issue) {
   const { id, partnerId } = issue
-  const patientAdvisorySent = await wasSmsSent(
-    knex,
-    id,
-    partnerId,
-    'patientAdvisorySms'
-  )
+  const patientAdvisorySent = await wasSmsSent(knex, id, partnerId)
   return patientAdvisorySent
 }
 module.exports = {

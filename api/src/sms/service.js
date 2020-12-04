@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
 const {
   allMessageStatusToId,
@@ -104,21 +105,25 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      partner: 'pr',
-      device: 'd',
-      deviceType: 'dt',
-      person: 'p',
-      /*
-      result: 'r',
-      ^^^ Leaving this commented out to  highlight the fact that adding these
-          constraints will break the RO notifications configured for Myanmar
-      */
-      sample: 'sample',
-      site: 's',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
+    .modify(queryBuilder => {
+      if (!_.isEmpty(dataConstraints)) {
+        queryBuilder.modify(addConstraints, dataConstraints, {
+          assay: 'a',
+          partner: 'pr',
+          device: 'd',
+          deviceType: 'dt',
+          person: 'p',
+          /*
+          result: 'r',
+          ^^^ Leaving this commented out to  highlight the fact that adding these
+              constraints will break the RO notifications configured for Myanmar
+          */
+          sample: 'sample',
+          site: 's',
+          showUnapprovedDevices: true,
+          showDecommissionedDevices: true,
+        })
+      }
     })
     .where({ 'm.id': smsMessageId })
     .first(
