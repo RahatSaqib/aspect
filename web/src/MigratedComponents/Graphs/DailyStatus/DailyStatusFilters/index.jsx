@@ -21,10 +21,15 @@ const DailyStatusFilters = ({
             <FormControlLabel
               control={
                 <Checkbox
-                  color="primary"
                   checked={checked}
                   onChange={() => action(key)}
                   value={key}
+                  classes={{
+                    root: cssClasses(
+                      'status__checkbox',
+                      `status__checkbox--${key}`
+                    ),
+                  }}
                 />
               }
               label={label}
@@ -42,10 +47,15 @@ const DailyStatusFilters = ({
                     }}
                     control={
                       <Checkbox
-                        color="primary"
                         checked={checked}
                         onChange={() => action(externalId)}
                         value={externalId}
+                        classes={{
+                          root: cssClasses(
+                            'status__checkbox',
+                            `status__checkbox--${externalId}`
+                          ),
+                        }}
                       />
                     }
                     label={name}

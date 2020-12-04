@@ -91,6 +91,38 @@
   background-color: var('--aspect-device-inactiveDecommissioned');
 }
 
+.status__checkbox {
+    transform : scale(1.5);
+    margin: 0 10px 0;
+}
+
+.status__checkbox--all {
+    color: var('--aspect-color-cyan') !important;
+    background-color: transparent;
+}
+.status__checkbox--active,
+.status__checkbox--reportedActive {
+    color: var('--aspect-device-active') !important;
+}
+.status__checkbox--inactiveUnknown {
+color: black !important;
+}
+.status__checkbox--inactiveNoResultsReported{
+    color: var('--aspect-device-inactiveNoResultsReported') !important;
+}
+.status__checkbox--inactiveOutOfInventory{
+    color: var('--aspect-device-inactiveOutOfInventory') !important;
+}
+.status__checkbox--inactiveDownForRepair{
+    color: var('--aspect-device-needs-repair') !important;
+}
+.status__checkbox--inactiveConnectivity{
+    color: var('--aspect-device-connectivity') !important;
+}
+.status__checkbox--inactiveDecommissioned {
+    color: var('--aspect-device-inactiveDecommissioned') !important;
+}
+
 .clinic__day--future {
   border-radius: 20%;
   border: 1px dashed #fafcff;
@@ -128,12 +160,12 @@
 }
 
 .statusses__spacer {
-  width: 345px;
+  width: 415px;
 }
 
 .statusses__row {
   display: flex;
-  height: 100px;
+  height: 120px;
 }
 
 .statusses__container {
