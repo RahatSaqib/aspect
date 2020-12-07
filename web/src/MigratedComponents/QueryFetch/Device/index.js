@@ -1,5 +1,5 @@
 const DAILY_STATUS = {
-  ENDPOINT: '/device-maintenance-status/over-time',
+  ENDPOINT: '/maintenance/over-time',
   KEY: 'DAILY_STATUS',
 }
 
