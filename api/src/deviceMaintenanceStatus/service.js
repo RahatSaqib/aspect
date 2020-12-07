@@ -29,8 +29,8 @@ async function deviceStatusOverTime(request) {
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Result as r', query => {
-      query
+    .leftJoin('Result as r', joinQuery => {
+      joinQuery
         .on('d.id', 'r.deviceId')
         .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
         .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
@@ -52,15 +52,15 @@ async function deviceStatusOverTime(request) {
       knex.raw('COUNT(r.id) as totalResults'),
     ])
 
-  const joinNewerDmslOnSameDay = (leftAlias, rightAlias) => join =>
-    join
+  const joinNewerDmslOnSameDay = (leftAlias, rightAlias) => joinQuery =>
+    joinQuery
       .on(`${leftAlias}.deviceId`, `${rightAlias}.deviceId`)
       .andOn(`${leftAlias}.day`, `${rightAlias}.day`)
-      .andOn(and => {
-        and
+      .andOn(andQuery => {
+        andQuery
           .andOn(`${leftAlias}.createdOn`, '<', `${rightAlias}.createdOn`)
-          .orOn(or => {
-            or.andOn(
+          .orOn(orQuery => {
+            orQuery.andOn(
               `${leftAlias}.createdOn`,
               '=',
               `${rightAlias}.createdOn`
@@ -91,8 +91,8 @@ async function deviceStatusOverTime(request) {
     // Join for getting the last different status before the current one, so then we can calculate the number of days in the same status
     .leftJoin(
       'DeviceMaintenanceStatusLog as previousDmslWithDifferentStatus',
-      join => {
-        join
+      joinQuery => {
+        joinQuery
           .on('dmsl.deviceId', 'previousDmslWithDifferentStatus.deviceId')
           .andOn('dmsl.day', '>', 'previousDmslWithDifferentStatus.day')
           .andOn(
