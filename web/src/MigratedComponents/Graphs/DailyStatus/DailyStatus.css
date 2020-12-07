@@ -20,7 +20,7 @@
 
 .clinic__day {
   background-color: white;
-  transition: background-color 5s ease;
+  transition: background-color 0.2s ease;
 }
 
 .clinic__day--null {
