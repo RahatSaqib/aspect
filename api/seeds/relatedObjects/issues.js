@@ -8,12 +8,7 @@ const msgInstrumentReplaced = `{{device.name}}:
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => {
-  let valueErrorCode = `result.errorCode`
-  if (errorCode) {
-    valueErrorCode += ` || ${errorCode}`
-  }
-  return `
+const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -56,7 +51,7 @@ const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => {
                 Error Code
               </td>
               <td>
-                {{${valueErrorCode}}}
+                ${errorCode || '{{result.errorCode}}'}
               </td>
           </tr>
           <tr>
@@ -181,20 +176,14 @@ const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => {
     </body>
 </html>
 `
-}
 
-const getDeviceBaseText = ({ resultSpecificPart, errorCode }) => {
-  let valueErrorCode = `result.errorCode`
-  if (errorCode) {
-    valueErrorCode += ` || ${errorCode}`
-  }
-  return `
+const getDeviceBaseText = ({ resultSpecificPart, errorCode }) => `
 This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{${valueErrorCode}}}
+Error Code: ${errorCode || '{{result.errorCode}}'}
 
 Occurrences: {{issue.data.resultsWithErrors}}
 
@@ -228,7 +217,6 @@ Contact Phone: {{site.primaryContact.phone}}
 Contact Cell: {{site.primaryContact.cell}}
 
 Contact Email: {{site.primaryContact.email}}`
-}
 
 const errorIssueEmailHtml = getDeviceBaseHtml({
   resultSpecificPart: `
@@ -1233,7 +1221,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(1001),
         body: getDeviceBaseText(1001),
-        htmlBody: getDeviceBaseHtml(1001),
+        htmlBody: getDeviceBaseHtml({ errorCode: 1001 }),
         ...auditFields,
       },
     },
@@ -1250,7 +1238,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(1002),
         body: getDeviceBaseText(1002),
-        htmlBody: getDeviceBaseHtml(1002),
+        htmlBody: getDeviceBaseHtml({ errorCode: 1002 }),
         ...auditFields,
       },
     },
@@ -1267,7 +1255,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2014),
         body: getDeviceBaseText(2014),
-        htmlBody: getDeviceBaseHtml(2014),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2014 }),
         ...auditFields,
       },
     },
@@ -1284,7 +1272,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4008),
         body: getDeviceBaseText(4008),
-        htmlBody: getDeviceBaseHtml(4008),
+        htmlBody: getDeviceBaseHtml({ errorCode: 4008 }),
         ...auditFields,
       },
     },
@@ -1301,7 +1289,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4009),
         body: getDeviceBaseText(4009),
-        htmlBody: getDeviceBaseHtml(4009),
+        htmlBody: getDeviceBaseHtml({ errorCode: 4009 }),
         ...auditFields,
       },
     },
@@ -1318,7 +1306,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4012),
         body: getDeviceBaseText(4012),
-        htmlBody: getDeviceBaseHtml(4012),
+        htmlBody: getDeviceBaseHtml({ errorCode: 4012 }),
         ...auditFields,
       },
     },
@@ -1335,7 +1323,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4017),
         body: getDeviceBaseText(4017),
-        htmlBody: getDeviceBaseHtml(4017),
+        htmlBody: getDeviceBaseHtml({ errorCode: 4017 }),
         ...auditFields,
       },
     },
