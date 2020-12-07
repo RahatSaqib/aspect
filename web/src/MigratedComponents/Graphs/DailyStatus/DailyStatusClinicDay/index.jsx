@@ -54,7 +54,7 @@ const DailyStatusClinicDay = ({
         : maintenanceStatusI18nKey
   }
 
-  return checked && daysInSameStatus ? (
+  return checked && daysInSameStatus && !isWeekend ? (
     <AspectTooltip
       title={`${daysInSameStatus} Days since last update`}
       toolTipContainerClass="inline__tooltip"
