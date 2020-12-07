@@ -6,7 +6,8 @@ import startCase from 'lodash/startCase'
 const cssClasses = classnames.bind(require('./GraphTooltip.css'))
 
 const GraphToolTip = ({ displayMethod, values }) => {
-  const { color, displayId, indexValue = false, displayValue } = values
+  const { color, displayId, indexValue = false, displayValue, ...rest } = values
+  console.log({ color, displayId, indexValue, displayValue, ...rest })
 
   return (
     <div className={cssClasses('tooltip__container')}>
