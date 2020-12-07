@@ -197,7 +197,7 @@ describe('Process GeneXpert Logs', () => {
      * action type for error code 1002
      * */
     const actionType = 'HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR'
-    // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareError()
+    // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareErrorAnalysis()
     const options = {
       startedOn: new Date(format(logData.occurredOn, 'yyyy-MM-dd HH:mm:ss')),
       details: JSON.parse(logData.details),

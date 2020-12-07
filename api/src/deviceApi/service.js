@@ -25,7 +25,7 @@ const {
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
-const { shouldTriggerHardwareError } = require('../plugin/utils')
+const { shouldTriggerHardwareErrorAnalysis } = require('../plugin/utils')
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -307,7 +307,7 @@ async function addDeviceDataWithContext(context) {
       }
       // check if stored in table 'DeviceOperation' entry is
       // hardware error and dispatch MQ action if needed
-      await shouldTriggerHardwareError(contextWithPayload)
+      await shouldTriggerHardwareErrorAnalysis(contextWithPayload)
     }
   }
 

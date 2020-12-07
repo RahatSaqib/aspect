@@ -314,7 +314,7 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 }
 
-async function shouldTriggerHardwareError(contextWithPayload) {
+async function shouldTriggerHardwareErrorAnalysis(contextWithPayload) {
   const {
     knex,
     partnerId,
@@ -412,5 +412,5 @@ module.exports = {
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerResultCategoryAnalysis,
-  shouldTriggerHardwareError,
+  shouldTriggerHardwareErrorAnalysis,
 }
