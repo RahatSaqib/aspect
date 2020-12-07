@@ -91,8 +91,8 @@ const DailyStatus = () => {
   )
 
   const toggleStatusVisibility = name => {
+    const tempStatusses = [...visibleStatuses]
     if (name === 'all') {
-      const tempStatusses = [...visibleStatuses]
       tempStatusses.map(status => (status.checked = !toggleAll.checked))
       setToggleAll({
         ...toggleAll,
@@ -100,7 +100,6 @@ const DailyStatus = () => {
       })
       setVisibleStatuses(tempStatusses)
     } else {
-      const tempStatusses = [...visibleStatuses]
       const index = getIndex(tempStatusses, 'i18nKey', name)
       const currentChecked = tempStatusses[index].checked
       tempStatusses[index].checked = !currentChecked
