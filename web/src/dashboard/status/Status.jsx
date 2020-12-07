@@ -72,7 +72,7 @@ const Status = ({ history, location, colorDemo }) => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           <SummaryStatus
             intl={intl}
@@ -82,7 +82,7 @@ const Status = ({ history, location, colorDemo }) => {
             dashboard="home"
           />
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
       <ErrorBoundary>
         <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
@@ -92,7 +92,7 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
+      {/* <ErrorBoundary>
         <PermissionsProvider permissions={tbDetected.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbDetected} />
@@ -197,7 +197,7 @@ const Status = ({ history, location, colorDemo }) => {
         >
           <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
         </PermissionsProvider>
-      </ErrorBoundary>
+      </ErrorBoundary> */}
 
       <Reports
         intl={intl}

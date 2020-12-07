@@ -239,8 +239,6 @@ const generateToolTip = (
   formatNumber,
   type
 ) => {
-  console.log(item)
-
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
   let displayId = translateLabel(id, assaysFromState)
@@ -279,7 +277,7 @@ const generateToolTip = (
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   }
-  return { color, displayId, indexValue, displayValue, i18nKey: id }
+  return { color, displayId, indexValue, displayValue, externalId: id }
 }
 
 const removeStringsFromArray = string => {
