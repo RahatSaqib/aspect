@@ -2,69 +2,66 @@ module.exports = [
   {
     errorCode: 1001,
     externalId: 'HardwareTemperatureDriftedFromSetPoint',
-    mergeGroup: [1001, 1002, 1004],
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
   {
     errorCode: 1002,
     externalId: 'HardwareHeaterTemperatureDifferentialError',
-    mergeGroup: [1001, 1002, 1004],
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
   {
     errorCode: 2014,
     externalId: 'HardwareThermistorTemperatureOutOfRange2014',
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
+  {
+    errorCode: 2037,
+    externalId: 'HardwareCartridgeIntegrityTestFailure',
+  },
+  {
+    errorCode: 2008,
+    externalId: 'HardwareSyringePressureTooHigh',
+  },
+  {
+    errorCode: 2005,
+    externalId: 'HardwareSyringeStallError',
+  },
+  {
+    errorCode: 2035,
+    externalId: 'HardwareUltrasonicHornFailure',
+  },
+  {
+    errorCode: 2032,
+    externalId: 'HardwareUltrasonicHornTuningError',
+  },
+  {
+    errorCode: 2026,
+    externalId: 'HardwareUltrasonicHornCurrentOutOfRange',
+  },
+  {
+    errorCode: 2096,
+    externalId: 'HardwareAssaySpecificTerminationError',
+  },
+  {
+    errorCode: 2097,
+    externalId: 'HardwareAssaySpecificTerminationError2',
+  },
+
   {
     errorCode: 2126,
     externalId: 'HardwareModuleWasReset',
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
   {
     errorCode: 4008,
     externalId: 'HardwarePowerSupplyVoltageOutOfRange',
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
   {
     errorCode: 4009,
     externalId: 'HardwareHeaterATemperatureUnstable',
-    mergeGroup: [4009, 4012],
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
   {
     errorCode: 4012,
     externalId: 'HardwareHeaterBTemperatureUnstable',
-    mergeGroup: [4009, 4012],
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
   {
     errorCode: 4017,
     externalId: 'HardwareThermistorTemperatureOutOfRange4017',
-    resolutionCondition: {
-      minResults: 1,
-      withinDays: 5,
-    },
   },
 ]

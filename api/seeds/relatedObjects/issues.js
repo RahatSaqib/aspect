@@ -287,7 +287,16 @@ const errorIssueEmailTextLot = errorIssueEmailText.replace(
 const hardwareMessage = {
   1001: 'Temperature Drifted From Setpoint',
   1002: 'Heater Temperature Differential Error',
+  2005: 'Syringe Stall Error',
+  2008: 'Syringe Pressure Too High',
   2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
+  2026: 'Ultrasonic Horn Current Out of Range',
+  2032: 'Ultrasonic Horn Tuning Error',
+  2035: 'Ultrasonic Horn Failure',
+  2037: 'Cartridge Integrity Test Failure',
+  2096: 'Assay Specific Termination Error',
+  2097: 'Assay-Specific Termination #2',
+  2126: 'Module was Reset',
   4008: 'Power Supply Voltage Out of Range',
   4009: 'Heater A Temperature Unstable',
   4012: 'Heater B Temperature Unstable',
@@ -1242,6 +1251,40 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    HardwareSyringeStallError: {
+      issueType: {
+        name: hardwareMessage[2005],
+        externalId: 'HardwareSyringeStallError',
+        i18nKey: 'issueHardwareSyringeStallError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2005),
+        body: getDeviceBaseText(2005),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2005 }),
+        ...auditFields,
+      },
+    },
+    HardwareSyringePressureTooHigh: {
+      issueType: {
+        name: hardwareMessage[2008],
+        externalId: 'HardwareSyringePressureTooHigh',
+        i18nKey: 'issueHardwareSyringePressureTooHigh',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2008),
+        body: getDeviceBaseText(2008),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2008 }),
+        ...auditFields,
+      },
+    },
     HardwareThermistorTemperatureOutOfRange2014: {
       issueType: {
         name: hardwareMessage[2014],
@@ -1259,9 +1302,111 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    HardwareUltrasonicHornCurrentOutOfRange: {
+      issueType: {
+        name: hardwareMessage[2026],
+        externalId: 'HardwareUltrasonicHornCurrentOutOfRange',
+        i18nKey: 'issueHardwareUltrasonicHornCurrentOutOfRange',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2026),
+        body: getDeviceBaseText(2026),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2026 }),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornTuningError: {
+      issueType: {
+        name: hardwareMessage[2032],
+        externalId: 'HardwareUltrasonicHornTuningError',
+        i18nKey: 'issueHardwareUltrasonicHornTuningError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2032),
+        body: getDeviceBaseText(2032),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2032 }),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornFailure: {
+      issueType: {
+        name: hardwareMessage[2035],
+        externalId: 'HardwareUltrasonicHornFailure',
+        i18nKey: 'issueHardwareUltrasonicHornFailure',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2035),
+        body: getDeviceBaseText(2035),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2035 }),
+        ...auditFields,
+      },
+    },
+    HardwareCartridgeIntegrityTestFailure: {
+      issueType: {
+        name: hardwareMessage[2037],
+        externalId: 'HardwareCartridgeIntegrityTestFailure',
+        i18nKey: 'issueHardwareCartridgeIntegrityTestFailure',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2037),
+        body: getDeviceBaseText(2037),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2037 }),
+        ...auditFields,
+      },
+    },
+    HardwareAssaySpecificTerminationError: {
+      issueType: {
+        name: hardwareMessage[2096],
+        externalId: 'HardwareAssaySpecificTerminationError',
+        i18nKey: 'issueHardwareAssaySpecificTerminationError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2096),
+        body: getDeviceBaseText(2096),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2096 }),
+        ...auditFields,
+      },
+    },
+    HardwareAssaySpecificTerminationError2: {
+      issueType: {
+        name: hardwareMessage[2097],
+        externalId: 'HardwareAssaySpecificTerminationError2',
+        i18nKey: 'issueHardwareAssaySpecificTerminationError2',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2097),
+        body: getDeviceBaseText(2097),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2097 }),
+        ...auditFields,
+      },
+    },
     HardwareModuleWasReset: {
       issueType: {
-        name: hardwareMessage[2014],
+        name: hardwareMessage[2126],
         externalId: 'HardwareModuleWasReset',
         i18nKey: 'issueHardwareModuleWasReset',
         issueCategoryId: issueCategories.DeviceHealth,

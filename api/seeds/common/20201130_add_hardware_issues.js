@@ -7,16 +7,12 @@ module.exports = async (
   knex,
   { partnerName, adminName, jobFunctionsToNotify = [] }
 ) =>
-  Promise.each(
-    hardwareIssues,
-    async ({ errorCode, externalId, mergeGroup, resolutionCondition }) =>
-      addIssue(knex, externalId, jobFunctionsToNotify, partnerName, adminName, {
-        evaluationMethod: 'plugin-function',
-        evaluationParameter: 'resolveHardwareIssue',
-        evaluationFilterParameters: {
-          errorCode,
-          mergeGroup,
-          resolutionCondition,
-        },
-      })
+  Promise.each(hardwareIssues, async ({ errorCode, externalId }) =>
+    addIssue(knex, externalId, jobFunctionsToNotify, partnerName, adminName, {
+      evaluationMethod: 'plugin-function',
+      evaluationParameter: 'resolveHardwareIssue',
+      evaluationFilterParameters: {
+        errorCode,
+      },
+    })
   )
