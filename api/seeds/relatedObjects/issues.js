@@ -1259,6 +1259,23 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    HardwareModuleWasReset: {
+      issueType: {
+        name: hardwareMessage[2014],
+        externalId: 'HardwareModuleWasReset',
+        i18nKey: 'issueHardwareModuleWasReset',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2126),
+        body: getDeviceBaseText(2126),
+        htmlBody: getDeviceBaseHtml({ errorCode: 2126 }),
+        ...auditFields,
+      },
+    },
     HardwarePowerSupplyVoltageOutOfRange: {
       issueType: {
         name: hardwareMessage[4008],

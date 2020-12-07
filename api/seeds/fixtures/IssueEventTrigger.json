@@ -673,9 +673,7 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 1001,
-            "mergeGroup": [1001, 1002, 1004],
-            "daysPeriod": 1,
-            "minHappened": 1
+            "mergeGroup": [1001, 1002, 1004]
           }
         }
       }
@@ -690,9 +688,7 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 1002,
-            "mergeGroup": [1001, 1002, 1004],
-            "daysPeriod": 1,
-            "minHappened": 1
+            "mergeGroup": [1001, 1002, 1004]
           }
         }
       }
@@ -706,9 +702,21 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2014,
-            "daysPeriod": 1,
-            "minHappened": 1
+            "errorCode": 2014
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareModuleWasReset",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_MODULE_WAS_RESET",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2126
           }
         }
       }
@@ -722,9 +730,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4008,
-            "daysPeriod": 1,
-            "minHappened": 1
+            "errorCode": 4008
           }
         }
       }
@@ -739,9 +745,7 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4009,
-            "mergeGroup": [4009, 4012],
-            "daysPeriod": 1,
-            "minHappened": 1
+            "mergeGroup": [4009, 4012]
           }
         }
       }
@@ -756,9 +760,7 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4012,
-            "mergeGroup": [4009, 4012],
-            "daysPeriod": 1,
-            "minHappened": 1
+            "mergeGroup": [4009, 4012]
           }
         }
       }
@@ -772,9 +774,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4017,
-            "daysPeriod": 1,
-            "minHappened": 1
+            "errorCode": 4017
           }
         }
       }

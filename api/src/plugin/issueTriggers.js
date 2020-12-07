@@ -154,21 +154,9 @@ async function analyzeErrors(
   return false
 }
 
-async function analyzeDeviceHardwareError(knex, action, params) {
-  const {
-    data: { details = {} },
-  } = action.options
-  const { errorCode, mergeGroup, daysPeriod, minResults } = params
-
-  if (
-    details.Errors &&
-    _.isArray(details.Errors) &&
-    details.Errors.find(
-      // exist item with needed ErrorCode
-      x => x.ErrorCode && parseInt(x.ErrorCode, 10) === errorCode
-    )
-  ) {
-    // TODO: add logic for using other props from 'params'
+async function analyzeDeviceHardwareError(knex, action, { errorCode }) {
+  const { errorCode: actualErrorCode } = action.options.data
+  if (parseInt(actualErrorCode, 10) === errorCode) {
     return true
   }
   return false

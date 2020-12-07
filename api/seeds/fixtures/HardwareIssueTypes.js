@@ -26,6 +26,14 @@ module.exports = [
     },
   },
   {
+    errorCode: 2126,
+    externalId: 'HardwareModuleWasReset',
+    resolutionCondition: {
+      minResults: 1,
+      withinDays: 5,
+    },
+  },
+  {
     errorCode: 4008,
     externalId: 'HardwarePowerSupplyVoltageOutOfRange',
     resolutionCondition: {
