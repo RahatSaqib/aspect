@@ -62,16 +62,12 @@ describe('Process GeneXpert Logs', () => {
     return count
   }
   // helper func to post log
-  const postLog = async (deviceAuth, source, data, expectedStatusCode) =>
-    postToDeviceApi({
-      authHeader: deviceAuth,
-      payload: {
-        log: {
-          source,
-          data,
-        },
+  const postLog = async (deviceAuth, source, data) =>
+    server.post(devicePath).set('Authorization', deviceAuth).send({
+      log: {
+        source,
+        data,
       },
-      expectedStatusCode,
     })
 
   beforeEach(async () => {
@@ -111,45 +107,29 @@ describe('Process GeneXpert Logs', () => {
     assert.isOk(apiKey)
 
     const logData = logDataWithCalibration
-    await postLog(
-      deviceAuth,
-      logSource,
-      {
-        ...logData,
-        occurredOn: null,
-      },
-      400
-    )
+    let res = await postLog(deviceAuth, logSource, {
+      ...logData,
+      occurredOn: null,
+    })
+    assert.equal(res.status, 400)
 
-    await postLog(
-      deviceAuth,
-      logSource,
-      {
-        ...logData,
-        logFileName: null,
-      },
-      400
-    )
+    res = await postLog(deviceAuth, logSource, {
+      ...logData,
+      logFileName: null,
+    })
+    assert.equal(res.status, 400)
 
-    await postLog(
-      deviceAuth,
-      logSource,
-      {
-        ...logData,
-        logLevel: null,
-      },
-      400
-    )
+    await postLog(deviceAuth, logSource, {
+      ...logData,
+      logLevel: null,
+    })
+    assert.equal(res.status, 400)
 
-    await postLog(
-      deviceAuth,
-      logSource,
-      {
-        ...logData,
-        details: null,
-      },
-      400
-    )
+    await postLog(deviceAuth, logSource, {
+      ...logData,
+      details: null,
+    })
+    assert.equal(res.status, 400)
   })
 
   it('should skip processing log if wrong source specified', async () => {
@@ -159,7 +139,8 @@ describe('Process GeneXpert Logs', () => {
     const totals1 = await getTotalsOfDeviceOperation()
 
     const logData = logDataWithCalibration
-    await postLog(deviceAuth, 'Invalid Source', logData)
+    const res = await postLog(deviceAuth, 'Invalid Source', logData)
+    assert.equal(res.status, 200)
 
     // total number of entries didn't change
     const totals2 = await getTotalsOfDeviceOperation()
@@ -208,7 +189,8 @@ describe('Process GeneXpert Logs', () => {
     /**
      * post data with error code 1002
      */
-    await postLog(deviceAuth, logSource, logData)
+    const res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
 
     // must dispatch needed action to MQ
     await waitForHardwareError
