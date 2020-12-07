@@ -158,6 +158,22 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.status.decommissioned',
     defaultMessage: 'Decommissioned',
   },
+  deviceStatusProvisioned: {
+    id: 'pages.DeviceList.status.provisioned',
+    defaultMessage: 'Provisioned',
+  },
+  deviceStatusAssigned: {
+    id: 'pages.DeviceList.status.assigned',
+    defaultMessage: 'Assigned',
+  },
+  deviceStatusApproved: {
+    id: 'pages.DeviceList.status.approved',
+    defaultMessage: 'Approved',
+  },
+  deviceStatusDecommissioned: {
+    id: 'pages.DeviceList.status.decommissioned',
+    defaultMessage: 'Decommissioned',
+  },
 })
 
 export default messages

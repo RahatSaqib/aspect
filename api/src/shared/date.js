@@ -117,6 +117,15 @@ function startOfTodayUtc() {
   return addMinutes(date, -date.getTimezoneOffset())
 }
 
+/**
+ * Returns the date part of a DateTime string in ISO format
+ *
+ * @param {string} isoDateTime The DateTime in ISO format (ex.: 2020-01-02T00:30:10.432-03:00).
+ */
+function getDateSubstring(isoDateTime) {
+  return isoDateTime.substring(0, 10)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -129,4 +138,5 @@ module.exports = {
   getTimeZoneById,
   startOfDayUtc,
   startOfTodayUtc,
+  getDateSubstring,
 }
