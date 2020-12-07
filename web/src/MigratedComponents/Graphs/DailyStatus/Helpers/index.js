@@ -6,7 +6,6 @@ import findIndex from 'lodash/findIndex'
 import isWeekend from 'date-fns/isWeekend'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
 import getWeek from 'date-fns/getWeek'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
@@ -21,8 +20,11 @@ function groupDateRanges(data) {
   return output
 }
 
-function dateRangeByWeekDay(startOfMonth) {
-  const amountOfDays = range(0, getDaysInMonth(startOfMonth))
+function dateRangeByWeekDay(startOfMonth, endOfPeriodDate) {
+  const amountOfDays = range(
+    0,
+    differenceInCalendarDays(endOfPeriodDate, startOfMonth) + 1
+  )
   return amountOfDays.reduce((acc, curr) => {
     const thisDay = addDays(startOfMonth, curr)
     const weekInt = getWeek(thisDay, { weekStartsOn: 1 })

@@ -61,7 +61,8 @@ const DailyStatus = () => {
   })
   const [params, setParams] = useState({ minDate, maxDate })
   const startOfMonth = new Date(params.minDate)
-  const dateRanges = dateRangeByWeekDay(startOfMonth)
+  const endOfPeriodDate = new Date(params.maxDate)
+  const dateRanges = dateRangeByWeekDay(startOfMonth, endOfPeriodDate)
   const totalDays = getTotalDays(params)
 
   const {
