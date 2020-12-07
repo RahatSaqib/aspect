@@ -1,5 +1,5 @@
 const chai = require('chai')
-const { format } = require('date-fns')
+const { format, subDays } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
@@ -152,9 +152,29 @@ describe('Process GeneXpert Logs', () => {
     assert.isOk(apiKey)
     // initial count of deviceOperation entries
     const totals1 = await getTotalsOfDeviceOperation()
+    // helper for getting date N days ago
+    const getDateDaysAgo = daysAgo =>
+      new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
 
-    const logData = logDataWithErrors
-    const detailsSent = JSON.parse(logData.details)
+    const logDatas = [
+      {
+        ...logDataWithErrors,
+        externalId: 139,
+        occurredOn: getDateDaysAgo(10),
+      },
+      {
+        ...logDataWithErrors,
+        externalId: 140,
+        occurredOn: getDateDaysAgo(5),
+      },
+      {
+        ...logDataWithErrors,
+        externalId: 141,
+        occurredOn: getDateDaysAgo(2),
+      },
+    ]
+    // last item sent - it should trigger issue and be referred in db
+    const detailsSent = JSON.parse(logDatas[2].details)
 
     // get device to pass it to action creator deviceHardwareError
     const device = await knex('Device').where('id', deviceId).first()
@@ -178,28 +198,50 @@ describe('Process GeneXpert Logs', () => {
      * action type for error code 1002
      * */
     const actionType = 'HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR'
-    // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareErrorAnalysis()
-    const options = {
-      startedOn: new Date(format(logData.occurredOn, 'yyyy-MM-dd HH:mm:ss')),
-      details: JSON.parse(logData.details),
-    }
-    const action = deviceHardwareError(device, actionType, options)
-    const waitForHardwareError = waitForAction(action)
 
     /**
-     * post data with error code 1002
+     * post data with error code 1002 within daysPeriod
+     *
+     * See trigger conditions in api/seeds/fixtures/IssueEventTrigger.json, i.e.
+     *  "daysPeriod": 30,
+     *  "minResults": 3
      */
-    const res = await postLog(deviceAuth, logSource, logData)
-    assert.equal(res.status, 200)
+    // helper - define action to wait for, post data, asert response, waitFor*
+    const postError = async (data, shouldTrigger = false) => {
+      const options = {
+        startedOn: new Date(format(data.occurredOn, 'yyyy-MM-dd HH:mm:ss')),
+        details: JSON.parse(data.details),
+      }
+      // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareErrorAnalysis()
+      const action = deviceHardwareError(device, actionType, options)
+      const waitForHardwareError = waitForAction(action)
 
-    // must dispatch needed action to MQ
-    await waitForHardwareError
-    await waitForIdle()
+      const res = await postLog(deviceAuth, logSource, data)
+      assert.equal(res.status, 200)
 
-    // -------------------
-    // table Issue - make sure Issue table contains just created record with issue details
-    // -------------------
-    const issuesAfter = await getIssues(deviceId)
+      if (shouldTrigger) {
+        // must dispatch needed action to MQ
+        await waitForHardwareError
+      }
+      await waitForIdle()
+    }
+
+    // post 1-st error
+    await postError(logDatas[0])
+    // this does not trigger issue, i.e. Issue table doesn't contain new entries
+    let issuesAfter = await getIssues(deviceId)
+    assert.equal(issuesBefore.length, issuesAfter.length)
+
+    // post 2-nd error
+    await postError(logDatas[1])
+    // this also does not trigger issue, i.e. Issue table doesn't contain new entries
+    issuesAfter = await getIssues(deviceId)
+    assert.equal(issuesBefore.length, issuesAfter.length)
+
+    // post 3-rd error
+    await postError(logDatas[2])
+    issuesAfter = await getIssues(deviceId)
+    // 3rd error triggers issue - Issue table contains just created record with issue details
     assert.equal(issuesBefore.length + 1, issuesAfter.length)
 
     // -------------------
@@ -219,16 +261,16 @@ describe('Process GeneXpert Logs', () => {
     // table DeviceOperation
     // -------------------
     const totals2 = await getTotalsOfDeviceOperation()
-    assert.equal(totals1 + 1, totals2)
+    assert.equal(totals1 + logDatas.length, totals2)
 
     // get stored deviceOperation entry and compare with sent data
     const deviceOperation = await knex('DeviceOperation')
-      .orderBy('CreatedOn', 'desc')
+      .orderBy('id', 'desc')
       .first()
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
-      format(logData.occurredOn, 'yyyy-MM-dd HH:mm:ss')
+      format(logDatas[2].occurredOn, 'yyyy-MM-dd HH:mm:ss')
     )
     const { details: detailsStored } = JSON.parse(deviceOperation.data)
     expect(detailsStored).to.containSubset(detailsSent)

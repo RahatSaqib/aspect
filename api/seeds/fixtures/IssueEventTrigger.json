@@ -673,7 +673,10 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 1001,
-            "mergeGroup": [1001, 1002, 1004]
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -688,7 +691,10 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 1002,
-            "mergeGroup": [1001, 1002, 1004]
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -702,7 +708,11 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2014
+            "errorCode": 2014,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -716,7 +726,11 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2126
+            "errorCode": 2126,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -730,7 +744,11 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4008
+            "errorCode": 4008,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -745,7 +763,10 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4009,
-            "mergeGroup": [4009, 4012]
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -760,7 +781,10 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4012,
-            "mergeGroup": [4009, 4012]
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
@@ -774,7 +798,11 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4017
+            "errorCode": 4017,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
           }
         }
       }
