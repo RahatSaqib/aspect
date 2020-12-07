@@ -389,14 +389,20 @@ async function shouldTriggerHardwareErrorAnalysis(contextWithPayload) {
     )
 
     if (hardwareIssueEventTrigger) {
+      const {
+        triggerConditions: {
+          conditions: {
+            evaluationFilterParameters: { errorCode },
+          },
+          action: actionType,
+        },
+      } = hardwareIssueEventTrigger
       const options = {
         startedOn,
         details,
         deviceOperationId,
+        errorCode,
       }
-      const {
-        triggerConditions: { action: actionType },
-      } = hardwareIssueEventTrigger
 
       messageContext.dispatch(deviceHardwareError(device, actionType, options))
     }

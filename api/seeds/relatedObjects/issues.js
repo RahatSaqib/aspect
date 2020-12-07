@@ -8,7 +8,12 @@ const msgInstrumentReplaced = `{{device.name}}:
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const errorIssueEmailHtml = `
+const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => {
+  let valueErrorCode = `result.errorCode`
+  if (errorCode) {
+    valueErrorCode += ` || ${errorCode}`
+  }
+  return `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -51,7 +56,7 @@ const errorIssueEmailHtml = `
                 Error Code
               </td>
               <td>
-                {{result.errorCode}}
+                {{${valueErrorCode}}}
               </td>
           </tr>
           <tr>
@@ -70,31 +75,7 @@ const errorIssueEmailHtml = `
                 30
               </td>
           </tr>
-          <tr>
-              <td>
-                System Serial
-              </td>
-              <td>
-                {{result.instrumentSerial}}
-              </td>
-          </tr>
-          <<REPLACE WITH MODULE OR REAGENT>>
-          <tr>
-              <td>
-                Cartridge Type
-              </td>
-              <td>
-                {{result.assay.name}}
-              </td>
-          </tr>
-          <tr>
-              <td>
-                Date/Time
-              </td>
-              <td>
-                {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
-              </td>
-          </tr>
+          ${resultSpecificPart}
       </table>
       <p>
         <strong>SystemOne GeneXpert System and Contact Information</strong>
@@ -200,26 +181,26 @@ const errorIssueEmailHtml = `
     </body>
 </html>
 `
+}
 
-const errorIssueEmailText = `This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
+const getDeviceBaseText = ({ resultSpecificPart, errorCode }) => {
+  let valueErrorCode = `result.errorCode`
+  if (errorCode) {
+    valueErrorCode += ` || ${errorCode}`
+  }
+  return `
+This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{result.errorCode}}
+Error Code: {{${valueErrorCode}}}
 
 Occurrences: {{issue.data.resultsWithErrors}}
 
 Time Period Days: 30
 
-System Serial: {{result.instrumentSerial}}
-
-<<REPLACE WITH MODULE OR REAGENT>>
-
-Cartridge Type: {{result.assay.name}}
-
-Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
-
+${resultSpecificPart}
 
 
 SystemOne GeneXpert System and Contact Information
@@ -247,8 +228,55 @@ Contact Phone: {{site.primaryContact.phone}}
 Contact Cell: {{site.primaryContact.cell}}
 
 Contact Email: {{site.primaryContact.email}}`
+}
 
-const errorIssueSubject = `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, Error: {{notification.type}}`
+const errorIssueEmailHtml = getDeviceBaseHtml({
+  resultSpecificPart: `
+  <tr>
+    <td>
+      System Serial
+    </td>
+    <td>
+      {{result.instrumentSerial}}
+    </td>
+  </tr>
+  <<REPLACE WITH MODULE OR REAGENT>>
+  <tr>
+    <td>
+      Cartridge Type
+    </td>
+    <td>
+      {{result.assay.name}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Date/Time
+    </td>
+    <td>
+      {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+    </td>
+  </tr>
+`,
+})
+
+const errorIssueEmailText = getDeviceBaseText({
+  resultSpecificPart: `
+System Serial: {{result.instrumentSerial}}
+
+<<REPLACE WITH MODULE OR REAGENT>>
+
+Cartridge Type: {{result.assay.name}}
+
+Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+`,
+})
+
+const getErrorIssueSubjectBase = errorCode => {
+  const errorLabel = `Error${errorCode ? ` ${errorCode}` : ''}`
+  return `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, ${errorLabel}: {{notification.type}}`
+}
+const errorIssueSubject = getErrorIssueSubjectBase()
 const errorIssueEmailHtmlModule = errorIssueEmailHtml.replace(
   '<<REPLACE WITH MODULE OR REAGENT>>',
   '<tr><td>Module</td><td>{{result.moduleSerial}}</td></tr>'
@@ -269,7 +297,7 @@ const errorIssueEmailTextLot = errorIssueEmailText.replace(
 
 // must correspond with 'Hardware*' items in IssueEventTrigger.json
 const hardwareMessage = {
-  1001: 'Temperature Drifted From SetPoint',
+  1001: 'Temperature Drifted From Setpoint',
   1002: 'Heater Temperature Differential Error',
   2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
   4008: 'Power Supply Voltage Out of Range',
@@ -1202,18 +1230,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[1001]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[1001]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[1001]}`,
-        body: `${hardwareMessage[1001]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[1001]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(1001),
+        body: getDeviceBaseText(1001),
+        htmlBody: getDeviceBaseHtml(1001),
         ...auditFields,
       },
     },
@@ -1227,18 +1247,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[1002]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[1002]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[1002]}`,
-        body: `${hardwareMessage[1002]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[1002]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(1002),
+        body: getDeviceBaseText(1002),
+        htmlBody: getDeviceBaseHtml(1002),
         ...auditFields,
       },
     },
@@ -1252,18 +1264,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[2014]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[2014]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[2014]}`,
-        body: `${hardwareMessage[2014]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[2014]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(2014),
+        body: getDeviceBaseText(2014),
+        htmlBody: getDeviceBaseHtml(2014),
         ...auditFields,
       },
     },
@@ -1277,18 +1281,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[4008]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[4008]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[4008]}`,
-        body: `${hardwareMessage[4008]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[4008]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(4008),
+        body: getDeviceBaseText(4008),
+        htmlBody: getDeviceBaseHtml(4008),
         ...auditFields,
       },
     },
@@ -1302,18 +1298,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[4009]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[4009]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[4009]}`,
-        body: `${hardwareMessage[4009]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[4009]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(4009),
+        body: getDeviceBaseText(4009),
+        htmlBody: getDeviceBaseHtml(4009),
         ...auditFields,
       },
     },
@@ -1327,18 +1315,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[4012]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[4012]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[4012]}`,
-        body: `${hardwareMessage[4012]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[4012]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(4012),
+        body: getDeviceBaseText(4012),
+        htmlBody: getDeviceBaseHtml(4012),
         ...auditFields,
       },
     },
@@ -1352,18 +1332,10 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      AlertTemplate: {
-        message: `${hardwareMessage[4017]} in {{device.name}}`,
-        ...auditFields,
-      },
-      SmsTemplate: {
-        message: `${hardwareMessage[4017]} in {{device.name}}`,
-        ...auditFields,
-      },
       EmailTemplate: {
-        subject: `{{device.name}}: ${hardwareMessage[4017]}`,
-        body: `${hardwareMessage[4017]} in {{device.name}}`,
-        htmlBody: `${hardwareMessage[4017]} in {{device.name}}`,
+        subject: getErrorIssueSubjectBase(4017),
+        body: getDeviceBaseText(4017),
+        htmlBody: getDeviceBaseHtml(4017),
         ...auditFields,
       },
     },
