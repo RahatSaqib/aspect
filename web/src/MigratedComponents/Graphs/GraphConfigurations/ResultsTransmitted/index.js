@@ -2,9 +2,13 @@ import PieRowGraph from '../../PieRowGraph'
 import { dateRangeOptions } from '../../Helpers/Formatters/datetime'
 import AspectDropdown from '../../../AspectDropdown'
 
-// get previous month by default
+import CONSTS from '../CONSTS'
+
+const { DATE_RANGE_OPTIONS } = CONSTS
 const dateRanges = dateRangeOptions()
-const currentMonth = dateRanges[Object.keys(dateRanges)][2].value.minDate
+const currentMonth =
+  dateRanges[Object.keys(dateRanges)][DATE_RANGE_OPTIONS.LAST_MONTH].value
+    .minDate
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
@@ -23,7 +27,7 @@ const resultsTransmittedGraphs = {
         data: dateRangeOptions('resultsDateRange'),
         sortByKeys: ['id'],
         isClearable: false,
-        defaultSelectedOption: 2,
+        defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
       },
     ],
     graphRenderPermissions: ['dashboard', 'operationalData'],

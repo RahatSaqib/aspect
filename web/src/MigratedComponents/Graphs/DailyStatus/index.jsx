@@ -10,6 +10,7 @@ import DailyStatusClinic from './DailyStatusClinic'
 import DateRanges from './DateRanges'
 import messages from './messages'
 import CONSTS from './CONSTS'
+import DATE_CONSTS from '../GraphConfigurations/CONSTS'
 
 import {
   getPreviousPeriod,
@@ -26,6 +27,7 @@ import { DAILY_STATUS, DEVICE_STATUS } from '../../QueryFetch/Device'
 
 const cssClasses = classnames.bind(require('./DailyStatus.css'))
 
+const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 const selectorModifiers = [
   {
     selectedValue: 'Date Range',
@@ -36,7 +38,7 @@ const selectorModifiers = [
     data: dateRangeOptions('deviceDateRange'),
     sortByKeys: ['id'],
     isClearable: false,
-    defaultSelectedOption: 2,
+    defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
   },
 ]
 
