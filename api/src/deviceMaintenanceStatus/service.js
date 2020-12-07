@@ -60,11 +60,9 @@ async function deviceStatusOverTime(request) {
         andQuery
           .andOn(`${leftAlias}.createdOn`, '<', `${rightAlias}.createdOn`)
           .orOn(orQuery => {
-            orQuery.andOn(
-              `${leftAlias}.createdOn`,
-              '=',
-              `${rightAlias}.createdOn`
-            ).andOn(`${leftAlias}.id`, '<', `${rightAlias}.id`)
+            orQuery
+              .andOn(`${leftAlias}.createdOn`, '=', `${rightAlias}.createdOn`)
+              .andOn(`${leftAlias}.id`, '<', `${rightAlias}.id`)
           })
       })
 
