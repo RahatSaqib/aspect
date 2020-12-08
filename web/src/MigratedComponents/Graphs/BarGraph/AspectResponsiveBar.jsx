@@ -5,8 +5,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
-import GraphClickThrough from '../GraphClickThrough'
-import useGraphClickThrough from '../Providers/useGraphClickThrough'
+import useGraphClickThrough from '../Hooks/useGraphClickThrough'
 
 import {
   formatValuesForGraphs,
@@ -21,6 +20,7 @@ import { calcOverallRate } from '../Helpers/Formatters/calcs'
 
 const AspectResponsiveBar = ({
   assaysFromState,
+  config: baseConfig,
   data,
   displayLegend,
   displayMethod,
@@ -32,7 +32,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
-  const { setLink } = useGraphClickThrough()
+  const { setConfig } = useGraphClickThrough()
   const legendsNotToRender = []
   const graphsToHaveCustomLegend = [
     'bar',
@@ -210,85 +210,83 @@ const AspectResponsiveBar = ({
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
   return (
-    <GraphClickThrough>
-      <div style={{ height: '100%', maxHeight: '350px' }}>
-        <ResponsiveBar
-          data={data}
+    <div style={{ height: '100%', maxHeight: '350px' }}>
+      <ResponsiveBar
+        data={data}
+        keys={keys}
+        indexBy={indexBy}
+        colorBy="index"
+        onClick={(value, event) => setConfig({ value, event, baseConfig })}
+        enableLabel={false}
+        enableGridY={config(type, data, displayMethod).enableGridY}
+        enableGridX={config(type, data, displayMethod).enableGridX}
+        gridYValues={config(type, data, displayMethod).gridYValues}
+        {...config(type, data, displayMethod).extraConfig}
+        padding={config(type, data, displayMethod).padding}
+        borderWidth={0}
+        borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+        axisTop={null}
+        axisRight={null}
+        labelSkipWidth={12}
+        labelSkipHeight={12}
+        animate
+        motionStiffness={90}
+        motionDamping={15}
+        layers={config(type, data, displayMethod).layers}
+        colors={v => generateColorForValue(v)}
+        margin={config(type, data, displayMethod).margin}
+        tooltip={v =>
+          v && legendsNotToRender.includes(v.id) ? (
+            <EmptyTooltip title={v.id} />
+          ) : (
+            <GraphToolTip
+              displayMethod={displayMethod}
+              values={generateToolTip(
+                v,
+                displayMethod,
+                assaysFromState,
+                intlFormatNumber,
+                type
+              )}
+            />
+          )
+        }
+        axisLeft={{
+          tickSize: 5,
+          tickValues: config(type, data, displayMethod).yTickValues,
+          format: v =>
+            formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+          legendPosition: 'middle',
+          legendOffset: -60,
+          legend: config(type, data, displayMethod).legend,
+        }}
+        axisBottom={{
+          legend: config(type, data, displayMethod).ylegend,
+          tickSize: 5,
+          tickValues: config(type, data, displayMethod).xTickValues,
+          tickPadding: 10,
+          tickRotation: 0,
+          legendPosition: 'middle',
+          legendOffset: 50,
+          format: v => format(v, displayMethod, intlFormatNumber),
+        }}
+        legends={baseLegend}
+        theme={config(type, data, displayMethod).theme}
+        markers={config(type, data, displayMethod).markers}
+      />
+      {displayLegend && graphsToHaveCustomLegend.includes(type) ? (
+        <CustomBarGraphLegend
           keys={keys}
-          indexBy={indexBy}
-          colorBy="index"
-          onClick={(a, b) => setLink(a, b)}
-          enableLabel={false}
-          enableGridY={config(type, data, displayMethod).enableGridY}
-          enableGridX={config(type, data, displayMethod).enableGridX}
-          gridYValues={config(type, data, displayMethod).gridYValues}
-          {...config(type, data, displayMethod).extraConfig}
-          padding={config(type, data, displayMethod).padding}
-          borderWidth={0}
-          borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-          axisTop={null}
-          axisRight={null}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
-          animate
-          motionStiffness={90}
-          motionDamping={15}
-          layers={config(type, data, displayMethod).layers}
-          colors={v => generateColorForValue(v)}
-          margin={config(type, data, displayMethod).margin}
-          tooltip={v =>
-            v && legendsNotToRender.includes(v.id) ? (
-              <EmptyTooltip title={v.id} />
-            ) : (
-              <GraphToolTip
-                displayMethod={displayMethod}
-                values={generateToolTip(
-                  v,
-                  displayMethod,
-                  assaysFromState,
-                  intlFormatNumber,
-                  type
-                )}
-              />
-            )
-          }
-          axisLeft={{
-            tickSize: 5,
-            tickValues: config(type, data, displayMethod).yTickValues,
-            format: v =>
-              formatValuesForGraphs(v, displayMethod, intlFormatNumber),
-            legendPosition: 'middle',
-            legendOffset: -60,
-            legend: config(type, data, displayMethod).legend,
-          }}
-          axisBottom={{
-            legend: config(type, data, displayMethod).ylegend,
-            tickSize: 5,
-            tickValues: config(type, data, displayMethod).xTickValues,
-            tickPadding: 10,
-            tickRotation: 0,
-            legendPosition: 'middle',
-            legendOffset: 50,
-            format: v => format(v, displayMethod, intlFormatNumber),
-          }}
-          legends={baseLegend}
-          theme={config(type, data, displayMethod).theme}
-          markers={config(type, data, displayMethod).markers}
+          generateLegend={generateLegend}
+          assaysFromState={assaysFromState}
+          type={type}
+          symbolShape={config(type, data, displayMethod).symbolShape}
+          legendsNotToRender={legendsNotToRender}
+          legendsToRename={legendsToRename}
+          legendsToPopover={legendsToPopover}
         />
-        {displayLegend && graphsToHaveCustomLegend.includes(type) ? (
-          <CustomBarGraphLegend
-            keys={keys}
-            generateLegend={generateLegend}
-            assaysFromState={assaysFromState}
-            type={type}
-            symbolShape={config(type, data, displayMethod).symbolShape}
-            legendsNotToRender={legendsNotToRender}
-            legendsToRename={legendsToRename}
-            legendsToPopover={legendsToPopover}
-          />
-        ) : null}
-      </div>
-    </GraphClickThrough>
+      ) : null}
+    </div>
   )
 }
 
@@ -302,6 +300,7 @@ AspectResponsiveBar.defaultProps = {
 
 AspectResponsiveBar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayLegend: PropTypes.bool.isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
