@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const {
   allMessageStatusToId,
@@ -9,7 +10,8 @@ const {
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-
+const { generateCsvFile } = require('../shared/io')
+const { generateAttachment } = require('./templateProcessor')
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
 // -----------------------------
@@ -28,21 +30,27 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  const { subject, body, htmlBody, to } = await createEmailFieldsFromTemplate(
-    knex,
-    emailMessageId
-  )
-  const pendingMessageStatusId = await messageStatusToId('Pending')
-
-  // store generated email message into the same record and set messageStatusId
-  await knex('EmailMessage').where({ id: emailMessageId }).update({
+  const {
     subject,
     body,
     htmlBody,
     to,
-    messageStatusId: pendingMessageStatusId,
-    updatedOn: new Date(),
-  })
+    attachments,
+  } = await createEmailFieldsFromTemplate(knex, emailMessageId)
+  const pendingMessageStatusId = await messageStatusToId('Pending')
+
+  // store generated email message into the same record and set messageStatusId
+  await knex('EmailMessage')
+    .where({ id: emailMessageId })
+    .update({
+      subject,
+      body,
+      htmlBody,
+      to,
+      messageStatusId: pendingMessageStatusId,
+      updatedOn: new Date(),
+      attachments: JSON.stringify(attachments),
+    })
 
   // dispatch EMAIL_MESSAGE_READY_FOR_SENDING to MQ
   context.emailMessageReadyForSending(emailMessageId)
@@ -68,9 +76,10 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   // get message and cell phone
   const d = await knex('EmailMessage')
     .where('id', emailMessageId)
-    .first('subject', 'body', 'htmlBody', 'to')
+    .first('subject', 'body', 'htmlBody', 'to', 'attachments')
 
   const { subject, htmlBody, body, to } = d || {}
+  const attachments = JSON.parse(d.attachments || '[]')
 
   // email handler
   const { sendEmail } = require('./emailUtil')
@@ -83,13 +92,17 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   let messageStatusId = messageStatusIdSent
 
   // send email
-  const sendResponse = await sendEmail(to, subject, htmlBody, body).catch(
-    err => {
-      // set status to 'Error'
-      messageStatusId = messageStatusIdError
-      return err
-    }
-  )
+  const sendResponse = await sendEmail(
+    to,
+    subject,
+    htmlBody,
+    body,
+    attachments
+  ).catch(err => {
+    // set status to 'Error'
+    messageStatusId = messageStatusIdError
+    return err
+  })
 
   // store status in db
   await knex('EmailMessage')
@@ -160,7 +173,78 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
         .map(address => address.toLowerCase().trim())
     ).join(',')
   }
+
+  const { attachmentPlaceholders } = processedTemplateFields
+  if (!_.isEmpty(attachmentPlaceholders)) {
+    processedTemplateFields.attachments = await generateAttachments(
+      attachmentPlaceholders,
+      data
+    )
+  }
+
   return processedTemplateFields
+}
+
+async function generateAttachments(attachmentPlaceholders, data) {
+  const attachments = []
+  await Promise.each(attachmentPlaceholders, async ({ name, params }) => {
+    if (name === 'error-history') {
+      // TODO: call func after ASP-1840
+      const { deviceId } = data
+      // get data
+      const items = [
+        {
+          module: 'Module-1',
+          assay: 'TB',
+          lot: 'lot-1',
+          dateTime: '2020-12-01 10:11:12.000Z',
+          result: 'Positive/Positive',
+          errorCode: '1001',
+        },
+        {
+          module: 'Module-2',
+          assay: 'TB',
+          lot: 'lot-2',
+          dateTime: '2020-12-02 10:11:12.000Z',
+          result: 'Some error name',
+          errorCode: '1002',
+        },
+      ]
+      const columnNames = [
+        'Module Name',
+        'Assay',
+        'Lot',
+        'DateTime',
+        'Result',
+        'Error Code',
+      ]
+      const fieldNames = [
+        'module',
+        'assay',
+        'lot',
+        'dateTime',
+        'result',
+        'errorCode',
+      ]
+      // get CSV file
+      const { ok, fullFilePath } = await generateCsvFile(
+        `${name}.csv`,
+        items,
+        columnNames,
+        fieldNames
+      )
+
+      if (ok) {
+        const attachment = await generateAttachment(
+          fullFilePath,
+          'application/vnd.ms-excel'
+        )
+
+        attachments.push(attachment)
+      }
+    }
+  })
+  return attachments
 }
 
 module.exports = {

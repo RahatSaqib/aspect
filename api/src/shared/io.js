@@ -159,7 +159,12 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
 
   const dir = getExportDirectory() // get path for export directory
   const ok = await writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
-  return { ok, url: `${dir.url}/${outputFileName}`, message }
+  return {
+    ok,
+    url: `${dir.url}/${outputFileName}`,
+    fullFilePath: `${dir.full}/${outputFileName}`,
+    message,
+  }
 }
 
 // ----------------------------------------------------------------------------------------------

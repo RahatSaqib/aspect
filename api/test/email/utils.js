@@ -33,7 +33,8 @@ class EmailTestContext {
       this.userId = userId
 
       // read 1st email template
-      const { id: emailTemplateId } = await knex('EmailTemplate').first('id')
+      this.emailTemplate = await knex('EmailTemplate').first()
+      const { id: emailTemplateId } = this.emailTemplate
       assert.isOk(emailTemplateId)
 
       // read 1st Result and coresponding siteId/deviceId
@@ -69,6 +70,14 @@ class EmailTestContext {
       // make sure MQ finished it's job before removing sample message
       await waitForIdle()
 
+      if (this.emailTemplate) {
+        await knex('EmailTemplate')
+          .update({
+            body: this.emailTemplate.body,
+            htmlBody: this.emailTemplate.htmlBody,
+          })
+          .where('id', this.emailTemplate.id)
+      }
       // remove sample message
       if (this.messageId) {
         await knex('EmailMessage').where('id', this.messageId).delete()

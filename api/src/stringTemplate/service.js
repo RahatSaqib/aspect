@@ -91,6 +91,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
+        'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
@@ -202,7 +203,11 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   const ds = await getBaseDataSource(data)
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
-    const template = (data && data[field]) || ''
+    let template = (data && data[field]) || ''
+
+    // check if template contains attachment tokens
+    template = checkAttachmentTemplates(memo, template)
+
     if (options.dynamic) {
       memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {
@@ -210,6 +215,34 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
     }
     return memo
   }, {})
+}
+
+function checkAttachmentTemplates(memo, template) {
+  memo.attachmentPlaceholders = memo.attachmentPlaceholders || []
+  const attachmentsRegExp = /<attachment:\s*(?<name>[\w-]+)\s*\(\s*(?<parameters>[\w,\s]+)\s*\)\s*(?:\/?)>/gi
+  let match
+  // eslint-disable-next-line no-cond-assign
+  while ((match = attachmentsRegExp.exec(template)) !== null) {
+    const [, name, parameters] = match
+    const params = parameters.split(',').map(param => param.trim())
+    if (
+      !memo.attachmentPlaceholders.find(
+        att => att.name === name && _.isEqual(att.params, params)
+      )
+    ) {
+      memo.attachmentPlaceholders.push({
+        name,
+        params,
+      })
+    }
+  }
+
+  // remove attachment placeholders
+  if (memo.attachmentPlaceholders.length > 0) {
+    template = template.replace(attachmentsRegExp, '')
+  }
+
+  return template
 }
 
 /**
