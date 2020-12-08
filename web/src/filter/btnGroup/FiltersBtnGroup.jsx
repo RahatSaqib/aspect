@@ -255,21 +255,28 @@ const buttonBy = {
   ),
   resultCategoryId: makeButton(
     ({ intl, filters, assayItems }, resultCategoryId) =>
-      intl.formatMessage(messages.withResultCategory, {
-        resultCategoryName: assayItems
-          .find(
-            it => it.get('id') === filters.assayId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('resultCategories', EMPTY_MAP)
-          .find(
-            it => it.get('id') === resultCategoryId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name', ''),
-      })
+      intl.formatMessage(
+        messages.withResultCategory,
+        filters.assayOverride
+          ? {
+              resultCategoryName: `"${startCase(filters.assayOverride)}"`,
+            }
+          : {
+              resultCategoryName: assayItems
+                .find(
+                  it => it.get('id') === filters.assayId,
+                  EMPTY_CONTEXT,
+                  EMPTY_MAP
+                )
+                .get('resultCategories', EMPTY_MAP)
+                .find(
+                  it => it.get('id') === resultCategoryId,
+                  EMPTY_CONTEXT,
+                  EMPTY_MAP
+                )
+                .get('name', ''),
+            }
+      )
   ),
   errorCode: makeButton(({ intl }, errorCode) =>
     intl.formatMessage(messages.errorCode, { errorCode })
@@ -385,19 +392,21 @@ const buttonBy = {
   assayOverride: () => false,
 }
 
-const FiltersBtnGroup = ({ className, children, ...restProps }) => (
-  <div className={cssClasses(className, 'FiltersBtnGroup')}>
-    {children &&
-      Children.map(children, child =>
-        React.cloneElement(child, {
-          className: cssClasses('FiltersBtnGroup__Child'),
-        })
-      )}
-    {Immutable.Map(restProps.filters)
-      .keySeq()
-      .sortBy(filterKey => filtersOrdering[filterKey])
-      .map(filterKey => buttonBy[filterKey](restProps, filterKey))}
-  </div>
-)
+const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+  return (
+    <div className={cssClasses(className, 'FiltersBtnGroup')}>
+      {children &&
+        Children.map(children, child =>
+          React.cloneElement(child, {
+            className: cssClasses('FiltersBtnGroup__Child'),
+          })
+        )}
+      {Immutable.Map(restProps.filters)
+        .keySeq()
+        .sortBy(filterKey => filtersOrdering[filterKey])
+        .map(filterKey => buttonBy[filterKey](restProps, filterKey))}
+    </div>
+  )
+}
 
 export default enhance(FiltersBtnGroup)
