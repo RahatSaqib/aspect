@@ -5,7 +5,6 @@ import { useQuery } from 'react-query'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import parse from 'date-fns/parse'
-import format from 'date-fns/format'
 import map from 'lodash/map'
 import uniqBy from 'lodash/uniqBy'
 import filter from 'lodash/filter'
@@ -16,8 +15,8 @@ import fetchWrapperForQueries from '../../../QueryFetch'
 const parseDate = (date, dateFormat) => {
   const newDate = parse(date, dateFormat, new Date())
   return {
-    minDate: format(startOfMonth(newDate), 'yyyy-MM-dd'),
-    maxDate: format(endOfMonth(newDate), 'yyyy-MM-dd'),
+    minDate: startOfMonth(newDate).toISOString(),
+    maxDate: endOfMonth(newDate).toISOString(),
   }
 }
 
@@ -50,32 +49,65 @@ const useGraphClickThrough = () => {
   }
 
   useEffect(() => {
-    async function buildLink(linkData, month, formatDate, indexBy, id) {
-      const categories = await flattenAssaysStructure(linkData)
-      const { id: resultCategoryId } = await assayCategoryIfFromKey(
-        categories,
-        id
+    async function buildLink(
+      linkData,
+      month,
+      formatDate,
+      id,
+      indexBy,
+      baseUrl,
+      keys
+    ) {
+      const params = {}
+      const buildParamsFromKey = async (key, params) => {
+        if (key === 'indexBy' && indexBy === 'month') {
+          const { minDate, maxDate } = parseDate(month, formatDate)
+          params.minDate = minDate
+          params.maxDate = maxDate
+        }
+
+        if (key === 'resultCategoryId') {
+          const categories = await flattenAssaysStructure(linkData)
+          const { id: resultCategoryId } = await assayCategoryIfFromKey(
+            categories,
+            id
+          )
+          params.resultCategoryId = resultCategoryId
+          params.assayOverride = true
+        }
+      }
+      await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
+      setLink(
+        `${baseUrl}?filters=${encodeURIComponent(
+          new URLSearchParams(params).toString()
+        )}`
       )
-      const { minDate, maxDate } = parseDate(month, formatDate)
-      const url = `/browse/result?filters=resultCategoryId=${resultCategoryId}&minDate=${minDate}&maxDate=${maxDate}`
-      setLink(url)
     }
 
-    if (!isLoading && config && linkData && !link) {
+    if (!isLoading && config && linkData) {
       const {
         value: {
           data: { month },
           id,
         },
-        baseConfig: { indexBy, formatDate },
+        baseConfig: {
+          indexBy,
+          formatDate,
+          clickThrough: { allow, baseUrl, keys } = false,
+        },
       } = config
-      buildLink(linkData, month, formatDate, indexBy, id)
-    }
 
-    if (!isLoading && link) {
+      if (allow) {
+        buildLink(linkData, month, formatDate, id, indexBy, baseUrl, keys)
+      }
+    }
+  }, [config, linkData, isLoading, push])
+
+  useEffect(() => {
+    if (link) {
       push(link)
     }
-  }, [config, link, linkData, isLoading, push])
+  }, [link, push])
 
   return { setConfig }
 }

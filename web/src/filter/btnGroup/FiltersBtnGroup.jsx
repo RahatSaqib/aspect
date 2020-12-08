@@ -382,6 +382,7 @@ const buttonBy = {
       issueTypeId: startCase(issueTypeId),
     })
   ),
+  assayOverride: () => false,
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => (

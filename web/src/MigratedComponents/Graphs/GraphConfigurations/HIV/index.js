@@ -41,6 +41,11 @@ const hivGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result',
+          keys: ['resultCategoryId', 'indexBy'],
+        },
       },
       {
         id: 'hivByCategory1Aggregate',
