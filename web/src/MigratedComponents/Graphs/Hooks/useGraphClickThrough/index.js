@@ -28,8 +28,12 @@ const flattenAssaysStructure = async ({ data }) => {
   return uniqBy(output, 'i18nKey')
 }
 
-const assayCategoryIfFromKey = async (data, id) => {
+const assayResultCategoryIfFromKey = async (data, id) => {
   return filter(data, { externalId: id })[0] || false
+}
+
+const assayIdFromKey = async ({ data }, id) => {
+  return filter(data, { name: id })[0] || false
 }
 
 const useGraphClickThrough = () => {
@@ -60,6 +64,8 @@ const useGraphClickThrough = () => {
     ) {
       const params = {}
       const buildParamsFromKey = async (key, params) => {
+        console.log(key)
+
         if (key === 'indexBy' && indexBy === 'month') {
           const { minDate, maxDate } = parseDate(month, formatDate)
           params.minDate = minDate
@@ -68,12 +74,17 @@ const useGraphClickThrough = () => {
 
         if (key === 'resultCategoryId') {
           const categories = await flattenAssaysStructure(linkData)
-          const { id: resultCategoryId } = await assayCategoryIfFromKey(
+          const { id: resultCategoryId } = await assayResultCategoryIfFromKey(
             categories,
             id
           )
           params.resultCategoryId = resultCategoryId
           params.assayOverride = id
+        }
+
+        if (key === 'assay') {
+          const { id: assayId } = await assayIdFromKey(linkData, id)
+          params.assayId = assayId
         }
       }
       await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
@@ -105,6 +116,7 @@ const useGraphClickThrough = () => {
 
   useEffect(() => {
     if (link) {
+      console.log(link)
       push(link)
     }
   }, [link, push])

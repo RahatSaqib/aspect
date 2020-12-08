@@ -33,6 +33,11 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result',
+          keys: ['resultCategoryId', 'indexBy'],
+        },
       },
       {
         id: 'tbResultsByCategory1Aggregate',
@@ -93,6 +98,11 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result',
+          keys: ['resultCategoryId', 'indexBy'],
+        },
       },
       {
         id: 'tbByCategory1Aggregate',
