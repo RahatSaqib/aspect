@@ -73,7 +73,7 @@ const useGraphClickThrough = () => {
             id
           )
           params.resultCategoryId = resultCategoryId
-          params.assayOverride = true
+          params.assayOverride = id
         }
       }
       await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
