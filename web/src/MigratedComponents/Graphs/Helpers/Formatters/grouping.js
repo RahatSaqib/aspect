@@ -10,7 +10,6 @@ import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
 import format from 'date-fns/format'
-import parse from 'date-fns/parse'
 
 import graphColorMap from '../Variables'
 import {
