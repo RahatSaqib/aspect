@@ -193,7 +193,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // 25% are ('Detected','Detected')
     // -----------------------------
     const { id: deviceId, geographyId, siteId } = device
-    await Promise.each([], async ({ midMonth, totalResults }) => {
+    await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
       const getRandomDate = () =>
         new Date(`2020-${format(midMonth, 'MM')}-01T01:00:00.000Z`)
       const samples = []
