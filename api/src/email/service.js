@@ -10,8 +10,8 @@ const {
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { generateCsvFile } = require('../shared/io')
-const { generateAttachment } = require('./templateProcessor')
+const { generateCsvAttachment } = require('../shared/io')
+
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
 // -----------------------------
@@ -226,22 +226,14 @@ async function generateAttachments(attachmentPlaceholders, data) {
         'result',
         'errorCode',
       ]
-      // get CSV file
-      const { ok, fullFilePath } = await generateCsvFile(
+      // get CSV attachment
+      const attachment = await generateCsvAttachment(
         `${name}.csv`,
         items,
         columnNames,
         fieldNames
       )
-
-      if (ok) {
-        const attachment = await generateAttachment(
-          fullFilePath,
-          'application/vnd.ms-excel'
-        )
-
-        attachments.push(attachment)
-      }
+      attachments.push(attachment)
     }
   })
   return attachments

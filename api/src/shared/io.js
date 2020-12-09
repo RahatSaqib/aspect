@@ -167,6 +167,45 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   }
 }
 
+// ---------------------------------
+// generate CSV attachment in memory - string arrays columnNames and fieldNames should have same size
+// ---------------------------------
+async function generateCsvAttachment(
+  outputFileName,
+  items,
+  columnNames,
+  fieldNames
+) {
+  const workbook = new excel.Workbook()
+  const worksheet = workbook.addWorksheet()
+
+  // column headers (for 1st row in CSV)
+  const columns = []
+  columnNames.forEach(columnName => {
+    columns.push({ header: columnName })
+  })
+  worksheet.columns = columns
+
+  // add an array of rows
+  const rows = []
+  items.forEach(dataItem => {
+    const row = []
+    fieldNames.forEach(fieldName => {
+      row.push(dataItem[fieldName])
+    })
+    rows.push(row)
+  })
+  worksheet.addRows(rows)
+
+  const fileBuffer = await workbook.csv.writeBuffer()
+  return {
+    content: fileBuffer.toString('base64'),
+    mimeType: 'application/vnd.ms-excel',
+    fileName: outputFileName,
+    disposition: 'attachment',
+  }
+}
+
 // ----------------------------------------------------------------------------------------------
 function getContentType(fileExt) {
   if (fileExt[0] === '.') {
@@ -199,6 +238,7 @@ function getContentType(fileExt) {
 module.exports = {
   createDirectory,
   generateCsvFile,
+  generateCsvAttachment,
   generateExcelFile,
   getCellsBySubstring,
   getCellsByValue,
