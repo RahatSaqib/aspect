@@ -1,11 +1,29 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import { defineMessages, useIntl } from 'react-intl'
 import filter from 'lodash/filter'
 
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
+
+const messages = defineMessages({
+  toolTipTitleWithStatus: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus',
+    defaultMessage: `{maintenanceStatusName} for {daysInSameStatus, plural,
+      one {# day}
+      other {# days}
+    }`,
+  },
+  toolTipTitleWithoutStatus: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus',
+    defaultMessage: `{daysInSameStatus, plural,
+      one {# day}
+      other {# days}
+    } since last update`,
+  },
+})
 
 const DayBlock = ({ dayModifier, consts }) => {
   const {
@@ -31,12 +49,14 @@ DayBlock.propTypes = {
 }
 
 const DailyStatusClinicDay = ({
-  isWeekend,
-  maintenanceStatusI18nKey,
-  daysInSameStatus,
-  statusses,
   consts,
+  daysInSameStatus,
+  isWeekend,
+  maintenanceStatusName,
+  maintenanceStatusI18nKey,
+  statusses,
 }) => {
+  const { formatMessage } = useIntl()
   const { weekend } = consts
   const { checked } =
     filter(statusses, {
@@ -54,9 +74,18 @@ const DailyStatusClinicDay = ({
         : maintenanceStatusI18nKey
   }
 
-  return checked && daysInSameStatus && !isWeekend ? (
+  return checked && daysInSameStatus ? (
     <AspectTooltip
-      title={`${daysInSameStatus} Days since last update`}
+      title={
+        maintenanceStatusName
+          ? formatMessage(messages.toolTipTitleWithStatus, {
+              maintenanceStatusName,
+              daysInSameStatus,
+            })
+          : formatMessage(messages.toolTipTitleWithoutStatus, {
+              daysInSameStatus,
+            })
+      }
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
@@ -67,9 +96,17 @@ const DailyStatusClinicDay = ({
   )
 }
 
+DailyStatusClinicDay.defaultProps = {
+  maintenanceStatusName: false,
+}
+
 DailyStatusClinicDay.propTypes = {
   isWeekend: PropTypes.string.isRequired,
   maintenanceStatusI18nKey: PropTypes.string.isRequired,
+  maintenanceStatusName: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+  ]),
   daysInSameStatus: PropTypes.string.isRequired,
   statusses: PropTypes.string.isRequired,
   consts: PropTypes.shape({
