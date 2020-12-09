@@ -1,5 +1,7 @@
 // const chai = require('chai')
+const _ = require('lodash')
 const { assert, expect } = require('chai')
+const { subDays } = require('date-fns')
 
 const { createEmailTestContext } = require('./utils')
 const {
@@ -89,7 +91,7 @@ describe('Sending Email via Message Queue', () => {
   it('should send email with CSV attachment', () =>
     runTest(async knex => {
       // get MQ context and messageId of inserted record in EmailMessage
-      const { messageId, emailTemplate } = context
+      const { messageId, emailTemplate, deviceId } = context
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ emailMessageCreated })
 
@@ -111,7 +113,7 @@ describe('Sending Email via Message Queue', () => {
        * (EmailTemplate will be restored in `afterEach` func)
        */
       const reportName = 'error-history'
-      const attachmentPlaceholder = `<attachment:${reportName}(deviceId, errorCode)>`
+      const attachmentPlaceholder = `<attachment:${reportName}(deviceId, 'last-30-days')>`
       const body = `${emailTemplate.body} ${attachmentPlaceholder}`
       const htmlBody = `${emailTemplate.htmlBody} ${attachmentPlaceholder}`
       await knex('EmailTemplate')
@@ -120,6 +122,18 @@ describe('Sending Email via Message Queue', () => {
           htmlBody,
         })
         .where('id', emailTemplate.id)
+      /**
+       * add results with errors for current device
+       */
+      const existingResult = await knex('Result').first()
+      const [resultId] = await knex('Result').insert({
+        ..._.omit(existingResult, ['id']),
+        externalId: `${existingResult.externalId}-1`,
+        deviceId,
+        endedOn: subDays(new Date(), 3),
+        errorCode: '1001',
+      })
+      context.resultIdsToDelete = [resultId]
 
       await waitForCreated
 

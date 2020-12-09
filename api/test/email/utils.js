@@ -32,6 +32,7 @@ class EmailTestContext {
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
+      this.resultIdsToDelete = null
       // read 1st email template
       this.emailTemplate = await knex('EmailTemplate').first()
       const { id: emailTemplateId } = this.emailTemplate
@@ -43,6 +44,7 @@ class EmailTestContext {
         'siteId',
         'deviceId'
       )
+      this.deviceId = deviceId
 
       const messageStatusId = await messageStatusToId('Initial')
 
@@ -81,6 +83,9 @@ class EmailTestContext {
       // remove sample message
       if (this.messageId) {
         await knex('EmailMessage').where('id', this.messageId).delete()
+      }
+      if (this.resultIdsToDelete && this.resultIdsToDelete.length > 0) {
+        await knex('Result').whereIn('id', this.resultIdsToDelete).del()
       }
 
       await queuePurge()

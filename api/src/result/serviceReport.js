@@ -245,7 +245,47 @@ async function getColumnsFromResultForms({ partnerId }) {
   return columns
 }
 
+async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
+  const items = await knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .where('r.deviceId', deviceId)
+    .where('r.endedOn', '>=', minDate)
+    .where('r.endedOn', '<=', maxDate)
+    .where(function () {
+      // get only errors
+      this.whereNotNull('r.errorCode')
+        .orWhere('rc1.externalId', 'Error')
+        .orWhere('rc2.externalId', 'Error')
+    })
+    .orderBy('r.endedOn', 'desc')
+    .select(
+      'a.abbreviation as assay',
+      'r.consumableLot as lot',
+      'r.moduleName',
+      'r.moduleSerial',
+      'r.endedOn as dateTime',
+      'rc1.externalId as result',
+      'r.errorCode'
+    )
+
+  const columns = [
+    { header: 'Assay', key: 'assay' },
+    { header: 'Module Name', key: 'moduleName' },
+    { header: 'Lot', key: 'lot' },
+    { header: 'Date/Time', key: 'dateTime' },
+    { header: 'Result', key: 'result' },
+    { header: 'Error Code', key: 'errorCode' },
+  ]
+  return {
+    items,
+    columns,
+  }
+}
+
 module.exports = {
   exportResults,
   getResultsReport,
+  getDeviceErrorHistoryForAttachment,
 }

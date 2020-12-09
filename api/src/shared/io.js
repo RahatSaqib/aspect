@@ -2,6 +2,7 @@ const fs = require('fs')
 const uuid = require('node-uuid')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Promise = require('bluebird')
+const _ = require('lodash')
 
 // ---------------------------------
 // create missing directories in the path and return path back
@@ -159,39 +160,25 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
 
   const dir = getExportDirectory() // get path for export directory
   const ok = await writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
-  return {
-    ok,
-    url: `${dir.url}/${outputFileName}`,
-    fullFilePath: `${dir.full}/${outputFileName}`,
-    message,
-  }
+  return { ok, url: `${dir.url}/${outputFileName}`, message }
 }
 
 // ---------------------------------
 // generate CSV attachment in memory - string arrays columnNames and fieldNames should have same size
 // ---------------------------------
-async function generateCsvAttachment(
-  outputFileName,
-  items,
-  columnNames,
-  fieldNames
-) {
+async function generateCsvAttachment(outputFileName, { items, columns }) {
   const workbook = new excel.Workbook()
   const worksheet = workbook.addWorksheet()
 
   // column headers (for 1st row in CSV)
-  const columns = []
-  columnNames.forEach(columnName => {
-    columns.push({ header: columnName })
-  })
-  worksheet.columns = columns
+  worksheet.columns = columns.map(column => _.pick(column, ['header']))
 
   // add an array of rows
   const rows = []
   items.forEach(dataItem => {
     const row = []
-    fieldNames.forEach(fieldName => {
-      row.push(dataItem[fieldName])
+    columns.forEach(column => {
+      row.push(dataItem[column.key])
     })
     rows.push(row)
   })

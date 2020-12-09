@@ -1,5 +1,15 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
+const {
+  subDays,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  startOfDay,
+  endOfDay,
+  parseISO,
+} = require('date-fns')
+
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const {
   allMessageStatusToId,
@@ -11,6 +21,10 @@ const {
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { generateCsvAttachment } = require('../shared/io')
+const { getLocalDateInUtc } = require('../shared/date')
+const {
+  getDeviceErrorHistoryForAttachment,
+} = require('../result/serviceReport')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -188,51 +202,33 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
 async function generateAttachments(attachmentPlaceholders, data) {
   const attachments = []
   await Promise.each(attachmentPlaceholders, async ({ name, params }) => {
+    const now = parseISO(new Date().toISOString())
+    let reportData = null
     if (name === 'error-history') {
-      // TODO: call func after ASP-1840
       const { deviceId } = data
-      // get data
-      const items = [
-        {
-          module: 'Module-1',
-          assay: 'TB',
-          lot: 'lot-1',
-          dateTime: '2020-12-01 10:11:12.000Z',
-          result: 'Positive/Positive',
-          errorCode: '1001',
-        },
-        {
-          module: 'Module-2',
-          assay: 'TB',
-          lot: 'lot-2',
-          dateTime: '2020-12-02 10:11:12.000Z',
-          result: 'Some error name',
-          errorCode: '1002',
-        },
-      ]
-      const columnNames = [
-        'Module Name',
-        'Assay',
-        'Lot',
-        'DateTime',
-        'Result',
-        'Error Code',
-      ]
-      const fieldNames = [
-        'module',
-        'assay',
-        'lot',
-        'dateTime',
-        'result',
-        'errorCode',
-      ]
-      // get CSV attachment
-      const attachment = await generateCsvAttachment(
-        `${name}.csv`,
-        items,
-        columnNames,
-        fieldNames
+      let [, period] = params
+      period = _.trim(period, [`'`, '"'])
+      let minDate
+      let maxDate
+      if (period === 'last-30-days') {
+        minDate = getLocalDateInUtc(startOfDay(subDays(now, 30)))
+        maxDate = getLocalDateInUtc(endOfDay(now))
+      } else {
+        // last month
+        const previousMonth = subMonths(now, 1)
+        minDate = getLocalDateInUtc(startOfMonth(previousMonth))
+        maxDate = getLocalDateInUtc(endOfMonth(previousMonth))
+      }
+      reportData = await getDeviceErrorHistoryForAttachment(
+        deviceId,
+        minDate,
+        maxDate
       )
+    }
+
+    if (reportData) {
+      // get CSV attachment
+      const attachment = await generateCsvAttachment(`${name}.csv`, reportData)
       attachments.push(attachment)
     }
   })

@@ -219,7 +219,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
 
 function checkAttachmentTemplates(memo, template) {
   memo.attachmentPlaceholders = memo.attachmentPlaceholders || []
-  const attachmentsRegExp = /<attachment:\s*(?<name>[\w-]+)\s*\(\s*(?<parameters>[\w,\s]+)\s*\)\s*(?:\/?)>/gi
+  const attachmentsRegExp = /<attachment:\s*(?<name>[\w-]+)\s*\(\s*(?<parameters>[\w,\s'"-]+)\s*\)\s*(?:\/?)>/gi
   let match
   // eslint-disable-next-line no-cond-assign
   while ((match = attachmentsRegExp.exec(template)) !== null) {
