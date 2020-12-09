@@ -447,7 +447,6 @@ async function listRefreshTokens(request) {
         }
       })
     })
-    .leftJoin('ResultDownloadLog as resd', 'r.userId', 'resd.createdBy')
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -486,7 +485,7 @@ async function listRefreshTokens(request) {
       'r.createdOn',
       'r.revoked',
       knex.raw(
-        'max(GREATEST(ifnull(r.updatedOn, r.createdOn), resd.createdOn)) as lastSeen'
+        'GREATEST(IFNULL(r.updatedOn, r.createdOn), (SELECT MAX(all_rdl.createdOn) FROM ResultDownloadLog as all_rdl WHERE all_rdl.createdBy = r.userId)) as lastSeen'
       ),
       knex.raw(
         "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
