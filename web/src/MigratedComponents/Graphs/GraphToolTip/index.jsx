@@ -1,11 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { defineMessages, useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import startCase from 'lodash/startCase'
 
 const cssClasses = classnames.bind(require('./GraphTooltip.css'))
 
-const GraphToolTip = ({ displayMethod, values }) => {
+const messages = defineMessages({
+  toolTipTitleWithPercentageSplit: {
+    id:
+      'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit',
+    defaultMessage: `{value} ({records}/{total, plural,
+      one {# result}
+      other {# results}
+    })`,
+  },
+  toolTipAllowClickThrough: {
+    id: 'pages.Graphs.toolTipAllowClickThrough',
+    defaultMessage: 'Click to view results in table format',
+  },
+})
+
+const GraphToolTip = ({ clickThrough, displayMethod, values }) => {
+  const { formatMessage } = useIntl()
   const { color, displayId, indexValue = false, displayValue } = values
   return (
     <div className={cssClasses('tooltip__container')}>
@@ -23,8 +40,11 @@ const GraphToolTip = ({ displayMethod, values }) => {
             <div className={cssClasses('tooltip__valueContainer')}>
               {displayMethod === 'percentage' ? (
                 <div className={cssClasses('tooltip__valueSecondary')}>
-                  ({displayValue.actual.percentageToValue}/
-                  {displayValue.actual.totalCnt} results)
+                  {formatMessage(messages.toolTipTitleWithPercentageSplit, {
+                    value: displayValue.value,
+                    records: displayValue.actual.percentageToValue,
+                    total: displayValue.actual.totalCnt,
+                  })}
                 </div>
               ) : (
                 <div className={cssClasses('tooltip__valuePrimary')}>
@@ -39,6 +59,13 @@ const GraphToolTip = ({ displayMethod, values }) => {
           )}
         </div>
       </div>
+      {clickThrough ? (
+        <div className={cssClasses('tooltip__row')}>
+          <div className={cssClasses('tooltip__allowsClickthrough')}>
+            {formatMessage(messages.toolTipAllowClickThrough)}
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -46,6 +73,14 @@ const GraphToolTip = ({ displayMethod, values }) => {
 GraphToolTip.propTypes = {
   displayMethod: PropTypes.string.isRequired,
   values: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  clickThrough: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      allow: PropTypes.bool,
+      baseUrl: PropTypes.string,
+      keys: PropTypes.oneOfType([PropTypes.array]),
+    }),
+  ]).isRequired,
 }
 
 const EmptyTooltip = ({ title }) => (
