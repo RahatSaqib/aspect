@@ -270,7 +270,7 @@ describe('Device API Raw Philippines NTRL', () => {
                   const whereCallbackFunction = whereParams[0].bind(
                     whereParamsAccumulator
                   )
-                  whereCallbackFunction()
+                  whereCallbackFunction(whereParamsAccumulator)
                   whereFunctionNames.forEach(whereFunctionName => {
                     delete whereParamsAccumulator[whereFunctionName]
                   })
