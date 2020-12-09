@@ -54,6 +54,11 @@ const treatmentStatusGraphs = {
         displayMethod: 'percentage', // todo: actual
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          keys: ['treatmentStatusId', 'indexBy'],
+        },
       },
       {
         id: 'treatmentStatusMonthly',

@@ -28,11 +28,13 @@ const flattenAssaysStructure = async ({ data }) => {
   return uniqBy(output, 'i18nKey')
 }
 
-const assayResultCategoryIfFromKey = async (data, id) => {
+const assayResultCategoryIdFromKey = async (data, id) => {
   return filter(data, { externalId: id })[0] || false
 }
 
 const assayIdFromKey = async ({ data }, id) => {
+  console.log(data, id)
+
   return filter(data, { name: id })[0] || false
 }
 
@@ -55,7 +57,7 @@ const useGraphClickThrough = () => {
   useEffect(() => {
     async function buildLink(
       linkData,
-      month,
+      data,
       formatDate,
       id,
       indexBy,
@@ -64,9 +66,8 @@ const useGraphClickThrough = () => {
     ) {
       const params = {}
       const buildParamsFromKey = async (key, params) => {
-        console.log(key)
-
-        if (key === 'indexBy' && indexBy === 'month') {
+        if (key === 'indexBy' && indexBy.includes('month')) {
+          const { [indexBy]: month } = data
           const { minDate, maxDate } = parseDate(month, formatDate)
           params.minDate = minDate
           params.maxDate = maxDate
@@ -74,7 +75,7 @@ const useGraphClickThrough = () => {
 
         if (key === 'resultCategoryId') {
           const categories = await flattenAssaysStructure(linkData)
-          const { id: resultCategoryId } = await assayResultCategoryIfFromKey(
+          const { id: resultCategoryId } = await assayResultCategoryIdFromKey(
             categories,
             id
           )
@@ -86,10 +87,15 @@ const useGraphClickThrough = () => {
           const { id: assayId } = await assayIdFromKey(linkData, id)
           params.assayId = assayId
         }
+
+        if (key === 'treatmentStatusId') {
+          const { id: assayId } = await assayIdFromKey(linkData, id)
+          params.assayId = assayId
+        }
       }
       await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
       setLink(
-        `${baseUrl}?filters=${encodeURIComponent(
+        `${baseUrl}${encodeURIComponent(
           new URLSearchParams(params).toString()
         )}`
       )
@@ -97,26 +103,22 @@ const useGraphClickThrough = () => {
 
     if (!isLoading && config && linkData) {
       const {
-        value: {
-          data: { month },
-          id,
-        },
         baseConfig: {
           indexBy,
           formatDate,
           clickThrough: { allow, baseUrl, keys } = false,
         },
+        value: { data, id },
       } = config
 
       if (allow) {
-        buildLink(linkData, month, formatDate, id, indexBy, baseUrl, keys)
+        buildLink(linkData, data, formatDate, id, indexBy, baseUrl, keys)
       }
     }
   }, [config, linkData, isLoading, push])
 
   useEffect(() => {
     if (link) {
-      console.log(link)
       push(link)
     }
   }, [link, push])
