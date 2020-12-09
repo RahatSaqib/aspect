@@ -10,8 +10,6 @@ const {
   waitForAction,
 } = require('../utils/mqUtils')
 
-// const { assert } = chai
-
 // get test context with created sample messageId
 const context = createEmailTestContext({ user: 'admin' })
 
@@ -91,7 +89,7 @@ describe('Sending Email via Message Queue', () => {
   it('should send email with CSV attachment', () =>
     runTest(async knex => {
       // get MQ context and messageId of inserted record in EmailMessage
-      const { messageId, emailTemplate, deviceId } = context
+      const { messageId, emailTemplate, result } = context
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ emailMessageCreated })
 
@@ -124,23 +122,20 @@ describe('Sending Email via Message Queue', () => {
         })
         .where('id', emailTemplate.id)
       /**
-       * add Result with errors for current device
+       * set errorCode for existing Result
        */
-      const existingResult = await knex('Result').first()
-      const [resultId] = await knex('Result').insert({
-        ..._.omit(existingResult, ['id']),
-        externalId: `${existingResult.externalId}-1`,
-        deviceId,
-        endedOn: subDays(new Date(), 3),
-        errorCode: '9999',
-      })
-      context.resultIdsToDelete = [resultId]
+      await knex('Result')
+        .where('id', result.id)
+        .update({
+          endedOn: subDays(new Date(), 3),
+          errorCode: '9999',
+        })
       /**
        * add DeviceOperation with error for current device
        */
       const [deviceOperationId] = await knex('DeviceOperation').insert({
         externalId: new Date().getTime(),
-        deviceId,
+        deviceId: result.deviceId,
         startedOn: subDays(new Date(), 5),
         data: JSON.stringify({
           type: 'gx-log',
@@ -199,7 +194,7 @@ describe('Sending Email via Message Queue', () => {
       )
 
       // is a stringified object
-      assert.isNotEmpty(msg.attachments)
+      assert.isNotNull(msg.attachments)
       // get object
       const attachments = JSON.parse(msg.attachments)
       // is array

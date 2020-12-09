@@ -32,20 +32,15 @@ class EmailTestContext {
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
-      this.resultIdsToDelete = null
       this.deviceOperationsToDelete = null
       // read 1st email template
       this.emailTemplate = await knex('EmailTemplate').first()
       const { id: emailTemplateId } = this.emailTemplate
       assert.isOk(emailTemplateId)
 
-      // read 1st Result and coresponding siteId/deviceId
-      const { id: resultId, siteId, deviceId } = await knex('Result').first(
-        'id',
-        'siteId',
-        'deviceId'
-      )
-      this.deviceId = deviceId
+      // read 1st Result and corresponding siteId/deviceId
+      this.result = await knex('Result').first()
+      const { id: resultId, siteId, deviceId } = this.result
 
       const messageStatusId = await messageStatusToId('Initial')
 
@@ -84,8 +79,11 @@ class EmailTestContext {
       if (this.messageId) {
         await knex('EmailMessage').where('id', this.messageId).delete()
       }
-      if (this.resultIdsToDelete && this.resultIdsToDelete.length > 0) {
-        await knex('Result').whereIn('id', this.resultIdsToDelete).del()
+      if (this.result) {
+        await knex('Result').where('id', this.result.id).update({
+          endedOn: this.result.endedOn,
+          errorCode: this.result.errorCode,
+        })
       }
       if (
         this.deviceOperationsToDelete &&
