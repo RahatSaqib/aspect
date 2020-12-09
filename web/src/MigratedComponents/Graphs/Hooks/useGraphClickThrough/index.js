@@ -12,11 +12,18 @@ import filter from 'lodash/filter'
 import ASSAY_LIST from '../../../QueryFetch/Assay'
 import fetchWrapperForQueries from '../../../QueryFetch'
 
+const CONSTS = {
+  treatmentStatusId: {
+    NotConfirmed: 1,
+    Confirmed: 2,
+  },
+}
+
 const parseDate = (date, dateFormat) => {
-  const newDate = parse(date, dateFormat, new Date())
+  const parsedDate = parse(date, dateFormat, new Date())
   return {
-    minDate: startOfMonth(newDate).toISOString(),
-    maxDate: endOfMonth(newDate).toISOString(),
+    minDate: startOfMonth(parsedDate).toISOString(),
+    maxDate: endOfMonth(parsedDate).toISOString(),
   }
 }
 
@@ -33,8 +40,6 @@ const assayResultCategoryIdFromKey = async (data, id) => {
 }
 
 const assayIdFromKey = async ({ data }, id) => {
-  console.log(data, id)
-
   return filter(data, { name: id })[0] || false
 }
 
@@ -89,8 +94,18 @@ const useGraphClickThrough = () => {
         }
 
         if (key === 'treatmentStatusId') {
-          const { id: assayId } = await assayIdFromKey(linkData, id)
-          params.assayId = assayId
+          switch (id) {
+            case 'NotConfirmed':
+              params.treatmentStatusId = CONSTS.treatmentStatusId.NotConfirmed
+              break
+
+            case 'Confirmed':
+              params.treatmentStatusId = CONSTS.treatmentStatusId.Confirmed
+              break
+
+            default:
+              break
+          }
         }
       }
       await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
@@ -119,7 +134,7 @@ const useGraphClickThrough = () => {
 
   useEffect(() => {
     if (link) {
-      push(link)
+      // push(link)
     }
   }, [link, push])
 
