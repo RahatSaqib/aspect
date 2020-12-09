@@ -5,17 +5,19 @@
 
 .clinic__container {
   display: flex;
+  align-items: center;
 }
 
 .clinic__name {
   min-width: 330px;
   text-align: right;
-  padding: 5px 10px 5px 0;
+  padding: 0 10px 0;
+  font-size: 12px;
 }
 
 .clinic__dayrow {
   display: flex;
-  padding: 5px 0;
+  padding: 2px 0;
 }
 
 .clinic__day {
