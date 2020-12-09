@@ -35,7 +35,7 @@ const testsPerFormedGraphs = {
         formatDate: 'MMM yy',
         clickThrough: {
           allow: true,
-          baseUrl: '/browse/result',
+          baseUrl: '/browse/result?filters=',
           keys: ['assay', 'indexBy'],
         },
       },

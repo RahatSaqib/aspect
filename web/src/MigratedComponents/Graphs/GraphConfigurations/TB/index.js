@@ -35,7 +35,7 @@ const tbGraphs = {
         formatDate: 'MMM yy',
         clickThrough: {
           allow: true,
-          baseUrl: '/browse/result',
+          baseUrl: '/browse/result?filters=',
           keys: ['resultCategoryId', 'indexBy'],
         },
       },
@@ -100,7 +100,7 @@ const tbGraphs = {
         formatDate: 'MMM yy',
         clickThrough: {
           allow: true,
-          baseUrl: '/browse/result',
+          baseUrl: '/browse/result?filters=',
           keys: ['resultCategoryId', 'indexBy'],
         },
       },

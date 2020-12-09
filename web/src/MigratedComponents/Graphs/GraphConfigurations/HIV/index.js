@@ -43,7 +43,7 @@ const hivGraphs = {
         formatDate: 'MMM yy',
         clickThrough: {
           allow: true,
-          baseUrl: '/browse/result',
+          baseUrl: '/browse/result?filters=',
           keys: ['resultCategoryId', 'indexBy'],
         },
       },
