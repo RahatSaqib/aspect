@@ -240,6 +240,7 @@ const AspectResponsiveBar = ({
             <EmptyTooltip title={v.id} />
           ) : (
             <GraphToolTip
+              clickThrough={(baseConfig && baseConfig.clickThrough) || false}
               displayMethod={displayMethod}
               values={generateToolTip(
                 v,
