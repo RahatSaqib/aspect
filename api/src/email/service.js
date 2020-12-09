@@ -162,7 +162,8 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       'tmpl.subject as subjectTemplate',
       'tmpl.body as bodyTemplate',
       'tmpl.htmlBody as htmlBodyTemplate',
-      'tmpl.to as toTemplate'
+      'tmpl.to as toTemplate',
+      'tmpl.attachments'
     )
 
   if (data && data.geographyId) {
@@ -188,10 +189,10 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     ).join(',')
   }
 
-  const { attachmentPlaceholders } = processedTemplateFields
-  if (!_.isEmpty(attachmentPlaceholders)) {
+  const attachmentProps = JSON.parse(data.attachments || '[]')
+  if (!_.isEmpty(attachmentProps)) {
     processedTemplateFields.attachments = await generateAttachments(
-      attachmentPlaceholders,
+      attachmentProps,
       data
     )
   }
@@ -199,15 +200,18 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   return processedTemplateFields
 }
 
-async function generateAttachments(attachmentPlaceholders, data) {
+async function generateAttachments(attachmentProps, data) {
   const attachments = []
-  await Promise.each(attachmentPlaceholders, async ({ name, params }) => {
+  await Promise.each(attachmentProps, async attachmentItem => {
+    const { name } = attachmentItem
     const now = parseISO(new Date().toISOString())
     let reportData = null
     if (name === 'error-history') {
+      // get deviceId from feeding 'data' of this email
       const { deviceId } = data
-      let [, period] = params
-      period = _.trim(period, [`'`, '"'])
+      // period token is defined in EmailTemplate in JSON 'attachments'
+      const { period } = attachmentItem
+
       let minDate
       let maxDate
       if (period === 'last-30-days') {

@@ -33,6 +33,7 @@ class EmailTestContext {
       this.userId = userId
 
       this.resultIdsToDelete = null
+      this.deviceOperationsToDelete = null
       // read 1st email template
       this.emailTemplate = await knex('EmailTemplate').first()
       const { id: emailTemplateId } = this.emailTemplate
@@ -75,8 +76,7 @@ class EmailTestContext {
       if (this.emailTemplate) {
         await knex('EmailTemplate')
           .update({
-            body: this.emailTemplate.body,
-            htmlBody: this.emailTemplate.htmlBody,
+            attachments: this.emailTemplate.attachments,
           })
           .where('id', this.emailTemplate.id)
       }
@@ -86,6 +86,14 @@ class EmailTestContext {
       }
       if (this.resultIdsToDelete && this.resultIdsToDelete.length > 0) {
         await knex('Result').whereIn('id', this.resultIdsToDelete).del()
+      }
+      if (
+        this.deviceOperationsToDelete &&
+        this.deviceOperationsToDelete.length > 0
+      ) {
+        await knex('DeviceOperation')
+          .whereIn('id', this.deviceOperationsToDelete)
+          .del()
       }
 
       await queuePurge()

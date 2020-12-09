@@ -246,6 +246,11 @@ async function getColumnsFromResultForms({ partnerId }) {
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
+  /**
+   * for current device
+   *
+   * select errors from Result table
+   */
   const items = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
@@ -259,16 +264,41 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .orWhere('rc1.externalId', 'Error')
         .orWhere('rc2.externalId', 'Error')
     })
-    .orderBy('r.endedOn', 'desc')
     .select(
       'a.abbreviation as assay',
       'r.consumableLot as lot',
       'r.moduleName',
-      'r.moduleSerial',
       'r.endedOn as dateTime',
       'rc1.externalId as result',
       'r.errorCode'
     )
+    .union([
+      /**
+       * select hardware errors from DeviceOperation table
+       */
+      knex('DeviceOperation')
+        .where('deviceId', deviceId)
+        .where('startedOn', '>=', minDate)
+        .where('startedOn', '<=', maxDate)
+        // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
+        .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
+        /**
+         * JSON array details.Errors should contain some error code
+         * Notice that below we get entries with any error code (grabbed
+         * from GeneXpert logs).
+         * Easy to narrow, if we need, to only some set of error codes.
+         */
+        .whereRaw(`IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) > 0`)
+        .select(
+          knex.raw('"Hardware" as assay'),
+          knex.raw(`'-' as lot`),
+          knex.raw(`'-' as moduleName`),
+          'startedOn as dateTime',
+          knex.raw(`'-' as result`),
+          knex.raw(`data ->> '$.details.Errors[0].ErrorCode'`)
+        ),
+    ])
+    .orderBy('dateTime', 'desc')
 
   const columns = [
     { header: 'Assay', key: 'assay' },

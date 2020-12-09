@@ -109,21 +109,22 @@ describe('Sending Email via Message Queue', () => {
       messageContext.emailMessageCreated(messageId)
 
       /**
-       * add attachment placeholder to body template and update EmailTemplate
+       * add attachments props to EmailTemplate
        * (EmailTemplate will be restored in `afterEach` func)
        */
       const reportName = 'error-history'
-      const attachmentPlaceholder = `<attachment:${reportName}(deviceId, 'last-30-days')>`
-      const body = `${emailTemplate.body} ${attachmentPlaceholder}`
-      const htmlBody = `${emailTemplate.htmlBody} ${attachmentPlaceholder}`
       await knex('EmailTemplate')
         .update({
-          body,
-          htmlBody,
+          attachments: JSON.stringify([
+            {
+              name: reportName,
+              period: 'last-30-days',
+            },
+          ]),
         })
         .where('id', emailTemplate.id)
       /**
-       * add results with errors for current device
+       * add Result with errors for current device
        */
       const existingResult = await knex('Result').first()
       const [resultId] = await knex('Result').insert({
@@ -131,9 +132,32 @@ describe('Sending Email via Message Queue', () => {
         externalId: `${existingResult.externalId}-1`,
         deviceId,
         endedOn: subDays(new Date(), 3),
-        errorCode: '1001',
+        errorCode: '9999',
       })
       context.resultIdsToDelete = [resultId]
+      /**
+       * add DeviceOperation with error for current device
+       */
+      const [deviceOperationId] = await knex('DeviceOperation').insert({
+        externalId: new Date().getTime(),
+        deviceId,
+        startedOn: subDays(new Date(), 5),
+        data: JSON.stringify({
+          type: 'gx-log',
+          details: {
+            Errors: [
+              {
+                Message: 'Heater Temperature Differential Error',
+                ErrorCode: '1002',
+              },
+            ],
+          },
+          logLevel: 'SEVERE',
+          logFileName:
+            'C:\\GeneXpert\\log\\XpertCal-2017.10.10_15.49.26.026-0.log',
+        }),
+      })
+      context.deviceOperationsToDelete = [deviceOperationId]
 
       await waitForCreated
 
@@ -171,15 +195,6 @@ describe('Sending Email via Message Queue', () => {
       )
       assert(
         !msg.htmlBody.includes('{{') && !msg.htmlBody.includes('}}'),
-        'Email htmlBody template has not been parsed well'
-      )
-
-      assert(
-        !msg.body.includes(attachmentPlaceholder),
-        'Email htmlBody template has not been parsed well'
-      )
-      assert(
-        !msg.htmlBody.includes(attachmentPlaceholder),
         'Email htmlBody template has not been parsed well'
       )
 
