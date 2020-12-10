@@ -44,7 +44,7 @@ const hivGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
-          keys: ['resultCategoryId', 'indexBy'],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
         },
       },
       {

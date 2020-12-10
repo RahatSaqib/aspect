@@ -36,7 +36,7 @@ const tbGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
-          keys: ['resultCategoryId', 'indexBy'],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
         },
       },
       {
@@ -101,7 +101,7 @@ const tbGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
-          keys: ['resultCategoryId', 'indexBy'],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
         },
       },
       {
