@@ -29,7 +29,7 @@ const {
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
 // -----------------------------
-function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
+async function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     emailMessageReadyForSending,
   })
@@ -66,6 +66,8 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
       attachments: JSON.stringify(attachments),
     })
 
+console.log('________ prepareEmailMessageForSending', { attachments: JSON.stringify(attachments) })// eslint-disable-line
+
   // dispatch EMAIL_MESSAGE_READY_FOR_SENDING to MQ
   context.emailMessageReadyForSending(emailMessageId)
 }
@@ -73,7 +75,10 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
 // -----------------------------
 // onEmailMessageReadyForSending - event handler for EMAIL_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
+async function onEmailMessageReadyForSending(
+  { emailMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({
     emailMessageSent,
   })
@@ -91,7 +96,7 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   const d = await knex('EmailMessage')
     .where('id', emailMessageId)
     .first('subject', 'body', 'htmlBody', 'to', 'attachments')
-
+console.log('__________ doSendEmailMessage', 1, { emailMessageId, d }) // eslint-disable-line
   const { subject, htmlBody, body, to } = d || {}
   const attachments = JSON.parse(d.attachments || '[]')
 
@@ -190,6 +195,8 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   }
 
   const attachmentProps = JSON.parse(data.attachments || '[]')
+console.log('________', 1, { attachmentProps })// eslint-disable-line
+
   if (!_.isEmpty(attachmentProps)) {
     processedTemplateFields.attachments = await generateAttachments(
       attachmentProps,
@@ -212,6 +219,7 @@ async function generateAttachments(attachmentProps, data) {
       // period token is defined in EmailTemplate in JSON 'attachments'
       const { period } = attachmentItem
 
+console.log('________ generateAttachments', 1, { name, period, deviceId })// eslint-disable-line
       let minDate
       let maxDate
       if (period === 'last-30-days') {
@@ -230,10 +238,15 @@ async function generateAttachments(attachmentProps, data) {
       )
     }
 
+console.log('________ generateAttachments', 2, { name, reportData })// eslint-disable-line
+
     if (reportData) {
       // get CSV attachment
       const attachment = await generateCsvAttachment(`${name}.csv`, reportData)
       attachments.push(attachment)
+
+console.log('________ generateAttachments', 3, { attachment })// eslint-disable-line
+console.log('________ generateAttachments', 4, { attachments: attachments.length })// eslint-disable-line
     }
   })
   return attachments

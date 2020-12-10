@@ -86,7 +86,7 @@ describe('Sending Email via Message Queue', () => {
       )
     }))
 
-  it('should send email with CSV attachment', () =>
+  it.only('should send email with CSV attachment', () =>
     runTest(async knex => {
       // get MQ context and messageId of inserted record in EmailMessage
       const { messageId, emailTemplate, result } = context
