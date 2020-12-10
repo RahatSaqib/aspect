@@ -7,7 +7,11 @@ const {
   getTimeZoneById,
   formatDateOrDefault,
   startOfDayUtc,
+  startOfMonthUTC,
+  endOfMonthUTC,
   startOfTodayUtc,
+  REGEX_ISODATESTRING,
+  getOffsetFromIsoDateString,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -44,6 +48,90 @@ describe('Shared Date Utility Functions', () => {
     })
   })
 
+  describe('getIsoDateTimeStringRegex', () => {
+    it('should parse different iso format datetime strings', () => {
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000Z'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00-00:00'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00+01:00'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000-04:00'))
+      assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000Z'))
+
+      assert.isFalse(REGEX_ISODATESTRING.test('2020-08-01T22:00:00+3:00'))
+      assert.isFalse(REGEX_ISODATESTRING.test('2020-08-01 22:00:00+03:00'))
+      assert.isFalse(REGEX_ISODATESTRING.test('2020-08-0122:00:00+3:00'))
+    })
+  })
+
+  describe('end/start of month in UTC', () => {
+    it('startOfMonthUTC', () => {
+      assert.equal(
+        startOfMonthUTC('2020-08-02T02:00:00.000-03:00').toISOString(),
+        '2020-08-01T03:00:00.000Z'
+      )
+      assert.equal(
+        startOfMonthUTC('2020-08-02T02:00:00.000+06:00').toISOString(),
+        '2020-07-31T18:00:00.000Z'
+      )
+      assert.equal(
+        startOfMonthUTC('2020-08-02T02:00:00.000+03:00').toISOString(),
+        '2020-07-31T21:00:00.000Z'
+      )
+      assert.equal(
+        startOfMonthUTC('2020-08-02T02:00:00.000-05:00').toISOString(),
+        '2020-08-01T05:00:00.000Z'
+      )
+    })
+    it('endOfMonthUTC', () => {
+      assert.equal(
+        endOfMonthUTC('2020-08-02T02:00:00.000-03:00').toISOString(),
+        '2020-09-01T02:59:59.999Z'
+      )
+      assert.equal(
+        endOfMonthUTC('2020-08-02T02:00:00.000+06:00').toISOString(),
+        '2020-08-31T17:59:59.999Z'
+      )
+      assert.equal(
+        endOfMonthUTC('2020-08-02T02:00:00.000+03:00').toISOString(),
+        '2020-08-31T20:59:59.999Z'
+      )
+      assert.equal(
+        endOfMonthUTC('2020-08-02T02:00:00.000-05:00').toISOString(),
+        '2020-09-01T04:59:59.999Z'
+      )
+    })
+  })
+  describe('getOffsetFromIsoDateString', () => {
+    it('should obtain the offset of the received datetime ', () => {
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000-04:00'),
+        '-04:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000+00:00'),
+        '+00:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00-03:00'),
+        '-03:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000-04:00'),
+        '-04:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000+11:00'),
+        '+11:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000-00:00'),
+        '-00:00'
+      )
+      assert.equal(
+        getOffsetFromIsoDateString('2020-08-01T22:00:00.000Z'),
+        '+00:00'
+      )
+    })
+  })
   describe('getLocalDateInUtc', () => {
     it('should return the UTC equivalent of the given local datetime', () => {
       const utcDateTime = getLocalDateInUtc(
