@@ -33,9 +33,10 @@ async function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     emailMessageReadyForSending,
   })
-
+console.log('________ onEmailMessageCreated', 1, { emailMessageId })// eslint-disable-line
   return context.transact(async knex => {
     // after email message entry created - process it's template and merge it with data
+console.log('________ onEmailMessageCreated', 2, { emailMessageId })// eslint-disable-line
     await prepareEmailMessageForSending(context, knex, emailMessageId)
   })
 }
@@ -52,7 +53,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     attachments,
   } = await createEmailFieldsFromTemplate(knex, emailMessageId)
   const pendingMessageStatusId = await messageStatusToId('Pending')
-
+console.log('________ prepareEmailMessageForSending', 1, { attachments, emailMessageId })// eslint-disable-line
   // store generated email message into the same record and set messageStatusId
   await knex('EmailMessage')
     .where({ id: emailMessageId })
@@ -66,7 +67,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
       attachments: JSON.stringify(attachments),
     })
 
-console.log('________ prepareEmailMessageForSending', { attachments: JSON.stringify(attachments) })// eslint-disable-line
+console.log('________ prepareEmailMessageForSending', 2, { attachments: JSON.stringify(attachments) })// eslint-disable-line
 
   // dispatch EMAIL_MESSAGE_READY_FOR_SENDING to MQ
   context.emailMessageReadyForSending(emailMessageId)
@@ -180,6 +181,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       .where({ 'jf.externalId': 'labUser' })
       .select('p.name', 'p.title', 'p.phone', 'p.cell', 'p.email')
   }
+console.log('________', 1, { attachments: data.attachments, emailMessageId })// eslint-disable-line
   const processedTemplateFields = await processUsingDataSourceQuery(data, [
     'subjectTemplate',
     'bodyTemplate',
@@ -195,7 +197,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   }
 
   const attachmentProps = JSON.parse(data.attachments || '[]')
-console.log('________', 1, { attachmentProps, emailMessageId })// eslint-disable-line
+console.log('________', 2, { attachmentProps, emailMessageId })// eslint-disable-line
 
   if (!_.isEmpty(attachmentProps)) {
     processedTemplateFields.attachments = await generateAttachments(

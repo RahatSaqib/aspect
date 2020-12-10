@@ -34,7 +34,7 @@ class EmailTestContext {
 
       this.deviceOperationsToDelete = null
       // read 1st email template
-      this.emailTemplate = await knex('EmailTemplate').first()
+      this.emailTemplate = await knex('EmailTemplate').orderBy('id').first()
       const { id: emailTemplateId } = this.emailTemplate
       assert.isOk(emailTemplateId)
 

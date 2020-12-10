@@ -93,18 +93,6 @@ describe('Sending Email via Message Queue', () => {
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ emailMessageCreated })
 
-      // message goes through few states - Created, ReadyForSending, Sent
-      const actionCreated = emailMessageCreated(messageId)
-      const waitForCreated = waitForAction(actionCreated)
-
-      const actionReady = emailMessageReadyForSending(messageId)
-      const waitForReadyForSending = waitForAction(actionReady)
-
-      const actionSent = emailMessageSent(messageId)
-      const waitForSent = waitForAction(actionSent)
-
-      // dispatch to MQ a messageId (generated in EmailMessage)
-      messageContext.emailMessageCreated(messageId)
 console.log('______ test', 1, { messageId, emailTemplate }) // eslint-disable-line
       /**
        * add attachments props to EmailTemplate
@@ -153,6 +141,19 @@ console.log('______ test', 1, { messageId, emailTemplate }) // eslint-disable-li
         }),
       })
       context.deviceOperationsToDelete = [deviceOperationId]
+
+      // message goes through few states - Created, ReadyForSending, Sent
+      const actionCreated = emailMessageCreated(messageId)
+      const waitForCreated = waitForAction(actionCreated)
+
+      const actionReady = emailMessageReadyForSending(messageId)
+      const waitForReadyForSending = waitForAction(actionReady)
+
+      const actionSent = emailMessageSent(messageId)
+      const waitForSent = waitForAction(actionSent)
+
+      // dispatch to MQ a messageId (generated in EmailMessage)
+      messageContext.emailMessageCreated(messageId)
 
       await waitForCreated
 
