@@ -3,7 +3,7 @@ const CONSTS = {
   blockSize: {
     width: 19,
     height: 15,
-    marginWidth: 6,
+    marginWidth: 4,
   },
   totalBlockSize: {
     width: 55,
