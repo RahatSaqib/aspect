@@ -43,6 +43,10 @@ const assayIdFromKey = async ({ data }, id) => {
   return filter(data, { name: id })[0] || false
 }
 
+const diseaseIdFromKey = async ({ data }, id) => {
+  return filter(data, { resultCategories: [{ externalId: id }] })[0] || false
+}
+
 const useGraphClickThrough = () => {
   const { push } = useHistory()
   const [link, setLink] = useState(false)
@@ -106,6 +110,11 @@ const useGraphClickThrough = () => {
             default:
               break
           }
+        }
+
+        if (key === 'diseaseId') {
+          const { diseaseId } = await diseaseIdFromKey(linkData, id)
+          params.diseaseId = diseaseId
         }
       }
       await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
