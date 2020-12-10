@@ -93,7 +93,6 @@ describe('Sending Email via Message Queue', () => {
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ emailMessageCreated })
 
-console.log('______ test', 1, { messageId, emailTemplate }) // eslint-disable-line
       /**
        * add attachments props to EmailTemplate
        * (EmailTemplate will be restored in `afterEach` func)

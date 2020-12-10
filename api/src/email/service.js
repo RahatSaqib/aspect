@@ -33,10 +33,8 @@ async function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     emailMessageReadyForSending,
   })
-console.log('________ onEmailMessageCreated', 1, { emailMessageId })// eslint-disable-line
   return context.transact(async knex => {
     // after email message entry created - process it's template and merge it with data
-console.log('________ onEmailMessageCreated', 2, { emailMessageId })// eslint-disable-line
     await prepareEmailMessageForSending(context, knex, emailMessageId)
   })
 }
@@ -53,7 +51,6 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     attachments,
   } = await createEmailFieldsFromTemplate(knex, emailMessageId)
   const pendingMessageStatusId = await messageStatusToId('Pending')
-console.log('________ prepareEmailMessageForSending', 1, { attachments, emailMessageId })// eslint-disable-line
   // store generated email message into the same record and set messageStatusId
   await knex('EmailMessage')
     .where({ id: emailMessageId })
@@ -66,8 +63,6 @@ console.log('________ prepareEmailMessageForSending', 1, { attachments, emailMes
       updatedOn: new Date(),
       attachments: JSON.stringify(attachments),
     })
-
-console.log('________ prepareEmailMessageForSending', 2, { attachments: JSON.stringify(attachments) })// eslint-disable-line
 
   // dispatch EMAIL_MESSAGE_READY_FOR_SENDING to MQ
   context.emailMessageReadyForSending(emailMessageId)
@@ -97,7 +92,6 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   const d = await knex('EmailMessage')
     .where('id', emailMessageId)
     .first('subject', 'body', 'htmlBody', 'to', 'attachments')
-console.log('__________ doSendEmailMessage', 1, { emailMessageId, d }) // eslint-disable-line
   const { subject, htmlBody, body, to } = d || {}
   const attachments = JSON.parse(d.attachments || '[]')
 
@@ -181,7 +175,6 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       .where({ 'jf.externalId': 'labUser' })
       .select('p.name', 'p.title', 'p.phone', 'p.cell', 'p.email')
   }
-console.log('________', 1, { attachments: data.attachments, emailMessageId })// eslint-disable-line
   const processedTemplateFields = await processUsingDataSourceQuery(data, [
     'subjectTemplate',
     'bodyTemplate',
@@ -197,7 +190,6 @@ console.log('________', 1, { attachments: data.attachments, emailMessageId })// 
   }
 
   const attachmentProps = JSON.parse(data.attachments || '[]')
-console.log('________', 2, { attachmentProps, emailMessageId })// eslint-disable-line
 
   if (!_.isEmpty(attachmentProps)) {
     processedTemplateFields.attachments = await generateAttachments(
@@ -221,7 +213,6 @@ async function generateAttachments(attachmentProps, data) {
       // period token is defined in EmailTemplate in JSON 'attachments'
       const { period } = attachmentItem
 
-console.log('________ generateAttachments', 1, { name, period, deviceId })// eslint-disable-line
       let minDate
       let maxDate
       if (period === 'last-30-days') {
@@ -240,15 +231,10 @@ console.log('________ generateAttachments', 1, { name, period, deviceId })// esl
       )
     }
 
-console.log('________ generateAttachments', 2, { name, reportData })// eslint-disable-line
-
     if (reportData) {
       // get CSV attachment
       const attachment = await generateCsvAttachment(`${name}.csv`, reportData)
       attachments.push(attachment)
-
-console.log('________ generateAttachments', 3, { attachment })// eslint-disable-line
-console.log('________ generateAttachments', 4, { attachments: attachments.length })// eslint-disable-line
     }
   })
   return attachments
