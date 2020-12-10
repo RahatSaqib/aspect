@@ -4,16 +4,29 @@ Requested in ASP-1801, ASP-1840
 
 ## Placeholder pattern
 
-Variables are marked with simbol `@`
+Set field `attachments` in EmailTemplate as this
 ```
-<attachment:@reportName(@param1, @param2, ...)>
+[
+  {
+    name: 'report name which to process in api/src/email/service.js in func generateAttachments()',
+    <any other props to destructure in func generateAttachments() based on 'name' value>
+  }
+]
 ```
 
-Example: `<attachment:error-history(deviceId, 'last-30-days')>`
+Example value of `attachments` field in EmailTemplate: 
+```
+attachments: JSON.stringify([
+  {
+    name: 'error-history',
+    period: 'last-30-days',
+  },
+])
+```
 
 
 ## Files to check
 
-- api/src/email/service.js - see func generateAttachments() where new @reportName value should be implemented to get data for attachment
+- api/src/email/service.js - see func generateAttachments()
 - tests in api/test/email/emailMq.spec.js
 
