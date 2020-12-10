@@ -3,7 +3,7 @@ const _ = require('lodash')
 const chai = require('chai')
 const {
   format,
-  subDays,
+  addDays,
   subMinutes,
   addMinutes,
   subMonths,
@@ -97,17 +97,24 @@ const getExpected = totalResults => {
 }
 describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
+  let initialState = {}
+
   shared.checkToken(server, path)
 
-  const now = new Date()
-  const currentMonth = new Date(now.getFullYear(), now.getMonth(), 15)
+  const currentMonth = new Date('2020-09-01T01:00:00.000Z')
   const dataToSeed = [
     // mid of current month
-    { midMonth: currentMonth, totalResults: 200 },
+    {
+      midMonth: addDays(currentMonth, 15),
+      totalResults: 200,
+    },
     // mid of prevuous month
-    { midMonth: subMonths(currentMonth, 1), totalResults: 100 },
+    {
+      midMonth: subMonths(addDays(currentMonth, 15), 1),
+      totalResults: 100,
+    },
   ]
-  let initialState = {}
+
   let assayGeneXpertMtbRif
   before(async () => {
     // -----------------------------
@@ -187,8 +194,8 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // -----------------------------
     const { id: deviceId, geographyId, siteId } = device
     await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
-      const getRandomDate = () => subDays(midMonth, _.random(10))
-      // const totalResults = 100
+      const getRandomDate = () =>
+        new Date(`2020-${format(midMonth, 'MM')}-01T01:00:00.000Z`)
       const samples = []
       await Promise.each(_.range(totalResults), async () => {
         const sample = {
@@ -347,7 +354,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const res = await server
       .get(`${path}`)
       .query({
-        currentMonth: format(currentMonth, 'yyyy-MM-dd'),
+        currentMonth: '2020-08-01T00:00:00.000-03:00',
       })
       .set('Authorization', `Bearer ${shared.token}`)
 
