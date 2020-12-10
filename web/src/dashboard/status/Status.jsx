@@ -85,6 +85,14 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
+        <PermissionsProvider permissions={testsOverTime.graphRenderPermissions}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={testsOverTime} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
         <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
@@ -104,14 +112,6 @@ const Status = ({ history, location, colorDemo }) => {
         <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbResults} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={testsOverTime.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={testsOverTime} />
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
