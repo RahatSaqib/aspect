@@ -195,7 +195,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   }
 
   const attachmentProps = JSON.parse(data.attachments || '[]')
-console.log('________', 1, { attachmentProps })// eslint-disable-line
+console.log('________', 1, { attachmentProps, emailMessageId })// eslint-disable-line
 
   if (!_.isEmpty(attachmentProps)) {
     processedTemplateFields.attachments = await generateAttachments(

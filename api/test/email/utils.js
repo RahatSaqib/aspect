@@ -46,7 +46,7 @@ class EmailTestContext {
 
       // add sample email message
       const now = new Date()
-      this.messageId = await knex('EmailMessage').insert({
+      const [messageId] = await knex('EmailMessage').insert({
         emailTemplateId,
         messageStatusId,
         personId: userId,
@@ -56,6 +56,7 @@ class EmailTestContext {
         createdOn: now,
         updatedOn: now,
       })
+      this.messageId = messageId
 
       assert.isOk(this.messageId)
 

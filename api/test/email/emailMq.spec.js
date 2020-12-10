@@ -105,7 +105,7 @@ describe('Sending Email via Message Queue', () => {
 
       // dispatch to MQ a messageId (generated in EmailMessage)
       messageContext.emailMessageCreated(messageId)
-
+console.log('______ test', 1, { messageId, emailTemplate }) // eslint-disable-line
       /**
        * add attachments props to EmailTemplate
        * (EmailTemplate will be restored in `afterEach` func)
