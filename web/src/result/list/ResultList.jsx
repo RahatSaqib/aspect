@@ -313,6 +313,7 @@ const ResultList = () => {
 
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
+  delete params.assayOverride
 
   // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
