@@ -5,6 +5,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
+import useGraphClickThrough from '../Hooks/useGraphClickThrough'
 
 import {
   formatValuesForGraphs,
@@ -19,6 +20,7 @@ import { calcOverallRate } from '../Helpers/Formatters/calcs'
 
 const AspectResponsiveBar = ({
   assaysFromState,
+  config: baseConfig,
   data,
   displayLegend,
   displayMethod,
@@ -30,6 +32,7 @@ const AspectResponsiveBar = ({
   tickValuesXShape,
   type,
 }) => {
+  const { setConfig } = useGraphClickThrough()
   const legendsNotToRender = []
   const graphsToHaveCustomLegend = [
     'bar',
@@ -213,6 +216,7 @@ const AspectResponsiveBar = ({
         keys={keys}
         indexBy={indexBy}
         colorBy="index"
+        onClick={(value, event) => setConfig({ value, event, baseConfig })}
         enableLabel={false}
         enableGridY={config(type, data, displayMethod).enableGridY}
         enableGridX={config(type, data, displayMethod).enableGridX}
@@ -236,6 +240,7 @@ const AspectResponsiveBar = ({
             <EmptyTooltip title={v.id} />
           ) : (
             <GraphToolTip
+              clickThrough={(baseConfig && baseConfig.clickThrough) || false}
               displayMethod={displayMethod}
               values={generateToolTip(
                 v,
@@ -296,6 +301,7 @@ AspectResponsiveBar.defaultProps = {
 
 AspectResponsiveBar.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayLegend: PropTypes.bool.isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
