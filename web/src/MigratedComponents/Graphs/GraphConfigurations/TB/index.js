@@ -2,11 +2,13 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+const assays = ['GxMtbRif', 'GxMtbRifUltra']
+
 const tbGraphs = {
   tbDetected: {
     id: 'tbDetected',
     title: 'clinicalIndicatorsTBDetected',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
     graphRenderPermissions: ['dashboard'],
@@ -36,6 +38,7 @@ const tbGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
           keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
         },
       },
@@ -69,7 +72,7 @@ const tbGraphs = {
   tbResults: {
     id: 'tbResults',
     title: 'clinicalIndicatorsTBTitle',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
     graphRenderPermissions: ['dashboard'],
@@ -101,6 +104,7 @@ const tbGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
           keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
         },
       },

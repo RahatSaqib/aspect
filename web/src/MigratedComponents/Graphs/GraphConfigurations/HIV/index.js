@@ -2,22 +2,24 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+const assays = [
+  'abbottM2000DBSHivVL',
+  'abbottM2000PlasmaHivVL',
+  'assayAlereQHiv12Detect',
+  'assayAlereQHiv12VLPlasma',
+  'assayCobasHivVl',
+  'GxHiv1Vl',
+  'QHivVL',
+  'ReporterHivVL',
+]
+
 const hivGraphs = {
   hivResults: {
     id: 'hivResults',
     title: 'clinicalIndicatorsVLTitle',
     componentSize: 'full',
     group: 'hiv',
-    assays: [
-      'abbottM2000DBSHivVL',
-      'abbottM2000PlasmaHivVL',
-      'assayAlereQHiv12Detect',
-      'assayAlereQHiv12VLPlasma',
-      'assayCobasHivVl',
-      'GxHiv1Vl',
-      'QHivVL',
-      'ReporterHivVL',
-    ],
+    assays,
     graphRenderPermissions: ['dashboard'],
     graphType: [
       {
@@ -44,6 +46,7 @@ const hivGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
           keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
         },
       },
