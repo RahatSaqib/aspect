@@ -44,7 +44,9 @@ const assayIdFromKey = async ({ data }, id) => {
 }
 
 const diseaseIdFromKey = async ({ data }, id) => {
-  return filter(data, { resultCategories: [{ externalId: id }] })[0] || false
+  console.log(data, id)
+
+  return filter(data, { externalId: id })[0] || false
 }
 
 const useGraphClickThrough = () => {
@@ -71,6 +73,7 @@ const useGraphClickThrough = () => {
       id,
       indexBy,
       baseUrl,
+      baseAssay,
       keys
     ) {
       const params = {}
@@ -113,7 +116,7 @@ const useGraphClickThrough = () => {
         }
 
         if (key === 'diseaseId') {
-          const { diseaseId } = await diseaseIdFromKey(linkData, id)
+          const { diseaseId } = await diseaseIdFromKey(linkData, baseAssay)
           params.diseaseId = diseaseId
         }
       }
@@ -130,20 +133,31 @@ const useGraphClickThrough = () => {
         baseConfig: {
           indexBy,
           formatDate,
-          clickThrough: { allow, baseUrl, keys } = false,
+          clickThrough: { allow, baseUrl, baseAssay, keys } = false,
         },
         value: { data, id },
       } = config
 
       if (allow) {
-        buildLink(linkData, data, formatDate, id, indexBy, baseUrl, keys)
+        buildLink(
+          linkData,
+          data,
+          formatDate,
+          id,
+          indexBy,
+          baseUrl,
+          baseAssay,
+          keys
+        )
       }
     }
   }, [config, linkData, isLoading, push])
 
   useEffect(() => {
     if (link) {
-      push(link)
+      console.log(link)
+
+      // push(link)
     }
   }, [link, push])
 
