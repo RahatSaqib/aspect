@@ -123,6 +123,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
   if (notification != null) {
     queryBuilder
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
+      .leftJoin('IssueType as it', `i.issueTypeId`, 'it.id')
       .leftJoin(
         'NotificationType as nt',
         `${notification}.notificationTypeId`,
@@ -132,6 +133,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'i.createdOn as issueCreatedOn',
         'i.dueOn as issueDueOn',
         'i.data as issueData',
+        'it.externalId as issueTypeExternalId',
         'nt.name as notificationTypeName'
       )
   }
@@ -335,6 +337,8 @@ async function getBaseDataSource(data) {
     [d.partnerPlugin],
     'settings'
   )
+  const issueData = d.issueData ? JSON.parse(d.issueData) : {}
+  const isHardwareIssue = d.issueTypeExternalId.indexOf('Hardware') === 0
   return {
     country: {
       name: d.countryName,
@@ -413,7 +417,14 @@ async function getBaseDataSource(data) {
     issue: {
       createdOn: d.issueCreatedOn,
       dueOn: d.issueDueOn,
-      data: d.issueData ? JSON.parse(d.issueData) : {},
+      data: issueData,
+      occurrences: isHardwareIssue
+        ? issueData.totalErrors // <-- 'totalErrors' is defined in analyzeDeviceHardwareError()
+        : d.issueData.resultsWithErrors,
+      errorCode: isHardwareIssue ? issueData.errorCode : d.resultErrorCode,
+    },
+    log: {
+      startedOn: isHardwareIssue ? issueData.startedOn : null,
     },
     notification: {
       type: d.notificationTypeName,

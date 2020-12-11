@@ -183,7 +183,6 @@ async function analyzeDeviceHardwareError(
 
     const [{ totalErrors }] = await query
     action.options.data.totalErrors = totalErrors
-    // action.options.totalResults = totalResults
 
     return totalErrors >= minErrors
   }

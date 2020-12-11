@@ -51,7 +51,7 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
                 Error Code
               </td>
               <td>
-                ${errorCode || '{{result.errorCode}}'}
+                {{issue.errorCode}}
               </td>
           </tr>
           <tr>
@@ -59,7 +59,7 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
                 Occurrences
               </td>
               <td>
-                {{issue.data.resultsWithErrors}}
+                {{issue.occurrences}}
               </td>
           </tr>
           <tr>
@@ -183,9 +183,9 @@ Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: ${errorCode || '{{result.errorCode}}'}
+Error Code: {{issue.errorCode}}
 
-Occurrences: {{issue.data.resultsWithErrors}}
+Occurrences: {{issue.occurrences}}
 
 Time Period Days: 30
 
