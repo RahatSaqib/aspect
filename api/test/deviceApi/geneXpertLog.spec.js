@@ -204,7 +204,7 @@ describe('Process GeneXpert Logs', () => {
      *
      * See trigger conditions in api/seeds/fixtures/IssueEventTrigger.json, i.e.
      *  "daysPeriod": 30,
-     *  "minResults": 3
+     *  "minErrors": 3
      */
     // helper - define action to wait for, post data, asert response, waitFor*
     const postError = async (data, shouldTrigger = false) => {

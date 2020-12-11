@@ -8,7 +8,7 @@ const msgInstrumentReplaced = `{{device.name}}:
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => `
+const getDeviceBaseHtml = ({ customPart, errorCode }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -70,7 +70,7 @@ const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => `
                 30
               </td>
           </tr>
-          ${resultSpecificPart}
+          ${customPart}
       </table>
       <p>
         <strong>SystemOne GeneXpert System and Contact Information</strong>
@@ -177,7 +177,7 @@ const getDeviceBaseHtml = ({ resultSpecificPart, errorCode }) => `
 </html>
 `
 
-const getDeviceBaseText = ({ resultSpecificPart, errorCode }) => `
+const getDeviceBaseText = ({ customPart, errorCode }) => `
 This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
@@ -189,7 +189,7 @@ Occurrences: {{issue.data.resultsWithErrors}}
 
 Time Period Days: 30
 
-${resultSpecificPart}
+${customPart}
 
 
 SystemOne GeneXpert System and Contact Information
@@ -219,7 +219,7 @@ Contact Cell: {{site.primaryContact.cell}}
 Contact Email: {{site.primaryContact.email}}`
 
 const errorIssueEmailHtml = getDeviceBaseHtml({
-  resultSpecificPart: `
+  customPart: `
   <tr>
     <td>
       System Serial
@@ -249,7 +249,7 @@ const errorIssueEmailHtml = getDeviceBaseHtml({
 })
 
 const errorIssueEmailText = getDeviceBaseText({
-  resultSpecificPart: `
+  customPart: `
 System Serial: {{result.instrumentSerial}}
 
 <<REPLACE WITH MODULE OR REAGENT>>
@@ -302,6 +302,37 @@ const hardwareMessage = {
   4012: 'Heater B Temperature Unstable',
   4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
 }
+const hardwareErrorIssueEmailHtml = errorCode =>
+  getDeviceBaseHtml({
+    errorCode,
+    customPart: `
+    <tr>
+      <td>
+        System Serial
+      </td>
+      <td>
+        {{device.serial}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Date/Time
+      </td>
+      <td>
+        {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+      </td>
+    </tr>
+  `,
+  })
+const hardwareErrorIssueEmailText = errorCode =>
+  getDeviceBaseText({
+    errorCode,
+    customPart: `
+System Serial: {{device.serial}}
+
+Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+  `,
+  })
 
 async function getBaseIssues(auditFields) {
   // Issues
@@ -1229,8 +1260,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(1001),
-        body: getDeviceBaseText(1001),
-        htmlBody: getDeviceBaseHtml({ errorCode: 1001 }),
+        body: hardwareErrorIssueEmailText(1001),
+        htmlBody: hardwareErrorIssueEmailHtml(1001),
         ...auditFields,
       },
     },
@@ -1246,8 +1277,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(1002),
-        body: getDeviceBaseText(1002),
-        htmlBody: getDeviceBaseHtml({ errorCode: 1002 }),
+        body: hardwareErrorIssueEmailText(1002),
+        htmlBody: hardwareErrorIssueEmailHtml(1002),
         ...auditFields,
       },
     },
@@ -1263,8 +1294,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2005),
-        body: getDeviceBaseText(2005),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2005 }),
+        body: hardwareErrorIssueEmailText(2005),
+        htmlBody: hardwareErrorIssueEmailHtml(2005),
         ...auditFields,
       },
     },
@@ -1280,8 +1311,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2008),
-        body: getDeviceBaseText(2008),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2008 }),
+        body: hardwareErrorIssueEmailText(2008),
+        htmlBody: hardwareErrorIssueEmailHtml(2008),
         ...auditFields,
       },
     },
@@ -1297,8 +1328,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2014),
-        body: getDeviceBaseText(2014),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2014 }),
+        body: hardwareErrorIssueEmailText(2014),
+        htmlBody: hardwareErrorIssueEmailHtml(2014),
         ...auditFields,
       },
     },
@@ -1314,8 +1345,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2026),
-        body: getDeviceBaseText(2026),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2026 }),
+        body: hardwareErrorIssueEmailText(2026),
+        htmlBody: hardwareErrorIssueEmailHtml(2026),
         ...auditFields,
       },
     },
@@ -1331,8 +1362,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2032),
-        body: getDeviceBaseText(2032),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2032 }),
+        body: hardwareErrorIssueEmailText(2032),
+        htmlBody: hardwareErrorIssueEmailHtml(2032),
         ...auditFields,
       },
     },
@@ -1348,8 +1379,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2035),
-        body: getDeviceBaseText(2035),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2035 }),
+        body: hardwareErrorIssueEmailText(2035),
+        htmlBody: hardwareErrorIssueEmailHtml(2035),
         ...auditFields,
       },
     },
@@ -1365,8 +1396,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2037),
-        body: getDeviceBaseText(2037),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2037 }),
+        body: hardwareErrorIssueEmailText(2037),
+        htmlBody: hardwareErrorIssueEmailHtml(2037),
         ...auditFields,
       },
     },
@@ -1382,8 +1413,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2096),
-        body: getDeviceBaseText(2096),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2096 }),
+        body: hardwareErrorIssueEmailText(2096),
+        htmlBody: hardwareErrorIssueEmailHtml(2096),
         ...auditFields,
       },
     },
@@ -1399,8 +1430,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2097),
-        body: getDeviceBaseText(2097),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2097 }),
+        body: hardwareErrorIssueEmailText(2097),
+        htmlBody: hardwareErrorIssueEmailHtml(2097),
         ...auditFields,
       },
     },
@@ -1416,8 +1447,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(2126),
-        body: getDeviceBaseText(2126),
-        htmlBody: getDeviceBaseHtml({ errorCode: 2126 }),
+        body: hardwareErrorIssueEmailText(2126),
+        htmlBody: hardwareErrorIssueEmailHtml(2126),
         ...auditFields,
       },
     },
@@ -1433,8 +1464,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4008),
-        body: getDeviceBaseText(4008),
-        htmlBody: getDeviceBaseHtml({ errorCode: 4008 }),
+        body: hardwareErrorIssueEmailText(4008),
+        htmlBody: hardwareErrorIssueEmailHtml(4008),
         ...auditFields,
       },
     },
@@ -1450,8 +1481,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4009),
-        body: getDeviceBaseText(4009),
-        htmlBody: getDeviceBaseHtml({ errorCode: 4009 }),
+        body: hardwareErrorIssueEmailText(4009),
+        htmlBody: hardwareErrorIssueEmailHtml(4009),
         ...auditFields,
       },
     },
@@ -1467,8 +1498,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4012),
-        body: getDeviceBaseText(4012),
-        htmlBody: getDeviceBaseHtml({ errorCode: 4012 }),
+        body: hardwareErrorIssueEmailText(4012),
+        htmlBody: hardwareErrorIssueEmailHtml(4012),
         ...auditFields,
       },
     },
@@ -1484,8 +1515,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: getErrorIssueSubjectBase(4017),
-        body: getDeviceBaseText(4017),
-        htmlBody: getDeviceBaseHtml({ errorCode: 4017 }),
+        body: hardwareErrorIssueEmailText(4017),
+        htmlBody: hardwareErrorIssueEmailHtml(4017),
         ...auditFields,
       },
     },

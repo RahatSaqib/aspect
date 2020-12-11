@@ -314,26 +314,18 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 }
 
-async function shouldTriggerHardwareErrorAnalysis(contextWithPayload) {
+async function shouldTriggerHardwareErrorAnalysis(
+  knex,
+  messageContext,
+  partnerId,
+  device,
+  payload,
+  deviceOperationId
+) {
   const {
-    knex,
-    partnerId,
-    device,
-    messageContext,
-    /**
-     * See api/src/deviceApi/service.js - 'payload' is defined in
-     * addDeviceDataWithContext(), see there 'operation = {...}' in section 'if (log) {'
-     */
-    payload: {
-      startedOn,
-      data: { details = {} },
-    },
-    /**
-     * See api/src/deviceApi/service.js - 'deviceLogUpdate' is defined in
-     * DeviceApiContext.parent in addDeviceLogUpdate()
-     */
-    parent: { deviceLogUpdate: { deviceOperationId } = {} } = {},
-  } = contextWithPayload
+    startedOn,
+    data: { details = {} },
+  } = payload
 
   if (details.Errors && _.isArray(details.Errors) && details.Errors.length) {
     // get all IssueEventTriggers starting with `Hardware`
@@ -404,7 +396,12 @@ async function shouldTriggerHardwareErrorAnalysis(contextWithPayload) {
         errorCode,
       }
 
-      messageContext.dispatch(deviceHardwareError(device, actionType, options))
+      if (!messageContext.deviceHardwareError) {
+        messageContext = messageContext.bindActionCreators({
+          deviceHardwareError,
+        })
+      }
+      messageContext.deviceHardwareError(device, actionType, options)
     }
   }
 }

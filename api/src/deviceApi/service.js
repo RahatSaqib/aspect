@@ -307,7 +307,22 @@ async function addDeviceDataWithContext(context) {
       }
       // check if stored in table 'DeviceOperation' entry is
       // hardware error and dispatch MQ action if needed
-      await shouldTriggerHardwareErrorAnalysis(contextWithPayload)
+      const {
+        messageContext,
+        partnerId,
+        payload,
+        parent: {
+          deviceLogUpdate: { deviceOperationId },
+        },
+      } = contextWithPayload
+      await shouldTriggerHardwareErrorAnalysis(
+        knex,
+        messageContext,
+        partnerId,
+        device,
+        payload,
+        deviceOperationId
+      )
     }
   }
 

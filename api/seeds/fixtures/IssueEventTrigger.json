@@ -673,10 +673,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 1001,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -691,10 +689,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 1002,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -709,10 +705,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2005,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -727,10 +721,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2008,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -745,10 +737,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2014,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -763,10 +753,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2026,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -781,10 +769,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2032,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -799,10 +785,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2035,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -817,10 +801,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2037,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -835,10 +817,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2096,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -853,10 +833,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2097,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -871,10 +849,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 2126,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -889,10 +865,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4008,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -907,10 +881,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4009,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -925,10 +897,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4012,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
@@ -943,10 +913,8 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCode": 4017,
-            "threshold": 0.03,
-            "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minErrors": 3
           }
         }
       }
