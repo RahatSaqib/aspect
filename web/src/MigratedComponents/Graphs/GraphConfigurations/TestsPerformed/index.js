@@ -33,6 +33,11 @@ const testsPerFormedGraphs = {
         displayMethod: 'actual',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          keys: ['assay', 'indexBy'],
+        },
       },
       {
         id: 'testPerformedMonthlytotal',

@@ -43,9 +43,9 @@ const groupByKey = (
       [indexBy]: dateFormatted,
       [countKey]: curr.cnt,
     }
-
     return acc
   }, {})
+
   return calcPercentageSplitBar(normaliseKeys(grouped), indexBy, displayMethod)
 }
 

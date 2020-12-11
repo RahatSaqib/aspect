@@ -277,7 +277,7 @@ const generateToolTip = (
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   }
-  return { color, displayId, indexValue, displayValue }
+  return { color, displayId, indexValue, displayValue, externalId: id }
 }
 
 const removeStringsFromArray = string => {
