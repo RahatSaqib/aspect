@@ -155,9 +155,7 @@ const useGraphClickThrough = () => {
 
   useEffect(() => {
     if (link) {
-      console.log(link)
-
-      // push(link)
+      push(link)
     }
   }, [link, push])
 
