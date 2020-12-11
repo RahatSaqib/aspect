@@ -44,8 +44,6 @@ const assayIdFromKey = async ({ data }, id) => {
 }
 
 const diseaseIdFromKey = async ({ data }, id) => {
-  console.log(data, id)
-
   return filter(data, { externalId: id })[0] || false
 }
 
