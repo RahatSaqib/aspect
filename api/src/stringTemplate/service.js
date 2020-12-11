@@ -422,7 +422,7 @@ async function getBaseDataSource(data) {
       data: issueData,
       occurrences: isHardwareIssue
         ? issueData.totalErrors // <-- 'totalErrors' is defined in analyzeDeviceHardwareError()
-        : d.issueData.resultsWithErrors,
+        : issueData.resultsWithErrors,
       errorCode: isHardwareIssue ? issueData.errorCode : d.resultErrorCode,
     },
     log: {
