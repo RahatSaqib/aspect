@@ -338,7 +338,9 @@ async function getBaseDataSource(data) {
     'settings'
   )
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
-  const isHardwareIssue = d.issueTypeExternalId.indexOf('Hardware') === 0
+  const isHardwareIssue = d.issueTypeExternalId
+    ? d.issueTypeExternalId.indexOf('Hardware') === 0
+    : false
   return {
     country: {
       name: d.countryName,
