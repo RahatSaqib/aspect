@@ -8,8 +8,8 @@ Set field `attachments` in EmailTemplate as this
 ```
 [
   {
-    name: 'report name which to process in api/src/email/service.js in func generateAttachments()',
-    <any other props to destructure in func generateAttachments() based on 'name' value>
+    type: 'report type which to process in api/src/email/service.js in func generateAttachments()',
+    <any other props to destructure in func generateAttachments() based on 'type' value>
   }
 ]
 ```
@@ -18,7 +18,7 @@ Example value of `attachments` field in EmailTemplate:
 ```
 attachments: JSON.stringify([
   {
-    name: 'error-history',
+    type: 'error-history',
     period: 'last-30-days',
   },
 ])

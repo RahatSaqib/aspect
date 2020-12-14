@@ -102,7 +102,7 @@ describe('Sending Email via Message Queue', () => {
         .update({
           attachments: JSON.stringify([
             {
-              name: reportName,
+              type: reportName,
               period: 'last-30-days',
             },
           ]),

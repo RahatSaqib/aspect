@@ -204,10 +204,10 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
 async function generateAttachments(attachmentProps, data) {
   const attachments = []
   await Promise.each(attachmentProps, async attachmentItem => {
-    const { name } = attachmentItem
+    const { type } = attachmentItem
     const now = parseISO(new Date().toISOString())
     let reportData = null
-    if (name === 'error-history') {
+    if (type === 'error-history') {
       // get deviceId from feeding 'data' of this email
       const { deviceId } = data
       // period token is defined in EmailTemplate in JSON 'attachments'
@@ -233,7 +233,7 @@ async function generateAttachments(attachmentProps, data) {
 
     if (reportData) {
       // get CSV attachment
-      const attachment = await generateCsvAttachment(`${name}.csv`, reportData)
+      const attachment = await generateCsvAttachment(`${type}.csv`, reportData)
       attachments.push(attachment)
     }
   })
