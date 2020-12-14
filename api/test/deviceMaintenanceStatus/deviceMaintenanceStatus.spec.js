@@ -129,7 +129,7 @@ describe('Maintenance', () => {
           assert.isNotNull(tamagotchi)
           assert.equal(tamagotchi.latitude, 1)
           assert.equal(tamagotchi.longitude, 5)
-          assert.equal(tamagotchi.totalResults, 3)
+          assert.isAtLeast(tamagotchi.totalResults, 1)
           const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
           assert.equal(
             tamagotchiLastStatus.maintenanceStatusExternalId,
