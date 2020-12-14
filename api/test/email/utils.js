@@ -32,22 +32,21 @@ class EmailTestContext {
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
+      this.deviceOperationsToDelete = null
       // read 1st email template
-      const { id: emailTemplateId } = await knex('EmailTemplate').first('id')
+      this.emailTemplate = await knex('EmailTemplate').orderBy('id').first()
+      const { id: emailTemplateId } = this.emailTemplate
       assert.isOk(emailTemplateId)
 
-      // read 1st Result and coresponding siteId/deviceId
-      const { id: resultId, siteId, deviceId } = await knex('Result').first(
-        'id',
-        'siteId',
-        'deviceId'
-      )
+      // read 1st Result and corresponding siteId/deviceId
+      this.result = await knex('Result').first()
+      const { id: resultId, siteId, deviceId } = this.result
 
       const messageStatusId = await messageStatusToId('Initial')
 
       // add sample email message
       const now = new Date()
-      this.messageId = await knex('EmailMessage').insert({
+      const [messageId] = await knex('EmailMessage').insert({
         emailTemplateId,
         messageStatusId,
         personId: userId,
@@ -57,6 +56,7 @@ class EmailTestContext {
         createdOn: now,
         updatedOn: now,
       })
+      this.messageId = messageId
 
       assert.isOk(this.messageId)
 
@@ -69,9 +69,30 @@ class EmailTestContext {
       // make sure MQ finished it's job before removing sample message
       await waitForIdle()
 
+      if (this.emailTemplate) {
+        await knex('EmailTemplate')
+          .update({
+            attachments: this.emailTemplate.attachments,
+          })
+          .where('id', this.emailTemplate.id)
+      }
       // remove sample message
       if (this.messageId) {
         await knex('EmailMessage').where('id', this.messageId).delete()
+      }
+      if (this.result) {
+        await knex('Result').where('id', this.result.id).update({
+          endedOn: this.result.endedOn,
+          errorCode: this.result.errorCode,
+        })
+      }
+      if (
+        this.deviceOperationsToDelete &&
+        this.deviceOperationsToDelete.length > 0
+      ) {
+        await knex('DeviceOperation')
+          .whereIn('id', this.deviceOperationsToDelete)
+          .del()
       }
 
       await queuePurge()

@@ -91,6 +91,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
+        'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
@@ -206,6 +207,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
+
     if (options.dynamic) {
       memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {
