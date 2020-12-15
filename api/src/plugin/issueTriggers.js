@@ -153,10 +153,47 @@ async function analyzeErrors(
   }
   return false
 }
+
+async function analyzeDeviceHardwareError(
+  knex,
+  action,
+  { errorCode, daysPeriod, minErrors }
+) {
+  const { errorCode: actualErrorCode } = action.options.data
+  if (parseInt(actualErrorCode, 10) === errorCode) {
+    const query = knex('DeviceOperation')
+      .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+      .where('deviceId', action.deviceId)
+      .select(
+        knex.raw(
+          `
+          SUM(
+            CASE WHEN
+              IFNULL(data ->> '$.type', '') = 'gx-log'
+              AND
+              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) = ?
+            THEN 1
+            ELSE 0
+            END
+          ) AS totalErrors
+          `,
+          errorCode
+        )
+      )
+
+    const [{ totalErrors }] = await query
+    action.options.data.totalErrors = totalErrors
+
+    return totalErrors >= minErrors
+  }
+  return false
+}
+
 module.exports = {
   analyzeErrors,
   analyzeResultsWithErrors,
   analyzeCategories,
   analyzeUnusedModules,
   hasUnusedModules,
+  analyzeDeviceHardwareError,
 }
