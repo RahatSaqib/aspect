@@ -436,16 +436,31 @@ async function listRefreshTokens(request) {
       revoked: 'r.revoked',
       diseaseId: 'dis.id',
     })
-    .leftJoin('ResultDownloadLog as rdl', function () {
-      this.on(function () {
-        this.on('rdl.createdBy', 'r.userId')
-        if (query.minDate) {
-          this.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
-        }
-        if (query.maxDate) {
-          this.andOn('rdl.createdOn', '<=', knex.raw('?', [query.maxDate]))
-        }
-      })
+    .leftJoin('ResultDownloadLog as rdl', queryBuilder => {
+      queryBuilder.on('rdl.createdBy', 'r.userId')
+      if (query.minDate) {
+        queryBuilder.andOn(
+          'rdl.createdOn',
+          '>=',
+          knex.raw('?', [query.minDate])
+        )
+      }
+      if (query.maxDate) {
+        queryBuilder.andOn(
+          'rdl.createdOn',
+          '<=',
+          knex.raw('?', [query.maxDate])
+        )
+      }
+    })
+    .leftJoin('ResultDownloadLog as rdl_unfiltered', queryBuilder => {
+      queryBuilder
+        .on('rdl.createdBy', 'r.userId')
+        .andOn(
+          'rdl_unfiltered.createdOn',
+          '>=',
+          'ifnull(r.updatedOn, r.createdOn)'
+        )
     })
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
@@ -471,11 +486,10 @@ async function listRefreshTokens(request) {
       'rws.id',
       'rwl.resultWorkflowStatusId'
     )
-    .leftJoin('ResultCategoryAssay as rca', function () {
-      this.on('rca.resultCategoryId', 'rt.resultCategory1').andOn(
-        'rca.assayId',
-        'rt.assayId'
-      )
+    .leftJoin('ResultCategoryAssay as rca', queryBuilder => {
+      queryBuilder
+        .on('rca.resultCategoryId', 'rt.resultCategory1')
+        .andOn('rca.assayId', 'rt.assayId')
     })
     .groupBy('r.clientId', 'p.name', 'r.clientName')
     .select(
@@ -484,7 +498,9 @@ async function listRefreshTokens(request) {
       'r.clientName as deviceName',
       'r.createdOn',
       'r.revoked',
-      knex.raw('max(ifnull(r.updatedOn, r.createdOn)) as lastSeen'),
+      knex.raw(
+        'max(greatest(ifnull(r.updatedOn, r.createdOn), rdl_unfiltered.createdOn)) as lastSeen'
+      ),
       knex.raw(
         "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
       ),
