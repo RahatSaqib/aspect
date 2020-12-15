@@ -2590,6 +2590,7 @@ async function addReports(knex, countryReports = []) {
     const reports = [...baseReports, ...countryReports]
 
     const existingReports = await knex('Report')
+      .where({ geographyId })
       .select('externalId')
       .pluck('externalId')
     await Promise.each(
