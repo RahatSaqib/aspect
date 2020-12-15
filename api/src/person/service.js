@@ -484,17 +484,15 @@ async function listRefreshTokens(request) {
       'r.clientName as deviceName',
       'r.createdOn',
       'r.revoked',
-      knex.raw(
-        'GREATEST(IFNULL(r.updatedOn, r.createdOn), (SELECT MAX(all_rdl.createdOn) FROM ResultDownloadLog as all_rdl WHERE all_rdl.createdBy = r.userId)) as lastSeen'
-      ),
+      knex.raw('max(ifnull(r.updatedOn, r.createdOn)) as lastSeen'),
       knex.raw(
         "sum(case rws.externalId when 'Acknowledged' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as acknowledgedRatio"
       ),
       knex.raw(
-        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
+        "sum(case when rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end)/sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as confirmFollowUpRatio"
       ),
       knex.raw(
-        "sum(case when  rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end) as totalOnTreatment"
+        "sum(case when rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end) as totalOnTreatment"
       ),
       knex.raw('count(distinct rdl.resultId) as delivered'),
       knex.raw(
