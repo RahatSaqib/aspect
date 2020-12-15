@@ -52,20 +52,6 @@ async function deviceStatusOverTime(request) {
       knex.raw('COUNT(r.id) as totalResults'),
     ])
 
-  const joinNewerDmslOnSameDay = (leftAlias, rightAlias) => joinQuery =>
-    joinQuery
-      .on(`${leftAlias}.deviceId`, `${rightAlias}.deviceId`)
-      .andOn(`${leftAlias}.day`, `${rightAlias}.day`)
-      .andOn(andQuery => {
-        andQuery
-          .andOn(`${leftAlias}.createdOn`, '<', `${rightAlias}.createdOn`)
-          .orOn(orQuery => {
-            orQuery
-              .andOn(`${leftAlias}.createdOn`, '=', `${rightAlias}.createdOn`)
-              .andOn(`${leftAlias}.id`, '<', `${rightAlias}.id`)
-          })
-      })
-
   let statusData = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -81,32 +67,23 @@ async function deviceStatusOverTime(request) {
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
-    // Join for checking if the current device maintenance status log is the last of the day
-    .leftJoin(
+    // Join for checking if the current device maintenance status log ('dmsl') is the last of the day
+    .leftOuterJoin(
       'DeviceMaintenanceStatusLog as newerDmslOnSameDay',
-      joinNewerDmslOnSameDay('dmsl', 'newerDmslOnSameDay')
-    )
-    // Join for getting the last different status before the current one, so then we can calculate the number of days in the same status
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as previousDmslWithDifferentStatus',
-      joinQuery => {
-        joinQuery
-          .on('dmsl.deviceId', 'previousDmslWithDifferentStatus.deviceId')
-          .andOn('dmsl.day', '>', 'previousDmslWithDifferentStatus.day')
-          .andOn(
-            'dmsl.deviceMaintenanceStatusId',
-            '!=',
-            'previousDmslWithDifferentStatus.deviceMaintenanceStatusId'
-          )
+      function () {
+        this.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
+          .andOn('newerDmslOnSameDay.day', 'dmsl.day')
+          .andOn(function () {
+            this.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn')
+            this.orOn(function () {
+              this.on(
+                'newerDmslOnSameDay.createdOn',
+                '=',
+                'dmsl.createdOn'
+              ).andOn('newerDmslOnSameDay.id', '>', 'dmsl.id')
+            })
+          })
       }
-    )
-    // Join for checking if the previous different device maintenance status log is the last of it's day
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as newerDmslOnSameDay_2',
-      joinNewerDmslOnSameDay(
-        'previousDmslWithDifferentStatus',
-        'newerDmslOnSameDay_2'
-      )
     )
     // Where maintenance status log is in range
     .where('dmsl.day', '>=', minDate)
@@ -115,25 +92,14 @@ async function deviceStatusOverTime(request) {
     .where('dtc.hasResults', 1)
     // Only get the current device maintenance status log if the device hasn't any newer statuses the same day (Only the last status of each device and day)
     .whereNull('newerDmslOnSameDay.id')
-    .whereNull('newerDmslOnSameDay_2.id')
     // Grouped by device and day
-    .groupBy([
-      'd.id',
-      'dmsl.day',
-      'dms.i18nKey',
-      'dms.name',
-      'dms.externalId',
-      'dms.id',
-    ])
+    .groupBy(['d.id', 'dmsl.day'])
     .select([
       'd.id as deviceId',
       'dmsl.day',
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
-      knex.raw(
-        'IFNULL(DATEDIFF(dmsl.day, MAX(previousDmslWithDifferentStatus.day)), 1) as daysInSameStatus'
-      ),
     ])
 
   statusData = groupBy(
