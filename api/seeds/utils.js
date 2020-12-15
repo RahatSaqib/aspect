@@ -2589,32 +2589,37 @@ async function addReports(knex, countryReports = []) {
     // merge global and country-specific reports
     const reports = [...baseReports, ...countryReports]
 
+    const existingReports = await knex('Report')
+      .select('externalId')
+      .pluck('externalId')
     await Promise.each(
       reports,
       async (
         { name, description, i18nKey, externalId, sheets, fileName },
         reportIndex
       ) => {
-        const [reportId] = await knex('Report').insert({
-          name,
-          description,
-          i18nKey,
-          externalId,
-          geographyId,
-          sortOrder: reportIndex + 1,
-          fileName,
-        })
-
-        await Promise.each(sheets, async (sheet, sheetIndex) => {
-          const { moduleName, functionName, query } = sheet
-          await knex('ReportSheet').insert({
-            moduleName,
-            functionName,
-            query: query && JSON.stringify(query),
-            reportId,
-            sortOrder: sheetIndex + 1,
+        if (!_.includes(existingReports, externalId)) {
+          const [reportId] = await knex('Report').insert({
+            name,
+            description,
+            i18nKey,
+            externalId,
+            geographyId,
+            sortOrder: reportIndex + 1,
+            fileName,
           })
-        })
+
+          await Promise.each(sheets, async (sheet, sheetIndex) => {
+            const { moduleName, functionName, query } = sheet
+            await knex('ReportSheet').insert({
+              moduleName,
+              functionName,
+              query: query && JSON.stringify(query),
+              reportId,
+              sortOrder: sheetIndex + 1,
+            })
+          })
+        }
       }
     )
   })
