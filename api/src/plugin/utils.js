@@ -54,7 +54,7 @@ async function shouldTriggerResultCategoryAnalysis(
   deviceId,
   resultId,
   resultCategoryId,
-  { resultOutcome, moduleSerial, assayId, consumableLot }
+  { resultOutcome, instrumentSerial }
 ) {
   const resultCategories = await allResultCategoryToId()
   const categoriesToAnalyze = [resultCategories.Invalid]
@@ -74,17 +74,7 @@ async function shouldTriggerResultCategoryAnalysis(
       resultId,
       resultCategoryExternalId,
       {
-        moduleSerial,
-        resultOutcome,
-      }
-    )
-    await messageContext.resultAnalyzeCategories(
-      deviceId,
-      resultId,
-      resultCategoryExternalId,
-      {
-        assayId,
-        consumableLot,
+        instrumentSerial,
         resultOutcome,
       }
     )
@@ -96,7 +86,7 @@ async function shouldTriggerResultErrorAnalysis(
   deviceId,
   resultId,
   resultErrorCode,
-  { resultOutcome, moduleSerial, assayId, consumableLot }
+  { resultOutcome, instrumentSerial }
 ) {
   const errorsToAnalyze = [
     5007,
@@ -124,17 +114,7 @@ async function shouldTriggerResultErrorAnalysis(
       resultId,
       resultErrorCode,
       {
-        moduleSerial,
-        resultOutcome,
-      }
-    )
-    await messageContext.resultAnalyzeErrors(
-      deviceId,
-      resultId,
-      resultErrorCode,
-      {
-        assayId,
-        consumableLot,
+        instrumentSerial,
         resultOutcome,
       }
     )

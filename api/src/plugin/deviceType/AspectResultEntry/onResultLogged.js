@@ -54,6 +54,7 @@ async function onResultLogged(
       [
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'rf.formSchema',
+        'r.instrumentSerial',
         'r.resultCategory1',
         'r.assayId',
         'd.id as resultDeviceId',
@@ -65,13 +66,11 @@ async function onResultLogged(
     )
     if (result) {
       const {
-        assayId,
-        resultModuleSerial,
         resultDeviceId,
         resultErrorCode,
-        consumableLot,
         resultOutcome,
         resultCategory1,
+        instrumentSerial,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
@@ -81,9 +80,7 @@ async function onResultLogged(
         resultErrorCode,
         {
           resultOutcome,
-          moduleSerial: resultModuleSerial,
-          assayId,
-          consumableLot,
+          instrumentSerial,
         }
       )
       await shouldTriggerResultCategoryAnalysis(
@@ -93,9 +90,7 @@ async function onResultLogged(
         resultCategory1,
         {
           resultOutcome,
-          moduleSerial: resultModuleSerial,
-          assayId,
-          consumableLot,
+          instrumentSerial,
         }
       )
 
