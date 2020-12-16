@@ -268,16 +268,17 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .orWhereIn('rc2.externalId', resultCategories)
     })
     .select(
+      knex.raw('"Result" as source'),
       /**
        * see list of all columns for CSV file in 2nd tab
        * of Excel file attached to https://ops.systemone.id/browse/ASP-1857
        */
       'r.endedOn as dateTime', // 1. Test Date/time
-      // '', // 2. Actual Date/Time
+      'r.createdOn as actualDateTime', // 2. Actual Date/Time
       'r.instrumentSerial', // 3. Instrument Serial Number
-      // '', // 4. GX System Name
+      knex.raw(`(r.resultData ->> '$.systemName') as gxSystemName`), // 4. GX System Name
       'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
-      // '', // 6. Instrument Gateway Serial Number
+      knex.raw(`'-' as gatewaySerial`), // 6. Instrument Gateway Serial Number
       'r.moduleSerial', // 7. Module Serial Number
       knex.raw(
         // 8. Cartridge Type
@@ -286,7 +287,13 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       'r.consumableLot as cartridgeLot', // 9. Cartridge Lot
       'r.consumableSerial as cartridgeSerial', // 10. Cartridge Serial Number
       'r.senderOperator as operatorId', // 12. Operator ID
-      'rc1.externalId as result', // 13. Test Outcome
+      // 13. Test Outcome
+      knex.raw(`
+        CASE
+        WHEN rc1.externalId IN ('Error', 'Invalid', 'NoResult') THEN rc1.externalId
+        ELSE 'Success'
+        END as result
+      `),
       'r.errorCode', // 14. Error Code
       /**
        * additional fields
@@ -298,44 +305,82 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       /**
        * select hardware errors from DeviceOperation table
        */
-      knex('DeviceOperation')
-        .where('deviceId', deviceId)
-        .where('startedOn', '>=', minDate)
-        .where('startedOn', '<=', maxDate)
+      knex('DeviceOperation as do')
+        // join to get recent Result entry for device (of any assay type)
+        .leftOuterJoin('Result as r', function () {
+          this.on('r.deviceId', 'do.deviceId').andOn(
+            'r.endedOn',
+            '<',
+            'do.startedOn'
+          )
+        })
+        // join again to Result to make sure we get latest entry for above join of alias 'r'
+        .leftOuterJoin('Result as rNewer', function () {
+          this.on('r.deviceId', 'rNewer.deviceId')
+            .andOn('rNewer.endedOn', '<', 'do.startedOn')
+            .andOn(function () {
+              this.on('r.endedOn', '<', 'rNewer.endedOn')
+              this.orOn(function () {
+                this.on('r.endedOn', '=', 'rNewer.endedOn').andOn(
+                  'r.id',
+                  '<',
+                  'rNewer.id'
+                )
+              })
+            })
+        })
+        .where('do.deviceId', deviceId)
+        .where('do.startedOn', '>=', minDate)
+        .where('do.startedOn', '<=', maxDate)
+        .whereNull('rNewer.id') // must be null to get single latest Result entry for alias 'r'
         // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
-        .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
+        .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
         /**
          * JSON array details.Errors should contain some error code
          * Notice that below we get entries with any error code (grabbed
          * from GeneXpert logs).
          * Easy to narrow, if we need, to only some set of error codes.
          */
-        .whereRaw(`IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) > 0`)
+        .whereRaw(`IFNULL(do.data ->> '$.details.Errors[0].ErrorCode', 0) > 0`)
         .select(
-          'startedOn as dateTime',
-          knex.raw(`'-' as instrumentSerial`),
-          knex.raw(`'-' as gxSoftwareVersion`),
-          knex.raw(`'-' as moduleSerial`),
+          knex.raw('"Hardware" as source'),
+          'do.startedOn as dateTime',
+          knex.raw(`'-' as actualDateTime`),
+          'r.instrumentSerial',
+          knex.raw(`
+            CASE 
+            WHEN r.resultData IS NOT NULL THEN r.resultData ->> '$.systemName'
+            ELSE ''
+            END as gxSystemName
+          `),
+          'r.senderVersion as gxSoftwareVersion',
+          knex.raw(`'-' as gatewaySerial`),
+          'r.moduleSerial',
           knex.raw(`'-' as cartridgeType`),
           knex.raw(`'-' as cartridgeLot`),
           knex.raw(`'-' as cartridgeSerial`),
-          knex.raw(`'-' as operatorId`),
+          'r.senderOperator as operatorId',
           knex.raw(`'-' as result`),
-          knex.raw(`data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
+          knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
           knex.raw(`'-' as assay`),
-          knex.raw('"Hardware" as moduleName')
+          'r.moduleName'
         ),
     ])
     .orderBy('dateTime', 'desc')
 
+  /**
+   * 'header' is for 1st row in CSV file,
+   * 'key' is prop name in array 'items'
+   */
   const columns = [
-    { header: 'Test Date/time', key: 'dateTime' },
-    // { header: 'Actual Date/Time', key: '' },
+    { header: 'Source', key: 'source' },
+    { header: 'Date/time', key: 'dateTime' },
+    { header: 'Actual Date/Time', key: 'actualDateTime' },
     { header: 'Instrument Serial Number', key: 'instrumentSerial' },
-    // { header: 'GX System Name', key: '' },
+    { header: 'GX System Name', key: 'gxSystemName' },
     { header: 'GX Software Version', key: 'gxSoftwareVersion' },
-    // { header: 'Instrument Gateway Serial Number', key: '' },
-    { header: 'Module Name', key: 'moduleName' },
+    { header: 'Instrument Gateway Serial Number', key: 'gatewaySerial' },
+    { header: 'Module Position', key: 'moduleName' },
     { header: 'Module Serial Number', key: 'moduleSerial' },
     { header: 'Assay', key: 'assay' },
     { header: 'Cartridge Type', key: 'cartridgeType' },
