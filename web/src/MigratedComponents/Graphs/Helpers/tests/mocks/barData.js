@@ -295,13 +295,13 @@ const barDataForToolTipsNovIn2 = {
 
 const barDataForToolTipsNovIn3 = {
   id: 'Detected',
-  value: '43.744417479662',
+  value: '43.744417479583',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '43.744417479662',
-    totalCnt: 115389190,
+    Detected: '43.744417479583',
+    totalCnt: 1200000000000,
   },
 }
 
@@ -340,8 +340,8 @@ const barDataForToolTipsNovOut3 = {
   displayValue: {
     value: '43.74%',
     actual: {
-      totalCnt: 115389190,
-      percentageToValue: 50476329,
+      totalCnt: 1200000000000,
+      percentageToValue: 524933009755,
     },
   },
   externalId: 'Detected',
