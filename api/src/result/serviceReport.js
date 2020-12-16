@@ -251,26 +251,48 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
    *
    * select errors from Result table
    */
+  const resultCategories = ['Error', 'Invalid', 'NoResult', 'Indeterminate']
   const items = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftOuterJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+    .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', minDate)
     .where('r.endedOn', '<=', maxDate)
     .where(function () {
-      // get only errors
+      // get only errors and invalids
       this.whereNotNull('r.errorCode')
-        .orWhere('rc1.externalId', 'Error')
-        .orWhere('rc2.externalId', 'Error')
+        .orWhereIn('rc1.externalId', resultCategories)
+        .orWhereIn('rc2.externalId', resultCategories)
     })
     .select(
+      /**
+       * see list of all columns for CSV file in 2nd tab
+       * of Excel file attached to https://ops.systemone.id/browse/ASP-1857
+       */
+      'r.endedOn as dateTime', // 1. Test Date/time
+      // '', // 2. Actual Date/Time
+      'r.instrumentSerial', // 3. Instrument Serial Number
+      // '', // 4. GX System Name
+      'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
+      // '', // 6. Instrument Gateway Serial Number
+      'r.moduleSerial', // 7. Module Serial Number
+      knex.raw(
+        // 8. Cartridge Type
+        `GROUP_CONCAT(DISTINCT c.name ORDER BY c.name ASC SEPARATOR '; ') as cartridgeType`
+      ),
+      'r.consumableLot as cartridgeLot', // 9. Cartridge Lot
+      'r.consumableSerial as cartridgeSerial', // 10. Cartridge Serial Number
+      'r.senderOperator as operatorId', // 12. Operator ID
+      'rc1.externalId as result', // 13. Test Outcome
+      'r.errorCode', // 14. Error Code
+      /**
+       * additional fields
+       */
       'a.abbreviation as assay',
-      'r.consumableLot as lot',
-      'r.moduleName',
-      'r.endedOn as dateTime',
-      'rc1.externalId as result',
-      'r.errorCode'
+      'r.moduleName'
     )
     .union([
       /**
@@ -290,22 +312,37 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
          */
         .whereRaw(`IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) > 0`)
         .select(
-          knex.raw('"Hardware" as assay'),
-          knex.raw(`'-' as lot`),
-          knex.raw(`'-' as moduleName`),
           'startedOn as dateTime',
+          knex.raw(`'-' as instrumentSerial`),
+          knex.raw(`'-' as gxSoftwareVersion`),
+          knex.raw(`'-' as moduleSerial`),
+          knex.raw(`'-' as cartridgeType`),
+          knex.raw(`'-' as cartridgeLot`),
+          knex.raw(`'-' as cartridgeSerial`),
+          knex.raw(`'-' as operatorId`),
           knex.raw(`'-' as result`),
-          knex.raw(`data ->> '$.details.Errors[0].ErrorCode'`)
+          knex.raw(`data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
+          knex.raw(`'-' as assay`),
+          knex.raw('"Hardware" as moduleName')
         ),
     ])
     .orderBy('dateTime', 'desc')
 
   const columns = [
-    { header: 'Assay', key: 'assay' },
+    { header: 'Test Date/time', key: 'dateTime' },
+    // { header: 'Actual Date/Time', key: '' },
+    { header: 'Instrument Serial Number', key: 'instrumentSerial' },
+    // { header: 'GX System Name', key: '' },
+    { header: 'GX Software Version', key: 'gxSoftwareVersion' },
+    // { header: 'Instrument Gateway Serial Number', key: '' },
     { header: 'Module Name', key: 'moduleName' },
-    { header: 'Lot', key: 'lot' },
-    { header: 'Date/Time', key: 'dateTime' },
-    { header: 'Result', key: 'result' },
+    { header: 'Module Serial Number', key: 'moduleSerial' },
+    { header: 'Assay', key: 'assay' },
+    { header: 'Cartridge Type', key: 'cartridgeType' },
+    { header: 'Cartridge Lot', key: 'cartridgeLot' },
+    { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
+    { header: 'Operator ID', key: 'operatorId' },
+    { header: 'Test Outcome', key: 'result' },
     { header: 'Error Code', key: 'errorCode' },
   ]
   return {
