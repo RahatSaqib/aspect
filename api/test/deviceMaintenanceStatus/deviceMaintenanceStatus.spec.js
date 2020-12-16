@@ -60,38 +60,36 @@ describe('Maintenance', () => {
         .where({ id: siteId })
         .update({ latitude: 1, longitude: 5 })
 
-      await knex('DeviceMaintenanceStatusLog').insert({
+      const logEntryBase = {
         deviceId,
         deviceMaintenanceStatusId: statuses.active,
-        day: subDays(now, 2),
-        createdOn: new Date(),
-        createdBy: personId,
-      })
-
-      await knex('DeviceMaintenanceStatusLog').insert({
-        deviceId,
-        deviceMaintenanceStatusId: statuses.active,
-        day: subDays(now, 1),
-        createdOn: new Date(),
-        createdBy: personId,
-      })
-
-      await knex('DeviceMaintenanceStatusLog').insert({
-        deviceId,
-        deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
+        data: JSON.stringify({}),
         day: now,
         createdOn: new Date(),
         createdBy: personId,
+      }
+
+      await knex('DeviceMaintenanceStatusLog').insert({
+        ...logEntryBase,
+        day: subDays(now, 2),
+      })
+
+      await knex('DeviceMaintenanceStatusLog').insert({
+        ...logEntryBase,
+        day: subDays(now, 1),
+      })
+
+      await knex('DeviceMaintenanceStatusLog').insert({
+        ...logEntryBase,
+        deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
+        day: now,
       })
 
       const [deviceMaintenanceStatusLogId] = await knex(
         'DeviceMaintenanceStatusLog'
       ).insert({
-        deviceId,
-        deviceMaintenanceStatusId: statuses.active,
+        ...logEntryBase,
         day: now,
-        createdOn: new Date(),
-        createdBy: personId,
       })
       await knex('Device')
         .where({ id: deviceId })
@@ -116,8 +114,10 @@ describe('Maintenance', () => {
     })
 
     it('should get the correct current and day status', done => {
+      const minDate = formatISO(monthAgo, { representation: 'date' })
+      const maxDate = formatISO(now, { representation: 'date' })
       server
-        .get(`${path}?minDate=${formatISO(monthAgo)}&maxDate=${formatISO(now)}`)
+        .get(`${path}?minDate=${minDate}&maxDate=${maxDate}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -139,7 +139,6 @@ describe('Maintenance', () => {
           assert.equal(tamagotchiLastStatus.maintenanceStatusName, 'Active')
           assert.isBoolean(tamagotchiLastStatus.isWeekend)
           assert.isNumber(tamagotchiLastStatus.weekNumber)
-          assert.isNumber(tamagotchiLastStatus.daysInSameStatus, 3)
           assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
 
           done()
