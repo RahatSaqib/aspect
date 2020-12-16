@@ -50,7 +50,7 @@ const groupByKey = (
     normaliseKeys(grouped),
     indexBy,
     displayMethod,
-    8
+    12
   )
 }
 

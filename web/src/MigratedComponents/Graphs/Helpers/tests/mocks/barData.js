@@ -271,36 +271,36 @@ const treatmentAPISkewedActualDataOut = [
 
 const barDataForToolTipsNovIn1 = {
   id: 'Detected',
-  value: '30.97345132',
+  value: '30.973451327434',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '30.97345132',
+    Detected: '30.973451327434',
     totalCnt: 113,
   },
 }
 
 const barDataForToolTipsNovIn2 = {
   id: 'Detected',
-  value: '25.49944506',
+  value: '25.499445061043',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '25.49944506',
+    Detected: '25.499445061043',
     totalCnt: 3604,
   },
 }
 
 const barDataForToolTipsNovIn3 = {
   id: 'Detected',
-  value: '43.74441747',
+  value: '43.744417479662',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '43.74441747',
+    Detected: '43.744417479662',
     totalCnt: 115389190,
   },
 }
