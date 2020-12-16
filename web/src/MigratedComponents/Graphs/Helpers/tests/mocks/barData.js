@@ -271,40 +271,37 @@ const treatmentAPISkewedActualDataOut = [
 
 const barDataForToolTipsNovIn1 = {
   id: 'Detected',
-  value: '30.9735',
+  value: '30.97345132',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '30.9735',
-    NotDetected: '69.0265',
+    Detected: '30.97345132',
     totalCnt: 113,
   },
 }
 
 const barDataForToolTipsNovIn2 = {
   id: 'Detected',
-  value: '25.4994',
+  value: '25.49944506',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '25.4994',
-    NotDetected: '74.5005',
+    Detected: '25.49944506',
     totalCnt: 3604,
   },
 }
 
 const barDataForToolTipsNovIn3 = {
   id: 'Detected',
-  value: '32.7999',
+  value: '43.74441747',
   index: 11,
   indexValue: 'Nov 20',
   data: {
     month: 'Nov 20',
-    Detected: '32.7999',
-    NotDetected: '67.2038',
-    totalCnt: 15389190,
+    Detected: '43.74441747',
+    totalCnt: 115389190,
   },
 }
 
@@ -341,10 +338,10 @@ const barDataForToolTipsNovOut3 = {
   displayId: 'Detected',
   indexValue: 'Nov 20',
   displayValue: {
-    value: '32.8%',
+    value: '43.74%',
     actual: {
-      totalCnt: 15389190,
-      percentageToValue: 5047639,
+      totalCnt: 115389190,
+      percentageToValue: 50476329,
     },
   },
   externalId: 'Detected',
