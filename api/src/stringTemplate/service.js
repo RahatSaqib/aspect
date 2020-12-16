@@ -91,9 +91,11 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
+        'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
+        'd.serial as deviceSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
         'r.patientData as resultPatientData',
@@ -122,6 +124,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
   if (notification != null) {
     queryBuilder
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
+      .leftJoin('IssueType as it', `i.issueTypeId`, 'it.id')
       .leftJoin(
         'NotificationType as nt',
         `${notification}.notificationTypeId`,
@@ -131,6 +134,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'i.createdOn as issueCreatedOn',
         'i.dueOn as issueDueOn',
         'i.data as issueData',
+        'it.externalId as issueTypeExternalId',
         'nt.name as notificationTypeName'
       )
   }
@@ -203,6 +207,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
+
     if (options.dynamic) {
       memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {
@@ -334,6 +339,10 @@ async function getBaseDataSource(data) {
     [d.partnerPlugin],
     'settings'
   )
+  const issueData = d.issueData ? JSON.parse(d.issueData) : {}
+  const isHardwareIssue = d.issueTypeExternalId
+    ? d.issueTypeExternalId.indexOf('Hardware') === 0
+    : false
   return {
     country: {
       name: d.countryName,
@@ -364,6 +373,7 @@ async function getBaseDataSource(data) {
       deviceType: d.deviceTypeExternalId,
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
+      serial: d.deviceSerial,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},
@@ -411,7 +421,14 @@ async function getBaseDataSource(data) {
     issue: {
       createdOn: d.issueCreatedOn,
       dueOn: d.issueDueOn,
-      data: d.issueData ? JSON.parse(d.issueData) : {},
+      data: issueData,
+      occurrences: isHardwareIssue
+        ? issueData.totalErrors // <-- 'totalErrors' is defined in analyzeDeviceHardwareError()
+        : issueData.resultsWithErrors,
+      errorCode: isHardwareIssue ? issueData.errorCode : d.resultErrorCode,
+    },
+    log: {
+      startedOn: isHardwareIssue ? issueData.startedOn : null,
     },
     notification: {
       type: d.notificationTypeName,

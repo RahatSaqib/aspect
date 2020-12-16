@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -7,6 +8,7 @@ const {
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
+  deviceHardwareError,
 } = require('../device/actions')
 const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
 
@@ -312,6 +314,98 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 }
 
+async function shouldTriggerHardwareErrorAnalysis(
+  knex,
+  messageContext,
+  partnerId,
+  device,
+  payload,
+  deviceOperationId
+) {
+  const {
+    startedOn,
+    data: { details = {} },
+  } = payload
+
+  if (details.Errors && _.isArray(details.Errors) && details.Errors.length) {
+    // get all IssueEventTriggers starting with `Hardware`
+    const hardwareEventTriggers = await knex('IssueEventTrigger as iet')
+      .innerJoin('IssueType as it', 'iet.issueTypeId', 'it.id')
+      .innerJoin('IssueEventStatus as ies', 'iet.issueEventStatusId', 'ies.id')
+      .where('ies.externalId', 'Triggered')
+      .where('iet.partnerId', partnerId)
+      .whereRaw('it.externalId LIKE ?', ['Hardware%'])
+      .select(
+        'iet.issueTypeId',
+        'it.externalId as issueType',
+        'iet.triggerConditions as triggerConditionsRaw'
+      )
+      .then(items =>
+        items.map(x => ({
+          ...x,
+          // append new prop with parsed JSON string
+          triggerConditions: JSON.parse(x.triggerConditionsRaw),
+        }))
+      )
+
+    /**
+     * get 1st IssueEventTrigger with needed ErrorCode
+     * --> see original details in prop 'triggerConditions' in /seeds/fixtures/IssueEventTrigger.json
+     * for 'Hardware*' issueTypes
+     */
+    const hardwareIssueEventTrigger = _.reduce(
+      details.Errors,
+      (memo, errorItem) => {
+        // get error code from log entry in 'deviceOperation'
+        const errorCode = parseInt(errorItem.ErrorCode, 10)
+        // get 1st IssueEventTrigger with same error code
+        const hardwareIssueEventTrigger = hardwareEventTriggers.find(
+          issueEventTrigger => {
+            const {
+              triggerConditions: {
+                conditions: { evaluationFilterParameters = {} },
+              } = {},
+            } = issueEventTrigger
+
+            return errorCode === evaluationFilterParameters.errorCode
+          }
+        )
+
+        if (!memo && hardwareIssueEventTrigger) {
+          memo = hardwareIssueEventTrigger
+        }
+
+        return memo
+      },
+      null
+    )
+
+    if (hardwareIssueEventTrigger) {
+      const {
+        triggerConditions: {
+          conditions: {
+            evaluationFilterParameters: { errorCode },
+          },
+          action: actionType,
+        },
+      } = hardwareIssueEventTrigger
+      const options = {
+        startedOn,
+        details,
+        deviceOperationId,
+        errorCode,
+      }
+
+      if (!messageContext.deviceHardwareError) {
+        messageContext = messageContext.bindActionCreators({
+          deviceHardwareError,
+        })
+      }
+      messageContext.deviceHardwareError(device, actionType, options)
+    }
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
@@ -321,4 +415,5 @@ module.exports = {
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerResultCategoryAnalysis,
+  shouldTriggerHardwareErrorAnalysis,
 }

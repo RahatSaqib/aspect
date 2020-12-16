@@ -92,7 +92,13 @@ const DailyStatusClinicDay = ({
       <DayBlock dayModifier={dayModifier} consts={consts} />
     </AspectTooltip>
   ) : (
-    <DayBlock dayModifier={dayModifier} consts={consts} />
+    <AspectTooltip
+      title={maintenanceStatusName}
+      toolTipContainerClass="inline__tooltip"
+      placement="right"
+    >
+      <DayBlock dayModifier={dayModifier} consts={consts} />
+    </AspectTooltip>
   )
 }
 
