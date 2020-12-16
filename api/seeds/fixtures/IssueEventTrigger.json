@@ -149,7 +149,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5007,
+            "errorCodes": [5007],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -170,7 +170,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5006,
+            "errorCodes": [5006],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -192,6 +192,7 @@
           "evaluationParameter": "analyzeCategories",
           "evaluationFilterParameters": {
             "categoryId": "Invalid",
+            "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -212,7 +213,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5017,
+            "errorCodes": [5017],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -233,28 +234,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5016,
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
-      }
-    },
-    {
-      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyte",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 5016,
+            "errorCodes": [5016],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -320,7 +300,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 5011,
+            "errorCodes": [5011],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -356,7 +336,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2037,
+            "errorCodes": [2037],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -377,7 +357,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2008,
+            "errorCodes": [2008],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -398,7 +378,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2005,
+            "errorCodes": [2005],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -419,7 +399,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2035,
+            "errorCodes": [2035],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -440,7 +420,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2032,
+            "errorCodes": [2032],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -461,7 +441,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2026,
+            "errorCodes": [2026],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -482,28 +462,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2096,
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
-      }
-    },
-    {
-      "issueType": "AssaySpecificTerminationError1",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCode": 2096,
+            "errorCodes": [2096],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -524,7 +483,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCode": 2097,
+            "errorCodes": [2097],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -545,7 +504,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 1001,
+            "errorCodes": [1001],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -561,7 +520,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 1002,
+            "errorCodes": [1002],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -577,7 +536,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2005,
+            "errorCodes": [2005],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -593,7 +552,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2008,
+            "errorCodes": [2008],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -609,7 +568,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2014,
+            "errorCodes": [2014],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -625,7 +584,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2026,
+            "errorCodes": [2026],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -641,7 +600,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2032,
+            "errorCodes": [2032],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -657,7 +616,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2035,
+            "errorCodes": [2035],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -673,7 +632,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2037,
+            "errorCodes": [2037],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -689,7 +648,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2096,
+            "errorCodes": [2096],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -705,7 +664,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2097,
+            "errorCodes": [2097],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -721,7 +680,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 2126,
+            "errorCodes": [2126],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -737,7 +696,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4008,
+            "errorCodes": [4008],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -753,7 +712,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4009,
+            "errorCodes": [4009],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -769,7 +728,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4012,
+            "errorCodes": [4012],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -785,7 +744,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCode": 4017,
+            "errorCodes": [4017],
             "daysPeriod": 30,
             "minErrors": 3
           }
