@@ -10,7 +10,7 @@ const {
   deviceModuleDisabled,
   deviceHardwareError,
 } = require('../device/actions')
-const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
+const { issueTypeToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -56,29 +56,25 @@ async function shouldTriggerResultCategoryAnalysis(
   resultCategoryId,
   { resultOutcome, instrumentSerial }
 ) {
-  const resultCategories = await allResultCategoryToId()
-  const categoriesToAnalyze = [resultCategories.Invalid]
-  if (categoriesToAnalyze.includes(resultCategoryId)) {
-    if (!messageContext.resultAnalyzeCategories) {
-      messageContext = messageContext.bindActionCreators({
-        resultAnalyzeCategories,
-      })
-    }
-    const { resultCategoryExternalId } = await knex('ResultCategory')
-      .where({
-        id: resultCategoryId,
-      })
-      .first('externalId as resultCategoryExternalId')
-    await messageContext.resultAnalyzeCategories(
-      deviceId,
-      resultId,
-      resultCategoryExternalId,
-      {
-        instrumentSerial,
-        resultOutcome,
-      }
-    )
+  if (!messageContext.resultAnalyzeCategories) {
+    messageContext = messageContext.bindActionCreators({
+      resultAnalyzeCategories,
+    })
   }
+  const { resultCategoryExternalId } = await knex('ResultCategory')
+    .where({
+      id: resultCategoryId,
+    })
+    .first('externalId as resultCategoryExternalId')
+  await messageContext.resultAnalyzeCategories(
+    deviceId,
+    resultId,
+    resultCategoryExternalId,
+    {
+      instrumentSerial,
+      resultOutcome,
+    }
+  )
 }
 
 async function shouldTriggerResultErrorAnalysis(
@@ -88,37 +84,20 @@ async function shouldTriggerResultErrorAnalysis(
   resultErrorCode,
   { resultOutcome, instrumentSerial }
 ) {
-  const errorsToAnalyze = [
-    5007,
-    5006,
-    5016,
-    5017,
-    5011,
-    2005,
-    2008,
-    2026,
-    2032,
-    2035,
-    2036,
-    2096,
-    2097,
-  ]
-  if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
-    if (!messageContext.resultAnalyzeErrors) {
-      messageContext = messageContext.bindActionCreators({
-        resultAnalyzeErrors,
-      })
-    }
-    await messageContext.resultAnalyzeErrors(
-      deviceId,
-      resultId,
-      resultErrorCode,
-      {
-        instrumentSerial,
-        resultOutcome,
-      }
-    )
+  if (!messageContext.resultAnalyzeErrors) {
+    messageContext = messageContext.bindActionCreators({
+      resultAnalyzeErrors,
+    })
   }
+  await messageContext.resultAnalyzeErrors(
+    deviceId,
+    resultId,
+    resultErrorCode,
+    {
+      instrumentSerial,
+      resultOutcome,
+    }
+  )
 }
 
 async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
