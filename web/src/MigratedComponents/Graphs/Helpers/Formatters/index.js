@@ -242,7 +242,6 @@ const generateToolTip = (
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
   let displayId = translateLabel(id, assaysFromState)
-
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
@@ -265,11 +264,8 @@ const generateToolTip = (
     } else {
       totalOut = totalCnt
     }
-
     const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
-    const percentageToValue = Math.round(
-      (parseFloat(percentage) / 100) * totalCnt
-    )
+    const percentageToValue = Math.round((parseFloat(value) / 100) * totalCnt)
     displayValue = {
       value: percentage,
       actual: { totalCnt: totalOut, percentageToValue },
