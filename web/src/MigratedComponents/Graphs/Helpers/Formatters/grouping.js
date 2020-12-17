@@ -46,7 +46,12 @@ const groupByKey = (
     return acc
   }, {})
 
-  return calcPercentageSplitBar(normaliseKeys(grouped), indexBy, displayMethod)
+  return calcPercentageSplitBar(
+    normaliseKeys(grouped),
+    indexBy,
+    displayMethod,
+    12
+  )
 }
 
 const groupForPie = (data, keyToConsume, indexBy, filterBy) => {

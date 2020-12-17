@@ -1,5 +1,6 @@
 import {
   calcPercentageSplitBar,
+  generateToolTip,
   groupByKey,
   groupForPie,
   groupForPieRow,
@@ -13,6 +14,12 @@ import {
 import {
   barDataActualFromAPIIn,
   barDataActualFromAPIOut,
+  barDataForToolTipsNovIn1,
+  barDataForToolTipsNovIn2,
+  barDataForToolTipsNovIn3,
+  barDataForToolTipsNovOut1,
+  barDataForToolTipsNovOut2,
+  barDataForToolTipsNovOut3,
   divergentDataFromAPIIn,
   divergentDataFromAPIOut,
   groupByKeyGrouped,
@@ -37,6 +44,8 @@ import {
   treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 } from './mocks/data.js'
+
+import { itemMocked, assaysMocked } from './mocks/tooltips'
 
 describe('Graph Helpers', () => {
   describe('Data transformations for individual graphs', () => {
@@ -301,6 +310,55 @@ describe('Graph Helpers', () => {
         )
         const display = calcPercentageSplitBar(normalised, indexBy)
         expect(display).toEqual(tickDataForBarDisplayMethodPercentageIn)
+      })
+    })
+  })
+
+  describe('Generate Tooltips', () => {
+    describe('generateToolTip', () => {
+      const displayMethod = 'percentage'
+      const assaysFromState = assaysMocked
+      const type = 'bar'
+      const formatNumber = number =>
+        new Intl.NumberFormat('en-US', {
+          style: 'percent',
+          maximumFractionDigits: 2,
+        }).format(number)
+
+      it('Should calculate tooltip correctly test 1', async () => {
+        const item = { ...itemMocked, ...barDataForToolTipsNovIn1 }
+        const tooltip = await generateToolTip(
+          item,
+          displayMethod,
+          assaysFromState,
+          formatNumber,
+          type
+        )
+        expect(tooltip).toEqual(barDataForToolTipsNovOut1)
+      })
+
+      it('Should calculate tooltip correctly test 2', async () => {
+        const item = { ...itemMocked, ...barDataForToolTipsNovIn2 }
+        const tooltip = await generateToolTip(
+          item,
+          displayMethod,
+          assaysFromState,
+          formatNumber,
+          type
+        )
+        expect(tooltip).toEqual(barDataForToolTipsNovOut2)
+      })
+
+      it('Should calculate tooltip correctly test 3', async () => {
+        const item = { ...itemMocked, ...barDataForToolTipsNovIn3 }
+        const tooltip = await generateToolTip(
+          item,
+          displayMethod,
+          assaysFromState,
+          formatNumber,
+          type
+        )
+        expect(tooltip).toEqual(barDataForToolTipsNovOut3)
       })
     })
   })
