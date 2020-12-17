@@ -1,11 +1,11 @@
 const _ = require('lodash')
-const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { run } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Assay Consumable Routes', () => {

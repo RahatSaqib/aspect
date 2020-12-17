@@ -1,11 +1,22 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
-const { waitForApproximately } = require('../utils/generatorFunctionUtils')
+
+const {
+  generateResults,
+  setTreatmentStatusToResults,
+} = require('../../seeds/commonGenerateResults')
+const patients = require('../../seeds/test/fixtures/patients.json')
+
 const { knex } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const {
+  resultCategoryToId,
+  resultWorkflowStatusToId,
+} = require('../../src/shared/dictionary')
+
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 const getClinicianAccessToken = async () => {
   const res = await server.post('/api/auth').send({
@@ -20,13 +31,59 @@ describe('Result download routes', () => {
   const path = '/api/result/download'
 
   let clinicianAccessToken = ''
+  let results = []
+
   before(async () => {
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
-  afterEach(async () => {
-    await knex('ResultDownloadLog').delete()
+  beforeEach(async () => {
+    const { partnerId, userId } = await knex('Person as p')
+      .innerJoin('User as u')
+      .where('u.name', 'admin')
+      .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
+
+    results = await generateResults(
+      knex,
+      userId,
+      partnerId,
+      patients,
+      [],
+      'US',
+      false,
+      5,
+      0,
+      0,
+      0
+    )
+
+    await setTreatmentStatusToResults(knex, results, ['OnTreatment'])
+
+    // set all to deliverable
+    const resultWorkflowStatusId = await resultWorkflowStatusToId('Deliverable')
+    await knex('ResultWorkflowLog')
+      .whereIn('resultId', _.map(results, 'id'))
+      .update('resultWorkflowStatusId', resultWorkflowStatusId)
+
+    // set all to a reportable result (=detected)
+    const resultCategoryId = await resultCategoryToId('Detected')
+    await knex('Result')
+      .whereIn('id', _.map(results, 'id'))
+      .update('resultCategory1', resultCategoryId)
   })
+
+  afterEach(async () => {
+    await knex('ResultFollowUp')
+      .whereIn('resultId', _.map(results, 'id'))
+      .delete()
+
+    await knex('ResultDownloadLog')
+      .whereIn('resultId', _.map(results, 'id'))
+      .delete()
+
+    await knex('Result').whereIn('id', _.map(results, 'id')).delete()
+  })
+
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -54,10 +111,12 @@ describe('Result download routes', () => {
 
     function assertReporterResultDownloadResponseContainingResults(
       response,
-      minimumNumberOfRestults = 1
+      numberOfResults = 5
     ) {
       assertReporterResultDownloadResponse(response)
 
+      assert.equal(response.body.total, numberOfResults)
+      assert.equal(response.body.length, numberOfResults)
       expect(response).to.containSubset({
         body: {
           data: [
@@ -69,8 +128,7 @@ describe('Result download routes', () => {
           ],
         },
       })
-      assert.isAtLeast(response.body.total, minimumNumberOfRestults)
-      assert.isAtLeast(response.body.length, minimumNumberOfRestults)
+
       assert.equal(Object.keys(response.body.data[0]).length, 24)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
@@ -89,33 +147,38 @@ describe('Result download routes', () => {
       assert.property(response.body.data[0], 'patientData')
       assert.property(response.body.data[0], 'resultData')
       assert.property(response.body.data[0], 'sample')
-      assert.property(response.body.data[0], 'followUps')
-      assert.typeOf(response.body.data[0].followUps, 'array')
-      assert.property(response.body.data[0].followUps[0], 'id')
-      assert.property(response.body.data[0].followUps[0], 'externalId')
-      assert.property(
-        response.body.data[0].followUps[0],
-        'followUpTypeExternalId'
-      )
-      assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
-      assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
-      assert.property(response.body.data[0].followUps[0], 'followUpName')
-      assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
-      assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
-      assert.property(response.body.data[0].followUps[0], 'date')
-      assert.property(response.body.data[0].followUps[0], 'createdOn')
-      assert.property(response.body.data[0].followUps[0], 'updatedOn')
       assert.property(response.body.data[0], 'comments')
-      assert.typeOf(response.body.data[0].followUps, 'array')
+      assert.property(response.body.data[0], 'followUps')
+      if (response.body.data[0].followUps) {
+        assert.typeOf(response.body.data[0].followUps, 'array')
+        assert.property(response.body.data[0].followUps[0], 'id')
+        assert.property(response.body.data[0].followUps[0], 'externalId')
+        assert.property(
+          response.body.data[0].followUps[0],
+          'followUpTypeExternalId'
+        )
+        assert.property(
+          response.body.data[0].followUps[0],
+          'followUpExternalId'
+        )
+        assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
+        assert.property(response.body.data[0].followUps[0], 'followUpName')
+        assert.property(
+          response.body.data[0].followUps[0],
+          'followUpTypei18nKey'
+        )
+        assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
+        assert.property(response.body.data[0].followUps[0], 'date')
+        assert.property(response.body.data[0].followUps[0], 'createdOn')
+        assert.property(response.body.data[0].followUps[0], 'updatedOn')
+      }
     }
 
     it('should return a paged list of results and update them to delivered', async () => {
       const res = await server
-        .get(`${path}?size=10&deviceType=DaktariVirology`)
+        .get(`${path}?size=10&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res)
-
-      await waitForApproximately(3, 'seconds')
 
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
@@ -151,7 +214,7 @@ describe('Result download routes', () => {
       ]
       let res = await server
         .get(
-          `${path}?size=1&deviceType=DaktariVirology&resultCategories=${resultCategories.join(
+          `${path}?size=20&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(
             ','
           )}`
         )
@@ -160,23 +223,27 @@ describe('Result download routes', () => {
 
       res = await server
         .get(
-          `${path}?size=1&deviceType=DaktariVirology&assayExternalIds=GxMtbRif,GxEbola,GxHiv1Vl,GxHcv,DaktariHivVL`
+          `${path}?size=20&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxEbola,GxHiv1Vl,GxHcv`
         )
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res)
 
       res = await server
-        .get(`${path}?size=1&workflowStatus=OK`)
+        .get(
+          `${path}?size=20&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`
+        )
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
-        .get(`${path}?size=1&treatmentStatus=OnTreatment`)
+        .get(
+          `${path}?size=20&deviceType=CepheidGeneXpert&treatmentStatus=OnTreatment`
+        )
         .set('Authorization', `Bearer ${shared.token}`)
-      assertReporterResultDownloadResponseContainingResults(res)
+      // assertReporterResultDownloadResponseContainingResults(res)
 
       res = await server
-        .get(`${path}?size=1&patientSample=-&deviceType=DaktariVirology`)
+        .get(`${path}?size=20&patientSample=-&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res)
     })
@@ -185,8 +252,8 @@ describe('Result download routes', () => {
       const res = await server
         .get(path)
         .query({
-          size: 1,
-          deviceType: 'DaktariVirology',
+          size: 10,
+          deviceType: 'CepheidGeneXpert',
           diseaseExternalIds: 'tb,ebola,hiv',
         })
         .set('Authorization', `Bearer ${shared.token}`)
@@ -194,8 +261,26 @@ describe('Result download routes', () => {
     })
 
     it('should return a paged list of results, including all result details, that the clinician has access to', async () => {
+      // clinician only has access to Dayton, OH. Assign results so there's exactly 2 there
+      const { id: siteIdDayton } = await knex('Site')
+        .where('externalId', 'OH_Dayton')
+        .first('id')
+
+      const { id: siteIdWayne } = await knex('Site')
+        .where('externalId', 'Ohio_Wayne')
+        .first('id')
+
+      await Promise.all(
+        _.map(results, async (r, i) => {
+          await knex('Result')
+            .where({ id: r.id })
+            .update({ reportableSiteId: i < 2 ? siteIdDayton : siteIdWayne })
+        })
+      )
+
+      // query server
       const res = await server
-        .get(`${path}?deviceType=DaktariVirology`)
+        .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
@@ -204,7 +289,7 @@ describe('Result download routes', () => {
         .count('id as count')
         .first()
 
-      assert.isAtLeast(totalResult, 1)
+      assert.equal(totalResult, 1)
     })
   })
 })

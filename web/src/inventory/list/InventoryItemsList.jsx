@@ -194,12 +194,6 @@ export const InventoryItemsListWithProps = ({
                   sortable: true,
                 },
                 {
-                  key: 'expiresIn',
-                  label: intl.formatMessage(messages.expiresIn),
-                  'data-column': 'expiresOn',
-                  sortable: true,
-                },
-                {
                   key: 'action',
                 },
               ]}

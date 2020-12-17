@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const supertest = require('supertest')
 const chai = require('chai')
 const { addDays, addHours, format, subDays } = require('date-fns')
 const Promise = require('bluebird')
@@ -23,7 +22,8 @@ const {
 } = require('../../../src/device/actions')
 const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Backward update db after getting tests from offline device', () => {

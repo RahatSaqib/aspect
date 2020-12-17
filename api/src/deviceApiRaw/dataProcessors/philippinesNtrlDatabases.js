@@ -257,6 +257,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
           changedOn: utcNow,
           createdOn: utcNow,
         })
+        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+          resultId: result.id,
+          resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
+          operator: resultSignOff.laboratoryManager,
+          reason: `Data from ${site.deviceName}`,
+          changedOn: utcNow,
+          createdOn: utcNow,
+        })
         this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
       }
     }
@@ -1096,6 +1104,18 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         'Xavier University Community Health Care Center PMDT TC',
       'zamboanga city medical center pmdt tc':
         'Zamboanga City Medical Center PMDT TC',
+      'City of Malolos Health OfficeV': 'City of Malolos Health OfficeV',
+      'Premiere Medical Center': 'Premiere Medical Center',
+      'La Paz Rural Health Unit (RHU) II': 'La Paz Rural Health Unit (RHU) II',
+      'Mabalacat RHU III': 'Mabalacat RHU III',
+      'Santa Maria RHU III': 'Santa Maria RHU III',
+      'Lian RHU': 'Lian RHU',
+      'Antipolo Health Units': 'Antipolo Health Units',
+      'San Mateo IV': 'San Mateo IV',
+      'Magdalena RHU': 'Magdalena RHU',
+      'Rodriguez RHU IV': 'IVA - RODRIGUEZ RHU',
+      'Siniloan RHU': 'Siniloan RHU',
+      'Dasmarinas CHO II': 'Dasmarinas CHO II',
     }
   }
 
@@ -1597,8 +1617,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('DST', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
                 .andWhere('siteId', site.id)
             })
@@ -1770,11 +1791,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.whereIn('assayId', [
-                  assayBdMgitGndId,
-                  assayGenericCultureId,
-                ])
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .whereIn('assayId', [assayBdMgitGndId, assayGenericCultureId])
                   .andWhere('sampleId', cultureSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -1897,8 +1916,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('LPA', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .andWhere('assayId', assayLpaId)
                 .andWhere('siteId', site.id)
             })
@@ -2070,8 +2090,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.where('assayId', assaySmearId)
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .where('assayId', assaySmearId)
                   .andWhere('sampleId', smearSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -2158,8 +2179,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('GeneXpert', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .whereIn('assayId', [
                   assayGeneXpertMtbRifId,
                   assayGeneXpertMtbRifUltraId,
@@ -2242,8 +2264,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .andWhere('assayId', assayTbLampId)
                 .andWhere('siteId', site.id)
             })
@@ -2513,8 +2536,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         if (referringFacility) {
           originSite = await knex('Site')
             .where('partnerId', partnerId)
-            .andWhere(function () {
-              this.where('externalId', referringFacility)
+            .andWhere(queryBuilder => {
+              queryBuilder
+                .where('externalId', referringFacility)
                 .orWhere('name', referringFacility)
                 .orWhere('shortName', referringFacility)
             })
@@ -2780,8 +2804,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('DST', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
                 .andWhere('siteId', site.id)
             })
@@ -2957,11 +2982,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.whereIn('assayId', [
-                  assayBdMgitGndId,
-                  assayGenericCultureId,
-                ])
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .whereIn('assayId', [assayBdMgitGndId, assayGenericCultureId])
                   .andWhere('sampleId', cultureSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -3113,8 +3136,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.where('assayId', assaySmearId)
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .where('assayId', assaySmearId)
                   .andWhere('sampleId', smearSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -3181,8 +3205,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('GeneXpert', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.where('sampleId', samples[0].id)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .where('sampleId', samples[0].id)
                 .whereIn('assayId', [
                   assayGeneXpertMtbRifId,
                   assayGeneXpertMtbRifUltraId,
@@ -3270,8 +3295,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .andWhere('assayId', assayTbLampId)
                 .andWhere('siteId', site.id)
             })

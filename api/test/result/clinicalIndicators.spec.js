@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const { format } = require('date-fns')
@@ -6,7 +5,8 @@ const { format } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('/result/clinical-indicator-aggregations', () => {
@@ -168,6 +168,28 @@ describe('/result/clinical-indicator-aggregations', () => {
         assert.deepEqual(res.body.data, expectedResponse)
       }))
 
+  it('should return all results grouped by month and assay', async () =>
+    server
+      .get(`${path}?groupBy=month&groupBy=assay`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .then(res => {
+        const expectedResponse = _.chain(resultsForUser)
+          .map(o => ({
+            categoryMonth: `${o.assayName}_${format(
+              new Date(o.endedOn),
+              'yyyy-MM'
+            )}`,
+          }))
+          .groupBy('categoryMonth')
+          .map((value, key) => ({
+            assay: key.substring(0, key.indexOf('_')),
+            month: key.substring(key.indexOf('_') + 1),
+            cnt: value.length,
+          }))
+          .value()
+        assert.equal(res.status, 200)
+        assert.deepEqual(res.body.data, expectedResponse)
+      }))
   it('should throw an error if groupby is not supported', async () =>
     server
       .get(`${path}?groupBy=GroupieGroup`)

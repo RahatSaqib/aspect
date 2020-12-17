@@ -18,7 +18,7 @@ import {
   filterByMultiple,
 } from './index'
 import { calcPercentageForGraphs } from './calcs'
-import { negateTimeZoneOffset } from './datetime'
+import { dateRangeOptions, negateTimeZoneOffset } from './datetime'
 
 const groupByKey = (
   data,
@@ -43,10 +43,15 @@ const groupByKey = (
       [indexBy]: dateFormatted,
       [countKey]: curr.cnt,
     }
-
     return acc
   }, {})
-  return calcPercentageSplitBar(normaliseKeys(grouped), indexBy, displayMethod)
+
+  return calcPercentageSplitBar(
+    normaliseKeys(grouped),
+    indexBy,
+    displayMethod,
+    12
+  )
 }
 
 const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
@@ -64,7 +69,7 @@ const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
   return grouped
 }
 
-const groupForPieRow = data => {
+const groupForPieRow = (data, mergedParams) => {
   const keysToRenderOrder = [
     'assayName',
     'cntAll',
@@ -93,7 +98,7 @@ const groupForPieRow = data => {
     return type
   }
 
-  const pieWidgetType = (key, value, difference) => {
+  const pieWidgetType = (_key, value, difference) => {
     let type
     switch (true) {
       case typeof value === 'number' && difference !== undefined:
@@ -109,6 +114,42 @@ const groupForPieRow = data => {
         break
     }
     return type
+  }
+
+  const buildLink = (id, assayId, resultCategoryPositiveId, mergedParams) => {
+    let link
+    const getDateRanges = dateRangeOptions()
+    const dateRanges = getDateRanges[Object.keys(getDateRanges)]
+    const dateMonthStart =
+      mergedParams && mergedParams.length ? mergedParams[0].currentMonth : false
+    const dateMonthEnd =
+      dateRanges && dateRanges.length
+        ? filter(dateRanges, {
+            value: { minDate: dateMonthStart },
+          })[0].value.maxDate
+        : false
+
+    const linkBase = '/browse/result?filters='
+    const assayUrl = `assayId%3D${assayId}`
+    const minDateUrl = `minDate%3D${dateMonthStart}`
+    const maxDateUrl = `maxDate%3D${dateMonthEnd}`
+    const resultCategoryUrl = `resultCategoryId%3D${resultCategoryPositiveId}`
+
+    switch (true) {
+      case id === 'cntAll':
+        link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}`
+        break
+
+      case id === 'cntPositive':
+        link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}%26${resultCategoryUrl}`
+        break
+
+      default:
+        link = false
+        break
+    }
+
+    return link
   }
 
   const valueSplit = (key, value, type, difference) => {
@@ -152,17 +193,25 @@ const groupForPieRow = data => {
   }
 
   const pieRows = []
-  data.map(row => {
+
+  data.map(({ assayId, resultCategoryPositiveId, ...rest }) => {
     const pieRow = {}
-    for (const [key, value] of Object.entries(row)) {
+    for (const [key, value] of Object.entries(rest)) {
       if (keysToRenderOrder.includes(key)) {
-        const hasChange = row[`${key}Change`]
+        const hasChange = rest[`${key}Change`]
         const type = pieWidgetType(key, value, hasChange)
         const format = pieValueFormat(key)
+        const link = buildLink(
+          key,
+          assayId,
+          resultCategoryPositiveId,
+          mergedParams
+        )
         pieRow[key] = {
           heading: `${key}`,
           type,
           format,
+          link,
           value: valueSplit(key, value, type, hasChange),
         }
       }
@@ -214,7 +263,8 @@ const groupForOldTreatmentAPI = (
   keyToConsume,
   indexBy,
   formatDate,
-  filterBy
+  filterBy,
+  displayMethod
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
@@ -224,10 +274,15 @@ const groupForOldTreatmentAPI = (
 
     acc[curr[indexBy]] = {
       monthTested: dateFormatted,
-      Confirmed: Number(curr[keyToConsume]).toFixed(1),
+      Confirmed:
+        displayMethod === 'percentage'
+          ? Number(curr[keyToConsume]).toFixed(1)
+          : curr[keyToConsume],
       NotConfirmed:
         curr[keyToConsume] < 1
-          ? curr.total
+          ? displayMethod === 'percentage'
+            ? '100.0'
+            : curr.total
           : Number(100 - curr[keyToConsume]).toFixed(1),
       totalCnt: curr.total,
     }

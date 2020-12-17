@@ -28,9 +28,8 @@ function onAlertMessageUpdateAfterIssueDataChanged(
   { messageContext }
 ) {
   return messageContext.transact(async knex => {
-    const { issueTypeId } = await knex('Issue')
-      .where('id', issueId)
-      .first('issueTypeId')
+    const { issueTypeId } =
+      (await knex('Issue').where('id', issueId).first('issueTypeId')) || {}
 
     // if issueType does not need to update alert message - exit
     // (later add here condition for DataCategoryLow* issue types which should update percentage in alert message)

@@ -1,9 +1,9 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 const getClinicianAccessToken = () =>
   server

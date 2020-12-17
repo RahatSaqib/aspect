@@ -1,16 +1,18 @@
 const _ = require('lodash')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const {
   addDays,
   format,
   isWeekend,
-  subMinutes,
+  addMinutes,
   subMonths,
+  startOfMonth,
   endOfMonth,
   parseISO,
 } = require('date-fns')
 const Promise = require('bluebird')
+const server = require('../utils/testUtils')
 
 const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
@@ -23,8 +25,6 @@ const {
   resultTypeToId,
 } = require('../../src/shared/dictionary')
 
-const server = supertest.agent('http://localhost:8080')
-
 const { assert } = chai
 
 describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
@@ -33,9 +33,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
 
   const now = parseISO(new Date().toISOString())
   const previousMonth = subMonths(now, 1)
-  const minDate = parseISO(
-    `${format(previousMonth, 'yyyy-MM-01')}T00:00:00.000Z`
-  )
+  const minDate = getLocalDateInUtc(startOfMonth(previousMonth))
   const maxDate = getLocalDateInUtc(endOfMonth(previousMonth))
 
   const totalResults = 5
@@ -95,11 +93,13 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       .join('Site as s', 'd.siteId', 's.id')
       .join('Geography as g', 's.geographyId', 'g.id')
       .join('Country as c', 'g.countryId', 'c.id')
+      .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .where('dt.externalId', 'CepheidGeneXpert')
       .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
       .where('d.partnerId', partnerId)
       .where('s.partnerId', partnerId)
       .where('c.abbreviation', countryAbbreviation)
+      .where('da.token', 'approved')
       .first('d.id', 'd.partnerId', 'd.geographyId', 'd.siteId')
 
     const getResultCategoryId = isDetected => {
@@ -139,10 +139,9 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       // -----------------------------
       const resultElement = {
         ...auditFields,
-        externalId: `UQTB-${i}-${format(
-          new Date(new Date() * _.random(1, 8)),
-          'tt'
-        )}-D`,
+        externalId: `UQTB-${_.times(8, () =>
+          _.toUpper(_.random(36).toString(36))
+        ).join('')}`,
         assayId: assayGeneXpertMtbRif.id,
         partnerId,
         geographyId,
@@ -157,10 +156,10 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         resultCategory1,
         resultCategory2,
         assayVersion: '4',
-        startedOn: getLocalDateInUtc(subMinutes(date, 100)),
-        endedOn: getLocalDateInUtc(date),
-        createdOn: getLocalDateInUtc(subMinutes(date, 90)),
-        updatedOn: getLocalDateInUtc(subMinutes(date, 90)),
+        startedOn: addMinutes(date, 100),
+        endedOn: addMinutes(date, 220),
+        createdOn: addMinutes(date, 220),
+        updatedOn: addMinutes(date, 220),
         notes: 'This is a test... result',
       }
 

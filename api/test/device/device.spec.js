@@ -1,5 +1,5 @@
-const supertest = require('supertest')
 const chai = require('chai')
+const Promise = require('bluebird')
 const _ = require('lodash')
 const {
   addDays,
@@ -23,6 +23,8 @@ const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const {
   allDeviceMaintenanceStatusToId,
   allDeviceApprovalToId,
+  allIssueTypeToId,
+  allIssueStatusToId,
 } = require('../../src/shared/dictionary')
 const {
   formatDateOrDefault,
@@ -30,14 +32,20 @@ const {
 } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
+const {
+  createGxConnectTestContext,
+} = require('../deviceApi/geneXpert/gxconnect_utils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device routes', () => {
   const path = '/api/device'
   let deviceId
-
+  let deviceMaintenanceStatuses
+  let deviceApprovals
+  let issuesToDelete = []
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -47,7 +55,16 @@ describe('Device routes', () => {
     let daktariManagerUserId
     let daktariManagerAuthAccessToken
 
+    // Status test
+    let statusesToTest
+    let theGreatestDeviceIEverCreated
+
     before(async () => {
+      deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+      deviceApprovals = await allDeviceApprovalToId()
+      const issueStatus = await allIssueStatusToId()
+      const issueTypes = await allIssueTypeToId()
+
       daktariManagerUserId = await createUser(
         'Partner One',
         'US',
@@ -64,9 +81,112 @@ describe('Device routes', () => {
         daktariManagerUsername,
         daktariManagerPassword
       )
+
+      const device = await knex('Device as d')
+        .join('Partner as p', 'd.partnerId', 'p.id')
+        .where('p.name', 'Partner One')
+        .first('d.*')
+      issuesToDelete = await Promise.map(
+        [issueTypes.ModuleReplaced, issueTypes.ModuleDisabled],
+        issueTypeId =>
+          knex('Issue').insert({
+            issueTypeId,
+            issueStatusId:
+              issueTypeId === issueTypes.ModuleDisabled
+                ? issueStatus.Resolved
+                : issueStatus.Active,
+            partnerId: device.partnerId,
+            geographyId: device.geographyId,
+            siteId: device.siteId,
+            deviceId: device.id,
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          })
+      )
+      // Status test
+      statusesToTest = [
+        // [approval status, maintenance status, expected status]
+        [deviceApprovals.provisioned, null, 'Provisioned'],
+        [
+          deviceApprovals.provisioned,
+          deviceMaintenanceStatuses.active,
+          'Provisioned',
+        ],
+        [deviceApprovals.approved, null, 'Approved'],
+        [deviceApprovals.approved, deviceMaintenanceStatuses.active, 'Active'],
+        [
+          deviceApprovals.approved,
+          deviceMaintenanceStatuses.inactiveOutOfInventory,
+          'Out of Inventory',
+        ],
+      ]
+      const statusTestDeviceContext = createGxConnectTestContext(server, {
+        macAddress: 'A really cool mac address',
+        adminUsername: 'admin',
+        adminPassword: 'test07',
+        countryCode: 'US',
+        deviceName: 'The greatest device I ever created',
+        deviceSerialNumber: 'A very cool device serial number',
+        hostId: 'The best host id ever',
+      })
+      await statusTestDeviceContext.registerAndSetDevice()
+      theGreatestDeviceIEverCreated = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first()
     })
 
-    after(async () => removeUser(daktariManagerUserId))
+    after(async () => {
+      removeUser(daktariManagerUserId)
+      const { id } = await knex('Device')
+        .where({ name: 'The greatest device I ever created' })
+        .first()
+      await knex('Issue').whereIn('id', issuesToDelete).delete()
+      await knex('DeviceApiKey').where({ deviceId: id }).delete()
+      await knex('DeviceLog').where({ deviceId: id }).delete()
+      await knex('DeviceApprovalLog').where({ deviceId: id }).delete()
+      await knex('Device').where({ id }).delete()
+    })
+
+    it('should return a list of devices with the correspondant status', async () => {
+      await Promise.each(
+        statusesToTest,
+        async ([
+          deviceApprovalId,
+          deviceMaintenanceStatusId,
+          expectedStatus,
+        ]) => {
+          if (deviceMaintenanceStatusId) {
+            const [deviceMaintenanceStatusLogId] = await knex(
+              'DeviceMaintenanceStatusLog'
+            ).insert({
+              deviceId: theGreatestDeviceIEverCreated.id,
+              deviceMaintenanceStatusId,
+              data: '{}',
+              day: new Date(),
+              createdOn: new Date(),
+            })
+            await knex('Device')
+              .where({ id: theGreatestDeviceIEverCreated.id })
+              .update({
+                deviceMaintenanceStatusLogId,
+                deviceApprovalId,
+              })
+          } else {
+            await knex('Device')
+              .where({ id: theGreatestDeviceIEverCreated.id })
+              .update({
+                deviceMaintenanceStatusLogId: null,
+                deviceApprovalId,
+              })
+          }
+
+          const res = await server
+            .get(`${path}?deviceName=The greatest device I ever created`)
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(res.body.data[0].status, expectedStatus)
+        }
+      )
+    })
 
     it('should return a list of devices when using valid token "approved"', async () => {
       const res = await server
@@ -145,6 +265,35 @@ describe('Device routes', () => {
       assert.property(res.body.data[0], 'deliveredLastMonth')
       assert.property(res.body.data[0], 'deliveredThisMonth')
       assert.property(res.body, 'total')
+    })
+
+    it('should return only devices that have linked issues', async () => {
+      let res = await server
+        .get(`${path}?onlyOpenIssues=1`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.equal(res.body.data.length, 1)
+      assertPropertiesOfListItem(res)
+
+      res = await server
+        .get(`${path}?onlyOpenIssues=1&issueTypeId=ModuleDisabled`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 0)
+
+      res = await server
+        .get(
+          `${path}?onlyOpenIssues=1&issueTypeId=ModuleReplaced&issueTypeId=ModuleDisabled"`
+        )
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 1)
+      res = await server
+        .get(`${path}?issueTypeId=ModuleDisabled`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 1)
     })
 
     it('should return details of a specific device', async () => {
@@ -564,7 +713,7 @@ describe('Device routes', () => {
       }
 
       // -----------------------------
-      async function checkMaintenance(externalId, datePropName, notesPropName) {
+      function checkMaintenance(externalId, datePropName, notesPropName) {
         it(`${externalId} - should create new entry in DeviceMaintenance table, update it, and create another new`, async () => {
           const options = { datePropName, notesPropName }
           let notes = 'Some sample notes'
@@ -789,8 +938,8 @@ describe('Device routes', () => {
           ])
           .andWhere('day', startOfTodayUtc)
           .del()
-        const deviceApprovals = await allDeviceApprovalToId()
-        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+        deviceApprovals = await allDeviceApprovalToId()
+        deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
         await knex('DeviceMaintenanceStatusLog')
           .where('deviceId', decommissionedDeviceId)
           .andWhere(

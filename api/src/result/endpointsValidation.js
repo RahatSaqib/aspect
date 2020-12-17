@@ -40,7 +40,10 @@ const resultAggregationsValidGroups = [
   'day',
 ]
 
-const clinicalIndicatorsValidGroups = [...resultAggregationsValidGroups]
+const clinicalIndicatorsValidGroups = [
+  ...resultAggregationsValidGroups,
+  'assay',
+]
 
 const followUpAggregationsValidGroups = [
   ...resultAggregationsValidGroups,
@@ -51,10 +54,13 @@ const resultAggregationsResponseItem = {
   cnt: Joi.number().required().description('The count of results in the group'),
   resultCategory1: Joi.string()
     .allow(null)
-    .description('Result Category 1 that count is grouped by'),
+    .description('Result Category 1 that the count is grouped by'),
   resultCategory2: Joi.string()
     .allow(null)
-    .description('Result Category 2 that count is grouped by'),
+    .description('Result Category 2 that the count is grouped by'),
+  assay: Joi.string()
+    .allow(null)
+    .description('Assay name that the count is grouped by'),
   week: Joi.string().description('The week that the count is grouped by'),
   month: Joi.string().description('The month that the count is grouped by'),
   year: Joi.string().description('The year that the count is grouped by'),
@@ -499,6 +505,11 @@ function listResultsBaseConfig() {
           .optional()
           .description(
             'Case externalid for filtering only Results related with'
+          ),
+        onlyReportableResults: Joi.boolean()
+          .optional()
+          .description(
+            'It filters only results with no "Invalid", "No result" or "Error" categories'
           ),
       },
     },

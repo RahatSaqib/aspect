@@ -1,5 +1,6 @@
-const { subDays } = require('date-fns')
-
+const subDays = require('date-fns/subDays')
+const addDays = require('date-fns/addDays')
+const startOfDay = require('date-fns/startOfDay')
 const _ = require('lodash')
 const { startOfDayUtc } = require('../shared/date')
 const { resultCategoryToId } = require('../shared/dictionary')
@@ -13,7 +14,7 @@ const analyzeResultsWithErrors = (
 ) => {
   const percentage = resultsWithErrors / parseFloat(totalResults)
   return (
-    totalResults >= minResults &&
+    resultsWithErrors >= minResults &&
     (below ? percentage <= threshold : percentage >= threshold)
   )
 }
@@ -45,8 +46,8 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-  const { resultsWithErrors, totalResults } = await query
 
+  const { resultsWithErrors, totalResults } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(
@@ -86,6 +87,47 @@ async function analyzeCategories(
   return false
 }
 
+function hasUnusedModules(
+  numberOfResults,
+  numberOfModules,
+  minResults,
+  expectedUsedModules
+) {
+  if (
+    (!numberOfResults && numberOfResults !== 0) ||
+    (!numberOfModules && numberOfModules !== 0)
+  )
+    throw new Error(
+      "numberOfResults and numberOfModules can't be null or undefined"
+    )
+
+  return numberOfResults >= minResults && numberOfModules < expectedUsedModules
+}
+
+async function analyzeUnusedModules(
+  knex,
+  action,
+  { minResults, expectedUsedModules }
+) {
+  const { deviceId } = action
+
+  const { numberOfResults, numberOfModules } = await knex('Result as r')
+    .where('r.endedOn', '>', startOfDay(addDays(new Date(), -30)))
+    .andWhere('r.deviceId', deviceId)
+    .select(
+      knex.raw('COUNT(*) as numberOfResults'),
+      knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
+    )
+    .first()
+
+  return hasUnusedModules(
+    numberOfResults,
+    numberOfModules,
+    minResults,
+    expectedUsedModules
+  )
+}
+
 async function analyzeErrors(
   knex,
   action,
@@ -111,8 +153,47 @@ async function analyzeErrors(
   }
   return false
 }
+
+async function analyzeDeviceHardwareError(
+  knex,
+  action,
+  { errorCode, daysPeriod, minErrors }
+) {
+  const { errorCode: actualErrorCode } = action.options.data
+  if (parseInt(actualErrorCode, 10) === errorCode) {
+    const query = knex('DeviceOperation')
+      .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+      .where('deviceId', action.deviceId)
+      .select(
+        knex.raw(
+          `
+          SUM(
+            CASE WHEN
+              IFNULL(data ->> '$.type', '') = 'gx-log'
+              AND
+              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) = ?
+            THEN 1
+            ELSE 0
+            END
+          ) AS totalErrors
+          `,
+          errorCode
+        )
+      )
+
+    const [{ totalErrors }] = await query
+    action.options.data.totalErrors = totalErrors
+
+    return totalErrors >= minErrors
+  }
+  return false
+}
+
 module.exports = {
   analyzeErrors,
   analyzeResultsWithErrors,
   analyzeCategories,
+  analyzeUnusedModules,
+  hasUnusedModules,
+  analyzeDeviceHardwareError,
 }

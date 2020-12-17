@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const path = require('path')
 const _ = require('lodash')
@@ -9,7 +8,8 @@ const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { waitForIdle } = require('../utils/mqUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert, expect } = chai
 
 const {

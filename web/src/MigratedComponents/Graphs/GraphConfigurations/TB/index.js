@@ -2,11 +2,13 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+const assays = ['GxMtbRif', 'GxMtbRifUltra']
+
 const tbGraphs = {
   tbDetected: {
     id: 'tbDetected',
     title: 'clinicalIndicatorsTBDetected',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
     graphRenderPermissions: ['dashboard'],
@@ -21,7 +23,7 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -33,6 +35,12 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'tbResultsByCategory1Aggregate',
@@ -44,7 +52,7 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -64,7 +72,7 @@ const tbGraphs = {
   tbResults: {
     id: 'tbResults',
     title: 'clinicalIndicatorsTBTitle',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
     graphRenderPermissions: ['dashboard'],
@@ -79,7 +87,7 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory2', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -93,6 +101,12 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'tbByCategory1Aggregate',
@@ -104,7 +118,7 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory2', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },

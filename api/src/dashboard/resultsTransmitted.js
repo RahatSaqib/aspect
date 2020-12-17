@@ -3,6 +3,12 @@ const subMonths = require('date-fns/subMonths')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
+  getOffsetFromIsoDateString,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
+
+const {
   allResultCategoryToId,
   allMessageStatusToId,
 } = require('../shared/dictionary')
@@ -10,9 +16,15 @@ const { formatDateOrDefault } = require('../shared/date')
 
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
-async function getAssayQuery(query, dataConstraints) {
+async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
   return knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+    .innerJoin('ResultCategory as rcPositive', function () {
+      this.on('rca.resultCategoryId', 'rcPositive.id').andOn(
+        knex.raw(`rcPositive.id IN (${positiveResultCategories})`)
+      )
+    })
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .modify(addConstraints, dataConstraints, {
@@ -26,20 +38,23 @@ async function getAssayQuery(query, dataConstraints) {
       'a.id as assayId',
       'a.name as assayName',
       'a.externalId as assayExternalId',
-      'a.i18nKey as assayI18nKey'
+      'a.i18nKey as assayI18nKey',
+      knex.raw('MAX(rcPositive.id) as resultCategoryPositiveId')
     )
     .whereIn('a.id', knex('Result').select('assayId').distinct())
     .where('a.externalId', '!=', 'GxUnknown')
     .where('dt.externalId', 'CepheidGeneXpert')
     .orderBy('a.name')
+    .groupBy('a.id', 'a.name', 'a.externalId', 'a.i18nKey')
 }
 
-async function getResultQuery(query, dataConstraints) {
+async function getResultQuery(
+  query,
+  dataConstraints,
+  positiveResultCategories,
+  tz = '+00:00'
+) {
   const { currentMonth = new Date() } = query
-  const resultCategories = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategories, getPositiveCategoriesExternalIds())
-  )
   const messageStatusToId = await allMessageStatusToId()
 
   const resultsQuery = knex('Result as r')
@@ -75,18 +90,19 @@ async function getResultQuery(query, dataConstraints) {
     .whereRaw(
       `
         ((
-          YEAR(r.endedOn) = YEAR(?)
-          AND
-          MONTH(r.endedOn) = MONTH(?)
+          r.endedOn between ? and ?
         )
         OR
         (
-          YEAR(r.endedOn) = YEAR(DATE_SUB(?, INTERVAL 1 MONTH))
-          AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(?, INTERVAL 1 MONTH))
+         r.endedOn between ? and ?
         ))
       `,
-      [currentMonth, currentMonth, currentMonth, currentMonth]
+      [
+        startOfMonthUTC(currentMonth),
+        endOfMonthUTC(currentMonth),
+        subMonths(startOfMonthUTC(currentMonth), 1),
+        subMonths(endOfMonthUTC(currentMonth), 1),
+      ]
     )
     .where('dt.externalId', 'CepheidGeneXpert')
     .modify(addConstraints, dataConstraints, {
@@ -110,9 +126,9 @@ async function getResultQuery(query, dataConstraints) {
       knex.raw(`
         CONCAT_WS(
           '-',
-          CAST( YEAR(r.endedOn) AS CHAR ),
+          CAST(YEAR(CONVERT_TZ(r.endedOn,'+00:00','${tz}')) AS CHAR ),
           LPAD(
-            CAST( MONTH(r.endedOn) AS CHAR ),
+            CAST(MONTH(CONVERT_TZ(r.endedOn,'+00:00','${tz}')) AS CHAR ),
             2,
             '0'
           )
@@ -203,7 +219,6 @@ async function getResultQuery(query, dataConstraints) {
       `),
     })
     .groupBy('a.id', 'yearMonth')
-
   return resultsQuery
 }
 
@@ -211,9 +226,27 @@ async function resultsTransmittedDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
+  const resultCategories = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategories, getPositiveCategoriesExternalIds())
+  )
+  // Because all the datetimes are transformed automatically to UTC
+  // and it is not possible to take the offset from that date,
+  // it is needed to use this function to obtain the offset received from the querystring.
+  const offset = getOffsetFromIsoDateString(query.currentMonth)
+
   // get all assays which user can access
-  const assays = await getAssayQuery(query, dataConstraints)
-  const items = await getResultQuery(query, dataConstraints)
+  const assays = await getAssayQuery(
+    query,
+    dataConstraints,
+    positiveResultCategories
+  )
+  const items = await getResultQuery(
+    query,
+    dataConstraints,
+    positiveResultCategories,
+    offset
+  )
 
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
@@ -237,7 +270,10 @@ async function resultsTransmittedDashboard(request) {
   // helpers
   const { currentMonth = new Date() } = query
   const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
-  const prevMonth = formatDateOrDefault(subMonths(currentMonth, 1), 'yyyy-MM')
+  const prevMonth = formatDateOrDefault(
+    subMonths(new Date(currentMonth), 1),
+    'yyyy-MM'
+  )
 
   const getChange = (pcCurr, pcPrev = null) => {
     if (pcPrev === null) {
@@ -248,59 +284,67 @@ async function resultsTransmittedDashboard(request) {
   const findItem = (yearMonth, assayExternalId) => item =>
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
 
-  const data = assays.map(({ assayName, assayExternalId }) => {
-    // get items for current and previous month
-    const currItem = items.find(findItem(currMonth, assayExternalId))
-    const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
-    const {
-      cntAll = 0,
-      cntPositive = 0,
-      cntAllReported = 0,
-      cntReportedViaEmail = 0,
-      cntReportedViaSms = 0,
-      cntWithin2Hours = 0,
-      percentPositive = 0,
-      percentReported = 0,
-      percentViaEmail = 0,
-      percentViaSms = 0,
-      percentWithin2Hours = 0,
-    } = currItem || {}
+  const data = assays
+    .map(
+      ({ assayId, assayName, assayExternalId, resultCategoryPositiveId }) => {
+        // get items for current and previous month
 
-    return {
-      assayName,
-      // totals in current month
-      cntAll,
-      cntPositive,
-      cntAllReported,
-      cntReportedViaEmail,
-      cntReportedViaSms,
-      cntWithin2Hours,
-      // percent in current month
-      percentPositive,
-      percentReported,
-      percentViaEmail,
-      percentViaSms,
-      percentWithin2Hours,
-      // changes since previous month
-      percentPositiveChange: getChange(
-        percentPositive,
-        prevItem.percentPositive
-      ),
-      percentReportedChange: getChange(
-        percentReported,
-        prevItem.percentReported
-      ),
-      percentViaEmailChange: getChange(
-        percentViaEmail,
-        prevItem.percentViaEmail
-      ),
-      percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
-      percentWithin2HoursChange: getChange(
-        percentWithin2Hours,
-        prevItem.percentWithin2Hours
-      ),
-    }
-  })
+        const currItem = items.find(findItem(currMonth, assayExternalId))
+        const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
+
+        const {
+          cntAll = 0,
+          cntPositive = 0,
+          cntAllReported = 0,
+          cntReportedViaEmail = 0,
+          cntReportedViaSms = 0,
+          cntWithin2Hours = 0,
+          percentPositive = 0,
+          percentReported = 0,
+          percentViaEmail = 0,
+          percentViaSms = 0,
+          percentWithin2Hours = 0,
+        } = currItem || {}
+
+        return {
+          assayId,
+          assayName,
+          resultCategoryPositiveId,
+          // totals in current month
+          cntAll,
+          cntPositive,
+          cntAllReported,
+          cntReportedViaEmail,
+          cntReportedViaSms,
+          cntWithin2Hours,
+          // percent in current month
+          percentPositive,
+          percentReported,
+          percentViaEmail,
+          percentViaSms,
+          percentWithin2Hours,
+          // changes since previous month
+          percentPositiveChange: getChange(
+            percentPositive,
+            prevItem.percentPositive
+          ),
+          percentReportedChange: getChange(
+            percentReported,
+            prevItem.percentReported
+          ),
+          percentViaEmailChange: getChange(
+            percentViaEmail,
+            prevItem.percentViaEmail
+          ),
+          percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
+          percentWithin2HoursChange: getChange(
+            percentWithin2Hours,
+            prevItem.percentWithin2Hours
+          ),
+        }
+      }
+    )
+    .sort((a, b) => b.cntAll - a.cntAll)
 
   return {
     ok: true,

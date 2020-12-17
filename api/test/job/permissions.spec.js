@@ -1,12 +1,13 @@
 const Promise = require('bluebird')
-const supertest = require('supertest')
+
 const chai = require('chai')
 const _ = require('lodash')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('Permissions', () => {
