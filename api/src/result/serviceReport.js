@@ -251,7 +251,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
    *
    * select errors from Result table
    */
-  const resultCategories = ['Error', 'Invalid', 'NoResult', 'Indeterminate']
+  const resultCategories = ['Error', 'Invalid', 'NoResult']
   const items = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
