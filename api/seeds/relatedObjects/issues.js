@@ -972,11 +972,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    CartridgeIntegrityTestFailureLot: {
+    CartridgeIntegrityTestFailure: {
       issueType: {
-        name: 'Cartridge Integrity Test Failure On Lot',
-        externalId: 'CartridgeIntegrityTestFailureLot',
-        i18nKey: 'cartridgeIntegrityTestFailureLot',
+        name: 'Cartridge Integrity Test Failure',
+        externalId: 'CartridgeIntegrityTestFailure',
+        i18nKey: 'cartridgeIntegrityTestFailure',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
@@ -989,11 +989,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    SyringePressureTooHighLot: {
+    SyringePressureTooHigh: {
       issueType: {
-        name: 'Syringe Pressure Too High On Lot',
-        externalId: 'SyringePressureTooHighLot',
-        i18nKey: 'SyringePressureTooHighLot',
+        name: 'Syringe Pressure Too High',
+        externalId: 'SyringePressureTooHigh',
+        i18nKey: 'SyringePressureTooHigh',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1006,11 +1006,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    SyringeStallErrorLot: {
+    SyringeStallError: {
       issueType: {
-        name: 'Syringe Stall Error On Lot',
-        externalId: 'SyringeStallErrorLot',
-        i18nKey: 'SyringeStallErrorLot',
+        name: 'Syringe Stall Error',
+        externalId: 'SyringeStallError',
+        i18nKey: 'SyringeStallError',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
