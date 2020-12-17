@@ -363,7 +363,10 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw(`'-' as result`),
           knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
           knex.raw(`'-' as assay`),
-          'r.moduleName'
+          // treat all words A1..D4 as moduleName
+          knex.raw(`
+            REGEXP_SUBSTR(do.data ->> '$.details.RawText', '\\b[A-D][1-4]\\b') as moduleName
+          `)
         ),
     ])
     .orderBy('dateTime', 'desc')
