@@ -21,9 +21,48 @@ module.exports = async function cleanIssueTypes(knex, partnerName) {
     if (
       !_.includes(Object.keys(getBaseIssues(auditFields)), issueType.externalId)
     ) {
-      await knex('Issue').where({ issueTypeId: issueType.id }).delete()
-      // await knex('Notification').where({ issueTypeId: issueType.id }).delete()
+      const issuesToDelete = await await knex('Issue')
+        .where({ issueTypeId: issueType.id })
+        .select('id as issueId, resultId, deviceId')
+
+      await knex('Notification').whereIn('issueId').delete()
+      await knex('Issue')
+        .whereIn(
+          'id',
+          _.map(issuesToDelete, issue => issue.issueId)
+        )
+        .delete()
       await knex('IssueType').where({ id: issueType.id }).delete()
+      await knex('EmailMessage')
+        .whereIn(
+          'resultId',
+          _.map(issuesToDelete, issue => issue.resultId)
+        )
+        .delete()
+      await knex('AlertMessage')
+        .whereIn(
+          'resultId',
+          _.map(issuesToDelete, issue => issue.resultId)
+        )
+        .delete()
+      await knex('SmsMessage')
+        .whereIn(
+          'resultId',
+          _.map(issuesToDelete, issue => issue.resultId)
+        )
+        .delete()
+      await knex('PushNotificationMessage')
+        .whereIn(
+          'resultId',
+          _.map(issuesToDelete, issue => issue.resultId)
+        )
+        .delete()
+      await knex('WebhookMessage')
+        .whereIn(
+          'resultId',
+          _.map(issuesToDelete, issue => issue.resultId)
+        )
+        .delete()
     }
   })
 }
