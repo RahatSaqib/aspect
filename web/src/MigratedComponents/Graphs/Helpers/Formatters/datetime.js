@@ -24,6 +24,11 @@ const negateTimeZoneOffset = dateString => {
     : subMinutes(date, Math.abs(offset))
 }
 
+const getISOFromString = date => {
+  const jsDate = new Date(date)
+  return format(jsDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
+}
+
 const getTimePeriod = (cnt, period, dateFormat) => {
   let timePeriod
   const dateNow = new Date()
@@ -136,10 +141,11 @@ const dateRangeOptions = key => {
 
 export {
   getAllDaysInCurrentMonth,
-  dateRangeOptions,
   getDayFromToday,
+  getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
+  dateRangeOptions,
   lastMonthLabel,
   negateTimeZoneOffset,
 }
