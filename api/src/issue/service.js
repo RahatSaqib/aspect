@@ -90,6 +90,7 @@ function onIssueEvent(actionParametersList) {
             triggerConditions,
             filterIssueCondition = null,
           } = actionParameters
+
           const shouldTriggerEvent = await actionConditionsMet(
             knex,
             action,

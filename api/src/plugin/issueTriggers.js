@@ -38,7 +38,6 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-
   const { resultsWithErrors, totalResults } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
@@ -54,13 +53,17 @@ async function analyzeWithQuery(
 async function analyzeCategories(
   knex,
   action,
-  { categoryId, threshold, below, daysPeriod, minResults }
+  { categoryId, errorCodes, threshold, below, daysPeriod, minResults }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
 
-  const { resultCategoryId } = action.options.data
-  const categoryReceivedId = await resultCategoryToId(resultCategoryId)
-  if (categoryReceivedId === categoryToCompare)
+  const { resultCategoryId, resultErrorCode } = action.options.data
+
+  if (
+    (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
+    (!_.isNil(resultErrorCode) &&
+      _.includes(errorCodes, parseInt(resultErrorCode, 10)))
+  )
     return analyzeWithQuery(
       knex,
       action,
@@ -71,8 +74,11 @@ async function analyzeCategories(
       builder =>
         builder.first(
           knex.raw(
-            'sum(case when resultCategory1=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
-            categoryToCompare
+            `sum(case when resultCategory1=${categoryToCompare}${
+              errorCodes && errorCodes.length > 0
+                ? ` OR errorcode in(${errorCodes.join(',')})`
+                : ``
+            } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
           )
         )
     )
@@ -137,8 +143,9 @@ async function analyzeErrors(
       builder =>
         builder.first(
           knex.raw(
-            'sum(case when errorcode in(?) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
-            errorCodes
+            `sum(case when errorcode in(${errorCodes.join(
+              ','
+            )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
           )
         )
     )
@@ -149,10 +156,10 @@ async function analyzeErrors(
 async function analyzeDeviceHardwareError(
   knex,
   action,
-  { errorCode, daysPeriod, minErrors }
+  { errorCodes, daysPeriod, minErrors }
 ) {
   const { errorCode: actualErrorCode } = action.options.data
-  if (parseInt(actualErrorCode, 10) === errorCode) {
+  if (_.includes(errorCodes, parseInt(actualErrorCode, 10))) {
     const query = knex('DeviceOperation')
       .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .where('deviceId', action.deviceId)
@@ -163,13 +170,14 @@ async function analyzeDeviceHardwareError(
             CASE WHEN
               IFNULL(data ->> '$.type', '') = 'gx-log'
               AND
-              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) = ?
+              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
+                ','
+              )})
             THEN 1
             ELSE 0
             END
           ) AS totalErrors
-          `,
-          errorCode
+          `
         )
       )
 

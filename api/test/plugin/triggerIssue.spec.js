@@ -402,7 +402,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await anotherDeviceContext.cleanUp()
         })
 
-        it(`should only create one issue per device instrument${
+        it(`should only create one issue per device instrument serial ${
           errorCode
             ? `error ${errorCode}`
             : `category${resultCategoryExternalId}`
@@ -505,16 +505,16 @@ describe('This test suite is for testing different triggers conditions', async (
   })
   describe('error 5016 issue', async () => {
     await testCategoriesAndErrorCodes(
-      'Failed To Verify Valid Background Error For Analyte',
+      'Too Many Invalid Results',
       5016,
-      'FailedToVerifyValidBackgroundErrorForAnalyte'
+      'TooManyInvalidResults'
     )
   })
   describe('error 5007 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Probes check Too Low',
       5007,
-      'ProbeCheckTooLow'
+      'ProbeCheckFailed'
     )
   })
 

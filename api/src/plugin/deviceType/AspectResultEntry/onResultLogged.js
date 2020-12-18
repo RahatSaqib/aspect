@@ -54,9 +54,9 @@ async function onResultLogged(
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'rf.formSchema',
         'r.instrumentSerial',
-        'r.resultCategory1',
         'r.assayId',
         'd.id as resultDeviceId',
+        'rc1.externalId as resultCategory1',
         knex.raw(
           "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
         ),

@@ -1,3 +1,4 @@
+const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
@@ -61,10 +62,12 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
-const obtainProperAction = ({ errorCode, resultCategoryId }) => {
-  const valueToCompare = errorCode
-    ? parseInt(errorCode, 10)
-    : resultCategoryId.toUpperCase()
+const obtainProperAction = ({ errorCode = null, resultCategoryId }) => {
+  const valueToCompare =
+    errorCode && !_.isNaN(parseInt(errorCode, 10))
+      ? parseInt(errorCode, 10)
+      : resultCategoryId.toUpperCase()
+
   switch (valueToCompare) {
     case 5001:
     case 5002:
@@ -132,7 +135,7 @@ function resultAnalyzeCategoriesAndErrors(
   resultErrorCode,
   data
 ) {
-  if (!deviceId && !resultCategoryId) {
+  if (!deviceId && !(resultCategoryId && resultErrorCode)) {
     throw new Error(
       'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
     )
@@ -141,6 +144,7 @@ function resultAnalyzeCategoriesAndErrors(
     resultCategoryId,
     errorCode: resultErrorCode,
   })
+
   return {
     type: actionType,
     deviceId,
