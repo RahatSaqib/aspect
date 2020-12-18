@@ -41,7 +41,7 @@ async function resolveIssueUnusedModules(knex, issue, conditions) {
   )
 }
 
-async function resolveHardwareIssue(knex, issue, conditions) {
+async function resolveHardwareIssue() {
   // do not resolve issue for now
   return false
 }

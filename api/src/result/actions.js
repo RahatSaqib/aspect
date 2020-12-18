@@ -66,6 +66,13 @@ const obtainProperAction = ({ errorCode, resultCategoryId }) => {
     ? parseInt(errorCode, 10)
     : resultCategoryId.toUpperCase()
   switch (valueToCompare) {
+    case 5001:
+    case 5002:
+    case 5003:
+    case 5004:
+    case 5005:
+    case 5015:
+    case 5016:
     case 'INVALID':
       return types.RESULT_ANALYZE_INVALIDS
 
@@ -90,11 +97,10 @@ const obtainProperAction = ({ errorCode, resultCategoryId }) => {
       return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE
     case 5006:
       return types.RESULT_ANALYZE_PROBES_HIGH
-    case 5016:
-      return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE
+    case 5007:
     case 5017:
       return types.RESULT_ANALYZE_PROBES_FAILED
-    case 5007:
+
     default:
       return types.RESULT_ANALYZE_PROBES
   }
@@ -119,14 +125,20 @@ const obtainProperAction = ({ errorCode, resultCategoryId }) => {
 
  */
 
-function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
-  if (!deviceId) {
+function resultAnalyzeCategoriesAndErrors(
+  deviceId,
+  resultId,
+  resultCategoryId,
+  resultErrorCode,
+  data
+) {
+  if (!deviceId && !resultCategoryId) {
     throw new Error(
-      'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
+      'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
     )
   }
-
   const actionType = obtainProperAction({
+    resultCategoryId,
     errorCode: resultErrorCode,
   })
   return {
@@ -134,27 +146,7 @@ function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
     deviceId,
     resultId,
     options: {
-      data: {
-        ...data,
-        resultErrorCode,
-      },
-    },
-  }
-}
-
-function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
-  if (!deviceId && !resultCategoryId) {
-    throw new Error(
-      'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
-    )
-  }
-  const actionType = obtainProperAction({ resultCategoryId })
-  return {
-    type: actionType,
-    deviceId,
-    resultId,
-    options: {
-      data: { ...data, resultCategoryId },
+      data: { ...data, resultCategoryId, resultErrorCode },
     },
   }
 }
@@ -405,7 +397,6 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
+  resultAnalyzeCategoriesAndErrors,
   resultUnusedModules,
 }

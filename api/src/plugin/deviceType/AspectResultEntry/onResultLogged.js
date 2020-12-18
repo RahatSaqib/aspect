@@ -18,7 +18,6 @@ const { resultUnusedModules } = require('../../../result/actions')
 const {
   shouldTriggerModuleReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerResultCategoryAnalysis,
 } = require('../../utils')
 
 async function onResultLogged(
@@ -77,17 +76,8 @@ async function onResultLogged(
         messageContext,
         resultDeviceId,
         resultId,
-        resultErrorCode,
-        {
-          resultOutcome,
-          instrumentSerial,
-        }
-      )
-      await shouldTriggerResultCategoryAnalysis(
-        messageContext,
-        resultDeviceId,
-        resultId,
         resultCategory1,
+        resultErrorCode,
         {
           resultOutcome,
           instrumentSerial,

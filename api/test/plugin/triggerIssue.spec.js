@@ -237,11 +237,10 @@ describe('This test suite is for testing different triggers conditions', async (
   const testCategoriesAndErrorCodes = (
     issueName,
     errorCode,
-    issueTypeModule,
-    issueTypeLot,
+    issueType,
     resultCategoryExternalId
   ) => {
-    describe(`${issueName} issue creation (Module and lot),${
+    describe(`${issueName} issue creation,${
       errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
     }`, () => {
       describe('With previous results older than 30 days', () => {
@@ -327,17 +326,12 @@ describe('This test suite is for testing different triggers conditions', async (
            * We are going to push the same lot for a different device and we are going to expect to create a new issue
            */
 
-          const issuesForModule = await getIssues(
+          const issuesForInstrument = await getIssues(
             response.body.device.id,
-            await issueTypeToId(issueTypeModule)
-          )
-          const issuesForLot = await getIssues(
-            response.body.device.id,
-            await issueTypeToId(issueTypeLot)
+            await issueTypeToId(issueType)
           )
 
-          assert.equal(issuesForModule.length, 0)
-          assert.equal(issuesForLot.length, 0)
+          assert.equal(issuesForInstrument.length, 0)
         })
       })
 
@@ -408,7 +402,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await anotherDeviceContext.cleanUp()
         })
 
-        it(`should only create one issue per device ${
+        it(`should only create one issue per device instrument${
           errorCode
             ? `error ${errorCode}`
             : `category${resultCategoryExternalId}`
@@ -421,7 +415,6 @@ describe('This test suite is for testing different triggers conditions', async (
            * 4) check if the different noifications were generated.
            */
 
-          const consumableLot = 'Lot 0'
           const { deviceAuth } = context
 
           const firstPayload = await getPayload(
@@ -444,7 +437,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await waitForIdle(1000)
           await evaluateIssues(
             response,
-            await issueTypeToId(issueTypeModule),
+            await issueTypeToId(issueType),
             errorCode
           )
 
@@ -459,7 +452,7 @@ describe('This test suite is for testing different triggers conditions', async (
                   startedOn: subDays(new Date(), i),
                   endedOn: subDays(new Date(), i),
                   consumable: {
-                    lot: consumableLot,
+                    lot: 'Any lot',
                   },
                 },
                 data: {
@@ -472,7 +465,7 @@ describe('This test suite is for testing different triggers conditions', async (
             await waitForIdle()
             await evaluateIssues(
               resp,
-              await issueTypeToId(issueTypeModule),
+              await issueTypeToId(issueType),
               errorCode
             )
           })
@@ -487,12 +480,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await waitForIdle(1000)
           await evaluateIssues(
             anotherDeviceResponse,
-            await issueTypeToId(issueTypeModule),
-            errorCode
-          )
-          await evaluateIssues(
-            anotherDeviceResponse,
-            await issueTypeToId(issueTypeLot),
+            await issueTypeToId(issueType),
             errorCode
           )
         })
@@ -503,8 +491,7 @@ describe('This test suite is for testing different triggers conditions', async (
     await testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
-      'TooManyInvalidResultsModule',
-      'TooManyInvalidResultsLot',
+      'TooManyInvalidResults',
       'Invalid'
     )
   })
@@ -513,24 +500,21 @@ describe('This test suite is for testing different triggers conditions', async (
     await testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
-      'ProbeCheckTooHighModule',
-      'ProbeCheckTooHighLot'
+      'ProbeCheckTooHigh'
     )
   })
   describe('error 5016 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Failed To Verify Valid Background Error For Analyte',
       5016,
-      'FailedToVerifyValidBackgroundErrorForAnalyteModule',
-      'FailedToVerifyValidBackgroundErrorForAnalyteLot'
+      'FailedToVerifyValidBackgroundErrorForAnalyte'
     )
   })
   describe('error 5007 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Probes check Too Low',
       5007,
-      'ProbeCheckTooLowModule',
-      'ProbeCheckTooLowLot'
+      'ProbeCheckTooLow'
     )
   })
 
@@ -538,16 +522,14 @@ describe('This test suite is for testing different triggers conditions', async (
     await testCategoriesAndErrorCodes(
       'Probes Check Failed',
       5017,
-      'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot'
+      'ProbeCheckFailed'
     )
   })
   describe('error 5011 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Signal Loss Detected in the Amplification Curve',
       5011,
-      'SignalLossDetectedInAmplificationCurveModule',
-      'SignalLossDetectedInAmplificationCurveLot'
+      'SignalLossDetectedInAmplificationCurve'
     )
   })
 

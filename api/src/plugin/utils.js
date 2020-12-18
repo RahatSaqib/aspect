@@ -2,8 +2,7 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
+  resultAnalyzeCategoriesAndErrors,
 } = require('../result/actions')
 const {
   deviceInstrumentReplaced,
@@ -49,49 +48,23 @@ async function getReplacedModuleSerials(knex, deviceId) {
   return replacedModuleSerials
 }
 
-async function shouldTriggerResultCategoryAnalysis(
-  messageContext,
-  deviceId,
-  resultId,
-  resultCategoryId,
-  { resultOutcome, instrumentSerial }
-) {
-  if (!messageContext.resultAnalyzeCategories) {
-    messageContext = messageContext.bindActionCreators({
-      resultAnalyzeCategories,
-    })
-  }
-  const { resultCategoryExternalId } = await knex('ResultCategory')
-    .where({
-      id: resultCategoryId,
-    })
-    .first('externalId as resultCategoryExternalId')
-  await messageContext.resultAnalyzeCategories(
-    deviceId,
-    resultId,
-    resultCategoryExternalId,
-    {
-      instrumentSerial,
-      resultOutcome,
-    }
-  )
-}
-
 async function shouldTriggerResultErrorAnalysis(
   messageContext,
   deviceId,
   resultId,
   resultErrorCode,
+  resultCategory1,
   { resultOutcome, instrumentSerial }
 ) {
-  if (!messageContext.resultAnalyzeErrors) {
+  if (!messageContext.resultAnalyzeCategoriesAndErrors) {
     messageContext = messageContext.bindActionCreators({
-      resultAnalyzeErrors,
+      resultAnalyzeCategoriesAndErrors,
     })
   }
-  await messageContext.resultAnalyzeErrors(
+  await messageContext.resultAnalyzeCategoriesAndErrors(
     deviceId,
     resultId,
+    resultCategory1,
     resultErrorCode,
     {
       instrumentSerial,
@@ -373,6 +346,5 @@ module.exports = {
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerResultCategoryAnalysis,
   shouldTriggerHardwareErrorAnalysis,
 }

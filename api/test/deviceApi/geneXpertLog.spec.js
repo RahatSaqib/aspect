@@ -5,7 +5,6 @@ const { knex } = require('../../src/db')
 
 const { deviceHardwareError } = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
-const { postToDeviceApi } = require('./utils')
 const server = require('../utils/testUtils')
 
 const { assert, expect } = chai

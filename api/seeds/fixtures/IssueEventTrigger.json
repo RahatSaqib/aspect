@@ -141,27 +141,6 @@
       }
     },
     {
-      "issueType": "ProbeCheckTooLow",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_PROBES",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [5007],
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
-      }
-    },
-    {
       "issueType": "ProbeCheckTooHigh",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -213,7 +192,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5017],
+            "errorCodes": [5017, 5007],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
