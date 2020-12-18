@@ -256,8 +256,6 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftOuterJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-    .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', minDate)
     .where('r.endedOn', '<=', maxDate)
@@ -268,7 +266,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .orWhereIn('rc2.externalId', resultCategories)
     })
     .select(
-      knex.raw('"Result" as source'),
+      knex.raw('"Assay" as source'),
       /**
        * see list of all columns for CSV file in 2nd tab
        * of Excel file attached to https://ops.systemone.id/browse/ASP-1857
@@ -280,10 +278,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
       knex.raw(`'-' as gatewaySerial`), // 6. Instrument Gateway Serial Number
       'r.moduleSerial', // 7. Module Serial Number
-      knex.raw(
-        // 8. Cartridge Type
-        `GROUP_CONCAT(DISTINCT c.name ORDER BY c.name ASC SEPARATOR '; ') as cartridgeType`
-      ),
+      'a.name as cartridgeType', // 8. Cartridge Name
       'r.consumableLot as cartridgeLot', // 9. Cartridge Lot
       'r.consumableSerial as cartridgeSerial', // 10. Cartridge Serial Number
       'r.senderOperator as operatorId', // 12. Operator ID
@@ -343,19 +338,19 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
          */
         .whereRaw(`IFNULL(do.data ->> '$.details.Errors[0].ErrorCode', 0) > 0`)
         .select(
-          knex.raw('"Hardware" as source'),
+          knex.raw('"System Log" as source'),
           'do.startedOn as dateTime',
-          knex.raw(`'-' as actualDateTime`),
+          knex.raw(`null as actualDateTime`),
           'r.instrumentSerial',
           knex.raw(`
-            CASE 
+            CASE
             WHEN r.resultData IS NOT NULL THEN r.resultData ->> '$.systemName'
             ELSE ''
             END as gxSystemName
           `),
           'r.senderVersion as gxSoftwareVersion',
           knex.raw(`'-' as gatewaySerial`),
-          'r.moduleSerial',
+          knex.raw(`'-' as moduleSerial`),
           knex.raw(`'-' as cartridgeType`),
           knex.raw(`'-' as cartridgeLot`),
           knex.raw(`'-' as cartridgeSerial`),
@@ -365,11 +360,11 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw(`'-' as assay`),
           // treat all words A1..D4 as moduleName
           knex.raw(`
-            REGEXP_SUBSTR(do.data ->> '$.details.RawText', '\\b[A-D][1-4]\\b') as moduleName
+            REGEXP_SUBSTR(do.data ->> '$.details.RawText', '[A-D][1-4]') as moduleName
           `)
         ),
     ])
-    .orderBy('dateTime', 'desc')
+    .orderBy('dateTime', 'asc')
 
   /**
    * 'header' is for 1st row in CSV file,
@@ -377,7 +372,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
    */
   const columns = [
     { header: 'Source', key: 'source' },
-    { header: 'Date/time', key: 'dateTime' },
+    { header: 'Date/Time', key: 'dateTime' },
     { header: 'Actual Date/Time', key: 'actualDateTime' },
     { header: 'Instrument Serial Number', key: 'instrumentSerial' },
     { header: 'GX System Name', key: 'gxSystemName' },
