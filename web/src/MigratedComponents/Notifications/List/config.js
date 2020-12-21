@@ -39,6 +39,8 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
       key: 'name',
       label: formatMessage(messages.notificationsTableHeaderName),
       width: 35,
+      disableHide: true,
+      disableGroupBy: true,
       aggregate: 'count',
       Aggregated: ({ value }) =>
         `${formatMessage(messages.notificationsTableHeaderNameCount, {
@@ -49,8 +51,9 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
       key: 'totalTriggers',
       label: formatMessage(messages.notificationsTableHeaderTotalTriggers),
       width: 20,
-      aggregate: 'sum',
+      disableHide: true,
       disableGroupBy: true,
+      aggregate: 'sum',
       Aggregated: ({ value }) =>
         `${formatMessage(messages.notificationsTableTotalTriggersCount, {
           itemCount: formatNumber(value),
@@ -60,7 +63,8 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     {
       key: 'contacts',
       label: formatMessage(messages.notificationsTableHeaderContacts),
-      disableSortBy: true,
+      disableHide: true,
+      disableGroupBy: true,
       width: 25,
       aggregate: totalItemCount,
       Aggregated: ({ value }) =>

@@ -131,6 +131,8 @@ function timeClassification(vals) {
 }
 
 function totalItemCount(vals) {
+  console.log(vals)
+
   return vals.reduce((acc, curr) => acc + curr.length, 0)
 }
 
