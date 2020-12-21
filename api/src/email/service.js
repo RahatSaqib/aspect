@@ -1,14 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  subDays,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  startOfDay,
-  endOfDay,
-  parseISO,
-} = require('date-fns')
+const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
 
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const {
@@ -21,7 +13,6 @@ const {
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { generateCsvAttachment } = require('../shared/io')
-const { getLocalDateInUtc } = require('../shared/date')
 const {
   getDeviceErrorHistoryForAttachment,
 } = require('../result/serviceReport')
@@ -205,7 +196,7 @@ async function generateAttachments(attachmentProps, data) {
   const attachments = []
   await Promise.each(attachmentProps, async attachmentItem => {
     const { type } = attachmentItem
-    const now = parseISO(new Date().toISOString())
+    const now = new Date()
     let reportData = null
     if (type === 'error-history') {
       // get deviceId from feeding 'data' of this email
@@ -216,13 +207,13 @@ async function generateAttachments(attachmentProps, data) {
       let minDate
       let maxDate
       if (period === 'last-30-days') {
-        minDate = getLocalDateInUtc(startOfDay(subDays(now, 30)))
-        maxDate = getLocalDateInUtc(endOfDay(now))
+        minDate = subDays(now, 30)
+        maxDate = now
       } else {
         // last month
         const previousMonth = subMonths(now, 1)
-        minDate = getLocalDateInUtc(startOfMonth(previousMonth))
-        maxDate = getLocalDateInUtc(endOfMonth(previousMonth))
+        minDate = startOfMonth(previousMonth)
+        maxDate = endOfMonth(previousMonth)
       }
       reportData = await getDeviceErrorHistoryForAttachment(
         deviceId,
