@@ -2,22 +2,24 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+const assays = [
+  'abbottM2000DBSHivVL',
+  'abbottM2000PlasmaHivVL',
+  'assayAlereQHiv12Detect',
+  'assayAlereQHiv12VLPlasma',
+  'assayCobasHivVl',
+  'GxHiv1Vl',
+  'QHivVL',
+  'ReporterHivVL',
+]
+
 const hivGraphs = {
   hivResults: {
     id: 'hivResults',
     title: 'clinicalIndicatorsVLTitle',
     componentSize: 'full',
     group: 'hiv',
-    assays: [
-      'abbottM2000DBSHivVL',
-      'abbottM2000PlasmaHivVL',
-      'assayAlereQHiv12Detect',
-      'assayAlereQHiv12VLPlasma',
-      'assayCobasHivVl',
-      'GxHiv1Vl',
-      'QHivVL',
-      'ReporterHivVL',
-    ],
+    assays,
     graphRenderPermissions: ['dashboard'],
     graphType: [
       {
@@ -30,7 +32,7 @@ const hivGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -41,6 +43,12 @@ const hivGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'hivByCategory1Aggregate',
@@ -52,7 +60,7 @@ const hivGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },

@@ -3,6 +3,12 @@ const subMonths = require('date-fns/subMonths')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
+  getOffsetFromIsoDateString,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
+
+const {
   allResultCategoryToId,
   allMessageStatusToId,
 } = require('../shared/dictionary')
@@ -45,7 +51,8 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
 async function getResultQuery(
   query,
   dataConstraints,
-  positiveResultCategories
+  positiveResultCategories,
+  tz = '+00:00'
 ) {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
@@ -83,18 +90,19 @@ async function getResultQuery(
     .whereRaw(
       `
         ((
-          YEAR(r.endedOn) = YEAR(?)
-          AND
-          MONTH(r.endedOn) = MONTH(?)
+          r.endedOn between ? and ?
         )
         OR
         (
-          YEAR(r.endedOn) = YEAR(DATE_SUB(?, INTERVAL 1 MONTH))
-          AND
-          MONTH(r.endedOn) = MONTH(DATE_SUB(?, INTERVAL 1 MONTH))
+         r.endedOn between ? and ?
         ))
       `,
-      [currentMonth, currentMonth, currentMonth, currentMonth]
+      [
+        startOfMonthUTC(currentMonth),
+        endOfMonthUTC(currentMonth),
+        subMonths(startOfMonthUTC(currentMonth), 1),
+        subMonths(endOfMonthUTC(currentMonth), 1),
+      ]
     )
     .where('dt.externalId', 'CepheidGeneXpert')
     .modify(addConstraints, dataConstraints, {
@@ -118,9 +126,9 @@ async function getResultQuery(
       knex.raw(`
         CONCAT_WS(
           '-',
-          CAST( YEAR(r.endedOn) AS CHAR ),
+          CAST(YEAR(CONVERT_TZ(r.endedOn,'+00:00','${tz}')) AS CHAR ),
           LPAD(
-            CAST( MONTH(r.endedOn) AS CHAR ),
+            CAST(MONTH(CONVERT_TZ(r.endedOn,'+00:00','${tz}')) AS CHAR ),
             2,
             '0'
           )
@@ -211,7 +219,6 @@ async function getResultQuery(
       `),
     })
     .groupBy('a.id', 'yearMonth')
-
   return resultsQuery
 }
 
@@ -223,6 +230,10 @@ async function resultsTransmittedDashboard(request) {
   const positiveResultCategories = _.values(
     _.pick(resultCategories, getPositiveCategoriesExternalIds())
   )
+  // Because all the datetimes are transformed automatically to UTC
+  // and it is not possible to take the offset from that date,
+  // it is needed to use this function to obtain the offset received from the querystring.
+  const offset = getOffsetFromIsoDateString(query.currentMonth)
 
   // get all assays which user can access
   const assays = await getAssayQuery(
@@ -233,7 +244,8 @@ async function resultsTransmittedDashboard(request) {
   const items = await getResultQuery(
     query,
     dataConstraints,
-    positiveResultCategories
+    positiveResultCategories,
+    offset
   )
 
   // helper func for percentages
@@ -258,7 +270,10 @@ async function resultsTransmittedDashboard(request) {
   // helpers
   const { currentMonth = new Date() } = query
   const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
-  const prevMonth = formatDateOrDefault(subMonths(currentMonth, 1), 'yyyy-MM')
+  const prevMonth = formatDateOrDefault(
+    subMonths(new Date(currentMonth), 1),
+    'yyyy-MM'
+  )
 
   const getChange = (pcCurr, pcPrev = null) => {
     if (pcPrev === null) {

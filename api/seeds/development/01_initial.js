@@ -48,7 +48,7 @@ const deviceNumber = 50
 const routerNumber = 20
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultMtbNumber = resultMultiplier
-const resultHivVlNumber = resultMultiplier
+const resultHivVlNumber = 0.6 * resultMultiplier
 const resultEbolaNumber = 0.1 * resultMultiplier
 const resultHcvNumber = 0.2 * resultMultiplier
 const now = new Date()
@@ -4172,7 +4172,15 @@ async function seed(knex) {
         const culture = _.includes(['Jim', 'Sam'], name)
           ? countries.NG.culture
           : countries.US.culture
+        const countryAbbreviation = _.includes(['Jim', 'Sam'], name)
+          ? countries.NG.abbreviation
+          : countries.US.abbreviation
 
+        const geographiesId = await knex('Country as c')
+          .join('Geography as g', 'c.id', 'g.countryId')
+          .where({ abbreviation: countryAbbreviation })
+          .select('g.id')
+          .pluck('g.id')
         const [personId] = await knex('Person').insert({
           userId,
           name,
@@ -4180,7 +4188,7 @@ async function seed(knex) {
           lastCountryId,
           timezone,
           culture,
-          geographyId: geographies[geographies.length % userId].id,
+          geographyId: _.sample(geographiesId),
           ...auditFields,
         })
         personIds[name.toLowerCase()] = personId
@@ -4326,7 +4334,8 @@ async function seed(knex) {
         }`,
         expiresOn: new Date(
           new Date(
-            now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+            now.getTime() +
+              _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
           ).setHours(0, 0, 0, 0)
         ),
         quantityOnHand: _.random(0, 1000),
@@ -4341,7 +4350,8 @@ async function seed(knex) {
           }`,
           expiresOn: new Date(
             new Date(
-              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+              now.getTime() +
+                _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
             ).setHours(0, 0, 0, 0)
           ),
           quantityOnHand: _.random(0, 1000),
@@ -4357,7 +4367,8 @@ async function seed(knex) {
           }`,
           expiresOn: new Date(
             new Date(
-              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+              now.getTime() +
+                _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
             ).setHours(0, 0, 0, 0)
           ),
           quantityOnHand: _.random(0, 1000),

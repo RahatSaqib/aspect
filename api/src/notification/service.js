@@ -233,13 +233,15 @@ async function createNotificationIfNotCreatedAlready(
       updatedOn: now,
     }
 
-    if (policy.alertTemplateId != null) {
-      const [alertMessageId] = await knex('AlertMessage').insert({
-        alertTemplateId: policy.alertTemplateId,
-        ...sharedMessageProperties,
-      })
-      notification.alertMessageId = alertMessageId
-      context.alertMessageCreated(alertMessageId)
+    if (personId) {
+      if (policy.alertTemplateId != null) {
+        const [alertMessageId] = await knex('AlertMessage').insert({
+          alertTemplateId: policy.alertTemplateId,
+          ...sharedMessageProperties,
+        })
+        notification.alertMessageId = alertMessageId
+        context.alertMessageCreated(alertMessageId)
+      }
     }
 
     if (policy.emailTemplateId != null) {

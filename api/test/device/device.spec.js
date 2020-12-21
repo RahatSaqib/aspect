@@ -23,6 +23,8 @@ const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const {
   allDeviceMaintenanceStatusToId,
   allDeviceApprovalToId,
+  allIssueTypeToId,
+  allIssueStatusToId,
 } = require('../../src/shared/dictionary')
 const {
   formatDateOrDefault,
@@ -43,7 +45,7 @@ describe('Device routes', () => {
   let deviceId
   let deviceMaintenanceStatuses
   let deviceApprovals
-
+  let issuesToDelete = []
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -60,6 +62,8 @@ describe('Device routes', () => {
     before(async () => {
       deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
       deviceApprovals = await allDeviceApprovalToId()
+      const issueStatus = await allIssueStatusToId()
+      const issueTypes = await allIssueTypeToId()
 
       daktariManagerUserId = await createUser(
         'Partner One',
@@ -78,6 +82,27 @@ describe('Device routes', () => {
         daktariManagerPassword
       )
 
+      const device = await knex('Device as d')
+        .join('Partner as p', 'd.partnerId', 'p.id')
+        .where('p.name', 'Partner One')
+        .first('d.*')
+      issuesToDelete = await Promise.map(
+        [issueTypes.ModuleReplaced, issueTypes.ModuleDisabled],
+        issueTypeId =>
+          knex('Issue').insert({
+            issueTypeId,
+            issueStatusId:
+              issueTypeId === issueTypes.ModuleDisabled
+                ? issueStatus.Resolved
+                : issueStatus.Active,
+            partnerId: device.partnerId,
+            geographyId: device.geographyId,
+            siteId: device.siteId,
+            deviceId: device.id,
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          })
+      )
       // Status test
       statusesToTest = [
         // [approval status, maintenance status, expected status]
@@ -115,6 +140,7 @@ describe('Device routes', () => {
       const { id } = await knex('Device')
         .where({ name: 'The greatest device I ever created' })
         .first()
+      await knex('Issue').whereIn('id', issuesToDelete).delete()
       await knex('DeviceApiKey').where({ deviceId: id }).delete()
       await knex('DeviceLog').where({ deviceId: id }).delete()
       await knex('DeviceApprovalLog').where({ deviceId: id }).delete()
@@ -135,6 +161,7 @@ describe('Device routes', () => {
             ).insert({
               deviceId: theGreatestDeviceIEverCreated.id,
               deviceMaintenanceStatusId,
+              data: '{}',
               day: new Date(),
               createdOn: new Date(),
             })
@@ -238,6 +265,35 @@ describe('Device routes', () => {
       assert.property(res.body.data[0], 'deliveredLastMonth')
       assert.property(res.body.data[0], 'deliveredThisMonth')
       assert.property(res.body, 'total')
+    })
+
+    it('should return only devices that have linked issues', async () => {
+      let res = await server
+        .get(`${path}?onlyOpenIssues=1`)
+        .set('Authorization', `Bearer ${shared.token}`)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.equal(res.body.data.length, 1)
+      assertPropertiesOfListItem(res)
+
+      res = await server
+        .get(`${path}?onlyOpenIssues=1&issueTypeId=ModuleDisabled`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 0)
+
+      res = await server
+        .get(
+          `${path}?onlyOpenIssues=1&issueTypeId=ModuleReplaced&issueTypeId=ModuleDisabled"`
+        )
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 1)
+      res = await server
+        .get(`${path}?issueTypeId=ModuleDisabled`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 1)
     })
 
     it('should return details of a specific device', async () => {

@@ -3,18 +3,20 @@ import PieGraph from '../../PieGraph'
 import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+const assays = [
+  'assayGenericCovid19',
+  'assayGXCovid19',
+  'assayMP96Covid19',
+  'assayQS7Covid19',
+]
+
 const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
     id: 'covidMortalityAndRecoveryConfig',
     title: 'covidGraphDailyMortalityAndrecovery',
     componentSize: 'full',
     group: 'covid',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
     graphRenderPermissions: ['covid'],
     graphType: [
       {
@@ -29,7 +31,7 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'died',
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -53,7 +55,7 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'recovered',
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -70,12 +72,7 @@ const covidGraphs = {
   covidCasesByAgeAndGender: {
     id: 'covidCasesByAgeAndGender',
     title: 'covidGraphDailyMortalityAndRecoveryByGenderAndGender',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
     graphRenderPermissions: ['covid'],
     graphType: [
       {
@@ -89,7 +86,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender', 'age'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -109,12 +106,7 @@ const covidGraphs = {
   covidDailyConfirmed: {
     id: 'covidDailyConfirmed',
     title: 'clinicalIndicatorsCovidName',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
     graphRenderPermissions: ['covid'],
     graphType: [
       {
@@ -147,12 +139,7 @@ const covidGraphs = {
   covidMortalityAndRecoveryByGender: {
     id: 'covidMortalityAndRecoveryByGender',
     title: 'clinicalIndicatorsCovidGenderRecoveryRates',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
     graphRenderPermissions: ['covid'],
     graphType: [
       {
@@ -166,7 +153,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -196,7 +183,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
@@ -220,12 +207,7 @@ const covidGraphs = {
   covidGenderByCalendar: {
     id: 'covidGenderByCalendar',
     title: 'clinicalIndicatorsCovidName',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
     graphRenderPermissions: ['covid'],
     graphType: [
       {
@@ -239,7 +221,7 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },

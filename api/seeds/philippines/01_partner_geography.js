@@ -5,13 +5,21 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
+const {
+  adminUserName,
+  adminPassword,
+  partnerName,
+  serverUrl,
+  partnerAbbreviation,
+  deviceApiToken,
+} = require('./fixtures/partnerData')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
+    .where({ name: adminUserName })
     .first('id')
   if (existingAdminUser) {
     return
@@ -19,8 +27,8 @@ async function seed(knex) {
 
   const now = new Date()
   const [adminId] = await knex('User').insert({
-    name: 'admin',
-    password: bcrypt.hashSync('e5wQ40TLzd', saltRounds),
+    name: adminUserName,
+    password: bcrypt.hashSync(adminPassword, saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -28,12 +36,12 @@ async function seed(knex) {
   })
 
   const [partnerId] = await knex('Partner').insert({
-    name: 'Philippines',
+    name: partnerName,
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://philippines.aspect.id:8443',
+    serverUrl,
   })
 
   await commonUpserts(
@@ -41,7 +49,7 @@ async function seed(knex) {
     partnerId,
     adminId,
     geography,
-    'PH',
-    'jdk5ctyu8jhwimkvfc99'
+    partnerAbbreviation,
+    deviceApiToken
   )
 }

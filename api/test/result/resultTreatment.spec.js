@@ -29,7 +29,7 @@ describe('Result Treatment', () => {
           assert.property(res.body, 'data')
           assert.property(res.body, 'siteId')
 
-          assert.equal(res.body.data.length, 6) // for 6 months
+          assert.equal(res.body.data.length, 12) // for 12 months
           assert.property(res.body.data[0], 'monthTested')
           assert.property(res.body.data[0], 'pcConfirmed')
           assert.property(res.body.data[0], 'cntConfirmed')

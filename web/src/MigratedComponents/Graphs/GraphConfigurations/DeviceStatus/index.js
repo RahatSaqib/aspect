@@ -2,8 +2,11 @@ import BarGraph from '../../BarGraph'
 import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
 import AspectDropDown from '../../../AspectDropDown'
 
+import CONSTS from '../CONSTS'
+
 const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
 const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
+const { DATE_RANGE_OPTIONS } = CONSTS
 
 const deviceStatusGraphs = {
   deviceStatus: {
@@ -22,7 +25,7 @@ const deviceStatusGraphs = {
         data: dateRangeOptions('deviceDateRange'),
         sortByKeys: ['id'],
         isClearable: false,
-        defaultSelectedOption: 2,
+        defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
       },
     ],
     graphRenderPermissions: ['dashboard', 'operationalData'],

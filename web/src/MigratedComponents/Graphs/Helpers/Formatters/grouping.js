@@ -43,10 +43,15 @@ const groupByKey = (
       [indexBy]: dateFormatted,
       [countKey]: curr.cnt,
     }
-
     return acc
   }, {})
-  return calcPercentageSplitBar(normaliseKeys(grouped), indexBy, displayMethod)
+
+  return calcPercentageSplitBar(
+    normaliseKeys(grouped),
+    indexBy,
+    displayMethod,
+    12
+  )
 }
 
 const groupForPie = (data, keyToConsume, indexBy, filterBy) => {
@@ -93,7 +98,7 @@ const groupForPieRow = (data, mergedParams) => {
     return type
   }
 
-  const pieWidgetType = (key, value, difference) => {
+  const pieWidgetType = (_key, value, difference) => {
     let type
     switch (true) {
       case typeof value === 'number' && difference !== undefined:
