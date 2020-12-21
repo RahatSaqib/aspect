@@ -25,14 +25,19 @@ const getMaxValueForDivergent = data => {
 const roundIfNumber = value =>
   typeof value === 'number' && value > 0 ? Math.round(value) : value
 
-const calcPercentageSplitBar = (data, keyToOmit, displayMethod) => {
+const calcPercentageSplitBar = (
+  data,
+  keyToOmit,
+  displayMethod,
+  precision = 4
+) => {
   return displayMethod === 'actual'
     ? data
     : data.map(d => {
         const dSum = sum(values(omit(d, keyToOmit)))
         forOwn(d, (value, key) => {
           if (key !== keyToOmit) {
-            d[key] = calcPercentageForGraphs(value, dSum)
+            d[key] = calcPercentageForGraphs(value, dSum, precision)
           }
         })
         d.totalCnt = dSum

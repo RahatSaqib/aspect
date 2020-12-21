@@ -32,7 +32,7 @@
 .tooltip__value {
   padding-left: 3px;
   font-weight: 300;
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .tooltip__valuePrimary {
@@ -51,4 +51,8 @@
   height: 0;
   width: 0;
   background-color: transparent;
+}
+
+.tooltip__allowsClickthrough {
+  font-size: 11px;
 }

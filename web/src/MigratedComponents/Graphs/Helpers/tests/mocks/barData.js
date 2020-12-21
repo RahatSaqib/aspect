@@ -269,6 +269,84 @@ const treatmentAPISkewedActualDataOut = [
   },
 ]
 
+const barDataForToolTipsNovIn1 = {
+  id: 'Detected',
+  value: '30.973451327434',
+  index: 11,
+  indexValue: 'Nov 20',
+  data: {
+    month: 'Nov 20',
+    Detected: '30.973451327434',
+    totalCnt: 113,
+  },
+}
+
+const barDataForToolTipsNovIn2 = {
+  id: 'Detected',
+  value: '25.499445061043',
+  index: 11,
+  indexValue: 'Nov 20',
+  data: {
+    month: 'Nov 20',
+    Detected: '25.499445061043',
+    totalCnt: 3604,
+  },
+}
+
+const barDataForToolTipsNovIn3 = {
+  id: 'Detected',
+  value: '43.744417479583',
+  index: 11,
+  indexValue: 'Nov 20',
+  data: {
+    month: 'Nov 20',
+    Detected: '43.744417479583',
+    totalCnt: 1200000000000,
+  },
+}
+
+const barDataForToolTipsNovOut1 = {
+  color: 'var(--guardsman-red, #d60000)',
+  displayId: 'Detected',
+  indexValue: 'Nov 20',
+  displayValue: {
+    value: '30.97%',
+    actual: {
+      totalCnt: 113,
+      percentageToValue: 35,
+    },
+  },
+  externalId: 'Detected',
+}
+
+const barDataForToolTipsNovOut2 = {
+  color: 'var(--guardsman-red, #d60000)',
+  displayId: 'Detected',
+  indexValue: 'Nov 20',
+  displayValue: {
+    value: '25.5%',
+    actual: {
+      totalCnt: 3604,
+      percentageToValue: 919,
+    },
+  },
+  externalId: 'Detected',
+}
+
+const barDataForToolTipsNovOut3 = {
+  color: 'var(--guardsman-red, #d60000)',
+  displayId: 'Detected',
+  indexValue: 'Nov 20',
+  displayValue: {
+    value: '43.74%',
+    actual: {
+      totalCnt: 1200000000000,
+      percentageToValue: 524933009755,
+    },
+  },
+  externalId: 'Detected',
+}
+
 const tickDataForBarYAxisShapeBookendsDisplayPercentageOut = [0, 100]
 const tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut = [0, 50, 100]
 const tickDataForBarYAxisShapeBookendsDisplayActualOut = [0, 22]
@@ -278,6 +356,12 @@ const tickDataForBarXAxisShapeBookendDisplayActualOut = ['Nov 19', 'Apr 20']
 export {
   barDataActualFromAPIIn,
   barDataActualFromAPIOut,
+  barDataForToolTipsNovIn1,
+  barDataForToolTipsNovIn2,
+  barDataForToolTipsNovIn3,
+  barDataForToolTipsNovOut1,
+  barDataForToolTipsNovOut2,
+  barDataForToolTipsNovOut3,
   tickDataForBarDisplayMethodPercentageIn,
   tickDataForBarDisplayMethodActualIn,
   tickDataForBarYAxisShapeBookendsDisplayPercentageOut,

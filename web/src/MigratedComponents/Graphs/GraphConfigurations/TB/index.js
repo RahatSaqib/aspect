@@ -2,11 +2,13 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+const assays = ['GxMtbRif', 'GxMtbRifUltra']
+
 const tbGraphs = {
   tbDetected: {
     id: 'tbDetected',
     title: 'clinicalIndicatorsTBDetected',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
     graphRenderPermissions: ['dashboard'],
@@ -33,6 +35,12 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'tbResultsByCategory1Aggregate',
@@ -64,7 +72,7 @@ const tbGraphs = {
   tbResults: {
     id: 'tbResults',
     title: 'clinicalIndicatorsTBTitle',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
     graphRenderPermissions: ['dashboard'],
@@ -93,6 +101,12 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'tbByCategory1Aggregate',

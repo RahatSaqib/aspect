@@ -8,7 +8,7 @@ const msgInstrumentReplaced = `{{device.name}}:
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const errorIssueEmailHtml = `
+const getDeviceBaseHtml = ({ customPart, errorCode }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -51,7 +51,7 @@ const errorIssueEmailHtml = `
                 Error Code
               </td>
               <td>
-                {{result.errorCode}}
+                {{issue.errorCode}}
               </td>
           </tr>
           <tr>
@@ -59,7 +59,7 @@ const errorIssueEmailHtml = `
                 Occurrences
               </td>
               <td>
-                {{issue.data.resultsWithErrors}}
+                {{issue.occurrences}}
               </td>
           </tr>
           <tr>
@@ -70,31 +70,7 @@ const errorIssueEmailHtml = `
                 30
               </td>
           </tr>
-          <tr>
-              <td>
-                System Serial
-              </td>
-              <td>
-                {{result.instrumentSerial}}
-              </td>
-          </tr>
-          <<REPLACE WITH MODULE OR REAGENT>>
-          <tr>
-              <td>
-                Cartridge Type
-              </td>
-              <td>
-                {{result.assay.name}}
-              </td>
-          </tr>
-          <tr>
-              <td>
-                Date/Time
-              </td>
-              <td>
-                {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
-              </td>
-          </tr>
+          ${customPart}
       </table>
       <p>
         <strong>SystemOne GeneXpert System and Contact Information</strong>
@@ -201,25 +177,19 @@ const errorIssueEmailHtml = `
 </html>
 `
 
-const errorIssueEmailText = `This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
+const getDeviceBaseText = ({ customPart, errorCode }) => `
+This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{result.errorCode}}
+Error Code: {{issue.errorCode}}
 
-Occurrences: {{issue.data.resultsWithErrors}}
+Occurrences: {{issue.occurrences}}
 
 Time Period Days: 30
 
-System Serial: {{result.instrumentSerial}}
-
-<<REPLACE WITH MODULE OR REAGENT>>
-
-Cartridge Type: {{result.assay.name}}
-
-Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
-
+${customPart}
 
 
 SystemOne GeneXpert System and Contact Information
@@ -248,7 +218,53 @@ Contact Cell: {{site.primaryContact.cell}}
 
 Contact Email: {{site.primaryContact.email}}`
 
-const errorIssueSubject = `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, Error: {{notification.type}}`
+const errorIssueEmailHtml = getDeviceBaseHtml({
+  customPart: `
+  <tr>
+    <td>
+      System Serial
+    </td>
+    <td>
+      {{result.instrumentSerial}}
+    </td>
+  </tr>
+  <<REPLACE WITH MODULE OR REAGENT>>
+  <tr>
+    <td>
+      Cartridge Type
+    </td>
+    <td>
+      {{result.assay.name}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Date/Time
+    </td>
+    <td>
+      {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+    </td>
+  </tr>
+`,
+})
+
+const errorIssueEmailText = getDeviceBaseText({
+  customPart: `
+System Serial: {{result.instrumentSerial}}
+
+<<REPLACE WITH MODULE OR REAGENT>>
+
+Cartridge Type: {{result.assay.name}}
+
+Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+`,
+})
+
+const getErrorIssueSubjectBase = errorCode => {
+  const errorLabel = `Error${errorCode ? ` ${errorCode}` : ''}`
+  return `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, ${errorLabel}: {{notification.type}}`
+}
+const errorIssueSubject = getErrorIssueSubjectBase()
 const errorIssueEmailHtmlModule = errorIssueEmailHtml.replace(
   '<<REPLACE WITH MODULE OR REAGENT>>',
   '<tr><td>Module</td><td>{{result.moduleSerial}}</td></tr>'
@@ -266,6 +282,57 @@ const errorIssueEmailTextLot = errorIssueEmailText.replace(
   '<<REPLACE WITH MODULE OR REAGENT>>',
   'Reagent Lot: {{result.consumableLot}}'
 )
+
+// must correspond with 'Hardware*' items in IssueEventTrigger.json
+const hardwareMessage = {
+  1001: 'Temperature Drifted From Setpoint',
+  1002: 'Heater Temperature Differential Error',
+  2005: 'Syringe Stall Error',
+  2008: 'Syringe Pressure Too High',
+  2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
+  2026: 'Ultrasonic Horn Current Out of Range',
+  2032: 'Ultrasonic Horn Tuning Error',
+  2035: 'Ultrasonic Horn Failure',
+  2037: 'Cartridge Integrity Test Failure',
+  2096: 'Assay Specific Termination Error',
+  2097: 'Assay-Specific Termination #2',
+  2126: 'Module was Reset',
+  4008: 'Power Supply Voltage Out of Range',
+  4009: 'Heater A Temperature Unstable',
+  4012: 'Heater B Temperature Unstable',
+  4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
+}
+const hardwareErrorIssueEmailHtml = errorCode =>
+  getDeviceBaseHtml({
+    errorCode,
+    customPart: `
+    <tr>
+      <td>
+        System Serial
+      </td>
+      <td>
+        {{device.serial}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Date/Time
+      </td>
+      <td>
+        {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+      </td>
+    </tr>
+  `,
+  })
+const hardwareErrorIssueEmailText = errorCode =>
+  getDeviceBaseText({
+    errorCode,
+    customPart: `
+System Serial: {{device.serial}}
+
+Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+  `,
+  })
 
 async function getBaseIssues(auditFields) {
   // Issues
@@ -1174,6 +1241,282 @@ async function getBaseIssues(auditFields) {
         subject: errorIssueSubject,
         body: errorIssueEmailTextLot,
         htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+
+    // --------------------------------------------------------
+    // Hardware Issues - must correspond with 'Hardware*' items in IssueEventTrigger.json
+    // --------------------------------------------------------
+    HardwareTemperatureDriftedFromSetPoint: {
+      issueType: {
+        name: hardwareMessage[1001],
+        externalId: 'HardwareTemperatureDriftedFromSetPoint',
+        i18nKey: 'issueHardwareTemperatureDriftedFromSetPoint',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(1001),
+        body: hardwareErrorIssueEmailText(1001),
+        htmlBody: hardwareErrorIssueEmailHtml(1001),
+        ...auditFields,
+      },
+    },
+    HardwareHeaterTemperatureDifferentialError: {
+      issueType: {
+        name: hardwareMessage[1002],
+        externalId: 'HardwareHeaterTemperatureDifferentialError',
+        i18nKey: 'issueHardwareHeaterTemperatureDifferentialError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(1002),
+        body: hardwareErrorIssueEmailText(1002),
+        htmlBody: hardwareErrorIssueEmailHtml(1002),
+        ...auditFields,
+      },
+    },
+    HardwareSyringeStallError: {
+      issueType: {
+        name: hardwareMessage[2005],
+        externalId: 'HardwareSyringeStallError',
+        i18nKey: 'issueHardwareSyringeStallError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2005),
+        body: hardwareErrorIssueEmailText(2005),
+        htmlBody: hardwareErrorIssueEmailHtml(2005),
+        ...auditFields,
+      },
+    },
+    HardwareSyringePressureTooHigh: {
+      issueType: {
+        name: hardwareMessage[2008],
+        externalId: 'HardwareSyringePressureTooHigh',
+        i18nKey: 'issueHardwareSyringePressureTooHigh',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2008),
+        body: hardwareErrorIssueEmailText(2008),
+        htmlBody: hardwareErrorIssueEmailHtml(2008),
+        ...auditFields,
+      },
+    },
+    HardwareThermistorTemperatureOutOfRange2014: {
+      issueType: {
+        name: hardwareMessage[2014],
+        externalId: 'HardwareThermistorTemperatureOutOfRange2014',
+        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange2014',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2014),
+        body: hardwareErrorIssueEmailText(2014),
+        htmlBody: hardwareErrorIssueEmailHtml(2014),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornCurrentOutOfRange: {
+      issueType: {
+        name: hardwareMessage[2026],
+        externalId: 'HardwareUltrasonicHornCurrentOutOfRange',
+        i18nKey: 'issueHardwareUltrasonicHornCurrentOutOfRange',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2026),
+        body: hardwareErrorIssueEmailText(2026),
+        htmlBody: hardwareErrorIssueEmailHtml(2026),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornTuningError: {
+      issueType: {
+        name: hardwareMessage[2032],
+        externalId: 'HardwareUltrasonicHornTuningError',
+        i18nKey: 'issueHardwareUltrasonicHornTuningError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2032),
+        body: hardwareErrorIssueEmailText(2032),
+        htmlBody: hardwareErrorIssueEmailHtml(2032),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornFailure: {
+      issueType: {
+        name: hardwareMessage[2035],
+        externalId: 'HardwareUltrasonicHornFailure',
+        i18nKey: 'issueHardwareUltrasonicHornFailure',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2035),
+        body: hardwareErrorIssueEmailText(2035),
+        htmlBody: hardwareErrorIssueEmailHtml(2035),
+        ...auditFields,
+      },
+    },
+    HardwareCartridgeIntegrityTestFailure: {
+      issueType: {
+        name: hardwareMessage[2037],
+        externalId: 'HardwareCartridgeIntegrityTestFailure',
+        i18nKey: 'issueHardwareCartridgeIntegrityTestFailure',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2037),
+        body: hardwareErrorIssueEmailText(2037),
+        htmlBody: hardwareErrorIssueEmailHtml(2037),
+        ...auditFields,
+      },
+    },
+    HardwareAssaySpecificTerminationError: {
+      issueType: {
+        name: hardwareMessage[2096],
+        externalId: 'HardwareAssaySpecificTerminationError',
+        i18nKey: 'issueHardwareAssaySpecificTerminationError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2096),
+        body: hardwareErrorIssueEmailText(2096),
+        htmlBody: hardwareErrorIssueEmailHtml(2096),
+        ...auditFields,
+      },
+    },
+    HardwareAssaySpecificTerminationError2: {
+      issueType: {
+        name: hardwareMessage[2097],
+        externalId: 'HardwareAssaySpecificTerminationError2',
+        i18nKey: 'issueHardwareAssaySpecificTerminationError2',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2097),
+        body: hardwareErrorIssueEmailText(2097),
+        htmlBody: hardwareErrorIssueEmailHtml(2097),
+        ...auditFields,
+      },
+    },
+    HardwareModuleWasReset: {
+      issueType: {
+        name: hardwareMessage[2126],
+        externalId: 'HardwareModuleWasReset',
+        i18nKey: 'issueHardwareModuleWasReset',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2126),
+        body: hardwareErrorIssueEmailText(2126),
+        htmlBody: hardwareErrorIssueEmailHtml(2126),
+        ...auditFields,
+      },
+    },
+    HardwarePowerSupplyVoltageOutOfRange: {
+      issueType: {
+        name: hardwareMessage[4008],
+        externalId: 'HardwarePowerSupplyVoltageOutOfRange',
+        i18nKey: 'issueHardwarePowerSupplyVoltageOutOfRange',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4008),
+        body: hardwareErrorIssueEmailText(4008),
+        htmlBody: hardwareErrorIssueEmailHtml(4008),
+        ...auditFields,
+      },
+    },
+    HardwareHeaterATemperatureUnstable: {
+      issueType: {
+        name: hardwareMessage[4009],
+        externalId: 'HardwareHeaterATemperatureUnstable',
+        i18nKey: 'issueHardwareHeaterATemperatureUnstable',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4009),
+        body: hardwareErrorIssueEmailText(4009),
+        htmlBody: hardwareErrorIssueEmailHtml(4009),
+        ...auditFields,
+      },
+    },
+    HardwareHeaterBTemperatureUnstable: {
+      issueType: {
+        name: hardwareMessage[4012],
+        externalId: 'HardwareHeaterBTemperatureUnstable',
+        i18nKey: 'issueHardwareHeaterBTemperatureUnstable',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4012),
+        body: hardwareErrorIssueEmailText(4012),
+        htmlBody: hardwareErrorIssueEmailHtml(4012),
+        ...auditFields,
+      },
+    },
+    HardwareThermistorTemperatureOutOfRange4017: {
+      issueType: {
+        name: hardwareMessage[4017],
+        externalId: 'HardwareThermistorTemperatureOutOfRange4017',
+        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange4017',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4017),
+        body: hardwareErrorIssueEmailText(4017),
+        htmlBody: hardwareErrorIssueEmailHtml(4017),
         ...auditFields,
       },
     },

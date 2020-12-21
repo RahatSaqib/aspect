@@ -16,6 +16,7 @@ const BarGraph = ({ data, keys, config, assaysFromState }) => {
   return (
     <AspectResponsiveBar
       assaysFromState={assaysFromState}
+      config={config}
       data={data}
       keys={keys}
       indexBy={indexBy}

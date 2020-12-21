@@ -25,6 +25,7 @@ const {
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
+const { shouldTriggerHardwareErrorAnalysis } = require('../plugin/utils')
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -299,12 +300,29 @@ async function addDeviceDataWithContext(context) {
         },
       }
 
+      const contextWithPayload = context.withPayload(operation)
       response = {
         ...response,
-        ...(await addDeviceOperationWithContext(
-          context.withPayload(operation)
-        )),
+        ...(await addDeviceOperationWithContext(contextWithPayload)),
       }
+      // check if stored in table 'DeviceOperation' entry is
+      // hardware error and dispatch MQ action if needed
+      const {
+        messageContext,
+        partnerId,
+        payload,
+        parent: {
+          deviceLogUpdate: { deviceOperationId },
+        },
+      } = contextWithPayload
+      await shouldTriggerHardwareErrorAnalysis(
+        knex,
+        messageContext,
+        partnerId,
+        device,
+        payload,
+        deviceOperationId
+      )
     }
   }
 

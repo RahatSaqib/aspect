@@ -3,7 +3,7 @@ const _ = require('lodash')
 const chai = require('chai')
 const {
   format,
-  subDays,
+  addDays,
   subMinutes,
   addMinutes,
   subMonths,
@@ -97,17 +97,25 @@ const getExpected = totalResults => {
 }
 describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
+  let initialState = {}
+
   shared.checkToken(server, path)
 
-  const now = new Date()
-  const currentMonth = new Date(now.getFullYear(), now.getMonth(), 15)
+  const currentMonthStr = '2009-09-01T00:00:00.000Z'
+  const currentMonth = new Date(currentMonthStr)
   const dataToSeed = [
     // mid of current month
-    { midMonth: currentMonth, totalResults: 200 },
+    {
+      midMonth: addDays(currentMonth, 15),
+      totalResults: 200,
+    },
     // mid of prevuous month
-    { midMonth: subMonths(currentMonth, 1), totalResults: 100 },
+    {
+      midMonth: subMonths(addDays(currentMonth, 15), 1),
+      totalResults: 100,
+    },
   ]
-  let initialState = {}
+
   let assayGeneXpertMtbRif
   before(async () => {
     // -----------------------------
@@ -122,6 +130,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     }
     // get last item id from tables we touch in test
     initialState = {
+      deviceId: await getLastId('Device'),
       sampleId: await getLastId('Sample'),
       resultId: await getLastId('Result'),
       issueId: await getLastId('Issue'),
@@ -171,9 +180,17 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     ]
     const [emailTemplateId] = await knex('EmailTemplate').pluck('id')
     const [smsTemplateId] = await knex('SmsTemplate').pluck('id')
-    const device = await knex('Device')
+    // get existing device
+    let device = await knex('Device')
       .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId })
       .whereIn('siteId', _.map(siteDatas, 'id'))
+      .first()
+    // create new device and get it's deviceId
+    const [deviceId] = await knex('Device').insert({
+      ..._.omit(device, ['id']),
+    })
+    device = await knex('Device')
+      .where('id', deviceId)
       .first('id', 'partnerId', 'geographyId', 'siteId')
 
     const getResultCategoryId = isDetected => {
@@ -185,10 +202,10 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // 50% are ('Detected','NotDetected')
     // 25% are ('Detected','Detected')
     // -----------------------------
-    const { id: deviceId, geographyId, siteId } = device
+    const { geographyId, siteId } = device
     await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
-      const getRandomDate = () => subDays(midMonth, _.random(10))
-      // const totalResults = 100
+      const getRandomDate = () =>
+        new Date(`${format(midMonth, 'yyyy-MM')}-01T01:00:00.000Z`)
       const samples = []
       await Promise.each(_.range(totalResults), async () => {
         const sample = {
@@ -333,21 +350,22 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
 
   after(async () => {
     // helper
-    const reset = async (tableName, id) =>
+    const reset = async (tableName, id = 0) =>
       knex(tableName).where('id', '>', id).delete()
     // reset all data tables affected in test
     await reset('Issue', initialState.issueId)
-    await reset('EmailMessage', initialState.emailMessageId || 0)
-    await reset('SmsMessage', initialState.smsMessageId || 0)
+    await reset('EmailMessage', initialState.emailMessageId)
+    await reset('SmsMessage', initialState.smsMessageId)
     await reset('Result', initialState.resultId)
-    await reset('Sample', initialState.sampleId || 0)
+    await reset('Sample', initialState.sampleId)
+    await reset('Device', initialState.deviceId)
   })
 
   it('should return data for Results Transmitted graph', async () => {
     const res = await server
       .get(`${path}`)
       .query({
-        currentMonth: format(currentMonth, 'yyyy-MM-dd'),
+        currentMonth: currentMonthStr,
       })
       .set('Authorization', `Bearer ${shared.token}`)
 

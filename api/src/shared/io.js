@@ -2,6 +2,7 @@ const fs = require('fs')
 const uuid = require('node-uuid')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Promise = require('bluebird')
+const _ = require('lodash')
 
 // ---------------------------------
 // create missing directories in the path and return path back
@@ -162,6 +163,36 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   return { ok, url: `${dir.url}/${outputFileName}`, message }
 }
 
+// ---------------------------------
+// generate CSV attachment in memory - string arrays columnNames and fieldNames should have same size
+// ---------------------------------
+async function generateCsvAttachment(outputFileName, { items, columns }) {
+  const workbook = new excel.Workbook()
+  const worksheet = workbook.addWorksheet()
+
+  // column headers (for 1st row in CSV)
+  worksheet.columns = columns.map(column => _.pick(column, ['header']))
+
+  // add an array of rows
+  const rows = []
+  items.forEach(dataItem => {
+    const row = []
+    columns.forEach(column => {
+      row.push(dataItem[column.key])
+    })
+    rows.push(row)
+  })
+  worksheet.addRows(rows)
+
+  const fileBuffer = await workbook.csv.writeBuffer()
+  return {
+    content: fileBuffer.toString('base64'),
+    mimeType: 'application/vnd.ms-excel',
+    fileName: outputFileName,
+    disposition: 'attachment',
+  }
+}
+
 // ----------------------------------------------------------------------------------------------
 function getContentType(fileExt) {
   if (fileExt[0] === '.') {
@@ -194,6 +225,7 @@ function getContentType(fileExt) {
 module.exports = {
   createDirectory,
   generateCsvFile,
+  generateCsvAttachment,
   generateExcelFile,
   getCellsBySubstring,
   getCellsByValue,
