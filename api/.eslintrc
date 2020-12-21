@@ -62,6 +62,7 @@
     "no-restricted-syntax": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
+    "no-unused-vars": ["warn", { "varsIgnorePattern": "[iI]gnored" }],
     "prefer-object-spread": "warn",
     "prettier/prettier": [
       "error",

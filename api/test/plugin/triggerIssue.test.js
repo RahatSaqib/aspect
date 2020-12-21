@@ -1,5 +1,8 @@
 const chai = require('chai')
-const { analyzeResultsWithErrors } = require('../../src/plugin/issueTriggers')
+const {
+  analyzeResultsWithErrors,
+  hasUnusedModules,
+} = require('../../src/plugin/issueTriggers')
 const {
   resultAnalyzeErrors,
   resultAnalyzeCategories,
@@ -8,6 +11,22 @@ const {
 const { assert } = chai
 
 describe('This test is for testing different triggers conditions', () => {
+  it('hasUnusedModules', async () => {
+    // numberOfResults, numberOfModules, minResults, expectedUsedModules
+    assert.isFalse(hasUnusedModules(10, 2, 20, 4))
+    assert.isTrue(hasUnusedModules(10, 2, 9, 4))
+    assert.isFalse(hasUnusedModules(10, 3, 9, 3))
+    assert.isFalse(hasUnusedModules(20, 4, 20, 4))
+    assert.isTrue(hasUnusedModules(20, 1, 20, 4))
+    assert.isFalse(hasUnusedModules(0, 2, null, null))
+    assert.isFalse(hasUnusedModules(0, 0, 20, 4))
+    chai
+      .expect(() => hasUnusedModules(null, undefined, 20, 4))
+      .to.throw(
+        "numberOfResults and numberOfModules can't be null or undefined"
+      )
+  })
+
   it('analyzeResultsWithErrors', async () => {
     assert.isTrue(analyzeResultsWithErrors(3, 100, 0.03, false, 3))
     assert.isTrue(analyzeResultsWithErrors(20, 200, 0.1, false, 3))
@@ -24,6 +43,42 @@ describe('This test is for testing different triggers conditions', () => {
 
   it('Should analyze different scenarios based on the data for triggering an action resultAnalyzeErrors', () => {
     ;[
+      {
+        errorCode: 2005,
+        type1: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE',
+        type2: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT',
+      },
+      {
+        errorCode: 2008,
+        type1: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE',
+        type2: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT',
+      },
+      {
+        errorCode: 2035,
+        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE',
+        type2: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT',
+      },
+      {
+        errorCode: 2037,
+        type1: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE',
+        type2: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT',
+      },
+      {
+        errorCode: 2026,
+        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE',
+        type2: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT',
+      },
+      {
+        errorCode: 2096,
+        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE',
+        type2: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT',
+      },
+      {
+        errorCode: 2097,
+        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE',
+        type2: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT',
+      },
+
       {
         errorCode: 5007,
         type1: 'RESULT_ANALYZE_PROBES_MODULE',

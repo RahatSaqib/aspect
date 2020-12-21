@@ -436,6 +436,488 @@
       "filterIssueCondition": {
         "evaluationFunction": "filterByLotAndAssay"
       }
+    },
+    {
+      "issueType": "UnusedModules",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_UNUSED_MODULES",
+        "conditions":{
+          "evaluationMethod":"plugin-function",
+          "evaluationParameter":"analyzeUnusedModules",
+          "evaluationFilterParameters": {
+            "minResults": 20,
+            "expectedUsedModules": 4
+          }
+        }
+      }
+    },
+    {
+      "issueType": "CartridgeIntegrityTestFailureLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2037,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "SyringePressureTooHighLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2008,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "SyringeStallErrorLot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2005,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "UltrasonicHornFailureModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2035,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "UltrasonicHornTuningErrorModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2032,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "UltrasonicHornCurrentOutOfRangeModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2026,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "AssaySpecificTerminationError1Module",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2096,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "AssaySpecificTerminationError1Lot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2096,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+    {
+      "issueType": "AssaySpecificTerminationError2Module",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2097,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleSerial"
+      }
+    },
+    {
+      "issueType": "AssaySpecificTerminationError2Lot",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCode": 2097,
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByLotAndAssay"
+      }
+    },
+
+    {
+      "issueType": "HardwareTemperatureDriftedFromSetPoint",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_TEMPERATURE_DRIFTED_FROM_SETPOINT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 1001,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareHeaterTemperatureDifferentialError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 1002,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareSyringeStallError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_SYRINGE_STALL_ERROR",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2005,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareSyringePressureTooHigh",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_SYRINGE_PRESSURE_TOOHIGH",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2008,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareThermistorTemperatureOutOfRange2014",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_2014",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2014,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareUltrasonicHornCurrentOutOfRange",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2026,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareUltrasonicHornTuningError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_ULTRASONIC_HORN_TUNING_ERROR",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2032,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareUltrasonicHornFailure",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_ULTRASONIC_HORN_FAILURE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2035,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareCartridgeIntegrityTestFailure",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_CARTRIDGE_INTEGRITY_TEST_FAILURE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2037,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareAssaySpecificTerminationError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2096,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareAssaySpecificTerminationError2",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR_2",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2097,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareModuleWasReset",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_MODULE_WAS_RESET",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 2126,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwarePowerSupplyVoltageOutOfRange",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4008,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareHeaterATemperatureUnstable",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_HEATER_A_TEMPERATURE_UNSTABLE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4009,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareHeaterBTemperatureUnstable",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_HEATER_B_TEMPERATURE_UNSTABLE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4012,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareThermistorTemperatureOutOfRange4017",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_4017",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCode": 4017,
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
     }
   ]
 }

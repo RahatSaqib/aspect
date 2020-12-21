@@ -229,7 +229,7 @@ const start = async () => {
       const scope = ['clientApi'].concat(modules, decoded.permissions || [])
       return { isValid, errorMessage, credentials: { scope, ...decoded } }
     },
-    // TODO JWT verfication algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+    // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
   })
 
   // ==========================================================================

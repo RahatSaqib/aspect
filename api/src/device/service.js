@@ -162,6 +162,25 @@ async function getListDevices(query, auth) {
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
           .where('rca.resultCategoryId', query.resultCategoryId)
+      if (query.onlyOpenIssues || query.issueTypeId) {
+        queryBuilder.innerJoin('Issue as issue', 'issue.deviceId', 'd.id')
+        if (query.issueTypeId)
+          queryBuilder
+            .innerJoin(
+              'IssueType as issueType',
+              'issue.issueTypeId',
+              'issueType.id'
+            )
+            .whereIn('issueType.externalId', query.issueTypeId)
+        if (query.onlyOpenIssues)
+          queryBuilder
+            .innerJoin(
+              'IssueStatus as issueStatus',
+              'issue.issueStatusId',
+              'issueStatus.id'
+            )
+            .whereNotIn('issueStatus.externalId', ['Inactive', 'Resolved'])
+      }
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -220,6 +239,7 @@ async function getListDevices(query, auth) {
       // Gets the count of days the device was logged
       knex('DeviceMaintenanceStatusLog as dmsl_total')
         .whereRaw('dmsl_total.deviceId = d.id')
+        .andWhereRaw('WEEKDAY(dmsl_total.day) < 5') // 5 - Saturday, 6 - Sunday
         .andWhere(
           'dmsl_total.day',
           '>=',
@@ -235,6 +255,7 @@ async function getListDevices(query, auth) {
           'dms_active.id'
         )
         .whereRaw('dmsl_active.deviceId = d.id')
+        .andWhereRaw('WEEKDAY(dmsl_active.day) < 5') // 5 - Saturday, 6 - Sunday
         .andWhere(
           'dmsl_active.day',
           '>=',
@@ -776,7 +797,10 @@ async function getDevicesForReport(auth, query) {
     .clone()
     .modify(sortPageParams, query, 'name')
     .select([
-      ..._.filter(SELECT_LIST_FIELDS, elem => elem.indexOf('dms') < 0),
+      ..._.filter(
+        SELECT_LIST_FIELDS,
+        elem => _.isString(elem) && elem.indexOf('dms.') < 0
+      ),
       'd.serial',
       queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults
