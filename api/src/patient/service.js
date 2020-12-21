@@ -176,7 +176,7 @@ async function onPatientChanged(patientId, messageContext, isAdded) {
   }
 }
 
-function onResultLogged({ resultId }, { messageContext }) {
+async function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
     // Linking the result service here to avoid cyclic
     //   references between this service and case service
