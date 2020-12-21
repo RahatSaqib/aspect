@@ -25,7 +25,9 @@
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json"
+    "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "husky": {
     "hooks": {
@@ -37,7 +39,8 @@
       "prettier --write"
     ],
     "./{cfg,src}/**/*.{js,jsx}": [
-      "eslint --fix --max-warnings 0", "prettier --write"
+      "eslint --fix --max-warnings 0",
+      "prettier --write"
     ]
   },
   "jest": {
@@ -86,6 +89,10 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
+    "@storybook/addon-actions": "^6.1.11",
+    "@storybook/addon-essentials": "^6.1.11",
+    "@storybook/addon-links": "^6.1.11",
+    "@storybook/react": "^6.1.11",
     "autodll-webpack-plugin": "^0.4.2",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
