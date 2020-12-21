@@ -4,9 +4,10 @@ import AspectDropdown from '../../../AspectDropdown'
 
 import CONSTS from '../CONSTS'
 
-const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
-const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
-const { DATE_RANGE_OPTIONS } = CONSTS
+const {
+  DATE_RANGE_OPTIONS,
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = CONSTS
 
 const deviceStatusGraphs = {
   deviceStatus: {
@@ -40,8 +41,8 @@ const deviceStatusGraphs = {
           method: 'GET',
           endpoint: '/dashboard/operational-data/activity-over-time',
           params: {
-            minDate,
-            maxDate,
+            [MIN_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').start,
+            [MAX_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').end,
           },
         },
         indexBy: 'date',
