@@ -118,13 +118,13 @@ describe('Process GeneXpert Logs', () => {
     })
     assert.equal(res.status, 400)
 
-    await postLog(deviceAuth, logSource, {
+    res = await postLog(deviceAuth, logSource, {
       ...logData,
       logLevel: null,
     })
     assert.equal(res.status, 400)
 
-    await postLog(deviceAuth, logSource, {
+    res = await postLog(deviceAuth, logSource, {
       ...logData,
       details: null,
     })
