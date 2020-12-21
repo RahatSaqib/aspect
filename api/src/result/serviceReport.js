@@ -254,6 +254,8 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
   const resultCategories = ['Error', 'Invalid', 'NoResult']
   const items = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .where('r.deviceId', deviceId)
@@ -271,10 +273,14 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
        * see list of all columns for CSV file in 2nd tab
        * of Excel file attached to https://ops.systemone.id/browse/ASP-1857
        */
-      'r.endedOn as dateTime', // 1. Test Date/time
-      'r.createdOn as actualDateTime', // 2. Actual Date/Time
+      knex.raw(
+        `ifnull(convert_tz(r.endedOn, '+00:00', tz.timeZone), r.endedOn) as dateTime`
+      ), // 1. Test Date/time in device time
+      'r.endedOn as actualDateTime', // 2. Actual Date/Time
       'r.instrumentSerial', // 3. Instrument Serial Number
-      knex.raw(`(r.resultData ->> '$.systemName') as gxSystemName`), // 4. GX System Name
+      knex.raw(
+        `ifnull(r.resultData ->> '$.systemName', d.configurationData ->> '$.systemName') as gxSystemName`
+      ), // 4. GX System Name
       'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
       knex.raw(`'-' as gatewaySerial`), // 6. Instrument Gateway Serial Number
       'r.moduleSerial', // 7. Module Serial Number
@@ -301,6 +307,8 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
        * select hardware errors from DeviceOperation table
        */
       knex('DeviceOperation as do')
+        .innerJoin('Device as d', 'do.deviceId', 'd.id')
+        .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
         // join to get recent Result entry for device (of any assay type)
         .leftOuterJoin('Result as r', function () {
           this.on('r.deviceId', 'do.deviceId').andOn(
@@ -340,12 +348,14 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .select(
           knex.raw('"System Log" as source'),
           'do.startedOn as dateTime',
-          knex.raw(`null as actualDateTime`),
+          knex.raw(
+            `ifnull(convert_tz(do.startedOn, tz.timeZone, '+00:00'), r.endedOn) as actualDateTime`
+          ),
           'r.instrumentSerial',
           knex.raw(`
             CASE
-            WHEN r.resultData IS NOT NULL THEN r.resultData ->> '$.systemName'
-            ELSE ''
+            WHEN r.resultData IS NOT NULL AND r.resultData ->> '$.systemName' IS NOT NULL THEN r.resultData ->> '$.systemName'
+            ELSE d.configurationData ->> '$.systemName'
             END as gxSystemName
           `),
           'r.senderVersion as gxSoftwareVersion',
@@ -373,7 +383,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
   const columns = [
     { header: 'Source', key: 'source' },
     { header: 'Date/Time', key: 'dateTime' },
-    { header: 'Actual Date/Time', key: 'actualDateTime' },
+    { header: 'Actual Date/Time (UTC)', key: 'actualDateTime' },
     { header: 'Instrument Serial Number', key: 'instrumentSerial' },
     { header: 'GX System Name', key: 'gxSystemName' },
     { header: 'GX Software Version', key: 'gxSoftwareVersion' },
