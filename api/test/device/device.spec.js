@@ -438,7 +438,7 @@ describe('Device routes', () => {
           )
         })
 
-        filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
+        filterOnDeviceMaintenanceStatus = ['active', 'inactiveDownForRepair']
         devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
@@ -771,25 +771,51 @@ describe('Device routes', () => {
     })
 
     describe('/maintenance-status/{deviceId}', () => {
-      const maintenanceStatusPath = `${path}/maintenance-status`
-      it('should save the maintenance status of the device', async () => {
-        const editableDeviceMaintenanceStatusIds = await knex(
+      let editableDeviceMaintenanceStatusIds
+      let device
+      let deviceId
+      let deviceMaintenanceStatusId
+      let lastDeviceMaintenanceStatusLogId = null
+      beforeEach(async () => {
+        editableDeviceMaintenanceStatusIds = await knex(
           'DeviceMaintenanceStatus'
         )
           .where('manuallySet', true)
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .select('id')
           .pluck('id')
-        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
+        ;[deviceMaintenanceStatusId] = editableDeviceMaintenanceStatusIds
+
+        device = await knex('DeviceTypeCategory as dtc')
           .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
+          .join('Partner as p', 'd.partnerId', 'p.id')
+          .where('p.name', 'Partner One')
           .where('dtc.hasResults', true)
-          .first('d.id')
+          .first('d.id', 'd.deviceMaintenanceStatusLogId')
+        deviceId = device.id
+        ;[{ id: lastDeviceMaintenanceStatusLogId }] = [
+          await knex('DeviceMaintenanceStatusLog')
+            .orderBy('id', 'desc')
+            .first('id'),
+        ]
+      })
+      afterEach(async () => {
+        await knex('Device').where({ id: deviceId }).update({
+          deviceMaintenanceStatusLogId: device.deviceMaintenanceStatusLogId,
+        })
+        await knex('DeviceMaintenanceStatusLog')
+          .where('id', '>', lastDeviceMaintenanceStatusLogId)
+          .del()
+      })
+
+      const maintenanceStatusPath = `${path}/maintenance-status`
+      it('should save the maintenance status of the device', async () => {
         const [deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId,
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusId,
           data: '{}',
           day: startOfToday(),
           createdOn: new Date(),
@@ -840,24 +866,11 @@ describe('Device routes', () => {
       })
 
       it('should provide shallow access to write to data.options.data.notes', async () => {
-        const editableDeviceMaintenanceStatusIds = await knex(
-          'DeviceMaintenanceStatus'
-        )
-          .where('manuallySet', true)
-          .andWhere('externalId', '<>', 'inactiveDownForRepair')
-          .select('id')
-          .pluck('id')
-
-        const { id: deviceId } = await knex('DeviceTypeCategory as dtc')
-          .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
-          .join('Device as d', 'dt.id', 'd.deviceTypeId')
-          .where('dtc.hasResults', true)
-          .first('d.id')
         const [deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId,
-          deviceMaintenanceStatusId: editableDeviceMaintenanceStatusIds[0],
+          deviceMaintenanceStatusId,
           data: '{}',
           day: startOfToday(),
           createdOn: new Date(),

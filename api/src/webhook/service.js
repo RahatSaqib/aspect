@@ -21,7 +21,10 @@ const {
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 
-function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessageCreated(
+  { webhookMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
   return context.transact(async knex => {
@@ -66,7 +69,10 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   })
 }
 
-function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessagePending(
+  { webhookMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({
     webhookMessageSent,
     webhookMessageError,
@@ -179,15 +185,15 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   })
 }
 
-function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
   return finalizeWebhookMessage(webhookMessageId, messageContext)
 }
 
-function onWebhookMessageError({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessageError({ webhookMessageId }, { messageContext }) {
   return finalizeWebhookMessage(webhookMessageId, messageContext)
 }
 
-function finalizeWebhookMessage(webhookMessageId, messageContext) {
+async function finalizeWebhookMessage(webhookMessageId, messageContext) {
   const context = messageContext.bindActionCreators({
     resolveIssues,
     escalateIssues,

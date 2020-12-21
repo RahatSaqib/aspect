@@ -61,8 +61,8 @@ const subscriptions = [
     actions: {
       ISSUE_CREATED: onIssueCreated,
       ISSUE_TRIGGERED: onIssueTriggered,
-      ESCALATE_ISSUES: onEscalateIssues(),
-      RESOLVE_ISSUES: onResolveIssues(),
+      ESCALATE_ISSUES: onEscalateIssues,
+      RESOLVE_ISSUES: onResolveIssues,
     },
   },
 ]

@@ -7,7 +7,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert } = chai
+const { assert, expect } = chai
 
 describe('/result/clinical-indicator-aggregations', () => {
   const path = '/api/result/clinical-indicator-aggregations'
@@ -21,7 +21,7 @@ describe('/result/clinical-indicator-aggregations', () => {
 
   const getResultsForUser = () =>
     server
-      .get('/api/result')
+      .get('/api/result?size=999999')
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => res.body.data)
 
@@ -83,7 +83,7 @@ describe('/result/clinical-indicator-aggregations', () => {
           }))
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
+        expect(expectedResponse).to.containSubset(res.body.data)
       }))
 
   it('should return all results grouped by month and state if specified in query string', async () =>
@@ -113,7 +113,7 @@ describe('/result/clinical-indicator-aggregations', () => {
           }))
           .value()
         assert.equal(res.status, 200)
-        assert.deepEqual(res.body.data, expectedResponse)
+        expect(expectedResponse).to.containSubset(res.body.data)
       }))
 
   it('should return all results grouped by day if specified in query string', async () =>
