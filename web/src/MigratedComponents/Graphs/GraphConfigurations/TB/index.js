@@ -110,7 +110,12 @@ const tbGraphs = {
           allow: true,
           baseUrl: '/browse/result?filters=',
           baseAssay: assays[0],
-          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+          keys: [
+            'resultCategoryId',
+            'resultCategory2Id',
+            'indexBy',
+            'diseaseId',
+          ],
         },
       },
       {

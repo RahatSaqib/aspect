@@ -3910,6 +3910,11 @@ async function seed(knex) {
     assayId: assayGeneXpertHcvId,
   })
 
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayGeneXpertHcvId,
+  })
+
   // Consumable types
   const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
     name: 'GeneXpert TB Cartridge',
@@ -5008,14 +5013,8 @@ async function seed(knex) {
       possibleResults = [
         {
           resultText: 'HCV-1 DETECTED {0} copies/mL (log {1})',
-          category1: resultCategoryMoreThan1000,
+          category1: resultCategoryDetectedId,
           minLikelihood: 0,
-          maxLikelihood: 40,
-        },
-        {
-          resultText: 'HCV-1 DETECTED {0} copies/mL (log {1})',
-          category1: resultCategoryLessThan1000,
-          minLikelihood: 41,
           maxLikelihood: 80,
         },
         {
