@@ -6,7 +6,7 @@ const {
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
-function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
+async function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
 
   return context.transact(async knex => {
@@ -23,7 +23,7 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   })
 }
 
-function onAlertMessageUpdateAfterIssueDataChanged(
+async function onAlertMessageUpdateAfterIssueDataChanged(
   { issueId },
   { messageContext }
 ) {
