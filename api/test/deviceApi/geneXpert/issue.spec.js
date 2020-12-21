@@ -22,7 +22,7 @@ const server = require('../../utils/testUtils')
 
 const { assert } = chai
 
-describe('Integration test for device status', () => {
+describe.only('Integration test for device status', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -49,7 +49,7 @@ describe('Integration test for device status', () => {
     assert.equal(issue.issueStatus, statusExternalId)
   }
 
-  describe('module disable issue', () => {
+  describe.only('module disable issue', () => {
     beforeEach(context.beforeRegisterAndSetDevice)
     afterEach(context.afterCleanUp)
     it('should create new issue for module disabled, then one for module replaced and change the status of the module disabled issue.', async () => {

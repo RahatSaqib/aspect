@@ -64,7 +64,7 @@ async function analyzeCategories(
     (!_.isNil(resultErrorCode) &&
       _.includes(errorCodes, parseInt(resultErrorCode, 10)))
   ) {
-    action.options.data.errorsIncluded = errorCodes
+    action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
       action,
@@ -135,7 +135,7 @@ async function analyzeErrors(
 ) {
   const { resultErrorCode } = action.options.data
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
-    action.options.data.errorsIncluded = errorCodes
+    action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
       action,

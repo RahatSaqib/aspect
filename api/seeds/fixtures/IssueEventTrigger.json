@@ -232,7 +232,7 @@
         "action": "DEVICE_MODULE_DISABLE_RECEIVED"
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {

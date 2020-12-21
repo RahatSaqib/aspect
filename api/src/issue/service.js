@@ -292,6 +292,8 @@ async function createNewIssue(knex, issueType, action) {
     issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
+
+  // console.log('-----Issue Creation', action, issue)
   // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId

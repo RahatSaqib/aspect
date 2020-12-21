@@ -48,7 +48,7 @@ const getDeviceBaseHtml = ({ customPart }) => `
           </tr>
           <tr>
               <td>
-                Error Code
+                Error Code/s
               </td>
               <td>
                 {{issue.errorCode}}
