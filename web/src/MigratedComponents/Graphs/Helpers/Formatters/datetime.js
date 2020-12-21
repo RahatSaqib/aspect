@@ -25,7 +25,7 @@ const negateTimeZoneOffset = dateString => {
 }
 
 const getISOFromString = date => {
-  const jsDate = new Date(date)
+  const jsDate = date ? new Date(date) : new Date()
   return format(jsDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
 }
 
