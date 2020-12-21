@@ -775,8 +775,8 @@ describe('Device routes', () => {
       let device
       let deviceId
       let deviceMaintenanceStatusId
-      let lastDeviceMaintenanceStatusLogId = null
-      beforeEach(async () => {
+      let deviceMaintenanceStatusLogId = null
+      before(async () => {
         editableDeviceMaintenanceStatusIds = await knex(
           'DeviceMaintenanceStatus'
         )
@@ -794,24 +794,25 @@ describe('Device routes', () => {
           .where('dtc.hasResults', true)
           .first('d.id', 'd.deviceMaintenanceStatusLogId')
         deviceId = device.id
-        ;[{ id: lastDeviceMaintenanceStatusLogId }] = [
-          await knex('DeviceMaintenanceStatusLog')
-            .orderBy('id', 'desc')
-            .first('id'),
-        ]
       })
       afterEach(async () => {
-        await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusLogId: device.deviceMaintenanceStatusLogId,
-        })
-        await knex('DeviceMaintenanceStatusLog')
-          .where('id', '>', lastDeviceMaintenanceStatusLogId)
-          .del()
+        if (deviceMaintenanceStatusLogId) {
+          // restore original device.deviceMaintenanceStatusLogId
+          await knex('Device').where({ id: deviceId }).update({
+            deviceMaintenanceStatusLogId: device.deviceMaintenanceStatusLogId,
+          })
+          // remove inserted entry in DeviceMaintenanceStatusLog
+          await knex('DeviceMaintenanceStatusLog')
+            .where('id', deviceMaintenanceStatusLogId)
+            .del()
+          // reset value
+          deviceMaintenanceStatusLogId = null
+        }
       })
 
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should save the maintenance status of the device', async () => {
-        const [deviceMaintenanceStatusLogId] = await knex(
+        ;[deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId,
@@ -866,7 +867,7 @@ describe('Device routes', () => {
       })
 
       it('should provide shallow access to write to data.options.data.notes', async () => {
-        const [deviceMaintenanceStatusLogId] = await knex(
+        ;[deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId,
