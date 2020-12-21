@@ -20,6 +20,17 @@ const filterByInstrumentSerial = (
     ])
   return queryBuilder
 }
+const filterByInstrumentAndModuleSerial = (
+  queryBuilder,
+  { instrumentSerial, moduleSerial },
+  aliases = { issue: 'i' }
+) => {
+  return filterByModuleSerial(
+    filterByInstrumentSerial(queryBuilder, { instrumentSerial }, aliases),
+    { moduleSerial },
+    aliases
+  )
+}
 const filterByLotAndAssay = (
   queryBuilder,
   { assayId, consumableLot },
@@ -37,4 +48,5 @@ module.exports = {
   filterByInstrumentSerial,
   filterByLotAndAssay,
   filterByModuleSerial,
+  filterByInstrumentAndModuleSerial,
 }

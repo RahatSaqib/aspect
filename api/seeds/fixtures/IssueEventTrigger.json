@@ -488,6 +488,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -502,6 +505,9 @@
             "errorCodes": [1002],
             "daysPeriod": 30,
             "minErrors": 3
+          },
+          "filterIssueCondition": {
+            "evaluationFunction": "filterByInstrumentAndModuleSerial"
           }
         }
       }
@@ -520,6 +526,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -536,6 +545,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -552,6 +564,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -568,6 +583,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -584,6 +602,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -600,6 +621,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -616,6 +640,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -631,6 +658,9 @@
             "daysPeriod": 30,
             "minErrors": 3
           }
+        },
+        "filterIssueCondition": {
+          "evaluationFunction": "filterByInstrumentAndModuleSerial"
         }
       }
     },
@@ -648,6 +678,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -664,6 +697,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -680,6 +716,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -696,6 +735,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -712,6 +754,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     },
     {
@@ -728,6 +773,9 @@
             "minErrors": 3
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentAndModuleSerial"
       }
     }
   ]

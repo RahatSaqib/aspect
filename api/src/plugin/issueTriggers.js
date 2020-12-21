@@ -63,7 +63,8 @@ async function analyzeCategories(
     (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
     (!_.isNil(resultErrorCode) &&
       _.includes(errorCodes, parseInt(resultErrorCode, 10)))
-  )
+  ) {
+    action.options.data.errorsIncluded = errorCodes
     return analyzeWithQuery(
       knex,
       action,
@@ -82,6 +83,7 @@ async function analyzeCategories(
           )
         )
     )
+  }
   return false
 }
 
@@ -133,6 +135,7 @@ async function analyzeErrors(
 ) {
   const { resultErrorCode } = action.options.data
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+    action.options.data.errorsIncluded = errorCodes
     return analyzeWithQuery(
       knex,
       action,

@@ -183,7 +183,7 @@ Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{issue.errorCode}}
+Error Code/s: {{issue.errorCode}}
 
 Occurrences: {{issue.occurrences}}
 
@@ -272,15 +272,6 @@ const errorIssueEmailHtmlModule = errorIssueEmailHtml.replace(
 const errorIssueEmailTextModule = errorIssueEmailText.replace(
   '<<REPLACE WITH MODULE OR REAGENT>>',
   'Module: {{result.moduleSerial}}'
-)
-
-const errorIssueEmailHtmlLot = errorIssueEmailHtml.replace(
-  '<<REPLACE WITH MODULE OR REAGENT>>',
-  '<tr><td>Reagent Lot</td><td>{{result.consumableLot}}</td></tr>'
-)
-const errorIssueEmailTextLot = errorIssueEmailText.replace(
-  '<<REPLACE WITH MODULE OR REAGENT>>',
-  'Reagent Lot: {{result.consumableLot}}'
 )
 
 // must correspond with 'Hardware*' items in IssueEventTrigger.json
@@ -984,8 +975,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: errorIssueSubject,
-        body: errorIssueEmailTextLot,
-        htmlBody: errorIssueEmailHtmlLot,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -1001,8 +992,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: errorIssueSubject,
-        body: errorIssueEmailTextLot,
-        htmlBody: errorIssueEmailHtmlLot,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
@@ -1018,8 +1009,8 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: errorIssueSubject,
-        body: errorIssueEmailTextLot,
-        htmlBody: errorIssueEmailHtmlLot,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
         ...auditFields,
       },
     },
