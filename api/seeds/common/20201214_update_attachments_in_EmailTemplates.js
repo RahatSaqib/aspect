@@ -24,6 +24,23 @@ async function seed(knex) {
     'AssaySpecificTerminationError1Lot',
     'AssaySpecificTerminationError2Module',
     'AssaySpecificTerminationError2Lot',
+
+    'HardwareTemperatureDriftedFromSetPoint',
+    'HardwareHeaterTemperatureDifferentialError',
+    'HardwareSyringeStallError',
+    'HardwareSyringePressureTooHigh',
+    'HardwareThermistorTemperatureOutOfRange2014',
+    'HardwareUltrasonicHornCurrentOutOfRange',
+    'HardwareUltrasonicHornTuningError',
+    'HardwareUltrasonicHornFailure',
+    'HardwareCartridgeIntegrityTestFailure',
+    'HardwareAssaySpecificTerminationError',
+    'HardwareAssaySpecificTerminationError2',
+    'HardwareModuleWasReset',
+    'HardwarePowerSupplyVoltageOutOfRange',
+    'HardwareHeaterATemperatureUnstable',
+    'HardwareHeaterBTemperatureUnstable',
+    'HardwareThermistorTemperatureOutOfRange4017',
   ]
   const emailTemplateIds = await knex('IssueType as it')
     .innerJoin('MessageType as mt', 'it.defaultMessageTypeId', 'mt.id')
