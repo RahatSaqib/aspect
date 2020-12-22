@@ -93,16 +93,6 @@ const useGraphClickThrough = () => {
           params.assayOverride = id
         }
 
-        if (key === 'resultCategory2Id') {
-          const categories = await flattenAssaysStructure(linkData)
-          const { id: resultCategoryId } = await assayResultCategoryIdFromKey(
-            categories,
-            id
-          )
-          params.resultCategory2Id = resultCategoryId
-          params.assayOverride = id
-        }
-
         if (key === 'assay') {
           const { id: assayId } = await assayIdFromKey(linkData, id)
           params.assayId = assayId
