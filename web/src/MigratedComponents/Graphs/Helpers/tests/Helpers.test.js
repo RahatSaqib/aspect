@@ -1,5 +1,6 @@
 import {
   calcPercentageSplitBar,
+  getISOFromString,
   generateToolTip,
   groupByKey,
   groupForPie,
@@ -359,6 +360,39 @@ describe('Graph Helpers', () => {
           type
         )
         expect(tooltip).toEqual(barDataForToolTipsNovOut3)
+      })
+    })
+  })
+
+  describe('Date formats', () => {
+    it('Should return a valid ISO date with offset', async () => {
+      const validDates = [
+        { inDate: '2019-09-19', expected: '2019-09-19T02:00:00.000+02:00' },
+        {
+          inDate: '2020-02-08 13:18',
+          expected: '2020-02-08T13:18:00.000+01:00',
+        },
+        {
+          inDate: new Date(2020, 10, 27, 5, 0),
+          expected: '2020-11-27T05:00:00.000+01:00',
+        },
+      ]
+      const invalidDates = [
+        {
+          inDate: null,
+        },
+        {
+          // eslint-disable-next-line no-void
+          inDate: void 0,
+        },
+      ]
+      validDates.map(({ inDate, expected }) => {
+        const outData = getISOFromString(inDate)
+        return expect(expected).toEqual(outData)
+      })
+      invalidDates.map(({ inDate }) => {
+        const expected = getISOFromString(inDate)
+        return expect(expected).toBeTruthy()
       })
     })
   })

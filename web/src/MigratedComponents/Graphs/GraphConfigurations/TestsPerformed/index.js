@@ -2,6 +2,12 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+import CONSTS from '../CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = CONSTS
+
 const testsPerFormedGraphs = {
   testsOverTime: {
     id: 'testsOverTime',
@@ -22,8 +28,8 @@ const testsPerFormedGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'assay'],
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -49,8 +55,8 @@ const testsPerFormedGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'assay'],
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',

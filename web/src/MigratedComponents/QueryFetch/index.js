@@ -1,33 +1,6 @@
-import isArray from 'lodash/isArray'
-import map from 'lodash/map'
-import keys from 'lodash/keys'
-import values from 'lodash/values'
-
 import { aspectFetch } from '../../shared/utils/fetch'
 import defaultErrors from './errors'
-
-const buildEndpointAndQueryString = (endpoint, params) => {
-  if (Object.keys(params).length !== 0 && params.constructor === Object) {
-    return `${endpoint}?${new URLSearchParams(params).toString()}`
-  }
-  if (isArray(params)) {
-    return `${endpoint}?${map(
-      params,
-      v => `${keys(v)[0]}=${values(v)[0]}`
-    ).join('&')}`
-  }
-  return endpoint
-}
-
-const buildBodyParams = (endpoint, params) => {
-  switch (endpoint) {
-    case '/result/confirmed-treatment-tracking':
-      return JSON.stringify({})
-
-    default:
-      return JSON.stringify(params)
-  }
-}
+import { buildBodyParams, buildEndpointAndQueryString } from './Helpers'
 
 const fetchWrapperForQueries = ({
   endpoint,
