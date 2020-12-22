@@ -18,11 +18,11 @@ const EMPTY_MAP = Immutable.Map()
 const messages = defineMessages({
   dateFrom: {
     id: 'filter.btnGroup.dateFrom',
-    defaultMessage: 'after {date}',
+    defaultMessage: 'until {date}',
   },
   dateTo: {
     id: 'filter.btnGroup.dateTo',
-    defaultMessage: 'before {date}',
+    defaultMessage: 'since {date}',
   },
   partnerId: {
     id: 'filter.btnGroup.partnerId',
