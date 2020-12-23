@@ -42,7 +42,6 @@ const { assert, expect } = chai
 
 describe('Device routes', () => {
   const path = '/api/device'
-  let deviceId
   let deviceMaintenanceStatuses
   let deviceApprovals
   let issuesToDelete = []
@@ -199,7 +198,6 @@ describe('Device routes', () => {
       assert.typeOf(res.body.data, 'array')
       assert.isAbove(res.body.data.length, 0)
       assertPropertiesOfListItem(res)
-      deviceId = res.body.data[0].id
     })
 
     it('should return only medical devices if hasResults=1', async () => {
@@ -656,10 +654,21 @@ describe('Device routes', () => {
   })
 
   describe('POST', () => {
+    shared.checkToken(server, path)
+
     describe('Device Maintenance - Calibration and Warranty', () => {
       let deviceMaintenanceIdsToRestore
       let deviceMaintenanceIdsToDelete = []
+      let deviceId
 
+      before(async () => {
+        const res = await server
+          .get(path)
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.status, 200)
+        deviceId = res.body.data[0].id
+      })
       beforeEach(async () => {
         const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
           .whereIn('externalId', ['calibration', 'warranty'])
