@@ -405,7 +405,7 @@ describe('Device routes', () => {
 
       it('should filter based on device maintenance status', async () => {
         const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        let filterOnDeviceMaintenanceStatus = ['active', 'inactiveConnectivity']
+        let filterOnDeviceMaintenanceStatus = ['inactiveConnectivity']
         let devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
@@ -438,7 +438,7 @@ describe('Device routes', () => {
           )
         })
 
-        filterOnDeviceMaintenanceStatus = ['active', 'inactiveDownForRepair']
+        filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
         devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
