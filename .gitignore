@@ -45,3 +45,6 @@ e2e/**/reports/
 
 # Excel temp files
 **/~$*.xlsx
+
+# Example storybooks
+web/src/stories/
