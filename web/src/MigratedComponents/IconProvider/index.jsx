@@ -35,7 +35,7 @@ const IconProvider = memo(({ icon, className }) => {
     <Suspense
       fallback={
         <IconShell>
-          <FaSquare className={cssClasses(['icons__proxy'])} />
+          <FaSquare className={cssClasses(['icons__proxy'])} title="FaSquare" />
         </IconShell>
       }
     >
@@ -43,7 +43,7 @@ const IconProvider = memo(({ icon, className }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent />
+          <IconComponent title={icon} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
