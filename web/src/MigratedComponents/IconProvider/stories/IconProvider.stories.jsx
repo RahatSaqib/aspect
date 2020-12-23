@@ -1,5 +1,5 @@
 import React from 'react'
-import IconProvider from './index'
+import IconProvider from '../index'
 
 export default {
   title: 'Providers/Components/IconProvider',
