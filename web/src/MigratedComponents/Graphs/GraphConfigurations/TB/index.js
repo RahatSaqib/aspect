@@ -2,11 +2,6 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
-import CONSTS from '../CONSTS'
-
-const {
-  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
-} = CONSTS
 const assays = ['GxMtbRif', 'GxMtbRifUltra']
 
 const tbGraphs = {
@@ -28,8 +23,8 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
-            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -57,8 +52,8 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
-            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -92,8 +87,8 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory2', 'resultCategory1'],
-            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -123,8 +118,8 @@ const tbGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory2', 'resultCategory1'],
-            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',

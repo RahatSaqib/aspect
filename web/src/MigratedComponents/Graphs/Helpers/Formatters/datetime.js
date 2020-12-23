@@ -29,11 +29,7 @@ const getISOFromString = date => {
   return format(jsDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
 }
 
-const getTimePeriod = (
-  cnt,
-  period,
-  dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
-) => {
+const getTimePeriod = (cnt, period, dateFormat) => {
   let timePeriod
   const dateNow = new Date()
   switch (true) {
