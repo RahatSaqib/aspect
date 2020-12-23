@@ -628,7 +628,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GX HCV',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaHcv,
-      ['Detected', 'Invalid', 'NoResult', 'Error'],
+      ['Detected', 'Invalid', 'NoResult', 'Error', 'NotDetected'],
       'HCV',
       'resultCategoryHcv',
       null,
