@@ -1174,11 +1174,14 @@ async function deviceMaintenanceStatusHistory(request) {
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+      queryBuilder
+        .on('d.deviceMaintenanceStatusLogId', 'dmsl.id')
+        .andOn('d.id', 'dmsl.deviceId')
+        .andOn(
+          knex.raw('dmsl.day BETWEEN ? AND ?', [days[0], days[days.length - 1]])
+        )
+    })
     .leftJoin(
       'DeviceMaintenanceStatus as dms',
       'dmsl.deviceMaintenanceStatusId',
