@@ -3,6 +3,12 @@ import PieGraph from '../../PieGraph'
 import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+import CONSTS from '../CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = CONSTS
+
 const assays = [
   'assayGenericCovid19',
   'assayGXCovid19',
@@ -31,8 +37,8 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'died',
             followUpType: 'outcome',
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -55,8 +61,8 @@ const covidGraphs = {
             groupBy: ['day'],
             followUp: 'recovered',
             followUpType: 'outcome',
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -86,8 +92,8 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender', 'age'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'inRange',
@@ -119,8 +125,8 @@ const covidGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['day', 'resultCategory1'],
-            minDate: getTimePeriod(15, 'days', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(15, 'days', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -153,8 +159,8 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -183,8 +189,8 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -221,8 +227,8 @@ const covidGraphs = {
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',

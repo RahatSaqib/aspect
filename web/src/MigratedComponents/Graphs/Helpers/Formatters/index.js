@@ -22,6 +22,7 @@ import times from 'lodash/times'
 import {
   dateRangeOptions,
   getDayFromToday,
+  getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
   lastMonthLabel,
@@ -493,6 +494,7 @@ export {
   generateToolTip,
   getAverageFromData,
   getDayFromToday,
+  getISOFromString,
   getGraphKeysFromResults,
   getMaxValueForDivergent,
   getPreviousPeriod,

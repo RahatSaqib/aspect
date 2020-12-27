@@ -13,7 +13,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
 // -----------------------------
-function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
+async function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     smsMessageReadyForSending,
   })
@@ -49,7 +49,10 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
 // -----------------------------
 // onSmsMessageReadyForSending - event handler for SMS_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
+async function onSmsMessageReadyForSending(
+  { smsMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({
     smsMessageSent,
   })
