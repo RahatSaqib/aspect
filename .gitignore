@@ -47,4 +47,4 @@ e2e/**/reports/
 **/~$*.xlsx
 
 # Example storybooks
-web/src/stories/
+web/src/example-stories/
