@@ -11,13 +11,9 @@ import filter from 'lodash/filter'
 
 import ASSAY_LIST from '../../../QueryFetch/Assay'
 import fetchWrapperForQueries from '../../../QueryFetch'
+import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 
-const CONSTS = {
-  treatmentStatusId: {
-    NotConfirmed: 1,
-    Confirmed: 2,
-  },
-}
+const { treatmentStatusId } = GRAPH_CONSTS
 
 const parseDate = (date, dateFormat) => {
   const parsedDate = parse(date, dateFormat, new Date())
@@ -101,11 +97,11 @@ const useGraphClickThrough = () => {
         if (key === 'treatmentStatusId') {
           switch (id) {
             case 'NotConfirmed':
-              params.treatmentStatusId = CONSTS.treatmentStatusId.NotConfirmed
+              params.treatmentStatusId = treatmentStatusId.NotConfirmed
               break
 
             case 'Confirmed':
-              params.treatmentStatusId = CONSTS.treatmentStatusId.Confirmed
+              params.treatmentStatusId = treatmentStatusId.Confirmed
               break
 
             default:

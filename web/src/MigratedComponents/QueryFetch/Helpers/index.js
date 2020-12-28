@@ -1,23 +1,20 @@
 import isArray from 'lodash/isArray'
 import map from 'lodash/map'
 import values from 'lodash/values'
-import forEach from 'lodash/forEach'
 
-import GRAPH_CONSTS from '../../Graphs/GraphConfigurations/CONSTS'
-import INVENTORY_CONSTS from '../../../inventory/adjustment/CONSTS'
+import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
 import { getISOFromString } from '../../Graphs/Helpers/Formatters/datetime'
 
-const dateStringMatches = [
-  ...values(GRAPH_CONSTS.DATE_RANGE_KEYS),
-  ...values(INVENTORY_CONSTS.DATE_KEYS),
-]
+const { DATE_RANGE_KEYS } = DATE_CONSTS
 
-const formatParam = (key, value) =>
-  dateStringMatches.includes(key) ? getISOFromString(value) : value
-
-const formatQueryParam = param => {
+const checkIfParamIsDate = param => {
+  const dateStringMatches = values(DATE_RANGE_KEYS)
   const [key, value] = Object.entries(param)[0]
-  return `${key}=${formatParam(key, value)}`
+  return `${key}=${
+    dateStringMatches.includes(key)
+      ? encodeURIComponent(getISOFromString(value))
+      : value
+  }`
 }
 
 const buildEndpointAndQueryString = (endpoint, params) => {
@@ -25,7 +22,7 @@ const buildEndpointAndQueryString = (endpoint, params) => {
     return `${endpoint}?${new URLSearchParams(params).toString()}`
   }
   if (isArray(params)) {
-    return `${endpoint}?${map(params, param => formatQueryParam(param)).join(
+    return `${endpoint}?${map(params, param => checkIfParamIsDate(param)).join(
       '&'
     )}`
   }
@@ -33,19 +30,13 @@ const buildEndpointAndQueryString = (endpoint, params) => {
 }
 
 const buildBodyParams = (endpoint, params) => {
-  let formattedParams = params
-
-  forEach(params, (value, key) => {
-    formattedParams = { ...formattedParams, [key]: formatParam(key, value) }
-  })
-
   switch (endpoint) {
     case '/result/confirmed-treatment-tracking':
       return JSON.stringify({})
 
     default:
-      return JSON.stringify(formattedParams)
+      return JSON.stringify(params)
   }
 }
 
-export { buildBodyParams, buildEndpointAndQueryString, formatQueryParam }
+export { buildBodyParams, buildEndpointAndQueryString, checkIfParamIsDate }

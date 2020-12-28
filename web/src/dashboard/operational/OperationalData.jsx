@@ -34,7 +34,7 @@ export const OperationalData = () => {
     push,
   } = useHistory()
 
-  const CONSTS = {
+  const tabsConfig = {
     dashboard: {
       path: '/operational-data',
       label: formatMessage(messages.operationalDashboardTitle),
@@ -45,8 +45,10 @@ export const OperationalData = () => {
     },
   }
 
-  const { path } = find(CONSTS, { path: pathname }) || false
-  const [currentTab, setCurrentTab] = useState(path || CONSTS.dashboard.path)
+  const { path } = find(tabsConfig, { path: pathname }) || false
+  const [currentTab, setCurrentTab] = useState(
+    path || tabsConfig.dashboard.path
+  )
 
   useEffect(() => {
     if (currentTab) {
@@ -66,25 +68,27 @@ export const OperationalData = () => {
           TabIndicatorProps={{ style: { height: '0px' } }}
         >
           <Tab
-            label={CONSTS.dashboard.label}
+            label={tabsConfig.dashboard.label}
             className={cssClasses(
               'tabs__tab',
-              currentTabStyle(currentTab, CONSTS.dashboard.path)
+              currentTabStyle(currentTab, tabsConfig.dashboard.path)
             )}
-            value={CONSTS.dashboard.path}
+            value={tabsConfig.dashboard.path}
           />
           <Tab
-            label={CONSTS.dailyStatus.label}
+            label={tabsConfig.dailyStatus.label}
             className={cssClasses(
               'tabs__tab',
-              currentTabStyle(currentTab, CONSTS.dailyStatus.path)
+              currentTabStyle(currentTab, tabsConfig.dailyStatus.path)
             )}
-            value={CONSTS.dailyStatus.path}
+            value={tabsConfig.dailyStatus.path}
           />
         </Tabs>
       </div>
-      {currentTab === CONSTS.dashboard.path ? <OperationalDashBoard /> : null}
-      {currentTab === CONSTS.dailyStatus.path ? (
+      {currentTab === tabsConfig.dashboard.path ? (
+        <OperationalDashBoard />
+      ) : null}
+      {currentTab === tabsConfig.dailyStatus.path ? (
         <OperationalDailyStatus />
       ) : null}
     </div>
