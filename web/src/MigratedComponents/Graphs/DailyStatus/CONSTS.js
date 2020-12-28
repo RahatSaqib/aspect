@@ -1,9 +1,9 @@
 const CONSTS = {
   weekend: 'weekend',
   blockSize: {
-    width: 19,
-    height: 15,
-    marginWidth: 4,
+    width: 20,
+    height: 18,
+    marginWidth: 5,
   },
   totalBlockSize: {
     width: 70,

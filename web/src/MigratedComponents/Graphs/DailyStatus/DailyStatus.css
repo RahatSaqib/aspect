@@ -6,13 +6,15 @@
 .clinic__container {
   display: flex;
   align-items: center;
+  margin: 2px 0;
+  justify-content: flex-start;
 }
 
 .clinic__name {
   min-width: 330px;
   text-align: right;
   padding: 0 10px 0;
-  font-size: 12px;
+  font-size: 14.4px;
 }
 
 .clinic__dayrow {
