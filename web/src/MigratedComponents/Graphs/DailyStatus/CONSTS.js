@@ -6,7 +6,7 @@ const CONSTS = {
     marginWidth: 4,
   },
   totalBlockSize: {
-    width: 55,
+    width: 70,
   },
 }
 
