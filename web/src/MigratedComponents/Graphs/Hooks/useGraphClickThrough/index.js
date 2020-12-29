@@ -4,6 +4,7 @@ import { useQuery } from 'react-query'
 
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
+import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import map from 'lodash/map'
 import uniqBy from 'lodash/uniqBy'
@@ -12,14 +13,19 @@ import filter from 'lodash/filter'
 import ASSAY_LIST from '../../../QueryFetch/Assay'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const { treatmentStatusId } = GRAPH_CONSTS
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
 
 const parseDate = (date, dateFormat) => {
+  const baseFormat = 'yyyy-MM-dd'
   const parsedDate = parse(date, dateFormat, new Date())
   return {
-    minDate: startOfMonth(parsedDate).toISOString(),
-    maxDate: endOfMonth(parsedDate).toISOString(),
+    [MIN_DATE]: format(startOfMonth(parsedDate), baseFormat),
+    [MAX_DATE]: format(endOfMonth(parsedDate), baseFormat),
   }
 }
 
@@ -75,8 +81,8 @@ const useGraphClickThrough = () => {
         if (key === 'indexBy' && indexBy.includes('month')) {
           const { [indexBy]: month } = data
           const { minDate, maxDate } = parseDate(month, formatDate)
-          params.minDate = minDate
-          params.maxDate = maxDate
+          params[MIN_DATE] = minDate
+          params[MAX_DATE] = maxDate
         }
 
         if (key === 'resultCategoryId') {

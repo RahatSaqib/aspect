@@ -5,6 +5,7 @@ import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
+import DATE_CONSTS from '../../globals/consts/DateTime/CONSTS'
 import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
@@ -19,18 +20,21 @@ const cssClasses = classnames.bind(require('./Widgets.css'))
 
 const buildDateRange = term => {
   let dateRange
+  const {
+    DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+  } = DATE_CONSTS
   switch (true) {
     case term === 'last30Days':
       dateRange = {
-        minDate: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
-        maxDate: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+        [MIN_DATE]: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
+        [MIN_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
       }
       break
 
     case term === 'currentMonth':
       dateRange = {
-        minDate: getAllDaysInCurrentMonth().start,
-        maxDate: getAllDaysInCurrentMonth(true).end,
+        [MIN_DATE]: getAllDaysInCurrentMonth().start,
+        [MAX_DATE]: getAllDaysInCurrentMonth(true).end,
       }
       break
 
@@ -60,6 +64,10 @@ const buildWidgetToLinkParams = (link, linkParams) => {
           break
       }
     }
+
+    // const huh = checkIfParamsIsDate(tempParams)
+    // console.log(new URLSearchParams(huh).toString())
+
     return `${link}?filters=${encodeURIComponent(
       new URLSearchParams(tempParams).toString()
     )}`
