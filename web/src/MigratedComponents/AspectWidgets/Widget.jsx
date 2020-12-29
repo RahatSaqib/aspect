@@ -12,7 +12,7 @@ import { buildMessagesFromI18nKeys } from './Helpers'
 import {
   getTimePeriod,
   getAllDaysInCurrentMonth,
-} from '../Graphs/Helpers/Formatters/datetime'
+} from '../../components/shared/DateTimeInput/utils/date'
 import WidgetAlert from './Alerts'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))

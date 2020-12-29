@@ -3,7 +3,7 @@ import map from 'lodash/map'
 import values from 'lodash/values'
 
 import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
-import { getISOFromString } from '../../Graphs/Helpers/Formatters/datetime'
+import { getISOFromString } from '../../../components/shared/DateTimeInput/utils/date'
 
 const { DATE_RANGE_KEYS } = DATE_CONSTS
 
