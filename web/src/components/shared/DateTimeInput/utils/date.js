@@ -11,10 +11,14 @@ import getHours from 'date-fns/getHours'
 import getMinutes from 'date-fns/getMinutes'
 import getMonth from 'date-fns/getMonth'
 import getYear from 'date-fns/getYear'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
 import isDate from 'lodash/isDate'
+import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
 import isValid from 'date-fns/isValid'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import map from 'lodash/map'
 import parseISO from 'date-fns/parseISO'
 import range from 'lodash/range'
 import setDate from 'date-fns/setDate'
@@ -29,6 +33,9 @@ import subMonths from 'date-fns/subMonths'
 import subtractYears from 'date-fns/subYears'
 import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
+import values from 'lodash/values'
+
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const now = new Date()
 export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)
@@ -198,7 +205,22 @@ const negateTimeZoneOffset = dateString => {
 }
 
 const getISOFromString = date => {
-  const jsDate = date ? new Date(date) : new Date()
+  let jsDate
+
+  switch (true) {
+    case isEmpty(date):
+      jsDate = new Date()
+      break
+
+    case !/[+-]\d\d:\d\d$/.test(date):
+      jsDate = new Date(`${date}T00:00:00`)
+      break
+
+    default:
+      jsDate = new Date(date)
+      break
+  }
+
   return format(jsDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
 }
 
@@ -312,7 +334,46 @@ const dateRangeOptions = key => {
   }
 }
 
+const checkIfParamsIsDate = (params, encode = true) => {
+  const { DATE_RANGE_KEYS } = DATE_CONSTS
+  const dateStringMatches = values(DATE_RANGE_KEYS)
+
+  if (isPlainObject(params)) {
+    const output = {}
+    map(
+      params,
+      (value, key) =>
+        (output[key] = dateStringMatches.includes(key)
+          ? encode
+            ? encodeURIComponent(getISOFromString(value))
+            : getISOFromString(value)
+          : value)
+    )
+    return output
+  }
+
+  if (isArray(params)) {
+    const output = []
+    map(params, param => {
+      const [key, value] = Object.entries(param)[0]
+      return output.push(
+        `${key}=${
+          dateStringMatches.includes(key)
+            ? encode
+              ? encodeURIComponent(getISOFromString(value))
+              : getISOFromString(value)
+            : value
+        }`
+      )
+    })
+    return output
+  }
+
+  return false
+}
+
 export {
+  checkIfParamsIsDate,
   dateRangeOptions,
   getAllDaysInCurrentMonth,
   getDayFromToday,
