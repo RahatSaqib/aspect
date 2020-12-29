@@ -2,6 +2,7 @@ import addDays from 'date-fns/addDays'
 import addMinutes from 'date-fns/addMinutes'
 import closestTo from 'date-fns/closestTo'
 import differenceInSeconds from 'date-fns/differenceInSeconds'
+import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import every from 'lodash/every'
 import format from 'date-fns/format'
@@ -26,6 +27,7 @@ import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'
 import setMonth from 'date-fns/setMonth'
 import setYear from 'date-fns/setYear'
+import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import subDays from 'date-fns/subDays'
 import subMinutes from 'date-fns/subMinutes'
@@ -204,7 +206,7 @@ const negateTimeZoneOffset = dateString => {
     : subMinutes(date, Math.abs(offset))
 }
 
-const getISOFromString = date => {
+const getISOFromString = (date, sod = true, eod = false) => {
   let jsDate
 
   switch (true) {
@@ -212,8 +214,12 @@ const getISOFromString = date => {
       jsDate = new Date()
       break
 
-    case !/[+-]\d\d:\d\d$/.test(date):
-      jsDate = new Date(`${date}T00:00:00`)
+    case !/[+-]\d\d:\d\d$/.test(date) && sod:
+      jsDate = startOfDay(new Date(date))
+      break
+
+    case !/[+-]\d\d:\d\d$/.test(date) && eod:
+      jsDate = endOfDay(new Date(date))
       break
 
     default:
@@ -335,8 +341,25 @@ const dateRangeOptions = key => {
 }
 
 const checkIfParamsIsDate = (params, encode = true) => {
-  const { DATE_RANGE_KEYS } = DATE_CONSTS
+  const {
+    DATE_RANGE_KEYS,
+    DATE_RANGE_START_OF_DAY_KEYS,
+    DATE_RANGE_END_OF_DAY_KEYS,
+  } = DATE_CONSTS
   const dateStringMatches = values(DATE_RANGE_KEYS)
+  const startKeys = DATE_RANGE_START_OF_DAY_KEYS
+  const endKeys = DATE_RANGE_END_OF_DAY_KEYS
+
+  const iSOHelper = (value, key) =>
+    encode
+      ? encodeURIComponent(
+          getISOFromString(
+            value,
+            startKeys.includes(key),
+            endKeys.includes(key)
+          )
+        )
+      : getISOFromString(value, startKeys.includes(key), endKeys.includes(key))
 
   if (isPlainObject(params)) {
     const output = {}
@@ -344,9 +367,7 @@ const checkIfParamsIsDate = (params, encode = true) => {
       params,
       (value, key) =>
         (output[key] = dateStringMatches.includes(key)
-          ? encode
-            ? encodeURIComponent(getISOFromString(value))
-            : getISOFromString(value)
+          ? iSOHelper(value, key)
           : value)
     )
     return output
@@ -358,11 +379,7 @@ const checkIfParamsIsDate = (params, encode = true) => {
       const [key, value] = Object.entries(param)[0]
       return output.push(
         `${key}=${
-          dateStringMatches.includes(key)
-            ? encode
-              ? encodeURIComponent(getISOFromString(value))
-              : getISOFromString(value)
-            : value
+          dateStringMatches.includes(key) ? iSOHelper(value, key) : value
         }`
       )
     })
@@ -372,9 +389,12 @@ const checkIfParamsIsDate = (params, encode = true) => {
   return false
 }
 
+const forceBaseFormatDate = date => format(parseISO(date), 'yyyy-MM-dd')
+
 export {
   checkIfParamsIsDate,
   dateRangeOptions,
+  forceBaseFormatDate,
   getAllDaysInCurrentMonth,
   getDayFromToday,
   getISOFromString,

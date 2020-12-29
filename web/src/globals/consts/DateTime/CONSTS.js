@@ -11,6 +11,8 @@ const CONSTS = {
     DATE_ADJUSTED_TO: 'dateAdjustedTo',
     EXPIRES_ON: 'expiresOn',
   },
+  DATE_RANGE_START_OF_DAY_KEYS: ['minDate', 'dateAdjustedFrom'],
+  DATE_RANGE_END_OF_DAY_KEYS: ['maxDate', 'dateAdjustedTo', 'expiresOn'],
 }
 
 export default CONSTS
