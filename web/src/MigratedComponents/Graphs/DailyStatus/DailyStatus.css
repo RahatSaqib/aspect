@@ -6,13 +6,15 @@
 .clinic__container {
   display: flex;
   align-items: center;
+  margin: 2px 0;
+  justify-content: flex-start;
 }
 
 .clinic__name {
   min-width: 330px;
   text-align: right;
   padding: 0 10px 0;
-  font-size: 12px;
+  font-size: 14.4px;
 }
 
 .clinic__dayrow {
@@ -94,35 +96,35 @@
 }
 
 .status__checkbox {
-    transform : scale(1.5);
-    margin: 0 10px 0;
+  transform: scale(1.5);
+  margin: 0 10px 0;
 }
 
 .status__checkbox--all {
-    color: var('--aspect-color-cyan') !important;
-    background-color: transparent;
+  color: var('--aspect-color-cyan') !important;
+  background-color: transparent;
 }
 .status__checkbox--active,
 .status__checkbox--reportedActive {
-    color: var('--aspect-device-active') !important;
+  color: var('--aspect-device-active') !important;
 }
 .status__checkbox--inactiveUnknown {
-color: black !important;
+  color: black !important;
 }
-.status__checkbox--inactiveNoResultsReported{
-    color: var('--aspect-device-inactiveNoResultsReported') !important;
+.status__checkbox--inactiveNoResultsReported {
+  color: var('--aspect-device-inactiveNoResultsReported') !important;
 }
-.status__checkbox--inactiveOutOfInventory{
-    color: var('--aspect-device-inactiveOutOfInventory') !important;
+.status__checkbox--inactiveOutOfInventory {
+  color: var('--aspect-device-inactiveOutOfInventory') !important;
 }
-.status__checkbox--inactiveDownForRepair{
-    color: var('--aspect-device-needs-repair') !important;
+.status__checkbox--inactiveDownForRepair {
+  color: var('--aspect-device-needs-repair') !important;
 }
-.status__checkbox--inactiveConnectivity{
-    color: var('--aspect-device-connectivity') !important;
+.status__checkbox--inactiveConnectivity {
+  color: var('--aspect-device-connectivity') !important;
 }
 .status__checkbox--inactiveDecommissioned {
-    color: var('--aspect-device-inactiveDecommissioned') !important;
+  color: var('--aspect-device-inactiveDecommissioned') !important;
 }
 
 .clinic__day--future {
@@ -134,7 +136,7 @@ color: black !important;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 25px;
+  padding: 0 15px;
   background: #333333;
   color: white;
   font-size: 11px;
