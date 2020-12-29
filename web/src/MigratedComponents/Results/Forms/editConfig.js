@@ -6,21 +6,6 @@ export default {
     helpers: '',
     items: [
       {
-        id: 'edit',
-        text: 'Edit Result',
-        action: 'enableEdit',
-      },
-      {
-        id: 'cancel',
-        text: 'Cancel Edit',
-        action: 'cancelEdit',
-      },
-      {
-        id: 'save',
-        text: 'Save Result',
-        action: 'saveEdit',
-      },
-      {
         id: 'transfer',
         text: 'Transfer Result',
         action: 'transferResult',
