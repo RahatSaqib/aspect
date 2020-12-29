@@ -934,7 +934,7 @@ const instrumentsReplaced = {
   sqlForIndicator: `
   SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
   FROM (
-    SELECT GREATEST(TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn), 0) AS days
+    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
     FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as instrumentSerial, i.deviceId, r.endedOn
           FROM Issue AS i
           INNER JOIN Result AS r on i.resultId = r.id
@@ -949,13 +949,13 @@ const instrumentsReplaced = {
           AND dt.externalId = 'CepheidGeneXpert'
         )
         AS issueData
-    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial
+    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial AND r.endedOn <= issueData.endedOn
     GROUP by r.deviceId, r.instrumentSerial
   ) as innerQuery`,
   sqlForStatUnit: `
   SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
   FROM (
-    SELECT GREATEST(TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn), 0) AS days
+    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
     FROM (SELECT i.data ->> '$.replacedInstrumentSerial' as instrumentSerial, i.deviceId, r.endedOn
           FROM Issue AS i
           INNER JOIN Result AS r on i.resultId = r.id
@@ -970,7 +970,7 @@ const instrumentsReplaced = {
           AND dt.externalId = 'CepheidGeneXpert'
         )
         AS issueData
-    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial
+    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.instrumentSerial = r.instrumentSerial AND r.endedOn <= issueData.endedOn
     GROUP by r.deviceId, r.instrumentSerial
   ) as innerQuery`,
   statUnit: '{unit} last month',
@@ -1204,7 +1204,7 @@ const averageDaysModuleSwap = {
   subTitleI18nKey: null,
   sqlForIndicator: `SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
   FROM (
-    SELECT GREATEST(TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn), 0) AS days
+    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
     FROM (SELECT i.data ->> '$.replacedModuleSerial' as moduleSerial, i.data ->> '$.moduleName' as moduleName, i.deviceId, r.endedOn
           FROM Issue AS i
           INNER JOIN Result AS r on i.resultId = r.id
@@ -1217,12 +1217,12 @@ const averageDaysModuleSwap = {
           AND MONTH(r.endedOn) = MONTH(NOW())
         )
         AS issueData
-    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.moduleName = r.moduleName AND issueData.moduleSerial = r.moduleSerial
+    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.moduleName = r.moduleName AND issueData.moduleSerial = r.moduleSerial AND r.endedOn <= issueData.endedOn
     GROUP by r.deviceId, r.moduleName, r.moduleSerial
   ) as innerQuery`,
   sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(days)), '-') AS cnt
   FROM (
-    SELECT GREATEST(TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn), 0) AS days
+    SELECT TIMESTAMPDIFF(DAY, max(r.endedOn), issueData.endedOn) AS days
     FROM (SELECT i.data ->> '$.replacedModuleSerial' as moduleSerial, i.data ->> '$.moduleName' as moduleName, i.deviceId, r.endedOn
           FROM Issue AS i
           INNER JOIN Result AS r on i.resultId = r.id
@@ -1235,7 +1235,7 @@ const averageDaysModuleSwap = {
           AND MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
         )
         AS issueData
-    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.moduleName = r.moduleName AND issueData.moduleSerial = r.moduleSerial
+    INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.moduleName = r.moduleName AND issueData.moduleSerial = r.moduleSerial AND r.endedOn <= issueData.endedOn
     GROUP by r.deviceId, r.moduleName, r.moduleSerial
   ) as innerQuery`,
   statUnit: '{unit} last month',
