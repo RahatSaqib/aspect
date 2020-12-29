@@ -64,10 +64,6 @@ const buildWidgetToLinkParams = (link, linkParams) => {
           break
       }
     }
-
-    // const huh = checkIfParamsIsDate(tempParams)
-    // console.log(new URLSearchParams(huh).toString())
-
     return `${link}?filters=${encodeURIComponent(
       new URLSearchParams(tempParams).toString()
     )}`
