@@ -27,7 +27,7 @@ const buildDateRange = term => {
     case term === 'last30Days':
       dateRange = {
         [MIN_DATE]: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
-        [MIN_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+        [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
       }
       break
 
