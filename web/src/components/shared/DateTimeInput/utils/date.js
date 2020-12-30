@@ -15,6 +15,7 @@ import getYear from 'date-fns/getYear'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isDate from 'lodash/isDate'
+import isObject from 'lodash/isObject'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
 import isValid from 'date-fns/isValid'
@@ -207,27 +208,25 @@ const negateTimeZoneOffset = dateString => {
 }
 
 const getISOFromString = (date, sod = true, eod = false) => {
-  let jsDate
+  const iSOFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+  const checkForTimeStampRegex = RegExp('[T|:|s]')
 
   switch (true) {
+    case isObject(date):
+      return format(date, iSOFormat)
+
     case isEmpty(date):
-      jsDate = new Date()
-      break
+      return format(new Date(), iSOFormat)
 
-    case !/[+-]\d\d:\d\d$/.test(date) && sod:
-      jsDate = startOfDay(new Date(date))
-      break
+    case !checkForTimeStampRegex.test(date) && sod:
+      return format(startOfDay(parseISO(date)), iSOFormat)
 
-    case !/[+-]\d\d:\d\d$/.test(date) && eod:
-      jsDate = endOfDay(new Date(date))
-      break
+    case !checkForTimeStampRegex.test(date) && eod:
+      return format(endOfDay(parseISO(date)), iSOFormat)
 
     default:
-      jsDate = new Date(date)
-      break
+      return format(new Date(date), iSOFormat)
   }
-
-  return format(jsDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
 }
 
 const getTimePeriod = (cnt, period, dateFormat) => {
