@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React, {
   useState,
   useEffect,
+  useMemo,
   useRef,
   useCallback,
   createRef,
@@ -12,6 +13,7 @@ import map from 'lodash/map'
 import isFunction from 'lodash/isFunction'
 import noop from 'lodash/noop'
 import filter from 'lodash/filter'
+import isNil from 'lodash/isNil'
 import Downshift from 'downshift'
 
 import FormControl from '@material-ui/core/FormControl'
@@ -545,7 +547,7 @@ const DateTimeInput = props => {
     onChange,
     onBlur,
     intl,
-    value,
+    value: valueRaw,
     defaultValue,
     dateFormat,
     timeFormat,
@@ -560,6 +562,17 @@ const DateTimeInput = props => {
     maxDate: max,
     ...restPropsToTextFields
   } = props
+
+  /**
+   * make sure that passed-in 'props.value' is a valid Date, i.e. parse it from string, if any.
+   * In case when 'props.value' is not 'undefined' nor 'null' AND is not a valid Date - then
+   * we reset it and use 'const value = undefined', i.e. getDateObject returns 'undefined'
+   */
+  const value = useMemo(
+    () => (isNil(valueRaw) ? valueRaw : getDateObject(valueRaw)),
+    [valueRaw]
+  )
+
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
   const FieldProps = originFieldProps || getDefaultFieldsProps(intl)
