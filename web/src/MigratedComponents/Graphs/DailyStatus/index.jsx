@@ -9,8 +9,8 @@ import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
 import DateRanges from './DateRanges'
 import messages from './messages'
-import CONSTS from './CONSTS'
-import DATE_CONSTS from '../GraphConfigurations/CONSTS'
+import GRAPH_CONSTS from '../../../globals/consts/Graphs/CONSTS'
+import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
 
 import {
   getPreviousPeriod,
@@ -146,7 +146,7 @@ const DailyStatus = () => {
             statusses={visibleStatuses}
             action={toggleStatusVisibility}
           />
-          <DateRanges data={dateRanges} consts={CONSTS} />
+          <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
           {devicesDaily.map(
             ({ name, maintenanceStatusHistory, totalResults }) => (
               <DailyStatusClinic
@@ -154,7 +154,7 @@ const DailyStatus = () => {
                 data={maintenanceStatusHistory}
                 total={totalResults}
                 statusses={visibleStatuses}
-                consts={CONSTS}
+                consts={GRAPH_CONSTS}
                 totalDays={totalDays}
               />
             )
