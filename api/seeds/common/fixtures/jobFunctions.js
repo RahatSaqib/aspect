@@ -1,5 +1,11 @@
 const admin = {
   name: 'Admin',
+  reports: [
+    'MTB_Detected_RR_Detected',
+    'Critical_Errors_By_Device',
+    'RIF_Resistance_Rate',
+    'Results_HIV_Not_Suppressed'
+  ],
   permissions: [
     {
       module: 'assay',
@@ -86,6 +92,12 @@ const admin = {
 
 const regionalOfficer = {
   name: 'Regional Officer',
+  reports: [
+    'MTB_Detected_RR_Detected',
+    'Critical_Errors_By_Device',
+    'RIF_Resistance_Rate',
+    'Results_HIV_Not_Suppressed'
+  ],
   permissions: [
     {
       module: 'assay',
@@ -160,6 +172,12 @@ const regionalOfficer = {
 
 const labUser = {
   name: 'Lab User',
+  reports: [
+    'MTB_Detected_RR_Detected',
+    'Critical_Errors_By_Device',
+    'RIF_Resistance_Rate',
+    'Results_HIV_Not_Suppressed'
+  ],
   permissions: [
     {
       module: 'assay',
@@ -234,6 +252,12 @@ const labUser = {
 
 const clinician = {
   name: 'Clinician',
+  reports: [
+    'MTB_Detected_RR_Detected',
+    'Critical_Errors_By_Device',
+    'RIF_Resistance_Rate',
+    'Results_HIV_Not_Suppressed'
+  ],
   permissions: [
     {
       module: 'assay',
@@ -306,10 +330,86 @@ const clinician = {
   ],
 }
 
+const deviceMaker = {
+  name: 'Device Maker',
+  reports: [
+    'Critical_Errors_By_Device',
+  ],
+  permissions: [
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    }
+  ],
+}
+
+const ntp = {
+  name: 'NTP',
+  reports: [
+    'Critical_Errors_By_Device',
+  ],
+  permissions: [
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    }
+  ],
+}
+
+const technician = {
+  name: 'Technician',
+  reports: [
+    'Critical_Errors_By_Device',
+  ],
+  permissions: [
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    }
+  ],
+}
+
+const donor = {
+  name: 'Donor',
+  reports: [
+    'Critical_Errors_By_Device',
+  ],
+  permissions: [
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    }
+  ],
+}
+
 module.exports = {
   admin,
   regionalOfficer,
   labUser,
   clinician,
-  fixture: [admin, regionalOfficer, labUser, clinician],
+  deviceMaker,
+  ntp,
+  technician,
+  donor,
+  fixture: [admin, regionalOfficer, labUser, clinician, deviceMaker, ntp, techinician, donor],
 }

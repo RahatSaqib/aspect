@@ -2565,67 +2565,6 @@ async function updateReportableInResultCategoryAssay(knex) {
   }
 }
 
-async function addReports(knex, countryReports = []) {
-  const countries = await knex('Country').select('id')
-
-  // globally defined reports applicable to all countries/seeds
-  const { getBaseReports } = require('./relatedObjects/reports')
-  const baseReports = (await getBaseReports()) || []
-
-  // add reports for each country
-  await Promise.each(countries, async ({ id: countryId }) => {
-    let geographyId
-    const geography = await knex('Geography')
-      .where({ countryId })
-      .whereNull('stateId')
-      .whereNull('lgaId')
-      .first('id')
-    if (geography) {
-      geographyId = geography.id
-    } else {
-      ;[geographyId] = await knex('Geography').insert({ countryId })
-    }
-
-    // merge global and country-specific reports
-    const reports = [...baseReports, ...countryReports]
-
-    const existingReports = await knex('Report')
-      .where({ geographyId })
-      .select('externalId')
-      .pluck('externalId')
-    await Promise.each(
-      reports,
-      async (
-        { name, description, i18nKey, externalId, sheets, fileName },
-        reportIndex
-      ) => {
-        if (!_.includes(existingReports, externalId)) {
-          const [reportId] = await knex('Report').insert({
-            name,
-            description,
-            i18nKey,
-            externalId,
-            geographyId,
-            sortOrder: reportIndex + 1,
-            fileName,
-          })
-
-          await Promise.each(sheets, async (sheet, sheetIndex) => {
-            const { moduleName, functionName, query } = sheet
-            await knex('ReportSheet').insert({
-              moduleName,
-              functionName,
-              query: query && JSON.stringify(query),
-              reportId,
-              sortOrder: sheetIndex + 1,
-            })
-          })
-        }
-      }
-    )
-  })
-}
-
 const resultTimeFrameInDays = 60
 const now = new Date()
 

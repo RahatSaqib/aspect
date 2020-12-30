@@ -259,9 +259,12 @@ async function upsertJobFunction(
   jobFunctionName,
   partnerId,
   permissions,
+  reports,
   removeMissingPermissions = false
 ) {
   if (!permissions) permissions = []
+  if (!reports) reports = []
+
   let { id: jobFunctionId } =
     (await knex('JobFunction')
       .where({
@@ -276,6 +279,11 @@ async function upsertJobFunction(
       partnerId,
     })
   }
+  await upsertJobFunctionReport(
+    knex,
+    jobFunctionId,
+    reports
+  )
   await upsertJobFunctionPermission(
     knex,
     jobFunctionId,
@@ -391,6 +399,32 @@ async function copyDashboardWidgetsFromJobFunction(
   )
 
   await knex('JobFunctionDashboardWidget').insert(permissions)
+}
+
+async function upsertJobFunctionReport(
+  knex,
+  jobFunctionId,
+  jobReports
+) {
+  const existingJobFunctionReports = await knex('JobFunctionReport')
+    .where({ jobFunctionId })
+    .pluck('reportId')
+
+  await knex('JobFunctionReport')
+    .where({ jobFunctionId })
+    .whereNotIn('reportId', jobReports)
+    .delete()
+
+  const JobFunctionReport = _.map(
+    jobReports.filter(
+      reportId => !existingJobFunctionReports.includes(reportId)
+    ),
+    reportId => ({
+      jobFunctionId,
+      reportId,
+    })
+  )
+  await knex('JobFunctionReport').insert(JobFunctionReport)
 }
 
 async function upsertJobFunctionPermission(
