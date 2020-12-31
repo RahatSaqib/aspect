@@ -2,12 +2,12 @@ import BarGraph from '../../BarGraph'
 import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
 import AspectDropdown from '../../../AspectDropdown'
 
-import CONSTS from '../CONSTS'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const {
   DATE_RANGE_OPTIONS,
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
-} = CONSTS
+} = DATE_CONSTS
 
 const deviceStatusGraphs = {
   deviceStatus: {
