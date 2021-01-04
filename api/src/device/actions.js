@@ -295,7 +295,12 @@ function logDeviceMaintenanceStatus(today = null) {
  * @param options - parameters for the hardware error
  */
 function deviceHardwareError(device, resultErrorCode, options) {
-  if (!device || !resultErrorCode || !options) {
+  if (
+    !device ||
+    !resultErrorCode ||
+    !options ||
+    !errorActions[resultErrorCode]
+  ) {
     throw new Error(
       'Must specify device, resultErrorCode and options for deviceHardwareError'
     )
