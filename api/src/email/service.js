@@ -83,7 +83,8 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   const d = await knex('EmailMessage')
     .where('id', emailMessageId)
     .first('subject', 'body', 'htmlBody', 'to', 'attachments')
-  const { subject, htmlBody, body, to, attachments = '[]' } = d || {}
+  const { subject, htmlBody, body, to } = d || {}
+  const attachments = JSON.parse(d.attachments || '[]')
 
   // email handler
   const { sendEmail } = require('./emailUtil')
