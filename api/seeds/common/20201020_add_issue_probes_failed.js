@@ -12,7 +12,7 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.userId')
 
-  const issueTypeModule = await seedIssueType(knex, 'ProbeCheckFailed', {
+  const issueType = await seedIssueType(knex, 'ProbeCheckFailed', {
     userName: 'admin',
   })
 
@@ -27,7 +27,7 @@ async function seed(knex) {
   }
 
   const issueTypeProbeCheckFailed = await knex('IssueType')
-    .where({ id: issueTypeModule })
+    .where({ id: issueType })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({

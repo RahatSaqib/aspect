@@ -48,7 +48,7 @@ const getDeviceBaseHtml = ({ customPart }) => `
           </tr>
           <tr>
               <td>
-                Error Code/s
+                Error Code(s)
               </td>
               <td>
                 {{issue.errorCode}}
@@ -183,7 +183,7 @@ Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code/s: {{issue.errorCode}}
+Error Code(s): {{issue.errorCode}}
 
 Occurrences: {{issue.occurrences}}
 
