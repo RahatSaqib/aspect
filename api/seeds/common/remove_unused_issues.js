@@ -31,17 +31,17 @@ module.exports = async function cleanIssueTypes(
         .select('id as issueId', 'resultId', 'deviceId')
       const filteredResults = _.reduce(
         issuesToDelete,
-        (result, value, key) => {
-          if (value.resultId) result[key] = value.resultId
-          return result
+        (issues, value, key) => {
+          if (value.resultId) issues[key] = value.resultId
+          return issues
         },
         []
       )
       const filteredDevices = _.reduce(
         issuesToDelete,
-        (result, value, key) => {
-          if (value.deviceId) result[key] = value.deviceId
-          return result
+        (devices, value, key) => {
+          if (value.deviceId) devices[key] = value.deviceId
+          return devices
         },
         []
       )
