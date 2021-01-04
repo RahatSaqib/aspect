@@ -320,23 +320,30 @@ async function seed(knex) {
   const jobFunctionIdClinician = await upsertJobFunction(
     knex,
     'Clinician',
-    partnerId
+    partnerId,
+    [
+      modules.demo.edit,
+      modules.patient.edit,
+      modules.case.edit,
+      modules.site.edit,
+      modules.result.edit,
+      modules.dashboard.summary,
+      modules.dashboard.result,
+      modules.account.edit,
+      modules.assay.edit,
+      modules.device.view,
+      modules.browse.view,
+      modules.person.view
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.demo.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.assay.edit,
-    modules.device.view,
-    modules.browse.view,
-    modules.person.view,
-  ])
 
   // Create User
   const [userIdFirstClinic] = await knex('User').insert({

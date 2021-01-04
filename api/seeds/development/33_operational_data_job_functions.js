@@ -46,6 +46,14 @@ async function seed(knex) {
   if (adminId && partner) {
     await upsertJobFunction(knex, 'Admin', partner.id, [
       modules.operationalData.edit,
-    ])
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    })
   }
 }

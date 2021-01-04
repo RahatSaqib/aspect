@@ -11,10 +11,14 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 async function getReports(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  console.log(auth.credentials)
+  console.log(dataConstraints)
 
   const reportsQuery = knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('JobFunction as jf', 'jf.id', 'jfr.jobFunctionId')
+    .innerJoin('Job as j', 'jf.id', 'j.jobFunctionId')
+    .where('j.personId', dataConstraints.person.id)
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
 
@@ -30,10 +34,14 @@ async function getReports(request) {
 
 async function getReportDetails(auth, externalId) {
   const dataConstraints = await getConstraints(auth.credentials)
+
   const report = await knex('Report as r')
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('r.externalId', externalId)
+    .andWhere('j.personId', dataConstraints.person.id)
     .select(
       'r.description',
       'r.externalId',

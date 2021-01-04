@@ -31,7 +31,7 @@ const {
   allResultSourceToId,
   resultCategoryToId,
   unitToId,
-  partnerTypeToId,
+  partnerTypeToId
 } = require('../src/shared/dictionary')
 
 /**
@@ -258,12 +258,12 @@ async function upsertJobFunction(
   knex,
   jobFunctionName,
   partnerId,
-  permissions,
-  reports,
-  removeMissingPermissions = false
+  permissions = [],
+  options = {
+    removeMissingPermissions: false
+  }
 ) {
-  if (!permissions) permissions = []
-  if (!reports) reports = []
+  const { reports = [], removeMissingPermissions } = options
 
   let { id: jobFunctionId } =
     (await knex('JobFunction')
@@ -404,19 +404,21 @@ async function copyDashboardWidgetsFromJobFunction(
 async function upsertJobFunctionReport(
   knex,
   jobFunctionId,
-  jobReports
+  reports
 ) {
+  const reportsIds = await knex('Report').whereIn('externalId', reports).pluck('id')
+
   const existingJobFunctionReports = await knex('JobFunctionReport')
     .where({ jobFunctionId })
     .pluck('reportId')
 
   await knex('JobFunctionReport')
     .where({ jobFunctionId })
-    .whereNotIn('reportId', jobReports)
+    .whereNotIn('reportId', reportsIds)
     .delete()
 
   const JobFunctionReport = _.map(
-    jobReports.filter(
+    reportsIds.filter(
       reportId => !existingJobFunctionReports.includes(reportId)
     ),
     reportId => ({
@@ -1719,7 +1721,8 @@ async function baseGxAlertMigration(
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
   await Promise.each(jobFunctionFixture, async jf => {
-    const jobFunction = _.omit(jf, ['permissions'])
+    const jobFunction = _.omit(jf, ['permissions', 'reports'])
+
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
@@ -1743,7 +1746,10 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
       jobFunction.name,
       partnerId,
       permissionIds,
-      true
+      {
+        reports: jf.reports,
+        removeMissingPermissions: true
+      }
     )
   })
 }

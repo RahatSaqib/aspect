@@ -142,34 +142,7 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
-
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId
-  )
-
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId
-  )
-
-  const jobFunctionIds = {
-    jobFunctionIdAdmin,
-    jobFunctionIdLabUser,
-    jobFunctionIdRegionalOfficer,
-  }
-  const baseProps = {
-    partnerId,
-    pluginName,
-    jobFunctionIds,
-    auditFields,
-    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
-  }
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    // Admin Permissions
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
     modules.demo.edit,
     modules.device.edit,
     modules.deviceApiKey.edit,
@@ -184,38 +157,81 @@ async function seed(knex) {
     modules.dashboard.summary,
     modules.dashboard.target,
     modules.dashboard.report,
-    modules.dashboard.siteFilter,
-  ])
+    modules.dashboard.siteFilter
+  ],
+  {
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
+  })
 
-  // Regional Officer Permissions
-  await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.device.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
-    modules.dashboard.summary,
-    modules.dashboard.target,
-    modules.dashboard.report,
-    modules.dashboard.site,
-    modules.dashboard.actionInventoryLevelUpdate,
-  ])
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
+    knex,
+    'Regional Officer',
+    partnerId,
+    [
+      modules.device.edit,
+      modules.result.edit,
+      modules.site.edit,
+      modules.issue.edit,
+      modules.inventory.edit,
+      modules.task.edit,
+      modules.dashboard.summary,
+      modules.dashboard.target,
+      modules.dashboard.report,
+      modules.dashboard.site,
+      modules.dashboard.actionInventoryLevelUpdate,],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
+  )
 
-  // Lab User Permissions
-  await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.device.edit,
+  const jobFunctionIdLabUser = await upsertJobFunction(
+    knex,
+    'Lab User',
+    partnerId,
+    [ 
+      modules.device.edit,
+      modules.result.edit,
+      modules.site.edit,
+      modules.issue.edit,
+      modules.inventory.edit,
+      modules.task.edit,
+      modules.dashboard.summary,
+      modules.dashboard.actionInventoryLevelUpdate,
+      modules.dashboard.report,
+      modules.dashboard.siteFilter,],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
+  )
 
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
-    modules.dashboard.summary,
-    modules.dashboard.actionInventoryLevelUpdate,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-  ])
+  const jobFunctionIds = {
+    jobFunctionIdAdmin,
+    jobFunctionIdLabUser,
+    jobFunctionIdRegionalOfficer,
+  }
+  const baseProps = {
+    partnerId,
+    pluginName,
+    jobFunctionIds,
+    auditFields,
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
+  }
+
 
   // Admin Job
   const [jobIdAdmin] = await knex('Job').insert({

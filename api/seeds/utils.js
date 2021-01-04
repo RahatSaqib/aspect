@@ -10,6 +10,7 @@ const {
   allAssayTypeToId,
   allResultCategoryToId,
   issueTypeToId,
+  allJobFunctionToId,
 } = require('../src/shared/dictionary')
 const config = require('../src/config')
 
@@ -2837,30 +2838,13 @@ async function seedJobFunctionsAndUsersForOperationalData(
       }
     )
   )
-  // -------------------------------------------
-  // Job Functions
-  const { upsertJobFunction } = require('./common')
-  const jobFunctionIdDeviceMaker = await upsertJobFunction(
-    knex,
-    'Device Maker',
-    partnerId,
-    [modules.account.edit, modules.operationalData.view]
-  )
-  const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
-    modules.account.edit,
-    modules.operationalData.view,
-  ])
-  const jobFunctionIdTechnician = await upsertJobFunction(
-    knex,
-    'Technician',
-    partnerId,
-    [modules.account.edit, modules.operationalData.view]
-  )
-  const jobFunctionIdDonor = await upsertJobFunction(knex, 'Donor', partnerId, [
-    modules.account.edit,
-    modules.site.view,
-    modules.operationalData.view,
-  ])
+  
+  const jobFunctionsById = await allJobFunctionToId()
+  const jobFunctionIdDeviceMaker = jobFunctionsById['deviceMaker']
+  const jobFunctionIdNtp = jobFunctionsById['ntp']
+  const jobFunctionIdTechnician = jobFunctionsById['technician']
+  const jobFunctionIdDonor = jobFunctionsById['donor']
+  
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -3238,8 +3222,6 @@ async function updateIssueNotificationTemplates(
 }
 
 module.exports = {
-  addReports,
-
   seed,
   seedTable,
   getSeedsRan,

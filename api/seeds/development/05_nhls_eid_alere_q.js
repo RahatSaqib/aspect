@@ -228,14 +228,21 @@ async function seed(knex) {
     timezone,
     ...auditFields,
   })
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
-  ])
-
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
+    modules.browse.view,
+    modules.result.edit,
+    modules.device.edit,
+    modules.site.edit
+  ],
+  {
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
+  })
+  
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
@@ -247,40 +254,42 @@ async function seed(knex) {
   const jobFunctionIdRegionalOfficer = await upsertJobFunction(
     knex,
     'Regional Officer',
-    partnerId
+    partnerId,
+    [
+      modules.browse.view,
+      modules.result.edit,
+      modules.device.view,
+      modules.site.view
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
-
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.device.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.site.view,
-    },
-  ])
 
   const jobFunctionIdLabUser = await upsertJobFunction(
     knex,
     'Lab User',
-    partnerId
+    partnerId,
+    [
+      modules.browse.view,
+      modules.result.edit,
+      modules.device.view,
+      modules.site.view
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
-
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
-  ])
 
   // create site for lab user
   await Promise.all(

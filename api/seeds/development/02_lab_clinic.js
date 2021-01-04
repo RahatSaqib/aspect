@@ -266,56 +266,51 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
+  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
+    modules.demo.edit,
+    modules.deviceApiKey.edit,
+    modules.device.edit,
+    modules.person.edit,
+    modules.result.edit,
+    modules.site.edit,
+    modules.assay.edit,
+    modules.inventory.edit,
+    modules.notification.edit,
+    modules.issue.edit,
+    modules.task.edit,
+    modules.taskMenu.view,
+    modules.report.edit,
+    modules.browse.view
+  ],
+  {
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
+  })
 
   const jobFunctionIdLabAdmin = await upsertJobFunction(
     knex,
     'Lab Admin',
-    partnerId
+    partnerId,
+    [
+      modules.device.edit,
+      modules.result.edit,
+      modules.site.edit,
+      modules.assay.edit,
+      modules.browse.view
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
-
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.device.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.result.edit,
-    },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.assay.edit },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.browse.view },
-  ])
-
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.edit },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.edit,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.edit },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.notification.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.issue.edit,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.taskMenu.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-  ])
 
   // add widgets
   const widgets = await knex('DashboardWidget').select('id', 'title')

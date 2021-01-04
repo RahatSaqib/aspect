@@ -1,10 +1,10 @@
 const admin = {
   name: 'Admin',
   reports: [
-    'MTB_Detected_RR_Detected',
-    'Critical_Errors_By_Device',
-    'RIF_Resistance_Rate',
-    'Results_HIV_Not_Suppressed'
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed'
   ],
   permissions: [
     {
@@ -93,10 +93,10 @@ const admin = {
 const regionalOfficer = {
   name: 'Regional Officer',
   reports: [
-    'MTB_Detected_RR_Detected',
-    'Critical_Errors_By_Device',
-    'RIF_Resistance_Rate',
-    'Results_HIV_Not_Suppressed'
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed'
   ],
   permissions: [
     {
@@ -173,10 +173,10 @@ const regionalOfficer = {
 const labUser = {
   name: 'Lab User',
   reports: [
-    'MTB_Detected_RR_Detected',
-    'Critical_Errors_By_Device',
-    'RIF_Resistance_Rate',
-    'Results_HIV_Not_Suppressed'
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed'
   ],
   permissions: [
     {
@@ -253,10 +253,10 @@ const labUser = {
 const clinician = {
   name: 'Clinician',
   reports: [
-    'MTB_Detected_RR_Detected',
-    'Critical_Errors_By_Device',
-    'RIF_Resistance_Rate',
-    'Results_HIV_Not_Suppressed'
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed'
   ],
   permissions: [
     {
@@ -333,7 +333,7 @@ const clinician = {
 const deviceMaker = {
   name: 'Device Maker',
   reports: [
-    'Critical_Errors_By_Device',
+    'critical_errors_by_device'
   ],
   permissions: [
     {
@@ -350,7 +350,7 @@ const deviceMaker = {
 const ntp = {
   name: 'NTP',
   reports: [
-    'Critical_Errors_By_Device',
+    'critical_errors_by_device'
   ],
   permissions: [
     {
@@ -367,7 +367,7 @@ const ntp = {
 const technician = {
   name: 'Technician',
   reports: [
-    'Critical_Errors_By_Device',
+    'critical_errors_by_device'
   ],
   permissions: [
     {
@@ -384,7 +384,7 @@ const technician = {
 const donor = {
   name: 'Donor',
   reports: [
-    'Critical_Errors_By_Device',
+    'critical_errors_by_device',
   ],
   permissions: [
     {
@@ -411,5 +411,5 @@ module.exports = {
   ntp,
   technician,
   donor,
-  fixture: [admin, regionalOfficer, labUser, clinician, deviceMaker, ntp, techinician, donor],
+  fixture: [admin, regionalOfficer, labUser, clinician, deviceMaker, ntp, technician, donor],
 }

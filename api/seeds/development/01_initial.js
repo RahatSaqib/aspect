@@ -39,6 +39,7 @@ const {
 } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
 const { upsertJobFunction } = require('../common')
+const upsertReports = require('../common/upsert_reports')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -5180,6 +5181,14 @@ async function seed(knex) {
     } // end of seeding results for specific countries
   }) // end of 'await Promise.each(geography.countries'
 
+/*
+;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
+  ;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
+  ;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'clinician' }).pluck('id')
+  ;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id') */
+
+  await upsertReports(knex)
+
   // Job Functions with permissions
   const modules = await getPermissionModules(knex)
   const jobFunctionIdAdmin = await upsertJobFunction(
@@ -5211,7 +5220,15 @@ async function seed(knex) {
       modules.case.edit,
       modules.account.edit,
       modules.router.edit,
-    ]
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
 
   const jobFunctionIdManager = await upsertJobFunction(
@@ -5237,7 +5254,15 @@ async function seed(knex) {
       modules.router.edit,
       modules.person.edit,
       modules.clinicalIndicators.view,
-    ]
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
 
   const jobFunctionIdClinician = await upsertJobFunction(
@@ -5263,7 +5288,15 @@ async function seed(knex) {
       modules.account.edit,
       modules.router.edit,
       modules.person.view,
-    ]
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
 
   const jobFunctionIdPartnerTwo = await upsertJobFunction(
@@ -5287,7 +5320,15 @@ async function seed(knex) {
       modules.router.edit,
       modules.assay.view,
       modules.inventory.view,
-    ]
+    ],
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed'
+      ],
+    }
   )
 
   // crate jobs for users

@@ -1,6 +1,19 @@
+const { 
+  deviceMaker,
+  ntp,
+  technician,
+  donor
+} = require('../../common/fixtures/jobFunctions')
+
 module.exports = [
   {
     name: 'Admin',
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
     permissions: [
       {
         module: 'assay',
@@ -46,6 +59,12 @@ module.exports = [
   },
   {
     name: 'Regional Officer',
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
     permissions: [
       {
         module: 'assay',
@@ -91,6 +110,12 @@ module.exports = [
   },
   {
     name: 'Lab User',
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
     permissions: [
       {
         module: 'assay',
@@ -134,4 +159,8 @@ module.exports = [
       },
     ],
   },
+  deviceMaker,
+  ntp,
+  technician,
+  donor
 ]
