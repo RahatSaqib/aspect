@@ -40,8 +40,10 @@ async function deviceStatusOverTime(request) {
       geography: 'g',
       result: 'r',
       site: 's',
+      device: 'd',
     })
     .where('dtc.hasResults', 1)
+    .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
     .orderBy('d.name')
     .select([
@@ -60,6 +62,7 @@ async function deviceStatusOverTime(request) {
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
       geography: 'g',
+      device: 'd',
     })
     .innerJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
     .innerJoin(
@@ -90,6 +93,7 @@ async function deviceStatusOverTime(request) {
     .where('dmsl.day', '<=', maxDate)
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
+    .where('dt.externalId', 'CepheidGeneXpert')
     // Only get the current device maintenance status log if the device hasn't any newer statuses the same day (Only the last status of each device and day)
     .whereNull('newerDmslOnSameDay.id')
     // Grouped by device and day

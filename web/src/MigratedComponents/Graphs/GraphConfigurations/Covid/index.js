@@ -3,11 +3,11 @@ import PieGraph from '../../PieGraph'
 import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
-import CONSTS from '../CONSTS'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
-} = CONSTS
+} = DATE_CONSTS
 
 const assays = [
   'assayGenericCovid19',
