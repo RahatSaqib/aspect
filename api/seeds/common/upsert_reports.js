@@ -39,7 +39,7 @@ module.exports = async function upsertReports(knex) {
   // Remote
   await knex('Report').whereNotIn('externalId', whitelist).delete()
 
-  Promise.each(whitelist, async externalId => {
+  await Promise.each(whitelist, async externalId => {
     const { sheets, ...report } = reportsById[externalId]
 
     const reportToUpdate = await knex('Report').where({ externalId }).first()
