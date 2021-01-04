@@ -141,7 +141,7 @@ async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
-  const { culture, id: userId } = await getUser(auth.credentials.name)
+  const { culture } = await getUser(auth.credentials.name)
 
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {

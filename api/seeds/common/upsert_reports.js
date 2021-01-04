@@ -6,7 +6,7 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function upsertSheets(knex, reportId, sheets) {
-  await knex('ReportSheet').delete({ reportId })
+  await knex('ReportSheet').where({ reportId }).delete()
   await Promise.all(sheets.map(({ query, ...sheet }) => knex('ReportSheet').insert({ ...sheet, query: JSON.stringify(query), reportId })))
 }
 

@@ -33,24 +33,22 @@ async function getReports(request) {
 }
 
 async function getReportDetails(auth, externalId) {
+  console.log('holaaaa')
   const dataConstraints = await getConstraints(auth.credentials)
 
   const report = await knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
     .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobContext as jc', 'j.id', 'j.jobFunctionId')
     .where('r.externalId', externalId)
     .andWhere('j.personId', dataConstraints.person.id)
     .select(
       'r.description',
       'r.externalId',
-      'r.fileName',
-      'r.geographyId',
+      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
       'r.id',
       'r.i18nKey',
       'r.name',
-      'r.partnerId'
     )
     .first()
 
