@@ -272,6 +272,16 @@ class GxConnectApiTestContext {
         this.site,
         `Cannot find site linked to device ${this.device.id}`
       )
+
+      const [{ id: deviceApprovalIdApproved }] = [
+        await knex('DeviceApproval').where({ token: 'approved' }).first(),
+      ]
+      if (deviceApprovalIdApproved !== this.device.deviceApprovalId) {
+        await knex('Device')
+          .update('deviceApprovalId', deviceApprovalIdApproved)
+          .where('id', this.device.id)
+        this.device.deviceApprovalId = deviceApprovalIdApproved
+      }
     })
   }
 

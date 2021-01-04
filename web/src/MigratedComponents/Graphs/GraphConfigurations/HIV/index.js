@@ -2,6 +2,12 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
+
 const assays = [
   'abbottM2000DBSHivVL',
   'abbottM2000PlasmaHivVL',
@@ -32,8 +38,8 @@ const hivGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -60,8 +66,8 @@ const hivGraphs = {
           endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
-            minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',

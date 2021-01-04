@@ -2,11 +2,12 @@ import BarGraph from '../../BarGraph'
 import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
 import AspectDropdown from '../../../AspectDropdown'
 
-import CONSTS from '../CONSTS'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
-const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
-const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
-const { DATE_RANGE_OPTIONS } = CONSTS
+const {
+  DATE_RANGE_OPTIONS,
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
 
 const deviceStatusGraphs = {
   deviceStatus: {
@@ -40,8 +41,8 @@ const deviceStatusGraphs = {
           method: 'GET',
           endpoint: '/dashboard/operational-data/activity-over-time',
           params: {
-            minDate,
-            maxDate,
+            [MIN_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').start,
+            [MAX_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').end,
           },
         },
         indexBy: 'date',

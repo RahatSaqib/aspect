@@ -319,29 +319,6 @@ const enhance = compose(
       showDialog('warranty', device)
     },
     onHideDialog: ({ hideDialog }) => () => hideDialog(),
-
-    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values =>
-      updateDeviceMaintenance({
-        externalId: 'calibration',
-        device,
-        values,
-      }),
-    onMaintenanceSubmit: ({
-      device,
-      updateDeviceMaintenanceStatus,
-    }) => values => {
-      return updateDeviceMaintenanceStatus({
-        externalId: values.maintenanceStatus,
-        device,
-        notes: values.notes,
-      })
-    },
-    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values =>
-      updateDeviceMaintenance({
-        externalId: 'warranty',
-        device,
-        values,
-      }),
   }),
   lifecycle({
     componentWillMount() {

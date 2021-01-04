@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
 import {
@@ -13,7 +13,7 @@ import {
   useParams,
   useLocation,
 } from 'react-router-dom'
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, queryCache } from 'react-query'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -30,6 +30,10 @@ import {
   DEVICE_DETAIL,
   DEVICE_PERFORMANCE,
 } from '../../QueryFetch/Device/index'
+import {
+  updateDeviceMaintenanceStatus,
+  updateDeviceMaintenance,
+} from '../../../device/DeviceRedux'
 
 const cssClasses = classnames.bind(require('./DeviceDetail.css'))
 
@@ -53,6 +57,7 @@ const messages = defineMessages({
 })
 
 export const DeviceDetail = ({ match }) => {
+  const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const editable = isEditable(user, 'device')
   const location = useLocation()
@@ -81,6 +86,52 @@ export const DeviceDetail = ({ match }) => {
       method: 'PUT',
       params: data,
     })
+  )
+
+  // onSuccess - reset key to re-run query for device
+  const onSuccess = useCallback(() => {
+    queryCache.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
+  }, [deviceId])
+
+  //
+  const [onMaintenanceSubmit] = useMutation(
+    values =>
+      dispatch(
+        updateDeviceMaintenanceStatus({
+          externalId: values.maintenanceStatus,
+          device: Immutable.fromJS(device),
+          notes: values.notes,
+        })
+      ),
+    {
+      onSuccess,
+    }
+  )
+  const [onCalibrationSubmit] = useMutation(
+    values =>
+      dispatch(
+        updateDeviceMaintenance({
+          externalId: 'calibration',
+          device: Immutable.fromJS(device),
+          values,
+        })
+      ),
+    {
+      onSuccess,
+    }
+  )
+  const [onWarrantySubmit] = useMutation(
+    values =>
+      dispatch(
+        updateDeviceMaintenance({
+          externalId: 'warranty',
+          device: Immutable.fromJS(device),
+          values,
+        })
+      ),
+    {
+      onSuccess,
+    }
   )
 
   const dateRange = searchParams.get('dateRange') || '30'
@@ -144,6 +195,9 @@ export const DeviceDetail = ({ match }) => {
                   devicePerformance={Immutable.fromJS(devicePerformance)}
                   disabled={!editable}
                   updateSingleDevice={updateSingleDevice}
+                  onMaintenanceSubmit={onMaintenanceSubmit}
+                  onCalibrationSubmit={onCalibrationSubmit}
+                  onWarrantySubmit={onWarrantySubmit}
                 />
               )}
             />
