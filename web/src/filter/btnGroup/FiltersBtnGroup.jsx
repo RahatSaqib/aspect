@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
 
-import { formatDate } from '../../shared/utils/dateFormat'
+import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -18,11 +18,11 @@ const EMPTY_MAP = Immutable.Map()
 const messages = defineMessages({
   dateFrom: {
     id: 'filter.btnGroup.dateFrom',
-    defaultMessage: 'after {date}',
+    defaultMessage: 'since {date}',
   },
   dateTo: {
     id: 'filter.btnGroup.dateTo',
-    defaultMessage: 'before {date}',
+    defaultMessage: 'until {date}',
   },
   partnerId: {
     id: 'filter.btnGroup.partnerId',
@@ -221,11 +221,15 @@ const buttonBy = {
       .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  minDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateFrom, { date: formatDate(date) })
-  ),
+  minDate: makeButton(({ intl }, date) => {
+    return intl.formatMessage(messages.dateFrom, {
+      date: forceBaseFormatDate(date),
+    })
+  }),
   maxDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateTo, { date: formatDate(date) })
+    intl.formatMessage(messages.dateTo, {
+      date: forceBaseFormatDate(date),
+    })
   ),
   partnerId: makeButton(({ intl, partnerItems }, partnerId) =>
     intl.formatMessage(messages.partnerId, {

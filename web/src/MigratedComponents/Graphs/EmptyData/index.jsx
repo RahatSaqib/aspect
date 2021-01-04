@@ -39,6 +39,22 @@ const EmptyPieGraph = ({ title }) => {
   )
 }
 
+const EmptyRowPieGraph = ({ title }) => {
+  return (
+    <div className={cssClasses('placeholder__container')}>
+      <div className={cssClasses('placeholder__text')}>{title}</div>
+      <div className={cssClasses('placeholder__graphRowPie')}>
+        {[0, 1].map(() => (
+          <div className={cssClasses('placeholder__pieRowItemSolid')} />
+        ))}
+        {[0, 1, 2, 3, 4].map(() => (
+          <div className={cssClasses('placeholder__pieRowItemDoughNut')} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const EmptyGraph = ({ type }) => {
   const barGraphs = [
     'bar',
@@ -49,7 +65,9 @@ const EmptyGraph = ({ type }) => {
     'stackedDeviceActivity',
   ]
   const pieGraphs = ['pie', 'pieLegacyTreatment']
+  const pieRowGraphs = ['pieRow']
   const { formatMessage: intlFormatMessage } = useIntl()
+
   return (
     <Fragment>
       {barGraphs.includes(type) && (
@@ -59,6 +77,11 @@ const EmptyGraph = ({ type }) => {
       )}
       {pieGraphs.includes(type) && (
         <EmptyPieGraph
+          title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)}
+        />
+      )}
+      {pieRowGraphs.includes(type) && (
+        <EmptyRowPieGraph
           title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)}
         />
       )}
