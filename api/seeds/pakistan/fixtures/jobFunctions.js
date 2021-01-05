@@ -1,3 +1,5 @@
+const { donor, ntp, technician, deviceMaker } = require('../../common/fixtures/jobFunctions')
+
 module.exports = [
   {
     name: 'Admin',
@@ -307,4 +309,8 @@ module.exports = [
       },
     ],
   },
+  donor,
+  ntp,
+  technician,
+  deviceMaker
 ]
