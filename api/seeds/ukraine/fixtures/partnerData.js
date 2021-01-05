@@ -1,3 +1,5 @@
+const jobFunctions = require('./jobFunctions')
+
 module.exports = {
   partnerName: 'Ukraine',
   adminUserName: 'admin',
@@ -6,4 +8,7 @@ module.exports = {
   lowerLevelUserPassword: '324PoCbqIeBG',
   serverUrl: 'https://ukraine.aspect.id',
   partnerAbbreviation: 'UK',
+  fixtures: {
+    jobFunctions
+  }
 }

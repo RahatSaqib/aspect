@@ -10,7 +10,7 @@ module.exports = [
     permissions: [
       {
         module: 'assay',
-        activity: 'edit',
+        activity: 'view',
       },
       {
         module: 'device',

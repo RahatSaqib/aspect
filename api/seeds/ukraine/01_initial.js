@@ -15,6 +15,7 @@ const {
   upsertGeneXpertDeviceTypeAndAssays,
 } = require('../common')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
+const partnerData = require('./fixtures/partnerData')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const lowerLevelUserPassword = 'TOVpMx3nHP'
@@ -49,7 +50,8 @@ async function seed(knex) {
     deviceApiToken,
     {
       password: lowerLevelUserPassword,
-    }
+    },
+    partnerData
   )
 
   // GeneXpert
