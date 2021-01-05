@@ -1718,8 +1718,40 @@ async function baseGxAlertMigration(
   return returnValue
 }
 
+async function removeJobFunctions(knex, jobFunctionsToDelete) {
+  await Promise.each(jobFunctionsToDelete, async ({ id }) => {
+    const jobs = await knex('Job').where('jobFunctionId', id)
+    if (jobs.length > 0) {
+      throw new Error(`Error while trying to remove job the job function with id ${id}. You should remove the jobs manually first.`)
+    }
+    await Promise.all(
+      [
+        knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete(),
+        knex('JobFunctionPermission').where('jobFunctionId', id).delete(),
+        knex('JobFunctionReport').where('jobFunctionId', id).delete()
+      ]
+    )
+    await knex('JobFunction').where({ id }).delete()
+  })
+}
+
+/**
+ * 
+ * Synchronizes the provided fixture with the job functions configuration in the database, removing from the database the ones that aren't in the fixture, inserting the ones that aren't at the database, and updating the ones present in both sides.
+ * It makes the same process for updating the permissions and reports assigned to each job function.
+ * 
+ * @param {object} knex 
+ * @param {Array} jobFunctionFixture 
+ * @param {number} partnerId 
+ */
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
+  console.log(jobFunctionFixture)
   const { getPermissonByModuleAndActivity } = utils
+
+  const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
+  const jobFunctionsToDelete = await knex('JobFunction').where({ partnerId }).whereNotIn('externalId', externalIds)
+  await removeJobFunctions(knex, jobFunctionsToDelete, partnerId)
+
   await Promise.each(jobFunctionFixture, async jf => {
     const jobFunction = _.omit(jf, ['permissions', 'reports'])
 
@@ -1741,6 +1773,7 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
         return permissionId
       }
     )
+
     await upsertJobFunction(
       knex,
       jobFunction.name,
