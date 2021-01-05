@@ -21,6 +21,10 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
         module: 'device',
         activity: 'edit',
       },
