@@ -196,7 +196,7 @@ describe('Process GeneXpert Logs', () => {
      *
      * action type for error code 1002
      * */
-    const hardwareErorCode = 1002
+    const hardwareErorCode = '1002'
 
     /**
      * post data with error code 1002 within daysPeriod

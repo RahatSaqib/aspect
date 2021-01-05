@@ -269,7 +269,6 @@ async function shouldTriggerHardwareErrorAnalysis(
         startedOn,
         details,
         deviceOperationId,
-        errorCodes: errorForTriggering.ErrorCode,
       }
       if (!messageContext.deviceHardwareError) {
         messageContext = messageContext.bindActionCreators({

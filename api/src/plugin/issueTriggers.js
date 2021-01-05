@@ -162,8 +162,8 @@ async function analyzeDeviceHardwareError(
   action,
   { errorCodes, daysPeriod, minErrors }
 ) {
-  const { errorCode: actualErrorCode } = action.options.data
-  if (_.includes(errorCodes, parseInt(actualErrorCode, 10))) {
+  const { resultErrorCode } = action.options.data
+  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const query = knex('DeviceOperation')
       .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .where('deviceId', action.deviceId)
@@ -184,10 +184,9 @@ async function analyzeDeviceHardwareError(
           `
         )
       )
-
     const [{ totalErrors }] = await query
     action.options.data.totalErrors = totalErrors
-
+    action.options.data.errorCodes = errorCodes
     return totalErrors >= minErrors
   }
   return false
