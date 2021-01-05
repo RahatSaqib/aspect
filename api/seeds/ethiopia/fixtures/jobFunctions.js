@@ -44,6 +44,10 @@ module.exports = [
         module: 'dashboard',
         activity: 'summary',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
   },
   {
@@ -91,6 +95,10 @@ module.exports = [
         module: 'dashboard',
         activity: 'summary',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
   },
   {
@@ -137,6 +145,10 @@ module.exports = [
       {
         module: 'dashboard',
         activity: 'summary',
+      },
+      {
+        module: 'report',
+        activity: 'view',
       },
     ],
   },
@@ -187,6 +199,10 @@ module.exports = [
       },
       {
         module: 'reporter',
+        activity: 'view',
+      },
+      {
+        module: 'report',
         activity: 'view',
       },
     ],
