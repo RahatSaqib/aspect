@@ -9,7 +9,15 @@ module.exports = [
     ],
     permissions: [
       {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'case',
         activity: 'edit',
       },
       {
@@ -17,7 +25,54 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
         module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'reporter',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'Clinician',
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
+    permissions: [
+      {
+        module: 'account',
         activity: 'edit',
       },
       {
@@ -29,32 +84,60 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
-        activity: 'edit',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
+        module: 'dashboard',
+        activity: 'result',
       },
       {
         module: 'dashboard',
         activity: 'summary',
       },
       {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
         module: 'inventory',
-        activity: 'edit',
+        activity: 'view',
       },
       {
-        module: 'case',
-        activity: 'edit',
+        module: 'notification',
+        activity: 'view',
       },
       {
-        module: 'reporter',
-        activity: 'edit',
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
   },
@@ -68,7 +151,39 @@ module.exports = [
     ],
     permissions: [
       {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'case',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'reporter',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
         activity: 'view',
       },
       {
@@ -80,40 +195,12 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
+        module: 'report',
+        activity: 'view',
       },
       {
         module: 'site',
         activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'case',
-        activity: 'edit',
-      },
-      {
-        module: 'reporter',
-        activity: 'edit',
       },
     ],
   },
@@ -127,16 +214,16 @@ module.exports = [
     ],
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
-        module: 'person',
-        activity: 'view',
+        module: 'case',
+        activity: 'edit',
       },
       {
-        module: 'device',
-        activity: 'view',
+        module: 'inventory',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -147,7 +234,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -155,23 +246,23 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'account',
-        activity: 'edit',
+        module: 'device',
+        activity: 'view',
       },
       {
-        module: 'dashboard',
-        activity: 'summary',
+        module: 'person',
+        activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'case',
-        activity: 'edit',
+        module: 'report',
+        activity: 'view',
       },
       {
         module: 'reporter',
+        activity: 'view',
+      },
+      {
+        module: 'site',
         activity: 'view',
       },
     ],
