@@ -45,7 +45,7 @@ const types = {
     'HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_4017', // 4017
 }
 
-const errorActions = {
+const hardwareErrorActions = {
   1001: types.HARDWARE_TEMPERATURE_DRIFTED_FROM_SETPOINT,
   1002: types.HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR,
   2005: types.HARDWARE_SYRINGE_STALL_ERROR,
@@ -299,7 +299,7 @@ function deviceHardwareError(device, resultErrorCode, options) {
     !device ||
     !resultErrorCode ||
     !options ||
-    !errorActions[resultErrorCode]
+    !hardwareErrorActions[resultErrorCode]
   ) {
     throw new Error(
       'Must specify device, resultErrorCode and options for deviceHardwareError'
@@ -307,7 +307,7 @@ function deviceHardwareError(device, resultErrorCode, options) {
   }
   const { id: deviceId, siteId, geographyId, partnerId } = device
   return {
-    type: errorActions[resultErrorCode],
+    type: hardwareErrorActions[resultErrorCode],
     deviceId,
     siteId,
     geographyId,
@@ -331,5 +331,5 @@ module.exports = {
   deviceInstrumentReplaced,
   deviceModuleUnused,
   deviceHardwareError,
-  errorActions,
+  hardwareErrorActions,
 }

@@ -8,7 +8,7 @@ const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
   deviceHardwareError,
-  errorActions,
+  hardwareErrorActions,
 } = require('../device/actions')
 const { issueTypeToId } = require('../shared/dictionary')
 
@@ -262,21 +262,25 @@ async function shouldTriggerHardwareErrorAnalysis(
 
   if (details.Errors && _.isArray(details.Errors) && details.Errors.length) {
     const errorForTriggering = _.find(details.Errors, error =>
-      _.includes(Object.keys(errorActions), error.ErrorCode)
+      _.includes(Object.keys(hardwareErrorActions), error.ErrorCode)
     )
     if (errorForTriggering) {
       const options = {
         startedOn,
         details,
         deviceOperationId,
-        errorCode: errorForTriggering.ErrorCode,
+        errorCodes: errorForTriggering.ErrorCode,
       }
       if (!messageContext.deviceHardwareError) {
         messageContext = messageContext.bindActionCreators({
           deviceHardwareError,
         })
       }
-      messageContext.deviceHardwareError(device, options.errorCode, options)
+      messageContext.deviceHardwareError(
+        device,
+        errorForTriggering.ErrorCode,
+        options
+      )
     }
   }
 }

@@ -75,11 +75,12 @@ async function analyzeCategories(
       builder =>
         builder.first(
           knex.raw(
-            `sum(case when resultCategory1=${categoryToCompare}${
+            `sum(case when resultCategory1=? ${
               errorCodes && errorCodes.length > 0
                 ? ` OR errorcode in(${errorCodes.join(',')})`
                 : ``
-            } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
+            } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
+            categoryToCompare
           )
         )
     )
