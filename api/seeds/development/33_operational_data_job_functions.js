@@ -1,6 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunction, upsertJobFunctionFixture } = require('../common')
+const jobFunctions = require('./fixtures/jobFunctions')
 const {
   getPermissionModules,
   seedJobFunctionsAndUsersForOperationalData,
@@ -24,6 +25,8 @@ async function seed(knex) {
     .where('name', 'Partner One')
     .first('id')
 
+  await upsertJobFunctionFixture(knex, jobFunctions, partnerId)
+
   await seedJobFunctionsAndUsersForOperationalData(knex, {
     auditFields,
     countryId,
@@ -37,6 +40,8 @@ async function seed(knex) {
       usaid: 'test07', // for jobFunction 'Donor'
     },
   })
+
+  console.log(await knex('JobFunction').where({ partnerId }).pluck('name'))
 
   // --- ----------------------
   // --- give existing 'admin' user access to operational-data

@@ -2772,7 +2772,6 @@ async function seedJobFunctionsAndUsersForOperationalData(
     timezone,
   }
 ) {
-  const modules = await getPermissionModules(knex)
   const now = new Date()
   const userIds = {}
   const personIds = {}

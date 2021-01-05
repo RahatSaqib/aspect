@@ -16,6 +16,14 @@ const admin = {
       activity: 'edit',
     },
     {
+      module: 'case',
+      activity: 'edit',
+    },
+    {
+      module: 'demo',
+      activity: 'edit',
+    },
+    {
       module: 'person',
       activity: 'edit',
     },
@@ -49,7 +57,23 @@ const admin = {
     },
     {
       module: 'dashboard',
+      activity: 'device',
+    },
+    {
+      module: 'dashboard',
       activity: 'result',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'dashboard',
+      activity: 'site',
+    },
+    {
+      module: 'dashboard',
+      activity: 'target',
     },
     {
       module: 'issue',
@@ -62,6 +86,10 @@ const admin = {
     {
       module: 'task',
       activity: 'view',
+    },
+    {
+      module: 'patient',
+      activity: 'edit',
     },
     {
       module: 'operationalData',
@@ -85,6 +113,82 @@ const admin = {
     },
     {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'patient',
+      activity: 'view',
+    },
+  ],
+}
+
+const manager = {
+  name: 'Manager',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed'
+  ],
+  permissions: [
+    {
+      module: 'dashboard',
+      activity: 'device',
+    },
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'case',
+      activity: 'edit',
+    },
+    {
+      module: 'device',
+      activity: 'edit',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+    {
+      module: 'person',
+      activity: 'edit',
+    },
+    {
+      module: 'reporter',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'dashboard',
+      activity: 'report',
+    },
+    {
+      module: 'dashboard',
+      activity: 'site',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'target',
+    },
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'router',
       activity: 'view',
     },
   ],
@@ -292,19 +396,39 @@ const clinician = {
       activity: 'edit',
     },
     {
+      module: 'case',
+      activity: 'edit',
+    },
+    {
       module: 'dashboard',
       activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'dashboard',
+      activity: 'report',
+    },
+    {
+      module: 'dashboard',
+      activity: 'site',
+    },
+    {
+      module: 'dashboard',
+      activity: 'target',
     },
     {
       module: 'dashboard',
       activity: 'result',
     },
     {
-      module: 'task',
-      activity: 'view',
+      module: 'dashboard',
+      activity: 'device',
     },
     {
-      module: 'operationalData',
+      module: 'task',
       activity: 'view',
     },
     {
@@ -316,11 +440,7 @@ const clinician = {
       activity: 'view',
     },
     {
-      module: 'notification',
-      activity: 'view',
-    },
-    {
-      module: 'deviceApiKey',
+      module: 'router',
       activity: 'view',
     },
     {
@@ -402,6 +522,68 @@ const donor = {
   ],
 }
 
+const resultViewerNo = {
+  name: 'Result Viewer - No',
+  reports: [
+    'critical_errors_by_device',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'reporter',
+      activity: 'view',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+  ],
+}
+
+const resultViewerYes = {
+  name: 'Result Viewer - Yes',
+  reports: [
+    'critical_errors_by_device',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'reporter',
+      activity: 'view',
+    },
+    {
+      module: 'result',
+      activity: 'view',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+  ],
+}
+
 module.exports = {
   admin,
   regionalOfficer,
@@ -411,5 +593,7 @@ module.exports = {
   ntp,
   technician,
   donor,
-  fixture: [admin, regionalOfficer, labUser, clinician, deviceMaker, ntp, technician, donor],
+  manager,
+  resultViewerNo,
+  resultViewerYes
 }
