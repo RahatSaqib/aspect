@@ -3,7 +3,6 @@ const {
   regionalOfficer,
   labUser,
   clinician,
-  manager
 } = require('./jobFunctionBase')
 
 module.exports = [
