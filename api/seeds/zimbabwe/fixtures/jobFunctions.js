@@ -16,11 +16,19 @@ module.exports = [
     ],
     permissions: [
       {
-        module: 'assay',
+        module: 'account',
         activity: 'edit',
       },
       {
         module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
         activity: 'edit',
       },
       {
@@ -32,19 +40,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
         module: 'site',
         activity: 'edit',
       },
       {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
+        module: 'treatmentStatus',
         activity: 'edit',
       },
       {
@@ -52,13 +52,29 @@ module.exports = [
         activity: 'summary',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
   },
   {
-    name: 'Regional Officer',
+    name: 'Clinician',
     reports: [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
@@ -67,16 +83,8 @@ module.exports = [
     ],
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -87,7 +95,15 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -95,16 +111,76 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'Donor',
+    reports: [
+      'critical_errors_by_device',
+    ],
+    permissions: [
+      {
         module: 'account',
         activity: 'edit',
       },
       {
-        module: 'dashboard',
-        activity: 'summary',
+        module: 'inventory',
+        activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
       },
     ],
   },
@@ -118,16 +194,12 @@ module.exports = [
     ],
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
+        module: 'inventory',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -138,7 +210,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -146,7 +222,138 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'NTP',
+    reports: [
+      'critical_errors_by_device',
+    ],
+    permissions: [
+      {
         module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'result',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'NTP - No Results',
+    reports: [
+      'critical_errors_by_device',
+    ],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'Regional Officer',
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
         activity: 'edit',
       },
       {
@@ -154,13 +361,176 @@ module.exports = [
         activity: 'summary',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
   },
-  deviceMaker,
-  ntp,
-  technician,
-  donor
+  {
+    name: 'SystemOne',
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed'
+    ],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
+        activity: 'edit',
+      },
+      {
+        module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'Technician',
+    reports: [
+      'critical_errors_by_device',
+    ],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    name: 'Device Maker',
+    reports: [
+      'critical_errors_by_device',
+    ],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+    ],
+  },
 ]
