@@ -13,6 +13,38 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'deviceApiKey',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
+        activity: 'edit',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'router',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
         module: 'device',
         activity: 'edit',
       },
@@ -84,6 +116,30 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'deviceApiKey',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
+        activity: 'edit',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
         module: 'treatmentStatus',
         activity: 'edit',
       },
@@ -106,6 +162,10 @@ module.exports = [
       {
         module: 'dashboard',
         activity: 'result',
+      },
+      {
+        module: 'report',
+        activity: 'view',
       },
     ],
   },
@@ -127,6 +187,34 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
         module: 'device',
         activity: 'view',
       },
@@ -137,10 +225,6 @@ module.exports = [
       {
         module: 'treatmentStatus',
         activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'view',
       },
       {
         module: 'browse',
@@ -157,6 +241,10 @@ module.exports = [
       {
         module: 'dashboard',
         activity: 'result',
+      },
+      {
+        module: 'report',
+        activity: 'view',
       },
     ],
   },
@@ -186,12 +274,36 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'treatmentStatus',
-        activity: 'edit',
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
       },
       {
         module: 'site',
         activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
       },
       {
         module: 'browse',
@@ -208,6 +320,10 @@ module.exports = [
       {
         module: 'dashboard',
         activity: 'result',
+      },
+      {
+        module: 'report',
+        activity: 'view',
       },
     ],
   },
