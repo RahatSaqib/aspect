@@ -4,7 +4,7 @@ const admin = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'rif_resistance_rate',
-    'results_hiv_not_suppressed'
+    'results_hiv_not_suppressed',
   ],
   permissions: [
     {
@@ -128,7 +128,7 @@ const manager = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'rif_resistance_rate',
-    'results_hiv_not_suppressed'
+    'results_hiv_not_suppressed',
   ],
   permissions: [
     {
@@ -200,7 +200,7 @@ const regionalOfficer = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'rif_resistance_rate',
-    'results_hiv_not_suppressed'
+    'results_hiv_not_suppressed',
   ],
   permissions: [
     {
@@ -280,7 +280,7 @@ const labUser = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'rif_resistance_rate',
-    'results_hiv_not_suppressed'
+    'results_hiv_not_suppressed',
   ],
   permissions: [
     {
@@ -360,7 +360,7 @@ const clinician = {
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
     'rif_resistance_rate',
-    'results_hiv_not_suppressed'
+    'results_hiv_not_suppressed',
   ],
   permissions: [
     {
@@ -452,9 +452,7 @@ const clinician = {
 
 const deviceMaker = {
   name: 'Device Maker',
-  reports: [
-    'critical_errors_by_device'
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'account',
@@ -473,9 +471,7 @@ const deviceMaker = {
 
 const ntp = {
   name: 'NTP',
-  reports: [
-    'critical_errors_by_device'
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'account',
@@ -494,9 +490,7 @@ const ntp = {
 
 const technician = {
   name: 'Technician',
-  reports: [
-    'critical_errors_by_device'
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'account',
@@ -515,9 +509,7 @@ const technician = {
 
 const donor = {
   name: 'Donor',
-  reports: [
-    'critical_errors_by_device',
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'account',
@@ -540,9 +532,7 @@ const donor = {
 
 const resultViewerNo = {
   name: 'Result Viewer - No',
-  reports: [
-    'critical_errors_by_device',
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'assay',
@@ -573,9 +563,7 @@ const resultViewerNo = {
 
 const resultViewerYes = {
   name: 'Result Viewer - Yes',
-  reports: [
-    'critical_errors_by_device',
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'assay',
@@ -619,5 +607,5 @@ module.exports = {
   donor,
   manager,
   resultViewerNo,
-  resultViewerYes
+  resultViewerYes,
 }

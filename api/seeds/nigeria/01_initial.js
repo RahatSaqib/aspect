@@ -4,7 +4,14 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
-const { partnerName, deviceApiToken, adminPassword, partnerAbbreviation, adminUserName, serverUrl } = require('./fixtures/partnerData')
+const {
+  partnerName,
+  deviceApiToken,
+  adminPassword,
+  partnerAbbreviation,
+  adminUserName,
+  serverUrl,
+} = require('./fixtures/partnerData')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 

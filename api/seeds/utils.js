@@ -2837,13 +2837,13 @@ async function seedJobFunctionsAndUsersForOperationalData(
       }
     )
   )
-  
+
   const jobFunctionsById = await allJobFunctionToId()
-  const jobFunctionIdDeviceMaker = jobFunctionsById['deviceMaker']
-  const jobFunctionIdNtp = jobFunctionsById['ntp']
-  const jobFunctionIdTechnician = jobFunctionsById['technician']
-  const jobFunctionIdDonor = jobFunctionsById['donor']
-  
+  const jobFunctionIdDeviceMaker = jobFunctionsById.deviceMaker
+  const jobFunctionIdNtp = jobFunctionsById.ntp
+  const jobFunctionIdTechnician = jobFunctionsById.technician
+  const jobFunctionIdDonor = jobFunctionsById.donor
+
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {

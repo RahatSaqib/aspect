@@ -9,6 +9,6 @@ module.exports = {
   serverUrl: 'https://ukraine.aspect.id',
   partnerAbbreviation: 'UK',
   fixtures: {
-    jobFunctions
-  }
+    jobFunctions,
+  },
 }

@@ -2,14 +2,16 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.createTable('JobFunctionReport', tblJobFunctionReport => {
-    tblJobFunctionReport.integer('jobFunctionId')
-      .notNullable()  
+    tblJobFunctionReport
+      .integer('jobFunctionId')
+      .notNullable()
       .unsigned()
       .index()
       .references('id')
       .inTable('JobFunction')
-      
-    tblJobFunctionReport.integer('reportId')
+
+    tblJobFunctionReport
+      .integer('reportId')
       .notNullable()
       .unsigned()
       .index()

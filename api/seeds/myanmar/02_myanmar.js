@@ -1,13 +1,17 @@
-// eslint-disable-next-line import/order
-const { addIssueTypes } = require('../relativeObjectsSeeds')
-const { serverUrl, partnerName, adminUserName, adminPassword, deviceApiToken } = require('./fixtures/partnerData')
-
 module.exports = require('../utils').seed(seed, __filename)
 
 const RO_PW = 'u4W9wupFBA'
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
+const {
+  serverUrl,
+  partnerName,
+  adminUserName,
+  adminPassword,
+  deviceApiToken,
+} = require('./fixtures/partnerData')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget')

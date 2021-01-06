@@ -44,7 +44,7 @@ async function getReportDetails(auth, externalId) {
       knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
       'r.id',
       'r.i18nKey',
-      'r.name',
+      'r.name'
     )
     .first()
 

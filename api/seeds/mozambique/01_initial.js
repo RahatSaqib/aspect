@@ -1,6 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { partnerName, deviceApiToken, serverUrl } = require('./fixtures/partnerData')
+const {
+  partnerName,
+  deviceApiToken,
+  serverUrl,
+} = require('./fixtures/partnerData')
 const jobFunctionsFixture = require('./fixtures/jobFunctions')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')

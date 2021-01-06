@@ -7,7 +7,15 @@ const {
 
 async function upsertSheets(knex, reportId, sheets) {
   await knex('ReportSheet').where({ reportId }).delete()
-  await Promise.all(sheets.map(({ query, ...sheet }) => knex('ReportSheet').insert({ ...sheet, query: JSON.stringify(query), reportId })))
+  await Promise.all(
+    sheets.map(({ query, ...sheet }) =>
+      knex('ReportSheet').insert({
+        ...sheet,
+        query: JSON.stringify(query),
+        reportId,
+      })
+    )
+  )
 }
 
 module.exports = async function upsertReports(knex) {
@@ -21,9 +29,11 @@ module.exports = async function upsertReports(knex) {
 
     report.sheets.forEach(({ query, ...sheet }) => {
       // Replace externalIds with Ids
-      if (query.resultCategoryId) query.resultCategoryId = resultCategoryIds[query.resultCategoryId]
+      if (query.resultCategoryId)
+        query.resultCategoryId = resultCategoryIds[query.resultCategoryId]
 
-      if (query.resultCategory2Id) query.resultCategory2Id = resultCategoryIds[query.resultCategory2Id]
+      if (query.resultCategory2Id)
+        query.resultCategory2Id = resultCategoryIds[query.resultCategory2Id]
 
       if (query.assayId) query.assayId = assayIds[query.assayId]
 
@@ -49,8 +59,7 @@ module.exports = async function upsertReports(knex) {
       // Update
       await knex('Report').where({ externalId }).update(report)
       reportId = reportToUpdate.id
-    }
-    else {
+    } else {
       // Create
       await knex('Report').insert(report)
       ;[reportId] = await knex('Report').where({ externalId }).pluck('id')

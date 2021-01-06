@@ -266,30 +266,35 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.demo.edit,
-    modules.deviceApiKey.edit,
-    modules.device.edit,
-    modules.person.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.assay.edit,
-    modules.inventory.edit,
-    modules.notification.edit,
-    modules.issue.edit,
-    modules.task.edit,
-    modules.taskMenu.view,
-    modules.report.edit,
-    modules.browse.view
-  ],
-  {
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+  const jobFunctionIdAdmin = await upsertJobFunction(
+    knex,
+    'Admin',
+    partnerId,
+    [
+      modules.demo.edit,
+      modules.deviceApiKey.edit,
+      modules.device.edit,
+      modules.person.edit,
+      modules.result.edit,
+      modules.site.edit,
+      modules.assay.edit,
+      modules.inventory.edit,
+      modules.notification.edit,
+      modules.issue.edit,
+      modules.task.edit,
+      modules.taskMenu.view,
+      modules.report.edit,
+      modules.browse.view,
     ],
-  })
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed',
+      ],
+    }
+  )
 
   const jobFunctionIdLabAdmin = await upsertJobFunction(
     knex,
@@ -300,14 +305,14 @@ async function seed(knex) {
       modules.result.edit,
       modules.site.edit,
       modules.assay.edit,
-      modules.browse.view
+      modules.browse.view,
     ],
     {
       reports: [
         'mtb_detected_rr_detected',
         'critical_errors_by_device',
         'rif_resistance_rate',
-        'results_hiv_not_suppressed'
+        'results_hiv_not_suppressed',
       ],
     }
   )

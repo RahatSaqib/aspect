@@ -5,9 +5,4 @@ const {
   clinician,
 } = require('./jobFunctionBase')
 
-module.exports = [
-  admin,
-  regionalOfficer,
-  labUser,
-  clinician
-]
+module.exports = [admin, regionalOfficer, labUser, clinician]

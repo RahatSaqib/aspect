@@ -5,7 +5,7 @@ module.exports = [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
       'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+      'results_hiv_not_suppressed',
     ],
     permissions: [
       {
@@ -72,7 +72,7 @@ module.exports = [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
       'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+      'results_hiv_not_suppressed',
     ],
     permissions: [
       {
@@ -147,9 +147,7 @@ module.exports = [
   },
   {
     name: 'Donor',
-    reports: [
-      'critical_errors_by_device',
-    ],
+    reports: ['critical_errors_by_device'],
     permissions: [
       {
         module: 'account',
@@ -183,7 +181,7 @@ module.exports = [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
       'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+      'results_hiv_not_suppressed',
     ],
     permissions: [
       {
@@ -242,9 +240,7 @@ module.exports = [
   },
   {
     name: 'NTP',
-    reports: [
-      'critical_errors_by_device',
-    ],
+    reports: ['critical_errors_by_device'],
     permissions: [
       {
         module: 'account',
@@ -286,9 +282,7 @@ module.exports = [
   },
   {
     name: 'NTP - No Results',
-    reports: [
-      'critical_errors_by_device',
-    ],
+    reports: ['critical_errors_by_device'],
     permissions: [
       {
         module: 'account',
@@ -330,7 +324,7 @@ module.exports = [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
       'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+      'results_hiv_not_suppressed',
     ],
     permissions: [
       {
@@ -393,7 +387,7 @@ module.exports = [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
       'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+      'results_hiv_not_suppressed',
     ],
     permissions: [
       {
@@ -456,9 +450,7 @@ module.exports = [
   },
   {
     name: 'Technician',
-    reports: [
-      'critical_errors_by_device',
-    ],
+    reports: ['critical_errors_by_device'],
     permissions: [
       {
         module: 'account',
@@ -496,9 +488,7 @@ module.exports = [
   },
   {
     name: 'Device Maker',
-    reports: [
-      'critical_errors_by_device',
-    ],
+    reports: ['critical_errors_by_device'],
     permissions: [
       {
         module: 'account',

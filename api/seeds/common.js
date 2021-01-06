@@ -29,7 +29,7 @@ const {
   allResultSourceToId,
   resultCategoryToId,
   unitToId,
-  partnerTypeToId
+  partnerTypeToId,
 } = require('../src/shared/dictionary')
 
 /**
@@ -258,7 +258,7 @@ async function upsertJobFunction(
   partnerId,
   permissions = [],
   options = {
-    removeMissingPermissions: false
+    removeMissingPermissions: false,
   }
 ) {
   const { reports = [], removeMissingPermissions } = options
@@ -277,11 +277,7 @@ async function upsertJobFunction(
       partnerId,
     })
   }
-  await upsertJobFunctionReport(
-    knex,
-    jobFunctionId,
-    reports
-  )
+  await upsertJobFunctionReport(knex, jobFunctionId, reports)
   await upsertJobFunctionPermission(
     knex,
     jobFunctionId,
@@ -399,12 +395,10 @@ async function copyDashboardWidgetsFromJobFunction(
   await knex('JobFunctionDashboardWidget').insert(permissions)
 }
 
-async function upsertJobFunctionReport(
-  knex,
-  jobFunctionId,
-  reports
-) {
-  const reportsIds = await knex('Report').whereIn('externalId', reports).pluck('id')
+async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
+  const reportsIds = await knex('Report')
+    .whereIn('externalId', reports)
+    .pluck('id')
 
   const existingJobFunctionReports = await knex('JobFunctionReport')
     .where({ jobFunctionId })
@@ -1720,33 +1714,35 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
   await Promise.each(jobFunctionsToDelete, async ({ id }) => {
     const jobs = await knex('Job').where('jobFunctionId', id)
     if (jobs.length > 0) {
-      throw new Error(`Error while trying to remove job the job function with id ${id}. You should remove the jobs manually first.`)
+      throw new Error(
+        `Error while trying to remove job the job function with id ${id}. You should remove the jobs manually first.`
+      )
     }
-    await Promise.all(
-      [
-        knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete(),
-        knex('JobFunctionPermission').where('jobFunctionId', id).delete(),
-        knex('JobFunctionReport').where('jobFunctionId', id).delete()
-      ]
-    )
+    await Promise.all([
+      knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete(),
+      knex('JobFunctionPermission').where('jobFunctionId', id).delete(),
+      knex('JobFunctionReport').where('jobFunctionId', id).delete(),
+    ])
     await knex('JobFunction').where({ id }).delete()
   })
 }
 
 /**
- * 
+ *
  * Synchronizes the provided fixture with the job functions configuration in the database, removing from the database the ones that aren't in the fixture, inserting the ones that aren't at the database, and updating the ones present in both sides.
  * It makes the same process for updating the permissions and reports assigned to each job function.
- * 
- * @param {object} knex 
- * @param {Array} jobFunctionFixture 
- * @param {number} partnerId 
+ *
+ * @param {object} knex
+ * @param {Array} jobFunctionFixture
+ * @param {number} partnerId
  */
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
 
   const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
-  const jobFunctionsToDelete = await knex('JobFunction').where({ partnerId }).whereNotIn('externalId', externalIds)
+  const jobFunctionsToDelete = await knex('JobFunction')
+    .where({ partnerId })
+    .whereNotIn('externalId', externalIds)
   await removeJobFunctions(knex, jobFunctionsToDelete, partnerId)
 
   await Promise.each(jobFunctionFixture, async jf => {
@@ -1771,16 +1767,10 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
       }
     )
 
-    await upsertJobFunction(
-      knex,
-      jobFunction.name,
-      partnerId,
-      permissionIds,
-      {
-        reports: jf.reports,
-        removeMissingPermissions: true
-      }
-    )
+    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds, {
+      reports: jf.reports,
+      removeMissingPermissions: true,
+    })
   })
 }
 

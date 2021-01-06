@@ -228,21 +228,26 @@ async function seed(knex) {
     timezone,
     ...auditFields,
   })
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.browse.view,
-    modules.result.edit,
-    modules.device.edit,
-    modules.site.edit
-  ],
-  {
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+  const jobFunctionIdAdmin = await upsertJobFunction(
+    knex,
+    'Admin',
+    partnerId,
+    [
+      modules.browse.view,
+      modules.result.edit,
+      modules.device.edit,
+      modules.site.edit,
     ],
-  })
-  
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed',
+      ],
+    }
+  )
+
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
@@ -259,14 +264,14 @@ async function seed(knex) {
       modules.browse.view,
       modules.result.edit,
       modules.device.view,
-      modules.site.view
+      modules.site.view,
     ],
     {
       reports: [
         'mtb_detected_rr_detected',
         'critical_errors_by_device',
         'rif_resistance_rate',
-        'results_hiv_not_suppressed'
+        'results_hiv_not_suppressed',
       ],
     }
   )
@@ -279,14 +284,14 @@ async function seed(knex) {
       modules.browse.view,
       modules.result.edit,
       modules.device.view,
-      modules.site.view
+      modules.site.view,
     ],
     {
       reports: [
         'mtb_detected_rr_detected',
         'critical_errors_by_device',
         'rif_resistance_rate',
-        'results_hiv_not_suppressed'
+        'results_hiv_not_suppressed',
       ],
     }
   )

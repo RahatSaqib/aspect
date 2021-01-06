@@ -47,16 +47,19 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
   const partner = await knex('Partner').where('name', 'Partner One').first('id')
   if (adminId && partner) {
-    await upsertJobFunction(knex, 'Admin', partner.id, [
-      modules.operationalData.edit,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed'
-      ],
-    })
+    await upsertJobFunction(
+      knex,
+      'Admin',
+      partner.id,
+      [modules.operationalData.edit],
+      {
+        reports: [
+          'mtb_detected_rr_detected',
+          'critical_errors_by_device',
+          'rif_resistance_rate',
+          'results_hiv_not_suppressed',
+        ],
+      }
+    )
   }
 }

@@ -333,14 +333,14 @@ async function seed(knex) {
       modules.assay.edit,
       modules.device.view,
       modules.browse.view,
-      modules.person.view
+      modules.person.view,
     ],
     {
       reports: [
         'mtb_detected_rr_detected',
         'critical_errors_by_device',
         'rif_resistance_rate',
-        'results_hiv_not_suppressed'
+        'results_hiv_not_suppressed',
       ],
     }
   )

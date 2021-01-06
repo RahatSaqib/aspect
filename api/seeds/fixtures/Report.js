@@ -1,4 +1,4 @@
-const mtb_detected_rr_detected = {
+const mtbDetectedRRDetected = {
   name: 'MTB Detected RR Detected',
   description: 'Contains all MTB Detected/RR Detected cases',
   i18nKey: 'MTB_Detected_RR_Detected',
@@ -19,10 +19,9 @@ const mtb_detected_rr_detected = {
   ],
 }
 
-const critical_errors_by_device = {
+const criticalErrorsByDevice = {
   name: 'Critical Errors By Device',
-  description:
-    'Includes a list of devices that had at least 2 critical errors',
+  description: 'Includes a list of devices that had at least 2 critical errors',
   i18nKey: 'Critical_Errors_By_Device',
   externalId: 'critical_errors_by_device',
   fileName: 'DevicesWithErrors',
@@ -40,7 +39,7 @@ const critical_errors_by_device = {
   ],
 }
 
-const rif_resistance_rate = {
+const rifResistanceRate = {
   name: 'RIF Resistance Rate (%positive results)',
   description:
     'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
@@ -63,7 +62,7 @@ const rif_resistance_rate = {
   ],
 }
 
-const results_hiv_not_suppressed = {
+const resultsHivNotSuppressed = {
   name: 'Results with HIV Not Suppressed',
   description: 'All HIV results where the virus is not suppressed',
   i18nKey: 'Results_HIV_Not_Suppressed',
@@ -84,9 +83,14 @@ const results_hiv_not_suppressed = {
 }
 
 module.exports = {
-  results_hiv_not_suppressed,
-  rif_resistance_rate,
-  critical_errors_by_device,
-  mtb_detected_rr_detected,
-  fixture: [results_hiv_not_suppressed, rif_resistance_rate, critical_errors_by_device, mtb_detected_rr_detected],
+  resultsHivNotSuppressed,
+  rifResistanceRate,
+  criticalErrorsByDevice,
+  mtbDetectedRRDetected,
+  fixture: [
+    mtbDetectedRRDetected,
+    resultsHivNotSuppressed,
+    rifResistanceRate,
+    criticalErrorsByDevice,
+  ],
 }

@@ -33,7 +33,6 @@ const {
 
 const { loadPlugin } = require('../../src/plugin/registration')
 const { seedDataCategory } = require('../dataCategoryLow')
-const { upsertJobFunctionPermission } = require('../common')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -142,31 +141,36 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId, [
-    modules.demo.edit,
-    modules.device.edit,
-    modules.deviceApiKey.edit,
-    modules.person.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.assay.edit,
-    modules.issue.edit,
-    modules.dashboard.actionInventoryLevelUpdate,
-    modules.inventory.edit,
-    modules.task.edit,
-    modules.dashboard.summary,
-    modules.dashboard.target,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter
-  ],
-  {
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed'
+  const jobFunctionIdAdmin = await upsertJobFunction(
+    knex,
+    'Admin',
+    partnerId,
+    [
+      modules.demo.edit,
+      modules.device.edit,
+      modules.deviceApiKey.edit,
+      modules.person.edit,
+      modules.result.edit,
+      modules.site.edit,
+      modules.assay.edit,
+      modules.issue.edit,
+      modules.dashboard.actionInventoryLevelUpdate,
+      modules.inventory.edit,
+      modules.task.edit,
+      modules.dashboard.summary,
+      modules.dashboard.target,
+      modules.dashboard.report,
+      modules.dashboard.siteFilter,
     ],
-  })
+    {
+      reports: [
+        'mtb_detected_rr_detected',
+        'critical_errors_by_device',
+        'rif_resistance_rate',
+        'results_hiv_not_suppressed',
+      ],
+    }
+  )
 
   const jobFunctionIdRegionalOfficer = await upsertJobFunction(
     knex,
@@ -183,13 +187,14 @@ async function seed(knex) {
       modules.dashboard.target,
       modules.dashboard.report,
       modules.dashboard.site,
-      modules.dashboard.actionInventoryLevelUpdate,],
+      modules.dashboard.actionInventoryLevelUpdate,
+    ],
     {
       reports: [
         'mtb_detected_rr_detected',
         'critical_errors_by_device',
         'rif_resistance_rate',
-        'results_hiv_not_suppressed'
+        'results_hiv_not_suppressed',
       ],
     }
   )
@@ -198,7 +203,7 @@ async function seed(knex) {
     knex,
     'Lab User',
     partnerId,
-    [ 
+    [
       modules.device.edit,
       modules.result.edit,
       modules.site.edit,
@@ -208,13 +213,14 @@ async function seed(knex) {
       modules.dashboard.summary,
       modules.dashboard.actionInventoryLevelUpdate,
       modules.dashboard.report,
-      modules.dashboard.siteFilter,],
+      modules.dashboard.siteFilter,
+    ],
     {
       reports: [
         'mtb_detected_rr_detected',
         'critical_errors_by_device',
         'rif_resistance_rate',
-        'results_hiv_not_suppressed'
+        'results_hiv_not_suppressed',
       ],
     }
   )
@@ -231,7 +237,6 @@ async function seed(knex) {
     auditFields,
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   }
-
 
   // Admin Job
   const [jobIdAdmin] = await knex('Job').insert({
