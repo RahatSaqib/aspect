@@ -5,7 +5,6 @@ const { knex } = require('../../src/db')
 
 const { deviceHardwareError } = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
-const { postToDeviceApi } = require('./utils')
 const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
@@ -197,7 +196,7 @@ describe('Process GeneXpert Logs', () => {
      *
      * action type for error code 1002
      * */
-    const actionType = 'HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR'
+    const hardwareErorCode = '1002'
 
     /**
      * post data with error code 1002 within daysPeriod
@@ -213,7 +212,7 @@ describe('Process GeneXpert Logs', () => {
         details: JSON.parse(data.details),
       }
       // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareErrorAnalysis()
-      const action = deviceHardwareError(device, actionType, options)
+      const action = deviceHardwareError(device, hardwareErorCode, options)
       const waitForHardwareError = waitForAction(action)
 
       const res = await postLog(deviceAuth, logSource, data)
