@@ -11,8 +11,6 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 async function getReports(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  console.log(auth.credentials)
-  console.log(dataConstraints)
 
   const reportsQuery = knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
@@ -33,7 +31,6 @@ async function getReports(request) {
 }
 
 async function getReportDetails(auth, externalId) {
-  console.log('holaaaa')
   const dataConstraints = await getConstraints(auth.credentials)
 
   const report = await knex('Report as r')

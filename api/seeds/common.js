@@ -1743,7 +1743,6 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
  * @param {number} partnerId 
  */
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
-  console.log(jobFunctionFixture)
   const { getPermissonByModuleAndActivity } = utils
 
   const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
