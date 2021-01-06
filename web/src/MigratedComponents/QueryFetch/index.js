@@ -1,33 +1,39 @@
-import { defineMessages } from 'react-intl'
-
 import { aspectFetch } from '../../shared/utils/fetch'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-  errorInsufficientScope,
-} from '../../error/CommonErrorNotifications'
+import defaultErrors from './errors'
+import { buildBodyParams, buildEndpointAndQueryString } from './Helpers'
 
-const fetchWrapperForQueries = endpoint => {
+const fetchWrapperForQueries = ({
+  endpoint,
+  method = 'GET',
+  params = {},
+  customErrorNotifications = {},
+}) => {
+  if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
+  let body = null
+
+  switch (method) {
+    case 'POST':
+    case 'PUT':
+    case 'PATCH':
+      body = buildBodyParams(endpoint, params)
+      break
+    case 'DELETE':
+    case 'GET':
+      endpoint = buildEndpointAndQueryString(endpoint, params)
+      break
+    default:
+      throw new Error(
+        `Method ${method} is not supported by fetchWrapperForQueries function`
+      )
+  }
+
   return aspectFetch(endpoint, {
-    method: 'GET',
-    errorNotifications: {
-      403: errorInsufficientScope(
-        defineMessages({
-          title: {
-            id: 'errorResponseMessages.fetchGraphDataFromConfig.GET.403.title',
-            defaultMessage: 'Insufficient Permissions',
-          },
-        })
-      ),
-      default: errorPleaseTryAgainInAFewMinutes(
-        defineMessages({
-          title: {
-            id:
-              'errorResponseMessages.fetchGraphDataFromConfig.GET.default.title',
-            defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
-          },
-        })
-      ),
+    method,
+    errors: {
+      ...defaultErrors(endpoint),
+      ...customErrorNotifications,
     },
+    body,
   })
     .then(data => data)
     .catch(err => err)

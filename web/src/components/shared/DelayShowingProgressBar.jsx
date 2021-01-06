@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import isEqual from 'lodash/isEqual'
 import { compose, lifecycle } from 'recompose'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -32,9 +32,7 @@ const enhance = compose(
     },
 
     shouldComponentUpdate(nextProps, nextState) {
-      return (
-        !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState)
-      )
+      return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState)
     },
 
     componentWillUnmount() {

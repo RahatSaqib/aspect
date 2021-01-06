@@ -19,7 +19,7 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsVLTitle: {
     id: 'pages.Status.clinicalIndicatorsVL.title',
-    defaultMessage: 'VL Outcomes',
+    defaultMessage: 'VL Results',
   },
   clinicalIndicatorsTBTitle: {
     id: 'pages.Status.clinicalIndicatorsTB.title',
@@ -27,7 +27,11 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsTBDetected: {
     id: 'pages.Status.clinicalIndicatorsTBDetected.title',
-    defaultMessage: 'TB Detected',
+    defaultMessage: 'TB Results',
+  },
+  inventoryGraphStatus: {
+    id: 'pages.Status.inventoryGraphStatus.title',
+    defaultMessage: 'Supply in Stock',
   },
   clinicalIndicatorsTBDetectedPie: {
     id: 'pages.Status.clinicalIndicatorsTBDetectedPie.title',
@@ -64,7 +68,7 @@ export const messages = defineMessages({
   },
   treatmentStatusTotalTitle: {
     id: 'pages.Status.treatmentStatusTotalTitle.graph',
-    defaultMessage: 'Total',
+    defaultMessage: 'Average Confirmed Response',
   },
   treatmentStatusTotalValidTitle: {
     id: 'pages.Status.treatmentStatusTotalValidTitle.graph',
@@ -77,6 +81,14 @@ export const messages = defineMessages({
   resultsTransmittedTitle: {
     id: 'pages.Status.resultsTransmittedTitle.graph',
     defaultMessage: 'Results Transmitted',
+  },
+  testsOverTimeTitle: {
+    id: 'pages.Status.testsOverTimeTitle.graph',
+    defaultMessage: 'Tests Performed',
+  },
+  testsOverTimeAvgTitle: {
+    id: 'pages.Status.testsOverTimeAvgTitle.graph',
+    defaultMessage: 'Average Monthly Tests Performed',
   },
 })
 

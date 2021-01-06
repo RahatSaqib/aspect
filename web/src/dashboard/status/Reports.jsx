@@ -1,7 +1,6 @@
 import classnames from 'classnames/bind'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import React from 'react'
-import { connect } from 'react-redux'
 import { compose, pure, withProps } from 'recompose'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
@@ -41,7 +40,7 @@ const enhance = compose(
       'yyyy-MM-dd'
     )
     return {
-      showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
+      showHigherLevel: isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),
       siteId: filtersParams.get('siteId'),
       last7Days,

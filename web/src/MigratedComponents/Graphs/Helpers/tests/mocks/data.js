@@ -1,6 +1,12 @@
 import {
   barDataActualFromAPIIn,
   barDataActualFromAPIOut,
+  barDataForToolTipsNovIn1,
+  barDataForToolTipsNovIn2,
+  barDataForToolTipsNovIn3,
+  barDataForToolTipsNovOut1,
+  barDataForToolTipsNovOut2,
+  barDataForToolTipsNovOut3,
   tickDataForBarDisplayMethodPercentageIn,
   tickDataForBarDisplayMethodActualIn,
   tickDataForBarYAxisShapeBookendsDisplayPercentageOut,
@@ -8,6 +14,13 @@ import {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
+  treatmentAPISkewedActualDataOut,
 } from './barData'
 import { pieDataActualFromAPIIn, pieDataActualFromAPIOut } from './pieData'
 import {
@@ -24,6 +37,12 @@ import { pieRowDataFromAPIIn, pieRowDataFromAPIOut } from './pieRowData'
 export {
   barDataActualFromAPIIn,
   barDataActualFromAPIOut,
+  barDataForToolTipsNovIn1,
+  barDataForToolTipsNovIn2,
+  barDataForToolTipsNovIn3,
+  barDataForToolTipsNovOut1,
+  barDataForToolTipsNovOut2,
+  barDataForToolTipsNovOut3,
   divergentDataFromAPIIn,
   divergentDataFromAPIOut,
   groupByKeyGrouped,
@@ -40,4 +59,11 @@ export {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
+  treatmentAPISkewedActualDataOut,
 }

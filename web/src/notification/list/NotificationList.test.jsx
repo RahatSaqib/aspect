@@ -3,48 +3,48 @@ import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
 
-import { NotificationList } from './NotificationList'
-import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import ExportListButton from '../../globals/components/ExportListButton'
+import { Items } from '../../shared/metaReducers/items'
+import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 
-describe('NotificationList module', () => {
-  const props = {
-    intl: createIntl({ locale: 'en' }),
-    location: {
-      search: '',
-    },
-    table: new Table(),
-    items: new Items(),
-    history: {
-      push: () => {},
-    },
-    fetchNotifications: () => {},
-    exportNotifications: () => {},
-    userPermissions: Immutable.Set([
-      'notification:edit',
-      'report:edit',
-      'person:edit',
-      'device:edit',
-      'issue:edit',
-      'assay:edit',
-      'deviceApiKey:edit',
-      'inventory:edit',
-      'result:edit',
-      'browse:view',
-      'demo:edit',
-      'task:edit',
-      'site:edit',
-    ]),
-    pageAt: 0,
-    pageSize: 10,
-  }
+describe('Notification List component', () => {
+  const { NotificationListWithProps } = require('./NotificationList')
+  let props
 
-  describe('NotificationList component', () => {
-    it('should render correctly', () => {
-      const element = shallow(<NotificationList {...props} />)
-      expect(element).toMatchSnapshot()
-      expect(element.find(ExportListButton)).toHaveLength(1)
-    })
+  beforeEach(() => {
+    props = {
+      intl: createIntl({ locale: 'en' }),
+      history: {
+        push: jest.fn(),
+      },
+      location: {
+        search: '',
+      },
+      table: new Table(),
+      items: new Items(),
+      sortCol: 'id',
+      sortDir: 'desc',
+      pageAt: 0,
+      pageSize: 10,
+      onHeadColumnClick: jest.fn(),
+      onRowClick: jest.fn(),
+      onExcelClick: jest.fn(),
+      isLoading: false,
+      columns: Immutable.List([]),
+      reducedFilters: jest.fn(),
+      onExportClick: jest.fn(),
+      total: 0,
+    }
+  })
+
+  afterAll(() => {
+    jest.restoreAllMocks()
+  })
+
+  it('should shallow render correctly', () => {
+    const element = shallow(<NotificationListWithProps {...props} />)
+
+    expect(element).toMatchSnapshot()
+    expect(element.find(AspectExportListButton)).toHaveLength(1)
   })
 })

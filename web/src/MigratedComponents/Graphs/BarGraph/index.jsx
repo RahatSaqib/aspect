@@ -9,14 +9,19 @@ const BarGraph = ({ data, keys, config, assaysFromState }) => {
     tickValuesXShape,
     displayMethod,
     displayLegend,
+    legendsToRename,
+    legendsToPopover,
     type,
   } = config
   return (
     <AspectResponsiveBar
       assaysFromState={assaysFromState}
+      config={config}
       data={data}
       keys={keys}
       indexBy={indexBy}
+      legendsToRename={legendsToRename}
+      legendsToPopover={legendsToPopover}
       tickValuesYShape={tickValuesYShape}
       tickValuesXShape={tickValuesXShape}
       displayMethod={displayMethod}

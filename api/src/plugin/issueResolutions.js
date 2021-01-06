@@ -1,5 +1,8 @@
-const { compareAsc } = require('date-fns')
-const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
+const compareAsc = require('date-fns/compareAsc')
+const parseISO = require('date-fns/parseISO')
+const addDays = require('date-fns/addDays')
+const { issueTypeToId } = require('../shared/dictionary')
+const { hasUnusedModules } = require('./issueTriggers')
 
 async function resolveIssueModuleDisabled(knex, issue) {
   const data = JSON.parse(issue.data)
@@ -11,18 +14,40 @@ async function resolveIssueModuleDisabled(knex, issue) {
     })
     .first()
 
-  if (
+  return (
     moduleReplacedIssue &&
-    compareAsc(moduleReplacedIssue.createdOn, data.disabledOn) >= 0
-  ) {
-    await knex('Issue')
-      .update({
-        issueStatusId: await issueStatusToId('Resolved'),
-      })
-      .where({ id: issue.id })
-  }
-  return Promise.resolve(true)
+    compareAsc(moduleReplacedIssue.createdOn, parseISO(data.disabledOn)) >= 0
+  )
 }
+
+async function resolveIssueUnusedModules(knex, issue, conditions) {
+  const { deviceId } = issue
+  const { minResults, expectedUsedModules } = conditions
+
+  const { numberOfResults, numberOfModules } = await knex('Result as r')
+    .where('r.endedOn', '>', addDays(new Date(), -30))
+    .andWhere('r.deviceId', deviceId)
+    .select(
+      knex.raw('COUNT(*) as numberOfResults'),
+      knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
+    )
+    .first()
+
+  return !hasUnusedModules(
+    numberOfResults,
+    numberOfModules,
+    minResults,
+    expectedUsedModules
+  )
+}
+
+async function resolveHardwareIssue(knex, issue, conditions) {
+  // do not resolve issue for now
+  return false
+}
+
 module.exports = {
   resolveIssueModuleDisabled,
+  resolveIssueUnusedModules,
+  resolveHardwareIssue,
 }

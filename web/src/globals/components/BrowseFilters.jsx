@@ -1,10 +1,10 @@
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import replace from 'lodash/replace'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Report from '../../dashboard/status/Reports'
 import BrowseNavDropdown from './BrowseNavDropdown'
 import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
@@ -26,8 +26,8 @@ const enhance = compose(
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const prefs = getAspectDisplayPreferences()
     return {
-      filters: _.fromPairs([...filtersParams.entries()]),
-      dateFormat: _.replace(prefs.get('dateFormat'), /-/g, '/'),
+      filters: fromPairs([...filtersParams.entries()]),
+      dateFormat: replace(prefs.get('dateFormat'), /-/g, '/'),
     }
   }),
   withHandlers({
@@ -37,7 +37,6 @@ const enhance = compose(
         nextFilters,
         new URLSearchParams(searchParams.get('filters') || '')
       )
-
       searchParams.set('filters', filtersParams)
       searchParams.delete('pageAt')
       history.replace({
@@ -105,7 +104,6 @@ export const BrowseFilters = ({
   intl,
   onRemoveFilterItem,
   reducedSource,
-  userPermissions,
   dateFormat,
   showBrowseDropdown = true,
   ...restProps
@@ -142,52 +140,52 @@ export const navigations = [
   {
     value: '/browse/device',
     label: 'Devices',
-    requiredPermissions: ['browse', 'device'],
+    requiredPermissions: ['device'],
   },
   {
     value: '/browse/result',
     label: 'Results',
-    requiredPermissions: ['browse', 'result'],
+    requiredPermissions: ['result'],
   },
   {
     value: '/browse/case',
     label: 'Cases',
-    requiredPermissions: ['browse', 'case'],
+    requiredPermissions: ['case'],
   },
   {
     value: '/browse/person',
     label: 'Contacts',
-    requiredPermissions: ['browse', 'person'],
+    requiredPermissions: ['person'],
   },
   {
     value: '/browse/site',
     label: 'Sites',
-    requiredPermissions: ['browse', 'site'],
+    requiredPermissions: ['site'],
   },
   {
     value: '/browse/inventory',
     label: 'Supplies',
-    requiredPermissions: ['browse', 'inventory'],
+    requiredPermissions: ['inventory'],
   },
   {
     value: '/browse/router',
     label: 'Routers',
-    requiredPermissions: ['browse', 'router'],
+    requiredPermissions: ['router'],
   },
   {
     value: '/browse/reporter',
     label: 'Reporters',
-    requiredPermissions: ['browse', 'reporter'],
+    requiredPermissions: ['reporter'],
   },
   {
     value: '/browse/notification',
     label: 'Notifications',
-    requiredPermissions: ['browse', 'notification'],
+    requiredPermissions: ['notification'],
   },
   {
     value: '/browse/deviceApiKey',
     label: 'Device Api Key',
-    requiredPermissions: ['browse', 'deviceApiKey'],
+    requiredPermissions: ['deviceApiKey'],
   },
 ]
 

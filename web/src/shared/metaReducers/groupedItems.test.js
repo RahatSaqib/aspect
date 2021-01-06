@@ -1,4 +1,7 @@
-import _ from 'lodash'
+import omit from 'lodash/omit'
+import flattenDeep from 'lodash/flattenDeep'
+import map from 'lodash/map'
+import sortBy from 'lodash/sortBy'
 import { Items, receiveList } from './groupedItems'
 
 describe('Grouped Items Reducer', () => {
@@ -11,7 +14,7 @@ describe('Grouped Items Reducer', () => {
         nestedData
       )
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 76]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -34,7 +37,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 53,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 75]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -57,7 +60,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 34,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 79]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -80,7 +83,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 18,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 78]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -103,7 +106,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 8,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 77]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -126,7 +129,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 225,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 63]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -149,7 +152,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 860,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 61]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -172,7 +175,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 13,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 44]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -195,7 +198,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 24,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 45]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -218,7 +221,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 16,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 43]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -241,7 +244,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 76,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 46]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -264,7 +267,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 76,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 47]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -287,7 +290,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 76,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 35]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -310,7 +313,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 931,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 36]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -333,7 +336,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 693,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 39]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -356,7 +359,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 930,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 38]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -379,7 +382,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 92,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 37]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -933,10 +936,10 @@ describe('Grouped Items Reducer', () => {
     })
 
     it('should return an item ID list that is in the same order as the deepest child IDs passed into it', () => {
-      const idList = _.flattenDeep(
-        _.map(nestedData, site =>
-          _.map(site.consumables, consumable =>
-            _.map(consumable.inventoryItems, 'id')
+      const idList = flattenDeep(
+        map(nestedData, site =>
+          map(site.consumables, consumable =>
+            map(consumable.inventoryItems, 'id')
           )
         )
       )
@@ -957,13 +960,13 @@ describe('Grouped Items Reducer', () => {
         ['consumables', 'inventoryItems'],
         nestedData
       )
-      const dataSortedByQuantity = _.map(nestedData, site => {
+      const dataSortedByQuantity = map(nestedData, site => {
         const siteWithConsumblesWithSortedItems = {
           ...site,
-          consumables: _.map(site.consumables, consumable => {
+          consumables: map(site.consumables, consumable => {
             const consumableWithSortedItems = {
               ...consumable,
-              inventoryItems: _.sortBy(
+              inventoryItems: sortBy(
                 consumable.inventoryItems,
                 'quantityOnHand'
               ),
@@ -1339,7 +1342,7 @@ describe('Grouped Items Reducer', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, [], flatData)
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 76]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -1362,7 +1365,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 53,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 75]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -1385,7 +1388,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 34,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 79]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -1408,7 +1411,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 18,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 78]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -1431,7 +1434,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 8,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 77]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -1454,7 +1457,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 225,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 63]).toJS(),
           'rowSpans',
           'visibleProperties'
@@ -1477,7 +1480,7 @@ describe('Grouped Items Reducer', () => {
         quantityOnHand: 860,
       })
       expect(
-        _.omit(
+        omit(
           newState.getIn(['byId', 61]).toJS(),
           'rowSpans',
           'visibleProperties'

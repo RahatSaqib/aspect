@@ -1,4 +1,4 @@
-const { addDays, subDays, startOfDay } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
@@ -28,12 +28,16 @@ const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
 } = require('../shared/utilsInventory')
+const { startOfDayUtc } = require('../shared/date')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
-function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
+async function onFactGenerateDeviceConnectivity(
+  { deviceId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({
     deviceOffline,
     deviceNoResults,
@@ -143,7 +147,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   })
 }
 
-function onFactGenerateResultCounts(action, context) {
+async function onFactGenerateResultCounts(action, context) {
   if (action.deviceId != null) {
     // specialization if device id specified, otherwise query for devices below.
     return onFactGenerateResultCountsForDevice(action, context)
@@ -167,7 +171,7 @@ function onFactGenerateResultCounts(action, context) {
   })
 }
 
-function onDeviceSeen({ deviceId }, { messageContext }) {
+async function onDeviceSeen({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
   return context.run(async knex => {
     // Mark device online if seen more recently than offline
@@ -191,7 +195,7 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
 }
 
 function onDeviceUpdateFlag(updates) {
-  return ({ deviceId, options }, { messageContext }) => {
+  return async ({ deviceId, options }, { messageContext }) => {
     const context = messageContext.bindActionCreators({
       factGenerateDeviceConnectivity,
     })
@@ -228,28 +232,26 @@ function onDeviceUpdateFlag(updates) {
   }
 }
 
-function onResultLogged({ resultId }, { messageContext }) {
+async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factGenerateResultCounts,
     deviceHasNewResults,
   })
-  return context.run(async knex => {
-    const {
-      deviceId,
-      assayId,
-      resultCategory1,
-      resultCategory2,
-      noResults,
-    } = await knex('Result as r')
-      .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
-      .where({ id: resultId })
-      .first(
-        'r.deviceId',
-        'r.assayId',
-        'r.resultCategory1',
-        'r.resultCategory2',
-        'fdf.noResults'
-      )
+  return context.transact(async knex => {
+    const { deviceId, assayId, resultCategory1, resultCategory2, noResults } =
+      (await knex('Result as r')
+        .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
+        .where({ id: resultId })
+        .first(
+          'r.deviceId',
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          'fdf.noResults'
+        )) || {}
+    if (!deviceId) {
+      return
+    }
     if (noResults === 1) {
       context.deviceHasNewResults(deviceId)
     }
@@ -261,7 +263,7 @@ function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-function onFactGenerateResultCountsForDevice(
+async function onFactGenerateResultCountsForDevice(
   { deviceId, options = {} },
   { messageContext }
 ) {
@@ -292,7 +294,7 @@ function onFactGenerateResultCountsForDevice(
     }
 
     await Promise.each(daysToCalculate, async days => {
-      const endedOn = startOfDay(subDays(now, days))
+      const endedOn = startOfDayUtc(subDays(now, days))
       // query for selecting data for the device
       const query = knex('Result as r').whereRaw(
         'r.deviceId = :deviceId and r.endedOn > :endedOn',
@@ -524,7 +526,7 @@ function onFactGenerateResultCountsForDevice(
 // ----------------------------------------------
 // This function is triggered by scheduler, and checks stock for all sites
 // ----------------------------------------------
-function onFactCheckInventoryStock(action, { messageContext }) {
+async function onFactCheckInventoryStock(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     inventoryStockout,
     inventoryStockExpiring,
@@ -591,7 +593,10 @@ function onFactCheckInventoryStock(action, { messageContext }) {
 
 // ------------------------------
 // is called from scheduler
-function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
+async function onFactCalculateInventoryConsumptionRates(
+  action,
+  { messageContext }
+) {
   return messageContext.run(async knex => {
     const items = await knex('InventoryItem')
       .groupBy('siteId', 'consumableId')
@@ -888,7 +893,7 @@ async function getDataCategoryStatus(
 // ----------------------------------------------
 // This function is triggered by scheduler, and checks if new results are available for any sample origin sites
 // ----------------------------------------------
-function onFactNewResultsAvailableCheck(action, { messageContext }) {
+async function onFactNewResultsAvailableCheck(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factNewResultsAvailable,
   })
@@ -922,7 +927,7 @@ function onFactNewResultsAvailableCheck(action, { messageContext }) {
 // ----------------------------------------------
 // This function is triggered by scheduler, and checks external sources to update fact tables
 // ----------------------------------------------
-function onFactExternalSourceCheck({ sourceName }, context) {
+async function onFactExternalSourceCheck({ sourceName }, context) {
   // eslint-disable-next-line import/no-dynamic-require
   const externalSourceHandler = require(`./externalSourceHandlers/${sourceName}`)
   if (externalSourceHandler) {

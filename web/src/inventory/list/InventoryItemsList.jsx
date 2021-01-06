@@ -1,23 +1,17 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import fromPairs from 'lodash/fromPairs'
+import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import React, { useEffect, useCallback } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useHistory, useLocation } from 'react-router-dom'
+import { useIntl } from 'react-intl'
+import { useQuery, useMutation, queryCache } from 'react-query'
 import { Helmet } from 'react-helmet'
-
-import MenuItem from '@material-ui/core/MenuItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import AddIcon from '@material-ui/icons/Add'
-import TransferIcon from '@material-ui/icons/SwapHoriz'
-import RemoveIcon from '@material-ui/icons/Remove'
-import DoneIcon from '@material-ui/icons/Done'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
 import TableBody from '@material-ui/core/TableBody'
 
+import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -28,7 +22,6 @@ import {
   reduceFiltersConfig,
 } from '../../filter/utils'
 import CheckboxField from '../../components/shared/CheckboxField'
-import IconMenu from '../../components/shared/IconMenu'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -45,19 +38,15 @@ import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
   types,
-  fetchInventoryItems,
   toggleGroupBySite,
   showNewInventoryDialog,
-  showAddInventoryDialog,
-  showRemoveInventoryDialog,
-  showTransferInventoryDialog,
-  showReceiveInventoryDialog,
   hideAdjustInventoryDialog,
   addInventory,
   removeInventory,
   transferInventory,
   receiveInventory,
   exportSupplies,
+  receiveInventoryItems,
 } from '../InventoryRedux'
 import {
   InventoryDataTable,
@@ -66,73 +55,15 @@ import {
 } from './InventoryDataTable'
 import requirePermissions from '../../components/shared/requirePermissions'
 import AspectButton from '../../components/shared/AspectButton'
+import {
+  INVENTORY_LIST,
+  INVENTORY_LIST_GROUP_BY_SITE,
+} from '../../MigratedComponents/QueryFetch/Inventory'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
 const EMPTY_MAP = Immutable.Map()
-
-const messages = defineMessages({
-  inventoryItemsTitle: {
-    id: 'pages.InventoryItemsList.inventoryItemsTitle',
-    defaultMessage: 'Inventory on Hand',
-  },
-  groupBySite: {
-    id: 'pages.InventoryItemsList.groupBySite',
-    defaultMessage: 'Group by Site',
-  },
-  siteName: {
-    id: 'pages.InventoryItemsList.siteName',
-    defaultMessage: 'Site Name',
-  },
-  consumableName: {
-    id: 'pages.InventoryItemsList.consumableName',
-    defaultMessage: 'Consumable',
-  },
-  quantityOnHand: {
-    id: 'pages.InventoryItemsList.quantityOnHand',
-    defaultMessage: 'Quantity on Hand',
-  },
-  expiresOn: {
-    id: 'pages.InventoryItemsList.expiresOn',
-    defaultMessage: 'Expires On',
-  },
-  expiresIn: {
-    id: 'pages.InventoryItemsList.expiresIn',
-    defaultMessage: 'Expires',
-  },
-  adjust: {
-    id: 'pages.InventoryItemsList.adjust',
-    defaultMessage: 'Adjust',
-  },
-  addInventory: {
-    id: 'pages.InventoryItemsList.addInventory',
-    defaultMessage: 'Add Inventory',
-  },
-  transferInventory: {
-    id: 'pages.InventoryItemsList.transferInventory',
-    defaultMessage: 'Transfer Inventory',
-  },
-  receiveInventory: {
-    id: 'pages.InventoryItemsList.receiveInventory',
-    defaultMessage: 'Receive Inventory in Transit',
-  },
-  removeInventory: {
-    id: 'pages.InventoryItemsList.removeInventory',
-    defaultMessage: 'Remove Inventory',
-  },
-  paginatorStatus: {
-    id: 'pages.InventoryItemsList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# supply}
-      other {# supplies}
-    }`,
-  },
-
-  inventoryAdjustedSuccessfully: {
-    id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
-    defaultMessage: 'Inventory levels have been adjusted successfully',
-  },
-})
 
 const FILTERS_CONFIG = [
   { consumable: true, requiredPermissions: [] },
@@ -156,228 +87,39 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
-const enhance = compose(
-  injectIntl,
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'siteName',
-    }),
-    ({ location }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-      return {
-        filters: _.fromPairs([...filtersParams.entries()]),
-      }
-    }
-  ),
-  connect(
-    state => ({
-      consumableReasons: state.consumable.consumableReasons,
-      items: state.inventory.items,
-      table: state.inventory.table,
-      inventoryAdjustment: state.inventory.inventoryAdjustment,
-      userPermissions: state.user.jwt.permissions,
-    }),
-    bindActionCreators.bind(null, {
-      showAcknowledgement,
+const AddNewButton = requirePermissions({
+  permissions: ['inventory:edit'],
+})(AspectButton)
 
-      fetchInventoryItems,
-      toggleGroupBySite,
-
-      showNewInventoryDialog,
-      showAddInventoryDialog,
-      showRemoveInventoryDialog,
-      showTransferInventoryDialog,
-      showReceiveInventoryDialog,
-      hideAdjustInventoryDialog,
-
-      addInventory,
-      removeInventory,
-      transferInventory,
-      receiveInventory,
-
-      exportSupplies,
-    })
-  ),
-  withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchInventoryItems,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchInventoryItems(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-
-    onExcelClick: ({
-      location,
-      exportSupplies,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSupplies(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'supplies'
-        )
-      }
-    },
-  }),
-  lifecycle({
-    componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
-
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
-      }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
-      this.setState({
-        reducedFilters,
-      })
-    },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
-  }),
-  withHandlers({
-    onAdjustInventorySucceeded: ({
-      table,
-      showAcknowledgement,
-      onPageChange,
-    }) => () => {
-      showAcknowledgement({
-        title: messages.inventoryAdjustedSuccessfully,
-      })
-      onPageChange(table.page)
-    },
-  }),
-  withHandlers({
-    onGroupBySiteChange: ({ toggleGroupBySite, onInitialLoad }) => (
-      event,
-      isInputChecked
-    ) => {
-      toggleGroupBySite(isInputChecked)
-      onInitialLoad()
-    },
-
-    onAddInventorySubmit: ({
-      addInventory,
-      onAdjustInventorySucceeded,
-    }) => values =>
-      addInventory(_.omit(values, ['canExpire'])).then(
-        onAdjustInventorySucceeded
-      ),
-
-    onRemoveInventorySubmit: ({
-      consumableReasons,
-      removeInventory,
-      onAdjustInventorySucceeded,
-    }) => values => {
-      const selectedAdjustmentReason = consumableReasons.items.find(
-        reason => reason.get('id') === values.reasonId
-      )
-      if (
-        selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
-      ) {
-        return removeInventory(
-          _.omit(values, ['canExpire', 'dateAdjusted'])
-        ).then(onAdjustInventorySucceeded)
-      }
-      return removeInventory(
-        _.omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo'])
-      ).then(onAdjustInventorySucceeded)
-    },
-
-    onTransferInventorySubmit: ({
-      transferInventory,
-      onAdjustInventorySucceeded,
-    }) => values =>
-      transferInventory(_.omit(values, ['canExpire'])).then(
-        onAdjustInventorySucceeded
-      ),
-
-    onReceiveInventorySubmit: ({
-      receiveInventory,
-      onAdjustInventorySucceeded,
-    }) => values =>
-      receiveInventory(_.omit(values, ['canExpire'])).then(
-        onAdjustInventorySucceeded
-      ),
-  })
-)
-
-export const InventoryItemsList = ({
+export const InventoryItemsListWithProps = ({
   intl,
   history,
   location,
-  table,
-  items,
-  inventoryAdjustment,
-  // --- injected by recompose ---
+  reducedFilters,
+  dispatch,
+  groupBySite,
+  onGroupBySiteChange,
+  isLoading,
   onExcelClick,
+  items,
   sortCol,
   sortDir,
+  table,
   pageAt,
   pageSize,
-  showNewInventoryDialog,
-  showReceiveInventoryDialog,
-  showAddInventoryDialog,
-  showTransferInventoryDialog,
-  showRemoveInventoryDialog,
-  hideAdjustInventoryDialog,
-  onGroupBySiteChange,
-  onAddInventorySubmit,
+  inventoryAdjustment,
   onRemoveInventorySubmit,
-  onTransferInventorySubmit,
   onReceiveInventorySubmit,
-  reducedFilters,
+  onTransferInventorySubmit,
+  onAddInventorySubmit,
 }) => {
-  const AddNewButton = requirePermissions({
-    permissions: ['inventory:edit'],
-  })(AspectButton)
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -393,7 +135,7 @@ export const InventoryItemsList = ({
           type="button"
           color="primary"
           variant="contained"
-          onClick={showNewInventoryDialog}
+          onClick={() => dispatch(showNewInventoryDialog)}
           browseButton
         >
           {intl.formatMessage(messages.addInventory)}
@@ -404,7 +146,7 @@ export const InventoryItemsList = ({
         <CheckboxField
           className={cssClasses('Checkbox')}
           name="groupBySite"
-          checked={table.get('groupBy').includes('siteId')}
+          checked={groupBySite}
           label={intl.formatMessage(messages.groupBySite)}
           onChange={onGroupBySiteChange}
         />
@@ -413,7 +155,7 @@ export const InventoryItemsList = ({
         key={`DataTableCard--table-${location.key}`}
         className={cssClasses('DataTableCard--table')}
       >
-        <DataTableProgressBar disabled={!table.loading} />
+        <DataTableProgressBar disabled={!isLoading} />
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
@@ -452,12 +194,6 @@ export const InventoryItemsList = ({
                   sortable: true,
                 },
                 {
-                  key: 'expiresIn',
-                  label: intl.formatMessage(messages.expiresIn),
-                  'data-column': 'expiresOn',
-                  sortable: true,
-                },
-                {
                   key: 'action',
                 },
               ]}
@@ -468,75 +204,8 @@ export const InventoryItemsList = ({
                 .map(inventoryItem => (
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
-                    intl={intl}
                     inventoryItem={inventoryItem}
-                  >
-                    <IconMenu icon={<MoreVertIcon />}>
-                      {inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={showReceiveInventoryDialog}
-                        >
-                          <ListItemIcon>
-                            <DoneIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(
-                              messages.receiveInventory
-                            )}
-                          />
-                        </MenuItem>
-                      )}
-                      {!inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={showAddInventoryDialog}
-                        >
-                          <ListItemIcon>
-                            <AddIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(messages.addInventory)}
-                          />
-                        </MenuItem>
-                      )}
-
-                      {!inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={showTransferInventoryDialog}
-                        >
-                          <ListItemIcon>
-                            <TransferIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(
-                              messages.transferInventory
-                            )}
-                          />
-                        </MenuItem>
-                      )}
-                      {!inventoryItem.get('inTransitFromSiteId') && (
-                        <MenuItem
-                          value={inventoryItem.get('id')}
-                          onClick={showRemoveInventoryDialog}
-                        >
-                          <ListItemIcon>
-                            <RemoveIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            inset
-                            primary={intl.formatMessage(
-                              messages.removeInventory
-                            )}
-                          />
-                        </MenuItem>
-                      )}
-                    </IconMenu>
-                  </InventoryDataTableRow>
+                  />
                 ))}
             </TableBody>
           </InventoryDataTable>
@@ -559,7 +228,7 @@ export const InventoryItemsList = ({
           inventoryAdjustment.get('actionType') ===
           types.SHOW_NEW_INVENTORY_DIALOG
         }
-        onCancel={hideAdjustInventoryDialog}
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
         onSubmit={onAddInventorySubmit}
       />
       <AddInventoryDialogForm
@@ -572,7 +241,7 @@ export const InventoryItemsList = ({
           inventoryAdjustment.get('actionType') ===
           types.SHOW_ADD_INVENTORY_DIALOG
         }
-        onCancel={hideAdjustInventoryDialog}
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
         onSubmit={onAddInventorySubmit}
       />
       <RemoveInventoryDialogForm
@@ -585,7 +254,7 @@ export const InventoryItemsList = ({
           inventoryAdjustment.get('actionType') ===
           types.SHOW_REMOVE_INVENTORY_DIALOG
         }
-        onCancel={hideAdjustInventoryDialog}
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
         onSubmit={onRemoveInventorySubmit}
       />
       <TransferInventoryDialogForm
@@ -598,11 +267,12 @@ export const InventoryItemsList = ({
           inventoryAdjustment.get('actionType') ===
           types.SHOW_TRANSFER_INVENTORY_DIALOG
         }
-        onCancel={hideAdjustInventoryDialog}
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
         onSubmit={onTransferInventorySubmit}
       />
       <ReceiveInventoryDialogForm
         intl={intl}
+        items={items}
         inventoryItem={items.getIn(
           ['byId', inventoryAdjustment.get('inventoryItemId')],
           EMPTY_MAP
@@ -611,11 +281,185 @@ export const InventoryItemsList = ({
           inventoryAdjustment.get('actionType') ===
           types.SHOW_RECEIVE_INVENTORY_DIALOG
         }
-        onCancel={hideAdjustInventoryDialog}
+        onCancel={() => dispatch(hideAdjustInventoryDialog())}
         onSubmit={onReceiveInventorySubmit}
       />
     </div>
   )
 }
 
-export default enhance(InventoryItemsList)
+export const InventoryItemsList = () => {
+  // >>>>>> Defining hooks <<<<<<
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const location = useLocation()
+  const intl = useIntl()
+
+  // >>>>>> Defining selectors <<<<<<
+  const inventory = useSelector(state => state.inventory)
+  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const consumableReasons = useSelector(
+    state => state.consumable.consumableReasons
+  )
+
+  // >>>>>> Structuring data <<<<<<
+  const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
+  const { table, items, inventoryAdjustment } = inventory
+  const sortPage = makeSortPageSelector({
+    sortCol: 'siteName',
+  })
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+  const searchParams = new URLSearchParams(location.search)
+  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+  const filters = fromPairs([...filtersParams.entries()])
+
+  // >>>>>> Defining callbacks <<<<<<
+  const onExcelClick = useCallback(
+    formatType => {
+      const format = formatType.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSupplies(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          table.get('total') > 0 ? table.get('total') : 1,
+          format,
+          'supplies',
+          dispatch
+        )
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location, sortCol, sortDir, pageAt, table]
+  )
+  const onAdjustInventorySucceeded = () => {
+    showAcknowledgement({
+      title: messages.inventoryAdjustedSuccessfully,
+    })
+  }
+  const onGroupBySiteChange = (_, isInputChecked) => {
+    dispatch(toggleGroupBySite(isInputChecked))
+  }
+
+  // >>>>>> Defining queries <<<<<<
+  const endpointConfig = groupBySite
+    ? INVENTORY_LIST_GROUP_BY_SITE
+    : INVENTORY_LIST
+  const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
+  const { isError, isLoading, data = false, error } = useQuery(
+    [endpointConfig.KEY, params, filters],
+    async () =>
+      fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
+  )
+
+  // >>>>>> Defining mutations <<<<<<
+  // onSuccess
+  const onSuccess = () => {
+    queryCache.invalidateQueries(endpointConfig.KEY)
+    onAdjustInventorySucceeded()
+  }
+  // Remove
+  const [onRemoveInventorySubmit] = useMutation(
+    values => {
+      const selectedAdjustmentReason = consumableReasons.items.find(
+        reason => reason.get('id') === values.reasonId
+      )
+      if (
+        selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
+      ) {
+        return removeInventory(
+          omit(values, ['canExpire', 'dateAdjusted']),
+          dispatch,
+          inventory
+        ).then(onAdjustInventorySucceeded)
+      }
+      return removeInventory(
+        omit(values, ['canExpire', 'dateAdjustedFrom', 'dateAdjustedTo']),
+        dispatch,
+        inventory
+      )
+    },
+    { onSuccess }
+  )
+  // Add
+  const [onAddInventorySubmit] = useMutation(
+    values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
+    {
+      onSuccess: () => {
+        queryCache.invalidateQueries(endpointConfig.KEY)
+        onAdjustInventorySucceeded()
+      },
+    }
+  )
+  // Transfer
+  const [onTransferInventorySubmit] = useMutation(
+    values =>
+      transferInventory(omit(values, ['canExpire']), dispatch, inventory),
+    {
+      onSuccess,
+    }
+  )
+  // Receive
+  const [onReceiveInventorySubmit] = useMutation(
+    values =>
+      receiveInventory(omit(values, ['canExpire']), dispatch, inventory),
+    {
+      onSuccess,
+    }
+  )
+
+  // >>>>>> Lifecycle hooks <<<<<<
+  useEffect(() => {
+    if (data)
+      dispatch(
+        receiveInventoryItems(data, groupBySite ? ['inventoryItems'] : [])
+      )
+  }, [data, groupBySite, dispatch])
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const {
+      sanitized: filtersSanitized,
+      value: filtersParams,
+    } = filtersSanitizer(searchParams.get('filters') || '')
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
+
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    }
+  }, [location, history, dispatch])
+
+  if (isError) throw new Error(error)
+
+  const props = {
+    intl,
+    history,
+    location,
+    reducedFilters,
+    dispatch,
+    groupBySite,
+    onGroupBySiteChange,
+    isLoading,
+    onExcelClick,
+    items,
+    sortCol,
+    sortDir,
+    table,
+    pageAt,
+    pageSize,
+    inventoryAdjustment,
+    onRemoveInventorySubmit,
+    onReceiveInventorySubmit,
+    onTransferInventorySubmit,
+    onAddInventorySubmit,
+  }
+
+  return <InventoryItemsListWithProps {...props} />
+}
+
+export default InventoryItemsList

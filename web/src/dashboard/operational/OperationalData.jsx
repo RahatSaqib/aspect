@@ -1,90 +1,98 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Fragment } from 'react'
-
+import React, { useEffect, useState } from 'react'
 import classnames from 'classnames/bind'
-import flowRight from 'lodash/flowRight'
-import { connect } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import { injectIntl } from 'react-intl'
-import { useQuery } from 'react-query'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import find from 'lodash/find'
+import { defineMessages, useIntl } from 'react-intl'
 
-import SummaryStatus from '../status/SummaryStatus'
-import InventoryItems from '../status/InventoryItems'
-
-import PermissionsProvider from '../../Providers/PermissionsProvider'
-import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
-import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
-import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
-import resultsTransmittedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/ResultsTransmitted'
+import OperationalDashBoard from './OperationalDashBoard'
+import OperationalDailyStatus from './OperationalDailyStatus'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
-export const OperationalData = ({ intl, history, location, loading }) => {
-  const { deviceStatus } = deviceStatusGraphs
-  const { resultsTransmitted } = resultsTransmittedGraphs
+const currentTabStyle = (currentTab, index) =>
+  currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
-  const { isError, data: { data: assays } = false, error } = useQuery(
-    'assays',
-    async () => fetchWrapperForQueries('/assay')
+const messages = defineMessages({
+  operationalDashboardTitle: {
+    id: 'pages.OperationalDashboard.operationalDashboardTitle',
+    defaultMessage: 'Dashboard',
+  },
+  dailyStatusTitle: {
+    id: 'pages.OperationalDashboard.dailyStatusTitle',
+    defaultMessage: 'Daily Status',
+  },
+})
+
+export const OperationalData = () => {
+  const { formatMessage } = useIntl()
+  const {
+    location: { pathname },
+    push,
+  } = useHistory()
+
+  const tabsConfig = {
+    dashboard: {
+      path: '/operational-data',
+      label: formatMessage(messages.operationalDashboardTitle),
+    },
+    dailyStatus: {
+      path: '/operational-data/daily-status',
+      label: formatMessage(messages.dailyStatusTitle),
+    },
+  }
+
+  const { path } = find(tabsConfig, { path: pathname }) || false
+  const [currentTab, setCurrentTab] = useState(
+    path || tabsConfig.dashboard.path
   )
 
-  if (isError) {
-    throw new Error(error)
-  }
+  useEffect(() => {
+    if (currentTab) {
+      push(currentTab)
+    }
+  }, [currentTab])
 
   return (
     <div className={cssClasses('Container')}>
       <Helmet title="Operational Data" />
-      {loading ? (
-        <div className={cssClasses({ 'Content--loading': loading })} />
-      ) : (
-        <Fragment>
-          <ErrorBoundary>
-            <PermissionsProvider permissions={['operationalData']}>
-              <SummaryStatus
-                intl={intl}
-                history={history}
-                location={location}
-                className={cssClasses('Section--summary')}
-                dashboard="operational"
-              />
-            </PermissionsProvider>
-          </ErrorBoundary>
-
-          <ErrorBoundary>
-            <PermissionsProvider permissions={['operationalData']}>
-              {assays && assays.length ? (
-                <GraphsContainer
-                  assaysFromState={assays}
-                  config={resultsTransmitted}
-                />
-              ) : null}
-            </PermissionsProvider>
-          </ErrorBoundary>
-
-          <ErrorBoundary>
-            <PermissionsProvider permissions={['operationalData']}>
-              <GraphsContainer assaysFromState={[]} config={deviceStatus} />
-            </PermissionsProvider>
-          </ErrorBoundary>
-
-          <InventoryItems
-            intl={intl}
-            history={history}
-            location={location}
-            className={cssClasses('Section--stock')}
+      <div className={cssClasses('tabs__container')}>
+        <Tabs
+          indicatorColor="primary"
+          textColor="inherit"
+          value={currentTab}
+          onChange={(e, v) => setCurrentTab(v)}
+          TabIndicatorProps={{ style: { height: '0px' } }}
+        >
+          <Tab
+            label={tabsConfig.dashboard.label}
+            className={cssClasses(
+              'tabs__tab',
+              currentTabStyle(currentTab, tabsConfig.dashboard.path)
+            )}
+            value={tabsConfig.dashboard.path}
           />
-        </Fragment>
-      )}
+          <Tab
+            label={tabsConfig.dailyStatus.label}
+            className={cssClasses(
+              'tabs__tab',
+              currentTabStyle(currentTab, tabsConfig.dailyStatus.path)
+            )}
+            value={tabsConfig.dailyStatus.path}
+          />
+        </Tabs>
+      </div>
+      {currentTab === tabsConfig.dashboard.path ? (
+        <OperationalDashBoard />
+      ) : null}
+      {currentTab === tabsConfig.dailyStatus.path ? (
+        <OperationalDailyStatus />
+      ) : null}
     </div>
   )
 }
 
-export default flowRight(
-  injectIntl,
-  connect(state => ({
-    loading: !!state.getIn(['dashboard', 'requestedAt']),
-    operational: state.getIn(['dashboard', 'operational']),
-  }))
-)(OperationalData)
+export default OperationalData

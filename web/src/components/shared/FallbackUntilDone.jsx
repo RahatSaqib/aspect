@@ -1,6 +1,7 @@
 /* eslint-disable react/no-find-dom-node */
 import elementResizeDetectorMaker from 'element-resize-detector'
-import _ from 'lodash'
+import throttle from 'lodash/throttle'
+import noop from 'lodash/noop'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
@@ -26,7 +27,7 @@ class FallbackUntilDone extends PureComponent {
 
   state = this.initialState()
 
-  handleResize = _.throttle(() => {
+  handleResize = throttle(() => {
     this.setState(this.initialState)
   }, 1000)
 
@@ -41,7 +42,7 @@ class FallbackUntilDone extends PureComponent {
   }
 
   componentWillUnmount() {
-    this.setState = _.noop
+    this.setState = noop
     this.erd.uninstall(ReactDOM.findDOMNode(this.node))
     window.removeEventListener('resize', this.handleResize)
   }
@@ -84,7 +85,7 @@ class FallbackUntilDone extends PureComponent {
   }
 
   render() {
-    const { component, className, fallbacks, isDone, ...restProps } = this.props
+    const { component, className, fallbacks, ...restProps } = this.props
     const fallback = fallbacks[this.state.fallbackIndex]
 
     return React.createElement(component, {

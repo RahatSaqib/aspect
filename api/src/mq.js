@@ -240,7 +240,21 @@ class MessageQueue {
         // values to pass iteratee test
         predicate = _.omitBy(predicate, _.isUndefined)
       }
-      const check = _.iteratee(predicate)
+
+      /**
+       * if 'predicate' is plain object (it may also be an array or string)
+       * then stringify it first and then restore.
+       * This is needed because in `dispatch()` func we stringify message
+       * before publishing it into the channel. And then event emitter listener
+       * parses such stringified object and some prop values (i.e. dates, etc)
+       * remain strings. So, here to let `_.iteratee` correctly compare values
+       * we need to make sure our awaitable action (i.e. `predicate`)
+       * exactly match emitted one.
+       */
+      const awaitableAction = _.isPlainObject(predicate)
+        ? JSON.parse(JSON.stringify(predicate))
+        : predicate
+      const check = _.iteratee(awaitableAction)
       const checkedListener = action => {
         if (check(action)) {
           debug(`waitForAction resolve ${JSON.stringify(action)}`)
@@ -314,10 +328,14 @@ class MessageContext {
   constructor(queue, id) {
     this.queue = queue
     this.id = id
-    _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit'])
+    _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit', 'clone'])
     this.transaction = null
     this.actions = []
     this.isFinalState = false
+  }
+
+  clone() {
+    return new MessageContext(this.queue, `${this.id} clone`)
   }
 
   dispatch(action, bindingKey) {

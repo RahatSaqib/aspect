@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { FaCircle } from 'react-icons/fa'
@@ -16,7 +16,7 @@ const cssClasses = classnames.bind(
   require('./NotificationDeliveryTableRow.css')
 )
 
-const enhance = _.identity(injectIntl)
+const enhance = identity(injectIntl)
 
 const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>

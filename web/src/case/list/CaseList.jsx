@@ -1,5 +1,6 @@
 import classnames from 'classnames/bind'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import without from 'lodash/without'
 import Immutable from 'immutable'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
@@ -28,8 +29,6 @@ import BrowseTablePaginator, {
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchCases } from '../CaseRedux'
-import requirePermissions from '../../components/shared/requirePermissions'
-import AspectButton from '../../components/shared/AspectButton'
 import DataTableHead from '../../components/shared/tableHead'
 import CaseTableRow from './CaseTableRow'
 
@@ -100,14 +99,14 @@ const searchSanitizer = makeSearchParamsSanitizer({
 
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
-const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
+const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
   injectIntl,

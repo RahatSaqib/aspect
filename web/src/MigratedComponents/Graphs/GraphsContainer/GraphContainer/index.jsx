@@ -17,17 +17,18 @@ const cssClasses = classnames.bind(require('../GraphsContainer.css'))
 const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
   const { title, id, selectorModifiers = false } = config
   const { formatMessage: intlFormatMessage } = useIntl()
-  const { graphType } = config
+  const { graphType, graphRenderPermissions } = config
   const { innerSize, outerSize } = size
   const [graphParams, setGraphParams] = useState(false)
+  const permissions = whiteListed
+    ? [...whiteListed, ...graphRenderPermissions]
+    : graphRenderPermissions
 
-  const updateFromActionComponent = params => {
-    const { identifier, selectedOption } = params
+  const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setGraphParams(extractOptionValue(identifier, selectedOption))
-  }
 
   return (
-    <PermissionsProvider permissions={whiteListed ? ['site'] : ['result']}>
+    <PermissionsProvider permissions={permissions}>
       <Grid item xs={12} lg={outerSize}>
         <Grid container>
           <Grid item xs={12}>

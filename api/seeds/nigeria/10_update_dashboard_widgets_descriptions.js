@@ -1,5 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
-const dashboardWidget = require('./fixtures/dashboardWidget')
+const dashboardWidget = require('../fixtures/DashboardWidget')
 const { upsertDashboardWidgets } = require('../common')
 
 async function seed(knex) {

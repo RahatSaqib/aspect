@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
+import fromPairs from 'lodash/fromPairs'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
@@ -18,7 +19,6 @@ import {
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
-import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 import { fetchReports, getReportFile } from '../ReportRedux'
 
 const cssClasses = classnames.bind(require('./ReportIndex.css'))
@@ -29,7 +29,6 @@ const messages = defineMessages({
     defaultMessage: 'Reports',
   },
 })
-const token = getAspectAccess()
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -45,7 +44,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer()
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -58,7 +57,7 @@ const enhance = compose(
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     return {
-      filters: _.fromPairs([...filtersParams.entries()]),
+      filters: fromPairs([...filtersParams.entries()]),
     }
   }),
   connect(

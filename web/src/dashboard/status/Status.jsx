@@ -9,10 +9,6 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
-import InventoryStatus from './InventoryStatus'
-import SiteStatus from './SiteStatus'
-import ActionStatus from './ActionStatus'
-import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
@@ -22,7 +18,9 @@ import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
 import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
 import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
 import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
+import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
+import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
 
 import ColorDemo from './ColorDemo/ColorDemo'
 
@@ -33,17 +31,19 @@ const Status = ({ history, location, colorDemo }) => {
   const { hivResults } = hivGraphs
   const { tbDetected, tbResults } = tbGraphs
   const { treatmentStatus } = treatmentStatusGraphs
+  const { inventoryStatus } = inventoryStatusGraphs
   const { deviceStatus } = deviceStatusGraphs
+  const { testsOverTime } = testsPerFormedGraphs
   const {
     covidDailyConfirmed,
     covidCasesByAgeAndGender,
     covidMortalityAndRecoveryConfig,
     covidMortalityAndRecoveryByGender,
   } = covidGraphs
-  const [marginBottom, setMarginBottom] = useState(0)
+  const [marginBottom] = useState(0)
   const dispatch = useDispatch()
   const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2Code = useSelector(
+  const countryIsoAlpha2CodeIgnored = useSelector(
     ({ user }) => user.countryAbbreviation
   )
   const assays = useSelector(({ assay }) =>
@@ -85,7 +85,15 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={testsOverTime.graphRenderPermissions}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={testsOverTime} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={hivResults} />
           ) : null}
@@ -93,7 +101,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={tbDetected.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbDetected} />
           ) : null}
@@ -101,7 +109,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbResults} />
           ) : null}
@@ -109,7 +117,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider
+          permissions={treatmentStatus.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -120,7 +130,7 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={deviceStatus} />
           ) : null}
@@ -128,7 +138,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidDailyConfirmed.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -139,7 +151,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidMortalityAndRecoveryConfig.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -150,7 +164,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidMortalityAndRecoveryByGender.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -161,7 +177,9 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider permissions={['covid']}>
+        <PermissionsProvider
+          permissions={covidCasesByAgeAndGender.graphRenderPermissions}
+        >
           {assays && assays.length ? (
             <GraphsContainer
               assaysFromState={assays}
@@ -172,36 +190,15 @@ const Status = ({ history, location, colorDemo }) => {
       </ErrorBoundary>
 
       {colorDemo && <ColorDemo vars={process.env} />}
-      <TargetStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--withDropdown')}
-        title={intl.formatMessage(messages.targetsTitle)}
-      />
-      <ActionStatus
-        intl={intl}
-        history={history}
-        location={location}
-        className={cssClasses('Section--withDropdown')}
-        title={intl.formatMessage(messages.actionTitle)}
-        marginBottom={marginBottom}
-        setMarginBottom={setMarginBottom}
-      />
-      <SiteStatus
-        history={history}
-        intl={intl}
-        countryIsoAlpha2Code={countryIsoAlpha2Code}
-        className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.sitesTitle)}
-      />
-      <InventoryStatus
-        history={history}
-        intl={intl}
-        countryIsoAlpha2Code={countryIsoAlpha2Code}
-        className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.consumableTitle)}
-      />
+
+      <ErrorBoundary>
+        <PermissionsProvider
+          permissions={inventoryStatus.graphRenderPermissions}
+        >
+          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
+        </PermissionsProvider>
+      </ErrorBoundary>
+
       <Reports
         intl={intl}
         location={location}

@@ -2,17 +2,25 @@
   This is a generic reducer for a list of items
   where individual items can be updated with additional data
 */
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import Immutable from 'immutable'
 
-export function receiveList(items, list) {
+function receiveListHelper(items, list, method) {
   const nextById = items.byId.withMutations(mutById => {
-    list.forEach(item => mutById.mergeDeepIn([item.get('id')], item))
+    list.forEach(item => mutById[method]([item.get('id')], item))
   })
 
   const nextCurrentIdList = list.map(item => item.get('id'))
 
   return items.set('byId', nextById).set('currentIdList', nextCurrentIdList)
+}
+
+export function receiveList(items, list) {
+  return receiveListHelper(items, list, 'mergeDeepIn')
+}
+
+export function receiveListWithSet(items, list) {
+  return receiveListHelper(items, list, 'setIn')
 }
 
 export function receiveItem(items, item) {
@@ -24,4 +32,4 @@ export const Items = Immutable.Record({
   currentIdList: Immutable.List(),
 })
 
-export const makeItems = _.flowRight(Items, Immutable.fromJS)
+export const makeItems = flowRight(Items, Immutable.fromJS)

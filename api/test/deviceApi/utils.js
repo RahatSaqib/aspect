@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const chai = require('chai')
-const supertest = require('supertest')
 const { subHours } = require('date-fns')
 const { run } = require('../../src/db')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -18,7 +17,7 @@ const {
 
 const { assert } = chai
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
 
 async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)

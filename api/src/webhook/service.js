@@ -21,7 +21,10 @@ const {
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 
-function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessageCreated(
+  { webhookMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
   return context.transact(async knex => {
@@ -66,7 +69,10 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   })
 }
 
-function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessagePending(
+  { webhookMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({
     webhookMessageSent,
     webhookMessageError,
@@ -87,7 +93,8 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
         'm.fileReferenceId',
         'm.resultId',
         'fct.mimeType',
-        'fct.mimeSubType'
+        'fct.mimeSubType',
+        'tmpl.okResponseSuccessRegex'
       )
     if (message) {
       const contentType = `${message.mimeType}/${message.mimeSubType}`
@@ -135,7 +142,16 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
           if (responseText) {
             messageUpdates.response += ` ${responseText}`
           }
-          webhookError = !resp.ok
+          if (message.okResponseSuccessRegex) {
+            webhookError = !(
+              messageUpdates.response &&
+              new RegExp(message.okResponseSuccessRegex, 'im').test(
+                messageUpdates.response
+              )
+            )
+          } else {
+            webhookError = !resp.ok
+          }
         } catch (err) {
           webhookError = true
           messageUpdates.response = err.toString()
@@ -169,15 +185,15 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   })
 }
 
-function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessageSent({ webhookMessageId }, { messageContext }) {
   return finalizeWebhookMessage(webhookMessageId, messageContext)
 }
 
-function onWebhookMessageError({ webhookMessageId }, { messageContext }) {
+async function onWebhookMessageError({ webhookMessageId }, { messageContext }) {
   return finalizeWebhookMessage(webhookMessageId, messageContext)
 }
 
-function finalizeWebhookMessage(webhookMessageId, messageContext) {
+async function finalizeWebhookMessage(webhookMessageId, messageContext) {
   const context = messageContext.bindActionCreators({
     resolveIssues,
     escalateIssues,
@@ -203,21 +219,29 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
-    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      partner: 'pr',
-      device: 'd',
-      deviceType: 'dt',
-      person: 'p',
-      /*
-      result: 'r',
-      ^^^ Leaving this commented out to  highlight the fact that adding these
-          constraints will break the RO notifications configured for Myanmar
-      */
-      sample: 'sample',
-      site: 's',
-      showUnapprovedDevices: true,
+    .modify(queryBuilder => {
+      queryBuilder.modify(addDataSourceToQuery, {
+        message: 'm',
+        notification: 'n',
+      })
+      if (dataConstraints) {
+        queryBuilder.modify(addConstraints, dataConstraints, {
+          assay: 'a',
+          partner: 'pr',
+          device: 'd',
+          deviceType: 'dt',
+          person: 'p',
+          /*
+          result: 'r',
+          ^^^ Leaving this commented out to  highlight the fact that adding these
+              constraints will break the RO notifications configured for Myanmar
+          */
+          sample: 'sample',
+          site: 's',
+          showUnapprovedDevices: true,
+          showDecommissionedDevices: true,
+        })
+      }
     })
     .where({ 'm.id': webhookMessageId })
     .first(

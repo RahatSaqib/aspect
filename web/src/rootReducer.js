@@ -6,7 +6,6 @@ import globals from './globals/GlobalsRedux'
 import appNotification from './appNotification/AppNotificationRedux'
 import filter from './filter/FilterRedux'
 import user, { types as authTypes } from './auth/AuthRedux'
-import dashboard from './dashboard/DashboardRedux'
 import demo from './demo/DemoRedux'
 import device from './device/DeviceRedux'
 import deviceApiKey from './deviceApiKey/DeviceApiKeyRedux'
@@ -23,7 +22,6 @@ import assay from './assay/AssayRedux'
 import assayType from './assay/AssayTypeRedux'
 import consumable from './consumable/ConsumableRedux'
 import inventory from './inventory/InventoryRedux'
-import notification from './notification/NotificationRedux'
 import tag from './tag/TagRedux'
 import task from './task/TaskRedux'
 import idle from './idle/IdleRedux'
@@ -32,11 +30,8 @@ import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
 import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatusRedux'
 import report from './report/ReportRedux'
-import reporter from './reporter/ReporterRedux'
 import patient from './patient/PatientRedux'
-import resultsDetail from './MigratedComponents/Results/Detail/Redux/resultsDetail'
-import resultsForm from './MigratedComponents/Results/Detail/Redux/resultsForm'
-import deviceMaintenanceStatus from './device/maintenance/DeviceMaintenanceStatusRedux'
+import deviceMaintenanceStatus from './MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
 import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({
@@ -46,7 +41,6 @@ const appReducer = combineReducers({
   assayType,
   case: _case,
   consumable,
-  dashboard,
   demo,
   device,
   deviceApiKey,
@@ -62,14 +56,10 @@ const appReducer = combineReducers({
   idle,
   inventory,
   jobs,
-  notification,
   patient,
   person,
   report,
-  reporter,
   result,
-  resultsDetail,
-  resultsForm,
   resultTreatmentStatus,
   resultWorkflowStatus,
   router,
@@ -87,7 +77,6 @@ const App = Immutable.Record({
   case: undefined,
   clinicalIndicators: undefined,
   consumable: undefined,
-  dashboard: undefined,
   demo: undefined,
   device: undefined,
   deviceApiKey: undefined,
@@ -102,14 +91,11 @@ const App = Immutable.Record({
   idle: undefined,
   inventory: undefined,
   jobs: undefined,
-  notification: undefined,
   patient: undefined,
   person: undefined,
   report: undefined,
   reporter: undefined,
   result: undefined,
-  resultsDetail: undefined,
-  resultsForm: undefined,
   resultTreatmentStatus: undefined,
   resultWorkflowStatus: undefined,
   router: undefined,

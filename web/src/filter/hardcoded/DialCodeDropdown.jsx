@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import keyBy from 'lodash/keyBy'
 import classnames from 'classnames/bind'
 import React, { useRef } from 'react'
 import Downshift from 'downshift'
@@ -17,7 +17,7 @@ import dialCodes from './dialCodes'
 
 const cssClasses = classnames.bind(require('./DialCodeDropdown.css'))
 
-const countryBy = _.keyBy(countries, 'isoAlpha2Code')
+const countryBy = keyBy(countries, 'isoAlpha2Code')
 
 const dialCodesWithCountry = dialCodes.map(({ dialCode, isoAlpha2Code }) => ({
   isoAlpha2Code,
@@ -80,7 +80,7 @@ const renderMenuItem = ({ index, style, key, getItemProps, selectedItem }) => {
 
 const itemToString = item => (item ? item.dialCode : '')
 
-export const DialCodeDropdown = ({ className, ...props }) => {
+export const DialCodeDropdown = ({ ...props }) => {
   const popperNode = useRef(null)
   const initialDialcode =
     props.value.length > 0 && props.value.length < 6 ? props.value : ''

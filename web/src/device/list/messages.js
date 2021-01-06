@@ -11,13 +11,13 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.device',
     defaultMessage: 'Device',
   },
-  approval: {
-    id: 'pages.DeviceList.approval',
-    defaultMessage: 'Approval Status',
+  status: {
+    id: 'pages.DeviceList.status',
+    defaultMessage: 'Status',
   },
   availabilityRate: {
     id: 'pages.DeviceList.availabilityRate',
-    defaultMessage: 'Availability',
+    defaultMessage: 'Active',
   },
   errorRate: {
     id: 'pages.DeviceList.errorRate',
@@ -90,9 +90,9 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.reportingForDays',
     defaultMessage: 'For {period}',
   },
-  noResults: {
-    id: 'pages.DeviceList.noResults',
-    defaultMessage: 'No Results',
+  notAvailable: {
+    id: 'pages.DeviceList.notAvailable',
+    defaultMessage: 'N/A',
   },
   issueCategoryDeviceHealth: {
     id: 'pages.DeviceList.deviceHealth',
@@ -109,6 +109,70 @@ export const messages = defineMessages({
   issueCategoryConnectivityHealth: {
     id: 'pages.DeviceList.connectivityHealth',
     defaultMessage: 'Connectivity',
+  },
+  active: {
+    id: 'pages.DeviceList.status.active',
+    defaultMessage: 'Active',
+  },
+  inactiveConnectivity: {
+    id: 'pages.DeviceList.status.inactiveConnectivity',
+    defaultMessage: 'Connectivity',
+  },
+  inactiveDecommissioned: {
+    id: 'pages.DeviceList.status.inactiveDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  inactiveDownForRepair: {
+    id: 'pages.DeviceList.status.inactiveDownForRepair',
+    defaultMessage: 'Down For Repair',
+  },
+  inactiveNoResultsReported: {
+    id: 'pages.DeviceList.status.inactiveNoResultsReported',
+    defaultMessage: 'No Results Reported',
+  },
+  inactiveOutOfInventory: {
+    id: 'pages.DeviceList.status.inactiveOutOfInventory',
+    defaultMessage: 'Out Of Inventory',
+  },
+  inactiveUnknown: {
+    id: 'pages.DeviceList.status.inactiveUnknown',
+    defaultMessage: 'Unknown',
+  },
+  reportedActive: {
+    id: 'pages.DeviceList.status.reportedActive',
+    defaultMessage: 'Active',
+  },
+  deviceApprovalProvisioned: {
+    id: 'pages.DeviceList.status.provisioned',
+    defaultMessage: 'Provisioned',
+  },
+  deviceApprovalAssigned: {
+    id: 'pages.DeviceList.status.assigned',
+    defaultMessage: 'Assigned',
+  },
+  deviceApprovalApproved: {
+    id: 'pages.DeviceList.status.approved',
+    defaultMessage: 'Approved',
+  },
+  deviceApprovalDecommissioned: {
+    id: 'pages.DeviceList.status.decommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  deviceStatusProvisioned: {
+    id: 'pages.DeviceList.status.provisioned',
+    defaultMessage: 'Provisioned',
+  },
+  deviceStatusAssigned: {
+    id: 'pages.DeviceList.status.assigned',
+    defaultMessage: 'Assigned',
+  },
+  deviceStatusApproved: {
+    id: 'pages.DeviceList.status.approved',
+    defaultMessage: 'Approved',
+  },
+  deviceStatusDecommissioned: {
+    id: 'pages.DeviceList.status.decommissioned',
+    defaultMessage: 'Decommissioned',
   },
 })
 

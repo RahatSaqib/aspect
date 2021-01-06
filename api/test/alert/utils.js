@@ -32,7 +32,9 @@ class AlertTestContext {
       this.userId = userId
 
       // read 1st alert template
-      const { id: alertTemplateId } = await knex('AlertTemplate').first('id')
+      const { id: alertTemplateId } = await knex('AlertTemplate')
+        .whereRaw('message LIKE ?', ['%{{numberOfDays%'])
+        .first('id')
       assert.isOk(alertTemplateId)
 
       // read 1st Result and corresponding siteId/deviceId

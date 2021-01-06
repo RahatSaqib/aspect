@@ -6,7 +6,7 @@ const {
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
-function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
+async function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
 
   return context.transact(async knex => {
@@ -23,14 +23,13 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   })
 }
 
-function onAlertMessageUpdateAfterIssueDataChanged(
+async function onAlertMessageUpdateAfterIssueDataChanged(
   { issueId },
   { messageContext }
 ) {
   return messageContext.transact(async knex => {
-    const { issueTypeId } = await knex('Issue')
-      .where('id', issueId)
-      .first('issueTypeId')
+    const { issueTypeId } =
+      (await knex('Issue').where('id', issueId).first('issueTypeId')) || {}
 
     // if issueType does not need to update alert message - exit
     // (later add here condition for DataCategoryLow* issue types which should update percentage in alert message)
@@ -92,6 +91,7 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
       sample: 'sample',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')

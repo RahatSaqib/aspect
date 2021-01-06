@@ -3,6 +3,337 @@ const {
   allMessageSeverityToId,
 } = require('../../src/shared/dictionary')
 
+const msgInstrumentReplaced = `{{device.name}}:
+  Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
+  "{{issue.data.newInstrumentSerial}}"
+`
+
+const getDeviceBaseHtml = ({ customPart, errorCode }) => `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style>
+          body {
+            font-family: Arial, Sans-Serif;
+          }
+
+          table {
+            width: 600px;
+            border: solid 1px black;
+            margin-bottom: 35px;
+          }
+
+          td {
+            border: solid 1px black;
+            padding: 2px;
+          }
+        </style>
+    </head>
+    <body>
+      <p>
+      This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
+      </p>
+      <p>
+        <strong>Notification Rule</strong>
+      </p>
+      <table cellpadding="0" cellspacing="0">
+          <tr>
+              <td>
+                Rule
+              </td>
+              <td>
+                {{notification.type}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Error Code
+              </td>
+              <td>
+                {{issue.errorCode}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Occurrences
+              </td>
+              <td>
+                {{issue.occurrences}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Time Period Days
+              </td>
+              <td>
+                30
+              </td>
+          </tr>
+          ${customPart}
+      </table>
+      <p>
+        <strong>SystemOne GeneXpert System and Contact Information</strong>
+      </p>
+      <table cellpadding="0" cellspacing="0">
+          <tr>
+              <td>
+                Location Name
+              </td>
+              <td>
+                {{site.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Address 1
+              </td>
+              <td>
+                {{site.street1}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Address 2
+              </td>
+              <td>
+                {{site.street2}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                State
+              </td>
+              <td>
+                {{site.state}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Local Government Area
+              </td>
+              <td>
+                {{site.lga}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Postal Code
+              </td>
+              <td>
+                {{site.zip}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Country
+              </td>
+              <td>
+                {{country.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Name
+              </td>
+              <td>
+                {{site.primaryContact.name}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Title
+              </td>
+              <td>
+                {{site.primaryContact.title}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Phone
+              </td>
+              <td>
+                {{site.primaryContact.phone}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Cell
+              </td>
+              <td>
+                {{site.primaryContact.cell}}
+              </td>
+          </tr>
+          <tr>
+              <td>
+                Contact Email
+              </td>
+              <td>
+                {{site.primaryContact.email}}
+              </td>
+          </tr>
+      </table>
+    </body>
+</html>
+`
+
+const getDeviceBaseText = ({ customPart, errorCode }) => `
+This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
+Notification Rule
+
+Rule: {{notification.type}}
+
+Error Code: {{issue.errorCode}}
+
+Occurrences: {{issue.occurrences}}
+
+Time Period Days: 30
+
+${customPart}
+
+
+SystemOne GeneXpert System and Contact Information
+
+Location Name: {{site.name}}
+
+Address 1: {{site.street1}}
+
+Address 2: {{site.street2}}
+
+State: {{site.state}}
+
+Local Government Area: {{site.lga}}
+
+Postal Code: {{site.zip}}
+
+Country: {{country.name}}
+
+Contact Name: {{site.primaryContact.name}}
+
+Contact Title: {{site.primaryContact.title}}
+
+Contact Phone: {{site.primaryContact.phone}}
+
+Contact Cell: {{site.primaryContact.cell}}
+
+Contact Email: {{site.primaryContact.email}}`
+
+const errorIssueEmailHtml = getDeviceBaseHtml({
+  customPart: `
+  <tr>
+    <td>
+      System Serial
+    </td>
+    <td>
+      {{result.instrumentSerial}}
+    </td>
+  </tr>
+  <<REPLACE WITH MODULE OR REAGENT>>
+  <tr>
+    <td>
+      Cartridge Type
+    </td>
+    <td>
+      {{result.assay.name}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Date/Time
+    </td>
+    <td>
+      {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+    </td>
+  </tr>
+`,
+})
+
+const errorIssueEmailText = getDeviceBaseText({
+  customPart: `
+System Serial: {{result.instrumentSerial}}
+
+<<REPLACE WITH MODULE OR REAGENT>>
+
+Cartridge Type: {{result.assay.name}}
+
+Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+`,
+})
+
+const getErrorIssueSubjectBase = errorCode => {
+  const errorLabel = `Error${errorCode ? ` ${errorCode}` : ''}`
+  return `Aspect Automatic Notification - Location: {{site.name}}, SN: {{result.instrumentSerial}}, ${errorLabel}: {{notification.type}}`
+}
+const errorIssueSubject = getErrorIssueSubjectBase()
+const errorIssueEmailHtmlModule = errorIssueEmailHtml.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  '<tr><td>Module</td><td>{{result.moduleSerial}}</td></tr>'
+)
+const errorIssueEmailTextModule = errorIssueEmailText.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  'Module: {{result.moduleSerial}}'
+)
+
+const errorIssueEmailHtmlLot = errorIssueEmailHtml.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  '<tr><td>Reagent Lot</td><td>{{result.consumableLot}}</td></tr>'
+)
+const errorIssueEmailTextLot = errorIssueEmailText.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  'Reagent Lot: {{result.consumableLot}}'
+)
+
+// must correspond with 'Hardware*' items in IssueEventTrigger.json
+const hardwareMessage = {
+  1001: 'Temperature Drifted From Setpoint',
+  1002: 'Heater Temperature Differential Error',
+  2005: 'Syringe Stall Error',
+  2008: 'Syringe Pressure Too High',
+  2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
+  2026: 'Ultrasonic Horn Current Out of Range',
+  2032: 'Ultrasonic Horn Tuning Error',
+  2035: 'Ultrasonic Horn Failure',
+  2037: 'Cartridge Integrity Test Failure',
+  2096: 'Assay Specific Termination Error',
+  2097: 'Assay-Specific Termination #2',
+  2126: 'Module was Reset',
+  4008: 'Power Supply Voltage Out of Range',
+  4009: 'Heater A Temperature Unstable',
+  4012: 'Heater B Temperature Unstable',
+  4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
+}
+const hardwareErrorIssueEmailHtml = errorCode =>
+  getDeviceBaseHtml({
+    errorCode,
+    customPart: `
+    <tr>
+      <td>
+        System Serial
+      </td>
+      <td>
+        {{device.serial}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Date/Time
+      </td>
+      <td>
+        {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+      </td>
+    </tr>
+  `,
+  })
+const hardwareErrorIssueEmailText = errorCode =>
+  getDeviceBaseText({
+    errorCode,
+    customPart: `
+System Serial: {{device.serial}}
+
+Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+  `,
+  })
+
 async function getBaseIssues(auditFields) {
   // Issues
   const issueCategories = await allIssueCategoryToId()
@@ -59,7 +390,6 @@ async function getBaseIssues(auditFields) {
         message: 'No testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
       },
-
       SmsTemplate: {
         message:
           '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
@@ -89,12 +419,10 @@ async function getBaseIssues(auditFields) {
         message: 'Under Maintenance',
         ...auditFields,
       },
-
       SmsTemplate: {
         message: '{{site.name}} under maintenance.',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{site.name}} Maintenance',
         body: '{{site.name}} under maintenance.',
@@ -131,6 +459,31 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    UnusedModules: {
+      issueType: {
+        name: 'Unused Modules',
+        externalId: 'UnusedModules',
+        i18nKey: 'issueStatusUnusedModules',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Unused Module(s) in {{device.name}}',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: 'Unused Module(s) in {{device.name}}',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: '{{device.name}}: Unused module(s)',
+        body: 'Unused module(s) in {{device.name}}',
+        htmlBody: 'Unused module(s) in {{device.name}}',
+        ...auditFields,
+      },
+    },
     ModuleTemperatureError: {
       issueType: {
         name: 'Module Temperature Error',
@@ -140,7 +493,6 @@ async function getBaseIssues(auditFields) {
         // defaultMessageTypeId: moduleTemperatureErrorTypeId,
       },
       MessageType: { messageSeverityId: messageSeverities.Alert },
-
       AlertTemplate: {
         message:
           'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
@@ -151,7 +503,6 @@ async function getBaseIssues(auditFields) {
           '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject:
           '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
@@ -211,7 +562,6 @@ async function getBaseIssues(auditFields) {
           '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Machine Temperature Errors',
         body:
@@ -235,13 +585,11 @@ async function getBaseIssues(auditFields) {
         message: 'Power error across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       SmsTemplate: {
         message:
           '{{device.name}}: Power error across machine, conduct troubleshooting.',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Power error across machine',
         body:
@@ -272,7 +620,6 @@ async function getBaseIssues(auditFields) {
           '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Possible module failure',
         body:
@@ -296,13 +643,11 @@ async function getBaseIssues(auditFields) {
         message: 'Procedural errors across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       SmsTemplate: {
         message:
           '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}}: Procedural Errors',
         body:
@@ -332,7 +677,6 @@ async function getBaseIssues(auditFields) {
           '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: 'Low Collection Rate',
         body:
@@ -356,12 +700,10 @@ async function getBaseIssues(auditFields) {
         message: 'Update Stock Level',
         ...auditFields,
       },
-
       SmsTemplate: {
         message: '{{site.name}} - Update Stock Level',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{site.name}} - Update Stock Level',
         body: '{{site.name}} - Update Stock Level',
@@ -383,12 +725,10 @@ async function getBaseIssues(auditFields) {
         message: 'Cartridge-specific errors exceed 5%',
         ...auditFields,
       },
-
       SmsTemplate: {
         message: '{{device.name}} - Cartridge-specific errors exceed 5%',
         ...auditFields,
       },
-
       EmailTemplate: {
         subject: '{{device.name}} - Cartridge-specific errors exceed 5%',
         body: '{{device.name}} - Cartridge-specific errors exceed 5%',
@@ -406,15 +746,12 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-
       AlertTemplate: {
         message: 'Generic errors across machine, conduct troubleshooting',
       },
-
       SmsTemplate: {
         message: 'Generic errors across machine, conduct troubleshooting',
       },
-
       EmailTemplate: {
         subject: 'Generic Errors',
         body: 'Generic errors across machine, conduct troubleshooting',
@@ -431,7 +768,6 @@ async function getBaseIssues(auditFields) {
       AlertTemplate: {
         message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
       },
-
       SmsTemplate: {
         message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
       },
@@ -489,6 +825,177 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
+    TooManyInvalidResultsModule: {
+      issueType: {
+        name: 'Too Many Invalid Results On Module',
+        externalId: 'TooManyInvalidResultsModule',
+        i18nKey: 'issueStatusTooManyInvalidResultsModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    TooManyInvalidResultsLot: {
+      issueType: {
+        name: 'Too Many Invalid Results On Lot',
+        externalId: 'TooManyInvalidResultsLot',
+        i18nKey: 'issueStatusTooManyInvalidResultsLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooLowModule: {
+      issueType: {
+        name: 'Probe Check Too Low On Module',
+        externalId: 'ProbeCheckTooLowModule',
+        i18nKey: 'issueStatusProbeCheckTooLowModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooLowLot: {
+      issueType: {
+        name: 'Probe Check Too Low On Lot',
+        externalId: 'ProbeCheckTooLowLot',
+        i18nKey: 'issueStatusProbesTooLow',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighModule: {
+      issueType: {
+        name: 'Probe Check Too High On Module',
+        externalId: 'ProbeCheckTooHighModule',
+        i18nKey: 'issueStatusProbeCheckTooHighModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighLot: {
+      issueType: {
+        name: 'Probe Check Too High On Lot',
+        externalId: 'ProbeCheckTooHighLot',
+        i18nKey: 'issueStatusProbesTooHigh',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Module',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey:
+          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Lot',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    ProbeCheckFailedModule: {
+      issueType: {
+        name: 'Probe Check Failed On Module',
+        externalId: 'ProbeCheckFailedModule',
+        i18nKey: 'issueStatusProbeCheckFailedModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    ProbeCheckFailedLot: {
+      issueType: {
+        name: 'Probe Check Failed On Lot',
+        externalId: 'ProbeCheckFailedLot',
+        i18nKey: 'issueStatusProbeCheckFailedLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
     InventoryStockExpiring: {
       issueType: {
         name: 'Inventory Stock Expiring',
@@ -509,6 +1016,508 @@ async function getBaseIssues(auditFields) {
         subject: 'stock expiring at {{site.name}}',
         htmlBody: '{{issue.data.totalWasted}} consumables likely to expire.',
         body: '{{issue.data.totalWasted}} consumables likely to expire.',
+      },
+    },
+    InstrumentReplaced: {
+      issueType: {
+        name: 'Instrument Replaced',
+        externalId: 'InstrumentReplaced',
+        i18nKey: 'issueTypeInstrumentReplaced',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: msgInstrumentReplaced,
+      },
+      SmsTemplate: {
+        message: msgInstrumentReplaced,
+      },
+      EmailTemplate: {
+        subject: 'Instrument has been replaced',
+        body: msgInstrumentReplaced,
+        htmlBody: msgInstrumentReplaced,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveModule: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Module',
+        externalId: 'SignalLossDetectedInAmplificationCurveModule',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    SignalLossDetectedInAmplificationCurveLot: {
+      issueType: {
+        name: 'Signal Loss Detected in the Amplification Curve On Lot',
+        externalId: 'SignalLossDetectedInAmplificationCurveLot',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    CartridgeIntegrityTestFailureLot: {
+      issueType: {
+        name: 'Cartridge Integrity Test Failure On Lot',
+        externalId: 'CartridgeIntegrityTestFailureLot',
+        i18nKey: 'cartridgeIntegrityTestFailureLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    SyringePressureTooHighLot: {
+      issueType: {
+        name: 'Syringe Pressure Too High On Lot',
+        externalId: 'SyringePressureTooHighLot',
+        i18nKey: 'SyringePressureTooHighLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    SyringeStallErrorLot: {
+      issueType: {
+        name: 'Syringe Stall Error On Lot',
+        externalId: 'SyringeStallErrorLot',
+        i18nKey: 'SyringeStallErrorLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornFailureModule: {
+      issueType: {
+        name: 'Ultrasonic Horn Failure On Module',
+        externalId: 'UltrasonicHornFailureModule',
+        i18nKey: 'issueStatusUltrasonicHornFailureModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornTuningErrorModule: {
+      issueType: {
+        name: 'Ultrasonic Horn Tuning Error On Module',
+        externalId: 'UltrasonicHornTuningErrorModule',
+        i18nKey: 'issueStatusUltrasonicHornTuningError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornCurrentOutOfRangeModule: {
+      issueType: {
+        name: 'Ultrasonic Horn Current Out of Range On Module',
+        externalId: 'UltrasonicHornCurrentOutOfRangeModule',
+        i18nKey: 'issueStatusUltrasonicHornCurrentOutOfRangeModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationError1Module: {
+      issueType: {
+        name: 'Assay Specific Termination Error On Module',
+        externalId: 'AssaySpecificTerminationError1Module',
+        i18nKey: 'issueStatusAssaySpecificTerminationError1Module',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationError1Lot: {
+      issueType: {
+        name: 'Assay Specific Termination Error On Lot',
+        externalId: 'AssaySpecificTerminationError1Lot',
+        i18nKey: 'issueStatusAssaySpecificTerminationError1Lot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationError2Module: {
+      issueType: {
+        name: 'Assay-Specific Termination #2 On Module',
+        externalId: 'AssaySpecificTerminationError2Module',
+        i18nKey: 'issueStatusAssaySpecificTerminationError2Module',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationError2Lot: {
+      issueType: {
+        name: 'Assay-Specific Termination #2 On Lot',
+        externalId: 'AssaySpecificTerminationError2Lot',
+        i18nKey: 'issueStatusAssaySpecificTerminationError2Lot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+
+    // --------------------------------------------------------
+    // Hardware Issues - must correspond with 'Hardware*' items in IssueEventTrigger.json
+    // --------------------------------------------------------
+    HardwareTemperatureDriftedFromSetPoint: {
+      issueType: {
+        name: hardwareMessage[1001],
+        externalId: 'HardwareTemperatureDriftedFromSetPoint',
+        i18nKey: 'issueHardwareTemperatureDriftedFromSetPoint',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(1001),
+        body: hardwareErrorIssueEmailText(1001),
+        htmlBody: hardwareErrorIssueEmailHtml(1001),
+        ...auditFields,
+      },
+    },
+    HardwareHeaterTemperatureDifferentialError: {
+      issueType: {
+        name: hardwareMessage[1002],
+        externalId: 'HardwareHeaterTemperatureDifferentialError',
+        i18nKey: 'issueHardwareHeaterTemperatureDifferentialError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(1002),
+        body: hardwareErrorIssueEmailText(1002),
+        htmlBody: hardwareErrorIssueEmailHtml(1002),
+        ...auditFields,
+      },
+    },
+    HardwareSyringeStallError: {
+      issueType: {
+        name: hardwareMessage[2005],
+        externalId: 'HardwareSyringeStallError',
+        i18nKey: 'issueHardwareSyringeStallError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2005),
+        body: hardwareErrorIssueEmailText(2005),
+        htmlBody: hardwareErrorIssueEmailHtml(2005),
+        ...auditFields,
+      },
+    },
+    HardwareSyringePressureTooHigh: {
+      issueType: {
+        name: hardwareMessage[2008],
+        externalId: 'HardwareSyringePressureTooHigh',
+        i18nKey: 'issueHardwareSyringePressureTooHigh',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2008),
+        body: hardwareErrorIssueEmailText(2008),
+        htmlBody: hardwareErrorIssueEmailHtml(2008),
+        ...auditFields,
+      },
+    },
+    HardwareThermistorTemperatureOutOfRange2014: {
+      issueType: {
+        name: hardwareMessage[2014],
+        externalId: 'HardwareThermistorTemperatureOutOfRange2014',
+        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange2014',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2014),
+        body: hardwareErrorIssueEmailText(2014),
+        htmlBody: hardwareErrorIssueEmailHtml(2014),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornCurrentOutOfRange: {
+      issueType: {
+        name: hardwareMessage[2026],
+        externalId: 'HardwareUltrasonicHornCurrentOutOfRange',
+        i18nKey: 'issueHardwareUltrasonicHornCurrentOutOfRange',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2026),
+        body: hardwareErrorIssueEmailText(2026),
+        htmlBody: hardwareErrorIssueEmailHtml(2026),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornTuningError: {
+      issueType: {
+        name: hardwareMessage[2032],
+        externalId: 'HardwareUltrasonicHornTuningError',
+        i18nKey: 'issueHardwareUltrasonicHornTuningError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2032),
+        body: hardwareErrorIssueEmailText(2032),
+        htmlBody: hardwareErrorIssueEmailHtml(2032),
+        ...auditFields,
+      },
+    },
+    HardwareUltrasonicHornFailure: {
+      issueType: {
+        name: hardwareMessage[2035],
+        externalId: 'HardwareUltrasonicHornFailure',
+        i18nKey: 'issueHardwareUltrasonicHornFailure',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2035),
+        body: hardwareErrorIssueEmailText(2035),
+        htmlBody: hardwareErrorIssueEmailHtml(2035),
+        ...auditFields,
+      },
+    },
+    HardwareCartridgeIntegrityTestFailure: {
+      issueType: {
+        name: hardwareMessage[2037],
+        externalId: 'HardwareCartridgeIntegrityTestFailure',
+        i18nKey: 'issueHardwareCartridgeIntegrityTestFailure',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2037),
+        body: hardwareErrorIssueEmailText(2037),
+        htmlBody: hardwareErrorIssueEmailHtml(2037),
+        ...auditFields,
+      },
+    },
+    HardwareAssaySpecificTerminationError: {
+      issueType: {
+        name: hardwareMessage[2096],
+        externalId: 'HardwareAssaySpecificTerminationError',
+        i18nKey: 'issueHardwareAssaySpecificTerminationError',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2096),
+        body: hardwareErrorIssueEmailText(2096),
+        htmlBody: hardwareErrorIssueEmailHtml(2096),
+        ...auditFields,
+      },
+    },
+    HardwareAssaySpecificTerminationError2: {
+      issueType: {
+        name: hardwareMessage[2097],
+        externalId: 'HardwareAssaySpecificTerminationError2',
+        i18nKey: 'issueHardwareAssaySpecificTerminationError2',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2097),
+        body: hardwareErrorIssueEmailText(2097),
+        htmlBody: hardwareErrorIssueEmailHtml(2097),
+        ...auditFields,
+      },
+    },
+    HardwareModuleWasReset: {
+      issueType: {
+        name: hardwareMessage[2126],
+        externalId: 'HardwareModuleWasReset',
+        i18nKey: 'issueHardwareModuleWasReset',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(2126),
+        body: hardwareErrorIssueEmailText(2126),
+        htmlBody: hardwareErrorIssueEmailHtml(2126),
+        ...auditFields,
+      },
+    },
+    HardwarePowerSupplyVoltageOutOfRange: {
+      issueType: {
+        name: hardwareMessage[4008],
+        externalId: 'HardwarePowerSupplyVoltageOutOfRange',
+        i18nKey: 'issueHardwarePowerSupplyVoltageOutOfRange',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4008),
+        body: hardwareErrorIssueEmailText(4008),
+        htmlBody: hardwareErrorIssueEmailHtml(4008),
+        ...auditFields,
+      },
+    },
+    HardwareHeaterATemperatureUnstable: {
+      issueType: {
+        name: hardwareMessage[4009],
+        externalId: 'HardwareHeaterATemperatureUnstable',
+        i18nKey: 'issueHardwareHeaterATemperatureUnstable',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4009),
+        body: hardwareErrorIssueEmailText(4009),
+        htmlBody: hardwareErrorIssueEmailHtml(4009),
+        ...auditFields,
+      },
+    },
+    HardwareHeaterBTemperatureUnstable: {
+      issueType: {
+        name: hardwareMessage[4012],
+        externalId: 'HardwareHeaterBTemperatureUnstable',
+        i18nKey: 'issueHardwareHeaterBTemperatureUnstable',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4012),
+        body: hardwareErrorIssueEmailText(4012),
+        htmlBody: hardwareErrorIssueEmailHtml(4012),
+        ...auditFields,
+      },
+    },
+    HardwareThermistorTemperatureOutOfRange4017: {
+      issueType: {
+        name: hardwareMessage[4017],
+        externalId: 'HardwareThermistorTemperatureOutOfRange4017',
+        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange4017',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: getErrorIssueSubjectBase(4017),
+        body: hardwareErrorIssueEmailText(4017),
+        htmlBody: hardwareErrorIssueEmailHtml(4017),
+        ...auditFields,
       },
     },
   }

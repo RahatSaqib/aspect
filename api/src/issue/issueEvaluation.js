@@ -28,13 +28,22 @@ async function issueConditionsMet(knex, issue, conditions) {
   if (Array.isArray(conditions)) {
     return evaluateArrayOfConditions(knex, issue, conditions)
   }
-  const { evaluationMethod = null, evaluationParameter = null } = conditions
+  const {
+    evaluationMethod = null,
+    evaluationParameter = null,
+    evaluationFilterParameters = null,
+  } = conditions
   if (!evaluationMethods[evaluationMethod]) {
     throw new Error(
       `Unrecognised evaluation method in condition ${evaluationMethod}`
     )
   }
-  return evaluationMethods[evaluationMethod](knex, issue, evaluationParameter)
+  return evaluationMethods[evaluationMethod](
+    knex,
+    issue,
+    evaluationParameter,
+    evaluationFilterParameters
+  )
 }
 
 async function evaluateArrayOfConditions(knex, issue, conditions) {
@@ -83,7 +92,12 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   return true
 }
 
-async function evaluatePluginFunction(knex, issue, functionName) {
+async function evaluatePluginFunction(
+  knex,
+  issue,
+  functionName,
+  evaluationFunctionParameter = {}
+) {
   const partner = await knex('Partner')
     .where({ id: issue.partnerId })
     .first('plugin')
@@ -95,7 +109,7 @@ async function evaluatePluginFunction(knex, issue, functionName) {
   const escalations = await loadPlugin([partner.plugin], 'issueEscalations')
   const plugins = { ...resolutions, ...escalations }
   const func = plugins[functionName]
-  return func != null && func(knex, issue)
+  return func != null && func(knex, issue, evaluationFunctionParameter)
 }
 
 async function evaluateInlineSql(knex, issue, inlineSql) {

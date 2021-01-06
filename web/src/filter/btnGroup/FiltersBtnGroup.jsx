@@ -6,7 +6,9 @@ import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
-import { formatDate } from '../../shared/utils/dateFormat'
+import startCase from 'lodash/startCase'
+
+import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -16,11 +18,11 @@ const EMPTY_MAP = Immutable.Map()
 const messages = defineMessages({
   dateFrom: {
     id: 'filter.btnGroup.dateFrom',
-    defaultMessage: 'after {date}',
+    defaultMessage: 'since {date}',
   },
   dateTo: {
     id: 'filter.btnGroup.dateTo',
-    defaultMessage: 'before {date}',
+    defaultMessage: 'until {date}',
   },
   partnerId: {
     id: 'filter.btnGroup.partnerId',
@@ -103,6 +105,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withRevoked',
     defaultMessage: 'revoked is "{revokedStatus}"',
   },
+  onlyReportableResults: {
+    id: 'filter.btnGroup.onlyReportableResults',
+    defaultMessage: 'Show Only Reportable Results',
+  },
+  deviceIssueType: {
+    id: 'filter.btnGroup.deviceIssueType',
+    defaultMessage: 'Device Issue: {issueTypeId}',
+  },
 })
 const revokedOptions = [
   {
@@ -162,6 +172,8 @@ const filtersOrdering = {
   // -1: Special orderings
   siteIds: -1,
   patientOrCaseId: 23,
+  onlyReportableResults: 23,
+  issueTypeId: 24,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -209,11 +221,15 @@ const buttonBy = {
       .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  minDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateFrom, { date: formatDate(date) })
-  ),
+  minDate: makeButton(({ intl }, date) => {
+    return intl.formatMessage(messages.dateFrom, {
+      date: forceBaseFormatDate(date),
+    })
+  }),
   maxDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateTo, { date: formatDate(date) })
+    intl.formatMessage(messages.dateTo, {
+      date: forceBaseFormatDate(date),
+    })
   ),
   partnerId: makeButton(({ intl, partnerItems }, partnerId) =>
     intl.formatMessage(messages.partnerId, {
@@ -243,21 +259,28 @@ const buttonBy = {
   ),
   resultCategoryId: makeButton(
     ({ intl, filters, assayItems }, resultCategoryId) =>
-      intl.formatMessage(messages.withResultCategory, {
-        resultCategoryName: assayItems
-          .find(
-            it => it.get('id') === filters.assayId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('resultCategories', EMPTY_MAP)
-          .find(
-            it => it.get('id') === resultCategoryId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name', ''),
-      })
+      intl.formatMessage(
+        messages.withResultCategory,
+        filters.assayOverride
+          ? {
+              resultCategoryName: `"${startCase(filters.assayOverride)}"`,
+            }
+          : {
+              resultCategoryName: assayItems
+                .find(
+                  it => it.get('id') === filters.assayId,
+                  EMPTY_CONTEXT,
+                  EMPTY_MAP
+                )
+                .get('resultCategories', EMPTY_MAP)
+                .find(
+                  it => it.get('id') === resultCategoryId,
+                  EMPTY_CONTEXT,
+                  EMPTY_MAP
+                )
+                .get('name', ''),
+            }
+      )
   ),
   errorCode: makeButton(({ intl }, errorCode) =>
     intl.formatMessage(messages.errorCode, { errorCode })
@@ -362,21 +385,32 @@ const buttonBy = {
       joinedIds: siteIds,
     })
   ),
+  onlyReportableResults: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyReportableResults)
+  ),
+  issueTypeId: makeButton(({ intl }, issueTypeId) =>
+    intl.formatMessage(messages.deviceIssueType, {
+      issueTypeId: startCase(issueTypeId),
+    })
+  ),
+  assayOverride: () => false,
 }
 
-const FiltersBtnGroup = ({ className, children, ...restProps }) => (
-  <div className={cssClasses(className, 'FiltersBtnGroup')}>
-    {children &&
-      Children.map(children, child =>
-        React.cloneElement(child, {
-          className: cssClasses('FiltersBtnGroup__Child'),
-        })
-      )}
-    {Immutable.Map(restProps.filters)
-      .keySeq()
-      .sortBy(filterKey => filtersOrdering[filterKey])
-      .map(filterKey => buttonBy[filterKey](restProps, filterKey))}
-  </div>
-)
+const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+  return (
+    <div className={cssClasses(className, 'FiltersBtnGroup')}>
+      {children &&
+        Children.map(children, child =>
+          React.cloneElement(child, {
+            className: cssClasses('FiltersBtnGroup__Child'),
+          })
+        )}
+      {Immutable.Map(restProps.filters)
+        .keySeq()
+        .sortBy(filterKey => filtersOrdering[filterKey])
+        .map(filterKey => buttonBy[filterKey](restProps, filterKey))}
+    </div>
+  )
+}
 
 export default enhance(FiltersBtnGroup)

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
@@ -11,7 +12,7 @@ const spacing = {
 }
 
 const GraphsContainer = ({ assaysFromState, config }) => {
-  const { assays, graphType, id, componentSize, group } = config
+  const { assays, componentSize, group } = config
   const allowedGroupsWithoutAssays = ['assaysNotNeeded'].includes(group)
   const [whiteListed, setwhiteListed] = useState(false)
 
@@ -46,8 +47,12 @@ const GraphsContainer = ({ assaysFromState, config }) => {
   )
 }
 
+GraphsContainer.defaultProps = {
+  assaysFromState: [],
+}
+
 GraphsContainer.propTypes = {
-  assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  assaysFromState: PropTypes.oneOfType([PropTypes.array]),
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

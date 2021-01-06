@@ -71,7 +71,7 @@ export function fetchAssays(forceRefresh) {
  * ---------------- Reducers -----------------
  */
 export const Assay = Immutable.Record({
-  loading: false,
+  loading: null,
   items: Immutable.List([]),
   lastRefreshed: undefined,
 })

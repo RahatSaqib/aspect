@@ -172,7 +172,7 @@ const routes = [
     config: {
       description: 'Result Type List',
       notes: 'Pageable and sortable list of results types',
-      auth: { scope: ['result:view'] },
+      auth: { scope: ['result'] },
       validate: {
         query: {
           name: Joi.string()
@@ -376,7 +376,7 @@ const routes = [
       description: 'Result Workflow Status Logs',
       notes:
         'Pageable and sortable list of workflow status logs for current result',
-      auth: { scope: ['result:view'] },
+      auth: { scope: ['result'] },
       validate: {
         query: validateSortPageParams(),
         params: {
@@ -1257,6 +1257,13 @@ const routes = [
             .integer()
             .positive()
             .description('UTC timestamp'),
+          comment: Joi.string()
+            .allow(null, '')
+            .description('Comment about this transfer'),
+          includeAllResults: Joi.boolean()
+            .optional()
+            .allow(null)
+            .description('Include all results related to Patient ID'),
         },
       },
       response: {

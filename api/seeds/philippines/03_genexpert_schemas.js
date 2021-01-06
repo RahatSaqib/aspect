@@ -10,7 +10,7 @@ async function seed(knex) {
   const mtbRifResultDataSchema = require('./fixtures/dataSchemas/geneXpertResultDataSchemaMTBRif.json')
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
-    ['GxMtbRif', 'GxMtbRifUltra'],
+    ['GxMtbRif', 'GxMtbRifUltra', 'GxUnknown'],
     patientDataSchema,
     mtbRifResultDataSchema
   )

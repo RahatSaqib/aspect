@@ -1,33 +1,56 @@
-import _ from 'lodash'
-import isValid from 'date-fns/isValid'
-import getYear from 'date-fns/getYear'
-import setYear from 'date-fns/setYear'
-import getMonth from 'date-fns/getMonth'
-import setMonth from 'date-fns/setMonth'
-import getDate from 'date-fns/getDate'
-import setDate from 'date-fns/setDate'
-import getHours from 'date-fns/getHours'
-import setHours from 'date-fns/setHours'
-import getMinutes from 'date-fns/getMinutes'
-import setMinutes from 'date-fns/setMinutes'
-import differenceInSeconds from 'date-fns/differenceInSeconds'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
-import subtractYears from 'date-fns/subYears'
+import addDays from 'date-fns/addDays'
+import addMinutes from 'date-fns/addMinutes'
 import closestTo from 'date-fns/closestTo'
+import differenceInSeconds from 'date-fns/differenceInSeconds'
+import endOfDay from 'date-fns/endOfDay'
+import endOfMonth from 'date-fns/endOfMonth'
+import every from 'lodash/every'
+import format from 'date-fns/format'
+import getDate from 'date-fns/getDate'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
+import getHours from 'date-fns/getHours'
+import getMinutes from 'date-fns/getMinutes'
+import getMonth from 'date-fns/getMonth'
+import getYear from 'date-fns/getYear'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
+import isDate from 'lodash/isDate'
+import isObject from 'lodash/isObject'
+import isPlainObject from 'lodash/isPlainObject'
+import isString from 'lodash/isString'
+import isValid from 'date-fns/isValid'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import map from 'lodash/map'
 import parseISO from 'date-fns/parseISO'
+import range from 'lodash/range'
+import setDate from 'date-fns/setDate'
+import setHours from 'date-fns/setHours'
+import setMinutes from 'date-fns/setMinutes'
+import setMonth from 'date-fns/setMonth'
+import setYear from 'date-fns/setYear'
+import startOfDay from 'date-fns/startOfDay'
+import startOfMonth from 'date-fns/startOfMonth'
+import subDays from 'date-fns/subDays'
+import subMinutes from 'date-fns/subMinutes'
+import subMonths from 'date-fns/subMonths'
+import subtractYears from 'date-fns/subYears'
+import times from 'lodash/times'
+import upperFirst from 'lodash/upperFirst'
+import values from 'lodash/values'
+
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const now = new Date()
 export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)
 export const until = new Date(getYear(subtractYears(now, -10)), 11, 31)
-export const rangeIncludeLast = (start, end) => _.range(start, end + 1)
+export const rangeIncludeLast = (start, end) => range(start, end + 1)
 
 export const defaultYearList = rangeIncludeLast(getYear(since), getYear(until))
-export const defaultMonthList = _.range(0, 12)
+export const defaultMonthList = range(0, 12)
 export const defaultDateList = rangeIncludeLast(1, 31)
-export const defaultHourList = _.range(0, 24)
-export const defaultMinuteList = _.range(0, 60)
-export const defaultSecondList = _.range(0, 60)
+export const defaultHourList = range(0, 24)
+export const defaultMinuteList = range(0, 60)
+export const defaultSecondList = range(0, 60)
 
 export const accessOptions = {
   setYear,
@@ -43,10 +66,9 @@ export const accessOptions = {
 }
 
 export function getDateObject(value, defaultValue) {
-  if (_.isString(value)) return parseISO(value)
-  if (_.isDate(value)) return value
-  if (defaultValue && !_.isDate(defaultValue)) {
-    // eslint-disable-next-line no-console
+  if (isString(value)) return parseISO(value)
+  if (isDate(value)) return value
+  if (defaultValue && !isDate(defaultValue)) {
     console.error(
       'getDateObject accepts only Date object for defaultValue if provided'
     )
@@ -66,13 +88,13 @@ export function isValidDateRange(minDate, maxDate) {
 }
 
 export const isDateEqual = field => (date1, date2) => {
-  const name = _.upperFirst(field)
+  const name = upperFirst(field)
   const get = accessOptions[`get${name}`]
   return get(date1) === get(date2)
 }
 
 export const isAllSameDateFields = (fields = []) => (date1, date2) =>
-  _.every(fields, field => isDateEqual(field)(date1, date2))
+  every(fields, field => isDateEqual(field)(date1, date2))
 
 export const normalizeDate = ({ date, minDate = since, maxDate = until }) => {
   if (!isValid(date)) {
@@ -100,7 +122,7 @@ export function getMonthList({ date, minDate = since, maxDate = until }) {
   const isEqualYear = isDateEqual('Year')
 
   if (isEqualYear(date, minDate)) {
-    return _.range(getMonth(minDate), 12)
+    return range(getMonth(minDate), 12)
   }
 
   if (isEqualYear(date, maxDate)) {
@@ -142,7 +164,7 @@ export function getHourList({ date, minDate = since, maxDate = until }) {
     'Date',
   ])
   if (isAllEqualFromYearToDate(date, minDate)) {
-    return _.range(getHours(minDate), 24)
+    return range(getHours(minDate), 24)
   }
 
   if (isAllEqualFromYearToDate(date, maxDate)) {
@@ -164,7 +186,7 @@ export function getMinuteList({ date, minDate = since, maxDate = until }) {
     'Hours',
   ])
   if (isAllEqualFromYearToHour(date, minDate)) {
-    return _.range(getMinutes(minDate), 60)
+    return range(getMinutes(minDate), 60)
   }
 
   if (isAllEqualFromYearToHour(date, maxDate)) {
@@ -172,4 +194,211 @@ export function getMinuteList({ date, minDate = since, maxDate = until }) {
   }
 
   return defaultMinuteList
+}
+
+const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
+
+const negateTimeZoneOffset = dateString => {
+  const date = new Date(dateString)
+  const offset = date.getTimezoneOffset()
+
+  return Math.sign(offset) !== -1
+    ? addMinutes(date, offset)
+    : subMinutes(date, Math.abs(offset))
+}
+
+const getISOFromString = (date, sod = true, eod = false) => {
+  const iSOFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+  const checkForTimeStampRegex = RegExp('[T|:|s]')
+
+  switch (true) {
+    case isObject(date):
+      return format(date, iSOFormat)
+
+    case isEmpty(date):
+      return format(new Date(), iSOFormat)
+
+    case !checkForTimeStampRegex.test(date) && sod:
+      return format(startOfDay(parseISO(date)), iSOFormat)
+
+    case !checkForTimeStampRegex.test(date) && eod:
+      return format(endOfDay(parseISO(date)), iSOFormat)
+
+    default:
+      return format(new Date(date), iSOFormat)
+  }
+}
+
+const getTimePeriod = (cnt, period, dateFormat) => {
+  let timePeriod
+  const dateNow = new Date()
+  switch (true) {
+    case period === 'hours':
+      timePeriod = subDays(dateNow, cnt)
+      break
+    case period === 'days':
+      timePeriod = subDays(dateNow, cnt)
+      break
+    case period === 'months':
+      timePeriod = startOfMonth(subMonths(dateNow, cnt))
+      break
+
+    default:
+      timePeriod = dateNow
+      break
+  }
+  return format(timePeriod, dateFormat)
+}
+
+const getAllDaysInCurrentMonth = (
+  upToToday = false,
+  dateFormat = 'yyyy-MM-dd'
+) => {
+  const dateNow = new Date()
+  const start = startOfMonth(dateNow)
+  const end = upToToday ? dateNow : endOfMonth(dateNow)
+  return { start: format(start, dateFormat), end: format(end, dateFormat) }
+}
+
+const getPreviousPeriod = (period = 'month', dateFormat) => {
+  // currently only works for month
+  const previousPeriodStart = format(
+    negateTimeZoneOffset(getTimePeriod(1, period, dateFormat)),
+    dateFormat
+  )
+  const previousPeriodEnd = format(
+    endOfMonth(negateTimeZoneOffset(previousPeriodStart)),
+    dateFormat
+  )
+  return { start: previousPeriodStart, end: previousPeriodEnd }
+}
+
+const monthRangeByCount = (date, offset, dateFormat) => ({
+  minDate: format(startOfMonth(subMonths(date, offset)), dateFormat),
+  maxDate: format(endOfMonth(subMonths(date, offset)), dateFormat),
+})
+
+const lastMonthLabel = (date, count, dateFormat) =>
+  `Last Month (${format(
+    startOfMonth(subMonths(date, count)),
+    dateFormat
+  )} - ${format(endOfMonth(subMonths(date, count)), dateFormat)})`
+
+const dateRangeOptions = key => {
+  const dateFormatLabel = 'dd/MM'
+  const dateFormatValue = 'yyyy-MM-dd'
+  const dateFormatMonths = 'MMMM yyyy'
+  const monthsToGet = 12
+  const today = negateTimeZoneOffset(new Date())
+  const dateRange = [
+    {
+      id: 0,
+      name: 'Last 30 Days',
+      value: {
+        minDate: getTimePeriod(30, 'days', dateFormatValue),
+        maxDate: format(today, dateFormatValue),
+      },
+    },
+  ]
+  times(monthsToGet, month => {
+    const count = month + 1
+    switch (count) {
+      case 1:
+        dateRange.push({
+          id: count,
+          name: `This Month (${format(
+            startOfMonth(today),
+            dateFormatLabel
+          )} - ${format(endOfMonth(today), dateFormatLabel)})`,
+          value: {
+            minDate: format(startOfMonth(today), dateFormatValue),
+            maxDate: format(endOfMonth(today), dateFormatValue),
+          },
+        })
+        break
+
+      case 2:
+        dateRange.push({
+          id: count,
+          name: lastMonthLabel(today, month, dateFormatLabel),
+          value: monthRangeByCount(today, month, dateFormatValue),
+        })
+        break
+
+      default:
+        dateRange.push({
+          id: count,
+          name: format(subMonths(today, month), dateFormatMonths),
+          value: monthRangeByCount(today, month, dateFormatValue),
+        })
+        break
+    }
+  })
+  return {
+    [key]: [...dateRange],
+  }
+}
+
+const checkIfParamsIsDate = (params, encode = true) => {
+  const {
+    DATE_RANGE_KEYS,
+    DATE_RANGE_START_OF_DAY_KEYS,
+    DATE_RANGE_END_OF_DAY_KEYS,
+  } = DATE_CONSTS
+  const dateStringMatches = values(DATE_RANGE_KEYS)
+  const startKeys = DATE_RANGE_START_OF_DAY_KEYS
+  const endKeys = DATE_RANGE_END_OF_DAY_KEYS
+
+  const iSOHelper = (value, key) =>
+    encode
+      ? encodeURIComponent(
+          getISOFromString(
+            value,
+            startKeys.includes(key),
+            endKeys.includes(key)
+          )
+        )
+      : getISOFromString(value, startKeys.includes(key), endKeys.includes(key))
+
+  if (isPlainObject(params)) {
+    const output = {}
+    map(
+      params,
+      (value, key) =>
+        (output[key] = dateStringMatches.includes(key)
+          ? iSOHelper(value, key)
+          : value)
+    )
+    return output
+  }
+
+  if (isArray(params)) {
+    const output = []
+    map(params, param => {
+      const [key, value] = Object.entries(param)[0]
+      return output.push(
+        `${key}=${
+          dateStringMatches.includes(key) ? iSOHelper(value, key) : value
+        }`
+      )
+    })
+    return output
+  }
+
+  return false
+}
+
+const forceBaseFormatDate = date => format(parseISO(date), 'yyyy-MM-dd')
+
+export {
+  checkIfParamsIsDate,
+  dateRangeOptions,
+  forceBaseFormatDate,
+  getAllDaysInCurrentMonth,
+  getDayFromToday,
+  getISOFromString,
+  getTimePeriod,
+  getPreviousPeriod,
+  lastMonthLabel,
+  negateTimeZoneOffset,
 }

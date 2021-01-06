@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import isFinite from 'lodash/isFinite'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
@@ -293,7 +293,7 @@ export class RouterDetail extends PureComponent {
 
     // get date for current locale, 'date' - is a Date object or string value in DateTime format
     const getFormattedDate = date =>
-      date !== null && date !== '' && _.isFinite(new Date(date).getTime())
+      date !== null && date !== '' && isFinite(new Date(date).getTime())
         ? formatDate(date)
         : date
 
@@ -373,7 +373,7 @@ export class RouterDetail extends PureComponent {
                 format={() => (
                   <img
                     alt="utilization rate"
-                    src={require('../../device/detail/utilization_rate.png')}
+                    src={require('../../MigratedComponents/Devices/Detail/utilization_rate.png')}
                     style={{ width: '100%' }}
                   />
                 )}
@@ -386,7 +386,7 @@ export class RouterDetail extends PureComponent {
                 format={() => (
                   <img
                     alt="error rates"
-                    src={require('../../device/detail/error_rates.png')}
+                    src={require('../../MigratedComponents/Devices/Detail/error_rates.png')}
                     style={{ width: '100%' }}
                   />
                 )}

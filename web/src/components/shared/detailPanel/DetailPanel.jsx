@@ -1,5 +1,6 @@
 import React from 'react'
-import _ from 'lodash'
+import identity from 'lodash/identity'
+import split from 'lodash/split'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
@@ -18,7 +19,7 @@ const cssClasses = classnames.bind(require('./DetailPanel.css'))
 
 const EMPTY_MAP = Immutable.Map()
 
-const enhance = _.identity
+const enhance = identity
 
 const format = (type, intl) =>
   type === 'number'
@@ -31,7 +32,7 @@ const format = (type, intl) =>
 
 const makeLink = (template, data) => {
   try {
-    return _.template(template)(data.toJSON())
+    return template(template)(data.toJSON())
   } catch (err) {
     return ''
   }
@@ -51,8 +52,7 @@ export const DetailGroup = compose(
   mapProps(({ data, rawData, groupSchema, ...restProps }) => {
     const dataSchemaPath = groupSchema.getIn(['detail', 'dataSchema'])
     if (dataSchemaPath) {
-      const dataSchema =
-        rawData.getIn(_.split(dataSchemaPath, '.')) || EMPTY_MAP
+      const dataSchema = rawData.getIn(split(dataSchemaPath, '.')) || EMPTY_MAP
       const defaultRow = groupSchema.hasIn(['detail', 'rows']) ? 1 : 0
       const schema = dataSchema
         .filter(value => value && value.get('type') !== 'object')

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { FaExclamationTriangle } from 'react-icons/fa'
@@ -12,7 +12,7 @@ import { formatRelative } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
-const enhance = _.identity
+const enhance = identity
 
 const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
   <TableRow

@@ -1,4 +1,3 @@
-const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
 
@@ -6,7 +5,8 @@ const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../utils/testUtils')
+
 const { assert } = chai
 
 describe('Notification routes', () => {
@@ -57,24 +57,23 @@ describe('Notification routes', () => {
     shared.checkToken(server, path)
 
     it('should return a list of notifications when using valid token', async () => {
-      await server
+      const res = await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 3)
-          res.body.data.forEach(notification => {
-            assert.property(notification, 'name')
-            assert.property(notification, 'lastTriggeredOn')
-            assert.property(notification, 'totalTriggers')
-            assert.property(notification, 'alertCount')
-            assert.property(notification, 'smsCount')
-            assert.property(notification, 'emailCount')
-          })
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAtLeast(res.body.data.length, 3)
+      res.body.data.forEach(notification => {
+        assert.property(notification, 'name')
+        assert.property(notification, 'lastTriggeredOn')
+        assert.property(notification, 'totalTriggers')
+        assert.property(notification, 'alertCount')
+        assert.property(notification, 'contactsCount')
+        assert.property(notification, 'contacts')
+      })
     })
   })
 })

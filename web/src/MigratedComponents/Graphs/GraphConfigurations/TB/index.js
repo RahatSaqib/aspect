@@ -2,13 +2,21 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
+const assays = ['GxMtbRif', 'GxMtbRifUltra']
+
 const tbGraphs = {
   tbDetected: {
     id: 'tbDetected',
     title: 'clinicalIndicatorsTBDetected',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
+    graphRenderPermissions: ['dashboard'],
     graphType: [
       {
         id: 'tbResultsByCategory1Monthly',
@@ -17,11 +25,11 @@ const tbGraphs = {
         size: 8,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -32,6 +40,12 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'tbResultsByCategory1Aggregate',
@@ -40,11 +54,11 @@ const tbGraphs = {
         size: 4,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -54,7 +68,7 @@ const tbGraphs = {
         averages: {
           showTotal: false,
           title: 'clinicalIndicatorsTBDetectedPie',
-          key: ['Detected'],
+          key: ['Detected', 'Trace Detected'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
@@ -63,9 +77,10 @@ const tbGraphs = {
   tbResults: {
     id: 'tbResults',
     title: 'clinicalIndicatorsTBTitle',
-    assays: ['GxMtbRif', 'GxMtbRifUltra'],
+    assays,
     componentSize: 'full',
     group: 'tb',
+    graphRenderPermissions: ['dashboard'],
     graphType: [
       {
         id: 'tbByCategory1Monthly',
@@ -74,11 +89,11 @@ const tbGraphs = {
         size: 8,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['month', 'resultCategory2', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -91,6 +106,12 @@ const tbGraphs = {
         displayMethod: 'percentage',
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
       },
       {
         id: 'tbByCategory1Aggregate',
@@ -99,11 +120,11 @@ const tbGraphs = {
         size: 4,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['resultCategory2', 'resultCategory1'],
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',

@@ -3,18 +3,27 @@ import PieGraph from '../../PieGraph'
 import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
+
+const assays = [
+  'assayGenericCovid19',
+  'assayGXCovid19',
+  'assayMP96Covid19',
+  'assayQS7Covid19',
+]
+
 const covidGraphs = {
   covidMortalityAndRecoveryConfig: {
     id: 'covidMortalityAndRecoveryConfig',
     title: 'covidGraphDailyMortalityAndrecovery',
     componentSize: 'full',
     group: 'covid',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'deathsPerDay',
@@ -23,13 +32,13 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day'],
             followUp: 'died',
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -47,13 +56,13 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day'],
             followUp: 'recovered',
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -69,12 +78,8 @@ const covidGraphs = {
   covidCasesByAgeAndGender: {
     id: 'covidCasesByAgeAndGender',
     title: 'covidGraphDailyMortalityAndRecoveryByGenderAndGender',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'outcomeByGender',
@@ -83,12 +88,12 @@ const covidGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender', 'age'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'inRange',
@@ -107,12 +112,8 @@ const covidGraphs = {
   covidDailyConfirmed: {
     id: 'covidDailyConfirmed',
     title: 'clinicalIndicatorsCovidName',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'dailyConfirmed',
@@ -121,11 +122,11 @@ const covidGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/clinical-indicator-aggregations',
+          endpoint: '/result/clinical-indicator-aggregations',
           params: {
             groupBy: ['day', 'resultCategory1'],
-            minDate: getTimePeriod(15, 'days', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(15, 'days', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',
@@ -144,12 +145,8 @@ const covidGraphs = {
   covidMortalityAndRecoveryByGender: {
     id: 'covidMortalityAndRecoveryByGender',
     title: 'clinicalIndicatorsCovidGenderRecoveryRates',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'splitByFemale',
@@ -158,12 +155,12 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -188,12 +185,12 @@ const covidGraphs = {
         size: 6,
         componentClasses: ['piegraph__container'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -216,12 +213,8 @@ const covidGraphs = {
   covidGenderByCalendar: {
     id: 'covidGenderByCalendar',
     title: 'clinicalIndicatorsCovidName',
-    assays: [
-      'assayGenericCovid19',
-      'assayGXCovid19',
-      'assayMP96Covid19',
-      'assayQS7Covid19',
-    ],
+    assays,
+    graphRenderPermissions: ['covid'],
     graphType: [
       {
         id: 'dailyConfirmedFemale',
@@ -230,12 +223,12 @@ const covidGraphs = {
         size: 12,
         componentClasses: ['BARCLASS'],
         api: {
-          endpoint: 'result/follow-up-aggregations',
+          endpoint: '/result/follow-up-aggregations',
           params: {
             groupBy: ['day', 'gender'],
             followUpType: 'outcome',
-            minDate: getTimePeriod(6, 'months', 'yyyy-MM-dd'),
-            maxDate: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'day',

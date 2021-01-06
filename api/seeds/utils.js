@@ -9,6 +9,7 @@ const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
   allResultCategoryToId,
+  issueTypeToId,
 } = require('../src/shared/dictionary')
 const config = require('../src/config')
 
@@ -54,6 +55,7 @@ const uniqueKeys = {
     'level',
     'messageTypeId',
   ],
+  IssueEventTrigger: ['issueTypeId', 'partnerId', 'issueEventStatusId'],
   IssueResolutionTrigger: ['issueTypeId', 'partnerId'],
   IssueEscalationTrigger: ['issueTypeId', 'partnerId', 'escalateToLevel'],
   MessageType: [
@@ -759,13 +761,18 @@ async function seedIssueEventTriggersForPartner(
           .where(triggerData)
           .first('id')
         if (existingTrigger == null) {
-          await knex('IssueEventTrigger').insert({
-            ...triggerData,
-            triggerConditions: JSON.stringify(triggerConditions),
-            filterIssueCondition: JSON.stringify(filterIssueCondition),
-            createdOn: now,
-            updatedOn: now,
-          })
+          await upsertSingle(
+            knex,
+            'IssueEventTrigger',
+            uniqueKeys.IssueEventTrigger,
+            {
+              ...triggerData,
+              triggerConditions: JSON.stringify(triggerConditions),
+              filterIssueCondition: JSON.stringify(filterIssueCondition),
+              createdOn: now,
+              updatedOn: now,
+            }
+          )
         }
       }
     }
@@ -811,12 +818,17 @@ async function seedIssueEscalationTriggersForPartner(
           .where(triggerData)
           .first('id')
         if (existingTrigger == null) {
-          await knex('IssueEscalationTrigger').insert({
-            ...triggerData,
-            escalationConditions: JSON.stringify(escalationConditions),
-            createdOn: now,
-            updatedOn: now,
-          })
+          await upsertSingle(
+            knex,
+            'IssueEscalationTrigger',
+            uniqueKeys.IssueEscalationTrigger,
+            {
+              ...triggerData,
+              escalationConditions: JSON.stringify(escalationConditions),
+              createdOn: now,
+              updatedOn: now,
+            }
+          )
         }
       }
     }
@@ -894,8 +906,19 @@ async function upsertSingle(knex, tableName, whereClause, item) {
     const fieldKey = whereClause
     whereClause = { [fieldKey]: item[fieldKey] }
   } else if (_.isArray(whereClause)) {
-    // array of field names, 'item' is required param
-    whereClause = _.pick(item, whereClause)
+    // when whereClause is an array of field names then 'item' is required param
+    const fields = whereClause
+    whereClause = builder => {
+      fields.forEach(name => {
+        if (item[name] === null) {
+          builder.whereNull(name)
+        } else if (item[name] === undefined) {
+          // skip this field because it is missing in 'item'
+        } else {
+          builder.where(name, item[name])
+        }
+      })
+    }
   } else {
     // 'whereClause' is json, if 'item' is missing set it to 'whereClause'
     item = item || whereClause
@@ -2566,32 +2589,38 @@ async function addReports(knex, countryReports = []) {
     // merge global and country-specific reports
     const reports = [...baseReports, ...countryReports]
 
+    const existingReports = await knex('Report')
+      .where({ geographyId })
+      .select('externalId')
+      .pluck('externalId')
     await Promise.each(
       reports,
       async (
         { name, description, i18nKey, externalId, sheets, fileName },
         reportIndex
       ) => {
-        const [reportId] = await knex('Report').insert({
-          name,
-          description,
-          i18nKey,
-          externalId,
-          geographyId,
-          sortOrder: reportIndex + 1,
-          fileName,
-        })
-
-        await Promise.each(sheets, async (sheet, sheetIndex) => {
-          const { moduleName, functionName, query } = sheet
-          await knex('ReportSheet').insert({
-            moduleName,
-            functionName,
-            query: query && JSON.stringify(query),
-            reportId,
-            sortOrder: sheetIndex + 1,
+        if (!_.includes(existingReports, externalId)) {
+          const [reportId] = await knex('Report').insert({
+            name,
+            description,
+            i18nKey,
+            externalId,
+            geographyId,
+            sortOrder: reportIndex + 1,
+            fileName,
           })
-        })
+
+          await Promise.each(sheets, async (sheet, sheetIndex) => {
+            const { moduleName, functionName, query } = sheet
+            await knex('ReportSheet').insert({
+              moduleName,
+              functionName,
+              query: query && JSON.stringify(query),
+              reportId,
+              sortOrder: sheetIndex + 1,
+            })
+          })
+        }
       }
     )
   })
@@ -2823,21 +2852,26 @@ async function seedJobFunctionsAndUsersForOperationalData(
         'cepheid', // for jobFunction 'Device Maker'
         'ntp', // for jobFunction 'NTP'
         'technician', // for jobFunction 'Technician'
+        'usaid', // for jobFunction 'Donor'
       ],
       async name => {
         const { id: userId } = await upsertSingle(
           knex,
           'User', // tableName
           'name', // whereKeys
-          {
-            name: name.toLowerCase(),
-            password: bcrypt.hashSync(passwords[name] || 'test07', saltRounds),
-            legacyPassword: 0,
-            approved: 1,
-            createdOn: now,
-            lockedOut: 0,
-            failedPasswordAttempts: 0,
-          }
+          Object.assign(
+            passwords[name]
+              ? { password: bcrypt.hashSync(passwords[name], saltRounds) }
+              : {},
+            {
+              name: name.toLowerCase(),
+              legacyPassword: 0,
+              approved: 1,
+              createdOn: now,
+              lockedOut: 0,
+              failedPasswordAttempts: 0,
+            }
+          )
         )
 
         userIds[name.toLowerCase()] = userId
@@ -2871,11 +2905,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
     knex,
     'Device Maker',
     partnerId,
-    [modules.account.edit, modules.operationalData.edit]
+    [modules.account.edit, modules.operationalData.view]
   )
   const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
     modules.account.edit,
-    modules.operationalData.edit,
+    modules.operationalData.view,
   ])
   const jobFunctionIdTechnician = await upsertJobFunction(
     knex,
@@ -2883,6 +2917,11 @@ async function seedJobFunctionsAndUsersForOperationalData(
     partnerId,
     [modules.account.edit, modules.operationalData.view]
   )
+  const jobFunctionIdDonor = await upsertJobFunction(knex, 'Donor', partnerId, [
+    modules.account.edit,
+    modules.site.view,
+    modules.operationalData.view,
+  ])
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -2903,6 +2942,7 @@ async function seedJobFunctionsAndUsersForOperationalData(
     personIds.technician,
     jobFunctionIdTechnician
   )
+  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionIdDonor)
 
   // -------------------------------------------
   // Constrain jobs by context
@@ -2914,6 +2954,7 @@ async function seedJobFunctionsAndUsersForOperationalData(
       { jobId: jobIdCepheid, geographyId },
       { jobId: jobIdNtp, geographyId },
       { jobId: jobIdTechnician, geographyId },
+      { jobId: jobIdUsaid, geographyId },
     ]
   )
 
@@ -2924,10 +2965,12 @@ async function seedJobFunctionsAndUsersForOperationalData(
     jobFunctionIdDeviceMaker,
     jobFunctionIdNtp,
     jobFunctionIdTechnician,
+    jobFunctionIdDonor,
 
     jobIdCepheid,
     jobIdNtp,
     jobIdTechnician,
+    jobIdUsaid,
   }
 }
 
@@ -3076,39 +3119,33 @@ async function seedIssueType(knex, issueType, { userName }) {
     updatedBy: adminId,
   }
 
-  // get previously defined data for ModuleReplaced issue type
   const issue = (await getBaseIssues(auditFields))[issueType]
+
+  if (!issue) return
 
   // ------------------------------------------
   // issue templates
   // ------------------------------------------
-  const { id: alertTemplateId } = await upsertSingle(
-    knex,
-    'AlertTemplate',
-    ['message'],
-    {
-      ...issue.AlertTemplate,
-      ...auditFields,
-    }
-  )
-  const { id: smsTemplateId } = await upsertSingle(
-    knex,
-    'SmsTemplate',
-    ['message'],
-    {
-      ...issue.SmsTemplate,
-      ...auditFields,
-    }
-  )
-  const { id: emailTemplateId } = await upsertSingle(
-    knex,
-    'EmailTemplate',
-    ['subject', 'body'],
-    {
-      ...issue.EmailTemplate,
-      ...auditFields,
-    }
-  )
+  const { id: alertTemplateId = null } = issue.AlertTemplate
+    ? await upsertSingle(knex, 'AlertTemplate', ['message'], {
+        ...issue.AlertTemplate,
+        ...auditFields,
+      })
+    : {}
+
+  const { id: smsTemplateId = null } = issue.SmsTemplate
+    ? await upsertSingle(knex, 'SmsTemplate', ['message'], {
+        ...issue.SmsTemplate,
+        ...auditFields,
+      })
+    : {}
+
+  const { id: emailTemplateId = null } = issue.EmailTemplate
+    ? await upsertSingle(knex, 'EmailTemplate', ['subject', 'body'], {
+        ...issue.EmailTemplate,
+        ...auditFields,
+      })
+    : {}
 
   // ------------------------------------------
   // MessageType
@@ -3123,10 +3160,142 @@ async function seedIssueType(knex, issueType, { userName }) {
   // ------------------------------------------
   // IssueType
   // ------------------------------------------
-  await upsertSingle(knex, 'IssueType', uniqueKeys.IssueType, {
-    ...issue.issueType,
-    defaultMessageTypeId: moduleMessageTypeId,
+  const { id: issueTypeId } = await upsertSingle(
+    knex,
+    'IssueType',
+    uniqueKeys.IssueType,
+    {
+      ...issue.issueType,
+      defaultMessageTypeId: moduleMessageTypeId,
+    }
+  )
+  return issueTypeId
+}
+
+async function deleteIssueTypes(knex, issueTypesToDelete) {
+  await Promise.each(issueTypesToDelete, async issueTypeExternalId => {
+    const issueTypeId = await issueTypeToId(issueTypeExternalId)
+    if (issueTypeId) {
+      await knex('Issue').where({ issueTypeId }).del()
+      await knex('NotificationType').where({ issueTypeId }).del()
+      await knex('IssueEventTrigger').where({ issueTypeId }).del()
+      await knex('IssueType').where({ id: issueTypeId }).del()
+    }
   })
+
+  // delete unused message types and templates
+  await knex('MessageType')
+    .whereNotIn(
+      'id',
+      _.map(
+        await knex('NotificationType').select('messageTypeId'),
+        nt => nt.messageTypeId || -1
+      )
+    )
+    .whereNotIn(
+      'id',
+      _.map(
+        await knex('IssueType').select('defaultMessageTypeId'),
+        nt => nt.defaultMessageTypeId || -1
+      )
+    )
+    .del()
+}
+
+async function updateIssueNotificationTemplates(
+  knex,
+  issueTypesToUpdate,
+  { userName }
+) {
+  const { id: adminId } = await knex('User')
+    .where({ name: userName })
+    .first('id')
+
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  await Promise.each(issueTypesToUpdate, async issueTypeExternalId => {
+    const issueTypeId = await issueTypeToId(issueTypeExternalId)
+    const issue = (await getBaseIssues())[issueTypeExternalId]
+
+    if (issueTypeId && issue) {
+      // old message type (to update later)
+      const notificationTypes = await knex('NotificationType')
+        .where({ issueTypeId })
+        .select()
+
+      await Promise.each(notificationTypes, async notificationType => {
+        // if no template, we'll set it to null in the MessageType table
+        // Alert
+        let alertTemplateId = null
+        if (issue.AlertTemplate) {
+          alertTemplateId = (
+            await upsertSingle(knex, 'AlertTemplate', ['message'], {
+              ...issue.AlertTemplate,
+              ...auditFields,
+            })
+          ).id
+        }
+        await knex('MessageType')
+          .where('id', notificationType.messageTypeId)
+          .update('alertTemplateId', alertTemplateId)
+
+        // Email
+        let emailTemplateId = null
+        if (issue.EmailTemplate) {
+          emailTemplateId = (
+            await upsertSingle(knex, 'EmailTemplate', ['subject', 'body'], {
+              ...issue.EmailTemplate,
+              ...auditFields,
+            })
+          ).id
+        }
+        await knex('MessageType')
+          .where('id', notificationType.messageTypeId)
+          .update('emailTemplateId', emailTemplateId)
+
+        // Sms
+        let smsTemplateId = null
+        if (issue.SmsTemplate) {
+          smsTemplateId = (
+            await upsertSingle(knex, 'SmsTemplate', ['message'], {
+              ...issue.SmsTemplate,
+              ...auditFields,
+            })
+          ).id
+        }
+        await knex('MessageType')
+          .where('id', notificationType.messageTypeId)
+          .update('smsTemplateId', smsTemplateId)
+      })
+    }
+  })
+
+  // now that we're done updating/deleting, drop any unused templates
+  const mTypes = await knex('MessageType').select()
+
+  const alertTemplatesToDelete = _.map(mTypes, mt => mt.alertTemplateId || -1)
+  await knex('AlertMessage')
+    .whereNotIn('alertTemplateId', alertTemplatesToDelete)
+    .del()
+  await knex('AlertTemplate').whereNotIn('id', alertTemplatesToDelete).del()
+
+  const emailTemplatesToDelete = _.map(mTypes, mt => mt.emailTemplateId || -1)
+  await knex('EmailMessage')
+    .whereNotIn('emailTemplateId', alertTemplatesToDelete)
+    .del()
+  await knex('EmailTemplate').whereNotIn('id', emailTemplatesToDelete).del()
+
+  const smsTemplatesToDelete = _.map(mTypes, mt => mt.smsTemplateId || -1)
+  await knex('SmsMessage')
+    .whereNotIn('smsTemplateId', smsTemplatesToDelete)
+    .del()
+  await knex('SmsTemplate').whereNotIn('id', smsTemplatesToDelete).del()
 }
 
 module.exports = {
@@ -3202,4 +3371,6 @@ module.exports = {
 
   seedIssueType,
   seedIssueEscalationTriggersForPartner,
+  deleteIssueTypes,
+  updateIssueNotificationTemplates,
 }

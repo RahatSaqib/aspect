@@ -40,7 +40,10 @@ const resultAggregationsValidGroups = [
   'day',
 ]
 
-const clinicalIndicatorsValidGroups = [...resultAggregationsValidGroups]
+const clinicalIndicatorsValidGroups = [
+  ...resultAggregationsValidGroups,
+  'assay',
+]
 
 const followUpAggregationsValidGroups = [
   ...resultAggregationsValidGroups,
@@ -51,10 +54,13 @@ const resultAggregationsResponseItem = {
   cnt: Joi.number().required().description('The count of results in the group'),
   resultCategory1: Joi.string()
     .allow(null)
-    .description('Result Category 1 that count is grouped by'),
+    .description('Result Category 1 that the count is grouped by'),
   resultCategory2: Joi.string()
     .allow(null)
-    .description('Result Category 2 that count is grouped by'),
+    .description('Result Category 2 that the count is grouped by'),
+  assay: Joi.string()
+    .allow(null)
+    .description('Assay name that the count is grouped by'),
   week: Joi.string().description('The week that the count is grouped by'),
   month: Joi.string().description('The month that the count is grouped by'),
   year: Joi.string().description('The year that the count is grouped by'),
@@ -283,6 +289,21 @@ function validateResultDetailResponse() {
     patientData: Joi.object().allow(null).description('The patient data'),
     formSchema: Joi.object().allow(null).description('The form data object'),
     assay: Joi.object().allow(null).description('The assay object'),
+    assayType: Joi.string()
+      .allow(null)
+      .description("The type of the result's assay"),
+    deviceType: Joi.string()
+      .allow(null)
+      .description("The type of the result's device"),
+    resultText: Joi.string()
+      .allow(null)
+      .description('The result represented in text format'),
+    resultCategory1Label: Joi.string()
+      .allow(null)
+      .description('The name of the test made for the first result category'),
+    resultCategory2Label: Joi.string()
+      .allow(null)
+      .description('The name of the test made for the second result category'),
     treatmentStatus: Joi.object()
       .allow(null)
       .description('The treatment status object'),
@@ -484,6 +505,11 @@ function listResultsBaseConfig() {
           .optional()
           .description(
             'Case externalid for filtering only Results related with'
+          ),
+        onlyReportableResults: Joi.boolean()
+          .optional()
+          .description(
+            'It filters only results with no "Invalid", "No result" or "Error" categories'
           ),
       },
     },

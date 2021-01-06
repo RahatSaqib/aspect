@@ -1,5 +1,8 @@
 // Imports from packages
-import _ from 'lodash'
+import isString from 'lodash/isString'
+import reduce from 'lodash/reduce'
+import omit from 'lodash/omit'
+import keys from 'lodash/keys'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
@@ -23,13 +26,13 @@ const keyToPrefixMappings = {
 }
 
 export function getClassNames(props) {
-  const initial = _.isString(props.className) ? [props.className] : []
+  const initial = isString(props.className) ? [props.className] : []
 
-  return _.reduce(
+  return reduce(
     pureGridPropTypes,
     (acc, unused, key) => {
       const value = props[key]
-      if (_.isString(value)) {
+      if (isString(value)) {
         acc.push(styles[`${keyToPrefixMappings[key]}-${value}`])
       }
       return acc
@@ -47,7 +50,7 @@ const enhance = compose(
 
 export const Unit = props => (
   <div
-    {..._.omit(props, _.keys(pureGridPropTypes))}
+    {...omit(props, keys(pureGridPropTypes))}
     className={getClassNames(props).join(' ')}
   >
     {props.children}

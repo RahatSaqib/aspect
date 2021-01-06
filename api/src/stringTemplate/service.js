@@ -62,6 +62,10 @@ function addDataSourceToQuery(queryBuilder, aliases) {
     queryBuilder
       .leftJoin('Person as p', `${message}.personId`, 'p.id')
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
+      .leftJoin('Geography as g', `s.geographyId`, 'g.id')
+      .leftJoin('Country as c', `g.countryId`, 'c.id')
+      .leftJoin('State as st', `g.stateId`, 'st.id')
+      .leftJoin('Lga as lg', `g.lgaId`, 'lg.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
@@ -72,15 +76,26 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
       .select(
+        's.id as siteId',
         's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
+        's.street1 as siteStreet1',
+        's.street2 as siteStreet2',
+        's.city as siteCity',
+        's.zip as siteZip',
+        'st.name as siteState',
+        'lg.name as siteLga',
         'p.name as personName',
         'p.cell as personCell',
+        'g.id as geographyId',
         'pu.plugin as partnerPlugin',
+        'c.name as countryName',
+        'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
+        'd.serial as deviceSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
         'r.patientData as resultPatientData',
@@ -89,13 +104,17 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'r.endedOn as resultEndedOn',
         'r.notes as resultNotes',
         'r.consumableSerial',
+        'r.consumableLot',
         'r.createdOn',
         'r.senderOperator',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
+        'r.instrumentSerial as resultInstrumentSerial',
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
+        'r.senderVersion as resultSoftwareVersion',
         'r.errorNotes as resultErrorNotes',
         'a.externalId as assayExternalId',
+        'a.name as assayName',
         'sample.externalId as sampleExternalId',
         'rc1.externalId as resultCategory1ExternalId',
         'rc2.externalId as resultCategory2ExternalId'
@@ -105,6 +124,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
   if (notification != null) {
     queryBuilder
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
+      .leftJoin('IssueType as it', `i.issueTypeId`, 'it.id')
       .leftJoin(
         'NotificationType as nt',
         `${notification}.notificationTypeId`,
@@ -114,6 +134,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'i.createdOn as issueCreatedOn',
         'i.dueOn as issueDueOn',
         'i.data as issueData',
+        'it.externalId as issueTypeExternalId',
         'nt.name as notificationTypeName'
       )
   }
@@ -128,7 +149,14 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    partnerPlugin: string
  *    siteExternalId: string
  *    siteName: string
+ *    countryName: string
  *    siteShortName: string
+ *    siteStreet1: string
+ *    siteStreet2: string
+ *    siteCity: string
+ *    siteZip: string
+ *    siteState: string
+ *    siteLga: string
  *    deviceName: string
  *    deviceTypeExternalId: string
  *    deviceLastSeenOn: date/time
@@ -141,6 +169,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    resultEndedOn: date/time
  *    resultNotes: string
  *    consumableSerial: string
+ *    consumableLot: string
  *    createdOn: date/time
  *    senderOperator: string
  *    resultModuleName: string
@@ -148,6 +177,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    resultErrorCode: string
  *    resultErrorNotes: string
  *    assayExternalId: string
+ *    assayName: string
  *    sampleExternalId: string
  *    sampleData: string (acceptable values are undefined, null, '' or JSON parsable)
  *    sampleOriginSiteExternalId: string
@@ -177,6 +207,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
+
     if (options.dynamic) {
       memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {
@@ -194,6 +225,12 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    siteExternalId: string
  *    siteName: string
  *    siteShortName: string
+ *    siteStreet1: string
+ *    siteStreet2: string
+ *    siteCity: string
+ *    siteZip: string
+ *    siteState: string
+ *    siteLga: string
  *    deviceName: string
  *    deviceTypeExternalId: string
  *    deviceLastSeenOn: date/time
@@ -206,6 +243,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *    resultEndedOn: date/time
  *    resultNotes: string
  *    consumableSerial: string
+ *    consumableLot: string
  *    createdOn: date/time
  *    senderOperator: string
  *    resultModuleName: string
@@ -232,6 +270,12 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         id: siteExternalId,
         name: siteName,
         shortName: siteShortName,
+        street1: siteStreet1,
+        street2: siteStreet2,
+        city: siteCity,
+        zip: siteZip,
+        state: siteState,
+        lga: siteLga,
       },
       device: {
         name: deviceName,
@@ -248,6 +292,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
         endedOn: resultEndedOn,
         notes: resultNotes,
         consumableSerial: consumableSerial,
+        consumableLot: consumableLot,
         createdOn: createdOn,
         senderOperator: senderOperator,
         moduleName: resultModuleName,
@@ -294,17 +339,41 @@ async function getBaseDataSource(data) {
     [d.partnerPlugin],
     'settings'
   )
+  const issueData = d.issueData ? JSON.parse(d.issueData) : {}
+  const isHardwareIssue = d.issueTypeExternalId
+    ? d.issueTypeExternalId.indexOf('Hardware') === 0
+    : false
   return {
+    country: {
+      name: d.countryName,
+    },
     site: {
       id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
+      street1: d.siteStreet1,
+      street2: d.siteStreet2,
+      city: d.siteCity,
+      zip: d.siteZip,
+      state: d.siteState,
+      lga: d.siteLga,
+      primaryContact:
+        d.siteContacts && d.siteContacts.length > 0
+          ? {
+              name: d.siteContacts[0].name,
+              title: d.siteContacts[0].title,
+              phone: d.siteContacts[0].phone,
+              cell: d.siteContacts[0].cell,
+              email: d.siteContacts[0].email,
+            }
+          : {},
     },
     device: {
       name: d.deviceName,
       deviceType: d.deviceTypeExternalId,
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
+      serial: d.deviceSerial,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},
@@ -314,15 +383,19 @@ async function getBaseDataSource(data) {
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,
+      consumableLot: d.consumableLot,
       consumableSerial: d.consumableSerial,
       createdOn: d.createdOn,
       senderOperator: d.senderOperator,
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
+      instrumentSerial: d.resultInstrumentSerial,
+      softwareVersion: d.resultSoftwareVersion,
       errorCode: d.resultErrorCode,
       errorNotes: d.resultErrorNotes,
       assay: {
         id: d.assayExternalId,
+        name: d.assayName,
       },
       sample: {
         id: d.sampleExternalId,
@@ -348,7 +421,14 @@ async function getBaseDataSource(data) {
     issue: {
       createdOn: d.issueCreatedOn,
       dueOn: d.issueDueOn,
-      data: d.issueData ? JSON.parse(d.issueData) : {},
+      data: issueData,
+      occurrences: isHardwareIssue
+        ? issueData.totalErrors // <-- 'totalErrors' is defined in analyzeDeviceHardwareError()
+        : issueData.resultsWithErrors,
+      errorCode: isHardwareIssue ? issueData.errorCode : d.resultErrorCode,
+    },
+    log: {
+      startedOn: isHardwareIssue ? issueData.startedOn : null,
     },
     notification: {
       type: d.notificationTypeName,
@@ -367,15 +447,33 @@ function processDynamicMessage(message) {
 
 // helpers
 function processUsingDynamicHelpers(template, ds) {
+  /**
+   * if template contains mustached string 'numberOfDays' then process it in few steps
+   * - replace mustaches with some tokens, i.e. '${openMustaches}' and '${closeMustaches}'
+   *   Such odd tokens - '${...}' - to make sure template never has such strings
+   * - replace captured value of 'numberOfDays' section with handlebar function {{isoDate ...}}
+   * - process template - this replaces {{isoDate ...}} and all other placeholders with actual values
+   * - then replace tokens '${openMustaches}' and '${closeMustaches}' with corresponding mustaches
+   * - process template - this replaces {{numberOfDays ...}} with actual value
+   * otherwise - process template in one step
+   */
   const dynamicTemplate = template.replace(
     /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
     (str, match) =>
       `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
   )
-  const message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+  let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+
+  if (dynamicTemplate !== template) {
+    message = processUsingHandlebarsSyntax(
+      message
+        .replace(/\${openMustaches}/g, '{{')
+        .replace(/\${closeMustaches}/g, '}}'),
+      ds
+    )
+  }
+
   return message
-    .replace(/\${openMustaches}/g, '{{')
-    .replace(/\${closeMustaches}/g, '}}')
 }
 
 function curlyBrace(object, open) {
@@ -523,7 +621,7 @@ function isRegexMatch(stringValue, options) {
     const expression = getArgumentFromOptions(options, 'expression')
     if (expression) {
       const regex = new RegExp(expression, 'g')
-      return !_.isNull(stringValue.match(regex))
+      return !_.isNull(raw.match(regex))
     }
   }
 }
@@ -534,7 +632,7 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
     const expression = getArgumentFromOptions(options, 'expression')
     const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
     if (expression) {
-      const regex = new RegExp(expression, 'gm')
+      const regex = new RegExp(expression, 'gmi')
       const match = regex.exec(stringValue)
       if (match && match.length > groupNumber) {
         return safeString(match[groupNumber])

@@ -25,6 +25,7 @@ const {
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
+const { shouldTriggerHardwareErrorAnalysis } = require('../plugin/utils')
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -239,7 +240,8 @@ async function addDeviceDataWithContext(context) {
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
-  const { name, site, result, configuration, operation } = payload
+  const { name, site, result, configuration, log } = payload
+  let { operation } = payload
 
   if (name) {
     await knex('Device')
@@ -274,6 +276,53 @@ async function addDeviceDataWithContext(context) {
     response = {
       ...response,
       ...(await mergeResultWithContext(context.withPayload(result))),
+    }
+  }
+
+  if (log) {
+    let { data } = log
+    if (log.source === 'GeneXpert' && data) {
+      if (_.isString(data)) {
+        data = JSON.parse(data)
+      }
+      if (_.isString(data.details)) {
+        data.details = JSON.parse(data.details)
+      }
+
+      operation = {
+        id: data.externalId,
+        startedOn: data.occurredOn,
+        data: {
+          type: 'gx-log',
+          logFileName: data.logFileName,
+          logLevel: data.logLevel,
+          details: data.details,
+        },
+      }
+
+      const contextWithPayload = context.withPayload(operation)
+      response = {
+        ...response,
+        ...(await addDeviceOperationWithContext(contextWithPayload)),
+      }
+      // check if stored in table 'DeviceOperation' entry is
+      // hardware error and dispatch MQ action if needed
+      const {
+        messageContext,
+        partnerId,
+        payload,
+        parent: {
+          deviceLogUpdate: { deviceOperationId },
+        },
+      } = contextWithPayload
+      await shouldTriggerHardwareErrorAnalysis(
+        knex,
+        messageContext,
+        partnerId,
+        device,
+        payload,
+        deviceOperationId
+      )
     }
   }
 

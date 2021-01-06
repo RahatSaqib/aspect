@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 
@@ -12,9 +12,9 @@ const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const enhance = _.identity
+const enhance = identity
 
-const WorkflowLogTableRow = ({ intl, workflowLog, ...restProps }) => (
+const WorkflowLogTableRow = ({ workflowLog, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(workflowLog.get('changedOn'))}</TableCell>
     <TableCell>{workflowLog.get('statusName')}</TableCell>

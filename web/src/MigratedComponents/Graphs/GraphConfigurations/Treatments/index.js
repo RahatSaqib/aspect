@@ -34,6 +34,7 @@ const treatmentStatusGraphs = {
         identifier: 'assayTypeId',
       },
     ],
+    graphRenderPermissions: ['dashboard'],
     graphType: [
       {
         id: 'treatmentStatusMonthly',
@@ -43,7 +44,7 @@ const treatmentStatusGraphs = {
         componentClasses: ['BARCLASS'],
         api: {
           method: 'POST',
-          endpoint: 'result/confirmed-treatment-tracking',
+          endpoint: '/result/confirmed-treatment-tracking',
           params: {},
         },
         indexBy: 'monthTested',
@@ -53,6 +54,11 @@ const treatmentStatusGraphs = {
         displayMethod: 'percentage', // todo: actual
         displayLegend: true,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          keys: ['treatmentStatusId', 'indexBy'],
+        },
       },
       {
         id: 'treatmentStatusMonthly',
@@ -62,7 +68,7 @@ const treatmentStatusGraphs = {
         componentClasses: ['piegraph__container'],
         api: {
           method: 'POST',
-          endpoint: 'result/confirmed-treatment-tracking',
+          endpoint: '/result/confirmed-treatment-tracking',
           params: {},
         },
         indexBy: 'monthTested',
@@ -70,7 +76,7 @@ const treatmentStatusGraphs = {
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {
-          showTotal: true,
+          showTotal: false,
           title: 'treatmentStatusTotalTitle',
           key: ['Confirmed'],
           subTitle: 'treatmentStatusTotalValidTitle',

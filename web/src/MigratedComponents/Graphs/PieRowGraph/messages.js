@@ -35,11 +35,23 @@ export const messages = defineMessages({
   },
   percentViaSmsDescription: {
     id: 'pages.OperationalData.percentViaSmsDescription',
-    defaultMessage: 'The percentage of reported results that were reported via SMS.',
+    defaultMessage:
+      'The percentage of reported results that were reported via SMS.',
   },
   percentViaEmailDescription: {
     id: 'pages.OperationalData.percentViaEmailDescription',
-    defaultMessage: 'The percentage of reported results that were reported via Email.',
+    defaultMessage:
+      'The percentage of reported results that were reported via Email.',
+  },
+  percentWithin2HoursDescription: {
+    id: 'pages.OperationalData.percentWithin2HoursDescription',
+    defaultMessage:
+      'The percentage of positive results that were reported within two hours of test completion.',
+  },
+  percentReportedDescription: {
+    id: 'pages.OperationalData.percentReportedDescription',
+    defaultMessage:
+      'The percentage of positive results that were reported via Email or SMS.',
   },
   percentWithin2Hours: {
     id: 'pages.OperationalData.percentWithin2Hours',

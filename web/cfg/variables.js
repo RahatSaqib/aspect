@@ -58,7 +58,6 @@ exports.customPropertiesVariables = {
   '--wild-sand': '#f0f0f0',
 
   // Colors 2020
-  '--anakiwa': '#73EBFF',
   '--apple-green': '#439B45',
   '--azure-radiance': '#0091ff',
   '--chathams-blue': '#18527d',
@@ -75,13 +74,82 @@ exports.customPropertiesVariables = {
   '--lavender': '#d38ae7',
   '--malibu': '#7fc4fa',
   '--saffron': '#f0bc2c',
-  '--selective-yellow-2': '#F7B600',
   '--steel-blue': '#5290c1',
   '--thunderbird': '#DB2F17',
   '--tundora': '#454545',
   '--your-pink': '#ffc9c4',
   '--malachite': '#00ca1c',
   '--web-orange': '#FEA500',
+  '--web-orange-2': '#FFD970',
+
+  // Assay hues Abbot
+  '--selective-yellow-2': '#3a0000',
+  '--lightning-yellow': '#4c2000',
+  '--saffron2': '#633800',
+  '--saffron-mango': '#7e5000',
+  '--goldenrod': '#9b6900',
+  '--sweet-corn': '#c98f00',
+  '--cherokee': '#ffc928',
+  '--cape-honey': '#fff155',
+
+  // Assay hues BD
+  '--pirate-gold': '#2e3b3f',
+  '--chelsea-gem': '#97a6ab',
+
+  // Assay hues GenoType
+  '--geno-lavender1': '#380039',
+  '--geno-lavender2': '#580057',
+  '--geno-lavender3': '#780f74',
+  '--geno-lavender4': '#902e8b',
+  '--geno-lavender5': '#aa48a4',
+  '--geno-lavender6': '#c460bc',
+  '--geno-lavender7': '#de79d6',
+  '--geno-lavender8': '#f792f1',
+  '--geno-lavender9': '#ffb8ff',
+
+  // Assay hues GeneXpert
+  '--genex-blue1': '#00142b',
+  '--genex-blue2': '#102239',
+  '--genex-blue3': '#203049',
+  '--genex-blue4': '#2f3f59',
+  '--genex-blue5': '#3f4e69',
+  '--genex-blue6': '#505e7a',
+  '--genex-blue7': '#606e8b',
+  '--genex-blue8': '#717f9d',
+  '--genex-blue9': '#8291af',
+  '--genex-blue10': '#94a2c1',
+  '--genex-blue11': '#a6b4d4',
+  '--genex-blue12': '#b8c7e7',
+  '--genex-blue13': '#cbdafa',
+  '--genex-blue14': '#dfeeff,',
+
+  // Assay hues COVID
+  '--sea-nymph': '#0f3328',
+  '--summer-green': '#33574b',
+  '--summer-green2': '#597e70',
+  '--opal': '#81a799',
+  '--opal2': '#aad3c3',
+  '--conch': '#d7fff0',
+
+  // Assay hues reporter
+  '--hot-pink': '#73004b',
+  '--carnation-pink': '#ce2099',
+  '--cotton-candy': '#ffb5ff',
+
+  // Assay hues Alere
+  '--anakiwa': '#004759',
+  '--oyster-bay': '#40c1d4',
+
+  // Assay hues Senaite
+  '--texas-rose': '#723800',
+  '--chardonnay': '#c77f23',
+  '--frangipani': '#ffda7c',
+
+  // Assay hues ungrouped
+  '--loblolly': '#b8c6cb',
+  '--hit-gray': '#a3b0b4',
+  '--regent-gray': '#8f9a9e',
+  '--rolling-stone': '#7a8487',
 
   // Genrally used variables throughout the app
   '--aspect-color-cyan': 'var(--scooter, #3cc0cd)',
@@ -104,7 +172,7 @@ exports.customPropertiesVariables = {
   '--aspect-color-grey-8': 'var(--white-lilac-2, #f6f7fb)',
   '--aspect-color-grey-9': 'var(--mercury, #e6e6e6)',
   '--aspect-color-mandy': 'var(--guardsman-red, #d60000)',
-  '--aspect-color-mandy-2': 'var(--carnation, #f45b69)',
+  '--aspect-color-mandy-2': 'var(--carnation, #EB6562)',
   '--aspect-color-mandy-3': 'var(--mandy-3,  #e85164)',
   '--aspect-color-mantis': 'var(--malachite, #00ca1c)',
   '--aspect-color-mountain': 'var(--purple-mountains-majesty, #9874b2)',
@@ -122,6 +190,24 @@ exports.customPropertiesVariables = {
   '--aspect-color-supernova': 'var(--saffron, #f0bc2c)',
   '--aspect-color-supernova-2': 'var(--my-sin, #fcb124)',
   '--aspect-color-sushi': 'var(--sushi, #7cb342)',
+
+  // Operational Data screen
+  '--aspect-device-active': '#99D25D',
+  '--aspect-device-inactive': '#D8D8D8',
+  '--aspect-device-no-samples': '#CCDCE1',
+  '--aspect-device-stockout': '#72ECFF',
+  '--aspect-device-no-staff': '#F7B500',
+  '--aspect-device-needs-repair': '#DB3018',
+  '--aspect-device-connectivity': '#EB6562',
+  '--aspect-device-inactiveDecommissioned': '#7d96bb',
+  '--aspect-device-inactiveOutOfInventory': '#004759',
+  '--aspect-device-inactiveNoResultsReported': '#6d6f7d',
+  '--aspect-device-error': '#FF2000',
+  '--aspect-device-unknown': '#454545',
+  '--aspect-device-transfer-time': '#99D7EF',
+  '--aspect-device-weekend': '#F4F4F4',
+  '--aspect-device-aspect': '#20A1B3',
+  '--aspect-device-titles': '#06C4E3',
 
   // commenting 'var(--white, #ffffff)' for now because after upgrade Chip component
   // in web/src/components/shared/TagInput.jsx crashes page and shows error in console

@@ -1,13 +1,17 @@
-import addMonths from 'date-fns/addMonths'
-import formatISO from 'date-fns/formatISO'
 import PieRowGraph from '../../PieRowGraph'
-import {
-  negateTimeZoneOffset,
-  dateRangeOptions,
-} from '../../Helpers/Formatters/datetime'
+import { dateRangeOptions } from '../../Helpers/Formatters'
 import AspectDropdown from '../../../AspectDropdown'
 
-const currentMonth = formatISO(negateTimeZoneOffset(addMonths(new Date(), -1)))
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_OPTIONS,
+  DATE_RANGE_KEYS: { CURRENT_MONTH },
+} = DATE_CONSTS
+const dateRanges = dateRangeOptions()
+const currentMonth =
+  dateRanges[Object.keys(dateRanges)][DATE_RANGE_OPTIONS.LAST_MONTH].value
+    .minDate
 
 const resultsTransmittedGraphs = {
   resultsTransmitted: {
@@ -15,12 +19,7 @@ const resultsTransmittedGraphs = {
     title: 'resultsTransmittedTitle',
     componentSize: 'row',
     group: 'assaysNotNeeded',
-    assays: [
-      // 'GxHiv1Vl',
-      // 'GxMtbRif',
-      // 'QHivVL',
-      // todo: add filtered assays
-    ],
+    assays: [],
     selectorModifiers: [
       {
         selectedValue: 'Date Range',
@@ -30,8 +29,11 @@ const resultsTransmittedGraphs = {
         identifier: 'currentMonth',
         data: dateRangeOptions('resultsDateRange'),
         sortByKeys: ['id'],
+        isClearable: false,
+        defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
       },
     ],
+    graphRenderPermissions: ['dashboard', 'operationalData'],
     graphType: [
       {
         id: 'resultsTransmittedDials',
@@ -41,9 +43,9 @@ const resultsTransmittedGraphs = {
         componentClasses: ['piegraph__container--nobg'],
         api: {
           method: 'GET',
-          endpoint: 'dashboard/results-transmitted',
+          endpoint: '/dashboard/results-transmitted',
           params: {
-            currentMonth,
+            [CURRENT_MONTH]: currentMonth,
           },
         },
         indexBy: 'date',

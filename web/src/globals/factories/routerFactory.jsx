@@ -23,17 +23,17 @@ import TaskDetail from '../../task/detail/TaskDetail'
 import OperationalData from '../../dashboard/operational/OperationalData'
 import DeviceDemo from '../../demo/device/DeviceDemo'
 import DeviceList from '../../device/list/DeviceList'
-import DeviceDetail from '../../device/detail/DeviceDetail'
+import DeviceDetail from '../../MigratedComponents/Devices/Detail/DeviceDetail'
 import DeviceApiKeyList from '../../deviceApiKey/list/DeviceApiKeyList'
 import CaseList from '../../case/list/CaseList'
 import SiteList from '../../site/list/SiteList'
-import SiteDetail from '../../site/detail/SiteDetail'
+import SiteDetail from '../../MigratedComponents/Sites/Detail/SiteDetail'
 import PersonList from '../../person/list/PersonList'
 import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../MigratedComponents/Results/Detail'
 import NotificationList from '../../notification/list/NotificationList'
-import NotificationDetail from '../../notification/detail/NotificationDetail'
+import NotificationDetail from '../../MigratedComponents/Notifications'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
@@ -142,7 +142,7 @@ const renderReports = loggedInFactory(ReportIndex)
 const renderManage = notImplementedLoggedInFactory('Manage')
 /* END-TODO: real components */
 const renderDeviceList = loggedInFactory(DeviceList)
-const renderDeviceDetail = loggedInDetailFactory(DeviceDetail)
+const renderDeviceDetail = loggedInFactory(DeviceDetail)
 const renderDeviceApiKeyList = loggedInFactory(DeviceApiKeyList)
 const renderCaseList = loggedInFactory(CaseList)
 const renderRouterList = loggedInFactory(RouterList)
@@ -151,12 +151,12 @@ const renderReporterList = loggedInFactory(ReporterList)
 const renderResultList = loggedInFactory(ResultList)
 const renderResultDetail = loggedInFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
-const renderSiteDetail = loggedInDetailFactory(SiteDetail)
+const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
-const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
+const renderNotificationDetail = loggedInFactory(NotificationDetail)
 const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)

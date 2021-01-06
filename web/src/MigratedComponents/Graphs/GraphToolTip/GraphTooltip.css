@@ -25,9 +25,24 @@
   color: inherit;
 }
 
+.tooltip__valueContainer {
+  display: flex;
+}
+
 .tooltip__value {
   padding-left: 3px;
+  font-weight: 300;
+  margin-left: 0;
+}
+
+.tooltip__valuePrimary {
+  padding: 0 3px;
   font-weight: 900;
+  margin-left: auto;
+}
+
+.tooltip__valuesecoondary {
+  padding-left: 3px;
   margin-left: auto;
 }
 
@@ -36,4 +51,8 @@
   height: 0;
   width: 0;
   background-color: transparent;
+}
+
+.tooltip__allowsClickthrough {
+  font-size: 11px;
 }

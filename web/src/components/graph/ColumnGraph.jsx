@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
+import flowRight from 'lodash/flowRight'
 import { scaleLinear, scaleBand } from '@vx/scale'
 import { Group } from '@vx/group'
 import { Bar } from '@vx/shape'
@@ -83,11 +83,11 @@ class ColumnGraph extends Component {
     })
 
     // Compose together the scale and accessor functions to get point functions
-    const yPoint = _.flowRight(yScale, y)
+    const yPoint = flowRight(yScale, y)
 
     const xPoint = []
     for (let i = 0; i < maxLength; i++) {
-      xPoint[i] = _.flowRight(xScale, x[i])
+      xPoint[i] = flowRight(xScale, x[i])
     }
 
     // determine labelling based on props

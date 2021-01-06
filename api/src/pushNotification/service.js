@@ -15,7 +15,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 // -----------------------------
 // onPushNotificationMessageCreated - event handler for action PUSH_NOTIFICATION_MESSAGE_CREATED
 // -----------------------------
-function onPushNotificationMessageCreated(
+async function onPushNotificationMessageCreated(
   { pushNotificationMessageId },
   { messageContext }
 ) {
@@ -65,7 +65,7 @@ async function preparePushNotificationMessageForSending(
 // -----------------------------
 // onPushNotificationMessageReadyForSending - event handler for PUSH_NOTIFICATION_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-function onPushNotificationMessageReadyForSending(
+async function onPushNotificationMessageReadyForSending(
   { pushNotificationMessageId },
   { messageContext }
 ) {
@@ -159,6 +159,7 @@ async function createPushNotificationMessageFromTemplate(
       sample: 'sample',
       site: 's',
       showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
     })
     .where({ 'm.id': pushNotificationMessageId })
     .first(

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import constant from 'lodash/constant'
 import PropTypes from 'prop-types'
 import { compose, setPropTypes, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
@@ -31,6 +31,6 @@ const enhance = compose(
   })
 )
 
-const NavTitle = _.constant(false)
+const NavTitle = constant(false)
 
 export default enhance(NavTitle)

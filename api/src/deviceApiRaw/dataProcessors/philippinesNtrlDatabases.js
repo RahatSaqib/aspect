@@ -257,6 +257,14 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
           changedOn: utcNow,
           createdOn: utcNow,
         })
+        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+          resultId: result.id,
+          resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
+          operator: resultSignOff.laboratoryManager,
+          reason: `Data from ${site.deviceName}`,
+          changedOn: utcNow,
+          createdOn: utcNow,
+        })
         this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
       }
     }
@@ -1096,6 +1104,18 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         'Xavier University Community Health Care Center PMDT TC',
       'zamboanga city medical center pmdt tc':
         'Zamboanga City Medical Center PMDT TC',
+      'City of Malolos Health OfficeV': 'City of Malolos Health OfficeV',
+      'Premiere Medical Center': 'Premiere Medical Center',
+      'La Paz Rural Health Unit (RHU) II': 'La Paz Rural Health Unit (RHU) II',
+      'Mabalacat RHU III': 'Mabalacat RHU III',
+      'Santa Maria RHU III': 'Santa Maria RHU III',
+      'Lian RHU': 'Lian RHU',
+      'Antipolo Health Units': 'Antipolo Health Units',
+      'San Mateo IV': 'San Mateo IV',
+      'Magdalena RHU': 'Magdalena RHU',
+      'Rodriguez RHU IV': 'IVA - RODRIGUEZ RHU',
+      'Siniloan RHU': 'Siniloan RHU',
+      'Dasmarinas CHO II': 'Dasmarinas CHO II',
     }
   }
 
@@ -1471,7 +1491,11 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           age: payload.Age,
           sex: payload.Sex,
           address: payload.Address,
+          province: payload.Province,
+          city: payload.City,
           phone: payload['Patient Contact Number'],
+          paragioniamiasisResult1: payload['Paragioniamiasis Result 1'],
+          paragioniamiasisResult2: payload['Paragioniamiasis Result 2'],
           cultureCenter: payload['Culture Center'],
           dstCenter: payload['DST Center'],
           treatmentCategory: payload['Treatment Category'],
@@ -1486,12 +1510,16 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           testRequestedDst: payload['Test Requested DST'],
           testRequestedLpa: payload['Test Requested LPA'],
           testRequestedGx: payload['Test Requested Gx'],
+          testRequestedTbLamp: payload['Test Requested TB LAMP'],
+          testRequestedParagonimiasis: payload['Test Requested Paragonimiasis'],
           dateTransferedToDst: payload['Date transfered to DST'],
           cultureMethod: payload['Culture Method'],
           presumptiveDsOrDr: payload['Presumptive DS or DR'],
           dateReceived: payload['Date Received'],
           labNo1: payload['Lab No 1'],
           tbCaseNumber: payload['TB Case Number'],
+          repeatCollection: payload['Repeat Collection'],
+          reasonForRecollection: payload['Reason for Recollection'],
           dateCollected1: payload['Date Collected 1'],
           dateCollected2: payload['Date Collected 2'],
           dateCollected3: payload['Date Collected 3'],
@@ -1502,6 +1530,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           consistency1: payload['Consistency 1'],
           consistency2: payload['Consistency 3'],
           consistency3: payload['Consistency 4'],
+          specimenAccepted: payload['Specimen Accepted'],
+          specimenRejectedReason: payload['Specimen Rejected Reason'],
           encodedBy: payload['Encoded By'],
           dateEncoded: payload['Date Encoded'],
           healthCareSystem: 'PMDT',
@@ -1548,6 +1578,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           levofloxacin: payload.Levofloxacin,
           amikacin: payload.Amikacin,
           capreomycin: payload.Capreomycin,
+          moxifloxacin: payload.Moxifloxacin,
           methodUsed: payload['DST Method Used'],
           otherMethodUsed: payload['DST Method Used Others'],
           remarks: payload['DST Remarks'],
@@ -1559,6 +1590,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           labTech: payload['DST Lab Tech'],
           encodedBy: payload['DST Encoded by'],
           reviewedBy: payload['DST Releasing Form Lab Manager'],
+          notedBy: payload['DST Noted By'],
         }
         if (
           objectHasValues(
@@ -1585,8 +1617,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('DST', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
                 .andWhere('siteId', site.id)
             })
@@ -1729,6 +1762,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           dateReleased: payload['Culture Date Released'],
           encodedBy: payload['Culture Encoded by'],
           labTech: payload['Culture Lab Tech'],
+          notedBy: payload['Culture Noted By'],
         }
         if (
           objectHasValues(
@@ -1757,11 +1791,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.whereIn('assayId', [
-                  assayBdMgitGndId,
-                  assayGenericCultureId,
-                ])
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .whereIn('assayId', [assayBdMgitGndId, assayGenericCultureId])
                   .andWhere('sampleId', cultureSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -1851,16 +1883,20 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           center: payload['LPA Center'],
           lpaKit: payload['LPA Kit Used'],
           lpaKitOther: payload['LPA Kit Others'],
+          lpaTestRequested: payload['LPA Test Requested'],
+          lpaTestRequestedOther: payload['LPA Test Requested Others'],
           mtbComplex: payload['LPA MTB Complex'],
           rifampicin: payload['LPA Rifampicin Result'],
           isoniazid: payload['LPA Isoniazid Result'],
           ethambutol: payload['LPA Ethambutol'],
           fluoroquinolones: payload['LPA Fluoroquinolones'],
           aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
+          ethionamideProthionamide: payload['LPA Ethionamide/Prothionamide'],
           remarks: payload['LPA Remarks:'],
           dateReleased: payload['LPA Date of Release'],
           performedBy: payload['LPA Performed By'],
           reviewedBy: payload['LPA Reviewed By'],
+          notedBy: payload['LPA Noted By'],
         }
         if (
           objectHasValues(
@@ -1880,8 +1916,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('LPA', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .andWhere('assayId', assayLpaId)
                 .andWhere('siteId', site.id)
             })
@@ -1987,6 +2024,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           dateReleased: payload['Smear Date Released'],
           encodedBy: payload['Smear Encoded by'],
           laboratoryTechnician: payload['Smear Lab Tech'],
+          notedBy: payload['Smear Noted By'],
+          verifiedBy: payload['Smear Verified By'],
         }
         if (
           objectHasValues(
@@ -2051,8 +2090,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.where('assayId', assaySmearId)
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .where('assayId', assaySmearId)
                   .andWhere('sampleId', smearSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -2119,6 +2159,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           dateReleased: payload['Gx Date Released'],
           examiner: payload['Gx Examiner'],
           labManager: payload['Gx Laboratory Manager'],
+          gxTestRequested: payload['Gx Test Requested'],
+          notedBy: payload['Gx Noted By'],
         }
         if (
           objectHasValues(
@@ -2137,8 +2179,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('GeneXpert', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .whereIn('assayId', [
                   assayGeneXpertMtbRifId,
                   assayGeneXpertMtbRifUltraId,
@@ -2197,6 +2240,80 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             geneXpertResultData.processingDate,
             geneXpertResultData.examiner,
             geneXpertResultData.remarks,
+            patientData,
+            utcNow,
+            resultCategories,
+            resultWorkflowStatuses,
+            resultOverwritePriority
+          )
+        }
+
+        const tbLampResultData = {
+          tbLampResult: payload['TB LAMP Result'],
+          verifiedBy: payload['TB LAMP Verified By'],
+          notedBy: payload['TB LAMP Noted By'],
+        }
+        if (objectHasValues(_.pick(tbLampResultData, ['tbLampResult']))) {
+          const assayTbLampId = await assayToId('assayTbLamp')
+          const resultCategoryMappings = {
+            POSITIVE: resultCategories.Positive,
+            NEGATIVE: resultCategories.Negative,
+            INDETERMINATE: resultCategories.Inconclusive,
+          }
+          const resultSignOff = this.getResultSignOff('TBLAMP', payload)
+          const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
+                .andWhere('assayId', assayTbLampId)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
+            ...baseNewResult,
+            externalId,
+            assayId: assayTbLampId,
+            sampleId: samples[0].id,
+            reportableSiteId,
+            startedOn:
+              smearResultData.dateReleased ||
+              geneXpertResultData.processingDate,
+            endedOn:
+              smearResultData.dateReleased ||
+              geneXpertResultData.processingDate,
+            resultData: JSON.stringify({
+              encodedResult: tbLampResultData,
+              resultSignOff,
+            }),
+            senderOperator:
+              smearResultData.laboratoryTechnician ||
+              geneXpertResultData.examiner,
+          }
+          const resultCategory1Id =
+            resultCategoryMappings[tbLampResultData.tbLampResult]
+          const resultOverwritePriority = [
+            resultCategories.Positive,
+            resultCategories.Negative,
+            resultCategories.Inconclusive,
+            resultCategories.Indeterminate,
+            resultCategories.Invalid,
+            resultCategories.NoResult,
+            resultCategories.Missing,
+          ]
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            null,
+            tbLampResultData,
+            resultSignOff,
+            smearResultData.dateReleased || geneXpertResultData.processingDate,
+            smearResultData.dateReleased || geneXpertResultData.processingDate,
+            tbLampResultData.notedBy,
+            null,
             patientData,
             utcNow,
             resultCategories,
@@ -2419,8 +2536,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         if (referringFacility) {
           originSite = await knex('Site')
             .where('partnerId', partnerId)
-            .andWhere(function () {
-              this.where('externalId', referringFacility)
+            .andWhere(queryBuilder => {
+              queryBuilder
+                .where('externalId', referringFacility)
                 .orWhere('name', referringFacility)
                 .orWhere('shortName', referringFacility)
             })
@@ -2565,14 +2683,18 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           referringHealthFacility:
             payload.Address || payload['Referring Facility'],
           requestingPhysician: payload.Requisitioner,
+          facilityContactNumber: payload['Facility Contact Number'],
           lastName: payload['Last Name'],
           firstName: payload['First Name'],
           middleInitialOrName: payload['Middle Name'],
           dateOfAdmission: payload['Date of Admission'],
           age,
           sex,
+          phone: payload['Patient Contact Number'],
           dateOfBirth: payload['Date of Birth'],
           address: payload.Address,
+          paragioniamiasisResult1: payload['Paragioniamiasis Result 1'],
+          paragioniamiasisResult2: payload['Paragioniamiasis Result 2'],
           treatmentCategory: payload['History of Treatment'],
           registrationGroup: payload['Registration Group'],
           treatmentSchedule: payload['Reason for Examination'],
@@ -2582,6 +2704,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           testRequestedCulture: payload.Culture,
           testRequestedDst: payload.DST,
           testRequestedGx: payload.GeneXpert,
+          testRequestedTbLamp: payload['Test Requested TB LAMP'],
           dateTransferedToDst: payload['Date transfered to DST'],
           cultureMethod: payload['Culture Method'],
           presumptiveDsOrDr: payload['Presumptive DS or DR'],
@@ -2589,6 +2712,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           labNo1: payload['Laboratory No'],
           tbCaseNumber: payload['RITM Hospital No'],
           dateCollected1: payload['Date and Time of Specimen Collection'],
+          dateDispatched: payload['Date Dispatch'],
           encodedBy: payload['MRF Encoded by'],
           dateEncoded: payload['MRF Date Encoded'],
           healthCareSystem: 'RITM',
@@ -2634,6 +2758,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           amikacin: payload.Amikacin,
           capreomycin: payload.Capreomycin,
           ofloxacin: payload.Ofloxacin,
+          moxifloxacin: payload.Moxifloxacin,
           methodUsed: payload['DST Laboratory Test Performed'],
           remarks: payload['DST Comments'],
           dateReleased: payload['Date and Time of Release of DST Result'],
@@ -2679,8 +2804,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('DST', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.whereIn('sampleId', sampleIds)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
                 .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
                 .andWhere('siteId', site.id)
             })
@@ -2856,11 +2982,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.whereIn('assayId', [
-                  assayBdMgitGndId,
-                  assayGenericCultureId,
-                ])
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .whereIn('assayId', [assayBdMgitGndId, assayGenericCultureId])
                   .andWhere('sampleId', cultureSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -3012,8 +3136,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             const externalId = `${site.externalId}_${smearSample.externalId}_SMEAR`
             const result = (await knex('Result')
               .where({ externalId, deviceId })
-              .orWhere(function () {
-                this.where('assayId', assaySmearId)
+              .orWhere(queryBuilder => {
+                queryBuilder
+                  .where('assayId', assaySmearId)
                   .andWhere('sampleId', smearSample.id)
                   .andWhere('siteId', site.id)
               })
@@ -3080,8 +3205,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('GeneXpert', payload)
           const result = (await knex('Result')
             .where({ externalId, deviceId })
-            .orWhere(function () {
-              this.where('sampleId', samples[0].id)
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .where('sampleId', samples[0].id)
                 .whereIn('assayId', [
                   assayGeneXpertMtbRifId,
                   assayGeneXpertMtbRifUltraId,
@@ -3147,6 +3273,72 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             geneXpertResultData.dateReleased,
             geneXpertResultData.examiner,
             geneXpertResultData.remarks,
+            patientData,
+            now,
+            resultCategories,
+            resultWorkflowStatuses,
+            resultOverwritePriority
+          )
+        }
+
+        const tbLampResultData = {
+          tbLampResult: payload['TB LAMP Result'],
+        }
+        if (objectHasValues(_.pick(tbLampResultData, ['tbLampResult']))) {
+          const assayTbLampId = await assayToId('assayTbLamp')
+          const resultCategoryMappings = {
+            POSITIVE: resultCategories.Positive,
+            NEGATIVE: resultCategories.Negative,
+            INDETERMINATE: resultCategories.Inconclusive,
+          }
+          const resultSignOff = this.getResultSignOff('TBLAMP', payload)
+          const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
+          const result = (await knex('Result')
+            .where({ externalId, deviceId })
+            .orWhere(queryBuilder => {
+              queryBuilder
+                .whereIn('sampleId', sampleIds)
+                .andWhere('assayId', assayTbLampId)
+                .andWhere('siteId', site.id)
+            })
+            .first()) || {
+            ...baseNewResult,
+            externalId,
+            assayId: assayTbLampId,
+            sampleId: samples[0].id,
+            reportableSiteId,
+            startedOn: geneXpertResultData.processingDate,
+            endedOn: geneXpertResultData.processingDate,
+            resultData: JSON.stringify({
+              encodedResult: tbLampResultData,
+              resultSignOff,
+            }),
+            senderOperator: geneXpertResultData.examiner,
+          }
+          const resultCategory1Id =
+            resultCategoryMappings[tbLampResultData.tbLampResult]
+          const resultOverwritePriority = [
+            resultCategories.Positive,
+            resultCategories.Negative,
+            resultCategories.Inconclusive,
+            resultCategories.Indeterminate,
+            resultCategories.Invalid,
+            resultCategories.NoResult,
+            resultCategories.Missing,
+          ]
+          await this.upsertResult(
+            knex,
+            rawMessage,
+            site,
+            result,
+            resultCategory1Id,
+            null,
+            tbLampResultData,
+            resultSignOff,
+            smearResultData.dateReleased || geneXpertResultData.processingDate,
+            smearResultData.dateReleased || geneXpertResultData.processingDate,
+            tbLampResultData.notedBy,
+            null,
             patientData,
             now,
             resultCategories,

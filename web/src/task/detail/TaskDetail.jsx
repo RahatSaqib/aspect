@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import _ from 'lodash'
+import map from 'lodash/map'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle, setPropTypes } from 'recompose'
@@ -123,12 +123,7 @@ export const TaskDetail = ({
             </Unit>
             <Unit lg="1-5" />
             <Unit lg="1-5">{formatRelative(intl, task.get('time'))}</Unit>
-            <Unit lg="1-5">
-              {/* <Link to="/" className={cssClasses('Summary__Item__Link')}>
-                <FaBellZ className={cssClasses('Summary__Item__Link__FaBellZ')} />
-                Snooze
-              </Link> */}
-            </Unit>
+            <Unit lg="1-5" />
             <br />
             <Unit lg="1-5">
               <legend className={cssClasses('Summary__Legend')}>
@@ -151,7 +146,7 @@ export const TaskDetail = ({
               </legend>
               <div>
                 {jobPersons && jobPersons.length > 0
-                  ? _.map(jobPersons.toArray(), elem => (
+                  ? map(jobPersons.toArray(), elem => (
                       <span className={cssClasses('Summary__Item')}>
                         {elem.personName}
                         <Link
@@ -175,88 +170,6 @@ export const TaskDetail = ({
                 {task.get('issueStatus')}
               </span>
             </Unit>
-            {/* <Unit lg="1-2">
-              <ButtonGroup
-                isolated
-                className={cssClasses('Card__Content__StatusButtonGroup')}
-              >
-                <AspectButton
-                  color="primary"
-                  variant="contained"
-                  inverse
-                  className={cssClasses('Button--inverse')}
-                >
-                  Alerted
-                </AspectButton>
-                <AspectButton color="primary" variant="contained">
-                  In progress
-                </AspectButton>
-                <AspectButton
-                  color="primary"
-                  variant="contained"
-                  inverse
-                  className={cssClasses('Button--inverse')}
-                >
-                  Resolved
-                </AspectButton>
-              </ButtonGroup>
-            </Unit> */}
-            {/* <Unit sm="1-1">
-              <ol className={cssClasses('MessageList')}>
-                {_.map(
-                  [
-                    {
-                      id: 1,
-                      author: 'Mary',
-                      date: 'March 31, 2017 2:17PM',
-                      text: '@Abdul can you please investigate?',
-                    },
-                    {
-                      id: 2,
-                      author: 'Abdul',
-                      date: 'March 31, 2017 2:17PM',
-                      text:
-                        'I called the lab and they said that they will do the calibration tomorrow.',
-                    },
-                  ],
-                  message => (
-                    <li
-                      key={message.id}
-                      className={cssClasses('MessageList__Item')}
-                    >
-                      <div className={cssClasses('MessageList__Item__Text')}>
-                        {message.text}
-                      </div>
-                      <div>
-                        <span className={cssClasses('MessageList__Item__Author')}>
-                          {message.author}
-                        </span>
-                        <span className={cssClasses('MessageList__Item__Date')}>
-                          {message.date}
-                        </span>
-                      </div>
-                    </li>
-                  )
-                )}
-              </ol>
-            </Unit>
-            <Unit sm="1-1">
-              <Input
-                multiline
-                rows={6}
-                defaultValue="  "
-                className={cssClasses('Input')}
-                inputProps={{
-                  className: cssClasses('Input__inputElement'),
-                }}
-              />
-            </Unit>
-            <Unit sm="1-2">
-              <AspectButton variant="contained">Add comment</AspectButton>
-            </Unit>
-            <Unit sm="1-2" className={cssClasses('NewMessage__Checkbox')}>
-              <CheckboxField checked={false} label="This is now resolved" />
-            </Unit> */}
           </div>
         </Card>
       </section>

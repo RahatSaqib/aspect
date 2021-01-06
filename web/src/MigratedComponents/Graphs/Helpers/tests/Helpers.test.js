@@ -1,10 +1,13 @@
 import {
   calcPercentageSplitBar,
+  getISOFromString,
+  generateToolTip,
   groupByKey,
   groupForPie,
   groupForPieRow,
   groupForDeviceStatusAPI,
   groupForDivergent,
+  groupForOldTreatmentAPI,
   generateTickValues,
   normaliseKeys,
 } from '../Formatters'
@@ -12,6 +15,12 @@ import {
 import {
   barDataActualFromAPIIn,
   barDataActualFromAPIOut,
+  barDataForToolTipsNovIn1,
+  barDataForToolTipsNovIn2,
+  barDataForToolTipsNovIn3,
+  barDataForToolTipsNovOut1,
+  barDataForToolTipsNovOut2,
+  barDataForToolTipsNovOut3,
   divergentDataFromAPIIn,
   divergentDataFromAPIOut,
   groupByKeyGrouped,
@@ -28,7 +37,16 @@ import {
   tickDataForBarYAxisShapeBookendsDisplayActualOut,
   tickDataForBarYAxisShapeClubSandwichDisplayActualOut,
   tickDataForBarXAxisShapeBookendDisplayActualOut,
+  treatmentAPIOptimumDataIn,
+  treatmentAPIOptimumDataOut,
+  treatmentAPISkewedDataIn,
+  treatmentAPISkewedDataOppositeIn,
+  treatmentAPISkewedPercentageDataOut,
+  treatmentAPISkewedDataOppositePercentageOut,
+  treatmentAPISkewedActualDataOut,
 } from './mocks/data.js'
+
+import { itemMocked, assaysMocked } from './mocks/tooltips'
 
 describe('Graph Helpers', () => {
   describe('Data transformations for individual graphs', () => {
@@ -68,8 +86,85 @@ describe('Graph Helpers', () => {
 
     describe('PieRowchart: groupForPieRow', () => {
       it('should group data by types correctly', () => {
-        const grouped = groupForPieRow(pieRowDataFromAPIIn)
+        const mergedParams = [{ currentMonth: '2020-10-01' }]
+        const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
         expect(grouped).toEqual(pieRowDataFromAPIOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - for old treatment API bar', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'percentage'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPIOptimumDataIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPIOptimumDataOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - Skewed data as percentage', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'percentage'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPISkewedDataIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPISkewedPercentageDataOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - Skewed data as percentage opposite', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'percentage'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPISkewedDataOppositeIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPISkewedDataOppositePercentageOut)
+      })
+    })
+
+    describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
+      it('should group data by key correctly - Skewed data as actual', () => {
+        const indexBy = 'monthTested'
+        const keyToConsume = 'pcConfirmed'
+        const displayMethod = 'actual'
+        const filterBy = false
+        const formatDate = 'MMM yy'
+        const grouped = groupForOldTreatmentAPI(
+          treatmentAPISkewedDataIn,
+          keyToConsume,
+          indexBy,
+          formatDate,
+          filterBy,
+          displayMethod
+        )
+        expect(grouped).toEqual(treatmentAPISkewedActualDataOut)
       })
     })
 
@@ -216,6 +311,96 @@ describe('Graph Helpers', () => {
         )
         const display = calcPercentageSplitBar(normalised, indexBy)
         expect(display).toEqual(tickDataForBarDisplayMethodPercentageIn)
+      })
+    })
+  })
+
+  describe('Generate Tooltips', () => {
+    describe('generateToolTip', () => {
+      const displayMethod = 'percentage'
+      const assaysFromState = assaysMocked
+      const type = 'bar'
+      const formatNumber = number =>
+        new Intl.NumberFormat('en-US', {
+          style: 'percent',
+          maximumFractionDigits: 2,
+        }).format(number)
+
+      it('Should calculate tooltip correctly test 1', async () => {
+        const item = { ...itemMocked, ...barDataForToolTipsNovIn1 }
+        const tooltip = await generateToolTip(
+          item,
+          displayMethod,
+          assaysFromState,
+          formatNumber,
+          type
+        )
+        expect(tooltip).toEqual(barDataForToolTipsNovOut1)
+      })
+
+      it('Should calculate tooltip correctly test 2', async () => {
+        const item = { ...itemMocked, ...barDataForToolTipsNovIn2 }
+        const tooltip = await generateToolTip(
+          item,
+          displayMethod,
+          assaysFromState,
+          formatNumber,
+          type
+        )
+        expect(tooltip).toEqual(barDataForToolTipsNovOut2)
+      })
+
+      it('Should calculate tooltip correctly test 3', async () => {
+        const item = { ...itemMocked, ...barDataForToolTipsNovIn3 }
+        const tooltip = await generateToolTip(
+          item,
+          displayMethod,
+          assaysFromState,
+          formatNumber,
+          type
+        )
+        expect(tooltip).toEqual(barDataForToolTipsNovOut3)
+      })
+    })
+  })
+
+  describe('Date formats', () => {
+    it('Should return a valid ISO date with offset', async () => {
+      const validDates = [
+        { inDate: '2019-09-19', expected: '2019-09-19T00:00:00.000+02:00' },
+        {
+          inDate: '2020-02-08T13:18:00',
+          expected: '2020-02-08T13:18:00.000+01:00',
+        },
+        {
+          inDate: '2019-08-28 11:11:00',
+          expected: '2019-08-28T11:11:00.000+02:00',
+        },
+        {
+          inDate: '1977-04-04 09:30:10',
+          expected: '1977-04-04T09:30:10.000+02:00',
+        },
+        {
+          inDate: new Date(2020, 10, 27, 5, 0),
+          expected: '2020-11-27T05:00:00.000+01:00',
+        },
+      ]
+      const invalidDates = [
+        {
+          inDate: null,
+        },
+        {
+          // eslint-disable-next-line no-void
+          inDate: void 0,
+        },
+      ]
+      validDates.map(({ inDate, expected }) => {
+        const outData = getISOFromString(inDate)
+        return expect(expected).toEqual(outData)
+      })
+      invalidDates.map(({ inDate }) => {
+        const expected = getISOFromString(inDate)
+        return expect(expected).toBeTruthy()
       })
     })
   })

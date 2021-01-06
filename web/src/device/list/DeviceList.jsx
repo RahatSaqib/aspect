@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import fromPairs from 'lodash/fromPairs'
+import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React from 'react'
 import {
@@ -65,12 +66,16 @@ const FILTERS_CONFIG = [
     deviceApproval: true,
     requiredPermissions: [],
   },
+  {
+    issueTypeId: true,
+    requiredPermissions: [],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
-    'approval',
+    'statusI18nKey',
     'availabilityRate',
     'errorRate',
     'createdOn',
@@ -82,7 +87,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  _.flowRight(
+  flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
   ),
@@ -101,7 +106,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: _.fromPairs([...filtersParams.entries()]),
+        filters: fromPairs([...filtersParams.entries()]),
       }
     }
   ),
@@ -289,8 +294,8 @@ export const DeviceList = ({
                 sortable: true,
               },
               {
-                key: 'approval',
-                label: intl.formatMessage(messages.approval),
+                key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
+                label: intl.formatMessage(messages.status),
                 sortable: true,
               },
               {

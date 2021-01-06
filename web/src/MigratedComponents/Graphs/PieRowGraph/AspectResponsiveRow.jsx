@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
-import _ from 'lodash'
+import map from 'lodash/map'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
 
 import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
@@ -11,12 +11,9 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./PieRowGraph.css'))
 
 const AspectResponsiveRow = ({ data, componentClasses }) => {
-  const {
-    formatNumber: intlFormatNumber,
-    formatMessage: intlFormatMessage,
-  } = useIntl()
+  const { formatMessage: intlFormatMessage } = useIntl()
 
-  const headings = graphData => _.map(graphData[0], 'heading')
+  const headings = graphData => map(graphData[0], 'heading')
 
   return (
     <div className={cssClasses('piegraph__container')}>
@@ -47,7 +44,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
           {data.map(row => (
             <div className={cssClasses('piegraphs__row')}>
               {row.map(pie => {
-                const { value, type } = pie
+                const { value, type, link } = pie
                 return (
                   <div className={cssClasses('piegraphs__column')}>
                     <div className={cssClasses('piegraphs__columnGraph')}>
@@ -65,6 +62,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
                           componentClasses={componentClasses}
                           keys={[]}
                           type={type}
+                          link={link}
                         />
                       ) : null}
                     </div>

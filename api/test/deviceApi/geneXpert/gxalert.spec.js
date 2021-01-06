@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const supertest = require('supertest')
 const chai = require('chai')
 const {
   setMilliseconds,
@@ -10,12 +9,14 @@ const {
   subHours,
   addDays,
   subDays,
-  startOfDay,
   startOfToday,
+  startOfDay,
   addYears,
   format: dateFormat,
 } = require('date-fns')
+
 const Promise = require('bluebird')
+const { startOfDayUtc } = require('../../../src/shared/date')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const {
   postToDeviceApi,
@@ -27,7 +28,7 @@ const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
 } = require('./geneXpertConstants')
-const { run } = require('../../../src/db')
+const { run, knex } = require('../../../src/db')
 const {
   allDeviceMaintenanceStatusToId,
   deviceApprovalToId,
@@ -35,6 +36,7 @@ const {
 const {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
+  formatDateOrDefault,
 } = require('../../../src/shared/date')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
@@ -46,7 +48,8 @@ const {
 } = require('../../../src/device/actions')
 const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
-const server = supertest.agent('http://localhost:8080')
+const server = require('../../utils/testUtils')
+
 const { assert, expect } = chai
 
 describe('Device API routes for GxAlert Device', () => {
@@ -2273,61 +2276,58 @@ describe('Device API routes for GxAlert Device', () => {
       })
 
       describe(`maintenance data effect on device maintenance status`, () => {
-        it('should change the maintenance status of an active device to inactive', () =>
-          runTest(async knex => {
-            useGxAlertDeviceId(gxAlertDeviceId)
-            await postToDeviceApi(standardDevicePayload)
-            let geneXpertDevice = await getCurrentGeneXpertDevice()
-            const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-            const [deviceMaintenanceStatusLogId] = await knex(
-              'DeviceMaintenanceStatusLog'
-            ).insert({
-              deviceId: geneXpertDevice.id,
-              deviceMaintenanceStatusId:
-                deviceMaintenanceStatuses.reportedActive,
-              day: startOfToday(),
-              data: '{}',
-              createdOn: new Date(),
-            })
-            await knex('Device').where('id', geneXpertDevice.id).update({
-              deviceMaintenanceStatusLogId,
-            })
-            await postToDeviceApi(
-              _.merge(standardDevicePayload, {
-                payload: {
-                  configuration: {
-                    data: {
-                      inactive: true,
-                      inactiveMaintenanceReason: 'stock',
-                      inactiveMaintenanceNote:
-                        'More cartridges coming next week',
-                    },
+        it('should change the maintenance status of an active device to inactive', async () => {
+          useGxAlertDeviceId(gxAlertDeviceId)
+          await postToDeviceApi(standardDevicePayload)
+          let geneXpertDevice = await getCurrentGeneXpertDevice()
+          const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+          const [deviceMaintenanceStatusLogId] = await knex(
+            'DeviceMaintenanceStatusLog'
+          ).insert({
+            deviceId: geneXpertDevice.id,
+            deviceMaintenanceStatusId: deviceMaintenanceStatuses.reportedActive,
+            day: startOfToday(),
+            data: '{}',
+            createdOn: new Date(),
+          })
+          await knex('Device').where('id', geneXpertDevice.id).update({
+            deviceMaintenanceStatusLogId,
+          })
+          await postToDeviceApi(
+            _.merge(standardDevicePayload, {
+              payload: {
+                configuration: {
+                  data: {
+                    inactive: true,
+                    inactiveMaintenanceReason: 'stock',
+                    inactiveMaintenanceNote: 'More cartridges coming next week',
                   },
                 },
-              })
-            )
-            await waitForAction({
-              type: types.DEVICE_MAINTENANCE_STATUS_LOGGED,
+              },
             })
-            await waitForIdle()
-            geneXpertDevice = await getCurrentGeneXpertDevice()
-            assert.equal(
-              geneXpertDevice.deviceMaintenanceStatus,
-              'inactiveOutOfInventory'
-            )
-            const latestMaintenanceStatusLog = await knex(
-              'DeviceMaintenanceStatusLog'
-            )
-              .where('deviceId', geneXpertDevice.id)
-              .orderByRaw('createdOn desc, id desc')
-              .orderBy(['createdOn', 'id'], 'desc')
-              .first()
-            expect(latestMaintenanceStatusLog).to.containSubset({
-              day: getLocalDateInUtc(startOfToday()),
-              deviceMaintenanceStatusId:
-                deviceMaintenanceStatuses.inactiveOutOfInventory,
-            })
-          }))
+          )
+          await waitForAction({
+            type: types.DEVICE_MAINTENANCE_STATUS_LOGGED,
+          })
+          await waitForIdle()
+          geneXpertDevice = await getCurrentGeneXpertDevice()
+          assert.equal(
+            geneXpertDevice.deviceMaintenanceStatus,
+            'inactiveOutOfInventory'
+          )
+          const latestMaintenanceStatusLog = await knex(
+            'DeviceMaintenanceStatusLog'
+          )
+            .where('deviceId', geneXpertDevice.id)
+            .orderByRaw('createdOn desc, id desc')
+            .orderBy(['createdOn', 'id'], 'desc')
+            .first()
+          expect(latestMaintenanceStatusLog).to.containSubset({
+            day: getLocalDateInUtc(startOfToday()),
+            deviceMaintenanceStatusId:
+              deviceMaintenanceStatuses.inactiveOutOfInventory,
+          })
+        })
       })
     })
 
@@ -3663,7 +3663,7 @@ describe('Device API routes for GxAlert Device', () => {
         )
       }))
 
-    describe.skip(`result's effect on device maintenance status`, () => {
+    describe(`result's effect on device maintenance status`, () => {
       it('should change the maintenance status of an inactive device to active', () =>
         runTest(async knex => {
           useGxAlertDeviceId(gxAlertDeviceId)
@@ -3677,23 +3677,27 @@ describe('Device API routes for GxAlert Device', () => {
           let geneXpertDevice = await getCurrentGeneXpertDevice()
           const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
           const startedOnDate = setMilliseconds(new Date(), 0)
-          const startedOn = dateFormat(
+          const startedOn = formatDateOrDefault(
             startedOnDate,
             "yyyy-MM-dd'T'HH:mm:ss'Z'"
           )
           const endedOnDate = addHours(startedOnDate, 2)
-          const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+          const endedOn = formatDateOrDefault(
+            endedOnDate,
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          )
           const endedOnDateInUtc = getLocalDateTimeStringInUtc(
             endedOn.replace('Z', ''),
             'America/New_York'
           )
+
           const [deviceMaintenanceStatusLogId] = await knex(
             'DeviceMaintenanceStatusLog'
           ).insert({
             deviceId: geneXpertDevice.id,
             deviceMaintenanceStatusId:
               deviceMaintenanceStatuses.inactiveUnknown,
-            day: getLocalDateInUtc(startOfDay(endedOnDateInUtc)),
+            day: startOfDay(endedOnDateInUtc),
             data: '{}',
             createdOn: new Date(),
           })
@@ -3733,7 +3737,7 @@ describe('Device API routes for GxAlert Device', () => {
           })
           assert.equal(
             latestMaintenanceStatusLog.day.toISOString(),
-            getLocalDateInUtc(startOfDay(endedOnDate)).toISOString()
+            startOfDayUtc(endedOnDateInUtc).toISOString()
           )
         }))
 
@@ -3832,17 +3836,16 @@ describe('Device API routes for GxAlert Device', () => {
               minDate: dateFormat(subDays(startedOnDate, 1), 'yyyy-MM-dd'),
             })
           assert.equal(devicesResponse.body.data.length, 1)
-          devicesResponse.body.data.forEach(device => {
-            device.days.forEach(day => {
-              if (
-                day.date < startOfDay(addDays(endedOnDateInUtc, 1)) &&
-                day.date >= startOfDay(endedOnDateInUtc)
-              ) {
-                assert.equal(day.externalId, 'active')
-              } else {
-                assert.equal(day.externalId, 'inactiveUnknown')
-              }
-            })
+          devicesResponse.body.data[0].days.forEach(day => {
+            if (
+              new Date(day.date) <
+                startOfDayUtc(addDays(endedOnDateInUtc, 1)) &&
+              new Date(day.date) >= startOfDayUtc(endedOnDateInUtc)
+            ) {
+              assert.equal(day.externalId, 'active')
+            } else {
+              assert.equal(day.externalId, 'inactiveUnknown')
+            }
           })
         }))
     })

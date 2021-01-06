@@ -33,7 +33,34 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.deviceCalibrationsUpToDate',
     defaultMessage: 'All device calibrations up to date',
   },
-
+  numberOfDevicesExperiencingServiceInterruptionTitle: {
+    id:
+      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
+    defaultMessage: 'Devices Experiencing Service Interruption',
+  },
+  numberOfDevicesExperiencingServiceInterruptionUnit: {
+    id:
+      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionUnit',
+    defaultMessage: '{unit} last month',
+  },
+  numberOfDevicesExperiencingServiceInterruptionDescription: {
+    id:
+      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
+    defaultMessage:
+      'The number of devices experiencing service interruption on this and the previous month.',
+  },
+  averageDurationServiceInterruptionTitle: {
+    id: 'pages.OperationalData.averageDurationServiceInterruptionTitle',
+    defaultMessage: 'Average Duration of Service Interruption',
+  },
+  averageDurationServiceInterruptionUnit: {
+    id: 'pages.OperationalData.averageDurationServiceInterruptionUnit',
+    defaultMessage: '{unit} last month',
+  },
+  averageDurationServiceInterruptionDescription: {
+    id: 'pages.OperationalData.averageDurationServiceInterruptionDescription',
+    defaultMessage: 'The average duration of a service interruption, in days',
+  },
   resultsTransmittedTitle: {
     id: 'pages.OperationalData.resultsTransmittedTitle',
     defaultMessage: 'Positive Test Results Transmitted',
@@ -68,7 +95,7 @@ export const messages = defineMessages({
   },
   averageDaysForInstrumentReplacement: {
     id: 'pages.OperationalData.instrumentsReplaced',
-    defaultMessage: 'Average Days for Instrument Replacement',
+    defaultMessage: 'Days for Instrument Replacement',
   },
   withinTwoHoursOfTesting: {
     id: 'pages.OperationalData.withinTwoHoursOfTesting',
@@ -78,7 +105,7 @@ export const messages = defineMessages({
 
   dashboardWidgetSmsSentTitle: {
     id: 'pages.Status.dashboardWidgetSmsSentTitle',
-    defaultMessage: 'Number of SMS Sent MTD',
+    defaultMessage: 'SMS Sent MTD',
   },
   dashboardWidgetSmsSentDescription: {
     id: 'pages.Status.dashboardWidgetSmsSentDescription',
@@ -87,13 +114,25 @@ export const messages = defineMessages({
 
   averageTimeToModuleReplacementTitle: {
     id: 'pages.OperationalData.averageTimeToModuleReplacementTitle',
-    defaultMessage: 'Average time to module replacement',
+    defaultMessage: 'Average time to replace disabled module',
   },
   averageTimeToModuleReplacementDescription: {
     id: 'pages.OperationalData.averageTimeToModuleReplacementDescription',
-    defaultMessage: `The average time (in days) between module replacement - i.e. 
-      between day module serial was marked as disabled until a
-      different module serial detected in that slot.`,
+    defaultMessage: `The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.`,
+  },
+  percentageOfDaysWithServiceInterruptionTitle: {
+    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle',
+    defaultMessage: 'Percentage of Days with Service Interruption',
+  },
+  percentageOfDaysWithServiceInterruptionUnit: {
+    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionUnit',
+    defaultMessage: '{unit} last month',
+  },
+  percentageOfDaysWithServiceInterruptionDescription: {
+    id:
+      'pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription',
+    defaultMessage:
+      'The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%',
   },
 })
 

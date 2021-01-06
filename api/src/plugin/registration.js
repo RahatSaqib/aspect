@@ -37,11 +37,11 @@ const plugins = {
   default: {
     settings: DEFAULT_SETTINGS,
     handlerOptions: DEFAULT_HANDLER_OPTIONS,
-    issueTriggers: {},
+    issueTriggers: require('./issueTriggers'),
     issueResolutions: require('./issueResolutions'),
     issueEscalations: {},
     dataCategories: {},
-    filterModuleDisabledIssue: require('../issue/filterConditions'),
+    filtersOpenIssues: require('../issue/filterConditions'),
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -132,6 +132,11 @@ const plugins = {
   },
   lesothoTb: {
     preProcessAddDeviceData: require('./partner/Lesotho_TB/preProcessAddDeviceData'),
+  },
+  philippines: {
+    onResultLogged: require('./partner/Philippines/onResultLogged'),
+    issueTriggers: require('./partner/Philippines/issueTriggers'),
+    issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
   },
 }
 

@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
 const {
   allMessageStatusToId,
@@ -12,7 +13,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
 // -----------------------------
-function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
+async function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     smsMessageReadyForSending,
   })
@@ -48,7 +49,10 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
 // -----------------------------
 // onSmsMessageReadyForSending - event handler for SMS_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
+async function onSmsMessageReadyForSending(
+  { smsMessageId },
+  { messageContext }
+) {
   const context = messageContext.bindActionCreators({
     smsMessageSent,
   })
@@ -104,20 +108,25 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      partner: 'pr',
-      device: 'd',
-      deviceType: 'dt',
-      person: 'p',
-      /*
-      result: 'r',
-      ^^^ Leaving this commented out to  highlight the fact that adding these
-          constraints will break the RO notifications configured for Myanmar
-      */
-      sample: 'sample',
-      site: 's',
-      showUnapprovedDevices: true,
+    .modify(queryBuilder => {
+      if (!_.isEmpty(dataConstraints)) {
+        queryBuilder.modify(addConstraints, dataConstraints, {
+          assay: 'a',
+          partner: 'pr',
+          device: 'd',
+          deviceType: 'dt',
+          person: 'p',
+          /*
+          result: 'r',
+          ^^^ Leaving this commented out to  highlight the fact that adding these
+              constraints will break the RO notifications configured for Myanmar
+          */
+          sample: 'sample',
+          site: 's',
+          showUnapprovedDevices: true,
+          showDecommissionedDevices: true,
+        })
+      }
     })
     .where({ 'm.id': smsMessageId })
     .first(

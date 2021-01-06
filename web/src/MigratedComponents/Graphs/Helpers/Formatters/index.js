@@ -4,7 +4,10 @@ import forOwn from 'lodash/forOwn'
 import includes from 'lodash/includes'
 import keys from 'lodash/keys'
 import last from 'lodash/last'
+import isArray from 'lodash/isArray'
+import isNull from 'lodash/isNull'
 import map from 'lodash/map'
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
@@ -14,21 +17,26 @@ import values from 'lodash/values'
 import valuesIn from 'lodash/valuesIn'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
+import times from 'lodash/times'
 
 import {
   dateRangeOptions,
+  getAllDaysInCurrentMonth,
   getDayFromToday,
+  getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
   lastMonthLabel,
   negateTimeZoneOffset,
-} from './datetime'
+} from '../../../../components/shared/DateTimeInput/utils/date'
+
 import {
+  calcPercentageSplitBar,
+  calcPercentageForGraphs,
+  getAverageFromData,
   getMaxValueForDivergent,
   roundIfNumber,
-  calcPercentageSplitBar,
   percentageOrActualForPie,
-  getAverageFromData,
 } from './calcs'
 
 import {
@@ -36,6 +44,7 @@ import {
   groupForPie,
   groupForPieRow,
   groupForDivergent,
+  groupForInvetoryStatusAPI,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
@@ -48,7 +57,7 @@ const makeProperCase = string => startCase(string)
 
 const normaliseKeys = data => {
   const normalised = []
-  for (const [key, value] of Object.entries(data)) {
+  for (const [keyIgnored, value] of Object.entries(data)) {
     normalised.push({ ...value })
   }
   return normalised
@@ -150,6 +159,13 @@ const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
   return [roundIfNumber(first(dataOut)), roundIfNumber(last(dataOut))]
 }
 
+const incrementSplit = (boundaries, increment) => {
+  const split = Math.round(boundaries[1] / increment)
+  const values = [boundaries[0], split * increment]
+  times(split, v => values.push(v * increment))
+  return sortBy(uniq(values))
+}
+
 const generateTickValues = (
   data,
   axesTicks,
@@ -158,8 +174,20 @@ const generateTickValues = (
   zeroOut = false
 ) => {
   let values
+  let dynamicAxesTicks
   const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
-  switch (axesTicks) {
+  const upperBoundary = boundaries[1] || 0
+
+  switch (true) {
+    case upperBoundary > 40 && axesTicks !== 'none' && axesTicks !== 'bookends':
+      dynamicAxesTicks = 'clubsandwich'
+      break
+
+    default:
+      dynamicAxesTicks = axesTicks
+  }
+
+  switch (dynamicAxesTicks) {
     case 'none':
       values = 0
       break
@@ -172,9 +200,18 @@ const generateTickValues = (
       values = clubsandwich(boundaries)
       break
 
+    case 'twos':
+      values = incrementSplit(boundaries, 2)
+      break
+
+    case 'threes':
+      values = incrementSplit(boundaries, 3)
+      break
+
     default:
       break
   }
+
   return values
 }
 
@@ -208,7 +245,7 @@ const generateToolTip = (
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
-  const displayId = translateLabel(id, assaysFromState)
+  let displayId = translateLabel(id, assaysFromState)
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
@@ -217,10 +254,30 @@ const generateToolTip = (
     displayValue = `${displayCount} ${displayTitle}`
   } else if (type === 'solid') {
     displayValue = value
+  } else if (type === 'barInventory') {
+    displayId = 'Locations'
+    displayValue = value
+  } else if (type === 'bar' || type === 'barLegacyTreatment') {
+    let totalOut = 0
+    const { totalCnt } = data || false
+
+    if (!totalCnt) {
+      const out = []
+      map(omit(data, ['month']), k => out.push(k))
+      totalOut = sum(out)
+    } else {
+      totalOut = totalCnt
+    }
+    const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
+    const percentageToValue = Math.round((parseFloat(value) / 100) * totalCnt)
+    displayValue = {
+      value: percentage,
+      actual: { totalCnt: totalOut, percentageToValue },
+    }
   } else {
     displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
   }
-  return { color, displayId, indexValue, displayValue }
+  return { color, displayId, indexValue, displayValue, externalId: id }
 }
 
 const removeStringsFromArray = string => {
@@ -231,8 +288,8 @@ const removeStringsFromArray = string => {
   return newString.length > 1 ? newString[1] : newString[0]
 }
 
-const translateLabel = (string, assaysFromState, type = false) => {
-  const dictionary = []
+const translateLabel = (string, assaysFromState, legendsToRename) => {
+  const dictionary = legendsToRename ? [...legendsToRename] : []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
@@ -240,6 +297,7 @@ const translateLabel = (string, assaysFromState, type = false) => {
         dictionary.push({ externalId, name })
       )
   )
+
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
@@ -254,11 +312,12 @@ const generateLegend = (
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = false
+  legendsNotToRender = false,
+  legendsToRename = false
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {
-      label: translateLabel(string, assaysFromState, type),
+      label: translateLabel(string, assaysFromState, legendsToRename, type),
       color: generateColorForLegend(string, type),
     }
   }
@@ -272,7 +331,9 @@ const formatDataByGraphType = (
   formatDate,
   indexBy,
   keyToConsume,
-  type
+  keysToRename,
+  type,
+  mergedParams
 ) => {
   let grouped
   switch (type) {
@@ -299,7 +360,8 @@ const formatDataByGraphType = (
         keyToConsume,
         indexBy,
         formatDate,
-        filterBy
+        filterBy,
+        displayMethod
       )
       break
 
@@ -311,6 +373,10 @@ const formatDataByGraphType = (
         formatDate,
         filterBy
       )
+      break
+
+    case 'barInventory':
+      grouped = groupForInvetoryStatusAPI(data, keysToRename)
       break
 
     case 'pieLegacyTreatment':
@@ -327,7 +393,7 @@ const formatDataByGraphType = (
       break
 
     case 'pieRow':
-      grouped = groupForPieRow(data)
+      grouped = groupForPieRow(data, mergedParams)
       break
 
     default:
@@ -381,30 +447,60 @@ const extractOptionValue = (identifier, selectedOption) => {
       }
       break
 
+    case 'consumableId':
+      optionValue = {
+        consumableId: selectedOption ? selectedOption.consumableId : null,
+      }
+      break
+
     default:
       break
   }
   return optionValue
 }
 
+const prepAssaysForParams = whiteListed => {
+  const assays = []
+  map(whiteListed, value => assays.push({ assay: value }))
+  return assays
+}
+
+const prepParamsForEndPoint = (urlParams, updatedParams) => {
+  const params = []
+  const paramsToUse =
+    updatedParams && !isNull(values(updatedParams)[0])
+      ? updatedParams
+      : urlParams
+
+  map(paramsToUse, (value, key) =>
+    isArray(value)
+      ? map(value, v => params.push({ [key]: v }))
+      : params.push({ [key]: value })
+  )
+  return params
+}
+
 export {
   calcPercentageSplitBar,
+  calcPercentageForGraphs,
   dateRangeOptions,
   extractOptionValue,
+  filterByMultiple,
+  filterColour,
+  findArrayIndexByStringPartial,
   formatDataByGraphType,
   formatValuesForGraphs,
-  filterColour,
-  filterByMultiple,
-  findArrayIndexByStringPartial,
   generateColorForLegend,
   generateColorForValue,
   generateLegend,
   generateMargin,
   generateTickValues,
   generateToolTip,
+  getAllDaysInCurrentMonth,
   getAverageFromData,
   getDayFromToday,
   getGraphKeysFromResults,
+  getISOFromString,
   getMaxValueForDivergent,
   getPreviousPeriod,
   getTimePeriod,
@@ -414,11 +510,13 @@ export {
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPie,
-  groupForPieRow,
   groupForPieOldTreatmentAPI,
+  groupForPieRow,
   lastMonthLabel,
-  normaliseKeys,
   negateTimeZoneOffset,
+  normaliseKeys,
   percentageOrActualForPie,
+  prepAssaysForParams,
+  prepParamsForEndPoint,
   validateGraphConfig,
 }

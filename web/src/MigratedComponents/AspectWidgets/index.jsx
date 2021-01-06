@@ -3,7 +3,14 @@ import PropTypes from 'prop-types'
 
 import { Unit } from '../../components/pureGrids'
 import Group from './Group'
-import Widget from './Widget'
+import { AspectWidget, EmptyWidget } from './Widget'
+
+const EmptyWidgets = () =>
+  [0, 1, 2, 3].map(key => (
+    <Unit key={key} sm="1-2" lg="1-4">
+      <EmptyWidget />
+    </Unit>
+  ))
 
 const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
   return (
@@ -14,7 +21,7 @@ const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
       {nonGroupedWidgets && nonGroupedWidgets.length
         ? nonGroupedWidgets.map(widget => (
             <Unit key={widget.id} sm="1-2" lg="1-4">
-              <Widget data={widget} />
+              <AspectWidget data={widget} />
             </Unit>
           ))
         : null}
@@ -29,4 +36,4 @@ AspectWidgets.propTypes = {
   }).isRequired,
 }
 
-export default AspectWidgets
+export { AspectWidgets, EmptyWidgets }

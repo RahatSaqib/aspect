@@ -17,7 +17,11 @@ async function actionConditionsMet(knex, action, partnerId, conditions) {
   if (Array.isArray(conditions)) {
     return evaluateArrayOfConditions(knex, action, partnerId, conditions)
   }
-  const { evaluationMethod = null, evaluationParameter = null } = conditions
+  const {
+    evaluationMethod = null,
+    evaluationParameter = null,
+    evaluationFilterParameters = {},
+  } = conditions
   if (!evaluationMethods[evaluationMethod]) {
     throw new Error(
       `Unrecognised evaluation method in condition ${evaluationMethod}`
@@ -27,7 +31,8 @@ async function actionConditionsMet(knex, action, partnerId, conditions) {
     knex,
     action,
     partnerId,
-    evaluationParameter
+    evaluationParameter,
+    evaluationFilterParameters
   )
 }
 
@@ -77,7 +82,13 @@ async function evaluateArrayOfConditions(knex, action, partnerId, conditions) {
   return true
 }
 
-async function evaluatePluginFunction(knex, action, partnerId, functionName) {
+async function evaluatePluginFunction(
+  knex,
+  action,
+  partnerId,
+  functionName,
+  evaluationFilterParameters = {}
+) {
   const partner = await knex('Partner').where({ id: partnerId }).first('plugin')
   if (partner == null) {
     return false
@@ -85,7 +96,7 @@ async function evaluatePluginFunction(knex, action, partnerId, functionName) {
   const { loadPlugin } = require('../plugin/registration')
   const plugins = await loadPlugin([partner.plugin], 'issueTriggers')
   const func = plugins[functionName]
-  return func != null && func(knex, action)
+  return func != null && func(knex, action, evaluationFilterParameters)
 }
 
 async function evaluateInlineSql(knex, action, partnerId, inlineSql) {

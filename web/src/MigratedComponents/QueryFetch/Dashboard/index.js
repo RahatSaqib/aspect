@@ -1,0 +1,6 @@
+const SUMMARY_STATUS_WIDGETS = {
+  ENDPOINT: '/dashboard/summary',
+  KEY: 'SUMMARY_STATUS_WIDGETS',
+}
+
+export default SUMMARY_STATUS_WIDGETS

@@ -1,12 +1,17 @@
 const _ = require('lodash')
 const {
   addDays,
+  addMinutes,
   format,
   parse,
   parseISO,
   isValid,
   toDate,
   isEqual,
+  startOfDay,
+  startOfToday,
+  startOfMonth,
+  endOfMonth,
 } = require('date-fns')
 
 const { convertToLocalTime } = require('date-fns-timezone')
@@ -39,17 +44,17 @@ function parseDateOrDefault(
   return isValid(parsedDate) ? parsedDate : defaultValue
 }
 
-function formatDateOrDefault(date, dateFormat, defaultValue = null) {
+function formatDateOrDefault(
+  date,
+  dateFormat = 'yyyy-MM-dd',
+  defaultValue = null
+) {
   date = parseDateOrDefault(date)
   if (date == null) {
     return defaultValue
   }
 
-  if (dateFormat != null) {
-    return format(date, dateFormat)
-  }
-
-  return format(date, 'yyyy-MM-dd')
+  return format(date, dateFormat)
 }
 
 function returnIso8601StringWithoutTimeZoneOffset(date) {
@@ -104,6 +109,65 @@ function getLocalDateInUtc(dateTime) {
 function getTimeZoneById(allTimeZones, timeZoneId) {
   return _.findKey(allTimeZones, _.partial(_.isEqual, timeZoneId || 'UTC'))
 }
+/*
+These are the different patterns of date format this regular expression validate.
+for further information check the unit test api/test/shared/date.test.js:65
+
+2020-11-26T15:00:24.000-11:00
+2020-11-26T15:00:24.000Z
+2020-11-26T15:00:24-11:00
+*/
+const REGEX_ISODATESTRING = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+
+function getOffsetFromIsoDateString(time) {
+  return time.slice(-1) !== 'Z' && REGEX_ISODATESTRING.test(time)
+    ? time.slice(-6)
+    : '+00:00'
+}
+
+// this works with iso format dates with timezones.
+const endOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
+
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    endOfMonth(new Date(`${datepart}T23:59:59.999Z`))
+      .toISOString()
+      .replace('T23:59:59.999Z', `T23:59:59.999${offset}`)
+  )
+}
+// this works with iso format dates with timezones.
+const startOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
+
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
+      .toISOString()
+      .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
+  )
+}
+function startOfDayUtc(date) {
+  return addMinutes(startOfDay(date), -date.getTimezoneOffset())
+}
+
+function startOfTodayUtc() {
+  const date = startOfToday()
+  return addMinutes(date, -date.getTimezoneOffset())
+}
+
+/**
+ * Returns the date part of a DateTime string in ISO format
+ *
+ * @param {string} isoDateTime The DateTime in ISO format (ex.: 2020-01-02T00:30:10.432-03:00).
+ */
+function getDateSubstring(isoDateTime) {
+  return isoDateTime.substring(0, 10)
+}
 
 module.exports = {
   getDateOrDefault,
@@ -115,4 +179,11 @@ module.exports = {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
   getTimeZoneById,
+  startOfDayUtc,
+  startOfTodayUtc,
+  startOfMonthUTC,
+  endOfMonthUTC,
+  getOffsetFromIsoDateString,
+  REGEX_ISODATESTRING,
+  getDateSubstring,
 }
