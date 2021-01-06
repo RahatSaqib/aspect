@@ -1,4 +1,4 @@
-const CONSTS = {
+const GRAPH_CONSTS = {
   weekend: 'weekend',
   blockSize: {
     width: 20,
@@ -8,6 +8,10 @@ const CONSTS = {
   totalBlockSize: {
     width: 70,
   },
+  treatmentStatusId: {
+    NotConfirmed: 1,
+    Confirmed: 2,
+  },
 }
 
-export default CONSTS
+export default GRAPH_CONSTS
