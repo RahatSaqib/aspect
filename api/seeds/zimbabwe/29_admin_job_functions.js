@@ -47,7 +47,7 @@ async function seed(knex) {
     partnerId,
     [],
     {
-      reports: ['critical_errors_by_device']
+      reports: ['critical_errors_by_device'],
     }
   )
   await copyPermissionsAndDashboardWidgetsFromJobFunction(
