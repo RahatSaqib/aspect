@@ -463,7 +463,11 @@ const deviceMaker = {
     {
       module: 'operationalData',
       activity: 'view',
-    }
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
   ],
 }
 
@@ -480,7 +484,11 @@ const ntp = {
     {
       module: 'operationalData',
       activity: 'view',
-    }
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
   ],
 }
 
@@ -497,7 +505,11 @@ const technician = {
     {
       module: 'operationalData',
       activity: 'view',
-    }
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
   ],
 }
 
@@ -518,7 +530,11 @@ const donor = {
     {
       module: 'operationalData',
       activity: 'view',
-    }
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
   ],
 }
 
@@ -546,6 +562,10 @@ const resultViewerNo = {
     },
     {
       module: 'task',
+      activity: 'view',
+    },
+    {
+      module: 'report',
       activity: 'view',
     },
   ],
@@ -579,6 +599,10 @@ const resultViewerYes = {
     },
     {
       module: 'task',
+      activity: 'view',
+    },
+    {
+      module: 'report',
       activity: 'view',
     },
   ],

@@ -41,8 +41,6 @@ async function seed(knex) {
     },
   })
 
-  console.log(await knex('JobFunction').where({ partnerId }).pluck('name'))
-
   // --- ----------------------
   // --- give existing 'admin' user access to operational-data
   // --- ----------------------

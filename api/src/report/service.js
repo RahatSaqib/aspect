@@ -36,7 +36,6 @@ async function getReportDetails(auth, externalId) {
   const report = await knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
     .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
-    .innerJoin('JobContext as jc', 'j.id', 'j.jobFunctionId')
     .where('r.externalId', externalId)
     .andWhere('j.personId', dataConstraints.person.id)
     .select(
