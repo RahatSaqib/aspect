@@ -147,7 +147,7 @@ async function analyzeErrors(
       builder =>
         builder.first(
           knex.raw(
-            `sum(case when errorcode in(${errorCodes.join(
+            `sum(case when errorcode in (${errorCodes.join(
               ','
             )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
           )

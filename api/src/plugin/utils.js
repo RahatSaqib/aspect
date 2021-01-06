@@ -53,7 +53,7 @@ async function shouldTriggerResultErrorAnalysis(
   messageContext,
   deviceId,
   resultId,
-  resultCategory1,
+  resultCategory1, // <-- this is result category externalid
   resultErrorCode,
   { resultOutcome, instrumentSerial }
 ) {
@@ -66,7 +66,7 @@ async function shouldTriggerResultErrorAnalysis(
   await messageContext.resultAnalyzeCategoriesAndErrors(
     deviceId,
     resultId,
-    resultCategory1,
+    resultCategory1, // <-- this is result category externalid
     resultErrorCode,
     {
       instrumentSerial,

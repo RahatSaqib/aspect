@@ -46,7 +46,7 @@ async function seed(knex) {
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Signal Loss Detected in the Amplification Curve ',
+      name: 'Signal Loss Detected in the Amplification Curve',
       ...auditFields,
     },
   ])

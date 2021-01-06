@@ -62,7 +62,10 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
-const obtainProperAction = ({ errorCode = null, resultCategoryId }) => {
+const obtainProperAction = ({
+  errorCode = null,
+  resultCategoryId, // <-- this is result category externalid
+}) => {
   const valueToCompare =
     errorCode && !_.isNaN(parseInt(errorCode, 10))
       ? parseInt(errorCode, 10)
@@ -131,7 +134,7 @@ const obtainProperAction = ({ errorCode = null, resultCategoryId }) => {
 function resultAnalyzeCategoriesAndErrors(
   deviceId,
   resultId,
-  resultCategoryId,
+  resultCategoryId, // <-- this is result category externalid
   resultErrorCode,
   data
 ) {
@@ -141,7 +144,7 @@ function resultAnalyzeCategoriesAndErrors(
     )
   }
   const actionType = obtainProperAction({
-    resultCategoryId,
+    resultCategoryId, // <-- this is result category externalid
     errorCode: resultErrorCode,
   })
 
