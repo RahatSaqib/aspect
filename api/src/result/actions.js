@@ -14,55 +14,29 @@ const types = {
   RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
   RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
-  RESULT_ANALYZE_PROBES_LOT: 'RESULT_ANALYZE_PROBES_LOT',
-  RESULT_ANALYZE_PROBES_MODULE: 'RESULT_ANALYZE_PROBES_MODULE',
-  RESULT_ANALYZE_PROBES_HIGH_LOT: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
-  RESULT_ANALYZE_PROBES_HIGH_MODULE: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
-  FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT:
-    'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT',
-  FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE:
-    'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE',
-  RESULT_ANALYZE_PROBES_FAILED_LOT: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
-  RESULT_ANALYZE_PROBES_FAILED_MODULE: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
-  RESULT_ANALYZE_INVALIDS_MODULE: 'RESULT_ANALYZE_INVALIDS_MODULE',
-  RESULT_ANALYZE_INVALIDS_LOT: 'RESULT_ANALYZE_INVALIDS_LOT',
-  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT:
-    'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
-  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE:
-    'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
+  RESULT_ANALYZE_PROBES: 'RESULT_ANALYZE_PROBES',
+  RESULT_ANALYZE_PROBES_HIGH: 'RESULT_ANALYZE_PROBES_HIGH',
+  FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE:
+    'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE',
+  RESULT_ANALYZE_PROBES_FAILED: 'RESULT_ANALYZE_PROBES_FAILED',
+  RESULT_ANALYZE_INVALIDS: 'RESULT_ANALYZE_INVALIDS',
+  RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE',
   RESULT_UNUSED_MODULES: 'RESULT_UNUSED_MODULES',
-  RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE:
-    'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE',
-  RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT:
-    'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT',
-  RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE:
-    'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE',
-  RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT:
-    'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT',
-  RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE:
-    'RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE',
-  RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT:
-    'RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT',
-  RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE:
-    'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE',
-  RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT:
-    'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT',
-  RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE:
-    'RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE',
-  RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT:
-    'RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT',
-  RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE:
-    'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE',
-  RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT:
-    'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT',
-  RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE:
-    'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE',
-  RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT:
-    'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT',
-  RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT:
-    'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT',
-  RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE:
-    'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE',
+  RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE:
+    'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE',
+  RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH:
+    'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH',
+  RESULT_ANALYZE_SYRINGE_STALL_ERROR: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR',
+  RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE:
+    'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE',
+  RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR:
+    'RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR',
+  RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE:
+    'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE',
+  RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR:
+    'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR',
+  RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION:
+    'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION',
 }
 
 // ----------- Action Creators -------------------
@@ -88,78 +62,53 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
-const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
-  const valueToCompare = errorCode
-    ? parseInt(errorCode, 10)
-    : resultCategoryId.toUpperCase()
+const obtainProperAction = ({
+  errorCode = null,
+  resultCategoryId, // <-- this is result category externalid
+}) => {
+  const valueToCompare =
+    errorCode && !_.isNaN(parseInt(errorCode, 10))
+      ? parseInt(errorCode, 10)
+      : resultCategoryId.toUpperCase()
 
-  if (moduleSerial) {
-    switch (valueToCompare) {
-      case 'INVALID':
-        return types.RESULT_ANALYZE_INVALIDS_MODULE
+  switch (valueToCompare) {
+    case 5001:
+    case 5002:
+    case 5003:
+    case 5004:
+    case 5005:
+    case 5015:
+    case 5016:
+    case 'INVALID':
+      return types.RESULT_ANALYZE_INVALIDS
 
-      case 2005:
-        return types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE
-      case 2008:
-        return types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE
-      case 2026:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE
+    case 2005:
+      return types.RESULT_ANALYZE_SYRINGE_STALL_ERROR
+    case 2008:
+      return types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH
+    case 2026:
+      return types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE
 
-      case 2032:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE
-      case 2035:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE
-      case 2037:
-        return types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE
-      case 2096:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE
-      case 2097:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE
-      case 5011:
-        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE
-      case 5006:
-        return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
-      case 5016:
-        return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE
-      case 5017:
-        return types.RESULT_ANALYZE_PROBES_FAILED_MODULE
-      case 5007:
-      default:
-        return types.RESULT_ANALYZE_PROBES_MODULE
-    }
-  } else {
-    switch (valueToCompare) {
-      case 'INVALID':
-        return types.RESULT_ANALYZE_INVALIDS_LOT
-      case 2005:
-        return types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT
-      case 2008:
-        return types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT
-      case 2026:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT
+    case 2032:
+      return types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR
+    case 2035:
+      return types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE
+    case 2037:
+      return types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE
+    case 2096:
+      return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR
+    case 2097:
+      return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION
+    case 5011:
+      return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE
+    case 5006:
+      return types.RESULT_ANALYZE_PROBES_HIGH
+    case 5007:
+    case 5017:
+      return types.RESULT_ANALYZE_PROBES_FAILED
 
-      case 2032:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT
-      case 2035:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT
-      case 2037:
-        return types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT
-      case 2096:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT
-      case 2097:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT
-      case 5011:
-        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT
-      case 5006:
-        return types.RESULT_ANALYZE_PROBES_HIGH_LOT
-      case 5016:
-        return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT
-      case 5017:
-        return types.RESULT_ANALYZE_PROBES_FAILED_LOT
-      case 5007:
-      default:
-        return types.RESULT_ANALYZE_PROBES_LOT
-    }
+    default:
+      return types.RESULT_ANALYZE_PROBES
   }
 }
 /**
@@ -182,44 +131,29 @@ const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
 
  */
 
-function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
-  if (!deviceId) {
-    throw new Error(
-      'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
-    )
-  }
-
-  const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = obtainProperAction(moduleSerial, {
-    errorCode: resultErrorCode,
-  })
-  return {
-    type: actionType,
-    deviceId,
-    resultId,
-    options: {
-      data: {
-        ...data,
-        resultErrorCode,
-      },
-    },
-  }
-}
-
-function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
-  if (!deviceId && !resultCategoryId) {
+function resultAnalyzeCategoriesAndErrors(
+  deviceId,
+  resultId,
+  resultCategoryId, // <-- this is result category externalid
+  resultErrorCode,
+  data
+) {
+  if (!deviceId && !(resultCategoryId && resultErrorCode)) {
     throw new Error(
       'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
     )
   }
-  const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = obtainProperAction(moduleSerial, { resultCategoryId })
+  const actionType = obtainProperAction({
+    resultCategoryId, // <-- this is result category externalid
+    errorCode: resultErrorCode,
+  })
+
   return {
     type: actionType,
     deviceId,
     resultId,
     options: {
-      data: { ...data, resultCategoryId },
+      data: { ...data, resultCategoryId, resultErrorCode },
     },
   }
 }
@@ -470,7 +404,6 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
+  resultAnalyzeCategoriesAndErrors,
   resultUnusedModules,
 }
