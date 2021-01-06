@@ -12,26 +12,16 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  const issueTypeModule = await seedIssueType(
+  const issueType = await seedIssueType(
     knex,
-    'SignalLossDetectedInAmplificationCurveModule',
-    {
-      userName: 'admin',
-    }
-  )
-  const issueTypeLot = await seedIssueType(
-    knex,
-    'SignalLossDetectedInAmplificationCurveLot',
+    'SignalLossDetectedInAmplificationCurve',
     {
       userName: 'admin',
     }
   )
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: [
-      'SignalLossDetectedInAmplificationCurveLot',
-      'SignalLossDetectedInAmplificationCurveModule',
-    ],
+    issueTypeWhitelist: ['SignalLossDetectedInAmplificationCurve'],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -40,11 +30,8 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeModuleObject = await knex('IssueType')
-    .where({ id: issueTypeModule })
-    .first()
-  const issueTypeLotObject = await knex('IssueType')
-    .where({ id: issueTypeLot })
+  const issueTypeObject = await knex('IssueType')
+    .where({ id: issueType })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
@@ -54,21 +41,12 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: issueTypeModuleObject.id,
-      messageTypeId: issueTypeModuleObject.defaultMessageTypeId,
+      issueTypeId: issueTypeObject.id,
+      messageTypeId: issueTypeObject.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Signal Loss Detected in the Amplification Curve - Module',
-      ...auditFields,
-    },
-    {
-      issueTypeId: issueTypeLotObject.id,
-      messageTypeId: issueTypeLotObject.defaultMessageTypeId,
-      partnerId,
-      jobFunctionId: jobFunctionAdminId,
-      level: 1,
-      name: 'Signal Loss Detected in the Amplification Curve - Lot',
+      name: 'Signal Loss Detected in the Amplification Curve',
       ...auditFields,
     },
   ])

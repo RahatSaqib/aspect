@@ -1,5 +1,4 @@
 // const chai = require('chai')
-const _ = require('lodash')
 const { assert, expect } = require('chai')
 const { subDays } = require('date-fns')
 

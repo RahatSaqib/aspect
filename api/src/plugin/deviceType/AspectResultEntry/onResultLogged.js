@@ -18,7 +18,6 @@ const { resultUnusedModules } = require('../../../result/actions')
 const {
   shouldTriggerModuleReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerResultCategoryAnalysis,
 } = require('../../utils')
 
 async function onResultLogged(
@@ -54,9 +53,10 @@ async function onResultLogged(
       [
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'rf.formSchema',
-        'r.resultCategory1',
+        'r.instrumentSerial',
         'r.assayId',
         'd.id as resultDeviceId',
+        'rc1.externalId as resultCategory1',
         knex.raw(
           "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
         ),
@@ -65,37 +65,22 @@ async function onResultLogged(
     )
     if (result) {
       const {
-        assayId,
-        resultModuleSerial,
         resultDeviceId,
         resultErrorCode,
-        consumableLot,
         resultOutcome,
         resultCategory1,
+        instrumentSerial,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
         messageContext,
         resultDeviceId,
         resultId,
+        resultCategory1,
         resultErrorCode,
         {
           resultOutcome,
-          moduleSerial: resultModuleSerial,
-          assayId,
-          consumableLot,
-        }
-      )
-      await shouldTriggerResultCategoryAnalysis(
-        messageContext,
-        resultDeviceId,
-        resultId,
-        resultCategory1,
-        {
-          resultOutcome,
-          moduleSerial: resultModuleSerial,
-          assayId,
-          consumableLot,
+          instrumentSerial,
         }
       )
 
