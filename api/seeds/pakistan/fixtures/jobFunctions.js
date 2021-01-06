@@ -1,5 +1,3 @@
-const { donor, ntp, technician, deviceMaker } = require('../../common/fixtures/jobFunctions')
-
 module.exports = [
   {
     name: 'Admin',
@@ -81,6 +79,18 @@ module.exports = [
       {
         module: 'deviceApiKey',
         activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'router',
+        activity: 'view',
       },
     ],
   },
@@ -232,6 +242,10 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'view',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
   },
   {
@@ -307,10 +321,10 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'view',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
   },
-  donor,
-  ntp,
-  technician,
-  deviceMaker
 ]
