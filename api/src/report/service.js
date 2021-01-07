@@ -7,6 +7,7 @@ const Promise = require('bluebird')
 const config = require('../config')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const logger = require('../shared/logger')
 
 async function getReports(request) {
   const { auth } = request
@@ -207,7 +208,7 @@ function proxyGxReport(request, reply) {
         )
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }
