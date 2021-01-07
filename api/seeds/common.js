@@ -1717,11 +1717,9 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
       )
     }
 
-    await knex('JobFunctionDashboardWidget')
-      .where('jobFunctionId', id)
-      .delete()
-    await knex('JobFunctionPermission').where('jobFunctionId', id).delete(),
-    await knex('JobFunctionReport').where('jobFunctionId', id).delete(),
+    await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
+    await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
+    await knex('JobFunctionReport').where('jobFunctionId', id).delete()
     await knex('JobFunction').where({ id }).delete()
   })
 }
