@@ -1,4 +1,9 @@
-const { admin, clinician, labUser, regionalOfficer } = require('../../../fixtures/jobFunctionBase')
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+} = require('../../../fixtures/jobFunctionBase')
 
 module.exports = [
   {

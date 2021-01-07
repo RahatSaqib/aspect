@@ -495,9 +495,7 @@ const ntp = {
 
 const ntpNoResults = {
   name: 'NTP - No Results',
-  reports: [
-    'critical_errors_by_device',
-  ],
+  reports: ['critical_errors_by_device'],
   permissions: [
     {
       module: 'account',
@@ -1033,5 +1031,5 @@ module.exports = {
   medTech,
   dataViewer,
   ntpNoResults,
-  systemOne
+  systemOne,
 }
