@@ -204,56 +204,12 @@ const regionalOfficer = {
   ],
   permissions: [
     {
-      module: 'assay',
-      activity: 'view',
-    },
-    {
-      module: 'device',
-      activity: 'view',
-    },
-    {
-      module: 'person',
-      activity: 'view',
-    },
-    {
-      module: 'result',
-      activity: 'edit',
-    },
-    {
-      module: 'treatmentStatus',
-      activity: 'edit',
-    },
-    {
-      module: 'site',
-      activity: 'view',
-    },
-    {
-      module: 'browse',
-      activity: 'view',
-    },
-    {
       module: 'account',
       activity: 'edit',
     },
     {
-      module: 'dashboard',
-      activity: 'summary',
-    },
-    {
-      module: 'dashboard',
-      activity: 'result',
-    },
-    {
-      module: 'task',
-      activity: 'view',
-    },
-    {
-      module: 'operationalData',
-      activity: 'view',
-    },
-    {
-      module: 'taskMenu',
-      activity: 'view',
+      module: 'deviceApiKey',
+      activity: 'edit',
     },
     {
       module: 'inventory',
@@ -264,11 +220,55 @@ const regionalOfficer = {
       activity: 'edit',
     },
     {
-      module: 'deviceApiKey',
+      module: 'result',
       activity: 'edit',
     },
     {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'result',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'person',
+      activity: 'view',
+    },
+    {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+    {
+      module: 'taskMenu',
+      activity: 'view',
+    },
+    {
+      module: 'assay',
       activity: 'view',
     },
   ],
@@ -364,6 +364,22 @@ const clinician = {
   ],
   permissions: [
     {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'case',
+      activity: 'edit',
+    },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
       module: 'assay',
       activity: 'view',
     },
@@ -376,28 +392,12 @@ const clinician = {
       activity: 'view',
     },
     {
-      module: 'result',
-      activity: 'edit',
-    },
-    {
-      module: 'treatmentStatus',
-      activity: 'edit',
-    },
-    {
       module: 'site',
       activity: 'view',
     },
     {
       module: 'browse',
       activity: 'view',
-    },
-    {
-      module: 'account',
-      activity: 'edit',
-    },
-    {
-      module: 'case',
-      activity: 'edit',
     },
     {
       module: 'dashboard',
@@ -476,6 +476,27 @@ const ntp = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+  ],
+}
+
+const ntpNoResults = {
+  name: 'NTP - No Results',
+  reports: [
+    'critical_errors_by_device',
   ],
   permissions: [
     {
@@ -606,6 +627,394 @@ const resultViewerYes = {
   ],
 }
 
+const remoteHealthWorker = {
+  name: 'Remote Health Worker',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'person',
+      activity: 'view',
+    },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'dashboard',
+      activity: 'report',
+    },
+    {
+      module: 'dashboard',
+      activity: 'site',
+    },
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'reporter',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+  ],
+}
+
+const labManager = {
+  name: 'Lab Manager',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'edit',
+    },
+    {
+      module: 'person',
+      activity: 'view',
+    },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'edit',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+  ],
+}
+
+const labSupervisor = {
+  name: 'Lab Supervisor',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'person',
+      activity: 'view',
+    },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+  ],
+}
+
+const medTech = {
+  name: 'Med Tech',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'person',
+      activity: 'view',
+    },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+  ],
+}
+
+const dataViewer = {
+  name: 'Data Viewer',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'person',
+      activity: 'view',
+    },
+    {
+      module: 'result',
+      activity: 'view',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'view',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+  ],
+}
+
+const systemOne = {
+  name: 'SystemOne',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+  ],
+  permissions: [
+    {
+      module: 'account',
+      activity: 'edit',
+    },
+    {
+      module: 'device',
+      activity: 'edit',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+    {
+      module: 'notification',
+      activity: 'edit',
+    },
+    {
+      module: 'person',
+      activity: 'edit',
+    },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'site',
+      activity: 'edit',
+    },
+    {
+      module: 'treatmentStatus',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'task',
+      activity: 'view',
+    },
+    {
+      module: 'taskMenu',
+      activity: 'view',
+    },
+  ],
+}
+
 module.exports = {
   admin,
   regionalOfficer,
@@ -618,4 +1027,11 @@ module.exports = {
   manager,
   resultViewerNo,
   resultViewerYes,
+  remoteHealthWorker,
+  labManager,
+  labSupervisor,
+  medTech,
+  dataViewer,
+  ntpNoResults,
+  systemOne
 }

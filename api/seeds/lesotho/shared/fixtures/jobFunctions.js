@@ -1,12 +1,8 @@
+const { admin, clinician, labUser, regionalOfficer } = require('../../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...admin,
     permissions: [
       {
         module: 'account',
@@ -91,13 +87,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Clinician',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...clinician,
     permissions: [
       {
         module: 'account',
@@ -170,13 +160,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Lab User',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...labUser,
     permissions: [
       {
         module: 'account',
@@ -249,82 +233,6 @@ module.exports = [
     ],
   },
   {
-    name: 'Regional Officer',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
-    permissions: [
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'deviceApiKey',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'notification',
-        activity: 'edit',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'result',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-      {
-        module: 'taskMenu',
-        activity: 'view',
-      },
-    ],
+    ...regionalOfficer,
   },
 ]

@@ -1,12 +1,8 @@
+const { admin, clinician, labUser, regionalOfficer } = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...admin,
     permissions: [
       {
         module: 'assay',
@@ -91,13 +87,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Regional Officer',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...regionalOfficer,
     permissions: [
       {
         module: 'dashboard',
@@ -166,13 +156,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Lab User',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...labUser,
     permissions: [
       {
         module: 'dashboard',

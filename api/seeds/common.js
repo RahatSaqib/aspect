@@ -257,7 +257,7 @@ async function upsertJobFunction(
   jobFunctionName,
   partnerId,
   permissions = [],
-  options
+  options = { }
 ) {
   const { reports = [], removeMissingPermissions = false } = options
 

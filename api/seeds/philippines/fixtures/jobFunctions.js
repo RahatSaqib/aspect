@@ -1,12 +1,8 @@
+const { admin, clinician, labUser, regionalOfficer, labManager, labSupervisor, medTech } = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...admin,
     permissions: [
       {
         module: 'assay',
@@ -87,13 +83,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Regional Officer',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...regionalOfficer,
     permissions: [
       {
         module: 'account',
@@ -169,203 +159,11 @@ module.exports = [
       },
     ],
   },
+  labManager,
+  labSupervisor,
+  medTech,
   {
-    name: 'Lab Manager',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
-    permissions: [
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'edit',
-      },
-      {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'edit',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Lab Supervisor',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
-    permissions: [
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Med Tech',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
-    permissions: [
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Lab User',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...labUser,
     permissions: [
       {
         module: 'assay',
@@ -429,73 +227,9 @@ module.exports = [
       },
     ],
   },
+  dataViewer,
   {
-    name: 'Data Viewer',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
-    permissions: [
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'result',
-        activity: 'view',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'view',
-      },
-      {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Clinician',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...clinician,
     permissions: [
       {
         module: 'account',
@@ -572,13 +306,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Remote Health Worker',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...remoteHealthWorker,
     permissions: [
       {
         module: 'assay',

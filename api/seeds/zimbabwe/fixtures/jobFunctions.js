@@ -1,12 +1,8 @@
+const { admin, clinician, donor, ntp, ntpNoResults, technician, deviceMaker, labUser, regionalOfficer, systemOne } = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...admin,
     permissions: [
       {
         module: 'account',
@@ -67,13 +63,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Clinician',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...clinician,
     permissions: [
       {
         module: 'account',
@@ -146,8 +136,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Donor',
-    reports: ['critical_errors_by_device'],
+    ...donor,
     permissions: [
       {
         module: 'account',
@@ -176,13 +165,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Lab User',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...labUser,
     permissions: [
       {
         module: 'account',
@@ -239,13 +222,7 @@ module.exports = [
     ],
   },
   {
-    name: 'NTP',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...ntp,
     permissions: [
       {
         module: 'account',
@@ -286,8 +263,7 @@ module.exports = [
     ],
   },
   {
-    name: 'NTP - No Results',
-    reports: ['critical_errors_by_device'],
+    ...ntpNoResults,
     permissions: [
       {
         module: 'account',
@@ -324,13 +300,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Regional Officer',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
+    ...regionalOfficer,
     permissions: [
       {
         module: 'account',
@@ -386,76 +356,9 @@ module.exports = [
       },
     ],
   },
+  systemOne,
   {
-    name: 'SystemOne',
-    reports: [
-      'mtb_detected_rr_detected',
-      'critical_errors_by_device',
-      'rif_resistance_rate',
-      'results_hiv_not_suppressed',
-    ],
-    permissions: [
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'device',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'notification',
-        activity: 'edit',
-      },
-      {
-        module: 'person',
-        activity: 'edit',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-      {
-        module: 'taskMenu',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Technician',
-    reports: ['critical_errors_by_device'],
+    ...technician,
     permissions: [
       {
         module: 'account',
@@ -492,8 +395,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Device Maker',
-    reports: ['critical_errors_by_device'],
+    ...deviceMaker,
     permissions: [
       {
         module: 'account',
