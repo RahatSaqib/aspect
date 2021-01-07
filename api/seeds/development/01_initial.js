@@ -5181,12 +5181,6 @@ async function seed(knex) {
     } // end of seeding results for specific countries
   }) // end of 'await Promise.each(geography.countries'
 
-  /*
-;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
-  ;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
-  ;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'clinician' }).pluck('id')
-  ;[jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id') */
-
   await upsertReports(knex)
 
   // Job Functions with permissions
