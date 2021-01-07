@@ -1716,11 +1716,10 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
         `Error while trying to remove job the job function with id ${id}. You should remove the jobs manually first.`
       )
     }
-    await Promise.all([
-      knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete(),
-      knex('JobFunctionPermission').where('jobFunctionId', id).delete(),
-      knex('JobFunctionReport').where('jobFunctionId', id).delete(),
-    ])
+
+    await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete(),
+    await knex('JobFunctionPermission').where('jobFunctionId', id).delete(),
+    await knex('JobFunctionReport').where('jobFunctionId', id).delete(),
     await knex('JobFunction').where({ id }).delete()
   })
 }
