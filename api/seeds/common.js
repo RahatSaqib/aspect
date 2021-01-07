@@ -257,11 +257,9 @@ async function upsertJobFunction(
   jobFunctionName,
   partnerId,
   permissions = [],
-  options = {
-    removeMissingPermissions: false,
-  }
+  options
 ) {
-  const { reports = [], removeMissingPermissions } = options
+  const { reports = [], removeMissingPermissions = false } = options
 
   let { id: jobFunctionId } =
     (await knex('JobFunction')
