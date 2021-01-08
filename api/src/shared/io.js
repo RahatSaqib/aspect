@@ -153,7 +153,7 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   items.forEach(dataItem => {
     const row = []
     fieldNames.forEach(fieldName => {
-      row.push(dataItem[fieldName])
+      row.push(formatCellContent(dataItem[fieldName]))
     })
     rows.push(row)
   })
@@ -179,14 +179,7 @@ async function generateCsvAttachment(outputFileName, { items, columns }) {
   items.forEach(dataItem => {
     const row = []
     columns.forEach(column => {
-      let columnContent = dataItem[column.key]
-      if (columnContent instanceof Date) {
-        columnContent = formatDateOrDefault(
-          columnContent,
-          'yyyy-MM-dd HH:mm:ss'
-        )
-      }
-      row.push(columnContent)
+      row.push(formatCellContent(dataItem[column.key]))
     })
     rows.push(row)
   })
@@ -199,6 +192,13 @@ async function generateCsvAttachment(outputFileName, { items, columns }) {
     fileName: outputFileName,
     disposition: 'attachment',
   }
+}
+
+function formatCellContent(cellContent) {
+  if (cellContent instanceof Date) {
+    cellContent = formatDateOrDefault(cellContent, 'yyyy-MM-dd HH:mm:ss')
+  }
+  return cellContent
 }
 
 // ----------------------------------------------------------------------------------------------
