@@ -547,6 +547,10 @@ const donor = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'task',
+      activity: 'view',
+    },
   ],
 }
 
