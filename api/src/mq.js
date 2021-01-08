@@ -27,7 +27,7 @@ class MessageQueue {
 
   async connect() {
     if (!this.channel) {
-      logger.debug(`connect ${this.name}`, { reLabel: 'aspect:mq' })
+      logger.debug(`connect ${this.name}`, { reLabel: 'aspect:mq:connect' })
       const connection = await amqp.connect(config.amqp.url)
       const channel = await connection.createChannel()
       await channel.assertExchange(exchange, 'topic', { durable: true })
@@ -40,7 +40,7 @@ class MessageQueue {
 
   async purge() {
     if (this.channel) {
-      logger.debug(`purge ${this.name}`, { reLabel: 'aspect:mq' })
+      logger.debug(`purge ${this.name}`, { reLabel: 'aspect:mq:purge' })
       return Promise.all(
         this.queues.map(queue => this.channel.purgeQueue(queue))
       )
@@ -48,7 +48,7 @@ class MessageQueue {
   }
 
   async close() {
-    logger.debug(`close ${this.name}`, { reLabel: 'aspect:mq' })
+    logger.debug(`close ${this.name}`, { reLabel: 'aspect:mq:close' })
     if (this.channel) {
       await this.purge()
       await this.channel.close()
@@ -70,7 +70,9 @@ class MessageQueue {
     const topic = bindingKey
       ? `aspect.actions.${action.type}.${bindingKey}`
       : `aspect.actions.${action.type}`
-    logger.debug(`dispatch ${this.name} ${message}`, { reLabel: 'aspect:mq' })
+    logger.debug(`dispatch ${this.name} ${message}`, {
+      reLabel: 'aspect:mq:dispatch',
+    })
     this.channel.publish(exchange, topic, Buffer.from(message), options)
   }
 
@@ -138,7 +140,7 @@ class MessageQueue {
         const subscribeName = `${queueName}_${name}_actions_${type}`
         const topic = `aspect.actions.${type}${bindingKey}`
         logger.debug(`subscribe ${subscribeName} ${topic}`, {
-          reLabel: 'aspect:mq',
+          reLabel: 'aspect:mq:subscribe',
         })
         const queueOptions = messageTtl ? { messageTtl } : undefined
         const { queue } = channel.assertQueue(subscribeName, queueOptions)
@@ -154,7 +156,7 @@ class MessageQueue {
             const messageContext = this.createMessageContext(subscribeName)
             const action = JSON.parse(content)
             logger.debug(`consume ${messageContext.id} ${content}`, {
-              reLabel: 'aspect:mq',
+              reLabel: 'aspect:mq:consume',
             })
             if (shouldHandle(action)) {
               Promise.resolve(handlerFunction(action, { messageContext }))
@@ -163,12 +165,12 @@ class MessageQueue {
                   // Allows backpressure per consumer, if this is not needed can
                   // return something (or nothing) that resolves immediately
                   logger.debug(`ack ${messageContext.id}`, {
-                    reLabel: 'aspect:mq',
+                    reLabel: 'aspect:mq:ack',
                   })
                   this.channel.ack(message)
                 })
                 .catch(err => {
-                  logger.error(err, { reLabel: 'aspect:mq' })
+                  logger.error(err, { reLabel: 'aspect:mq:error' })
                   // TODO nack/dead letter queue?
                   this.channel.ack(message)
                 })
@@ -189,7 +191,9 @@ class MessageQueue {
 
   async subscribeEmitActions() {
     if (this.queueEmitActions == null) {
-      logger.debug('subscribeEmitActions', { reLabel: 'aspect:mq' })
+      logger.debug('subscribeEmitActions', {
+        reLabel: 'aspect:mq:subscribeEmitActions',
+      })
       const { channel } = this
       const { queue } = await channel.assertQueue('', { exclusive: true })
       this.queueEmitActions = queue
@@ -374,7 +378,7 @@ class MessageContext {
     this.transaction = transact(async knex => task(knex))
       .then(this.commit)
       .then(null, err => {
-        logger.error(err, { reLabel: 'aspect:mq' })
+        logger.error(err, { reLabel: 'aspect:mq:transact' })
         this.rollback()
         throw err
       })

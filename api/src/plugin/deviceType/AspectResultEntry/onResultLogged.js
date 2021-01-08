@@ -19,12 +19,16 @@ const {
   shouldTriggerModuleReplaced,
   shouldTriggerResultErrorAnalysis,
 } = require('../../utils')
+const logger = require('../../../shared/logger')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
   return messageContext.run(async knex => {
+    logger.debug([resultId, deviceLogId, userId], {
+      reLabel: 'mq:onResultLogged',
+    })
     await shouldTriggerModuleReplaced(knex, messageContext, resultId)
 
     const { externalId: deviceLogDeviceTypeExternalId } =
