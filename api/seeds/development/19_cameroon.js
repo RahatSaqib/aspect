@@ -8,6 +8,7 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
+const jobFunctionsFixtureCameroon = require('./fixtures/jobFunctions_cameroon')
 
 module.exports = require('../utils').seed(seed, __filename)
 
@@ -47,7 +48,13 @@ async function seed(knex) {
       ],
     },
     'CM',
-    'fkhrolf5kovl5ynya44h'
+    'fkhrolf5kovl5ynya44h',
+    null,
+    {
+      fixtures: {
+        jobFunctions: jobFunctionsFixtureCameroon
+      }
+    }
   )
 
   // Grant access to sites

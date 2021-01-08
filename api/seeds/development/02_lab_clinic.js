@@ -13,7 +13,7 @@ const {
   subMinutes,
   subMonths,
 } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -30,9 +30,9 @@ const {
   resultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
+const jobFunctionsFixtureReporter = require('./fixtures/jobFunctions_reporter')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 180
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
@@ -266,56 +266,9 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerId,
-    [
-      modules.demo.edit,
-      modules.deviceApiKey.edit,
-      modules.device.edit,
-      modules.person.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.edit,
-      modules.inventory.edit,
-      modules.notification.edit,
-      modules.issue.edit,
-      modules.task.edit,
-      modules.taskMenu.view,
-      modules.report.edit,
-      modules.browse.view,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
-
-  const jobFunctionIdLabAdmin = await upsertJobFunction(
-    knex,
-    'Lab Admin',
-    partnerId,
-    [
-      modules.device.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.edit,
-      modules.browse.view,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
+  await upsertJobFunctionFixture(knex, jobFunctionsFixtureReporter, partnerId)
+  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdLabAdmin] = await knex('JobFunction').where({ externalId: 'labAdmin', partnerId }).pluck('id')
 
   // add widgets
   const widgets = await knex('DashboardWidget').select('id', 'title')

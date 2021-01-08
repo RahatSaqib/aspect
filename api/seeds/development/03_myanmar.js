@@ -8,7 +8,8 @@ const {
   subDays,
   differenceInDays,
 } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
+const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 let patients = require('./fixtures/patients.json')
@@ -141,89 +142,10 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerId,
-    [
-      modules.demo.edit,
-      modules.device.edit,
-      modules.deviceApiKey.edit,
-      modules.person.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.edit,
-      modules.issue.edit,
-      modules.dashboard.actionInventoryLevelUpdate,
-      modules.inventory.edit,
-      modules.task.edit,
-      modules.dashboard.summary,
-      modules.dashboard.target,
-      modules.dashboard.report,
-      modules.dashboard.siteFilter,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
-
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId,
-    [
-      modules.device.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.issue.edit,
-      modules.inventory.edit,
-      modules.task.edit,
-      modules.dashboard.summary,
-      modules.dashboard.target,
-      modules.dashboard.report,
-      modules.dashboard.site,
-      modules.dashboard.actionInventoryLevelUpdate,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
-
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId,
-    [
-      modules.device.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.issue.edit,
-      modules.inventory.edit,
-      modules.task.edit,
-      modules.dashboard.summary,
-      modules.dashboard.actionInventoryLevelUpdate,
-      modules.dashboard.report,
-      modules.dashboard.siteFilter,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
+  await upsertJobFunctionFixture(knex, jobFunctionsFixtureMyanmar, partnerId)
+  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').where({ externalId: 'regionalOfficer', partnerId }).pluck('id')
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,

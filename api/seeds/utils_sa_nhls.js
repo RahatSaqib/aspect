@@ -177,6 +177,8 @@ async function seedNotifications(knex, { partnerId }) {
     issueCategoryId: issueCategoryDataHealthId,
   })
 
+  console.log(await knex('JobFunction').where({ partnerId }))
+  
   const { id: adminJobFunctionId } = await knex('JobFunction')
     .where({ name: 'Admin', partnerId })
     .first('id')

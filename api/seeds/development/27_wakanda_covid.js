@@ -21,6 +21,7 @@ const {
   deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 const utils = require('../utils')
+const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
@@ -82,7 +83,13 @@ async function seed(knex) {
     {
       countries: [countryWakanda],
     },
-    'WK'
+    'WK',
+    null,
+    {
+      fixtures: {
+        jobFunctions: jobFunctionsFixtureWakanda
+      }
+    }
   )
 
   // Give permission to dashboard, browse, sites, results, devices, reporters
@@ -92,62 +99,6 @@ async function seed(knex) {
     .where('name', 'Admin')
     .where({ partnerId })
     .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.edit,
-    modules.issue.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.reporter.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where('name', 'Regional Officer')
-    .where({ partnerId })
-    .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.demo.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where('name', 'Lab User')
-    .where({ partnerId })
-    .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
 
   const covidDeviceTypes = (
     await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)

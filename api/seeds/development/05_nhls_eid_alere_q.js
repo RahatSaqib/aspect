@@ -4,7 +4,8 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMinutes } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
+const jobFunctionsFixtureSouthAfrica = require('./fixtures/jobFunctions_southAfrica')
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
 const { rowsAsObject, getPermissionModules } = require('../utils')
@@ -228,25 +229,11 @@ async function seed(knex) {
     timezone,
     ...auditFields,
   })
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerId,
-    [
-      modules.browse.view,
-      modules.result.edit,
-      modules.device.edit,
-      modules.site.edit,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
+
+  await upsertJobFunctionFixture(knex, jobFunctionsFixtureSouthAfrica, partnerId)
+  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').where({ externalId: 'regionalOfficer', partnerId }).pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
 
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
@@ -255,46 +242,6 @@ async function seed(knex) {
     jobId: jobIdAdmin,
     geographyId: southAfricaGeographyId,
   })
-
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId,
-    [
-      modules.browse.view,
-      modules.result.edit,
-      modules.device.view,
-      modules.site.view,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
-
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId,
-    [
-      modules.browse.view,
-      modules.result.edit,
-      modules.device.view,
-      modules.site.view,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
 
   // create site for lab user
   await Promise.all(
