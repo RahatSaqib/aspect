@@ -52,8 +52,8 @@ async function seed(knex) {
     null,
     {
       fixtures: {
-        jobFunctions: jobFunctionsFixtureCameroon
-      }
+        jobFunctions: jobFunctionsFixtureCameroon,
+      },
     }
   )
 

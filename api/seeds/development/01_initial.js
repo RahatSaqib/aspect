@@ -39,7 +39,6 @@ const {
 const { getRandomTBPatientData } = require('../commonTbresults')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
-const { upsertJobFunction } = require('../common')
 const { upsertJobFunctionFixture } = require('../common')
 const upsertReports = require('../common/upsert_reports')
 
@@ -5185,15 +5184,31 @@ async function seed(knex) {
 
   await upsertReports(knex)
 
-  await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerOne, partnerOneId)
-  await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerTwo, partnerTwoId)
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixturePartnerOne,
+    partnerOneId
+  )
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixturePartnerTwo,
+    partnerTwoId
+  )
   // Job Functions with permissions
 
   // crate jobs for users
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ partnerId: partnerOneId, externalId: 'admin' }).pluck('id')
-  const [jobFunctionIdManager] = await knex('JobFunction').where({ partnerId: partnerOneId, externalId: 'manager' }).pluck('id')
-  const [jobFunctionIdClinician] = await knex('JobFunction').where({ partnerId: partnerOneId, externalId: 'clinician' }).pluck('id')
-  const [jobFunctionIdPartnerTwo] = await knex('JobFunction').where({ partnerId: partnerTwoId, externalId: 'labManager' }).pluck('id')
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'admin' })
+    .pluck('id')
+  const [jobFunctionIdManager] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'manager' })
+    .pluck('id')
+  const [jobFunctionIdClinician] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'clinician' })
+    .pluck('id')
+  const [jobFunctionIdPartnerTwo] = await knex('JobFunction')
+    .where({ partnerId: partnerTwoId, externalId: 'labManager' })
+    .pluck('id')
 
   const jobIdAdmin = await knex('Job').insert([
     {

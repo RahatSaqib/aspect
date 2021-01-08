@@ -1,6 +1,4 @@
-const {
-  labManager,
-} = require('../../fixtures/jobFunctionBase')
+const { labManager } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   {
@@ -70,6 +68,6 @@ module.exports = [
         module: 'router',
         activity: 'view',
       },
-    ]
-  }
+    ],
+  },
 ]

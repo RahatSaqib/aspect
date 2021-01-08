@@ -236,8 +236,6 @@ async function seed(knex) {
     }),
   })
 
-  const modules = await getPermissionModules(knex)
-
   // Create clinics for every state in Malawi
   const [malawiCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MWI' })
@@ -267,8 +265,12 @@ async function seed(knex) {
   })
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixtureReporter, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
-  const [jobFunctionIdLabAdmin] = await knex('JobFunction').where({ externalId: 'labAdmin', partnerId }).pluck('id')
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .pluck('id')
+  const [jobFunctionIdLabAdmin] = await knex('JobFunction')
+    .where({ externalId: 'labAdmin', partnerId })
+    .pluck('id')
 
   // add widgets
   const widgets = await knex('DashboardWidget').select('id', 'title')

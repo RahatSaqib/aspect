@@ -97,8 +97,6 @@ async function seed(knex) {
   }
   // -------------------------
 
-  const modules = await getPermissionModules(knex)
-
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -143,9 +141,15 @@ async function seed(knex) {
   })
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixtureMyanmar, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
-  const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').where({ externalId: 'regionalOfficer', partnerId }).pluck('id')
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction')
+    .where({ externalId: 'labUser', partnerId })
+    .pluck('id')
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
+    .where({ externalId: 'regionalOfficer', partnerId })
+    .pluck('id')
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,

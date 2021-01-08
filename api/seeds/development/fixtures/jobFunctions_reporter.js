@@ -1,7 +1,4 @@
-const {
-  admin,
-  labAdmin
-} = require('../../fixtures/jobFunctionBase')
+const { admin, labAdmin } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   {
@@ -9,89 +6,89 @@ module.exports = [
     permissions: [
       {
         module: 'demo',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'notification',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'person',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
   {
     ...labAdmin,
     permissions: [
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
-  }
+    ],
+  },
 ]

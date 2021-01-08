@@ -2,195 +2,194 @@ const {
   admin,
   labUser,
   regionalOfficer,
-
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  { 
+  {
     ...admin,
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action'
+        activity: 'action',
       },
       {
         module: 'dashboard',
-        activity: 'actionInventoryLevelUpdate'
+        activity: 'actionInventoryLevelUpdate',
       },
       {
         module: 'demo',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'person',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'target'
+        activity: 'target',
       },
       {
         module: 'dashboard',
-        activity: 'report'
+        activity: 'report',
       },
       {
         module: 'dashboard',
-        activity: 'siteFilter'
+        activity: 'siteFilter',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
   {
     ...labUser,
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action'
+        activity: 'action',
       },
       {
         module: 'dashboard',
-        activity: 'actionInventoryLevelUpdate'
+        activity: 'actionInventoryLevelUpdate',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'report'
+        activity: 'report',
       },
       {
         module: 'dashboard',
-        activity: 'siteFilter'
+        activity: 'siteFilter',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
   {
     ...regionalOfficer,
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action'
+        activity: 'action',
       },
       {
         module: 'dashboard',
-        activity: 'actionInventoryLevelUpdate'
+        activity: 'actionInventoryLevelUpdate',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'report'
+        activity: 'report',
       },
       {
         module: 'dashboard',
-        activity: 'site'
+        activity: 'site',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'dashboard',
-        activity: 'target'
+        activity: 'target',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
-  }
+    ],
+  },
 ]

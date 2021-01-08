@@ -1024,25 +1024,25 @@ const labAdmin = {
   permissions: [
     {
       module: 'device',
-      activity: 'edit'
+      activity: 'edit',
     },
     {
       module: 'result',
-      activity: 'edit'
+      activity: 'edit',
     },
     {
       module: 'site',
-      activity: 'edit'
+      activity: 'edit',
     },
     {
       module: 'assay',
-      activity: 'view'
+      activity: 'view',
     },
     {
       module: 'browse',
-      activity: 'view'
-    }
-  ]
+      activity: 'view',
+    },
+  ],
 }
 
 module.exports = {

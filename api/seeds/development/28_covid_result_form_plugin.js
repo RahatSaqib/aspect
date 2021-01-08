@@ -4,7 +4,6 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays, addDays } = require('date-fns')
 
-const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const utils = require('../utils')
 
@@ -35,7 +34,7 @@ async function seed(knex) {
   const countryWakanda = geography.countries.find(
     country => country.abbreviation === 'WK'
   )
-  
+
   const covidResultFormData = await knex('AssayType as at')
     .join('Assay as a', 'at.id', 'a.assayTypeId')
     .join('Result as r', 'a.id', 'r.assayId')

@@ -1,9 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { upsertJobFunction } = require('../common')
-const {
-  seedJobFunctionsAndUsersForOperationalData,
-} = require('../utils')
+const { seedJobFunctionsAndUsersForOperationalData } = require('../utils')
 
 async function seed(knex) {
   const now = new Date()

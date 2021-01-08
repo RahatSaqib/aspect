@@ -11,303 +11,303 @@ module.exports = [
     permissions: [
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'device',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'issue',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'notification',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'person',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'reporter',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'site',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'router',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
   {
     ...clinician,
     permissions: [
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'deviceApiKey',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'notification',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
   {
     ...labUser,
     permissions: [
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'deviceApiKey',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'notification',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
   {
     ...regionalOfficer,
     permissions: [
       {
         module: 'account',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'inventory',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'notification',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'edit'
+        activity: 'edit',
       },
       {
         module: 'dashboard',
-        activity: 'result'
+        activity: 'result',
       },
       {
         module: 'dashboard',
-        activity: 'summary'
+        activity: 'summary',
       },
       {
         module: 'assay',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'browse',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'device',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'operationalData',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'person',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'report',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'site',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'task',
-        activity: 'view'
+        activity: 'view',
       },
       {
         module: 'taskMenu',
-        activity: 'view'
+        activity: 'view',
       },
-    ]
+    ],
   },
 ]

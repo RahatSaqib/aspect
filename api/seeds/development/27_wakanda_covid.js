@@ -5,9 +5,7 @@ const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
-const {
-  commonUpserts,
-} = require('../common')
+const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
@@ -86,8 +84,8 @@ async function seed(knex) {
     null,
     {
       fixtures: {
-        jobFunctions: jobFunctionsFixtureWakanda
-      }
+        jobFunctions: jobFunctionsFixtureWakanda,
+      },
     }
   )
 

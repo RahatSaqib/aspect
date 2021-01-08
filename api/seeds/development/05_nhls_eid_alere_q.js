@@ -66,9 +66,8 @@ async function seed(knex) {
   })
 
   // Reuse previously seeded "static" data
-  const [deviceTypes, modules, approvedDeviceApprovalId] = await Promise.all([
+  const [deviceTypes, approvedDeviceApprovalId] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
-    getPermissionModules(knex),
     deviceApprovalToId('approved'),
   ])
 
@@ -230,10 +229,20 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  await upsertJobFunctionFixture(knex, jobFunctionsFixtureSouthAfrica, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').where({ externalId: 'regionalOfficer', partnerId }).pluck('id')
-  const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixtureSouthAfrica,
+    partnerId
+  )
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .pluck('id')
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
+    .where({ externalId: 'regionalOfficer', partnerId })
+    .pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction')
+    .where({ externalId: 'labUser', partnerId })
+    .pluck('id')
 
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
