@@ -49,22 +49,6 @@ async function getReportDetails(auth, externalId) {
     )
     .first()
 
-  console.log(knex('Report as r')
-  .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
-  .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
-  .innerJoin('Person as p', 'j.personId', 'p.id')
-  .modify(addConstraints, dataConstraints, { person: 'p' })
-  .where('r.externalId', externalId)
-  .select(
-    'r.description',
-    'r.externalId',
-    knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
-    'r.id',
-    'r.i18nKey',
-    'r.name'
-  )
-  .first().toString())
-
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
     .orderBy('sortOrder', 'asc')
