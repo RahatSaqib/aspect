@@ -39,7 +39,8 @@
       "prettier --write"
     ],
     "./{cfg,src}/**/*.{js,jsx}": [
-      "eslint --fix --max-warnings 0", "prettier --write"
+      "eslint --fix --max-warnings 0",
+      "prettier --write"
     ]
   },
   "jest": {
@@ -104,7 +105,6 @@
     "babel-plugin-lodash": "^3.3.4",
     "babel-plugin-react-intl": "^7.5.7",
     "babel-polyfill": "^6.26.0",
-    "caniuse-lite": "^1.0.30001058",
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
     "compression-webpack-plugin": "^3.1.0",
     "core-js": "^3.6.5",
