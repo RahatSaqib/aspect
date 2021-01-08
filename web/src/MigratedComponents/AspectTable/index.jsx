@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 import {
   useTable,
@@ -16,6 +16,8 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 
 import TableHiddenColumns from './TableHeader/TableHiddenColumns'
 import TableHeaderRow from './TableHeader/TableHeaderRow'
@@ -25,13 +27,20 @@ import AspectTablePagination from './TablePagination'
 import {
   buildColumnsFromData,
   getCurrentColumnIndexAndShift,
+  getParamsFromUrl,
   shapeTableParamsForApi,
 } from './Helpers'
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search)
+}
+
 const AspectTable = ({ config, tableData, initialParams }) => {
   const { push } = useHistory()
-  const { pathname } = useLocation()
+  const { pathname, ...rest } = useLocation()
+  const urlQuery = useQuery()
   const [params, setParams] = useState(initialParams)
+  const [urlParams, setUrlParams] = useState(false)
   const { total, data } = tableData
   const { name } = config
   const {
@@ -97,52 +106,102 @@ const AspectTable = ({ config, tableData, initialParams }) => {
     toggleGroupBy(id)
   }
 
-  useEffect(() => {
-    if (!sortBy.length && initialSortBy) {
-      setSortBy([initialSortBy])
-    }
-  }, [sortBy, setSortBy, initialSortBy])
+  // useEffect(() => {
+  //   if (allowColumnReOrder) {
+  //     // console.log(
+  //     //   initialOrder,
+  //     //   columnOrder,
+  //     //   urlParams.colOrder,
+  //     //   isEqual(columnOrder, [urlParams.colOrder])
+  //     // )
+  //     console.log(urlParams.colOrder)
+
+  //     switch (true) {
+  //       case !columnOrder.length:
+  //         setColumnOrder(initialOrder)
+  //         break
+
+  //       case columnOrder.length &&
+  //         urlParams &&
+  //         urlParams.colOrder &&
+  //         !isEqual(columnOrder, urlParams.colOrder.split(',')):
+  //         console.log(urlParams.colOrder.split(','))
+
+  //         // setColumnOrder(initialOrder)
+  //         break
+
+  //       default:
+  //         break
+  //     }
+  //     // if (
+  //     //   columnOrder &&
+  //     //   columnOrder.length &&
+  //     //   !isEqual(columnOrder, [urlParams.colOrder])
+  //     // ) {
+  //     //   setColumnOrder(urlParams.colOrder)
+  //     // }
+  //   }
+
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [allowColumnReOrder, columnOrder, urlParams])
+
+  // useEffect(() => {
+  //   console.log(sortBy.length, urlParams.sortCol, initialSortBy)
+
+  //   if (!sortBy.length && !urlParams.sortCol && initialSortBy) {
+  //     console.log('hey!')
+
+  //     setSortBy([initialSortBy])
+  //   }
+  // }, [sortBy, setSortBy, initialSortBy])
+
+  // useEffect(() => {
+  //   if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
+  //     setColumnOrder(initialOrder)
+  //   }
+  // }, [
+  //   visibleColumns,
+  //   allowColumnReOrder,
+  //   columnOrder,
+  //   initialOrder,
+  //   setColumnOrder,
+  // ])
 
   useEffect(() => {
-    if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
-      setColumnOrder(initialOrder)
+    const fromUrl = getParamsFromUrl(urlQuery, [
+      'page',
+      'size',
+      'sortCol',
+      'sortDir',
+    ])
+    if (isEmpty(fromUrl)) {
+      const newUrl =
+        !isEmpty(fromUrl) || new URLSearchParams(urlParams).toString()
+      // console.log(new)
+
+      // push(`${pathname}?${newUrl}`)
     }
-  }, [
-    visibleColumns,
-    allowColumnReOrder,
-    columnOrder,
-    initialOrder,
-    setColumnOrder,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlParams])
 
   React.useMemo(() => {
     async function buildAndSetParams() {
-      const { page = 0, size, sortCol, sortDir } = await shapeTableParamsForApi(
-        {
-          pageIndex,
-          pageSize,
-          sortBy,
-          initialOrder,
-        }
+      const paramsForUrl = await shapeTableParamsForApi(
+        { pageIndex, pageSize, sortBy, columnOrder },
+        urlParams
       )
-      const newUrl = new URLSearchParams({
-        page,
-        size,
-        sortCol,
-        sortDir,
-      }).toString()
-      push(`${pathname}?${newUrl}`)
-      setParams({
-        page,
-        size,
-        sortCol,
-        sortDir,
-      })
+
+      if (paramsForUrl) {
+        setUrlParams({ ...paramsForUrl })
+      }
     }
+
     if (data && data.length) {
       buildAndSetParams()
     }
-  }, [data, pageIndex, pageSize, sortBy])
+  }, [])
+
+  // console.log(columnOrder, urlParams)
 
   return (
     <Fragment>
