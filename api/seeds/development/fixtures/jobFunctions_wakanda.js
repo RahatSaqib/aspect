@@ -168,6 +168,10 @@ module.exports = [
     ...labUser,
     permissions: [
       {
+        module: 'account',
+        activity: 'edit'
+      },
+      {
         module: 'result',
         activity: 'edit'
       },
