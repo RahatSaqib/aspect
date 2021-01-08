@@ -1,7 +1,6 @@
 const { createLogger, format, transports } = require('winston')
 
 const { combine, timestamp, label, printf, errors } = format
-
 // Plain text
 const myFormat = printf(
   ({ level, message, label, reLabel, timestamp, stack }) => {
@@ -18,12 +17,25 @@ const myFormat = printf(
 )
 
 const filterLabel = format(info => {
-  if (
-    process.env['log.filterLabel'] &&
-    info.reLabel &&
-    !info.reLabel.toString().match(process.env['log.filterLabel'])
-  ) {
-    return false
+  if (process.env['log.filterLabel'] && info.reLabel) {
+    const regex = new RegExp(process.env['log.filterLabel'].toString(), 'g')
+    if (!regex.test(info.reLabel.toString())) {
+      // this is a regular expression
+      return false
+    }
+  }
+  return info
+})
+
+const blacklistLabels = format(info => {
+  if (process.env['log.labelsBlackListed'] && info.reLabel) {
+    const regex = new RegExp(
+      process.env['log.labelsBlackListed'].toString(),
+      'g'
+    )
+    if (regex.test(info.reLabel)) {
+      return false
+    }
   }
   return info
 })
@@ -35,31 +47,51 @@ const logger = createLogger()
 if (process.env['log.format'] === 'JSON') {
   logger.add(
     new transports.Console({
-      format: format.simple(),
+      format: combine(
+        format.colorize(),
+        label({ label: 'Aspect api' }),
+        errors({ stack: true }),
+        filterLabel(),
+        blacklistLabels(),
+
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.simple()
+      ),
     })
   )
 } else {
   logger.add(
     new transports.Console({
       format: combine(
+        errors({ stack: true }),
         format.colorize(),
         label({ label: 'Aspect api' }),
         filterLabel(),
-        errors({ stack: true }),
+        blacklistLabels(),
 
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         myFormat
       ),
-      level: process.env['log.logLevel'] || 'debug',
+      level: process.env['log.logLevel'] || 'info',
     })
   )
 }
 
-if (process.env.loggingFilePath) {
+if (process.env['log.loggingFilePath']) {
   logger.add(
     new transports.File({
-      filename: process.env.loggingFilePath,
-      level: process.env['log.logLevel'] || 'info',
+      format: combine(
+        errors({ stack: true }),
+        format.colorize(),
+        label({ label: 'Aspect api' }),
+        filterLabel(),
+        blacklistLabels(),
+
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.simple()
+      ),
+      filename: process.env['log.loggingFilePath'],
+      level: process.env['log.fileLogLevel'] || 'info',
     })
   )
 }

@@ -201,7 +201,7 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 
   if (!messageContext.deviceInstrumentReplaced) {
-    logger.debug([`shouldTriggerInstrumentReplaced resultid${resultId}`])
+    logger.debug([`shouldTriggerInstrumentReplaced resultid:${resultId}`])
 
     messageContext = messageContext.bindActionCreators({
       deviceInstrumentReplaced,
