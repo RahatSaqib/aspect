@@ -85,6 +85,7 @@ async function seed(knex) {
     },
     'WK',
     null,
+    null,
     {
       fixtures: {
         jobFunctions: jobFunctionsFixtureWakanda
@@ -92,11 +93,13 @@ async function seed(knex) {
     }
   )
 
-  // Give permission to dashboard, browse, sites, results, devices, reporters
-  const modules = await utils.getPermissionModules(knex)
-
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
     .where('name', 'Admin')
+    .where({ partnerId })
+    .first('id')
+
+  const { id: jobFunctionIdClinician } = await knex('JobFunction')
+    .where('name', 'Clinician')
     .where({ partnerId })
     .first('id')
 
@@ -267,34 +270,6 @@ async function seed(knex) {
   const clinicList = countryData.clinics
   const firstClinic = clinicList[0]
   const secondClinic = clinicList[1]
-
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerId,
-    [
-      modules.demo.edit,
-      modules.patient.edit,
-      modules.case.edit,
-      modules.site.edit,
-      modules.result.edit,
-      modules.dashboard.summary,
-      modules.dashboard.result,
-      modules.account.edit,
-      modules.assay.edit,
-      modules.device.view,
-      modules.browse.view,
-      modules.person.view,
-    ],
-    {
-      reports: [
-        'mtb_detected_rr_detected',
-        'critical_errors_by_device',
-        'rif_resistance_rate',
-        'results_hiv_not_suppressed',
-      ],
-    }
-  )
 
   // Create User
   const [userIdFirstClinic] = await knex('User').insert({
