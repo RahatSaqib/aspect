@@ -14,6 +14,7 @@ import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
 import pickBy from 'lodash/pickBy'
+import _size from 'lodash/size'
 
 const mockedDataNames = [
   'Amherst',
@@ -131,8 +132,6 @@ function timeClassification(vals) {
 }
 
 function totalItemCount(vals) {
-  console.log(vals)
-
   return vals.reduce((acc, curr) => acc + curr.length, 0)
 }
 
@@ -146,23 +145,76 @@ function timeSinceFromUTC(val) {
   }
 }
 
-async function shapeTableParamsForApi({
-  pageIndex,
-  pageSize,
-  sortBy,
-  initialOrder,
-}) {
-  const page = pageIndex
-  const size = pageSize
-  const sortCol = sortBy.length ? sortBy[0].id : initialOrder[0]
-  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : 'asc'
-  return pickBy({ page, size, sortCol, sortDir }, identity)
+async function shapeTableParamsForApi(tableParams, urlParams) {
+  const { pageIndex, pageSize, sortBy, columnOrder } = tableParams
+  const {
+    page: urlPage,
+    size: urlSize,
+    sortCol: urlSortCol,
+    sortDir: urlSortDir,
+  } = urlParams
+
+  const initialColumn = columnOrder[0]
+  const urlPageIndex = parseInt(urlPage, 10)
+  const urlPageSize = parseInt(urlSize, 10)
+
+  let sortCol
+
+  switch (true) {
+    case sortBy.length:
+      // console.log(1)
+
+      sortCol = sortBy[0].id
+      break
+
+    case !sortBy.length && urlSortCol && initialColumn !== urlSortCol:
+      // console.log(2)
+
+      sortCol = urlSortCol
+      break
+
+    case !sortBy.length && initialColumn === urlSortCol:
+      // console.log(3)
+
+      sortCol = initialColumn
+      break
+
+    default:
+      sortCol = null
+      break
+  }
+
+  // console.log(
+  //   urlParams,
+  //   { pageIndex, pageSize, sortBy },
+  //   { urlPageIndex, urlPageSize, urlSortCol, urlSortDir }
+  // )
+
+  // console.log(urlSortCol, pickBy({ sortCol }, identity))
+
+  const page = pageIndex === urlPageIndex ? pageIndex : urlPageIndex
+  const size = pageSize === urlPageSize ? pageSize : urlPageSize
+  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : urlSortDir
+  const colOrder = columnOrder.length ? columnOrder.join(',') : null
+  const returnParams = pickBy(
+    { page, size, sortCol, sortDir, colOrder },
+    identity
+  )
+  return _size(returnParams) > 0 ? returnParams : false
+}
+
+function getParamsFromUrl(query, keys) {
+  const output = {}
+  keys.map(key => (output[key] = query.get(key)))
+
+  return pickBy(output, identity)
 }
 
 export {
   buildColumnsFromData,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
+  getParamsFromUrl,
   mockDatafetch,
   shapeTableParamsForApi,
   timeClassification,
