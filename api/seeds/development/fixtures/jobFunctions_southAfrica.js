@@ -1,6 +1,7 @@
 const {
   admin,
-  labUser
+  labUser,
+  regionalOfficer
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -49,5 +50,29 @@ module.exports = [
         activity: 'view'
       },
     ]
-  }
+  },
+  {
+    ...regionalOfficer,
+    permissions: [
+      {
+        module: 'result',
+        activity: 'edit'
+      },
+      {
+        module: 'browse',
+        activity: 'view'
+      },
+      {
+        module: 'device',
+        activity: 'view'
+      },
+      {
+        module: 'site',
+        activity: 'view'
+      },
+      {
+        module: 'task',
+        activity: 'view'
+      },
+    ]
 ]
