@@ -115,10 +115,6 @@ const admin = {
       module: 'report',
       activity: 'view',
     },
-    {
-      module: 'patient',
-      activity: 'view',
-    },
   ],
 }
 
