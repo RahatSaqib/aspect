@@ -7,8 +7,6 @@ const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
 const {
   commonUpserts,
-  upsertJobFunctionPermission,
-  upsertJobFunction,
 } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
