@@ -1713,7 +1713,7 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
     const jobs = await knex('Job').where('jobFunctionId', id)
     if (jobs.length > 0) {
       throw new Error(
-        `Error while trying to remove job the job function with id ${id}. You should remove the jobs manually first.`
+        `Error while trying to remove Job the JobFunctionId = ${id}. You should remove the jobs manually first.`
       )
     }
 
