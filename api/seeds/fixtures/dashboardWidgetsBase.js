@@ -1398,7 +1398,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   link: '/browse/device',
   linkParams: {
     deviceName: 'GeneXpert',
-    deviceMaintenanceStatusId: 'inactiveDownForRepair'
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
@@ -1489,7 +1489,7 @@ const averageDurationServiceInterruption = {
   link: '/browse/device',
   linkParams: {
     deviceName: 'GeneXpert',
-    deviceMaintenanceStatusId: 'inactiveDownForRepair'
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
@@ -1585,7 +1585,7 @@ const percentageOfDaysWithServiceInterruption = {
   link: '/browse/device',
   linkParams: {
     deviceName: 'GeneXpert',
-    deviceMaintenanceStatusId: 'inactiveDownForRepair'
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
   sortOrder: 2,
   externalId: 'percentageOfDaysWithServiceInterruption',

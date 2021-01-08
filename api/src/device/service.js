@@ -152,10 +152,7 @@ async function getListDevices(query, auth) {
         query.deviceMaintenanceStatusId &&
         !_.isEmpty(query.deviceMaintenanceStatusId)
       ) {
-        queryBuilder.whereIn(
-          'dms.externalId',
-          query.deviceMaintenanceStatusId
-        )
+        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
     })
     .modify(queryBuilder => {
