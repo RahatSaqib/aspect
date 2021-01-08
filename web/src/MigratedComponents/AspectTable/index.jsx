@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useEffect } from 'react'
+import React, { Fragment, useMemo, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -28,9 +28,10 @@ import {
   shapeTableParamsForApi,
 } from './Helpers'
 
-const AspectTable = ({ config, tableData, setUrlParams }) => {
-  const history = useHistory()
-  const location = useLocation()
+const AspectTable = ({ config, tableData, initialParams }) => {
+  const { push } = useHistory()
+  const { pathname } = useLocation()
+  const [params, setParams] = useState(initialParams)
   const { total, data } = tableData
   const { name } = config
   const {
@@ -130,8 +131,8 @@ const AspectTable = ({ config, tableData, setUrlParams }) => {
         sortCol,
         sortDir,
       }).toString()
-      history.push(`${location.pathname}?${newUrl}`)
-      setUrlParams({
+      push(`${pathname}?${newUrl}`)
+      setParams({
         page,
         size,
         sortCol,
@@ -141,8 +142,7 @@ const AspectTable = ({ config, tableData, setUrlParams }) => {
     if (data && data.length) {
       buildAndSetParams()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize, sortBy])
+  }, [data, pageIndex, pageSize, sortBy])
 
   return (
     <Fragment>
