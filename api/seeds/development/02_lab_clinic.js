@@ -18,7 +18,6 @@ const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const { getPermissionModules } = require('../utils')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,

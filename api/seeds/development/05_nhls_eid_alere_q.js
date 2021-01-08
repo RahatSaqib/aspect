@@ -8,7 +8,7 @@ const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureSouthAfrica = require('./fixtures/jobFunctions_southAfrica')
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
-const { rowsAsObject, getPermissionModules } = require('../utils')
+const { rowsAsObject } = require('../utils')
 const { seedNotifications } = require('../utils_sa_nhls')
 const {
   allResultCategoryToId,

@@ -17,7 +17,6 @@ const dashboardWidget = require('./fixtures/myanmarDashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   rowsAsObject,
-  getPermissionModules,
   seedNotificationTypes,
   seedIssues,
 } = require('../utils')
