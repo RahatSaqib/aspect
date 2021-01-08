@@ -15,11 +15,7 @@ const myanmarSites = require('./fixtures/myanmarSites.json')
 let patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const {
-  rowsAsObject,
-  seedNotificationTypes,
-  seedIssues,
-} = require('../utils')
+const { rowsAsObject, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
   allResultCategoryToId,
