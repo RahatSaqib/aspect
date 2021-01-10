@@ -635,7 +635,7 @@ async function addFollowUps(knex, partnerIds, { data }) {
     const existingFollowUp = await knex('FollowUp').where(followUp).first('id')
     let followUpId = null
     if (existingFollowUp == null) {
-      followUpId = await knex('FollowUp').insert(followUp)
+      ;[followUpId] = await knex('FollowUp').insert(followUp)
     } else {
       followUpId = existingFollowUp.id
     }

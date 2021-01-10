@@ -214,7 +214,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteId,
         }
-        sample.id = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
         samples.push(sample)
       })
       let totalPositive = 0

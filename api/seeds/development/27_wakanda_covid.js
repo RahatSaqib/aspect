@@ -242,7 +242,7 @@ async function seed(knex) {
               ).join(''),
             }
 
-            device.id = await knex('Device').insert(device)
+            ;[device.id] = await knex('Device').insert(device)
             countryData.devices.push(device)
 
             // add clinics in the LGA
