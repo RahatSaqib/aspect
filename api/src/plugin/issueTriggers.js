@@ -27,26 +27,14 @@ async function analyzeWithQuery(
   minResults,
   queryBuilder
 ) {
-  const moduleSerial = _.get(action.options.data, 'moduleSerial')
   const instrumentSerial = _.get(action.options.data, 'instrumentSerial')
-  const consumableLot = _.get(action.options.data, 'consumableLot')
-  const assayId = _.get(action.options.data, 'assayId')
 
   const query = knex('Result')
     .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
     .andWhere('deviceId', action.deviceId)
-    .modify(
-      (builder, moduleSerial, consumableLot, assayId) => {
-        if (moduleSerial) builder.where({ moduleSerial })
-        else if (instrumentSerial) builder.where({ instrumentSerial })
-        else builder.where({ consumableLot, assayId })
-      },
-      moduleSerial,
-      consumableLot,
-      assayId,
-      instrumentSerial
-    )
-
+    .modify((builder, instrumentSerial) => {
+      if (instrumentSerial) builder.where({ instrumentSerial })
+    }, instrumentSerial)
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
