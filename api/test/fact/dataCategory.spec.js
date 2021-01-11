@@ -202,7 +202,7 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
             sampleTypeId,
             originSiteId: siteId,
           }
-          sample.id = await knex('Sample').insert(sample)
+          ;[sample.id] = await knex('Sample').insert(sample)
           samples.push(sample)
         })
       )

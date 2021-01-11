@@ -80,7 +80,7 @@ async function seed(knex) {
     .select('s.id', 's.name', 's.abbreviation')
 
   // create site for GxAlert device
-  const gxAlertSiteId = await knex('Site').insert({
+  const [gxAlertSiteId] = await knex('Site').insert({
     ...auditFields,
     name: 'GxAlert Site',
     shortName: 'GxA Site',
@@ -92,7 +92,7 @@ async function seed(knex) {
   })
 
   // insert GxAlert device
-  const gxAlertDeviceId = await knex('Device').insert({
+  const [gxAlertDeviceId] = await knex('Device').insert({
     ...auditFields,
     name: 'GxAlert',
     deviceTypeId: await deviceTypeToId('GxAlert'),

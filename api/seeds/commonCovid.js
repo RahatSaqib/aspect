@@ -133,7 +133,7 @@ async function upsertCovidDeviceTypes(
           .first('id')) || {}
 
       if (!assayCovidId) {
-        assayCovidId = await knex('Assay').insert(assayCovid19)
+        ;[assayCovidId] = await knex('Assay').insert(assayCovid19)
       } else {
         await knex('Assay').where('id', assayCovidId).update(assayCovid19)
       }
