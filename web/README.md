@@ -91,7 +91,19 @@ yarn update
 
 Also update vendorPackages in dist.js to make sure that vendor packages are bundled separately from our code
 
-## Styleguide
+## Storybook
+
+```bash
+# Run styleguide
+yarn storybook
+```
+
+To view storybook, visit http://localhost:6060/.
+
+
+## Styleguide [DEPRECATED]
+
+TO BE REMOVED: Once Storybook has been adopted fully, this will be removed. See Issue: https://github.com/SystemOneId/aspect/issues/1546
 
 To view styleguides, visit http://localhost:6060/.
 
