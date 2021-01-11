@@ -156,3 +156,10 @@
   max-height: 100%;
   background: #f9f9f9;
 }
+
+.table__spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

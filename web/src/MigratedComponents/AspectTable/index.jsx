@@ -1,6 +1,12 @@
 import React, { Fragment, useMemo, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { usePaginatedQuery } from 'react-query'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
+import isEqual from 'lodash/isEqual'
+import keys from 'lodash/keys'
 
 import {
   useTable,
@@ -16,9 +22,8 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import isEmpty from 'lodash/isEmpty'
-import isEqual from 'lodash/isEqual'
 
+import fetchWrapperForQueries from '../QueryFetch'
 import TableHiddenColumns from './TableHeader/TableHiddenColumns'
 import TableHeaderRow from './TableHeader/TableHeaderRow'
 import TableBodyRow from './TableBody/TableBodyRow'
@@ -31,16 +36,11 @@ import {
   shapeTableParamsForApi,
 } from './Helpers'
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search)
-}
+const cssClasses = classnames.bind(require('./Table.css'))
 
-const AspectTable = ({ config, tableData, initialParams }) => {
-  const { push } = useHistory()
-  const { pathname, ...rest } = useLocation()
-  const urlQuery = useQuery()
-  const [params, setParams] = useState(initialParams)
-  const [urlParams, setUrlParams] = useState(false)
+const AspectTableCore = ({ config, tableData, params }) => {
+  const history = useHistory()
+  const location = useLocation()
   const { total, data } = tableData
   const { name } = config
   const {
@@ -106,102 +106,72 @@ const AspectTable = ({ config, tableData, initialParams }) => {
     toggleGroupBy(id)
   }
 
-  // useEffect(() => {
-  //   if (allowColumnReOrder) {
-  //     // console.log(
-  //     //   initialOrder,
-  //     //   columnOrder,
-  //     //   urlParams.colOrder,
-  //     //   isEqual(columnOrder, [urlParams.colOrder])
-  //     // )
-  //     console.log(urlParams.colOrder)
-
-  //     switch (true) {
-  //       case !columnOrder.length:
-  //         setColumnOrder(initialOrder)
-  //         break
-
-  //       case columnOrder.length &&
-  //         urlParams &&
-  //         urlParams.colOrder &&
-  //         !isEqual(columnOrder, urlParams.colOrder.split(',')):
-  //         console.log(urlParams.colOrder.split(','))
-
-  //         // setColumnOrder(initialOrder)
-  //         break
-
-  //       default:
-  //         break
-  //     }
-  //     // if (
-  //     //   columnOrder &&
-  //     //   columnOrder.length &&
-  //     //   !isEqual(columnOrder, [urlParams.colOrder])
-  //     // ) {
-  //     //   setColumnOrder(urlParams.colOrder)
-  //     // }
-  //   }
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [allowColumnReOrder, columnOrder, urlParams])
-
-  // useEffect(() => {
-  //   console.log(sortBy.length, urlParams.sortCol, initialSortBy)
-
-  //   if (!sortBy.length && !urlParams.sortCol && initialSortBy) {
-  //     console.log('hey!')
-
-  //     setSortBy([initialSortBy])
-  //   }
-  // }, [sortBy, setSortBy, initialSortBy])
-
-  // useEffect(() => {
-  //   if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
-  //     setColumnOrder(initialOrder)
-  //   }
-  // }, [
-  //   visibleColumns,
-  //   allowColumnReOrder,
-  //   columnOrder,
-  //   initialOrder,
-  //   setColumnOrder,
-  // ])
+  useEffect(() => {
+    if (!sortBy.length && initialSortBy) {
+      setSortBy([initialSortBy])
+    }
+  }, [sortBy, setSortBy, initialSortBy])
 
   useEffect(() => {
-    const fromUrl = getParamsFromUrl(urlQuery, [
-      'page',
-      'size',
-      'sortCol',
-      'sortDir',
-    ])
-    if (isEmpty(fromUrl)) {
-      const newUrl =
-        !isEmpty(fromUrl) || new URLSearchParams(urlParams).toString()
-      // console.log(new)
-
-      // push(`${pathname}?${newUrl}`)
+    if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
+      setColumnOrder(initialOrder)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlParams])
+  }, [
+    visibleColumns,
+    allowColumnReOrder,
+    columnOrder,
+    initialOrder,
+    setColumnOrder,
+  ])
 
-  React.useMemo(() => {
+  useEffect(() => {
     async function buildAndSetParams() {
-      const paramsForUrl = await shapeTableParamsForApi(
-        { pageIndex, pageSize, sortBy, columnOrder },
-        urlParams
+      const { page = 0, size, sortCol, sortDir } = await shapeTableParamsForApi(
+        {
+          pageIndex,
+          pageSize,
+          sortBy,
+          initialOrder,
+        }
       )
 
-      if (paramsForUrl) {
-        setUrlParams({ ...paramsForUrl })
-      }
-    }
+      if (
+        !isEqual(
+          {
+            page,
+            size,
+            sortCol,
+            sortDir,
+          },
+          params
+        )
+      ) {
+        const newUrlParams = new URLSearchParams({
+          page,
+          size,
+          sortCol,
+          sortDir,
+        }).toString()
+        // window.location.search = newUrlParams
+        window.history.pushState(null, '', newUrlParams)
+        // history.replace({ pathname, search: newUrlParams })
+        // console.log(history)
 
+        // push(`${pathname}?${newUrlParams}`)
+      }
+
+      // setParamsToUrl({
+      //   page,
+      //   size,
+      //   sortCol,
+      //   sortDir,
+      // })
+    }
     if (data && data.length) {
       buildAndSetParams()
     }
-  }, [])
-
-  // console.log(columnOrder, urlParams)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIndex, pageSize, sortBy, initialOrder])
 
   return (
     <Fragment>
@@ -275,9 +245,89 @@ const AspectTable = ({ config, tableData, initialParams }) => {
   )
 }
 
-AspectTable.proptTypes = {
+AspectTableCore.proptTypes = {
   data: PropTypes.oneOf([PropTypes.array]).isRequired,
   config: PropTypes.oneOf([PropTypes.object]).isRequired,
+}
+
+const Loading = () => (
+  <div className={cssClasses('table__spinner')}>
+    <CircularProgress />
+  </div>
+)
+
+function useUrlQuery() {
+  return new URLSearchParams(useLocation().search)
+}
+
+const AspectTable = ({ baseConfig, consts: CONSTS }) => {
+  const intl = useIntl()
+  const urlQuery = useUrlQuery()
+  const config = baseConfig(intl)
+  const history = useHistory()
+  const { search } = useLocation()
+  const prms = useParams()
+
+  const [params, setParams] = useState(false)
+  const [paramsToUrl, setParamsToUrl] = useState(false)
+
+  const {
+    error,
+    isError,
+    isLoading,
+    isFetching,
+    resolvedData: data = false,
+  } = usePaginatedQuery(
+    [CONSTS.KEY, { params }],
+    async (_queryId, { params }) => {
+      console.log(params, window.performance.now())
+      return fetchWrapperForQueries({
+        endpoint: CONSTS.ENDPOINT,
+        params,
+      })
+    }
+    // {
+    //   onSuccess: ({ total: totalRes, data: dataRes }) => {
+    //     if (!isEqual(dataRes, data.data)) {
+    //       setData({ total: totalRes, data: dataRes })
+    //     }
+    //   },
+    // }
+  )
+
+  if (isError) {
+    throw new Error(error)
+  }
+
+  useEffect(() => {
+    console.log(search)
+
+    const paramsFromUrl = getParamsFromUrl(urlQuery, search)
+    if (!isEqual(params, paramsFromUrl)) {
+      setParams(paramsFromUrl)
+    }
+  }, [search, urlQuery])
+
+  // useEffect(() => {
+  // if (paramsToUrl) {
+  //   const paramsFromUrl = getParamsFromUrl(urlQuery, keys(paramsToUrl))
+  //   console.log(params, paramsFromUrl, window.performance.now())
+  //   if (!params && !isEqual(params, paramsFromUrl)) {
+  //     setParams(paramsFromUrl)
+  //   }
+  // }
+  // const trueUrlParams = getParamsFromUrl(urlQuery, keys(paramsToUrl))
+  // if (paramsToUrl && !isEqual(params, trueUrlParams)) {
+  //   console.log(paramsToUrl, trueUrlParams, window.performance.now())
+  //   setParams(getParamsFromUrl(urlQuery, keys(paramsToUrl)))
+  // }
+  // }, [params, paramsToUrl])
+
+  return !data || isLoading ? (
+    <Loading />
+  ) : (
+    <AspectTableCore config={config} tableData={data} params={params} />
+  )
 }
 
 export default AspectTable

@@ -6,6 +6,7 @@ import isPast from 'date-fns/isPast'
 import getUnixTime from 'date-fns/getUnixTime'
 import parseISO from 'date-fns/parseISO'
 import identity from 'lodash/identity'
+import isNaN from 'lodash/isNaN'
 import filter from 'lodash/filter'
 import times from 'lodash/times'
 import random from 'lodash/random'
@@ -14,7 +15,7 @@ import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
 import pickBy from 'lodash/pickBy'
-import _size from 'lodash/size'
+import keys from 'lodash/keys'
 
 const mockedDataNames = [
   'Amherst',
@@ -145,69 +146,29 @@ function timeSinceFromUTC(val) {
   }
 }
 
-async function shapeTableParamsForApi(tableParams, urlParams) {
-  const { pageIndex, pageSize, sortBy, columnOrder } = tableParams
-  const {
-    page: urlPage,
-    size: urlSize,
-    sortCol: urlSortCol,
-    sortDir: urlSortDir,
-  } = urlParams
-
-  const initialColumn = columnOrder[0]
-  const urlPageIndex = parseInt(urlPage, 10)
-  const urlPageSize = parseInt(urlSize, 10)
-
-  let sortCol
-
-  switch (true) {
-    case sortBy.length:
-      // console.log(1)
-
-      sortCol = sortBy[0].id
-      break
-
-    case !sortBy.length && urlSortCol && initialColumn !== urlSortCol:
-      // console.log(2)
-
-      sortCol = urlSortCol
-      break
-
-    case !sortBy.length && initialColumn === urlSortCol:
-      // console.log(3)
-
-      sortCol = initialColumn
-      break
-
-    default:
-      sortCol = null
-      break
-  }
-
-  // console.log(
-  //   urlParams,
-  //   { pageIndex, pageSize, sortBy },
-  //   { urlPageIndex, urlPageSize, urlSortCol, urlSortDir }
-  // )
-
-  // console.log(urlSortCol, pickBy({ sortCol }, identity))
-
-  const page = pageIndex === urlPageIndex ? pageIndex : urlPageIndex
-  const size = pageSize === urlPageSize ? pageSize : urlPageSize
-  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : urlSortDir
-  const colOrder = columnOrder.length ? columnOrder.join(',') : null
-  const returnParams = pickBy(
-    { page, size, sortCol, sortDir, colOrder },
-    identity
-  )
-  return _size(returnParams) > 0 ? returnParams : false
+async function shapeTableParamsForApi({
+  pageIndex,
+  pageSize,
+  sortBy,
+  initialOrder,
+}) {
+  const page = pageIndex
+  const size = pageSize
+  const sortCol = sortBy.length ? sortBy[0].id : initialOrder[0]
+  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : 'asc'
+  return pickBy({ page, size, sortCol, sortDir }, identity)
 }
 
-function getParamsFromUrl(query, keys) {
+function getParamsFromUrl(query, search) {
   const output = {}
-  keys.map(key => (output[key] = query.get(key)))
+  const queryKeys = new URLSearchParams(search)
+  for (const key of queryKeys.keys()) {
+    const queryParam = query.get(key)
+    const parsedParam = parseInt(queryParam, 10)
+    output[key] = isNaN(parsedParam) ? queryParam : parsedParam
+  }
 
-  return pickBy(output, identity)
+  return output
 }
 
 export {
