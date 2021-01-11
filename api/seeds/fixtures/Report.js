@@ -6,6 +6,7 @@ const mtbDetectedRRDetected = {
   fileName: 'MTB_Detected_RR_Detected',
   sheets: [
     {
+      sortOrder: 0,
       moduleName: 'result/service',
       functionName: 'getResultsForReport',
       query: {
@@ -27,6 +28,7 @@ const criticalErrorsByDevice = {
   fileName: 'DevicesWithErrors',
   sheets: [
     {
+      sortOrder: 0,
       moduleName: 'device/service',
       functionName: 'getDevicesForReport',
       query: {
@@ -48,6 +50,7 @@ const rifResistanceRate = {
   fileName: 'RifResistanceRate',
   sheets: [
     {
+      sortOrder: 0,
       moduleName: 'device/service',
       functionName: 'getDevicesForRifResistanceReport',
       query: {
@@ -70,6 +73,7 @@ const resultsHivNotSuppressed = {
   fileName: 'HIVNotSuppressed',
   sheets: [
     {
+      sortOrder: 0,
       moduleName: 'result/service',
       functionName: 'getResultsForReport',
       query: {
