@@ -20,10 +20,8 @@ async function seed(knex) {
     .whereNotNull('r.resultCategory2')
     .select('r.id')
 
-  await Promise.all(
-    resultsCategories.map(({ id }) =>
-      knex('Result').where('id', id).update('resultCategory2', null)
-    )
+  await Promise.each(resultsCategories, result =>
+    knex('Result').where('id', result.id).update('resultCategory2', null)
   )
 
   // For all assays, the result cannot have an error code unless result1 is either Invalid, No Result, or Error
@@ -33,10 +31,8 @@ async function seed(knex) {
     .whereNotNull('r.errorCode')
     .select('r.id')
 
-  await Promise.all(
-    resultsErrorCodes.map(({ id }) =>
-      knex('Result').where('id', id).update('errorCode', null)
-    )
+  await Promise.each(resultsErrorCodes, result =>
+    knex('Result').where('id', result.id).update('errorCode', null)
   )
 }
 

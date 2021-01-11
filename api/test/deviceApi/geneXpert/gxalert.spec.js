@@ -3510,7 +3510,7 @@ describe('Device API routes for GxAlert Device', () => {
         )
       }))
 
-    it('should NOT update a result if the sample ID matches an existing result, but the startedOn date does not', () =>
+    it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', () =>
       runTest(async () => {
         const { now } = context
         const testStartedOn = setMilliseconds(
