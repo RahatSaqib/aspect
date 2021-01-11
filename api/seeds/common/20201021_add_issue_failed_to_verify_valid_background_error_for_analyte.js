@@ -12,16 +12,26 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.userId')
 
-  const issueType = await seedIssueType(
+  const issueTypeModule = await seedIssueType(
     knex,
-    'FailedToVerifyValidBackgroundErrorForAnalyte',
+    'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+    {
+      userName: 'admin',
+    }
+  )
+  const issueTypeLot = await seedIssueType(
+    knex,
+    'FailedToVerifyValidBackgroundErrorForAnalyteLot',
     {
       userName: 'admin',
     }
   )
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['FailedToVerifyValidBackgroundErrorForAnalyte'],
+    issueTypeWhitelist: [
+      'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+      'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+    ],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -30,8 +40,15 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const failedToVerifyValidBackgroundErrorForAnalyte = await knex('IssueType')
-    .where({ id: issueType })
+  const failedToVerifyValidBackgroundErrorForAnalyteModule = await knex(
+    'IssueType'
+  )
+    .where({ id: issueTypeModule })
+    .first()
+  const failedToVerifyValidBackgroundErrorForAnalyteLot = await knex(
+    'IssueType'
+  )
+    .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
@@ -41,13 +58,23 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: failedToVerifyValidBackgroundErrorForAnalyte.id,
+      issueTypeId: failedToVerifyValidBackgroundErrorForAnalyteModule.id,
       messageTypeId:
-        failedToVerifyValidBackgroundErrorForAnalyte.defaultMessageTypeId,
+        failedToVerifyValidBackgroundErrorForAnalyteModule.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probe Check Background Error For Analyte Failed',
+      name: 'Probe Check Background Error For Analyte Failed - Module',
+      ...auditFields,
+    },
+    {
+      issueTypeId: failedToVerifyValidBackgroundErrorForAnalyteLot.id,
+      messageTypeId:
+        failedToVerifyValidBackgroundErrorForAnalyteLot.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: 'Probe Check Background Error For Analyte Failed - Lot',
       ...auditFields,
     },
   ])

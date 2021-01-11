@@ -14,14 +14,22 @@ async function seed(knex) {
     .first('p.lastPartnerId as partnerId', 'p.userId')
 
   const issuesToInsert = [
-    'CartridgeIntegrityTestFailure',
-    'SyringePressureTooHigh',
-    'SyringeStallError',
-    'UltrasonicHornFailure',
-    'UltrasonicHornTuningError',
-    'UltrasonicHornCurrentOutOfRange',
-    'AssaySpecificTerminationError1',
-    'AssaySpecificTerminationError2',
+    'CartridgeIntegrityTestFailureModule',
+    'CartridgeIntegrityTestFailureLot',
+    'SyringePressureTooHighModule',
+    'SyringePressureTooHighLot',
+    'SyringeStallErrorModule',
+    'SyringeStallErrorLot',
+    'UltrasonicHornFailureModule',
+    'UltrasonicHornFailureLot',
+    'UltrasonicHornTuningErrorModule',
+    'UltrasonicHornTuningErrorLot',
+    'UltrasonicHornCurrentOutOfRangeModule',
+    'UltrasonicHornCurrentOutOfRangeLot',
+    'AssaySpecificTerminationError1Module',
+    'AssaySpecificTerminationError1Lot',
+    'AssaySpecificTerminationError2Module',
+    'AssaySpecificTerminationError2Lot',
   ]
   await Promise.each(issuesToInsert, async issue => {
     const issueTypeId = await seedIssueType(knex, issue, {
