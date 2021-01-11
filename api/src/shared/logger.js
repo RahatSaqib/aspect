@@ -11,7 +11,7 @@ const myFormat = printf(info => {
     info.message = JSON.stringify(info.message, null, 3)
   }
   // this is for boom validations errors, it doesn't arrive with message property
-  if (!info.message) return JSON.parse(info)
+  if (!info.message) return JSON.stringify(info, null, '\t')
   return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}${
     info.stack ? `\n${info.stack}` : ''
   }`
