@@ -30,6 +30,12 @@ yarn dist
 # Run unit tests
 yarn test
 
+# Run unit tests with watch, and no coverage
+yarn test:no-coverage
+
+# Run a single unit test by appending file to test
+yarn test:single (example: `yarn test: single src/MigratedComponents/AspectTable/TableHeader/Tests/TableHeaders.test.jsx`)
+
 # Lint all files in src (also automatically done AFTER tests are run)
 yarn lint
 
