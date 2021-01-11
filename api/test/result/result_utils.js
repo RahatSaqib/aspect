@@ -80,7 +80,7 @@ async function createResult(
     ...sampleDetails,
   }
   const assay = await knex('Assay').where('externalId', assayExternalId).first()
-  sample.id = await knex('Sample').insert(sample)
+  ;[sample.id] = await knex('Sample').insert(sample)
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
   const resultSourceDiagnosticDeviceId = await resultSourceToId(
     'DiagnosticDevice'

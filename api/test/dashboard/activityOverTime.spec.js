@@ -124,7 +124,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         sampleTypeId: sampleTypeDBSId,
         originSiteId: siteId,
       }
-      sample.id = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
       samples.push(sample)
     })
     await Promise.each(_.range(totalResults), async i => {

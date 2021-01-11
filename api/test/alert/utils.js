@@ -48,7 +48,7 @@ class AlertTestContext {
 
       // add sample alert message
       const now = new Date()
-      this.messageId = await knex('AlertMessage').insert({
+      ;[this.messageId] = await knex('AlertMessage').insert({
         alertTemplateId,
         messageStatusId: initialMessageStatusId,
         personId: userId,

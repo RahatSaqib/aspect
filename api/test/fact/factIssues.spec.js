@@ -1152,7 +1152,7 @@ describe('Fact based issues', () => {
         const resultSourceId = await resultSourceToId('DiagnosticDevice')
         const resultTypeId = await resultTypeToId('Patient')
 
-        const sampleId = await knex('Sample').insert({
+        const [sampleId] = await knex('Sample').insert({
           externalId: 'AVAILABLE_SAMPLE_1',
           collectedOn: subHours(now, 12),
           originSiteId: device.siteId,

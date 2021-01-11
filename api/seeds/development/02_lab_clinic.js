@@ -610,7 +610,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -724,7 +724,7 @@ async function seed(knex) {
       device.id
     )
 
-    const resultId = await knex('Result').insert({
+    const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId: assayIdEid,
@@ -850,7 +850,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -892,7 +892,7 @@ async function seed(knex) {
       sample.externalId,
       device.id
     )
-    const resultId = await knex('Result').insert({
+    const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId: assayIdHivVl,
