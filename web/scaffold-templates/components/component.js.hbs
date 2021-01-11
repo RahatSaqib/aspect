@@ -1,0 +1,23 @@
+import React from 'react'
+import { string } from 'prop-types'
+
+function {{pascalCase name}} ({ title }) {
+    return (
+        <div>
+            {title}
+        </div>
+    );
+};
+
+{{pascalCase name}}.defaultProps = {
+    title: '{{name}}'
+};
+
+{{pascalCase name}}.propTypes = {
+    /**
+    * Base variable for component
+    */
+    title: string,
+}
+
+export default {{pascalCase name}}
