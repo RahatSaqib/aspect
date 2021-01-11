@@ -1,11 +1,15 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { array, bool, func, number, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
 
 import PageSizeSelectors from './PageSizeSelectors'
 import PageIndexSelectors from './PageIndexSelectors'
 
 const cssClasses = classnames.bind(require('../Table.css'))
+
+/**
+ * Component to render pagination
+ */
 
 const AspectPagination = ({
   canNextPage,
@@ -49,18 +53,54 @@ const AspectPagination = ({
 )
 
 AspectPagination.propTypes = {
-  dataLength: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  pageIndex: PropTypes.number.isRequired,
-  canNextPage: PropTypes.bool.isRequired,
-  canPreviousPage: PropTypes.bool.isRequired,
-  gotoPage: PropTypes.func.isRequired,
-  name: PropTypes.string.isRequired,
-  nextPage: PropTypes.func.isRequired,
-  page: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  pageCount: PropTypes.number.isRequired,
-  previousPage: PropTypes.func.isRequired,
-  handleChangeRowsPerPage: PropTypes.func.isRequired,
+  /**
+    Length of data to be rendered, needed for calcs
+  */
+  dataLength: number.isRequired,
+  /**
+    Total rows shown per page
+  */
+  pageSize: number.isRequired,
+  /**
+    Current page index (starts at zero)
+  */
+  pageIndex: number.isRequired,
+  /**
+    Boolean to allow next page
+  */
+  canNextPage: bool.isRequired,
+  /**
+    Boolean to allow previous page
+  */
+  canPreviousPage: bool.isRequired,
+  /**
+    Function to navigate to page provided as int
+  */
+  gotoPage: func.isRequired,
+  /**
+    Name of the type of records
+  */
+  name: string.isRequired,
+  /**
+    Function to move to immediate next page
+  */
+  nextPage: func.isRequired,
+  /**
+    Array of page data
+  */
+  page: oneOfType([array]).isRequired,
+  /**
+    Length of data to be rendered, needed for calcs
+  */
+  pageCount: number.isRequired,
+  /**
+    Function to move to immediate previous page
+  */
+  previousPage: func.isRequired,
+  /**
+    Function to handle row count change
+  */
+  handleChangeRowsPerPage: func.isRequired,
 }
 
 export default AspectPagination

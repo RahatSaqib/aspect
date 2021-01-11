@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { func, number } from 'prop-types'
 import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
@@ -24,7 +24,10 @@ const TableColumnOrderButtons = ({
         data-testid={`order_left_${headerIndex}`}
         title={formatMessage(messages.moveColumnLeft)}
       >
-        <IconProvider icon="MdChevronLeft" />
+        <IconProvider
+          icon="MdChevronLeft"
+          className="tableheader__orderbutton"
+        />
       </IconButton>
       <IconButton
         disabled={headerIndex + 1 >= headersLength}
@@ -33,16 +36,19 @@ const TableColumnOrderButtons = ({
         data-testid={`order_right_${headerIndex}`}
         title={formatMessage(messages.moveColumnRight)}
       >
-        <IconProvider icon="MdChevronRight" />
+        <IconProvider
+          icon="MdChevronRight"
+          className="tableheader__orderbutton"
+        />
       </IconButton>
     </div>
   )
 }
 
 TableColumnOrderButtons.propTypes = {
-  headerIndex: PropTypes.number.isRequired,
-  headersLength: PropTypes.number.isRequired,
-  handleChangeColumnOrder: PropTypes.func.isRequired,
+  headerIndex: number.isRequired,
+  headersLength: number.isRequired,
+  handleChangeColumnOrder: func.isRequired,
 }
 
 export default TableColumnOrderButtons

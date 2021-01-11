@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { func, string } from 'prop-types'
 import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
@@ -18,14 +18,17 @@ const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
       data-testid={`hide_column_${headerIndex}`}
       title={formatMessage(messages.hideColumn)}
     >
-      <IconProvider icon="MdVisibilityOff" />
+      <IconProvider
+        icon="MdVisibilityOff"
+        className="tableheader__hidebutton"
+      />
     </IconButton>
   )
 }
 
 TableColumnHideButton.propTypes = {
-  headerIndex: PropTypes.string.isRequired,
-  handleHideColumnToggle: PropTypes.func.isRequired,
+  headerIndex: string.isRequired,
+  handleHideColumnToggle: func.isRequired,
 }
 
 export default TableColumnHideButton

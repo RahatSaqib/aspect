@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { array, oneOfType } from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
@@ -10,6 +10,10 @@ const cssClasses = classnames.bind(require('../../Table.css'))
 const CONTACTS = {
   MAX_VISIBLE_COUNT: 5,
 }
+
+/**
+ * Component to render a contact cell
+ */
 
 const ContactsCell = ({ value }) => {
   const { formatMessage } = useIntl()
@@ -39,7 +43,10 @@ ContactsCell.defaultProps = {
 }
 
 ContactsCell.propTypes = {
-  value: PropTypes.oneOf([PropTypes.array]),
+  /**
+    Data for the cell to render
+  */
+  value: oneOfType([array]),
 }
 
 export default ContactsCell

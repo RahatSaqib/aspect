@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { array, func, oneOfType } from 'prop-types'
 import { useIntl } from 'react-intl'
 import Chip from '@material-ui/core/Chip'
 import classnames from 'classnames/bind'
@@ -15,6 +15,10 @@ const getProperColumnLabelFromKey = (key, columns) => {
   }
   return key
 }
+
+/**
+ * Component to render names of hidden columns
+ */
 
 const TableHiddenColumns = ({
   columns,
@@ -38,9 +42,18 @@ const TableHiddenColumns = ({
 }
 
 TableHiddenColumns.propTypes = {
-  columns: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  hiddenColumns: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  handleHideColumnToggle: PropTypes.func.isRequired,
+  /**
+    Array of all columns rendered to table
+  */
+  columns: oneOfType([array]).isRequired,
+  /**
+    Array of columns names currently hidden
+  */
+  hiddenColumns: oneOfType([array]).isRequired,
+  /**
+    Function to handle visibility toggle
+  */
+  handleHideColumnToggle: func.isRequired,
 }
 
 export default TableHiddenColumns

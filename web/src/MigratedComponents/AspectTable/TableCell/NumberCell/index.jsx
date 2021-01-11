@@ -1,6 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { array, oneOfType } from 'prop-types'
 import { useIntl } from 'react-intl'
+
+/**
+ * Component to render a numbered cell
+ */
 
 const NumberCell = ({ value }) => {
   const { formatNumber } = useIntl()
@@ -8,7 +12,10 @@ const NumberCell = ({ value }) => {
 }
 
 NumberCell.propTypes = {
-  value: PropTypes.oneOf([PropTypes.array]).isRequired,
+  /**
+    Data for the cell to render
+  */
+  value: oneOfType([array]).isRequired,
 }
 
 export default NumberCell

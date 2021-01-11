@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { number, string } from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
@@ -7,6 +7,10 @@ import messages from '../messages'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to render page counts and navigation
+ */
 
 const NowShowing = ({ dataLength, pageIndex, pageSize, name }) => {
   const intl = useIntl()
@@ -34,10 +38,22 @@ const NowShowing = ({ dataLength, pageIndex, pageSize, name }) => {
 }
 
 NowShowing.propTypes = {
-  dataLength: PropTypes.number.isRequired,
-  pageIndex: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
+  /**
+    Length of data to be rendered, needed for calcs
+  */
+  dataLength: number.isRequired,
+  /**
+    Current int for page selected (starts at zero)
+  */
+  pageIndex: number.isRequired,
+  /**
+    Number of rows to be shown per page
+  */
+  pageSize: number.isRequired,
+  /**
+    Name of type of records
+  */
+  name: string.isRequired,
 }
 
 export default NowShowing
