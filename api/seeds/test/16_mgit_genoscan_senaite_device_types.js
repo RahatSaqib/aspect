@@ -29,7 +29,7 @@ async function seed(knex) {
     (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
     {}
   if (!deviceTypeSenaiteLimsId) {
-    deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
+    ;[deviceTypeSenaiteLimsId] = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
       name: 'Senaite LIMS',
       manufacturer: 'Senaite',

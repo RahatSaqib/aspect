@@ -3,6 +3,7 @@ const uuid = require('node-uuid')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Promise = require('bluebird')
 const _ = require('lodash')
+const { formatDateOrDefault } = require('./date')
 
 // ---------------------------------
 // create missing directories in the path and return path back
@@ -152,7 +153,7 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   items.forEach(dataItem => {
     const row = []
     fieldNames.forEach(fieldName => {
-      row.push(dataItem[fieldName])
+      row.push(formatCellContent(dataItem[fieldName]))
     })
     rows.push(row)
   })
@@ -178,7 +179,7 @@ async function generateCsvAttachment(outputFileName, { items, columns }) {
   items.forEach(dataItem => {
     const row = []
     columns.forEach(column => {
-      row.push(dataItem[column.key])
+      row.push(formatCellContent(dataItem[column.key]))
     })
     rows.push(row)
   })
@@ -191,6 +192,13 @@ async function generateCsvAttachment(outputFileName, { items, columns }) {
     fileName: outputFileName,
     disposition: 'attachment',
   }
+}
+
+function formatCellContent(cellContent) {
+  if (cellContent instanceof Date) {
+    cellContent = formatDateOrDefault(cellContent, 'yyyy-MM-dd HH:mm:ss')
+  }
+  return cellContent
 }
 
 // ----------------------------------------------------------------------------------------------

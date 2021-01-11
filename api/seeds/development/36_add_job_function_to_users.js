@@ -57,22 +57,22 @@ async function seed(knex) {
   })
 
   if (checkJobEd.length < 1) {
-    const jobIdEd = await knex('Job').insert({
+    const [jobIdEd] = await knex('Job').insert({
       personId: personIds.ed,
       jobFunctionId: jobFunctionManager.id,
     })
 
-    const jobIdJim = await knex('Job').insert({
+    const [jobIdJim] = await knex('Job').insert({
       personId: personIds.jim,
       jobFunctionId: jobFunctionLabManager.id,
     })
 
-    const jobIdJon = await knex('Job').insert({
+    const [jobIdJon] = await knex('Job').insert({
       personId: personIds.jon,
       jobFunctionId: jobFunctionClinical.id,
     })
 
-    const jobIdSteve = await knex('Job').insert({
+    const [jobIdSteve] = await knex('Job').insert({
       personId: personIds.steve,
       jobFunctionId: jobFunctionClinical.id,
     })
