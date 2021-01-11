@@ -12,12 +12,22 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  const issueType = await seedIssueType(knex, 'TooManyInvalidResults', {
+  const issueTypeModule = await seedIssueType(
+    knex,
+    'TooManyInvalidResultsModule',
+    {
+      userName: 'admin',
+    }
+  )
+  const issueTypeLot = await seedIssueType(knex, 'TooManyInvalidResultsLot', {
     userName: 'admin',
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['TooManyInvalidResults'],
+    issueTypeWhitelist: [
+      'TooManyInvalidResultsLot',
+      'TooManyInvalidResultsModule',
+    ],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -26,8 +36,11 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeTooManyInvalidResults = await knex('IssueType')
-    .where({ id: issueType })
+  const issueTypeTooManyInvalidResultsModule = await knex('IssueType')
+    .where({ id: issueTypeModule })
+    .first()
+  const issueTypeTooManyInvalidResultsLot = await knex('IssueType')
+    .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
@@ -37,12 +50,21 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: issueTypeTooManyInvalidResults.id,
-      messageTypeId: issueTypeTooManyInvalidResults.defaultMessageTypeId,
+      issueTypeId: issueTypeTooManyInvalidResultsModule.id,
+      messageTypeId: issueTypeTooManyInvalidResultsModule.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Too Many Invalid Results',
+      name: 'Too Many Invalid Results - Module',
+      ...auditFields,
+    },
+    {
+      issueTypeId: issueTypeTooManyInvalidResultsLot.id,
+      messageTypeId: issueTypeTooManyInvalidResultsLot.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: 'Too Many Invalid Results - Lot',
       ...auditFields,
     },
   ])

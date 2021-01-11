@@ -12,16 +12,26 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  const issueType = await seedIssueType(
+  const issueTypeModule = await seedIssueType(
     knex,
-    'SignalLossDetectedInAmplificationCurve',
+    'SignalLossDetectedInAmplificationCurveModule',
+    {
+      userName: 'admin',
+    }
+  )
+  const issueTypeLot = await seedIssueType(
+    knex,
+    'SignalLossDetectedInAmplificationCurveLot',
     {
       userName: 'admin',
     }
   )
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['SignalLossDetectedInAmplificationCurve'],
+    issueTypeWhitelist: [
+      'SignalLossDetectedInAmplificationCurveLot',
+      'SignalLossDetectedInAmplificationCurveModule',
+    ],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -30,8 +40,11 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeObject = await knex('IssueType')
-    .where({ id: issueType })
+  const issueTypeModuleObject = await knex('IssueType')
+    .where({ id: issueTypeModule })
+    .first()
+  const issueTypeLotObject = await knex('IssueType')
+    .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
@@ -41,12 +54,21 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: issueTypeObject.id,
-      messageTypeId: issueTypeObject.defaultMessageTypeId,
+      issueTypeId: issueTypeModuleObject.id,
+      messageTypeId: issueTypeModuleObject.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Signal Loss Detected in the Amplification Curve',
+      name: 'Signal Loss Detected in the Amplification Curve - Module',
+      ...auditFields,
+    },
+    {
+      issueTypeId: issueTypeLotObject.id,
+      messageTypeId: issueTypeLotObject.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: 'Signal Loss Detected in the Amplification Curve - Lot',
       ...auditFields,
     },
   ])
