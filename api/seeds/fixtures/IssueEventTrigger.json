@@ -158,7 +158,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -179,7 +179,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -193,7 +193,7 @@
           "evaluationFilterParameters": {
             "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
             "categoryId": "Invalid",
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3
@@ -201,7 +201,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -223,7 +223,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -244,7 +244,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -265,49 +265,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
-      }
-    },
-    {
-      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [5016],
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
-      }
-    },
-    {
-      "issueType": "FailedToVerifyValidBackgroundErrorForAnalyteLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [5016],
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -373,7 +331,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -394,7 +352,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -430,7 +388,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -451,7 +409,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -472,7 +430,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -493,7 +451,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -514,7 +472,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -535,7 +493,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -556,7 +514,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -577,7 +535,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -598,7 +556,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -619,7 +577,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial"
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
