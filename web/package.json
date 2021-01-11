@@ -27,7 +27,7 @@
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 8080",
     "build-storybook": "build-storybook"
   },
   "husky": {

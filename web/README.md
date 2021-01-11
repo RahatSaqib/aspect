@@ -98,7 +98,7 @@ Also update vendorPackages in dist.js to make sure that vendor packages are bund
 yarn storybook
 ```
 
-To view storybook, visit http://localhost:6060/.
+To view storybook, visit http://localhost:8080/.
 
 
 ## Styleguide [DEPRECATED]
