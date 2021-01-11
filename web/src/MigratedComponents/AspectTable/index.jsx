@@ -28,6 +28,11 @@ import PlaceholderCell from './TableCell/PlaceholderCell'
 import AspectTablePagination from './TablePagination'
 import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
 
+/**
+ * Table component to render data within pre-defined
+ * columns and formatters
+ */
+
 const AspectTable = ({ tableData: data, config }) => {
   const { name } = config
   const {
@@ -266,7 +271,13 @@ const AspectTable = ({ tableData: data, config }) => {
 }
 
 AspectTable.proptTypes = {
+  /**
+    Data input for tables
+  */
   data: PropTypes.oneOf([PropTypes.array]).isRequired,
+  /**
+   Config input for tables
+ */
   config: PropTypes.oneOf([PropTypes.object]).isRequired,
 }
 

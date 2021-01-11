@@ -2,9 +2,9 @@ import React, { useMemo } from 'react'
 import { IntlProvider } from 'react-intl'
 import { useTable, useSortBy, usePagination } from 'react-table'
 
-import AspectTablePagination from './index'
+import AspectTablePagination from '../index'
 
-import { mockDatafetch, buildColumnsFromData } from '../Helpers'
+import { mockDatafetch, buildColumnsFromData } from '../../Helpers'
 
 const { data } = mockDatafetch(90)
 const config = {
