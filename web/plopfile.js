@@ -5,19 +5,19 @@ module.exports = plop => {
   const addComponentIndex = {
     type: 'add',
     path: `${componentPath}/{{pascalCase name}}/index.jsx`,
-    templateFile: `${templatePath}/components/component.js.hbs`,
+    templateFile: `${templatePath}/components/component.jsx.hbs`,
   }
 
   const addComponentTest = {
     type: 'add',
-    path: `${componentPath}/{{pascalCase name}}/tests/{{pascalCase name}}.test.js`,
-    templateFile: `${templatePath}/components/component.test.js.hbs`,
+    path: `${componentPath}/{{pascalCase name}}/tests/{{pascalCase name}}.test.jsx`,
+    templateFile: `${templatePath}/components/component.test.jsx.hbs`,
   }
 
   const addComponentStory = {
     type: 'add',
-    path: `${componentPath}/{{pascalCase name}}/stories/{{pascalCase name}}.stories.js`,
-    templateFile: `${templatePath}/components/component.stories.js.hbs`,
+    path: `${componentPath}/{{pascalCase name}}/stories/{{pascalCase name}}.stories.jsx`,
+    templateFile: `${templatePath}/components/component.stories.jsx.hbs`,
   }
 
   plop.setGenerator('component', {
