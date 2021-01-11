@@ -31,7 +31,7 @@ class NotificationTestContext {
       this.partnerId = partnerId
 
       const now = new Date()
-      this.ntId = await knex('NotificationType').insert({
+      ;[this.ntId] = await knex('NotificationType').insert({
         partnerId: this.partnerId,
         issueTypeId: 2,
         name: 'Results Delayed',

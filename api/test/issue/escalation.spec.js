@@ -157,7 +157,7 @@ describe('Issue Escalation', () => {
       knex,
       'Triggered'
     )
-    const issueId = await knex('Issue').insert({
+    const [issueId] = await knex('Issue').insert({
       issueTypeId,
       issueStatusId: activeIssueStatus.id,
       partnerId,
