@@ -8,5 +8,5 @@ describe('{{pascalCase name}}', () => {
   it('should render {{pascalCase name}} correctly', () => {
     const { getByText } = render(<Base {...Base.args} />)
     expect(getByText('{{name}}')).toBeInTheDocument()
-  });
-});
+  })
+})
