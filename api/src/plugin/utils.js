@@ -63,12 +63,22 @@ async function shouldTriggerResultErrorAnalysis(
     })
   }
 
+  // this one is for result base issue, only needs module serial.
+  // others data parameters are for filtering not for triggering the issue.
   await messageContext.resultAnalyzeCategoriesAndErrors(
     deviceId,
     resultId,
     resultCategory1, // <-- this is result category externalid
     resultErrorCode,
-    { resultOutcome, moduleSerial, assayId, consumableLot, instrumentSerial }
+    { resultOutcome, moduleSerial, instrumentSerial }
+  )
+  // this 2nd one is for reagent base issue, it needs assayid and consumablelot.
+  await messageContext.resultAnalyzeCategoriesAndErrors(
+    deviceId,
+    resultId,
+    resultCategory1, // <-- this is result category externalid
+    resultErrorCode,
+    { resultOutcome, assayId, consumableLot, instrumentSerial }
   )
 }
 
