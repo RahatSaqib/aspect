@@ -386,31 +386,31 @@ describe('Process GeneXpert Logs', () => {
       await waitForIdle()
     }
 
-    // post 1-st error
+    // post 1st error
     await postError(logDatas[0])
     // this does not trigger issue, i.e. Issue table doesn't contain new entries
     let issuesAfter = await getIssues(deviceId)
     assert.equal(issuesBefore.length, issuesAfter.length)
 
-    // post 2-nd error
+    // post 2nd error
     await postError(logDatas[1])
-    // this also does not trigger issue, i.e. Issue table doesn't contain new entries
+    // this also does not trigger issue, it's the INFO version of the previous error
     issuesAfter = await getIssues(deviceId)
     assert.equal(issuesBefore.length, issuesAfter.length)
 
-    // post 3-rd error
+    // post 3rd error
     await postError(logDatas[2])
     issuesAfter = await getIssues(deviceId)
-    // 3rd error triggers issue - Issue table contains just created record with issue details
+    // 3rd error still shouldn't trigger issue because so far we only have the duplicated problem in 1st and 2nd post above
     assert.equal(issuesBefore.length, issuesAfter.length)
 
     // post 4th error - should NOT produce an issue
     await postError(logDatas[3])
     issuesAfter = await getIssues(deviceId)
-    // 4th error triggers issue - Issue table contains just created record with issue details
+    // 4th error still no issue - so far, we only have two "real" problems (2 duplicates in the previous four posts)
     assert.equal(issuesBefore.length, issuesAfter.length)
 
-    // post 5th error - should produce an issue
+    // post 5th error - this should produce an issue because we now have a third "real" problem
     await postError(logDatas[4])
     issuesAfter = await getIssues(deviceId)
     // 5th error triggers issue - Issue table contains just created record with issue details
