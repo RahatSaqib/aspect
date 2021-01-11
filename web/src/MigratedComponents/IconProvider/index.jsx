@@ -17,6 +17,11 @@ async function loadIconModule(icon) {
   }
 }
 
+/**
+ * Icon component to dynamically import icon from string.
+ * Falls back to default icon if failure
+ */
+
 const IconProvider = memo(({ icon, className }) => {
   const IconShell = ({ children }) => (
     <div className={cssClasses([className])}>{children}</div>
@@ -35,7 +40,7 @@ const IconProvider = memo(({ icon, className }) => {
     <Suspense
       fallback={
         <IconShell>
-          <FaSquare className={cssClasses(['icons__proxy'])} />
+          <FaSquare className={cssClasses(['icons__proxy'])} title="FaSquare" />
         </IconShell>
       }
     >
@@ -43,20 +48,22 @@ const IconProvider = memo(({ icon, className }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent />
+          <IconComponent title={icon} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
   )
 })
 
-IconProvider.defaultProps = {
-  className: '',
-}
-
 IconProvider.propTypes = {
+  /**
+    String of the icon name to be displayed
+  */
   icon: PropTypes.string.isRequired,
-  className: PropTypes.string,
+  /**
+    Class name for icon to be displayed
+  */
+  className: PropTypes.string.isRequired,
 }
 
 export default IconProvider

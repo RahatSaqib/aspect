@@ -1,10 +1,13 @@
 import PieRowGraph from '../../PieRowGraph'
-import { dateRangeOptions } from '../../Helpers/Formatters/datetime'
-import AspectDropDown from '../../../AspectDropDown'
+import { dateRangeOptions } from '../../Helpers/Formatters'
+import AspectDropDown from '../../../AspectDropdown'
 
-import CONSTS from '../CONSTS'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
-const { DATE_RANGE_OPTIONS } = CONSTS
+const {
+  DATE_RANGE_OPTIONS,
+  DATE_RANGE_KEYS: { CURRENT_MONTH },
+} = DATE_CONSTS
 const dateRanges = dateRangeOptions()
 const currentMonth =
   dateRanges[Object.keys(dateRanges)][DATE_RANGE_OPTIONS.LAST_MONTH].value
@@ -42,7 +45,7 @@ const resultsTransmittedGraphs = {
           method: 'GET',
           endpoint: '/dashboard/results-transmitted',
           params: {
-            currentMonth,
+            [CURRENT_MONTH]: currentMonth,
           },
         },
         indexBy: 'date',
