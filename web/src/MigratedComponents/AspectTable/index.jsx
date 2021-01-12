@@ -38,9 +38,16 @@ import {
 
 const cssClasses = classnames.bind(require('./Table.css'))
 
-const AspectTableCore = ({ config, tableData, params }) => {
-  const history = useHistory()
-  const location = useLocation()
+const AspectTableCore = ({
+  config,
+  tableData,
+  params,
+  urlParams,
+  setUrlParams,
+  setParams,
+}) => {
+  const { push } = useHistory()
+  const { pathname } = useLocation()
   const { total, data } = tableData
   const { name } = config
   const {
@@ -124,54 +131,15 @@ const AspectTableCore = ({ config, tableData, params }) => {
     setColumnOrder,
   ])
 
-  useEffect(() => {
-    async function buildAndSetParams() {
-      const { page = 0, size, sortCol, sortDir } = await shapeTableParamsForApi(
-        {
-          pageIndex,
-          pageSize,
-          sortBy,
-          initialOrder,
-        }
-      )
+  // useEffect(())
 
-      if (
-        !isEqual(
-          {
-            page,
-            size,
-            sortCol,
-            sortDir,
-          },
-          params
-        )
-      ) {
-        const newUrlParams = new URLSearchParams({
-          page,
-          size,
-          sortCol,
-          sortDir,
-        }).toString()
-        // window.location.search = newUrlParams
-        window.history.pushState(null, '', newUrlParams)
-        // history.replace({ pathname, search: newUrlParams })
-        // console.log(history)
-
-        // push(`${pathname}?${newUrlParams}`)
-      }
-
-      // setParamsToUrl({
-      //   page,
-      //   size,
-      //   sortCol,
-      //   sortDir,
-      // })
-    }
-    if (data && data.length) {
-      buildAndSetParams()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize, sortBy, initialOrder])
+  console.log({
+    tableData,
+    pageIndex,
+    pageSize,
+    sortBy,
+    columnOrder,
+  })
 
   return (
     <Fragment>
@@ -262,14 +230,13 @@ function useUrlQuery() {
 
 const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const intl = useIntl()
-  const urlQuery = useUrlQuery()
+  const query = useUrlQuery()
   const config = baseConfig(intl)
   const history = useHistory()
-  const { search } = useLocation()
-  const prms = useParams()
+  const { pathname, search } = useLocation()
+  const [size, setSize] = useState(30)
 
-  const [params, setParams] = useState(false)
-  const [paramsToUrl, setParamsToUrl] = useState(false)
+  const params = { size }
 
   const {
     error,
@@ -280,19 +247,12 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   } = usePaginatedQuery(
     [CONSTS.KEY, { params }],
     async (_queryId, { params }) => {
-      console.log(params, window.performance.now())
+      // console.log(params, window.performance.now())
       return fetchWrapperForQueries({
         endpoint: CONSTS.ENDPOINT,
         params,
       })
     }
-    // {
-    //   onSuccess: ({ total: totalRes, data: dataRes }) => {
-    //     if (!isEqual(dataRes, data.data)) {
-    //       setData({ total: totalRes, data: dataRes })
-    //     }
-    //   },
-    // }
   )
 
   if (isError) {
@@ -300,33 +260,45 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   }
 
   useEffect(() => {
-    console.log(search)
-
-    const paramsFromUrl = getParamsFromUrl(urlQuery, search)
-    if (!isEqual(params, paramsFromUrl)) {
-      setParams(paramsFromUrl)
+    if (params) {
+      const urlParams = getParamsFromUrl(query, search)
+      const newUrlParams = new URLSearchParams(params).toString()
+      if (!isEqual(urlParams, params)) {
+        console.log(urlParams, params)
+        history.push(`${pathname}?${newUrlParams}`)
+      }
     }
-  }, [search, urlQuery])
+  }, [params])
 
   // useEffect(() => {
-  // if (paramsToUrl) {
-  //   const paramsFromUrl = getParamsFromUrl(urlQuery, keys(paramsToUrl))
-  //   console.log(params, paramsFromUrl, window.performance.now())
-  //   if (!params && !isEqual(params, paramsFromUrl)) {
-  //     setParams(paramsFromUrl)
+  // async function formatParams(urlParams) {
+  //   const { page = 0, size, sortCol, sortDir } = await shapeTableParamsForApi(
+  //     urlParams
+  //   )
+  //   if (params !== { page, size, sortCol, sortDir }) {
+  //     console.log(params, { page, size, sortCol, sortDir })
+  //     // setParams({ page, size, sortCol, sortDir })
   //   }
   // }
-  // const trueUrlParams = getParamsFromUrl(urlQuery, keys(paramsToUrl))
-  // if (paramsToUrl && !isEqual(params, trueUrlParams)) {
-  //   console.log(paramsToUrl, trueUrlParams, window.performance.now())
-  //   setParams(getParamsFromUrl(urlQuery, keys(paramsToUrl)))
-  // }
-  // }, [params, paramsToUrl])
 
-  return !data || isLoading ? (
+  //   if (urlParams) {
+  //     const newUrlParams = new URLSearchParams(urlParams).toString()
+  //     console.log(urlParams)
+  //     formatParams(urlParams)
+  //     // setParams(urlParams)
+  //     // history.push(`${pathname}?${newUrlParams}`)
+  //   }
+  // }, [urlParams])
+
+  return isLoading || isFetching || !data ? (
     <Loading />
   ) : (
-    <AspectTableCore config={config} tableData={data} params={params} />
+    <AspectTableCore
+      config={config}
+      tableData={data}
+      params={params}
+      setSize={setSize}
+    />
   )
 }
 
