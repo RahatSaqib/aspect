@@ -73,7 +73,7 @@ TableColumnHeader.propTypes = {
   */
   headerVisibilityComponent: func.isRequired,
   /**
-    Boolean to check if row is manually sorted
+    Boolean to check if rows are sorted by this column
   */
   isSorted: bool.isRequired,
   /**
