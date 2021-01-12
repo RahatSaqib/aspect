@@ -24,10 +24,10 @@ module.exports = {
   },
   log: {
     fileLogLevel: process.env['log.file.logLevel'] || 'info',
-    filterLabel: process.env['log.filterLabel'] || null,
     logLevel: process.env['log.console.logLevel'] || 'info',
     format: process.env['log.format'] || 'text',
     loggingFilePath: process.env['log.file.path'] || null,
+    labelsWhiteList: process.env['log.labelsWhiteList'] || null,
     labelsBlackList: process.env['log.labelsBlackList'] || null,
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),

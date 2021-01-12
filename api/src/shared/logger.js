@@ -21,10 +21,10 @@ const relabel = format(info => {
   if (info.reLabel) info.label = info.reLabel
   return info
 })
-const filterLabel = format(info => {
-  if (config.log.filterLabel) {
-    const regex = new RegExp(config.log.filterLabel, 'g')
-    if (!regex.test(info.label.toString())) {
+const labelsWhiteList = format(info => {
+  if (config.log.labelsWhiteList) {
+    const regex = new RegExp(config.log.labelsWhiteList, 'g')
+    if (!regex.test(info.label)) {
       // this is a regular expression
       return false
     }
@@ -33,7 +33,7 @@ const filterLabel = format(info => {
 })
 
 const blacklistLabels = format(info => {
-  if (config.log.labelsBlackListed) {
+  if (config.log.labelsBlackList) {
     const regex = new RegExp(config.log.labelsBlackList, 'g')
     if (regex.test(info.label)) {
       return false
@@ -41,6 +41,20 @@ const blacklistLabels = format(info => {
   }
   return info
 })
+
+const getBaseFormat = extraFormater =>
+  combine(
+    format.colorize(),
+    label({ label: 'Aspect api' }),
+    relabel(),
+    errors({ stack: true }),
+    labelsWhiteList(),
+    blacklistLabels(),
+
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    extraFormater
+  )
+
 const logger = createLogger()
 //
 // If we're not in production then log to the `console` with the format:
@@ -49,33 +63,14 @@ const logger = createLogger()
 if (config.log.format === 'JSON') {
   logger.add(
     new transports.Console({
-      format: combine(
-        format.colorize(),
-        label({ label: 'Aspect api' }),
-        relabel(),
-        errors({ stack: true }),
-        filterLabel(),
-        blacklistLabels(),
-
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        format.simple()
-      ),
+      format: getBaseFormat(format.simple()),
+      level: config.log.logLevel,
     })
   )
 } else {
   logger.add(
     new transports.Console({
-      format: combine(
-        format.colorize(),
-
-        label({ label: 'Aspect api' }),
-        relabel(),
-        filterLabel(),
-        blacklistLabels(),
-        errors({ stack: true }),
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        myFormat
-      ),
+      format: getBaseFormat(myFormat),
       level: config.log.logLevel,
     })
   )
@@ -84,17 +79,7 @@ if (config.log.format === 'JSON') {
 if (config.log.loggingFilePath) {
   logger.add(
     new transports.File({
-      format: combine(
-        errors({ stack: true }),
-        format.colorize(),
-        label({ label: 'Aspect api' }),
-        relabel(),
-        filterLabel(),
-        blacklistLabels(),
-
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        format.simple()
-      ),
+      format: getBaseFormat(format.simple()),
       filename: config.log.loggingFilePath,
       level: config.log.fileLogLevel,
     })
