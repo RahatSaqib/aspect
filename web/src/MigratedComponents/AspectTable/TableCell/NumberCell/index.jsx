@@ -1,5 +1,5 @@
 import React from 'react'
-import { array, oneOfType } from 'prop-types'
+import { number } from 'prop-types'
 import { useIntl } from 'react-intl'
 
 /**
@@ -15,7 +15,7 @@ NumberCell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([array]).isRequired,
+  value: number.isRequired,
 }
 
 export default NumberCell

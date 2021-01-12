@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import { array, bool, oneOfType } from 'prop-types'
+import { bool, number, oneOfType } from 'prop-types'
 import { useIntl } from 'react-intl'
 
 import { timeSinceFromUnix } from '../../Helpers'
@@ -26,7 +26,7 @@ DateTimeCellBase.defaultProps = {
 }
 
 DateTimeCellBase.propTypes = {
-  value: oneOfType([array]).isRequired,
+  value: number.isRequired,
   flagged: bool,
 }
 
@@ -37,14 +37,14 @@ DateTimeCellBase.propTypes = {
 const DateTimeCell = ({ value }) => <DateTimeCellBase value={value} />
 
 DateTimeCell.defaultProps = {
-  value: [],
+  value: false,
 }
 
 DateTimeCell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([array]),
+  value: oneOfType([number, bool]),
 }
 
 /**
@@ -57,14 +57,14 @@ const DateTimeCellFlagged = ({ value }) => (
 )
 
 DateTimeCell.defaultProps = {
-  value: [],
+  value: false,
 }
 
 DateTimeCell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([array]),
+  value: oneOfType([bool, number]),
 }
 
 export { DateTimeCell, DateTimeCellFlagged }
