@@ -46,8 +46,17 @@ const TableColumnOrderButtons = ({
 }
 
 TableColumnOrderButtons.propTypes = {
+  /**
+    Index for the header within the group
+  */
   headerIndex: number.isRequired,
+  /**
+    Number of headers for the table
+  */
   headersLength: number.isRequired,
+  /**
+    Function to handle column order
+  */
   handleChangeColumnOrder: func.isRequired,
 }
 
