@@ -23,42 +23,40 @@ async function onIssueTriggered({ issueId }, { messageContext: context }) {
   context.escalateIssues(issueId)
 }
 
-function onEscalateIssues() {
-  return async (action, { messageContext: context }) => {
-    context.bindActionCreators({
-      issueEscalated,
-      alertMessageUpdateAfterIssueDataChanged,
-    })
-    context.transact(async knex => {
-      const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
+async function onEscalateIssues(action, { messageContext: context }) {
+  context.bindActionCreators({
+    issueEscalated,
+    alertMessageUpdateAfterIssueDataChanged,
+  })
+  return context.transact(async knex => {
+    const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
+      knex,
+      action.issueId
+    )
+    if (_.isEmpty(openIssuesToCheck)) {
+      return Promise.resolve()
+    }
+    return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
+      const shouldEscalate = await issueConditionsMet(
         knex,
-        action.issueId
+        issueEscalationTrigger,
+        issueEscalationTrigger.conditions
       )
-      if (_.isEmpty(openIssuesToCheck)) {
-        return Promise.resolve()
-      }
-      return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
-        const shouldEscalate = await issueConditionsMet(
-          knex,
-          issueEscalationTrigger,
-          issueEscalationTrigger.conditions
+      if (shouldEscalate) {
+        await knex('Issue')
+          .where('id', issueEscalationTrigger.id)
+          .update({ level: issueEscalationTrigger.escalateToLevel })
+        context.issueEscalated(
+          issueEscalationTrigger.id,
+          issueEscalationTrigger.escalateToLevel
         )
-        if (shouldEscalate) {
-          await knex('Issue')
-            .where('id', issueEscalationTrigger.id)
-            .update({ level: issueEscalationTrigger.escalateToLevel })
-          context.issueEscalated(
-            issueEscalationTrigger.id,
-            issueEscalationTrigger.escalateToLevel
-          )
-        } else {
-          context.alertMessageUpdateAfterIssueDataChanged(
-            issueEscalationTrigger.id
-          )
-        }
-      })
+      } else {
+        context.alertMessageUpdateAfterIssueDataChanged(
+          issueEscalationTrigger.id
+        )
+      }
     })
-  }
+  })
 }
 
 async function findOpenIssuesToCheckForEscalation(knex, issueId) {

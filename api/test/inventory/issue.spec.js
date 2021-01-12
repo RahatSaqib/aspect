@@ -571,7 +571,7 @@ async function createTestInventory(knex, siteId, partnerId) {
     allowStockUpdateFromActionDashboard: true,
   })
 
-  const inventoryItemId = await knex('InventoryItem').insert({
+  const [inventoryItemId] = await knex('InventoryItem').insert({
     consumableId,
     siteId,
     lotNumber: 'TEST-LOT',

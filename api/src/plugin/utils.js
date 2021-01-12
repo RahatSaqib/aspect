@@ -2,15 +2,15 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
+  resultAnalyzeCategoriesAndErrors,
 } = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
   deviceHardwareError,
+  hardwareErrorActions,
 } = require('../device/actions')
-const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
+const { issueTypeToId } = require('../shared/dictionary')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -49,96 +49,30 @@ async function getReplacedModuleSerials(knex, deviceId) {
   return replacedModuleSerials
 }
 
-async function shouldTriggerResultCategoryAnalysis(
-  messageContext,
-  deviceId,
-  resultId,
-  resultCategoryId,
-  { resultOutcome, moduleSerial, assayId, consumableLot }
-) {
-  const resultCategories = await allResultCategoryToId()
-  const categoriesToAnalyze = [resultCategories.Invalid]
-  if (categoriesToAnalyze.includes(resultCategoryId)) {
-    if (!messageContext.resultAnalyzeCategories) {
-      messageContext = messageContext.bindActionCreators({
-        resultAnalyzeCategories,
-      })
-    }
-    const { resultCategoryExternalId } = await knex('ResultCategory')
-      .where({
-        id: resultCategoryId,
-      })
-      .first('externalId as resultCategoryExternalId')
-    await messageContext.resultAnalyzeCategories(
-      deviceId,
-      resultId,
-      resultCategoryExternalId,
-      {
-        moduleSerial,
-        resultOutcome,
-      }
-    )
-    await messageContext.resultAnalyzeCategories(
-      deviceId,
-      resultId,
-      resultCategoryExternalId,
-      {
-        assayId,
-        consumableLot,
-        resultOutcome,
-      }
-    )
-  }
-}
-
 async function shouldTriggerResultErrorAnalysis(
   messageContext,
   deviceId,
   resultId,
+  resultCategory1, // <-- this is result category externalid
   resultErrorCode,
-  { resultOutcome, moduleSerial, assayId, consumableLot }
+  { resultOutcome, instrumentSerial }
 ) {
-  const errorsToAnalyze = [
-    5007,
-    5006,
-    5016,
-    5017,
-    5011,
-    2005,
-    2008,
-    2026,
-    2032,
-    2035,
-    2036,
-    2096,
-    2097,
-  ]
-  if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
-    if (!messageContext.resultAnalyzeErrors) {
-      messageContext = messageContext.bindActionCreators({
-        resultAnalyzeErrors,
-      })
-    }
-    await messageContext.resultAnalyzeErrors(
-      deviceId,
-      resultId,
-      resultErrorCode,
-      {
-        moduleSerial,
-        resultOutcome,
-      }
-    )
-    await messageContext.resultAnalyzeErrors(
-      deviceId,
-      resultId,
-      resultErrorCode,
-      {
-        assayId,
-        consumableLot,
-        resultOutcome,
-      }
-    )
+  if (!messageContext.resultAnalyzeCategoriesAndErrors) {
+    messageContext = messageContext.bindActionCreators({
+      resultAnalyzeCategoriesAndErrors,
+    })
   }
+
+  await messageContext.resultAnalyzeCategoriesAndErrors(
+    deviceId,
+    resultId,
+    resultCategory1, // <-- this is result category externalid
+    resultErrorCode,
+    {
+      instrumentSerial,
+      resultOutcome,
+    }
+  )
 }
 
 async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
@@ -317,7 +251,6 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
 async function shouldTriggerHardwareErrorAnalysis(
   knex,
   messageContext,
-  partnerId,
   device,
   payload,
   deviceOperationId
@@ -328,80 +261,25 @@ async function shouldTriggerHardwareErrorAnalysis(
   } = payload
 
   if (details.Errors && _.isArray(details.Errors) && details.Errors.length) {
-    // get all IssueEventTriggers starting with `Hardware`
-    const hardwareEventTriggers = await knex('IssueEventTrigger as iet')
-      .innerJoin('IssueType as it', 'iet.issueTypeId', 'it.id')
-      .innerJoin('IssueEventStatus as ies', 'iet.issueEventStatusId', 'ies.id')
-      .where('ies.externalId', 'Triggered')
-      .where('iet.partnerId', partnerId)
-      .whereRaw('it.externalId LIKE ?', ['Hardware%'])
-      .select(
-        'iet.issueTypeId',
-        'it.externalId as issueType',
-        'iet.triggerConditions as triggerConditionsRaw'
-      )
-      .then(items =>
-        items.map(x => ({
-          ...x,
-          // append new prop with parsed JSON string
-          triggerConditions: JSON.parse(x.triggerConditionsRaw),
-        }))
-      )
-
-    /**
-     * get 1st IssueEventTrigger with needed ErrorCode
-     * --> see original details in prop 'triggerConditions' in /seeds/fixtures/IssueEventTrigger.json
-     * for 'Hardware*' issueTypes
-     */
-    const hardwareIssueEventTrigger = _.reduce(
-      details.Errors,
-      (memo, errorItem) => {
-        // get error code from log entry in 'deviceOperation'
-        const errorCode = parseInt(errorItem.ErrorCode, 10)
-        // get 1st IssueEventTrigger with same error code
-        const hardwareIssueEventTrigger = hardwareEventTriggers.find(
-          issueEventTrigger => {
-            const {
-              triggerConditions: {
-                conditions: { evaluationFilterParameters = {} },
-              } = {},
-            } = issueEventTrigger
-
-            return errorCode === evaluationFilterParameters.errorCode
-          }
-        )
-
-        if (!memo && hardwareIssueEventTrigger) {
-          memo = hardwareIssueEventTrigger
-        }
-
-        return memo
-      },
-      null
+    const errorForTriggering = _.find(details.Errors, error =>
+      _.includes(Object.keys(hardwareErrorActions), error.ErrorCode)
     )
-
-    if (hardwareIssueEventTrigger) {
-      const {
-        triggerConditions: {
-          conditions: {
-            evaluationFilterParameters: { errorCode },
-          },
-          action: actionType,
-        },
-      } = hardwareIssueEventTrigger
+    if (errorForTriggering) {
       const options = {
         startedOn,
         details,
         deviceOperationId,
-        errorCode,
       }
-
       if (!messageContext.deviceHardwareError) {
         messageContext = messageContext.bindActionCreators({
           deviceHardwareError,
         })
       }
-      messageContext.deviceHardwareError(device, actionType, options)
+      messageContext.deviceHardwareError(
+        device,
+        errorForTriggering.ErrorCode,
+        options
+      )
     }
   }
 }
@@ -414,6 +292,5 @@ module.exports = {
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerResultCategoryAnalysis,
   shouldTriggerHardwareErrorAnalysis,
 }

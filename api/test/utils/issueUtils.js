@@ -143,7 +143,7 @@ async function createAndTriggerIssueBase({
 }) {
   const activeIssueStatus = await getIssueStatus(knex, 'Active')
   const triggeredIssueEventStatus = await getIssueEventStatus(knex, 'Triggered')
-  const issueId = await knex('Issue').insert({
+  const [issueId] = await knex('Issue').insert({
     issueTypeId,
     issueStatusId: activeIssueStatus.id,
     partnerId,

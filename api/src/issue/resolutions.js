@@ -7,48 +7,46 @@ const {
   issueEventStatusToId,
 } = require('../shared/dictionary')
 
-function onResolveIssues() {
-  return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueResolved })
-    context.transact(async knex => {
-      const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
+async function onResolveIssues(action, { messageContext: context }) {
+  context.bindActionCreators({ issueResolved })
+  return context.transact(async knex => {
+    const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
+      knex,
+      action.issueId
+    )
+    const resolvedIssueStatusId = await issueStatusToId('Resolved')
+    const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
+    if (_.isEmpty(openIssuesToCheck)) {
+      return Promise.resolve()
+    }
+    return Promise.each(openIssuesToCheck, async issueResolutionTrigger => {
+      const shouldResolve = await issueConditionsMet(
         knex,
-        action.issueId
+        issueResolutionTrigger,
+        issueResolutionTrigger.conditions
       )
-      const resolvedIssueStatusId = await issueStatusToId('Resolved')
-      const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
-      if (_.isEmpty(openIssuesToCheck)) {
-        return Promise.resolve()
+      if (shouldResolve) {
+        const now = new Date()
+        await knex('Issue').where({ id: issueResolutionTrigger.id }).update({
+          issueStatusId: resolvedIssueStatusId,
+          updatedOn: now,
+        })
+        await knex('IssueStatusLog').insert({
+          issueId: issueResolutionTrigger.id,
+          issueStatusId: resolvedIssueStatusId,
+          changedOn: now,
+          createdOn: now,
+        })
+        context.issueResolved(issueResolutionTrigger.id)
+        await knex('IssueEvent').insert({
+          issueId: issueResolutionTrigger.id,
+          issueEventStatusId: resolvedIssueEventStatusId,
+          data: JSON.stringify(action),
+          createdOn: now,
+        })
       }
-      return Promise.each(openIssuesToCheck, async issueResolutionTrigger => {
-        const shouldResolve = await issueConditionsMet(
-          knex,
-          issueResolutionTrigger,
-          issueResolutionTrigger.conditions
-        )
-        if (shouldResolve) {
-          const now = new Date()
-          await knex('Issue').where({ id: issueResolutionTrigger.id }).update({
-            issueStatusId: resolvedIssueStatusId,
-            updatedOn: now,
-          })
-          await knex('IssueStatusLog').insert({
-            issueId: issueResolutionTrigger.id,
-            issueStatusId: resolvedIssueStatusId,
-            changedOn: now,
-            createdOn: now,
-          })
-          context.issueResolved(issueResolutionTrigger.id)
-          await knex('IssueEvent').insert({
-            issueId: issueResolutionTrigger.id,
-            issueEventStatusId: resolvedIssueEventStatusId,
-            data: JSON.stringify(action),
-            createdOn: now,
-          })
-        }
-      })
     })
-  }
+  })
 }
 
 async function findOpenIssuesToCheckForResolution(knex, issueId) {

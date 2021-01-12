@@ -9,7 +9,28 @@ const filterByModuleSerial = (
     ])
   return queryBuilder
 }
-
+const filterByInstrumentSerial = (
+  queryBuilder,
+  { instrumentSerial },
+  aliases = { issue: 'i' }
+) => {
+  if (instrumentSerial)
+    queryBuilder.whereRaw(`${aliases.issue}.data->>"$.instrumentSerial"=?`, [
+      instrumentSerial,
+    ])
+  return queryBuilder
+}
+const filterByInstrumentAndModuleSerial = (
+  queryBuilder,
+  { instrumentSerial, moduleSerial },
+  aliases = { issue: 'i' }
+) => {
+  return filterByModuleSerial(
+    filterByInstrumentSerial(queryBuilder, { instrumentSerial }, aliases),
+    { moduleSerial },
+    aliases
+  )
+}
 const filterByLotAndAssay = (
   queryBuilder,
   { assayId, consumableLot },
@@ -24,6 +45,8 @@ const filterByLotAndAssay = (
 }
 
 module.exports = {
-  filterByModuleSerial,
+  filterByInstrumentSerial,
   filterByLotAndAssay,
+  filterByModuleSerial,
+  filterByInstrumentAndModuleSerial,
 }

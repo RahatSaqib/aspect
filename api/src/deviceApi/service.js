@@ -309,7 +309,6 @@ async function addDeviceDataWithContext(context) {
       // hardware error and dispatch MQ action if needed
       const {
         messageContext,
-        partnerId,
         payload,
         parent: {
           deviceLogUpdate: { deviceOperationId },
@@ -318,7 +317,6 @@ async function addDeviceDataWithContext(context) {
       await shouldTriggerHardwareErrorAnalysis(
         knex,
         messageContext,
-        partnerId,
         device,
         payload,
         deviceOperationId

@@ -90,13 +90,13 @@ function onIssueEvent(actionParametersList) {
             triggerConditions,
             filterIssueCondition = null,
           } = actionParameters
+
           const shouldTriggerEvent = await actionConditionsMet(
             knex,
             action,
             partnerId,
             JSON.parse(triggerConditions).conditions
           )
-
           if (shouldTriggerEvent) {
             const now = new Date()
             const openIssue = await findOpenIssue(
@@ -291,6 +291,7 @@ async function createNewIssue(knex, issueType, action) {
     issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
+
   // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
