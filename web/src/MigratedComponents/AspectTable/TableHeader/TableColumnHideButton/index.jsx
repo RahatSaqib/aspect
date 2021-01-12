@@ -27,7 +27,13 @@ const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
 }
 
 TableColumnHideButton.propTypes = {
+  /**
+    Index for the header within the group
+  */
   headerIndex: string.isRequired,
+  /**
+    Function to handle column visibility toggle
+  */
   handleHideColumnToggle: func.isRequired,
 }
 
