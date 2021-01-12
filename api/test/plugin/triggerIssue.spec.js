@@ -127,35 +127,23 @@ const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const messageTemplates = await getMessageTemplates()
   const notification = await knex('Notification as n')
     .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
-    .join('SmsMessage as sms', 'n.smsMessageId', 'sms.id')
     .where({ 'n.issueId': issueId })
     .first()
 
   assert.isNotNull(notification)
   assert.isNotNull(notification.emailMessageId)
-  assert.isNotNull(notification.alertMessageId)
-  assert.isNotNull(notification.smsMessageId)
-  assert.isTrue(notification.message.indexOf('null') < 0)
-  assert.isTrue(
-    notification.message.indexOf('{{') < 0 &&
-      notification.message.indexOf('}}') < 0
-  )
+
   assert.isTrue(
     notification.body.indexOf('{{') < 0 && notification.body.indexOf('}}') < 0
   )
 
   if (
-    !notification.message.indexOf('M-123456-0') > 0 &&
+    !notification.body.indexOf('M-123456-0') > 0 &&
     issueTypeId === (await issueTypeToId('ProbeCheckTooLowModule'))
   ) {
     assert.containSubset(
       notification.body.toString().replace(regex, ''),
       messageTemplates[issueTypeId].email
-    )
-
-    assert.containSubset(
-      notification.message,
-      messageTemplates[issueTypeId].sms
     )
   }
 }
@@ -177,7 +165,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe.only('This test suite is for testing different triggers conditions', async () => {
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -523,16 +511,16 @@ describe.only('This test suite is for testing different triggers conditions', as
     await testCategoriesAndErrorCodes(
       'Failed To Verify Valid Background Error For Analyte',
       5016,
-      'FailedToVerifyValidBackgroundErrorForAnalyteModule',
-      'FailedToVerifyValidBackgroundErrorForAnalyteLot'
+      'TooManyInvalidResultsModule',
+      'TooManyInvalidResultsLot'
     )
   })
   describe('error 5007 issue', async () => {
     await testCategoriesAndErrorCodes(
       'Probes check Too Low',
       5007,
-      'ProbeCheckTooLowModule',
-      'ProbeCheckTooLowLot'
+      'ProbeCheckFailedModule',
+      'ProbeCheckFailedLot'
     )
   })
 
