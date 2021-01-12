@@ -28,7 +28,6 @@ async function analyzeWithQuery(
   queryBuilder
 ) {
   const moduleSerial = _.get(action.options.data, 'moduleSerial')
-  const instrumentSerial = _.get(action.options.data, 'instrumentSerial')
   const consumableLot = _.get(action.options.data, 'consumableLot')
   const assayId = _.get(action.options.data, 'assayId')
 
@@ -38,13 +37,11 @@ async function analyzeWithQuery(
     .modify(
       (builder, moduleSerial, consumableLot, assayId) => {
         if (moduleSerial) builder.where({ moduleSerial })
-        else if (instrumentSerial) builder.where({ instrumentSerial })
         else builder.where({ consumableLot, assayId })
       },
       moduleSerial,
       consumableLot,
-      assayId,
-      instrumentSerial
+      assayId
     )
 
   if (queryBuilder) {
