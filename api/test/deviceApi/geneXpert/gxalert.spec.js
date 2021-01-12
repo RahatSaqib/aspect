@@ -3438,6 +3438,139 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(result2Category2.externalId, 'Indeterminate')
       }))
 
+    it('should update a result if the sample ID and startedOn date matches an existing result', () =>
+      runTest(async () => {
+        const { now } = context
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'dupe'
+        const instrumentSerial = 'Tested on the same instrument'
+
+        // Send a new result
+        const firstResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_1',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        await waitForApproximately(2, 'seconds')
+
+        // Send another result with the same sample ID, but different start date
+        const secondResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_2',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        const {
+          body: { result: firstResult },
+        } = firstResponse
+        const {
+          body: { result: secondResult },
+        } = secondResponse
+        assert.equal(secondResult.id, firstResult.id)
+        assert.equal(secondResult.createdOn, firstResult.createdOn)
+        assert.equal(
+          JSON.parse(secondResult.resultData).geneXpertTestId,
+          'unique_id_2'
+        )
+        expect(new Date(secondResult.updatedOn)).to.be.above(
+          new Date(firstResult.updatedOn)
+        )
+      }))
+
+    it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', () =>
+      runTest(async () => {
+        const { now } = context
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'dupe'
+        const instrumentSerial = 'Tested on the same instrument'
+
+        // Send a new result
+        const firstResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_1',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        await waitForApproximately(2, 'seconds')
+
+        // Send another result with the same sample ID, but different start date
+        const secondResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_2',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: setMilliseconds(subMinutes(testStartedOn, 1234), 0),
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        assert.notEqual(
+          secondResponse.body.result.id,
+          firstResponse.body.result.id
+        )
+      }))
+
     it('should map result categorizes based on result text', () =>
       runTest(async () => {
         const sendResult = async (

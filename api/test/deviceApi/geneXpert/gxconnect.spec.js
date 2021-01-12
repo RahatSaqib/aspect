@@ -1294,6 +1294,122 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(result2Category2.externalId, 'Indeterminate')
       }))
 
+    it('should update a result if the sample ID and startedOn date matches an existing result', () =>
+      runTest(async knex => {
+        const { deviceAuth, device, now } = context
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'dupe'
+        const instrumentSerial = 'Tested on the same instrument'
+
+        // Send a new result
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_1',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        const firstResultId = await getLastResultId(knex, device.id)
+
+        // Send another result with the same sample ID, but different start date
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_2',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        const secondResultId = await getLastResultId(knex, device.id)
+        assert.equal(firstResultId, secondResultId)
+      }))
+
+    it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', () =>
+      runTest(async knex => {
+        const { deviceAuth, device, now } = context
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'dupe'
+        const instrumentSerial = 'Tested on the same instrument'
+
+        // Send a new result
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_1',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        const firstResultId = await getLastResultId(knex, device.id)
+
+        // Send another result with the same sample ID, but different start date
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_2',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: setMilliseconds(subMinutes(testStartedOn, 1234), 0),
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        const secondResultId = await getLastResultId(knex, device.id)
+        assert.notEqual(firstResultId, secondResultId)
+      }))
+
     it('should map result categories based on result text', () =>
       runTest(async () => {
         const { basicDevicePayload, deviceAuth } = context

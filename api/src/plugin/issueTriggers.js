@@ -163,6 +163,11 @@ async function analyzeDeviceHardwareError(
   { errorCodes, daysPeriod, minErrors }
 ) {
   const { resultErrorCode } = action.options.data
+
+  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
+  // the rest is of the entry is identical. Ignore those duplicates.
+  const errorCodesWithDuplicateLogEntries = ['2126']
+
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const query = knex('DeviceOperation')
       .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
@@ -174,7 +179,11 @@ async function analyzeDeviceHardwareError(
             CASE WHEN
               IFNULL(data ->> '$.type', '') = 'gx-log'
               AND
-              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
+              (data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
+                ','
+              )}) OR IFNULL(data ->> '$.logLevel', '') = 'INFO')
+              AND
+              CAST(IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
                 ','
               )})
             THEN 1

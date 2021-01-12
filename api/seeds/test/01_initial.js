@@ -1569,7 +1569,7 @@ async function seed(knex) {
       ).join(''),
     }
 
-    device.id = await knex('Device').insert(device)
+    ;[device.id] = await knex('Device').insert(device)
     devicesDaktari.push(device)
 
     // Create API Keys
@@ -1613,7 +1613,7 @@ async function seed(knex) {
       sampleTypeId: await sampleTypeToId('DBS'),
       originSiteId: siteDate.id,
     }
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
     samples.push(sample)
   })
 
@@ -1715,7 +1715,7 @@ async function seed(knex) {
   })
 
   await Promise.each(resultDatas, async resultData => {
-    const resultId = await knex('Result').insert(resultData)
+    const [resultId] = await knex('Result').insert(resultData)
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
@@ -1756,12 +1756,12 @@ async function seed(knex) {
     .first()
 
   // crate jobs for users
-  const jobIdAdmin = await knex('Job').insert({
+  const [jobIdAdmin] = await knex('Job').insert({
     personId: adminPersonId,
     jobFunctionId: jobFunctionIdAdmin,
   })
 
-  const jobIdClinician = await knex('Job').insert({
+  const [jobIdClinician] = await knex('Job').insert({
     personId: clinicianPersonId,
     jobFunctionId: jobFunctionIdClinician,
   })

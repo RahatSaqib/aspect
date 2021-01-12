@@ -61,7 +61,7 @@ async function seed(knex) {
           'inventoryDaysThreshold',
           'monthStartsOnDay',
         ])
-        countryData.id = await knex('Country').insert(countryData)
+        ;[countryData.id] = await knex('Country').insert(countryData)
         const [countryGeographyId] = await knex('Geography').insert({
           countryId: countryData.id,
         })
@@ -93,7 +93,7 @@ async function seed(knex) {
             .first('s.id', 'g.countryId', 's.abbreviation', 's.name')
           if (_.isEmpty(stateData)) {
             stateData = _.pick(state, ['abbreviation', 'name'])
-            stateData.id = await knex('State').insert(stateData)
+            ;[stateData.id] = await knex('State').insert(stateData)
             stateData.countryId = countryData.id
             const [stateGeographyId] = await knex('Geography').insert({
               countryId: countryData.id,
@@ -128,7 +128,7 @@ async function seed(knex) {
                 .first('l.id', 'g.stateId', 'l.name')
               if (_.isEmpty(lgaData)) {
                 lgaData = _.pick(lga, ['name'])
-                lgaData.id = await knex('Lga').insert(lgaData)
+                ;[lgaData.id] = await knex('Lga').insert(lgaData)
                 lgaData.stateId = stateData.id
                 const [lgaGeographyId] = await knex('Geography').insert({
                   countryId: countryData.id,

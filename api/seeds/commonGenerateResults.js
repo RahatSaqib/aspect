@@ -357,7 +357,7 @@ async function addCovidResults(
       originSiteId: siteData.id,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -617,7 +617,7 @@ async function addHivVlResults(
       originSiteId: siteData.id,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
@@ -833,7 +833,7 @@ async function addTBResults(
         originSiteId: siteData.id,
       }
 
-      sample.id = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
       samples.push(sample)
     }
@@ -1098,7 +1098,7 @@ async function addEbolaResults(
       originSiteId: siteData.id,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   })
