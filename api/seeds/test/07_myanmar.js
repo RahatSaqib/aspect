@@ -225,7 +225,7 @@ async function seed(knex) {
     )
 
   await Promise.each(roAlertTemplates, async roAlertTemplate => {
-    const newRoAlertTemplateId = await knex('AlertTemplate').insert({
+    const [newRoAlertTemplateId] = await knex('AlertTemplate').insert({
       message: roAlertTemplate.message,
       hideWhenSiteFilterIsSelected: true,
       createdOn: now,
@@ -260,7 +260,7 @@ async function seed(knex) {
       webhookTemplateId,
     } = roAlertTemplate
 
-    const newMessageTypeId = await knex('MessageType').insert({
+    const [newMessageTypeId] = await knex('MessageType').insert({
       messageSeverityId,
       alertTemplateId: newRoAlertTemplateId,
       emailTemplateId,
@@ -294,7 +294,7 @@ async function seed(knex) {
     )
 
   await Promise.each(roLuViewAlertTemplates, async luRoViewAlertTemplate => {
-    const newRoLuViewAlertTemplateId = await knex('AlertTemplate').insert({
+    const [newRoLuViewAlertTemplateId] = await knex('AlertTemplate').insert({
       message: luRoViewAlertTemplate.message,
       hideWhenSiteFilterIsNotSelected: true,
       createdOn: now,
@@ -330,7 +330,7 @@ async function seed(knex) {
       webhookTemplateId,
     } = luRoViewAlertTemplate
 
-    const newMessageTypeId = await knex('MessageType').insert({
+    const [newMessageTypeId] = await knex('MessageType').insert({
       messageSeverityId,
       alertTemplateId: newRoLuViewAlertTemplateId,
       emailTemplateId,

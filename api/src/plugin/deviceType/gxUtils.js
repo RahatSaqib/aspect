@@ -188,6 +188,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       potentialSampleIds: [sampleId],
       siteId: device.siteId,
       potentialAssayIds,
+      startedOn: payload.startedOn,
     },
     knex
   )
@@ -515,6 +516,7 @@ async function findExistingResult(availableResultDetails, knex) {
     potentialSampleIds = [],
     siteId = null,
     potentialAssayIds = [],
+    startedOn = null,
   } = availableResultDetails
   const selectFields = [
     'r.id',
@@ -628,13 +630,15 @@ async function findExistingResult(availableResultDetails, knex) {
     _.isEmpty(matchingResult) &&
     !_.isEmpty(potentialSampleIds) &&
     siteId &&
-    !_.isEmpty(potentialAssayIds)
+    !_.isEmpty(potentialAssayIds) &&
+    startedOn
   ) {
     matchingResults = await queryStart
       .clone()
       .whereIn('s.externalId', potentialSampleIds)
       .andWhere('r.siteId', siteId)
       .whereIn('a.externalId', potentialAssayIds)
+      .andWhere('r.startedOn', startedOn)
       .select(selectFields)
     if (matchingResults.length === 1) {
       ;[matchingResult] = matchingResults
