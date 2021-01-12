@@ -85,6 +85,9 @@ function listDevicesBaseRequest() {
         deviceTypeId: Joi.number()
           .allow('')
           .description('Filter for device type ID'),
+        deviceType: Joi.string()
+          .allow('')
+          .description('Filter for device type ExternalId'),
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
         name: Joi.string().allow('').description('Filter for device name'),

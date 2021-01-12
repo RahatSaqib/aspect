@@ -68,6 +68,10 @@ const FILTERS_CONFIG = [
     deviceName: true,
     requiredPermissions: ['device'],
   },
+  {
+    deviceType: true,
+    requiredPermissions: [],
+  },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },

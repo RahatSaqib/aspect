@@ -89,9 +89,11 @@ async function listSites(request) {
         return
       }
       const deviceQuery = knex('Device as d')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .select('d.siteId')
         .modify(filterParams, query, {
           deviceName: 'd.name',
+          deviceType: 'dt.externalId',
         })
 
       this.whereIn('s.id', deviceQuery)
