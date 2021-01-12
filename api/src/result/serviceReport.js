@@ -282,13 +282,13 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         `ifnull(r.resultData ->> '$.systemName', d.configurationData ->> '$.systemName') as gxSystemName`
       ), // 4. GX System Name
       'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
-      knex.raw(`'-' as gatewaySerial`), // 6. Instrument Gateway Serial Number
-      'r.moduleSerial', // 7. Module Serial Number
-      'a.name as cartridgeType', // 8. Cartridge Name
+      'r.moduleSerial', // 6. Module Serial Number
+      knex.raw(`r.resultData ->> '$.assay' as assay`), // 7. Assay
+      knex.raw(`r.resultData ->> '$.assayVersion' as assayVersion`), // 8. Assay Version
       'r.consumableLot as cartridgeLot', // 9. Cartridge Lot
       'r.consumableSerial as cartridgeSerial', // 10. Cartridge Serial Number
-      'r.senderOperator as operatorId', // 12. Operator ID
-      // 13. Test Outcome
+      'r.senderOperator as operatorId', // 11. Operator ID
+      // 12. Test Outcome
       knex.raw(`
         CASE
         WHEN rc1.externalId IN ('Error', 'Invalid', 'NoResult') THEN rc1.externalId
@@ -296,10 +296,6 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         END as result
       `),
       'r.errorCode', // 14. Error Code
-      /**
-       * additional fields
-       */
-      'a.abbreviation as assay',
       'r.moduleName'
     )
     .union([
@@ -359,15 +355,14 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
             END as gxSystemName
           `),
           'r.senderVersion as gxSoftwareVersion',
-          knex.raw(`'-' as gatewaySerial`),
           knex.raw(`'-' as moduleSerial`),
-          knex.raw(`'-' as cartridgeType`),
+          knex.raw(`'-' as assay`),
+          knex.raw(`'-' as assayVersion`),
           knex.raw(`'-' as cartridgeLot`),
           knex.raw(`'-' as cartridgeSerial`),
           'r.senderOperator as operatorId',
           knex.raw(`'-' as result`),
           knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
-          knex.raw(`'-' as assay`),
           // treat all words A1..D4 as moduleName
           knex.raw(`
             REGEXP_SUBSTR(do.data ->> '$.details.RawText', '[A-D][1-4]') as moduleName
@@ -387,11 +382,10 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     { header: 'Instrument Serial Number', key: 'instrumentSerial' },
     { header: 'GX System Name', key: 'gxSystemName' },
     { header: 'GX Software Version', key: 'gxSoftwareVersion' },
-    { header: 'Instrument Gateway Serial Number', key: 'gatewaySerial' },
     { header: 'Module Position', key: 'moduleName' },
     { header: 'Module Serial Number', key: 'moduleSerial' },
     { header: 'Assay', key: 'assay' },
-    { header: 'Cartridge Type', key: 'cartridgeType' },
+    { header: 'Assay Version', key: 'assayVersion' },
     { header: 'Cartridge Lot', key: 'cartridgeLot' },
     { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
     { header: 'Operator ID', key: 'operatorId' },
