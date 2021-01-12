@@ -2709,7 +2709,8 @@ async function updateOrCreateSample(
     }
     return sampleId
   }
-  return [await knex('Sample').insert(sampleData)]
+  const [id] = await knex('Sample').insert(sampleData)
+  return id
 }
 
 module.exports = {

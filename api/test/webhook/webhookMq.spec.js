@@ -114,7 +114,7 @@ describe('Sending Webhook Message via Message Queue', () => {
     }
 
     const now = new Date()
-    const messageId = await knex('WebhookMessage').insert({
+    const [messageId] = await knex('WebhookMessage').insert({
       webhookTemplateId,
       messageStatusId: initialMessageStatusId,
       personId: adminId,

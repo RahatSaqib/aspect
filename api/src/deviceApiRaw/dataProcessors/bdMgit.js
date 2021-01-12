@@ -173,7 +173,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         await knex('Sample').where('id', existingSample.id).update(sampleFields)
       } else {
         // insert sample
-        sampleId = await knex('Sample').insert(sampleFields)
+        ;[sampleId] = await knex('Sample').insert(sampleFields)
       }
 
       // It is possible that a single plastic carrier could be used more than once for a particular access number.
@@ -301,7 +301,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       }
 
       if (newStatus || !result || !result.resultWorkflowStatusLogId) {
-        const logId = await knex('ResultWorkflowLog').insert({
+        const [logId] = await knex('ResultWorkflowLog').insert({
           resultId,
           resultWorkflowStatusId,
           changedOn: now,

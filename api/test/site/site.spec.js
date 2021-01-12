@@ -158,18 +158,18 @@ describe('Site routes', () => {
         lab.geographyId = geographyId
 
         // Tags insert
-        const labTagId = await knex('Tag').insert(labTag)
+        const [labTagId] = await knex('Tag').insert(labTag)
         labTag.id = labTagId
         tags.push(labTag)
-        const clinicTagId = await knex('Tag').insert(clinicTag)
+        const [clinicTagId] = await knex('Tag').insert(clinicTag)
         clinicTag.id = clinicTagId
         tags.push(clinicTag)
 
         // Sites insert
-        const labId = await knex('Site').insert(lab)
+        const [labId] = await knex('Site').insert(lab)
         lab.id = labId
         sites.push(lab)
-        const clinicId = await knex('Site').insert(clinic)
+        const [clinicId] = await knex('Site').insert(clinic)
         clinic.id = clinicId
         sites.push(clinic)
 
