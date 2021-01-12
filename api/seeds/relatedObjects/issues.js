@@ -239,7 +239,7 @@ const errorIssueEmailHtml = getDeviceBaseHtml({
   </tr>
   <tr>
     <td>
-      Date/Time
+      Date/Time (UTC)
     </td>
     <td>
       {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -256,7 +256,7 @@ System Serial: {{result.instrumentSerial}}
 
 Cartridge Type: {{result.assay.name}}
 
-Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+Date/Time (UTC): {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 `,
 })
 
@@ -307,7 +307,7 @@ const hardwareErrorIssueEmailHtml = errorCode =>
     </tr>
     <tr>
       <td>
-        Date/Time
+        Date/Time (UTC)
       </td>
       <td>
         {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -321,7 +321,7 @@ const hardwareErrorIssueEmailText = errorCode =>
     customPart: `
 System Serial: {{device.serial}}
 
-Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+Date/Time (UTC): {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
   `,
   })
 
