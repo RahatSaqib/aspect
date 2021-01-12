@@ -27,26 +27,14 @@ async function analyzeWithQuery(
   minResults,
   queryBuilder
 ) {
-  const moduleSerial = _.get(action.options.data, 'moduleSerial')
   const instrumentSerial = _.get(action.options.data, 'instrumentSerial')
-  const consumableLot = _.get(action.options.data, 'consumableLot')
-  const assayId = _.get(action.options.data, 'assayId')
 
   const query = knex('Result')
     .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
     .andWhere('deviceId', action.deviceId)
-    .modify(
-      (builder, moduleSerial, consumableLot, assayId) => {
-        if (moduleSerial) builder.where({ moduleSerial })
-        else if (instrumentSerial) builder.where({ instrumentSerial })
-        else builder.where({ consumableLot, assayId })
-      },
-      moduleSerial,
-      consumableLot,
-      assayId,
-      instrumentSerial
-    )
-
+    .modify((builder, instrumentSerial) => {
+      if (instrumentSerial) builder.where({ instrumentSerial })
+    }, instrumentSerial)
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
@@ -175,6 +163,11 @@ async function analyzeDeviceHardwareError(
   { errorCodes, daysPeriod, minErrors }
 ) {
   const { resultErrorCode } = action.options.data
+
+  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
+  // the rest is of the entry is identical. Ignore those duplicates.
+  const errorCodesWithDuplicateLogEntries = ['2126']
+
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const query = knex('DeviceOperation')
       .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
@@ -186,7 +179,11 @@ async function analyzeDeviceHardwareError(
             CASE WHEN
               IFNULL(data ->> '$.type', '') = 'gx-log'
               AND
-              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
+              (data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
+                ','
+              )}) OR IFNULL(data ->> '$.logLevel', '') = 'INFO')
+              AND
+              CAST(IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
                 ','
               )})
             THEN 1

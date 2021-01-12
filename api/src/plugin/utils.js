@@ -55,7 +55,7 @@ async function shouldTriggerResultErrorAnalysis(
   resultId,
   resultCategory1, // <-- this is result category externalid
   resultErrorCode,
-  { resultOutcome, moduleSerial, assayId, consumableLot, instrumentSerial }
+  { resultOutcome, instrumentSerial }
 ) {
   if (!messageContext.resultAnalyzeCategoriesAndErrors) {
     messageContext = messageContext.bindActionCreators({
@@ -68,7 +68,10 @@ async function shouldTriggerResultErrorAnalysis(
     resultId,
     resultCategory1, // <-- this is result category externalid
     resultErrorCode,
-    { resultOutcome, moduleSerial, assayId, consumableLot, instrumentSerial }
+    {
+      instrumentSerial,
+      resultOutcome,
+    }
   )
 }
 
