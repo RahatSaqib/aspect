@@ -25,7 +25,6 @@ const labelsWhiteList = format(info => {
   if (config.log.labelsWhiteList) {
     const regex = new RegExp(config.log.labelsWhiteList, 'g')
     if (!regex.test(info.label)) {
-      // this is a regular expression
       return false
     }
   }
