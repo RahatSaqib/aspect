@@ -40,7 +40,7 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device routes', () => {
+describe.only('Device routes', () => {
   const path = '/api/device'
   let deviceMaintenanceStatuses
   let deviceApprovals
@@ -402,7 +402,6 @@ describe('Device routes', () => {
       })
 
       it('should filter based on device maintenance status', async () => {
-        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
         let filterOnDeviceMaintenanceStatus = ['inactiveConnectivity']
         let devicesReponse = await server
           .get(
@@ -415,7 +414,7 @@ describe('Device routes', () => {
             )}&${filterOnDeviceMaintenanceStatus
               .map(
                 status =>
-                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+                  `deviceMaintenanceStatusId=${status}`
               )
               .join('&')}`
           )
@@ -448,7 +447,7 @@ describe('Device routes', () => {
             )}&${filterOnDeviceMaintenanceStatus
               .map(
                 status =>
-                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+                  `deviceMaintenanceStatusId=${status}`
               )
               .join('&')}`
           )
@@ -528,7 +527,7 @@ describe('Device routes', () => {
             )}&${filterOnDeviceMaintenanceStatus
               .map(
                 status =>
-                  `deviceMaintenanceStatusId=${deviceMaintenanceStatuses[status]}`
+                  `deviceMaintenanceStatusId=${status}`
               )
               .join('&')}`
           )
@@ -786,14 +785,16 @@ describe('Device routes', () => {
       let deviceMaintenanceStatusId
       let deviceMaintenanceStatusLogId = null
       before(async () => {
+        const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
         editableDeviceMaintenanceStatusIds = await knex(
           'DeviceMaintenanceStatus'
         )
           .where('manuallySet', true)
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .select('id')
-          .pluck('id')
-        ;[deviceMaintenanceStatusId] = editableDeviceMaintenanceStatusIds
+          .pluck('externalId')
+        ;[deviceMaintenanceStatusExternalId] = editableDeviceMaintenanceStatusIds
+        deviceMaintenanceStatusId = deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
 
         device = await knex('DeviceTypeCategory as dtc')
           .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')

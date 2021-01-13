@@ -1155,6 +1155,8 @@ async function deviceMaintenanceStatusHistory(request) {
   const { minDate, maxDate = new Date() } = query
   const dataConstraints = await getConstraints(auth.credentials)
 
+  console.log('golaa')
+
   const days = []
   let day = minDate || startOfMonth(new Date())
   while (day <= (maxDate || startOfTodayUtc())) {
@@ -1170,13 +1172,14 @@ async function deviceMaintenanceStatusHistory(request) {
         )
         .andOn('d.id', 'dmsl.deviceId')
     })
+    .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .modify(queryBuilder => {
       if (
         query.deviceMaintenanceStatusId &&
         !_.isEmpty(query.deviceMaintenanceStatusId)
       ) {
         queryBuilder.whereIn(
-          'dmsl.deviceMaintenanceStatusId',
+          'dms.externalId',
           query.deviceMaintenanceStatusId
         )
       }
@@ -1186,6 +1189,32 @@ async function deviceMaintenanceStatusHistory(request) {
     })
     .distinct('d.id')
     .pluck('d.id')
+
+  console.log(knex('Device as d')
+  .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
+    queryBuilder
+      .on(
+        knex.raw('dmsl.day BETWEEN ? AND ?', [days[0], days[days.length - 1]])
+      )
+      .andOn('d.id', 'dmsl.deviceId')
+  })
+  .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+  .modify(queryBuilder => {
+    if (
+      query.deviceMaintenanceStatusId &&
+      !_.isEmpty(query.deviceMaintenanceStatusId)
+    ) {
+      queryBuilder.whereIn(
+        'dms.externalId',
+        query.deviceMaintenanceStatusId
+      )
+    }
+    if (!_.isEmpty(queryDeviceIds)) {
+      queryBuilder.whereIn('d.id', queryDeviceIds)
+    }
+  })
+  .distinct('d.id')
+  .pluck('d.id'))
 
   const devicesWithConstraints = _.isEmpty(filterByDeviceIds)
     ? []
@@ -1282,6 +1311,7 @@ async function deviceMaintenanceStatusHistory(request) {
     .select([
       'd.id as deviceId',
       'dmsl.deviceMaintenanceStatusId',
+      'dms.externalId as deviceMaintenanceStatusExternalId',
       'dmsl.day',
       'dmsl.data',
       'dms.externalId',
@@ -1303,7 +1333,7 @@ async function deviceMaintenanceStatusHistory(request) {
           if (
             itemsForDevice.find(item =>
               query.deviceMaintenanceStatusId.includes(
-                item.deviceMaintenanceStatusId
+                item.deviceMaintenanceStatusExternalId
               )
             )
           ) {
