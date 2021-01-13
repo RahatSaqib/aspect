@@ -354,6 +354,17 @@ const buttonBy = {
         .get('name'),
     })
   ),
+  deviceType: makeButton(({ intl, deviceTypeItems }, deviceType) =>
+    intl.formatMessage(messages.withDeviceType, {
+      deviceTypeName: deviceTypeItems
+        .find(
+          it => it.get('externalId') === deviceType,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        )
+        .get('name'),
+    })
+  ),
   externalId: makeButton(({ intl }, externalId) =>
     intl.formatMessage(messages.whereExternalIdIncludes, {
       externalId,

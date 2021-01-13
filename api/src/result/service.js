@@ -2117,6 +2117,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
       siteName: 'si.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
@@ -2188,6 +2189,7 @@ async function clinicalIndicatorAggregations(request) {
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
@@ -2214,6 +2216,7 @@ async function clinicalIndicatorAggregations(request) {
       partnerId: 'g.partnerId',
       siteName: 's.name',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
     })
     .modify(qb => {
       if (query.minDate) {
@@ -2334,6 +2337,7 @@ async function followUpAggregations(request) {
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
@@ -2369,6 +2373,7 @@ async function followUpAggregations(request) {
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
       partnerId: 'g.partnerId',
       siteName: 's.name',
     })

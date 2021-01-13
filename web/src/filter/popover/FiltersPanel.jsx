@@ -118,9 +118,9 @@ const enhance = compose(
       onChangeFilters({
         deviceApprovalId,
       }),
-    onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
+    onDeviceTypeChange: ({ onChangeFilters }) => deviceType =>
       onChangeFilters({
-        deviceTypeId,
+        deviceType,
       }),
     onRevokedChange: ({ onChangeFilters }) => revoked =>
       onChangeFilters({
@@ -414,7 +414,7 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onTreatmentStatusIdChange,
   onDeviceApprovalIdChange,
-  onDeviceTypeIdChange,
+  onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
   user,
@@ -793,8 +793,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <DeviceTypeSelectField
                 allItemText={intl.formatMessage(messages.all)}
-                value={filters.deviceTypeId}
-                onDeviceTypeChange={onDeviceTypeIdChange}
+                value={filters.deviceType}
+                onDeviceTypeChange={onDeviceTypeChange}
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectDeviceType)}
                 floatingLabelText={intl.formatMessage(messages.deviceType)}
