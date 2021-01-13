@@ -38,6 +38,28 @@ const headers = [
   { key: 'errorNotes', header: 'Error notes' },
   { key: 'notes', header: 'Notes' },
 ]
+/**
+ * 'header' is for 1st row in CSV file,
+ * 'key' is prop name in array 'items' in func getDeviceErrorHistoryForAttachment() below
+ */
+const columnsDeviceErrorHistoryForAttachment = [
+  { header: 'Source', key: 'source' },
+  { header: 'Date/Time', key: 'dateTime' },
+  { header: 'Actual Date/Time (UTC)', key: 'actualDateTime' },
+  { header: 'Instrument Serial Number', key: 'instrumentSerial' },
+  { header: 'GX System Name', key: 'gxSystemName' },
+  { header: 'GX Software Version', key: 'gxSoftwareVersion' },
+  { header: 'Instrument Gateway Serial Number', key: 'gatewaySerial' },
+  { header: 'Module Position', key: 'moduleName' },
+  { header: 'Module Serial Number', key: 'moduleSerial' },
+  { header: 'Assay', key: 'assay' },
+  { header: 'Cartridge Type', key: 'cartridgeType' },
+  { header: 'Cartridge Lot', key: 'cartridgeLot' },
+  { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
+  { header: 'Operator ID', key: 'operatorId' },
+  { header: 'Test Outcome', key: 'result' },
+  { header: 'Error Code', key: 'errorCode' },
+]
 async function getResultsReport(request, reply) {
   const { query, auth } = request
 
@@ -246,6 +268,8 @@ async function getColumnsFromResultForms({ partnerId }) {
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
+  // treat all words A1..D4 as moduleName in DeviceOperation table
+  const regexDeviceOperationModuleName = `REGEXP_SUBSTR(do.data ->> '$.details.RawText', '[A-D][1-4]')`
   /**
    * for current device
    *
@@ -309,7 +333,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       knex('DeviceOperation as do')
         .innerJoin('Device as d', 'do.deviceId', 'd.id')
         .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
-        // join to get recent Result entry for device (of any assay type)
+        // join to Result to get most recent Result entry for device (of any assay type)
         .leftOuterJoin('Result as r', function () {
           this.on('r.deviceId', 'do.deviceId').andOn(
             'r.endedOn',
@@ -332,10 +356,56 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
               })
             })
         })
+        /**
+         * join again to Result to get latest Result with defined moduleSerial
+         */
+        .leftOuterJoin('Result as rModuleSerial', function () {
+          // same deviceId
+          this.on('rModuleSerial.deviceId', 'do.deviceId')
+            .andOn('rModuleSerial.endedOn', '<=', 'do.startedOn')
+            /**
+             * same defined moduleName (if moduleName is undefined then join for moduleSerial
+             * makes no sense and we'll get 'rModuleSerial.moduleSerial = null' in SELECT)
+             */
+            .andOn(
+              knex.raw(regexDeviceOperationModuleName),
+              'rModuleSerial.moduleName'
+            )
+            /**
+             * moduleSerial should be defined -
+             * Notice that we do this and next JOIN for 'rModuleSerialNewer' exactly
+             * for this value 'rModuleSerial.moduleSerial', if any exists
+             */
+            .andOnNotNull('rModuleSerial.moduleSerial')
+        })
+        /**
+         * join again to Result to make sure we get latest entry for above join of alias 'rModuleSerial'
+         */
+        .leftOuterJoin('Result as rModuleSerialNewer', function () {
+          this.on('rModuleSerialNewer.deviceId', 'rModuleSerial.deviceId')
+            .andOn('rModuleSerialNewer.moduleName', 'rModuleSerial.moduleName')
+            .andOnNotNull('rModuleSerialNewer.moduleSerial')
+            .andOn('rModuleSerialNewer.endedOn', '<=', 'do.startedOn')
+            .andOn(function () {
+              this.on(
+                'rModuleSerial.endedOn',
+                '<',
+                'rModuleSerialNewer.endedOn'
+              )
+              this.orOn(function () {
+                this.on(
+                  'rModuleSerial.endedOn',
+                  '=',
+                  'rModuleSerialNewer.endedOn'
+                ).andOn('rModuleSerial.id', '<', 'rModuleSerialNewer.id')
+              })
+            })
+        })
         .where('do.deviceId', deviceId)
         .where('do.startedOn', '>=', minDate)
         .where('do.startedOn', '<=', maxDate)
         .whereNull('rNewer.id') // must be null to get single latest Result entry for alias 'r'
+        .whereNull('rModuleSerialNewer.id') // must be null to get single latest Result entry for alias 'rModuleSerial'
         // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
         .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
         /**
@@ -360,7 +430,14 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           `),
           'r.senderVersion as gxSoftwareVersion',
           knex.raw(`'-' as gatewaySerial`),
-          knex.raw(`'-' as moduleSerial`),
+          /**
+           * try to get `moduleSerial` from most recent result 'r',
+           * otherwise - from most recent result 'rModuleSerial' before 'r' which has module serial defined
+           */
+          knex.raw(
+            'ifnull(r.moduleSerial, rModuleSerial.moduleSerial) as moduleSerial'
+          ),
+          // knex.raw(`'-' as moduleSerial`),
           knex.raw(`'-' as cartridgeType`),
           knex.raw(`'-' as cartridgeLot`),
           knex.raw(`'-' as cartridgeSerial`),
@@ -369,38 +446,14 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
           knex.raw(`'-' as assay`),
           // treat all words A1..D4 as moduleName
-          knex.raw(`
-            REGEXP_SUBSTR(do.data ->> '$.details.RawText', '[A-D][1-4]') as moduleName
-          `)
+          knex.raw(`${regexDeviceOperationModuleName} as moduleName`)
         ),
     ])
     .orderBy('dateTime', 'asc')
 
-  /**
-   * 'header' is for 1st row in CSV file,
-   * 'key' is prop name in array 'items'
-   */
-  const columns = [
-    { header: 'Source', key: 'source' },
-    { header: 'Date/Time', key: 'dateTime' },
-    { header: 'Actual Date/Time (UTC)', key: 'actualDateTime' },
-    { header: 'Instrument Serial Number', key: 'instrumentSerial' },
-    { header: 'GX System Name', key: 'gxSystemName' },
-    { header: 'GX Software Version', key: 'gxSoftwareVersion' },
-    { header: 'Instrument Gateway Serial Number', key: 'gatewaySerial' },
-    { header: 'Module Position', key: 'moduleName' },
-    { header: 'Module Serial Number', key: 'moduleSerial' },
-    { header: 'Assay', key: 'assay' },
-    { header: 'Cartridge Type', key: 'cartridgeType' },
-    { header: 'Cartridge Lot', key: 'cartridgeLot' },
-    { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
-    { header: 'Operator ID', key: 'operatorId' },
-    { header: 'Test Outcome', key: 'result' },
-    { header: 'Error Code', key: 'errorCode' },
-  ]
   return {
     items,
-    columns,
+    columns: columnsDeviceErrorHistoryForAttachment,
   }
 }
 
@@ -408,4 +461,5 @@ module.exports = {
   exportResults,
   getResultsReport,
   getDeviceErrorHistoryForAttachment,
+  columnsDeviceErrorHistoryForAttachment,
 }
