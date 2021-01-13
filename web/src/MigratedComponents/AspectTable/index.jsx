@@ -1,12 +1,11 @@
 import React, { Fragment, useMemo, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { usePaginatedQuery } from 'react-query'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
-import keys from 'lodash/keys'
 
 import {
   useTable,
@@ -29,11 +28,15 @@ import TableHeaderRow from './TableHeader/TableHeaderRow'
 import TableBodyRow from './TableBody/TableBodyRow'
 
 import AspectTablePagination from './TablePagination'
+import AspectTableReset from './TableReset'
+
 import {
   buildColumnsFromData,
+  determineSortDirection,
   getCurrentColumnIndexAndShift,
   getParamsFromUrl,
-  shapeTableParamsForApi,
+  removeNullFromCollection,
+  useUrlQuery,
 } from './Helpers'
 
 const cssClasses = classnames.bind(require('./Table.css'))
@@ -41,13 +44,17 @@ const cssClasses = classnames.bind(require('./Table.css'))
 const AspectTableCore = ({
   config,
   tableData,
-  params,
-  urlParams,
-  setUrlParams,
-  setParams,
+  isFetching,
+  initialState,
+  setters,
 }) => {
-  const { push } = useHistory()
-  const { pathname } = useLocation()
+  const {
+    handleClearParams,
+    setSize,
+    setSortCol,
+    setSortDir,
+    setPage,
+  } = setters
   const { total, data } = tableData
   const { name } = config
   const {
@@ -84,7 +91,7 @@ const AspectTableCore = ({
       expanded,
     },
   } = useTable(
-    { columns, data },
+    { columns, data, initialState },
     useColumnOrder,
     useGroupBy,
     useSortBy,
@@ -114,13 +121,32 @@ const AspectTableCore = ({
   }
 
   useEffect(() => {
+    const { pageSize: initialStatePageSize } = initialState
+    if (pageSize !== initialStatePageSize) {
+      setSize(pageSize)
+    }
+  }, [pageSize, setSize, initialState])
+
+  useEffect(() => {
+    const { pageIndex: initialStatePageIndex } = initialState
+    if (pageIndex !== initialStatePageIndex) {
+      setPage(pageIndex)
+    }
+  }, [pageIndex, setPage, initialState])
+
+  useEffect(() => {
+    const { sortBy: initialStateSortBy } = initialState
     if (!sortBy.length && initialSortBy) {
       setSortBy([initialSortBy])
     }
-  }, [sortBy, setSortBy, initialSortBy])
+    if (sortBy.length && !isEqual(sortBy, initialStateSortBy)) {
+      setSortCol(sortBy[0].id)
+      setSortDir(sortBy[0].desc ? 'desc' : 'asc')
+    }
+  }, [sortBy, setSortBy, initialSortBy, initialState, setSortCol, setSortDir])
 
   useEffect(() => {
-    if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
+    if (visibleColumns && !columnOrder.length) {
       setColumnOrder(initialOrder)
     }
   }, [
@@ -131,18 +157,11 @@ const AspectTableCore = ({
     setColumnOrder,
   ])
 
-  // useEffect(())
-
-  console.log({
-    tableData,
-    pageIndex,
-    pageSize,
-    sortBy,
-    columnOrder,
-  })
-
   return (
     <Fragment>
+      {initialState.allowReset ? (
+        <AspectTableReset isFetching={isFetching} action={handleClearParams} />
+      ) : null}
       {hiddenColumns && hiddenColumns.length ? (
         <TableHiddenColumns
           columns={columns}
@@ -224,19 +243,25 @@ const Loading = () => (
   </div>
 )
 
-function useUrlQuery() {
-  return new URLSearchParams(useLocation().search)
-}
-
 const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const intl = useIntl()
-  const query = useUrlQuery()
   const config = baseConfig(intl)
-  const history = useHistory()
+  const { push } = useHistory()
   const { pathname, search } = useLocation()
-  const [size, setSize] = useState(30)
+  const query = useUrlQuery(search)
+  const {
+    size: urlSize = false,
+    page: urlPage = 0,
+    sortCol: urlSortCol = null,
+    sortDir: urlSortDir = null,
+  } = getParamsFromUrl(query, search)
+  const [size, setSize] = useState(urlSize || 10)
+  const [sortCol, setSortCol] = useState(urlSortCol)
+  const [sortDir, setSortDir] = useState(urlSortDir)
+  const [page, setPage] = useState(urlPage)
+  const [allowReset, setAllowReset] = useState(false)
 
-  const params = { size }
+  const params = removeNullFromCollection({ size, sortCol, sortDir, page })
 
   const {
     error,
@@ -247,11 +272,13 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   } = usePaginatedQuery(
     [CONSTS.KEY, { params }],
     async (_queryId, { params }) => {
-      // console.log(params, window.performance.now())
       return fetchWrapperForQueries({
         endpoint: CONSTS.ENDPOINT,
         params,
       })
+    },
+    {
+      keepPreviousData: true,
     }
   )
 
@@ -261,43 +288,34 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
 
   useEffect(() => {
     if (params) {
-      const urlParams = getParamsFromUrl(query, search)
       const newUrlParams = new URLSearchParams(params).toString()
+      const urlParams = getParamsFromUrl(query, search)
       if (!isEqual(urlParams, params)) {
-        console.log(urlParams, params)
-        history.push(`${pathname}?${newUrlParams}`)
+        push(`${pathname}?${newUrlParams}`)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params])
 
-  // useEffect(() => {
-  // async function formatParams(urlParams) {
-  //   const { page = 0, size, sortCol, sortDir } = await shapeTableParamsForApi(
-  //     urlParams
-  //   )
-  //   if (params !== { page, size, sortCol, sortDir }) {
-  //     console.log(params, { page, size, sortCol, sortDir })
-  //     // setParams({ page, size, sortCol, sortDir })
-  //   }
-  // }
+  const handleClearParams = () => {
+    setAllowReset(!allowReset)
+  }
 
-  //   if (urlParams) {
-  //     const newUrlParams = new URLSearchParams(urlParams).toString()
-  //     console.log(urlParams)
-  //     formatParams(urlParams)
-  //     // setParams(urlParams)
-  //     // history.push(`${pathname}?${newUrlParams}`)
-  //   }
-  // }, [urlParams])
-
-  return isLoading || isFetching || !data ? (
+  return isLoading || !data ? (
     <Loading />
   ) : (
     <AspectTableCore
       config={config}
       tableData={data}
       params={params}
-      setSize={setSize}
+      isFetching={isFetching}
+      initialState={removeNullFromCollection({
+        pageSize: size,
+        sortBy: [{ id: sortCol, desc: determineSortDirection(sortDir) }],
+        pageIndex: page,
+        allowReset,
+      })}
+      setters={{ handleClearParams, setSize, setSortCol, setSortDir, setPage }}
     />
   )
 }
