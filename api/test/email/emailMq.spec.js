@@ -1,7 +1,7 @@
 // const chai = require('chai')
 const { assert, expect } = require('chai')
 const { subDays } = require('date-fns')
-const excel = require('exceljs') 
+const excel = require('exceljs')
 const { Readable } = require('stream')
 const Promise = require('bluebird')
 
@@ -94,7 +94,11 @@ describe('Sending Email via Message Queue', () => {
   it('should send email with CSV attachment', () =>
     runTest(async knex => {
       // get MQ context and messageId of inserted record in EmailMessage
-      const { messageId, emailTemplate, result: { deviceId } } = context
+      const {
+        messageId,
+        emailTemplate,
+        result: { deviceId },
+      } = context
       const messageContext = await createMessageContext()
       messageContext.bindActionCreators({ emailMessageCreated })
 
@@ -129,10 +133,10 @@ describe('Sending Email via Message Queue', () => {
        */
       await Promise.each(context.results, async (r, index) => {
         const updatedValues = {
-          // range all endedOn backward from eventStartedOn 
+          // range all endedOn backward from eventStartedOn
           endedOn: subDays(eventStartedOn, 1 + index),
         }
-        
+
         if (index < 2) {
           updatedValues.moduleName = moduleName
           if (index === 0) {
@@ -144,8 +148,7 @@ describe('Sending Email via Message Queue', () => {
             updatedValues.errorCode = errorCode.assay
             // reset moduleSerial
             updatedValues.moduleSerial = null
-          }
-          else {
+          } else {
             /**
              * set moduleSerial for result before most recent one
              * it's date is subDays(eventStartedOn, 2)
@@ -171,8 +174,7 @@ describe('Sending Email via Message Queue', () => {
                 ErrorCode: errorCode.systemLog,
               },
             ],
-            RawText:
-              `<SomeError>Error Code ${errorCode.systemLog}, Heater Temperature Differential Error in module ${moduleName}`,
+            RawText: `<SomeError>Error Code ${errorCode.systemLog}, Heater Temperature Differential Error in module ${moduleName}`,
           },
           logLevel: 'SEVERE',
           logFileName:
@@ -250,17 +252,17 @@ describe('Sending Email via Message Queue', () => {
       assert.isOk(attachment.mimeType)
 
       /**
-       * - decode from base64 
+       * - decode from base64
        *   (see func generateCsvAttachment() in `shared/io.js` about what/how we encode)
        * - get stream from buffer
        * - restore Excel Worksheet from stream
        */
-      const buffer = Buffer.from(attachment.content, "base64")
+      const buffer = Buffer.from(attachment.content, 'base64')
       const stream = new Readable({
         read() {
           this.push(buffer)
           this.push(null)
-        }
+        },
       })
       const workbook = new excel.Workbook()
       const worksheet = await workbook.csv.read(stream)
@@ -292,14 +294,11 @@ describe('Sending Email via Message Queue', () => {
         .eachCell({ includeEmpty: true }, (cell, cellNumber) => {
           if (cell.value === valueSource) {
             columnNumber.source = cellNumber
-          }
-          else if (cell.value === valueModuleName) {
+          } else if (cell.value === valueModuleName) {
             columnNumber.moduleName = cellNumber
-          }
-          else if (cell.value === valueModuleSerial) {
+          } else if (cell.value === valueModuleSerial) {
             columnNumber.moduleSerial = cellNumber
-          }
-          else if (cell.value === valueErrorCode) {
+          } else if (cell.value === valueErrorCode) {
             columnNumber.errorCode = cellNumber
           }
         })
@@ -330,8 +329,7 @@ describe('Sending Email via Message Queue', () => {
             moduleSerial: row.getCell(columnNumber.moduleSerial).value,
             errorCode: row.getCell(columnNumber.errorCode).value,
           }
-        }
-        else if (
+        } else if (
           row.getCell(columnNumber.source).value === 'System Log' &&
           row.getCell(columnNumber.moduleName).value === moduleName &&
           +row.getCell(columnNumber.errorCode).value === +errorCode.systemLog &&
