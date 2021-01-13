@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi')
+const logger = require('./shared/logger')
 
 // Adds all API routes to the server
 function addClientRoutes(server) {
@@ -177,7 +178,7 @@ function asyncHandler(handler) {
       .then(reply)
       .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       })
 }

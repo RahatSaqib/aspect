@@ -119,9 +119,9 @@ const enhance = compose(
       onChangeFilters({
         deviceApprovalId,
       }),
-    onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
+    onDeviceTypeChange: ({ onChangeFilters }) => deviceType =>
       onChangeFilters({
-        deviceTypeId,
+        deviceType,
       }),
     onDeviceMaintenanceStatusIdChange: ({
       onChangeFilters,
@@ -429,6 +429,7 @@ export const FiltersPanel = ({
   onDeviceApprovalIdChange,
   onDeviceTypeIdChange,
   onDeviceMaintenanceStatusIdChange,
+  onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
   user,
@@ -806,8 +807,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <DeviceTypeSelectField
                 allItemText={intl.formatMessage(messages.all)}
-                value={filters.deviceTypeId}
-                onDeviceTypeChange={onDeviceTypeIdChange}
+                value={filters.deviceType}
+                onDeviceTypeChange={onDeviceTypeChange}
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectDeviceType)}
                 floatingLabelText={intl.formatMessage(messages.deviceType)}
