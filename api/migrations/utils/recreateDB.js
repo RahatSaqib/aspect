@@ -1,4 +1,5 @@
 const { knex } = require('../../src/db')
+const logger = require('../../src/shared/logger')
 const {
   db: { database },
 } = require('../../src/config')
@@ -11,7 +12,7 @@ async function recreateDB() {
 recreateDB().then(
   () => process.exit(0),
   err => {
-    console.error(err) // eslint-disable-line no-console
+    logger.error(err)
     process.exit(1)
   }
 )
