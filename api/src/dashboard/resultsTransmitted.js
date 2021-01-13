@@ -346,6 +346,7 @@ async function resultsTransmittedDashboard(request) {
         }
       }
     )
+    .filter(item => item.cntAll > 0)
     .sort((a, b) => b.cntAll - a.cntAll)
 
   return {
