@@ -114,7 +114,8 @@
     "shx": "^0.3.2",
     "timezone-support": "^2.0.2",
     "twilio": "^3.43.1",
-    "vision": "^5.4.4"
+    "vision": "^5.4.4",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",

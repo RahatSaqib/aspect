@@ -117,6 +117,7 @@ async function getResultQuery(
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
       siteName: 's.name',
     })
     .select(

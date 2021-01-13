@@ -12,6 +12,7 @@ const {
   issueTypeToId,
   allJobFunctionToId,
 } = require('../src/shared/dictionary')
+const logger = require('../src/shared/logger')
 const config = require('../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -100,7 +101,7 @@ function seed(seed, fileName, overridedSeeds) {
   return {
     seed(knex) {
       return runSeed(seed, knex, fileName, overridedSeeds).catch(err => {
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       })
     },

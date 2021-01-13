@@ -111,7 +111,7 @@ export const JobAssignmentForm = ({
   onLgaIdChange,
   onSiteIdChange,
   onDiseaseIdChange,
-  onDeviceTypeIdChange,
+  onDeviceTypeChange,
   onAssayTypeIdChange,
   onAssayIdChange,
   handleSubmit,
@@ -207,7 +207,7 @@ export const JobAssignmentForm = ({
               {...baseProps}
               floatingLabelText={formatMessage(messages.deviceType)}
               value={values.deviceTypeId}
-              onDeviceTypeChange={onDeviceTypeIdChange}
+              onDeviceTypeChange={onDeviceTypeChange}
             />
             <AssayTypeSelectField
               {...baseProps}
