@@ -48,6 +48,7 @@ const {
 const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
+const logger = require('../shared/logger')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
@@ -635,7 +636,7 @@ function downloadFile(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }
@@ -650,7 +651,7 @@ function downloadFirstImage(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }

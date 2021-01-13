@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
+const logger = require('../shared/logger')
 
 function register(plugin) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
@@ -29,7 +30,7 @@ function authenticate(request, h) {
   return authToken(token)
     .then(credentials => h.authenticated({ credentials }))
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }

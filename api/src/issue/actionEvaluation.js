@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { readTextFile } = require('../shared/io')
+const logger = require('../shared/logger')
 
 const evaluationMethods = {
   'inline-sql': evaluateInlineSql,
@@ -14,6 +15,13 @@ async function actionConditionsMet(knex, action, partnerId, conditions) {
   if (_.isEmpty(conditions)) {
     return Promise.resolve(true)
   }
+  logger.debug(
+    { conditions, action },
+    {
+      reLabel: 'issues:actionConditionsMet',
+    }
+  )
+
   if (Array.isArray(conditions)) {
     return evaluateArrayOfConditions(knex, action, partnerId, conditions)
   }
@@ -22,6 +30,7 @@ async function actionConditionsMet(knex, action, partnerId, conditions) {
     evaluationParameter = null,
     evaluationFilterParameters = {},
   } = conditions
+
   if (!evaluationMethods[evaluationMethod]) {
     throw new Error(
       `Unrecognised evaluation method in condition ${evaluationMethod}`
@@ -41,6 +50,13 @@ async function evaluateArrayOfConditions(knex, action, partnerId, conditions) {
     conditions,
     ({ evaluationMethod = null }) => !evaluationMethods[evaluationMethod]
   )
+  logger.debug(
+    { conditions, action },
+    {
+      reLabel: 'issues:evaluateArrayOfConditions',
+    }
+  )
+
   if (!_.isEmpty(invalidConditions)) {
     const invalidMethods = _.orderBy(
       _.uniq(
@@ -96,6 +112,9 @@ async function evaluatePluginFunction(
   const { loadPlugin } = require('../plugin/registration')
   const plugins = await loadPlugin([partner.plugin], 'issueTriggers')
   const func = plugins[functionName]
+  logger.debug(`${functionName} plugin function`, {
+    reLabel: 'issues:evaluatePluginFunction',
+  })
   return func != null && func(knex, action, evaluationFilterParameters)
 }
 
