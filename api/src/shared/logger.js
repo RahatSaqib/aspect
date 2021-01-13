@@ -3,10 +3,7 @@ const config = require('../config')
 
 const { combine, timestamp, label, printf, errors } = format
 // Plain text
-const myFormat = printf(info => {
-  if (typeof message === 'object') {
-    info.message = JSON.stringify(info.message, null, 3)
-  }
+const plainTextFormat = printf(info => {
   if (typeof message === 'object') {
     info.message = JSON.stringify(info.message, null, 3)
   }
@@ -21,9 +18,9 @@ const relabel = format(info => {
   if (info.reLabel) info.label = info.reLabel
   return info
 })
-const labelsWhiteList = format(info => {
+const whiteListLabels = format((info, { labelsWhiteList }) => {
   if (config.log.labelsWhiteList) {
-    const regex = new RegExp(config.log.labelsWhiteList, 'g')
+    const regex = new RegExp(labelsWhiteList, 'g')
     if (!regex.test(info.label)) {
       return false
     }
@@ -31,9 +28,9 @@ const labelsWhiteList = format(info => {
   return info
 })
 
-const blacklistLabels = format(info => {
+const blacklistLabels = format((info, { labelsBlackList }) => {
   if (config.log.labelsBlackList) {
-    const regex = new RegExp(config.log.labelsBlackList, 'g')
+    const regex = new RegExp(labelsBlackList, 'g')
     if (regex.test(info.label)) {
       return false
     }
@@ -41,45 +38,34 @@ const blacklistLabels = format(info => {
   return info
 })
 
-const getBaseFormat = extraFormater =>
+const getBaseFormat = (extraFormater, { labelsBlackList, labelsWhiteList }) =>
   combine(
     format.colorize(),
     label({ label: 'Aspect api' }),
     relabel(),
     errors({ stack: true }),
-    labelsWhiteList(),
-    blacklistLabels(),
-
+    whiteListLabels({ labelsWhiteList }),
+    blacklistLabels({ labelsBlackList }),
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     extraFormater
   )
 
-const logger = createLogger()
-//
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+const consoleLogger =
+  config.log.format === 'JSON' ? format.simple() : plainTextFormat
+const logger = createLogger({
+  format: getBaseFormat(consoleLogger, config.log),
+  level: config.log.logLevel,
+  transports: [new transports.Console()],
+})
 
-if (config.log.format === 'JSON') {
-  logger.add(
-    new transports.Console({
-      format: getBaseFormat(format.simple()),
-      level: config.log.logLevel,
-    })
-  )
-} else {
-  logger.add(
-    new transports.Console({
-      format: getBaseFormat(myFormat),
-      level: config.log.logLevel,
-    })
-  )
-}
-
-if (config.log.loggingFilePath) {
+if (config.log.file.path) {
   logger.add(
     new transports.File({
-      format: getBaseFormat(format.simple()),
-      filename: config.log.loggingFilePath,
+      format: getBaseFormat(
+        config.log.file.format === 'JSON' ? format.simple() : plainTextFormat,
+        config.log.file
+      ),
+      filename: config.log.file.path,
       level: config.log.fileLogLevel,
     })
   )
