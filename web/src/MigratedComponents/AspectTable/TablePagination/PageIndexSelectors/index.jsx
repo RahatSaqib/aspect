@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { bool, func, number, string } from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
@@ -8,6 +8,10 @@ import IndexButton from './IndexButton'
 import NowShowing from './NowShowing'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to render page navigation options
+ */
 
 const PageIndexSelectors = ({
   canNextPage,
@@ -63,16 +67,46 @@ const PageIndexSelectors = ({
 }
 
 PageIndexSelectors.propTypes = {
-  canNextPage: PropTypes.bool.isRequired,
-  canPreviousPage: PropTypes.bool.isRequired,
-  dataLength: PropTypes.number.isRequired,
-  gotoPage: PropTypes.func.isRequired,
-  name: PropTypes.string.isRequired,
-  nextPage: PropTypes.func.isRequired,
-  pageIndex: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  pageCount: PropTypes.number.isRequired,
-  previousPage: PropTypes.func.isRequired,
+  /**
+    Boolean to allow next page
+  */
+  canNextPage: bool.isRequired,
+  /**
+    Boolean to allow previous page
+  */
+  canPreviousPage: bool.isRequired,
+  /**
+    Length of data to be rendered, needed for calcs
+  */
+  dataLength: number.isRequired,
+  /**
+    Function to navigate to page provided as int
+  */
+  gotoPage: func.isRequired,
+  /**
+    Name of the type of records
+  */
+  name: string.isRequired,
+  /**
+    Function to move to immediate next page
+  */
+  nextPage: func.isRequired,
+  /**
+    Current page index (starts at zero)
+  */
+  pageIndex: number.isRequired,
+  /**
+    Total rows shown per page
+  */
+  pageSize: number.isRequired,
+  /**
+    Total pages calculated from rows and page size
+  */
+  pageCount: number.isRequired,
+  /**
+    Function to navigate to the immediate previous page
+  */
+  previousPage: func.isRequired,
 }
 
 export default PageIndexSelectors

@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, memo } from 'react'
-import PropTypes from 'prop-types'
+import { string } from 'prop-types'
 import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
@@ -59,11 +59,11 @@ IconProvider.propTypes = {
   /**
     String of the icon name to be displayed
   */
-  icon: PropTypes.string.isRequired,
+  icon: string.isRequired,
   /**
     Class name for icon to be displayed
   */
-  className: PropTypes.string.isRequired,
+  className: string.isRequired,
 }
 
 export default IconProvider

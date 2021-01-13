@@ -3,7 +3,7 @@ import { render, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
 
-import { Default } from '../Table.stories'
+import { Default } from '../../Table.stories'
 
 describe('test headers and sortable states', () => {
   it('should render 4 columns in the correct order', () => {
@@ -13,10 +13,10 @@ describe('test headers and sortable states', () => {
 
     expect(columnHeaders).toHaveLength(4)
     expect(columnHeaders.map(d => d.textContent)).toEqual([
-      'Contacts',
-      'Name',
-      'Last Triggered',
-      'Total Triggers',
+      'ContactsFaSquareFaSquareFaSquareFaSquare',
+      'NameFaSquareFaSquareFaSquareFaSquare',
+      'Last TriggeredFaSquareFaSquareFaSquare',
+      'Total TriggersFaSquareFaSquareFaSquareFaSquare',
     ])
   })
 
@@ -78,7 +78,12 @@ describe('test headers and sortable states', () => {
       within(table)
         .getAllByRole('columnheader')
         .map(d => d.textContent)
-    ).toEqual(['Name', 'Contacts', 'Last Triggered', 'Total Triggers'])
+    ).toEqual([
+      'NameFaSquareFaSquareFaSquareFaSquare',
+      'ContactsFaSquareFaSquareFaSquareFaSquare',
+      'Last TriggeredFaSquareFaSquareFaSquare',
+      'Total TriggersFaSquareFaSquareFaSquareFaSquare',
+    ])
   })
 
   it('check allowed hide-column states, hide column, and test headers', () => {

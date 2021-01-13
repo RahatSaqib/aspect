@@ -1,11 +1,15 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { bool, func, oneOf, string } from 'prop-types'
 import Button from '@material-ui/core/Button'
 import classnames from 'classnames/bind'
 
 import IconProvider from '../../../IconProvider'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to render page navigation button
+ */
 
 const IndexButton = ({ modifier, disabled, action, icon, label }) => {
   return (
@@ -24,11 +28,26 @@ const IndexButton = ({ modifier, disabled, action, icon, label }) => {
 }
 
 IndexButton.propTypes = {
-  modifier: PropTypes.oneOf(['left', 'right']).isRequired,
-  disabled: PropTypes.bool.isRequired,
-  action: PropTypes.func.isRequired,
-  icon: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  /**
+    Enum for direction of the button once clicked
+  */
+  modifier: oneOf(['left', 'right']).isRequired,
+  /**
+    Is currently enabled boolean
+  */
+  disabled: bool.isRequired,
+  /**
+    Function to perform once clicked (if enabled)
+  */
+  action: func.isRequired,
+  /**
+    Which icon to pass to the component
+  */
+  icon: string.isRequired,
+  /**
+    Additional text label for the button
+  */
+  label: string.isRequired,
 }
 
 export default IndexButton

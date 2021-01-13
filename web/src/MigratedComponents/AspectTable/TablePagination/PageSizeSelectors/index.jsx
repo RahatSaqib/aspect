@@ -1,9 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { func, number } from 'prop-types'
 import Button from '@material-ui/core/Button'
 import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to render page selectors for table component
+ */
 
 const PageSizeSelectors = ({
   dataLength,
@@ -28,9 +32,18 @@ const PageSizeSelectors = ({
 }
 
 PageSizeSelectors.proptTypes = {
-  dataLength: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  handleChangeRowsPerPage: PropTypes.func.isRequired,
+  /**
+    Length of data to be rendered, needed for calcs
+  */
+  dataLength: number.isRequired,
+  /**
+    Page size number sent from component selector
+  */
+  pageSize: number.isRequired,
+  /**
+    Function to handle updates to selected page size
+  */
+  handleChangeRowsPerPage: func.isRequired,
 }
 
 export default PageSizeSelectors

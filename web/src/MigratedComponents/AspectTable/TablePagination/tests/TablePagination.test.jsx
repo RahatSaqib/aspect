@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
 
-import { Default } from './TablePagination.stories'
+import { Default } from '../stories/TablePagination.stories'
 
 it('renders buttons in correct states', () => {
   const { getByRole } = render(<Default {...Default.args} />)

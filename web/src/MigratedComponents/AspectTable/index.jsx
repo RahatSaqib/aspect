@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import { array, object, oneOfType } from 'prop-types'
 import { usePaginatedQuery } from 'react-query'
 import { useHistory, useLocation } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -171,18 +171,19 @@ const AspectTableCore = ({
       ) : null}
       <Table {...getTableProps()} style={{ tableLayout: 'auto' }}>
         <TableHead>
-          {headerGroups.map(({ headers, getHeaderGroupProps }) => (
-            <TableRow {...getHeaderGroupProps()}>
-              <TableHeaderRow
-                allowColumnReOrder={allowColumnReOrder}
-                handleChangeColumnOrder={handleChangeColumnOrder}
-                handleHideColumnToggle={handleHideColumnToggle}
-                handleGroupByColumnToggle={handleGroupByColumnToggle}
-                headers={headers}
-              />
-              {ContextualMenu ? <TableCell /> : null}
-            </TableRow>
-          ))}
+          {headerGroups &&
+            headerGroups.map(({ headers, getHeaderGroupProps }) => (
+              <TableRow {...getHeaderGroupProps()}>
+                <TableHeaderRow
+                  allowColumnReOrder={allowColumnReOrder}
+                  handleChangeColumnOrder={handleChangeColumnOrder}
+                  handleHideColumnToggle={handleHideColumnToggle}
+                  handleGroupByColumnToggle={handleGroupByColumnToggle}
+                  headers={headers}
+                />
+                {ContextualMenu ? <TableCell /> : null}
+              </TableRow>
+            ))}
         </TableHead>
         <TableBody>
           {page.map(row => {
@@ -233,8 +234,14 @@ const AspectTableCore = ({
 }
 
 AspectTableCore.proptTypes = {
-  data: PropTypes.oneOf([PropTypes.array]).isRequired,
-  config: PropTypes.oneOf([PropTypes.object]).isRequired,
+  /**
+    Data input for tables
+  */
+  data: oneOfType([array]).isRequired,
+  /**
+   Config input for tables
+ */
+  config: oneOfType([object]).isRequired,
 }
 
 const Loading = () => (
