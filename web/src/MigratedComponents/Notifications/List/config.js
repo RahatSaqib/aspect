@@ -75,7 +75,7 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
   ],
   columnOrder: {
-    allow: true,
+    allow: false,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
   },
   contextualMenu: NotificationsContextualMenu,
