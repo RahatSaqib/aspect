@@ -1,9 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { bool, func, string } from 'prop-types'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import classnames from 'classnames/bind'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to render column
+ */
 
 function TableColumnHeader({
   canSort,
@@ -52,13 +56,34 @@ TableColumnHeader.defaultProps = {
 }
 
 TableColumnHeader.propTypes = {
-  canSort: PropTypes.bool.isRequired,
-  headerGroupByComponent: PropTypes.func.isRequired,
-  headerOrderComponent: PropTypes.func.isRequired,
-  headerVisibilityComponent: PropTypes.func.isRequired,
-  isSorted: PropTypes.bool.isRequired,
-  isSortedDesc: PropTypes.bool,
-  render: PropTypes.string.isRequired,
+  /**
+    Boolean to allow table row order toggle
+  */
+  canSort: bool.isRequired,
+  /**
+    Function exposed by react-table
+  */
+  headerGroupByComponent: func.isRequired,
+  /**
+    Function exposed by react-table
+  */
+  headerOrderComponent: func.isRequired,
+  /**
+    Function exposed by react-table
+  */
+  headerVisibilityComponent: func.isRequired,
+  /**
+    Boolean to check if rows are sorted by this column
+  */
+  isSorted: bool.isRequired,
+  /**
+    Bool to identify direction of sorting
+  */
+  isSortedDesc: bool,
+  /**
+    Function exposed by react-table
+  */
+  render: string.isRequired,
 }
 
 export default TableColumnHeader

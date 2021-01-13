@@ -30,6 +30,12 @@ yarn dist
 # Run unit tests
 yarn test
 
+# Run unit tests with watch, and no coverage
+yarn test:no-coverage
+
+# Run a single unit test by appending file to test
+yarn test:single (example: `yarn test: single src/MigratedComponents/AspectTable/TableHeader/Tests/TableHeaders.test.jsx`)
+
 # Lint all files in src (also automatically done AFTER tests are run)
 yarn lint
 
@@ -91,7 +97,19 @@ yarn update
 
 Also update vendorPackages in dist.js to make sure that vendor packages are bundled separately from our code
 
-## Styleguide
+## Storybook
+
+```bash
+# Run styleguide
+yarn storybook
+```
+
+To view storybook, visit http://localhost:8080/.
+
+
+## Styleguide [DEPRECATED]
+
+TO BE REMOVED: Once Storybook has been adopted fully, this will be removed. See Issue: https://github.com/SystemOneId/aspect/issues/1546
 
 To view styleguides, visit http://localhost:6060/.
 

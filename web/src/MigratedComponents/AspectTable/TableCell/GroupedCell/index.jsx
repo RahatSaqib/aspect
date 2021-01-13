@@ -1,5 +1,14 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import {
+  array,
+  bool,
+  func,
+  number,
+  object,
+  oneOfType,
+  shape,
+  string,
+} from 'prop-types'
 import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
@@ -9,6 +18,10 @@ import IconProvider from '../../../IconProvider'
 import Cell from '../Cell'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to render a grouped cell
+ */
 
 const GroupedCell = ({
   format,
@@ -38,15 +51,32 @@ const GroupedCell = ({
 }
 
 GroupedCell.propTypes = {
-  format: PropTypes.func.isRequired,
-  getToggleRowExpandedProps: PropTypes.oneOf([PropTypes.object]).isRequired,
-  isExpanded: PropTypes.bool.isRequired,
-  render: PropTypes.func.isRequired,
-  subRows: PropTypes.shape({
-    length: PropTypes.number,
+  /**
+    Function to format the cell
+  */
+  format: func.isRequired,
+  /**
+    Function exposed by react-table
+  */
+  getToggleRowExpandedProps: oneOfType([object]).isRequired,
+  /**
+    Bool to check expanded state of cell
+  */
+  isExpanded: bool.isRequired,
+  /**
+    Function exposed by react-table
+  */
+  render: func.isRequired,
+  /**
+    Count of rows nested below this grouped cell
+  */
+  subRows: shape({
+    length: number,
   }).isRequired,
-  value: PropTypes.oneOf([PropTypes.array, PropTypes.string, PropTypes.number])
-    .isRequired,
+  /**
+    Value for the cell to render
+  */
+  value: oneOfType([array, string, number]).isRequired,
 }
 
 export default GroupedCell

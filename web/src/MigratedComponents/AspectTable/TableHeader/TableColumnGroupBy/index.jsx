@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { bool, func, number } from 'prop-types'
 import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
@@ -8,6 +8,10 @@ import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
+
+/**
+ * Component to allow rows to be grouped for this column
+ */
 
 const TableColumnGroupBy = ({
   headerIndex,
@@ -22,7 +26,10 @@ const TableColumnGroupBy = ({
       data-testid={`ungroup_${headerIndex}`}
       title={formatMessage(messages.unGroupByColumn)}
     >
-      <IconProvider icon="FaCheckSquare" />
+      <IconProvider
+        icon="FaCheckSquare"
+        className="tableheader__groupbybutton"
+      />
     </IconButton>
   ) : (
     <IconButton
@@ -31,15 +38,27 @@ const TableColumnGroupBy = ({
       data-testid={`group_${headerIndex}`}
       title={formatMessage(messages.groupByColumn)}
     >
-      <IconProvider icon="FaRegCheckSquare" />
+      <IconProvider
+        icon="FaRegCheckSquare"
+        className="tableheader__groupbybutton"
+      />
     </IconButton>
   )
 }
 
 TableColumnGroupBy.defaultProps = {
-  headerIndex: PropTypes.number.isRequired,
-  handleGroupByColumnToggle: PropTypes.func.isRequired,
-  isGrouped: PropTypes.bool.isRequired,
+  /**
+    Index int for the currently grouped column
+  */
+  headerIndex: number.isRequired,
+  /**
+    Function to handle grouping toggle
+  */
+  handleGroupByColumnToggle: func.isRequired,
+  /**
+    Boolean to check if rows are grouped per column
+  */
+  isGrouped: bool.isRequired,
 }
 
 export default TableColumnGroupBy
