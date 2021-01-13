@@ -40,7 +40,7 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe.only('Device routes', () => {
+describe('Device routes', () => {
   const path = '/api/device'
   let deviceMaintenanceStatuses
   let deviceApprovals
