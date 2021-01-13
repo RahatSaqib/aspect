@@ -6,13 +6,27 @@ const {
   issueStatusToId,
   issueEventStatusToId,
 } = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 async function onResolveIssues(action, { messageContext: context }) {
   context.bindActionCreators({ issueResolved })
   return context.transact(async knex => {
+    logger.debug(
+      {
+        action_type: action.type,
+      },
+      { reLabel: 'issues:onResolveIssues' }
+    )
     const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
       knex,
       action.issueId
+    )
+    logger.debug(
+      {
+        action_type: action.type,
+        openIssuesToCheck,
+      },
+      { reLabel: 'issues:onResolveIssues' }
     )
     const resolvedIssueStatusId = await issueStatusToId('Resolved')
     const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
@@ -25,12 +39,31 @@ async function onResolveIssues(action, { messageContext: context }) {
         issueResolutionTrigger,
         issueResolutionTrigger.conditions
       )
+      logger.debug(
+        {
+          action_type: action.type,
+          openIssuesToCheck,
+          conditions: issueResolutionTrigger.conditions,
+          shouldResolve,
+        },
+        { reLabel: 'issues:onResolveIssues' }
+      )
       if (shouldResolve) {
         const now = new Date()
         await knex('Issue').where({ id: issueResolutionTrigger.id }).update({
           issueStatusId: resolvedIssueStatusId,
           updatedOn: now,
         })
+        logger.debug(
+          {
+            action_type: action.type,
+            openIssuesToCheck,
+            conditions: issueResolutionTrigger.conditions,
+            shouldResolve,
+            issueResolved: true,
+          },
+          { reLabel: 'issues:onResolveIssues' }
+        )
         await knex('IssueStatusLog').insert({
           issueId: issueResolutionTrigger.id,
           issueStatusId: resolvedIssueStatusId,

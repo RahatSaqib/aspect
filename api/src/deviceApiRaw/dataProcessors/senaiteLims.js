@@ -14,6 +14,7 @@ const {
 } = require('../../shared/dictionary')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
+const logger = require('../../shared/logger')
 
 class DefaultSenaiteLIMS extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -43,7 +44,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       try {
         payload = JSON.parse(payloadBody)
       } catch (error) {
-        console.error(error) // eslint-disable-line no-console
+        logger.error(error)
       }
     }
     const now = new Date()
