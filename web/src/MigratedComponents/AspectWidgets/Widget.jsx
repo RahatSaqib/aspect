@@ -102,7 +102,7 @@ const AspectWidget = ({
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const messages = defineMessage(buildMessagesFromI18nKeys(data))
-  const linkParam = buildWidgetToLinkParams(link, linkParams)
+  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : false
 
   return (
     <AspectLink
