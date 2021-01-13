@@ -3,7 +3,6 @@ import subMinutes from 'date-fns/subMinutes'
 import addMinutes from 'date-fns/addMinutes'
 import formatDistance from 'date-fns/formatDistance'
 import isPast from 'date-fns/isPast'
-import getUnixTime from 'date-fns/getUnixTime'
 import parseISO from 'date-fns/parseISO'
 import identity from 'lodash/identity'
 import isNaN from 'lodash/isNaN'
@@ -15,7 +14,6 @@ import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
 import pickBy from 'lodash/pickBy'
-import keys from 'lodash/keys'
 
 const mockedDataNames = [
   'Amherst',
@@ -78,8 +76,8 @@ function mockDatafetch(cnt = 10) {
       totalTriggers: triggerRandom,
       alertCount: triggerRandom,
       contactsCount: contacts.length,
-      contacts,
-      lastTriggeredOn: getUnixTime(mutatedDate),
+      contacts: contacts.join(','),
+      lastTriggeredOn: mutatedDate.toISOString(),
     })
   })
   return { data }
@@ -159,6 +157,14 @@ async function shapeTableParamsForApi({
   return pickBy({ page, size, sortCol, sortDir }, identity)
 }
 
+function removeNullFromCollection(collection) {
+  return pickBy(collection, identity)
+}
+
+function determineSortDirection(direction) {
+  return (direction && direction === 'desc') || false
+}
+
 function getParamsFromUrl(query, search) {
   const output = {}
   const queryKeys = new URLSearchParams(search)
@@ -171,14 +177,21 @@ function getParamsFromUrl(query, search) {
   return output
 }
 
+function useUrlQuery(search) {
+  return new URLSearchParams(search)
+}
+
 export {
   buildColumnsFromData,
+  determineSortDirection,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
   getParamsFromUrl,
   mockDatafetch,
+  removeNullFromCollection,
   shapeTableParamsForApi,
   timeClassification,
   timeSinceFromUTC,
   totalItemCount,
+  useUrlQuery,
 }
