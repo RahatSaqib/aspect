@@ -19,6 +19,7 @@ export class DeviceTypeSelectField extends PureComponent {
     deviceTypeItems: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
+        externalId: PropTypes.string,
         name: PropTypes.string,
       })
     ).isRequired,
@@ -53,7 +54,7 @@ export class DeviceTypeSelectField extends PureComponent {
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceTypeItems.map(a => (
-          <MenuItem key={a.get('id')} value={a.get('id')}>
+          <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
             {a.get('name')}
           </MenuItem>
         ))}
