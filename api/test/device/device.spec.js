@@ -412,10 +412,7 @@ describe('Device routes', () => {
               endOfMonth(subMonths(new Date(), 1)),
               'yyyy-MM-dd'
             )}&${filterOnDeviceMaintenanceStatus
-              .map(
-                status =>
-                  `deviceMaintenanceStatusId=${status}`
-              )
+              .map(status => `deviceMaintenanceStatusId=${status}`)
               .join('&')}`
           )
           .set('Authorization', `Bearer ${shared.token}`)
@@ -445,10 +442,7 @@ describe('Device routes', () => {
               endOfMonth(subMonths(new Date(), 1)),
               'yyyy-MM-dd'
             )}&${filterOnDeviceMaintenanceStatus
-              .map(
-                status =>
-                  `deviceMaintenanceStatusId=${status}`
-              )
+              .map(status => `deviceMaintenanceStatusId=${status}`)
               .join('&')}`
           )
           .set('Authorization', `Bearer ${shared.token}`)
@@ -525,10 +519,7 @@ describe('Device routes', () => {
               endOfMonth(subMonths(new Date(), 1)),
               'yyyy-MM-dd'
             )}&${filterOnDeviceMaintenanceStatus
-              .map(
-                status =>
-                  `deviceMaintenanceStatusId=${status}`
-              )
+              .map(status => `deviceMaintenanceStatusId=${status}`)
               .join('&')}`
           )
           .set('Authorization', `Bearer ${shared.token}`)
@@ -793,8 +784,11 @@ describe('Device routes', () => {
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .select('id')
           .pluck('externalId')
-        ;[deviceMaintenanceStatusExternalId] = editableDeviceMaintenanceStatusIds
-        deviceMaintenanceStatusId = deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
+        const [
+          deviceMaintenanceStatusExternalId,
+        ] = editableDeviceMaintenanceStatusIds
+        deviceMaintenanceStatusId =
+          deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
 
         device = await knex('DeviceTypeCategory as dtc')
           .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
