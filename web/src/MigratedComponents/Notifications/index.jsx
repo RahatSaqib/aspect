@@ -2,7 +2,7 @@ import React from 'react'
 import { Switch, Route, useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-// import NotificationDetailView from '../../notification/Detail/view/NotificationDetailView'
+import NotificationDetailView from '../../notification/Detail/view/NotificationDetailView'
 import NotificationDetailHistory from './Detail/NotificationDetailHistory'
 import NotificationList from './List'
 
@@ -12,11 +12,11 @@ const AspectNotificationDetails = ({ match }) => {
     <div>
       <Switch>
         <Route exact path={match.path} render={() => <NotificationList />} />
-        {/* <Route
+        <Route
           exact
           path={`${match?.path}/:notificationId`}
           render={props => <NotificationDetailView {...props} />}
-        /> */}
+        />
         <Route
           path={`${match.path}/history`}
           render={({ location, history }) => (
