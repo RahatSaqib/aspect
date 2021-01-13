@@ -43,6 +43,26 @@ yarn lint
 yarn clean
 ```
 
+## Component Scaffolding
+
+There are some helpers to generate boilerplate for code we write often. Components, Stories for components, and tests for components.
+
+```bash
+# Start for development
+yarn scaffold --name --item
+
+--name: name of the component [string]
+--item: which helper template to generate [string options: all, index, test, story]
+```
+
+As example:
+`yarn scaffold AspectButton index,test` will generate the `AspectButton` index component, as well as a corresponding test for that component.
+
+`yarn scaffold AspectButton all` will generate the index component, story and test for this component.
+
+`yarn scaffold AspectButton test` will only generate the test for an existing component. 
+
+Make sure to run the command in the root of the folder you want to create the component, and if the folder already exists, then it will not overwrite what is there.
 
 ## i18n
 

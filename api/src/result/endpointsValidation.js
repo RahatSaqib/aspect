@@ -453,6 +453,9 @@ function listResultsBaseConfig() {
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
+        deviceType: Joi.string()
+          .allow('')
+          .description('Filter for device type ExternalId'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         patientOrResearchId: Joi.string()
           .allow('')
