@@ -73,6 +73,7 @@ const sanitizerByConfigKey = {
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
+  deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
 }
 
 export const sanitizeFiltersStringBy = config => filtersString =>
@@ -183,6 +184,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'deviceApproval':
               result.deviceApproval = true
+              break
+            case 'deviceMaintenanceStatus':
+              result.deviceMaintenanceStatus = true
               break
             case 'deviceType':
               result.deviceType = true

@@ -1,13 +1,34 @@
+const {
+  admin,
+  clinician,
+  donor,
+  ntp,
+  ntpNoResults,
+  technician,
+  deviceMaker,
+  labUser,
+  regionalOfficer,
+  systemOne,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
+    ...admin,
     permissions: [
       {
-        module: 'assay',
+        module: 'account',
         activity: 'edit',
       },
       {
         module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
         activity: 'edit',
       },
       {
@@ -19,19 +40,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
         module: 'site',
         activity: 'edit',
       },
       {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
+        module: 'treatmentStatus',
         activity: 'edit',
       },
       {
@@ -39,25 +52,33 @@ module.exports = [
         activity: 'summary',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
   },
   {
-    name: 'Regional Officer',
+    ...clinician,
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -68,7 +89,15 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -76,33 +105,86 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'account',
-        activity: 'edit',
+        module: 'device',
+        activity: 'view',
       },
       {
-        module: 'dashboard',
-        activity: 'summary',
+        module: 'deviceApiKey',
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'edit',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
   },
   {
-    name: 'Lab User',
+    ...donor,
     permissions: [
       {
-        module: 'assay',
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
         activity: 'view',
       },
       {
-        module: 'person',
+        module: 'operationalData',
         activity: 'view',
       },
       {
-        module: 'device',
+        module: 'report',
         activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    ...labUser,
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -113,7 +195,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -121,7 +207,126 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    ...ntp,
+    permissions: [
+      {
         module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'result',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    ...ntpNoResults,
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    ...regionalOfficer,
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
         activity: 'edit',
       },
       {
@@ -129,8 +334,103 @@ module.exports = [
         activity: 'summary',
       },
       {
-        module: 'inventory',
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  systemOne,
+  {
+    ...technician,
+    permissions: [
+      {
+        module: 'account',
         activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    ...deviceMaker,
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
       },
     ],
   },

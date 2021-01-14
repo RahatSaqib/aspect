@@ -14,8 +14,10 @@ async function getReports(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const reportsQuery = knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('JobFunction as jf', 'jf.id', 'jfr.jobFunctionId')
+    .innerJoin('Job as j', 'jf.id', 'j.jobFunctionId')
+    .where('j.personId', dataConstraints.person.id)
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
 
@@ -31,19 +33,20 @@ async function getReports(request) {
 
 async function getReportDetails(auth, externalId) {
   const dataConstraints = await getConstraints(auth.credentials)
+
   const report = await knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { person: 'p' })
     .where('r.externalId', externalId)
     .select(
       'r.description',
       'r.externalId',
-      'r.fileName',
-      'r.geographyId',
+      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
       'r.id',
       'r.i18nKey',
-      'r.name',
-      'r.partnerId'
+      'r.name'
     )
     .first()
 
