@@ -1,39 +1,25 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  notificationsTableHeaderName: {
-    id: 'pages.Notifications.table.nameHeader',
-    defaultMessage: 'Name',
+  eventsTableWebhookSent: {
+    id: 'pages.Notifications.table.webhookSentHeader',
+    defaultMessage: 'Webhook Sent',
   },
-  notificationsTableHeaderNameCount: {
-    id: 'pages.Notifications.notificationsTableHeaderNameCount',
-    defaultMessage: `{itemCount, plural,
-      one {# Name}
-      other {# Names}
-    }`,
+  eventsTableHeaderDate: {
+    id: 'pages.Notifications.table.dateHeader',
+    defaultMessage: 'Date',
   },
-  notificationsTableHeaderLastTriggered: {
-    id: 'pages.Notifications.table.lastTriggeredHeader',
-    defaultMessage: 'Last Triggered',
-  },
-  notificationsTableHeaderTotalTriggers: {
-    id: 'pages.Notifications.table.totalTriggersHeader',
-    defaultMessage: 'Total Triggers',
+  eventsTableHeaderEmailSent: {
+    id: 'pages.Notifications.table.emailSentHeader',
+    defaultMessage: 'Email Sent',
   },
   notificationsTableTotalTriggersCount: {
     id: 'pages.Notifications.notificationsTableTotalTriggersCount',
     defaultMessage: `{itemCount} (total)`,
   },
-  notificationsTableHeaderContacts: {
-    id: 'pages.Notifications.table.contactsHeader',
-    defaultMessage: 'Contacts',
-  },
-  notificationsTableContactsCount: {
-    id: 'pages.Notifications.notificationsTableContactsCount',
-    defaultMessage: `{itemCount, plural,
-      one {# Contact}
-      other {# Contacts}
-    }`,
+  eventsTableSmsSent: {
+    id: 'pages.Notifications.table.smsSentHeader',
+    defaultMessage: 'SMS Sent',
   },
 })
 

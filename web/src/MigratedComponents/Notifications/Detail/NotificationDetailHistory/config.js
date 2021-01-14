@@ -1,61 +1,65 @@
 /**
- * WIP
- * key: 'string' [self defined]
- * label: 'string' [self defined]
- * width: 'number' [self defined]
- * disableHide: 'boolean' [react-table]
- * disableGroupBy: 'boolean' [react-table]
- * aggregate: 'function' [self defined|react-table]
- * Aggregated: 'function' [self defined]
- * format: 'react component' [self defined]
+ * name: 'string' [self defined, required]
+ * columns: 'array' [self-defined, required]
+ *  key: 'string' [self defined, required]
+ *  filterKey: 'string' [self defined, optional for filtering]
+ *  label: 'string' [self defined, required]
+ *  width: 'number' [self defined, optional]
+ *  disableHide: 'boolean' [react-table, optional default false]
+ *  disableGroupBy: 'boolean' [react-table, optional default false]
+ *  disableSortBy: 'boolean' [react-table, optional default false]
+ *  aggregate: 'function' [self defined|react-table, optional for calcs]
+ *  Aggregated: 'function' [self defined, optional for calcs]
+ *  format: 'function|react component' [self defined, optional for calcs]
+ * columnOrder: 'object' [self defined, optional]
+ *  allow: 'bool' [self defined, optional default true]
+ *  initialOrder: 'array' [self defined, optional]
+ * contextualMenu: 'function|component' [self defined, optional]
  */
 
 import messages from './messages'
-import ContactsCell from '../../../AspectTable/TableCell/ContactsCell'
+import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../../AspectTable/TableCell/NumberCell'
 
 const baseConfig = ({ formatMessage }) => ({
-  name: 'notification',
+  name: 'event',
   columns: [
     {
-      key: 'lastTriggeredOn',
-      label: formatMessage(messages.notificationsTableHeaderLastTriggered),
+      key: 'date',
+      label: formatMessage(messages.eventsTableHeaderDate),
+      width: 40,
+      disableHide: true,
+      disableGroupBy: true,
+      format: DateTimeCell,
+    },
+    {
+      key: 'webhookSent',
+      label: formatMessage(messages.eventsTableWebhookSent),
       width: 20,
       disableHide: true,
       disableGroupBy: true,
-      disableOrderBy: true,
-    },
-    {
-      key: 'name',
-      label: formatMessage(messages.notificationsTableHeaderName),
-      width: 35,
-      disableHide: true,
-      disableGroupBy: true,
-      disableOrderBy: true,
-    },
-    {
-      key: 'totalTriggers',
-      label: formatMessage(messages.notificationsTableHeaderTotalTriggers),
-      width: 20,
-      aggregate: 'sum',
-      disableHide: true,
-      disableGroupBy: true,
-      disableOrderBy: true,
       format: NumberCell,
     },
     {
-      key: 'contacts',
-      label: formatMessage(messages.notificationsTableHeaderContacts),
+      key: 'emailSent',
+      label: formatMessage(messages.eventsTableHeaderEmailSent),
+      width: 20,
       disableHide: true,
       disableGroupBy: true,
-      disableOrderBy: true,
-      width: 25,
-      format: ContactsCell,
+      format: NumberCell,
+    },
+    {
+      key: 'smsSent',
+      label: formatMessage(messages.eventsTableSmsSent),
+      width: 20,
+      disableHide: true,
+      disableGroupBy: true,
+      format: NumberCell,
     },
   ],
   columnOrder: {
-    allow: true,
-    initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
+    allow: false,
+    initialOrder: [],
   },
 })
 
