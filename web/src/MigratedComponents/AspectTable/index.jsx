@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 
 import fetchWrapperForQueries from '../QueryFetch'
+import ErrorBoundary from '../ErrorBoundary'
 
 import AspectTableCore from './TableCore'
 
@@ -112,26 +113,34 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   return isLoading || !data ? (
     <Loading />
   ) : (
-    <AspectTableCore
-      config={config}
-      tableData={data}
-      params={params}
-      pageCount={Math.ceil(data.total / size)}
-      isFetching={isFetching}
-      initialState={removeNullFromCollection({
-        pageSize: size,
-        sortBy: [
-          {
-            id: sortCol,
-            desc: determineSortDirection(sortDir),
-          },
-        ],
-        pageIndex: page,
-        allowReset,
-        filters: getColumnIdFromFilterKey(config, filters),
-      })}
-      setters={{ handleClearParams, setSize, setSortCol, setSortDir, setPage }}
-    />
+    <ErrorBoundary>
+      <AspectTableCore
+        config={config}
+        tableData={data}
+        params={params}
+        pageCount={Math.ceil(data.total / size)}
+        isFetching={isFetching}
+        initialState={removeNullFromCollection({
+          pageSize: size,
+          sortBy: [
+            {
+              id: sortCol,
+              desc: determineSortDirection(sortDir),
+            },
+          ],
+          pageIndex: page,
+          allowReset,
+          filters: getColumnIdFromFilterKey(config, filters),
+        })}
+        setters={{
+          handleClearParams,
+          setSize,
+          setSortCol,
+          setSortDir,
+          setPage,
+        }}
+      />
+    </ErrorBoundary>
   )
 }
 
