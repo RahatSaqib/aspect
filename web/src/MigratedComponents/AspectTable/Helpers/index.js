@@ -1,4 +1,3 @@
-import map from 'lodash/map'
 import subMinutes from 'date-fns/subMinutes'
 import addMinutes from 'date-fns/addMinutes'
 import formatDistance from 'date-fns/formatDistance'
@@ -7,6 +6,7 @@ import parseISO from 'date-fns/parseISO'
 import identity from 'lodash/identity'
 import isNaN from 'lodash/isNaN'
 import filter from 'lodash/filter'
+import find from 'lodash/find'
 import times from 'lodash/times'
 import random from 'lodash/random'
 import chunk from 'lodash/chunk'
@@ -14,6 +14,8 @@ import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
 import pickBy from 'lodash/pickBy'
+import omit from 'lodash/omit'
+import map from 'lodash/map'
 
 const mockedDataNames = [
   'Amherst',
@@ -181,9 +183,32 @@ function useUrlQuery(search) {
   return new URLSearchParams(search)
 }
 
+function allowOnlyAPIKeys(params) {
+  const omitKeys = ['filters']
+  return omit(params, omitKeys)
+}
+
+function getColumnIdFromFilterKey(config, filters) {
+  const output = []
+  const { columns } = config
+  const filterStrings = Object.fromEntries(new URLSearchParams(filters))
+
+  map(filterStrings, (value, key) => {
+    const configColumn = find(columns, { filterKey: key })
+    if (configColumn) {
+      const { key: id } = configColumn
+      return output.push({ id, value })
+    }
+  })
+
+  return output
+}
+
 export {
+  allowOnlyAPIKeys,
   buildColumnsFromData,
   determineSortDirection,
+  getColumnIdFromFilterKey,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
   getParamsFromUrl,

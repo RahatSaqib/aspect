@@ -8,12 +8,13 @@ import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 
 import {
-  useTable,
-  useSortBy,
-  usePagination,
   useColumnOrder,
-  useGroupBy,
   useExpanded,
+  useFilters,
+  useGroupBy,
+  usePagination,
+  useSortBy,
+  useTable,
 } from 'react-table'
 
 import Table from '@material-ui/core/Table'
@@ -31,8 +32,10 @@ import AspectTablePagination from './TablePagination'
 import AspectTableReset from './TableReset'
 
 import {
+  allowOnlyAPIKeys,
   buildColumnsFromData,
   determineSortDirection,
+  getColumnIdFromFilterKey,
   getCurrentColumnIndexAndShift,
   getParamsFromUrl,
   removeNullFromCollection,
@@ -93,6 +96,7 @@ const AspectTableCore = ({
   } = useTable(
     { columns, data, initialState },
     useColumnOrder,
+    useFilters,
     useGroupBy,
     useSortBy,
     useExpanded,
@@ -261,14 +265,16 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     page: urlPage = 0,
     sortCol: urlSortCol = null,
     sortDir: urlSortDir = null,
+    filters: urlFilters = null,
   } = getParamsFromUrl(query, search)
+  const [allowReset, setAllowReset] = useState(false)
+  const [filters, setFilters] = useState(urlFilters)
   const [size, setSize] = useState(urlSize || 10)
   const [sortCol, setSortCol] = useState(urlSortCol)
   const [sortDir, setSortDir] = useState(urlSortDir)
   const [page, setPage] = useState(urlPage)
-  const [allowReset, setAllowReset] = useState(false)
   const [params, setParams] = useState(
-    removeNullFromCollection({ size, sortCol, sortDir, page })
+    removeNullFromCollection({ size, sortCol, sortDir, page, filters })
   )
 
   const {
@@ -282,7 +288,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     async (_queryId, { params }) => {
       return fetchWrapperForQueries({
         endpoint: CONSTS.ENDPOINT,
-        params,
+        params: allowOnlyAPIKeys(params),
       })
     },
     {
@@ -306,11 +312,19 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   }, [params])
 
   useEffect(() => {
-    if (!isEqual(params, { size, sortCol, sortDir, page })) {
-      setParams(removeNullFromCollection({ size, sortCol, sortDir, page }))
+    if (!isEqual(params, { size, sortCol, sortDir, page, filters })) {
+      setParams(
+        removeNullFromCollection({ size, sortCol, sortDir, page, filters })
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [size, sortCol, sortDir, page])
+  }, [filters, size, sortCol, sortDir, page])
+
+  useEffect(() => {
+    if (filters !== urlFilters) {
+      setFilters(urlFilters)
+    }
+  }, [filters, urlFilters])
 
   const handleClearParams = () => {
     setAllowReset(!allowReset)
@@ -329,6 +343,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
         sortBy: [{ id: sortCol, desc: determineSortDirection(sortDir) }],
         pageIndex: page,
         allowReset,
+        filters: getColumnIdFromFilterKey(config, filters),
       })}
       setters={{ handleClearParams, setSize, setSortCol, setSortDir, setPage }}
     />
