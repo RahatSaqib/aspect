@@ -267,8 +267,9 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const [sortDir, setSortDir] = useState(urlSortDir)
   const [page, setPage] = useState(urlPage)
   const [allowReset, setAllowReset] = useState(false)
-
-  const params = removeNullFromCollection({ size, sortCol, sortDir, page })
+  const [params, setParams] = useState(
+    removeNullFromCollection({ size, sortCol, sortDir, page })
+  )
 
   const {
     error,
@@ -304,6 +305,13 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params])
 
+  useEffect(() => {
+    if (!isEqual(params, { size, sortCol, sortDir, page })) {
+      setParams(removeNullFromCollection({ size, sortCol, sortDir, page }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [size, sortCol, sortDir, page])
+
   const handleClearParams = () => {
     setAllowReset(!allowReset)
   }
@@ -327,4 +335,4 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   )
 }
 
-export default AspectTable
+export { AspectTable, AspectTableCore }
