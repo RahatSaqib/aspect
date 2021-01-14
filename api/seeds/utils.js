@@ -740,17 +740,20 @@ async function seedIssueEventTriggersForPartner(
         return memo
       }, {})
     )
+  const issuesFiltered = _.filter(data, elem =>
+    _.includes(issueTypeWhitelist, elem.issueType)
+  )
   issueTypeWhitelist.forEach(issueType => {
     issueTypeConfigured[issueType] = true
   })
 
   await Promise.each(
-    data,
+    issuesFiltered,
     async ({
       issueType,
       issueEventStatus,
       triggerConditions,
-      filterIssueCondition,
+      filterIssueCondition = null,
     }) => {
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
@@ -759,7 +762,13 @@ async function seedIssueEventTriggersForPartner(
           issueEventStatusId: issueEventStatuses[issueEventStatus].id,
         }
         const existingTrigger = await knex('IssueEventTrigger')
-          .where(triggerData)
+          .where({
+            ...triggerData,
+            triggerConditions: JSON.stringify(triggerConditions),
+            filterIssueCondition: filterIssueCondition
+              ? JSON.stringify(filterIssueCondition)
+              : null,
+          })
           .first('id')
         if (existingTrigger == null) {
           await upsertSingle(
@@ -3107,7 +3116,12 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function seedIssueType(knex, issueType, { userName }) {
+async function seedIssueType(
+  knex,
+  issueType,
+  { userName },
+  issueEventTrigger = {}
+) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -3121,7 +3135,6 @@ async function seedIssueType(knex, issueType, { userName }) {
   }
 
   const issue = (await getBaseIssues(auditFields))[issueType]
-
   if (!issue) return
 
   // ------------------------------------------
@@ -3170,6 +3183,13 @@ async function seedIssueType(knex, issueType, { userName }) {
       defaultMessageTypeId: moduleMessageTypeId,
     }
   )
+  if (!_.isEmpty(issueEventTrigger))
+    await upsertSingle(
+      knex,
+      'IssueEventTrigger',
+      uniqueKeys.IssueEventTrigger,
+      issueEventTrigger
+    )
   return issueTypeId
 }
 

@@ -6,10 +6,17 @@ async function seed(knex) {
     .where({ externalId: 'NotDetected' })
     .first()
 
-  await knex('ResultCategoryAssay').insert({
-    assayId: gxHcvId,
-    resultCategoryId: resultCategoryNotDetectedId,
-  })
+  const { assayId } = await knex('ResultCategoryAssay')
+    .where({
+      assayId: gxHcvId,
+      resultCategoryId: resultCategoryNotDetectedId,
+    })
+    .first()
+  if (!assayId)
+    await knex('ResultCategoryAssay').insert({
+      assayId: gxHcvId,
+      resultCategoryId: resultCategoryNotDetectedId,
+    })
 }
 
 module.exports = seed

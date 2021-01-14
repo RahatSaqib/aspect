@@ -21,11 +21,12 @@ async function seed(knex) {
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .join('EmailTemplate as et', 'mt.emailTemplateId', 'et.id')
     .select('et.id as emailTemplateId, it.externalId')
-  await Promise.each(emailTemplatesId, et =>
-    knex('EmailTemplate')
-      .update(issues[et.externalId].EmailTemplate)
-      .where('id', et.emailTemplateId)
-  )
+  await Promise.each(emailTemplatesId, et => {
+    if (issues[et.externalId])
+      return knex('EmailTemplate')
+        .update(issues[et.externalId].EmailTemplate)
+        .where('id', et.emailTemplateId)
+  })
 }
 
 module.exports = seed
