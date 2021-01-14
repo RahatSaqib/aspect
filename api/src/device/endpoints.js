@@ -75,10 +75,10 @@ function listDevicesBaseRequest() {
           .allow('')
           .description('Filter for device name'),
         deviceMaintenanceStatusId: Joi.array()
-          .items(Joi.number())
+          .items(Joi.string())
           .single()
           .allow(null)
-          .description('Filter for device maintenance status'),
+          .description('Filter for device maintenance status external id'),
         deviceApprovalId: Joi.number()
           .allow('')
           .description('Filter for device approval ID'),

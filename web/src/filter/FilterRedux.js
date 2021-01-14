@@ -75,6 +75,7 @@ const ListConfig = Immutable.Record({
   consumable: false,
   workflowStatus: false,
   deviceApproval: false,
+  deviceMaintenanceStatus: false,
   externalId: false,
   notificationName: false,
 })
