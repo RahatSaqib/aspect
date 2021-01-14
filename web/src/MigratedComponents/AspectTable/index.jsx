@@ -261,10 +261,13 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const { pathname, search } = useLocation()
   const query = useUrlQuery(search)
   const {
+    columnOrder: { initialOrder = false },
+  } = config
+  const {
     size: urlSize = false,
     page: urlPage = 0,
-    sortCol: urlSortCol = null,
-    sortDir: urlSortDir = null,
+    sortCol: urlSortCol = initialOrder ? initialOrder[0] : null,
+    sortDir: urlSortDir = initialOrder ? 'asc' : 'desc',
     filters: urlFilters = null,
   } = getParamsFromUrl(query, search)
   const [allowReset, setAllowReset] = useState(false)
@@ -340,7 +343,12 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
       isFetching={isFetching}
       initialState={removeNullFromCollection({
         pageSize: size,
-        sortBy: [{ id: sortCol, desc: determineSortDirection(sortDir) }],
+        sortBy: [
+          {
+            id: sortCol,
+            desc: determineSortDirection(sortDir),
+          },
+        ],
         pageIndex: page,
         allowReset,
         filters: getColumnIdFromFilterKey(config, filters),
