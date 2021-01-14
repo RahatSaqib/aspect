@@ -81,7 +81,6 @@ export function fetchDevices(
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = fromPairs([...filtersParams.entries()])
     dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
-
     return aspectFetch(
       `/device?${stringify({
         sortCol,
@@ -274,7 +273,6 @@ export function exportDevices(
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = fromPairs([...filtersParams.entries()])
-
     return aspectFetchFile(
       `/device/export?${stringify({
         sortCol,

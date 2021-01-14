@@ -1397,6 +1397,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
   link: '/browse/device',
   linkParams: {
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
     deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
@@ -1487,6 +1488,7 @@ const averageDurationServiceInterruption = {
   statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
   link: '/browse/device',
   linkParams: {
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
     deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 1,
@@ -1581,6 +1583,10 @@ const percentageOfDaysWithServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'percentageOfDaysWithServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+  },
   sortOrder: 2,
   externalId: 'percentageOfDaysWithServiceInterruption',
   description: `The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%`,
