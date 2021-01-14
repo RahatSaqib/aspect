@@ -1,9 +1,24 @@
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
+    ...admin,
     permissions: [
       {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'case',
         activity: 'edit',
       },
       {
@@ -11,7 +26,15 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
         module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'reporter',
         activity: 'edit',
       },
       {
@@ -19,19 +42,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
         module: 'site',
         activity: 'edit',
       },
       {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
+        module: 'treatmentStatus',
         activity: 'edit',
       },
       {
@@ -39,33 +54,21 @@ module.exports = [
         activity: 'summary',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
+        module: 'browse',
+        activity: 'view',
       },
       {
-        module: 'case',
-        activity: 'edit',
-      },
-      {
-        module: 'reporter',
-        activity: 'edit',
+        module: 'report',
+        activity: 'view',
       },
     ],
   },
   {
-    name: 'Regional Officer',
+    ...clinician,
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -76,7 +79,15 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -84,41 +95,65 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'account',
-        activity: 'edit',
+        module: 'device',
+        activity: 'view',
       },
       {
-        module: 'dashboard',
-        activity: 'summary',
+        module: 'deviceApiKey',
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'edit',
+        activity: 'view',
       },
       {
-        module: 'case',
-        activity: 'edit',
+        module: 'notification',
+        activity: 'view',
       },
       {
-        module: 'reporter',
-        activity: 'edit',
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
   },
   {
-    name: 'Lab User',
+    ...regionalOfficer,
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
-        module: 'person',
-        activity: 'view',
+        module: 'case',
+        activity: 'edit',
       },
       {
-        module: 'device',
-        activity: 'view',
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'reporter',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -129,7 +164,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -137,15 +176,28 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+    ],
+  },
+  {
+    ...labUser,
+    permissions: [
+      {
         module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -153,7 +205,47 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
         module: 'reporter',
+        activity: 'view',
+      },
+      {
+        module: 'site',
         activity: 'view',
       },
     ],

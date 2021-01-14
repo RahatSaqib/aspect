@@ -10,6 +10,7 @@ const {
   allAssayTypeToId,
   allResultCategoryToId,
   issueTypeToId,
+  allJobFunctionToId,
 } = require('../src/shared/dictionary')
 const logger = require('../src/shared/logger')
 const config = require('../src/config')
@@ -2566,67 +2567,6 @@ async function updateReportableInResultCategoryAssay(knex) {
   }
 }
 
-async function addReports(knex, countryReports = []) {
-  const countries = await knex('Country').select('id')
-
-  // globally defined reports applicable to all countries/seeds
-  const { getBaseReports } = require('./relatedObjects/reports')
-  const baseReports = (await getBaseReports()) || []
-
-  // add reports for each country
-  await Promise.each(countries, async ({ id: countryId }) => {
-    let geographyId
-    const geography = await knex('Geography')
-      .where({ countryId })
-      .whereNull('stateId')
-      .whereNull('lgaId')
-      .first('id')
-    if (geography) {
-      geographyId = geography.id
-    } else {
-      ;[geographyId] = await knex('Geography').insert({ countryId })
-    }
-
-    // merge global and country-specific reports
-    const reports = [...baseReports, ...countryReports]
-
-    const existingReports = await knex('Report')
-      .where({ geographyId })
-      .select('externalId')
-      .pluck('externalId')
-    await Promise.each(
-      reports,
-      async (
-        { name, description, i18nKey, externalId, sheets, fileName },
-        reportIndex
-      ) => {
-        if (!_.includes(existingReports, externalId)) {
-          const [reportId] = await knex('Report').insert({
-            name,
-            description,
-            i18nKey,
-            externalId,
-            geographyId,
-            sortOrder: reportIndex + 1,
-            fileName,
-          })
-
-          await Promise.each(sheets, async (sheet, sheetIndex) => {
-            const { moduleName, functionName, query } = sheet
-            await knex('ReportSheet').insert({
-              moduleName,
-              functionName,
-              query: query && JSON.stringify(query),
-              reportId,
-              sortOrder: sheetIndex + 1,
-            })
-          })
-        }
-      }
-    )
-  })
-}
-
 const resultTimeFrameInDays = 60
 const now = new Date()
 
@@ -2833,7 +2773,6 @@ async function seedJobFunctionsAndUsersForOperationalData(
     timezone,
   }
 ) {
-  const modules = await getPermissionModules(knex)
   const now = new Date()
   const userIds = {}
   const personIds = {}
@@ -2899,30 +2838,13 @@ async function seedJobFunctionsAndUsersForOperationalData(
       }
     )
   )
-  // -------------------------------------------
-  // Job Functions
-  const { upsertJobFunction } = require('./common')
-  const jobFunctionIdDeviceMaker = await upsertJobFunction(
-    knex,
-    'Device Maker',
-    partnerId,
-    [modules.account.edit, modules.operationalData.view]
-  )
-  const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
-    modules.account.edit,
-    modules.operationalData.view,
-  ])
-  const jobFunctionIdTechnician = await upsertJobFunction(
-    knex,
-    'Technician',
-    partnerId,
-    [modules.account.edit, modules.operationalData.view]
-  )
-  const jobFunctionIdDonor = await upsertJobFunction(knex, 'Donor', partnerId, [
-    modules.account.edit,
-    modules.site.view,
-    modules.operationalData.view,
-  ])
+
+  const jobFunctionsById = await allJobFunctionToId()
+  const jobFunctionIdDeviceMaker = jobFunctionsById.deviceMaker
+  const jobFunctionIdNtp = jobFunctionsById.ntp
+  const jobFunctionIdTechnician = jobFunctionsById.technician
+  const jobFunctionIdDonor = jobFunctionsById.donor
+
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -3300,8 +3222,6 @@ async function updateIssueNotificationTemplates(
 }
 
 module.exports = {
-  addReports,
-
   seed,
   seedTable,
   getSeedsRan,
