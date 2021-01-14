@@ -1,6 +1,18 @@
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+  labManager,
+  labSupervisor,
+  medTech,
+  dataViewer,
+  remoteHealthWorker,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
+    ...admin,
     permissions: [
       {
         module: 'assay',
@@ -81,19 +93,27 @@ module.exports = [
     ],
   },
   {
-    name: 'Lab Manager',
+    ...regionalOfficer,
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
+        module: 'account',
         activity: 'edit',
       },
       {
-        module: 'person',
-        activity: 'view',
+        module: 'case',
+        activity: 'edit',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
+        activity: 'edit',
       },
       {
         module: 'result',
@@ -104,44 +124,19 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
-        activity: 'edit',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
+        module: 'dashboard',
+        activity: 'result',
       },
       {
         module: 'dashboard',
         activity: 'summary',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Lab Supervisor',
-    permissions: [
-      {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
         activity: 'view',
       },
       {
@@ -149,60 +144,7 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    name: 'Med Tech',
-    permissions: [
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'device',
         activity: 'view',
       },
       {
@@ -210,49 +152,28 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
+        module: 'report',
+        activity: 'view',
       },
       {
         module: 'site',
         activity: 'view',
       },
       {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-      {
         module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
         activity: 'view',
       },
     ],
   },
+  labManager,
+  labSupervisor,
+  medTech,
   {
-    name: 'Lab User',
+    ...labUser,
     permissions: [
       {
         module: 'assay',
@@ -316,31 +237,36 @@ module.exports = [
       },
     ],
   },
+  dataViewer,
   {
-    name: 'Data Viewer',
+    ...clinician,
     permissions: [
       {
-        module: 'assay',
-        activity: 'view',
+        module: 'account',
+        activity: 'edit',
       },
       {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
+        module: 'case',
+        activity: 'edit',
       },
       {
         module: 'result',
-        activity: 'view',
+        activity: 'edit',
       },
       {
         module: 'treatmentStatus',
-        activity: 'view',
+        activity: 'edit',
       },
       {
-        module: 'site',
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
         activity: 'view',
       },
       {
@@ -348,15 +274,27 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'account',
-        activity: 'edit',
+        module: 'device',
+        activity: 'view',
       },
       {
-        module: 'dashboard',
-        activity: 'summary',
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
       },
       {
         module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
         activity: 'view',
       },
       {
@@ -364,13 +302,21 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'site',
+        activity: 'view',
+      },
+      {
         module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
         activity: 'view',
       },
     ],
   },
   {
-    name: 'Remote Health Worker',
+    ...remoteHealthWorker,
     permissions: [
       {
         module: 'assay',
@@ -398,6 +344,10 @@ module.exports = [
       },
       {
         module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
         activity: 'view',
       },
       {

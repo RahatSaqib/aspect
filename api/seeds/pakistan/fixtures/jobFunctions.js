@@ -1,6 +1,13 @@
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
   {
-    name: 'Admin',
+    ...admin,
     permissions: [
       {
         module: 'assay',
@@ -74,10 +81,22 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'edit',
       },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'router',
+        activity: 'view',
+      },
     ],
   },
   {
-    name: 'Regional Officer',
+    ...regionalOfficer,
     permissions: [
       {
         module: 'assay',
@@ -146,7 +165,7 @@ module.exports = [
     ],
   },
   {
-    name: 'Lab User',
+    ...labUser,
     permissions: [
       {
         module: 'assay',
@@ -210,12 +229,16 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'report',
         activity: 'view',
       },
     ],
   },
   {
-    name: 'Clinician',
+    ...clinician,
     permissions: [
       {
         module: 'assay',
@@ -279,6 +302,10 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'report',
         activity: 'view',
       },
     ],
