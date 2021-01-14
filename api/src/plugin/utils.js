@@ -11,6 +11,7 @@ const {
   hardwareErrorActions,
 } = require('../device/actions')
 const { issueTypeToId } = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -62,6 +63,11 @@ async function shouldTriggerResultErrorAnalysis(
       resultAnalyzeCategoriesAndErrors,
     })
   }
+  logger.debug([
+    `shouldTriggerResultErrorAnalysis resultid:${resultId}`,
+    resultCategory1, // <-- this is result category externalid
+    resultErrorCode,
+  ])
 
   // this one is for result base issue, only needs module serial.
   // others data parameters are for filtering not for triggering the issue.
@@ -97,6 +103,7 @@ async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
   if (!result) {
     return
   }
+  logger.debug(`shouldTriggerModuleReplaced resultid:${resultId}`)
 
   if (!messageContext.resultModuleReplaced) {
     messageContext = messageContext.bindActionCreators({
@@ -164,6 +171,7 @@ async function shouldTriggerModuleDisabled(
    * If the module wasn't replaced already, we trigger the event to create the new issue.
    */
   if (!moduleReplacedIssue) {
+    logger.debug([`shouldTriggerModuleDisabled`, device, deviceModule])
     if (!messageContext.deviceModuleDisabled) {
       messageContext = messageContext.bindActionCreators({
         deviceModuleDisabled,
@@ -200,6 +208,8 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 
   if (!messageContext.deviceInstrumentReplaced) {
+    logger.debug([`shouldTriggerInstrumentReplaced resultid:${resultId}`])
+
     messageContext = messageContext.bindActionCreators({
       deviceInstrumentReplaced,
     })
@@ -272,6 +282,9 @@ async function shouldTriggerHardwareErrorAnalysis(
       _.includes(Object.keys(hardwareErrorActions), error.ErrorCode)
     )
     if (errorForTriggering) {
+      logger.debug(
+        `shouldTriggerHardwareErrorAnalysis error:${errorForTriggering}`
+      )
       const options = {
         startedOn,
         details,
