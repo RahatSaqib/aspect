@@ -10,16 +10,14 @@ describe('test headers and sortable states', () => {
     const { getByRole } = render(<Default {...Default.args} />)
     const table = getByRole('table')
     const columnHeaders = within(table).getAllByRole('columnheader')
-
     expect(columnHeaders).toHaveLength(4)
     expect(columnHeaders.map(d => d.textContent)).toEqual([
-      'ContactsFaSquareFaSquareFaSquareFaSquare',
-      'NameFaSquareFaSquareFaSquareFaSquare',
-      'Last TriggeredFaSquareFaSquareFaSquare',
-      'Total TriggersFaSquareFaSquareFaSquareFaSquare',
+      'NameFaSquareFaSquare',
+      'Last TriggeredFaSquareFaSquare',
+      'Total TriggersFaSquareFaSquare',
+      'ContactsFaSquareFaSquareFaSquare',
     ])
   })
-
   it('contacts column is not sortable', () => {
     const { getByRole } = render(<Default {...Default.args} />)
     const table = getByRole('table')
@@ -27,10 +25,8 @@ describe('test headers and sortable states', () => {
     const columns = within(rowGroup)
     const contactsHeader = columns.getByText(/contacts/i)
     const contactsColumn = contactsHeader.closest('th')
-
     expect(contactsColumn.getAttribute('title')).toBe(null)
   })
-
   it('sort columns, change page size, move to next page and verify correct values and states', () => {
     const { getByRole, getByTestId } = render(<Default {...Default.args} />)
     const table = getByRole('table')
@@ -41,60 +37,50 @@ describe('test headers and sortable states', () => {
     const lastTriggeredColumn = lastTriggeredHeader.closest('th')
     const pageCount25Button = getByRole('button', { name: /25/i })
     const pageNextButton = getByRole('button', { name: /next/i })
-
     userEvent.click(lastTriggeredColumn)
     userEvent.click(pageCount25Button)
     userEvent.click(pageNextButton)
-
     expect(nowShowing).toHaveTextContent('Showing 26-50 of 87 notifications')
   })
-
   it('test reorder buttons to be in correct states', () => {
     const { getByRole } = render(<Default {...Default.args} />)
     const table = getByRole('table')
     const [rowGroup] = within(table).getAllByRole('rowgroup')
     const columns = within(rowGroup)
-    const totaltriggersHeader = columns.getByText(/total triggers/i)
+    const nameHeader = columns.getByText(/name/i)
+    const nameColumn = nameHeader.closest('th')
+    const nameOrderLeftButton = within(nameColumn).getByTestId('order_left_0')
     const contactsHeader = columns.getByText(/contacts/i)
     const contactsColumn = contactsHeader.closest('th')
-    const totalTriggersColumn = totaltriggersHeader.closest('th')
-    const buttonFarLeft = within(contactsColumn).getByTestId('order_left_0')
-    const buttonFarRight = within(totalTriggersColumn).getByTestId(
+    const contactsOrderRightButton = within(contactsColumn).getByTestId(
       'order_right_3'
     )
-
-    expect(buttonFarLeft).toBeDisabled()
-    expect(buttonFarRight).toBeDisabled()
+    expect(nameOrderLeftButton).toBeDisabled()
+    expect(contactsOrderRightButton).toBeDisabled()
   })
-
-  it('reorder column and test headers', () => {
+  it('reorder name column right, and test headers order', () => {
     const { getByRole, getByTestId } = render(<Default {...Default.args} />)
     const table = getByRole('table')
-    const contactsOrderRightButton = getByTestId('order_right_0')
-
-    userEvent.click(contactsOrderRightButton)
-
+    const nameOrderRightButton = getByTestId('order_right_0')
+    userEvent.click(nameOrderRightButton)
     expect(
       within(table)
         .getAllByRole('columnheader')
         .map(d => d.textContent)
     ).toEqual([
-      'NameFaSquareFaSquareFaSquareFaSquare',
-      'ContactsFaSquareFaSquareFaSquareFaSquare',
-      'Last TriggeredFaSquareFaSquareFaSquare',
-      'Total TriggersFaSquareFaSquareFaSquareFaSquare',
+      'Last TriggeredFaSquareFaSquare',
+      'NameFaSquareFaSquare',
+      'Total TriggersFaSquareFaSquare',
+      'ContactsFaSquareFaSquareFaSquare',
     ])
   })
-
   it('check allowed hide-column states, hide column, and test headers', () => {
     const { getByRole, getByTestId, queryByTestId } = render(
       <Default {...Default.args} />
     )
     const table = getByRole('table')
     const contactsHideColumnButton = getByTestId('hide_column_contacts')
-
     userEvent.click(contactsHideColumnButton)
-
     expect(queryByTestId('hide_column_lastTriggeredOn')).not.toBeInTheDocument()
     expect(
       within(table)
