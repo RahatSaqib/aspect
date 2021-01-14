@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { bool, func, oneOfType, array } from 'prop-types'
 import TableCell from '@material-ui/core/TableCell'
 
 import TableColumnHeader from '../TableColumnHeader'
@@ -78,11 +78,30 @@ const TableHeaderRow = ({
   )
 
 TableHeaderRow.propTypes = {
-  allowColumnReOrder: PropTypes.bool.isRequired,
-  handleChangeColumnOrder: PropTypes.func.isRequired,
-  handleHideColumnToggle: PropTypes.func.isRequired,
-  handleGroupByColumnToggle: PropTypes.func.isRequired,
-  headers: PropTypes.oneOf([PropTypes.array]).isRequired,
+  headers: false,
+}
+
+TableHeaderRow.propTypes = {
+  /**
+    Boolean to allow column reordering
+  */
+  allowColumnReOrder: bool.isRequired,
+  /**
+    Function to handle column reorder
+  */
+  handleChangeColumnOrder: func.isRequired,
+  /**
+    Function to handle column visibility
+  */
+  handleHideColumnToggle: func.isRequired,
+  /**
+    Function to handle column grouping
+  */
+  handleGroupByColumnToggle: func.isRequired,
+  /**
+    Array of column titles, bool while waiting for data
+  */
+  headers: oneOfType([array, bool]).isRequired,
 }
 
 export default TableHeaderRow

@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { array, bool, func, oneOfType } from 'prop-types'
 import TableCell from '@material-ui/core/TableCell'
 
 import Cell from '../../TableCell/Cell'
@@ -47,21 +47,28 @@ const TableBodyRow = ({
   )
 
 TableBodyRow.defaultProps = {
+  cells: false,
   isExpanded: false,
   subRows: [],
 }
 
 TableBodyRow.propTypes = {
-  cells: PropTypes.shape({
-    column: PropTypes.object,
-    getCellProps: PropTypes.func,
-    isAggregated: PropTypes.oneOf([PropTypes.number, PropTypes.bool]),
-    isGrouped: PropTypes.bool,
-    isPlaceholder: PropTypes.bool,
-  }).isRequired,
-  getToggleRowExpandedProps: PropTypes.func.isRequired,
-  isExpanded: PropTypes.bool,
-  subRows: PropTypes.oneOf([PropTypes.array]),
+  /**
+    Array of cells, bool while waiting for data
+  */
+  cells: oneOfType([array, bool]),
+  /**
+    Function to handle grouped row toggle
+  */
+  getToggleRowExpandedProps: func.isRequired,
+  /**
+    Boolean to indicate if expanded 
+  */
+  isExpanded: bool,
+  /**
+    Array for grouped cell sub-rows
+  */
+  subRows: oneOfType([array]),
 }
 
 export default TableBodyRow
