@@ -1,60 +1,93 @@
 import React from 'react'
-import { IntlProvider } from 'react-intl'
-import AspectTable from './index'
+import { IntlProvider, useIntl } from 'react-intl'
+import { AspectTableCore } from './index'
 
 import { mockDatafetch } from './Helpers'
 
-const { data } = mockDatafetch(87)
-const config = {
+const totalDataCount = 87
+const { data } = mockDatafetch(totalDataCount)
+
+const baseConfig = () => ({
   name: 'notification',
   columns: [
     {
       key: 'lastTriggeredOn',
       label: 'Last Triggered',
       width: 20,
+      disableGroupBy: true,
       disableHide: true,
+      disableSortBy: false,
     },
     {
       key: 'name',
       label: 'Name',
       width: 35,
+      disableGroupBy: true,
+      disableHide: true,
+      disableSortBy: false,
     },
     {
       key: 'totalTriggers',
       label: 'Total Triggers',
       width: 20,
+      disableGroupBy: true,
+      disableHide: true,
+      disableSortBy: false,
     },
     {
       key: 'contacts',
       label: 'Contacts',
-      disableSortBy: true,
       width: 25,
+      disableGroupBy: true,
+      disableHide: false,
+      disableSortBy: true,
     },
   ],
   columnOrder: {
     allow: true,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
   },
-}
+})
 
-config.columnOrder = {
-  allow: true,
+baseConfig.columnOrder = {
+  allow: false,
   initialOrder: ['contacts', 'name', 'lastTriggeredOn', 'totalTriggers'],
 }
 
 export default {
   title: 'Layouts/AspectTable/Examples/Kitchen Sink',
-  component: AspectTable,
+  component: AspectTableCore,
 }
 
-const Template = args => (
-  <IntlProvider locale="en">
-    <AspectTable {...args} />
-  </IntlProvider>
-)
+const StoryWrapped = args => {
+  const intl = useIntl()
+  const config = baseConfig(intl)
+  return <AspectTableCore config={config} {...args} />
+}
+
+const Template = args => {
+  return (
+    <IntlProvider locale="en">
+      <StoryWrapped {...args} />
+    </IntlProvider>
+  )
+}
 
 export const Default = Template.bind({})
 Default.args = {
-  tableData: data,
-  config,
+  tableData: { ok: true, total: totalDataCount, data, length: totalDataCount },
+  initialState: {
+    pageSize: 10,
+    sortBy: [],
+    pageIndex: 0,
+    allowReset: false,
+  },
+  isFetching: false,
+  setters: {
+    handleClearParams: () => false,
+    setSize: () => false,
+    setSortCol: () => false,
+    setSortDir: () => false,
+    setPage: () => false,
+  },
 }
