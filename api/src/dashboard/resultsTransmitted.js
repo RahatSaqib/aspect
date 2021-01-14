@@ -251,7 +251,8 @@ async function resultsTransmittedDashboard(request) {
 
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
-    return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
+    const percent = denominator === 0 ? 0 : (100.0 * numerator) / denominator
+    return percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
   }
   // calculate all percentages
   items.forEach(item => {
@@ -345,6 +346,7 @@ async function resultsTransmittedDashboard(request) {
         }
       }
     )
+    .filter(item => item.cntAll > 0)
     .sort((a, b) => b.cntAll - a.cntAll)
 
   return {
