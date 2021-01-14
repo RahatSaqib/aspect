@@ -82,6 +82,7 @@ Default.args = {
     pageIndex: 0,
     allowReset: false,
   },
+  manualPagination: false,
   isFetching: false,
   setters: {
     handleClearParams: () => false,

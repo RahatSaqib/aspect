@@ -1,5 +1,6 @@
 import subMinutes from 'date-fns/subMinutes'
 import addMinutes from 'date-fns/addMinutes'
+import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import isPast from 'date-fns/isPast'
 import parseISO from 'date-fns/parseISO'
@@ -15,6 +16,8 @@ import min from 'lodash/min'
 import max from 'lodash/max'
 import pickBy from 'lodash/pickBy'
 import omit from 'lodash/omit'
+import omitBy from 'lodash/omitBy'
+import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 
 const mockedDataNames = [
@@ -146,6 +149,11 @@ function timeSinceFromUTC(val) {
   }
 }
 
+function timeAndDate(val, dateFormat) {
+  const date = parseISO(val)
+  return format(new Date(date), dateFormat)
+}
+
 async function shapeTableParamsForApi({
   pageIndex,
   pageSize,
@@ -160,7 +168,7 @@ async function shapeTableParamsForApi({
 }
 
 function removeNullFromCollection(collection) {
-  return pickBy(collection, identity)
+  return omitBy(collection, isNil)
 }
 
 function determineSortDirection(direction) {
@@ -204,6 +212,12 @@ function getColumnIdFromFilterKey(config, filters) {
   return output
 }
 
+function replaceRouteParams(route, routeParams) {
+  let newRoute = route
+  map(routeParams, (a, b) => (newRoute = newRoute.replace(`:${b}`, a)))
+  return newRoute
+}
+
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
@@ -214,7 +228,9 @@ export {
   getParamsFromUrl,
   mockDatafetch,
   removeNullFromCollection,
+  replaceRouteParams,
   shapeTableParamsForApi,
+  timeAndDate,
   timeClassification,
   timeSinceFromUTC,
   totalItemCount,
