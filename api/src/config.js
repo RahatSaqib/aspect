@@ -23,12 +23,18 @@ module.exports = {
     timezone: 'UTC',
   },
   log: {
-    fileLogLevel: process.env['log.file.logLevel'] || 'info',
+    file: {
+      logLevel: process.env['log.file.logLevel'] || 'info',
+      labelsWhiteList: process.env['log.file.labelsWhiteList'] || null,
+      labelsBlackList: process.env['log.file.labelsBlackList'] || null,
+      path: process.env['log.file.path'] || null,
+      format: process.env['log.file.format'] || 'text',
+    },
     logLevel: process.env['log.console.logLevel'] || 'info',
     format: process.env['log.format'] || 'text',
-    loggingFilePath: process.env['log.file.path'] || null,
     labelsWhiteList: process.env['log.labelsWhiteList'] || null,
     labelsBlackList: process.env['log.labelsBlackList'] || null,
+
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
