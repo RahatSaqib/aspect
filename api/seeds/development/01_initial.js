@@ -11,7 +11,6 @@ const {
 } = require('date-fns')
 
 const config = require('../../src/config')
-const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
@@ -38,7 +37,10 @@ const {
   upsertCultureAssays,
 } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
-const { upsertJobFunction } = require('../common')
+const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
+const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
+const { upsertJobFunctionFixture } = require('../common')
+const upsertReports = require('../common/upsert_reports')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -5180,117 +5182,33 @@ async function seed(knex) {
     } // end of seeding results for specific countries
   }) // end of 'await Promise.each(geography.countries'
 
+  await upsertReports(knex)
+
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixturePartnerOne,
+    partnerOneId
+  )
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixturePartnerTwo,
+    partnerTwoId
+  )
   // Job Functions with permissions
-  const modules = await getPermissionModules(knex)
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerOneId,
-    [
-      modules.demo.edit,
-      modules.deviceApiKey.edit,
-      modules.device.edit,
-      modules.person.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.edit,
-      modules.inventory.edit,
-      modules.notification.edit,
-      modules.issue.edit,
-      modules.task.edit,
-      modules.report.edit,
-      modules.browse.view,
-      modules.reporter.edit,
-      modules.treatmentStatus.edit,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.account.edit,
-      modules.router.edit,
-    ]
-  )
-
-  const jobFunctionIdManager = await upsertJobFunction(
-    knex,
-    'Manager',
-    partnerOneId,
-    [
-      modules.treatmentStatus.edit,
-      modules.site.edit,
-      modules.device.edit,
-      modules.assay.view,
-      modules.inventory.edit,
-      modules.reporter.edit,
-      modules.dashboard.report,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.account.edit,
-      modules.router.edit,
-      modules.person.edit,
-      modules.clinicalIndicators.view,
-    ]
-  )
-
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerOneId,
-    [
-      modules.site.view,
-      modules.device.view,
-      modules.assay.view,
-      modules.inventory.view,
-      modules.result.edit,
-      modules.browse.view,
-      modules.treatmentStatus.edit,
-      modules.dashboard.report,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.account.edit,
-      modules.router.edit,
-      modules.person.view,
-    ]
-  )
-
-  const jobFunctionIdPartnerTwo = await upsertJobFunction(
-    knex,
-    'Lab Manager',
-    partnerTwoId,
-    [
-      modules.treatmentStatus.edit,
-      modules.site.edit,
-      modules.device.edit,
-      modules.dashboard.report,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.person.view,
-      modules.account.edit,
-      modules.router.edit,
-      modules.assay.view,
-      modules.inventory.view,
-    ]
-  )
 
   // crate jobs for users
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'admin' })
+    .pluck('id')
+  const [jobFunctionIdManager] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'manager' })
+    .pluck('id')
+  const [jobFunctionIdClinician] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'clinician' })
+    .pluck('id')
+  const [jobFunctionIdPartnerTwo] = await knex('JobFunction')
+    .where({ partnerId: partnerTwoId, externalId: 'labManager' })
+    .pluck('id')
 
   const [jobIdAdmin] = await knex('Job').insert([
     {

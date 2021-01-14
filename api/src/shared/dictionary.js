@@ -47,6 +47,7 @@ const cacheConfig = {
   ResultTreatmentStatus: {},
   ResultType: {},
   ResultWorkflowStatus: {},
+  Report: {},
   SampleType: {},
   TimeZone: {
     keyColumn: 'timeZone',

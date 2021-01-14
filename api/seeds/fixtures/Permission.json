@@ -3,6 +3,19 @@
     {
       "name": "assay",
       "activities": [
+        "view"
+      ]
+    },
+    {
+      "name": "patient",
+      "activities": [
+        "view",
+        "edit"
+      ]
+    },
+    {
+      "name": "assay",
+      "activities": [
         "view",
         "edit"
       ]
