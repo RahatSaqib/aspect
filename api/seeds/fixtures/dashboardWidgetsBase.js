@@ -47,7 +47,7 @@ const geneXpertDevices = {
   statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
   externalId: 'geneXpertDevices',
@@ -186,7 +186,7 @@ const dashboardWidgetTestsPerDayTitle = {
   statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
   link: '/browse/result',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 1,
@@ -227,7 +227,7 @@ const dashboardWidgetValidResultsPc = {
   statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
   link: '/browse/result',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -298,7 +298,7 @@ const utilizationRate = {
   statUnitI18nKey: 'dashboardWidgetUtilizationRate',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 0,
@@ -570,7 +570,7 @@ const errorRate = {
   statUnitI18nKey: 'dashboardWidgetErrorRate',
   link: '/browse/result',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -688,7 +688,7 @@ const moduleSwaps = {
   statUnitI18nKey: 'dashboardWidgetModuleSwaps',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     issueTypeId: 'ModuleReplaced',
   },
   sortOrder: 4,
@@ -908,7 +908,7 @@ const unusedModules = {
   statUnitI18nKey: 'unusedModulesStats',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     issueTypeId: 'UnusedModules',
   },
   sortOrder: 6,
@@ -977,7 +977,7 @@ const instrumentsReplaced = {
   statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     issueTypeId: 'InstrumentReplaced',
   },
   sortOrder: 3,
@@ -1397,7 +1397,8 @@ const numberOfDevicesExperiencingServiceInterruption = {
   statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
@@ -1487,7 +1488,8 @@ const averageDurationServiceInterruption = {
   statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
@@ -1581,6 +1583,10 @@ const percentageOfDaysWithServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'percentageOfDaysWithServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+  },
   sortOrder: 2,
   externalId: 'percentageOfDaysWithServiceInterruption',
   description: `The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%`,

@@ -80,6 +80,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withDeviceApproval',
     defaultMessage: 'approval status is {deviceApprovalName}',
   },
+  withDeviceMaintenanceStatus: {
+    id: 'filter.btnGroup.withDeviceMaintenanceStatus',
+    defaultMessage: 'maintenance status is {deviceMaintenanceStatusName}',
+  },
   withDeviceType: {
     id: 'filter.btnGroup.withDeviceType',
     defaultMessage: 'type is {deviceTypeName}',
@@ -138,6 +142,7 @@ const enhance = compose(
       deviceApprovalItems: state.deviceApproval.items,
       deviceTypeItems: state.deviceType.selectList.items,
       diseaseItems: state.disease.diseases.items,
+      deviceMaintenanceStatusItems: state.deviceMaintenanceStatus.items,
     }),
     null
   )
@@ -347,10 +352,33 @@ const buttonBy = {
           .get('name'),
       })
   ),
+  deviceMaintenanceStatusId: makeButton(
+    ({ intl, deviceMaintenanceStatusItems }, deviceMaintenanceStatusId) =>
+      intl.formatMessage(messages.withDeviceMaintenanceStatus, {
+        deviceMaintenanceStatusName: deviceMaintenanceStatusItems
+          .find(
+            it => it.get('externalId') === deviceMaintenanceStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+  ),
   deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
     intl.formatMessage(messages.withDeviceType, {
       deviceTypeName: deviceTypeItems
         .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
+  ),
+  deviceType: makeButton(({ intl, deviceTypeItems }, deviceType) =>
+    intl.formatMessage(messages.withDeviceType, {
+      deviceTypeName: deviceTypeItems
+        .find(
+          it => it.get('externalId') === deviceType,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        )
         .get('name'),
     })
   ),

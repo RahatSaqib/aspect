@@ -31,6 +31,7 @@ import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
 import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
+import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -118,10 +119,14 @@ const enhance = compose(
       onChangeFilters({
         deviceApprovalId,
       }),
-    onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
+    onDeviceTypeChange: ({ onChangeFilters }) => deviceType =>
       onChangeFilters({
-        deviceTypeId,
+        deviceType,
       }),
+    onDeviceMaintenanceStatusIdChange: ({
+      onChangeFilters,
+    }) => deviceMaintenanceStatusId =>
+      onChangeFilters({ deviceMaintenanceStatusId }),
     onRevokedChange: ({ onChangeFilters }) => revoked =>
       onChangeFilters({
         revoked,
@@ -384,6 +389,14 @@ const messages = defineMessages({
     id: 'filter.popover.onlyReportableResults',
     defaultMessage: 'Only Reportable Results',
   },
+  deviceMaintenanceStatus: {
+    id: 'filter.popover.deviceMaintenanceStatus',
+    defaultMessage: 'Maintenance Status',
+  },
+  selectDeviceMaintenanceStatus: {
+    id: 'filter.popover.selectDeviceMaintenanceStatus',
+    defaultMessage: 'Select maintenance status...',
+  },
 })
 
 export const FiltersPanel = ({
@@ -415,12 +428,12 @@ export const FiltersPanel = ({
   onTreatmentStatusIdChange,
   onDeviceApprovalIdChange,
   onDeviceTypeIdChange,
+  onDeviceMaintenanceStatusIdChange,
+  onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
   user,
 }) => {
-  // console.log(config)
-
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -786,6 +799,7 @@ export const FiltersPanel = ({
                 floatingLabelText={intl.formatMessage(messages.deviceApproval)}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
+                intl={intl}
               />
             </div>
           )}
@@ -793,11 +807,30 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <DeviceTypeSelectField
                 allItemText={intl.formatMessage(messages.all)}
-                value={filters.deviceTypeId}
-                onDeviceTypeChange={onDeviceTypeIdChange}
+                value={filters.deviceType}
+                onDeviceTypeChange={onDeviceTypeChange}
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectDeviceType)}
                 floatingLabelText={intl.formatMessage(messages.deviceType)}
+                style={{ verticalAlign: 'bottom' }}
+                autoWidth
+              />
+            </div>
+          )}
+          {config.deviceMaintenanceStatus && (
+            <div className={cssClasses('Control')}>
+              <DeviceMaintenanceStatusSelectField
+                value={filters.deviceMaintenanceStatusId}
+                onDeviceMaintenanceStatusChange={
+                  onDeviceMaintenanceStatusIdChange
+                }
+                floatingLabelFixed
+                hintText={intl.formatMessage(
+                  messages.selectDeviceMaintenanceStatus
+                )}
+                floatingLabelText={intl.formatMessage(
+                  messages.deviceMaintenanceStatus
+                )}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />

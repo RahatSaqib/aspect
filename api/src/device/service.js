@@ -152,10 +152,7 @@ async function getListDevices(query, auth) {
         query.deviceMaintenanceStatusId &&
         !_.isEmpty(query.deviceMaintenanceStatusId)
       ) {
-        queryBuilder.whereIn(
-          'dmsl.deviceMaintenanceStatusId',
-          query.deviceMaintenanceStatusId
-        )
+        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
     })
     .modify(queryBuilder => {
@@ -190,6 +187,7 @@ async function getListDevices(query, auth) {
       deviceName: 'd.name',
       deviceApprovalId: 'd.deviceApprovalId',
       deviceTypeId: 'd.deviceTypeId',
+      deviceType: 'dt.externalId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
       category: 'dc.name',
@@ -756,6 +754,7 @@ function getDeviceBaseQuery(query, dataConstraints) {
       deviceName: 'd.name',
       deviceApprovalId: 'd.deviceApprovalId',
       deviceTypeId: 'd.deviceTypeId',
+      deviceType: 'dt.externalId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
       category: 'dc.name',
@@ -1171,15 +1170,17 @@ async function deviceMaintenanceStatusHistory(request) {
         )
         .andOn('d.id', 'dmsl.deviceId')
     })
+    .innerJoin(
+      'DeviceMaintenanceStatus as dms',
+      'dmsl.deviceMaintenanceStatusId',
+      'dms.id'
+    )
     .modify(queryBuilder => {
       if (
         query.deviceMaintenanceStatusId &&
         !_.isEmpty(query.deviceMaintenanceStatusId)
       ) {
-        queryBuilder.whereIn(
-          'dmsl.deviceMaintenanceStatusId',
-          query.deviceMaintenanceStatusId
-        )
+        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
       if (!_.isEmpty(queryDeviceIds)) {
         queryBuilder.whereIn('d.id', queryDeviceIds)
@@ -1223,6 +1224,7 @@ async function deviceMaintenanceStatusHistory(request) {
           deviceName: 'd.name',
           deviceApprovalId: 'd.deviceApprovalId',
           deviceTypeId: 'd.deviceTypeId',
+          deviceType: 'dt.externalId',
           hasConnectivity: 'dc.hasConnectivity',
           hasResults: 'dc.hasResults',
           category: 'dc.name',
@@ -1282,6 +1284,7 @@ async function deviceMaintenanceStatusHistory(request) {
     .select([
       'd.id as deviceId',
       'dmsl.deviceMaintenanceStatusId',
+      'dms.externalId as deviceMaintenanceStatusExternalId',
       'dmsl.day',
       'dmsl.data',
       'dms.externalId',
@@ -1303,7 +1306,7 @@ async function deviceMaintenanceStatusHistory(request) {
           if (
             itemsForDevice.find(item =>
               query.deviceMaintenanceStatusId.includes(
-                item.deviceMaintenanceStatusId
+                item.deviceMaintenanceStatusExternalId
               )
             )
           ) {
