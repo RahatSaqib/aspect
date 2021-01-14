@@ -3280,19 +3280,26 @@ async function updateIssueNotificationTemplates(
   // now that we're done updating/deleting, drop any unused templates
   const mTypes = await knex('MessageType').select()
 
-  const alertTemplatesToDelete = _.map(mTypes, mt => mt.alertTemplateId || -1)
+  const alertTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.alertTemplateId || -1)
+  )
   await knex('AlertMessage')
     .whereNotIn('alertTemplateId', alertTemplatesToDelete)
     .del()
   await knex('AlertTemplate').whereNotIn('id', alertTemplatesToDelete).del()
 
-  const emailTemplatesToDelete = _.map(mTypes, mt => mt.emailTemplateId || -1)
+  const emailTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.emailTemplateId || -1)
+  )
   await knex('EmailMessage')
-    .whereNotIn('emailTemplateId', alertTemplatesToDelete)
+    .whereNotIn('emailTemplateId', emailTemplatesToDelete)
     .del()
+
   await knex('EmailTemplate').whereNotIn('id', emailTemplatesToDelete).del()
 
-  const smsTemplatesToDelete = _.map(mTypes, mt => mt.smsTemplateId || -1)
+  const smsTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.smsTemplateId || -1)
+  )
   await knex('SmsMessage')
     .whereNotIn('smsTemplateId', smsTemplatesToDelete)
     .del()
