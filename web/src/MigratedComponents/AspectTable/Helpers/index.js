@@ -71,7 +71,7 @@ function mockDatafetch(cnt = 10) {
     const triggerRandom = random(0, 120000)
     times(random(0, 9), i => contacts.push(mockedDataContacts[i]))
     data.push({
-      id: index,
+      id: index.toString(),
       name: `Notification trigger ${mockedDataNames[random(0, 11)]}`,
       totalTriggers: triggerRandom,
       alertCount: triggerRandom,
