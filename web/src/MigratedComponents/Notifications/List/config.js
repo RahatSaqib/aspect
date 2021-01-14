@@ -37,6 +37,7 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
     {
       key: 'name',
+      filterKey: 'notificationName',
       label: formatMessage(messages.notificationsTableHeaderName),
       width: 35,
       disableHide: true,
