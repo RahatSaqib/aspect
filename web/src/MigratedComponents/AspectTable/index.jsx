@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { func, object, oneOfType } from 'prop-types'
 import { usePaginatedQuery } from 'react-query'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
@@ -17,6 +17,7 @@ import {
   getColumnIdFromFilterKey,
   getParamsFromUrl,
   removeNullFromCollection,
+  replaceRouteParams,
   useUrlQuery,
 } from './Helpers'
 
@@ -32,6 +33,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const intl = useIntl()
   const config = baseConfig(intl)
   const { push } = useHistory()
+  const { ...routeParams } = useParams()
   const { pathname, search } = useLocation()
   const query = useUrlQuery(search)
   const {
@@ -64,7 +66,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     [CONSTS.KEY, { params }],
     async (_queryId, { params }) => {
       return fetchWrapperForQueries({
-        endpoint: CONSTS.ENDPOINT,
+        endpoint: replaceRouteParams(CONSTS.ENDPOINT, routeParams),
         params: allowOnlyAPIKeys(params),
       })
     },
@@ -114,6 +116,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
       config={config}
       tableData={data}
       params={params}
+      pageCount={Math.ceil(data.total / size)}
       isFetching={isFetching}
       initialState={removeNullFromCollection({
         pageSize: size,
