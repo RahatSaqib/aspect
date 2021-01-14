@@ -26,6 +26,7 @@ const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis } = require('../plugin/utils')
+const logger = require('../shared/logger')
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -122,15 +123,25 @@ async function getHandlerOptionsFromRequest(
 
 function deviceApiHandler(handler, defaultHandlerOptions = {}) {
   return asyncHandler(async request => {
+    logger.debug('createDeviceApiContext', {
+      reLabel: 'deviceApi:createDeviceApiContext',
+    })
     const { error, context } = await createDeviceApiContext(
       handler,
       request,
       defaultHandlerOptions
     )
     if (error) {
+      logger.debug('Update logs because an error', {
+        reLabel: 'deviceApi:deviceApiHandler',
+      })
       await updateLogs(request)
       return error
     }
+    logger.debug('getting handler options from context', {
+      reLabel: 'deviceApi:deviceApiHandler',
+    })
+
     let handlerOptions = await getHandlerOptionsFromContext(
       handler,
       context,
@@ -149,6 +160,13 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
     if (updateDeviceLog) {
       // TODO DeviceLog handle non-JSON payloads
       deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
+
+      logger.debug(
+        'need to ensure DeviceLog is inserted even if failure below',
+        {
+          reLabel: 'deviceApi:deviceApiHandler',
+        }
+      )
 
       // need to ensure DeviceLog is inserted even if failure below
       ;[deviceLogId] = await knex('DeviceLog').insert({
@@ -210,12 +228,20 @@ async function updateDeviceTimestamps(
   const getDeviceSeenOn = await loadPlugin(plugins, 'getDeviceSeenOn')
   const deviceSeenOn = await getDeviceSeenOn(context)
   if (deviceSeenOn != null) {
+    logger.debug('update deviceSeenOn', {
+      reLabel: 'deviceApi:updateDeviceTimestamps',
+    })
+
     // flag as seen even if handler fails
     deviceUpdates.lastSeenOn = deviceSeenOn
     context.messageContext.dispatch(deviceSeen(device.id))
   }
 
   if (updatePing) {
+    logger.debug('update device ping on', {
+      reLabel: 'deviceApi:updateDeviceTimestamps',
+    })
+
     const getDevicePingOn = await loadPlugin(plugins, 'getDevicePingOn')
     const devicePingOn = await getDevicePingOn(context)
     if (devicePingOn != null) {
@@ -233,10 +259,16 @@ async function addDeviceDataWithContext(context) {
   let response = {}
   const { pluginNames: plugins } = context
 
+  logger.debug("Loading device plugin's preProcessAddDeviceData", {
+    reLabel: 'deviceApi:preProcessAddDeviceData',
+  })
   const preProcessAddDeviceData = await loadPlugin(
     plugins,
     'preProcessAddDeviceData'
   )
+  logger.debug('Processing preProcessAddDeviceData', {
+    reLabel: 'deviceApi:preProcessAddDeviceData',
+  })
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
@@ -250,6 +282,9 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (site) {
+    logger.debug('executing updateSiteWithContext', {
+      reLabel: 'deviceApi:updateSiteWithContext',
+    })
     response = {
       ...response,
       ...(await updateSiteWithContext(context.withPayload(site))),
@@ -257,6 +292,9 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (configuration) {
+    logger.debug('executing updateSiteWithContext', {
+      reLabel: 'deviceApi:updateDeviceConfigurationWithContext',
+    })
     response = {
       ...response,
       ...(await updateDeviceConfigurationWithContext(
@@ -266,6 +304,9 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (operation) {
+    logger.debug('executing addDeviceOperationWithContext', {
+      reLabel: 'deviceApi:addDeviceOperationWithContext',
+    })
     response = {
       ...response,
       ...(await addDeviceOperationWithContext(context.withPayload(operation))),
@@ -273,6 +314,9 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (result) {
+    logger.debug('executing mergeResultWithContext', {
+      reLabel: 'deviceApi:mergeResultWithContext',
+    })
     response = {
       ...response,
       ...(await mergeResultWithContext(context.withPayload(result))),
@@ -301,6 +345,10 @@ async function addDeviceDataWithContext(context) {
       }
 
       const contextWithPayload = context.withPayload(operation)
+      logger.debug('executing addDeviceOperationWithContext', {
+        reLabel: 'deviceApi:addDeviceOperationWithContext',
+      })
+
       response = {
         ...response,
         ...(await addDeviceOperationWithContext(contextWithPayload)),
@@ -314,6 +362,11 @@ async function addDeviceDataWithContext(context) {
           deviceLogUpdate: { deviceOperationId },
         },
       } = contextWithPayload
+
+      logger.debug('executing shouldTriggerHardwareErrorAnalysis', {
+        reLabel: 'deviceApi:shouldTriggerHardwareErrorAnalysis',
+      })
+
       await shouldTriggerHardwareErrorAnalysis(
         knex,
         messageContext,
@@ -696,7 +749,9 @@ async function createDeviceApiContext(
 function createNewDeviceFromRequest(request, now) {
   return transact(async knex => {
     const { auth } = request
-
+    logger.debug('Create new device from request', {
+      reLabel: 'deviceApi:createNewDeviceFromRequest',
+    })
     // Find API Key to use as template for new device
     const partnerApiKey = await knex('DeviceApiKey as k')
       .where({
@@ -747,7 +802,9 @@ function createNewDeviceFromRequest(request, now) {
         ),
       }
     }
-
+    logger.debug('Create new device', {
+      reLabel: 'deviceApi:createNewDeviceFromRequest',
+    })
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
@@ -757,7 +814,9 @@ function createNewDeviceFromRequest(request, now) {
       geographyId: apiKey.geographyId,
       approval: apiKey.siteId ? 'approved' : 'provisioned',
     })
-
+    logger.debug('Assign new device an api key', {
+      reLabel: 'deviceApi:createNewDeviceFromRequest',
+    })
     // Assign new device to API Key
     await knex('DeviceApiKey')
       .where({ id: apiKey.id })
@@ -836,6 +895,9 @@ async function onResultUpdated(
   if (!resultId) {
     throw new Error('Must specify resultId in Action')
   }
+  logger.debug('onResultUpdated inserting in DeviceLog table', {
+    reLabel: 'deviceApi:onResultUpdated',
+  })
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
@@ -876,6 +938,9 @@ async function onResultLogged(action, context) {
           'p.plugin as partnerPluginName',
           'dt.plugin as deviceTypePluginName'
         )) || {}
+    logger.debug('onResultLogged locating the plugin function', {
+      reLabel: 'deviceApi:onResultLogged',
+    })
     const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
