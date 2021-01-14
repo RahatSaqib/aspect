@@ -4,10 +4,11 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMinutes } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
+const jobFunctionsFixtureSouthAfrica = require('./fixtures/jobFunctions_southAfrica')
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
-const { rowsAsObject, getPermissionModules } = require('../utils')
+const { rowsAsObject } = require('../utils')
 const { seedNotifications } = require('../utils_sa_nhls')
 const {
   allResultCategoryToId,
@@ -65,9 +66,8 @@ async function seed(knex) {
   })
 
   // Reuse previously seeded "static" data
-  const [deviceTypes, modules, approvedDeviceApprovalId] = await Promise.all([
+  const [deviceTypes, approvedDeviceApprovalId] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
-    getPermissionModules(knex),
     deviceApprovalToId('approved'),
   ])
 
@@ -228,13 +228,21 @@ async function seed(knex) {
     timezone,
     ...auditFields,
   })
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
-  ])
+
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixtureSouthAfrica,
+    partnerId
+  )
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .pluck('id')
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
+    .where({ externalId: 'regionalOfficer', partnerId })
+    .pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction')
+    .where({ externalId: 'labUser', partnerId })
+    .pluck('id')
 
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
@@ -243,44 +251,6 @@ async function seed(knex) {
     jobId: jobIdAdmin,
     geographyId: southAfricaGeographyId,
   })
-
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId
-  )
-
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.device.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.site.view,
-    },
-  ])
-
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId
-  )
-
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
-  ])
 
   // create site for lab user
   await Promise.all(
