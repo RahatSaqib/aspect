@@ -1,6 +1,6 @@
 import React from 'react'
 import { IntlProvider, useIntl } from 'react-intl'
-import { AspectTableCore } from './index'
+import AspectTableCore from './TableCore'
 
 import { mockDatafetch } from './Helpers'
 

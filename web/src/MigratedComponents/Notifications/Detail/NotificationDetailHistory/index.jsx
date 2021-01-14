@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 
 import Shell from '../../../Shell'
 import ShellContent from '../../../Shell/Content'
-import { AspectTable } from '../../../AspectTable'
+import AspectTable from '../../../AspectTable'
 
 import { mockDatafetch } from '../../../AspectTable/Helpers'
 import baseConfig from './config'

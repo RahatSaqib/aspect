@@ -7,14 +7,11 @@ import classnames from 'classnames/bind'
 
 import NavTitle from '../../../globals/components/NavTitle'
 import BrowseFilters from '../../../globals/components/BrowseFilters'
-import {
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../../filter/utils'
+import { reduceFiltersConfig } from '../../../filter/utils'
 
 import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
-import { AspectTable } from '../../AspectTable'
+import AspectTable from '../../AspectTable'
 import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
 import baseConfig from './config'
 
