@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const addIssue = require('./add_issue')
+
 const { getBaseIssues } = require('../relatedObjects/issues')
 
 module.exports = async function cleanIssueTypes(

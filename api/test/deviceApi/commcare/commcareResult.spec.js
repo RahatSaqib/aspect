@@ -117,7 +117,7 @@ describe('CommCare Result API routes', () => {
     })
     afterEach(context.afterEach)
 
-    it.only('should add and return device results', async () => {
+    it('should add and return device results', async () => {
       const { apiKey } = context
 
       let payload = getCommCarePayload({
