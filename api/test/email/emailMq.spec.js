@@ -112,6 +112,10 @@ describe('Sending Email via Message Queue', () => {
         assay: '9999',
         systemLog: '1002',
       }
+      const errorMessage = {
+        assay: 'Description of error with code 9999',
+        systemLog: 'Heater Temperature Differential Error',
+      }
       /**
        * add attachments props to EmailTemplate
        * (EmailTemplate will be restored in `afterEach` func)
@@ -146,6 +150,7 @@ describe('Sending Email via Message Queue', () => {
              */
             // has Assay error
             updatedValues.errorCode = errorCode.assay
+            updatedValues.errorNotes = errorMessage.assay
             // reset moduleSerial
             updatedValues.moduleSerial = null
           } else {
@@ -170,7 +175,7 @@ describe('Sending Email via Message Queue', () => {
           details: {
             Errors: [
               {
-                Message: 'Heater Temperature Differential Error',
+                Message: errorMessage.systemLog,
                 ErrorCode: errorCode.systemLog,
               },
             ],
@@ -282,12 +287,14 @@ describe('Sending Email via Message Queue', () => {
       const valueModuleName = getHeaderValue('moduleName')
       const valueModuleSerial = getHeaderValue('moduleSerial')
       const valueErrorCode = getHeaderValue('errorCode')
+      const valueErrorMessage = getHeaderValue('errorMessage')
       // define column numbers in CSV for some keys from array `columnsDeviceErrorHistoryForAttachment`
       const columnNumber = {
         source: null,
         moduleName: null,
         moduleSerial: null,
         errorCode: null,
+        errorMessage: null,
       }
       worksheet
         .getRow(1) // 1st row contains headers in our CSV
@@ -300,12 +307,15 @@ describe('Sending Email via Message Queue', () => {
             columnNumber.moduleSerial = cellNumber
           } else if (cell.value === valueErrorCode) {
             columnNumber.errorCode = cellNumber
+          } else if (cell.value === valueErrorMessage) {
+            columnNumber.errorMessage = cellNumber
           }
         })
       assert.isNotNull(columnNumber.source)
       assert.isNotNull(columnNumber.moduleName)
       assert.isNotNull(columnNumber.moduleSerial)
       assert.isNotNull(columnNumber.errorCode)
+      assert.isNotNull(columnNumber.errorMessage)
 
       /**
        * now loop through all roows and define 2 variables for Assay and SystemLog errors
@@ -318,27 +328,36 @@ describe('Sending Email via Message Queue', () => {
          * see func getDeviceErrorHistoryForAttachment() in `api/src/result/serviceReport.js`
          * for aliases for column 'source' - they are 'Assay' and 'System Log'
          */
+        const vSource = row.getCell(columnNumber.source).value
+        const vModuleName = row.getCell(columnNumber.moduleName).value
+        const vModuleSerial = row.getCell(columnNumber.moduleSerial).value
+        const vErrorCode = row.getCell(columnNumber.errorCode).value
+        const vErrorMessage = row.getCell(columnNumber.errorMessage).value
         if (
-          row.getCell(columnNumber.source).value === 'Assay' &&
-          row.getCell(columnNumber.moduleName).value === moduleName &&
-          +row.getCell(columnNumber.errorCode).value === +errorCode.assay &&
+          vSource === 'Assay' &&
+          vModuleName === moduleName &&
+          +vErrorCode === +errorCode.assay &&
+          vErrorMessage === errorMessage.assay &&
           !rowAssayError
         ) {
           rowAssayError = {
-            moduleName,
-            moduleSerial: row.getCell(columnNumber.moduleSerial).value,
-            errorCode: row.getCell(columnNumber.errorCode).value,
+            moduleName: vModuleName,
+            moduleSerial: vModuleSerial,
+            errorCode: vErrorCode,
+            errorMessage: vErrorMessage,
           }
         } else if (
-          row.getCell(columnNumber.source).value === 'System Log' &&
-          row.getCell(columnNumber.moduleName).value === moduleName &&
-          +row.getCell(columnNumber.errorCode).value === +errorCode.systemLog &&
+          vSource === 'System Log' &&
+          vModuleName === moduleName &&
+          +vErrorCode === +errorCode.systemLog &&
+          vErrorMessage === errorMessage.systemLog &&
           !rowSystemLogError
         ) {
           rowSystemLogError = {
-            moduleName,
-            moduleSerial: row.getCell(columnNumber.moduleSerial).value,
-            errorCode: row.getCell(columnNumber.errorCode).value,
+            moduleName: vModuleName,
+            moduleSerial: vModuleSerial,
+            errorCode: vErrorCode,
+            errorMessage: vErrorMessage,
           }
         }
       })
@@ -351,6 +370,7 @@ describe('Sending Email via Message Queue', () => {
       // we null'ed moduleSerial and set errorCode for this assay result
       assert.isNull(rowAssayError.moduleSerial)
       assert.equal(rowAssayError.errorCode, errorCode.assay)
+      assert.equal(rowAssayError.errorMessage, errorMessage.assay)
 
       assert.isNotNull(rowSystemLogError)
       assert.equal(rowSystemLogError.moduleName, moduleName)
@@ -358,5 +378,6 @@ describe('Sending Email via Message Queue', () => {
       // so we get moduleSerial from previous result with index = 1
       assert.equal(rowSystemLogError.moduleSerial, 'Module Serial - 1')
       assert.equal(rowSystemLogError.errorCode, errorCode.systemLog)
+      assert.equal(rowSystemLogError.errorMessage, errorMessage.systemLog)
     }))
 })

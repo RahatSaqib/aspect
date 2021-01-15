@@ -59,6 +59,7 @@ const columnsDeviceErrorHistoryForAttachment = [
   { header: 'Operator ID', key: 'operatorId' },
   { header: 'Test Outcome', key: 'result' },
   { header: 'Error Code', key: 'errorCode' },
+  { header: 'Error Message', key: 'errorMessage' },
 ]
 async function getResultsReport(request, reply) {
   const { query, auth } = request
@@ -320,6 +321,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         END as result
       `),
       'r.errorCode', // 14. Error Code
+      'r.errorNotes as errorMessage',
       'r.moduleName'
     )
     .union([
@@ -439,6 +441,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           'r.senderOperator as operatorId',
           knex.raw(`'-' as result`),
           knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
+          knex.raw(`do.data ->> '$.details.Errors[0].Message' as errorMessage`),
           // treat all words A1..D4 as moduleName
           knex.raw(`${regexDeviceOperationModuleName} as moduleName`)
         ),
