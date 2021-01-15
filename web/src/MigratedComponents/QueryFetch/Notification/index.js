@@ -1,5 +1,5 @@
 const NOTIFICATION_HISTORY = {
-  ENDPOINT: '/notification/history',
+  ENDPOINT: '/notification/history/:notificationId',
   KEY: 'notificationHistory',
 }
 const NOTIFICATION_LIST = {
