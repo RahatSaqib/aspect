@@ -741,15 +741,12 @@ async function seedIssueEventTriggersForPartner(
         return memo
       }, {})
     )
-  const issuesFiltered = _.filter(data, elem =>
-    _.includes(issueTypeWhitelist, elem.issueType)
-  )
   issueTypeWhitelist.forEach(issueType => {
     issueTypeConfigured[issueType] = true
   })
 
   await Promise.each(
-    issuesFiltered,
+    data,
     async ({
       issueType,
       issueEventStatus,

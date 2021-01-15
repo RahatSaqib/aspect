@@ -14,9 +14,8 @@ const { assert } = chai
 const { knex } = require('../../../src/db')
 
 const pluginPath = '/device/plugin/commcare'
-const logger = require('../../../src/shared/logger')
 
-describe.only('CommCare Result API routes', () => {
+describe('CommCare Result API routes', () => {
   describe('Check patient phone normalization malawi', () => {
     const context = createTestContext(server, {
       user: 'reporter_admin',
@@ -138,7 +137,6 @@ describe.only('CommCare Result API routes', () => {
       const { id: deviceId } = await getDeviceFromApiKey(knex, apiKey)
 
       let result = await getLastResult(knex, deviceId)
-      logger.debug(['before check notification', result, deviceId])
       let notification = await getLastNotification(knex, deviceId)
       assert.equal(result.id, '123')
       assert.equal(result.data.resultText, 'negative')
@@ -227,7 +225,6 @@ async function getLastNotification(knex, deviceId) {
     .join('SmsMessage as s', 'n.smsMessageId', 's.id')
     .where('i.resultId', resultId)
     .orderBy('i.id', 'desc')
-    .select('it.externalId as issueType', 'i.level', 's.message')
-  logger.debug('notification', resultId, notification)
-  return notification[0]
+    .first('it.externalId as issueType', 'i.level', 's.message')
+  return notification
 }
