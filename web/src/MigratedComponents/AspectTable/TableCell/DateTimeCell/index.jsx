@@ -3,31 +3,34 @@ import classnames from 'classnames/bind'
 import { bool, number, oneOfType } from 'prop-types'
 import { useIntl } from 'react-intl'
 
-import { timeSinceFromUnix } from '../../Helpers'
+import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 
 const cssClasses = classnames.bind(require('../../Table.css'))
 
-const DateTimeCellBase = ({ value, flagged }) => {
+const DateTimeCellBase = ({ value, flagged, since }) => {
   const { locale } = useIntl()
-  const { isPast, timeSince } = timeSinceFromUnix(value, locale)
+  const { isPast, timeSince } = timeSinceFromUTC(value, locale)
+  const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')
   return (
     <div
       className={cssClasses(
         `${isPast && flagged ? 'date__cell--past' : 'date__cell'}`
       )}
     >
-      {timeSince}
+      {since ? timeSince : dateFormatted}
     </div>
   )
 }
 
 DateTimeCellBase.defaultProps = {
   flagged: false,
+  since: false,
 }
 
 DateTimeCellBase.propTypes = {
   value: number.isRequired,
   flagged: bool,
+  since: bool,
 }
 
 /**
@@ -48,12 +51,31 @@ DateTimeCell.propTypes = {
 }
 
 /**
+ * Component to render a date since cell
+ */
+
+const DateTimeCellSince = ({ value }) => (
+  <DateTimeCellBase value={value} since />
+)
+
+DateTimeCellSince.defaultProps = {
+  value: false,
+}
+
+DateTimeCellSince.propTypes = {
+  /**
+    Data for the cell to render
+  */
+  value: oneOfType([number, bool]),
+}
+
+/**
  * Component to render a date/time cell with
  * with an indicator for past dates
  */
 
 const DateTimeCellFlagged = ({ value }) => (
-  <DateTimeCellBase value={value} flagged />
+  <DateTimeCellBase value={value} flagged since />
 )
 
 DateTimeCell.defaultProps = {
@@ -67,4 +89,4 @@ DateTimeCell.propTypes = {
   value: oneOfType([bool, number]),
 }
 
-export { DateTimeCell, DateTimeCellFlagged }
+export { DateTimeCell, DateTimeCellSince, DateTimeCellFlagged }

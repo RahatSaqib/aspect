@@ -477,7 +477,6 @@ const AppRoutes = ({ props }) => {
       />
 
       <Route
-        exact
         path="/browse/notification"
         render={
           renderRedirectToLoginOr(props) ||

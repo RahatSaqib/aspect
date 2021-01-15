@@ -1,17 +1,24 @@
-import map from 'lodash/map'
 import subMinutes from 'date-fns/subMinutes'
 import addMinutes from 'date-fns/addMinutes'
+import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import isPast from 'date-fns/isPast'
-import getUnixTime from 'date-fns/getUnixTime'
-import fromUnixTime from 'date-fns/fromUnixTime'
+import parseISO from 'date-fns/parseISO'
+import identity from 'lodash/identity'
+import isNaN from 'lodash/isNaN'
 import filter from 'lodash/filter'
+import find from 'lodash/find'
 import times from 'lodash/times'
 import random from 'lodash/random'
 import chunk from 'lodash/chunk'
 import range from 'lodash/range'
 import min from 'lodash/min'
 import max from 'lodash/max'
+import pickBy from 'lodash/pickBy'
+import omit from 'lodash/omit'
+import omitBy from 'lodash/omitBy'
+import isNil from 'lodash/isNil'
+import map from 'lodash/map'
 
 const mockedDataNames = [
   'Amherst',
@@ -69,19 +76,23 @@ function mockDatafetch(cnt = 10) {
     const triggerRandom = random(0, 120000)
     times(random(0, 9), i => contacts.push(mockedDataContacts[i]))
     data.push({
-      id: index,
+      id: index.toString(),
       name: `Notification trigger ${mockedDataNames[random(0, 11)]}`,
       totalTriggers: triggerRandom,
       alertCount: triggerRandom,
       contactsCount: contacts.length,
-      contacts,
-      lastTriggeredOn: getUnixTime(mutatedDate),
+      contacts: contacts.join(','),
+      lastTriggeredOn: mutatedDate.toISOString(),
     })
   })
   return { data }
 }
 
-function buildColumnsFromData({ columns, columnOrder }) {
+function buildColumnsFromData({
+  columns,
+  columnOrder,
+  contextualMenu = false,
+}) {
   const output = []
   const { key, intitalSortBy } = filter(columns, 'intitalSortBy')[0] || false
   if (columns) {
@@ -93,6 +104,7 @@ function buildColumnsFromData({ columns, columnOrder }) {
     columns: output,
     initialSortBy: intitalSortBy ? { id: key, ...intitalSortBy } : false,
     columnOrder,
+    contextualMenu,
   }
 }
 
@@ -119,9 +131,7 @@ function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
 function timeClassification(vals) {
   const future = []
   const past = []
-  vals.map(val =>
-    isPast(fromUnixTime(val)) ? past.push(val) : future.push(val)
-  )
+  vals.map(val => (isPast(parseISO(val)) ? past.push(val) : future.push(val)))
   return [past.length, future.length]
 }
 
@@ -129,21 +139,100 @@ function totalItemCount(vals) {
   return vals.reduce((acc, curr) => acc + curr.length, 0)
 }
 
-function timeSinceFromUnix(val) {
+function timeSinceFromUTC(val) {
+  const date = parseISO(val)
   return {
-    isPast: isPast(fromUnixTime(val)),
-    timeSince: formatDistance(fromUnixTime(val), new Date(), {
+    isPast: isPast(date),
+    timeSince: formatDistance(date, new Date(), {
       addSuffix: true,
     }),
   }
 }
 
+function timeAndDate(val, dateFormat) {
+  const date = parseISO(val)
+  return format(new Date(date), dateFormat)
+}
+
+async function shapeTableParamsForApi({
+  pageIndex,
+  pageSize,
+  sortBy,
+  initialOrder,
+}) {
+  const page = pageIndex
+  const size = pageSize
+  const sortCol = sortBy.length ? sortBy[0].id : initialOrder[0]
+  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : 'asc'
+  return pickBy({ page, size, sortCol, sortDir }, identity)
+}
+
+function removeNullFromCollection(collection) {
+  return omitBy(collection, isNil)
+}
+
+function determineSortDirection(direction) {
+  return (direction && direction === 'desc') || false
+}
+
+function getParamsFromUrl(query, search) {
+  const output = {}
+  const queryKeys = new URLSearchParams(search)
+  for (const key of queryKeys.keys()) {
+    const queryParam = query.get(key)
+    const parsedParam = parseInt(queryParam, 10)
+    output[key] = isNaN(parsedParam) ? queryParam : parsedParam
+  }
+
+  return output
+}
+
+function useUrlQuery(search) {
+  return new URLSearchParams(search)
+}
+
+function allowOnlyAPIKeys(params) {
+  const omitKeys = ['filters']
+  return omit(params, omitKeys)
+}
+
+function getColumnIdFromFilterKey(config, filters) {
+  const output = []
+  const { columns } = config
+  const filterStrings = Object.fromEntries(new URLSearchParams(filters))
+
+  map(filterStrings, (value, key) => {
+    const configColumn = find(columns, { filterKey: key })
+    if (configColumn) {
+      const { key: id } = configColumn
+      return output.push({ id, value })
+    }
+  })
+
+  return output
+}
+
+function replaceRouteParams(route, routeParams) {
+  let newRoute = route
+  map(routeParams, (a, b) => (newRoute = newRoute.replace(`:${b}`, a)))
+  return newRoute
+}
+
 export {
+  allowOnlyAPIKeys,
   buildColumnsFromData,
+  determineSortDirection,
+  getColumnIdFromFilterKey,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
+  getParamsFromUrl,
   mockDatafetch,
+  removeNullFromCollection,
+  replaceRouteParams,
+  shapeTableParamsForApi,
+  timeAndDate,
   timeClassification,
-  timeSinceFromUnix,
+  timeSinceFromUTC,
   totalItemCount,
+  useUrlQuery,
 }

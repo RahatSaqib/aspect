@@ -156,3 +156,29 @@
   max-height: 100%;
   background: #f9f9f9;
 }
+
+.table__spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table__reload {
+  position: absolute;
+  right: 40px;
+  margin-top: -10px;
+}
+
+.tablereload__waiting {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tablereload__waiting div {
+  height: 20px !important;
+  width: 20px !important;
+}

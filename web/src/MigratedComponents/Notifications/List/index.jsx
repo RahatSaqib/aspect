@@ -1,38 +1,63 @@
-import React, { useState } from 'react'
-import { useQuery } from 'react-query'
-import { useIntl } from 'react-intl'
+import React, { Fragment } from 'react'
+import { useSelector } from 'react-redux'
+import { Helmet } from 'react-helmet'
+import { defineMessages, useIntl } from 'react-intl'
+import { useHistory, useLocation } from 'react-router-dom'
+import classnames from 'classnames/bind'
+
+import NavTitle from '../../../globals/components/NavTitle'
+import BrowseFilters from '../../../globals/components/BrowseFilters'
+import { reduceFiltersConfig } from '../../../filter/utils'
 
 import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
 import AspectTable from '../../AspectTable'
-
-import { mockDatafetch } from '../../AspectTable/Helpers'
+import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
 import baseConfig from './config'
 
-function NotificationList() {
+const cssClasses = classnames.bind(require('../Notifications.css'))
+
+const messages = defineMessages({
+  notificationsTitle: {
+    id: 'pages.NotificationList.title',
+    defaultMessage: 'Notifications',
+  },
+})
+
+const NotificationList = () => {
   const intl = useIntl()
-  const [data, setData] = useState(false)
-  const config = baseConfig(intl)
-
-  const { isError, error } = useQuery(
-    'mockTableData',
-    async () => mockDatafetch(86),
-    {
-      onSuccess: ({ data }) => setData(data),
-    }
+  const history = useHistory()
+  const location = useLocation()
+  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
+  const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
+  return (
+    <Fragment>
+      <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
+      <div className={cssClasses('filters__container')}>
+        <BrowseFilters
+          history={history}
+          location={location}
+          intl={intl}
+          config={reducedFilters}
+        />
+      </div>
+      <div
+        /**
+         * TODO:temp fix before all tables are placed with
+         * the <Shell component />
+         */
+        style={{ marginTop: '-22px' }}
+      >
+        <Shell>
+          <ShellContent>
+            <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_LIST} />
+          </ShellContent>
+        </Shell>
+      </div>
+    </Fragment>
   )
-
-  if (isError) {
-    throw new Error(error)
-  }
-
-  return data && data.length ? (
-    <Shell>
-      <ShellContent>
-        <AspectTable tableData={data} config={config} />
-      </ShellContent>
-    </Shell>
-  ) : null
 }
 
 export default NotificationList

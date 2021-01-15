@@ -1,13 +1,20 @@
 /**
- * WIP
- * key: 'string' [self defined]
- * label: 'string' [self defined]
- * width: 'number' [self defined]
- * disableHide: 'boolean' [react-table]
- * disableGroupBy: 'boolean' [react-table]
- * aggregate: 'function' [self defined|react-table]
- * Aggregated: 'function' [self defined]
- * format: 'react component' [self defined]
+ * name: 'string' [self defined, required]
+ * columns: 'array' [self-defined, required]
+ *  key: 'string' [self defined, required]
+ *  filterKey: 'string' [self defined, optional for filtering]
+ *  label: 'string' [self defined, required]
+ *  width: 'number' [self defined, optional]
+ *  disableHide: 'boolean' [react-table, optional default false]
+ *  disableGroupBy: 'boolean' [react-table, optional default false]
+ *  disableSortBy: 'boolean' [react-table, optional default false]
+ *  aggregate: 'function' [self defined|react-table, optional for calcs]
+ *  Aggregated: 'function' [self defined, optional for calcs]
+ *  format: 'function|react component' [self defined, optional for calcs]
+ * columnOrder: 'object' [self defined, optional]
+ *  allow: 'bool' [self defined, optional default true]
+ *  initialOrder: 'array' [self defined, optional]
+ * contextualMenu: 'function|component' [self defined, optional]
  */
 
 import messages from './messages'
@@ -16,6 +23,7 @@ import { timeClassification, totalItemCount } from '../../AspectTable/Helpers'
 import ContactsCell from '../../AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../AspectTable/TableCell/NumberCell'
+import NotificationsContextualMenu from './NotificationsContextualMenu'
 
 const baseConfig = ({ formatMessage, formatNumber }) => ({
   name: 'notification',
@@ -36,8 +44,11 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
     {
       key: 'name',
+      filterKey: 'notificationName',
       label: formatMessage(messages.notificationsTableHeaderName),
       width: 35,
+      disableHide: true,
+      disableGroupBy: true,
       aggregate: 'count',
       Aggregated: ({ value }) =>
         `${formatMessage(messages.notificationsTableHeaderNameCount, {
@@ -48,8 +59,9 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
       key: 'totalTriggers',
       label: formatMessage(messages.notificationsTableHeaderTotalTriggers),
       width: 20,
-      aggregate: 'sum',
+      disableHide: true,
       disableGroupBy: true,
+      aggregate: 'sum',
       Aggregated: ({ value }) =>
         `${formatMessage(messages.notificationsTableTotalTriggersCount, {
           itemCount: formatNumber(value),
@@ -59,7 +71,8 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     {
       key: 'contacts',
       label: formatMessage(messages.notificationsTableHeaderContacts),
-      disableSortBy: true,
+      disableHide: true,
+      disableGroupBy: true,
       width: 25,
       aggregate: totalItemCount,
       Aggregated: ({ value }) =>
@@ -70,9 +83,10 @@ const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
   ],
   columnOrder: {
-    allow: true,
+    allow: false,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
   },
+  contextualMenu: NotificationsContextualMenu,
 })
 
 export default baseConfig

@@ -1,292 +1,158 @@
-import React, { Fragment, useMemo, useEffect } from 'react'
-import { array, object, oneOfType } from 'prop-types'
+import React, { useEffect, useState } from 'react'
+import { func, object, oneOfType } from 'prop-types'
+import { usePaginatedQuery } from 'react-query'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
+import isEqual from 'lodash/isEqual'
+
+import fetchWrapperForQueries from '../QueryFetch'
+import ErrorBoundary from '../ErrorBoundary'
+
+import AspectTableCore from './TableCore'
+
 import {
-  useTable,
-  useSortBy,
-  usePagination,
-  useColumnOrder,
-  useGroupBy,
-  useExpanded,
-} from 'react-table'
+  allowOnlyAPIKeys,
+  determineSortDirection,
+  getColumnIdFromFilterKey,
+  getParamsFromUrl,
+  removeNullFromCollection,
+  replaceRouteParams,
+  useUrlQuery,
+} from './Helpers'
 
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
+const cssClasses = classnames.bind(require('./Table.css'))
 
-import TableColumnHeader from './TableHeader/TableColumnHeader'
-import TableColumnOrderButtons from './TableHeader/TableColumnOrderButtons'
-import TableHiddenColumns from './TableHeader/TableHiddenColumns'
-import TableColumnGroupBy from './TableHeader/TableColumnGroupBy'
-import TableColumnHideButton from './TableHeader/TableColumnHideButton'
+const Loading = () => (
+  <div className={cssClasses('table__spinner')}>
+    <CircularProgress />
+  </div>
+)
 
-import Cell from './TableCell/Cell'
-import GroupedCell from './TableCell/GroupedCell'
-import PlaceholderCell from './TableCell/PlaceholderCell'
-
-import AspectTablePagination from './TablePagination'
-import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
-
-/**
- * Table component to render data within pre-defined
- * columns and formatters
- */
-
-const AspectTable = ({ tableData: data, config }) => {
-  const { name } = config
+const AspectTable = ({ baseConfig, consts: CONSTS }) => {
+  const intl = useIntl()
+  const config = baseConfig(intl)
+  const { push } = useHistory()
+  const { ...routeParams } = useParams()
+  const { pathname, search } = useLocation()
+  const query = useUrlQuery(search)
   const {
-    columns,
-    initialSortBy,
-    columnOrder: { allow: allowColumnReOrder, initialOrder } = false,
-  } = useMemo(() => buildColumnsFromData(config), [config])
-
-  const table = useTable(
-    { columns, data },
-    useColumnOrder,
-    useGroupBy,
-    useSortBy,
-    useExpanded,
-    usePagination
+    columnOrder: { initialOrder = false },
+  } = config
+  const {
+    size: urlSize = false,
+    page: urlPage = 0,
+    sortCol: urlSortCol = initialOrder ? initialOrder[0] : null,
+    sortDir: urlSortDir = initialOrder ? 'asc' : 'desc',
+    filters: urlFilters = null,
+  } = getParamsFromUrl(query, search)
+  const [allowReset, setAllowReset] = useState(false)
+  const [filters, setFilters] = useState(urlFilters)
+  const [size, setSize] = useState(urlSize || 10)
+  const [sortCol, setSortCol] = useState(urlSortCol)
+  const [sortDir, setSortDir] = useState(urlSortDir)
+  const [page, setPage] = useState(urlPage)
+  const [params, setParams] = useState(
+    removeNullFromCollection({ size, sortCol, sortDir, page, filters })
   )
 
   const {
-    canNextPage,
-    canPreviousPage,
-    getTableProps,
-    gotoPage,
-    headerGroups,
-    nextPage,
-    page,
-    pageCount,
-    prepareRow,
-    previousPage,
-    setColumnOrder,
-    setPageSize,
-    setSortBy,
-    toggleGroupBy,
-    toggleHideColumn,
-    visibleColumns,
-    state: {
-      pageIndex,
-      pageSize,
-      sortBy,
-      columnOrder,
-      hiddenColumns,
-      groupBy,
-      expanded,
+    error,
+    isError,
+    isLoading,
+    isFetching,
+    resolvedData: data = false,
+  } = usePaginatedQuery(
+    [CONSTS.KEY, { params }],
+    async (_queryId, { params }) => {
+      return fetchWrapperForQueries({
+        endpoint: replaceRouteParams(CONSTS.ENDPOINT, routeParams),
+        params: allowOnlyAPIKeys(params),
+      })
     },
-  } = table
+    {
+      keepPreviousData: true,
+    }
+  )
 
-  const handleChangeRowsPerPage = val => {
-    setPageSize(typeof val !== 'number' ? data.length : Number(val))
-  }
-
-  const handleChangeColumnOrder = (e, direction, index) => {
-    e.stopPropagation()
-    setColumnOrder(
-      getCurrentColumnIndexAndShift(visibleColumns, direction, index)
-    )
-  }
-
-  const handleHideColumnToggle = (e, id) => {
-    e.stopPropagation()
-    toggleHideColumn(id)
-  }
-
-  const handleGroupByColumnToggle = (e, id) => {
-    e.stopPropagation()
-    toggleGroupBy(id)
+  if (isError) {
+    throw new Error(error)
   }
 
   useEffect(() => {
-    if (!sortBy.length && initialSortBy) {
-      setSortBy([initialSortBy])
+    if (params) {
+      const newUrlParams = new URLSearchParams(params).toString()
+      const urlParams = getParamsFromUrl(query, search)
+      if (!isEqual(urlParams, params)) {
+        push(`${pathname}?${newUrlParams}`)
+      }
     }
-  }, [sortBy, setSortBy, initialSortBy])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params])
 
   useEffect(() => {
-    if (visibleColumns && allowColumnReOrder && !columnOrder.length) {
-      setColumnOrder(initialOrder)
+    if (!isEqual(params, { size, sortCol, sortDir, page, filters })) {
+      setParams(
+        removeNullFromCollection({ size, sortCol, sortDir, page, filters })
+      )
     }
-  }, [
-    visibleColumns,
-    allowColumnReOrder,
-    columnOrder,
-    initialOrder,
-    setColumnOrder,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, size, sortCol, sortDir, page])
 
-  return data ? (
-    <Fragment>
-      {hiddenColumns && hiddenColumns.length ? (
-        <TableHiddenColumns
-          columns={columns}
-          hiddenColumns={hiddenColumns}
-          handleHideColumnToggle={handleHideColumnToggle}
-        />
-      ) : null}
-      <Table {...getTableProps()} style={{ tableLayout: 'auto' }}>
-        <TableHead>
-          {headerGroups &&
-            headerGroups.map(({ headers, getHeaderGroupProps }) => (
-              <TableRow {...getHeaderGroupProps()}>
-                {headers.map(
-                  (
-                    {
-                      canSort,
-                      canGroupBy,
-                      disableHide,
-                      getHeaderProps,
-                      getGroupByToggleProps,
-                      getSortByToggleProps,
-                      id,
-                      isGrouped,
-                      isSorted,
-                      isSortedDesc,
-                      render,
-                      width,
-                    },
-                    index
-                  ) => {
-                    return (
-                      <TableCell
-                        {...getHeaderProps(
-                          getSortByToggleProps(),
-                          getGroupByToggleProps()
-                        )}
-                        style={{ width: `${width}%` }}
-                      >
-                        <TableColumnHeader
-                          width={width}
-                          render={render('Header')}
-                          canSort={canSort}
-                          canGroupBy={canGroupBy}
-                          isSorted={isSorted}
-                          isSortedDesc={isSortedDesc}
-                          headerOrderComponent={() =>
-                            allowColumnReOrder ? (
-                              <TableColumnOrderButtons
-                                headerIndex={index}
-                                headersLength={headers.length}
-                                handleChangeColumnOrder={
-                                  handleChangeColumnOrder
-                                }
-                              />
-                            ) : null
-                          }
-                          headerVisibilityComponent={() =>
-                            !disableHide ? (
-                              <TableColumnHideButton
-                                headerIndex={id}
-                                handleHideColumnToggle={handleHideColumnToggle}
-                              />
-                            ) : null
-                          }
-                          headerGroupByComponent={() =>
-                            canGroupBy ? (
-                              <TableColumnGroupBy
-                                headerIndex={id}
-                                handleGroupByColumnToggle={
-                                  handleGroupByColumnToggle
-                                }
-                                isGrouped={isGrouped}
-                              />
-                            ) : null
-                          }
-                        />
-                      </TableCell>
-                    )
-                  }
-                )}
-              </TableRow>
-            ))}
-        </TableHead>
-        <TableBody>
-          {page.map(row => {
-            prepareRow(row)
-            const {
-              getRowProps,
-              cells,
-              getToggleRowExpandedProps,
-              isExpanded,
-              subRows,
-            } = row
-            return (
-              <TableRow {...getRowProps()}>
-                {cells &&
-                  cells.map(
-                    ({
-                      getCellProps,
-                      column: { format = false },
-                      render,
-                      isGrouped,
-                      isAggregated,
-                      isPlaceholder,
-                      value,
-                    }) => {
-                      return (
-                        <TableCell {...getCellProps()}>
-                          {isGrouped ? (
-                            <GroupedCell
-                              format={format}
-                              getToggleRowExpandedProps={
-                                getToggleRowExpandedProps
-                              }
-                              isExpanded={isExpanded}
-                              render={render}
-                              subRows={subRows}
-                              value={value}
-                            />
-                          ) : isAggregated ? (
-                            render('Aggregated')
-                          ) : isPlaceholder ? (
-                            <PlaceholderCell />
-                          ) : (
-                            <Cell
-                              render={render}
-                              format={format}
-                              value={value}
-                            />
-                          )}
-                        </TableCell>
-                      )
-                    }
-                  )}
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-      <AspectTablePagination
-        canNextPage={canNextPage}
-        canPreviousPage={canPreviousPage}
-        dataLength={data.length}
-        expanded={expanded}
-        gotoPage={gotoPage}
-        groupBy={groupBy}
-        handleChangeRowsPerPage={handleChangeRowsPerPage}
-        name={name}
-        nextPage={nextPage}
-        pageCount={pageCount}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        previousPage={previousPage}
-        page={page}
+  useEffect(() => {
+    if (filters !== urlFilters) {
+      setFilters(urlFilters)
+    }
+  }, [filters, urlFilters])
+
+  const handleClearParams = () => {
+    setAllowReset(!allowReset)
+  }
+
+  return isLoading || !data ? (
+    <Loading />
+  ) : (
+    <ErrorBoundary>
+      <AspectTableCore
+        config={config}
+        tableData={data}
+        params={params}
+        pageCount={Math.ceil(data.total / size)}
+        isFetching={isFetching}
+        initialState={removeNullFromCollection({
+          pageSize: size,
+          sortBy: [
+            {
+              id: sortCol,
+              desc: determineSortDirection(sortDir),
+            },
+          ],
+          pageIndex: page,
+          allowReset,
+          filters: getColumnIdFromFilterKey(config, filters),
+        })}
+        setters={{
+          handleClearParams,
+          setSize,
+          setSortCol,
+          setSortDir,
+          setPage,
+        }}
       />
-    </Fragment>
-  ) : null
+    </ErrorBoundary>
+  )
 }
 
-AspectTable.proptTypes = {
+AspectTable.propTypes = {
   /**
-    Data input for tables
-  */
-  data: oneOfType([array]).isRequired,
-  /**
-   Config input for tables
+   Config input for table
  */
-  config: oneOfType([object]).isRequired,
+  baseConfig: func.isRequired,
+  /**
+   Consts required for data fetching
+ */
+  consts: oneOfType([object]).isRequired,
 }
 
 export default AspectTable
