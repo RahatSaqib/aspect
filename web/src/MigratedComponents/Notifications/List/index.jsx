@@ -29,8 +29,8 @@ const NotificationList = () => {
   const history = useHistory()
   const location = useLocation()
   const userPermissions = useSelector(state => state.user.jwt.permissions)
-  const FILTERS_CONFIG = [{ notificationName: true, requiredPermissions: [] }]
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+  const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
+  const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
