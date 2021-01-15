@@ -8,4 +8,4 @@ module.exports = require('../../utils').seed(async knex => {
     .first('id')
 
   await upsertDashboardWidgets(knex, partnerId, fixture)
-})
+}, __filename)
