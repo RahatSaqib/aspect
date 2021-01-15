@@ -95,7 +95,7 @@ const getExpected = totalResults => {
     percentWithin2Hours,
   }
 }
-describe.only('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
+describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
   let initialState = {}
 
@@ -362,7 +362,7 @@ describe.only('Dashboard routes - GET /api/dashboard/results-transmitted', () =>
   //   await reset('Device', initialState.deviceId)
   // })
 
-  it.only('should return data for Results Transmitted graph', async () => {
+  it('should return data for Results Transmitted graph', async () => {
     const res = await server
       .get(`${path}`)
       .query({
