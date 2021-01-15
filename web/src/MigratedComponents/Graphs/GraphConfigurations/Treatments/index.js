@@ -1,6 +1,6 @@
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
 
 const treatmentStatusGraphs = {
   treatmentStatus: {
@@ -23,14 +23,14 @@ const treatmentStatusGraphs = {
         selectedValue: 'All Sites',
         endpoint: '/dashboard/site',
         state: 'siteList',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'siteId',
       },
       {
         selectedValue: 'Viral Load',
         endpoint: '/dashboard/site',
         state: 'assayResultCategoryList',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'assayTypeId',
       },
     ],
