@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route, useRouteMatch } from 'react-router-dom'
 
-import NotificationDetailView from '../../notification/Detail/view/NotificationDetailView'
+import NotificationDetailView from '../../notification/detail/view/NotificationDetailView'
 import NotificationDetailHistory from './Detail/NotificationDetailHistory'
 import NotificationList from './List'
 
