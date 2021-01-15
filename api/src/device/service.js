@@ -1031,9 +1031,14 @@ async function onDeviceMaintenanceStatusLogged(
   { messageContext }
 ) {
   return messageContext.run(async knex => {
-    const { deviceId } = await knex('DeviceMaintenanceStatusLog')
-      .where('id', deviceMaintenanceStatusLogId)
-      .first('deviceId')
+    if (!deviceMaintenanceStatusLogId) return
+
+    const { deviceId } =
+      (await knex('DeviceMaintenanceStatusLog')
+        .where('id', deviceMaintenanceStatusLogId)
+        .first('deviceId')) || {}
+    if (!deviceId) return
+
     const {
       latestDeviceMaintenanceStatusLogId,
       currentDeviceMaintenanceStatusLogId,
