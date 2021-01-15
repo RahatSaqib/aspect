@@ -286,7 +286,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           const [resultReceivedId] = await knex('IssueType')
             .where({ externalId: 'ResultReceived' })
             .pluck('id')
-          // console.log('resultReceivedId', resultReceivedId)
           const [notificationId] = await knex('Notification').insert({
             notificationTypeId: resultReceivedId,
             issueId,
@@ -349,18 +348,18 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     })
   })
 
-  // after(async () => {
-  //   // helper
-  //   const reset = async (tableName, id = 0) =>
-  //     knex(tableName).where('id', '>', id).delete()
-  //   // reset all data tables affected in test
-  //   await reset('Issue', initialState.issueId)
-  //   await reset('EmailMessage', initialState.emailMessageId)
-  //   await reset('SmsMessage', initialState.smsMessageId)
-  //   await reset('Result', initialState.resultId)
-  //   await reset('Sample', initialState.sampleId)
-  //   await reset('Device', initialState.deviceId)
-  // })
+  after(async () => {
+    // helper
+    const reset = async (tableName, id = 0) =>
+      knex(tableName).where('id', '>', id).delete()
+    // reset all data tables affected in test
+    await reset('Issue', initialState.issueId)
+    await reset('EmailMessage', initialState.emailMessageId)
+    await reset('SmsMessage', initialState.smsMessageId)
+    await reset('Result', initialState.resultId)
+    await reset('Sample', initialState.sampleId)
+    await reset('Device', initialState.deviceId)
+  })
 
   it('should return data for Results Transmitted graph', async () => {
     const res = await server
@@ -378,7 +377,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const { data } = res.body
     assert.typeOf(data, 'array')
     // minimum 1 assay for current month
-    console.log(data)
     assert.isAtLeast(data.length, 1)
 
     const item = data.find(
