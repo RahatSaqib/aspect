@@ -31,7 +31,6 @@ const AspectWidget = ({
   data: {
     link,
     linkParams,
-    linkPermissions,
     icon,
     description,
     count,
@@ -44,29 +43,17 @@ const AspectWidget = ({
     statUnitI18nKey,
     alert: { display: displayAlert, config: alertConfig } = {},
   },
-  addTo,
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
-  const truePermissions = useSelector(({ user }) => user.jwt.permissions)
-  const isPermitted = isPermittedUser(truePermissions, {
-    required: linkPermissions,
-  })
   const messages = defineMessage(buildMessagesFromI18nKeys(data))
-  const linkParam = link
-    ? buildWidgetToLinkParams(link, linkParams, isPermitted)
-    : false
-
-  // addTo({ link, linkParam, linkParams, linkPermissions })
-
+  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : false
   return (
     <AspectLink
       to={linkParam}
-      className={
-        isPermitted
-          ? cssClasses('Summary')
-          : cssClasses('Summary', 'Summary_Link--disabled')
-      }
-      testId="SummaryStatus--Summary_Link"
+      className={{
+        active: cssClasses('Summary'),
+        disabled: cssClasses('Summary', 'Summary_Link--disabled'),
+      }}
     >
       <Card className={cssClasses('Summary__Card')}>
         <div className={cssClasses('Summary__Card__Title')}>
