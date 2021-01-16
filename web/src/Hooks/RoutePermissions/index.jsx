@@ -60,11 +60,9 @@ function useUserIsPermitted(path) {
     routes,
     path.split('?')[0]
   )
-
   const allow = isPermittedUser(userPermissions, {
     required: routePermissionsRequired,
   })
-
   context.isPermitted = allow
   return context
 }

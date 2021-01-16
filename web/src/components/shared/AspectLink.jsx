@@ -18,8 +18,6 @@ const BaseLink = ({ children, to, ...rest }) => (
 
 const AspectLink = ({ to = '#', children, ...restProps }) => {
   const { isPermitted } = useUserIsPermitted(to)
-  // console.log(isPermitted)
-
   return (
     <Fragment>
       {isPermitted && isURL(to) ? (
@@ -32,7 +30,7 @@ const AspectLink = ({ to = '#', children, ...restProps }) => {
           {children}
         </Link>
       ) : null}
-      {!isPermitted ? <div {...restProps}>{children}</div> : null}
+      {!isPermitted ? <a {...restProps}>{children}</a> : null}
     </Fragment>
   )
 }
