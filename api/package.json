@@ -113,7 +113,7 @@
     "raven": "^2.6.4",
     "shx": "^0.3.2",
     "timezone-support": "^2.0.2",
-    "twilio": "^3.43.1",
+    "twilio": "^3.55.0",
     "vision": "^5.4.4",
     "winston": "^3.3.3"
   },
