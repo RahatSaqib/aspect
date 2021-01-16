@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
+
+import { useUserIsPermitted } from '../../Hooks/RoutePermissions/index.jsx'
 
 const isURL = to => {
   if (!to) return false
@@ -8,15 +10,30 @@ const isURL = to => {
   return to.match(regex)
 }
 
+const BaseLink = ({ children, to, ...rest }) => (
+  <a href={to} target="_blank" {...rest} rel="noreferrer">
+    {children}
+  </a>
+)
+
 const AspectLink = ({ to = '#', children, ...restProps }) => {
-  return isURL(to) ? (
-    <a href={to} target="_blank" {...restProps} rel="noreferrer">
-      {children}
-    </a>
-  ) : (
-    <Link to={to} {...restProps}>
-      {children}
-    </Link>
+  const { isPermitted } = useUserIsPermitted(to)
+  // console.log(isPermitted)
+
+  return (
+    <Fragment>
+      {isPermitted && isURL(to) ? (
+        <BaseLink to={to} {...restProps}>
+          {children}
+        </BaseLink>
+      ) : null}
+      {isPermitted && !isURL(to) ? (
+        <Link to={to} {...restProps}>
+          {children}
+        </Link>
+      ) : null}
+      {!isPermitted ? <div {...restProps}>{children}</div> : null}
+    </Fragment>
   )
 }
 
