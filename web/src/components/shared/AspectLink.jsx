@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
+import isObject from 'lodash/isObject'
 
 import { useUserIsPermitted } from '../../Hooks/RoutePermissions/index.jsx'
 
@@ -10,27 +11,37 @@ const isURL = to => {
   return to.match(regex)
 }
 
-const BaseLink = ({ children, to, ...rest }) => (
-  <a href={to} target="_blank" {...rest} rel="noreferrer">
-    {children}
-  </a>
-)
-
-const AspectLink = ({ to = '#', children, ...restProps }) => {
+const AspectLink = ({ to = '#', children, className, ...restProps }) => {
+  let linkClassName
   const { isPermitted } = useUserIsPermitted(to)
+  if (isObject(className)) {
+    linkClassName = isPermitted
+      ? (linkClassName = className.active)
+      : className.disabled
+  }
   return (
     <Fragment>
       {isPermitted && isURL(to) ? (
-        <BaseLink to={to} {...restProps}>
+        <a
+          {...restProps}
+          href={to}
+          target="_blank"
+          className={linkClassName}
+          rel="noreferrer"
+        >
           {children}
-        </BaseLink>
+        </a>
       ) : null}
       {isPermitted && !isURL(to) ? (
-        <Link to={to} {...restProps}>
+        <Link to={to} {...restProps} className={linkClassName}>
           {children}
         </Link>
       ) : null}
-      {!isPermitted ? <a {...restProps}>{children}</a> : null}
+      {!isPermitted ? (
+        <a {...restProps} className={linkClassName}>
+          {children}
+        </a>
+      ) : null}
     </Fragment>
   )
 }
