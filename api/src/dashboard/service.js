@@ -72,7 +72,6 @@ async function summaryDashboard(request) {
   const data = await Promise.all(
     widgets.map(async widget => {
       const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
-
       const count = await queryValue(sqlForIndicator, dataConstraints, query)
       const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
       const extra = await queryValue(sqlForExtra, dataConstraints, query)
