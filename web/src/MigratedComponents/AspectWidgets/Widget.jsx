@@ -1,75 +1,19 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { array, func, object, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { useSelector } from 'react-redux'
 
-import DATE_CONSTS from '../../globals/consts/DateTime/CONSTS'
 import AspectLink from '../../components/shared/AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
+import { isPermittedUser } from '../../components/shared/requirePermissions'
 import IconProvider from '../IconProvider'
-import { buildMessagesFromI18nKeys } from './Helpers'
-import {
-  getTimePeriod,
-  getAllDaysInCurrentMonth,
-} from '../../components/shared/DateTimeInput/utils/date'
+import { buildMessagesFromI18nKeys, buildWidgetToLinkParams } from './Helpers'
 import WidgetAlert from './Alerts'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
-
-const buildDateRange = term => {
-  let dateRange
-  const {
-    DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
-  } = DATE_CONSTS
-  switch (true) {
-    case term === 'last30Days':
-      dateRange = {
-        [MIN_DATE]: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
-        [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
-      }
-      break
-
-    case term === 'currentMonth':
-      dateRange = {
-        [MIN_DATE]: getAllDaysInCurrentMonth().start,
-        [MAX_DATE]: getAllDaysInCurrentMonth(true).end,
-      }
-      break
-
-    default:
-      dateRange = {}
-      break
-  }
-  return dateRange
-}
-
-const buildWidgetToLinkParams = (link, linkParams) => {
-  const inParams = JSON.parse(linkParams)
-  if (
-    inParams &&
-    Object.keys(inParams).length !== 0 &&
-    inParams.constructor === Object
-  ) {
-    let tempParams = {}
-    for (const [key, value] of Object.entries(inParams)) {
-      switch (true) {
-        case key === 'dateRange':
-          tempParams = { ...tempParams, ...buildDateRange(value) }
-          break
-
-        default:
-          tempParams[key] = value
-          break
-      }
-    }
-    return `${link}?filters=${encodeURIComponent(
-      new URLSearchParams(tempParams).toString()
-    )}`
-  }
-  return link
-}
 
 const EmptyWidget = () => (
   <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
@@ -87,6 +31,7 @@ const AspectWidget = ({
   data: {
     link,
     linkParams,
+    linkPermissions,
     icon,
     description,
     count,
@@ -99,17 +44,28 @@ const AspectWidget = ({
     statUnitI18nKey,
     alert: { display: displayAlert, config: alertConfig } = {},
   },
+  addTo,
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
+  const truePermissions = useSelector(({ user }) => user.jwt.permissions)
+  const isPermitted = isPermittedUser(truePermissions, {
+    required: linkPermissions,
+  })
   const messages = defineMessage(buildMessagesFromI18nKeys(data))
-  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : false
+  const linkParam = link
+    ? buildWidgetToLinkParams(link, linkParams, isPermitted)
+    : false
+
+  // addTo({ link, linkParam, linkParams, linkPermissions })
 
   return (
     <AspectLink
       to={linkParam}
-      className={cssClasses('Summary', {
-        'Summary_Link--disabled': !link,
-      })}
+      className={
+        isPermitted
+          ? cssClasses('Summary')
+          : cssClasses('Summary', 'Summary_Link--disabled')
+      }
       testId="SummaryStatus--Summary_Link"
     >
       <Card className={cssClasses('Summary__Card')}>
@@ -167,23 +123,24 @@ const AspectWidget = ({
 }
 
 AspectWidget.propTypes = {
-  data: PropTypes.shape({
-    link: PropTypes.string,
-    linkParams: PropTypes.string,
-    icon: PropTypes.string,
-    description: PropTypes.string,
-    count: PropTypes.string,
-    extra: PropTypes.object,
-    title: PropTypes.string,
-    unit: PropTypes.string,
-    subTitle: PropTypes.object,
-    statUnit: PropTypes.string,
-    statStatus: PropTypes.object,
-    extraLabel: PropTypes.object,
-    statUnitI18nKey: PropTypes.string,
-    alert: PropTypes.shape({
-      config: PropTypes.object.isRequired,
-      display: PropTypes.isRequired,
+  data: shape({
+    link: string,
+    linkParams: string,
+    linkPermissions: array,
+    icon: string,
+    description: string,
+    count: string,
+    extra: object,
+    title: string,
+    unit: string,
+    subTitle: object,
+    statUnit: string,
+    statStatus: object,
+    extraLabel: object,
+    statUnitI18nKey: string,
+    alert: shape({
+      config: object.isRequired,
+      display: func.isRequired,
     }),
   }).isRequired,
 }
