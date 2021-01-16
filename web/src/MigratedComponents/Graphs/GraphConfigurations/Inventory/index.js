@@ -1,5 +1,5 @@
 import BarGraph from '../../BarGraph'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
 
 const inventoryGraphs = {
   inventoryStatus: {
@@ -11,7 +11,7 @@ const inventoryGraphs = {
         selectedValue: 'Consumable',
         endpoint: '/dashboard/inventory-item',
         state: 'data.inventoryConsumableSummaryList',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'consumableId',
         data: null,
         sortByKeys: ['consumableName'],

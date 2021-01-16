@@ -1,5 +1,7 @@
 const _ = require('lodash')
 const chai = require('chai')
+const Promise = require('bluebird')
+
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
 const { queuePurge } = require('../utils/mqUtils')
@@ -42,6 +44,9 @@ class EmailTestContext {
       this.result = await knex('Result').first()
       const { id: resultId, siteId, deviceId } = this.result
 
+      // read all results for this deviceId
+      this.results = await knex('Result').where({ deviceId }).select()
+
       const messageStatusId = await messageStatusToId('Initial')
 
       // add sample email message
@@ -80,12 +85,16 @@ class EmailTestContext {
       if (this.messageId) {
         await knex('EmailMessage').where('id', this.messageId).delete()
       }
-      if (this.result) {
-        await knex('Result').where('id', this.result.id).update({
-          endedOn: this.result.endedOn,
-          errorCode: this.result.errorCode,
+      // restore some fields in results of current deviceId
+      await Promise.each(this.results, async result => {
+        await knex('Result').where('id', result.id).update({
+          moduleName: result.moduleName,
+          moduleSerial: result.moduleSerial,
+          endedOn: result.endedOn,
+          errorCode: result.errorCode,
         })
-      }
+      })
+
       if (
         this.deviceOperationsToDelete &&
         this.deviceOperationsToDelete.length > 0

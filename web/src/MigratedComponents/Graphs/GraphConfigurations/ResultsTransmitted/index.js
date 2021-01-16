@@ -1,6 +1,6 @@
 import PieRowGraph from '../../PieRowGraph'
 import { dateRangeOptions } from '../../Helpers/Formatters'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
 
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
@@ -25,7 +25,7 @@ const resultsTransmittedGraphs = {
         selectedValue: 'Date Range',
         endpoint: false,
         state: 'resultsDateRange',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'currentMonth',
         data: dateRangeOptions('resultsDateRange'),
         sortByKeys: ['id'],

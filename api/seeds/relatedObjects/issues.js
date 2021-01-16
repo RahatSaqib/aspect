@@ -231,10 +231,18 @@ const errorIssueEmailHtml = getDeviceBaseHtml({
   <<REPLACE WITH MODULE OR REAGENT>>
   <tr>
     <td>
-      Cartridge Type
+      Assay
     </td>
     <td>
-      {{result.assay.name}}
+      {{result.data.assay}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Assay Version
+    </td>
+    <td>
+      {{result.data.assayVersion}}
     </td>
   </tr>
   <tr>
@@ -254,7 +262,9 @@ System Serial: {{result.instrumentSerial}}
 
 <<REPLACE WITH MODULE OR REAGENT>>
 
-Cartridge Type: {{result.assay.name}}
+Assay: {{result.data.assay}}
+
+Assay Version: {{result.data.assayVersion}}
 
 Date/Time (UTC): {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 `,

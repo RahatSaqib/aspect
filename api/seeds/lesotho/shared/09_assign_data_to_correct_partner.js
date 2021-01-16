@@ -1,9 +1,7 @@
 const _ = require('lodash')
 const { baseGxAlertMigration } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
-const {
-  fixture: jobFunctionsFixture,
-} = require('../../common/fixtures/jobFunctions')
+const jobFunctionsFixture = require('./fixtures/jobFunctions')
 
 const { diseaseToId } = require('../../../src/shared/dictionary')
 
