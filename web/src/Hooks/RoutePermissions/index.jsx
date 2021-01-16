@@ -58,7 +58,7 @@ function useUserIsPermitted(path) {
   const { userPermissions, routes } = context
   const routePermissionsRequired = extractPermissionsFromRoutes(
     routes,
-    path.split('?')[0]
+    path.replace(/[?|#].*/, '')
   )
   const allow = isPermittedUser(userPermissions, {
     required: routePermissionsRequired,
