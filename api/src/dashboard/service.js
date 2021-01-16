@@ -14,7 +14,6 @@ const {
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { queryValue } = require('../shared/sql-2-knex')
-const { canView } = require('../auth/constraints')
 const { addExtraData } = require('./options')
 
 const resultsTransmittedDashboard = require('./resultsTransmitted')
@@ -62,18 +61,6 @@ async function getDashboardWidget({ id, partnerId }, options) {
   return widgets
 }
 
-function getWidgetLink(widget, auth) {
-  const linkParts = widget.link ? widget.link.split('/') : []
-  if (
-    linkParts.length === 3 &&
-    linkParts[1] === 'browse' &&
-    (!canView(auth, `${linkParts[2]}:`) || !canView(auth, 'browse:'))
-  ) {
-    return null
-  }
-  return widget.link
-}
-
 async function summaryDashboard(request) {
   const { auth, query } = request
   // get data constraints
@@ -84,19 +71,11 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
-      widget.link = getWidgetLink(widget, request.auth)
-      const count = await queryValue(
-        widget.sqlForIndicator,
-        dataConstraints,
-        query
-      )
-      const unit = await queryValue(
-        widget.sqlForStatUnit,
-        dataConstraints,
-        query
-      )
+      const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
 
-      const extra = await queryValue(widget.sqlForExtra, dataConstraints, query)
+      const count = await queryValue(sqlForIndicator, dataConstraints, query)
+      const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
+      const extra = await queryValue(sqlForExtra, dataConstraints, query)
       widget = _.assign(
         _.omit(widget, [
           'sqlForIndicator',
@@ -111,8 +90,8 @@ async function summaryDashboard(request) {
         }
       )
 
-      if (!_.isEmpty(widget.options)) {
-        widget.options = JSON.parse(widget.options)
+      if (!_.isEmpty(options)) {
+        widget.options = JSON.parse(options)
         addExtraData(widget)
       }
 
