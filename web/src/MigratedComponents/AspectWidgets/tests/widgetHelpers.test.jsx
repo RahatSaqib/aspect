@@ -4,8 +4,8 @@ import { renderHook } from '@testing-library/react-hooks'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
-import { createBrowserHistory } from 'history'
 
+import AspectLink from '../../../components/shared/AspectLink'
 import { buildWidgetToLinkParams } from '../Helpers'
 import {
   useUserIsPermitted,
@@ -24,21 +24,14 @@ function reducer(state = initialState, action) {
   }
 }
 
-// const TestRoutes = () => {
-//   return (
-
-//   )
-// }
-
 describe('buildWidgetToLinkParams', () => {
-  const history = createBrowserHistory()
   users.map(({ key, permissions }) => {
     const User = Immutable.Record({
       jwt: { permissions },
     })
     const reduxState = { user: new User() }
     const store = createStore(reducer, reduxState || initialState)
-    const wrapper = ({ children }) => (
+    const wrapper = ({ children, widgetToLink }) => (
       <Provider store={store}>
         <MemoryRouter>
           <RoutesPermissionProvider>
@@ -161,25 +154,37 @@ describe('buildWidgetToLinkParams', () => {
                 path="/browse/report"
                 permissions={['browse', 'report']}
               />
-              {children}
+              <AspectLink
+                to={widgetToLink}
+                testId="SummaryStatus--Summary_Link"
+              >
+                {children}
+              </AspectLink>
             </Switch>
           </RoutesPermissionProvider>
         </MemoryRouter>
       </Provider>
     )
-    return links.map(({ link, linkParams, expected }) => {
+    return links.map(async ({ link, linkParams, expected }) => {
+      const widgetToLink = buildWidgetToLinkParams(
+        link,
+        linkParams,
+        isPermitted
+      )
       const {
         result: {
           current: { isPermitted },
         },
-      } = renderHook(() => useUserIsPermitted(link), { wrapper })
-      const { allowed, restricted } = expected
+      } = renderHook(() => useUserIsPermitted(link), {
+        wrapper,
+        initialProps: {
+          widgetToLink,
+        },
+      })
       return it(`${key} is ${
         isPermitted ? '**ALLOWED** to access' : '**RESTRICTED** access to'
       } ${link}`, () => {
-        expect(buildWidgetToLinkParams(link, linkParams, isPermitted)).toEqual(
-          isPermitted ? allowed : restricted
-        )
+        expect(expected.allowed).toEqual(widgetToLink)
       })
     })
   })
