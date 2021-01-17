@@ -525,17 +525,6 @@ const AppRoutes = ({ props }) => {
         />
 
         <Route
-          path="/browse/notification/:notificationId"
-          permissions={['browse', 'notification:edit']}
-          render={
-            renderRedirectToLoginOr(props) ||
-            renderRedirectToLicenseOr(props) ||
-            renderRedirectToNotFound(props, ['browse', 'notification:edit']) ||
-            renderNotificationDetail
-          }
-        />
-
-        <Route
           exact
           path="/browse/report"
           permissions={['browse', 'report']}
@@ -557,6 +546,7 @@ const AppRoutes = ({ props }) => {
 }
 
 export const routerFactory = () => props => {
+  console.error('cannot nav to other notifications')
   return (
     <Router history={history}>
       <AppRoutes props={props} />
