@@ -142,7 +142,7 @@ SelectComponent.propTypes = {
   defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
 }
 
-const AspectDropdown = ({
+const AspectDropDown = ({
   props: {
     selectedValue,
     state: reduxStateId,
@@ -192,7 +192,7 @@ const AspectDropdown = ({
   ) : null
 }
 
-AspectDropdown.defaulProps = {
+AspectDropDown.defaulProps = {
   props: {
     sortByKeys: ['name'],
     keyMapping: {},
@@ -201,7 +201,7 @@ AspectDropdown.defaulProps = {
   defaultSelectedOption: false,
 }
 
-AspectDropdown.propTypes = {
+AspectDropDown.propTypes = {
   props: PropTypes.shape({
     selectedValue: PropTypes.string.isRequired,
     state: PropTypes.string.isRequired,
@@ -219,4 +219,4 @@ AspectDropdown.propTypes = {
   action: PropTypes.func.isRequired,
 }
 
-export default AspectDropdown
+export default AspectDropDown
