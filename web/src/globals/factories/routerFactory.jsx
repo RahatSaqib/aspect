@@ -536,13 +536,10 @@ const AppRoutes = ({ props }) => {
   )
 }
 
-export const routerFactory = () => props => {
-  console.error('cannot nav to other notifications')
-  return (
-    <Router history={history}>
-      <AppRoutes props={props} />
-    </Router>
-  )
-}
+export const routerFactory = () => props => (
+  <Router history={history}>
+    <AppRoutes props={props} />
+  </Router>
+)
 
 export default routerFactory
