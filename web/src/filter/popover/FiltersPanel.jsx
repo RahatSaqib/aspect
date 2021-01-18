@@ -427,7 +427,6 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onTreatmentStatusIdChange,
   onDeviceApprovalIdChange,
-  onDeviceTypeIdChange,
   onDeviceMaintenanceStatusIdChange,
   onDeviceTypeChange,
   onRevokedChange,
