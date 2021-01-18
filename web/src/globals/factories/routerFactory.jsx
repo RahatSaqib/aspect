@@ -1,12 +1,5 @@
 import React, { useEffect } from 'react'
-import {
-  Router,
-  Switch,
-  Route,
-  Redirect,
-  useLocation,
-  useHistory,
-} from 'react-router-dom'
+import { Router, Switch, Route, Redirect, useLocation } from 'react-router-dom'
 import memoize from 'lodash/memoize'
 import head from 'lodash/head'
 import Paper from '@material-ui/core/Paper'
@@ -513,9 +506,7 @@ const AppRoutes = ({ props }) => {
         />
 
         <Route
-          exact
           path="/browse/notification"
-          permissions={['browse', 'notification']}
           render={
             renderRedirectToLoginOr(props) ||
             renderRedirectToLicenseOr(props) ||

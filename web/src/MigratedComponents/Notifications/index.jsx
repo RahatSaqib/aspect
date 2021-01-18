@@ -10,14 +10,22 @@ const AspectNotificationDetails = () => {
   return (
     <div>
       <Switch>
-        <Route exact path={path} render={() => <NotificationList />} />
+        <Route
+          exact
+          path={path}
+          permissions={['browse', 'notification']}
+          render={() => <NotificationList />}
+        />
         <Route
           exact
           path={`${path}/:notificationId`}
+          permissions={['browse', 'notification:edit']}
           render={props => <NotificationDetailView {...props} />}
         />
         <Route
+          exact
           path={`${path}/:notificationId/history`}
+          permissions={['browse', 'notification']}
           render={() => <NotificationDetailHistory />}
         />
       </Switch>
