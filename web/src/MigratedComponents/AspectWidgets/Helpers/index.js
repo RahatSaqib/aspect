@@ -3,6 +3,7 @@ import get from 'lodash/get'
 import includes from 'lodash/includes'
 import remove from 'lodash/remove'
 import map from 'lodash/map'
+import omit from 'lodash/omit'
 
 import {
   getTimePeriod,
@@ -64,7 +65,9 @@ const buildWidgetToLinkParams = (link, linkParams) => {
     inParams.constructor === Object
   ) {
     let tempParams = {}
-    for (const [key, value] of Object.entries(inParams)) {
+    for (const [key, value] of Object.entries(
+      omit(inParams, ['permissions'])
+    )) {
       switch (true) {
         case key === 'dateRange':
           tempParams = { ...tempParams, ...buildDateRange(value) }
