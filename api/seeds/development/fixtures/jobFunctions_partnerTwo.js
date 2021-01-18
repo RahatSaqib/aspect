@@ -1,8 +1,8 @@
+const _ = require('lodash')
 const { labManager } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...labManager,
+  _.merge({}, labManager, {
     permissions: [
       {
         module: 'dashboard',
@@ -69,5 +69,5 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
 ]
