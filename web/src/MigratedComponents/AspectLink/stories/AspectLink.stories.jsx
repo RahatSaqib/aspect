@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import Immutable from 'immutable'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { MemoryRouter, Route, Switch } from 'react-router-dom'
+import { MemoryRouter, Route } from 'react-router-dom'
 
 import { RoutesPermissionProvider } from '../../../Hooks/RoutePermissions'
 import AspectLink from '../index'
@@ -18,6 +18,22 @@ function reducer(state = initialState, action) {
   }
 }
 
+export const links = [
+  '/browse/site',
+  '/browse/site/209',
+  '/browse/person',
+  '/browse/person/9',
+  'https://google.com',
+]
+
+export const permissions = [
+  'browse, device',
+  'browse, site',
+  'browse, site:edit',
+  'browse, person',
+  'browse, person:edit',
+]
+
 export default {
   title: 'Components/AspectLink',
   argTypes: {
@@ -25,13 +41,7 @@ export default {
       defaultValue: 'browse, device',
       control: {
         type: 'select',
-        options: [
-          'browse, device',
-          'browse, site',
-          'browse, site:edit',
-          'browse, person',
-          'browse, person:edit',
-        ],
+        options: permissions,
       },
       table: {
         type: {
@@ -47,13 +57,7 @@ export default {
       defaultValue: '/browse/site',
       control: {
         type: 'select',
-        options: [
-          '/browse/site',
-          '/browse/site/209',
-          '/browse/person',
-          '/browse/person/9',
-          'https://google.com',
-        ],
+        options: links,
       },
     },
     className: { table: { disable: true }, controls: { disable: true } },
@@ -72,7 +76,7 @@ const Template = ({ to, Permissions: permissions, ...rest }) => {
     <Provider store={store}>
       <MemoryRouter>
         <RoutesPermissionProvider>
-          <Switch>
+          <Fragment>
             <Route exact path="/browse/site" permissions={['browse', 'site']} />
             <Route
               path="/browse/site/:siteId"
@@ -90,7 +94,7 @@ const Template = ({ to, Permissions: permissions, ...rest }) => {
             <AspectLink {...rest} to={to}>
               Link
             </AspectLink>
-          </Switch>
+          </Fragment>
         </RoutesPermissionProvider>
       </MemoryRouter>
     </Provider>
