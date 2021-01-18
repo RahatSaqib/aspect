@@ -15,10 +15,9 @@ const AspectLink = ({ to = '#', children, className, ...restProps }) => {
   let linkClassName
   const { isPermitted } = useUserIsPermitted(to)
   if (isObject(className)) {
-    linkClassName = isPermitted
-      ? (linkClassName = className.active)
-      : className.disabled
+    linkClassName = isPermitted ? className.active : className.disabled
   }
+
   return (
     <Fragment>
       {isPermitted && isURL(to) ? (
