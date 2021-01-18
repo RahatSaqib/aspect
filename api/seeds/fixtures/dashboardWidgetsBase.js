@@ -241,6 +241,16 @@ const dashboardWidgetValidResultsPc = {
       groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '95%',
+        representing: 'percentageOfValidResults',
+      },
+    },
+  },
 }
 
 const utilizationRate = {
@@ -311,6 +321,16 @@ const utilizationRate = {
       groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '50%',
+        representing: 'utilizationRate',
+      },
+    },
+  },
 }
 
 const activeDevices = {
@@ -360,6 +380,16 @@ const activeDevices = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '80%',
+        representing: 'percentageOfActiveDevices',
+      },
     },
   },
 }
@@ -445,6 +475,16 @@ const stockouts = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '10%',
+        representing: 'percentageOfStockouts',
+      },
     },
   },
 }
@@ -584,6 +624,16 @@ const errorRate = {
       groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '3%',
+        representing: 'errorRate',
+      },
+    },
+  },
 }
 
 const stockNotRecorded = {
@@ -633,6 +683,16 @@ const stockNotRecorded = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '10%',
+        representing: 'percentageOfSitesWithoutGxStockEntered',
+      },
     },
   },
 }
@@ -787,6 +847,16 @@ const gxPositiveResultsNotified = {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '95%',
+        representing: 'percentageOfPositiveResultsNotified',
+      },
+    },
+  },
 }
 
 const avgTimeToUpload = {
@@ -859,6 +929,16 @@ WHERE TIMESTAMPDIFF(
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '24',
+        representing: 'averageHoursToUpload',
+      },
+    },
+  },
 }
 
 const unusedModules = {
@@ -868,23 +948,41 @@ const unusedModules = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `
-  SELECT COUNT(DISTINCT deviceid) AS cnt
-    FROM(
-              SELECT d.id AS deviceid
-                FROM Device AS d
-                INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-                INNER JOIN Site AS s ON d.siteId = s.id
-                LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-                INNER JOIN Issue as i ON d.id = i.deviceId
-                INNER JOIN IssueType as it ON i.issueTypeId = it.id
-                INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
-                WHERE 
-          it.externalId = 'unusedModules' AND
-                      ist.externalId NOT IN ('Inactive', 'Resolved') AND
-          (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()) AND
-                      dt.externalId = 'CepheidGeneXpert'
-              GROUP BY d.id
-    ) AS innerquery
+  SELECT 
+    SUM(CASE
+        WHEN numberOfUnusedModulesIssues > 0 THEN 1
+        ELSE 0
+    END) AS cnt,
+    CONCAT(ROUND(SUM(CASE
+                        WHEN numberOfUnusedModulesIssues > 0 THEN 1
+                        ELSE 0
+                    END) * 100 / COUNT(DISTINCT deviceid)),
+            '%') AS percentage
+  FROM
+      (SELECT 
+          d.id AS deviceid,
+              SUM(CASE
+                  WHEN
+                      ISNULL(i.id) = 0 AND ISNULL(it.id) = 0
+                          AND ISNULL(ist.id) = 0
+                  THEN
+                      1
+                  ELSE 0
+              END) AS numberOfUnusedModulesIssues
+      FROM
+          Device AS d
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      LEFT OUTER JOIN Issue AS i ON d.id = i.deviceId
+          AND (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW())
+      LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id
+          AND it.externalId = 'unusedModules'
+      LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
+          AND ist.externalId NOT IN ('Inactive' , 'Resolved')
+      WHERE
+          dt.externalId = 'CepheidGeneXpert'
+      GROUP BY d.id) AS innerquery;
   `,
   sqlForStatUnit: `
   SELECT COUNT(DISTINCT deviceid) AS cnt
@@ -920,6 +1018,16 @@ const unusedModules = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'percentage',
+        whenIs: 'greaterThan',
+        comparedTo: '10%',
+        representing: 'percentageOfDevicesWithUnusedModules',
+      },
     },
   },
 }
@@ -988,6 +1096,16 @@ const instrumentsReplaced = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageDaysForInstrumentReplacement',
+      },
     },
   },
 }
@@ -1146,6 +1264,16 @@ const averageLengthOfSms = {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '280',
+        representing: 'averageLengthOfSMS',
+      },
+    },
+  },
 }
 
 const smsSent = {
@@ -1191,6 +1319,16 @@ const smsSent = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '2000',
+        representing: 'numberOfTextMessagesSent',
+      },
     },
   },
 }
@@ -1249,6 +1387,16 @@ const averageDaysModuleSwap = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageDaysBetweenModuleSwaps',
+      },
     },
   },
 }
@@ -1340,6 +1488,16 @@ const averageTimeToModuleReplacement = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageTimeToReplaceDisabledModules',
+      },
     },
   },
 }
@@ -1498,6 +1656,16 @@ const averageDurationServiceInterruption = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageDaysOfServiceInterrumption',
+      },
     },
   },
 }
@@ -1720,6 +1888,16 @@ const serverUptimeTitle = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '95%',
+        representing: 'percentageOfServerUptime',
+      },
     },
   },
 }

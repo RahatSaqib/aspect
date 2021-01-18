@@ -72,9 +72,14 @@ async function summaryDashboard(request) {
   const data = await Promise.all(
     widgets.map(async widget => {
       const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
-      const count = await queryValue(sqlForIndicator, dataConstraints, query)
       const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
       const extra = await queryValue(sqlForExtra, dataConstraints, query)
+      const { cnt: countCnt, ...restCountProps } = (await queryValue(
+        sqlForIndicator,
+        dataConstraints,
+        query
+      )) || { cnt: null }
+
       widget = _.assign(
         _.omit(widget, [
           'sqlForIndicator',
@@ -83,9 +88,10 @@ async function summaryDashboard(request) {
           'sortOrder',
         ]),
         {
-          count: count ? count.cnt : 0,
+          count: countCnt || 0,
           unit: unit ? unit.cnt : null,
           extra: extra ? extra.cnt : null,
+          ...restCountProps,
         }
       )
 
