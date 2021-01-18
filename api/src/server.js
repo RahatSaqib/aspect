@@ -4,7 +4,6 @@
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
-
 const config = require('./config')
 const { version } = require('../package.json')
 const {

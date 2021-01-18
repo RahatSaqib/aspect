@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const {
   admin,
   clinician,
@@ -6,8 +7,7 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...admin,
+  _.merge({}, admin, {
     permissions: [
       {
         module: 'assay',
@@ -94,9 +94,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...regionalOfficer,
+  }),
+  _.merge({}, regionalOfficer, {
     permissions: [
       {
         module: 'assay',
@@ -163,82 +162,8 @@ module.exports = [
         activity: 'edit',
       },
     ],
-  },
-  {
-    ...labUser,
-    permissions: [
-      {
-        module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'person',
-        activity: 'view',
-      },
-      {
-        module: 'device',
-        activity: 'view',
-      },
-      {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'dashboard',
-        activity: 'result',
-      },
-      {
-        module: 'task',
-        activity: 'view',
-      },
-      {
-        module: 'operationalData',
-        activity: 'view',
-      },
-      {
-        module: 'taskMenu',
-        activity: 'view',
-      },
-      {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
-        module: 'notification',
-        activity: 'view',
-      },
-      {
-        module: 'deviceApiKey',
-        activity: 'view',
-      },
-      {
-        module: 'report',
-        activity: 'view',
-      },
-    ],
-  },
-  {
-    ...clinician,
+  }),
+  _.merge({}, labUser, {
     permissions: [
       {
         module: 'assay',
@@ -309,5 +234,77 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
+  _.merge({}, clinician, {
+    permissions: [
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+    ],
+  }),
 ]
