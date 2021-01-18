@@ -166,11 +166,7 @@ describe('buildWidgetToLinkParams', () => {
       </Provider>
     )
     return links.map(async ({ link, linkParams, expected }) => {
-      const widgetToLink = buildWidgetToLinkParams(
-        link,
-        linkParams,
-        isPermitted
-      )
+      const widgetToLink = buildWidgetToLinkParams(link, linkParams)
       const {
         result: {
           current: { isPermitted },
