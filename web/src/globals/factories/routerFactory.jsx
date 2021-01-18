@@ -529,7 +529,7 @@ const AppRoutes = ({ props }) => {
           render={
             renderRedirectToLoginOr(props) ||
             renderRedirectToLicenseOr(props) ||
-            renderRedirectToNotFound(props, ['browse', 'notification']) ||
+            renderRedirectToNotFound(props, ['browse', 'notification:edit']) ||
             renderNotificationDetailView
           }
         />
