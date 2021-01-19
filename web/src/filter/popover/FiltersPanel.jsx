@@ -21,6 +21,7 @@ import PartnerSelectField from '../partner/PartnerSelectField'
 import AssaySelectField from '../resource/AssaySelectField'
 import DiseaseSelectField from '../resource/DiseaseSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
+import ResultCategoryGroupSelectField from '../resource/ResultCategoryGroupSelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
@@ -36,8 +37,9 @@ import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceSta
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
 const enhance = compose(
-  connect(state => ({
-    user: state.user,
+  connect(({ user, assay }) => ({
+    user,
+    assays: assay,
   })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
@@ -71,6 +73,13 @@ const enhance = compose(
     onResultCategoryChange: ({ onChangeFilters }) => resultCategoryId =>
       onChangeFilters({
         resultCategoryId,
+      }),
+
+    onResultCategoryGroupChange: ({
+      onChangeFilters,
+    }) => resultCategoryGroupId =>
+      onChangeFilters({
+        resultCategoryGroupId,
       }),
 
     onTextFieldCommitValue: ({ onChangeFilters }) => ({
@@ -427,13 +436,28 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onTreatmentStatusIdChange,
   onDeviceApprovalIdChange,
-  onDeviceTypeIdChange,
+  onResultCategoryGroupChange,
   onDeviceMaintenanceStatusIdChange,
   onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
   user,
+  assays,
 }) => {
+  const { assayId } = filters
+  const assayItems = assays.get('items')
+  let assayResultCategory2Label
+  if (assayItems && assayId) {
+    const selectedAssay = assayItems
+      .filter(a => a.get('id') === assayId.toString())
+      .get(0)
+
+    if (selectedAssay) {
+      const { resultCategory2Label } = selectedAssay.toJS()
+      assayResultCategory2Label = resultCategory2Label
+    }
+  }
+
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -597,21 +621,59 @@ export const FiltersPanel = ({
               />
             </div>
           )}
+
           {config.assayAndResultCategory && !config.onlyDisease && (
             <div className={cssClasses('Control')}>
-              <ResultCategorySelectField
+              <AssaySelectField
                 allItemText={intl.formatMessage(messages.all)}
-                disabled={!filters.assayId}
-                assayId={filters.assayId}
-                value={filters.resultCategoryId}
-                onResultCategoryChange={onResultCategoryChange}
+                value={filters.assayId}
+                onAssayChange={onAssayChange}
+                diseaseId={filters.diseaseId}
                 floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectResult)}
-                floatingLabelText={intl.formatMessage(messages.result)}
+                hintText={intl.formatMessage(messages.selectAssay)}
+                floatingLabelText={intl.formatMessage(messages.assay)}
+                intl={intl}
                 style={{ verticalAlign: 'bottom' }}
               />
             </div>
           )}
+
+          {!assayResultCategory2Label &&
+            config.assayAndResultCategory &&
+            !config.onlyDisease && (
+              <div className={cssClasses('Control')}>
+                <ResultCategorySelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  disabled={!filters.assayId}
+                  assayId={filters.assayId}
+                  value={filters.resultCategoryId}
+                  onResultCategoryChange={onResultCategoryChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectResult)}
+                  floatingLabelText={intl.formatMessage(messages.result)}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+
+          {assayResultCategory2Label &&
+            config.assayAndResultCategory &&
+            !config.onlyDisease && (
+              <div className={cssClasses('Control')}>
+                <ResultCategoryGroupSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  disabled={!filters.assayId}
+                  assayId={filters.assayId}
+                  value={filters.resultCategoryId}
+                  onResultCategoryGroupChange={onResultCategoryGroupChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectResult)}
+                  floatingLabelText={intl.formatMessage(messages.result)}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+
           {config.errorCode && (
             <div className={cssClasses('Control')}>
               <FocusBlurTextField

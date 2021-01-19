@@ -86,6 +86,9 @@ function addClientRoutes(server) {
   server.route(
     require('./case/endpoints').routes.map(decorateClientAPI('case'))
   )
+  server.route(
+    require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI())
+  )
 }
 
 function addDeviceRoutes(server) {
