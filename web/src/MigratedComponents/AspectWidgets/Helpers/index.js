@@ -3,6 +3,14 @@ import get from 'lodash/get'
 import includes from 'lodash/includes'
 import remove from 'lodash/remove'
 import map from 'lodash/map'
+import omit from 'lodash/omit'
+
+import {
+  getTimePeriod,
+  getAllDaysInCurrentMonth,
+} from '../../../components/shared/DateTimeInput/utils/date'
+
+import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
 
 /**
  * Order of widget groups - values must correspond to
@@ -49,4 +57,59 @@ const buildMessagesFromI18nKeys = item => {
   return messages
 }
 
-export { groupWidgets, buildMessagesFromI18nKeys }
+const buildWidgetToLinkParams = (link, linkParams) => {
+  const inParams = JSON.parse(linkParams)
+  if (
+    inParams &&
+    Object.keys(inParams).length !== 0 &&
+    inParams.constructor === Object
+  ) {
+    let tempParams = {}
+    for (const [key, value] of Object.entries(
+      omit(inParams, ['permissions'])
+    )) {
+      switch (true) {
+        case key === 'dateRange':
+          tempParams = { ...tempParams, ...buildDateRange(value) }
+          break
+
+        default:
+          tempParams[key] = value
+          break
+      }
+    }
+    return `${link}?filters=${encodeURIComponent(
+      new URLSearchParams(tempParams).toString()
+    )}`
+  }
+  return link
+}
+
+const buildDateRange = term => {
+  let dateRange
+  const {
+    DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+  } = DATE_CONSTS
+  switch (true) {
+    case term === 'last30Days':
+      dateRange = {
+        [MIN_DATE]: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
+        [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+      }
+      break
+
+    case term === 'currentMonth':
+      dateRange = {
+        [MIN_DATE]: getAllDaysInCurrentMonth().start,
+        [MAX_DATE]: getAllDaysInCurrentMonth(true).end,
+      }
+      break
+
+    default:
+      dateRange = {}
+      break
+  }
+  return dateRange
+}
+
+export { buildMessagesFromI18nKeys, buildWidgetToLinkParams, groupWidgets }
