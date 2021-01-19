@@ -4,6 +4,7 @@ const mtbDetectedRRDetected = {
   i18nKey: 'MTB_Detected_RR_Detected',
   externalId: 'mtb_detected_rr_detected',
   fileName: 'MTB_Detected_RR_Detected',
+  sortOrder: 0,
   sheets: [
     {
       sortOrder: 0,
@@ -26,6 +27,7 @@ const criticalErrorsByDevice = {
   i18nKey: 'Critical_Errors_By_Device',
   externalId: 'critical_errors_by_device',
   fileName: 'DevicesWithErrors',
+  sortOrder: 2,
   sheets: [
     {
       sortOrder: 0,
@@ -48,6 +50,7 @@ const rifResistanceRate = {
   i18nKey: 'RIF_Resistance_Rate',
   externalId: 'rif_resistance_rate',
   fileName: 'RifResistanceRate',
+  sortOrder: 3,
   sheets: [
     {
       sortOrder: 0,
@@ -71,6 +74,7 @@ const resultsHivNotSuppressed = {
   i18nKey: 'Results_HIV_Not_Suppressed',
   externalId: 'results_hiv_not_suppressed',
   fileName: 'HIVNotSuppressed',
+  sortOrder: 4,
   sheets: [
     {
       sortOrder: 0,

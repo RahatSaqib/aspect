@@ -42,83 +42,70 @@ describe('This test is for testing different triggers conditions', () => {
     ;[
       {
         errorCode: 2005,
-        type1: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR',
+        type1: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE',
+        type2: 'RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT',
       },
       {
         errorCode: 2008,
-        type1: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH',
+        type1: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE',
+        type2: 'RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT',
       },
       {
         errorCode: 2035,
-        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE',
+        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE',
+        type2: 'RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT',
       },
       {
         errorCode: 2037,
-        type1: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE',
+        type1: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE',
+        type2: 'RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT',
       },
       {
         errorCode: 2026,
-        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE',
+        type1: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE',
+        type2: 'RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT',
       },
       {
         errorCode: 2096,
-        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR',
+        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE',
+        type2: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT',
       },
       {
         errorCode: 2097,
-        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION',
+        type1: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE',
+        type2: 'RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT',
+      },
+
+      {
+        errorCode: 5007,
+        type1: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
       },
       {
         errorCode: 5011,
-        type1: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE',
+        type1: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE',
+        type2: 'RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT',
       },
       {
         errorCode: 5006,
-        type1: 'RESULT_ANALYZE_PROBES_HIGH',
-      },
-      {
-        errorCode: 5007,
-        type1: 'RESULT_ANALYZE_PROBES_FAILED',
+        type1: 'RESULT_ANALYZE_PROBES_HIGH_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_HIGH_LOT',
       },
       {
         errorCode: 5017,
-        type1: 'RESULT_ANALYZE_PROBES_FAILED',
+        type1: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
       },
       {
         errorCode: 5016,
-        type1: 'RESULT_ANALYZE_INVALIDS',
+        type1: 'RESULT_ANALYZE_INVALIDS_MODULE',
+        type2: 'RESULT_ANALYZE_INVALIDS_LOT',
       },
       {
         // on non existing code it should return default values
         errorCode: 5555,
-        type1: 'RESULT_ANALYZE_PROBES',
-      },
-    ].forEach(elem => {
-      const analyzeProbes = resultAnalyzeCategoriesAndErrors(
-        1,
-        1,
-        'DETECTED',
-        elem.errorCode,
-        {
-          moduleName: 'Test1',
-          moduleSerial: 'Module2',
-        }
-      )
-      assert.isObject(analyzeProbes)
-      assert.property(analyzeProbes, 'type')
-      assert.equal(analyzeProbes.type, elem.type1)
-    })
-  })
-  it('Should analyze different scenarios based on the data for triggering an action', () => {
-    ;[
-      {
-        resultCategoryId: 'Invalid',
-        errorCode: 5002,
-        type1: 'RESULT_ANALYZE_INVALIDS',
-      },
-      {
-        resultCategoryId: 'Non-existing',
-        type1: 'RESULT_ANALYZE_PROBES',
+        type1: 'RESULT_ANALYZE_PROBES_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_LOT',
       },
     ].forEach(elem => {
       const analyzeProbesModule = resultAnalyzeCategoriesAndErrors(
@@ -131,9 +118,62 @@ describe('This test is for testing different triggers conditions', () => {
           moduleSerial: 'Module2',
         }
       )
+      const analyzeProbesLot = resultAnalyzeCategoriesAndErrors(
+        1,
+        1,
+        elem.resultCategoryId,
+
+        elem.errorCode,
+        {
+          consumableLot: 1234,
+          assayId: 1,
+        }
+      )
       assert.isObject(analyzeProbesModule)
       assert.property(analyzeProbesModule, 'type')
       assert.equal(analyzeProbesModule.type, elem.type1)
+      assert.equal(analyzeProbesLot.type, elem.type2)
+    })
+  })
+  it('Should analyze different scenarios based on the data for triggering an action', () => {
+    ;[
+      {
+        resultCategoryId: 'Invalid',
+        type1: 'RESULT_ANALYZE_INVALIDS_MODULE',
+        type2: 'RESULT_ANALYZE_INVALIDS_LOT',
+      },
+      {
+        resultCategoryId: 'Non-existing',
+        type1: 'RESULT_ANALYZE_PROBES_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_LOT',
+      },
+    ].forEach(elem => {
+      const analyzeProbesModule = resultAnalyzeCategoriesAndErrors(
+        1,
+        1,
+        elem.resultCategoryId,
+        elem.errorCode,
+
+        {
+          moduleName: 'Test1',
+          moduleSerial: 'Module2',
+        }
+      )
+      const analyzeProbesLot = resultAnalyzeCategoriesAndErrors(
+        1,
+        1,
+        elem.resultCategoryId,
+        elem.errorCode,
+
+        {
+          consumableLot: 1234,
+          assayId: 1,
+        }
+      )
+      assert.isObject(analyzeProbesModule)
+      assert.property(analyzeProbesModule, 'type')
+      assert.equal(analyzeProbesModule.type, elem.type1)
+      assert.equal(analyzeProbesLot.type, elem.type2)
     })
   })
 })
