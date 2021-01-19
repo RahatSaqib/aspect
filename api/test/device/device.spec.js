@@ -661,6 +661,7 @@ describe('Device routes', () => {
         deviceId = res.body.data.find(
           d => d.maintenanceStatus !== 'inactiveDecommissioned'
         ).id
+        assert.isAbove(deviceId, 0)
       })
       beforeEach(async () => {
         const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
