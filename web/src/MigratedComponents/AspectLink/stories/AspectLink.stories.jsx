@@ -6,6 +6,7 @@ import { MemoryRouter, Route } from 'react-router-dom'
 
 import { RoutesPermissionProvider } from '../../../Hooks/RoutePermissions'
 import AspectLink from '../index'
+import { permissions, links } from '../tests/mocks'
 
 const initialState = {
   permissions: null,
@@ -17,22 +18,6 @@ function reducer(state = initialState, action) {
       return state
   }
 }
-
-export const links = [
-  '/browse/site',
-  '/browse/site/209',
-  '/browse/person',
-  '/browse/person/9',
-  'https://google.com',
-]
-
-export const permissions = [
-  'browse, device',
-  'browse, site',
-  'browse, site:edit',
-  'browse, person',
-  'browse, person:edit',
-]
 
 export default {
   title: 'Components/AspectLink',

@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import filter from 'lodash/filter'
 
-import { Base, permissions, links } from '../stories/AspectLink.stories'
-import expected from './mocks'
+import { Base } from '../stories/AspectLink.stories'
+import { expected, permissions, links } from './mocks'
 
 describe('AspectLink', () => {
   permissions.map(permission => {

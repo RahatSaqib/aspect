@@ -1,4 +1,18 @@
-import { permissions, links } from '../stories/AspectLink.stories'
+const links = [
+  '/browse/site',
+  '/browse/site/209',
+  '/browse/person',
+  '/browse/person/9',
+  'https://google.com',
+]
+
+const permissions = [
+  'browse, device',
+  'browse, site',
+  'browse, site:edit',
+  'browse, person',
+  'browse, person:edit',
+]
 
 const expected = [
   {
@@ -132,4 +146,4 @@ const expected = [
   },
 ]
 
-export default expected
+export { expected, links, permissions }
