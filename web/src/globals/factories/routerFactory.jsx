@@ -33,7 +33,9 @@ import PersonList from '../../person/list/PersonList'
 import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../MigratedComponents/Results/Detail'
-import NotificationList from '../../MigratedComponents/Notifications'
+import NotificationList from '../../MigratedComponents/Notifications/List'
+import NotificationDetailView from '../../notification/detail/view/NotificationDetailView'
+import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
@@ -156,6 +158,10 @@ const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
+const renderNotificationDetailView = loggedInFactory(NotificationDetailView)
+const renderNotificationDetailHistory = loggedInFactory(
+  NotificationDetailHistory
+)
 const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
@@ -506,12 +512,36 @@ const AppRoutes = ({ props }) => {
         />
 
         <Route
+          exact
           path="/browse/notification"
+          permissions={['browse', 'notification']}
           render={
             renderRedirectToLoginOr(props) ||
             renderRedirectToLicenseOr(props) ||
             renderRedirectToNotFound(props, ['browse', 'notification']) ||
             renderNotificationList
+          }
+        />
+        <Route
+          exact
+          path="/browse/notification/:notificationId"
+          permissions={['browse', 'notification:edit']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'notification:edit']) ||
+            renderNotificationDetailView
+          }
+        />
+        <Route
+          exact
+          path="/browse/notification/:notificationId/history"
+          permissions={['browse', 'notification']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'notification']) ||
+            renderNotificationDetailHistory
           }
         />
 

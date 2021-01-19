@@ -1,5 +1,5 @@
 import React from 'react'
-import { array, func, object, shape, string } from 'prop-types'
+import { func, object, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import { defineMessage, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
@@ -111,7 +111,6 @@ AspectWidget.propTypes = {
   data: shape({
     link: string,
     linkParams: string,
-    linkPermissions: array,
     icon: string,
     description: string,
     count: string,

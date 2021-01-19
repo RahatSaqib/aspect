@@ -156,8 +156,7 @@ const links = [
       allowed: '/browse/device?filters=deviceType%3DCepheidGeneXpert',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "permissions": ["browse", "device"]}',
+    linkParams: '{"deviceType": "CepheidGeneXpert"}',
   },
   {
     link: '/browse/result',
@@ -192,8 +191,7 @@ const links = [
       allowed: '/browse/device?filters=deviceType%3DCepheidGeneXpert',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "permissions": ["browse", "device"]}',
+    linkParams: '{"deviceType": "CepheidGeneXpert"}',
   },
   {
     link: '/browse/device',
@@ -201,16 +199,15 @@ const links = [
       allowed: '/browse/device?filters=deviceType%3DCepheidGeneXpert',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "permissions": ["browse", "device"]}',
+    linkParams: '{"deviceType": "CepheidGeneXpert"}',
   },
   {
     link: '/browse/device',
     expected: {
-      allowed: '/browse/device?filters=',
+      allowed: '/browse/device',
       restricted: '#',
     },
-    linkParams: '{"permissions": ["browse", "device"]}',
+    linkParams: '{}',
   },
   {
     link: '/browse/device',
@@ -220,7 +217,7 @@ const links = [
       restricted: '#',
     },
     linkParams:
-      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "InstrumentReplaced", "permissions": ["browse", "device"]}',
+      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "InstrumentReplaced"}',
   },
   {
     link: '/browse/device',
@@ -230,7 +227,7 @@ const links = [
       restricted: '#',
     },
     linkParams:
-      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "ModuleReplaced", "permissions": ["browse", "device"]}',
+      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "ModuleReplaced"}',
   },
   {
     link: '/browse/notification',
@@ -256,7 +253,7 @@ const links = [
       restricted: '#',
     },
     linkParams:
-      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "UnusedModules", "permissions": ["browse", "device"]}',
+      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "UnusedModules"}',
   },
 ]
 
