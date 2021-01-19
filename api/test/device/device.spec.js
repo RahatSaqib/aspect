@@ -658,8 +658,7 @@ describe('Device routes', () => {
 
         assert.equal(res.status, 200)
 
-        const devices = res.body.data
-        deviceId = devices.find(
+        deviceId = res.body.data.find(
           d => d.maintenanceStatus !== 'inactiveDecommissioned'
         ).id
       })
