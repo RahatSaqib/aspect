@@ -657,7 +657,11 @@ describe('Device routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
-        deviceId = res.body.data[0].id
+
+        const devices = res.body.data
+        deviceId = devices.find(
+          d => d.maintenanceStatus !== 'inactiveDecommissioned'
+        ).id
       })
       beforeEach(async () => {
         const deviceMaintenanceTypeIds = await knex('DeviceMaintenanceType')
