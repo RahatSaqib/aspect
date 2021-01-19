@@ -279,7 +279,7 @@ async function upsertJobFunction(
   await upsertJobFunctionPermission(
     knex,
     jobFunctionId,
-    permissions,
+    _.uniq(permissions),
     removeMissingPermissions
   )
   return jobFunctionId
