@@ -1103,7 +1103,8 @@ async function getStatesByName(knex, countryId) {
 
 async function baseGxAlertMigration(
   variables = defaultGxAlertMigrationVariables,
-  knex
+  knex,
+  partnerData = {}
 ) {
   // -----------------------------------------------
   // Supplement passed variables with default values
@@ -1216,7 +1217,9 @@ async function baseGxAlertMigration(
     adminId,
     geographyFromGxAlert,
     countries[0].abbreviation,
-    gxAlertDevice.deviceApiKeyToken
+    gxAlertDevice.deviceApiKeyToken,
+    null,
+    partnerData
   )
 
   // --------------------------------------------
@@ -1764,10 +1767,16 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
       }
     )
 
-    await upsertJobFunction(knex, jobFunction.name, partnerId, permissionIds, {
-      reports: jf.reports,
-      removeMissingPermissions: true,
-    })
+    await upsertJobFunction(
+      knex,
+      jobFunction.name,
+      partnerId,
+      _.uniq(permissionIds),
+      {
+        reports: jf.reports,
+        removeMissingPermissions: true,
+      }
+    )
   })
 }
 
