@@ -657,10 +657,10 @@ describe('Device routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
-
-        deviceId = res.body.data.find(
-          d => d.maintenanceStatus !== 'inactiveDecommissioned'
-        ).id
+        ;[{ id: deviceId }] = _.reject(res.body.data, [
+          'maintenanceStatus',
+          'inactiveDecommissioned',
+        ])
         assert.isAbove(deviceId, 0)
       })
       beforeEach(async () => {
