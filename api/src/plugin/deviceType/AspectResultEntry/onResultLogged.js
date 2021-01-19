@@ -69,6 +69,9 @@ async function onResultLogged(
     )
     if (result) {
       const {
+        assayId,
+        resultModuleSerial,
+        consumableLot,
         resultDeviceId,
         resultErrorCode,
         resultOutcome,
@@ -84,6 +87,9 @@ async function onResultLogged(
         resultErrorCode,
         {
           resultOutcome,
+          moduleSerial: resultModuleSerial,
+          assayId,
+          consumableLot,
           instrumentSerial,
         }
       )

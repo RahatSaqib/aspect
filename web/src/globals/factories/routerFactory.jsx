@@ -5,6 +5,7 @@ import head from 'lodash/head'
 import Paper from '@material-ui/core/Paper'
 import { compose } from 'recompose'
 
+import { RoutesPermissionProvider } from '../../Hooks/RoutePermissions'
 import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
@@ -32,7 +33,9 @@ import PersonList from '../../person/list/PersonList'
 import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../MigratedComponents/Results/Detail'
-import NotificationList from '../../MigratedComponents/Notifications'
+import NotificationList from '../../MigratedComponents/Notifications/List'
+import NotificationDetailView from '../../notification/detail/view/NotificationDetailView'
+import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
 import StyleguideMain from '../../styleguide/main/StyleguideMain'
@@ -155,6 +158,10 @@ const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
+const renderNotificationDetailView = loggedInFactory(NotificationDetailView)
+const renderNotificationDetailHistory = loggedInFactory(
+  NotificationDetailHistory
+)
 const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
@@ -180,336 +187,389 @@ const renderCaseDetails = loggedInFactory(CaseDetails)
 const AppRoutes = ({ props }) => {
   useHashAndScroll()
   return (
-    <Switch>
-      <Route
-        exact
-        path="/"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToDashboard(props)
-        }
-      />
+    <RoutesPermissionProvider>
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToDashboard(props)
+          }
+        />
 
-      <Route
-        path="/login"
-        render={
-          isLoggedInAndOnLogin(props, history)
-            ? () => renderRedirectToHomePage()
-            : renderLoadableLogin
-        }
-      />
+        <Route
+          path="/login"
+          render={
+            isLoggedInAndOnLogin(props, history)
+              ? () => renderRedirectToHomePage()
+              : renderLoadableLogin
+          }
+        />
 
-      <Route path="/reset-password" render={renderResetPassword} />
+        <Route path="/reset-password" render={renderResetPassword} />
 
-      <Route
-        path="/license"
-        render={renderRedirectToLoginOr(props) || renderLicense}
-      />
+        <Route
+          path="/license"
+          render={renderRedirectToLoginOr(props) || renderLicense}
+        />
 
-      <Route
-        exact
-        path="/dashboard"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['dashboard:summary']) ||
-          renderLoadableStatus
-        }
-      />
-      <Route
-        exact
-        path="/task-list"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task']) ||
-          renderTaskList
-        }
-      />
-      <Route
-        exact
-        path="/task-list/aggre-list"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task']) ||
-          renderTaskAggre
-        }
-      />
-      <Route
-        path="/task-list/:taskId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['task']) ||
-          renderTaskDetail
-        }
-      />
-      <Route
-        path="/operational-data"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['operationalData']) ||
-          renderOperationalData
-        }
-      />
+        <Route
+          exact
+          path="/dashboard"
+          permissions={['dashboard:summary']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['dashboard:summary']) ||
+            renderLoadableStatus
+          }
+        />
+        <Route
+          exact
+          path="/task-list"
+          permissions={['task']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['task']) ||
+            renderTaskList
+          }
+        />
+        <Route
+          exact
+          path="/task-list/aggre-list"
+          permissions={['task']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['task']) ||
+            renderTaskAggre
+          }
+        />
+        <Route
+          path="/task-list/:taskId"
+          permissions={['task']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['task']) ||
+            renderTaskDetail
+          }
+        />
+        <Route
+          path="/operational-data"
+          permissions={['operationalData']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['operationalData']) ||
+            renderOperationalData
+          }
+        />
 
-      <Route
-        path="/account-details/current"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['account']) ||
-          renderAccountDetails
-        }
-      />
+        <Route
+          path="/account-details/current"
+          permissions={['account']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['account']) ||
+            renderAccountDetails
+          }
+        />
 
-      <Route
-        path="/demo/device/:deviceId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['deviceDemo']) ||
-          renderDeviceDemo
-        }
-      />
+        <Route
+          path="/demo/device/:deviceId"
+          permissions={['deviceDemo']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['deviceDemo']) ||
+            renderDeviceDemo
+          }
+        />
 
-      <Route
-        path="/clinical-indicators"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['clinicalIndicators:view']) ||
-          renderClinicalIndicators
-        }
-      />
-      <Route
-        path="/reports"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['report']) ||
-          renderReports
-        }
-      />
-      <Route
-        path="/manage"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['manage']) ||
-          renderManage
-        }
-      />
+        <Route
+          path="/clinical-indicators"
+          permissions={['clinicalIndicators:view']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['clinicalIndicators:view']) ||
+            renderClinicalIndicators
+          }
+        />
+        <Route
+          path="/reports"
+          permissions={['report']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['report']) ||
+            renderReports
+          }
+        />
+        <Route
+          path="/manage"
+          permissions={['manage']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['manage']) ||
+            renderManage
+          }
+        />
 
-      <Route
-        exact
-        path="/browse"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse']) ||
-          renderRedirectToBrowse(props)
-        }
-      />
+        <Route
+          exact
+          path="/browse"
+          permissions={['browse']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse']) ||
+            renderRedirectToBrowse(props)
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/device"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'device']) ||
-          renderDeviceList
-        }
-      />
-      <Route
-        path="/browse/device/:deviceId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'device']) ||
-          renderDeviceDetail
-        }
-      />
-      <Route
-        path="/browse/case/:caseId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'case:edit']) ||
-          renderCaseDetails
-        }
-      />
-      <Route
-        path="/browse/patient/:patientId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'patient:edit']) ||
-          renderClinicalHistory
-        }
-      />
-      <Route
-        exact
-        path="/browse/deviceApiKey"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'deviceApiKey']) ||
-          renderDeviceApiKeyList
-        }
-      />
+        <Route
+          exact
+          path="/browse/device"
+          permissions={['browse', 'device']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'device']) ||
+            renderDeviceList
+          }
+        />
+        <Route
+          path="/browse/device/:deviceId"
+          permissions={['browse', 'device']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'device']) ||
+            renderDeviceDetail
+          }
+        />
+        <Route
+          path="/browse/case/:caseId"
+          permissions={['browse', 'case:edit']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'case:edit']) ||
+            renderCaseDetails
+          }
+        />
+        <Route
+          path="/browse/patient/:patientId"
+          permissions={['browse', 'patient:edit']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'patient:edit']) ||
+            renderClinicalHistory
+          }
+        />
+        <Route
+          exact
+          path="/browse/deviceApiKey"
+          permissions={['browse', 'deviceApiKey']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'deviceApiKey']) ||
+            renderDeviceApiKeyList
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/case"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'case']) ||
-          renderCaseList
-        }
-      />
+        <Route
+          exact
+          path="/browse/case"
+          permissions={['browse', 'case']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'case']) ||
+            renderCaseList
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/router"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'router']) ||
-          renderRouterList
-        }
-      />
-      <Route
-        path="/browse/router/:routerId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'router']) ||
-          renderRouterDetail
-        }
-      />
+        <Route
+          exact
+          path="/browse/router"
+          permissions={['browse', 'router']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'router']) ||
+            renderRouterList
+          }
+        />
+        <Route
+          path="/browse/router/:routerId"
+          permissions={['browse', 'router']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'router']) ||
+            renderRouterDetail
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/reporter"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'reporter']) ||
-          renderReporterList
-        }
-      />
+        <Route
+          exact
+          path="/browse/reporter"
+          permissions={['browse', 'reporter']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'reporter']) ||
+            renderReporterList
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/result"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'result']) ||
-          renderResultList
-        }
-      />
-      <Route
-        path="/browse/result/:resultId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'result:edit']) ||
-          renderResultDetail
-        }
-      />
+        <Route
+          exact
+          path="/browse/result"
+          permissions={['browse', 'result']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'result']) ||
+            renderResultList
+          }
+        />
+        <Route
+          path="/browse/result/:resultId"
+          permissions={['browse', 'result:edit']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'result:edit']) ||
+            renderResultDetail
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/site"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'site']) ||
-          renderSiteList
-        }
-      />
-      <Route
-        path="/browse/site/:siteId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'site']) ||
-          renderSiteDetail
-        }
-      />
+        <Route
+          exact
+          path="/browse/site"
+          permissions={['browse', 'site']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'site']) ||
+            renderSiteList
+          }
+        />
+        <Route
+          path="/browse/site/:siteId"
+          permissions={['browse', 'site']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'site']) ||
+            renderSiteDetail
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/person"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'person']) ||
-          renderPersonList
-        }
-      />
-      <Route
-        path="/browse/person/:personId"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'person:edit']) ||
-          renderPersonDetail
-        }
-      />
+        <Route
+          exact
+          path="/browse/person"
+          permissions={['browse', 'person']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'person']) ||
+            renderPersonList
+          }
+        />
+        <Route
+          path="/browse/person/:personId"
+          permissions={['browse', 'person:edit']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'person:edit']) ||
+            renderPersonDetail
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/inventory"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'inventory']) ||
-          renderInventoryItemsList
-        }
-      />
+        <Route
+          exact
+          path="/browse/inventory"
+          permissions={['browse', 'inventory']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'inventory']) ||
+            renderInventoryItemsList
+          }
+        />
 
-      <Route
-        path="/browse/notification"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'notification']) ||
-          renderNotificationList
-        }
-      />
+        <Route
+          exact
+          path="/browse/notification"
+          permissions={['browse', 'notification']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'notification']) ||
+            renderNotificationList
+          }
+        />
+        <Route
+          exact
+          path="/browse/notification/:notificationId"
+          permissions={['browse', 'notification:edit']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'notification:edit']) ||
+            renderNotificationDetailView
+          }
+        />
+        <Route
+          exact
+          path="/browse/notification/:notificationId/history"
+          permissions={['browse', 'notification']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'notification']) ||
+            renderNotificationDetailHistory
+          }
+        />
 
-      <Route
-        exact
-        path="/browse/report"
-        render={
-          renderRedirectToLoginOr(props) ||
-          renderRedirectToLicenseOr(props) ||
-          renderRedirectToNotFound(props, ['browse', 'report'])
-        }
-      />
+        <Route
+          exact
+          path="/browse/report"
+          permissions={['browse', 'report']}
+          render={
+            renderRedirectToLoginOr(props) ||
+            renderRedirectToLicenseOr(props) ||
+            renderRedirectToNotFound(props, ['browse', 'report'])
+          }
+        />
 
-      {process.env.NODE_ENV !== 'production' && (
-        <Route path="/styleguide" component={StyleguideMain} />
-      )}
+        {process.env.NODE_ENV !== 'production' && (
+          <Route path="/styleguide" component={StyleguideMain} />
+        )}
 
-      <Route render={renderNotFound} />
-    </Switch>
+        <Route render={renderNotFound} />
+      </Switch>
+    </RoutesPermissionProvider>
   )
 }
-export const routerFactory = () => props => {
-  return (
-    <Router history={history}>
-      <AppRoutes props={props} />
-    </Router>
-  )
-}
+
+export const routerFactory = () => props => (
+  <Router history={history}>
+    <AppRoutes props={props} />
+  </Router>
+)
 
 export default routerFactory

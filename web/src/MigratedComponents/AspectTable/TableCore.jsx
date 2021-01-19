@@ -201,7 +201,7 @@ const AspectTableCore = ({
                 />
                 {ContextualMenu ? (
                   <TableCell>
-                    <ContextualMenu item={row} />
+                    <ContextualMenu item={row.original} />
                   </TableCell>
                 ) : null}
               </TableRow>

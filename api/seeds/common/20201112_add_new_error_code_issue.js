@@ -14,15 +14,24 @@ async function seed(knex) {
     .first('p.lastPartnerId as partnerId', 'p.userId')
 
   const issuesToInsert = [
-    'CartridgeIntegrityTestFailure',
-    'SyringePressureTooHigh',
-    'SyringeStallError',
-    'UltrasonicHornFailure',
-    'UltrasonicHornTuningError',
-    'UltrasonicHornCurrentOutOfRange',
-    'AssaySpecificTerminationError1',
-    'AssaySpecificTerminationError2',
+    'CartridgeIntegrityTestFailureModule',
+    'CartridgeIntegrityTestFailureLot',
+    'SyringePressureTooHighModule',
+    'SyringePressureTooHighLot',
+    'SyringeStallErrorModule',
+    'SyringeStallErrorLot',
+    'UltrasonicHornFailureModule',
+    'UltrasonicHornFailureLot',
+    'UltrasonicHornTuningErrorModule',
+    'UltrasonicHornTuningErrorLot',
+    'UltrasonicHornCurrentOutOfRangeModule',
+    'UltrasonicHornCurrentOutOfRangeLot',
+    'AssaySpecificTerminationError1Module',
+    'AssaySpecificTerminationError1Lot',
+    'AssaySpecificTerminationError2Module',
+    'AssaySpecificTerminationError2Lot',
   ]
+  const notifications = []
   await Promise.each(issuesToInsert, async issue => {
     const issueTypeId = await seedIssueType(knex, issue, {
       userName: 'admin',
@@ -53,20 +62,21 @@ async function seed(knex) {
         })
         .first('id as jobFunctionAdminId'))
 
-    await upsertNotificationTypes(knex, [
-      {
-        issueTypeId: issueType.id,
-        messageTypeId: issueType.defaultMessageTypeId,
-        partnerId,
-        jobFunctionId: jobFunctionAdminId,
-        level: 1,
-        name: issueType.name,
-        ...auditFields,
-      },
-    ])
+    notifications.push({
+      issueTypeId: issueType.id,
+      messageTypeId: issueType.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: issueType.name,
+      ...auditFields,
+    })
   })
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: issuesToInsert,
-  })
+  await Promise.all([
+    upsertNotificationTypes(knex, notifications),
+    seedIssueEventTriggersForPartner(knex, partnerId, {
+      issueTypeWhitelist: issuesToInsert,
+    }),
+  ])
 }
 module.exports = seed

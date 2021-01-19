@@ -107,7 +107,6 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'mt.smsTemplateId',
         'mt.webhookTemplateId'
       )
-
     // for each job function, find all policies with maximum constrained level,
     // since we are ordered by, max level at first position and filter all with same
     let jobFunctionId = null

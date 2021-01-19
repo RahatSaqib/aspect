@@ -31,9 +31,9 @@ module.exports = {
       format: process.env['log.file.format'] || 'text',
     },
     logLevel: process.env['log.console.logLevel'] || 'info',
-    format: process.env['log.format'] || 'text',
-    labelsWhiteList: process.env['log.labelsWhiteList'] || null,
-    labelsBlackList: process.env['log.labelsBlackList'] || null,
+    format: process.env['log.console.format'] || 'text',
+    labelsWhiteList: process.env['log.console.labelsWhiteList'] || null,
+    labelsBlackList: process.env['log.console.labelsBlackList'] || null,
 
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),

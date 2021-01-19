@@ -4,11 +4,13 @@ const config = require('../config')
 const { combine, timestamp, label, printf, errors } = format
 // Plain text
 const plainTextFormat = printf(info => {
-  if (typeof message === 'object') {
+  // console.log(info)
+  // this is for boom validations errors, it doesn't arrive with message property
+  if (!info.message) return JSON.stringify(info, null, 3)
+  if (typeof info.message === 'object') {
     info.message = JSON.stringify(info.message, null, 3)
   }
-  // this is for boom validations errors, it doesn't arrive with message property
-  if (!info.message) return JSON.stringify(info, null, '\t')
+
   return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}${
     info.stack ? `\n${info.stack}` : ''
   }`
@@ -46,7 +48,7 @@ const getBaseFormat = (extraFormater, { labelsBlackList, labelsWhiteList }) =>
     errors({ stack: true }),
     whiteListLabels({ labelsWhiteList }),
     blacklistLabels({ labelsBlackList }),
-    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
     extraFormater
   )
 
