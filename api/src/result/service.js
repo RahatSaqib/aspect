@@ -239,6 +239,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         'rca2.resultCategoryId'
       )
     })
+    .leftJoin('ResultCategoryGroup as rcg', function () {
+      this.on('r.assayId', 'rca2.assayId').andOn(
+        'r.resultCategory2',
+        'rca2.resultCategoryId'
+      )
+    })
     // only results which are reportable for either ResultCategory
     .where(builder =>
       builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1)
@@ -2094,7 +2100,14 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
+  console.log(query)
+
   const resultQuery = getBaseQueryForResults()
+    .leftJoin('ResultCategoryGroup as rcg', function () {
+      this.on('r.assayId', 'rcg.assayId')
+        .andOn('r.resultCategory1', 'rcg.resultCategory1Id')
+        .andOn('r.resultCategory2', 'rcg.resultCategory2Id')
+    })
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
@@ -2127,6 +2140,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
       onlyReportableResults: 'rca.reportable',
+      resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {

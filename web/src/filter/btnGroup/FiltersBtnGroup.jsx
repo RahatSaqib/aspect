@@ -54,6 +54,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withResultCategory',
     defaultMessage: 'with result {resultCategoryName}',
   },
+  withResultCategoryGroup: {
+    id: 'filter.btnGroup.withResultCategoryGroup',
+    defaultMessage: 'with result {resultCategoryGroupName}',
+  },
   whereSiteNameIncludes: {
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
@@ -149,6 +153,7 @@ const enhance = compose(
       countryItems: state.geography.countriesForLocationSelector.items,
       consumableItems: state.consumable.consumables.items,
       assayItems: state.assay.items,
+      resultCategoryGroupItems: state.resultCategoryGroup.items,
       partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
       workflowStatusItems: state.resultWorkflowStatus.items,
       treatmentStatusItems: state.resultTreatmentStatus.items,
@@ -300,6 +305,26 @@ const buttonBy = {
                 .get('name', ''),
             }
       )
+  ),
+  resultCategoryGroupId: makeButton(
+    ({ intl, filters, resultCategoryGroupItems }, resultCategoryGroupId) => {
+      return intl.formatMessage(
+        messages.withResultCategoryGroup,
+        filters.assayOverride
+          ? {
+              resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
+            }
+          : {
+              resultCategoryGroupName: resultCategoryGroupItems
+                .find(
+                  it => it.get('externalId') === resultCategoryGroupId,
+                  EMPTY_CONTEXT,
+                  EMPTY_MAP
+                )
+                .get('externalId'),
+            }
+      )
+    }
   ),
   errorCode: makeButton(({ intl }, errorCode) =>
     intl.formatMessage(messages.errorCode, { errorCode })

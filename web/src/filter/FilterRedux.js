@@ -78,6 +78,7 @@ const ListConfig = Immutable.Record({
   deviceMaintenanceStatus: false,
   externalId: false,
   notificationName: false,
+  assayAndResultCategoryGroup: false,
 })
 
 const ListExport = Immutable.Record({
