@@ -73,5 +73,3 @@ AspectLink.propTypes = {
 }
 
 export default AspectLink
-
-// export default AspectLink
