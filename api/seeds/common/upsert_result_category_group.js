@@ -1,15 +1,16 @@
 const Promise = require('bluebird')
-const ReportCategoryGroupFixture = require('../fixtures/ResultCategoryGroup')
+const ReportCategoryGroupFixtureDefault = require('../fixtures/ResultCategoryGroup')
 const {
   allAssayToId,
   allResultCategoryToId,
 } = require('../../src/shared/dictionary')
 
-module.exports = async function upsertResultCategoryGroups(knex) {
+module.exports = async function upsertResultCategoryGroups(knex, fixture = ReportCategoryGroupFixtureDefault) {
   const assayIds = await allAssayToId()
+  console.log(assayIds)
   const resultCategoryIds = await allResultCategoryToId()
 
-  const groups = ReportCategoryGroupFixture.map(({
+  const groups = fixture.map(({
     resultCategory1Id = false,
     resultCategory2Id = false,
     assayId,
@@ -23,6 +24,7 @@ module.exports = async function upsertResultCategoryGroups(knex) {
       resultCategory1Id: resultCategoryIds[resultCategory1Id],
       resultCategory2Id: resultCategoryIds[resultCategory2Id],
       assayId: assayIds[assayId],
+      assayExternalId: assayId,
       externalId,
       ...restProps,
     }
@@ -33,7 +35,10 @@ module.exports = async function upsertResultCategoryGroups(knex) {
   // Delete
   await knex('ResultCategoryGroup').whereNotIn('externalId', whitelist).delete()
 
-  await Promise.each(groups, async ({ externalId, ...group }) => {
+  await Promise.each(groups, async ({ externalId, assayExternalId, ...group }) => {
+    if (!group.assayId) {
+      console.warn(`Warning! ResultCategoryGroup upsert skipped as it references to an unexistant assay external id (${assayExternalId})`)
+    } else {
       const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup').where({ externalId }).first()
 
       if (resultCategoryGroupToUpdate) {
@@ -43,5 +48,6 @@ module.exports = async function upsertResultCategoryGroups(knex) {
         // Create
         await knex('ResultCategoryGroup').insert({ externalId, ...group })
       }
-    })
+    }
+  })
 }
