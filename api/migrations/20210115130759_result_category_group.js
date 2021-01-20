@@ -5,6 +5,8 @@ async function up(knex) {
   await knex.schema.createTable('ResultCategoryGroup', tblResultCategoryGroup => {
     tblResultCategoryGroup.increments('id')
     tblResultCategoryGroup.string('externalId')
+    tblResultCategoryGroup.string('name')
+    tblResultCategoryGroup.string('i18nKey')
       .notNullable()
       .index()
       .unique()
