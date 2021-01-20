@@ -9,7 +9,7 @@ import IconProvider from '../../IconProvider'
 
 import usePrevious from '../../../Hooks/CustomHooks'
 import { getAverageFromData } from '../Helpers/Formatters'
-import AspectLink from '../../../components/shared/AspectLink'
+import AspectLink from '../../AspectLink'
 
 import messages from '../GraphsContainer/messages'
 
