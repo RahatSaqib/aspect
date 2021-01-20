@@ -12,12 +12,15 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  const issueType = await seedIssueType(knex, 'ProbeCheckTooLow', {
+  const issueTypeModule = await seedIssueType(knex, 'ProbeCheckTooLowModule', {
+    userName: 'admin',
+  })
+  const issueTypeLot = await seedIssueType(knex, 'ProbeCheckTooLowLot', {
     userName: 'admin',
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['ProbeCheckTooLow'],
+    issueTypeWhitelist: ['ProbeCheckTooLowLot', 'ProbeCheckTooLowModule'],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -26,10 +29,12 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeProbeCheckTooLow = await knex('IssueType')
-    .where({ id: issueType })
+  const issueTypeProbeCheckTooLowModule = await knex('IssueType')
+    .where({ id: issueTypeModule })
     .first()
-
+  const issueTypeProbeCheckTooLowLot = await knex('IssueType')
+    .where({ id: issueTypeLot })
+    .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
       externalId: 'admin',
@@ -38,12 +43,21 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: issueTypeProbeCheckTooLow.id,
-      messageTypeId: issueTypeProbeCheckTooLow.defaultMessageTypeId,
+      issueTypeId: issueTypeProbeCheckTooLowModule.id,
+      messageTypeId: issueTypeProbeCheckTooLowModule.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probe Check Too Low',
+      name: 'Probe Check Too Low - Module',
+      ...auditFields,
+    },
+    {
+      issueTypeId: issueTypeProbeCheckTooLowLot.id,
+      messageTypeId: issueTypeProbeCheckTooLowLot.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: 'Probe Check Too Low - Lot',
       ...auditFields,
     },
   ])

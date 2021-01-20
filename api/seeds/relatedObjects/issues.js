@@ -284,6 +284,15 @@ const errorIssueEmailTextModule = errorIssueEmailText.replace(
   'Module: {{result.moduleSerial}}'
 )
 
+const errorIssueEmailHtmlLot = errorIssueEmailHtml.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  '<tr><td>Reagent Lot</td><td>{{result.consumableLot}}</td></tr>'
+)
+const errorIssueEmailTextLot = errorIssueEmailText.replace(
+  '<<REPLACE WITH MODULE OR REAGENT>>',
+  'Reagent Lot: {{result.consumableLot}}'
+)
+
 // must correspond with 'Hardware*' items in IssueEventTrigger.json
 const hardwareMessage = {
   1001: 'Temperature Drifted From Setpoint',
@@ -826,11 +835,11 @@ async function getBaseIssues(auditFields) {
         htmlBody: `{{device.name}}: Module {{issue.data.moduleSerialNumber}} has been disabled on {{issue.data.disabledOn}}.`,
       },
     },
-    TooManyInvalidResults: {
+    TooManyInvalidResultsModule: {
       issueType: {
-        name: 'Too Many Invalid Results',
-        externalId: 'TooManyInvalidResults',
-        i18nKey: 'issueStatusTooManyInvalidResults',
+        name: 'Too Many Invalid Results On Module',
+        externalId: 'TooManyInvalidResultsModule',
+        i18nKey: 'issueStatusTooManyInvalidResultsModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -843,11 +852,28 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    ProbeCheckTooLow: {
+    TooManyInvalidResultsLot: {
       issueType: {
-        name: 'Probe Check Too Low',
-        externalId: 'ProbeCheckTooLow',
-        i18nKey: 'issueStatusProbeCheckTooLow',
+        name: 'Too Many Invalid Results On Lot',
+        externalId: 'TooManyInvalidResultsLot',
+        i18nKey: 'issueStatusTooManyInvalidResultsLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    ProbeCheckTooHighModule: {
+      issueType: {
+        name: 'Probe Check Too High On Module',
+        externalId: 'ProbeCheckTooHighModule',
+        i18nKey: 'issueStatusProbeCheckTooHighModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -860,11 +886,29 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    ProbeCheckTooHigh: {
+    ProbeCheckTooHighLot: {
       issueType: {
-        name: 'Probe Check Too High',
-        externalId: 'ProbeCheckTooHigh',
-        i18nKey: 'issueStatusProbeCheckTooHigh',
+        name: 'Probe Check Too High On Lot',
+        externalId: 'ProbeCheckTooHighLot',
+        i18nKey: 'issueStatusProbesTooHigh',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: {
+      issueType: {
+        name: 'Failed To Verify Valid Background Error For Analyte On Module',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey:
+          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -877,11 +921,28 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    FailedToVerifyValidBackgroundErrorForAnalyte: {
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: {
       issueType: {
-        name: 'Failed To Verify Valid Background Error For Analyte',
-        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyte',
-        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyte',
+        name: 'Failed To Verify Valid Background Error For Analyte On Lot',
+        externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteLot',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    ProbeCheckFailedModule: {
+      issueType: {
+        name: 'Probe Check Failed On Module',
+        externalId: 'ProbeCheckFailedModule',
+        i18nKey: 'issueStatusProbeCheckFailedModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -894,21 +955,20 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-
-    ProbeCheckFailed: {
+    ProbeCheckFailedLot: {
       issueType: {
-        name: 'Probe Check Failed',
-        externalId: 'ProbeCheckFailed',
-        i18nKey: 'issueStatusProbeCheckFailed',
-        issueCategoryId: issueCategories.DeviceHealth,
+        name: 'Probe Check Failed On Lot',
+        externalId: 'ProbeCheckFailedLot',
+        i18nKey: 'issueStatusProbeCheckFailedLot',
+        issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
       EmailTemplate: {
         subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
@@ -956,11 +1016,11 @@ async function getBaseIssues(auditFields) {
         htmlBody: msgInstrumentReplaced,
       },
     },
-    SignalLossDetectedInAmplificationCurve: {
+    SignalLossDetectedInAmplificationCurveModule: {
       issueType: {
-        name: 'Signal Loss Detected in the Amplification Curve',
-        externalId: 'SignalLossDetectedInAmplificationCurve',
-        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurve',
+        name: 'Signal Loss Detected in the Amplification Curve On Module',
+        externalId: 'SignalLossDetectedInAmplificationCurveModule',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -973,11 +1033,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    CartridgeIntegrityTestFailure: {
+    SignalLossDetectedInAmplificationCurveLot: {
       issueType: {
-        name: 'Cartridge Integrity Test Failure',
-        externalId: 'CartridgeIntegrityTestFailure',
-        i18nKey: 'cartridgeIntegrityTestFailure',
+        name: 'Signal Loss Detected in the Amplification Curve On Lot',
+        externalId: 'SignalLossDetectedInAmplificationCurveLot',
+        i18nKey: 'issueStatusSignalLossDetectedInAmplificationCurveLot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
@@ -985,33 +1045,16 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
-    SyringePressureTooHigh: {
+    CartridgeIntegrityTestFailureLot: {
       issueType: {
-        name: 'Syringe Pressure Too High',
-        externalId: 'SyringePressureTooHigh',
-        i18nKey: 'SyringePressureTooHigh',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
-        ...auditFields,
-      },
-    },
-    SyringeStallError: {
-      issueType: {
-        name: 'Syringe Stall Error',
-        externalId: 'SyringeStallError',
-        i18nKey: 'SyringeStallError',
+        name: 'Cartridge Integrity Test Failure On Lot',
+        externalId: 'CartridgeIntegrityTestFailureLot',
+        i18nKey: 'cartridgeIntegrityTestFailureLot',
         issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
@@ -1019,16 +1062,50 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
-    UltrasonicHornFailure: {
+    SyringePressureTooHighLot: {
       issueType: {
-        name: 'Ultrasonic Horn Failure',
-        externalId: 'UltrasonicHornFailure',
-        i18nKey: 'issueStatusUltrasonicHornFailure',
+        name: 'Syringe Pressure Too High On Lot',
+        externalId: 'SyringePressureTooHighLot',
+        i18nKey: 'SyringePressureTooHighLot',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    SyringeStallErrorLot: {
+      issueType: {
+        name: 'Syringe Stall Error On Lot',
+        externalId: 'SyringeStallErrorLot',
+        i18nKey: 'SyringeStallErrorLot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    UltrasonicHornFailureModule: {
+      issueType: {
+        name: 'Ultrasonic Horn Failure On Module',
+        externalId: 'UltrasonicHornFailureModule',
+        i18nKey: 'issueStatusUltrasonicHornFailureModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1041,11 +1118,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    UltrasonicHornTuningError: {
+    UltrasonicHornTuningErrorModule: {
       issueType: {
-        name: 'Ultrasonic Horn Tuning Error',
-        externalId: 'UltrasonicHornTuningError',
-        i18nKey: 'issueStatusUltrasonicHornTuning',
+        name: 'Ultrasonic Horn Tuning Error On Module',
+        externalId: 'UltrasonicHornTuningErrorModule',
+        i18nKey: 'issueStatusUltrasonicHornTuningError',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1058,11 +1135,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    UltrasonicHornCurrentOutOfRange: {
+    UltrasonicHornCurrentOutOfRangeModule: {
       issueType: {
-        name: 'Ultrasonic Horn Current Out of Range',
-        externalId: 'UltrasonicHornCurrentOutOfRange',
-        i18nKey: 'issueStatusUltrasonicHornCurrentOutOfRange',
+        name: 'Ultrasonic Horn Current Out of Range On Module',
+        externalId: 'UltrasonicHornCurrentOutOfRangeModule',
+        i18nKey: 'issueStatusUltrasonicHornCurrentOutOfRangeModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1075,11 +1152,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    AssaySpecificTerminationError1: {
+    AssaySpecificTerminationError1Module: {
       issueType: {
-        name: 'Assay Specific Termination Error',
-        externalId: 'AssaySpecificTerminationError1',
-        i18nKey: 'issueStatusAssaySpecificTerminationError1',
+        name: 'Assay Specific Termination Error On Module',
+        externalId: 'AssaySpecificTerminationError1Module',
+        i18nKey: 'issueStatusAssaySpecificTerminationError1Module',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1092,11 +1169,28 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    AssaySpecificTerminationError2: {
+    AssaySpecificTerminationError1Lot: {
       issueType: {
-        name: 'Assay-Specific Termination #2',
-        externalId: 'AssaySpecificTerminationError2',
-        i18nKey: 'issueStatusAssaySpecificTerminationError2',
+        name: 'Assay Specific Termination Error On Lot',
+        externalId: 'AssaySpecificTerminationError1Lot',
+        i18nKey: 'issueStatusAssaySpecificTerminationError1Lot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationError2Module: {
+      issueType: {
+        name: 'Assay-Specific Termination #2 On Module',
+        externalId: 'AssaySpecificTerminationError2Module',
+        i18nKey: 'issueStatusAssaySpecificTerminationError2Module',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1106,6 +1200,23 @@ async function getBaseIssues(auditFields) {
         subject: errorIssueSubject,
         body: errorIssueEmailTextModule,
         htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
+    AssaySpecificTerminationError2Lot: {
+      issueType: {
+        name: 'Assay-Specific Termination #2 On Lot',
+        externalId: 'AssaySpecificTerminationError2Lot',
+        i18nKey: 'issueStatusAssaySpecificTerminationError2Lot',
+        issueCategoryId: issueCategories.ReagentHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextLot,
+        htmlBody: errorIssueEmailHtmlLot,
         ...auditFields,
       },
     },
