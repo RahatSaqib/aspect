@@ -17,7 +17,7 @@ import {
   dateRangeOptions,
   extractOptionValue,
 } from '../Helpers/Formatters'
-import AspectDropdown from '../../AspectDropdown'
+import AspectDropDown from '../../AspectDropDown'
 
 import AspectCard from '../../AspectCard'
 import CardSelectors from '../CardSelectors'
@@ -33,7 +33,7 @@ const selectorModifiers = [
     selectedValue: 'Date Range',
     endpoint: false,
     state: 'deviceDateRange',
-    component: AspectDropdown,
+    component: AspectDropDown,
     identifier: 'dateRange',
     data: dateRangeOptions('deviceDateRange'),
     sortByKeys: ['id'],

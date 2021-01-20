@@ -6,9 +6,13 @@ const {
 } = require('../../src/shared/dictionary')
 
 module.exports = async function upsertResultCategoryGroups(knex, fixture = ReportCategoryGroupFixtureDefault) {
-  const assayIds = await allAssayToId()
-  console.log(assayIds)
-  const resultCategoryIds = await allResultCategoryToId()
+  const assayIds = {}
+  const resultCategoryIds = {}
+
+  const assays = await knex('Assay').select('id', 'externalId')
+  const resultCategories = await knex('ResultCategory').select('id', 'externalId')
+  assays.forEach(({ id, externalId }) => assayIds[externalId] = id)
+  resultCategories.forEach(({ id, externalId }) => resultCategoryIds[externalId] = id )
 
   const groups = fixture.map(({
     resultCategory1Id = false,

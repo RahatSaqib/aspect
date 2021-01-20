@@ -1,5 +1,13 @@
 const _ = require('lodash')
 
+const getRawValue = value => {
+  // If value is a string and represents a percentage, then return only the number
+  if (typeof value === 'string' && /^\d+(\.\d+)?%$/.test(value))
+    return parseInt(value.replace('%', ''), 10)
+
+  return value
+}
+
 const getValue = (widget, field) => _.get(widget, field)
 
 const setAlertValueOnWidget = widget => {
@@ -7,17 +15,15 @@ const setAlertValueOnWidget = widget => {
 
   if (!alert) return
 
-  // As 'dependsOn' is always a field, we get the value of it
-  const dependencyValue = getValue(widget, alert.dependsOn)
+  // As 'dependsOn' is always a field, we get the raw value of it
+  const dependencyValue = getRawValue(getValue(widget, alert.dependsOn))
 
   let comparedTo = null
   // If 'comparedTo' is a string, at first we assume it represents a field
   if (typeof alert.comparedTo === 'string')
-    comparedTo = getValue(widget, alert.comparedTo)
-  // If 'comparedTo' is still null, it's because it's not a field - it's a value
-  if (comparedTo === null) comparedTo = alert.comparedTo
+    alert.comparedTo = getValue(widget, alert.comparedTo) || alert.comparedTo
 
-  alert.comparedTo = comparedTo
+  comparedTo = getRawValue(alert.comparedTo)
 
   // Depending the action to take, we make a different comparation and get the value of the alert
   let display = false

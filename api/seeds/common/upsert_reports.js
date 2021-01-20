@@ -61,7 +61,10 @@ module.exports = async function upsertReports(knex) {
       reportId = reportToUpdate.id
     } else {
       // Create
-      await knex('Report').insert(report)
+      await knex('Report').insert({
+        sortOrder: 0, // defaults to 0 if sortOrder is missing in 'report', need because 'sortOrder' is NOT NULL field
+        ...report,
+      })
       ;[reportId] = await knex('Report').where({ externalId }).pluck('id')
     }
 
