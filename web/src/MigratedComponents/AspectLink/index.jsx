@@ -59,11 +59,11 @@ AspectLink.defaultProps = {
 
 AspectLink.propTypes = {
   /**
-   Proposed URL for link component
+   Optional classname for the link
   */
   className: oneOfType([object, string]),
   /**
-  Proposed URL for link component
+  React children of the link
  */
   children: oneOfType([object, string]).isRequired,
   /**
