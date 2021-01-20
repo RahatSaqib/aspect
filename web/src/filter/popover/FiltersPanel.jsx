@@ -679,7 +679,7 @@ export const FiltersPanel = ({
                   allItemText={intl.formatMessage(messages.all)}
                   disabled={!filters.assayId}
                   assayId={filters.assayId}
-                  value={filters.resultCategoryId}
+                  value={filters.resultCategoryGroupId}
                   onResultCategoryGroupChange={onResultCategoryGroupChange}
                   floatingLabelFixed
                   hintText={intl.formatMessage(messages.selectResult)}

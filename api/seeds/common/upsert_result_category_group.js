@@ -10,15 +10,20 @@ module.exports = async function upsertResultCategoryGroups(knex) {
   const resultCategoryIds = await allResultCategoryToId()
 
   const groups = ReportCategoryGroupFixture.map(({
-    resultCategory1Id,
-    resultCategory2Id,
+    resultCategory1Id = false,
+    resultCategory2Id = false,
     assayId,
+    externalId,
     ...restProps
   }) => {
+    if (!resultCategory1Id && !resultCategory2Id)
+      throw new Error(`No result categories assigned for group ${externalId}`)
+
     return {
       resultCategory1Id: resultCategoryIds[resultCategory1Id],
       resultCategory2Id: resultCategoryIds[resultCategory2Id],
       assayId: assayIds[assayId],
+      externalId,
       ...restProps,
     }
   }) 

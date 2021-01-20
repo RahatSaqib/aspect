@@ -321,7 +321,7 @@ const buttonBy = {
                   EMPTY_CONTEXT,
                   EMPTY_MAP
                 )
-                .get('externalId'),
+                .get('name'),
             }
       )
     }
