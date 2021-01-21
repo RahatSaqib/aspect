@@ -68,6 +68,10 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
     defaultMessage: 'Inventory levels have been adjusted successfully',
   },
+  stockLeft: {
+    id: 'pages.InventoryItemsList.stockLeft',
+    defaultMessage: 'Days Stock Left',
+  },
 })
 
 export default messages

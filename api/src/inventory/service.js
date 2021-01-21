@@ -57,6 +57,7 @@ const INVENTORY_ITEM_SORT_FIELDS = {
   quantityOnHand: 'ii.quantityOnHand',
   expiresOn: 'ii.expiresOn',
   lotNumber: 'ii.lotNumber',
+  stockLeft: 'stock.stockLeft',
 }
 
 const INVENTORY_ITEM_FILTER_FIELDS = {
@@ -68,7 +69,44 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   siteId: 's.id',
 }
 
+const STOCK_LEFT_FILTER_FIELDS = {
+  stockLeft: (queryBuilder, filterValue) => {
+    queryBuilder.where(function () {
+      this.where(`stock.${filterValue}`, '>', 0)
+    })
+  },
+}
+
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
+
+const SUPPLY_IN_STOCK_FIELDS = [
+  'consumableId',
+  'consumableName',
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired = 0 THEN true ELSE null END) as outOfStock'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 15 and 30 THEN true ELSE null END) as upTo30'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 31 and 90 THEN true ELSE null END) as upTo90'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'
+  ),
+  knex.raw(
+    'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
+  ),
+]
 
 async function consumeInventoryForResult(
   resultId,
@@ -367,6 +405,11 @@ async function listInventoryItems(request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
+  const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(
+    request,
+    dataConstraints
+  )
+
   const inventoryItemsQuery = query('Search Inventory Items')
     .from('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
@@ -377,9 +420,15 @@ async function listInventoryItems(request) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .leftOuterJoin(supplyInStockBase.as('stock'), function () {
+      this.on('s.id', 'stock.siteId').andOn('c.id', 'stock.consumableId')
+    })
     .where('ii.quantityOnHand', '<>', 0)
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-    .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+    .modify(filterParams, request.query, {
+      ...INVENTORY_ITEM_FILTER_FIELDS,
+      ...STOCK_LEFT_FILTER_FIELDS,
+    })
     .modify(
       addConstraints,
       dataConstraints,
@@ -395,7 +444,7 @@ async function listInventoryItems(request) {
       INVENTORY_ITEM_SORT_FIELDS.siteName,
       INVENTORY_ITEM_SORT_FIELDS
     )
-    .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+    .select([...INVENTORY_ITEM_SELECT_LIST_FIELDS, 'stock.stockLeft'])
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -424,12 +473,18 @@ const inventoryItemFields = [
   'canExpire',
   'inTransitFromSiteId',
   'inTransitFromSiteName',
+  'stockLeft',
 ]
 
 async function listInventoryItemsGroupedBySite(request) {
   const { auth } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
+
+  const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(
+    request,
+    dataConstraints
+  )
 
   /* TODO: Add inventory item <--> site bridging table and fix this query so that
      user can view items that are out of stock */
@@ -446,12 +501,18 @@ async function listInventoryItemsGroupedBySite(request) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .leftOuterJoin(supplyInStockBase.as('stock'), function () {
+      this.on('s.id', 'stock.siteId').andOn('c.id', 'stock.consumableId')
+    })
     .where('ii.quantityOnHand', '<>', 0)
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
 
   const sitesQuery = inventoryItemsSiteByGeographyQuery
     .clone()
-    .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+    .modify(filterParams, request.query, {
+      ...INVENTORY_ITEM_FILTER_FIELDS,
+      ...STOCK_LEFT_FILTER_FIELDS,
+    })
     .modify(
       addConstraints,
       dataConstraints,
@@ -501,6 +562,7 @@ async function listInventoryItemsGroupedBySite(request) {
     .select([
       ...INVENTORY_ITEM_SELECT_LIST_FIELDS,
       knex.raw(`${sortColumnField} as sortBy`),
+      'stock.stockLeft',
     ])
 
   const sites = _.uniqBy(
@@ -525,10 +587,33 @@ async function listInventoryItemsGroupedBySite(request) {
   }
 }
 
-async function getDaysByLocation(request) {
-  const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-  // -----------------
+function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
+  // group by siteId and consumableId, and return different counts
+  const baseWithCalculatedFields = getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+    request,
+    dataConstraints
+  )
+  const supplyInStockBase = knex
+    .from(baseWithCalculatedFields.as('t2'))
+    .groupBy(['consumableId', 'siteId'])
+    .select([
+      ...SUPPLY_IN_STOCK_FIELDS,
+      knex.raw('MAX(daysUnexpired) as stockLeft'),
+      'siteId',
+    ])
+  return supplyInStockBase
+}
+
+/**
+ * Returns base knex query (no async/await!) with prepared/precalculated data for
+ * inventories
+ * @param {*} request
+ * @param {*} dataConstraints
+ */
+function getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+  request,
+  dataConstraints
+) {
   const baseInventoryItemsBySiteGeography = query(
     'Join Consumable with Inventory Items, Site Details, and Geography Details'
   )
@@ -673,39 +758,23 @@ async function getDaysByLocation(request) {
       END AS wasted
       `)
     )
+  return baseWithCalculatedFields
+}
+
+async function getDaysByLocation(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const baseWithCalculatedFields = getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+    request,
+    dataConstraints
+  )
+
   // -----------------
   // group by location fields and consumableId, and return different counts
   const result = await knex
     .from(baseWithCalculatedFields.as('t2'))
     .groupBy('consumableId')
-    .select(
-      'consumableId',
-      'consumableName',
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired = 0 THEN true ELSE null END) as outOfStock'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 15 and 30 THEN true ELSE null END) as upTo30'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 31 and 90 THEN true ELSE null END) as upTo90'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'
-      ),
-      knex.raw(
-        'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
-      )
-    )
+    .select(SUPPLY_IN_STOCK_FIELDS)
 
   return {
     ok: true,
