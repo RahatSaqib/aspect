@@ -371,7 +371,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
   // fix hardware entries, if any
   // eslint-disable-next-line no-constant-condition
   if ((_.some(items), { source: 'System Log' })) {
-    // for harwdare errors, we don't have senderversion or module serial, only module name -> get all serials by slot along with instrument serial and sender version the max result date
+    // for hardware errors, we don't have senderversion or module serial, only module name -> get all serials by slot along with instrument serial and sender version by max result date
     const missingFields = [
       'r.moduleName',
       'r.moduleSerial',
