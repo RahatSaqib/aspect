@@ -352,7 +352,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw(
             `ifnull(d.configurationData ->> '$.systemName', '-') as gxSystemName`
           ),
-          knex.raw(`'-' as senderVersion`),
+          knex.raw(`'-' as gxSoftwareVersion`),
           knex.raw(`'-' as moduleSerial`),
           knex.raw(`'-' as assay`),
           knex.raw(`'-' as assayVersion`),
