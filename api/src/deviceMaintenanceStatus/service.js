@@ -49,6 +49,7 @@ async function deviceStatusOverTime(request) {
     .select([
       'd.id',
       'd.name',
+      'd.shortName',
       's.longitude',
       's.latitude',
       knex.raw('COUNT(r.id) as totalResults'),

@@ -38,6 +38,9 @@ const routes = [
               name: Joi.string()
                 .required()
                 .description('The name of the device'),
+              shortName: Joi.string().description(
+                'The short name of the device'
+              ),
               longitude: Joi.number()
                 .allow(null)
                 .description('The longitude where the device is allocated'),
