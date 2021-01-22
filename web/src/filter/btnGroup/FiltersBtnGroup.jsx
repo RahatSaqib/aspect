@@ -7,8 +7,10 @@ import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
+import reduce from 'lodash/reduce'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
+import stockLeftOptions from '../hardcoded/stockLeftOptions'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -117,40 +119,17 @@ const messages = defineMessages({
     id: 'filter.btnGroup.deviceIssueType',
     defaultMessage: 'Device Issue: {issueTypeId}',
   },
-  stockLeft: {
-    outOfStock: {
-      id: 'filter.btnGroup.stockLeft.outOfStock',
-      defaultMessage: 'Out of Stock',
+  stockLeft: reduce(
+    stockLeftOptions,
+    (acc, { externalId, name }) => {
+      acc[externalId] = {
+        id: `filter.btnGroup.stockLeft.${externalId}`,
+        defaultMessage: `Stock left: ${name}`,
+      }
+      return acc
     },
-    upTo14: {
-      id: 'filter.btnGroup.stockLeft.upTo14',
-      defaultMessage: 'Stock left: 1-14 Days',
-    },
-    upTo30: {
-      id: 'filter.btnGroup.stockLeft.upTo30',
-      defaultMessage: 'Stock left: 15-30 Days',
-    },
-    upTo90: {
-      id: 'filter.btnGroup.stockLeft.upTo90',
-      defaultMessage: 'Stock left: 1-3 Months',
-    },
-    upTo180: {
-      id: 'filter.btnGroup.stockLeft.upTo180',
-      defaultMessage: 'Stock left: 4-6 Months',
-    },
-    moreThan180: {
-      id: 'filter.btnGroup.stockLeft.moreThan180',
-      defaultMessage: 'Stock left: >6 Months',
-    },
-    notRecorded: {
-      id: 'filter.btnGroup.stockLeft.notRecorded',
-      defaultMessage: 'Stock left: Not Recorded',
-    },
-    noConsumption: {
-      id: 'filter.btnGroup.stockLeft.noConsumption',
-      defaultMessage: 'Stock left: No Consumption',
-    },
-  },
+    {}
+  ),
 })
 const revokedOptions = [
   {
@@ -213,7 +192,7 @@ const filtersOrdering = {
   patientOrCaseId: 23,
   onlyReportableResults: 23,
   issueTypeId: 24,
-  stockLeft: 99, // put last in the list of filters
+  stockLeft: 99,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
