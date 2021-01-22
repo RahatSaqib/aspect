@@ -10,13 +10,76 @@ const {
 } = DATE_CONSTS
 
 const assays = [
-  'assayGenericCovid19',
   'assayGXCovid19',
   'assayMP96Covid19',
   'assayQS7Covid19',
+  'assayGenericCovid19',
 ]
 
 const covidGraphs = {
+  covidResults: {
+    id: 'covidResults',
+    title: 'clinicalIndicatorsCovidTitle',
+    componentSize: 'full',
+    group: 'covid',
+    assays,
+    graphRenderPermissions: ['dashboard'],
+    graphType: [
+      {
+        id: 'covidByCategory1Monthly',
+        component: BarGraph,
+        type: 'bar',
+        size: 8,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: '/result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['month', 'resultCategory1'],
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'month',
+        keyToConsume: 'resultCategory1',
+        tickValuesYShape: 'none',
+        tickValuesXShape: 'all',
+        displayMethod: 'percentage',
+        displayLegend: true,
+        formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+        },
+      },
+      {
+        id: 'covidByCategory1Aggregate',
+        component: PieGraph,
+        type: 'pie',
+        size: 4,
+        componentClasses: ['piegraph__container'],
+        api: {
+          endpoint: '/result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['resultCategory1'],
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'cnt',
+        keyToConsume: 'resultCategory1',
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        averages: {
+          showTotal: false,
+          title: 'clinicalIndicatorsCovidPieLegend',
+          key: ['Positive', 'PresumptivePositive'],
+          subTitle: 'clinicalIndicatorsPieSubLegend',
+        },
+      },
+    ],
+  },
   covidMortalityAndRecoveryConfig: {
     id: 'covidMortalityAndRecoveryConfig',
     title: 'covidGraphDailyMortalityAndrecovery',
