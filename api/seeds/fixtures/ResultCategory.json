@@ -164,6 +164,11 @@
       "name": "Positive",
       "i18nKey": "resultCategoryPositive",
       "externalId": "Positive"
+    },
+    {
+      "name": "Presumptive Positive",
+      "i18nKey": "resultCategoryPresumptivePositive",
+      "externalId": "PresumptivePositive"
     }
   ]
 }
