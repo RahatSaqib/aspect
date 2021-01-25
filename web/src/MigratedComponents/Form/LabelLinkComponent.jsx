@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
 import IconProvider from '../IconProvider'
-import AspectLink from '../../components/shared/AspectLink'
+import AspectLink from '../AspectLink'
 
 const cssClasses = classnames.bind(require('./LabelLinkComponent.css'))
 

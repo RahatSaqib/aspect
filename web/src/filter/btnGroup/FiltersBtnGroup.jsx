@@ -7,8 +7,10 @@ import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
+import reduce from 'lodash/reduce'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
+import stockLeftOptions from '../hardcoded/stockLeftOptions'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -117,6 +119,17 @@ const messages = defineMessages({
     id: 'filter.btnGroup.deviceIssueType',
     defaultMessage: 'Device Issue: {issueTypeId}',
   },
+  stockLeft: reduce(
+    stockLeftOptions,
+    (acc, { externalId, name }) => {
+      acc[externalId] = {
+        id: `filter.btnGroup.stockLeft.${externalId}`,
+        defaultMessage: `Stock left: ${name}`,
+      }
+      return acc
+    },
+    {}
+  ),
 })
 const revokedOptions = [
   {
@@ -179,6 +192,7 @@ const filtersOrdering = {
   patientOrCaseId: 23,
   onlyReportableResults: 23,
   issueTypeId: 24,
+  stockLeft: 99,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -422,6 +436,9 @@ const buttonBy = {
     })
   ),
   assayOverride: () => false,
+  stockLeft: makeButton(({ intl }, stockLeft) =>
+    intl.formatMessage(messages.stockLeft[stockLeft])
+  ),
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {

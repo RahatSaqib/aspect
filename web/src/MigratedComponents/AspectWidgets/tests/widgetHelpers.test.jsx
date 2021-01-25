@@ -5,7 +5,7 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 
-import AspectLink from '../../../components/shared/AspectLink'
+import AspectLink from '../../AspectLink'
 import { buildWidgetToLinkParams } from '../Helpers'
 import {
   useUserIsPermitted,
