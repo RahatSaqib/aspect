@@ -1,8 +1,12 @@
-const _ = require('lodash')
-const { admin, clinician, labUser } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  clinician,
+  labUser,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  _.merge({}, admin, {
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'account',
@@ -90,7 +94,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, clinician, {
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'account',
@@ -166,7 +170,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, labUser, {
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'account',
@@ -325,7 +329,7 @@ module.exports = [
       },
     ],
   },
-  _.merge({}, labUser, {
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'account',

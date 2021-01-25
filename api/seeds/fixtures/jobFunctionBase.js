@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const admin = {
   name: 'Admin',
   reports: [
@@ -982,6 +984,52 @@ const labAdmin = {
   ],
 }
 
+const concatUniqOrderedArray = (
+  arr1,
+  arr2,
+
+  sortedFunction = _.identity
+) =>
+  _.compact(
+    _.sortBy(
+      _.uniq(_.concat(arr1, arr2)),
+      arr1 && arr2 ? sortedFunction : _.identity
+    )
+  )
+
+const mergeJobFunctions = (jf1, jf2) => {
+  if (jf1.name && jf2.name && jf1.name !== jf2.name)
+    throw new Error('The jobfunction names should be equals')
+  const plainObject = _.merge(
+    {},
+    _.omit(jf1, ['reports', 'permissions']),
+    _.omit(jf2, ['reports', 'permissions'])
+  )
+  const reports = concatUniqOrderedArray(jf1.reports, jf2.reports)
+  const permissions = concatUniqOrderedArray(
+    jf1.permissions,
+    jf2.permissions,
+
+    obj => [obj.module, obj.activity]
+  )
+
+  const finalJobFunction = { ...plainObject }
+
+  if (reports.length) finalJobFunction.reports = reports
+  if (permissions.length)
+    finalJobFunction.permissions = _.reduce(
+      permissions,
+      (result, curr) => {
+        if (result.length === 0) result.push(curr)
+        else if (_.last(result).module !== curr.module) result.push(curr)
+        return result
+      },
+      []
+    )
+
+  return finalJobFunction
+}
+
 module.exports = {
   admin,
   regionalOfficer,
@@ -1002,4 +1050,5 @@ module.exports = {
   ntpNoResults,
   systemOne,
   labAdmin,
+  mergeJobFunctions,
 }
