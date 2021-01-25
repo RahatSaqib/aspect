@@ -32,7 +32,7 @@ describe('Seed helpers unit functions', () => {
         'The jobfunction names should be equals'
       )
     })
-    it.only('Should merge 2 different jobFunctions with the same name', () => {
+    it('Should merge 2 different jobFunctions with the same name', () => {
       assert.deepEqual(mergeJobFunctions(admin, admin2), {
         name: 'admin',
         permissions: [
