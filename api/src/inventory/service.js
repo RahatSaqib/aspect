@@ -71,8 +71,8 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
 
 const STOCK_LEFT_FILTER_FIELDS = {
   stockLeft: (queryBuilder, filterValue) => {
-    queryBuilder.where(function () {
-      this.where(`stock.${filterValue}`, '>', 0)
+    queryBuilder.where(builder => {
+      builder.where(`stock.${filterValue}`, '>', 0)
     })
   },
 }
