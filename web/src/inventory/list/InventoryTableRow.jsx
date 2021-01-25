@@ -56,28 +56,32 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
     },
   ]
 
+  // helper funcs
+  const hasProp = name => inventoryItem.get('visibleProperties').includes(name)
+  const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
+
   return (
     <TableRow key={key} className={cssClasses('TableRow')}>
-      {inventoryItem.get('visibleProperties').includes('siteName') ? (
+      {hasProp('siteName') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'siteName'])}
+          rowSpan={rowSpan('siteName')}
         >
           {inventoryItem.get('siteName')}
         </TableCell>
       ) : null}
-      {inventoryItem.get('visibleProperties').includes('consumableName') ? (
+      {hasProp('consumableName') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'consumableName'])}
+          rowSpan={rowSpan('consumableName')}
         >
           {inventoryItem.get('consumableName')}
         </TableCell>
       ) : null}
-      {inventoryItem.get('visibleProperties').includes('quantityOnHand') ? (
+      {hasProp('quantityOnHand') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'quantityOnHand'])}
+          rowSpan={rowSpan('quantityOnHand')}
         >
           {inventoryItem.get('inTransitFromSiteName') ? (
             <span>
@@ -96,10 +100,10 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
           )}
         </TableCell>
       ) : null}
-      {inventoryItem.get('visibleProperties').includes('expiresOn') ? (
+      {hasProp('expiresOn') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
+          rowSpan={rowSpan('expiresOn')}
         >
           <span
             className={
@@ -112,6 +116,14 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
               ? formatDate(inventoryItem.get('expiresOn'))
               : 'N/A'}
           </span>
+        </TableCell>
+      ) : null}
+      {hasProp('stockLeft') ? (
+        <TableCell
+          className={cssClasses('TableCell')}
+          rowSpan={rowSpan('stockLeft')}
+        >
+          {inventoryItem.get('stockLeft')}
         </TableCell>
       ) : null}
       <TableCell className={cssClasses('TableCell')}>

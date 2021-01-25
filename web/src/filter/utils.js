@@ -239,6 +239,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'onlyOpenIssues':
               result.onlyOpenIssues = true
               break
+            case 'stockLeft':
+              result.stockLeft = true
+              break
             default:
           }
         })
