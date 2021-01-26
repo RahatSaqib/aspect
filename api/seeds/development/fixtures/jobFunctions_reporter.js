@@ -1,8 +1,11 @@
-const _ = require('lodash')
-const { admin, labAdmin } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  labAdmin,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  _.merge({}, admin, {
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'demo',
@@ -66,7 +69,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, labAdmin, {
+  mergeJobFunctions(labAdmin, {
     permissions: [
       {
         module: 'device',

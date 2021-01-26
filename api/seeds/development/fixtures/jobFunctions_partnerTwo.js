@@ -1,8 +1,10 @@
-const _ = require('lodash')
-const { labManager } = require('../../fixtures/jobFunctionBase')
+const {
+  labManager,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  _.merge({}, labManager, {
+  mergeJobFunctions(labManager, {
     permissions: [
       {
         module: 'dashboard',
