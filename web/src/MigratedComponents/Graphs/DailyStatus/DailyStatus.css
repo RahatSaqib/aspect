@@ -90,7 +90,8 @@
   border-top: 1px solid black;
   /*
   width is a size of hypotenuse (~26) from rectangle of 
-  blockSize.with (20) and blockSize.height (18) minus 2px
+  blockSize.width (20) and blockSize.height (18) minus 2px.
+  See `web/src/globals/consts/Graphs/CONSTS.js` for `blockSize`.
   */
   width: 24px;
   transform: rotate(39deg);
