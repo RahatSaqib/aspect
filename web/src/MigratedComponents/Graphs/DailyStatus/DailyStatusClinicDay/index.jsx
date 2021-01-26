@@ -25,10 +25,18 @@ const messages = defineMessages({
   },
 })
 
-const DayBlock = ({ dayModifier, consts }) => {
+const DayBlock = ({
+  consts,
+  dayModifier,
+  maintenanceStatusI18nKey,
+  totalResults,
+}) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
+  const isDisplayTotalResults =
+    maintenanceStatusI18nKey === 'active' ||
+    maintenanceStatusI18nKey === 'reportedActive'
   return (
     <div
       className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
@@ -37,7 +45,9 @@ const DayBlock = ({ dayModifier, consts }) => {
         height: `${blockHeight}px`,
         margin: `0 ${marginWidth / 2}px`,
       }}
-    />
+    >
+      {isDisplayTotalResults ? totalResults : null}
+    </div>
   )
 }
 
@@ -46,6 +56,8 @@ DayBlock.propTypes = {
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
+  totalResults: PropTypes.number.isRequired,
+  maintenanceStatusI18nKey: PropTypes.string.isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -55,6 +67,7 @@ const DailyStatusClinicDay = ({
   maintenanceStatusName,
   maintenanceStatusI18nKey,
   statusses,
+  totalResults,
 }) => {
   const { formatMessage } = useIntl()
   const { weekend } = consts
@@ -73,6 +86,12 @@ const DailyStatusClinicDay = ({
         ? weekend
         : maintenanceStatusI18nKey
   }
+  const dayBlockProps = {
+    consts,
+    dayModifier,
+    maintenanceStatusI18nKey,
+    totalResults,
+  }
 
   return checked && daysInSameStatus ? (
     <AspectTooltip
@@ -89,7 +108,7 @@ const DailyStatusClinicDay = ({
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock dayModifier={dayModifier} consts={consts} />
+      <DayBlock {...dayBlockProps} />
     </AspectTooltip>
   ) : (
     <AspectTooltip
@@ -97,13 +116,14 @@ const DailyStatusClinicDay = ({
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock dayModifier={dayModifier} consts={consts} />
+      <DayBlock {...dayBlockProps} />
     </AspectTooltip>
   )
 }
 
 DailyStatusClinicDay.defaultProps = {
   maintenanceStatusName: false,
+  totalResults: 0,
 }
 
 DailyStatusClinicDay.propTypes = {
@@ -118,6 +138,7 @@ DailyStatusClinicDay.propTypes = {
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,
+  totalResults: PropTypes.number,
 }
 
 export { DailyStatusClinicDay, DayBlock }

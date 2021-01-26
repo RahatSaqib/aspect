@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import times from 'lodash/times'
+import pick from 'lodash/pick'
 
 import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
 
@@ -26,23 +27,19 @@ const DailyStatusClinic = ({
     <div className={cssClasses('clinic__container')}>
       <div className={cssClasses('clinic__name')}>{name}</div>
       <div className={cssClasses('clinic__dayrow')}>
-        {data.map(
-          ({
-            isWeekend,
-            maintenanceStatusI18nKey,
-            maintenanceStatusName,
-            daysInSameStatus,
-          }) => (
-            <DailyStatusClinicDay
-              consts={consts}
-              daysInSameStatus={daysInSameStatus}
-              isWeekend={isWeekend}
-              maintenanceStatusName={maintenanceStatusName}
-              maintenanceStatusI18nKey={maintenanceStatusI18nKey}
-              statusses={statusses}
-            />
-          )
-        )}
+        {data.map(dailyStatusClinic => (
+          <DailyStatusClinicDay
+            {...pick(dailyStatusClinic, [
+              'daysInSameStatus',
+              'isWeekend',
+              'maintenanceStatusI18nKey',
+              'maintenanceStatusName',
+              'totalResults',
+            ])}
+            consts={consts}
+            statusses={statusses}
+          />
+        ))}
         {fillerDays.map(() => (
           <DayBlock dayModifier="future" consts={consts} />
         ))}
