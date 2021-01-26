@@ -9,9 +9,16 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
 const messages = defineMessages({
+  toolTipTitleResultsReported: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported',
+    defaultMessage: `{maintenanceStatusName} ({totalResults, plural,
+      one {# result reported}
+      other {# results reported}
+    })`,
+  },
   toolTipTitleWithStatus: {
     id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus',
-    defaultMessage: `{maintenanceStatusName} for {daysInSameStatus, plural,
+    defaultMessage: `{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural,
       one {# day}
       other {# days}
     }`,
@@ -25,18 +32,10 @@ const messages = defineMessages({
   },
 })
 
-const DayBlock = ({
-  consts,
-  dayModifier,
-  maintenanceStatusI18nKey,
-  totalResults,
-}) => {
+const DayBlock = ({ consts, dayModifier }) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
-  const isDisplayTotalResults =
-    maintenanceStatusI18nKey === 'active' ||
-    maintenanceStatusI18nKey === 'reportedActive'
   return (
     <div
       className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
@@ -45,9 +44,7 @@ const DayBlock = ({
         height: `${blockHeight}px`,
         margin: `0 ${marginWidth / 2}px`,
       }}
-    >
-      {isDisplayTotalResults ? totalResults : null}
-    </div>
+    />
   )
 }
 
@@ -56,8 +53,6 @@ DayBlock.propTypes = {
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
-  totalResults: PropTypes.number.isRequired,
-  maintenanceStatusI18nKey: PropTypes.string.isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -69,6 +64,9 @@ const DailyStatusClinicDay = ({
   statusses,
   totalResults,
 }) => {
+  const isActive =
+    maintenanceStatusI18nKey === 'active' ||
+    maintenanceStatusI18nKey === 'reportedActive'
   const { formatMessage } = useIntl()
   const { weekend } = consts
   const { checked } =
@@ -78,19 +76,11 @@ const DailyStatusClinicDay = ({
 
   let dayModifier = isWeekend ? weekend : null
   if (checked) {
-    dayModifier =
-      maintenanceStatusI18nKey === 'active' ||
-      maintenanceStatusI18nKey === 'reportedActive'
-        ? maintenanceStatusI18nKey
-        : isWeekend
-        ? weekend
-        : maintenanceStatusI18nKey
-  }
-  const dayBlockProps = {
-    consts,
-    dayModifier,
-    maintenanceStatusI18nKey,
-    totalResults,
+    dayModifier = isActive
+      ? maintenanceStatusI18nKey
+      : isWeekend
+      ? weekend
+      : maintenanceStatusI18nKey
   }
 
   return checked && daysInSameStatus ? (
@@ -100,6 +90,7 @@ const DailyStatusClinicDay = ({
           ? formatMessage(messages.toolTipTitleWithStatus, {
               maintenanceStatusName,
               daysInSameStatus,
+              totalResults,
             })
           : formatMessage(messages.toolTipTitleWithoutStatus, {
               daysInSameStatus,
@@ -108,15 +99,22 @@ const DailyStatusClinicDay = ({
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock {...dayBlockProps} />
+      <DayBlock consts={consts} dayModifier={dayModifier} />
     </AspectTooltip>
   ) : (
     <AspectTooltip
-      title={maintenanceStatusName}
+      title={
+        isActive
+          ? formatMessage(messages.toolTipTitleResultsReported, {
+              maintenanceStatusName,
+              totalResults,
+            })
+          : maintenanceStatusName
+      }
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock {...dayBlockProps} />
+      <DayBlock consts={consts} dayModifier={dayModifier} />
     </AspectTooltip>
   )
 }
