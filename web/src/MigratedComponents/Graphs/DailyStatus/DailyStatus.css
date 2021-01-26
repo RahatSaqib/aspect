@@ -11,7 +11,10 @@
 }
 
 .clinic__name {
-  min-width: 330px;
+  width: 330px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   text-align: right;
   padding: 0 10px 0;
   font-size: 14.4px;
@@ -31,7 +34,7 @@
   background-color: transparent;
 }
 
-/* 
+/*
  * Statusses targeted:
  * active
  * reportedActive
