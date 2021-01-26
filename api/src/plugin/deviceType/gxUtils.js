@@ -898,7 +898,7 @@ function getResultCategories(payload) {
           'sans résultat': 'NoResult',
           'sin resultado': 'NoResult',
           'pas de résultat': 'NoResult',
-          'kein ergebni': 'NoResult',
+          'kein ergebnis': 'NoResult',
           'nessun risultato': 'NoResult',
           'нет результата': 'NoResult',
           'немає результату': 'NoResult',
