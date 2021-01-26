@@ -29,7 +29,7 @@ const testsPerFormedGraphs = {
           params: {
             groupBy: ['month', 'assay'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -56,7 +56,7 @@ const testsPerFormedGraphs = {
           params: {
             groupBy: ['month', 'assay'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
