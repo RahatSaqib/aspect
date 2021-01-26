@@ -27,6 +27,7 @@ async function upsertCovidDeviceTypes(
     resultCategoryToId('Negative'),
     resultCategoryToId('Inconclusive'),
     resultCategoryToId('Unknown'),
+    resultCategoryToId('PresumptivePositive'),
   ])
   const covidDeviceTypes = []
   await Promise.each(

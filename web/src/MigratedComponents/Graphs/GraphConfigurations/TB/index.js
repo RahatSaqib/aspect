@@ -29,7 +29,7 @@ const tbGraphs = {
           params: {
             groupBy: ['month', 'resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -58,7 +58,7 @@ const tbGraphs = {
           params: {
             groupBy: ['resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',
@@ -93,7 +93,7 @@ const tbGraphs = {
           params: {
             groupBy: ['month', 'resultCategory2', 'resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'month',
@@ -124,7 +124,7 @@ const tbGraphs = {
           params: {
             groupBy: ['resultCategory2', 'resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-            [MAX_DATE]: getTimePeriod(0, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
         indexBy: 'cnt',

@@ -35,6 +35,7 @@ const Status = ({ history, location, colorDemo }) => {
   const { deviceStatus } = deviceStatusGraphs
   const { testsOverTime } = testsPerFormedGraphs
   const {
+    covidResults,
     covidDailyConfirmed,
     covidCasesByAgeAndGender,
     covidMortalityAndRecoveryConfig,
@@ -112,6 +113,14 @@ const Status = ({ history, location, colorDemo }) => {
         <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
           {assays && assays.length ? (
             <GraphsContainer assaysFromState={assays} config={tbResults} />
+          ) : null}
+        </PermissionsProvider>
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <PermissionsProvider permissions={covidResults.graphRenderPermissions}>
+          {assays && assays.length ? (
+            <GraphsContainer assaysFromState={assays} config={covidResults} />
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>

@@ -836,13 +836,13 @@ const resultTextToResultCategoryMapping = {
   'SARS-CoV-2 PRESUMPTIVE POS': {
     resultId: '200687_206318_4dd5457b',
     assay: 'assayGXCovid19',
-    resultCategory1: 'Indeterminate',
+    resultCategory1: 'PresumptivePositive',
     resultCategory2: null,
   },
   'SARS-CoV-2 PRESUMPTIVE POSITIVE': {
     resultId: '195687_206318_4dd5457b',
     assay: 'assayGXCovid19',
-    resultCategory1: 'Indeterminate',
+    resultCategory1: 'PresumptivePositive',
     resultCategory2: null,
   },
 }
