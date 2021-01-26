@@ -2,6 +2,7 @@ const groupBy = require('lodash/groupBy')
 const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
+const uniq = require('lodash/uniq')
 const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const isWeekend = require('date-fns/isWeekend')
@@ -41,7 +42,7 @@ async function deviceStatusOverTime(request) {
     .first()
 
   // generic query for devices grouped by id with counts of tests
-  const devicesBase = knex('Device as d')
+  const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
@@ -63,35 +64,33 @@ async function deviceStatusOverTime(request) {
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
-    .orderBy('d.name')
-    .select('d.id', knex.raw('COUNT(r.id) as totalResults'))
-
-  // devices with all needed fields
-  const devices = await devicesBase
-    .clone()
-    // additional fields
-    .select('d.name', 'd.shortName', 's.longitude', 's.latitude')
-
-  // devices grouped by id and day with counts of tests for each day
-  let devicesByDay = await devicesBase
-    .clone()
-    .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
-    .groupBy('dayDate') // additional group by 'day'
     .select(
-      knex.raw(
-        `
-        CASE
-        WHEN 
-          ifnull(convert_tz(r.endedOn, '+00:00', tz.timeZone), r.endedOn) IS NULL 
-        THEN NULL
-        ELSE DATE_FORMAT(
-          ifnull(convert_tz(r.endedOn, '+00:00', tz.timeZone), r.endedOn),
-          '%Y-%m-%d'
-        )
-        END as dayDate
-        `
-      ),
+      'd.id',
+      'd.name',
+      'd.shortName',
+      's.longitude',
+      's.latitude',
       knex.raw('COUNT(r.id) as totalResults')
+    )
+
+  const deviceIds = uniq(devices.map(({ id }) => id))
+
+  let devicesByDay = await knex('Device as d')
+    .leftJoin('Result as r', joinQuery => {
+      joinQuery
+        .on('d.id', 'r.deviceId')
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
+    })
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+    })
+    .whereIn('d.id', deviceIds)
+    .groupBy('d.id', 'dayDate')
+    .select(
+      'd.id',
+      knex.raw('COUNT(r.id) as totalResults'),
+      knex.raw(`DATE_FORMAT(r.endedOn, '%Y-%m-%d') as dayDate`)
     )
   devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
 
@@ -186,13 +185,13 @@ async function deviceStatusOverTime(request) {
         totalResults,
       })
     })
-    data = orderBy(data, ['name'])
 
     data.push({
       ...device,
       maintenanceStatusHistory,
     })
   })
+  data = orderBy(data, ['name'])
 
   return { ok: true, data }
 }
