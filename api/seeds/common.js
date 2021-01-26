@@ -829,6 +829,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
         'Invalid',
         'NoResult',
         'Error',
+        'PresumptivePositive',
       ],
       'COVID-19',
       'resultCategoryCovid19'
@@ -953,7 +954,7 @@ async function upsertStatesAndLgas(knex, countryId, states) {
 }
 
 // adds the categories (array of externalIds) to the given assayId
-// safe to execute multiple times - will only add new entires
+// safe to execute multiple times - will only add new entries
 async function upsertAssayResultCategories(knex, assayId, categories) {
   await Promise.all(
     _.map(categories || [], async category => {

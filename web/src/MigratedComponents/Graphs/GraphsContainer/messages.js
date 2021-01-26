@@ -17,6 +17,14 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsCovidGenderRecoveryRates',
     defaultMessage: 'Recovery Rates by Gender',
   },
+  clinicalIndicatorsCovidTitle: {
+    id: 'pages.Status.clinicalIndicatorsCovidTitle.title',
+    defaultMessage: 'COVID Results',
+  },
+  clinicalIndicatorsCovidPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsCovidPieLegend',
+    defaultMessage: 'Average Monthly Positivity Rate',
+  },
   clinicalIndicatorsVLTitle: {
     id: 'pages.Status.clinicalIndicatorsVL.title',
     defaultMessage: 'VL Results',
