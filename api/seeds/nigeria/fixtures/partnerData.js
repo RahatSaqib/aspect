@@ -5,4 +5,5 @@ module.exports = {
   partnerAbbreviation: 'NG',
   adminUserName: 'admin',
   adminPassword: 'bC2B04ABra',
+  defaultPassword: 'azD45r'
 }
