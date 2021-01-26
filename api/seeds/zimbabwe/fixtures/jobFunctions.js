@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const {
   admin,
   clinician,
@@ -10,10 +9,11 @@ const {
   labUser,
   regionalOfficer,
   systemOne,
+  mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  _.merge({}, admin, {
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'account',
@@ -73,7 +73,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, clinician, {
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'account',
@@ -145,7 +145,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, donor, {
+  mergeJobFunctions(donor, {
     permissions: [
       {
         module: 'account',
@@ -173,7 +173,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, labUser, {
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'account',
@@ -229,7 +229,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, ntp, {
+  mergeJobFunctions(ntp, {
     permissions: [
       {
         module: 'account',
@@ -269,7 +269,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, ntpNoResults, {
+  mergeJobFunctions(ntpNoResults, {
     permissions: [
       {
         module: 'account',
@@ -305,7 +305,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, regionalOfficer, {
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'account',
@@ -362,7 +362,7 @@ module.exports = [
     ],
   }),
   systemOne,
-  _.merge({}, technician, {
+  mergeJobFunctions(technician, {
     permissions: [
       {
         module: 'account',
@@ -398,7 +398,7 @@ module.exports = [
       },
     ],
   }),
-  _.merge({}, deviceMaker, {
+  mergeJobFunctions(deviceMaker, {
     permissions: [
       {
         module: 'account',
