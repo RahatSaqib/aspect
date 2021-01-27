@@ -2,40 +2,34 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
 
-const { sites } = require('./fixtures/sites.json')
-const { insertSites } = require('../utils')
-const contacts = require('./fixtures/contacts.json')
-const partnerData = require('./fixtures/partnerData')
-const upsertContacts = require('../common/upsert_contacts')
-
 async function seed(knex) {
   const devicesClinics = [{
     hostId: 'State Hospital Iwo',
-    defaultReportableSiteId: 2604
+    defaultReportableSiteExternalId: 2604
   },
   {
     hostId: 'GH, Ede',
-    defaultReportableSiteId: 2609
+    defaultReportableSiteExternalId: 2609
   },
   {
     hostId: 'Baptist Hospital, Ej',
-    defaultReportableSiteId: 2612
+    defaultReportableSiteExternalId: 2612
   },
   {
     hostId: 'Baptist Hospital, Ej',
-    defaultReportableSiteId: 2612
+    defaultReportableSiteExternalId: 2612
   },
   {
     hostId: 'SH Ilesa',
-    defaultReportableSiteId: 2623
+    defaultReportableSiteExternalId: 2623
   },
   {
     hostId: 'STATE HOSPITAL IKIRE',
-    defaultReportableSiteId: 2626
+    defaultReportableSiteExternalId: 2626
   },
   {
     hostId: 'SH Asubiaro',
-    defaultReportableSiteId: 2627
+    defaultReportableSiteExternalId: 2627
   },
   {
     hostId: 'PHC Oke Baale Oshogo',
@@ -52,7 +46,7 @@ async function seed(knex) {
   ]
 
   await Promise.each(devicesClinics, async ({ hostId, defaultReportableSiteExternalId }) => {
-    const { id: defaultReportableSiteId } = await knex('Site').where({ externalId: defaultReportableSiteExternalId }).first()
+    const { id: defaultReportableSiteId } = (await knex('Site').where({ externalId: defaultReportableSiteExternalId }).first() || { })
     await knex('Device').where({ hostId }).update({ defaultReportableSiteId })
   })
 }
