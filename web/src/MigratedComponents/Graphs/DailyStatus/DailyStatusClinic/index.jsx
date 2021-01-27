@@ -28,17 +28,19 @@ const DailyStatusClinic = ({
       <div className={cssClasses('clinic__dayrow')}>
         {data.map(
           ({
+            daysInSameStatus,
             isWeekend,
             maintenanceStatusI18nKey,
             maintenanceStatusName,
-            daysInSameStatus,
+            totalResults,
           }) => (
             <DailyStatusClinicDay
               consts={consts}
               daysInSameStatus={daysInSameStatus}
               isWeekend={isWeekend}
-              maintenanceStatusName={maintenanceStatusName}
               maintenanceStatusI18nKey={maintenanceStatusI18nKey}
+              maintenanceStatusName={maintenanceStatusName}
+              totalResults={totalResults}
               statusses={statusses}
             />
           )
