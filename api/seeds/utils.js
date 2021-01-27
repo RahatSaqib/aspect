@@ -2846,11 +2846,6 @@ async function seedJobFunctionsAndUsersForOperationalData(
   )
 
   const jobFunctionsById = await allJobFunctionToId()
-  const jobFunctionIdDeviceMaker = jobFunctionsById.deviceMaker
-  const jobFunctionIdNtp = jobFunctionsById.ntp
-  const jobFunctionIdTechnician = jobFunctionsById.technician
-  const jobFunctionIdDonor = jobFunctionsById.donor
-
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -2864,14 +2859,14 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
   const jobIdCepheid = await initJob(
     personIds.cepheid,
-    jobFunctionIdDeviceMaker
+    jobFunctionsById.deviceMaker
   )
-  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdNtp)
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionsById.ntp)
   const jobIdTechnician = await initJob(
     personIds.technician,
-    jobFunctionIdTechnician
+    jobFunctionsById.technician
   )
-  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionIdDonor)
+  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionsById.donor)
 
   // -------------------------------------------
   // Constrain jobs by context
@@ -2890,12 +2885,10 @@ async function seedJobFunctionsAndUsersForOperationalData(
   return {
     userIds,
     personIds,
-
-    jobFunctionIdDeviceMaker,
-    jobFunctionIdNtp,
-    jobFunctionIdTechnician,
-    jobFunctionIdDonor,
-
+    jobFunctionIdDeviceMaker: jobFunctionsById.deviceMaker,
+    jobFunctionIdNtp: jobFunctionsById.ntp,
+    jobFunctionIdTechnician: jobFunctionsById.technician,
+    jobFunctionIdDonor: jobFunctionsById.donor,
     jobIdCepheid,
     jobIdNtp,
     jobIdTechnician,

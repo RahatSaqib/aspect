@@ -10,6 +10,7 @@ const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json
 const labClinic = require('./fixtures/labClinic.json')
 const { baseGxAlertMigration, seedLabClinicFixture } = require('../common')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
+const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const migrationSeededData = await baseGxAlertMigration(
@@ -27,7 +28,8 @@ async function seed(knex) {
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    partnerData
   )
   await seedAbbottM2000AndAssays(knex)
 
