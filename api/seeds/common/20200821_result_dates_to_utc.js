@@ -1,7 +1,7 @@
 const setupPaginator = require('../../src/shared/knex-paginator')
 
 const MAX_ROWS_PER_UPDATE = 1000
-
+const MAX_ROWS_PER_BATCH = 10001
 async function seed(knex) {
   setupPaginator(knex)
   const [{ mySqlTimezoneTablesMissing }] = await knex.select(
@@ -28,8 +28,11 @@ async function seed(knex) {
     .first()
 
   let currentMinValue = minResultId
-  const updateQueries = []
-  while (currentMinValue < maxResultId) {
+  let updateQueries = []
+  while (
+    currentMinValue < maxResultId &&
+    currentMinValue % (minResultId + MAX_ROWS_PER_BATCH) !== 0
+  ) {
     updateQueries.push(
       getResultDateUpdates(
         knex,
@@ -39,8 +42,15 @@ async function seed(knex) {
     )
     currentMinValue += MAX_ROWS_PER_UPDATE
   }
+
+  if (updateQueries.length !== 0) await Promise.all(updateQueries)
+
   currentMinValue = minSampleId
-  while (currentMinValue < maxSampleId) {
+  updateQueries = []
+  while (
+    currentMinValue < maxSampleId &&
+    currentMinValue % (minSampleId + MAX_ROWS_PER_BATCH) !== 0
+  ) {
     updateQueries.push(
       getSampleDateUpdates(
         knex,
@@ -50,7 +60,7 @@ async function seed(knex) {
     )
     currentMinValue += MAX_ROWS_PER_UPDATE
   }
-  if (updateQueries.length === 0) await Promise.all(updateQueries)
+  if (updateQueries.length !== 0) await Promise.all(updateQueries)
 }
 
 async function getResultDateUpdates(knex, minValue, maxValue) {
@@ -74,7 +84,7 @@ async function getResultDateUpdates(knex, minValue, maxValue) {
                     countrytz.timezone),
             'UTC'), r.startedOn)`),
     })
-    .where('r.id', '>=', minValue)
+    .where('r.id', '>', minValue)
     .andWhere('r.id', '<=', maxValue)
 }
 
@@ -95,7 +105,7 @@ async function getSampleDateUpdates(knex, minValue, maxValue) {
                     countrytz.timezone),
             'UTC'), sm.collectedOn)`),
     })
-    .where('sm.id', '>=', minValue)
+    .where('sm.id', '>', minValue)
     .andWhere('sm.id', '<=', maxValue)
 }
 
