@@ -1,8 +1,10 @@
-const { labManager } = require('../../fixtures/jobFunctionBase')
+const {
+  labManager,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...labManager,
+  mergeJobFunctions(labManager, {
     permissions: [
       {
         module: 'dashboard',
@@ -69,5 +71,5 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
 ]

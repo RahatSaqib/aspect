@@ -2,7 +2,6 @@ const _ = require('lodash')
 const { baseGxAlertMigration } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
 const jobFunctionsFixture = require('./fixtures/jobFunctions')
-
 const { diseaseToId } = require('../../../src/shared/dictionary')
 
 module.exports = async function (
@@ -66,6 +65,7 @@ module.exports = async function (
       geneXpertAssayExternalIds,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    { fixtures: { jobFunctions: jobFunctionsFixture } }
   )
 }
