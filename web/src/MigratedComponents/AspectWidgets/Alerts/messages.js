@@ -86,6 +86,10 @@ const valueRepresentations = defineMessages({
     id: 'widgetAlerts.percentageOfDevicesWithUnusedModules',
     defaultMessage: 'percentage of devices with unused modules',
   },
+  averageDaysOfServiceInterruption: {
+    id: 'widgetAlerts.averageDaysOfServiceInterruption',
+    defaultMessage: 'percentage of devices service interruption',
+  },
 })
 
 const format = (
