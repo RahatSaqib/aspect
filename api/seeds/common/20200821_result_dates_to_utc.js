@@ -1,4 +1,9 @@
+const setupPaginator = require('../../src/shared/knex-paginator')
+
+const MAX_ROWS_PER_UPDATE = 1000
+
 async function seed(knex) {
+  setupPaginator(knex)
   const [{ mySqlTimezoneTablesMissing }] = await knex.select(
     knex.raw(
       "ISNULL(CONVERT_TZ(now(), 'EST', 'UTC')) as mySqlTimezoneTablesMissing"
@@ -9,14 +14,47 @@ async function seed(knex) {
       "TimeZone tables weren't configured on the MySql server. For more information, check the next link: https://dev.mysql.com/downloads/timezones.html."
     )
 
-  const resultDateUpdates = await getResultDateUpdates(knex)
-  await Promise.all(resultDateUpdates)
-  const sampleDateUpdates = await getSampleDateUpdates(knex)
-  await Promise.all(sampleDateUpdates)
+  const { minId: minResultId = 0, maxId: maxResultId = 0 } = await knex(
+    'Result'
+  )
+    .max('id as maxId')
+    .min('id as minId')
+    .first()
+  const { minId: minSampleId = 0, maxId: maxSampleId = 0 } = await knex(
+    'Sample'
+  )
+    .max('id as maxId')
+    .min('id as minId')
+    .first()
+
+  let currentMinValue = minResultId
+  const updateQueries = []
+  while (currentMinValue < maxResultId) {
+    updateQueries.push(
+      getResultDateUpdates(
+        knex,
+        currentMinValue,
+        currentMinValue + MAX_ROWS_PER_UPDATE
+      )
+    )
+    currentMinValue += MAX_ROWS_PER_UPDATE
+  }
+  currentMinValue = minSampleId
+  while (currentMinValue < maxSampleId) {
+    updateQueries.push(
+      getSampleDateUpdates(
+        knex,
+        currentMinValue,
+        currentMinValue + MAX_ROWS_PER_UPDATE
+      )
+    )
+    currentMinValue += MAX_ROWS_PER_UPDATE
+  }
+  if (updateQueries.length === 0) await Promise.all(updateQueries)
 }
 
-async function getResultDateUpdates(knex) {
-  const dates = await knex('Result as r')
+async function getResultDateUpdates(knex, minValue, maxValue) {
+  return knex('Result as r')
     .innerJoin('Site as s', 'r.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -24,27 +62,24 @@ async function getResultDateUpdates(knex) {
     .leftJoin('TimeZone as sitetz', 's.timezoneId', 'sitetz.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
-    .select([
-      'r.id',
-      knex.raw(`IFNULL(CONVERT_TZ(r.endedOn,
+    .update({
+      'r.endedOn': knex.raw(`IFNULL(CONVERT_TZ(r.endedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
-            'UTC'), r.endedOn) as endedOn`),
-      knex.raw(`IFNULL(CONVERT_TZ(r.startedOn,
+            'UTC'), r.endedOn)`),
+      'r.startedOn': knex.raw(`IFNULL(CONVERT_TZ(r.startedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
-            'UTC'), r.startedOn) as startedOn
-        `),
-    ])
-  return dates.map(({ id, ...dates }) =>
-    knex('Result').where({ id }).update(dates)
-  )
+            'UTC'), r.startedOn)`),
+    })
+    .where('r.id', '>=', minValue)
+    .andWhere('r.id', '<=', maxValue)
 }
 
-async function getSampleDateUpdates(knex) {
-  const dates = await knex('Sample as sm')
+async function getSampleDateUpdates(knex, minValue, maxValue) {
+  return knex('Sample as sm')
     .innerJoin('Result as r', 'sm.id', 'r.sampleId')
     .innerJoin('Site as s', 'sm.originSiteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
@@ -53,17 +88,15 @@ async function getSampleDateUpdates(knex) {
     .leftJoin('TimeZone as sitetz', 's.timezoneId', 'sitetz.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
-    .select([
-      'sm.id',
-      knex.raw(`IFNULL(CONVERT_TZ(sm.collectedOn,
+    .update({
+      'sm.collectedOn': knex.raw(`IFNULL(CONVERT_TZ(sm.collectedOn,
             COALESCE(devicetz.timezone,
                     sitetz.timezone,
                     countrytz.timezone),
-            'UTC'), sm.collectedOn) as collectedOn`),
-    ])
-  return dates.map(({ id, ...dates }) =>
-    knex('Sample').where({ id }).update(dates)
-  )
+            'UTC'), sm.collectedOn)`),
+    })
+    .where('sm.id', '>=', minValue)
+    .andWhere('sm.id', '<=', maxValue)
 }
 
 module.exports = seed
