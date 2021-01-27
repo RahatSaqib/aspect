@@ -1759,7 +1759,7 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
 
         if (!permissionId)
           throw new Error(
-            `Unexistant permission ${permission.module}:${permission.activity}`
+            `Permission ${permission.module}:${permission.activity} doesn't exist and therefore cannot be assigned to a job function.`
           )
 
         return permissionId
