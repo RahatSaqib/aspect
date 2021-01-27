@@ -90,6 +90,10 @@ const valueRepresentations = defineMessages({
     id: 'widgetAlerts.averageDaysOfServiceInterruption',
     defaultMessage: 'percentage of devices service interruption',
   },
+  defaultMessage: {
+    id: 'widgetAlerts.defaultMessage',
+    defaultMessage: 'indicator',
+  },
 })
 
 const format = (
@@ -115,7 +119,9 @@ const format = (
       break
   }
 
-  const representing = formatFunc(valueRepresentations[representingKey])
+  const representing = formatFunc(
+    valueRepresentations[representingKey] || valueRepresentations.defaultMessage
+  )
 
   return formatFunc(messagesByOperators[whenIs], {
     representing,
