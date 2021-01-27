@@ -9,11 +9,11 @@ const {
   labUser,
   regionalOfficer,
   systemOne,
+  mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...admin,
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'account',
@@ -72,9 +72,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...clinician,
+  }),
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'account',
@@ -145,9 +144,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...donor,
+  }),
+  mergeJobFunctions(donor, {
     permissions: [
       {
         module: 'account',
@@ -174,9 +172,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...labUser,
+  }),
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'account',
@@ -231,9 +228,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...ntp,
+  }),
+  mergeJobFunctions(ntp, {
     permissions: [
       {
         module: 'account',
@@ -272,9 +268,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...ntpNoResults,
+  }),
+  mergeJobFunctions(ntpNoResults, {
     permissions: [
       {
         module: 'account',
@@ -309,9 +304,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...regionalOfficer,
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'account',
@@ -366,10 +360,9 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
   systemOne,
-  {
-    ...technician,
+  mergeJobFunctions(technician, {
     permissions: [
       {
         module: 'account',
@@ -404,9 +397,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...deviceMaker,
+  }),
+  mergeJobFunctions(deviceMaker, {
     permissions: [
       {
         module: 'account',
@@ -433,5 +425,5 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
 ]

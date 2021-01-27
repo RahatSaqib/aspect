@@ -3,11 +3,11 @@ const {
   clinician,
   labUser,
   regionalOfficer,
+  mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...admin,
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'assay',
@@ -90,9 +90,8 @@ module.exports = [
         activity: 'edit',
       },
     ],
-  },
-  {
-    ...regionalOfficer,
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'assay',
@@ -163,9 +162,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...labUser,
+  }),
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'assay',
@@ -236,9 +234,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...clinician,
+  }),
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'assay',
@@ -309,5 +306,5 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
 ]

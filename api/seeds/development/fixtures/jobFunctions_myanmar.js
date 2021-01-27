@@ -2,11 +2,11 @@ const {
   admin,
   labUser,
   regionalOfficer,
+  mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...admin,
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'dashboard',
@@ -81,9 +81,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...labUser,
+  }),
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'dashboard',
@@ -134,9 +133,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...regionalOfficer,
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'dashboard',
@@ -191,5 +189,5 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
 ]
