@@ -1714,13 +1714,11 @@ async function baseGxAlertMigration(
 
 async function removeJobFunctions(knex, jobFunctionsToDelete) {
   await Promise.each(jobFunctionsToDelete, async ({ id }) => {
-    const jobs = await knex('Job').where('jobFunctionId', id)
-    if (jobs.length > 0) {
-      throw new Error(
-        `Error while trying to remove Job the JobFunctionId = ${id}. You should remove the jobs manually first.`
-      )
+    const jobIds = await knex('Job').where('jobFunctionId', id).pluck('id')
+    if (jobIds.length > 0) {
+      await knex('JobContext').whereIn('jobId', jobIds).delete()
+      await knex('Job').whereIn('id', jobIds).delete()
     }
-
     await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
     await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
     await knex('JobFunctionReport').where('jobFunctionId', id).delete()
