@@ -52,9 +52,7 @@ export default ({
       {resultCategoryGroups
         ? resultCategoryGroups.map(({ externalId, name }) => (
             <MenuItem key={externalId} value={externalId}>
-              <div className={cssClasses('Control__inner')}>
-                {name} To make it longer and longer to look longer
-              </div>
+              <div className={cssClasses('Control__inner')}>{name}</div>
             </MenuItem>
           ))
         : null}
