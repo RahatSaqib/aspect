@@ -1,6 +1,6 @@
 const chai = require('chai')
 
-const { assert } = chai
+const { assert, expect } = chai
 const subDays = require('date-fns/subDays')
 const formatISO = require('date-fns/formatISO')
 const isValid = require('date-fns/isValid')
@@ -131,12 +131,19 @@ describe('Maintenance', () => {
           assert.equal(tamagotchi.longitude, 5)
           assert.isAtLeast(tamagotchi.totalResults, 1)
           const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
-          assert.equal(
-            tamagotchiLastStatus.maintenanceStatusExternalId,
-            'active'
+          expect(tamagotchiLastStatus).to.have.containSubset(
+            tamagotchiLastStatus.totalResults > 0
+              ? {
+                  maintenanceStatusExternalId: 'active',
+                  maintenanceStatusI18nKey: 'active',
+                  maintenanceStatusName: 'Active',
+                }
+              : {
+                  maintenanceStatusExternalId: 'inactiveNoResultsReported',
+                  maintenanceStatusI18nKey: 'inactiveNoResultsReported',
+                  maintenanceStatusName: 'No Results Reported',
+                }
           )
-          assert.equal(tamagotchiLastStatus.maintenanceStatusI18nKey, 'active')
-          assert.equal(tamagotchiLastStatus.maintenanceStatusName, 'Active')
           assert.isBoolean(tamagotchiLastStatus.isWeekend)
           assert.isNumber(tamagotchiLastStatus.weekNumber)
           assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))

@@ -2,6 +2,7 @@ const groupBy = require('lodash/groupBy')
 const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
+const uniq = require('lodash/uniq')
 const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const isWeekend = require('date-fns/isWeekend')
@@ -13,6 +14,7 @@ const {
   getDateSubstring,
   startOfDayUtc,
 } = require('../shared/date')
+const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 
 async function deviceStatusOverTime(request) {
   const { auth } = request
@@ -23,7 +25,24 @@ async function deviceStatusOverTime(request) {
 
   const days = getArrayOfDaysInRange(minDate, maxDate)
 
-  const deviceData = await knex('Device as d')
+  // helpers
+  const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+  const getGroupName = (deviceId, day) => `${deviceId}-${day}`
+  const groupListBy = (items, deviceIdPropName, datePropName) =>
+    groupBy(items, item =>
+      getGroupName(item[deviceIdPropName], item[datePropName])
+    )
+  const inactiveNoResultsReported = await knex('DeviceMaintenanceStatus')
+    .where('id', deviceMaintenanceStatuses.inactiveNoResultsReported)
+    .select(
+      'name as maintenanceStatusName',
+      'i18nKey as maintenanceStatusI18nKey',
+      'externalId as maintenanceStatusExternalId'
+    )
+    .first()
+
+  // generic query for devices grouped by id with counts of tests
+  const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
@@ -45,16 +64,37 @@ async function deviceStatusOverTime(request) {
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
-    .orderBy('d.name')
-    .select([
+    .select(
       'd.id',
       'd.name',
       'd.shortName',
       's.longitude',
       's.latitude',
-      knex.raw('COUNT(r.id) as totalResults'),
-    ])
+      knex.raw('COUNT(r.id) as totalResults')
+    )
 
+  const deviceIds = uniq(devices.map(({ id }) => id))
+
+  let devicesByDay = await knex('Device as d')
+    .leftJoin('Result as r', joinQuery => {
+      joinQuery
+        .on('d.id', 'r.deviceId')
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
+    })
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+    })
+    .whereIn('d.id', deviceIds)
+    .groupBy('d.id', 'dayDate')
+    .select(
+      'd.id',
+      knex.raw('COUNT(r.id) as totalResults'),
+      knex.raw(`DATE_FORMAT(r.endedOn, '%Y-%m-%d') as dayDate`)
+    )
+  devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
+
+  // maintenance statuses grouped by device id and day
   let statusData = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -101,44 +141,57 @@ async function deviceStatusOverTime(request) {
     .groupBy(['d.id', 'dmsl.day'])
     .select([
       'd.id as deviceId',
-      'dmsl.day',
+      knex.raw(`DATE_FORMAT(dmsl.day, '%Y-%m-%d') as day`),
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
     ])
-
-  statusData = groupBy(
-    statusData,
-    statusDataItem =>
-      statusDataItem.deviceId +
-      getDateSubstring(statusDataItem.day.toISOString())
-  )
+  statusData = groupListBy(statusData, 'deviceId', 'day')
 
   let data = []
-  deviceData.forEach(device => {
+  devices.forEach(device => {
     const maintenanceStatusHistory = []
-
     days.forEach(day => {
       const onlyDate = getDateSubstring(day.toISOString())
+      const groupName = getGroupName(device.id, onlyDate)
 
-      let status = {}
-      if (statusData[device.id + onlyDate])
-        [status] = statusData[device.id + onlyDate]
+      const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
+
+      let [status] = statusData[groupName] || [{}]
+      if (status) {
+        status = omit(status, 'deviceId')
+
+        if (
+          // when device has no tests on this day ...
+          totalResults === 0 &&
+          // ... and it's current maintenance status for the day is active ...
+          ['active', 'reportedActive'].includes(
+            status.maintenanceStatusExternalId
+          )
+        ) {
+          // ... then change it's status to 'No Results Reported' for this day
+          status = {
+            ...status,
+            ...inactiveNoResultsReported,
+          }
+        }
+      }
 
       maintenanceStatusHistory.push({
-        ...omit(status, 'deviceId'),
+        ...status,
         day: onlyDate,
         isWeekend: isWeekend(parseISO(onlyDate)),
         weekNumber: getISOWeek(parseISO(onlyDate)),
+        totalResults,
       })
     })
-    data = orderBy(data, ['name'])
 
     data.push({
       ...device,
       maintenanceStatusHistory,
     })
   })
+  data = orderBy(data, ['name'])
 
   return { ok: true, data }
 }
