@@ -637,22 +637,6 @@ export const FiltersPanel = ({
             </div>
           )}
 
-          {config.assayAndResultCategory && !config.onlyDisease && (
-            <div className={cssClasses('Control')}>
-              <AssaySelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.assayId}
-                onAssayChange={onAssayChange}
-                diseaseId={filters.diseaseId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectAssay)}
-                floatingLabelText={intl.formatMessage(messages.assay)}
-                intl={intl}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-
           {!assayResultCategory2Label &&
             config.assayAndResultCategory &&
             !config.onlyDisease && (
@@ -674,7 +658,7 @@ export const FiltersPanel = ({
           {assayResultCategory2Label &&
             config.assayAndResultCategory &&
             !config.onlyDisease && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control--wide')}>
                 <ResultCategoryGroupSelectField
                   allItemText={intl.formatMessage(messages.all)}
                   disabled={!filters.assayId}
