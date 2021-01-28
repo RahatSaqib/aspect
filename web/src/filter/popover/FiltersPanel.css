@@ -88,6 +88,25 @@
   padding: 0 10px;
 }
 
+.Control--wide {
+  max-width: 33%;
+}
+
+.Control--wide div {
+  width: calc(100% - 3px);
+}
+
+.Control--wide div:focus {
+  padding-right: 8px;
+}
+
+.Control .Control__inner {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
 .checkbox__container {
   padding: 10px 0 0 0;
 }
