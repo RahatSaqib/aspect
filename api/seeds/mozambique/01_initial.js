@@ -22,6 +22,7 @@ const {
   setCapacityForExistingDevices,
   updateReportableInResultCategoryAssay,
 } = require('../utils')
+const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const { patientDataSchema } = await baseGxAlertMigration(
@@ -39,7 +40,8 @@ async function seed(knex) {
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    partnerData
   )
   await ensureResultTreatmentStatuses(knex)
   await updateReportableInResultCategoryAssay(knex)

@@ -1,8 +1,11 @@
-const { admin, labAdmin } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  labAdmin,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...admin,
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'demo',
@@ -65,9 +68,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...labAdmin,
+  }),
+  mergeJobFunctions(labAdmin, {
     permissions: [
       {
         module: 'device',
@@ -90,5 +92,5 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
 ]
