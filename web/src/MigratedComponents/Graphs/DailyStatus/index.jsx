@@ -148,9 +148,9 @@ const DailyStatus = () => {
           />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
           {devicesDaily.map(
-            ({ name, maintenanceStatusHistory, totalResults }) => (
+            ({ name, shortName, maintenanceStatusHistory, totalResults }) => (
               <DailyStatusClinic
-                name={name}
+                name={shortName || name}
                 data={maintenanceStatusHistory}
                 total={totalResults}
                 statusses={visibleStatuses}

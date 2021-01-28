@@ -14,6 +14,7 @@ const {
   seedLabClinicFixture,
   upsertDashboardWidgets,
 } = require('../common')
+const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const migrationSeededData = await baseGxAlertMigration(
@@ -34,7 +35,8 @@ async function seed(knex) {
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    partnerData
   )
 
   await seedLabClinicFixture(

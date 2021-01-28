@@ -35,7 +35,8 @@ async function seed(knex) {
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    partnerData
   )
 
   const { id: partnerId } = await knex('Partner')

@@ -11,10 +11,13 @@ import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 function groupDateRanges(data) {
   const output = []
-  const dateFormat = 'd/M'
+  const dateFormat = 'MMM d'
   map(data, (v, k) => {
     const min = format(first(v), dateFormat)
-    const max = v.length > 1 ? format(last(v), dateFormat) : false
+    let max = v.length > 1 ? format(last(v), dateFormat) : false
+    if (max.substring(0, 3) === min.substring(0, 3)) {
+      max = max.substring(4)
+    }
     return output.push({ week: k, min, max, size: v.length })
   })
   return output

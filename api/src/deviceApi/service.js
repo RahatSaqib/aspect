@@ -660,17 +660,23 @@ async function createDeviceApiContext(
       'c.abbreviation as countryAbbreviation'
     )
   if (handlerOptions.transformInitialPayload && request.params.pluginName) {
+    logger.debug('Set up transforminitialpayload plugin function', {
+      reLabel: 'deviceApi:createDeviceApiContext',
+    })
     const transformInitialPayload = await loadPlugin(
       [request.params.pluginName],
       'transformInitialPayload'
     )
 
-    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation)
+    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation) {
+      logger.debug('Transforming the payload base on the function plugin', {
+        reLabel: 'deviceApi:createDeviceApiContext',
+      })
       request.payload = await transformInitialPayload(
         originalRequest,
         existingDeviceAndData.countryAbbreviation
       )
-    else request.payload = await transformInitialPayload(originalRequest)
+    } else request.payload = await transformInitialPayload(originalRequest)
   }
 
   let device = null
@@ -895,9 +901,12 @@ async function onResultUpdated(
   if (!resultId) {
     throw new Error('Must specify resultId in Action')
   }
-  logger.debug('onResultUpdated inserting in DeviceLog table', {
-    reLabel: 'deviceApi:onResultUpdated',
-  })
+  logger.debug(
+    `onResultUpdated inserting in DeviceLog table for resultId:${resultId}`,
+    {
+      reLabel: 'deviceApi:onResultUpdated',
+    }
+  )
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
@@ -938,9 +947,14 @@ async function onResultLogged(action, context) {
           'p.plugin as partnerPluginName',
           'dt.plugin as deviceTypePluginName'
         )) || {}
-    logger.debug('onResultLogged locating the plugin function', {
-      reLabel: 'deviceApi:onResultLogged',
-    })
+    logger.debug(
+      [
+        `onResultLogged locating the plugin function on resultId:${action.resultId} for partnerPlugin:${partnerPluginName} or devicePlugin:${deviceTypePluginName}`,
+      ],
+      {
+        reLabel: 'deviceApi:onResultLogged',
+      }
+    )
     const pluginOnResultLogged = await loadPlugin(
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'

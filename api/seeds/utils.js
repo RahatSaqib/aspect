@@ -751,7 +751,7 @@ async function seedIssueEventTriggersForPartner(
       issueType,
       issueEventStatus,
       triggerConditions,
-      filterIssueCondition,
+      filterIssueCondition = null,
     }) => {
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
@@ -760,7 +760,13 @@ async function seedIssueEventTriggersForPartner(
           issueEventStatusId: issueEventStatuses[issueEventStatus].id,
         }
         const existingTrigger = await knex('IssueEventTrigger')
-          .where(triggerData)
+          .where({
+            ...triggerData,
+            triggerConditions: JSON.stringify(triggerConditions),
+            filterIssueCondition: filterIssueCondition
+              ? JSON.stringify(filterIssueCondition)
+              : null,
+          })
           .first('id')
         if (existingTrigger == null) {
           await upsertSingle(
@@ -2840,11 +2846,6 @@ async function seedJobFunctionsAndUsersForOperationalData(
   )
 
   const jobFunctionsById = await allJobFunctionToId()
-  const jobFunctionIdDeviceMaker = jobFunctionsById.deviceMaker
-  const jobFunctionIdNtp = jobFunctionsById.ntp
-  const jobFunctionIdTechnician = jobFunctionsById.technician
-  const jobFunctionIdDonor = jobFunctionsById.donor
-
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -2858,14 +2859,14 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
   const jobIdCepheid = await initJob(
     personIds.cepheid,
-    jobFunctionIdDeviceMaker
+    jobFunctionsById.deviceMaker
   )
-  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdNtp)
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionsById.ntp)
   const jobIdTechnician = await initJob(
     personIds.technician,
-    jobFunctionIdTechnician
+    jobFunctionsById.technician
   )
-  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionIdDonor)
+  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionsById.donor)
 
   // -------------------------------------------
   // Constrain jobs by context
@@ -2884,12 +2885,10 @@ async function seedJobFunctionsAndUsersForOperationalData(
   return {
     userIds,
     personIds,
-
-    jobFunctionIdDeviceMaker,
-    jobFunctionIdNtp,
-    jobFunctionIdTechnician,
-    jobFunctionIdDonor,
-
+    jobFunctionIdDeviceMaker: jobFunctionsById.deviceMaker,
+    jobFunctionIdNtp: jobFunctionsById.ntp,
+    jobFunctionIdTechnician: jobFunctionsById.technician,
+    jobFunctionIdDonor: jobFunctionsById.donor,
     jobIdCepheid,
     jobIdNtp,
     jobIdTechnician,
@@ -3029,7 +3028,12 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function seedIssueType(knex, issueType, { userName }) {
+async function seedIssueType(
+  knex,
+  issueType,
+  { userName },
+  issueEventTrigger = {}
+) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -3043,7 +3047,6 @@ async function seedIssueType(knex, issueType, { userName }) {
   }
 
   const issue = (await getBaseIssues(auditFields))[issueType]
-
   if (!issue) return
 
   // ------------------------------------------
@@ -3092,6 +3095,13 @@ async function seedIssueType(knex, issueType, { userName }) {
       defaultMessageTypeId: moduleMessageTypeId,
     }
   )
+  if (!_.isEmpty(issueEventTrigger))
+    await upsertSingle(
+      knex,
+      'IssueEventTrigger',
+      uniqueKeys.IssueEventTrigger,
+      issueEventTrigger
+    )
   return issueTypeId
 }
 
@@ -3202,19 +3212,26 @@ async function updateIssueNotificationTemplates(
   // now that we're done updating/deleting, drop any unused templates
   const mTypes = await knex('MessageType').select()
 
-  const alertTemplatesToDelete = _.map(mTypes, mt => mt.alertTemplateId || -1)
+  const alertTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.alertTemplateId || -1)
+  )
   await knex('AlertMessage')
     .whereNotIn('alertTemplateId', alertTemplatesToDelete)
     .del()
   await knex('AlertTemplate').whereNotIn('id', alertTemplatesToDelete).del()
 
-  const emailTemplatesToDelete = _.map(mTypes, mt => mt.emailTemplateId || -1)
+  const emailTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.emailTemplateId || -1)
+  )
   await knex('EmailMessage')
-    .whereNotIn('emailTemplateId', alertTemplatesToDelete)
+    .whereNotIn('emailTemplateId', emailTemplatesToDelete)
     .del()
+
   await knex('EmailTemplate').whereNotIn('id', emailTemplatesToDelete).del()
 
-  const smsTemplatesToDelete = _.map(mTypes, mt => mt.smsTemplateId || -1)
+  const smsTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.smsTemplateId || -1)
+  )
   await knex('SmsMessage')
     .whereNotIn('smsTemplateId', smsTemplatesToDelete)
     .del()

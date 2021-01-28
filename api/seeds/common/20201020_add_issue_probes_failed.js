@@ -12,12 +12,15 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.userId')
 
-  const issueType = await seedIssueType(knex, 'ProbeCheckFailed', {
+  const issueTypeModule = await seedIssueType(knex, 'ProbeCheckFailedModule', {
+    userName: 'admin',
+  })
+  const issueTypeLot = await seedIssueType(knex, 'ProbeCheckFailedLot', {
     userName: 'admin',
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['ProbeCheckFailed'],
+    issueTypeWhitelist: ['ProbeCheckFailedLot', 'ProbeCheckFailedModule'],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -26,8 +29,11 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeProbeCheckFailed = await knex('IssueType')
-    .where({ id: issueType })
+  const issueTypeProbeCheckFailedModule = await knex('IssueType')
+    .where({ id: issueTypeModule })
+    .first()
+  const issueTypeProbeCheckFailedLot = await knex('IssueType')
+    .where({ id: issueTypeLot })
     .first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
@@ -37,12 +43,21 @@ async function seed(knex) {
     .first('id as jobFunctionAdminId')
   await upsertNotificationTypes(knex, [
     {
-      issueTypeId: issueTypeProbeCheckFailed.id,
-      messageTypeId: issueTypeProbeCheckFailed.defaultMessageTypeId,
+      issueTypeId: issueTypeProbeCheckFailedModule.id,
+      messageTypeId: issueTypeProbeCheckFailedModule.defaultMessageTypeId,
       partnerId,
       jobFunctionId: jobFunctionAdminId,
       level: 1,
-      name: 'Probe Check Failed',
+      name: 'Probe Check Failed - Module',
+      ...auditFields,
+    },
+    {
+      issueTypeId: issueTypeProbeCheckFailedLot.id,
+      messageTypeId: issueTypeProbeCheckFailedLot.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: 'Probe Check Failed - Lot',
       ...auditFields,
     },
   ])

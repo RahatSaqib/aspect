@@ -1,8 +1,15 @@
 import React, { Fragment } from 'react'
+import { string, object, oneOfType } from 'prop-types'
 import { Link } from 'react-router-dom'
 import isObject from 'lodash/isObject'
 
 import { useUserIsPermitted } from '../../Hooks/RoutePermissions/index.jsx'
+
+/**
+ * The AspectLink component provides
+ * consistent method to link internally
+ * and externally
+ */
 
 const isURL = to => {
   if (!to) return false
@@ -43,6 +50,26 @@ const AspectLink = ({ to = '#', children, className, ...restProps }) => {
       ) : null}
     </Fragment>
   )
+}
+
+AspectLink.defaultProps = {
+  className: null,
+  to: '#',
+}
+
+AspectLink.propTypes = {
+  /**
+   Optional classname for the link
+  */
+  className: oneOfType([object, string]),
+  /**
+  React children of the link
+ */
+  children: oneOfType([object, string]).isRequired,
+  /**
+  Proposed URL for link component
+  */
+  to: string,
 }
 
 export default AspectLink
