@@ -27,7 +27,7 @@ async function seed(knex) {
         const lastPartnerId = _.sample(partners).id
         const lastCountryId = _.sample([1, 2, 3, 4])
         const timezone = _.sample([
-          'Central Africa Time',
+          'South Africa Standard Time',
           'W. Central Africa Standard Time',
           'Eastern Standard Time',
           'Myanmar Standard Time',

@@ -1,6 +1,29 @@
+const Promise = require('bluebird')
+const _ = require('lodash')
+const config = require('../src/config')
+// eslint-disable-next-line import/no-dynamic-require
+const geography = require(`..${config.seeds.directory.substring(
+  1
+)}fixtures/geography.json`)
+
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
+  await Promise.each(geography.countries, async country => {
+    const countryData = _.pick(country, [
+      'abbreviation',
+      'name',
+      'a3',
+      'culture',
+      'countryCode',
+      'timezone',
+      'portNumber',
+      'exportColumns',
+      'inventoryDaysThreshold',
+      'monthStartsOnDay',
+    ])
+    return knex('Country').update(countryData).where('a3', countryData.a3)
+  })
   const personsToUpdate = await knex('Person')
     .whereNotNull('timezone')
     .whereNotIn('timezone', knex.select('id').from('TimeZone'))
@@ -18,13 +41,13 @@ async function up(knex) {
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .whereIn('s.id', sitesToUpdate)
-    .update('s.timezoneId', 'c.timezone')
+    .update('s.timezoneId', knex.raw('c.timezone'))
 
-  await knex('Device as d')
+  const query = knex('Device as d')
     .join('Site as s', 'd.siteId', 's.id')
     .whereIn('d.id', devicesToUpdate)
-    .update('d.timezone', 's.timezoneid')
-
+    .update('d.timezone', knex.raw('s.timezoneid'))
+  await query
   await knex('Person as p')
     .join('Geography as g', 'p.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -32,6 +55,10 @@ async function up(knex) {
     .whereIn('s.id', personsToUpdate)
     .update('p.timezone', knex.raw('COALESCE(s.timezoneId,c.timezone)'))
 
+  await knex.schema.raw(`ALTER TABLE TimeZone MODIFY
+  id VARCHAR(100)
+    CHARACTER SET utf8
+    COLLATE utf8_general_ci;`)
   await knex.schema.alterTable('Device', devices => {
     devices
       .string('timezone', 100)
