@@ -9,12 +9,12 @@ const routes = [
     handler: asyncHandler(listResultCategoryGroupsForSelectList),
     config: {
       description: 'Result Category Group List',
-      notes: "List of result category groups external IDs and their result categories names concatenated",
+      notes:
+        'List of result category groups external IDs and their result categories names concatenated',
       auth: { scope: ['browse', 'result'] },
       validate: {
         query: {
-          assayId: Joi.number()
-            .description('The assay id'),
+          assayId: Joi.number().description('The assay id'),
         },
       },
     },
