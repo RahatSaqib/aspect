@@ -133,6 +133,8 @@ const messageQueuePlugin = {
 
 const plugins = [
   ...ravenPlugins,
+  // logging framework
+  require('./shared/hapi-logger'),
   require('@hapi/inert'), // eslint-disable-line import/order
   ...swaggerPlugins,
   // JWT for authentication in client API

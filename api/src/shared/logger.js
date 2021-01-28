@@ -43,7 +43,7 @@ const blacklistLabels = format((info, { labelsBlackList }) => {
 const getBaseFormat = (extraFormater, { labelsBlackList, labelsWhiteList }) =>
   combine(
     format.colorize(),
-    label({ label: 'Aspect api' }),
+    label({ label: 'aspect:api' }),
     relabel(),
     errors({ stack: true }),
     whiteListLabels({ labelsWhiteList }),
