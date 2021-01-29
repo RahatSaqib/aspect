@@ -7,7 +7,6 @@ async function up(knex) {
     timezone.string('name', 100).notNullable()
     timezone.string('timeZone', 100).notNullable()
     timezone.primary('id')
-    timezone.charset('utf8')
   })
 }
 

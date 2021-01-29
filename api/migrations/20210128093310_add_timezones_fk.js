@@ -35,11 +35,11 @@ async function up(knex) {
     .whereIn('s.id', sitesToUpdate)
     .update('s.timezoneId', knex.raw('c.timezone'))
 
-  const query = knex('Device as d')
+  await knex('Device as d')
     .join('Site as s', 'd.siteId', 's.id')
     .whereIn('d.id', devicesToUpdate)
     .update('d.timezone', knex.raw('s.timezoneid'))
-  await query
+
   await knex('Person as p')
     .join('Geography as g', 'p.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -51,6 +51,7 @@ async function up(knex) {
   id VARCHAR(100)
     CHARACTER SET utf8
     COLLATE utf8_general_ci;`)
+
   await knex.schema.alterTable('Device', devices => {
     devices
       .string('timezone', 100)
