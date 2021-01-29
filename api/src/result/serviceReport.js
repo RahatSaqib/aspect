@@ -49,11 +49,10 @@ const columnsDeviceErrorHistoryForAttachment = [
   { header: 'Instrument Serial Number', key: 'instrumentSerial' },
   { header: 'GX System Name', key: 'gxSystemName' },
   { header: 'GX Software Version', key: 'gxSoftwareVersion' },
-  { header: 'Instrument Gateway Serial Number', key: 'gatewaySerial' },
   { header: 'Module Position', key: 'moduleName' },
   { header: 'Module Serial Number', key: 'moduleSerial' },
   { header: 'Assay', key: 'assay' },
-  { header: 'Cartridge Type', key: 'cartridgeType' },
+  { header: 'Assay Version', key: 'assayVersion' },
   { header: 'Cartridge Lot', key: 'cartridgeLot' },
   { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
   { header: 'Operator ID', key: 'operatorId' },
@@ -331,79 +330,9 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       knex('DeviceOperation as do')
         .innerJoin('Device as d', 'do.deviceId', 'd.id')
         .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
-        // join to Result to get most recent Result entry for device (of any assay type)
-        .leftOuterJoin('Result as r', function () {
-          this.on('r.deviceId', 'do.deviceId').andOn(
-            'r.endedOn',
-            '<',
-            'do.startedOn'
-          )
-        })
-        // join again to Result to make sure we get latest entry for above join of alias 'r'
-        .leftOuterJoin('Result as rNewer', function () {
-          this.on('r.deviceId', 'rNewer.deviceId')
-            .andOn('rNewer.endedOn', '<', 'do.startedOn')
-            .andOn(function () {
-              this.on('r.endedOn', '<', 'rNewer.endedOn')
-              this.orOn(function () {
-                this.on('r.endedOn', '=', 'rNewer.endedOn').andOn(
-                  'r.id',
-                  '<',
-                  'rNewer.id'
-                )
-              })
-            })
-        })
-        /**
-         * join again to Result to get latest Result with defined moduleSerial
-         */
-        .leftOuterJoin('Result as rModuleSerial', function () {
-          // same deviceId
-          this.on('rModuleSerial.deviceId', 'do.deviceId')
-            .andOn('rModuleSerial.endedOn', '<=', 'do.startedOn')
-            /**
-             * same defined moduleName (if moduleName is undefined then join for moduleSerial
-             * makes no sense and we'll get 'rModuleSerial.moduleSerial = null' in SELECT)
-             */
-            .andOn(
-              knex.raw(regexDeviceOperationModuleName),
-              'rModuleSerial.moduleName'
-            )
-            /**
-             * moduleSerial should be defined -
-             * Notice that we do this and next JOIN for 'rModuleSerialNewer' exactly
-             * for this value 'rModuleSerial.moduleSerial', if any exists
-             */
-            .andOnNotNull('rModuleSerial.moduleSerial')
-        })
-        /**
-         * join again to Result to make sure we get latest entry for above join of alias 'rModuleSerial'
-         */
-        .leftOuterJoin('Result as rModuleSerialNewer', function () {
-          this.on('rModuleSerialNewer.deviceId', 'rModuleSerial.deviceId')
-            .andOn('rModuleSerialNewer.moduleName', 'rModuleSerial.moduleName')
-            .andOnNotNull('rModuleSerialNewer.moduleSerial')
-            .andOn('rModuleSerialNewer.endedOn', '<=', 'do.startedOn')
-            .andOn(function () {
-              this.on(
-                'rModuleSerial.endedOn',
-                '<',
-                'rModuleSerialNewer.endedOn'
-              )
-              this.orOn(function () {
-                this.on(
-                  'rModuleSerial.endedOn',
-                  '=',
-                  'rModuleSerialNewer.endedOn'
-                ).andOn('rModuleSerial.id', '<', 'rModuleSerialNewer.id')
-              })
-            })
-        })
         .where('do.deviceId', deviceId)
         .where('do.startedOn', '>=', minDate)
         .where('do.startedOn', '<=', maxDate)
-        .whereNull('rNewer.id') // must be null to get single latest Result entry for alias 'r'
-        .whereNull('rModuleSerialNewer.id') // must be null to get single latest Result entry for alias 'rModuleSerial'
         // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
         .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
         /**
@@ -417,28 +346,19 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw('"System Log" as source'),
           'do.startedOn as dateTime',
           knex.raw(
-            `ifnull(convert_tz(do.startedOn, tz.timeZone, '+00:00'), r.endedOn) as actualDateTime`
+            `convert_tz(do.startedOn, tz.timeZone, '+00:00') as actualDateTime`
           ),
-          'r.instrumentSerial',
-          knex.raw(`
-            CASE
-            WHEN r.resultData IS NOT NULL AND r.resultData ->> '$.systemName' IS NOT NULL THEN r.resultData ->> '$.systemName'
-            ELSE d.configurationData ->> '$.systemName'
-            END as gxSystemName
-          `),
-          'r.senderVersion as gxSoftwareVersion',
-          /**
-           * try to get `moduleSerial` from most recent result 'r',
-           * otherwise - from most recent result 'rModuleSerial' before 'r' which has module serial defined
-           */
+          knex.raw(`'-' as instrumentSerial`),
           knex.raw(
-            'ifnull(r.moduleSerial, rModuleSerial.moduleSerial) as moduleSerial'
+            `ifnull(d.configurationData ->> '$.systemName', '-') as gxSystemName`
           ),
+          knex.raw(`'-' as gxSoftwareVersion`),
+          knex.raw(`'-' as moduleSerial`),
           knex.raw(`'-' as assay`),
           knex.raw(`'-' as assayVersion`),
           knex.raw(`'-' as cartridgeLot`),
           knex.raw(`'-' as cartridgeSerial`),
-          'r.senderOperator as operatorId',
+          knex.raw(`'-' as operatorId`),
           knex.raw(`'-' as result`),
           knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
           knex.raw(`do.data ->> '$.details.Errors[0].Message' as errorMessage`),
@@ -447,6 +367,44 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         ),
     ])
     .orderBy('dateTime', 'asc')
+
+  // fix hardware entries, if any
+  // eslint-disable-next-line no-constant-condition
+  if ((_.some(items), { source: 'System Log' })) {
+    // for hardware errors, we don't have senderversion or module serial, only module name -> get all serials by slot along with instrument serial and sender version by max result date
+    const missingFields = [
+      'r.moduleName',
+      'r.moduleSerial',
+      'r.instrumentSerial',
+      'r.senderVersion',
+    ]
+    const results = await knex('Result as r')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '<=', maxDate)
+      .groupBy(missingFields)
+      .select(missingFields)
+      .min('r.endedOn as endedOn')
+      .orderBy('endedOn', 'desc')
+
+    _.each(_.filter(items, { source: 'System Log' }), i => {
+      const instrumentData = _.find(results, r => {
+        return r.endedOn <= i.dateTime
+      })
+      const moduleData = _.find(results, r => {
+        return (
+          r.endedOn <= i.dateTime &&
+          r.moduleSerial &&
+          r.moduleName === i.moduleName
+        )
+      })
+
+      if (instrumentData) {
+        i.gxSoftwareVersion = instrumentData.senderVersion
+        i.instrumentSerial = instrumentData.instrumentSerial
+        i.moduleSerial = moduleData ? moduleData.moduleSerial : '-'
+      }
+    })
+  }
 
   return {
     items,

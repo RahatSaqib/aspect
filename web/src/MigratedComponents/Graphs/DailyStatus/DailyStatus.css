@@ -11,7 +11,10 @@
 }
 
 .clinic__name {
-  min-width: 330px;
+  width: 330px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   text-align: right;
   padding: 0 10px 0;
   font-size: 14.4px;
@@ -24,14 +27,20 @@
 
 .clinic__day {
   background-color: white;
+  color: transparent;
   transition: background-color 0.2s ease;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .clinic__day--null {
   background-color: transparent;
 }
 
-/* 
+/*
  * Statusses targeted:
  * active
  * reportedActive
@@ -50,6 +59,7 @@
 .clinic__day--active,
 .clinic__day--reportedActive {
   background-color: var('--aspect-device-active');
+  color: var('--aspect-color-black-2');
 }
 
 .clinic__day--inactive {
@@ -72,10 +82,19 @@
 .clinic__day--inactiveUnknown:after {
   content: '';
   position: absolute;
-  margin-top: -0.5px;
+  top: 0;
+  left: 0;
+  /*
+  keep border props same as in .clinic__day--inactiveUnknown
+  */
   border-top: 1px solid black;
-  width: 22px;
-  transform: rotate(36deg);
+  /*
+  width is a size of hypotenuse (~26) from rectangle of 
+  blockSize.width (20) and blockSize.height (18) minus 2px.
+  See `web/src/globals/consts/Graphs/CONSTS.js` for `blockSize`.
+  */
+  width: 24px;
+  transform: rotate(39deg);
   transform-origin: 0% 0%;
 }
 

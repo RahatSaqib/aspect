@@ -653,7 +653,7 @@ const stockNotRecorded = {
   INNER JOIN Device AS d on d.siteId = s.id
   INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId 
+  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId
   LEFT OUTER JOIN Consumable AS c ON ii.consumableId = c.id
   LEFT OUTER JOIN InventoryLog AS il ON ii.id = il.inventoryItemId AND c.manufacturer = 'Cepheid'
   LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
@@ -667,7 +667,7 @@ const stockNotRecorded = {
   INNER JOIN Device AS d on d.siteId = s.id
   INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId 
+  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId
   LEFT OUTER JOIN Consumable AS c ON ii.consumableId = c.id
   LEFT OUTER JOIN InventoryLog AS il ON ii.id = il.inventoryItemId AND il.createdON < DATE_FORMAT(NOW(), '%Y-%m-01') AND c.manufacturer = 'Cepheid'
   LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
@@ -948,7 +948,7 @@ const unusedModules = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `
-  SELECT 
+  SELECT
     SUM(CASE
         WHEN numberOfUnusedModulesIssues > 0 THEN 1
         ELSE 0
@@ -959,7 +959,7 @@ const unusedModules = {
                     END) * 100 / COUNT(DISTINCT deviceid)),
             '%') AS percentage
   FROM
-      (SELECT 
+      (SELECT
           d.id AS deviceid,
               SUM(CASE
                   WHEN
@@ -995,7 +995,7 @@ const unusedModules = {
                 INNER JOIN Issue as i ON d.id = i.deviceId
                 INNER JOIN IssueType as it ON i.issueTypeId = it.id
                 INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
-                WHERE 
+                WHERE
           it.externalId = 'unusedModules' AND
                       ist.externalId NOT IN ('Inactive', 'Resolved') AND
                       dt.externalId = 'CepheidGeneXpert'
@@ -1664,7 +1664,7 @@ const averageDurationServiceInterruption = {
         dependsOn: 'count',
         whenIs: 'greaterThan',
         comparedTo: '14',
-        representing: 'averageDaysOfServiceInterrumption',
+        representing: 'averageDaysOfServiceInterruption',
       },
     },
   },

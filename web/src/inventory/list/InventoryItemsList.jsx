@@ -75,6 +75,7 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
+  { stockLeft: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -83,6 +84,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'consumableName',
     'quantityOnHand',
     'expiresOn',
+    'stockLeft',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -191,6 +193,11 @@ export const InventoryItemsListWithProps = ({
                 {
                   key: 'expiresOn',
                   label: intl.formatMessage(messages.expiresOn),
+                  sortable: true,
+                },
+                {
+                  key: 'stockLeft',
+                  label: intl.formatMessage(messages.stockLeft),
                   sortable: true,
                 },
                 {

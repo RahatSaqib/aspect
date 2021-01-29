@@ -8,11 +8,11 @@ const {
   medTech,
   dataViewer,
   remoteHealthWorker,
+  mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    ...admin,
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'assay',
@@ -91,9 +91,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...regionalOfficer,
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'account',
@@ -168,12 +167,11 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
   labManager,
   labSupervisor,
   medTech,
-  {
-    ...labUser,
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'assay',
@@ -236,10 +234,9 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
+  }),
   dataViewer,
-  {
-    ...clinician,
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'account',
@@ -314,9 +311,8 @@ module.exports = [
         activity: 'view',
       },
     ],
-  },
-  {
-    ...remoteHealthWorker,
+  }),
+  mergeJobFunctions(remoteHealthWorker, {
     permissions: [
       {
         module: 'assay',
@@ -359,5 +355,5 @@ module.exports = [
         activity: 'summary',
       },
     ],
-  },
+  }),
 ]
