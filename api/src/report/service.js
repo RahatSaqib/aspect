@@ -35,10 +35,8 @@ async function getReports(request) {
 async function getReportDetails(auth, externalId) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  if (await knex('Report').where({ externalId }).first() === null)
-    throw Boom.badRequest(
-      'The requested report does not exist'
-    )
+  if ((await knex('Report').where({ externalId }).first()) === null)
+    throw Boom.badRequest('The requested report does not exist')
 
   const report = await knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
@@ -57,9 +55,7 @@ async function getReportDetails(auth, externalId) {
     .first()
 
   if (!report)
-    throw Boom.forbidden(
-      "You don't have access to the requested report"
-    )
+    throw Boom.forbidden("You don't have access to the requested report")
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
