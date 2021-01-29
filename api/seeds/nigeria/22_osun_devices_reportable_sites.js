@@ -16,10 +16,6 @@ async function seed(knex) {
     defaultReportableSiteExternalId: 2612
   },
   {
-    hostId: 'Baptist Hospital, Ej',
-    defaultReportableSiteExternalId: 2612
-  },
-  {
     hostId: 'SH Ilesa',
     defaultReportableSiteExternalId: 2623
   },
@@ -35,14 +31,15 @@ async function seed(knex) {
     hostId: 'PHC Oke Baale Oshogo',
     defaultReportableSiteExternalId: 2630
   },
-    // {
-    //   hostId: 'OAUTH, Ile Ife',
-    //   defaultReportableSiteId: ?????????
-    // },
-    // {
-    //   hostId: 'SEVENTH-DAY ADVENTIS',
-    //   defaultReportableSiteId: ?????????
-    // },
+  // For the next devices we don't have a Clinic that matches the lab's name, so the lab was set as the reportable site
+  {
+    hostId: 'OAUTH, Ile Ife',
+    defaultReportableSiteId: 'OAUTH IFE'
+  },
+  {
+    hostId: 'SEVENTH-DAY ADVENTIS',
+     defaultReportableSiteId: 'SDA IFE'
+   },
   ]
 
   await Promise.each(devicesClinics, async ({ hostId, defaultReportableSiteExternalId }) => {

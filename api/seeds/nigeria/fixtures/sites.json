@@ -2746,14 +2746,6 @@
     "tags": ["Clinic", "Primary"]
   },
   {
-    "externalId": "SH IWO",
-    "lgaName": "Iwo",
-    "name": "SH IWO",
-    "shortName": "IWO",
-    "stateName": "Osun",
-    "tags": ["Lab"]
-  },
-  {
     "externalId": 2604,
     "lgaName": "Iwo",
     "name": "SH IWO",
@@ -2786,14 +2778,6 @@
     "tags": ["Clinic", "Primary"]
   },
   {
-    "externalId": "SH EDE",
-    "lgaName": "Ede South",
-    "name": "SH EDE",
-    "shortName": "EDE",
-    "stateName": "Osun",
-    "tags": ["Lab"]
-  },
-  {
     "externalId": 2609,
     "lgaName": "Ede South",
     "name": "SH EDE",
@@ -2824,14 +2808,6 @@
     "shortName": "MASIFA",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
-  },
-  {
-    "externalId": "BMC EJIGBO",
-    "lgaName": "Ejigbo",
-    "name": "MASIFA PHC",
-    "shortName": "MASIFA",
-    "stateName": "Osun",
-    "tags": ["Lab"]
   },
   {
     "externalId": 2613,
@@ -2874,14 +2850,6 @@
     "tags": ["Clinic", "Primary"]
   },
   {
-    "externalId": "OAUTHC IFE",
-    "lgaName": "Ife Central",
-    "name": "OAUTHC IFE",
-    "shortName": "OAUTHC IFE",
-    "stateName": "Osun",
-    "tags": ["Lab"]
-  },
-  {
     "externalId": 2618,
     "lgaName": "Ife Central",
     "name": "ENUWA PHC",
@@ -2922,14 +2890,6 @@
     "tags": ["Clinic", "Primary"]
   },
   {
-    "externalId": "SDA IFE",
-    "lgaName": "Ife Central",
-    "name": "SDA IFE",
-    "shortName": "SDA IFE",
-    "stateName": "Osun",
-    "tags": ["Lab"]
-  },
-  {
     "externalId": 2623,
     "lgaName": "Ilesa West",
     "name": "SH ILESA",
@@ -2954,14 +2914,6 @@
     "tags": ["Clinic", "Primary"]
   },
   {
-    "externalId": "SH ILESA",
-    "lgaName": "Ilesa West",
-    "name": "SH ILESA",
-    "shortName": "SH ILESA",
-    "stateName": "Osun",
-    "tags": ["Lab"]
-  },
-  {
     "externalId": 2626,
     "lgaName": "Irewole",
     "name": "SH IKIRE",
@@ -2970,28 +2922,12 @@
     "tags": ["Clinic", "Primary"]
   },
   {
-    "externalId": "SH IKIRE",
-    "lgaName": "Irewole",
-    "name": "SH IKIRE",
-    "shortName": "IKIRE",
-    "stateName": "Osun",
-    "tags": ["Lab"]
-  },
-  {
     "externalId": 2627,
     "lgaName": "Osogbo",
     "name": "SH ASUBIARO",
     "shortName": "ASUBIARO",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
-  },
-  {
-    "externalId": "SH ASUBIARO",
-    "lgaName": "Osogbo",
-    "name": "SH ASUBIARO",
-    "shortName": "ASUBIARO",
-    "stateName": "Osun",
-    "tags": ["Lab"]
   },
   {
     "externalId": 2628,
@@ -3016,14 +2952,6 @@
     "shortName": "OKE BAALE",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
-  },
-  {
-    "externalId": "OKE BAALE PHC",
-    "lgaName": "Osogbo",
-    "name": "OKE BAALE PHC",
-    "shortName": "OKE BAALE PHC",
-    "stateName": "Osun",
-    "tags": ["Lab"]
   },
   {
     "externalId": 2631,
