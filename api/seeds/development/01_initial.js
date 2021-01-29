@@ -11,7 +11,6 @@ const {
 } = require('date-fns')
 
 const config = require('../../src/config')
-const { getPermissionModules } = require('../utils')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
   allAssayTypeToId,
@@ -38,7 +37,10 @@ const {
   upsertCultureAssays,
 } = require('../commonTB')
 const { getRandomTBPatientData } = require('../commonTbresults')
-const { upsertJobFunction } = require('../common')
+const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
+const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
+const { upsertJobFunctionFixture } = require('../common')
+const upsertReports = require('../common/upsert_reports')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -221,7 +223,7 @@ async function seed(knex) {
     (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
     {}
   if (!deviceTypeSenaiteLimsId) {
-    deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
+    ;[deviceTypeSenaiteLimsId] = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
       name: 'Senaite LIMS',
       manufacturer: 'Senaite',
@@ -4289,7 +4291,7 @@ async function seed(knex) {
         ).join(''),
       }
 
-      device.id = await knex('Device').insert(device)
+      ;[device.id] = await knex('Device').insert(device)
       devicesGeneXpert.push(device)
 
       // Create API Keys
@@ -4404,7 +4406,7 @@ async function seed(knex) {
           originSiteId: siteData.id,
         }
 
-        sample.id = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
 
         samples.push(sample)
       })
@@ -4497,7 +4499,7 @@ async function seed(knex) {
           r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
         resultData.resultText = result.resultText
-        const resultId = await knex('Result').insert({
+        const [resultId] = await knex('Result').insert({
           ...auditFields,
           externalId: `UQTB-${i}`,
           assayId: assayGeneXpertMtbRifId,
@@ -4652,7 +4654,7 @@ async function seed(knex) {
           originSiteId: siteData.id,
         }
 
-        sample.id = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
 
         samples.push(sample)
       })
@@ -4731,7 +4733,7 @@ async function seed(knex) {
           j += 1
           if (_.random(5) === 0) {
             resultData.resultText = result.resultText
-            const resultId = await knex('Result').insert({
+            const [resultId] = await knex('Result').insert({
               ...auditFields,
               externalId: `UQEB-${i}-${j}`,
               assayId: assayGeneXpertEbolaId,
@@ -4825,7 +4827,7 @@ async function seed(knex) {
           originSiteId: siteData.id,
         }
 
-        sample.id = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
 
         samples.push(sample)
       })
@@ -4933,7 +4935,7 @@ async function seed(knex) {
             ? validated
             : acknowledged
 
-        const resultId = await knex('Result').insert({
+        const [resultId] = await knex('Result').insert({
           ...auditFields,
           externalId: `UQHIV-${i}`,
           assayId: assayGeneXpertHiv1VlId,
@@ -5004,7 +5006,7 @@ async function seed(knex) {
             sampleTypeId: sampleTypeDBSId,
           }
 
-          sample.id = await knex('Sample').insert(sample)
+          ;[sample.id] = await knex('Sample').insert(sample)
 
           samples.push(sample)
         })
@@ -5096,7 +5098,7 @@ async function seed(knex) {
           _.map(possibleResults, async result => {
             j += 1
             if (_.random(5) === 0) {
-              const resultId = await knex('Result').insert({
+              const [resultId] = await knex('Result').insert({
                 ...auditFields,
                 externalId: `UQHCV-${i}-${j}`,
                 assayId: assayGeneXpertHcvId,
@@ -5180,119 +5182,35 @@ async function seed(knex) {
     } // end of seeding results for specific countries
   }) // end of 'await Promise.each(geography.countries'
 
+  await upsertReports(knex)
+
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixturePartnerOne,
+    partnerOneId
+  )
+  await upsertJobFunctionFixture(
+    knex,
+    jobFunctionsFixturePartnerTwo,
+    partnerTwoId
+  )
   // Job Functions with permissions
-  const modules = await getPermissionModules(knex)
-  const jobFunctionIdAdmin = await upsertJobFunction(
-    knex,
-    'Admin',
-    partnerOneId,
-    [
-      modules.demo.edit,
-      modules.deviceApiKey.edit,
-      modules.device.edit,
-      modules.person.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.edit,
-      modules.inventory.edit,
-      modules.notification.edit,
-      modules.issue.edit,
-      modules.task.edit,
-      modules.report.edit,
-      modules.browse.view,
-      modules.reporter.edit,
-      modules.treatmentStatus.edit,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.account.edit,
-      modules.router.edit,
-    ]
-  )
-
-  const jobFunctionIdManager = await upsertJobFunction(
-    knex,
-    'Manager',
-    partnerOneId,
-    [
-      modules.treatmentStatus.edit,
-      modules.site.edit,
-      modules.device.edit,
-      modules.assay.view,
-      modules.inventory.edit,
-      modules.reporter.edit,
-      modules.dashboard.report,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.account.edit,
-      modules.router.edit,
-      modules.person.edit,
-      modules.clinicalIndicators.view,
-    ]
-  )
-
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerOneId,
-    [
-      modules.site.view,
-      modules.device.view,
-      modules.assay.view,
-      modules.inventory.view,
-      modules.result.edit,
-      modules.browse.view,
-      modules.treatmentStatus.edit,
-      modules.dashboard.report,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.account.edit,
-      modules.router.edit,
-      modules.person.view,
-    ]
-  )
-
-  const jobFunctionIdPartnerTwo = await upsertJobFunction(
-    knex,
-    'Lab Manager',
-    partnerTwoId,
-    [
-      modules.treatmentStatus.edit,
-      modules.site.edit,
-      modules.device.edit,
-      modules.dashboard.report,
-      modules.dashboard.target,
-      modules.dashboard.result,
-      modules.dashboard.device,
-      modules.dashboard.inventory,
-      modules.dashboard.site,
-      modules.dashboard.summary,
-      modules.case.edit,
-      modules.person.view,
-      modules.account.edit,
-      modules.router.edit,
-      modules.assay.view,
-      modules.inventory.view,
-    ]
-  )
 
   // crate jobs for users
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'admin' })
+    .pluck('id')
+  const [jobFunctionIdManager] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'manager' })
+    .pluck('id')
+  const [jobFunctionIdClinician] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'clinician' })
+    .pluck('id')
+  const [jobFunctionIdPartnerTwo] = await knex('JobFunction')
+    .where({ partnerId: partnerTwoId, externalId: 'labManager' })
+    .pluck('id')
 
-  const jobIdAdmin = await knex('Job').insert([
+  const [jobIdAdmin] = await knex('Job').insert([
     {
       personId: personIds.admin,
       jobFunctionId: jobFunctionIdAdmin,
@@ -5323,46 +5241,46 @@ async function seed(knex) {
     },
   ])
 
-  const jobIdJason = await knex('Job').insert({
+  const [jobIdJason] = await knex('Job').insert({
     personId: personIds.jason,
     jobFunctionId: jobFunctionIdPartnerTwo,
   })
 
-  const jobIdSam = await knex('Job').insert({
+  const [jobIdSam] = await knex('Job').insert({
     personId: personIds.sam,
     jobFunctionId: jobFunctionIdAdmin,
   })
 
-  const jobIdBob = await knex('Job').insert({
+  const [jobIdBob] = await knex('Job').insert({
     personId: personIds.bob,
     jobFunctionId: jobFunctionIdManager,
   })
-  const jobIdFrank = await knex('Job').insert({
+  const [jobIdFrank] = await knex('Job').insert({
     personId: personIds.frank,
     jobFunctionId: jobFunctionIdManager,
   })
 
-  const jobIdEd = await knex('Job').insert({
+  const [jobIdEd] = await knex('Job').insert({
     personId: personIds.ed,
     jobFunctionId: jobFunctionIdManager,
   })
-  const jobIdJim = await knex('Job').insert({
+  const [jobIdJim] = await knex('Job').insert({
     personId: personIds.jim,
     jobFunctionId: jobFunctionIdPartnerTwo,
   })
-  const jobIdNed = await knex('Job').insert({
+  const [jobIdNed] = await knex('Job').insert({
     personId: personIds.ned,
     jobFunctionId: jobFunctionIdClinician,
   })
-  const jobIdJon = await knex('Job').insert({
+  const [jobIdJon] = await knex('Job').insert({
     personId: personIds.jon,
     jobFunctionId: jobFunctionIdClinician,
   })
-  const jobIdSteve = await knex('Job').insert({
+  const [jobIdSteve] = await knex('Job').insert({
     personId: personIds.steve,
     jobFunctionId: jobFunctionIdClinician,
   })
-  const jobIdFred = await knex('Job').insert({
+  const [jobIdFred] = await knex('Job').insert({
     personId: personIds.fred,
     jobFunctionId: jobFunctionIdClinician,
   })

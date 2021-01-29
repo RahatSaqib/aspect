@@ -23,6 +23,7 @@ const { exportSupplies } = require('./serviceReports')
 const inventoryFilters = {
   consumableId: Joi.number().integer().positive().allow('', null),
   siteName: Joi.string().allow('', null),
+  stockLeft: Joi.string().allow('', null),
 }
 
 const addRemoveInventoryCommonParams = {
@@ -66,7 +67,8 @@ function listSuppliesBaseConfig() {
           'stateName',
           'lgaName',
           'quantityOnHand',
-          'expiresOn'
+          'expiresOn',
+          'stockLeft'
         ),
       },
     },
@@ -95,7 +97,8 @@ const routes = [
             'stateName',
             'lgaName',
             'quantityOnHand',
-            'expiresOn'
+            'expiresOn',
+            'stockLeft'
           ),
         },
       },

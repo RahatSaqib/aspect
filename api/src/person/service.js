@@ -132,7 +132,7 @@ async function assignContact(request) {
     const { id: jobFunctionIdDefault } = await knex('JobFunction')
       .where({ name: 'Lab User' })
       .first('id')
-    jobId = await knex('Job').insert({
+    ;[jobId] = await knex('Job').insert({
       personId: personDetails.id,
       jobFunctionId: jobFunctionIdDefault,
     })

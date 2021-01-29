@@ -18,14 +18,17 @@ const { resultUnusedModules } = require('../../../result/actions')
 const {
   shouldTriggerModuleReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerResultCategoryAnalysis,
 } = require('../../utils')
+const logger = require('../../../shared/logger')
 
 async function onResultLogged(
   { resultId, deviceLogId, userId },
   { messageContext }
 ) {
   return messageContext.run(async knex => {
+    logger.debug([resultId, deviceLogId, userId], {
+      reLabel: 'mq:onResultLogged',
+    })
     await shouldTriggerModuleReplaced(knex, messageContext, resultId)
 
     const { externalId: deviceLogDeviceTypeExternalId } =
@@ -54,9 +57,10 @@ async function onResultLogged(
       [
         ...RESULT_STRING_TEMPLATE_FIELDS,
         'rf.formSchema',
-        'r.resultCategory1',
+        'r.instrumentSerial',
         'r.assayId',
         'd.id as resultDeviceId',
+        'rc1.externalId as resultCategory1',
         knex.raw(
           "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
         ),
@@ -67,35 +71,26 @@ async function onResultLogged(
       const {
         assayId,
         resultModuleSerial,
+        consumableLot,
         resultDeviceId,
         resultErrorCode,
-        consumableLot,
         resultOutcome,
         resultCategory1,
+        instrumentSerial,
       } = result
 
       await shouldTriggerResultErrorAnalysis(
         messageContext,
         resultDeviceId,
         resultId,
+        resultCategory1,
         resultErrorCode,
         {
           resultOutcome,
           moduleSerial: resultModuleSerial,
           assayId,
           consumableLot,
-        }
-      )
-      await shouldTriggerResultCategoryAnalysis(
-        messageContext,
-        resultDeviceId,
-        resultId,
-        resultCategory1,
-        {
-          resultOutcome,
-          moduleSerial: resultModuleSerial,
-          assayId,
-          consumableLot,
+          instrumentSerial,
         }
       )
 

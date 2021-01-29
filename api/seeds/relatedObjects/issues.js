@@ -8,7 +8,7 @@ const msgInstrumentReplaced = `{{device.name}}:
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const getDeviceBaseHtml = ({ customPart, errorCode }) => `
+const getDeviceBaseHtml = ({ customPart }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -48,7 +48,7 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
           </tr>
           <tr>
               <td>
-                Error Code
+                Error Code(s)
               </td>
               <td>
                 {{issue.errorCode}}
@@ -177,13 +177,13 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
 </html>
 `
 
-const getDeviceBaseText = ({ customPart, errorCode }) => `
+const getDeviceBaseText = ({ customPart }) => `
 This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{issue.errorCode}}
+Error Code(s): {{issue.errorCode}}
 
 Occurrences: {{issue.occurrences}}
 
@@ -231,15 +231,23 @@ const errorIssueEmailHtml = getDeviceBaseHtml({
   <<REPLACE WITH MODULE OR REAGENT>>
   <tr>
     <td>
-      Cartridge Type
+      Assay
     </td>
     <td>
-      {{result.assay.name}}
+      {{result.data.assay}}
     </td>
   </tr>
   <tr>
     <td>
-      Date/Time
+      Assay Version
+    </td>
+    <td>
+      {{result.data.assayVersion}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Date/Time (UTC)
     </td>
     <td>
       {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -254,9 +262,11 @@ System Serial: {{result.instrumentSerial}}
 
 <<REPLACE WITH MODULE OR REAGENT>>
 
-Cartridge Type: {{result.assay.name}}
+Assay: {{result.data.assay}}
 
-Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+Assay Version: {{result.data.assayVersion}}
+
+Date/Time (UTC): {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 `,
 })
 
@@ -316,7 +326,7 @@ const hardwareErrorIssueEmailHtml = errorCode =>
     </tr>
     <tr>
       <td>
-        Date/Time
+        Date/Time (UTC)
       </td>
       <td>
         {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -330,7 +340,7 @@ const hardwareErrorIssueEmailText = errorCode =>
     customPart: `
 System Serial: {{device.serial}}
 
-Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+Date/Time (UTC): {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
   `,
   })
 
@@ -848,40 +858,6 @@ async function getBaseIssues(auditFields) {
         externalId: 'TooManyInvalidResultsLot',
         i18nKey: 'issueStatusTooManyInvalidResultsLot',
         issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextLot,
-        htmlBody: errorIssueEmailHtmlLot,
-        ...auditFields,
-      },
-    },
-    ProbeCheckTooLowModule: {
-      issueType: {
-        name: 'Probe Check Too Low On Module',
-        externalId: 'ProbeCheckTooLowModule',
-        i18nKey: 'issueStatusProbeCheckTooLowModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
-        ...auditFields,
-      },
-    },
-    ProbeCheckTooLowLot: {
-      issueType: {
-        name: 'Probe Check Too Low On Lot',
-        externalId: 'ProbeCheckTooLowLot',
-        i18nKey: 'issueStatusProbesTooLow',
-        issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,

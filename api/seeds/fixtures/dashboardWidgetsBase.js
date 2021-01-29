@@ -47,7 +47,7 @@ const geneXpertDevices = {
   statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
   externalId: 'geneXpertDevices',
@@ -186,7 +186,7 @@ const dashboardWidgetTestsPerDayTitle = {
   statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
   link: '/browse/result',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 1,
@@ -227,7 +227,7 @@ const dashboardWidgetValidResultsPc = {
   statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
   link: '/browse/result',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -239,6 +239,16 @@ const dashboardWidgetValidResultsPc = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '95%',
+        representing: 'percentageOfValidResults',
+      },
     },
   },
 }
@@ -298,7 +308,7 @@ const utilizationRate = {
   statUnitI18nKey: 'dashboardWidgetUtilizationRate',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 0,
@@ -309,6 +319,16 @@ const utilizationRate = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '50%',
+        representing: 'utilizationRate',
+      },
     },
   },
 }
@@ -360,6 +380,16 @@ const activeDevices = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '80%',
+        representing: 'percentageOfActiveDevices',
+      },
     },
   },
 }
@@ -445,6 +475,16 @@ const stockouts = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '10%',
+        representing: 'percentageOfStockouts',
+      },
     },
   },
 }
@@ -570,7 +610,7 @@ const errorRate = {
   statUnitI18nKey: 'dashboardWidgetErrorRate',
   link: '/browse/result',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -582,6 +622,16 @@ const errorRate = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '3%',
+        representing: 'errorRate',
+      },
     },
   },
 }
@@ -603,7 +653,7 @@ const stockNotRecorded = {
   INNER JOIN Device AS d on d.siteId = s.id
   INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId 
+  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId
   LEFT OUTER JOIN Consumable AS c ON ii.consumableId = c.id
   LEFT OUTER JOIN InventoryLog AS il ON ii.id = il.inventoryItemId AND c.manufacturer = 'Cepheid'
   LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
@@ -617,7 +667,7 @@ const stockNotRecorded = {
   INNER JOIN Device AS d on d.siteId = s.id
   INNER JOIN DeviceType AS dt ON d.deviceTypeId = dt.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId 
+  LEFT OUTER JOIN InventoryItem AS ii ON s.id = ii.siteId
   LEFT OUTER JOIN Consumable AS c ON ii.consumableId = c.id
   LEFT OUTER JOIN InventoryLog AS il ON ii.id = il.inventoryItemId AND il.createdON < DATE_FORMAT(NOW(), '%Y-%m-01') AND c.manufacturer = 'Cepheid'
   LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
@@ -633,6 +683,16 @@ const stockNotRecorded = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.INVENTORY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '10%',
+        representing: 'percentageOfSitesWithoutGxStockEntered',
+      },
     },
   },
 }
@@ -688,7 +748,7 @@ const moduleSwaps = {
   statUnitI18nKey: 'dashboardWidgetModuleSwaps',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     issueTypeId: 'ModuleReplaced',
   },
   sortOrder: 4,
@@ -787,6 +847,16 @@ const gxPositiveResultsNotified = {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '95%',
+        representing: 'percentageOfPositiveResultsNotified',
+      },
+    },
+  },
 }
 
 const avgTimeToUpload = {
@@ -859,6 +929,16 @@ WHERE TIMESTAMPDIFF(
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '24',
+        representing: 'averageHoursToUpload',
+      },
+    },
+  },
 }
 
 const unusedModules = {
@@ -868,23 +948,41 @@ const unusedModules = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `
-  SELECT COUNT(DISTINCT deviceid) AS cnt
-    FROM(
-              SELECT d.id AS deviceid
-                FROM Device AS d
-                INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-                INNER JOIN Site AS s ON d.siteId = s.id
-                LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-                INNER JOIN Issue as i ON d.id = i.deviceId
-                INNER JOIN IssueType as it ON i.issueTypeId = it.id
-                INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
-                WHERE 
-          it.externalId = 'unusedModules' AND
-                      ist.externalId NOT IN ('Inactive', 'Resolved') AND
-          (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()) AND
-                      dt.externalId = 'CepheidGeneXpert'
-              GROUP BY d.id
-    ) AS innerquery
+  SELECT
+    SUM(CASE
+        WHEN numberOfUnusedModulesIssues > 0 THEN 1
+        ELSE 0
+    END) AS cnt,
+    CONCAT(ROUND(SUM(CASE
+                        WHEN numberOfUnusedModulesIssues > 0 THEN 1
+                        ELSE 0
+                    END) * 100 / COUNT(DISTINCT deviceid)),
+            '%') AS percentage
+  FROM
+      (SELECT
+          d.id AS deviceid,
+              SUM(CASE
+                  WHEN
+                      ISNULL(i.id) = 0 AND ISNULL(it.id) = 0
+                          AND ISNULL(ist.id) = 0
+                  THEN
+                      1
+                  ELSE 0
+              END) AS numberOfUnusedModulesIssues
+      FROM
+          Device AS d
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      LEFT OUTER JOIN Issue AS i ON d.id = i.deviceId
+          AND (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW())
+      LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id
+          AND it.externalId = 'unusedModules'
+      LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
+          AND ist.externalId NOT IN ('Inactive' , 'Resolved')
+      WHERE
+          dt.externalId = 'CepheidGeneXpert'
+      GROUP BY d.id) AS innerquery;
   `,
   sqlForStatUnit: `
   SELECT COUNT(DISTINCT deviceid) AS cnt
@@ -897,7 +995,7 @@ const unusedModules = {
                 INNER JOIN Issue as i ON d.id = i.deviceId
                 INNER JOIN IssueType as it ON i.issueTypeId = it.id
                 INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
-                WHERE 
+                WHERE
           it.externalId = 'unusedModules' AND
                       ist.externalId NOT IN ('Inactive', 'Resolved') AND
                       dt.externalId = 'CepheidGeneXpert'
@@ -908,7 +1006,7 @@ const unusedModules = {
   statUnitI18nKey: 'unusedModulesStats',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     issueTypeId: 'UnusedModules',
   },
   sortOrder: 6,
@@ -920,6 +1018,16 @@ const unusedModules = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'percentage',
+        whenIs: 'greaterThan',
+        comparedTo: '10%',
+        representing: 'percentageOfDevicesWithUnusedModules',
+      },
     },
   },
 }
@@ -977,7 +1085,7 @@ const instrumentsReplaced = {
   statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceType: 'CepheidGeneXpert',
     issueTypeId: 'InstrumentReplaced',
   },
   sortOrder: 3,
@@ -988,6 +1096,16 @@ const instrumentsReplaced = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageDaysForInstrumentReplacement',
+      },
     },
   },
 }
@@ -1146,6 +1264,16 @@ const averageLengthOfSms = {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '280',
+        representing: 'averageLengthOfSMS',
+      },
+    },
+  },
 }
 
 const smsSent = {
@@ -1191,6 +1319,16 @@ const smsSent = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '2000',
+        representing: 'numberOfTextMessagesSent',
+      },
     },
   },
 }
@@ -1249,6 +1387,16 @@ const averageDaysModuleSwap = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageDaysBetweenModuleSwaps',
+      },
     },
   },
 }
@@ -1342,6 +1490,16 @@ const averageTimeToModuleReplacement = {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
     },
   },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageTimeToReplaceDisabledModules',
+      },
+    },
+  },
 }
 
 const numberOfDevicesExperiencingServiceInterruption = {
@@ -1397,7 +1555,8 @@ const numberOfDevicesExperiencingServiceInterruption = {
   statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
@@ -1487,7 +1646,8 @@ const averageDurationServiceInterruption = {
   statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
   link: '/browse/device',
   linkParams: {
-    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
@@ -1496,6 +1656,16 @@ const averageDurationServiceInterruption = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'greaterThan',
+        comparedTo: '14',
+        representing: 'averageDaysOfServiceInterruption',
+      },
     },
   },
 }
@@ -1581,6 +1751,10 @@ const percentageOfDaysWithServiceInterruption = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'percentageOfDaysWithServiceInterruptionUnit',
   link: '/browse/device',
+  linkParams: {
+    deviceName: 'GeneXpert',
+    deviceMaintenanceStatusId: 'inactiveDownForRepair',
+  },
   sortOrder: 2,
   externalId: 'percentageOfDaysWithServiceInterruption',
   description: `The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%`,
@@ -1714,6 +1888,16 @@ const serverUptimeTitle = {
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+  options: {
+    extraFields: {
+      alert: {
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '95%',
+        representing: 'percentageOfServerUptime',
+      },
     },
   },
 }

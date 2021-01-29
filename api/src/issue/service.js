@@ -16,6 +16,7 @@ const {
   issueStatusToId,
   issueEventStatusToId,
 } = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 async function getIssueEventTriggerSubscriptions({ messageContext }) {
   return messageContext.run(async knex => {
@@ -83,6 +84,7 @@ function onIssueEvent(actionParametersList) {
     context.bindActionCreators({ issueCreated, issueTriggered, issueResolved })
     return context.transact(async knex => {
       return Promise.each(actionParametersList, async actionParameters => {
+        logger.debug(['action', action], { reLabel: 'issues:onIssueEvent' })
         if (actionParameters.issueEventStatus === 'Triggered') {
           const {
             partnerId,
@@ -90,13 +92,21 @@ function onIssueEvent(actionParametersList) {
             triggerConditions,
             filterIssueCondition = null,
           } = actionParameters
+
           const shouldTriggerEvent = await actionConditionsMet(
             knex,
             action,
             partnerId,
             JSON.parse(triggerConditions).conditions
           )
-
+          logger.debug(
+            {
+              action_type: action.type,
+              shouldTriggerEvent,
+              issueEventStatus: actionParameters.issueEventStatus,
+            },
+            { reLabel: 'issues:onIssueEvent' }
+          )
           if (shouldTriggerEvent) {
             const now = new Date()
             const openIssue = await findOpenIssue(
@@ -104,6 +114,15 @@ function onIssueEvent(actionParametersList) {
               issueType,
               action,
               JSON.parse(filterIssueCondition)
+            )
+            logger.debug(
+              {
+                action_type: action.type,
+                shouldTriggerEvent,
+                issueEventStatus: actionParameters.issueEventStatus,
+                openIssue,
+              },
+              { reLabel: 'issues:onIssueEvent' }
             )
             let issue = null
             if (openIssue) {
@@ -131,6 +150,16 @@ function onIssueEvent(actionParametersList) {
               // ----------------------
               issue = await mergeActionData(knex, openIssue, action)
             } else {
+              logger.debug(
+                {
+                  action_type: action.type,
+                  shouldTriggerEvent,
+                  openIssue,
+                  issueEventStatus: actionParameters.issueEventStatus,
+                  willCreateIssue: true,
+                },
+                { reLabel: 'issues:onIssueEvent' }
+              )
               issue = await createNewIssue(knex, issueType, action)
               if (issue != null) {
                 context.issueCreated(issue.id)
@@ -166,6 +195,15 @@ function onIssueEvent(actionParametersList) {
               action,
               issueEventStatus: 'Resolved',
             }))
+          logger.debug(
+            {
+              action_type: action.type,
+              openIssue: issue,
+              issueEventStatus: actionParameters.issueEventStatus,
+              hasTrigger,
+            },
+            { reLabel: 'issues:onIssueEvent' }
+          )
           if (hasTrigger) {
             await knex('Issue')
               .where({ id: issue.id })
@@ -173,6 +211,15 @@ function onIssueEvent(actionParametersList) {
                 issueStatusId: await issueStatusToId('Resolved'),
                 updatedOn: now,
               })
+            logger.debug(
+              {
+                action_type: action.type,
+                openIssue: issue,
+                issueEventStatus: actionParameters.issueEventStatus,
+                issueResolved: true,
+              },
+              { reLabel: 'issues:onIssueEvent' }
+            )
             context.issueResolved(issue.id)
             await knex('IssueEvent').insert({
               issueId: issue.id,
@@ -291,6 +338,7 @@ async function createNewIssue(knex, issueType, action) {
     issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
+
   // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId

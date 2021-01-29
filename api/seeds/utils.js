@@ -10,7 +10,9 @@ const {
   allAssayTypeToId,
   allResultCategoryToId,
   issueTypeToId,
+  allJobFunctionToId,
 } = require('../src/shared/dictionary')
+const logger = require('../src/shared/logger')
 const config = require('../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -99,7 +101,7 @@ function seed(seed, fileName, overridedSeeds) {
   return {
     seed(knex) {
       return runSeed(seed, knex, fileName, overridedSeeds).catch(err => {
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       })
     },
@@ -635,7 +637,7 @@ async function addFollowUps(knex, partnerIds, { data }) {
     const existingFollowUp = await knex('FollowUp').where(followUp).first('id')
     let followUpId = null
     if (existingFollowUp == null) {
-      followUpId = await knex('FollowUp').insert(followUp)
+      ;[followUpId] = await knex('FollowUp').insert(followUp)
     } else {
       followUpId = existingFollowUp.id
     }
@@ -749,7 +751,7 @@ async function seedIssueEventTriggersForPartner(
       issueType,
       issueEventStatus,
       triggerConditions,
-      filterIssueCondition,
+      filterIssueCondition = null,
     }) => {
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
@@ -758,7 +760,13 @@ async function seedIssueEventTriggersForPartner(
           issueEventStatusId: issueEventStatuses[issueEventStatus].id,
         }
         const existingTrigger = await knex('IssueEventTrigger')
-          .where(triggerData)
+          .where({
+            ...triggerData,
+            triggerConditions: JSON.stringify(triggerConditions),
+            filterIssueCondition: filterIssueCondition
+              ? JSON.stringify(filterIssueCondition)
+              : null,
+          })
           .first('id')
         if (existingTrigger == null) {
           await upsertSingle(
@@ -2565,67 +2573,6 @@ async function updateReportableInResultCategoryAssay(knex) {
   }
 }
 
-async function addReports(knex, countryReports = []) {
-  const countries = await knex('Country').select('id')
-
-  // globally defined reports applicable to all countries/seeds
-  const { getBaseReports } = require('./relatedObjects/reports')
-  const baseReports = (await getBaseReports()) || []
-
-  // add reports for each country
-  await Promise.each(countries, async ({ id: countryId }) => {
-    let geographyId
-    const geography = await knex('Geography')
-      .where({ countryId })
-      .whereNull('stateId')
-      .whereNull('lgaId')
-      .first('id')
-    if (geography) {
-      geographyId = geography.id
-    } else {
-      ;[geographyId] = await knex('Geography').insert({ countryId })
-    }
-
-    // merge global and country-specific reports
-    const reports = [...baseReports, ...countryReports]
-
-    const existingReports = await knex('Report')
-      .where({ geographyId })
-      .select('externalId')
-      .pluck('externalId')
-    await Promise.each(
-      reports,
-      async (
-        { name, description, i18nKey, externalId, sheets, fileName },
-        reportIndex
-      ) => {
-        if (!_.includes(existingReports, externalId)) {
-          const [reportId] = await knex('Report').insert({
-            name,
-            description,
-            i18nKey,
-            externalId,
-            geographyId,
-            sortOrder: reportIndex + 1,
-            fileName,
-          })
-
-          await Promise.each(sheets, async (sheet, sheetIndex) => {
-            const { moduleName, functionName, query } = sheet
-            await knex('ReportSheet').insert({
-              moduleName,
-              functionName,
-              query: query && JSON.stringify(query),
-              reportId,
-              sortOrder: sheetIndex + 1,
-            })
-          })
-        }
-      }
-    )
-  })
-}
-
 const resultTimeFrameInDays = 60
 const now = new Date()
 
@@ -2832,7 +2779,6 @@ async function seedJobFunctionsAndUsersForOperationalData(
     timezone,
   }
 ) {
-  const modules = await getPermissionModules(knex)
   const now = new Date()
   const userIds = {}
   const personIds = {}
@@ -2898,30 +2844,8 @@ async function seedJobFunctionsAndUsersForOperationalData(
       }
     )
   )
-  // -------------------------------------------
-  // Job Functions
-  const { upsertJobFunction } = require('./common')
-  const jobFunctionIdDeviceMaker = await upsertJobFunction(
-    knex,
-    'Device Maker',
-    partnerId,
-    [modules.account.edit, modules.operationalData.view]
-  )
-  const jobFunctionIdNtp = await upsertJobFunction(knex, 'NTP', partnerId, [
-    modules.account.edit,
-    modules.operationalData.view,
-  ])
-  const jobFunctionIdTechnician = await upsertJobFunction(
-    knex,
-    'Technician',
-    partnerId,
-    [modules.account.edit, modules.operationalData.view]
-  )
-  const jobFunctionIdDonor = await upsertJobFunction(knex, 'Donor', partnerId, [
-    modules.account.edit,
-    modules.site.view,
-    modules.operationalData.view,
-  ])
+
+  const jobFunctionsById = await allJobFunctionToId()
   // -------------------------------------------
   // Jobs
   const initJob = async (personId, jobFunctionId) => {
@@ -2935,14 +2859,14 @@ async function seedJobFunctionsAndUsersForOperationalData(
   }
   const jobIdCepheid = await initJob(
     personIds.cepheid,
-    jobFunctionIdDeviceMaker
+    jobFunctionsById.deviceMaker
   )
-  const jobIdNtp = await initJob(personIds.ntp, jobFunctionIdNtp)
+  const jobIdNtp = await initJob(personIds.ntp, jobFunctionsById.ntp)
   const jobIdTechnician = await initJob(
     personIds.technician,
-    jobFunctionIdTechnician
+    jobFunctionsById.technician
   )
-  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionIdDonor)
+  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionsById.donor)
 
   // -------------------------------------------
   // Constrain jobs by context
@@ -2961,12 +2885,10 @@ async function seedJobFunctionsAndUsersForOperationalData(
   return {
     userIds,
     personIds,
-
-    jobFunctionIdDeviceMaker,
-    jobFunctionIdNtp,
-    jobFunctionIdTechnician,
-    jobFunctionIdDonor,
-
+    jobFunctionIdDeviceMaker: jobFunctionsById.deviceMaker,
+    jobFunctionIdNtp: jobFunctionsById.ntp,
+    jobFunctionIdTechnician: jobFunctionsById.technician,
+    jobFunctionIdDonor: jobFunctionsById.donor,
     jobIdCepheid,
     jobIdNtp,
     jobIdTechnician,
@@ -3106,7 +3028,12 @@ async function removeAndReplaceActivity(
 }
 
 // ***********************************************************************
-async function seedIssueType(knex, issueType, { userName }) {
+async function seedIssueType(
+  knex,
+  issueType,
+  { userName },
+  issueEventTrigger = {}
+) {
   const { id: adminId } = await knex('User')
     .where({ name: userName })
     .first('id')
@@ -3120,7 +3047,6 @@ async function seedIssueType(knex, issueType, { userName }) {
   }
 
   const issue = (await getBaseIssues(auditFields))[issueType]
-
   if (!issue) return
 
   // ------------------------------------------
@@ -3169,6 +3095,13 @@ async function seedIssueType(knex, issueType, { userName }) {
       defaultMessageTypeId: moduleMessageTypeId,
     }
   )
+  if (!_.isEmpty(issueEventTrigger))
+    await upsertSingle(
+      knex,
+      'IssueEventTrigger',
+      uniqueKeys.IssueEventTrigger,
+      issueEventTrigger
+    )
   return issueTypeId
 }
 
@@ -3279,19 +3212,26 @@ async function updateIssueNotificationTemplates(
   // now that we're done updating/deleting, drop any unused templates
   const mTypes = await knex('MessageType').select()
 
-  const alertTemplatesToDelete = _.map(mTypes, mt => mt.alertTemplateId || -1)
+  const alertTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.alertTemplateId || -1)
+  )
   await knex('AlertMessage')
     .whereNotIn('alertTemplateId', alertTemplatesToDelete)
     .del()
   await knex('AlertTemplate').whereNotIn('id', alertTemplatesToDelete).del()
 
-  const emailTemplatesToDelete = _.map(mTypes, mt => mt.emailTemplateId || -1)
+  const emailTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.emailTemplateId || -1)
+  )
   await knex('EmailMessage')
-    .whereNotIn('emailTemplateId', alertTemplatesToDelete)
+    .whereNotIn('emailTemplateId', emailTemplatesToDelete)
     .del()
+
   await knex('EmailTemplate').whereNotIn('id', emailTemplatesToDelete).del()
 
-  const smsTemplatesToDelete = _.map(mTypes, mt => mt.smsTemplateId || -1)
+  const smsTemplatesToDelete = _.uniq(
+    _.map(mTypes, mt => mt.smsTemplateId || -1)
+  )
   await knex('SmsMessage')
     .whereNotIn('smsTemplateId', smsTemplatesToDelete)
     .del()
@@ -3299,8 +3239,6 @@ async function updateIssueNotificationTemplates(
 }
 
 module.exports = {
-  addReports,
-
   seed,
   seedTable,
   getSeedsRan,

@@ -38,6 +38,28 @@ const headers = [
   { key: 'errorNotes', header: 'Error notes' },
   { key: 'notes', header: 'Notes' },
 ]
+/**
+ * 'header' is for 1st row in CSV file,
+ * 'key' is prop name in array 'items' in func getDeviceErrorHistoryForAttachment() below
+ */
+const columnsDeviceErrorHistoryForAttachment = [
+  { header: 'Source', key: 'source' },
+  { header: 'Date/Time', key: 'dateTime' },
+  { header: 'Actual Date/Time (UTC)', key: 'actualDateTime' },
+  { header: 'Instrument Serial Number', key: 'instrumentSerial' },
+  { header: 'GX System Name', key: 'gxSystemName' },
+  { header: 'GX Software Version', key: 'gxSoftwareVersion' },
+  { header: 'Module Position', key: 'moduleName' },
+  { header: 'Module Serial Number', key: 'moduleSerial' },
+  { header: 'Assay', key: 'assay' },
+  { header: 'Assay Version', key: 'assayVersion' },
+  { header: 'Cartridge Lot', key: 'cartridgeLot' },
+  { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
+  { header: 'Operator ID', key: 'operatorId' },
+  { header: 'Test Outcome', key: 'result' },
+  { header: 'Error Code', key: 'errorCode' },
+  { header: 'Error Message', key: 'errorMessage' },
+]
 async function getResultsReport(request, reply) {
   const { query, auth } = request
 
@@ -246,6 +268,8 @@ async function getColumnsFromResultForms({ partnerId }) {
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
+  // treat all words A1..D4 as moduleName in DeviceOperation table
+  const regexDeviceOperationModuleName = `REGEXP_SUBSTR(do.data ->> '$.details.RawText', '[A-D][1-4]')`
   /**
    * for current device
    *
@@ -282,13 +306,13 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         `ifnull(r.resultData ->> '$.systemName', d.configurationData ->> '$.systemName') as gxSystemName`
       ), // 4. GX System Name
       'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
-      knex.raw(`'-' as gatewaySerial`), // 6. Instrument Gateway Serial Number
-      'r.moduleSerial', // 7. Module Serial Number
-      'a.name as cartridgeType', // 8. Cartridge Name
+      'r.moduleSerial', // 6. Module Serial Number
+      knex.raw(`r.resultData ->> '$.assay' as assay`), // 7. Assay
+      knex.raw(`r.resultData ->> '$.assayVersion' as assayVersion`), // 8. Assay Version
       'r.consumableLot as cartridgeLot', // 9. Cartridge Lot
       'r.consumableSerial as cartridgeSerial', // 10. Cartridge Serial Number
-      'r.senderOperator as operatorId', // 12. Operator ID
-      // 13. Test Outcome
+      'r.senderOperator as operatorId', // 11. Operator ID
+      // 12. Test Outcome
       knex.raw(`
         CASE
         WHEN rc1.externalId IN ('Error', 'Invalid', 'NoResult') THEN rc1.externalId
@@ -296,10 +320,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         END as result
       `),
       'r.errorCode', // 14. Error Code
-      /**
-       * additional fields
-       */
-      'a.abbreviation as assay',
+      'r.errorNotes as errorMessage',
       'r.moduleName'
     )
     .union([
@@ -309,33 +330,9 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       knex('DeviceOperation as do')
         .innerJoin('Device as d', 'do.deviceId', 'd.id')
         .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
-        // join to get recent Result entry for device (of any assay type)
-        .leftOuterJoin('Result as r', function () {
-          this.on('r.deviceId', 'do.deviceId').andOn(
-            'r.endedOn',
-            '<',
-            'do.startedOn'
-          )
-        })
-        // join again to Result to make sure we get latest entry for above join of alias 'r'
-        .leftOuterJoin('Result as rNewer', function () {
-          this.on('r.deviceId', 'rNewer.deviceId')
-            .andOn('rNewer.endedOn', '<', 'do.startedOn')
-            .andOn(function () {
-              this.on('r.endedOn', '<', 'rNewer.endedOn')
-              this.orOn(function () {
-                this.on('r.endedOn', '=', 'rNewer.endedOn').andOn(
-                  'r.id',
-                  '<',
-                  'rNewer.id'
-                )
-              })
-            })
-        })
         .where('do.deviceId', deviceId)
         .where('do.startedOn', '>=', minDate)
         .where('do.startedOn', '<=', maxDate)
-        .whereNull('rNewer.id') // must be null to get single latest Result entry for alias 'r'
         // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
         .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
         /**
@@ -349,58 +346,69 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw('"System Log" as source'),
           'do.startedOn as dateTime',
           knex.raw(
-            `ifnull(convert_tz(do.startedOn, tz.timeZone, '+00:00'), r.endedOn) as actualDateTime`
+            `convert_tz(do.startedOn, tz.timeZone, '+00:00') as actualDateTime`
           ),
-          'r.instrumentSerial',
-          knex.raw(`
-            CASE
-            WHEN r.resultData IS NOT NULL AND r.resultData ->> '$.systemName' IS NOT NULL THEN r.resultData ->> '$.systemName'
-            ELSE d.configurationData ->> '$.systemName'
-            END as gxSystemName
-          `),
-          'r.senderVersion as gxSoftwareVersion',
-          knex.raw(`'-' as gatewaySerial`),
+          knex.raw(`'-' as instrumentSerial`),
+          knex.raw(
+            `ifnull(d.configurationData ->> '$.systemName', '-') as gxSystemName`
+          ),
+          knex.raw(`'-' as gxSoftwareVersion`),
           knex.raw(`'-' as moduleSerial`),
-          knex.raw(`'-' as cartridgeType`),
+          knex.raw(`'-' as assay`),
+          knex.raw(`'-' as assayVersion`),
           knex.raw(`'-' as cartridgeLot`),
           knex.raw(`'-' as cartridgeSerial`),
-          'r.senderOperator as operatorId',
+          knex.raw(`'-' as operatorId`),
           knex.raw(`'-' as result`),
           knex.raw(`do.data ->> '$.details.Errors[0].ErrorCode' as errorCode`),
-          knex.raw(`'-' as assay`),
+          knex.raw(`do.data ->> '$.details.Errors[0].Message' as errorMessage`),
           // treat all words A1..D4 as moduleName
-          knex.raw(`
-            REGEXP_SUBSTR(do.data ->> '$.details.RawText', '[A-D][1-4]') as moduleName
-          `)
+          knex.raw(`${regexDeviceOperationModuleName} as moduleName`)
         ),
     ])
     .orderBy('dateTime', 'asc')
 
-  /**
-   * 'header' is for 1st row in CSV file,
-   * 'key' is prop name in array 'items'
-   */
-  const columns = [
-    { header: 'Source', key: 'source' },
-    { header: 'Date/Time', key: 'dateTime' },
-    { header: 'Actual Date/Time (UTC)', key: 'actualDateTime' },
-    { header: 'Instrument Serial Number', key: 'instrumentSerial' },
-    { header: 'GX System Name', key: 'gxSystemName' },
-    { header: 'GX Software Version', key: 'gxSoftwareVersion' },
-    { header: 'Instrument Gateway Serial Number', key: 'gatewaySerial' },
-    { header: 'Module Position', key: 'moduleName' },
-    { header: 'Module Serial Number', key: 'moduleSerial' },
-    { header: 'Assay', key: 'assay' },
-    { header: 'Cartridge Type', key: 'cartridgeType' },
-    { header: 'Cartridge Lot', key: 'cartridgeLot' },
-    { header: 'Cartridge Serial Number', key: 'cartridgeSerial' },
-    { header: 'Operator ID', key: 'operatorId' },
-    { header: 'Test Outcome', key: 'result' },
-    { header: 'Error Code', key: 'errorCode' },
-  ]
+  // fix hardware entries, if any
+  // eslint-disable-next-line no-constant-condition
+  if ((_.some(items), { source: 'System Log' })) {
+    // for hardware errors, we don't have senderversion or module serial, only module name -> get all serials by slot along with instrument serial and sender version by max result date
+    const missingFields = [
+      'r.moduleName',
+      'r.moduleSerial',
+      'r.instrumentSerial',
+      'r.senderVersion',
+    ]
+    const results = await knex('Result as r')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '<=', maxDate)
+      .groupBy(missingFields)
+      .select(missingFields)
+      .min('r.endedOn as endedOn')
+      .orderBy('endedOn', 'desc')
+
+    _.each(_.filter(items, { source: 'System Log' }), i => {
+      const instrumentData = _.find(results, r => {
+        return r.endedOn <= i.dateTime
+      })
+      const moduleData = _.find(results, r => {
+        return (
+          r.endedOn <= i.dateTime &&
+          r.moduleSerial &&
+          r.moduleName === i.moduleName
+        )
+      })
+
+      if (instrumentData) {
+        i.gxSoftwareVersion = instrumentData.senderVersion
+        i.instrumentSerial = instrumentData.instrumentSerial
+        i.moduleSerial = moduleData ? moduleData.moduleSerial : '-'
+      }
+    })
+  }
+
   return {
     items,
-    columns,
+    columns: columnsDeviceErrorHistoryForAttachment,
   }
 }
 
@@ -408,4 +416,5 @@ module.exports = {
   exportResults,
   getResultsReport,
   getDeviceErrorHistoryForAttachment,
+  columnsDeviceErrorHistoryForAttachment,
 }

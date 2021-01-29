@@ -25,8 +25,7 @@ async function seed(knex) {
       .first('id')) || {}
 
   if (deviceTypeNTRLDatabaseId) return
-
-  deviceTypeNTRLDatabaseId = await knex('DeviceType').insert({
+  ;[deviceTypeNTRLDatabaseId] = await knex('DeviceType').insert({
     externalId: 'PhilippinesNtrl',
     name: 'Philippines NTRL Database',
     manufacturer: 'NTRL',
@@ -213,7 +212,7 @@ async function seed(knex) {
   let { id: assayLpaId } =
     (await knex('Assay').where('externalId', 'assayLpa').first('id')) || {}
   if (!assayLpaId) {
-    assayLpaId = await knex('Assay').insert(assayLpa)
+    ;[assayLpaId] = await knex('Assay').insert(assayLpa)
   } else {
     await knex('Assay').where('id', assayLpaId).update(assayLpa)
   }
@@ -275,7 +274,7 @@ async function seed(knex) {
   let { id: assaySmearId } =
     (await knex('Assay').where('externalId', 'assaySmear').first('id')) || {}
   if (!assaySmearId) {
-    assaySmearId = await knex('Assay').insert(assaySmear)
+    ;[assaySmearId] = await knex('Assay').insert(assaySmear)
   } else {
     await knex('Assay').where('id', assaySmearId).update(assaySmear)
   }

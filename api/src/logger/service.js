@@ -2,6 +2,7 @@ const config = require('../config')
 const { parseDateOrDefault } = require('../shared/date')
 const { logCreated } = require('./actions')
 const { getRemoteAddress } = require('../shared/request')
+const logger = require('../shared/logger')
 
 const logConsoleDataKeys = {
   request: ['remoteAddress', 'method', 'path', 'statusCode', 'timeElapsed'],
@@ -58,10 +59,10 @@ function logAction(action, dispatcher = null) {
 function logConsole({ logKey, severity, data, userName, createdOn }) {
   const dataKeys = logConsoleDataKeys[logKey] || []
   const message = dataKeys.map(key => data[key] || '').join(' ')
-  const logMessage = `${logKey} ${severity} ${message} ${
+  const logMessage = `${data.timeElapsed}ms ${message} ${
     userName || ''
   } [${createdOn}]`
-  console.log(logMessage) // eslint-disable-line no-console
+  logger[severity](logMessage, { reLabel: `aspect:api:${logKey}` })
 }
 
 async function onLogDatabase(

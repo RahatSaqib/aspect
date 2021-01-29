@@ -41,7 +41,7 @@ async function upsertTbLampDeviceTypes(
       .first('id')) || {}
 
   if (!assayTbLampId) {
-    assayTbLampId = await knex('Assay').insert(assayTbLamp)
+    ;[assayTbLampId] = await knex('Assay').insert(assayTbLamp)
   } else {
     await knex('Assay').where('id', assayTbLampId).update(assayTbLamp)
   }

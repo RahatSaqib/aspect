@@ -89,7 +89,7 @@ async function createSample(knex, siteId, sampleTypeId, i) {
     originSiteId: siteId,
   }
 
-  sample.id = await knex('Sample').insert(sample)
+  ;[sample.id] = await knex('Sample').insert(sample)
 
   return sample
 }
@@ -220,7 +220,7 @@ async function createResults(
       deviceId
     )
 
-    const resultId = await knex('Result').insert({
+    const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId,

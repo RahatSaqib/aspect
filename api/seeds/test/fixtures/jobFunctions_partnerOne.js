@@ -3,19 +3,10 @@ const {
   regionalOfficer,
   labUser,
   clinician,
-} = require('../../common/fixtures/jobFunctions')
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    name: admin.name,
-    permissions: [
-      ...admin.permissions,
-      { module: 'patient', activity: 'view' },
-      { module: 'patient', activity: 'edit' },
-      { module: 'case', activity: 'edit' },
-      { module: 'demo', activity: 'edit' },
-    ],
-  },
+  admin,
   regionalOfficer,
   labUser,
   clinician,

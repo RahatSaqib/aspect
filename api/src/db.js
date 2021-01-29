@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { getSortPageParams, getSortParams, getPageParams } = require('./routes')
+const logger = require('./shared/logger')
 
 let knex = null // see load
 
@@ -52,7 +53,9 @@ function filterParams(queryBuilder, params, filters) {
     if (_.isUndefined(params[paramName])) {
       return
     }
-    if (_.isArray(columnNameOrArray)) {
+    if (_.isFunction(columnNameOrArray)) {
+      columnNameOrArray(queryBuilder, params[paramName])
+    } else if (_.isArray(columnNameOrArray)) {
       queryBuilder.where(function () {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach(columnName => {
@@ -87,7 +90,7 @@ function filterDateRangeParams(queryBuilder, params, dateColumnName) {
 // helper function for run, transact and migration
 const makeBlockRunner = block => blockArg =>
   block(blockArg).catch(err => {
-    console.error(err) // eslint-disable-line no-console
+    logger.error(err)
     throw err
   })
 

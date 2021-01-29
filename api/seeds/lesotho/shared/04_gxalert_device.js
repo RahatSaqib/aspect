@@ -1,8 +1,6 @@
 const { baseGxAlertMigration, upsertDashboardWidgets } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
-const {
-  fixture: defaultJobFunctionsFixture,
-} = require('../../common/fixtures/jobFunctions')
+const jobFunctions = require('./fixtures/jobFunctions')
 
 module.exports = async function (
   knex,
@@ -29,11 +27,12 @@ module.exports = async function (
         deviceApiKeyToken: gxAlertDeviceApiKey,
       },
       sitesFromGxAlert,
-      jobFunctionsFixture: defaultJobFunctionsFixture,
+      jobFunctionsFixture: jobFunctions,
       contactsFromGxAlert,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    { fixtures: { jobFunctions } }
   )
 
   const { id: partnerId } = await knex('Partner')

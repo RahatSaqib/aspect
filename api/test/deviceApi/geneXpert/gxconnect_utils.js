@@ -396,7 +396,7 @@ class GxConnectApiTestContext {
     const assay = await knex('Assay')
       .where('externalId', assayExternalId)
       .first()
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     const resultSourceDiagnosticDeviceId = await resultSourceToId(
       'DiagnosticDevice'

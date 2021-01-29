@@ -8,18 +8,14 @@ const {
   subDays,
   differenceInDays,
 } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
+const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 let patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const {
-  rowsAsObject,
-  getPermissionModules,
-  seedNotificationTypes,
-  seedIssues,
-} = require('../utils')
+const { rowsAsObject, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const {
   allResultCategoryToId,
@@ -33,7 +29,6 @@ const {
 
 const { loadPlugin } = require('../../src/plugin/registration')
 const { seedDataCategory } = require('../dataCategoryLow')
-const { upsertJobFunctionPermission } = require('../common')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -97,8 +92,6 @@ async function seed(knex) {
   }
   // -------------------------
 
-  const modules = await getPermissionModules(knex)
-
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -142,19 +135,16 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
-
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId
-  )
-
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId
-  )
+  await upsertJobFunctionFixture(knex, jobFunctionsFixtureMyanmar, partnerId)
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction')
+    .where({ externalId: 'labUser', partnerId })
+    .pluck('id')
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
+    .where({ externalId: 'regionalOfficer', partnerId })
+    .pluck('id')
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,
@@ -168,54 +158,6 @@ async function seed(knex) {
     auditFields,
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   }
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    // Admin Permissions
-    modules.demo.edit,
-    modules.device.edit,
-    modules.deviceApiKey.edit,
-    modules.person.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.assay.edit,
-    modules.issue.edit,
-    modules.dashboard.actionInventoryLevelUpdate,
-    modules.inventory.edit,
-    modules.task.edit,
-    modules.dashboard.summary,
-    modules.dashboard.target,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-  ])
-
-  // Regional Officer Permissions
-  await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.device.edit,
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
-    modules.dashboard.summary,
-    modules.dashboard.target,
-    modules.dashboard.report,
-    modules.dashboard.site,
-    modules.dashboard.actionInventoryLevelUpdate,
-  ])
-
-  // Lab User Permissions
-  await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.device.edit,
-
-    modules.result.edit,
-    modules.site.edit,
-    modules.issue.edit,
-    modules.inventory.edit,
-    modules.task.edit,
-    modules.dashboard.summary,
-    modules.dashboard.actionInventoryLevelUpdate,
-    modules.dashboard.report,
-    modules.dashboard.siteFilter,
-  ])
 
   // Admin Job
   const [jobIdAdmin] = await knex('Job').insert({
@@ -423,7 +365,7 @@ async function seed(knex) {
             originSiteId: siteData.id,
           }
 
-          sample.id = await knex('Sample').insert(sample)
+          ;[sample.id] = await knex('Sample').insert(sample)
           samples.push(sample)
         })
       )

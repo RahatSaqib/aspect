@@ -7,8 +7,10 @@ import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
+import reduce from 'lodash/reduce'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
+import stockLeftOptions from '../hardcoded/stockLeftOptions'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -80,6 +82,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withDeviceApproval',
     defaultMessage: 'approval status is {deviceApprovalName}',
   },
+  withDeviceMaintenanceStatus: {
+    id: 'filter.btnGroup.withDeviceMaintenanceStatus',
+    defaultMessage: 'maintenance status is {deviceMaintenanceStatusName}',
+  },
   withDeviceType: {
     id: 'filter.btnGroup.withDeviceType',
     defaultMessage: 'type is {deviceTypeName}',
@@ -113,6 +119,17 @@ const messages = defineMessages({
     id: 'filter.btnGroup.deviceIssueType',
     defaultMessage: 'Device Issue: {issueTypeId}',
   },
+  stockLeft: reduce(
+    stockLeftOptions,
+    (acc, { externalId, name }) => {
+      acc[externalId] = {
+        id: `filter.btnGroup.stockLeft.${externalId}`,
+        defaultMessage: `Stock left: ${name}`,
+      }
+      return acc
+    },
+    {}
+  ),
 })
 const revokedOptions = [
   {
@@ -138,6 +155,7 @@ const enhance = compose(
       deviceApprovalItems: state.deviceApproval.items,
       deviceTypeItems: state.deviceType.selectList.items,
       diseaseItems: state.disease.diseases.items,
+      deviceMaintenanceStatusItems: state.deviceMaintenanceStatus.items,
     }),
     null
   )
@@ -174,6 +192,7 @@ const filtersOrdering = {
   patientOrCaseId: 23,
   onlyReportableResults: 23,
   issueTypeId: 24,
+  stockLeft: 99,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -347,10 +366,33 @@ const buttonBy = {
           .get('name'),
       })
   ),
+  deviceMaintenanceStatusId: makeButton(
+    ({ intl, deviceMaintenanceStatusItems }, deviceMaintenanceStatusId) =>
+      intl.formatMessage(messages.withDeviceMaintenanceStatus, {
+        deviceMaintenanceStatusName: deviceMaintenanceStatusItems
+          .find(
+            it => it.get('externalId') === deviceMaintenanceStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+  ),
   deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
     intl.formatMessage(messages.withDeviceType, {
       deviceTypeName: deviceTypeItems
         .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
+  ),
+  deviceType: makeButton(({ intl, deviceTypeItems }, deviceType) =>
+    intl.formatMessage(messages.withDeviceType, {
+      deviceTypeName: deviceTypeItems
+        .find(
+          it => it.get('externalId') === deviceType,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        )
         .get('name'),
     })
   ),
@@ -394,6 +436,9 @@ const buttonBy = {
     })
   ),
   assayOverride: () => false,
+  stockLeft: makeButton(({ intl }, stockLeft) =>
+    intl.formatMessage(messages.stockLeft[stockLeft])
+  ),
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {

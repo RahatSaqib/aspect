@@ -188,6 +188,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       potentialSampleIds: [sampleId],
       siteId: device.siteId,
       potentialAssayIds,
+      startedOn: payload.startedOn,
     },
     knex
   )
@@ -515,6 +516,7 @@ async function findExistingResult(availableResultDetails, knex) {
     potentialSampleIds = [],
     siteId = null,
     potentialAssayIds = [],
+    startedOn = null,
   } = availableResultDetails
   const selectFields = [
     'r.id',
@@ -628,13 +630,15 @@ async function findExistingResult(availableResultDetails, knex) {
     _.isEmpty(matchingResult) &&
     !_.isEmpty(potentialSampleIds) &&
     siteId &&
-    !_.isEmpty(potentialAssayIds)
+    !_.isEmpty(potentialAssayIds) &&
+    startedOn
   ) {
     matchingResults = await queryStart
       .clone()
       .whereIn('s.externalId', potentialSampleIds)
       .andWhere('r.siteId', siteId)
       .whereIn('a.externalId', potentialAssayIds)
+      .andWhere('r.startedOn', startedOn)
       .select(selectFields)
     if (matchingResults.length === 1) {
       ;[matchingResult] = matchingResults
@@ -883,19 +887,57 @@ function getResultCategories(payload) {
           inválido: 'Invalid',
           недействительный: 'Invalid',
           'non valide': 'Invalid',
+          ungültig: 'Invalid',
+          'no válido': 'Invalid',
+          'non valido': 'Invalid',
+          'tidak valid': 'Invalid',
+          nieważny: 'Invalid',
           'no result': 'NoResult',
           'sem resultado': 'NoResult',
           безрезультатно: 'NoResult',
           'sans résultat': 'NoResult',
           'sin resultado': 'NoResult',
+          'pas de résultat': 'NoResult',
+          'kein ergebnis': 'NoResult',
+          'nessun risultato': 'NoResult',
+          'нет результата': 'NoResult',
+          'немає результату': 'NoResult',
+          'tanpa hasil': 'NoResult',
+          'brak wyniku': 'NoResult',
           error: 'Error',
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
+          fehler: 'Error',
+          errore: 'Error',
+          недійсний: 'Error',
+          kesalahan: 'Error',
+          błąd: 'Error',
           negative: 'Negative',
+          négatif: 'Negative',
+          отрицательный: 'Negative',
+          negativo: 'Negative',
+          negativ: 'Negative',
+          помилка: 'Negative',
+          negatif: 'Negative',
+          ujemny: 'Negative',
           positive: 'Positive',
-          'presumptive positive': 'Indeterminate',
-          'presumptive pos': 'Indeterminate',
+          positivo: 'Positive',
+          положительный: 'Positive',
+          positif: 'Positive',
+          positiv: 'Positive',
+          позитивний: 'Positive',
+          dodatni: 'Positive',
+          'presumptive positive': 'PresumptivePositive',
+          'presumptive pos': 'PresumptivePositive',
+          'presumptive posit': 'PresumptivePositive',
+          'presuntivo positivo': 'PresumptivePositive',
+          'предположительный положительный': 'PresumptivePositive',
+          'présomptif positif': 'PresumptivePositive',
+          'предположительно пол': 'PresumptivePositive',
+          негативний: 'PresumptivePositive',
+          'praduga pos': 'PresumptivePositive',
+          przypuszczalnego: 'PresumptivePositive',
           'null null': 'Success',
         }
         if (assayId === 'GxMtbRifUltra') {

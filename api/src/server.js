@@ -16,6 +16,7 @@ const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
+const logger = require('./shared/logger')
 const {
   plugin: deviceApiKeyPlugin,
   validateApiKeyAuthBasic,
@@ -38,7 +39,7 @@ const server = new Hapi.server({
     validate: {
       failAction: async (request, h, err) => {
         // log and respond with the full error
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       },
     },
@@ -126,12 +127,14 @@ const messageQueuePlugin = {
         })
       })
       .catch(err => {
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
       }),
 }
 
 const plugins = [
   ...ravenPlugins,
+  // logging framework
+  require('./shared/hapi-logger'),
   require('@hapi/inert'), // eslint-disable-line import/order
   ...swaggerPlugins,
   // JWT for authentication in client API
@@ -162,9 +165,9 @@ const start = async () => {
     server.events.on('log', (event, tags) => {
       if (tags.error) {
         const { error } = event
-        console.error('-------------------') // eslint-disable-line no-console
-        console.error(error || event) // eslint-disable-line no-console
-        console.error('-------------------') // eslint-disable-line no-console
+        logger.error('-------------------')
+        logger.error(error || event)
+        logger.error('-------------------')
       }
     })
     server.ext('onPreResponse', function (request, h) {
@@ -261,7 +264,7 @@ const start = async () => {
           addClientRoutes(server)
           resolve()
         }).catch(err => {
-          console.error(err) // eslint-disable-line no-console
+          logger.error(err)
           throw err
         }),
     },
@@ -283,7 +286,7 @@ const start = async () => {
           addDeviceRoutes(server)
           resolve()
         }).catch(err => {
-          console.error(err) // eslint-disable-line no-console
+          logger.error(err)
           throw err
         }),
     },
@@ -310,7 +313,7 @@ const start = async () => {
           // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
           resolve()
         }).catch(err => {
-          console.error(err) // eslint-disable-line no-console
+          logger.error(err)
           throw err
         }),
     },
@@ -326,9 +329,9 @@ const start = async () => {
   // =======================
   try {
     await server.start()
-    console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+    logger.info(`Magic happens at http://localhost:${port}`)
   } catch (err) {
-    console.error(err) // eslint-disable-line no-console
+    logger.error(err)
   }
 }
 

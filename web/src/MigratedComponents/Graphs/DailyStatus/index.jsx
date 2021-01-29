@@ -17,7 +17,7 @@ import {
   dateRangeOptions,
   extractOptionValue,
 } from '../Helpers/Formatters'
-import AspectDropdown from '../../AspectDropdown'
+import AspectDropDown from '../../AspectDropDown'
 
 import AspectCard from '../../AspectCard'
 import CardSelectors from '../CardSelectors'
@@ -33,7 +33,7 @@ const selectorModifiers = [
     selectedValue: 'Date Range',
     endpoint: false,
     state: 'deviceDateRange',
-    component: AspectDropdown,
+    component: AspectDropDown,
     identifier: 'dateRange',
     data: dateRangeOptions('deviceDateRange'),
     sortByKeys: ['id'],
@@ -148,9 +148,9 @@ const DailyStatus = () => {
           />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
           {devicesDaily.map(
-            ({ name, maintenanceStatusHistory, totalResults }) => (
+            ({ name, shortName, maintenanceStatusHistory, totalResults }) => (
               <DailyStatusClinic
-                name={name}
+                name={shortName || name}
                 data={maintenanceStatusHistory}
                 total={totalResults}
                 statusses={visibleStatuses}

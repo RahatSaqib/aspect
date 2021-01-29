@@ -7,7 +7,7 @@ const messagesByOperators = defineMessages({
   },
   lessThan: {
     id: 'widgetAlerts.lessThan',
-    defaultMessage: 'The {representing} is greater than {comparedTo}',
+    defaultMessage: 'The {representing} is less than {comparedTo}',
   },
   between: {
     id: 'widgetAlerts.between',
@@ -20,7 +20,81 @@ const messagesByOperators = defineMessages({
   },
 })
 
-const valueRepresentations = defineMessages({})
+const valueRepresentations = defineMessages({
+  percentageOfActiveDevices: {
+    id: 'widgetAlerts.percentageOfActiveDevices',
+    defaultMessage: 'percentage of active devices',
+  },
+  averageHoursToUpload: {
+    id: 'widgetAlerts.averageHoursToUpload',
+    defaultMessage: 'average hours to upload',
+  },
+  percentageOfServerUptime: {
+    id: 'widgetAlerts.percentageOfServerUptime',
+    defaultMessage: 'percentage of server uptime',
+  },
+  percentageOfPositiveResultsNotified: {
+    id: 'widgetAlerts.percentageOfPositiveResultsNotified',
+    defaultMessage: 'percentage of positive results notified',
+  },
+  averageLengthOfSMS: {
+    id: 'widgetAlerts.averageLengthOfSMS',
+    defaultMessage: 'average length of SMS',
+  },
+  numberOfTextMessagesSent: {
+    id: 'widgetAlerts.numberOfTextMessagesSent',
+    defaultMessage: 'number of text messages sent',
+  },
+  utilizationRate: {
+    id: 'widgetAlerts.utilizationRate',
+    defaultMessage: 'utilization rate',
+  },
+  percentageOfValidResults: {
+    id: 'widgetAlerts.percentageOfValidResults',
+    defaultMessage: 'percentage of valid results',
+  },
+  errorRate: {
+    id: 'widgetAlerts.errorRate',
+    defaultMessage: 'error rate',
+  },
+  percentageOfStockouts: {
+    id: 'widgetAlerts.percentageOfStockouts',
+    defaultMessage: 'percentage of active sites experiencing stockouts',
+  },
+  percentageOfSitesWithoutGxStockEntered: {
+    id: 'widgetAlerts.percentageOfSitesWithoutGxStockEntered',
+    defaultMessage:
+      'percentage of sites that never entered stock of GeneXpert assays',
+  },
+  averageDurationOfServiceInterrumption: {
+    id: 'widgetAlerts.averageDurationOfServiceInterrumption',
+    defaultMessage: 'average days of service interrumption',
+  },
+  averageDaysForInstrumentReplacement: {
+    id: 'widgetAlerts.averageDaysForInstrumentReplacement',
+    defaultMessage: 'average days for instrument replacement',
+  },
+  averageDaysBetweenModuleSwaps: {
+    id: 'widgetAlerts.averageDaysBetweenModuleSwaps',
+    defaultMessage: 'average days between module swaps',
+  },
+  averageTimeToReplaceDisabledModules: {
+    id: 'widgetAlerts.averageTimeToReplaceDisabledModules',
+    defaultMessage: 'average time to replace disabled modules',
+  },
+  percentageOfDevicesWithUnusedModules: {
+    id: 'widgetAlerts.percentageOfDevicesWithUnusedModules',
+    defaultMessage: 'percentage of devices with unused modules',
+  },
+  averageDaysOfServiceInterruption: {
+    id: 'widgetAlerts.averageDaysOfServiceInterruption',
+    defaultMessage: 'percentage of devices service interruption',
+  },
+  defaultMessage: {
+    id: 'widgetAlerts.defaultMessage',
+    defaultMessage: 'indicator',
+  },
+})
 
 const format = (
   formatFunc,
@@ -45,7 +119,9 @@ const format = (
       break
   }
 
-  const representing = formatFunc(valueRepresentations[representingKey])
+  const representing = formatFunc(
+    valueRepresentations[representingKey] || valueRepresentations.defaultMessage
+  )
 
   return formatFunc(messagesByOperators[whenIs], {
     representing,

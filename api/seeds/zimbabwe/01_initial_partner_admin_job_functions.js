@@ -1,19 +1,19 @@
 module.exports = require('../utils').seed(seed, __filename)
-
 const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
+const { allJobFunctionToId } = require('../../src/shared/dictionary')
 const {
   adminUserName,
   partnerName,
   adminPassword,
   serverUrl,
+  fixtures,
 } = require('./fixtures/partnerData')
 const config = require('../../src/config')
-const { getPermissionModules } = require('../utils')
 const geography = require('./fixtures/geography.json')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -42,9 +42,6 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: adminId,
   }
-
-  // Reuse previously seeded "static" data
-  const modules = await getPermissionModules(knex)
 
   const [partnerId] = await knex('Partner').insert({
     name: partnerName,
@@ -91,71 +88,18 @@ async function seed(knex) {
     timezone,
     ...auditFields,
   })
-
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
-
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.edit },
-  ])
-
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
+  await upsertJobFunctionFixture(knex, fixtures.jobFunctions, partnerId)
+  const jobFunctionsById = await allJobFunctionToId()
+  const [jobIdAdmin] = await knex('Job').insert({
+    personId: adminPersonId,
+    jobFunctionId: jobFunctionsById.admin,
+  })
   await knex('JobContext').insert({
     jobId: jobIdAdmin,
     geographyId,
   })
-
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId
-  )
-
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.browse.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.result.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.assay.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.device.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.site.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.person.view,
-    },
-  ])
-
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId
-  )
-
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.assay.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
-    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.person.view },
-  ])
+  await knex('JobContext').insert({
+    jobId: jobIdAdmin,
+    geographyId,
+  })
 }

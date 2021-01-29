@@ -9,9 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
-const {
-  fixture: defaultJobFunctionsFixture,
-} = require('./common/fixtures/jobFunctions')
+const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
@@ -258,10 +256,11 @@ async function upsertJobFunction(
   knex,
   jobFunctionName,
   partnerId,
-  permissions,
-  removeMissingPermissions = false
+  permissions = [],
+  options = {}
 ) {
-  if (!permissions) permissions = []
+  const { reports = [], removeMissingPermissions = false } = options
+
   let { id: jobFunctionId } =
     (await knex('JobFunction')
       .where({
@@ -276,10 +275,11 @@ async function upsertJobFunction(
       partnerId,
     })
   }
+  await upsertJobFunctionReport(knex, jobFunctionId, reports)
   await upsertJobFunctionPermission(
     knex,
     jobFunctionId,
-    permissions,
+    _.uniq(permissions),
     removeMissingPermissions
   )
   return jobFunctionId
@@ -391,6 +391,32 @@ async function copyDashboardWidgetsFromJobFunction(
   )
 
   await knex('JobFunctionDashboardWidget').insert(permissions)
+}
+
+async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
+  const reportsIds = await knex('Report')
+    .whereIn('externalId', reports)
+    .pluck('id')
+
+  const existingJobFunctionReports = await knex('JobFunctionReport')
+    .where({ jobFunctionId })
+    .pluck('reportId')
+
+  await knex('JobFunctionReport')
+    .where({ jobFunctionId })
+    .whereNotIn('reportId', reportsIds)
+    .delete()
+
+  const JobFunctionReport = _.map(
+    reportsIds.filter(
+      reportId => !existingJobFunctionReports.includes(reportId)
+    ),
+    reportId => ({
+      jobFunctionId,
+      reportId,
+    })
+  )
+  await knex('JobFunctionReport').insert(JobFunctionReport)
 }
 
 async function upsertJobFunctionPermission(
@@ -803,6 +829,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
         'Invalid',
         'NoResult',
         'Error',
+        'PresumptivePositive',
       ],
       'COVID-19',
       'resultCategoryCovid19'
@@ -927,7 +954,7 @@ async function upsertStatesAndLgas(knex, countryId, states) {
 }
 
 // adds the categories (array of externalIds) to the given assayId
-// safe to execute multiple times - will only add new entires
+// safe to execute multiple times - will only add new entries
 async function upsertAssayResultCategories(knex, assayId, categories) {
   await Promise.all(
     _.map(categories || [], async category => {
@@ -1077,7 +1104,8 @@ async function getStatesByName(knex, countryId) {
 
 async function baseGxAlertMigration(
   variables = defaultGxAlertMigrationVariables,
-  knex
+  knex,
+  partnerData = {}
 ) {
   // -----------------------------------------------
   // Supplement passed variables with default values
@@ -1190,7 +1218,9 @@ async function baseGxAlertMigration(
     adminId,
     geographyFromGxAlert,
     countries[0].abbreviation,
-    gxAlertDevice.deviceApiKeyToken
+    gxAlertDevice.deviceApiKeyToken,
+    null,
+    partnerData
   )
 
   // --------------------------------------------
@@ -1682,10 +1712,43 @@ async function baseGxAlertMigration(
   return returnValue
 }
 
+async function removeJobFunctions(knex, jobFunctionsToDelete) {
+  await Promise.each(jobFunctionsToDelete, async ({ id }) => {
+    const jobs = await knex('Job').where('jobFunctionId', id)
+    if (jobs.length > 0) {
+      throw new Error(
+        `Error while trying to remove Job the JobFunctionId = ${id}. You should remove the jobs manually first.`
+      )
+    }
+
+    await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
+    await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
+    await knex('JobFunctionReport').where('jobFunctionId', id).delete()
+    await knex('JobFunction').where({ id }).delete()
+  })
+}
+
+/**
+ *
+ * Synchronizes the provided fixture with the job functions configuration in the database, removing from the database the ones that aren't in the fixture, inserting the ones that aren't at the database, and updating the ones present in both sides.
+ * It makes the same process for updating the permissions and reports assigned to each job function.
+ *
+ * @param {object} knex
+ * @param {Array} jobFunctionFixture
+ * @param {number} partnerId
+ */
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
+
+  const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
+  const jobFunctionsToDelete = await knex('JobFunction')
+    .where({ partnerId })
+    .whereNotIn('externalId', externalIds)
+  await removeJobFunctions(knex, jobFunctionsToDelete, partnerId)
+
   await Promise.each(jobFunctionFixture, async jf => {
-    const jobFunction = _.omit(jf, ['permissions'])
+    const jobFunction = _.omit(jf, ['permissions', 'reports'])
+
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
@@ -1704,12 +1767,16 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
         return permissionId
       }
     )
+
     await upsertJobFunction(
       knex,
       jobFunction.name,
       partnerId,
-      permissionIds,
-      true
+      _.uniq(permissionIds),
+      {
+        reports: jf.reports,
+        removeMissingPermissions: true,
+      }
     )
   })
 }
