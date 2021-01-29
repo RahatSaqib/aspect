@@ -1522,7 +1522,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
         // if has result for TODAY
         totalResults > 0 &&
         // but current status is not active - then set it to active for TODAY
-        !['active', 'reportedActive'].includes(deviceMaintenanceStatusForTheDay)
+        deviceMaintenanceStatusForTheDay !== 'active'
       ) {
         deviceMaintenanceStatusForTheDay = 'active'
       }
