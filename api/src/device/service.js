@@ -1515,9 +1515,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
          * then change it's status to 'No Results Reported' for this day
          */
         totalResults === 0 &&
-        ['active', 'reportedActive', 'inactiveUnknown'].includes(
-          deviceMaintenanceStatusForTheDay
-        )
+        ['active', 'inactiveUnknown'].includes(deviceMaintenanceStatusForTheDay)
       ) {
         deviceMaintenanceStatusForTheDay = 'inactiveNoResultsReported'
       } else if (
