@@ -34,17 +34,18 @@ async function seed(knex) {
   // For the next devices we don't have a Clinic that matches the lab's name, so the lab was set as the reportable site
   {
     hostId: 'OAUTH, Ile Ife',
-    defaultReportableSiteId: 'OAUTH IFE'
+    defaultReportableSiteExternalId: 'OAUTH IFE'
   },
   {
     hostId: 'SEVENTH-DAY ADVENTIS',
-     defaultReportableSiteId: 'SDA IFE'
+    defaultReportableSiteExternalId: 'SDA IFE'
    },
   ]
 
   await Promise.each(devicesClinics, async ({ hostId, defaultReportableSiteExternalId }) => {
     const { id: defaultReportableSiteId } = (await knex('Site').where({ externalId: defaultReportableSiteExternalId }).first() || { })
-    await knex('Device').where({ hostId }).update({ defaultReportableSiteId })
+    if (defaultReportableSiteId)
+      await knex('Device').where({ hostId }).update({ defaultReportableSiteId })
   })
 }
 
