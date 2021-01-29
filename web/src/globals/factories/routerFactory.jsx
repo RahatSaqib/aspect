@@ -38,7 +38,6 @@ import NotificationDetailView from '../../notification/detail/view/NotificationD
 import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
-import StyleguideMain from '../../styleguide/main/StyleguideMain'
 import InventoryItemsList from '../../inventory/list/InventoryItemsList'
 import RouterList from '../../router/list/RouterList'
 import RouterDetail from '../../router/detail/RouterDetail'
@@ -555,11 +554,6 @@ const AppRoutes = ({ props }) => {
             renderRedirectToNotFound(props, ['browse', 'report'])
           }
         />
-
-        {process.env.NODE_ENV !== 'production' && (
-          <Route path="/styleguide" component={StyleguideMain} />
-        )}
-
         <Route render={renderNotFound} />
       </Switch>
     </RoutesPermissionProvider>
