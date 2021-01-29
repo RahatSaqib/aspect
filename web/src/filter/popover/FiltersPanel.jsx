@@ -46,8 +46,13 @@ const enhance = compose(
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
 
-    onAssayChange: ({ onChangeFilters }) => assayId =>
-      onChangeFilters({ assayId }),
+    onAssayChange: ({ onChangeFilters }) => assayId => {
+      onChangeFilters({
+        assayId,
+        resultCategoryId: null,
+        resultCategoryGroupId: null,
+      })
+    },
     onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
       onChangeFilters({ diseaseId }),
     onDateChange: ({ onChangeFilters }) => dateValues =>
