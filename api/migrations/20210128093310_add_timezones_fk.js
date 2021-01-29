@@ -4,7 +4,7 @@ const config = require('../src/config')
 // eslint-disable-next-line import/no-dynamic-require
 const geography = require(`..${config.seeds.directory.substring(
   1
-)}fixtures/geography.json`)
+)}/fixtures/geography.json`)
 
 module.exports = require('../src/db').migration(up, down)
 
