@@ -18,7 +18,7 @@ export default ({
   ...restProps
 }) => {
   const { data, isError } = useQuery(
-    RESULT_CATEGORY_GROUP_SELECT_LIST.KEY,
+    [RESULT_CATEGORY_GROUP_SELECT_LIST.KEY, assayId],
     async () =>
       fetchWrapperForQueries({
         endpoint: RESULT_CATEGORY_GROUP_SELECT_LIST.ENDPOINT,
