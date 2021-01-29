@@ -10,19 +10,11 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await Promise.each(geography.countries, async country => {
-    const countryData = _.pick(country, [
-      'abbreviation',
-      'name',
-      'a3',
-      'culture',
-      'countryCode',
-      'timezone',
-      'portNumber',
-      'exportColumns',
-      'inventoryDaysThreshold',
-      'monthStartsOnDay',
-    ])
-    return knex('Country').update(countryData).where('a3', countryData.a3)
+    const countryData = _.pick(country, ['a3', 'timezone'])
+    return knex('Country')
+      .update(countryData)
+      .where('a3', countryData.a3)
+      .andWhere('timezone', '<>', countryData.timezone)
   })
   const personsToUpdate = await knex('Person')
     .whereNotNull('timezone')
