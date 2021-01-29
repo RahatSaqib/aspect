@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 :root {
-  @custom-media --sm-viewport (min-width: 620px);
+  @custom-media --sm-viewport (min-width: 620px and max-width: 919px);
   @custom-media --md-viewport (min-width: 920px);
 }
 
