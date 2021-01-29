@@ -1464,7 +1464,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
         queryBuilder
           .on('d.id', 'today_dmsl.deviceId')
-          .andOn('today_dmsl.day', knex.raw('?', [today]))
+          .andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
       })
       .leftJoin(
         'DeviceMaintenanceStatus as today_dms',
@@ -1472,6 +1472,11 @@ async function onDeviceMaintenanceStatusLogScheduled(
         'today_dms.id'
       )
       .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+      .leftJoin('Result as r', queryBuilder => {
+        queryBuilder
+          .on('d.id', 'r.deviceId')
+          .andOn(knex.raw('DATE(r.endedOn)'), knex.raw('DATE(?)', [today]))
+      })
       .where('dtc.hasResults', true)
       .andWhere(queryBuilder => {
         queryBuilder.whereNull('today_dmsl.id').orWhere(queryBuilder => {
@@ -1480,11 +1485,14 @@ async function onDeviceMaintenanceStatusLogScheduled(
             .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
         })
       })
+      .groupBy('d.id')
       .select(
         'd.id',
         'current_dms.externalId as currentMaintenanceStatusExternalId',
         'current_dmsl.data as currentMaintenanceStatusLogData',
-        'da.token as approvalToken'
+        'current_dmsl.day as currentMaintenanceStatusDay',
+        'da.token as approvalToken',
+        knex.raw('COUNT(r.id) as totalResults')
       )
     await Promise.each(devicesWithNoMaintenanceLogForTheDay, async device => {
       const {
@@ -1492,18 +1500,46 @@ async function onDeviceMaintenanceStatusLogScheduled(
         approvalToken,
         currentMaintenanceStatusExternalId,
         currentMaintenanceStatusLogData = '{}',
+        currentMaintenanceStatusDay,
+        totalResults,
       } = device
+      // set maintenance status external id
       let deviceMaintenanceStatusForTheDay =
         currentMaintenanceStatusExternalId || 'inactiveUnknown'
       if (approvalToken === 'decommissioned') {
         deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
+      } else if (
+        /**
+         * when device has no tests on this day (today) and
+         * it's current maintenance status is active or inactiveUnknown
+         * then change it's status to 'No Results Reported' for this day
+         */
+        totalResults === 0 &&
+        ['active', 'reportedActive', 'inactiveUnknown'].includes(
+          deviceMaintenanceStatusForTheDay
+        )
+      ) {
+        deviceMaintenanceStatusForTheDay = 'inactiveNoResultsReported'
+      } else if (
+        // if has result for TODAY
+        totalResults > 0 &&
+        // but current status is not active - then set it to active for TODAY
+        !['active', 'reportedActive'].includes(deviceMaintenanceStatusForTheDay)
+      ) {
+        deviceMaintenanceStatusForTheDay = 'active'
       }
+      // set maintenance status log data
+      const deviceMaintenanceStatusLogData =
+        currentMaintenanceStatusDay === today
+          ? currentMaintenanceStatusLogData
+          : '{}'
+
       await automaticallySetDeviceMaintenanceStatus(
         id,
         today,
         deviceMaintenanceStatusForTheDay,
         {
-          ...JSON.parse(currentMaintenanceStatusLogData),
+          ...JSON.parse(deviceMaintenanceStatusLogData),
           ...action,
         },
         messageContext
