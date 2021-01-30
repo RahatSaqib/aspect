@@ -13,6 +13,9 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('Person', person => {
+    person.dropForeign('partnerId')
+  })
+  await knex.schema.alterTable('Person', person => {
     person.dropColumns('partnerId')
   })
 }

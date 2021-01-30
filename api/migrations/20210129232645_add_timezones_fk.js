@@ -84,7 +84,6 @@ async function up(knex) {
 async function down(knex) {
   await knex.schema.alterTable('Device', devices => {
     devices.dropForeign('timezone')
-    devices.string(45).defaultTo(null)
   })
 
   await knex.schema.alterTable('Person', person => {
@@ -95,5 +94,8 @@ async function down(knex) {
   })
   await knex.schema.alterTable('Site', site => {
     site.dropForeign('timezoneId')
+  })
+  await knex.schema.alterTable('Device', devices => {
+    devices.string('timezone', 45).defaultTo(null).alter()
   })
 }
