@@ -1,7 +1,6 @@
 const setupPaginator = require('../../src/shared/knex-paginator')
 
-const MAX_ROWS_PER_UPDATE = 1000
-const MAX_ROWS_PER_BATCH = 10001
+const MAX_ROWS_PER_UPDATE = 10000
 async function seed(knex) {
   setupPaginator(knex)
   const [{ mySqlTimezoneTablesMissing }] = await knex.select(
@@ -29,38 +28,46 @@ async function seed(knex) {
 
   let currentMinValue = minResultId
   let updateQueries = []
-  while (
-    currentMinValue < maxResultId &&
-    currentMinValue % (minResultId + MAX_ROWS_PER_BATCH) !== 0
-  ) {
-    updateQueries.push(
-      getResultDateUpdates(
-        knex,
-        currentMinValue,
-        currentMinValue + MAX_ROWS_PER_UPDATE
+  while (currentMinValue < maxResultId) {
+    updateQueries = []
+    while (
+      currentMinValue < maxResultId &&
+      currentMinValue % (minResultId + MAX_ROWS_PER_UPDATE) !== 0 &&
+      updateQueries.length === 0
+    ) {
+      updateQueries.push(
+        getResultDateUpdates(
+          knex,
+          currentMinValue,
+          currentMinValue + MAX_ROWS_PER_UPDATE
+        )
       )
-    )
-    currentMinValue += MAX_ROWS_PER_UPDATE
+      currentMinValue += MAX_ROWS_PER_UPDATE
+    }
+
+    // eslint-disable-next-line no-await-in-loop
+    if (updateQueries.length !== 0) await Promise.all(updateQueries)
   }
-
-  if (updateQueries.length !== 0) await Promise.all(updateQueries)
-
   currentMinValue = minSampleId
-  updateQueries = []
-  while (
-    currentMinValue < maxSampleId &&
-    currentMinValue % (minSampleId + MAX_ROWS_PER_BATCH) !== 0
-  ) {
-    updateQueries.push(
-      getSampleDateUpdates(
-        knex,
-        currentMinValue,
-        currentMinValue + MAX_ROWS_PER_UPDATE
+  while (currentMinValue < maxSampleId) {
+    updateQueries = []
+    while (
+      currentMinValue < maxSampleId &&
+      currentMinValue % (minSampleId + MAX_ROWS_PER_UPDATE) !== 0 &&
+      updateQueries.length === 0
+    ) {
+      updateQueries.push(
+        getSampleDateUpdates(
+          knex,
+          currentMinValue,
+          currentMinValue + MAX_ROWS_PER_UPDATE
+        )
       )
-    )
-    currentMinValue += MAX_ROWS_PER_UPDATE
+      currentMinValue += MAX_ROWS_PER_UPDATE
+    }
+    // eslint-disable-next-line no-await-in-loop
+    if (updateQueries.length !== 0) await Promise.all(updateQueries)
   }
-  if (updateQueries.length !== 0) await Promise.all(updateQueries)
 }
 
 async function getResultDateUpdates(knex, minValue, maxValue) {
