@@ -234,6 +234,11 @@ describe('Device API routes', () => {
         .send({
           type: { id: 'DaktariInSight' },
           site: { id: 'CHIZ' },
+          configuration: {
+            data: {
+              timezone: 'Hawaiian Standard Time',
+            },
+          },
         })
 
       assert.equal(res.status, 200)
@@ -243,6 +248,7 @@ describe('Device API routes', () => {
       const newDevice = await getDeviceFromApiKey(knex, apiKey)
       assert.isOk(newDevice)
       assert.isOk(newDevice.name)
+      assert.equal(newDevice.timezone, 'Hawaiian Standard Time')
       assert.equal(newDevice.serial, null)
 
       const deviceLogs = await knex('DeviceApprovalLog as dl').where(
@@ -325,6 +331,8 @@ describe('Device API routes', () => {
         .first('id')
 
       assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
+      // this is the site default timezone
+      assert.equal(newDevice.timezone, 'Eastern Standard Time')
     })
     it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', async () => {
       const { apiKey, deviceAuth } = newDeviceContext

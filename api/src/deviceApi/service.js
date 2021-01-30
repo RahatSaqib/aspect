@@ -819,6 +819,7 @@ function createNewDeviceFromRequest(request, now) {
       siteId: apiKey.siteId,
       geographyId: apiKey.geographyId,
       approval: apiKey.siteId ? 'approved' : 'provisioned',
+      timezone: _.get(payload, 'configuration.data.timezone', null),
     })
     logger.debug('Assign new device an api key', {
       reLabel: 'deviceApi:createNewDeviceFromRequest',
