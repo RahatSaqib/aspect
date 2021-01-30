@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const config = require('../src/config')
+
 // eslint-disable-next-line import/no-dynamic-require
 const geography = require(`..${config.seeds.directory.substring(
   1
@@ -49,8 +50,8 @@ async function up(knex) {
 
   await knex.schema.raw(`ALTER TABLE TimeZone MODIFY
   id VARCHAR(100)
-    CHARACTER SET utf8
-    COLLATE utf8_general_ci;`)
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;`)
 
   await knex.schema.alterTable('Device', devices => {
     devices
@@ -83,6 +84,7 @@ async function up(knex) {
 async function down(knex) {
   await knex.schema.alterTable('Device', devices => {
     devices.dropForeign('timezone')
+    devices.string(45).defaultTo(null)
   })
 
   await knex.schema.alterTable('Person', person => {
