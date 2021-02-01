@@ -1473,9 +1473,12 @@ async function onDeviceMaintenanceStatusLogScheduled(
       )
       .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .leftJoin('Result as r', queryBuilder => {
-        queryBuilder
-          .on('d.id', 'r.deviceId')
-          .andOn(knex.raw('DATE(r.endedOn)'), knex.raw('DATE(?)', [today]))
+        queryBuilder.on('d.id', 'r.deviceId').andOn(function () {
+          this.on(
+            knex.raw('DATE(r.endedOn)'),
+            knex.raw('DATE(?)', [today])
+          ).orOn(knex.raw('DATE(r.startedOn)'), knex.raw('DATE(?)', [today]))
+        })
       })
       .where('dtc.hasResults', true)
       .andWhere(queryBuilder => {
