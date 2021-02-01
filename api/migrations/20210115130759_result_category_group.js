@@ -1,7 +1,6 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  /* Adding TZ table just for querying purpose */
   await knex.schema.createTable(
     'ResultCategoryGroup',
     tblResultCategoryGroup => {
