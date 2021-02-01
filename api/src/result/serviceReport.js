@@ -383,7 +383,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
       .where('r.endedOn', '<=', maxDate)
       .groupBy(missingFields)
       .select(missingFields)
-      .max('r.endedOn as endedOn')
+      .min('r.endedOn as endedOn')
       .orderBy('endedOn', 'desc')
 
     _.each(_.filter(items, { source: 'System Log' }), i => {
