@@ -240,10 +240,9 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       )
     })
     .leftJoin('ResultCategoryGroup as rcg', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn(
-        'r.resultCategory2',
-        'rca2.resultCategoryId'
-      )
+      this.on('r.assayId', 'rcg.assayId')
+        .andOn('r.resultCategory1', 'rcg.resultCategory1Id')
+        .andOn('r.resultCategory2', 'rcg.resultCategory2Id')
     })
     // only results which are reportable for either ResultCategory
     .where(builder =>
@@ -2100,8 +2099,6 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  console.log(query)
-
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryGroup as rcg', function () {
       this.on('r.assayId', 'rcg.assayId')
