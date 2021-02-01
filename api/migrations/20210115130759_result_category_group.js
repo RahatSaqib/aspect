@@ -29,7 +29,10 @@ async function up(knex) {
         .index()
         .references('id')
         .inTable('Assay')
-      tblResultCategoryGroup.unique(['resultCategory1Id', 'resultCategory2Id', 'assayId'], 'rc1Id_rc2Id_assayId')
+      tblResultCategoryGroup.unique(
+        ['resultCategory1Id', 'resultCategory2Id', 'assayId'],
+        'rc1Id_rc2Id_assayId'
+      )
     }
   )
 }

@@ -2,15 +2,19 @@ const Promise = require('bluebird')
 const groupBy = require('lodash/groupBy')
 const ResultCategoryGroupFixtureDefault = require('../fixtures/ResultCategoryGroup')
 
-const validateFixture = (fixture) => {
+const validateFixture = fixture => {
   const byExternalId = groupBy(fixture, 'externalId')
-  let duplicatedExternalIds = []
+  const duplicatedExternalIds = []
   Object.keys(byExternalId).forEach(externalId => {
     if (byExternalId[externalId].length > 1)
       duplicatedExternalIds.push(externalId)
   })
   if (duplicatedExternalIds.length > 0)
-    throw new Error(`Some result category groups external ids where specified more than one time: ${duplicatedExternalIds.join(', ')}`)
+    throw new Error(
+      `Some result category groups external ids where specified more than one time: ${duplicatedExternalIds.join(
+        ', '
+      )}`
+    )
 }
 
 module.exports = async function upsertResultCategoryGroups(
