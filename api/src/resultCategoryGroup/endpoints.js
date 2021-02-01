@@ -14,7 +14,7 @@ const routes = [
       auth: { scope: ['browse', 'result'] },
       validate: {
         query: {
-          assayId: Joi.number().description('The assay id'),
+          assayId: Joi.number(),
         },
       },
     },
