@@ -71,9 +71,6 @@ function listDevicesBaseRequest() {
         resultCategoryId: Joi.number()
           .allow('')
           .description('Result Category ID'),
-        resultCategoryId: Joi.string()
-          .allow('')
-          .description('Result Category G'),
         resultCategoryGroupId: Joi.string()
           .allow('')
           .description(
