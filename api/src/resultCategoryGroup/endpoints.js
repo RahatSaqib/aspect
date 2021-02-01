@@ -10,7 +10,7 @@ const routes = [
     config: {
       description: 'Result Category Group List',
       notes:
-        'List of result category groups external IDs and their result categories names concatenated',
+        "List of the result category groups' external IDs and the concatenated names of their result categories",
       auth: { scope: ['browse', 'result'] },
       validate: {
         query: {
