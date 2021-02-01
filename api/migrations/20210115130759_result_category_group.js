@@ -5,9 +5,9 @@ async function up(knex) {
     'ResultCategoryGroup',
     tblResultCategoryGroup => {
       tblResultCategoryGroup.increments('id')
-      tblResultCategoryGroup.string('externalId')
+      tblResultCategoryGroup.string('externalId').notNullable().index().unique()
       tblResultCategoryGroup.string('name')
-      tblResultCategoryGroup.string('i18nKey').notNullable().index().unique()
+      tblResultCategoryGroup.string('i18nKey')
       tblResultCategoryGroup
         .integer('resultCategory1Id')
         .unsigned()
@@ -29,6 +29,7 @@ async function up(knex) {
         .index()
         .references('id')
         .inTable('Assay')
+      tblResultCategoryGroup.unique(['resultCategory1Id', 'resultCategory2Id', 'assayId'], 'rc1Id_rc2Id_assayId')
     }
   )
 }

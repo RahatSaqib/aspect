@@ -66,7 +66,7 @@ module.exports = async function upsertResultCategoryGroups(
     async ({ externalId, assayExternalId, ...group }) => {
       if (!group.assayId) {
         console.warn(
-          `Warning! ResultCategoryGroup upsert skipped as it references to an unexistant assay external id (${assayExternalId})`
+          `Warning! ResultCategoryGroup upsert skipped as it references to an non-existant assay external id (${assayExternalId})`
         )
       } else {
         const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup')
