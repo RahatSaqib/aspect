@@ -657,7 +657,7 @@ describe('Device Result API routes', () => {
           zip: '12345',
           latitude: 12.12,
           longitude: 15.12,
-          timezoneId: 'South Africa Standard Time',
+          timezoneid: 'South Africa Standard Time',
           hoursStart: 9,
           hoursEnd: 17,
         }
@@ -676,7 +676,7 @@ describe('Device Result API routes', () => {
             latitude: expectedSampleOriginSite.latitude,
             longitude: expectedSampleOriginSite.longitude,
           },
-          timezoneId: expectedSampleOriginSite.timezoneId,
+          timezoneId: expectedSampleOriginSite.timezoneid,
           hoursStart: expectedSampleOriginSite.hoursStart,
           hoursEnd: expectedSampleOriginSite.hoursEnd,
         }
