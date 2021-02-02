@@ -757,7 +757,7 @@ describe('Device Result API routes', () => {
           .where({ id: _.last(resultIds) })
           .first()
 
-        const result2Status = await await knex('ResultWorkflowLog as rsl')
+        const result2Status = await knex('ResultWorkflowLog as rsl')
           .innerJoin(
             'ResultWorkflowStatus as rs',
             'rsl.resultWorkflowStatusId',
@@ -845,7 +845,7 @@ describe('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(result2.resultData), { a: 'c' })
         assert.equal(result2.errorCode, '1')
 
-        const result2Status = await await knex('ResultWorkflowLog as rsl')
+        const result2Status = await knex('ResultWorkflowLog as rsl')
           .innerJoin(
             'ResultWorkflowStatus as rs',
             'rsl.resultWorkflowStatusId',
