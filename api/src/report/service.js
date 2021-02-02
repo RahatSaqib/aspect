@@ -17,7 +17,8 @@ async function getReports(request) {
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
     .innerJoin('JobFunction as jf', 'jf.id', 'jfr.jobFunctionId')
     .innerJoin('Job as j', 'jf.id', 'j.jobFunctionId')
-    .where('j.personId', dataConstraints.person.id)
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { person: 'p' })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
 
@@ -34,6 +35,9 @@ async function getReports(request) {
 async function getReportDetails(auth, externalId) {
   const dataConstraints = await getConstraints(auth.credentials)
 
+  if ((await knex('Report').where({ externalId }).first()) === null)
+    throw Boom.badRequest('The requested report does not exist')
+
   const report = await knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
     .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
@@ -49,6 +53,9 @@ async function getReportDetails(auth, externalId) {
       'r.name'
     )
     .first()
+
+  if (!report)
+    throw Boom.forbidden("You don't have access to the requested report")
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
