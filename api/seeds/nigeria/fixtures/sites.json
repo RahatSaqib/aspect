@@ -2780,8 +2780,8 @@
   {
     "externalId": 2609,
     "lgaName": "Ede South",
-    "name": "SH EDE",
-    "shortName": "EDE",
+    "name": "GH, Ede - DOTS",
+    "shortName": "EDE DOTS",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
   },
@@ -2916,16 +2916,16 @@
   {
     "externalId": 2626,
     "lgaName": "Irewole",
-    "name": "SH IKIRE",
-    "shortName": "IKIRE",
+    "name": "STATE HOSPITAL IKIRE - DOTS",
+    "shortName": "IKIRE DOTS",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
   },
   {
     "externalId": 2627,
     "lgaName": "Osogbo",
-    "name": "SH ASUBIARO",
-    "shortName": "ASUBIARO",
+    "name": "SH ASUBIARO - DOTS",
+    "shortName": "ASUBIARO DOTS",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
   },
@@ -2948,8 +2948,8 @@
   {
     "externalId": 2630,
     "lgaName": "Osogbo",
-    "name": "OKE BAALE PHC",
-    "shortName": "OKE BAALE",
+    "name": "OKE BAALE PHC - DOTS",
+    "shortName": "OKE BAALE DOTS",
     "stateName": "Osun",
     "tags": ["Clinic", "Primary"]
   },
