@@ -18,10 +18,17 @@ const {
   smsMessageSent,
 } = require('../../src/sms/actions')
 const { messageStatusToId } = require('../../src/shared/dictionary')
+const logger = require('../../src/shared/logger')
 
-describe('Sending SMS via Message Queue', () => {
-  beforeEach(async () => context.beforeEach())
-  afterEach(async () => context.afterEach())
+describe.only('Sending SMS via Message Queue', () => {
+  beforeEach(async () => {
+    logger.info('before each')
+    await context.beforeEach()
+  })
+  afterEach(async () => {
+    await context.afterEach()
+    logger.info('after each')
+  })
 
   it('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
     // get MQ context and messageId of inserted record in SmsMessage
@@ -32,7 +39,7 @@ describe('Sending SMS via Message Queue', () => {
     // message goes through few states - Created, ReadyForSending, Sent
     const actionCreated = smsMessageCreated(messageId)
     const waitForCreated = waitForAction(actionCreated)
-
+    messageContext.smsMessageCreated(messageId)
     const actionReady = smsMessageReadyForSending(messageId)
     const waitForReadyForSending = waitForAction(actionReady)
 
@@ -40,7 +47,6 @@ describe('Sending SMS via Message Queue', () => {
     const waitForSent = waitForAction(actionSent)
 
     // dispatch to MQ a messageId (generated in SmsMessage)
-    messageContext.smsMessageCreated(messageId)
 
     await waitForCreated
 
