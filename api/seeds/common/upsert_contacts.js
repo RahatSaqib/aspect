@@ -144,6 +144,7 @@ module.exports = async (knex, partnerData, contacts) => {
       .first()
     if (existingPerson) {
       if (
+        existingPerson.personCell !== person.personCell ||
         existingPerson.name !== person.personName ||
         existingPerson.timezone !== person.timezone ||
         existingPerson.title !== person.title ||
