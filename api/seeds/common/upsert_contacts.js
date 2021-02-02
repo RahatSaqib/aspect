@@ -157,20 +157,22 @@ module.exports = async (knex, partnerData, contacts) => {
         existingPerson.hideSampleId !== person.hideSampleId ||
         existingPerson.hideNotes !== person.hideNotes
       ) {
-        await knex('Person').where('id', existingPerson.id).update({
-          name: person.personName,
-          timezone: person.timezone,
-          title: person.title,
-          geographyId,
-          email: person.personEmailAddress,
-          cell: person.personCell,
-          phone: person.personPhone,
-          hidePatientId: person.hidePatientId,
-          hideSampleId: person.hideSampleId,
-          hideNotes: person.hideNotes,
-          updatedOn: now,
-          updatedBy: adminId,
-        })
+        await knex('Person')
+          .where('id', existingPerson.id)
+          .update({
+            name: person.personName,
+            timezone: person.timezone,
+            title: person.title || null,
+            geographyId,
+            email: person.personEmailAddress || null,
+            cell: person.personCell || null,
+            phone: person.personPhone || null,
+            hidePatientId: person.hidePatientId,
+            hideSampleId: person.hideSampleId,
+            hideNotes: person.hideNotes,
+            updatedOn: now,
+            updatedBy: adminId,
+          })
       }
       personId = existingPerson.id
     } else {
@@ -178,11 +180,12 @@ module.exports = async (knex, partnerData, contacts) => {
         name: person.personName,
         timezone: person.timezone,
         geographyId,
-        title: person.title,
-        email: person.personEmailAddress,
-        cell: person.personCell,
-        phone: person.personPhone,
+        title: person.title || null,
+        email: person.personEmailAddress || null,
+        cell: person.personCell || null,
+        phone: person.personPhone || null,
         userId,
+        canLogin: !!userId,
         lastPartnerId: partnerId,
         lastCountryId: countryId,
         hidePatientId: person.hidePatientId,
