@@ -20,7 +20,7 @@ const {
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const logger = require('../../src/shared/logger')
 
-describe.only('Sending SMS via Message Queue', () => {
+describe('Sending SMS via Message Queue', () => {
   beforeEach(async () => {
     logger.info('before each')
     await context.beforeEach()
