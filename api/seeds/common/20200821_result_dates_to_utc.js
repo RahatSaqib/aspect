@@ -1,6 +1,9 @@
+const Promise = require('bluebird')
+const _ = require('lodash')
 const setupPaginator = require('../../src/shared/knex-paginator')
+const logger = require('../../src/shared/logger')
 
-const MAX_ROWS_PER_UPDATE = 10000
+const MAX_ROWS_PER_UPDATE = 10000.0
 async function seed(knex) {
   setupPaginator(knex)
   const [{ mySqlTimezoneTablesMissing }] = await knex.select(
@@ -26,51 +29,48 @@ async function seed(knex) {
     .min('id as minId')
     .first()
 
-  let currentMinValue = minResultId
-  let updateQueries = []
-  while (currentMinValue < maxResultId) {
-    updateQueries = []
-    while (
-      currentMinValue < maxResultId &&
-      currentMinValue % (minResultId + MAX_ROWS_PER_UPDATE) !== 0 &&
-      updateQueries.length === 0
-    ) {
-      updateQueries.push(
-        getResultDateUpdates(
-          knex,
-          currentMinValue,
-          currentMinValue + MAX_ROWS_PER_UPDATE
-        )
-      )
-      currentMinValue += MAX_ROWS_PER_UPDATE
-    }
-
-    // eslint-disable-next-line no-await-in-loop
-    if (updateQueries.length !== 0) await Promise.all(updateQueries)
-  }
-  currentMinValue = minSampleId
-  while (currentMinValue < maxSampleId) {
-    updateQueries = []
-    while (
-      currentMinValue < maxSampleId &&
-      currentMinValue % (minSampleId + MAX_ROWS_PER_UPDATE) !== 0 &&
-      updateQueries.length === 0
-    ) {
-      updateQueries.push(
-        getSampleDateUpdates(
-          knex,
-          currentMinValue,
-          currentMinValue + MAX_ROWS_PER_UPDATE
-        )
-      )
-      currentMinValue += MAX_ROWS_PER_UPDATE
-    }
-    // eslint-disable-next-line no-await-in-loop
-    if (updateQueries.length !== 0) await Promise.all(updateQueries)
-  }
+  batchUpdate(knex, minResultId, maxResultId, getResultDateUpdates)
+  batchUpdate(knex, minSampleId, maxSampleId, getSampleDateUpdates)
 }
 
-async function getResultDateUpdates(knex, minValue, maxValue) {
+function batchUpdate(knex, minValue, maxValue, queryBuilderFunction) {
+  let currentMinValue = minValue
+  const queries = []
+  knex.transaction(trx => {
+    _.range(0, Math.ceil((maxValue - minValue) / MAX_ROWS_PER_UPDATE)).forEach(
+      i => {
+        logger.info(i)
+        queries.push(
+          queryBuilderFunction(
+            knex,
+            currentMinValue,
+            currentMinValue + MAX_ROWS_PER_UPDATE,
+            trx
+          )
+        )
+        currentMinValue += MAX_ROWS_PER_UPDATE
+      }
+    )
+    logger.info('updating')
+
+    return Promise.all(queries)
+      .then(() => {
+        logger.debug(`batch update successful ${__filename} commiting`)
+        trx.commit()
+        logger.debug(`batch update successful ${__filename} commit`)
+      })
+      .catch(error => {
+        logger.debug([
+          `batch update error ${__filename} rolling back....`,
+          error,
+        ])
+        trx.rollback()
+        logger.error([`rolled back${__filename}`, error])
+      })
+  })
+}
+
+async function getResultDateUpdates(knex, minValue, maxValue, trx) {
   return knex('Result as r')
     .innerJoin('Site as s', 'r.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
@@ -93,9 +93,10 @@ async function getResultDateUpdates(knex, minValue, maxValue) {
     })
     .where('r.id', '>', minValue)
     .andWhere('r.id', '<=', maxValue)
+    .transacting(trx)
 }
 
-async function getSampleDateUpdates(knex, minValue, maxValue) {
+async function getSampleDateUpdates(knex, minValue, maxValue, trx) {
   return knex('Sample as sm')
     .innerJoin('Result as r', 'sm.id', 'r.sampleId')
     .innerJoin('Site as s', 'sm.originSiteId', 's.id')
@@ -114,6 +115,7 @@ async function getSampleDateUpdates(knex, minValue, maxValue) {
     })
     .where('sm.id', '>', minValue)
     .andWhere('sm.id', '<=', maxValue)
+    .transacting(trx)
 }
 
 module.exports = seed
