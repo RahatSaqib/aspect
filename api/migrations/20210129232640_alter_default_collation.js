@@ -21,8 +21,8 @@ async function up(knex) {
 
   const [alterColumnQueries] = await knex.raw(
     // eslint-disable-next-line no-useless-escape
-    "SELECT CONCAT('ALTER TABLE ', col.`TABLE_SCHEMA`, '.', col.`TABLE_NAME`, ' change column `',col.COLUMN_NAME, '` ','`',col.COLUMN_NAME ,'` varchar(',character_maximum_length,') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ', CASE col.IS_NULLABLE WHEN 'NO' THEN 'NOT NULL' ELSE 'NULL' END, CASE WHEN column_default IS NOT NULL THEN CONCAT( ' DEFAULT ', ''',column_default,''' ) ELSE '' END) as query FROM INFORMATION_SCHEMA.COLUMNS col WHERE col.DATA_TYPE = 'varchar' AND TABLE_SCHEMA=? AND (COLLATION_NAME<>'utf8mb4_unicode_ci' OR CHARACTER_SET_NAME<>'utf8mb4');",
-    [config.db.database]
+    "SELECT CONCAT('ALTER TABLE ', col.`TABLE_SCHEMA`, '.', col.`TABLE_NAME`, ' change column `',col.COLUMN_NAME, '` ','`',col.COLUMN_NAME ,'` varchar(',character_maximum_length,') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ', CASE col.IS_NULLABLE WHEN 'NO' THEN 'NOT NULL' ELSE 'NULL' END, CASE WHEN column_default IS NOT NULL THEN CONCAT( ' DEFAULT ', ? ,column_default, ? ) ELSE '' END) as query FROM INFORMATION_SCHEMA.COLUMNS col WHERE col.DATA_TYPE = 'varchar' AND TABLE_SCHEMA=? AND (COLLATION_NAME<>'utf8mb4_unicode_ci' OR CHARACTER_SET_NAME<>'utf8mb4');",
+    ["'", "'", config.db.database]
   )
 
   await Promise.each(alterTableQueries, tableQuery =>
@@ -47,10 +47,11 @@ async function down(knex) {
     [config.db.database]
   )
 
-  const [alterColumnQueries] = await knex.raw(
-    // eslint-disable-next-line no-useless-escape
-    "SELECT CONCAT('ALTER TABLE ', col.`TABLE_SCHEMA`, '.', col.`TABLE_NAME`, ' change column `',col.COLUMN_NAME, '` ','`',col.COLUMN_NAME ,'` varchar(',character_maximum_length,') CHARACTER SET utf8 COLLATE utf8_general_ci ', CASE col.IS_NULLABLE WHEN 'NO' THEN 'NOT NULL' ELSE 'NULL' END, CASE WHEN column_default IS NOT NULL THEN CONCAT( ' DEFAULT ', ''',column_default,''' ) ELSE '' END) as query FROM INFORMATION_SCHEMA.COLUMNS col WHERE col.DATA_TYPE = 'varchar' AND TABLE_SCHEMA=? AND (COLLATION_NAME='utf8mb4_unicode_ci' OR CHARACTER_SET_NAME='utf8mb4');",
-    [config.db.database]
+  const [
+    alterColumnQueries,
+  ] = await knex.raw(
+    "SELECT CONCAT('ALTER TABLE ', col.`TABLE_SCHEMA`, '.', col.`TABLE_NAME`, ' change column `',col.COLUMN_NAME, '` ','`',col.COLUMN_NAME ,'` varchar(',character_maximum_length,') CHARACTER SET utf8 COLLATE utf8_general_ci ', CASE col.IS_NULLABLE WHEN 'NO' THEN 'NOT NULL' ELSE 'NULL' END, CASE WHEN column_default IS NOT NULL THEN CONCAT( ' DEFAULT ',?, column_default, ? ) ELSE '' END) as query FROM INFORMATION_SCHEMA.COLUMNS col WHERE col.DATA_TYPE = 'varchar' AND TABLE_SCHEMA=? AND (COLLATION_NAME='utf8mb4_unicode_ci' OR CHARACTER_SET_NAME='utf8mb4');",
+    ["'", "'", config.db.database]
   )
 
   await Promise.each(alterTableQueries, tableQuery =>
