@@ -1,9 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const geography = require('./fixtures/geography.json')
-const {
-  upsertStatesAndLgas,
-} = require('../common')
+const { upsertStatesAndLgas } = require('../common')
 
 async function seed(knex) {
   const { id: countryId } = await knex('Country')

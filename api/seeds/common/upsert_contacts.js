@@ -5,11 +5,15 @@ const Promise = require('bluebird')
 const { getPartnerByName } = require('../utils')
 const config = require('../../src/config')
 
-
 module.exports = async (knex, partnerData, contacts) => {
   const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-  const { partnerName, adminUserName, partnerAbbreviation, defaultPassword = 'WelcomeToAspect' } = partnerData
+  const {
+    partnerName,
+    adminUserName,
+    partnerAbbreviation,
+    defaultPassword = 'WelcomeToAspect',
+  } = partnerData
 
   const { id: partnerId } = await getPartnerByName(knex, partnerName)
 
@@ -51,24 +55,21 @@ module.exports = async (knex, partnerData, contacts) => {
     .innerJoin('State as s', 's.id', 'g.stateId')
     .where({ 'g.countryId': country.id })
     .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
-  const provincesByName = states.reduce(
-    (provinceMemo, province) => {
-      provinceMemo[province.name.toLowerCase()] = province
-      const provinceDistricts = _.filter(lgas, {
-        stateName: province.name,
-      })
-      if (provinceDistricts) {
-        provinceMemo[
-          province.name.toLowerCase()
-        ].districts = provinceDistricts.reduce((districtMemo, district) => {
-          districtMemo[district.name.toLowerCase()] = district
-          return districtMemo
-        }, {})
-      }
-      return provinceMemo
-    },
-    {}
-  )
+  const provincesByName = states.reduce((provinceMemo, province) => {
+    provinceMemo[province.name.toLowerCase()] = province
+    const provinceDistricts = _.filter(lgas, {
+      stateName: province.name,
+    })
+    if (provinceDistricts) {
+      provinceMemo[
+        province.name.toLowerCase()
+      ].districts = provinceDistricts.reduce((districtMemo, district) => {
+        districtMemo[district.name.toLowerCase()] = district
+        return districtMemo
+      }, {})
+    }
+    return provinceMemo
+  }, {})
   const siteIds = (
     await knex('Geography as g')
       .join('Site as s', 'g.id', 's.geographyId')
@@ -99,43 +100,43 @@ module.exports = async (knex, partnerData, contacts) => {
           legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
           lockedOut: 0,
         }
-          ;[userId] = await knex('User').insert({
-            name: person.username,
-            approved: 1,
-            createdOn: now,
-            ...baseUserData,
-          })
+        ;[userId] = await knex('User').insert({
+          name: person.username,
+          approved: 1,
+          createdOn: now,
+          ...baseUserData,
+        })
       }
     }
 
     const province =
       !_.isEmpty(person.geographies) && person.geographies[0].stateName
         ? provincesByName[person.geographies[0].stateName.toLowerCase()] || {
-          id: null,
-          districts: {},
-        }
+            id: null,
+            districts: {},
+          }
         : {
-          id: null,
-          districts: {},
-        }
+            id: null,
+            districts: {},
+          }
     const district =
       province.districts &&
-        !_.isEmpty(person.geographies) &&
-        person.geographies[0].lgaName
+      !_.isEmpty(person.geographies) &&
+      person.geographies[0].lgaName
         ? province.districts[person.geographies[0].lgaName.toLowerCase()] || {
-          id: null,
-        }
+            id: null,
+          }
         : {
-          id: null,
-        }
+            id: null,
+          }
     const { id: geographyId } = !_.isEmpty(person.geographies)
       ? await knex('Geography')
-        .where({
-          countryId,
-          stateId: province.id,
-          lgaId: district.id,
-        })
-        .first()
+          .where({
+            countryId,
+            stateId: province.id,
+            lgaId: district.id,
+          })
+          .first()
       : { id: countryGeography.id }
     let personId = null
     const existingPerson = await knex('Person')
@@ -271,21 +272,21 @@ module.exports = async (knex, partnerData, contacts) => {
           await Promise.each(person.geographies, async geography => {
             const jobProvince = geography.stateName
               ? provincesByName[geography.stateName.toLowerCase()] || {
-                id: null,
-                districts: {},
-              }
+                  id: null,
+                  districts: {},
+                }
               : {
-                id: null,
-                districts: {},
-              }
+                  id: null,
+                  districts: {},
+                }
             const jobDistrict =
               jobProvince.districts && geography.lgaName
                 ? jobProvince.districts[geography.lgaName.toLowerCase()] || {
-                  id: null,
-                }
+                    id: null,
+                  }
                 : {
-                  id: null,
-                }
+                    id: null,
+                  }
             const { id: jobGeographyId } = await knex('Geography')
               .where({
                 countryId,
