@@ -233,6 +233,7 @@ module.exports = {
       GxMtbRifMtbNotDetected,
       GxMtbRifMtbDetected,
       GxMtbRifMtbDetectedRifDetected,
+      GxMtbRifMtbDetectedRifNotDetected,
       GxMtbRifMtbDetectedRifIndeterminate,
       GxMtbRifMtbInvalid,
       GxMtbRifMtbError,
