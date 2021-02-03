@@ -152,12 +152,14 @@ async function createNewDevice(
     }
   }
 
-  const { timeZone: defaultTimeZone } = await knex('Site as s')
-    .join('Geography as g', 's.geographyId', 'g.id')
-    .join('Country as c', 'c.id', 'g.countryId')
-    .where('g.id', geographyId)
-    .orWhere('s.id', siteId)
-    .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))
+  const { timeZone: defaultTimeZone } =
+    (await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .join('Country as c', 'c.id', 'g.countryId')
+      .where('g.id', geographyId)
+      .orWhere('s.id', siteId)
+      .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
+    (await knex('Country').first('c.timezone as timeZone'))
 
   const { existingTimeZone } = await knex('TimeZone')
     .where('id', timezone || defaultTimeZone)
