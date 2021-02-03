@@ -159,8 +159,7 @@ async function createNewDevice(
       .where('g.id', geographyId)
       .orWhere('s.id', siteId)
       .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
-    (await knex('Country').first('c.timezone as timeZone'))
-
+    (await knex('Country as c').first('c.timezone as timeZone'))
   const { existingTimeZone } = await knex('TimeZone')
     .where('id', timezone || defaultTimeZone)
     .first('id as existingTimeZone')
