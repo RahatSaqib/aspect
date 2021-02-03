@@ -11,6 +11,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
 const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
+const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
@@ -848,7 +849,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
 
-  await upsertResultCategoryGroup(knex)
+  await upsertResultCategoryGroup(knex, gxResultCategoryGroups, assayExternalIds)
 }
 
 async function createAssay(

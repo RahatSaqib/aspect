@@ -1,6 +1,5 @@
 const Promise = require('bluebird')
 const groupBy = require('lodash/groupBy')
-const ResultCategoryGroupFixtureDefault = require('../fixtures/ResultCategoryGroup')
 
 const validateFixture = fixture => {
   const byExternalId = groupBy(fixture, 'externalId')
@@ -19,7 +18,8 @@ const validateFixture = fixture => {
 
 module.exports = async function upsertResultCategoryGroups(
   knex,
-  fixture = ResultCategoryGroupFixtureDefault
+  fixture,
+  assayWhitelist = []
 ) {
   validateFixture(fixture)
 
@@ -37,6 +37,9 @@ module.exports = async function upsertResultCategoryGroups(
   resultCategories.forEach(({ id, externalId }) => {
     resultCategoryIds[externalId] = id
   })
+
+  if (assayWhitelist.length > 0)
+    fixture = fixture.filter(g => assayWhitelist.indexOf(g.assayExternalId) > -1)
 
   const groups = fixture.map(
     ({
@@ -59,11 +62,6 @@ module.exports = async function upsertResultCategoryGroups(
       }
     }
   )
-
-  const whitelist = groups.map(g => g.externalId)
-
-  // Delete
-  await knex('ResultCategoryGroup').whereNotIn('externalId', whitelist).delete()
 
   await Promise.each(
     groups,
