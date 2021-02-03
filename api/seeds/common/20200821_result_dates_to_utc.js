@@ -1,11 +1,9 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const setupPaginator = require('../../src/shared/knex-paginator')
 const logger = require('../../src/shared/logger')
 
 const MAX_ROWS_PER_UPDATE = 10000.0
 async function seed(knex) {
-  setupPaginator(knex)
   const [{ mySqlTimezoneTablesMissing }] = await knex.select(
     knex.raw(
       "ISNULL(CONVERT_TZ(now(), 'EST', 'UTC')) as mySqlTimezoneTablesMissing"
@@ -29,17 +27,19 @@ async function seed(knex) {
     .min('id as minId')
     .first()
 
-  batchUpdate(knex, minResultId, maxResultId, getResultDateUpdates)
-  batchUpdate(knex, minSampleId, maxSampleId, getSampleDateUpdates)
+  await batchUpdate(knex, minResultId, maxResultId, getResultDateUpdates)
+  await batchUpdate(knex, minSampleId, maxSampleId, getSampleDateUpdates)
 }
 
-function batchUpdate(knex, minValue, maxValue, queryBuilderFunction) {
+async function batchUpdate(knex, minValue, maxValue, queryBuilderFunction) {
   let currentMinValue = minValue
   const queries = []
-  knex.transaction(trx => {
-    _.range(0, Math.ceil((maxValue - minValue) / MAX_ROWS_PER_UPDATE)).forEach(
-      i => {
-        logger.info(i)
+  try {
+    return knex.transaction(async trx => {
+      _.range(
+        0,
+        Math.ceil((maxValue - minValue) / MAX_ROWS_PER_UPDATE)
+      ).forEach(() => {
         queries.push(
           queryBuilderFunction(
             knex,
@@ -49,25 +49,12 @@ function batchUpdate(knex, minValue, maxValue, queryBuilderFunction) {
           )
         )
         currentMinValue += MAX_ROWS_PER_UPDATE
-      }
-    )
-    logger.info('updating')
-
-    return Promise.all(queries)
-      .then(() => {
-        logger.debug(`batch update successful ${__filename} commiting`)
-        trx.commit()
-        logger.debug(`batch update successful ${__filename} commit`)
       })
-      .catch(error => {
-        logger.debug([
-          `batch update error ${__filename} rolling back....`,
-          error,
-        ])
-        trx.rollback()
-        logger.error([`rolled back${__filename}`, error])
-      })
-  })
+      return Promise.all(queries)
+    })
+  } catch (e) {
+    logger.error(e)
+  }
 }
 
 async function getResultDateUpdates(knex, minValue, maxValue, trx) {
