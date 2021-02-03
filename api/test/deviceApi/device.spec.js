@@ -332,7 +332,7 @@ describe('Device API routes', () => {
 
       assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
       // this is the site default timezone
-      assert.equal(newDevice.timezone, 'Eastern Standard Time')
+      assert.equal(newDevice.timezone, 'South Africa Standard Time')
     })
     it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
