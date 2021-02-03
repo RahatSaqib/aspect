@@ -65,23 +65,17 @@ module.exports = async function upsertResultCategoryGroups(
 
   await Promise.each(
     groups,
-    async ({ externalId, assayExternalId, ...group }) => {
-      if (!group.assayId) {
-        console.warn(
-          `Warning! ResultCategoryGroup upsert skipped as it references to an non-existant assay external id (${assayExternalId})`
-        )
-      } else {
-        const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup')
-          .where({ externalId })
-          .first()
+    async ({ assayExternalId, ...group }) => {
+      const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup')
+        .where({ externalId: group.externalId })
+        .first()
 
-        if (resultCategoryGroupToUpdate) {
-          // Update
-          await knex('ResultCategoryGroup').where({ externalId }).update(group)
-        } else {
-          // Create
-          await knex('ResultCategoryGroup').insert({ externalId, ...group })
-        }
+      if (resultCategoryGroupToUpdate) {
+        // Update
+        await knex('ResultCategoryGroup').where({ externalId: group.externalId }).update(group)
+      } else {
+        // Create
+        await knex('ResultCategoryGroup').insert(group)
       }
     }
   )
