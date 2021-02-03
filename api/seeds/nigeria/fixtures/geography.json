@@ -1765,6 +1765,9 @@
 					"name": "Ogun",
 					"lgas": [
 						{
+							"name": "Abeokuta North"
+						},
+						{
 							"name": "Abeokuta South"
 						},
 						{
@@ -1819,7 +1822,7 @@
 							"name": "Remo North"
 						},
 						{
-							"name": "Shagamu"
+							"name": "Sagamu"
 						}
 					]
 				},
