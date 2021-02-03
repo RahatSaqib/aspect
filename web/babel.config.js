@@ -74,15 +74,7 @@ module.exports = {
         ],
         '@babel/preset-react',
       ],
-      plugins: [
-        ...plugins,
-        [
-          'babel-plugin-react-intl',
-          {
-            messagesDir: './i18n',
-          },
-        ],
-      ],
+      plugins: [...plugins, 'babel-plugin-formatjs'],
     },
   },
 }
