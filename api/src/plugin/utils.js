@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { addYears } = require('date-fns')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -10,7 +9,6 @@ const {
   deviceModuleDisabled,
   deviceHardwareError,
   hardwareErrorActions,
-  deviceAutoCalibrated,
 } = require('../device/actions')
 const {
   deviceMaintenanceTypeToId,
@@ -308,8 +306,8 @@ async function shouldTriggerHardwareErrorAnalysis(
   }
 }
 
-async function shouldTriggerAutoCalibrationAnalysis(
-  messageContext,
+async function shouldLogDeviceCalibration(
+  knex,
   device,
   payload,
   deviceOperationId
@@ -325,7 +323,7 @@ async function shouldTriggerAutoCalibrationAnalysis(
     details.Calibrations.length
   ) {
     logger.debug(
-      `shouldTriggerAutoCalibrationAnalysis: analyzing value ${JSON.stringify({
+      `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
         deviceId: device.id,
         calibratedOn,
         deviceOperationId,
@@ -339,7 +337,7 @@ async function shouldTriggerAutoCalibrationAnalysis(
       )
 
       // get currently active maintenance item
-      const item = await knex('DeviceMaintenance')
+      const itemCurrent = await knex('DeviceMaintenance')
         .where({
           deviceId,
           deviceMaintenanceTypeId,
@@ -347,30 +345,65 @@ async function shouldTriggerAutoCalibrationAnalysis(
         })
         .first()
 
-      /**
-       * if calibration for the device is missing, or it has been expired -
-       * then insert new entry into 'DeviceMaintenance'
-       */
-      let shouldInsert = false
-      if (item) {
-        // if calibration expired - should insert new record
-        shouldInsert = calibratedOn >= addYears(item.contextDate, 1)
-      } else {
-        // current calibration is missing - should insert new record
-        shouldInsert = true
+      // get today's maintenance item
+      const itemToday = await knex('DeviceMaintenance')
+        .where({
+          deviceId,
+          deviceMaintenanceTypeId,
+        })
+        // only one entry per day
+        .whereRaw(`DATE(contextDate) = DATE(?)`, [calibratedOn])
+        .first()
+
+      // set `current` to 1 if ...
+      const current =
+        // ... missing current entry ...
+        !itemCurrent ||
+        // ... or when current calibration date is less than new date
+        itemCurrent.contextDate < calibratedOn
+          ? 1
+          : 0
+
+      // reset 'current' if current calibration date is less than new date
+      const shouldResetCurrent =
+        itemCurrent && itemCurrent.contextDate < calibratedOn
+      if (shouldResetCurrent) {
+        await knex('DeviceMaintenance').update({ current: 0 }).where({
+          id: itemCurrent.id,
+        })
       }
 
-      if (shouldInsert) {
-        if (!messageContext.deviceAutoCalibrated) {
-          messageContext = messageContext.bindActionCreators({
-            deviceAutoCalibrated,
-          })
-        }
-        messageContext.deviceAutoCalibrated(
+      if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
+        /**
+         * condition means itemCurrent had been reset (because
+         * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
+         * exists and by some reason is NOT set as 'current'
+         */
+        await knex('DeviceMaintenance').update({ current: 1 }).where({
+          id: itemToday.id,
+        })
+      } else if (!itemToday) {
+        await knex('DeviceMaintenance').insert({
           deviceId,
-          calibratedOn,
-          deviceOperationId
-        )
+          deviceMaintenanceTypeId,
+          current,
+          contextDate: calibratedOn,
+          notes: JSON.stringify({
+            description: 'log calibration',
+            deviceOperationId, // GeneXpert log entry (stored in DeviceOperation) triggered this flow
+          }),
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          /**
+           * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
+           */
+        })
+      } else {
+        /**
+         * if we are here then itemToday with calibratedOn exists
+         * (i.e. no dupes for same day for this deviceId),
+         * and no need to change itemCurrent
+         */
       }
     }
   }
@@ -385,5 +418,5 @@ module.exports = {
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerHardwareErrorAnalysis,
-  shouldTriggerAutoCalibrationAnalysis,
+  shouldLogDeviceCalibration,
 }

@@ -1,13 +1,10 @@
 const chai = require('chai')
-const { format, subDays } = require('date-fns')
+const { format, subDays, addDays } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
 const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
-const {
-  deviceAutoCalibrated,
-  deviceHardwareError,
-} = require('../../src/device/actions')
+const { deviceHardwareError } = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
 
@@ -102,6 +99,32 @@ describe('Process GeneXpert Logs', () => {
     const totals1 = await getTotalsOfDeviceOperation()
 
     const logData = logDataWithCalibration
+    const res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+
+    const totals2 = await getTotalsOfDeviceOperation()
+    assert.equal(totals1 + 1, totals2)
+
+    // get stored deviceOperation entry and compare with sent data
+    const deviceOperation = await knex('DeviceOperation')
+      .orderBy('CreatedOn', 'desc')
+      .first()
+
+    assert.equal(deviceOperation.deviceId, deviceId)
+    assert.equal(
+      format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
+      format(logData.occurredOn, 'yyyy-MM-dd HH:mm:ss')
+    )
+    const { details: detailsStored } = JSON.parse(deviceOperation.data)
+    const detailsSent = JSON.parse(logData.details)
+    expect(detailsStored).to.containSubset(detailsSent)
+  })
+
+  it('should create entries in DeviceMaintenance for calibration', async () => {
+    const { apiKey, deviceAuth, deviceId } = context
+    assert.isOk(apiKey)
+
+    let logData = logDataWithCalibration
 
     /**
      * check that device doesn't have a calibration defined
@@ -116,29 +139,15 @@ describe('Process GeneXpert Logs', () => {
         current: 1,
       })
       .first()
-    // assert.isUndefined(deviceMaintenance)
     assert.isFalse(!!deviceMaintenance)
-
-    /**
-     * prepare action to listen for
-     */
-    const action = deviceAutoCalibrated(deviceId, logData.occurredOn)
-    const waitForAutoCalibrated = waitForAction(action)
 
     /**
      * notice that `logData` contains `Calibrations` array defined, and
      * device at this point doesn't have any item in DeviceMaintenance.
-     * So we expect that posting logData will trigger MQ event which insert entry
-     * in DeviceMaintenance table
+     * So we expect that posting logData will add new item in DeviceMaintenance table
      */
-    const res = await postLog(deviceAuth, logSource, logData)
+    let res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
-
-    /**
-     * must trigger MQ event because device didn't have calibration defined
-     */
-    await waitForAutoCalibrated
-    await waitForIdle()
 
     /**
      * check that device now has calibration defined
@@ -152,21 +161,47 @@ describe('Process GeneXpert Logs', () => {
       .first()
     assert.isTrue(!!deviceMaintenance)
 
-    const totals2 = await getTotalsOfDeviceOperation()
-    assert.equal(totals1 + 1, totals2)
-
-    // get stored deviceOperation entry and compare with sent data
-    const deviceOperation = await knex('DeviceOperation')
-      .orderBy('CreatedOn', 'desc')
+    /**
+     * post log data with past date
+     */
+    logData = {
+      ...logDataWithCalibration,
+      occurredOn: subDays(logDataWithCalibration.occurredOn, 5),
+    }
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    //
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
       .first()
-    assert.equal(deviceOperation.deviceId, deviceId)
-    assert.equal(
-      format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
-      format(logData.occurredOn, 'yyyy-MM-dd HH:mm:ss')
+    // current calibration date is NOT equal to what we've just posted
+    assert.isTrue(deviceMaintenance.contextDate > logData.occurredOn)
+
+    /**
+     * post log data with future date
+     */
+    logData = {
+      ...logDataWithCalibration,
+      occurredOn: addDays(logDataWithCalibration.occurredOn, 5),
+    }
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    //
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+      .first()
+    // current calibration date is equal to what we've just posted
+    assert.isTrue(
+      deviceMaintenance.contextDate.getTime() === logData.occurredOn.getTime()
     )
-    const { details: detailsStored } = JSON.parse(deviceOperation.data)
-    const detailsSent = JSON.parse(logData.details)
-    expect(detailsStored).to.containSubset(detailsSent)
   })
 
   it('should return 400 if some required props missed for log data', async () => {

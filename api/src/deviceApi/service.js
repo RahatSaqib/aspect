@@ -27,7 +27,7 @@ const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
 const {
   shouldTriggerHardwareErrorAnalysis,
-  shouldTriggerAutoCalibrationAnalysis,
+  shouldLogDeviceCalibration,
 } = require('../plugin/utils')
 const logger = require('../shared/logger')
 
@@ -376,12 +376,8 @@ async function addDeviceDataWithContext(context) {
         payload,
         deviceOperationId
       )
-      await shouldTriggerAutoCalibrationAnalysis(
-        messageContext,
-        device,
-        payload,
-        deviceOperationId
-      )
+
+      await shouldLogDeviceCalibration(knex, device, payload, deviceOperationId)
     }
   }
 

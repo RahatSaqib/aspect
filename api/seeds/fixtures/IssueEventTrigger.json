@@ -856,13 +856,6 @@
           }
         }
       }
-    },
-    {
-      "issueType": "DeviceAutoCalibrated",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_AUTO_CALIBRATED"
-      }
     }
   ]
 }
