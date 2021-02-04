@@ -1065,14 +1065,12 @@ const mergeJobFunctions = (jf1, jf2) => {
       permissions,
       (result, curr) => {
         const lastPermission = _.last(result)
-        console.log(lastPermission)
         if (!lastPermission) result.push(curr)
         else if (modulesToNotReduce.includes('dashboard') || lastPermission.module !== curr.module) result.push(curr)
         return result
       },
       []
     )
-  console.log('finalJobFunction', finalJobFunction)
   return finalJobFunction
 }
 
