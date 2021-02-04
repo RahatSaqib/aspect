@@ -9,7 +9,7 @@ async function listResultCategoryGroupsForSelectList(request) {
   const data = await knex('ResultCategoryGroup as rcg')
     .innerJoin('Assay as a', 'rcg.assayId', 'a.id')
     .modify(addConstraints, dataConstraints, {
-      assay: 'a'
+      assay: 'a',
     })
     .select(['rcg.externalId', 'rcg.name', 'rcg.i18nKey'])
     .where('rcg.assayId', assayId)

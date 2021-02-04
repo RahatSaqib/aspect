@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const groupBy = require('lodash/groupBy')
+const omit = require('lodash/omit')
 
 const validateFixture = fixture => {
   const byExternalId = groupBy(fixture, 'externalId')
@@ -63,20 +64,20 @@ module.exports = async function upsertResultCategoryGroups(
     }
   )
 
-  await Promise.each(
-    groups,
-    async ({ assayExternalId, ...group }) => {
-      const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup')
-        .where({ externalId: group.externalId })
-        .first()
+  await Promise.each(groups, async group => {
+    group = omit(group, ['assayExternalId'])
+    const resultCategoryGroupToUpdate = await knex('ResultCategoryGroup')
+      .where({ externalId: group.externalId })
+      .first()
 
-      if (resultCategoryGroupToUpdate) {
-        // Update
-        await knex('ResultCategoryGroup').where({ externalId: group.externalId }).update(group)
-      } else {
-        // Create
-        await knex('ResultCategoryGroup').insert(group)
-      }
+    if (resultCategoryGroupToUpdate) {
+      // Update
+      await knex('ResultCategoryGroup')
+        .where({ externalId: group.externalId })
+        .update(group)
+    } else {
+      // Create
+      await knex('ResultCategoryGroup').insert(group)
     }
-  )
+  })
 }

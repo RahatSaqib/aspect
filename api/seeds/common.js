@@ -849,7 +849,11 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
 
-  await upsertResultCategoryGroup(knex, gxResultCategoryGroups, assayExternalIds)
+  await upsertResultCategoryGroup(
+    knex,
+    gxResultCategoryGroups,
+    assayExternalIds
+  )
 }
 
 async function createAssay(

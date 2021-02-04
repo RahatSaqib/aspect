@@ -242,12 +242,16 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftJoin('ResultCategoryGroup as rcg', function () {
       this.on('r.assayId', 'rcg.assayId')
         .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory1Id IS NULL'))
-            .orOn('r.resultCategory1', 'rcg.resultCategory1Id')
+          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+            'r.resultCategory1',
+            'rcg.resultCategory1Id'
+          )
         })
         .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory2Id IS NULL'))
-            .orOn('r.resultCategory2', 'rcg.resultCategory2Id')
+          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+            'r.resultCategory2',
+            'rcg.resultCategory2Id'
+          )
         })
     })
     // only results which are reportable for either ResultCategory
@@ -2110,12 +2114,16 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     .leftJoin('ResultCategoryGroup as rcg', function () {
       this.on('r.assayId', 'rcg.assayId')
         .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory1Id IS NULL'))
-            .orOn('r.resultCategory1', 'rcg.resultCategory1Id')
+          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+            'r.resultCategory1',
+            'rcg.resultCategory1Id'
+          )
         })
         .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory2Id IS NULL'))
-            .orOn('r.resultCategory2', 'rcg.resultCategory2Id')
+          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+            'r.resultCategory2',
+            'rcg.resultCategory2Id'
+          )
         })
     })
     .leftJoin('ResultCategoryAssay as rca', function () {
