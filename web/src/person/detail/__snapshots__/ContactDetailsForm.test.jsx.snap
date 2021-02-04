@@ -894,6 +894,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -902,7 +914,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -1843,6 +1855,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -1851,7 +1875,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -2792,6 +2816,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -2800,7 +2836,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -3741,6 +3777,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -3749,7 +3797,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -4690,6 +4738,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -4698,7 +4758,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -5637,6 +5697,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -5645,7 +5717,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -6570,6 +6642,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
         variant="standard"
       >
         <WithStyles(MenuItem)
+          key="de-DE"
+          value="de-DE"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="DE"
+              withRightMargin={true}
+            />
+            Deutsch (D)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -6578,7 +6662,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            French (FR)
+            Française (FR)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)

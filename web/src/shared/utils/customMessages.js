@@ -1,59 +1,60 @@
 import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 
-export const commonDefinitions = {
+export const commonDefinitions = defineMessages({
   selectPlaceholder: {
-    id: `pages.common.selectPlaceholder`,
+    id: 'pages.common.selectPlaceholder',
     defaultMessage: 'Select {entity}...',
   },
   state: {
-    id: `pages.common.state`,
+    id: 'pages.common.state',
     defaultMessage: 'State',
   },
   state_MW: {
-    id: `pages.common.state_MW`,
+    id: 'pages.common.state_MW',
     defaultMessage: 'District',
   },
   state_ZANHLS: {
-    id: `pages.common.state_ZANHLS`,
+    id: 'pages.common.state_ZANHLS',
     defaultMessage: 'Province',
   },
   state_MM: {
-    id: `pages.common.state_MM`,
+    id: 'pages.common.state_MM',
     defaultMessage: 'State/Region',
   },
   state_ZW: {
-    id: `pages.common.state_ZW`,
+    id: 'pages.common.state_ZW',
     defaultMessage: 'Province',
   },
   state_CM: {
-    id: `pages.common.state_CM`,
+    id: 'pages.common.state_CM',
     defaultMessage: 'Region',
   },
   lga: {
-    id: `pages.common.lga`,
+    id: 'pages.common.lga',
     defaultMessage: 'LGA',
   },
   lga_ZANHLS: {
-    id: `pages.common.lga_ZANHLS`,
+    id: 'pages.common.lga_ZANHLS',
     defaultMessage: 'District',
   },
   lga_US: {
-    id: `pages.common.lga_US`,
+    id: 'pages.common.lga_US',
     defaultMessage: 'County',
   },
   lga_MM: {
-    id: `pages.common.lga_MM`,
+    id: 'pages.common.lga_MM',
     defaultMessage: 'District',
   },
   lga_ZW: {
-    id: `pages.common.lga_ZW`,
+    id: 'pages.common.lga_ZW',
     defaultMessage: 'District',
   },
   lga_CM: {
-    id: `pages.common.lga_CM`,
+    id: 'pages.common.lga_CM',
     defaultMessage: 'Division',
   },
-}
+})
 
 export function getCustomMessage(intl, messages, key, user, params) {
   const { countryAbbreviation } = user

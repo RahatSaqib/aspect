@@ -134,17 +134,17 @@ export function loginStart({ user, password }) {
             ...defineMessages({
               title: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
+                  'errorResponseMessages.loginStart.POST.401.authenticationFailed.title',
                 defaultMessage: 'Login Failed',
               },
               message: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                  'errorResponseMessages.loginStart.POST.401.authenticationFailed.message',
                 defaultMessage: 'Incorrect password',
               },
               resolution: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                  'errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution',
                 defaultMessage:
                   'Please, correct the credentials your entered and try again.',
               },
@@ -160,12 +160,12 @@ export function loginStart({ user, password }) {
               },
               message: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                  'errorResponseMessages.loginStart.POST.401.incorrectPassword.message',
                 defaultMessage: 'The password you entered is incorrect',
               },
               resolution: {
                 id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                  'errorResponseMessages.loginStart.POST.401.incorrectPassword.resolution',
                 defaultMessage: 'Please, re-enter your password and try again.',
               },
             }),

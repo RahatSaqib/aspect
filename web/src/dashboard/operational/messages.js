@@ -86,11 +86,11 @@ export const messages = defineMessages({
     defaultMessage: 'Percent Reported',
   },
   sentViaSms: {
-    id: 'pages.OperationalData.totalPositiveResults',
+    id: 'pages.OperationalData.sentViaSms',
     defaultMessage: 'Sent via SMS',
   },
   sentViaEmail: {
-    id: 'pages.OperationalData.totalPositiveResults',
+    id: 'pages.OperationalData.sentViaEmail',
     defaultMessage: 'Sent via Email',
   },
   averageDaysForInstrumentReplacement: {

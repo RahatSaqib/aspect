@@ -1,17 +1,44 @@
 import React from 'react'
 import { func, object, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessage, useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import AspectLink from '../AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
-import { buildMessagesFromI18nKeys, buildWidgetToLinkParams } from './Helpers'
+import { buildWidgetToLinkParams } from './Helpers'
 import WidgetAlert from './Alerts'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
+
+const messages = defineMessages({
+  forMtbPositive: {
+    id: 'component.Widget.forMtbPositive',
+    defaultMessage: 'for {unit} MTB+',
+  },
+  forResults: {
+    id: 'component.Widget.forResults',
+    defaultMessage: 'for {unit} Results',
+  },
+  ofCurrentlyReported: {
+    id: 'component.Widget.ofCurrentlyReported',
+    defaultMessage: 'of {unit} currently reported',
+  },
+  lastMonth: {
+    id: 'component.Widget.lastMonth',
+    defaultMessage: '{unit} in last month',
+  },
+  sinceLastWeek: {
+    id: 'component.Widget.sinceLastWeek',
+    defaultMessage: '{unit} since last week',
+  },
+  ytd: {
+    id: 'component.Widget.ytd',
+    defaultMessage: '{unit} YTD',
+  },
+})
 
 const EmptyWidget = () => (
   <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
@@ -25,7 +52,6 @@ const EmptyWidget = () => (
 )
 
 const AspectWidget = ({
-  data,
   data: {
     link,
     linkParams,
@@ -43,7 +69,6 @@ const AspectWidget = ({
   },
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
-  const messages = defineMessage(buildMessagesFromI18nKeys(data))
   const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : false
   return (
     <AspectLink
@@ -82,7 +107,7 @@ const AspectWidget = ({
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
                 {statUnitI18nKey !== null &&
-                  intlFormatMessage(messages.statUnitI18nKey, { unit })}
+                  intlFormatMessage(messages[statUnitI18nKey], { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
                 {statStatus}
