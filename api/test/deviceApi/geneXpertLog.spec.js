@@ -3,7 +3,11 @@ const { format, subDays } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
-const { deviceHardwareError } = require('../../src/device/actions')
+const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
+const {
+  deviceAutoCalibrated,
+  deviceHardwareError,
+} = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
 
@@ -98,8 +102,55 @@ describe('Process GeneXpert Logs', () => {
     const totals1 = await getTotalsOfDeviceOperation()
 
     const logData = logDataWithCalibration
+
+    /**
+     * check that device doesn't have a calibration defined
+     */
+    const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+      'calibration'
+    )
+    let deviceMaintenance = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+      .first()
+    // assert.isUndefined(deviceMaintenance)
+    assert.isFalse(!!deviceMaintenance)
+
+    /**
+     * prepare action to listen for
+     */
+    const action = deviceAutoCalibrated(deviceId, logData.occurredOn)
+    const waitForAutoCalibrated = waitForAction(action)
+
+    /**
+     * notice that `logData` contains `Calibrations` array defined, and
+     * device at this point doesn't have any item in DeviceMaintenance.
+     * So we expect that posting logData will trigger MQ event which insert entry
+     * in DeviceMaintenance table
+     */
     const res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
+
+    /**
+     * must trigger MQ event because device didn't have calibration defined
+     */
+    await waitForAutoCalibrated
+    await waitForIdle()
+
+    /**
+     * check that device now has calibration defined
+     */
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+      .first()
+    assert.isTrue(!!deviceMaintenance)
 
     const totals2 = await getTotalsOfDeviceOperation()
     assert.equal(totals1 + 1, totals2)

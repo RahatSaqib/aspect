@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { addYears } = require('date-fns')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -9,8 +10,12 @@ const {
   deviceModuleDisabled,
   deviceHardwareError,
   hardwareErrorActions,
+  deviceAutoCalibrated,
 } = require('../device/actions')
-const { issueTypeToId } = require('../shared/dictionary')
+const {
+  deviceMaintenanceTypeToId,
+  issueTypeToId,
+} = require('../shared/dictionary')
 const logger = require('../shared/logger')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
@@ -266,7 +271,6 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
 }
 
 async function shouldTriggerHardwareErrorAnalysis(
-  knex,
   messageContext,
   device,
   payload,
@@ -304,6 +308,74 @@ async function shouldTriggerHardwareErrorAnalysis(
   }
 }
 
+async function shouldTriggerAutoCalibrationAnalysis(
+  messageContext,
+  device,
+  payload,
+  deviceOperationId
+) {
+  const {
+    startedOn: calibratedOn,
+    data: { details = {} },
+  } = payload
+  // on meeting conditions - trigger auto-calibration event
+  if (
+    details.Calibrations &&
+    _.isArray(details.Calibrations) &&
+    details.Calibrations.length
+  ) {
+    logger.debug(
+      `shouldTriggerAutoCalibrationAnalysis: analyzing value ${JSON.stringify({
+        deviceId: device.id,
+        calibratedOn,
+        deviceOperationId,
+      })}`
+    )
+
+    const { id: deviceId } = device
+    if (deviceId && calibratedOn) {
+      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+        'calibration'
+      )
+
+      // get currently active maintenance item
+      const item = await knex('DeviceMaintenance')
+        .where({
+          deviceId,
+          deviceMaintenanceTypeId,
+          current: 1,
+        })
+        .first()
+
+      /**
+       * if calibration for the device is missing, or it has been expired -
+       * then insert new entry into 'DeviceMaintenance'
+       */
+      let shouldInsert = false
+      if (item) {
+        // if calibration expired - should insert new record
+        shouldInsert = calibratedOn >= addYears(item.contextDate, 1)
+      } else {
+        // current calibration is missing - should insert new record
+        shouldInsert = true
+      }
+
+      if (shouldInsert) {
+        if (!messageContext.deviceAutoCalibrated) {
+          messageContext = messageContext.bindActionCreators({
+            deviceAutoCalibrated,
+          })
+        }
+        messageContext.deviceAutoCalibrated(
+          deviceId,
+          calibratedOn,
+          deviceOperationId
+        )
+      }
+    }
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
@@ -313,4 +385,5 @@ module.exports = {
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerHardwareErrorAnalysis,
+  shouldTriggerAutoCalibrationAnalysis,
 }

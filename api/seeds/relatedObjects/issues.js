@@ -1496,6 +1496,31 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    DeviceAutoCalibrated: {
+      issueType: {
+        name: 'Device Auto Calibrated',
+        externalId: 'DeviceAutoCalibrated',
+        i18nKey: 'issueTypeDeviceAutoCalibrated',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Device Auto Calibrated',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message: '{{device.name}} has been auto-calibrated.',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: '{{device.name}} auto-calibrated',
+        body: '{{device.name}} has been auto-calibrated.',
+        htmlBody: '<em>{{device.name}}</em> has been auto-calibrated',
+        ...auditFields,
+      },
+    },
   }
   return IssueDefinition
 }

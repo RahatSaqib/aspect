@@ -1133,6 +1133,49 @@ async function onDeviceUpdateMaintenanceStatusNoResults(
   return Promise.resolve()
 }
 
+async function onDeviceAutoCalibrated(action, { messageContext }) {
+  return messageContext.run(async knex => {
+    const { deviceId, calibratedOn, deviceOperationId } = action
+
+    const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+      'calibration'
+    )
+
+    // get currently active maintenance item
+    const item = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+      .first()
+
+    if (item) {
+      // mark item as it's not `current` now
+      await knex('DeviceMaintenance').update({ current: 0 }).where({
+        id: item.id,
+      })
+    }
+
+    await knex('DeviceMaintenance').insert({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+      contextDate: calibratedOn,
+      notes: JSON.stringify({
+        description: 'Auto calibration',
+        issueType: 'DeviceAutoCalibrated', // i.e. = IssueType.externalId
+        deviceOperationId, // GeneXpert log entry (stored in DeviceOperation) triggered this flow
+      }),
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      /**
+       * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
+       */
+    })
+  })
+}
+
 async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
   const { deviceId, options = {} } = action
   if (deviceId) {
@@ -1572,4 +1615,5 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
+  onDeviceAutoCalibrated,
 }

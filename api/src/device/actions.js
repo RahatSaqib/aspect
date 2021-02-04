@@ -7,6 +7,7 @@ const types = {
   DEVICE_ONLINE: 'DEVICE_ONLINE',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
+  DEVICE_AUTO_CALIBRATED: 'DEVICE_AUTO_CALIBRATED',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
   DEVICE_MAINTENANCE_RESOLVED: 'DEVICE_MAINTENANCE_RESOLVED',
   DEVICE_MAINTENANCE_STATUS_LOGGED: 'DEVICE_MAINTENANCE_STATUS_LOGGED',
@@ -100,6 +101,27 @@ function deviceMaintenance(deviceId, options) {
     type: types.DEVICE_MAINTENANCE,
     deviceId,
     options,
+  }
+}
+
+/**
+ * Action to notify the device has been auto-calibrated based on
+ * GeneXpert log data received from GxConnect.
+ * @param {*} deviceId (required)
+ * @param {*} calibratedOn (required) - date/time
+ * @param {*} deviceOperationId (optional) - id in DeviceOperation which triggered flow to auto-calibrate device
+ */
+function deviceAutoCalibrated(deviceId, calibratedOn, deviceOperationId) {
+  if (!deviceId || !calibratedOn) {
+    throw new Error(
+      'Must specify deviceId and calibratedOn for auto-calibrating device'
+    )
+  }
+  return {
+    type: types.DEVICE_AUTO_CALIBRATED,
+    deviceId,
+    calibratedOn,
+    deviceOperationId,
   }
 }
 
@@ -332,4 +354,5 @@ module.exports = {
   deviceModuleUnused,
   deviceHardwareError,
   hardwareErrorActions,
+  deviceAutoCalibrated,
 }
