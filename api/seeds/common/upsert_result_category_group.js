@@ -39,7 +39,7 @@ module.exports = async function upsertResultCategoryGroups(
   })
 
   if (assayWhitelist.length > 0)
-    fixture = fixture.filter(g => assayWhitelist.indexOf(g.assayExternalId) > -1)
+    fixture = fixture.filter(g => assayWhitelist.includes(g.assayExternalId))
 
   const groups = fixture.map(
     ({
