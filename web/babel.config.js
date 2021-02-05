@@ -62,19 +62,5 @@ module.exports = {
       ],
       plugins: [...plugins, 'babel-plugin-dynamic-import-node'],
     },
-    message: {
-      presets: [
-        [
-          '@babel/preset-env',
-          {
-            targets: {
-              node: 'current',
-            },
-          },
-        ],
-        '@babel/preset-react',
-      ],
-      plugins: [...plugins, 'babel-plugin-formatjs'],
-    },
   },
 }
