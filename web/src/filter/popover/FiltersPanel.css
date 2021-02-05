@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 :root {
-  @custom-media --sm-viewport (min-width: 620px);
+  @custom-media --sm-viewport (min-width: 620px and max-width: 919px);
   @custom-media --md-viewport (min-width: 920px);
 }
 
@@ -86,6 +86,25 @@
 .FallbackUntilDone--sm .Control,
 .FallbackUntilDone--md .Control {
   padding: 0 10px;
+}
+
+.Control--wide {
+  max-width: 33%;
+}
+
+.Control--wide div {
+  width: calc(100% - 3px);
+}
+
+.Control--wide div:focus {
+  padding-right: 8px;
+}
+
+.Control .Control__inner {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
 }
 
 .checkbox__container {
