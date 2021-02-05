@@ -113,11 +113,12 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
     .clone()
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
@@ -205,6 +206,7 @@ async function getResultsForExport(query, auth) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   const data = await resultQuery
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
@@ -339,13 +341,13 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       result: 'r',
       country: 'c',
     })
-    .groupBy('r.id')
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
     .clone()
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'r.updatedOn')
     .select(
       'r.id',
@@ -2184,7 +2186,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       country: 'c',
       disease: 'dis',
     })
-    .groupBy('r.id')
   return resultQuery
 }
 
