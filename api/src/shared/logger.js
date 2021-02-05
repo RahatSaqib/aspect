@@ -68,7 +68,7 @@ if (config.log.file.path) {
         config.log.file
       ),
       filename: config.log.file.path,
-      level: config.log.fileLogLevel,
+      level: config.log.file.logLevel,
     })
   )
 }
