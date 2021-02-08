@@ -90,15 +90,31 @@ const resultsHivNotSuppressed = {
   ],
 }
 
+const deviceCalibrationReport = {
+  name: 'Device Calibration Report',
+  description:
+    'All devices along with the last calibration date and when next calibration is due',
+  i18nKey: 'Device_Calibration_Report',
+  externalId: 'device_calibration_report',
+  fileName: 'DeviceCalibrationReport',
+  sortOrder: 5,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/service',
+      functionName: 'getDeviceCalibrationsForReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
   criticalErrorsByDevice,
   mtbDetectedRRDetected,
-  fixture: [
-    mtbDetectedRRDetected,
-    resultsHivNotSuppressed,
-    rifResistanceRate,
-    criticalErrorsByDevice,
-  ],
+  deviceCalibrationReport,
 }

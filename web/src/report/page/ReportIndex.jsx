@@ -39,6 +39,7 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
+  { reportName: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer()
