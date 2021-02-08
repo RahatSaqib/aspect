@@ -31,9 +31,15 @@ const partnerData = require('./fixtures/partnerVariables')
 const NUMBER_OF_SITES = 50
 
 async function seed(knex) {
-  const { id: countryId } = await knex('Country').where('abbreviation', 'NG').first()
-  const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first()
-  const geographies = await knex('Geography as g').where({ countryId }).andWhere(knex.raw('ISNULL(lgaId) = 0'))
+  const { id: countryId } = await knex('Country')
+    .where('abbreviation', 'NG')
+    .first()
+  const { id: partnerId } = await knex('Partner')
+    .where('name', 'Partner One')
+    .first()
+  const geographies = await knex('Geography as g')
+    .where({ countryId })
+    .andWhere(knex.raw('ISNULL(lgaId) = 0'))
     .innerJoin('Lga as l', 'g.lgaId', 'l.id')
     .innerJoin('State as s', 'g.stateId', 's.id')
     .select('g.id as geographyId', 'l.name as lgaName', 's.name as stateName')
@@ -43,8 +49,8 @@ async function seed(knex) {
   range(NUMBER_OF_SITES).forEach(num => {
     const rnd = random(0, geographies.length - 1, 0)
     const geography = geographies[rnd]
-    const stateName = geography.stateName
-    const lgaName = geography.lgaName
+    const { stateName } = geography
+    const { lgaName } = geography
 
     sites.push({
       externalId: `Clinic ${num}`,
@@ -53,13 +59,16 @@ async function seed(knex) {
       stateName,
       lgaName,
       timeZoneId: 'W. Central Africa Standard Time',
-      tags: ["Clinic", "Primary"]
+      tags: ['Clinic', 'Primary'],
     })
   })
   await insertSites(knex, partnerId, countryId, sites)
-  
+
   // Update results reportable site id
-  const newSites = await knex('Site').whereIn('externalId', sites.map(s => s.externalId))
+  const newSites = await knex('Site').whereIn(
+    'externalId',
+    sites.map(s => s.externalId)
+  )
   const resultsIds = await knex('Result as r')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
@@ -73,7 +82,7 @@ async function seed(knex) {
 
   // Insert new results until 50
   // newSites.map(async site => {
-  //   const 
+  //   const
   // })
 
   const contacts = []
@@ -85,14 +94,14 @@ async function seed(knex) {
       timeZoneId: site.timeZoneId,
       personEmailAddress: null,
       name: `Clinic ${num}`,
-      jobFunctions: ["Clinician"],
+      jobFunctions: ['Clinician'],
       username: site.name.toLowerCase().replace(' ', '_'),
       password: '12345',
       sites: [
         {
-          shortName: site.shortName
-        }
-      ]
+          shortName: site.shortName,
+        },
+      ],
     })
   })
   contacts.push({
@@ -100,10 +109,17 @@ async function seed(knex) {
     timeZoneId: 'W. Central Africa Standard Time',
     personEmailAddress: null,
     name: 'Admin Nigeria',
-    jobFunctions: ["Admin"],
+    jobFunctions: ['Admin'],
     username: 'nigeria_admin',
     password: 'test07',
   })
-  await upsertContacts(knex, { adminUserName: partnerData.adminName, partnerName: partnerData.partnerName, partnerAbbreviation: 'NG' }, contacts)
-
+  await upsertContacts(
+    knex,
+    {
+      adminUserName: partnerData.adminName,
+      partnerName: partnerData.partnerName,
+      partnerAbbreviation: 'NG',
+    },
+    contacts
+  )
 }
