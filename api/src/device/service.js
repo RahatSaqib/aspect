@@ -1572,4 +1572,5 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
+  getDeviceBaseQuery,
 }

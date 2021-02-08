@@ -101,7 +101,7 @@ const deviceActivity = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'device/service',
+      moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
     },
   ],

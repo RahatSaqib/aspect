@@ -3,6 +3,10 @@ const { format } = require('date-fns')
 const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
+const { getDeviceBaseQuery } = require('./service')
+const { knex, filterDateRangeParams } = require('../db')
+const { getConstraints } = require('../auth/constraints')
+const { getMonthYearUserTimeZoneField } = require('../shared/date')
 
 async function exportDevices(request, reply) {
   const { data } = await listDevices(request)
@@ -38,6 +42,67 @@ async function exportDevices(request, reply) {
     replacements: getBaseReplacements(),
   })
 }
+
+async function getDeviceActivityReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .leftJoin('Result as r', 'd.id', 'r.deviceId')
+    .select('d.id', 'd.name', 'd.serial')
+    .countDistinct('r.id as totalResults')
+    .max('r.endedOn as lastUploadOn')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .groupBy('d.id', 'd.name', 'd.serial')
+
+  const deviceResultsPerMonths = await deviceQuery
+    .clone()
+    .join('Result as r', 'd.id', 'r.deviceId')
+    .countDistinct('r.id as totalResults')
+    .select(
+      'd.id as deviceId',
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn')
+    )
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null))
+
+  // return result when both queries are finished
+  const [data, deviceDetails] = await Promise.all([
+    getItems,
+    deviceResultsPerMonths,
+  ])
+  const dateFields = []
+  const devices = _.map(data, elem => {
+    _.each(
+      _.filter(
+        deviceDetails,
+        filteredElem => filteredElem.deviceId === elem.id
+      ),
+      detail => {
+        elem[detail.monthYear] = detail.totalResults
+        dateFields.push(detail.monthYear.toString())
+      }
+    )
+
+    return elem
+  })
+
+  const dataset = {
+    ok: true,
+    total: devices.length,
+    length: devices.length,
+    data: devices,
+    dynamicColumns: [
+      { key: '2020-08', header: 'August 2020' },
+      { key: '2020-09', header: 'September 2020' },
+    ],
+  }
+  return dataset
+}
+
 module.exports = {
   exportDevices,
+  getDeviceActivityReport,
 }
