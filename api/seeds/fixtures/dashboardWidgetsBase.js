@@ -33,6 +33,9 @@ const WIDGET_FILTER_KEYS = {
   CURRENT_MONTH: 'currentMonth',
 }
 
+// props will be defined below for each object
+const helpers = {}
+
 const geneXpertDevices = {
   jobFunctions: ['all'],
   icon: 'MdDesktopWindows',
@@ -1902,6 +1905,72 @@ const serverUptimeTitle = {
   },
 }
 
+helpers.deviceCalibrationPastDue = {
+  sum: `
+    SUM(CASE
+      WHEN daysSinceCalibration > 365 THEN 1
+      ELSE 0
+    END)
+  `,
+  innerQuery: `
+    SELECT
+      d.id AS deviceid,
+      CASE
+        WHEN dm.contextDate IS NULL THEN null
+        ELSE 
+          DATEDIFF(
+            DATE_SUB(NOW(), INTERVAL 1 YEAR),
+            MAX(dm.contextDate)
+          )
+      END as daysSinceCalibration
+    FROM Device AS d
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      LEFT OUTER JOIN DeviceMaintenance as dm on d.id = dm.deviceId and dm.current = 1
+      LEFT OUTER JOIN DeviceMaintenanceType as dmt on dm.deviceMaintenanceTypeId = dmt.id and dmt.externalId = 'calibration'
+    WHERE
+        dt.externalId = 'CepheidGeneXpert'
+    GROUP BY d.id
+  `,
+}
+const deviceCalibrationPastDue = {
+  externalId: 'deviceCalibrationPastDue',
+  jobFunctions: ['all'],
+  sortOrder: 4,
+  icon: 'MdBuild',
+  title: 'Calibration Past Due',
+  titleI18nKey: 'deviceCalibrationPastDueTitle',
+  sqlForIndicator: `
+    SELECT
+      ${helpers.deviceCalibrationPastDue.sum} AS cnt
+    FROM (
+      ${helpers.deviceCalibrationPastDue.innerQuery}
+    ) AS sub;`,
+  sqlForStatUnit: `
+    SELECT
+      CONCAT(
+        ROUND(${helpers.deviceCalibrationPastDue.sum} * 100 / COUNT(deviceid)),
+        '%'
+      ) AS cnt
+    FROM (
+      ${helpers.deviceCalibrationPastDue.innerQuery}
+    ) AS sub;`,
+  statUnit: '{unit}',
+  statUnitI18nKey: 'deviceCalibrationPastDueStatUnit',
+  description: `The number of instruments that had their last calibration more than one year ago.`,
+  descriptionI18nKey: 'deviceCalibrationPastDueDescription',
+  link: '/reports',
+  linkParams: {
+    reportName: 'Device Calibration Report',
+  },
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
   WIDGET_FILTER_KEYS,
@@ -1938,5 +2007,6 @@ module.exports = {
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
     serverUptimeTitle,
+    deviceCalibrationPastDue,
   },
 }

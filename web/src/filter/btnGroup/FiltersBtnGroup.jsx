@@ -130,6 +130,10 @@ const messages = defineMessages({
     },
     {}
   ),
+  whereReportNameIncludes: {
+    id: 'filter.btnGroup.whereReportNameIncludes',
+    defaultMessage: 'report name includes "{reportName}"',
+  },
 })
 const revokedOptions = [
   {
@@ -192,7 +196,8 @@ const filtersOrdering = {
   patientOrCaseId: 23,
   onlyReportableResults: 23,
   issueTypeId: 24,
-  stockLeft: 99,
+  stockLeft: 31,
+  reportName: 32,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -438,6 +443,11 @@ const buttonBy = {
   assayOverride: () => false,
   stockLeft: makeButton(({ intl }, stockLeft) =>
     intl.formatMessage(messages.stockLeft[stockLeft])
+  ),
+  reportName: makeButton(({ intl }, reportName) =>
+    intl.formatMessage(messages.whereReportNameIncludes, {
+      reportName,
+    })
   ),
 }
 

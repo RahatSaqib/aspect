@@ -5,12 +5,12 @@ require('isomorphic-fetch')
 const Promise = require('bluebird')
 
 const config = require('../config')
-const { knex } = require('../db')
+const { filterParams, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
 
 async function getReports(request) {
-  const { auth } = request
+  const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
   const reportsQuery = knex('Report as r')
@@ -24,6 +24,18 @@ async function getReports(request) {
 
   const getItems = reportsQuery
     .clone()
+    .modify(filterParams, query, {
+      reportName: (queryBuilder, value) => {
+        queryBuilder.whereRaw(
+          `(
+            r.name LIKE CONCAT('%', ?, '%')
+            OR
+            r.description LIKE CONCAT('%', ?, '%')
+          )`,
+          [value, value]
+        )
+      },
+    })
     .orderBy('r.sortOrder', 'asc')
     .select('r.name', 'r.description', 'r.externalId', 'r.sortOrder')
 
