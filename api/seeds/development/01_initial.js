@@ -4391,6 +4391,8 @@ async function seed(knex) {
         Plasma: sampleTypePlasmaId,
       } = await allSampleTypeToId()
 
+      console.log(country.name)
+      console.log(resultMtbNumber)
       // some TB samples:
       let samples = []
       await Promise.each(_.range(resultMtbNumber / 2), async i => {
