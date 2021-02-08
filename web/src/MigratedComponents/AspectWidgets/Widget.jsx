@@ -28,7 +28,7 @@ const messages = defineMessages({
   },
   lastMonth: {
     id: 'component.Widget.lastMonth',
-    defaultMessage: '{unit} in last month',
+    defaultMessage: '{unit} last month',
   },
   sinceLastWeek: {
     id: 'component.Widget.sinceLastWeek',
