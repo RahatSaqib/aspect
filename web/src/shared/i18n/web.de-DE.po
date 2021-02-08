@@ -1,0 +1,6630 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2021-02-08T16:36:19.658Z\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.4.2\n"
+"Project-Id-Version: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de_DE\n"
+
+#. [pages.ReporterList.acknowledgedRatio]
+#. defaultMessage is:
+#. % Acknowledged
+#: extracted_strings.json
+msgid "% Acknowledged"
+msgstr "Bestätigt"
+
+#. [pages.ReporterList.followup]
+#. defaultMessage is:
+#. % Confirmed Follow-up
+#: extracted_strings.json
+msgid "% Confirmed Follow-up"
+msgstr "% Bestätigt Nachverfolgt"
+
+#. [pages.AddInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.NewInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#: extracted_strings.json
+msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
+msgstr "(Neue Menge im Bestand: {nextQuantity} {unitShortName})"
+
+#. [pages.InventoryItemsList.inTransitFromSiteName]
+#. defaultMessage is:
+#. * in transit from {inTransitFromSiteName}
+#: extracted_strings.json
+msgid "* in transit from {inTransitFromSiteName}"
+msgstr "* auf dem Weg von {inTransitFromSiteName}"
+
+#. [pages.TableCell.moreContacts]
+#. defaultMessage is:
+#. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
+#: extracted_strings.json
+msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
+msgstr "...{Kontakte, plural, ein {# mehr {name}} andere {# mehr {name}s}} }"
+
+#. [filter.btnGroup.stockLeft.upTo14]
+#. defaultMessage is:
+#. 1-14 Days
+#: extracted_strings.json
+msgid "1-14 Days"
+msgstr "1-14 Tage"
+
+#. [filter.btnGroup.stockLeft.upTo90]
+#. defaultMessage is:
+#. 1-3 Months
+#: extracted_strings.json
+msgid "1-3 Months"
+msgstr "1-3 Monate"
+
+#. [filter.btnGroup.stockLeft.upTo30]
+#. defaultMessage is:
+#. 15-30 Days
+#: extracted_strings.json
+msgid "15-30 Days"
+msgstr "15-30 Tage"
+
+#. [filter.btnGroup.stockLeft.upTo180]
+#. defaultMessage is:
+#. 4-6 Months
+#: extracted_strings.json
+msgid "4-6 Months"
+msgstr "4-6 Monate"
+
+#. [filter.btnGroup.stockLeft.moreThan180]
+#. defaultMessage is:
+#. >6 Months
+#: extracted_strings.json
+msgid ">6 Months"
+msgstr ">6 Monate"
+
+#. [pages.UpdateLoginDetails.usernameRequired]
+#. defaultMessage is:
+#. A username is required
+#: extracted_strings.json
+msgid "A username is required"
+msgstr "Ein Benutzername ist erforderlich"
+
+#. [filter.AssaySelectField.AssayAbbottM2000DBSHivVl]
+#. defaultMessage is:
+#. Abbott m2000 DBS HIV VL
+#: extracted_strings.json
+msgid "Abbott m2000 DBS HIV VL"
+msgstr "Abbott m2000 DBS HIV VL"
+
+#. [filter.AssaySelectField.AssayAbbottM2000HivEid]
+#. defaultMessage is:
+#. Abbott m2000 HIV EID
+#: extracted_strings.json
+msgid "Abbott m2000 HIV EID"
+msgstr "Abbott m2000 HIV EID"
+
+#. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
+#. defaultMessage is:
+#. Abbott m2000 Plasma HBV VL
+#: extracted_strings.json
+msgid "Abbott m2000 Plasma HBV VL"
+msgstr "Abbott m2000 Plasma HBV VL"
+
+#. [filter.AssaySelectField.abbottM2000PlasmaHivVL]
+#. defaultMessage is:
+#. Abbott m2000 Plasma HIV VL
+#: extracted_strings.json
+msgid "Abbott m2000 Plasma HIV VL"
+msgstr "Abbott m2000 Plasma HIV VL"
+
+#. [queryFetch.errorResponseMessages.GET.403.title]
+#. defaultMessage is:
+#. Access denied
+#: extracted_strings.json
+msgid "Access denied"
+msgstr "Zugriff verweigert"
+
+#. [errorResponseMessages.common.forbidden.resolution]
+#. defaultMessage is:
+#. Access denied for this resource. Please, contact your administrator for support.
+#: extracted_strings.json
+msgid ""
+"Access denied for this resource. Please, contact your administrator for "
+"support."
+msgstr ""
+"Zugriff für diese Ressource verweigert. Bitte wenden Sie sich an Ihren "
+"Administrator, um Unterstützung zu erhalten."
+
+#. [pages.AccountDetails.title]
+#. defaultMessage is:
+#. Account Details
+#: extracted_strings.json
+msgid "Account Details"
+msgstr "Kontodetails"
+
+#. [errorResponseMessages.acknowledgeIssue..default.title]
+#. defaultMessage is:
+#. Acknowledging Issue Failed
+#: extracted_strings.json
+msgid "Acknowledging Issue Failed"
+msgstr "Problembestätigung fehlgeschlagen"
+
+#. [pages.DeviceList.availabilityRate]
+#. defaultMessage is:
+#. Active
+#. [pages.DeviceList.status.active]
+#. defaultMessage is:
+#. Active
+#. [pages.DeviceList.status.reportedActive]
+#. defaultMessage is:
+#. Active
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.active]
+#. defaultMessage is:
+#. Active
+#. [pages.DeviceDetailProfile.maintenanceStatus.active]
+#. defaultMessage is:
+#. Active
+#. [pages.DeviceDetailProfile.maintenanceStatus.reportedActive]
+#. defaultMessage is:
+#. Active
+#: extracted_strings.json
+msgid "Active"
+msgstr "Aktiv"
+
+#. [pages.InventoryItemsList.addInventory]
+#. defaultMessage is:
+#. Add Inventory
+#: extracted_strings.json
+msgid "Add Inventory"
+msgstr "Bestand hinzufügen"
+
+#. [pages.resultTreatmentPanel.addNote]
+#. defaultMessage is:
+#. Add Note
+#: extracted_strings.json
+msgid "Add Note"
+msgstr "Anmerkung hinzufügen"
+
+#. [pages.DeviceDetailProfile.buttonAddRecord]
+#. defaultMessage is:
+#. Add Record
+#: extracted_strings.json
+msgid "Add Record"
+msgstr "Datensatz hinzufügen"
+
+#. [pages.AddInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Add {consumableName}
+#. [pages.NewInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Add {consumableName}
+#: extracted_strings.json
+msgid "Add {consumableName}"
+msgstr "{consumableName} hinzufügen"
+
+#. [errorResponseMessages.addInventory.PUT.default.title]
+#. defaultMessage is:
+#. Adding Inventory Failed
+#. [errorResponseMessages.addInventory.POST.default.title]
+#. defaultMessage is:
+#. Adding Inventory Failed
+#: extracted_strings.json
+msgid "Adding Inventory Failed"
+msgstr "Hinzufügen von Inventar fehlgeschlagen"
+
+#. [pages.SiteDetail.fieldAddress]
+#. defaultMessage is:
+#. Address
+#: extracted_strings.json
+msgid "Address"
+msgstr "Adresse"
+
+#. [pages.SiteDetail.fieldAddress2]
+#. defaultMessage is:
+#. Address 2
+#: extracted_strings.json
+msgid "Address 2"
+msgstr "Adresse 2"
+
+#. [pages.InventoryItemsList.adjust]
+#. defaultMessage is:
+#. Adjust
+#: extracted_strings.json
+msgid "Adjust"
+msgstr "Anpassung"
+
+#. [pages.transferResult.successMessageButton]
+#. defaultMessage is:
+#. After clicking the OK button below, you will be redirected to the list of results.
+#: extracted_strings.json
+msgid ""
+"After clicking the OK button below, you will be redirected to the list of "
+"results."
+msgstr "Nach dem Klicken auf OK werden Sie zur Ergebnisliste weitergeleitet."
+
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph]
+#. defaultMessage is:
+#. Age and Gender
+#: extracted_strings.json
+msgid "Age and Gender"
+msgstr "Alter und Geschlecht"
+
+#. [filter.AssaySelectField.assayAlereQHiv12Detect]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 Detect
+#: extracted_strings.json
+msgid "Alere Q HIV-1/2 Detect"
+msgstr "Alere Q HIV-1/2 Detect"
+
+#. [filter.AssaySelectField.assayAlereQHiv12VLPlasma]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 VL plasma
+#: extracted_strings.json
+msgid "Alere Q HIV-1/2 VL plasma"
+msgstr "Alere Q HIV-1/2 VL-Plasma"
+
+#. [pages.DeviceDetail.alerts]
+#. defaultMessage is:
+#. Alerts
+#. [pages.SiteDetail.alerts]
+#. defaultMessage is:
+#. Alerts
+#: extracted_strings.json
+msgid "Alerts"
+msgstr "Benachrichtigungen"
+
+#. [pages.TablePaginator.all]
+#. defaultMessage is:
+#. All
+#. [filter.popover.all]
+#. defaultMessage is:
+#. All
+#. [pages.PersonDetails.all]
+#. defaultMessage is:
+#. All
+#. [pages.TablePagination.all]
+#. defaultMessage is:
+#. All
+#: extracted_strings.json
+msgid "All"
+msgstr "Alle"
+
+#. [pages.JobAssignments.allAreas]
+#. defaultMessage is:
+#. All areas
+#: extracted_strings.json
+msgid "All areas"
+msgstr "Alle Gebiete"
+
+#. [pages.JobAssignments.allAssayTypes]
+#. defaultMessage is:
+#. All assay types
+#: extracted_strings.json
+msgid "All assay types"
+msgstr "Alle Assay-Typen"
+
+#. [pages.JobAssignments.allAssays]
+#. defaultMessage is:
+#. All assays
+#: extracted_strings.json
+msgid "All assays"
+msgstr "Alle Assays"
+
+#. [pages.OperationalData.deviceCalibrationsUpToDate]
+#. defaultMessage is:
+#. All device calibrations up to date
+#: extracted_strings.json
+msgid "All device calibrations up to date"
+msgstr "Alle Gerätekalibrierungen auf dem neuesten Stand"
+
+#. [pages.JobAssignments.allDeviceTypes]
+#. defaultMessage is:
+#. All device types
+#: extracted_strings.json
+msgid "All device types"
+msgstr "Alle Gerätetypen"
+
+#. [pages.JobAssignments.allDiseases]
+#. defaultMessage is:
+#. All diseases
+#: extracted_strings.json
+msgid "All diseases"
+msgstr "Alle Krankheiten"
+
+#. [pages.JobAssignments.allSites]
+#. defaultMessage is:
+#. All sites
+#: extracted_strings.json
+msgid "All sites"
+msgstr "Alle Standorte"
+
+#. [pages.JobAssignments.allStates]
+#. defaultMessage is:
+#. All states
+#: extracted_strings.json
+msgid "All states"
+msgstr "Alle Staaten"
+
+#. [pages.ContactDetails.email2]
+#. defaultMessage is:
+#. Alternate Email
+#: extracted_strings.json
+msgid "Alternate Email"
+msgstr "Alternative E-Mail"
+
+#. [errorResponseMessages.createPerson.POST.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Create the Contact
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Create the Contact"
+msgstr "Beim Versuch, den Kontakt zu erstellen, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updatePerson.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Contact
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the Contact"
+msgstr "Beim Versuch, den Kontakt zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateSingleDevice.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Device
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the Device"
+msgstr "Beim Versuch, das Gerät zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the DeviceApiKey
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the DeviceApiKey"
+msgstr ""
+"Beim Versuch, den DeviceApiKey zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateSingleResult.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Result
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the Result"
+msgstr "Beim Versuch, das Ergebnis zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateSingleRouter.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Router
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the Router"
+msgstr "Beim Versuch, den Router zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateSingleSite.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Site
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the Site"
+msgstr "Beim Versuch, die Site zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateResultWorkflowStatus.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Workflow Status
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Save the Workflow Status"
+msgstr ""
+"Beim Versuch, den Workflow-Status zu speichern, ist ein Fehler aufgetreten"
+
+#. [errorResponseMessages.updateTags.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Update Tags
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Update Tags"
+msgstr "Beim Versuch, Tags zu aktualisieren, trat ein Fehler auf"
+
+#. [pages.ResetPassword.emailSent]
+#. defaultMessage is:
+#. An email has been sent to you
+#: extracted_strings.json
+msgid "An email has been sent to you"
+msgstr "Es wurde eine E-Mail an Sie gesendet"
+
+#. [errorResponseMessages.saveResultFormDataValue.PUT.default.title]
+#. defaultMessage is:
+#. An error occurred when trying to update the result.
+#: extracted_strings.json
+msgid "An error occurred when trying to update the result."
+msgstr ""
+"Beim Versuch, das Ergebnis zu aktualisieren, ist ein Fehler aufgetreten."
+
+#. [pages.dateRangeSelector.any]
+#. defaultMessage is:
+#. Any
+#: extracted_strings.json
+msgid "Any"
+msgstr "Beliebig"
+
+#. [filter.popover.deviceApproval]
+#. defaultMessage is:
+#. Approval
+#. [pages.DeviceDetailProfile.approval]
+#. defaultMessage is:
+#. Approval
+#: extracted_strings.json
+msgid "Approval"
+msgstr "Freigabe"
+
+#. [pages.RouterList.approval]
+#. defaultMessage is:
+#. Approval Status
+#: extracted_strings.json
+msgid "Approval Status"
+msgstr "Genehmigungsstatus"
+
+#. [pages.DeviceList.status.approved]
+#. defaultMessage is:
+#. Approved
+#. [pages.RouterDetail.approved]
+#. defaultMessage is:
+#. Approved
+#: extracted_strings.json
+msgid "Approved"
+msgstr "Genehmigt"
+
+#. [pages.LocationSelector.lga]
+#. defaultMessage is:
+#. Area
+#: extracted_strings.json
+msgid "Area"
+msgstr "Gebiet"
+
+#. [errorResponseMessages.generic.title]
+#. defaultMessage is:
+#. Aspect has Encountered a Problem.
+#: extracted_strings.json
+msgid "Aspect has Encountered a Problem."
+msgstr "Aspect ist auf ein Problem gestoßen."
+
+#. [filter.popover.assay]
+#. defaultMessage is:
+#. Assay
+#. [pages.JobAssignments.assay]
+#. defaultMessage is:
+#. Assay
+#. [pages.ResultList.assayName]
+#. defaultMessage is:
+#. Assay
+#. [pages.ResultList.assayId]
+#. defaultMessage is:
+#. Assay
+#: extracted_strings.json
+msgid "Assay"
+msgstr "Assay"
+
+#. [pages.OperationalData.assayName]
+#. defaultMessage is:
+#. Assay Name
+#: extracted_strings.json
+msgid "Assay Name"
+msgstr "Assay Name"
+
+#. [pages.JobAssignments.assayType]
+#. defaultMessage is:
+#. Assay Type
+#: extracted_strings.json
+msgid "Assay Type"
+msgstr "Assay-Typ"
+
+#. [pages.Milestones.assayType]
+#. defaultMessage is:
+#. Assay Type:
+#: extracted_strings.json
+msgid "Assay Type:"
+msgstr "Assay-Typ:"
+
+#. [pages.DeviceApiKeyList.assign]
+#. defaultMessage is:
+#. Assign
+#: extracted_strings.json
+msgid "Assign"
+msgstr "Zuordnen"
+
+#. [errorResponseMessages.assignDeviceApiKeys.POST.400.title]
+#. defaultMessage is:
+#. Assign DeviceApiKeys Failed
+#. [errorResponseMessages.assignDeviceApiKeys.POST.default.title]
+#. defaultMessage is:
+#. Assign DeviceApiKeys Failed
+#: extracted_strings.json
+msgid "Assign DeviceApiKeys Failed"
+msgstr "Zuweisen von DeviceApiKeys fehlgeschlagen"
+
+#. [pages.DeviceApiKeyList.assignerDialogTitle]
+#. defaultMessage is:
+#. Assign {count} Keys
+#: extracted_strings.json
+msgid "Assign {count} Keys"
+msgstr "{count} API Keys zuweisen"
+
+#. [pages.DeviceList.status.assigned]
+#. defaultMessage is:
+#. Assigned
+#: extracted_strings.json
+msgid "Assigned"
+msgstr "Zugewiesen"
+
+#. [pages.UserPreferences.assignmentDetails]
+#. defaultMessage is:
+#. Assignment Details
+#: extracted_strings.json
+msgid "Assignment Details"
+msgstr "Details über die Zuweisung"
+
+#. [pages.IdleDialog.title]
+#. defaultMessage is:
+#. Automatic Logout
+#: extracted_strings.json
+msgid "Automatic Logout"
+msgstr "Automatisches Abmelden"
+
+#. [pages.Status.treatmentStatusTotalTitle.graph]
+#. defaultMessage is:
+#. Average Confirmed Response
+#: extracted_strings.json
+msgid "Average Confirmed Response"
+msgstr "Durchschnittlich Bestätigt"
+
+#. [pages.OperationalData.averageDurationServiceInterruptionTitle]
+#. defaultMessage is:
+#. Average Duration of Service Interruption
+#: extracted_strings.json
+msgid "Average Duration of Service Interruption"
+msgstr "Durchschnittliche Dauer der Betriebsunterbrechung"
+
+#. [pages.Status.clinicalIndicatorsCovidPieLegend]
+#. defaultMessage is:
+#. Average Monthly Positivity Rate
+#: extracted_strings.json
+msgid "Average Monthly Positivity Rate"
+msgstr "Durchschnittliche monatliche Positivitätsrate"
+
+#. [pages.Status.clinicalIndicatorsTB.pie]
+#. defaultMessage is:
+#. Average Monthly Rif Resistance Rate
+#: extracted_strings.json
+msgid "Average Monthly Rif Resistance Rate"
+msgstr "Durchschnittliche monatliche Rif-Widerstandsrate"
+
+#. [pages.Status.clinicalIndicatorsPieLegend]
+#. defaultMessage is:
+#. Average Monthly Suppression Rate
+#: extracted_strings.json
+msgid "Average Monthly Suppression Rate"
+msgstr "Durchschnittliche monatliche Unterdrückungsrate"
+
+#. [pages.Status.testsOverTimeAvgTitle.graph]
+#. defaultMessage is:
+#. Average Monthly Tests Performed
+#: extracted_strings.json
+msgid "Average Monthly Tests Performed"
+msgstr "Durchschnittlich durchgeführte monatliche Tests"
+
+#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
+#. defaultMessage is:
+#. Average monthly TB Detected Rate
+#: extracted_strings.json
+msgid "Average monthly TB Detected Rate"
+msgstr "Durchschnittliche monatliche TB-Erkennungsrate"
+
+#. [pages.Status.dashboardWidgetTestsPerDayDescription]
+#. defaultMessage is:
+#. Average number of tests per day reported the current month
+#: extracted_strings.json
+msgid "Average number of tests per day reported the current month"
+msgstr ""
+"Durchschnittliche Anzahl von Tests pro Tag, die im aktuellen Monat gemeldet "
+"wurden"
+
+#. [pages.OperationalData.averageTimeToModuleReplacementTitle]
+#. defaultMessage is:
+#. Average time to replace disabled module
+#: extracted_strings.json
+msgid "Average time to replace disabled module"
+msgstr "Durchschnittliche Zeit für den Austausch eines deaktivierten Moduls"
+
+#. [filter.AssaySelectField.assayBdMgitAst]
+#. defaultMessage is:
+#. BD MGIT AST
+#: extracted_strings.json
+msgid "BD MGIT AST"
+msgstr "BD MGIT AST"
+
+#. [filter.AssaySelectField.assayBdMgitGnd]
+#. defaultMessage is:
+#. BD MGIT GND
+#: extracted_strings.json
+msgid "BD MGIT GND"
+msgstr "BD MGIT GND"
+
+#. [pages.NotificationList.backButton]
+#. defaultMessage is:
+#. Back
+#: extracted_strings.json
+msgid "Back"
+msgstr "Zurück"
+
+#. [pages.ResetPassword.backToLogin]
+#. defaultMessage is:
+#. Back to Login Page
+#: extracted_strings.json
+msgid "Back to Login Page"
+msgstr "Zurück zur Login-Seite"
+
+#. [filter.AssayTypeSelectField.assayTypeCD4]
+#. defaultMessage is:
+#. CD4 Count
+#: extracted_strings.json
+msgid "CD4 Count"
+msgstr "CD4-Zahl"
+
+#. [filter.AssaySelectField.AssayChaiEid]
+#. defaultMessage is:
+#. CHAI EID
+#: extracted_strings.json
+msgid "CHAI EID"
+msgstr "CHAI EID"
+
+#. [filter.AssaySelectField.AssayChaiHivVl]
+#. defaultMessage is:
+#. CHAI HIV VL
+#: extracted_strings.json
+msgid "CHAI HIV VL"
+msgstr "Abbott m2000 DBS HIV VL"
+
+#. [filter.AssaySelectField.assayCobasHivVl]
+#. defaultMessage is:
+#. COBAS 4800 VL
+#: extracted_strings.json
+msgid "COBAS 4800 VL"
+msgstr "COBAS 4800 VL"
+
+#. [pages.Status.clinicalIndicatorsCovidTitle.title]
+#. defaultMessage is:
+#. COVID Results
+#: extracted_strings.json
+msgid "COVID Results"
+msgstr "COVID-Ergebnisse"
+
+#. [filter.AssaySelectField.assayGenericCovid19]
+#. defaultMessage is:
+#. COVID-19 Generic Test
+#: extracted_strings.json
+msgid "COVID-19 Generic Test"
+msgstr "COVID-19 Generischer Test"
+
+#. [filter.AssayTypeSelectField.covid19]
+#. defaultMessage is:
+#. COVID-19 Test
+#: extracted_strings.json
+msgid "COVID-19 Test"
+msgstr "COVID-19 Test"
+
+#. [pages.ListExport.exportCsv]
+#. defaultMessage is:
+#. CSV
+#: extracted_strings.json
+msgid "CSV"
+msgstr "CSV"
+
+#. [pages.DeviceDetailProfile.calibration]
+#. defaultMessage is:
+#. Calibration
+#: extracted_strings.json
+msgid "Calibration"
+msgstr "Kalibrieren"
+
+#. [pages.CalibrationDialog.calibrationDate]
+#. defaultMessage is:
+#. Calibration Date
+#: extracted_strings.json
+msgid "Calibration Date"
+msgstr "Datum der Kalibrierung"
+
+#. [pages.WarrantyDialog.calibrationDateIsRequired]
+#. defaultMessage is:
+#. Calibration Date is required
+#: extracted_strings.json
+msgid "Calibration Date is required"
+msgstr "Kalibrierungsdatum ist erforderlich"
+
+#. [pages.ResetPassword.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceApiKeyList.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.InventoryAdjustmentDialogForm.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.UpdateLoginDetails.cancelCurrentPassword]
+#. defaultMessage is:
+#. Cancel
+#. [pages.JobAssignments.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.RouterDetail.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.BaseDialog.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.MaintenanceStatusDialog.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.transferResult.buttonCancel]
+#. defaultMessage is:
+#. Cancel
+#: extracted_strings.json
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#. [pages.CasesList.caseId]
+#. defaultMessage is:
+#. Case ID
+#: extracted_strings.json
+msgid "Case ID"
+msgstr "Fall-ID"
+
+#. [pages.CaseList.title]
+#. defaultMessage is:
+#. Cases
+#: extracted_strings.json
+msgid "Cases"
+msgstr "Fälle"
+
+#. [pages.DeviceDetailProfile.buttonChange]
+#. defaultMessage is:
+#. Change
+#: extracted_strings.json
+msgid "Change"
+msgstr "Ändern"
+
+#. [pages.ResultWorkflowStatusLog.logChangedOn]
+#. defaultMessage is:
+#. Changed On
+#: extracted_strings.json
+msgid "Changed On"
+msgstr "Geändert am"
+
+#. [pages.ResetPassword.checkEmail]
+#. defaultMessage is:
+#. Check Inbox
+#: extracted_strings.json
+msgid "Check Inbox"
+msgstr "Posteingang prüfen"
+
+#. [pages.UserPreferences.chooseTags]
+#. defaultMessage is:
+#. Choose tags
+#: extracted_strings.json
+msgid "Choose tags"
+msgstr "Schlagwörter auswählen"
+
+#. [pages.SiteDetail.fieldCity]
+#. defaultMessage is:
+#. City
+#: extracted_strings.json
+msgid "City"
+msgstr "Stadt"
+
+#. [shared.EmptyList.clearFilters]
+#. defaultMessage is:
+#. Clear filters
+#: extracted_strings.json
+msgid "Clear filters"
+msgstr "Filter zurücksetzen"
+
+#. [pages.Graphs.toolTipAllowClickThrough]
+#. defaultMessage is:
+#. Click to view results in table format
+#: extracted_strings.json
+msgid "Click to view results in table format"
+msgstr "Klicken Sie hier, um die Ergebnisse im Tabellenformat anzuzeigen"
+
+#. [pages.ClinicalHistory.clinicalHistory]
+#. defaultMessage is:
+#. Clinical History
+#: extracted_strings.json
+msgid "Clinical History"
+msgstr "Anamnese"
+
+#. [errorResponseMessages.generic.closeText]
+#. defaultMessage is:
+#. Close
+#. [pages.ResetPassword.adminHelpClose]
+#. defaultMessage is:
+#. Close
+#. [filter.popover.close]
+#. defaultMessage is:
+#. Close
+#: extracted_strings.json
+msgid "Close"
+msgstr "Schließen"
+
+#. [pages.Milestones.sampleCollectedOn]
+#. defaultMessage is:
+#. Collected On:
+#: extracted_strings.json
+msgid "Collected On:"
+msgstr "Gesammelt am:"
+
+#. [filter.AssaySelectField.assayCommCareGatesRDT]
+#. defaultMessage is:
+#. CommCare Gates RDT
+#: extracted_strings.json
+msgid "CommCare Gates RDT"
+msgstr "CommCare Gates RDT"
+
+#. [filter.AssaySelectField.commCareHiv]
+#. defaultMessage is:
+#. CommCare HIV
+#: extracted_strings.json
+msgid "CommCare HIV"
+msgstr "CommCare HIV"
+
+#. [pages.RouterDetail.fieldConfiguration]
+#. defaultMessage is:
+#. Configuration
+#: extracted_strings.json
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#. [pages.resultTreatmentPanel.confirm]
+#. defaultMessage is:
+#. Confirm
+#: extracted_strings.json
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#. [pages.ResetPassword.confirmNewPassword]
+#. defaultMessage is:
+#. Confirm New Password
+#. [pages.UpdateLoginDetails.confirmNewPassword]
+#. defaultMessage is:
+#. Confirm New Password
+#: extracted_strings.json
+msgid "Confirm New Password"
+msgstr "Neues Passwort bestätigen"
+
+#. [pages.Status.treatmentGraphStatusMonthly.graph]
+#. defaultMessage is:
+#. Confirmed Response
+#: extracted_strings.json
+msgid "Confirmed Response"
+msgstr "Bestätigt"
+
+#. [pages.RouterDetail.fieldFirstConnected]
+#. defaultMessage is:
+#. Connected
+#: extracted_strings.json
+msgid "Connected"
+msgstr "Verbunden"
+
+#. [pages.ReporterList.connectedSince]
+#. defaultMessage is:
+#. Connected Since
+#: extracted_strings.json
+msgid "Connected Since"
+msgstr "Verbunden seit"
+
+#. [pages.Status.summaryWidgetGroup.connectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceList.connectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceList.connectivityHealth]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceList.status.inactiveConnectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.SiteList.issueCategoryConnectivityHealth]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceDetailProfile.connectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity]
+#. defaultMessage is:
+#. Connectivity
+#: extracted_strings.json
+msgid "Connectivity"
+msgstr "Konnektivität"
+
+#. [filter.popover.consumable]
+#. defaultMessage is:
+#. Consumable
+#. [pages.InventoryAdjustmentDialogForm.consumable]
+#. defaultMessage is:
+#. Consumable
+#. [pages.InventoryItemsList.consumableName]
+#. defaultMessage is:
+#. Consumable
+#: extracted_strings.json
+msgid "Consumable"
+msgstr "Verbrauchsmaterial"
+
+#. [pages.PersonDetails.detailsCreatedSuccessfully]
+#. defaultMessage is:
+#. Contact Created Successfully
+#: extracted_strings.json
+msgid "Contact Created Successfully"
+msgstr "Kontakt erfolgreich angelegt"
+
+#. [pages.PersonDetails.contactDetails]
+#. defaultMessage is:
+#. Contact Details
+#: extracted_strings.json
+msgid "Contact Details"
+msgstr "Kontaktdetails"
+
+#. [pages.PersonDetails.contactDetailsUpdatedMessage]
+#. defaultMessage is:
+#. Contact details changed successfully
+#: extracted_strings.json
+msgid "Contact details changed successfully"
+msgstr "Kontaktdaten erfolgreich geändert"
+
+#. [pages.PersonDetails.contactDetailsCreatedMessage]
+#. defaultMessage is:
+#. Contact details created successfully
+#: extracted_strings.json
+msgid "Contact details created successfully"
+msgstr "Kontaktdetails erfolgreich erstellt"
+
+#. [filter.popover.contactNameEmail]
+#. defaultMessage is:
+#. Contact name/email
+#: extracted_strings.json
+msgid "Contact name/email"
+msgstr "Kontaktperson Name/E-Mail"
+
+#. [pages.NotificationList.contacts]
+#. defaultMessage is:
+#. Contacts
+#. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#. [pages.Notifications.table.contactsHeader]
+#. defaultMessage is:
+#. Contacts
+#: extracted_strings.json
+msgid "Contacts"
+msgstr "Kontakte"
+
+#. [errorResponseMessages.fetchSinglePerson.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Contact's Details
+#. [errorResponseMessages.updatePerson.PUT.404.title]
+#. defaultMessage is:
+#. Could Not Find Contact's Details
+#: extracted_strings.json
+msgid "Could Not Find Contact's Details"
+msgstr "Details des Kontakts konnten nicht gefunden werden"
+
+#. [errorResponseMessages.fetchSingleDevice.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Device Details
+#: extracted_strings.json
+msgid "Could Not Find Device Details"
+msgstr "Konnte keine Gerätedetails finden"
+
+#. [errorResponseMessages.fetchSingleRouter.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Router Details
+#: extracted_strings.json
+msgid "Could Not Find Router Details"
+msgstr "Router-Details konnten nicht gefunden werden"
+
+#. [errorResponseMessages.fetchSingleSite.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Site Details
+#: extracted_strings.json
+msgid "Could Not Find Site Details"
+msgstr "Konnte keine Standort-Details finden"
+
+#. [errorResponseMessages.fetchResultsDetail.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Test Result
+#: extracted_strings.json
+msgid "Could Not Find Test Result"
+msgstr "Konnte kein Testergebnis finden"
+
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title]
+#. defaultMessage is:
+#. Could Not Find User's Details
+#: extracted_strings.json
+msgid "Could Not Find User's Details"
+msgstr "Konnte die Benutzerdetails nicht finden"
+
+#. [errorResponseMessages.fetchAllSites.GET.404.title]
+#. defaultMessage is:
+#. Could Not Load All Sites
+#: extracted_strings.json
+msgid "Could Not Load All Sites"
+msgstr "Konnte nicht alle Standorte laden"
+
+#. [errorResponseMessages.transferResult.GET.404.title]
+#. defaultMessage is:
+#. Could Not Transfer Result
+#: extracted_strings.json
+msgid "Could Not Transfer Result"
+msgstr "Konnte Ergebnis nicht übertragen"
+
+#. [errorResponseMessages.loginStart.POST.401.incorrectPassword.title]
+#. defaultMessage is:
+#. Could not update your credentials
+#: extracted_strings.json
+msgid "Could not update your credentials"
+msgstr "Konnte Ihre Anmeldeinformationen nicht aktualisieren"
+
+#. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title]
+#. defaultMessage is:
+#. Couldn't login with your credentials
+#: extracted_strings.json
+msgid "Couldn't login with your credentials"
+msgstr "Konnte sich nicht mit Ihren Anmeldedaten anmelden"
+
+#. [pages.DeviceApiKeyList.count]
+#. defaultMessage is:
+#. Count (1-100)
+#: extracted_strings.json
+msgid "Count (1-100)"
+msgstr "Anzahl (1-100)"
+
+#. [pages.ManageDevices.filterTemplateOptional]
+#. defaultMessage is:
+#. Counting only {ASSAY} assays {RESULT}{DATE}.
+#: extracted_strings.json
+msgid "Counting only {ASSAY} assays {RESULT}{DATE}."
+msgstr "Zählen nur {ASSAY} Assays {RESULT}{DATE}."
+
+#. [pages.LocationSelector.country]
+#. defaultMessage is:
+#. Country
+#. [pages.DeviceApiKeyList.countryId]
+#. defaultMessage is:
+#. Country
+#. [pages.DeviceApiKeyList.country]
+#. defaultMessage is:
+#. Country
+#. [filter.popover.country]
+#. defaultMessage is:
+#. Country
+#. [pages.PersonDetails.country]
+#. defaultMessage is:
+#. Country
+#. [pages.SiteDetail.fieldCountry]
+#. defaultMessage is:
+#. Country
+#: extracted_strings.json
+msgid "Country"
+msgstr "Land"
+
+#. [pages.common.lga_US]
+#. defaultMessage is:
+#. County
+#: extracted_strings.json
+msgid "County"
+msgstr "Landkreis"
+
+#. [pages.PersonDetails.create]
+#. defaultMessage is:
+#. Create
+#: extracted_strings.json
+msgid "Create"
+msgstr "Erstellen"
+
+#. [pages.DeviceApiKeyList.createdOn]
+#. defaultMessage is:
+#. Created On
+#: extracted_strings.json
+msgid "Created On"
+msgstr "Erstellt am"
+
+#. [pages.Milestones.followUpCreatedOn]
+#. defaultMessage is:
+#. Created On:
+#: extracted_strings.json
+msgid "Created On:"
+msgstr "Erstellt am:"
+
+#. [filter.AssaySelectField.assayCulture]
+#. defaultMessage is:
+#. Culture
+#: extracted_strings.json
+msgid "Culture"
+msgstr "Kultur"
+
+#. [pages.UpdateLoginDetails.currentPassword]
+#. defaultMessage is:
+#. Current Password
+#: extracted_strings.json
+msgid "Current Password"
+msgstr "Aktuelles Passwort"
+
+#. [pages.dateRangeSelector.custom]
+#. defaultMessage is:
+#. Custom
+#: extracted_strings.json
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#. [pages.Status.clinicalIndicatorsCovidName]
+#. defaultMessage is:
+#. Daily Confirmed Cases
+#: extracted_strings.json
+msgid "Daily Confirmed Cases"
+msgstr "Täglich Bestätigte Fälle"
+
+#. [pages.Status.covidGraphDailyMortalityAndrecovery.pie]
+#. defaultMessage is:
+#. Daily Mortality and Recovery
+#: extracted_strings.json
+msgid "Daily Mortality and Recovery"
+msgstr "Tägliche Sterblichkeit und Erholung"
+
+#. [pages.OperationalDashboard.dailyStatusTitle]
+#. defaultMessage is:
+#. Daily Status
+#: extracted_strings.json
+msgid "Daily Status"
+msgstr "Täglicher Status"
+
+#. [filter.AssaySelectField.assayDaktariCD4]
+#. defaultMessage is:
+#. Daktari CD4
+#: extracted_strings.json
+msgid "Daktari CD4"
+msgstr "Daktari CD4"
+
+#. [filter.AssaySelectField.assayDaktariHcv]
+#. defaultMessage is:
+#. Daktari HCV
+#: extracted_strings.json
+msgid "Daktari HCV"
+msgstr "Daktari HCV"
+
+#. [filter.AssaySelectField.assayDaktariHivVl]
+#. defaultMessage is:
+#. Daktari HIV-VL
+#: extracted_strings.json
+msgid "Daktari HIV-VL"
+msgstr "Daktari HIV-VL"
+
+#. [pages.OperationalDashboard.operationalDashboardTitle]
+#. defaultMessage is:
+#. Dashboard
+#: extracted_strings.json
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#. [pages.DeviceList.dataHealth]
+#. defaultMessage is:
+#. Data
+#. [pages.SiteList.issueCategoryDataHealth]
+#. defaultMessage is:
+#. Data
+#: extracted_strings.json
+msgid "Data"
+msgstr "Daten"
+
+#. [pages.CaseList.createdOn]
+#. defaultMessage is:
+#. Date
+#. [filter.popover.date]
+#. defaultMessage is:
+#. Date
+#. [pages.Milestones.date]
+#. defaultMessage is:
+#. Date
+#. [component.DateTimeInput.date.placeholder]
+#. defaultMessage is:
+#. Date
+#. [pages.DeviceDetailOperation.startedOn]
+#. defaultMessage is:
+#. Date
+#. [pages.Notifications.table.dateHeader]
+#. defaultMessage is:
+#. Date
+#: extracted_strings.json
+msgid "Date"
+msgstr "Datum"
+
+#. [pages.AddInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Added
+#. [pages.NewInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Added
+#: extracted_strings.json
+msgid "Date Added"
+msgstr "Hinzugefügt am"
+
+#. [pages.ReceiveInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Received
+#: extracted_strings.json
+msgid "Date Received"
+msgstr "Empfangsdatum"
+
+#. [pages.RemoveInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Removed
+#: extracted_strings.json
+msgid "Date Removed"
+msgstr "Entfernt am"
+
+#. [pages.TransferInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Transferred
+#: extracted_strings.json
+msgid "Date Transferred"
+msgstr "Übertragen am"
+
+#. [pages.dateRangeSelector.day]
+#. defaultMessage is:
+#. Day
+#: extracted_strings.json
+msgid "Day"
+msgstr "Tag"
+
+#. [filter.popover.stockLeft]
+#. defaultMessage is:
+#. Days Stock Left
+#. [pages.InventoryItemsList.stockLeft]
+#. defaultMessage is:
+#. Days Stock Left
+#: extracted_strings.json
+msgid "Days Stock Left"
+msgstr "Tage Restbestand"
+
+#. [pages.OperationalData.instrumentsReplaced]
+#. defaultMessage is:
+#. Days for Instrument Replacement
+#: extracted_strings.json
+msgid "Days for Instrument Replacement"
+msgstr "Tage für Gerätetausch"
+
+#. [pages.DeviceList.status.inactiveDecommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#. [pages.DeviceList.status.decommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#: extracted_strings.json
+msgid "Decommissioned"
+msgstr "Außer Betrieb genommen"
+
+#. [pages.ReporterList.delivered]
+#. defaultMessage is:
+#. Delivered
+#: extracted_strings.json
+msgid "Delivered"
+msgstr "Geliefert"
+
+#. [filter.AssayTypeSelectField.assayTypeDengue]
+#. defaultMessage is:
+#. Dengue
+#: extracted_strings.json
+msgid "Dengue"
+msgstr "Dengue"
+
+#. [filter.DiseaseSelectField.diseaseNameDengueFever]
+#. defaultMessage is:
+#. Dengue Fever
+#: extracted_strings.json
+msgid "Dengue Fever"
+msgstr "Dengue-Fieber"
+
+#. [pages.Milestones.notes]
+#. defaultMessage is:
+#. Description:
+#: extracted_strings.json
+msgid "Description:"
+msgstr "Beschreibung:"
+
+#. [pages.PersonDetails.detailsUpdatedSuccessfully]
+#. defaultMessage is:
+#. Details Changed Successfully
+#: extracted_strings.json
+msgid "Details Changed Successfully"
+msgstr "Details wurden erfolgreich geändert"
+
+#. [errorResponseMessages.inline.moreDetails]
+#. defaultMessage is:
+#. Details...
+#: extracted_strings.json
+msgid "Details..."
+msgstr "Details..."
+
+#. [pages.DeviceList.device]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceList.deviceHealth]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceApiKeyList.deviceId]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceApiKeyList.device]
+#. defaultMessage is:
+#. Device
+#. [filter.popover.deviceName]
+#. defaultMessage is:
+#. Device
+#. [pages.ReporterList.reporterDevice]
+#. defaultMessage is:
+#. Device
+#. [pages.ResultList.deviceName]
+#. defaultMessage is:
+#. Device
+#. [pages.SiteList.issueCategoryDeviceHealth]
+#. defaultMessage is:
+#. Device
+#: extracted_strings.json
+msgid "Device"
+msgstr "Gerät"
+
+#. [pages.DeviceApiKeyList.title]
+#. defaultMessage is:
+#. Device API Keys
+#: extracted_strings.json
+msgid "Device API Keys"
+msgstr "Geräte-API-Schlüssel"
+
+#. [pages.DeviceApiKeyList.generatorDialogTitle]
+#. defaultMessage is:
+#. Device API Keys Generator
+#: extracted_strings.json
+msgid "Device API Keys Generator"
+msgstr "Geräte-API-Schlüssel-Generator"
+
+#. [pages.CalibrationDialog.dialogTitle]
+#. defaultMessage is:
+#. Device Calibration
+#: extracted_strings.json
+msgid "Device Calibration"
+msgstr "Gerätekalibrierung"
+
+#. [filter.btnGroup.deviceIssueType]
+#. defaultMessage is:
+#. Device Issue: {issueTypeId}
+#: extracted_strings.json
+msgid "Device Issue: {issueTypeId}"
+msgstr "Geräteproblem: {issueTypeId}"
+
+#. [pages.MaintenanceStatusDialog.dialogTitle]
+#. defaultMessage is:
+#. Device Maintenance
+#: extracted_strings.json
+msgid "Device Maintenance"
+msgstr "Gerätewartung"
+
+#. [filter.popover.deviceType]
+#. defaultMessage is:
+#. Device Type
+#. [pages.JobAssignments.deviceType]
+#. defaultMessage is:
+#. Device Type
+#: extracted_strings.json
+msgid "Device Type"
+msgstr "Gerätetyp"
+
+#. [pages.WarrantyDialog.dialogTitle]
+#. defaultMessage is:
+#. Device Warranty
+#: extracted_strings.json
+msgid "Device Warranty"
+msgstr "Geräte-Garantie"
+
+#. [pages.DeviceDetailProfile.deviceType]
+#. defaultMessage is:
+#. Device type
+#: extracted_strings.json
+msgid "Device type"
+msgstr "Gerätetyp"
+
+#. [pages.Status.summaryWidgetGroup.devices]
+#. defaultMessage is:
+#. Devices
+#. [pages.DeviceList.devicesTitle]
+#. defaultMessage is:
+#. Devices
+#. [pages.SiteDetail.fieldDevices]
+#. defaultMessage is:
+#. Devices
+#: extracted_strings.json
+msgid "Devices"
+msgstr "Geräte"
+
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
+#. defaultMessage is:
+#. Devices Experiencing Service Interruption
+#: extracted_strings.json
+msgid "Devices Experiencing Service Interruption"
+msgstr "Geräte, bei denen eine Betriebsunterbrechung auftritt"
+
+#. [pages.DeviceDetailEdit.discard]
+#. defaultMessage is:
+#. Discard
+#: extracted_strings.json
+msgid "Discard"
+msgstr "Verwerfen"
+
+#. [pages.CasesList.diseaseName]
+#. defaultMessage is:
+#. Disease
+#. [filter.popover.disease]
+#. defaultMessage is:
+#. Disease
+#. [pages.JobAssignments.disease]
+#. defaultMessage is:
+#. Disease
+#: extracted_strings.json
+msgid "Disease"
+msgstr "Krankheit"
+
+#. [pages.common.state_MW]
+#. defaultMessage is:
+#. District
+#. [pages.common.lga_ZANHLS]
+#. defaultMessage is:
+#. District
+#. [pages.common.lga_MM]
+#. defaultMessage is:
+#. District
+#. [pages.common.lga_ZW]
+#. defaultMessage is:
+#. District
+#: extracted_strings.json
+msgid "District"
+msgstr "Bezirk"
+
+#. [pages.common.lga_CM]
+#. defaultMessage is:
+#. Division
+#: extracted_strings.json
+msgid "Division"
+msgstr "Division"
+
+#. [pages.DeviceList.status.inactiveDownForRepair]
+#. defaultMessage is:
+#. Down For Repair
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair]
+#. defaultMessage is:
+#. Down For Repair
+#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair]
+#. defaultMessage is:
+#. Down For Repair
+#: extracted_strings.json
+msgid "Down For Repair"
+msgstr "Stillgelegt zur Reparatur"
+
+#. [filter.AssayTypeSelectField.assayTypeEid]
+#. defaultMessage is:
+#. EID
+#: extracted_strings.json
+msgid "EID"
+msgstr "EID"
+
+#. [filter.AssayTypeSelectField.assayTypeEbola]
+#. defaultMessage is:
+#. Ebola
+#. [filter.DiseaseSelectField.diseaseNameEbola]
+#. defaultMessage is:
+#. Ebola
+#: extracted_strings.json
+msgid "Ebola"
+msgstr "Ebola"
+
+#. [pages.NotificationDetail.edit]
+#. defaultMessage is:
+#. Edit
+#. [pages.RouterDetail.editTooltip]
+#. defaultMessage is:
+#. Edit
+#. [pages.DeviceDetail.edit]
+#. defaultMessage is:
+#. Edit
+#. [pages.SiteDetail.edit]
+#. defaultMessage is:
+#. Edit
+#: extracted_strings.json
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#. [errorResponseMessages.disconnected.default.message]
+#. defaultMessage is:
+#. Either your computer has been disconnected from the internet or our server has failed to respond.
+#: extracted_strings.json
+msgid ""
+"Either your computer has been disconnected from the internet or our server "
+"has failed to respond."
+msgstr ""
+"Entweder ist Ihr Computer nicht mehr mit dem Internet verbunden oder unser "
+"Server hat nicht geantwortet."
+
+#. [pages.ContactDetails.emailHeader]
+#. defaultMessage is:
+#. Email
+#. [pages.ContactDetails.email]
+#. defaultMessage is:
+#. Email
+#: extracted_strings.json
+msgid "Email"
+msgstr "E-Mail"
+
+#. [pages.ResetPassword.emailAddress]
+#. defaultMessage is:
+#. Email Address
+#: extracted_strings.json
+msgid "Email Address"
+msgstr "E-Mail Adresse"
+
+#. [pages.Notifications.table.emailSentHeader]
+#. defaultMessage is:
+#. Email Sent
+#: extracted_strings.json
+msgid "Email Sent"
+msgstr "Email gesendet"
+
+#. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
+#. defaultMessage is:
+#. Enter Current Password
+#: extracted_strings.json
+msgid "Enter Current Password"
+msgstr "Aktuelles Passwort eingeben"
+
+#. [pages.ResetPassword.enterEmailAddress]
+#. defaultMessage is:
+#. Enter Email Address
+#: extracted_strings.json
+msgid "Enter Email Address"
+msgstr "E-Mail Adresse eingeben"
+
+#. [pages.ResetPassword.enterNewPassword]
+#. defaultMessage is:
+#. Enter New Password
+#: extracted_strings.json
+msgid "Enter New Password"
+msgstr "Neues Passwort eingeben"
+
+#. [pages.transferResult.hint]
+#. defaultMessage is:
+#. Enter clinic name
+#: extracted_strings.json
+msgid "Enter clinic name"
+msgstr "Klinikname eingeben"
+
+#. [filter.popover.setContactNameEmail]
+#. defaultMessage is:
+#. Enter contact name/email...
+#: extracted_strings.json
+msgid "Enter contact name/email..."
+msgstr "Kontaktname/E-Mail eingeben..."
+
+#. [filter.popover.enterDeviceName]
+#. defaultMessage is:
+#. Enter device name...
+#: extracted_strings.json
+msgid "Enter device name..."
+msgstr "Gerätenamen eingeben..."
+
+#. [filter.popover.enterErrorCode]
+#. defaultMessage is:
+#. Enter error code...
+#: extracted_strings.json
+msgid "Enter error code..."
+msgstr "Fehlercode eingeben..."
+
+#. [filter.popover.selectNotificationName]
+#. defaultMessage is:
+#. Enter notification name...
+#: extracted_strings.json
+msgid "Enter notification name..."
+msgstr "Name der Benachrichtigung eingeben..."
+
+#. [filter.popover.enterPatientOrResearchId]
+#. defaultMessage is:
+#. Enter patient ID...
+#: extracted_strings.json
+msgid "Enter patient ID..."
+msgstr "Patienten-ID eingeben..."
+
+#. [filter.popover.enterPatientOrCaseId]
+#. defaultMessage is:
+#. Enter patient/case ID...
+#: extracted_strings.json
+msgid "Enter patient/case ID..."
+msgstr "Patienten-/Fall-ID eingeben..."
+
+#. [filter.popover.enterSampleId]
+#. defaultMessage is:
+#. Enter sample ID...
+#: extracted_strings.json
+msgid "Enter sample ID..."
+msgstr "Proben-ID eingeben..."
+
+#. [filter.popover.enterSampleOriginSite]
+#. defaultMessage is:
+#. Enter sample origin site name...
+#: extracted_strings.json
+msgid "Enter sample origin site name..."
+msgstr "Name des Herkunftsorts der Probe eingeben..."
+
+#. [filter.popover.enterSiteId]
+#. defaultMessage is:
+#. Enter site ID...
+#. [filter.popover.enterExternalId]
+#. defaultMessage is:
+#. Enter site ID...
+#: extracted_strings.json
+msgid "Enter site ID..."
+msgstr "Standort-ID eingeben..."
+
+#. [filter.popover.enterSiteName]
+#. defaultMessage is:
+#. Enter site name...
+#: extracted_strings.json
+msgid "Enter site name..."
+msgstr "Standortnamen eingeben..."
+
+#. [filter.popover.errorCode]
+#. defaultMessage is:
+#. Error Code
+#. [pages.ResultList.errorCode]
+#. defaultMessage is:
+#. Error Code
+#. [pages.DeviceDetailProfile.errorCode]
+#. defaultMessage is:
+#. Error Code
+#: extracted_strings.json
+msgid "Error Code"
+msgstr "Fehlercode"
+
+#. [queryFetch.errorResponseMessages.GET.default.title]
+#. defaultMessage is:
+#. Error Fetching Endpoint
+#: extracted_strings.json
+msgid "Error Fetching Endpoint"
+msgstr "Fehler beim Laden"
+
+#. [errorResponseMessages.fetchAllSites.GET.default.title]
+#. defaultMessage is:
+#. Error Loading All Sites
+#: extracted_strings.json
+msgid "Error Loading All Sites"
+msgstr "Fehler beim Laden aller Standorte"
+
+#. [errorResponseMessages.fetchLgasForLocationSelector.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Areas for {stateName}
+#: extracted_strings.json
+msgid "Error Loading Areas for {stateName}"
+msgstr "Fehler beim Laden von Gebieten für {stateName}"
+
+#. [errorResponseMessages.fetchSinglePerson.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Contact's Details
+#: extracted_strings.json
+msgid "Error Loading Contact's Details"
+msgstr "Fehler beim Laden der Kontaktdetails"
+
+#. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Countries
+#: extracted_strings.json
+msgid "Error Loading Countries"
+msgstr "Fehler beim Laden von Ländern"
+
+#. [errorResponseMessages.fetchSingleDevice.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Device Details
+#: extracted_strings.json
+msgid "Error Loading Device Details"
+msgstr "Fehler beim Laden von Gerätedetails"
+
+#. [errorResponseMessages.fetchPerformanceReport.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Device profile performance report
+#: extracted_strings.json
+msgid "Error Loading Device profile performance report"
+msgstr "Fehler beim Laden des Geräteprofil-Leistungsberichts"
+
+#. [errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Partners And Job Functions
+#: extracted_strings.json
+msgid "Error Loading Partners And Job Functions"
+msgstr "Fehler beim Laden von Partnern und Job-Funktionen"
+
+#. [errorResponseMessages.fetchResultsDetailDetails.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Result Details
+#: extracted_strings.json
+msgid "Error Loading Result Details"
+msgstr "Fehler beim Laden von Ergebnisdetails"
+
+#. [errorResponseMessages.fetchDeviceLog.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Result Logs
+#: extracted_strings.json
+msgid "Error Loading Result Logs"
+msgstr "Fehler beim Laden von Ergebnisprotokollen"
+
+#. [errorResponseMessages.fetchSingleRouter.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Router Details
+#: extracted_strings.json
+msgid "Error Loading Router Details"
+msgstr "Fehler beim Laden von Router-Details"
+
+#. [errorResponseMessages.fetchSingleSite.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Site Details
+#: extracted_strings.json
+msgid "Error Loading Site Details"
+msgstr "Fehler beim Laden der Standort-Details"
+
+#. [errorResponseMessages.fetchStatesForLocationSelector.GET.default.title]
+#. defaultMessage is:
+#. Error Loading States for {countryName}
+#: extracted_strings.json
+msgid "Error Loading States for {countryName}"
+msgstr "Fehler beim Laden von Staaten für {countryName}"
+
+#. [pages.DeviceDetailProfile.errorRate]
+#. defaultMessage is:
+#. Error Rate
+#: extracted_strings.json
+msgid "Error Rate"
+msgstr "Fehlerrate"
+
+#. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
+#. defaultMessage is:
+#. Error Saving New Password
+#: extracted_strings.json
+msgid "Error Saving New Password"
+msgstr "Fehler beim Speichern des neuen Passworts"
+
+#. [errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title]
+#. defaultMessage is:
+#. Error Sending Reset Password Email
+#: extracted_strings.json
+msgid "Error Sending Reset Password Email"
+msgstr "Fehler beim Senden der E-Mail zum Zurücksetzen des Kennworts"
+
+#. [errorResponseMessages.transferResult.GET.default.title]
+#. defaultMessage is:
+#. Error Transferring Result
+#: extracted_strings.json
+msgid "Error Transferring Result"
+msgstr "Fehler beim Übertragen des Ergebnisses"
+
+#. [pages.ListExport.exportExcel]
+#. defaultMessage is:
+#. Excel
+#: extracted_strings.json
+msgid "Excel"
+msgstr "Excel"
+
+#. [pages.TableCell.expandRow]
+#. defaultMessage is:
+#. Expand Row
+#: extracted_strings.json
+msgid "Expand Row"
+msgstr "Zeile erweitern"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Expired]
+#. defaultMessage is:
+#. Expired
+#: extracted_strings.json
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#. [pages.InventoryItemsList.expiresIn]
+#. defaultMessage is:
+#. Expires
+#: extracted_strings.json
+msgid "Expires"
+msgstr "Läuft ab"
+
+#. [pages.InventoryItemsList.expiresOn]
+#. defaultMessage is:
+#. Expires On
+#: extracted_strings.json
+msgid "Expires On"
+msgstr "Läuft ab am"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
+#: extracted_strings.json
+msgid "Expiry Date"
+msgstr "Ablaufdatum"
+
+#. [pages.DeviceList.exportDevices]
+#. defaultMessage is:
+#. Export device list
+#: extracted_strings.json
+msgid "Export device list"
+msgstr "Geräteliste exportieren"
+
+#. [errorResponseMessages.exportContacts.GET.400.title]
+#. defaultMessage is:
+#. Exporting Contacts Failed
+#. [errorResponseMessages.exportContacts.GET.default.title]
+#. defaultMessage is:
+#. Exporting Contacts Failed
+#: extracted_strings.json
+msgid "Exporting Contacts Failed"
+msgstr "Exportieren von Kontakten fehlgeschlagen"
+
+#. [errorResponseMessages.exportDeviceApiKeys.GET.400.title]
+#. defaultMessage is:
+#. Exporting DeviceApiKeys Failed
+#. [errorResponseMessages.exportDeviceApiKeys.GET.default.title]
+#. defaultMessage is:
+#. Exporting DeviceApiKeys Failed
+#: extracted_strings.json
+msgid "Exporting DeviceApiKeys Failed"
+msgstr "Exportieren von Geräte-API-Schlüssel fehlgeschlagen"
+
+#. [errorResponseMessages.exportDevices.GET.400.title]
+#. defaultMessage is:
+#. Exporting Devices Failed
+#. [errorResponseMessages.exportDevices.GET.default.title]
+#. defaultMessage is:
+#. Exporting Devices Failed
+#: extracted_strings.json
+msgid "Exporting Devices Failed"
+msgstr "Exportieren von Geräten fehlgeschlagen"
+
+#. [errorResponseMessages.exportResults.GET.400.title]
+#. defaultMessage is:
+#. Exporting Results Failed
+#. [errorResponseMessages.exportResults.GET.default.title]
+#. defaultMessage is:
+#. Exporting Results Failed
+#: extracted_strings.json
+msgid "Exporting Results Failed"
+msgstr "Exportieren von Ergebnissen fehlgeschlagen"
+
+#. [errorResponseMessages.exportRouters.GET.400.title]
+#. defaultMessage is:
+#. Exporting Routers Failed
+#. [errorResponseMessages.exportRouters.GET.default.title]
+#. defaultMessage is:
+#. Exporting Routers Failed
+#: extracted_strings.json
+msgid "Exporting Routers Failed"
+msgstr "Exportieren von Routern fehlgeschlagen"
+
+#. [errorResponseMessages.exportSites.GET.400.title]
+#. defaultMessage is:
+#. Exporting Sites Failed
+#. [errorResponseMessages.exportSites.GET.default.title]
+#. defaultMessage is:
+#. Exporting Sites Failed
+#: extracted_strings.json
+msgid "Exporting Sites Failed"
+msgstr "Exportieren von Standorten fehlgeschlagen"
+
+#. [errorResponseMessages.exportSupplies.GET.400.title]
+#. defaultMessage is:
+#. Exporting Supplies Failed
+#. [errorResponseMessages.exportSupplies.GET.default.title]
+#. defaultMessage is:
+#. Exporting Supplies Failed
+#: extracted_strings.json
+msgid "Exporting Supplies Failed"
+msgstr "Exportieren von Lieferungen fehlgeschlagen"
+
+#. [pages.SiteDetail.fieldFacilityCode]
+#. defaultMessage is:
+#. Facility Code
+#: extracted_strings.json
+msgid "Facility Code"
+msgstr "Einrichtung Code"
+
+#. [pages.revokedSelectField.false]
+#. defaultMessage is:
+#. False
+#: extracted_strings.json
+msgid "False"
+msgstr "Falsch"
+
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi]
+#. defaultMessage is:
+#. Female
+#: extracted_strings.json
+msgid "Female"
+msgstr "Weiblich"
+
+#. [forms.minAllowed]
+#. defaultMessage is:
+#. Field cannot contain less than {total} characters
+#: extracted_strings.json
+msgid "Field cannot contain less than {total} characters"
+msgstr "Feld kann nicht weniger als {total} Zeichen enthalten"
+
+#. [forms.maxAllowed]
+#. defaultMessage is:
+#. Field cannot contain more than {total} characters
+#: extracted_strings.json
+msgid "Field cannot contain more than {total} characters"
+msgstr "Feld kann nicht mehr als {total} Zeichen enthalten"
+
+#. [pages.ResetPassword.finish]
+#. defaultMessage is:
+#. Finish
+#: extracted_strings.json
+msgid "Finish"
+msgstr "Fertigstellen"
+
+#. [pages.DeviceDetailOperation.firmware]
+#. defaultMessage is:
+#. Firmware
+#: extracted_strings.json
+msgid "Firmware"
+msgstr "Firmware"
+
+#. [pages.TablePaginator.first]
+#. defaultMessage is:
+#. First
+#. [pages.TablePagination.first]
+#. defaultMessage is:
+#. First
+#: extracted_strings.json
+msgid "First"
+msgstr "Erste"
+
+#. [pages.RouterDetail.fieldFirstApprovedBy]
+#. defaultMessage is:
+#. First Approved By
+#: extracted_strings.json
+msgid "First Approved By"
+msgstr "Erste Freigabe durch"
+
+#. [pages.RouterDetail.fieldFirstApprovedOn]
+#. defaultMessage is:
+#. First Approved On
+#: extracted_strings.json
+msgid "First Approved On"
+msgstr "Erste Freigabe am"
+
+#. [pages.DeviceDetailEdit.firstApproved]
+#. defaultMessage is:
+#. First approved
+#: extracted_strings.json
+msgid "First approved"
+msgstr "Erstmals zugelassen"
+
+#. [pages.DeviceList.reportingForDays]
+#. defaultMessage is:
+#. For {period}
+#: extracted_strings.json
+msgid "For {period}"
+msgstr "Für {period}"
+
+#. [pages.Login.resetPasswordLink]
+#. defaultMessage is:
+#. Forgot Password?
+#: extracted_strings.json
+msgid "Forgot Password?"
+msgstr "Passwort vergessen?"
+
+#. [pages.InventoryAdjustmentDialogForm.fromSiteName]
+#. defaultMessage is:
+#. From Site
+#: extracted_strings.json
+msgid "From Site"
+msgstr "Vom Standort"
+
+#. [pages.dateRangeSelector.fromDate]
+#. defaultMessage is:
+#. From...
+#: extracted_strings.json
+msgid "From..."
+msgstr "Von…"
+
+#. [pages.ContactDetails.name]
+#. defaultMessage is:
+#. Full Name
+#: extracted_strings.json
+msgid "Full Name"
+msgstr "Vollständiger Name"
+
+#. [filter.AssaySelectField.assayGXCovid19]
+#. defaultMessage is:
+#. GeneXpert COVID-19
+#: extracted_strings.json
+msgid "GeneXpert COVID-19"
+msgstr "GeneXpert COVID-19"
+
+#. [filter.AssaySelectField.assayGeneXpertEbola]
+#. defaultMessage is:
+#. GeneXpert Ebola
+#: extracted_strings.json
+msgid "GeneXpert Ebola"
+msgstr "GeneXpert Ebola"
+
+#. [filter.AssaySelectField.assayGeneXpertHcv]
+#. defaultMessage is:
+#. GeneXpert HCV
+#: extracted_strings.json
+msgid "GeneXpert HCV"
+msgstr "GeneXpert HCV"
+
+#. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
+#. defaultMessage is:
+#. GeneXpert HIV-1 Qual
+#: extracted_strings.json
+msgid "GeneXpert HIV-1 Qual"
+msgstr "GeneXpert HIV-1 Qual"
+
+#. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
+#. defaultMessage is:
+#. GeneXpert HIV-1 VL
+#: extracted_strings.json
+msgid "GeneXpert HIV-1 VL"
+msgstr "GeneXpert HIV-1 VL"
+
+#. [filter.AssaySelectField.assayGeneXpertMtbRif]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif
+#: extracted_strings.json
+msgid "GeneXpert MTB/Rif"
+msgstr "GeneXpert MTB/Rif"
+
+#. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif Ultra
+#: extracted_strings.json
+msgid "GeneXpert MTB/Rif Ultra"
+msgstr "GeneXpert MTB/Rif Ultra"
+
+#. [filter.AssaySelectField.assayGeneXpertUnknown]
+#. defaultMessage is:
+#. GeneXpert Unknown
+#: extracted_strings.json
+msgid "GeneXpert Unknown"
+msgstr "GeneXpert Unbekannt"
+
+#. [pages.DeviceApiKeyList.generate]
+#. defaultMessage is:
+#. Generate
+#: extracted_strings.json
+msgid "Generate"
+msgstr "Generieren"
+
+#. [errorResponseMessages.generateDeviceApiKeys.POST.400.title]
+#. defaultMessage is:
+#. Generate DeviceApiKeys Failed
+#. [errorResponseMessages.generateDeviceApiKeys.POST.default.title]
+#. defaultMessage is:
+#. Generate DeviceApiKeys Failed
+#: extracted_strings.json
+msgid "Generate DeviceApiKeys Failed"
+msgstr "Generieren von Geräte-API-Schlüssel fehlgeschlagen"
+
+#. [filter.AssaySelectField.genericRdt]
+#. defaultMessage is:
+#. Generic RDT
+#. [filter.AssayTypeSelectField.genericRDT]
+#. defaultMessage is:
+#. Generic RDT
+#: extracted_strings.json
+msgid "Generic RDT"
+msgstr "Generischer RDT"
+
+#. [filter.AssaySelectField.assayGenoTypeMTBCV1]
+#. defaultMessage is:
+#. GenoType MTBC VER 1.X
+#: extracted_strings.json
+msgid "GenoType MTBC VER 1.X"
+msgstr "GenoType MTBC VER 1.X"
+
+#. [filter.AssaySelectField.assayGenoTypeMTBDRplusV2]
+#. defaultMessage is:
+#. GenoType MTBDRplus VER 2.0
+#: extracted_strings.json
+msgid "GenoType MTBDRplus VER 2.0"
+msgstr "GenoType MTBDRplus VER 2.0"
+
+#. [filter.AssaySelectField.assayGenoTypeMTBDRslV1]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 1.0
+#: extracted_strings.json
+msgid "GenoType MTBDRsl VER 1.0"
+msgstr "GenoType MTBDRsl VER 1.0"
+
+#. [filter.AssaySelectField.assayGenoTypeMTBDRslV2]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 2.0
+#: extracted_strings.json
+msgid "GenoType MTBDRsl VER 2.0"
+msgstr "GenoType MTBDRsl VER 2.0"
+
+#. [filter.AssayTypeSelectField.genoTypeTestStrip]
+#. defaultMessage is:
+#. GenoType Test Strip
+#: extracted_strings.json
+msgid "GenoType Test Strip"
+msgstr "GenoType Teststreifen"
+
+#. [errorResponseMessages.getReportFile.GET.400.title]
+#. defaultMessage is:
+#. Getting Report File Failed
+#. [errorResponseMessages.getReportFile.GET.default.title]
+#. defaultMessage is:
+#. Getting Report File Failed
+#: extracted_strings.json
+msgid "Getting Report File Failed"
+msgstr "Abrufen der Reportdatei fehlgeschlagen"
+
+#. [pages.TableHeader.groupByColumn]
+#. defaultMessage is:
+#. Group By Column
+#: extracted_strings.json
+msgid "Group By Column"
+msgstr "Gruppieren nach Spalte"
+
+#. [pages.InventoryItemsList.groupBySite]
+#. defaultMessage is:
+#. Group by Site
+#: extracted_strings.json
+msgid "Group by Site"
+msgstr "Gruppieren nach Standort"
+
+#. [filter.AssayTypeSelectField.assayTypeHbvVl]
+#. defaultMessage is:
+#. HBV VL
+#: extracted_strings.json
+msgid "HBV VL"
+msgstr "HBV VL"
+
+#. [filter.AssayTypeSelectField.assayTypeHcv]
+#. defaultMessage is:
+#. HCV
+#: extracted_strings.json
+msgid "HCV"
+msgstr "HCV"
+
+#. [pages.ResultList.resultCategoryHiv]
+#. defaultMessage is:
+#. HIV
+#: extracted_strings.json
+msgid "HIV"
+msgstr "HIV"
+
+#. [filter.AssayTypeSelectField.assayTypeHivQual]
+#. defaultMessage is:
+#. HIV Qual
+#: extracted_strings.json
+msgid "HIV Qual"
+msgstr "HIV Qual"
+
+#. [filter.AssayTypeSelectField.assayTypeHivVl]
+#. defaultMessage is:
+#. HIV VL
+#: extracted_strings.json
+msgid "HIV VL"
+msgstr "HIV VL"
+
+#. [filter.DiseaseSelectField.diseaseNameHIVAIDS]
+#. defaultMessage is:
+#. HIV/AIDS
+#: extracted_strings.json
+msgid "HIV/AIDS"
+msgstr "HIV/AIDS"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase]
+#. defaultMessage is:
+#. Has a mix of UPPER and lower case characters
+#: extracted_strings.json
+msgid "Has a mix of UPPER and lower case characters"
+msgstr "Hat eine Mischung aus GROSS- und Kleinbuchstaben"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterContainsNumber]
+#. defaultMessage is:
+#. Has a number
+#: extracted_strings.json
+msgid "Has a number"
+msgstr "Hat eine Nummer"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter]
+#. defaultMessage is:
+#. Has a special character (%!$*...)
+#: extracted_strings.json
+msgid "Has a special character (%!$*...)"
+msgstr "Hat ein Sonderzeichen (%!$*...)"
+
+#. [filter.DiseaseSelectField.diseaseNameHepatitisB]
+#. defaultMessage is:
+#. Hepatitis B
+#: extracted_strings.json
+msgid "Hepatitis B"
+msgstr "Hepatitis B"
+
+#. [filter.DiseaseSelectField.diseaseNameHepatitisC]
+#. defaultMessage is:
+#. Hepatitis C
+#: extracted_strings.json
+msgid "Hepatitis C"
+msgstr "Hepatitis C"
+
+#. [pages.TableHeader.hiddenColumns]
+#. defaultMessage is:
+#. Hidden Columns:
+#: extracted_strings.json
+msgid "Hidden Columns:"
+msgstr "Ausgeblendete Spalten:"
+
+#. [pages.TableHeader.hideColumn]
+#. defaultMessage is:
+#. Hide Column
+#: extracted_strings.json
+msgid "Hide Column"
+msgstr "Spalte ausblenden"
+
+#. [pages.NotificationDetail.history]
+#. defaultMessage is:
+#. History
+#: extracted_strings.json
+msgid "History"
+msgstr "Verlauf"
+
+#. [pages.DeviceDetailEdit.hostId]
+#. defaultMessage is:
+#. Host ID
+#: extracted_strings.json
+msgid "Host ID"
+msgstr "Gastgeber-ID"
+
+#. [pages.RouterDetail.fieldHostId]
+#. defaultMessage is:
+#. Host Id
+#: extracted_strings.json
+msgid "Host Id"
+msgstr "Host-ID"
+
+#. [component.DateTimeInput.hours.placeholder]
+#. defaultMessage is:
+#. Hours
+#: extracted_strings.json
+msgid "Hours"
+msgstr "Stunden"
+
+#. [pages.License.accept]
+#. defaultMessage is:
+#. I Accept
+#: extracted_strings.json
+msgid "I Accept"
+msgstr "Ich akzeptiere"
+
+#. [pages.License.doNotAccept]
+#. defaultMessage is:
+#. I Do Not Accept
+#: extracted_strings.json
+msgid "I Do Not Accept"
+msgstr "Ich akzeptiere nicht"
+
+#. [pages.ResetPassword.iDidntReceiveAnEmail]
+#. defaultMessage is:
+#. I didn't receive an email
+#: extracted_strings.json
+msgid "I didn't receive an email"
+msgstr "Ich habe keine E-Mail erhalten"
+
+#. [pages.ResetPassword.iDontHaveAnEmailAddress]
+#. defaultMessage is:
+#. I don't know what email address I am registered with
+#: extracted_strings.json
+msgid "I don't know what email address I am registered with"
+msgstr "Ich weiß nicht, mit welcher E-Mail Adresse ich registriert bin"
+
+#. [pages.DeviceDetailOperation.id]
+#. defaultMessage is:
+#. ID
+#: extracted_strings.json
+msgid "ID"
+msgstr "ID"
+
+#. [filter.btnGroup.whereExternalIdIncludes]
+#. defaultMessage is:
+#. ID includes "{externalId}"
+#: extracted_strings.json
+msgid "ID includes \"{externalId}\""
+msgstr "ID enthält \"{externalId}\""
+
+#. [pages.ResetPassword.adminHelpContent]
+#. defaultMessage is:
+#. If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}
+#: extracted_strings.json
+msgid ""
+"If you you need help to recover you login details, please contact us so that "
+"we may assist you. You can request our help by sending an email to "
+"{supportEmail}"
+msgstr ""
+"Wenn Sie Hilfe benötigen, um Ihre Anmeldedaten wiederherzustellen, "
+"kontaktieren Sie uns bitte, damit wir Ihnen helfen können. Sie können unsere "
+"Hilfe anfordern, indem Sie eine E-Mail an {supportEmail} senden"
+
+#. [errorResponseMessages.common.filterError.resolution]
+#. defaultMessage is:
+#. In the meantime, you could try to adjust the values in these filter fields, change the column that you are sorting on in the list or change the page number that you are viewing
+#: extracted_strings.json
+msgid ""
+"In the meantime, you could try to adjust the values in these filter fields, "
+"change the column that you are sorting on in the list or change the page "
+"number that you are viewing"
+msgstr ""
+"In der Zwischenzeit könnten Sie versuchen, die Werte in diesen Filterfeldern "
+"anzupassen, die Spalte zu ändern, nach der Sie in der Liste sortieren, oder "
+"die Seitenzahl zu ändern, die Sie betrachten"
+
+#. [pages.transferResult.includeAllResults]
+#. defaultMessage is:
+#. Include ALL results related to Patient ID
+#: extracted_strings.json
+msgid "Include ALL results related to Patient ID"
+msgstr "ALLE Ergebnisse in Bezug auf die Patienten-ID einbeziehen"
+
+#. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
+#. defaultMessage is:
+#. Incorrect password
+#: extracted_strings.json
+msgid "Incorrect password"
+msgstr "Ungültiges Passwort"
+
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPatientDetails.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.exportContacts.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchAvailablePersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchReports.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.getReportFile.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.exportPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.exportSites.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#: extracted_strings.json
+msgid "Insufficient Permissions"
+msgstr "Ungenügende Berechtigung"
+
+#. [queryFetch.errorResponseMessages.GET.401.title]
+#. defaultMessage is:
+#. Invalid Credentials
+#: extracted_strings.json
+msgid "Invalid Credentials"
+msgstr "Ungültige Anmeldeinformationen"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.403.title]
+#. defaultMessage is:
+#. Invalid Password
+#: extracted_strings.json
+msgid "Invalid Password"
+msgstr "Ungültiges Kennwort"
+
+#. [errorResponseMessages.fetchASiteContacts.GET.400.title]
+#. defaultMessage is:
+#. Invalid Site ID
+#: extracted_strings.json
+msgid "Invalid Site ID"
+msgstr "Ungültige Standort-ID"
+
+#. [errorResponseMessages.common.unauthorized.resolution]
+#. defaultMessage is:
+#. Invalid credentials. Please, login again.
+#: extracted_strings.json
+msgid "Invalid credentials. Please, login again."
+msgstr "Ungültige Anmeldedaten. Bitte, melden Sie sich erneut an."
+
+#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
+#. defaultMessage is:
+#. Invalid username or password
+#: extracted_strings.json
+msgid "Invalid username or password"
+msgstr "Ungültiger Benutzername oder Passwort"
+
+#. [pages.Status.summaryWidgetGroup.inventory]
+#. defaultMessage is:
+#. Inventory
+#: extracted_strings.json
+msgid "Inventory"
+msgstr "Inventar"
+
+#. [pages.NewInventoryDialogForm.defaultConsumableName]
+#. defaultMessage is:
+#. Inventory Item
+#: extracted_strings.json
+msgid "Inventory Item"
+msgstr "Inventarartikel"
+
+#. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
+#. defaultMessage is:
+#. Inventory levels have been adjusted successfully
+#: extracted_strings.json
+msgid "Inventory levels have been adjusted successfully"
+msgstr "Der Lagerbestand wurde erfolgreich angepasst"
+
+#. [pages.InventoryItemsList.inventoryItemsTitle]
+#. defaultMessage is:
+#. Inventory on Hand
+#: extracted_strings.json
+msgid "Inventory on Hand"
+msgstr "Vorhandene Bestände"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
+#. defaultMessage is:
+#. Is at least {minLength} characters long
+#: extracted_strings.json
+msgid "Is at least {minLength} characters long"
+msgstr "Ist mindestens {minLength} Zeichen lang"
+
+#. [pages.DeviceList.issues]
+#. defaultMessage is:
+#. Issues
+#. [pages.DeviceList.issueCategory]
+#. defaultMessage is:
+#. Issues
+#. [pages.SiteList.siteIssues]
+#. defaultMessage is:
+#. Issues
+#: extracted_strings.json
+msgid "Issues"
+msgstr "Probleme"
+
+#. [errorResponseMessages.common.notFound.message]
+#. defaultMessage is:
+#. It might have been deleted or renamed
+#: extracted_strings.json
+msgid "It might have been deleted or renamed"
+msgstr "Es wurde möglicherweise gelöscht oder umbenannt"
+
+#. [pages.UserPreferences.job]
+#. defaultMessage is:
+#. Job
+#. [pages.PersonList.level]
+#. defaultMessage is:
+#. Job
+#: extracted_strings.json
+msgid "Job"
+msgstr "Job"
+
+#. [pages.UserPreferences.jobAssignment]
+#. defaultMessage is:
+#. Job Assignment
+#: extracted_strings.json
+msgid "Job Assignment"
+msgstr "Job-Zuweisung"
+
+#. [pages.DeviceApiKeyList.token]
+#. defaultMessage is:
+#. Key
+#: extracted_strings.json
+msgid "Key"
+msgstr "Schlüssel"
+
+#. [pages.common.lga]
+#. defaultMessage is:
+#. LGA
+#. [pages.SiteDetail.fieldLGA]
+#. defaultMessage is:
+#. LGA
+#: extracted_strings.json
+msgid "LGA"
+msgstr "LGA"
+
+#. [pages.Milestones.resultSiteName]
+#. defaultMessage is:
+#. Lab:
+#: extracted_strings.json
+msgid "Lab:"
+msgstr "Labor:"
+
+#. [pages.UserPreferences.language]
+#. defaultMessage is:
+#. Language
+#: extracted_strings.json
+msgid "Language"
+msgstr "Sprache"
+
+#. [pages.PersonDetails.languageAndTimezone]
+#. defaultMessage is:
+#. Language & Timezone
+#: extracted_strings.json
+msgid "Language & Timezone"
+msgstr "Sprache & Zeitzone"
+
+#. [pages.TablePaginator.last]
+#. defaultMessage is:
+#. Last
+#. [pages.TablePagination.last]
+#. defaultMessage is:
+#. Last
+#: extracted_strings.json
+msgid "Last"
+msgstr "Letzte"
+
+#. [pages.dateRangeSelector.last30Days]
+#. defaultMessage is:
+#. Last 30 Days
+#: extracted_strings.json
+msgid "Last 30 Days"
+msgstr "Letzte 30 Tage"
+
+#. [pages.dateRangeSelector.last7Days]
+#. defaultMessage is:
+#. Last 7 Days
+#: extracted_strings.json
+msgid "Last 7 Days"
+msgstr "Letzte 7 Tage"
+
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last Month
+#. [pages.dateRangeSelector.lastMonth]
+#. defaultMessage is:
+#. Last Month
+#: extracted_strings.json
+msgid "Last Month"
+msgstr "Letzter Monat"
+
+#. [pages.DeviceList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.ReporterList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.RouterDetail.fieldLastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.RouterList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#: extracted_strings.json
+msgid "Last Seen"
+msgstr "Zuletzt gesehen"
+
+#. [pages.Notifications.table.lastTriggeredHeader]
+#. defaultMessage is:
+#. Last Triggered
+#: extracted_strings.json
+msgid "Last Triggered"
+msgstr "Zuletzt Ausgelöst"
+
+#. [pages.dateRangeSelector.lastWeek]
+#. defaultMessage is:
+#. Last Week
+#: extracted_strings.json
+msgid "Last Week"
+msgstr "Letzte Woche"
+
+#. [pages.dateRangeSelector.lastYear]
+#. defaultMessage is:
+#. Last Year
+#: extracted_strings.json
+msgid "Last Year"
+msgstr "Letztes Jahr"
+
+#. [pages.DeviceDetailProfile.lastSeenOn]
+#. defaultMessage is:
+#. Last seen {lastSeen}
+#: extracted_strings.json
+msgid "Last seen {lastSeen}"
+msgstr "Zuletzt gesehen {lastSeen}"
+
+#. [pages.NotificationList.lastTriggered]
+#. defaultMessage is:
+#. Last triggered
+#: extracted_strings.json
+msgid "Last triggered"
+msgstr "Zuletzt ausgelöst"
+
+#. [pages.SiteList.latestInventoryUpdate]
+#. defaultMessage is:
+#. Latest Inventory Update
+#: extracted_strings.json
+msgid "Latest Inventory Update"
+msgstr "Aktuelles Inventar-Update"
+
+#. [pages.SiteDetail.fieldLatitude]
+#. defaultMessage is:
+#. Latitude
+#: extracted_strings.json
+msgid "Latitude"
+msgstr "Breitengrad"
+
+#. [pages.License.title]
+#. defaultMessage is:
+#. License
+#: extracted_strings.json
+msgid "License"
+msgstr "Lizenz"
+
+#. [pages.resultTreatmentPanel.linkedToTreatment]
+#. defaultMessage is:
+#. Linked to treatment
+#: extracted_strings.json
+msgid "Linked to treatment"
+msgstr "In Behandlung"
+
+#. [filter.AssayTypeSelectField.assayTypeLipidPanel]
+#. defaultMessage is:
+#. Lipid Panel
+#: extracted_strings.json
+msgid "Lipid Panel"
+msgstr "Lipid-Panel"
+
+#. [errorResponseMessages.fetchAccountDetails.GET.default.title]
+#. defaultMessage is:
+#. Loading Account Details Failed
+#: extracted_strings.json
+msgid "Loading Account Details Failed"
+msgstr "Laden der Kontodaten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchAssayTypes.GET.default.title]
+#. defaultMessage is:
+#. Loading Assay Types Failed
+#: extracted_strings.json
+msgid "Loading Assay Types Failed"
+msgstr "Laden von Assay-Typen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchAssays.GET.default.title]
+#. defaultMessage is:
+#. Loading Assays Failed
+#: extracted_strings.json
+msgid "Loading Assays Failed"
+msgstr "Lade-Assays fehlgeschlagen"
+
+#. [errorResponseMessages.fetchCases.GET.default.title]
+#. defaultMessage is:
+#. Loading Cases Failed
+#: extracted_strings.json
+msgid "Loading Cases Failed"
+msgstr "Laden von Fällen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchConsumableReasons.GET.default.title]
+#. defaultMessage is:
+#. Loading Consumable Reasons Failed
+#: extracted_strings.json
+msgid "Loading Consumable Reasons Failed"
+msgstr "Laden von Verbrauchsmaterial-Gründen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchConsumables.GET.default.title]
+#. defaultMessage is:
+#. Loading Consumables Failed
+#: extracted_strings.json
+msgid "Loading Consumables Failed"
+msgstr "Laden von Verbrauchsmaterial fehlgeschlagen"
+
+#. [errorResponseMessages.fetchPersons.GET.default.title]
+#. defaultMessage is:
+#. Loading Contacts Failed
+#: extracted_strings.json
+msgid "Loading Contacts Failed"
+msgstr "Laden von Kontakten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceApprovals.GET.default.title]
+#. defaultMessage is:
+#. Loading Device Approval Statuses Failed
+#: extracted_strings.json
+msgid "Loading Device Approval Statuses Failed"
+msgstr "Laden von Gerätefreigabestatus fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title]
+#. defaultMessage is:
+#. Loading Device Maintenance Status Failed
+#: extracted_strings.json
+msgid "Loading Device Maintenance Status Failed"
+msgstr "Laden des Gerätewartungsstatus fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceApiKeys.GET.default.title]
+#. defaultMessage is:
+#. Loading DeviceApiKeys Failed
+#: extracted_strings.json
+msgid "Loading DeviceApiKeys Failed"
+msgstr "Laden von Geräte-API-Schlüsseln fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
+#. defaultMessage is:
+#. Loading DeviceOperations Failed
+#: extracted_strings.json
+msgid "Loading DeviceOperations Failed"
+msgstr "Laden von Gerätevorgängen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceTypes.GET.default.title]
+#. defaultMessage is:
+#. Loading DeviceTypes Failed
+#: extracted_strings.json
+msgid "Loading DeviceTypes Failed"
+msgstr "Laden von Gerätearten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDevices.GET.default.title]
+#. defaultMessage is:
+#. Loading Devices Failed
+#. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
+#. defaultMessage is:
+#. Loading Devices Failed
+#: extracted_strings.json
+msgid "Loading Devices Failed"
+msgstr "Laden von Geräten"
+
+#. [errorResponseMessages.fetchDiseases.GET.default.title]
+#. defaultMessage is:
+#. Loading Diseases Failed
+#: extracted_strings.json
+msgid "Loading Diseases Failed"
+msgstr "Laden von Krankheiten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchPatientDetails.GET.default.title]
+#. defaultMessage is:
+#. Loading Patient results details Failed
+#: extracted_strings.json
+msgid "Loading Patient results details Failed"
+msgstr "Laden von Patientenergebnisdetails fehlgeschlagen"
+
+#. [errorResponseMessages.fetchPossibleTags.GET.default.title]
+#. defaultMessage is:
+#. Loading Possible Tags Failed
+#: extracted_strings.json
+msgid "Loading Possible Tags Failed"
+msgstr "Laden möglicher Tags fehlgeschlagen"
+
+#. [errorResponseMessages.fetchReports.GET.default.title]
+#. defaultMessage is:
+#. Loading Reports Failed
+#: extracted_strings.json
+msgid "Loading Reports Failed"
+msgstr "Laden von Berichten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchTreatmentStatuses.GET.default.title]
+#. defaultMessage is:
+#. Loading Result Treatment Statuses Failed
+#: extracted_strings.json
+msgid "Loading Result Treatment Statuses Failed"
+msgstr "Laden von Ergebnis-Behandlungszuständen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchWorkflowLogs.GET.default.title]
+#. defaultMessage is:
+#. Loading Result Workflow Status Logs Failed
+#: extracted_strings.json
+msgid "Loading Result Workflow Status Logs Failed"
+msgstr "Laden von Ergebnis-Workflow-Statusprotokollen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchWorkflowStatuses.GET.default.title]
+#. defaultMessage is:
+#. Loading Result Workflow Statuses Failed
+#: extracted_strings.json
+msgid "Loading Result Workflow Statuses Failed"
+msgstr "Laden von Ergebnis-Workflow-Zuständen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchResults.GET.default.title]
+#. defaultMessage is:
+#. Loading Results Failed
+#: extracted_strings.json
+msgid "Loading Results Failed"
+msgstr "Laden der Ergebnisse fehlgeschlagen"
+
+#. [errorResponseMessages.fetchRouters.GET.default.title]
+#. defaultMessage is:
+#. Loading Routers Failed
+#: extracted_strings.json
+msgid "Loading Routers Failed"
+msgstr "Laden von Routern fehlgeschlagen"
+
+#. [errorResponseMessages.fetchSites.GET.default.title]
+#. defaultMessage is:
+#. Loading Sites Failed
+#: extracted_strings.json
+msgid "Loading Sites Failed"
+msgstr "Laden von Standorten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchTags.GET.default.title]
+#. defaultMessage is:
+#. Loading Tags Failed
+#: extracted_strings.json
+msgid "Loading Tags Failed"
+msgstr "Laden von Tags fehlgeschlagen"
+
+#. [errorResponseMessages.fetchTask.GET.default.title]
+#. defaultMessage is:
+#. Loading Task Failed
+#: extracted_strings.json
+msgid "Loading Task Failed"
+msgstr "Laden von Aufgaben fehlgeschlagen"
+
+#. [errorResponseMessages.getTasksByStatus.GET.default.title]
+#. defaultMessage is:
+#. Loading Tasks Failed
+#. [errorResponseMessages.fetchTasks.GET.default.title]
+#. defaultMessage is:
+#. Loading Tasks Failed
+#: extracted_strings.json
+msgid "Loading Tasks Failed"
+msgstr "Laden von Aufgaben fehlgeschlagen"
+
+#. [pages.ContactDetails.locationHeader]
+#. defaultMessage is:
+#. Location
+#: extracted_strings.json
+msgid "Location"
+msgstr "Standort"
+
+#. [pages.AccountDetails.usernameAndPassword]
+#. defaultMessage is:
+#. Login
+#. [pages.Login.title]
+#. defaultMessage is:
+#. Login
+#. [pages.Login.login]
+#. defaultMessage is:
+#. Login
+#. [pages.PersonDetails.systemAccessControl]
+#. defaultMessage is:
+#. Login
+#: extracted_strings.json
+msgid "Login"
+msgstr "Anmelden"
+
+#. [errorResponseMessages.loginStart.POST.default.title]
+#. defaultMessage is:
+#. Login Error
+#: extracted_strings.json
+msgid "Login Error"
+msgstr "Anmelde-Fehler"
+
+#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title]
+#. defaultMessage is:
+#. Login Failed
+#. [errorResponseMessages.loginStart.POST.401.authenticationFailed.title]
+#. defaultMessage is:
+#. Login Failed
+#: extracted_strings.json
+msgid "Login Failed"
+msgstr "Anmeldung Fehlgeschlagen"
+
+#. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title]
+#. defaultMessage is:
+#. Login failed
+#. [errorResponseMessages.loginStart.POST.403.accountLocked.title]
+#. defaultMessage is:
+#. Login failed
+#: extracted_strings.json
+msgid "Login failed"
+msgstr "Login fehlgeschlagen"
+
+#. [pages.ResetPassword.loginWithMyNewPassword]
+#. defaultMessage is:
+#. Login with my new password
+#: extracted_strings.json
+msgid "Login with my new password"
+msgstr "Anmelden mit neuem Passwort"
+
+#. [pages.SiteDetail.fieldLongitude]
+#. defaultMessage is:
+#. Longitude
+#: extracted_strings.json
+msgid "Longitude"
+msgstr "Längengrad"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Lost]
+#. defaultMessage is:
+#. Lost
+#: extracted_strings.json
+msgid "Lost"
+msgstr "Verloren"
+
+#. [pages.InventoryAdjustmentDialogForm.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#: extracted_strings.json
+msgid "Lot Number"
+msgstr "Losnummer"
+
+#. [filter.AssayTypeSelectField.assayTypeMtbRif]
+#. defaultMessage is:
+#. MTB/Rif
+#: extracted_strings.json
+msgid "MTB/Rif"
+msgstr "MTB/Rif"
+
+#. [filter.AssaySelectField.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
+#: extracted_strings.json
+msgid "MagNA Pure-96 COVID-19"
+msgstr "MagNA Pure-96 COVID-19"
+
+#. [filter.popover.deviceMaintenanceStatus]
+#. defaultMessage is:
+#. Maintenance Status
+#. [pages.DeviceDetailProfile.maintenance]
+#. defaultMessage is:
+#. Maintenance Status
+#: extracted_strings.json
+msgid "Maintenance Status"
+msgstr "Wartungszustand"
+
+#. [pages.MaintenanceStatusDialog.maintenanceStatus]
+#. defaultMessage is:
+#. Maintenance status
+#: extracted_strings.json
+msgid "Maintenance status"
+msgstr "Wartungszustand"
+
+#. [pages.MaintenanceStatusDialog.maintenanceStatusIsRequired]
+#. defaultMessage is:
+#. Maintenance status is required
+#: extracted_strings.json
+msgid "Maintenance status is required"
+msgstr "Wartungszustand ist erforderlich"
+
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderMale.pie]
+#. defaultMessage is:
+#. Male
+#: extracted_strings.json
+msgid "Male"
+msgstr "Männlich"
+
+#. [pages.AccountDetails.cell]
+#. defaultMessage is:
+#. Mobile
+#: extracted_strings.json
+msgid "Mobile"
+msgstr "Mobil"
+
+#. [pages.dateRangeSelector.month]
+#. defaultMessage is:
+#. Month
+#. [component.DateTimeInput.month.placeholder]
+#. defaultMessage is:
+#. Month
+#: extracted_strings.json
+msgid "Month"
+msgstr "Monat"
+
+#. [filter.popover.moreFilters]
+#. defaultMessage is:
+#. More filters
+#: extracted_strings.json
+msgid "More filters"
+msgstr "Weitere Filter"
+
+#. [pages.TableHeader.moveColumnLeft]
+#. defaultMessage is:
+#. Move Column Left
+#: extracted_strings.json
+msgid "Move Column Left"
+msgstr "Spalte nach links verschieben"
+
+#. [pages.TableHeader.moveColumnRight]
+#. defaultMessage is:
+#. Move Column Right
+#: extracted_strings.json
+msgid "Move Column Right"
+msgstr "Spalte nach rechts verschieben"
+
+#. [pages.DeviceList.notAvailable]
+#. defaultMessage is:
+#. N/A
+#: extracted_strings.json
+msgid "N/A"
+msgstr "N/A"
+
+#. [pages.resultTreatmentPanel.note]
+#. defaultMessage is:
+#. NOTE:
+#: extracted_strings.json
+msgid "NOTE:"
+msgstr "NOTIZ:"
+
+#. [pages.NotificationList.name]
+#. defaultMessage is:
+#. Name
+#. [pages.PersonList.personName]
+#. defaultMessage is:
+#. Name
+#. [pages.RouterDetail.fieldName]
+#. defaultMessage is:
+#. Name
+#. [pages.SiteList.siteName]
+#. defaultMessage is:
+#. Name
+#. [pages.Notifications.table.nameHeader]
+#. defaultMessage is:
+#. Name
+#. [pages.SiteDetail.fieldName]
+#. defaultMessage is:
+#. Name
+#: extracted_strings.json
+msgid "Name"
+msgstr "Name"
+
+#. [pages.DeviceList.needsRepair]
+#. defaultMessage is:
+#. Needs Repair
+#: extracted_strings.json
+msgid "Needs Repair"
+msgstr "Benötigt Reparatur"
+
+#. [pages.InventoryItemsList.never]
+#. defaultMessage is:
+#. Never
+#: extracted_strings.json
+msgid "Never"
+msgstr "Niemals"
+
+#. [pages.PersonList.addContact]
+#. defaultMessage is:
+#. New Contact
+#: extracted_strings.json
+msgid "New Contact"
+msgstr "Neue Kontaktaufnahme"
+
+#. [pages.ResetPassword.newPassword]
+#. defaultMessage is:
+#. New Password
+#. [pages.UpdateLoginDetails.newPassword]
+#. defaultMessage is:
+#. New Password
+#: extracted_strings.json
+msgid "New Password"
+msgstr "Neues Passwort"
+
+#. [pages.ResultList.newResult]
+#. defaultMessage is:
+#. New Result
+#: extracted_strings.json
+msgid "New Result"
+msgstr "Neues Ergebnis"
+
+#. [pages.TablePaginator.newer]
+#. defaultMessage is:
+#. Newer
+#. [pages.TablePagination.newer]
+#. defaultMessage is:
+#. Newer
+#: extracted_strings.json
+msgid "Newer"
+msgstr "Neuer"
+
+#. [pages.ResetPassword.next]
+#. defaultMessage is:
+#. Next
+#. [pages.TablePaginator.next]
+#. defaultMessage is:
+#. Next
+#. [pages.TablePagination.next]
+#. defaultMessage is:
+#. Next
+#: extracted_strings.json
+msgid "Next"
+msgstr "Weiter"
+
+#. [filter.btnGroup.stockLeft.noConsumption]
+#. defaultMessage is:
+#. No Consumption
+#: extracted_strings.json
+msgid "No Consumption"
+msgstr "Kein Verbrauch"
+
+#. [pages.graphs.emptyGraphPlaceholderTitle]
+#. defaultMessage is:
+#. No Data Available
+#: extracted_strings.json
+msgid "No Data Available"
+msgstr "Keine Daten verfügbar"
+
+#. [pages.DeviceList.status.inactiveNoResultsReported]
+#. defaultMessage is:
+#. No Results Reported
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported]
+#. defaultMessage is:
+#. No Results Reported
+#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoResultsReported]
+#. defaultMessage is:
+#. No Results Reported
+#: extracted_strings.json
+msgid "No Results Reported"
+msgstr "Keine Ergebnisse berichtet"
+
+#. [pages.SiteDetail.fieldNoContact]
+#. defaultMessage is:
+#. No contacts assigned to site
+#: extracted_strings.json
+msgid "No contacts assigned to site"
+msgstr "Keine Kontakte dem Standort zugeordnet"
+
+#. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
+#. defaultMessage is:
+#. No logs for this result.
+#: extracted_strings.json
+msgid "No logs for this result."
+msgstr "Keine Protokolle für dieses Ergebnis."
+
+#. [pages.SiteDetail.fieldNoMatch]
+#. defaultMessage is:
+#. No matching results found
+#: extracted_strings.json
+msgid "No matching results found"
+msgstr "Keine passenden Ergebnisse gefunden"
+
+#. [shared.EmptyList.noResultsTitle]
+#. defaultMessage is:
+#. No results match your selected filters
+#: extracted_strings.json
+msgid "No results match your selected filters"
+msgstr "Keine Ergebnisse entsprechen Ihren ausgewählten Filtern"
+
+#. [filter.popover.none]
+#. defaultMessage is:
+#. None
+#. [pages.PersonDetails.none]
+#. defaultMessage is:
+#. None
+#: extracted_strings.json
+msgid "None"
+msgstr "Nichts"
+
+#. [pages.TableCell.notConfigured]
+#. defaultMessage is:
+#. Not Configured
+#: extracted_strings.json
+msgid "Not Configured"
+msgstr "Nicht konfiguriert"
+
+#. [errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title]
+#. defaultMessage is:
+#. Not Found
+#. [errorResponseMessages.fetchPersonAssignments.GET.404.title]
+#. defaultMessage is:
+#. Not Found
+#. [errorResponseMessages.addPersonAssignment.POST.404.title]
+#. defaultMessage is:
+#. Not Found
+#. [errorResponseMessages.deletePersonAssignment.DELETE.404.title]
+#. defaultMessage is:
+#. Not Found
+#. [pages.NotFound.title]
+#. defaultMessage is:
+#. Not Found
+#: extracted_strings.json
+msgid "Not Found"
+msgstr "Nicht gefunden"
+
+#. [filter.btnGroup.stockLeft.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
+#: extracted_strings.json
+msgid "Not Recorded"
+msgstr "Nicht Aufgenommen"
+
+#. [pages.resultTreatmentPanel.notPossible]
+#. defaultMessage is:
+#. Not possible
+#: extracted_strings.json
+msgid "Not possible"
+msgstr "Nicht möglich"
+
+#. [pages.resultTreatmentPanel.notYetConfirmedOnTreatment]
+#. defaultMessage is:
+#. Not yet confirmed on treatment
+#: extracted_strings.json
+msgid "Not yet confirmed on treatment"
+msgstr "Behandlung noch nicht bestätigt"
+
+#. [pages.InventoryAdjustmentDialogForm.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.ContactDetails.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.RouterDetail.fieldNotes]
+#. defaultMessage is:
+#. Notes
+#. [pages.BaseDialog.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.MaintenanceStatusDialog.notes]
+#. defaultMessage is:
+#. Notes
+#: extracted_strings.json
+msgid "Notes"
+msgstr "Notizen"
+
+#. [filter.popover.notificationName]
+#. defaultMessage is:
+#. Notification
+#: extracted_strings.json
+msgid "Notification"
+msgstr "Benachrichtigung"
+
+#. [pages.NotificationList.title]
+#. defaultMessage is:
+#. Notifications
+#: extracted_strings.json
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#. [pages.NotificationList.notificationsTitle]
+#. defaultMessage is:
+#. Notifications History
+#: extracted_strings.json
+msgid "Notifications History"
+msgstr "Benachrichtigungsverlauf"
+
+#. [component.DateTimeInput.button.now]
+#. defaultMessage is:
+#. Now
+#: extracted_strings.json
+msgid "Now"
+msgstr "Jetzt"
+
+#. [pages.ReporterList.numberOfTestsLeft]
+#. defaultMessage is:
+#. Number Of Tests Delivered
+#: extracted_strings.json
+msgid "Number Of Tests Delivered"
+msgstr "Anzahl der gelieferten Tests"
+
+#. [pages.SiteList.totalDevices]
+#. defaultMessage is:
+#. Number of Devices
+#: extracted_strings.json
+msgid "Number of Devices"
+msgstr "Anzahl der Geräte"
+
+#. [pages.DeviceList.numberOfTests]
+#. defaultMessage is:
+#. Number of Tests
+#: extracted_strings.json
+msgid "Number of Tests"
+msgstr "Anzahl der Tests"
+
+#. [pages.DeviceDetailProfile.errorRateExplain]
+#. defaultMessage is:
+#. Number of errors divided by number of results in the last 30 days
+#: extracted_strings.json
+msgid "Number of errors divided by number of results in the last 30 days"
+msgstr ""
+"Anzahl der Fehler geteilt durch die Anzahl der Ergebnisse in den letzten 30 "
+"Tagen"
+
+#. [pages.DeviceDetailProfile.utilizationRateExplain]
+#. defaultMessage is:
+#. Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days
+#: extracted_strings.json
+msgid ""
+"Number of results in the last 30 days divided by the daily capacity of the "
+"instrument multiplied by 30 days"
+msgstr ""
+"Anzahl der Ergebnisse in den letzten 30 Tagen geteilt durch die "
+"Tageskapazität des Geräts multipliziert mit 30 Tagen"
+
+#. [pages.transferResult.successOk]
+#. defaultMessage is:
+#. OK
+#: extracted_strings.json
+msgid "OK"
+msgstr "OK"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
+#. defaultMessage is:
+#. Okay
+#: extracted_strings.json
+msgid "Okay"
+msgstr "Okay"
+
+#. [pages.TablePaginator.older]
+#. defaultMessage is:
+#. Older
+#. [pages.TablePagination.older]
+#. defaultMessage is:
+#. Older
+#: extracted_strings.json
+msgid "Older"
+msgstr "Älter"
+
+#. [pages.ReporterList.totalOnTreatment]
+#. defaultMessage is:
+#. On Treatment
+#: extracted_strings.json
+msgid "On Treatment"
+msgstr "Zur Behandlung"
+
+#. [filter.popover.onlyReportableResults]
+#. defaultMessage is:
+#. Only Reportable Results
+#: extracted_strings.json
+msgid "Only Reportable Results"
+msgstr "Nur meldepflichtige Ergebnisse"
+
+#. [pages.DeviceDetail.operation]
+#. defaultMessage is:
+#. Operation
+#: extracted_strings.json
+msgid "Operation"
+msgstr "Operationen"
+
+#. [pages.ResultWorkflowStatusLog.logOperator]
+#. defaultMessage is:
+#. Operator
+#: extracted_strings.json
+msgid "Operator"
+msgstr "Betreiber"
+
+#. [errorResponseMessages.generic.message]
+#. defaultMessage is:
+#. Our technical team has been notified of the problem and will attend to it as soon as possible.
+#: extracted_strings.json
+msgid ""
+"Our technical team has been notified of the problem and will attend to it as "
+"soon as possible."
+msgstr ""
+"Unser technisches Team wurde über das Problem informiert und wird sich so "
+"schnell wie möglich darum kümmern."
+
+#. [pages.DeviceList.status.inactiveOutOfInventory]
+#. defaultMessage is:
+#. Out Of Inventory
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory]
+#. defaultMessage is:
+#. Out Of Inventory
+#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory]
+#. defaultMessage is:
+#. Out Of Inventory
+#: extracted_strings.json
+msgid "Out Of Inventory"
+msgstr "Nicht auf Lager"
+
+#. [filter.btnGroup.stockLeft.outOfStock]
+#. defaultMessage is:
+#. Out of Stock
+#: extracted_strings.json
+msgid "Out of Stock"
+msgstr "Ausverkauft"
+
+#. [pages.Milestones.followUpName]
+#. defaultMessage is:
+#. Outcome
+#: extracted_strings.json
+msgid "Outcome"
+msgstr "Endstand"
+
+#. [pages.Milestones.followUpTypeName]
+#. defaultMessage is:
+#. Outcome type:
+#: extracted_strings.json
+msgid "Outcome type:"
+msgstr "Ergebnistyp:"
+
+#. [pages.Status.deviceStatusTitle.graph]
+#. defaultMessage is:
+#. Overall Activity Rate
+#: extracted_strings.json
+msgid "Overall Activity Rate"
+msgstr "Gesamtaktivitätsrate"
+
+#. [pages.DailyStatus.dailyStatusMainTitle]
+#. defaultMessage is:
+#. Overall Network Health Daily
+#: extracted_strings.json
+msgid "Overall Network Health Daily"
+msgstr "Gesamtnetzwerkzustand Täglich"
+
+#. [pages.DeviceApiKeyList.partnerId]
+#. defaultMessage is:
+#. Partner
+#. [pages.DeviceApiKeyList.partner]
+#. defaultMessage is:
+#. Partner
+#. [filter.popover.partner]
+#. defaultMessage is:
+#. Partner
+#. [pages.AccountDetails.partner]
+#. defaultMessage is:
+#. Partner
+#: extracted_strings.json
+msgid "Partner"
+msgstr "Partner"
+
+#. [pages.Login.password]
+#. defaultMessage is:
+#. Password
+#: extracted_strings.json
+msgid "Password"
+msgstr "Passwort"
+
+#. [pages.ResetPassword.passwordUpdatedTitle]
+#. defaultMessage is:
+#. Password Changed Successfully
+#: extracted_strings.json
+msgid "Password Changed Successfully"
+msgstr "Passwort erfolgreich geändert"
+
+#. [pages.ResetPassword.passwordUpdateFailedTitle]
+#. defaultMessage is:
+#. Password Reset Failed
+#: extracted_strings.json
+msgid "Password Reset Failed"
+msgstr "Passwort zurücksetzen fehlgeschlagen"
+
+#. [pages.ClinicalHistory.patient]
+#. defaultMessage is:
+#. Patient
+#: extracted_strings.json
+msgid "Patient"
+msgstr "Patient"
+
+#. [pages.ClinicalHistory.patientData]
+#. defaultMessage is:
+#. Patient Data
+#: extracted_strings.json
+msgid "Patient Data"
+msgstr "Patientendaten"
+
+#. [pages.CasesList.patientId]
+#. defaultMessage is:
+#. Patient ID
+#. [filter.popover.patientOrResearchId]
+#. defaultMessage is:
+#. Patient ID
+#. [pages.ResultList.patiendId]
+#. defaultMessage is:
+#. Patient ID
+#. [pages.DeviceDetailProfile.patientId]
+#. defaultMessage is:
+#. Patient ID
+#: extracted_strings.json
+msgid "Patient ID"
+msgstr "Patienten-ID"
+
+#. [filter.popover.patientOrCaseId]
+#. defaultMessage is:
+#. Patient/Case ID
+#: extracted_strings.json
+msgid "Patient/Case ID"
+msgstr "Patienten-/Fall-ID"
+
+#. [pages.OperationalData.percentPositiveResults]
+#. defaultMessage is:
+#. Percent Positive
+#. [pages.OperationalData.percentPositive]
+#. defaultMessage is:
+#. Percent Positive
+#: extracted_strings.json
+msgid "Percent Positive"
+msgstr "Prozentsatz positiv"
+
+#. [pages.OperationalData.percentReported]
+#. defaultMessage is:
+#. Percent Reported
+#: extracted_strings.json
+msgid "Percent Reported"
+msgstr "Prozent berichtet"
+
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle]
+#. defaultMessage is:
+#. Percentage of Days with Service Interruption
+#: extracted_strings.json
+msgid "Percentage of Days with Service Interruption"
+msgstr "Prozentualer Anteil der Tage mit Serviceunterbrechung"
+
+#. [pages.Status.dashboardWidgetValidResultsPcDescription]
+#. defaultMessage is:
+#. Percentage of valid results reported the current month
+#: extracted_strings.json
+msgid "Percentage of valid results reported the current month"
+msgstr "Prozentsatz der im aktuellen Monat gemeldeten gültigen Ergebnisse"
+
+#. [pages.PersonDetail.title]
+#. defaultMessage is:
+#. Person Detail
+#: extracted_strings.json
+msgid "Person Detail"
+msgstr "Person Detail"
+
+#. [pages.ContactDetails.phoneHeader]
+#. defaultMessage is:
+#. Phone
+#: extracted_strings.json
+msgid "Phone"
+msgstr "Telefon"
+
+#. [errorResponseMessages.common.notFound.resolution]
+#. defaultMessage is:
+#. Please check that it still exists
+#: extracted_strings.json
+msgid "Please check that it still exists"
+msgstr "Bitte prüfen Sie, ob es noch existiert"
+
+#. [pages.InventoryAdjustmentDialogForm.dateFromAfterDateTo]
+#. defaultMessage is:
+#. Please choose a date later or equal to from date
+#: extracted_strings.json
+msgid "Please choose a date later or equal to from date"
+msgstr "Bitte wählen Sie ein Datum größer oder gleich dem Datum von"
+
+#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
+#. defaultMessage is:
+#. Please choose a different site
+#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
+#. defaultMessage is:
+#. Please choose a different site
+#: extracted_strings.json
+msgid "Please choose a different site"
+msgstr "Bitte wählen Sie einen anderen Standort"
+
+#. [pages.ResetPassword.newPasswordRequired]
+#. defaultMessage is:
+#. Please enter a new password
+#: extracted_strings.json
+msgid "Please enter a new password"
+msgstr "Bitte geben Sie ein neues Passwort ein"
+
+#. [pages.ResetPassword.invalidEmailAddress]
+#. defaultMessage is:
+#. Please enter a valid email address
+#. [pages.ContactDetails.invalidEmailAddress]
+#. defaultMessage is:
+#. Please enter a valid email address
+#: extracted_strings.json
+msgid "Please enter a valid email address"
+msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
+
+#. [pages.ResetPassword.enterEmailAddressContent]
+#. defaultMessage is:
+#. Please enter the email address that you are registered with
+#: extracted_strings.json
+msgid "Please enter the email address that you are registered with"
+msgstr "Bitte geben Sie die E-Mail-Adresse ein, mit der Sie registriert sind"
+
+#. [pages.ContactDetails.nameRequired]
+#. defaultMessage is:
+#. Please enter your Full name
+#: extracted_strings.json
+msgid "Please enter your Full name"
+msgstr "Bitte geben Sie Ihren vollständigen Namen ein"
+
+#. [pages.UpdateLoginDetails.currentPasswordRequired]
+#. defaultMessage is:
+#. Please enter your current password to update your login details
+#: extracted_strings.json
+msgid "Please enter your current password to update your login details"
+msgstr ""
+"Bitte geben Sie Ihr aktuelles Passwort ein, um Ihre Zugangsdaten zu "
+"aktualisieren"
+
+#. [pages.ResetPassword.enterNewPasswordContent]
+#. defaultMessage is:
+#. Please enter your new password?
+#: extracted_strings.json
+msgid "Please enter your new password?"
+msgstr "Bitte geben Sie Ihr neues Passwort ein?"
+
+#. [pages.transferResult.note]
+#. defaultMessage is:
+#. Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone.
+#: extracted_strings.json
+msgid ""
+"Please notice that above field 'Transfer to Clinic' lists all clinics, even "
+"those which you may not have access to. In a such case - by transferring "
+"this result you won't be able to edit this result record any more, and your "
+"action cannot be undone."
+msgstr ""
+"Bitte beachten Sie, dass das obige Feld \"An Klinik übertragen\" alle "
+"Kliniken auflistet, auch solche, auf die Sie möglicherweise keinen Zugriff "
+"haben. In einem solchen Fall - wenn Sie dieses Ergebnis übertragen, können "
+"Sie diesen Ergebnisdatensatz nicht mehr bearbeiten und Ihre Aktion kann "
+"nicht rückgängig gemacht werden."
+
+#. [pages.ContactDetails.countryRequired]
+#. defaultMessage is:
+#. Please select Country
+#: extracted_strings.json
+msgid "Please select Country"
+msgstr "Bitte Land auswählen"
+
+#. [pages.JobAssignments.jobRequired]
+#. defaultMessage is:
+#. Please select Job
+#: extracted_strings.json
+msgid "Please select Job"
+msgstr "Bitte wählen Sie einen Job"
+
+#. [pages.DeviceApiKeyList.countryRequired]
+#. defaultMessage is:
+#. Please select a country
+#: extracted_strings.json
+msgid "Please select a country"
+msgstr "Bitte wählen Sie ein Land"
+
+#. [pages.DeviceApiKeyList.partnerRequired]
+#. defaultMessage is:
+#. Please select a partner
+#: extracted_strings.json
+msgid "Please select a partner"
+msgstr "Bitte wählen Sie einen Partner"
+
+#. [pages.InventoryAdjustmentDialogForm.reasonRequired]
+#. defaultMessage is:
+#. Please select a reason
+#: extracted_strings.json
+msgid "Please select a reason"
+msgstr "Bitte wählen Sie einen Grund"
+
+#. [pages.InventoryAdjustmentDialogForm.siteRequired]
+#. defaultMessage is:
+#. Please select a site
+#: extracted_strings.json
+msgid "Please select a site"
+msgstr "Bitte wählen Sie einen Standort"
+
+#. [pages.InventoryAdjustmentDialogForm.consumableRequired]
+#. defaultMessage is:
+#. Please specify a consumable
+#: extracted_strings.json
+msgid "Please specify a consumable"
+msgstr "Bitte geben Sie ein Verbrauchsmaterial an"
+
+#. [pages.InventoryAdjustmentDialogForm.dateRequired]
+#. defaultMessage is:
+#. Please specify a date
+#: extracted_strings.json
+msgid "Please specify a date"
+msgstr "Bitte geben Sie ein Datum an"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDateRequired]
+#. defaultMessage is:
+#. Please specify an expiry date
+#: extracted_strings.json
+msgid "Please specify an expiry date"
+msgstr "Bitte geben Sie ein Verfallsdatum an"
+
+#. [pages.AddInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to add
+#. [pages.NewInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to add
+#: extracted_strings.json
+msgid "Please specify the quantity to add"
+msgstr "Bitte geben Sie die Menge an, die Sie hinzufügen möchten"
+
+#. [pages.ReceiveInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to receive
+#: extracted_strings.json
+msgid "Please specify the quantity to receive"
+msgstr "Bitte geben Sie die zu erhaltende Menge an"
+
+#. [pages.RemoveInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to remove
+#: extracted_strings.json
+msgid "Please specify the quantity to remove"
+msgstr "Bitte geben Sie die zu entfernende Menge an"
+
+#. [pages.TransferInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to transfer
+#: extracted_strings.json
+msgid "Please specify the quantity to transfer"
+msgstr "Bitte geben Sie die zu übertragende Menge an"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.409.resolution]
+#. defaultMessage is:
+#. Please try another username
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution]
+#. defaultMessage is:
+#. Please try another username
+#: extracted_strings.json
+msgid "Please try another username"
+msgstr "Bitte versuchen Sie einen anderen Benutzernamen"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.403.resolution]
+#. defaultMessage is:
+#. Please try re-entering your password or contact us to reset your login details
+#: extracted_strings.json
+msgid ""
+"Please try re-entering your password or contact us to reset your login "
+"details"
+msgstr ""
+"Bitte versuchen Sie, Ihr Passwort erneut einzugeben oder kontaktieren Sie "
+"uns, um Ihre Anmeldedaten zurückzusetzen"
+
+#. [errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution]
+#. defaultMessage is:
+#. Please, correct the credentials your entered and try again.
+#: extracted_strings.json
+msgid "Please, correct the credentials your entered and try again."
+msgstr ""
+"Bitte korrigieren Sie die eingegebenen Anmeldedaten und versuchen Sie es "
+"erneut."
+
+#. [errorResponseMessages.loginStart.POST.401.incorrectPassword.resolution]
+#. defaultMessage is:
+#. Please, re-enter your password and try again.
+#: extracted_strings.json
+msgid "Please, re-enter your password and try again."
+msgstr "Bitte geben Sie Ihr Passwort erneut ein und versuchen Sie es erneut."
+
+#. [errorResponseMessages.common.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+msgid ""
+"Please, try again in a few minutes. If the error persists, contact your "
+"administrator for support."
+msgstr ""
+"Bitte versuchen Sie es in ein paar Minuten erneut. Wenn der Fehler weiterhin "
+"besteht, wenden Sie sich an Ihren Administrator, um Unterstützung zu "
+"erhalten."
+
+#. [pages.OperationalData.resultsTransmittedTitle]
+#. defaultMessage is:
+#. Positive Test Results Transmitted
+#: extracted_strings.json
+msgid "Positive Test Results Transmitted"
+msgstr "Übertragene positive Testergebnisse"
+
+#. [pages.OperationalData.totalPositiveResults]
+#. defaultMessage is:
+#. Positives
+#. [pages.OperationalData.cntPositive]
+#. defaultMessage is:
+#. Positives
+#: extracted_strings.json
+msgid "Positives"
+msgstr "Positive"
+
+#. [pages.SiteDetail.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
+#: extracted_strings.json
+msgid "Press enter to add tag"
+msgstr "Drücken Sie die Eingabetaste, um ein Tag hinzuzufügen"
+
+#. [pages.TablePaginator.previous]
+#. defaultMessage is:
+#. Previous
+#. [pages.TablePagination.previous]
+#. defaultMessage is:
+#. Previous
+#: extracted_strings.json
+msgid "Previous"
+msgstr "Zurück"
+
+#. [errorResponseMessages.generic.proceedText]
+#. defaultMessage is:
+#. Proceed
+#: extracted_strings.json
+msgid "Proceed"
+msgstr "Fortfahren"
+
+#. [pages.transferResult.processing]
+#. defaultMessage is:
+#. Processing...
+#: extracted_strings.json
+msgid "Processing..."
+msgstr "Wird verarbeitet..."
+
+#. [pages.DeviceDetail.profile]
+#. defaultMessage is:
+#. Profile
+#. [pages.SiteDetail.profile]
+#. defaultMessage is:
+#. Profile
+#: extracted_strings.json
+msgid "Profile"
+msgstr "Profil"
+
+#. [pages.common.state_ZANHLS]
+#. defaultMessage is:
+#. Province
+#. [pages.common.state_ZW]
+#. defaultMessage is:
+#. Province
+#: extracted_strings.json
+msgid "Province"
+msgstr "Provinz"
+
+#. [pages.DeviceList.status.provisioned]
+#. defaultMessage is:
+#. Provisioned
+#: extracted_strings.json
+msgid "Provisioned"
+msgstr "Bereitgestellt"
+
+#. [filter.AssaySelectField.assayQHivVl]
+#. defaultMessage is:
+#. Q HIV VL
+#: extracted_strings.json
+msgid "Q HIV VL"
+msgstr "Q HIV VL"
+
+#. [pages.DeviceList.qualityControl]
+#. defaultMessage is:
+#. Quality Control
+#: extracted_strings.json
+msgid "Quality Control"
+msgstr "Quality Control"
+
+#. [filter.AssaySelectField.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
+#: extracted_strings.json
+msgid "QuantStudio7 Flex COVID-19"
+msgstr "QuantStudio7 Flex COVID-19"
+
+#. [pages.ReceiveInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity Received
+#: extracted_strings.json
+msgid "Quantity Received"
+msgstr "Empfangene Menge"
+
+#. [pages.InventoryItemsList.quantityOnHand]
+#. defaultMessage is:
+#. Quantity on Hand
+#: extracted_strings.json
+msgid "Quantity on Hand"
+msgstr "Vorrätige Menge"
+
+#. [pages.AddInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Add
+#. [pages.NewInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Add
+#: extracted_strings.json
+msgid "Quantity to Add"
+msgstr "Menge zum Hinzufügen"
+
+#. [pages.RemoveInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Remove
+#: extracted_strings.json
+msgid "Quantity to Remove"
+msgstr "Zu entfernende Menge"
+
+#. [pages.TransferInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Transfer
+#: extracted_strings.json
+msgid "Quantity to Transfer"
+msgstr "Zu übertragende Menge"
+
+#. [pages.dateRangeSelector.quarter]
+#. defaultMessage is:
+#. Quarter
+#: extracted_strings.json
+msgid "Quarter"
+msgstr "Quartal"
+
+#. [pages.DeviceList.reagentHealth]
+#. defaultMessage is:
+#. Reagent
+#. [pages.SiteList.issueCategoryReagentHealth]
+#. defaultMessage is:
+#. Reagent
+#: extracted_strings.json
+msgid "Reagent"
+msgstr "Reagenz"
+
+#. [pages.InventoryAdjustmentDialogForm.reason]
+#. defaultMessage is:
+#. Reason
+#: extracted_strings.json
+msgid "Reason"
+msgstr "Grund"
+
+#. [pages.InventoryItemsList.receiveInventory]
+#. defaultMessage is:
+#. Receive Inventory in Transit
+#: extracted_strings.json
+msgid "Receive Inventory in Transit"
+msgstr "Empfang von Inventar in Transit"
+
+#. [pages.ReceiveInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Receive {consumableName}
+#: extracted_strings.json
+msgid "Receive {consumableName}"
+msgstr "Empfange {consumableName}"
+
+#. [errorResponseMessages.receiveInventory.PUT.default.title]
+#. defaultMessage is:
+#. Receiving Inventory Failed
+#: extracted_strings.json
+msgid "Receiving Inventory Failed"
+msgstr "Empfang von Inventar fehlgeschlagen"
+
+#. [pages.Status.clinicalIndicatorsCovidGenderRecoveryRates]
+#. defaultMessage is:
+#. Recovery Rates by Gender
+#: extracted_strings.json
+msgid "Recovery Rates by Gender"
+msgstr "Erholungsraten nach Geschlecht"
+
+#. [pages.common.state_CM]
+#. defaultMessage is:
+#. Region
+#: extracted_strings.json
+msgid "Region"
+msgstr "Region"
+
+#. [pages.SiteDropdown.allSites]
+#. defaultMessage is:
+#. Region: {region}
+#: extracted_strings.json
+msgid "Region: {region}"
+msgstr "Region: {region}"
+
+#. [pages.InventoryItemsList.removeInventory]
+#. defaultMessage is:
+#. Remove Inventory
+#: extracted_strings.json
+msgid "Remove Inventory"
+msgstr "Inventar entfernen"
+
+#. [pages.RemoveInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Remove {consumableName}
+#: extracted_strings.json
+msgid "Remove {consumableName}"
+msgstr "Entfernen {consumableName}"
+
+#. [errorResponseMessages.removeInventory.PUT.default.title]
+#. defaultMessage is:
+#. Removing Inventory Failed
+#: extracted_strings.json
+msgid "Removing Inventory Failed"
+msgstr "Entfernen des Inventars fehlgeschlagen"
+
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive]
+#. defaultMessage is:
+#. Reported Active
+#: extracted_strings.json
+msgid "Reported Active"
+msgstr "Gemeldet Aktiv"
+
+#. [filter.AssaySelectField.AssayReporterEid]
+#. defaultMessage is:
+#. Reporter EID
+#: extracted_strings.json
+msgid "Reporter EID"
+msgstr "Reporter EID"
+
+#. [filter.AssaySelectField.AssayReporterHivVl]
+#. defaultMessage is:
+#. Reporter HIV VL
+#: extracted_strings.json
+msgid "Reporter HIV VL"
+msgstr "Reporter HIV VL"
+
+#. [pages.ReporterList.reportersTitle]
+#. defaultMessage is:
+#. Reporters
+#: extracted_strings.json
+msgid "Reporters"
+msgstr "Reporter"
+
+#. [pages.DeviceList.reportingFor]
+#. defaultMessage is:
+#. Reporting For
+#. [pages.RouterList.reportingFor]
+#. defaultMessage is:
+#. Reporting For
+#: extracted_strings.json
+msgid "Reporting For"
+msgstr "Bericht für"
+
+#. [pages.Status.reportsTitle]
+#. defaultMessage is:
+#. Reports
+#. [pages.ReportIndex.title]
+#. defaultMessage is:
+#. Reports
+#: extracted_strings.json
+msgid "Reports"
+msgstr "Berichte"
+
+#. [pages.ResetPassword.adminHelpHeader]
+#. defaultMessage is:
+#. Request a New Password From Aspect
+#: extracted_strings.json
+msgid "Request a New Password From Aspect"
+msgstr "Neues Passwort von Aspect anfordern"
+
+#. [pages.DeviceDetailOperation.requirePrinter]
+#. defaultMessage is:
+#. Require printer
+#: extracted_strings.json
+msgid "Require printer"
+msgstr "Drucker benötigt"
+
+#. [pages.ReporterList.requiresFollowUp]
+#. defaultMessage is:
+#. Requires Follow-up
+#: extracted_strings.json
+msgid "Requires Follow-up"
+msgstr "Erfordert Nachverfolgung"
+
+#. [pages.ResetPassword.title]
+#. defaultMessage is:
+#. Reset Password
+#: extracted_strings.json
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+#. [pages.Table.ResetTable.resetTableMessage]
+#. defaultMessage is:
+#. Reset all filters
+#: extracted_strings.json
+msgid "Reset all filters"
+msgstr "Alle Filter zurücksetzen"
+
+#. [filter.popover.result]
+#. defaultMessage is:
+#. Result
+#. [pages.Milestones.resultNotes]
+#. defaultMessage is:
+#. Result
+#: extracted_strings.json
+msgid "Result"
+msgstr "Ergebnis"
+
+#. [pages.ResultList.resultText]
+#. defaultMessage is:
+#. Result Text
+#. [pages.DeviceDetailProfile.resultText]
+#. defaultMessage is:
+#. Result Text
+#: extracted_strings.json
+msgid "Result Text"
+msgstr "Ergebnis Text"
+
+#. [pages.transferResult.successHeader]
+#. defaultMessage is:
+#. Result Transfer Completed
+#: extracted_strings.json
+msgid "Result Transfer Completed"
+msgstr "Ergebnis übertragen Abgeschlossen"
+
+#. [pages.DeviceDetailProfile.resultWorkflowStatus]
+#. defaultMessage is:
+#. Result Workflow Status
+#: extracted_strings.json
+msgid "Result Workflow Status"
+msgstr "Ergebnis Workflow-Status"
+
+#. [pages.ResultWorkflowStatusLog.totalWorkflowStatusLog]
+#. defaultMessage is:
+#. Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }
+#: extracted_strings.json
+msgid ""
+"Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }"
+msgstr ""
+"Ergebnis Workflow-Statusprotokoll {itemCount, plural, =0 {} andere "
+"{({itemCount})} }"
+
+#. [pages.Milestones.resultEndedOn]
+#. defaultMessage is:
+#. Result ended on:
+#: extracted_strings.json
+msgid "Result ended on:"
+msgstr "Ergebnis endete am:"
+
+#. [pages.transferResult.successMessagePatient]
+#. defaultMessage is:
+#. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
+#: extracted_strings.json
+msgid ""
+"Result for patient \"{patientId}\" has been transferred from "
+"\"{oldSiteName}\" to \"{newSiteName}\""
+msgstr ""
+"Ergebnis für Patient \"{patientId}\" wurde von \"{oldSiteName}\" nach "
+"\"{newSiteName}\" übertragen"
+
+#. [pages.ResultList.title]
+#. defaultMessage is:
+#. Results
+#: extracted_strings.json
+msgid "Results"
+msgstr "Ergebnisse"
+
+#. [pages.Status.resultsTransmittedTitle.graph]
+#. defaultMessage is:
+#. Results Transmitted
+#: extracted_strings.json
+msgid "Results Transmitted"
+msgstr "Übertragene Ergebnisse"
+
+#. [pages.DeviceApiKeyList.revoked]
+#. defaultMessage is:
+#. Revoked
+#. [filter.popover.revoked]
+#. defaultMessage is:
+#. Revoked
+#. [pages.ReporterList.revoked]
+#. defaultMessage is:
+#. Revoked
+#: extracted_strings.json
+msgid "Revoked"
+msgstr "Widerrufen"
+
+#. [pages.RouterList.router]
+#. defaultMessage is:
+#. Router
+#: extracted_strings.json
+msgid "Router"
+msgstr "Router"
+
+#. [pages.RouterDetail.title]
+#. defaultMessage is:
+#. Router Detail
+#: extracted_strings.json
+msgid "Router Detail"
+msgstr "Router Detail"
+
+#. [pages.RouterList.routersTitle]
+#. defaultMessage is:
+#. Routers
+#: extracted_strings.json
+msgid "Routers"
+msgstr "Router"
+
+#. [filter.DiseaseSelectField.diseaseNameCovid19]
+#. defaultMessage is:
+#. SARS-CoV-2 (COVID-19)
+#: extracted_strings.json
+msgid "SARS-CoV-2 (COVID-19)"
+msgstr "SARS-CoV-2 (COVID-19)"
+
+#. [pages.Notifications.table.smsSentHeader]
+#. defaultMessage is:
+#. SMS Sent
+#: extracted_strings.json
+msgid "SMS Sent"
+msgstr "Gesendete SMS"
+
+#. [pages.Status.dashboardWidgetSmsSentTitle]
+#. defaultMessage is:
+#. SMS Sent MTD
+#: extracted_strings.json
+msgid "SMS Sent MTD"
+msgstr "SMS gesendet diesen Monat"
+
+#. [pages.MilestonesSample.sampleId]
+#. defaultMessage is:
+#. Sample
+#: extracted_strings.json
+msgid "Sample"
+msgstr "Probe"
+
+#. [pages.CasesList.sampleOriginSite]
+#. defaultMessage is:
+#. Sample Collection Site
+#. [pages.ResultList.sampleOriginSiteName]
+#. defaultMessage is:
+#. Sample Collection Site
+#. [pages.DeviceDetailProfile.sampleOriginSiteName]
+#. defaultMessage is:
+#. Sample Collection Site
+#: extracted_strings.json
+msgid "Sample Collection Site"
+msgstr "Ort der Probenentnahme"
+
+#. [pages.Milestones.originalSiteName]
+#. defaultMessage is:
+#. Sample Collection Site:
+#: extracted_strings.json
+msgid "Sample Collection Site:"
+msgstr "Ort der Probenentnahme:"
+
+#. [filter.popover.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [pages.ResultList.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [pages.DeviceDetailProfile.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#: extracted_strings.json
+msgid "Sample ID"
+msgstr "Probe ID"
+
+#. [pages.Milestones.sampleType]
+#. defaultMessage is:
+#. Sample Type:
+#: extracted_strings.json
+msgid "Sample Type:"
+msgstr "Probenart:"
+
+#. [filter.popover.sampleOriginSite]
+#. defaultMessage is:
+#. Sample collection site
+#: extracted_strings.json
+msgid "Sample collection site"
+msgstr "Ort der Probenentnahme"
+
+#. [pages.PersonDetails.save]
+#. defaultMessage is:
+#. Save
+#. [pages.DeviceDetailEdit.save]
+#. defaultMessage is:
+#. Save
+#: extracted_strings.json
+msgid "Save"
+msgstr "Speichern"
+
+#. [errorResponseMessages.saveContactDetails.PUT.default.title]
+#. defaultMessage is:
+#. Saving Contact Details Failed
+#: extracted_strings.json
+msgid "Saving Contact Details Failed"
+msgstr "Speichern der Kontaktdetails fehlgeschlagen"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.default.title]
+#. defaultMessage is:
+#. Saving Login Details Failed
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title]
+#. defaultMessage is:
+#. Saving Login Details Failed
+#: extracted_strings.json
+msgid "Saving Login Details Failed"
+msgstr "Speichern der Anmeldedaten fehlgeschlagen"
+
+#. [errorResponseMessages.saveUserPreferences.PUT.default.title]
+#. defaultMessage is:
+#. Saving User Preferences Failed
+#: extracted_strings.json
+msgid "Saving User Preferences Failed"
+msgstr "Speichern der Benutzereinstellungen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchAssayTypes.GET.400.title]
+#. defaultMessage is:
+#. Searching Assay Types Failed
+#: extracted_strings.json
+msgid "Searching Assay Types Failed"
+msgstr "Suche nach Assay-Typen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchAssays.GET.400.title]
+#. defaultMessage is:
+#. Searching Assays Failed
+#: extracted_strings.json
+msgid "Searching Assays Failed"
+msgstr "Suche nach Assays fehlgeschlagen"
+
+#. [errorResponseMessages.fetchCases.GET.400.title]
+#. defaultMessage is:
+#. Searching Cases Failed
+#: extracted_strings.json
+msgid "Searching Cases Failed"
+msgstr "Suche nach Fällen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchConsumables.GET.400.title]
+#. defaultMessage is:
+#. Searching Consumables Failed
+#: extracted_strings.json
+msgid "Searching Consumables Failed"
+msgstr "Suche nach Verbrauchsmaterial fehlgeschlagen"
+
+#. [errorResponseMessages.fetchPersons.GET.400.title]
+#. defaultMessage is:
+#. Searching Contacts Failed
+#: extracted_strings.json
+msgid "Searching Contacts Failed"
+msgstr "Suche nach Kontakten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceApprovals.GET.400.title]
+#. defaultMessage is:
+#. Searching Device Approvals Failed
+#: extracted_strings.json
+msgid "Searching Device Approvals Failed"
+msgstr "Suche nach Gerätezulassungen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title]
+#. defaultMessage is:
+#. Searching Device Maintenance status Failed
+#: extracted_strings.json
+msgid "Searching Device Maintenance status Failed"
+msgstr "Suche nach Gerät Wartungsstatus fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceApiKeys.GET.400.title]
+#. defaultMessage is:
+#. Searching DeviceApiKeys Failed
+#: extracted_strings.json
+msgid "Searching DeviceApiKeys Failed"
+msgstr "Suche nach Geräte-API-Schlüsseln fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
+#. defaultMessage is:
+#. Searching DeviceOperations Failed
+#: extracted_strings.json
+msgid "Searching DeviceOperations Failed"
+msgstr "Suche nach Geräteoperationen fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDevices.GET.400.title]
+#. defaultMessage is:
+#. Searching Devices Failed
+#: extracted_strings.json
+msgid "Searching Devices Failed"
+msgstr "Suche nach Geräten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchDiseases.GET.400.title]
+#. defaultMessage is:
+#. Searching Diseases Failed
+#: extracted_strings.json
+msgid "Searching Diseases Failed"
+msgstr "Suche nach Krankheiten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchPatientResult.GET.400.title]
+#. defaultMessage is:
+#. Searching Patient Result Failed
+#: extracted_strings.json
+msgid "Searching Patient Result Failed"
+msgstr "Suche nach Patientenergebnis fehlgeschlagen"
+
+#. [errorResponseMessages.fetchReports.GET.400.title]
+#. defaultMessage is:
+#. Searching Reports Failed
+#: extracted_strings.json
+msgid "Searching Reports Failed"
+msgstr "Suche nach Berichten fehlgeschlagen"
+
+#. [errorResponseMessages.fetchTreatmentStatuses.GET.400.title]
+#. defaultMessage is:
+#. Searching Result Treatment Statuses Failed
+#: extracted_strings.json
+msgid "Searching Result Treatment Statuses Failed"
+msgstr "Suchergebnis Behandlungszustände fehlgeschlagen"
+
+#. [errorResponseMessages.fetchWorkflowLogs.GET.400.title]
+#. defaultMessage is:
+#. Searching Result Workflow Status Logs Failed
+#: extracted_strings.json
+msgid "Searching Result Workflow Status Logs Failed"
+msgstr "Suchergebnis Workflow-Statusprotokolle fehlgeschlagen"
+
+#. [errorResponseMessages.fetchWorkflowStatuses.GET.400.title]
+#. defaultMessage is:
+#. Searching Result Workflow Statuses Failed
+#: extracted_strings.json
+msgid "Searching Result Workflow Statuses Failed"
+msgstr "Suchergebnis Workflow-Status fehlgeschlagen"
+
+#. [errorResponseMessages.fetchResults.GET.400.title]
+#. defaultMessage is:
+#. Searching Results Failed
+#: extracted_strings.json
+msgid "Searching Results Failed"
+msgstr "Suchergebnisse fehlgeschlagen"
+
+#. [errorResponseMessages.fetchRouters.GET.400.title]
+#. defaultMessage is:
+#. Searching Routers Failed
+#: extracted_strings.json
+msgid "Searching Routers Failed"
+msgstr "Suche nach Routern fehlgeschlagen"
+
+#. [errorResponseMessages.fetchSites.GET.400.title]
+#. defaultMessage is:
+#. Searching Sites Failed
+#: extracted_strings.json
+msgid "Searching Sites Failed"
+msgstr "Suche nach Sites fehlgeschlagen"
+
+#. [errorResponseMessages.getTasksByStatus.GET.400.title]
+#. defaultMessage is:
+#. Searching Task Failed
+#. [errorResponseMessages.fetchTask.GET.400.title]
+#. defaultMessage is:
+#. Searching Task Failed
+#: extracted_strings.json
+msgid "Searching Task Failed"
+msgstr "Suchauftrag fehlgeschlagen"
+
+#. [errorResponseMessages.fetchTasks.GET.400.title]
+#. defaultMessage is:
+#. Searching Tasks Failed
+#: extracted_strings.json
+msgid "Searching Tasks Failed"
+msgstr "Suchen von Aufgaben fehlgeschlagen"
+
+#. [pages.dateRangeSelector.selectDay]
+#. defaultMessage is:
+#. Select Day...
+#: extracted_strings.json
+msgid "Select Day..."
+msgstr "Tag auswählen..."
+
+#. [filter.popover.selectDisease]
+#. defaultMessage is:
+#. Select Disease...
+#: extracted_strings.json
+msgid "Select Disease..."
+msgstr "Krankheit auswählen..."
+
+#. [pages.JobAssignments.selectJob]
+#. defaultMessage is:
+#. Select Job
+#: extracted_strings.json
+msgid "Select Job"
+msgstr "Job auswählen"
+
+#. [pages.dateRangeSelector.selectMonth]
+#. defaultMessage is:
+#. Select Month...
+#: extracted_strings.json
+msgid "Select Month..."
+msgstr "Monat auswählen..."
+
+#. [pages.dateRangeSelector.selectQuarter]
+#. defaultMessage is:
+#. Select Quarter...
+#: extracted_strings.json
+msgid "Select Quarter..."
+msgstr "Quartal auswählen..."
+
+#. [pages.dateRangeSelector.selectWeek]
+#. defaultMessage is:
+#. Select Week...
+#: extracted_strings.json
+msgid "Select Week..."
+msgstr "Woche auswählen..."
+
+#. [pages.dateRangeSelector.selectYear]
+#. defaultMessage is:
+#. Select Year...
+#: extracted_strings.json
+msgid "Select Year..."
+msgstr "Jahr auswählen..."
+
+#. [filter.popover.selectDeviceApproval]
+#. defaultMessage is:
+#. Select approval status...
+#: extracted_strings.json
+msgid "Select approval status..."
+msgstr "Genehmigungsstatus auswählen..."
+
+#. [filter.popover.selectAssay]
+#. defaultMessage is:
+#. Select assay...
+#: extracted_strings.json
+msgid "Select assay..."
+msgstr "Assay auswählen..."
+
+#. [filter.popover.selectConsumable]
+#. defaultMessage is:
+#. Select consumable...
+#: extracted_strings.json
+msgid "Select consumable..."
+msgstr "Verbrauchsmaterial auswählen..."
+
+#. [filter.popover.selectCountry]
+#. defaultMessage is:
+#. Select country...
+#: extracted_strings.json
+msgid "Select country..."
+msgstr "Land auswählen..."
+
+#. [filter.popover.selectDeviceMaintenanceStatus]
+#. defaultMessage is:
+#. Select maintenance status...
+#: extracted_strings.json
+msgid "Select maintenance status..."
+msgstr "Wartungsstatus auswählen..."
+
+#. [filter.popover.selectPartner]
+#. defaultMessage is:
+#. Select partner...
+#: extracted_strings.json
+msgid "Select partner..."
+msgstr "Partner auswählen..."
+
+#. [filter.popover.selectResult]
+#. defaultMessage is:
+#. Select result...
+#: extracted_strings.json
+msgid "Select result..."
+msgstr "Ergebnis auswählen..."
+
+#. [filter.popover.selectRevoked]
+#. defaultMessage is:
+#. Select revoked status...
+#: extracted_strings.json
+msgid "Select revoked status..."
+msgstr "Status widerrufen auswählen..."
+
+#. [filter.popover.selectWorkflowStatus]
+#. defaultMessage is:
+#. Select status...
+#. [filter.popover.selectTreatmentStatus]
+#. defaultMessage is:
+#. Select status...
+#: extracted_strings.json
+msgid "Select status..."
+msgstr "Status wählen..."
+
+#. [filter.popover.selectStockLeft]
+#. defaultMessage is:
+#. Select stock left...
+#: extracted_strings.json
+msgid "Select stock left..."
+msgstr "Lagerbestand auswählen..."
+
+#. [filter.popover.selectDeviceType]
+#. defaultMessage is:
+#. Select type...
+#: extracted_strings.json
+msgid "Select type..."
+msgstr "Typ auswählen ..."
+
+#. [pages.common.selectPlaceholder]
+#. defaultMessage is:
+#. Select {entity}...
+#: extracted_strings.json
+msgid "Select {entity}..."
+msgstr "Wählen Sie {entity}..."
+
+#. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
+#. defaultMessage is:
+#. Senaite LIMS Smear Microscopy
+#: extracted_strings.json
+msgid "Senaite LIMS Smear Microscopy"
+msgstr "Senaite LIMS Ausstrichmikroskopie"
+
+#. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
+#. defaultMessage is:
+#. Senaite LIMS TB Culture
+#: extracted_strings.json
+msgid "Senaite LIMS TB Culture"
+msgstr "Senaite LIMS TB Kultur"
+
+#. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
+#. defaultMessage is:
+#. Senaite LIMS Unknown
+#: extracted_strings.json
+msgid "Senaite LIMS Unknown"
+msgstr "Senaite LIMS Unbekannt"
+
+#. [pages.OperationalData.sentViaEmail]
+#. defaultMessage is:
+#. Sent via Email
+#. [pages.OperationalData.percentViaEmail]
+#. defaultMessage is:
+#. Sent via Email
+#: extracted_strings.json
+msgid "Sent via Email"
+msgstr "Per E-Mail gesendet"
+
+#. [pages.OperationalData.sentViaSms]
+#. defaultMessage is:
+#. Sent via SMS
+#. [pages.OperationalData.percentViaSms]
+#. defaultMessage is:
+#. Sent via SMS
+#: extracted_strings.json
+msgid "Sent via SMS"
+msgstr "Per SMS gesendet"
+
+#. [pages.RouterDetail.fieldSerial]
+#. defaultMessage is:
+#. Serial
+#: extracted_strings.json
+msgid "Serial"
+msgstr "Seriennummer"
+
+#. [pages.DeviceDetailEdit.serialNumber]
+#. defaultMessage is:
+#. Serial number
+#: extracted_strings.json
+msgid "Serial number"
+msgstr "Seriennummer"
+
+#. [pages.Status.summaryWidgetGroup.service]
+#. defaultMessage is:
+#. Service
+#: extracted_strings.json
+msgid "Service"
+msgstr "Service"
+
+#. [filter.popover.setFilters]
+#. defaultMessage is:
+#. Set Filters
+#: extracted_strings.json
+msgid "Set Filters"
+msgstr "Filter einstellen"
+
+#. [pages.SiteDetail.buttonSetBasedonAddress]
+#. defaultMessage is:
+#. Set based on address
+#: extracted_strings.json
+msgid "Set based on address"
+msgstr "Eingestellt auf Basis der Adresse"
+
+#. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
+#. defaultMessage is:
+#. Setting Device Calibration Date Failed
+#: extracted_strings.json
+msgid "Setting Device Calibration Date Failed"
+msgstr "Einstellung des Gerätekalibrierungsdatums fehlgeschlagen"
+
+#. [errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title]
+#. defaultMessage is:
+#. Setting Device Warranty Due Date Failed
+#: extracted_strings.json
+msgid "Setting Device Warranty Due Date Failed"
+msgstr "Einstellung Gerätegarantie-Fälligkeitsdatum fehlgeschlagen"
+
+#. [errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title]
+#. defaultMessage is:
+#. Setting Maintenance Status Failed
+#: extracted_strings.json
+msgid "Setting Maintenance Status Failed"
+msgstr "Einstellung Wartungsstatus fehlgeschlagen"
+
+#. [pages.RouterDetail.fieldShortName]
+#. defaultMessage is:
+#. ShortName
+#. [pages.SiteDetail.fieldShortName]
+#. defaultMessage is:
+#. ShortName
+#: extracted_strings.json
+msgid "ShortName"
+msgstr "Kurzname"
+
+#. [filter.btnGroup.onlyReportableResults]
+#. defaultMessage is:
+#. Show Only Reportable Results
+#: extracted_strings.json
+msgid "Show Only Reportable Results"
+msgstr "Nur beichtbare Ergebnisse anzeigen"
+
+#. [pages.CaseList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} "
+"other {# cases} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# Fall} "
+"other {# Fällen} }"
+
+#. [pages.PersonList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"contact} other {# contacts} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Kontakt} other {# Kontakten} }"
+
+#. [pages.DeviceApiKeyList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device API key} other {# device API keys} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device API key} other {# device API keys} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# Geräte-"
+"API-Schlüssel} other {# Geräte-API-Schlüsseln} }"
+
+#. [pages.DeviceList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device} other {# devices} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# Gerät} "
+"other {# Geräten} }"
+
+#. [pages.ResultWorkflowStatusLog.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
+"other {# logs} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Protokoll} other {# Protokollen} }"
+
+#. [pages.NotificationList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# notification} other {# notifications} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"notification} other {# notifications} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Benachrichtigung} other {# Benachrichtigungen} }"
+
+#. [pages.DeviceDetailOperation.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"record} other {# records} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Datensatz} other {# Datensätzen} }"
+
+#. [pages.ReporterList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# reporter} other {# reporters} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"reporter} other {# reporters} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Reporter} other {# Reportern} }"
+
+#. [component.historyResults.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
+#. [pages.ResultList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
+#. [pages.DeviceDetailProfile.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"result} other {# results} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Ergebnis} other {# Ergebnissen} }"
+
+#. [pages.RouterList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"router} other {# routers} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Router} other {# Routern} }"
+
+#. [pages.SiteList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} other {# sites} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} "
+"other {# sites} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Standort} other {# Standorten} }"
+
+#. [pages.InventoryItemsList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"supply} other {# supplies} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Verbrauchsmaterial} other {# Verbrauchsmaterialien} }"
+
+#. [pages.TaskList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
+"other {# tasks} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Aufgabe} other {# Aufgaben} }"
+
+#. [pages.TablePagination.nowShowing]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# {name}} other {# {name}s} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"{name}} other {# {name}s} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"{name}} other {# {name}s} }"
+
+#. [pages.DeviceApiKeyList.siteId]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceApiKeyList.site]
+#. defaultMessage is:
+#. Site
+#. [filter.popover.site]
+#. defaultMessage is:
+#. Site
+#. [pages.JobAssignments.site]
+#. defaultMessage is:
+#. Site
+#. [pages.RouterDetail.fieldSiteId]
+#. defaultMessage is:
+#. Site
+#. [pages.TaskList.site]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceDetailEdit.location]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceDetailProfile.site]
+#. defaultMessage is:
+#. Site
+#: extracted_strings.json
+msgid "Site"
+msgstr "Standort"
+
+#. [pages.SiteDetail.fieldContact]
+#. defaultMessage is:
+#. Site Contacts
+#: extracted_strings.json
+msgid "Site Contacts"
+msgstr "Standort-Kontakte"
+
+#. [pages.SiteDetail.title]
+#. defaultMessage is:
+#. Site Detail
+#: extracted_strings.json
+msgid "Site Detail"
+msgstr "Standort Detail"
+
+#. [filter.popover.externalId]
+#. defaultMessage is:
+#. Site ID
+#. [pages.SiteList.externalId]
+#. defaultMessage is:
+#. Site ID
+#. [pages.SiteDetail.fieldExternalId]
+#. defaultMessage is:
+#. Site ID
+#: extracted_strings.json
+msgid "Site ID"
+msgstr "Standort-ID"
+
+#. [filter.popover.siteId]
+#. defaultMessage is:
+#. Site Id
+#: extracted_strings.json
+msgid "Site Id"
+msgstr "Standort-ID"
+
+#. [pages.InventoryItemsList.siteName]
+#. defaultMessage is:
+#. Site Name
+#: extracted_strings.json
+msgid "Site Name"
+msgstr "Standort Name"
+
+#. [pages.SiteList.title]
+#. defaultMessage is:
+#. Sites
+#: extracted_strings.json
+msgid "Sites"
+msgstr "Standorte"
+
+#. [pages.LocationSelector.state]
+#. defaultMessage is:
+#. State
+#. [pages.common.state]
+#. defaultMessage is:
+#. State
+#. [pages.SiteDetail.fieldState]
+#. defaultMessage is:
+#. State
+#: extracted_strings.json
+msgid "State"
+msgstr "Bundesland"
+
+#. [pages.common.state_MM]
+#. defaultMessage is:
+#. State/Region
+#: extracted_strings.json
+msgid "State/Region"
+msgstr "Bundesland/Region"
+
+#. [pages.CasesList.status]
+#. defaultMessage is:
+#. Status
+#. [pages.DeviceList.status]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultWorkflowStatusLog.logStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.RouterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#: extracted_strings.json
+msgid "Status"
+msgstr "Status"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
+#. defaultMessage is:
+#. Stolen
+#: extracted_strings.json
+msgid "Stolen"
+msgstr "Gestohlen"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterStrong]
+#. defaultMessage is:
+#. Strong
+#: extracted_strings.json
+msgid "Strong"
+msgstr "Stark"
+
+#. [pages.StyleguideMain.title]
+#. defaultMessage is:
+#. Styleguide
+#: extracted_strings.json
+msgid "Styleguide"
+msgstr "Styleguide"
+
+#. [pages.InventoryAdjustmentDialogForm.submit]
+#. defaultMessage is:
+#. Submit
+#. [pages.UpdateLoginDetails.submitCurrentPassword]
+#. defaultMessage is:
+#. Submit
+#. [pages.BaseDialog.submit]
+#. defaultMessage is:
+#. Submit
+#. [pages.MaintenanceStatusDialog.submit]
+#. defaultMessage is:
+#. Submit
+#: extracted_strings.json
+msgid "Submit"
+msgstr "Senden"
+
+#. [pages.Status.inventoryGraphStatus.title]
+#. defaultMessage is:
+#. Supply in Stock
+#: extracted_strings.json
+msgid "Supply in Stock"
+msgstr "Inventar auf Lager"
+
+#. [filter.AssayTypeSelectField.assayTypeTbAst]
+#. defaultMessage is:
+#. TB AST
+#: extracted_strings.json
+msgid "TB AST"
+msgstr "TB AST"
+
+#. [filter.AssaySelectField.assayGenericDst]
+#. defaultMessage is:
+#. TB DST
+#: extracted_strings.json
+msgid "TB DST"
+msgstr "TB DST"
+
+#. [filter.AssayTypeSelectField.assayTypeTbGnd]
+#. defaultMessage is:
+#. TB G&D
+#: extracted_strings.json
+msgid "TB G&D"
+msgstr "TB G&D"
+
+#. [pages.Status.clinicalIndicatorsTBDetected.title]
+#. defaultMessage is:
+#. TB Results
+#: extracted_strings.json
+msgid "TB Results"
+msgstr "TB-Ergebnisse"
+
+#. [pages.Status.clinicalIndicatorsTB.title]
+#. defaultMessage is:
+#. TB Rif Resistance
+#: extracted_strings.json
+msgid "TB Rif Resistance"
+msgstr "TB Rif-Resistenz"
+
+#. [pages.UserPreferences.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.PersonList.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.SiteDetail.fieldTags]
+#. defaultMessage is:
+#. Tags
+#. [pages.DeviceDetailEdit.tags]
+#. defaultMessage is:
+#. Tags
+#: extracted_strings.json
+msgid "Tags"
+msgstr "Schlagwörter"
+
+#. [pages.TaskAggre.title]
+#. defaultMessage is:
+#. Task
+#. [pages.TaskDetail.title]
+#. defaultMessage is:
+#. Task
+#: extracted_strings.json
+msgid "Task"
+msgstr "Aufgabe"
+
+#. [pages.TaskList.title]
+#. defaultMessage is:
+#. Tasks
+#: extracted_strings.json
+msgid "Tasks"
+msgstr "Aufgaben"
+
+#. [pages.ContactDetails.phone]
+#. defaultMessage is:
+#. Telephone
+#: extracted_strings.json
+msgid "Telephone"
+msgstr "Telefon"
+
+#. [pages.DeviceDetailOperation.temperature]
+#. defaultMessage is:
+#. Temperature
+#: extracted_strings.json
+msgid "Temperature"
+msgstr "Temperatur"
+
+#. [bbe12]
+#. defaultMessage is:
+#. Test Conducted
+#: extracted_strings.json
+msgid "Test Conducted"
+msgstr "Test durchgeführt"
+
+#. [pages.ResultList.EndedOn]
+#. defaultMessage is:
+#. Test Date
+#. [pages.DeviceDetailProfile.endedOn]
+#. defaultMessage is:
+#. Test Date
+#: extracted_strings.json
+msgid "Test Date"
+msgstr "Test Datum"
+
+#. [pages.DeviceList.errorRate]
+#. defaultMessage is:
+#. Test failures
+#: extracted_strings.json
+msgid "Test failures"
+msgstr "Testfehler"
+
+#. [pages.DeviceDetailProfile.testHistory]
+#. defaultMessage is:
+#. Test history
+#: extracted_strings.json
+msgid "Test history"
+msgstr "Testverlauf"
+
+#. [pages.RouterDetail.fieldTotalNumberOfTests]
+#. defaultMessage is:
+#. Tests
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
+#. defaultMessage is:
+#. Tests
+#. [pages.DailyStatus.ClinicRow.totalTests]
+#. defaultMessage is:
+#. Tests
+#: extracted_strings.json
+msgid "Tests"
+msgstr "Tests"
+
+#. [pages.Status.dashboardWidgetTestsPerDayTitle]
+#. defaultMessage is:
+#. Tests Per Day
+#: extracted_strings.json
+msgid "Tests Per Day"
+msgstr "Tests pro Tag"
+
+#. [pages.Status.testsOverTimeTitle.graph]
+#. defaultMessage is:
+#. Tests Performed
+#: extracted_strings.json
+msgid "Tests Performed"
+msgstr "Durchgeführte Tests"
+
+#. [pages.InventoryAdjustmentDialogForm.testsRunBetween]
+#. defaultMessage is:
+#. Tests Run Between
+#: extracted_strings.json
+msgid "Tests Run Between"
+msgstr "Tests zwischen"
+
+#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
+#. defaultMessage is:
+#. The average duration of a service interruption, in days
+#: extracted_strings.json
+msgid "The average duration of a service interruption, in days"
+msgstr "Die durchschnittliche Dauer einer Unterbrechung, in Tagen"
+
+#. [pages.OperationalData.averageTimeToModuleReplacementDescription]
+#. defaultMessage is:
+#. The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.
+#: extracted_strings.json
+msgid ""
+"The average time (in days) between when a module was disabled and a "
+"different module serial being detected in the same slot."
+msgstr ""
+"Die durchschnittliche Zeit (in Tagen) zwischen der Deaktivierung eines "
+"Moduls und der Erkennung einer anderen Modulserie auf demselben Steckplatz."
+
+#. [errorResponseMessages.saveLoginDetails.PUT.403.message]
+#. defaultMessage is:
+#. The current password that you have entered is incorrect.
+#: extracted_strings.json
+msgid "The current password that you have entered is incorrect."
+msgstr "Das aktuelle Passwort, das Sie eingegeben haben, ist falsch."
+
+#. [legends.Unknown.hover]
+#. defaultMessage is:
+#. The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.
+#: extracted_strings.json
+msgid ""
+"The device hasn't connected to Aspect for several days. It may be running "
+"tests, but the tests aren't uploaded to Aspect yet."
+msgstr ""
+"Das Gerät ist seit mehreren Tagen nicht mehr mit Aspect verbunden. Es führt "
+"möglicherweise Tests durch, aber die Tests sind noch nicht zu Aspect "
+"hochgeladen."
+
+#. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
+#. defaultMessage is:
+#. The most that you can remove is {currentQuantity}
+#: extracted_strings.json
+msgid "The most that you can remove is {currentQuantity}"
+msgstr "Sie können höchstens {currentQuantity} entfernen"
+
+#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
+#. defaultMessage is:
+#. The most that you can transfer is {currentQuantity}
+#: extracted_strings.json
+msgid "The most that you can transfer is {currentQuantity}"
+msgstr "Das Maximum, das Sie übertragen können, ist {currentQuantity}"
+
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month.
+#: extracted_strings.json
+msgid ""
+"The number of devices experiencing service interruption on this and the "
+"previous month."
+msgstr ""
+"Die Anzahl der Geräte, bei denen in diesem und im vorherigen Monat eine "
+"Dienstunterbrechung aufgetreten ist."
+
+#. [pages.NotFound.help]
+#. defaultMessage is:
+#. The page you're looking for doesn't exist.
+#: extracted_strings.json
+msgid "The page you're looking for doesn't exist."
+msgstr "Der Standort, den Sie suchen, existiert nicht."
+
+#. [pages.UpdateLoginDetails.newPasswordTooShort]
+#. defaultMessage is:
+#. The password needs to be at least 8 characters long
+#: extracted_strings.json
+msgid "The password needs to be at least 8 characters long"
+msgstr "Das Passwort muss mindestens 8 Zeichen lang sein"
+
+#. [pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter]
+#. defaultMessage is:
+#. The password needs to contain at least one number or special character (%!$*...)
+#: extracted_strings.json
+msgid ""
+"The password needs to contain at least one number or special character (%!"
+"$*...)"
+msgstr ""
+"Das Passwort muss mindestens eine Zahl oder ein Sonderzeichen (%!$*...) "
+"enthalten"
+
+#. [pages.UpdateLoginDetails.invalidPassword]
+#. defaultMessage is:
+#. The password that you entered is not valid
+#: extracted_strings.json
+msgid "The password that you entered is not valid"
+msgstr "Das eingegebene Passwort ist ungültig"
+
+#. [errorResponseMessages.loginStart.POST.401.incorrectPassword.message]
+#. defaultMessage is:
+#. The password you entered is incorrect
+#: extracted_strings.json
+msgid "The password you entered is incorrect"
+msgstr "Das eingegebene Passwort ist falsch"
+
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
+#. defaultMessage is:
+#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
+#: extracted_strings.json
+msgid ""
+"The percentage of \"device-days\" that were statused as \"down for repair\", "
+"excluding weekends. For example, 20 weekdays in the month and 5 devices "
+"would equate 100 \"device-days\". If one device was down half of the month, "
+"this number would be 10%"
+msgstr ""
+"Der Prozentsatz der \"Gerätetage\", die als \"zur Reparatur ausgefallen\" "
+"eingestuft wurden, ohne Wochenenden. Zum Beispiel würden 20 Wochentage im "
+"Monat und 5 Geräte 100 \"Gerätetagen\" entsprechen. Wenn ein Gerät die "
+"Hälfte des Monats ausgefallen ist, würde diese Zahl 10 % betragen"
+
+#. [pages.OperationalData.percentReportedDescription]
+#. defaultMessage is:
+#. The percentage of positive results that were reported via Email or SMS.
+#: extracted_strings.json
+msgid "The percentage of positive results that were reported via Email or SMS."
+msgstr ""
+"Der Prozentsatz der positiven Ergebnisse, die per E-Mail oder SMS gemeldet "
+"wurden."
+
+#. [pages.OperationalData.percentWithin2HoursDescription]
+#. defaultMessage is:
+#. The percentage of positive results that were reported within two hours of test completion.
+#: extracted_strings.json
+msgid ""
+"The percentage of positive results that were reported within two hours of "
+"test completion."
+msgstr ""
+"Der Prozentsatz der positiven Ergebnisse, die innerhalb von zwei Stunden "
+"nach Testabschluss gemeldet wurden."
+
+#. [pages.OperationalData.percentViaEmailDescription]
+#. defaultMessage is:
+#. The percentage of reported results that were reported via Email.
+#: extracted_strings.json
+msgid "The percentage of reported results that were reported via Email."
+msgstr ""
+"Der Prozentsatz der gemeldeten Ergebnisse, die per E-Mail gemeldet wurden."
+
+#. [pages.OperationalData.percentViaSmsDescription]
+#. defaultMessage is:
+#. The percentage of reported results that were reported via SMS.
+#: extracted_strings.json
+msgid "The percentage of reported results that were reported via SMS."
+msgstr ""
+"Der Prozentsatz der gemeldeten Ergebnisse, die per SMS gemeldet wurden."
+
+#. [errorResponseMessages.common.filterError.message]
+#. defaultMessage is:
+#. The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.
+#: extracted_strings.json
+msgid ""
+"The server rejected the values specified in these filter fields. Our "
+"technical team has been notified and will attend to the problem as soon as "
+"possible."
+msgstr ""
+"Der Server hat die in diesen Filterfeldern angegebenen Werte abgelehnt. "
+"Unser technisches Team wurde benachrichtigt und wird sich so schnell wie "
+"möglich um das Problem kümmern."
+
+#. [pages.Status.dashboardWidgetSmsSentDescription]
+#. defaultMessage is:
+#. The total number of text messages sent in the month
+#: extracted_strings.json
+msgid "The total number of text messages sent in the month"
+msgstr "Die Gesamtzahl der im Monat gesendeten SMS"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.409.message]
+#. defaultMessage is:
+#. The username that you have entered is already in use by another user on the system
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message]
+#. defaultMessage is:
+#. The username that you have entered is already in use by another user on the system
+#: extracted_strings.json
+msgid ""
+"The username that you have entered is already in use by another user on the "
+"system"
+msgstr ""
+"Der von Ihnen eingegebene Benutzername wird bereits von einem anderen "
+"Benutzer im System verwendet"
+
+#. [widgetAlerts.between]
+#. defaultMessage is:
+#. The {representing} is between {comparedToFrom} and {comparedToTo}
+#: extracted_strings.json
+msgid "The {representing} is between {comparedToFrom} and {comparedToTo}"
+msgstr "Die {representing} liegt zwischen {comparedToFrom} und {comparedToTo}"
+
+#. [widgetAlerts.greaterThan]
+#. defaultMessage is:
+#. The {representing} is greater than {comparedTo}
+#: extracted_strings.json
+msgid "The {representing} is greater than {comparedTo}"
+msgstr "Die {representing} ist größer als {comparedTo}"
+
+#. [widgetAlerts.lessThan]
+#. defaultMessage is:
+#. The {representing} is less than {comparedTo}
+#: extracted_strings.json
+msgid "The {representing} is less than {comparedTo}"
+msgstr "Die {representing} ist kleiner als die {comparedTo}"
+
+#. [widgetAlerts.containerIn]
+#. defaultMessage is:
+#. The {representing} is one of {comparedTo}
+#: extracted_strings.json
+msgid "The {representing} is one of {comparedTo}"
+msgstr "Die {representing} ist eine von {comparedTo}"
+
+#. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message]
+#. defaultMessage is:
+#. There was a conflict with your credentials. Please, contact an administrator for support.
+#: extracted_strings.json
+msgid ""
+"There was a conflict with your credentials. Please, contact an administrator "
+"for support."
+msgstr ""
+"Es gab einen Konflikt mit Ihren Anmeldedaten. Bitte wenden Sie sich an einen "
+"Administrator, um Unterstützung zu erhalten."
+
+#. [pages.ResetPassword.passwordsDoNotMatch]
+#. defaultMessage is:
+#. These passwords don't match
+#. [pages.UpdateLoginDetails.passwordsDoNotMatch]
+#. defaultMessage is:
+#. These passwords don't match
+#: extracted_strings.json
+msgid "These passwords don't match"
+msgstr "Diese Passwörter stimmen nicht überein"
+
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. This Month
+#. [pages.dateRangeSelector.thisMonth]
+#. defaultMessage is:
+#. This Month
+#: extracted_strings.json
+msgid "This Month"
+msgstr "Aktueller Monat"
+
+#. [pages.dateRangeSelector.thisQuarter]
+#. defaultMessage is:
+#. This Quarter
+#: extracted_strings.json
+msgid "This Quarter"
+msgstr "Dieses Quartal"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.409.title]
+#. defaultMessage is:
+#. This Username is Unavailable
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title]
+#. defaultMessage is:
+#. This Username is Unavailable
+#: extracted_strings.json
+msgid "This Username is Unavailable"
+msgstr "Dieser Benutzername ist nicht verfügbar"
+
+#. [pages.dateRangeSelector.thisWeek]
+#. defaultMessage is:
+#. This Week
+#: extracted_strings.json
+msgid "This Week"
+msgstr "Diese Woche"
+
+#. [pages.dateRangeSelector.thisYear]
+#. defaultMessage is:
+#. This Year
+#: extracted_strings.json
+msgid "This Year"
+msgstr "Dieses Jahr"
+
+#. [pages.UserPreferences.assignments]
+#. defaultMessage is:
+#. This contact is assigned to:
+#: extracted_strings.json
+msgid "This contact is assigned to:"
+msgstr "Dieser Kontakt ist zugewiesen an:"
+
+#. [forms.validEmail]
+#. defaultMessage is:
+#. This email is not valid
+#: extracted_strings.json
+msgid "This email is not valid"
+msgstr "Diese E-Mail ist nicht gültig"
+
+#. [forms.isRequired]
+#. defaultMessage is:
+#. This field is required
+#: extracted_strings.json
+msgid "This field is required"
+msgstr "Dieses Feld ist erforderlich"
+
+#. [pages.UpdateLoginDetails.usernameUnavailable]
+#. defaultMessage is:
+#. This username is unavailable
+#: extracted_strings.json
+msgid "This username is unavailable"
+msgstr "Dieser Benutzername ist nicht verfügbar"
+
+#. [pages.TaskList.time]
+#. defaultMessage is:
+#. Time
+#: extracted_strings.json
+msgid "Time"
+msgstr "Zeit"
+
+#. [pages.UserPreferences.timezone]
+#. defaultMessage is:
+#. Time Zone
+#. [pages.SiteDetail.fieldTimeZone]
+#. defaultMessage is:
+#. Time Zone
+#: extracted_strings.json
+msgid "Time Zone"
+msgstr "Zeitzone"
+
+#. [pages.ContactDetails.title]
+#. defaultMessage is:
+#. Title
+#: extracted_strings.json
+msgid "Title"
+msgstr "Titel"
+
+#. [pages.InventoryAdjustmentDialogForm.toSiteName]
+#. defaultMessage is:
+#. To Site
+#: extracted_strings.json
+msgid "To Site"
+msgstr "Zum Standort"
+
+#. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
+#. defaultMessage is:
+#. To update your login details, please enter your current password
+#: extracted_strings.json
+msgid "To update your login details, please enter your current password"
+msgstr ""
+"Um Ihre Zugangsdaten zu aktualisieren, geben Sie bitte Ihr aktuelles "
+"Passwort ein"
+
+#. [pages.dateRangeSelector.toDate]
+#. defaultMessage is:
+#. To...
+#: extracted_strings.json
+msgid "To..."
+msgstr "Bis…"
+
+#. [pages.dateRangeSelector.today]
+#. defaultMessage is:
+#. Today
+#: extracted_strings.json
+msgid "Today"
+msgstr "Heute"
+
+#. [pages.DailyStatus.dailyStatusToggleAll]
+#. defaultMessage is:
+#. Toggle All
+#: extracted_strings.json
+msgid "Toggle All"
+msgstr "Alle Ein- / Ausblenden"
+
+#. [pages.TaskList.topic]
+#. defaultMessage is:
+#. Topic
+#: extracted_strings.json
+msgid "Topic"
+msgstr "Thema"
+
+#. [pages.Status.clinicalIndicatorsPieSubLegend]
+#. defaultMessage is:
+#. Total Cases
+#: extracted_strings.json
+msgid "Total Cases"
+msgstr "Gesamtanzahl Fälle"
+
+#. [pages.OperationalData.totalResults]
+#. defaultMessage is:
+#. Total Results
+#. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
+#: extracted_strings.json
+msgid "Total Results"
+msgstr "Ergebnisse insgesamt"
+
+#. [pages.Notifications.table.totalTriggersHeader]
+#. defaultMessage is:
+#. Total Triggers
+#: extracted_strings.json
+msgid "Total Triggers"
+msgstr "Auslöser insgesamt"
+
+#. [pages.NotificationList.totalTriggers]
+#. defaultMessage is:
+#. Total triggers
+#: extracted_strings.json
+msgid "Total triggers"
+msgstr "Auslöser Insgesamt"
+
+#. [pages.transferResult.buttonTransfer]
+#. defaultMessage is:
+#. Transfer
+#: extracted_strings.json
+msgid "Transfer"
+msgstr "Transfer"
+
+#. [pages.InventoryItemsList.transferInventory]
+#. defaultMessage is:
+#. Transfer Inventory
+#: extracted_strings.json
+msgid "Transfer Inventory"
+msgstr "Inventar übertragen"
+
+#. [pages.transferResult.header]
+#. defaultMessage is:
+#. Transfer Result
+#: extracted_strings.json
+msgid "Transfer Result"
+msgstr "Ergebnis übertragen"
+
+#. [errorResponseMessages.transferResult.POST.default.title]
+#. defaultMessage is:
+#. Transfer Result Error
+#: extracted_strings.json
+msgid "Transfer Result Error"
+msgstr "Ergebnis übertragen Fehler"
+
+#. [pages.transferResult.titleSites]
+#. defaultMessage is:
+#. Transfer to Clinic
+#: extracted_strings.json
+msgid "Transfer to Clinic"
+msgstr "Übertragen an die Klinik"
+
+#. [pages.TransferInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Transfer {consumableName}
+#: extracted_strings.json
+msgid "Transfer {consumableName}"
+msgstr "Übertrage {consumableName}"
+
+#. [errorResponseMessages.transferInventory.PUT.default.title]
+#. defaultMessage is:
+#. Transferring Inventory Failed
+#: extracted_strings.json
+msgid "Transferring Inventory Failed"
+msgstr "Übertragen von Inventar fehlgeschlagen"
+
+#. [pages.Milestones.resultTreatmentName]
+#. defaultMessage is:
+#. Treatment
+#: extracted_strings.json
+msgid "Treatment"
+msgstr "Behandlung"
+
+#. [filter.popover.treatmentStatus]
+#. defaultMessage is:
+#. Treatment Status
+#. [pages.ResultList.resultTreatmentStatus]
+#. defaultMessage is:
+#. Treatment Status
+#: extracted_strings.json
+msgid "Treatment Status"
+msgstr "Behandlungsstatus"
+
+#. [pages.Milestones.resultTreatmentStatusLogCreatedBy]
+#. defaultMessage is:
+#. Treatment created by:
+#: extracted_strings.json
+msgid "Treatment created by:"
+msgstr "Behandlung erstellt von:"
+
+#. [pages.Milestones.resultTreatmentStatusLogData]
+#. defaultMessage is:
+#. Treatment date:
+#: extracted_strings.json
+msgid "Treatment date:"
+msgstr "Datum der Behandlung:"
+
+#. [pages.Milestones.resultTreatmentStatusLogMethod]
+#. defaultMessage is:
+#. Treatment method:
+#: extracted_strings.json
+msgid "Treatment method:"
+msgstr "Behandlungsmethode:"
+
+#. [pages.revokedSelectField.true]
+#. defaultMessage is:
+#. True
+#: extracted_strings.json
+msgid "True"
+msgstr "Wahr"
+
+#. [filter.DiseaseSelectField.diseaseNameTuberculosis]
+#. defaultMessage is:
+#. Tuberculosis
+#: extracted_strings.json
+msgid "Tuberculosis"
+msgstr "Tuberkulose"
+
+#. [pages.SiteDetail.buttonUpdate]
+#. defaultMessage is:
+#. UPDATE
+#: extracted_strings.json
+msgid "UPDATE"
+msgstr "AKTUALISIEREN"
+
+#. [pages.ResetPassword.generateTokenFailedTitle]
+#. defaultMessage is:
+#. Unable to Reset Password
+#: extracted_strings.json
+msgid "Unable to Reset Password"
+msgstr "Passwort kann nicht zurückgesetzt werden"
+
+#. [pages.TableHeader.unGroupByColumn]
+#. defaultMessage is:
+#. Ungroup Column
+#: extracted_strings.json
+msgid "Ungroup Column"
+msgstr "Auflösen der Gruppenspalte"
+
+#. [pages.DeviceList.status.inactiveUnknown]
+#. defaultMessage is:
+#. Unknown
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. defaultMessage is:
+#. Unknown
+#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
+#. defaultMessage is:
+#. Unknown
+#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
+#. defaultMessage is:
+#. Unknown
+#: extracted_strings.json
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#. [pages.RouterDetail.update]
+#. defaultMessage is:
+#. Update
+#. [pages.DeviceDetailProfile.buttonUpdate]
+#. defaultMessage is:
+#. Update
+#: extracted_strings.json
+msgid "Update"
+msgstr "Aktualisieren"
+
+#. [errorResponseMessages.updateInventory.PUT.default.title]
+#. defaultMessage is:
+#. Updating Inventory Failed
+#: extracted_strings.json
+msgid "Updating Inventory Failed"
+msgstr "Aktualisierung der Bestandsliste fehlgeschlagen"
+
+#. [pages.ReporterList.user]
+#. defaultMessage is:
+#. User
+#: extracted_strings.json
+msgid "User"
+msgstr "Benutzer"
+
+#. [pages.UpdateLoginDetails.userEnableLabel]
+#. defaultMessage is:
+#. User lockedout
+#: extracted_strings.json
+msgid "User lockedout"
+msgstr "Benutzer deaktiviert"
+
+#. [pages.PersonDetails.userPreferencesUpdatedMessage]
+#. defaultMessage is:
+#. User preferences changed successfully
+#: extracted_strings.json
+msgid "User preferences changed successfully"
+msgstr "Benutzereinstellungen erfolgreich geändert"
+
+#. [pages.Login.user]
+#. defaultMessage is:
+#. Username
+#. [pages.UpdateLoginDetails.username]
+#. defaultMessage is:
+#. Username
+#: extracted_strings.json
+msgid "Username"
+msgstr "Benutzername"
+
+#. [pages.DeviceDetailProfile.utilizationRate]
+#. defaultMessage is:
+#. Utilization Rate
+#: extracted_strings.json
+msgid "Utilization Rate"
+msgstr "Auslastungsrate"
+
+#. [pages.Status.clinicalIndicatorsVL.title]
+#. defaultMessage is:
+#. VL Results
+#: extracted_strings.json
+msgid "VL Results"
+msgstr "VL-Ergebnisse"
+
+#. [pages.Status.dashboardWidgetValidResultsPc]
+#. defaultMessage is:
+#. Valid Results
+#: extracted_strings.json
+msgid "Valid Results"
+msgstr "Gültige Ergebnisse"
+
+#. [pages.Status.treatmentStatusTotalValidTitle.graph]
+#. defaultMessage is:
+#. Valid Tests
+#: extracted_strings.json
+msgid "Valid Tests"
+msgstr "Gültige Tests"
+
+#. [forms.mustMatch]
+#. defaultMessage is:
+#. Value is not valid. Try {options}.
+#: extracted_strings.json
+msgid "Value is not valid. Try {options}."
+msgstr "Wert ist nicht gültig. Versuchen Sie {options}."
+
+#. [pages.NotificationDetail.view]
+#. defaultMessage is:
+#. View
+#: extracted_strings.json
+msgid "View"
+msgstr "Anzeigen"
+
+#. [pages.ManageDevices.filterTemplate]
+#. defaultMessage is:
+#. Viewing all devices {GEOGRAPHY} {NAME}.
+#: extracted_strings.json
+msgid "Viewing all devices {GEOGRAPHY} {NAME}."
+msgstr "Alle Geräte anzeigen {GEOGRAPHY} {NAME}."
+
+#. [pages.DeviceDetailOperation.voltage]
+#. defaultMessage is:
+#. Voltage
+#: extracted_strings.json
+msgid "Voltage"
+msgstr "Spannung"
+
+#. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.DeviceDetailProfile.warranty]
+#. defaultMessage is:
+#. Warranty
+#: extracted_strings.json
+msgid "Warranty"
+msgstr "Garantie"
+
+#. [pages.WarrantyDialog.warrantyDueDate]
+#. defaultMessage is:
+#. Warranty Due Date
+#: extracted_strings.json
+msgid "Warranty Due Date"
+msgstr "Fälligkeitsdatum der Garantie"
+
+#. [pages.WarrantyDialog.warrantyDueDateIsRequired]
+#. defaultMessage is:
+#. Warranty Due Date is required
+#: extracted_strings.json
+msgid "Warranty Due Date is required"
+msgstr "Fälligkeitsdatum der Garantie ist erforderlich"
+
+#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution]
+#. defaultMessage is:
+#. We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
+#: extracted_strings.json
+msgid ""
+"We couldn't establish a connection with GxAlert. If you are trying to login "
+"with an Aspect user, you probably entered invalid credentials."
+msgstr ""
+"Wir konnten keine Verbindung mit GxAlert herstellen. Wenn Sie versuchen, "
+"sich mit einem Aspect-Benutzer anzumelden, haben Sie wahrscheinlich "
+"ungültige Anmeldedaten eingegeben."
+
+#. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
+#. defaultMessage is:
+#. We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
+#: extracted_strings.json
+msgid ""
+"We couldn't establish connection with GxAlert. If you are trying to login "
+"with an Aspect user, you probably entered invalid credentials."
+msgstr ""
+"Wir konnten keine Verbindung mit GxAlert herstellen. Wenn Sie versuchen, "
+"sich mit einem Aspect-Benutzer anzumelden, haben Sie wahrscheinlich "
+"ungültige Anmeldedaten eingegeben."
+
+#. [pages.ResetPassword.checkEmailContent]
+#. defaultMessage is:
+#. We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox.
+#: extracted_strings.json
+msgid ""
+"We have sent an email to {emailAddress} that contains a link which will "
+"allow you to reset your password. Please check your inbox."
+msgstr ""
+"Wir haben eine E-Mail an {emailAddress} gesendet, die einen Link enthält, "
+"mit dem Sie Ihr Passwort zurücksetzen können. Bitte prüfen Sie Ihren "
+"Posteingang."
+
+#. [pages.ResetPassword.generateTokenFailedMessage]
+#. defaultMessage is:
+#. We were unable to reset your password.
+#. [pages.ResetPassword.passwordUpdateFailedMessage]
+#. defaultMessage is:
+#. We were unable to reset your password.
+#: extracted_strings.json
+msgid "We were unable to reset your password."
+msgstr "Wir konnten Ihr Passwort nicht zurücksetzen."
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterWeak]
+#. defaultMessage is:
+#. Weak
+#: extracted_strings.json
+msgid "Weak"
+msgstr "Schwach"
+
+#. [pages.Notifications.table.webhookSentHeader]
+#. defaultMessage is:
+#. Webhook Sent
+#: extracted_strings.json
+msgid "Webhook Sent"
+msgstr "Webhook gesendet"
+
+#. [pages.dateRangeSelector.week]
+#. defaultMessage is:
+#. Week
+#: extracted_strings.json
+msgid "Week"
+msgstr "Woche"
+
+#. [pages.OperationalData.withinTwoHoursOfTesting]
+#. defaultMessage is:
+#. Within 2 hours of testing
+#. [pages.OperationalData.percentWithin2Hours]
+#. defaultMessage is:
+#. Within 2 hours of testing
+#: extracted_strings.json
+msgid "Within 2 hours of testing"
+msgstr "Innerhalb von 2 Stunden nach dem Test"
+
+#. [filter.popover.workflowStatus]
+#. defaultMessage is:
+#. Workflow Status
+#. [pages.ResultList.resultWorkflowStatus]
+#. defaultMessage is:
+#. Workflow Status
+#: extracted_strings.json
+msgid "Workflow Status"
+msgstr "Workflow-Status"
+
+#. [pages.dateRangeSelector.year]
+#. defaultMessage is:
+#. Year
+#. [component.DateTimeInput.year.placeholder]
+#. defaultMessage is:
+#. Year
+#: extracted_strings.json
+msgid "Year"
+msgstr "Jahr"
+
+#. [pages.JobAssignments.yesDelete]
+#. defaultMessage is:
+#. Yes, delete
+#: extracted_strings.json
+msgid "Yes, delete"
+msgstr "Ja, löschen"
+
+#. [pages.dateRangeSelector.yesterday]
+#. defaultMessage is:
+#. Yesterday
+#: extracted_strings.json
+msgid "Yesterday"
+msgstr "Gestern"
+
+#. [errorResponseMessages.loginStart.POST.403.accountLocked.resolution]
+#. defaultMessage is:
+#. You can contact us to unlock your account for you by email ({supportEmail})
+#: extracted_strings.json
+msgid ""
+"You can contact us to unlock your account for you by email ({supportEmail})"
+msgstr ""
+"Sie können uns per E-Mail ({supportEmail}) kontaktieren, um Ihr Konto für "
+"Sie freizuschalten"
+
+#. [pages.PersonDetails.loginDetailsUpdatedMessage]
+#. defaultMessage is:
+#. You can now login with these new details
+#: extracted_strings.json
+msgid "You can now login with these new details"
+msgstr "Sie können sich jetzt mit diesen neuen Daten anmelden"
+
+#. [pages.ResetPassword.generateTokenFailedResolution]
+#. defaultMessage is:
+#. You can request further help by sending an email to {supportEmail}
+#. [pages.ResetPassword.passwordUpdateFailedResolution]
+#. defaultMessage is:
+#. You can request further help by sending an email to {supportEmail}
+#: extracted_strings.json
+msgid "You can request further help by sending an email to {supportEmail}"
+msgstr ""
+"Sie können weitere Hilfe anfordern, indem Sie eine E-Mail an {supportEmail} "
+"senden"
+
+#. [pages.ResetPassword.passwordUpdatedMessage]
+#. defaultMessage is:
+#. You may now login with your new login details.
+#: extracted_strings.json
+msgid "You may now login with your new login details."
+msgstr "Sie können sich nun mit Ihren neuen Zugangsdaten anmelden."
+
+#. [pages.Login.reasonExpiredJWT]
+#. defaultMessage is:
+#. You were logged out due to an expired session
+#: extracted_strings.json
+msgid "You were logged out due to an expired session"
+msgstr "Sie wurden aufgrund einer abgelaufenen Sitzung abgemeldet"
+
+#. [pages.Login.reasonIdle]
+#. defaultMessage is:
+#. You were logged out due to inactivity
+#: extracted_strings.json
+msgid "You were logged out due to inactivity"
+msgstr "Sie wurden aufgrund von Inaktivität abgemeldet"
+
+#. [pages.Login.reasonRefreshJWTFailure]
+#. defaultMessage is:
+#. You were logged out due to refreshing session failure
+#: extracted_strings.json
+msgid "You were logged out due to refreshing session failure"
+msgstr ""
+"Sie wurden aufgrund eines Fehlers beim Aktualisieren der Sitzung abgemeldet"
+
+#. [shared.IdleDialog.help]
+#. defaultMessage is:
+#. You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.
+#: extracted_strings.json
+msgid ""
+"You will be logged out automatically in one minute due to inactivity. To "
+"stay logged in, hit any button or move your mouse."
+msgstr ""
+"Sie werden in einer Minute wegen Inaktivität automatisch abgemeldet. Um "
+"eingeloggt zu bleiben, drücken Sie eine beliebige Taste oder bewegen Sie die "
+"Maus."
+
+#. [pages.Login.reasonUserRequested]
+#. defaultMessage is:
+#. You've successfully logged out
+#: extracted_strings.json
+msgid "You've successfully logged out"
+msgstr "Sie haben sich erfolgreich abgemeldet"
+
+#. [pages.ResetPassword.finishContent]
+#. defaultMessage is:
+#. Your password has been changed successfully. You can now login with your new details
+#: extracted_strings.json
+msgid ""
+"Your password has been changed successfully. You can now login with your new "
+"details"
+msgstr ""
+"Ihr Passwort wurde erfolgreich geändert. Sie können sich jetzt mit Ihren "
+"neuen Daten anmelden"
+
+#. [pages.ResetPassword.newPasswordTooShort]
+#. defaultMessage is:
+#. Your password needs to be at least 8 characters long
+#: extracted_strings.json
+msgid "Your password needs to be at least 8 characters long"
+msgstr "Ihr Passwort muss mindestens 8 Zeichen lang sein"
+
+#. [pages.ResetPassword.newPasswordMustContainANumber]
+#. defaultMessage is:
+#. Your password needs to contain at least one number or special character (%!$*...)
+#: extracted_strings.json
+msgid ""
+"Your password needs to contain at least one number or special character (%!"
+"$*...)"
+msgstr ""
+"Ihr Passwort muss mindestens eine Zahl oder ein Sonderzeichen (%!$*...) "
+"enthalten"
+
+#. [errorResponseMessages.loginStart.POST.403.accountLocked.message]
+#. defaultMessage is:
+#. Your user account has been locked
+#: extracted_strings.json
+msgid "Your user account has been locked"
+msgstr "Ihr Benutzerkonto wurde gesperrt"
+
+#. [filter.AssayTypeSelectField.assayTypeZika]
+#. defaultMessage is:
+#. Zika
+#: extracted_strings.json
+msgid "Zika"
+msgstr "Zika"
+
+#. [filter.DiseaseSelectField.diseaseNameZikaFever]
+#. defaultMessage is:
+#. Zika Fever
+#: extracted_strings.json
+msgid "Zika Fever"
+msgstr "Zika-Fieber"
+
+#. [pages.SiteDetail.fieldZip]
+#. defaultMessage is:
+#. Zip
+#: extracted_strings.json
+msgid "Zip"
+msgstr "Postleitzahl"
+
+#. [pages.ContactDetails.zip]
+#. defaultMessage is:
+#. Zip Code
+#: extracted_strings.json
+msgid "Zip Code"
+msgstr "Postleitzahl"
+
+#. [pages.InventoryAdjustmentDialogForm.and]
+#. defaultMessage is:
+#. and
+#: extracted_strings.json
+msgid "and"
+msgstr "und"
+
+#. [filter.btnGroup.withDeviceApproval]
+#. defaultMessage is:
+#. approval status is {deviceApprovalName}
+#: extracted_strings.json
+msgid "approval status is {deviceApprovalName}"
+msgstr "genehmigungsstatus ist {deviceApprovalName}"
+
+#. [widgetAlerts.averageDaysBetweenModuleSwaps]
+#. defaultMessage is:
+#. average days between module swaps
+#: extracted_strings.json
+msgid "average days between module swaps"
+msgstr "durchschnittliche Tage für Modulaustausch"
+
+#. [widgetAlerts.averageDaysForInstrumentReplacement]
+#. defaultMessage is:
+#. average days for instrument replacement
+#: extracted_strings.json
+msgid "average days for instrument replacement"
+msgstr "durchschnittliche Tage für Geräteaustausch"
+
+#. [widgetAlerts.averageDurationOfServiceInterrumption]
+#. defaultMessage is:
+#. average days of service interrumption
+#: extracted_strings.json
+msgid "average days of service interrumption"
+msgstr "durchschnittliche Betriebsstundenzahl"
+
+#. [widgetAlerts.averageHoursToUpload]
+#. defaultMessage is:
+#. average hours to upload
+#: extracted_strings.json
+msgid "average hours to upload"
+msgstr "durchschnittliche Stunden bis zum Hochladen"
+
+#. [widgetAlerts.averageLengthOfSMS]
+#. defaultMessage is:
+#. average length of SMS
+#: extracted_strings.json
+msgid "average length of SMS"
+msgstr "durchschnittliche Länge der SMS"
+
+#. [widgetAlerts.averageTimeToReplaceDisabledModules]
+#. defaultMessage is:
+#. average time to replace disabled modules
+#: extracted_strings.json
+msgid "average time to replace disabled modules"
+msgstr "durchschnittliche Zeit für den Austausch deaktivierter Module"
+
+#. [pages.OperationalData.calibrationCompliance]
+#. defaultMessage is:
+#. calibration compliance
+#: extracted_strings.json
+msgid "calibration compliance"
+msgstr "Kalibrierungskonformität"
+
+#. [pages.resultTreatmentPanel.days]
+#. defaultMessage is:
+#. days
+#: extracted_strings.json
+msgid "days"
+msgstr "Tage"
+
+#. [pages.OperationalData.daysUnavailable]
+#. defaultMessage is:
+#. days unavailable
+#: extracted_strings.json
+msgid "days unavailable"
+msgstr "tage unverfügbar"
+
+#. [filter.btnGroup.whereDeviceNameIncludes]
+#. defaultMessage is:
+#. device name includes "{deviceName}"
+#: extracted_strings.json
+msgid "device name includes \"{deviceName}\""
+msgstr "Gerätename enthält \"{deviceName}\""
+
+#. [filter.btnGroup.whereDeviceIdIsIn]
+#. defaultMessage is:
+#. deviceId is in ({joinedIds})
+#: extracted_strings.json
+msgid "deviceId is in ({joinedIds})"
+msgstr "Geräte ID ist in ({joinedIds})"
+
+#. [filter.btnGroup.errorCode]
+#. defaultMessage is:
+#. error code includes "{errorCode}"
+#: extracted_strings.json
+msgid "error code includes \"{errorCode}\""
+msgstr "Fehlercode enthält \"{errorCode}\""
+
+#. [widgetAlerts.errorRate]
+#. defaultMessage is:
+#. error rate
+#: extracted_strings.json
+msgid "error rate"
+msgstr "Fehlerrate"
+
+#. [pages.OperationalData.expiringTitle]
+#. defaultMessage is:
+#. expiring
+#: extracted_strings.json
+msgid "expiring"
+msgstr "auslaufend"
+
+#. [component.Widget.forMtbPositive]
+#. defaultMessage is:
+#. for {unit} MTB+
+#: extracted_strings.json
+msgid "for {unit} MTB+"
+msgstr "für {unit} MTB+"
+
+#. [component.Widget.forResults]
+#. defaultMessage is:
+#. for {unit} Results
+#: extracted_strings.json
+msgid "for {unit} Results"
+msgstr "für {unit} Ergebnisse"
+
+#. [widgetAlerts.defaultMessage]
+#. defaultMessage is:
+#. indicator
+#: extracted_strings.json
+msgid "indicator"
+msgstr "Indikator"
+
+#. [filter.btnGroup.withDeviceMaintenanceStatus]
+#. defaultMessage is:
+#. maintenance status is {deviceMaintenanceStatusName}
+#: extracted_strings.json
+msgid "maintenance status is {deviceMaintenanceStatusName}"
+msgstr "Wartungsstatus ist {deviceMaintenanceStatusName}"
+
+#. [component.DateTimeInput.minutes.placeholder]
+#. defaultMessage is:
+#. min.
+#: extracted_strings.json
+msgid "min."
+msgstr "Min."
+
+#. [pages.NotificationListRow.moreContacts]
+#. defaultMessage is:
+#. more contacts
+#: extracted_strings.json
+msgid "more contacts"
+msgstr "mehr Kontakte"
+
+#. [pages.DeviceDetailProfile.undefinedValue]
+#. defaultMessage is:
+#. n/a
+#: extracted_strings.json
+msgid "n/a"
+msgstr "n/a"
+
+#. [filter.btnGroup.whoseNameOrEmailIncludes]
+#. defaultMessage is:
+#. name/email includes "{contactNameOrEmail}"
+#: extracted_strings.json
+msgid "name/email includes \"{contactNameOrEmail}\""
+msgstr "Name/Email enthält \"{contactNameOrEmail}\""
+
+#. [pages.DeviceDetailProfile.notes]
+#. defaultMessage is:
+#. notes
+#: extracted_strings.json
+msgid "notes"
+msgstr "Notizen"
+
+#. [filter.btnGroup.whereNotificationNameIncludes]
+#. defaultMessage is:
+#. notification name includes "{notificationName}"
+#: extracted_strings.json
+msgid "notification name includes \"{notificationName}\""
+msgstr "Benachrichtigungsname enthält \"{notificationName}\""
+
+#. [widgetAlerts.numberOfTextMessagesSent]
+#. defaultMessage is:
+#. number of text messages sent
+#: extracted_strings.json
+msgid "number of text messages sent"
+msgstr "Anzahl der gesendeten Textnachrichten"
+
+#. [component.Widget.ofCurrentlyReported]
+#. defaultMessage is:
+#. of {unit} currently reported
+#: extracted_strings.json
+msgid "of {unit} currently reported"
+msgstr "von {unit} aktuell gemeldet"
+
+#. [filter.btnGroup.partnerId]
+#. defaultMessage is:
+#. partner "{partnerName}"
+#: extracted_strings.json
+msgid "partner \"{partnerName}\""
+msgstr "Partner \"{partnerName}\""
+
+#. [filter.btnGroup.patientOrResearchId]
+#. defaultMessage is:
+#. patient ID includes {patientOrResearchId}
+#: extracted_strings.json
+msgid "patient ID includes {patientOrResearchId}"
+msgstr "Patienten-ID enthält {patientOrResearchId}"
+
+#. [filter.btnGroup.patientOrCaseId]
+#. defaultMessage is:
+#. patient/case ID includes {patientOrCaseId}
+#: extracted_strings.json
+msgid "patient/case ID includes {patientOrCaseId}"
+msgstr "Patienten-/Fall-ID enthält {patientOrCaseId}"
+
+#. [widgetAlerts.percentageOfActiveDevices]
+#. defaultMessage is:
+#. percentage of active devices
+#: extracted_strings.json
+msgid "percentage of active devices"
+msgstr "Anteil der aktiven Geräte"
+
+#. [widgetAlerts.percentageOfStockouts]
+#. defaultMessage is:
+#. percentage of active sites experiencing stockouts
+#: extracted_strings.json
+msgid "percentage of active sites experiencing stockouts"
+msgstr "Prozentsatz aktiver Standorte mit Stockouts"
+
+#. [widgetAlerts.averageDaysOfServiceInterruption]
+#. defaultMessage is:
+#. percentage of devices service interruption
+#: extracted_strings.json
+msgid "percentage of devices service interruption"
+msgstr "Prozentsatz der Geräte mit Betriebsunterbrechung"
+
+#. [widgetAlerts.percentageOfDevicesWithUnusedModules]
+#. defaultMessage is:
+#. percentage of devices with unused modules
+#: extracted_strings.json
+msgid "percentage of devices with unused modules"
+msgstr "Prozentsatz der Geräte mit unbenutzten Modulen"
+
+#. [widgetAlerts.percentageOfPositiveResultsNotified]
+#. defaultMessage is:
+#. percentage of positive results notified
+#: extracted_strings.json
+msgid "percentage of positive results notified"
+msgstr "Prozentsatz der gemeldeten positiven Ergebnisse"
+
+#. [widgetAlerts.percentageOfServerUptime]
+#. defaultMessage is:
+#. percentage of server uptime
+#: extracted_strings.json
+msgid "percentage of server uptime"
+msgstr "Prozentuale Verfügbarkeit des Servers"
+
+#. [widgetAlerts.percentageOfSitesWithoutGxStockEntered]
+#. defaultMessage is:
+#. percentage of sites that never entered stock of GeneXpert assays
+#: extracted_strings.json
+msgid "percentage of sites that never entered stock of GeneXpert assays"
+msgstr ""
+"Prozentsatz der Standorte, die nie einen GeneXpert-Assay auf Lager hatten"
+
+#. [widgetAlerts.percentageOfValidResults]
+#. defaultMessage is:
+#. percentage of valid results
+#: extracted_strings.json
+msgid "percentage of valid results"
+msgstr "Prozentsatz der gültigen Ergebnisse"
+
+#. [filter.btnGroup.withRevoked]
+#. defaultMessage is:
+#. revoked is "{revokedStatus}"
+#: extracted_strings.json
+msgid "revoked is \"{revokedStatus}\""
+msgstr "Widerrufen ist \"{revokedStatus}\""
+
+#. [filter.btnGroup.sampleOriginSite]
+#. defaultMessage is:
+#. sample collection site is {sampleOriginSiteName}
+#: extracted_strings.json
+msgid "sample collection site is {sampleOriginSiteName}"
+msgstr "Probenentnahmeort ist {sampleOriginSiteName}"
+
+#. [filter.btnGroup.sampleId]
+#. defaultMessage is:
+#. sample includes "{sampleId}"
+#: extracted_strings.json
+msgid "sample includes \"{sampleId}\""
+msgstr "Probe enthält \"{sampleId}\""
+
+#. [filter.btnGroup.dateFrom]
+#. defaultMessage is:
+#. since {date}
+#: extracted_strings.json
+msgid "since {date}"
+msgstr "Seit {date}"
+
+#. [filter.btnGroup.whereSiteIdIncludes]
+#. defaultMessage is:
+#. site ID includes "{siteId}"
+#: extracted_strings.json
+msgid "site ID includes \"{siteId}\""
+msgstr "Standort-ID enthält \"{siteId}\""
+
+#. [filter.btnGroup.whereSiteIdIsIn]
+#. defaultMessage is:
+#. site ID is in ({joinedIds})
+#: extracted_strings.json
+msgid "site ID is in ({joinedIds})"
+msgstr "Standort-ID ist in ({joinedIds})"
+
+#. [filter.btnGroup.whereSiteNameIncludes]
+#. defaultMessage is:
+#. site name includes "{siteName}"
+#: extracted_strings.json
+msgid "site name includes \"{siteName}\""
+msgstr "Standoret-Name enthält \"{siteName}\""
+
+#. [pages.OperationalData.stockOutsTitle]
+#. defaultMessage is:
+#. stock outs
+#: extracted_strings.json
+msgid "stock outs"
+msgstr "Stockouts"
+
+#. [pages.OperationalData.testFailures]
+#. defaultMessage is:
+#. test failures
+#: extracted_strings.json
+msgid "test failures"
+msgstr "Testfehler"
+
+#. [filter.btnGroup.withTreatmentStatus]
+#. defaultMessage is:
+#. treatment status is {treatmentStatusName}
+#: extracted_strings.json
+msgid "treatment status is {treatmentStatusName}"
+msgstr "Behandlungsstatus ist {treatmentStatusName}"
+
+#. [filter.btnGroup.withDeviceType]
+#. defaultMessage is:
+#. type is {deviceTypeName}
+#: extracted_strings.json
+msgid "type is {deviceTypeName}"
+msgstr "Typ ist {deviceTypeName}"
+
+#. [filter.btnGroup.dateTo]
+#. defaultMessage is:
+#. until {date}
+#: extracted_strings.json
+msgid "until {date}"
+msgstr "bis {date}"
+
+#. [widgetAlerts.utilizationRate]
+#. defaultMessage is:
+#. utilization rate
+#: extracted_strings.json
+msgid "utilization rate"
+msgstr "Auslastungsgrad"
+
+#. [pages.Milestones.viewResultsDetails]
+#. defaultMessage is:
+#. view Results Details
+#: extracted_strings.json
+msgid "view Results Details"
+msgstr "Ergebnisdetails anzeigen"
+
+#. [filter.btnGroup.withResultCategory]
+#. defaultMessage is:
+#. with result {resultCategoryName}
+#: extracted_strings.json
+msgid "with result {resultCategoryName}"
+msgstr "mit Ergebnis {resultCategoryName}"
+
+#. [filter.btnGroup.withWorkflowStatus]
+#. defaultMessage is:
+#. workflow status is {workflowStatusName}
+#: extracted_strings.json
+msgid "workflow status is {workflowStatusName}"
+msgstr "Workflow-Status ist {workflowStatusName}"
+
+#. [pages.TaskList.alertCount]
+#. defaultMessage is:
+#. {alertCount, plural, one {# alert} other {# alerts} }
+#: extracted_strings.json
+msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+msgstr "{alertCount, plural, ein {# Warnung} other {# Warnungen} }"
+
+#. [pages.OperationalData.deviceWithProblems]
+#. defaultMessage is:
+#. {count} device with problems
+#: extracted_strings.json
+msgid "{count} device with problems"
+msgstr "{count} Gerät mit Problemen"
+
+#. [pages.RouterDetail.nestedDataSubtitle]
+#. defaultMessage is:
+#. {count} fields
+#: extracted_strings.json
+msgid "{count} fields"
+msgstr "{count} Felder"
+
+#. [pages.DeviceList.errorOfTotal]
+#. defaultMessage is:
+#. {count} of {total}
+#: extracted_strings.json
+msgid "{count} of {total}"
+msgstr "{count} von {total}"
+
+#. [pages.DeviceList.availabilityOfDays]
+#. defaultMessage is:
+#. {count} of {total} days
+#: extracted_strings.json
+msgid "{count} of {total} days"
+msgstr "{count} von {total} Tagen"
+
+#. [pages.OperationalData.siteWithProblems]
+#. defaultMessage is:
+#. {count} site with problems
+#: extracted_strings.json
+msgid "{count} site with problems"
+msgstr "{count} Standorte mit Problemen"
+
+#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus]
+#. defaultMessage is:
+#. {daysInSameStatus, plural, one {# day} other {# days} } since last update
+#: extracted_strings.json
+msgid ""
+"{daysInSameStatus, plural, one {# day} other {# days} } since last update"
+msgstr ""
+"{daysInSameStatus, plural, one {# Tag} other {# Tage} } seit letzter "
+"Aktualisierung"
+
+#. [pages.TableCell.timeClassification]
+#. defaultMessage is:
+#. {elapsed} elapsed, {upcoming} upcoming
+#: extracted_strings.json
+msgid "{elapsed} elapsed, {upcoming} upcoming"
+msgstr "{elapsed} verstrichen, {upcoming} kommend"
+
+#. [pages.Notifications.notificationsTableContactsCount]
+#. defaultMessage is:
+#. {itemCount, plural, one {# Contact} other {# Contacts} }
+#: extracted_strings.json
+msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
+msgstr "{itemCount, plural, one {# Kontakt} other {# Kontakte} }"
+
+#. [pages.Notifications.notificationsTableHeaderNameCount]
+#. defaultMessage is:
+#. {itemCount, plural, one {# Name} other {# Names} }
+#: extracted_strings.json
+msgid "{itemCount, plural, one {# Name} other {# Names} }"
+msgstr "{itemCount, plural, one {# Name} other {# Namen} }"
+
+#. [pages.Notifications.notificationsTableTotalTriggersCount]
+#. defaultMessage is:
+#. {itemCount} (total)
+#: extracted_strings.json
+msgid "{itemCount} (total)"
+msgstr "{itemCount} (gesamt)"
+
+#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported]
+#. defaultMessage is:
+#. {maintenanceStatusName} ({totalResults, plural, one {# result reported} other {# results reported} })
+#: extracted_strings.json
+msgid ""
+"{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
+"other {# results reported} })"
+msgstr ""
+"{maintenanceStatusName} ({Gesamtergebnisse, plural, one {# berichtetes "
+"Ergebnis} other {# berichtete Ergebnisse} })"
+
+#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
+#. defaultMessage is:
+#. {maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one {# day} other {# days} }
+#: extracted_strings.json
+msgid ""
+"{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
+"{# day} other {# days} }"
+msgstr ""
+"{maintenanceStatusName} ({totalResults}) für {daysInSameStatus, plural, one "
+"{# Tag} other {# Tage} }"
+
+#. [component.Widget.ytd]
+#. defaultMessage is:
+#. {unit} YTD
+#: extracted_strings.json
+msgid "{unit} YTD"
+msgstr "{unit} dieses Jahr"
+
+#. [component.Widget.lastMonth]
+#. defaultMessage is:
+#. {unit} last month
+#: extracted_strings.json
+msgid "{unit} last month"
+msgstr "{unit} im letzten Monat"
+
+#. [component.Widget.sinceLastWeek]
+#. defaultMessage is:
+#. {unit} since last week
+#: extracted_strings.json
+msgid "{unit} since last week"
+msgstr "{unit} seit letzter Woche"
+
+#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
+#. defaultMessage is:
+#. {value} ({records}/{total, plural, one {# result} other {# results} })
+#: extracted_strings.json
+msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
+msgstr ""
+"{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"

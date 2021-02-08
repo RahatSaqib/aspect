@@ -81,7 +81,7 @@ Updating `.po` files means updating existing translations with newly added messa
 
 1. Open [Poedit](https://poedit.net)
 2. Click `Create new translation`
-3. Select `src/shared/i18n/diff.pot` from the file dialog
+3. Select `diff.pot` from the file dialog
 4. Select language of the translation from the dropdown
 5. When done, click `File > Save`. Set filename to `web.${LOCALE_NAME}.po` and store it under `src/shared/i18n` folder.
 
