@@ -6,28 +6,6 @@ const { insertSites } = require('../utils')
 const upsertContacts = require('../common/upsert_contacts')
 const partnerData = require('./fixtures/partnerVariables')
 
-/*
-  {
-    "personName": "SH IWO",
-    "personEmailAddress": "",
-    "timezone": "W. Central Africa Standard Time",
-    "jobFunctions": ["Clinician"],
-    "username": "iwo_dots",
-    "password": "JXrT45",
-    "personCell": "+2348036336614",
-    "geographies": [
-      {
-        "stateName": "Osun",
-        "lgaName": "Iwo"
-      }
-    ],
-    "sites": [
-      {
-        "shortName": "IWO"
-      }
-    ]
-  },   
-*/
 const NUMBER_OF_SITES = 50
 
 async function seed(knex) {
@@ -80,11 +58,7 @@ async function seed(knex) {
   })
   await Promise.all(resultsUpdates)
 
-  // Insert new results until 50
-  // newSites.map(async site => {
-  //   const
-  // })
-
+  // Insert contacts for reportable sites
   const contacts = []
   range(NUMBER_OF_SITES).forEach(num => {
     const site = sites[num]
@@ -104,6 +78,8 @@ async function seed(knex) {
       ],
     })
   })
+
+  // Insert admin for Nigeria
   contacts.push({
     personName: 'Admin Nigeria',
     timeZoneId: 'W. Central Africa Standard Time',
