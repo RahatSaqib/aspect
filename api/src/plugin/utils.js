@@ -344,6 +344,12 @@ async function shouldLogDeviceCalibration(
           deviceMaintenanceTypeId,
           current: 1,
         })
+        /**
+         * below ordering is actually not needed cuz we should have only single entry with
+         * above WHERE condition, but let's keep this 'orderBy' here to have such
+         * extra validation to get item with latest 'contextDate'
+         */
+        .orderBy('contextDate', 'desc')
         .first()
 
       // get today's maintenance item
