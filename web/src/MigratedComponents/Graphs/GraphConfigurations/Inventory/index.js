@@ -28,7 +28,7 @@ const inventoryGraphs = {
     graphRenderPermissions: ['dashboard'],
     graphType: [
       {
-        id: 'tbResultsByCategory1Monthly',
+        id: 'suppliesExpiryByPeriod',
         component: BarGraph,
         type: 'barInventory',
         size: 12,
@@ -81,6 +81,11 @@ const inventoryGraphs = {
         displayMethod: 'actual',
         displayLegend: false,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/inventory?filters=',
+          keys: ['stockLeft', 'consumableId'],
+        },
       },
     ],
   },
