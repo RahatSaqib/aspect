@@ -82,7 +82,7 @@ async function seed(knex) {
   // Insert admin for Nigeria
   contacts.push({
     personName: 'Admin Nigeria',
-    timeZoneId: 'W. Central Africa Standard Time',
+    timezone: 'W. Central Africa Standard Time',
     personEmailAddress: null,
     name: 'Admin Nigeria',
     jobFunctions: ['Admin'],
