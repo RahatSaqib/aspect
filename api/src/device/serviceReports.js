@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { format } = require('date-fns')
+const { format, addMonths, differenceInMonths } = require('date-fns')
 const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
@@ -46,7 +46,7 @@ async function exportDevices(request, reply) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-
+  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
   // get rows
   const getItems = deviceQuery
     .clone()
@@ -56,6 +56,7 @@ async function getDeviceActivityReport(auth, query) {
     .max('r.endedOn as lastUploadOn')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('d.id', 'd.name', 'd.serial')
+    .orderBy('d.name')
 
   const deviceResultsPerMonths = await deviceQuery
     .clone()
@@ -73,7 +74,16 @@ async function getDeviceActivityReport(auth, query) {
     getItems,
     deviceResultsPerMonths,
   ])
+  const monthDif = differenceInMonths(maxDate, minDate)
   const dateFields = []
+
+  for (let i = 0; i <= monthDif; i++) {
+    dateFields.push({
+      key: format(addMonths(minDate, i), 'yyyy-MM'),
+      header: format(addMonths(minDate, i), 'yyyy-LLL'),
+    })
+  }
+
   const devices = _.map(data, elem => {
     _.each(
       _.filter(
@@ -82,22 +92,17 @@ async function getDeviceActivityReport(auth, query) {
       ),
       detail => {
         elem[detail.monthYear] = detail.totalResults
-        dateFields.push(detail.monthYear.toString())
       }
     )
 
     return elem
   })
-
   const dataset = {
     ok: true,
     total: devices.length,
     length: devices.length,
     data: devices,
-    dynamicColumns: [
-      { key: '2020-08', header: 'August 2020' },
-      { key: '2020-09', header: 'September 2020' },
-    ],
+    dynamicColumns: dateFields,
   }
   return dataset
 }

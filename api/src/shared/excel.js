@@ -234,8 +234,10 @@ async function renderExcelTemplate({
             return value
           })
           let valuesInDynamicColumns = []
-          if (dynamicColumns.length > 0 && dataSelector) {
-            const normalizedValues = dataSelector(dataRow)
+          if (dynamicColumns.length > 0) {
+            let normalizedValues
+            if (dataSelector) normalizedValues = dataSelector(dataRow)
+            else normalizedValues = dataRow
             valuesInDynamicColumns = dynamicColumns.map(
               column => normalizedValues[column.key]
             )
