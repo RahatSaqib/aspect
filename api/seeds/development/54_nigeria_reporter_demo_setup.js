@@ -65,7 +65,7 @@ async function seed(knex) {
 
     contacts.push({
       personName: site.name,
-      timeZoneId: site.timeZoneId,
+      timezone: site.timeZoneId,
       personEmailAddress: null,
       name: `Clinic ${num}`,
       jobFunctions: ['Clinician'],
