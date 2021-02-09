@@ -449,6 +449,11 @@ function listResultsBaseConfig() {
         resultCategory2Id: Joi.number()
           .allow('')
           .description('Result-2 Category ID'),
+        resultCategoryGroupId: Joi.string()
+          .allow('')
+          .description(
+            'Result Category Group external id for assays with multiple results'
+          ),
         errorCode: Joi.string().allow('').description('Filter error code'),
         deviceName: Joi.string()
           .allow('')

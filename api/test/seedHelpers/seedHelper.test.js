@@ -101,6 +101,14 @@ describe('Seed helpers unit functions', () => {
                 module: 'browse',
                 activity: 'view',
               },
+              {
+                module: 'dashboard',
+                activity: 'view',
+              },
+              {
+                module: 'dashboard',
+                activity: 'summary',
+              },
             ],
           }
         ),
@@ -120,6 +128,14 @@ describe('Seed helpers unit functions', () => {
             },
             {
               module: 'browse',
+              activity: 'view',
+            },
+            {
+              module: 'dashboard',
+              activity: 'summary',
+            },
+            {
+              module: 'dashboard',
               activity: 'view',
             },
             {

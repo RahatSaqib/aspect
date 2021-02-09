@@ -79,6 +79,10 @@ const admin = {
       activity: 'target',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'issue',
       activity: 'edit',
     },
@@ -136,6 +140,10 @@ const manager = {
       activity: 'device',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'account',
       activity: 'edit',
     },
@@ -182,6 +190,10 @@ const manager = {
     {
       module: 'dashboard',
       activity: 'target',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
     },
     {
       module: 'assay',
@@ -235,6 +247,10 @@ const regionalOfficer = {
     {
       module: 'dashboard',
       activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
     },
     {
       module: 'browse',
@@ -324,6 +340,10 @@ const labUser = {
     {
       module: 'dashboard',
       activity: 'result',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
     },
     {
       module: 'task',
@@ -429,6 +449,10 @@ const clinician = {
     {
       module: 'dashboard',
       activity: 'device',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
     },
     {
       module: 'task',
@@ -689,6 +713,10 @@ const remoteHealthWorker = {
       activity: 'site',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'account',
       activity: 'edit',
     },
@@ -748,6 +776,10 @@ const labManager = {
     {
       module: 'dashboard',
       activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
     },
     {
       module: 'inventory',
@@ -815,6 +847,10 @@ const labSupervisor = {
       activity: 'summary',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'inventory',
       activity: 'edit',
     },
@@ -878,6 +914,10 @@ const medTech = {
     {
       module: 'dashboard',
       activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
     },
     {
       module: 'inventory',
@@ -945,6 +985,10 @@ const dataViewer = {
       activity: 'summary',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'operationalData',
       activity: 'view',
     },
@@ -997,12 +1041,7 @@ const labAdmin = {
   ],
 }
 
-const concatUniqOrderedArray = (
-  arr1,
-  arr2,
-
-  sortedFunction = _.identity
-) =>
+const concatUniqOrderedArray = (arr1, arr2, sortedFunction = _.identity) =>
   _.compact(
     _.sortBy(
       _.uniq(_.concat(arr1, arr2)),
@@ -1022,19 +1061,25 @@ const mergeJobFunctions = (jf1, jf2) => {
   const permissions = concatUniqOrderedArray(
     jf1.permissions,
     jf2.permissions,
-
     obj => [obj.module, obj.activity]
   )
 
   const finalJobFunction = { ...plainObject }
+
+  const modulesToNotReduce = ['dashboard']
 
   if (reports.length) finalJobFunction.reports = reports
   if (permissions.length)
     finalJobFunction.permissions = _.reduce(
       permissions,
       (result, curr) => {
-        if (result.length === 0) result.push(curr)
-        else if (_.last(result).module !== curr.module) result.push(curr)
+        const lastPermission = _.last(result)
+        if (!lastPermission) result.push(curr)
+        else if (
+          modulesToNotReduce.includes(lastPermission.module) ||
+          lastPermission.module !== curr.module
+        )
+          result.push(curr)
         return result
       },
       []

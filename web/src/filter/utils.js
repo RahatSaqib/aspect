@@ -53,6 +53,7 @@ const sanitizerByConfigKey = {
   assayAndResultCategory: makeArraySanitizer([
     'assayId',
     'resultCategoryId',
+    'resultCategoryGroupId',
     'diseaseId',
   ]),
   geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
@@ -163,6 +164,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
           switch (key) {
             case 'assayAndResultCategory':
               result.assayAndResultCategory = true
+              break
+            case 'assayAndResultCategoryGroup':
+              result.assayAndResultCategoryGroup = true
               break
             case 'geography':
               result.geography = true
