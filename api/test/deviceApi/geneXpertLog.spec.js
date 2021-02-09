@@ -139,7 +139,7 @@ describe('Process GeneXpert Logs', () => {
         current: 1,
       })
       .first()
-    assert.isFalse(!!deviceMaintenance)
+    assert.isUndefined(deviceMaintenance)
 
     /**
      * notice that `logData` contains `Calibrations` array defined, and
@@ -159,7 +159,7 @@ describe('Process GeneXpert Logs', () => {
         current: 1,
       })
       .first()
-    assert.isTrue(!!deviceMaintenance)
+    assert.isDefined(deviceMaintenance)
 
     /**
      * post log data with past date
