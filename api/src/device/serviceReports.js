@@ -59,7 +59,23 @@ async function getDeviceActivityReport(auth, query) {
   const getItems = deviceQuery
     .clone()
     .leftJoin('Result as r', 'd.id', 'r.deviceId')
-    .select('d.id', 'd.name', 'd.serial')
+    .leftJoin(
+      'DeviceMaintenanceStatusLog as dmsl',
+      'd.deviceMaintenanceStatusLogId',
+      'dmsl.id'
+    )
+    .leftJoin(
+      'DeviceMaintenanceStatus as dms',
+      'dmsl.deviceMaintenanceStatusId',
+      'dms.id'
+    )
+    .select(
+      'd.id',
+      'd.name',
+      'd.serial',
+      'da.name as deviceApprovalStatus',
+      'dms.name as deviceMaintenanceStatus'
+    )
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -98,7 +114,6 @@ async function getDeviceActivityReport(auth, query) {
       }),
     })
   }
-
   const devices = _.map(data, elem => {
     _.each(
       _.filter(
