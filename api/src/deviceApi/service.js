@@ -377,7 +377,12 @@ async function addDeviceDataWithContext(context) {
         deviceOperationId
       )
 
-      await shouldLogDeviceCalibration(knex, device, payload, deviceOperationId)
+      await shouldLogDeviceCalibration(
+        messageContext,
+        device,
+        payload,
+        deviceOperationId
+      )
     }
   }
 
