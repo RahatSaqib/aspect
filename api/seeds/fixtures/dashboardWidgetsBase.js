@@ -108,7 +108,7 @@ const resultsTitle = {
   title: 'Results',
   titleI18nKey: 'resultsTitle',
   subTitle: 'Last 30 Days',
-  subTitleI18nKey: 'subResultsTitle',
+  subTitleI18nKey: 'last30Days',
   sqlForIndicator: `select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30`,
   link: '/browse/result',
   linkParams: {

@@ -38,6 +38,10 @@ const messages = defineMessages({
     id: 'component.Widget.ytd',
     defaultMessage: '{unit} YTD',
   },
+  last30Days: {
+    id: 'component.Widget.last30Days',
+    defaultMessage: 'Last 30 Days',
+  },
 })
 
 const EmptyWidget = () => (
@@ -62,6 +66,7 @@ const AspectWidget = ({
     title,
     unit,
     subTitle,
+    subTitleI18nKey,
     statStatus,
     extraLabel,
     statUnitI18nKey,
@@ -89,7 +94,9 @@ const AspectWidget = ({
               {title}
             </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
-              {subTitle}
+              {subTitleI18nKey
+                ? intlFormatMessage(messages[subTitleI18nKey])
+                : subTitle}
             </span>
           </span>
           {description ? (

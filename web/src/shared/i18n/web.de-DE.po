@@ -1,16 +1,16 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-02-08T16:36:19.658Z\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2021-02-09T19:47:11.800Z\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"MIME-Version: 1.0\n"
 "X-Generator: Poedit 2.4.2\n"
-"Project-Id-Version: \n"
-"PO-Revision-Date: \n"
-"Language-Team: \n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: de_DE\n"
 
 #. [pages.ReporterList.acknowledgedRatio]
 #. defaultMessage is:
@@ -2589,6 +2589,9 @@ msgstr "Sprache & Zeitzone"
 msgid "Last"
 msgstr "Letzte"
 
+#. [component.Widget.last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
