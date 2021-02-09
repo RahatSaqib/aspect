@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const {
   addDays,
   addYears,
+  subYears,
   subMonths,
   startOfMonth,
   endOfMonth,
@@ -1576,9 +1577,20 @@ async function getDeviceCalibrationsForReport(auth, query) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
+  const now = new Date()
   // add more fields which depend on aggregations
   data.forEach(async it => {
     it.nextCalibrationOn = it.calibratedOn ? addYears(it.calibratedOn, 1) : null
+    if (it.calibratedOn) {
+      // highlight the rows where the last calibration was more than 12 months ago in red,
+      if (it.calibratedOn < subYears(now, 1)) {
+        it.backgroundColor = 'red'
+      }
+      // and in yellow if it was more than 8 months ago
+      else if (it.calibratedOn < subMonths(now, 8)) {
+        it.backgroundColor = 'yellow'
+      }
+    }
   })
 
   const result = { ok: true, total, length: data.length, data }

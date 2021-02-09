@@ -1917,11 +1917,7 @@ helpers.deviceCalibrationPastDue = {
       d.id AS deviceid,
       CASE
         WHEN dm.contextDate IS NULL THEN null
-        ELSE 
-          DATEDIFF(
-            DATE_SUB(NOW(), INTERVAL 1 YEAR),
-            MAX(dm.contextDate)
-          )
+        ELSE DATEDIFF( NOW(), MAX(dm.contextDate) )
       END as daysSinceCalibration
     FROM Device AS d
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
