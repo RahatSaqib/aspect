@@ -263,6 +263,28 @@ async function renderExcelTemplate({
 
         // remove all rows between 1st row and table body (remove table headers too)
         worksheet.spliceRows(2, patternRowNumber - 1 - 1)
+      } else {
+        // colorize rows if their data contain prop 'backgroundColor'
+        dataRows.forEach((dataRow, rowIndex) => {
+          const row = worksheet.getRow(patternRowNumber + rowIndex)
+          if (dataRow.backgroundColor) {
+            let fillColor
+            if (dataRow.backgroundColor === 'red') {
+              fillColor = 'FFffaaaa'
+            } else if (dataRow.backgroundColor === 'yellow') {
+              fillColor = 'FFffffaa'
+            }
+            if (fillColor) {
+              row.eachCell(cell => {
+                cell.fill = {
+                  type: 'pattern',
+                  pattern: 'solid',
+                  fgColor: { argb: fillColor },
+                }
+              })
+            }
+          }
+        })
       }
     }
   })
