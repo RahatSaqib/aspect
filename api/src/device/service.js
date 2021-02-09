@@ -738,7 +738,7 @@ function getDeviceBaseQuery(
         .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
         .where('a.id', query.assayId)
 
-      if (query.resultCategoryId) {
+      if (!query.resultCategoryId) {
         return
       }
       queryBuilder
