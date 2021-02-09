@@ -23,7 +23,6 @@ const styles = {
   formatCard: {
     boxShadow: 'none',
   },
-
   actions: {
     display: 'flex',
     justifyContent: 'space-between',
