@@ -119,6 +119,14 @@ const useGraphClickThrough = () => {
           const { diseaseId } = await diseaseIdFromKey(linkData, baseAssay)
           params.diseaseId = diseaseId
         }
+
+        if (key === 'stockLeft') {
+          params.stockLeft = id
+        }
+
+        if (key === 'consumableId') {
+          params.consumableId = data.consumableId
+        }
       }
       await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
       setLink(
