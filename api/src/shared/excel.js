@@ -168,7 +168,7 @@ async function renderExcelTemplate({
     if (extension === 'csv' && sheetIndex > 0) {
       return
     }
-    const { dynamicColumns = [] } = data[sheetIndex]
+    const { dynamicColumns = [] } = data[sheetIndex] || {}
     // replace placeholders, i.e. <Dates>, <States>, etc in the header
     _.each(replacements, ({ placeholder, value }) => {
       replaceSubstringInCell(worksheet, placeholder, value)

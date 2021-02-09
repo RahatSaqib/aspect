@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
+const locales = require('date-fns/locale')
 const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
@@ -10,6 +11,7 @@ const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
 } = require('../shared/date')
+const { getUser } = require('../auth/service')
 
 async function exportDevices(request, reply) {
   const { data } = await listDevices(request)
@@ -48,7 +50,8 @@ async function exportDevices(request, reply) {
 
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const { culture } = await getUser(auth.credentials.name)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints, true, true)
   const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -85,13 +88,14 @@ async function getDeviceActivityReport(auth, query) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
-
   const dateFields = []
-
+  const locale = culture.split('-')[0].toLowerCase()
   for (let i = 0; i <= monthDiff; i++) {
     dateFields.push({
       key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
-      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL'),
+      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
+        locale: locales[locale],
+      }),
     })
   }
 
