@@ -25,12 +25,12 @@ const getMonthYearUserTimeZoneField = (
   knex,
   field,
   alias = 'monthYear',
-  tz = '+00:00'
+  offset = '+00:00'
 ) =>
   knex.raw(`CONCAT_WS(
     '-',
-    CAST(YEAR(CONVERT_TZ(${field},'+00:00','${tz}')) AS CHAR ),
-    LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${tz}')) AS CHAR ),2,'0')
+    CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
+    LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
 
 
     ) ${alias ? ` as ${alias}` : ''}`)

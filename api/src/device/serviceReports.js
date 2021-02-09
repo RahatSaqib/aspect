@@ -1,12 +1,15 @@
 const _ = require('lodash')
-const { format, addMonths, differenceInMonths } = require('date-fns')
+const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
 const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
 const { getDeviceBaseQuery } = require('./service')
 const { knex, filterDateRangeParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
-const { getMonthYearUserTimeZoneField } = require('../shared/date')
+const {
+  getMonthYearUserTimeZoneField,
+  getOffsetFromIsoDateString,
+} = require('../shared/date')
 
 async function exportDevices(request, reply) {
   const { data } = await listDevices(request)
@@ -47,6 +50,8 @@ async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
   const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
+
   // get rows
   const getItems = deviceQuery
     .clone()
@@ -64,23 +69,29 @@ async function getDeviceActivityReport(auth, query) {
     .countDistinct('r.id as totalResults')
     .select(
       'd.id as deviceId',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn')
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset)
     )
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null))
+    .groupBy(
+      'd.id',
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
+    )
 
   // return result when both queries are finished
   const [data, deviceDetails] = await Promise.all([
     getItems,
     deviceResultsPerMonths,
   ])
-  const monthDif = differenceInMonths(maxDate, minDate)
+  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
+  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
+  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
+
   const dateFields = []
 
-  for (let i = 0; i <= monthDif; i++) {
+  for (let i = 0; i <= monthDiff; i++) {
     dateFields.push({
-      key: format(addMonths(minDate, i), 'yyyy-MM'),
-      header: format(addMonths(minDate, i), 'yyyy-LLL'),
+      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
+      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL'),
     })
   }
 

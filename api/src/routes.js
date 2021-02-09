@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
 const logger = require('./shared/logger')
-
+const { REGEX_ISODATESTRING } = require('./shared/date')
 // Adds all API routes to the server
 function addClientRoutes(server) {
   server.route(
@@ -244,8 +244,14 @@ function validateSortPageParams(...sortColumns) {
 
 function validateDateRangeParams() {
   return {
-    minDate: Joi.date().iso().allow(null).description('From Date'),
-    maxDate: Joi.date().iso().allow(null).description('To Date'),
+    minDate: Joi.string()
+      .pattern(REGEX_ISODATESTRING)
+      .allow(null)
+      .description('From Date'),
+    maxDate: Joi.string()
+      .pattern(REGEX_ISODATESTRING)
+      .allow(null)
+      .description('To Date'),
   }
 }
 
