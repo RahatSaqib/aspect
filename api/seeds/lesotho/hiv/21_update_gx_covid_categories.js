@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = require('../../utils').seed(seed, __filename)
 const { upsertGeneXpertDeviceTypeAndAssays } = require('../../common')
 
 async function seed(knex) {
