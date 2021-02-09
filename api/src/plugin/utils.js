@@ -322,7 +322,7 @@ async function shouldLogDeviceCalibration(
     _.isArray(details.Calibrations) &&
     details.Calibrations.length
   ) {
-    logger.debug(
+    logger.silly(
       `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
         deviceId: device.id,
         calibratedOn,
@@ -333,6 +333,11 @@ async function shouldLogDeviceCalibration(
 
     const { id: deviceId } = device
     if (deviceId && calibratedOn) {
+      logger.silly(
+        `shouldLogDeviceCalibration: 'deviceId' and 'calibratedOn' are defined`,
+        { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
+      )
+
       const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
         'calibration'
       )
@@ -381,6 +386,10 @@ async function shouldLogDeviceCalibration(
       }
 
       if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
+        logger.silly(
+          `shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true`,
+          { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
+        )
         /**
          * condition means itemCurrent had been reset (because
          * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
@@ -390,6 +399,10 @@ async function shouldLogDeviceCalibration(
           id: itemToday.id,
         })
       } else if (!itemToday) {
+        logger.silly(
+          `shouldLogDeviceCalibration: insert item for today, because it is missing`,
+          { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
+        )
         await knex('DeviceMaintenance').insert({
           deviceId,
           deviceMaintenanceTypeId,
