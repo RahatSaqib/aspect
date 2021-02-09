@@ -327,7 +327,8 @@ async function shouldLogDeviceCalibration(
         deviceId: device.id,
         calibratedOn,
         deviceOperationId,
-      })}`
+      })}`,
+      { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
     )
 
     const { id: deviceId } = device
