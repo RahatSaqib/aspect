@@ -69,7 +69,7 @@ async function seed(knex) {
       personEmailAddress: null,
       name: `Clinic ${num}`,
       jobFunctions: ['Clinician'],
-      username: site.name.toLowerCase().replace(' ', '_'),
+      username: site.name.toLowerCase().replace(' ', ''),
       password: '12345',
       sites: [
         {
