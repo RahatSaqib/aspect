@@ -1567,7 +1567,14 @@ async function getDeviceCalibrationsForReport(auth, query) {
     .select([
       ..._.filter(
         SELECT_LIST_FIELDS,
-        elem => _.isString(elem) && elem.indexOf('dms.') < 0
+        /**
+         * make sure to exclude columns starting with `dms.` because
+         * we do not have JOIN with DeviceMaintenanceStatus table
+         */
+        elem =>
+          _.isString(elem) &&
+          // is either -1 or > 0
+          elem.indexOf('dms.') !== 0
       ),
       'd.serial',
       'dm.contextDate as calibratedOn',
