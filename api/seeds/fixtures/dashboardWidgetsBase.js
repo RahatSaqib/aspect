@@ -34,7 +34,7 @@ const WIDGET_FILTER_KEYS = {
 }
 
 // props will be defined below for each object
-const helpers = {}
+const sqlSnippets = {}
 
 const geneXpertDevices = {
   jobFunctions: ['all'],
@@ -1905,7 +1905,7 @@ const serverUptimeTitle = {
   },
 }
 
-helpers.deviceCalibrationPastDue = {
+sqlSnippets.deviceCalibrationPastDue = {
   sum: `
     SUM(CASE
       WHEN daysSinceCalibration > 365 THEN 1
@@ -1914,9 +1914,9 @@ helpers.deviceCalibrationPastDue = {
   `,
   innerQuery: `
     SELECT
-      d.id AS deviceid,
+      d.id AS deviceId,
       CASE
-        WHEN dm.contextDate IS NULL THEN null
+        WHEN MAX(dm.contextDate) IS NULL THEN null
         ELSE DATEDIFF( NOW(), MAX(dm.contextDate) )
       END as daysSinceCalibration
     FROM Device AS d
@@ -1939,18 +1939,18 @@ const deviceCalibrationPastDue = {
   titleI18nKey: 'deviceCalibrationPastDueTitle',
   sqlForIndicator: `
     SELECT
-      ${helpers.deviceCalibrationPastDue.sum} AS cnt
+      ${sqlSnippets.deviceCalibrationPastDue.sum} AS cnt
     FROM (
-      ${helpers.deviceCalibrationPastDue.innerQuery}
+      ${sqlSnippets.deviceCalibrationPastDue.innerQuery}
     ) AS sub;`,
   sqlForStatUnit: `
     SELECT
       CONCAT(
-        ROUND(${helpers.deviceCalibrationPastDue.sum} * 100 / COUNT(deviceid)),
+        ROUND(${sqlSnippets.deviceCalibrationPastDue.sum} * 100 / COUNT(deviceId)),
         '%'
       ) AS cnt
     FROM (
-      ${helpers.deviceCalibrationPastDue.innerQuery}
+      ${sqlSnippets.deviceCalibrationPastDue.innerQuery}
     ) AS sub;`,
   statUnit: '{unit}',
   statUnitI18nKey: 'deviceCalibrationPastDueStatUnit',
