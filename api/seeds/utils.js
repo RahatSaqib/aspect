@@ -45,6 +45,7 @@ const tables = [
   ['DeviceTypeCategory', 'name'],
   ['Unit', 'name'],
   ['Permission', seedStaticDataPermission],
+  ['TimeZone', 'id'],
   'DeviceMaintenanceStatus',
 ]
 

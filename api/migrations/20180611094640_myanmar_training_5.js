@@ -22,7 +22,6 @@ async function up(knex) {
         .notNullable()
       issueResolutionTrigger.specificType('resolutionConditions', 'JSON')
       addTimestamps(issueResolutionTrigger)
-      issueResolutionTrigger.charset('utf8')
     }
   )
 }
