@@ -18,7 +18,6 @@ async function up(knex) {
       .inTable('Assay')
     resultForm.specificType('formSchema', 'JSON')
     resultForm.primary(['partnerId', 'assayId'])
-    resultForm.charset('utf8')
   })
 
   await knex.schema.table('Result', result => {

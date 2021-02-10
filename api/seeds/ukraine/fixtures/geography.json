@@ -6,7 +6,7 @@
       "a3": "UKR",
       "culture": "uk-UA",
       "countryCode": "380",
-      "timezone": "Eastern European Time",
+      "timezone": "E. Europe Standard Time",
       "portNumber": null,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,

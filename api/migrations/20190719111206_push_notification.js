@@ -14,7 +14,6 @@ async function up(knex) {
     template.text('data')
     addCreateFieldsNullable(template)
     addUpdateFieldsNullable(template)
-    template.charset('utf8')
   })
 
   await knex.schema.createTable('PushNotificationMessage', message => {
@@ -59,7 +58,6 @@ async function up(knex) {
     message.text('body')
     message.text('data')
     addTimestamps(message)
-    message.charset('utf8')
   })
 
   await knex.schema.alterTable('Notification', notification => {

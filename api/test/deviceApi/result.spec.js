@@ -657,7 +657,7 @@ describe('Device Result API routes', () => {
           zip: '12345',
           latitude: 12.12,
           longitude: 15.12,
-          timezoneId: 'South Africa Standard Time',
+          timezoneid: 'South Africa Standard Time',
           hoursStart: 9,
           hoursEnd: 17,
         }
@@ -676,7 +676,7 @@ describe('Device Result API routes', () => {
             latitude: expectedSampleOriginSite.latitude,
             longitude: expectedSampleOriginSite.longitude,
           },
-          timezoneId: expectedSampleOriginSite.timezoneId,
+          timezoneId: expectedSampleOriginSite.timezoneid,
           hoursStart: expectedSampleOriginSite.hoursStart,
           hoursEnd: expectedSampleOriginSite.hoursEnd,
         }
@@ -757,7 +757,7 @@ describe('Device Result API routes', () => {
           .where({ id: _.last(resultIds) })
           .first()
 
-        const result2Status = await await knex('ResultWorkflowLog as rsl')
+        const result2Status = await knex('ResultWorkflowLog as rsl')
           .innerJoin(
             'ResultWorkflowStatus as rs',
             'rsl.resultWorkflowStatusId',
@@ -845,7 +845,7 @@ describe('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(result2.resultData), { a: 'c' })
         assert.equal(result2.errorCode, '1')
 
-        const result2Status = await await knex('ResultWorkflowLog as rsl')
+        const result2Status = await knex('ResultWorkflowLog as rsl')
           .innerJoin(
             'ResultWorkflowStatus as rs',
             'rsl.resultWorkflowStatusId',
