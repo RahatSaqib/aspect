@@ -22,12 +22,10 @@ module.exports = async (knex, partnerName, adminName, countryAbbreviation) => {
 
   const deviceIds = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .join('Site as s', 'd.siteId', 's.id')
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('dt.externalId', 'CepheidGeneXpert')
-    .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
     .where('d.partnerId', partnerId)
     .where('c.abbreviation', countryAbbreviation)
     .pluck('d.id')
