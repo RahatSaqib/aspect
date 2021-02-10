@@ -45,7 +45,7 @@ async function down(knex) {
       .references('id')
       .inTable('Geography')
       .onDelete('SET NULL')
-    tblReport.string('fileName').notNullable()
+    tblReport.string('fileName').notNullable().alter()
   })
 
   await knex.schema.dropTable('JobFunctionReport')

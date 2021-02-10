@@ -808,17 +808,27 @@ function createNewDeviceFromRequest(request, now) {
         ),
       }
     }
-    logger.debug('Create new device', {
-      reLabel: 'deviceApi:createNewDeviceFromRequest',
+
+    const siteExternalId = _.get(payload, 'site.id', null)
+    let defaultSite = {}
+    logger.debug(siteExternalId && !apiKey.geographyId && !apiKey.siteId, {
+      reLabel: 'deviceApi:createNewDevice',
     })
+    if (siteExternalId && !apiKey.geographyId && !apiKey.siteId)
+      defaultSite = await knex('Site as s')
+        .where('externalId', siteExternalId)
+        .first()
+
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
       serial: payload.serial,
       partnerId: apiKey.partnerId,
-      siteId: apiKey.siteId,
-      geographyId: apiKey.geographyId,
+      siteId: apiKey.siteId || _.get(defaultSite, 'id', null),
+      geographyId:
+        apiKey.geographyId || _.get(defaultSite, 'geographyId', null),
       approval: apiKey.siteId ? 'approved' : 'provisioned',
+      timezone: _.get(payload, 'configuration.data.timezone', null),
     })
     logger.debug('Assign new device an api key', {
       reLabel: 'deviceApi:createNewDeviceFromRequest',

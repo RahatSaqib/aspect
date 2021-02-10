@@ -30,6 +30,9 @@ async function up(knex) {
 }
 
 async function down(knex) {
+  await knex.schema.alterTable('SmsMessage', tbl => {
+    tbl.dropForeign('personId')
+  })
   await knex.schema.table('SmsMessage', tbl => {
     tbl
       .integer('personId')
@@ -39,7 +42,9 @@ async function down(knex) {
       .inTable('Person')
       .alter()
   })
-
+  await knex.schema.alterTable('EmailMessage', tbl => {
+    tbl.dropForeign('personId')
+  })
   await knex.schema.table('EmailMessage', tbl => {
     tbl
       .integer('personId')
