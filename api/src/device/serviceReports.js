@@ -58,7 +58,11 @@ async function getDeviceActivityReport(auth, query) {
   // get rows
   const getItems = deviceQuery
     .clone()
-    .leftJoin('Result as r', 'd.id', 'r.deviceId')
+    .leftJoin('Result as r', builder => {
+      builder
+        .on('d.id', 'r.deviceId')
+        .andOn(knex.raw('r.endedOn between ? and ?', [minDate, maxDate]))
+    })
     .leftJoin(
       'DeviceMaintenanceStatusLog as dmsl',
       'd.deviceMaintenanceStatusLogId',
@@ -78,10 +82,9 @@ async function getDeviceActivityReport(auth, query) {
     )
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
-    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .where('dc.hasResults', 1)
     .groupBy('d.id', 'd.name', 'd.serial')
     .orderBy('d.name')
-
   const deviceResultsPerMonths = await deviceQuery
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
