@@ -11,7 +11,7 @@ const routes = [
     config: {
       description: 'Device Status Over Time',
       notes: 'List of devices and their status history over time',
-      auth: { scope: ['device:view'] },
+      auth: { scope: ['device:view', 'operationalData:view'] },
       validate: {
         query: {
           minDate: Joi.date()
