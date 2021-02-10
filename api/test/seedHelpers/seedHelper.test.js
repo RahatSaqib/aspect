@@ -116,10 +116,10 @@ describe('Seed helpers unit functions', () => {
           name: 'Lab Admin',
           reports: [
             'critical_errors_by_device',
+            'device_calibration_report',
             'mtb_detected_rr_detected',
             'results_hiv_not_suppressed',
             'rif_resistance_rate',
-            'device_calibration_report',
           ],
           permissions: [
             {
@@ -174,10 +174,10 @@ describe('Seed helpers unit functions', () => {
           name: 'Lab Admin',
           reports: [
             'critical_errors_by_device',
+            'device_calibration_report',
             'mtb_detected_rr_detected',
             'results_hiv_not_suppressed',
             'rif_resistance_rate',
-            'device_calibration_report',
           ],
         }
       )
