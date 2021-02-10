@@ -242,7 +242,12 @@ function validateSortPageParams(...sortColumns) {
   }
 }
 
-function validateDateRangeParams() {
+function validateDateRangeParams(dateFormat = false) {
+  if (dateFormat)
+    return {
+      minDate: Joi.date().iso().allow(null).description('From Date'),
+      maxDate: Joi.date().iso().allow(null).description('To Date'),
+    }
   return {
     minDate: Joi.string()
       .pattern(REGEX_ISODATESTRING)
