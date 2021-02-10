@@ -31,9 +31,8 @@ const getMonthYearUserTimeZoneField = (
     '-',
     CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
-
-
     ) ${alias ? ` as ${alias}` : ''}`)
+
 function parseDateOrDefault(
   date,
   options = { formatString: null, backupDate: null, defaultDate: null }
