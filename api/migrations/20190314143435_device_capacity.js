@@ -20,7 +20,6 @@ async function up(knex) {
     capacity.string('name').notNullable()
     capacity.boolean('defaultForDeviceType').notNullable().defaultTo(0)
     capacity.float('dailyCapacity').notNullable()
-    capacity.charset('utf8')
   })
 
   await knex.schema.table('Device', device => {

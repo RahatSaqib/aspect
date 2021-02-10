@@ -9,6 +9,7 @@ const {
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const logger = require('../shared/logger')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -72,7 +73,9 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
     .first('sm.message', 'sm.phoneNumber as cell')
 
   const { cell, message } = sms || {}
-
+  logger.debug(` Sending ${smsMessageId} to ${cell} with ${message}`, {
+    reLabel: 'aspect:sms:send',
+  })
   // sms handler
   const { sendSms } = require('./smsUtil')
 
