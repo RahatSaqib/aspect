@@ -1,7 +1,3 @@
-// const Promise = require('bluebird')
-
-// const { upsertDashboardWidgets } = require('../common')
-
 const Promise = require('bluebird')
 const { addYears, subYears, subDays } = require('date-fns')
 const { random } = require('lodash')
