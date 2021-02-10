@@ -23,34 +23,33 @@ describe('/account-details', () => {
       shared.checkToken(server, path)
 
       it('should return the account details for the currently logged in user', async () => {
-        await server
+        const res = await server
           .get(path)
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'Object')
-            const accountDetailsFieldNames = [
-              'id',
-              'userId',
-              'username',
-              'name',
-              'title',
-              'email',
-              'email2',
-              'phone',
-              'cell',
-              'countryId',
-              'stateId',
-              'lgaId',
-              'timezone',
-              'culture',
-            ]
-            _.each(accountDetailsFieldNames, fieldName => {
-              assert.property(res.body.data, fieldName)
-            })
-          })
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'Object')
+        const accountDetailsFieldNames = [
+          'id',
+          'userId',
+          'username',
+          'name',
+          'title',
+          'email',
+          'email2',
+          'phone',
+          'cell',
+          'countryId',
+          'stateId',
+          'lgaId',
+          'timezone',
+          'culture',
+        ]
+        _.each(accountDetailsFieldNames, fieldName => {
+          assert.property(res.body.data, fieldName)
+        })
       })
     })
   })
@@ -78,58 +77,57 @@ describe('/account-details', () => {
           'timezone',
           'culture',
         ])
-        await server
+        let res = await server
           .put(path)
           .send({ ...contactDetails, title: newJobTitle })
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'Object')
-            const accountDetailsFieldNames = [
-              'id',
-              'userId',
-              'username',
-              'name',
-              'title',
-              'email',
-              'email2',
-              'phone',
-              'cell',
-              'countryId',
-              'stateId',
-              'lgaId',
-              'timezone',
-              'culture',
-            ]
-            _.each(accountDetailsFieldNames, fieldName => {
-              assert.property(res.body.data, fieldName)
-            })
-            assert.equal(res.body.data.title, newJobTitle)
-          })
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'Object')
+        const accountDetailsFieldNames = [
+          'id',
+          'userId',
+          'username',
+          'name',
+          'title',
+          'email',
+          'email2',
+          'phone',
+          'cell',
+          'countryId',
+          'stateId',
+          'lgaId',
+          'timezone',
+          'culture',
+        ]
+        _.each(accountDetailsFieldNames, fieldName => {
+          assert.property(res.body.data, fieldName)
+        })
+        assert.equal(res.body.data.title, newJobTitle)
+
         // Make sure the data has been persisted
-        await server
+        res = await server
           .get('/api/account-details/current')
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.body.data.title, newJobTitle)
 
-            // Clean Up: Update the user with their old title again
-            contactDetails = _.omit(accountDetails, [
-              'userId',
-              'username',
-              'timezone',
-              'culture',
-            ])
-          })
-        await server
+        assert.equal(res.body.data.title, newJobTitle)
+
+        // Clean Up: Update the user with their old title again
+        contactDetails = _.omit(accountDetails, [
+          'userId',
+          'username',
+          'timezone',
+          'culture',
+        ])
+
+        res = await server
           .put(path)
           .send({ ...contactDetails, title: originalTitle })
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.body.data.title, originalTitle)
-          })
+
+        assert.equal(res.body.data.title, originalTitle)
       })
     })
   })
@@ -145,11 +143,11 @@ describe('/account-details', () => {
 
       it('should update user preferences for the currently logged in user and return them', async () => {
         const originalTimezone = accountDetails.timezone
-        const newTimezone = 'South African Standard Time'
+        const newTimezone = 'South Africa Standard Time'
         assert.notEqual(
           accountDetails.timezone,
           newTimezone,
-          `The timezone set for this person is already set to 'South African Standard Time'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the timezone for this person (id=${accountDetails.id}) to something other than '${newTimezone}'`
+          `The timezone set for this person is already set to 'South Africa Standard Time'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the timezone for this person (id=${accountDetails.id}) to something other than '${newTimezone}'`
         )
         let userPreferences = _.omit(accountDetails, [
           'userId',
@@ -165,66 +163,65 @@ describe('/account-details', () => {
           'lgaId',
           'zip',
         ])
-        await server
+        let res = await server
           .put(path)
           .send({ ...userPreferences, timezone: newTimezone })
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'data')
-            assert.typeOf(res.body.data, 'Object')
-            const accountDetailsFieldNames = [
-              'id',
-              'userId',
-              'username',
-              'name',
-              'title',
-              'email',
-              'email2',
-              'phone',
-              'cell',
-              'countryId',
-              'stateId',
-              'lgaId',
-              'timezone',
-              'culture',
-            ]
-            _.each(accountDetailsFieldNames, fieldName => {
-              assert.property(res.body.data, fieldName)
-            })
-            assert.equal(res.body.data.timezone, newTimezone)
-          })
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'Object')
+        const accountDetailsFieldNames = [
+          'id',
+          'userId',
+          'username',
+          'name',
+          'title',
+          'email',
+          'email2',
+          'phone',
+          'cell',
+          'countryId',
+          'stateId',
+          'lgaId',
+          'timezone',
+          'culture',
+        ]
+        _.each(accountDetailsFieldNames, fieldName => {
+          assert.property(res.body.data, fieldName)
+        })
+        assert.equal(res.body.data.timezone, newTimezone)
+
         // Make sure the data has been persisted
-        await server
+        res = await server
           .get('/api/account-details/current')
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.body.data.timezone, newTimezone)
 
-            // Clean Up: Update the user with their old title again
-            userPreferences = _.omit(accountDetails, [
-              'userId',
-              'username',
-              'name',
-              'title',
-              'email',
-              'email2',
-              'phone',
-              'cell',
-              'countryId',
-              'stateId',
-              'lgaId',
-              'zip',
-            ])
-          })
-        await server
+        assert.equal(res.body.data.timezone, newTimezone)
+
+        // Clean Up: Update the user with their old title again
+        userPreferences = _.omit(accountDetails, [
+          'userId',
+          'username',
+          'name',
+          'title',
+          'email',
+          'email2',
+          'phone',
+          'cell',
+          'countryId',
+          'stateId',
+          'lgaId',
+          'zip',
+        ])
+
+        res = await server
           .put(path)
           .send({ ...userPreferences, timezone: originalTimezone })
           .set('Authorization', `Bearer ${shared.token}`)
-          .then(res => {
-            assert.equal(res.body.data.timezone, originalTimezone)
-          })
+
+        assert.equal(res.body.data.timezone, originalTimezone)
       })
     })
   })
