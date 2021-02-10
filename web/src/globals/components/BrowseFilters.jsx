@@ -107,34 +107,32 @@ export const BrowseFilters = ({
   dateFormat,
   showBrowseDropdown = true,
   ...restProps
-}) => {
-  return (
-    <div className={cssClasses('Container')}>
-      <FiltersBtnGroup
-        intl={intl}
-        filters={restProps.filters}
-        onRemoveFilterItem={onRemoveFilterItem}
-        className={cssClasses('FiltersBtnGroup')}
-      >
-        {showBrowseDropdown && (
-          <BrowseNavDropdown
-            history={history}
-            location={location}
-            source={reducedSource}
-          />
-        )}
-      </FiltersBtnGroup>
-      {children}
+}) => (
+  <div className={cssClasses('Container')}>
+    <FiltersBtnGroup
+      intl={intl}
+      filters={restProps.filters}
+      onRemoveFilterItem={onRemoveFilterItem}
+      className={cssClasses('FiltersBtnGroup')}
+    >
+      {showBrowseDropdown && (
+        <BrowseNavDropdown
+          history={history}
+          location={location}
+          source={reducedSource}
+        />
+      )}
+    </FiltersBtnGroup>
+    {children}
 
-      <FiltersPanel
-        intl={intl}
-        className={cssClasses('FiltersPanel')}
-        dateFormat={dateFormat}
-        {...restProps}
-      />
-    </div>
-  )
-}
+    <FiltersPanel
+      intl={intl}
+      className={cssClasses('FiltersPanel')}
+      dateFormat={dateFormat}
+      {...restProps}
+    />
+  </div>
+)
 
 export const navigations = [
   {
