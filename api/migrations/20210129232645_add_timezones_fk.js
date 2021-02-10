@@ -45,7 +45,7 @@ async function up(knex) {
     .join('Geography as g', 'p.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Site as s', 'g.id', 's.geographyId')
-    .whereIn('s.id', personsToUpdate)
+    .whereIn('p.id', personsToUpdate)
     .update('p.timezone', knex.raw('COALESCE(s.timezoneId,c.timezone)'))
 
   await knex.schema.raw(`ALTER TABLE TimeZone MODIFY
