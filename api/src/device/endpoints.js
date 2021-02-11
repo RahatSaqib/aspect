@@ -32,7 +32,7 @@ function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
 
-function listDevicesBaseRequest(dateFormat = false) {
+function listDevicesBaseRequest(isoDateFormatExpected = false) {
   return {
     auth: { scope: ['device:view', 'operationalData:view'] },
     validate: {
@@ -106,7 +106,7 @@ function listDevicesBaseRequest(dateFormat = false) {
           .allow('')
           .description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(dateFormat),
+        ...validateDateRangeParams(isoDateFormatExpected),
         ...validateSortPageParams(
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',

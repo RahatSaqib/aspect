@@ -242,8 +242,8 @@ function validateSortPageParams(...sortColumns) {
   }
 }
 
-function validateDateRangeParams(dateFormat = false) {
-  if (dateFormat)
+function validateDateRangeParams(isoDateFormatExpected = false) {
+  if (isoDateFormatExpected)
     return {
       minDate: Joi.date().iso().allow(null).description('From Date'),
       maxDate: Joi.date().iso().allow(null).description('To Date'),
