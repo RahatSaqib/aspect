@@ -25,7 +25,7 @@ const inventoryGraphs = {
     ],
     componentSize: 'full',
     group: 'assaysNotNeeded',
-    graphRenderPermissions: ['dashboard'],
+    graphRenderPermissions: ['dashboard', 'operationalData'],
     graphType: [
       {
         id: 'tbResultsByCategory1Monthly',
