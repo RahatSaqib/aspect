@@ -486,11 +486,23 @@ const deviceMaker = {
       activity: 'edit',
     },
     {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
+      activity: 'view',
+    },
+    {
       module: 'operationalData',
       activity: 'view',
     },
     {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'site',
       activity: 'view',
     },
   ],
@@ -568,7 +580,11 @@ const donor = {
       activity: 'edit',
     },
     {
-      module: 'site',
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
       activity: 'view',
     },
     {
@@ -580,7 +596,7 @@ const donor = {
       activity: 'view',
     },
     {
-      module: 'task',
+      module: 'site',
       activity: 'view',
     },
   ],
