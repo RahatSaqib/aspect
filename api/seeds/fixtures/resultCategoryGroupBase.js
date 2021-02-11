@@ -93,7 +93,7 @@ const GxMtbRifMtbDetected = {
 const GxMtbRifMtbDetectedRifNotDetected = {
   externalId: 'GxMtbRifMtbDetectedRifNotDetected',
   i18nKey: 'gxMtbRifMtbDetectedRifNotDetected',
-  name: 'MTB Not Detected RIF Not Detected',
+  name: 'MTB Detected RIF Not Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRif',
