@@ -308,123 +308,116 @@ async function shouldTriggerHardwareErrorAnalysis(
 
 async function shouldLogDeviceCalibration(
   knex,
-  device,
+  deviceId,
   payload,
-  deviceOperationId
+  deviceMaintenanceTypeId
 ) {
   const {
     startedOn: calibratedOn,
     data: { details = {} },
   } = payload
-  // on meeting conditions - trigger auto-calibration event
+  /**
+   * if log entry contains non-empty array `Calibrations`
+   * then insert/update entry into DeviceMaintenance table
+   */
   if (
     details.Calibrations &&
     _.isArray(details.Calibrations) &&
-    details.Calibrations.length
+    details.Calibrations.length &&
+    deviceId &&
+    calibratedOn
   ) {
     logger.silly(
       `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
-        deviceId: device.id,
+        deviceId,
         calibratedOn,
-        deviceOperationId,
       })}`,
       { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
     )
 
-    const { id: deviceId } = device
-    if (deviceId && calibratedOn) {
+    if (!deviceMaintenanceTypeId) {
+      deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+    }
+
+    // get currently active maintenance item
+    const itemCurrent = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+      /**
+       * below ordering is actually not needed cuz we should have only single entry with
+       * above WHERE condition, but let's keep this 'orderBy' here to have such
+       * extra validation to get item with latest 'contextDate'
+       */
+      .orderBy('contextDate', 'desc')
+      .first()
+
+    // set `current` to 1 if ...
+    const current =
+      // ... missing current entry ...
+      !itemCurrent ||
+      // ... or when current calibration date is less than new date
+      itemCurrent.contextDate < calibratedOn
+        ? 1
+        : 0
+
+    // reset 'current' if current calibration date is less than new date
+    const shouldResetCurrent =
+      itemCurrent && itemCurrent.contextDate < calibratedOn
+    if (shouldResetCurrent) {
+      await knex('DeviceMaintenance').update({ current: 0 }).where({
+        id: itemCurrent.id,
+      })
+    }
+
+    // get today's maintenance item
+    const itemToday = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+      })
+      // only one entry per day
+      .whereRaw(`DATE(contextDate) = DATE(?)`, [calibratedOn])
+      .first()
+
+    if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
+      /**
+       * condition means itemCurrent had been reset (because
+       * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
+       * exists and by some reason is NOT set as 'current'
+       */
       logger.silly(
-        `shouldLogDeviceCalibration: 'deviceId' and 'calibratedOn' are defined`,
+        `shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true`,
         { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
       )
-
-      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
-        'calibration'
+      await knex('DeviceMaintenance').update({ current: 1 }).where({
+        id: itemToday.id,
+      })
+    } else if (!itemToday) {
+      logger.silly(
+        `shouldLogDeviceCalibration: insert item for today, because it is missing`,
+        { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
       )
-
-      // get currently active maintenance item
-      const itemCurrent = await knex('DeviceMaintenance')
-        .where({
-          deviceId,
-          deviceMaintenanceTypeId,
-          current: 1,
-        })
+      await knex('DeviceMaintenance').insert({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current,
+        contextDate: calibratedOn,
+        notes: 'Create calibration from GeneXpert logs',
+        createdOn: new Date(),
+        updatedOn: new Date(),
         /**
-         * below ordering is actually not needed cuz we should have only single entry with
-         * above WHERE condition, but let's keep this 'orderBy' here to have such
-         * extra validation to get item with latest 'contextDate'
+         * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
          */
-        .orderBy('contextDate', 'desc')
-        .first()
-
-      // get today's maintenance item
-      const itemToday = await knex('DeviceMaintenance')
-        .where({
-          deviceId,
-          deviceMaintenanceTypeId,
-        })
-        // only one entry per day
-        .whereRaw(`DATE(contextDate) = DATE(?)`, [calibratedOn])
-        .first()
-
-      // set `current` to 1 if ...
-      const current =
-        // ... missing current entry ...
-        !itemCurrent ||
-        // ... or when current calibration date is less than new date
-        itemCurrent.contextDate < calibratedOn
-          ? 1
-          : 0
-
-      // reset 'current' if current calibration date is less than new date
-      const shouldResetCurrent =
-        itemCurrent && itemCurrent.contextDate < calibratedOn
-      if (shouldResetCurrent) {
-        await knex('DeviceMaintenance').update({ current: 0 }).where({
-          id: itemCurrent.id,
-        })
-      }
-
-      if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
-        /**
-         * condition means itemCurrent had been reset (because
-         * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
-         * exists and by some reason is NOT set as 'current'
-         */
-        logger.silly(
-          `shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true`,
-          { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
-        )
-        await knex('DeviceMaintenance').update({ current: 1 }).where({
-          id: itemToday.id,
-        })
-      } else if (!itemToday) {
-        logger.silly(
-          `shouldLogDeviceCalibration: insert item for today, because it is missing`,
-          { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
-        )
-        await knex('DeviceMaintenance').insert({
-          deviceId,
-          deviceMaintenanceTypeId,
-          current,
-          contextDate: calibratedOn,
-          notes: JSON.stringify({
-            description: 'log calibration',
-            deviceOperationId, // GeneXpert log entry (stored in DeviceOperation) triggered this flow
-          }),
-          createdOn: new Date(),
-          updatedOn: new Date(),
-          /**
-           * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
-           */
-        })
-      } else {
-        /**
-         * if we are here then itemToday with calibratedOn exists
-         * (i.e. no dupes for same day for this deviceId),
-         * and no need to change itemCurrent
-         */
-      }
+      })
+    } else {
+      /**
+       * if we are here then itemToday with calibratedOn exists
+       * (i.e. no dupes for same day for this deviceId),
+       * and no need to change itemCurrent
+       */
     }
   }
 }

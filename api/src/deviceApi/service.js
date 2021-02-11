@@ -6,6 +6,7 @@ const { asyncHandler } = require('../routes')
 const {
   deviceApprovalToId,
   deviceTypeToPlugin,
+  deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
 const {
   resultUpdated,
@@ -377,7 +378,15 @@ async function addDeviceDataWithContext(context) {
         deviceOperationId
       )
 
-      await shouldLogDeviceCalibration(knex, device, payload, deviceOperationId)
+      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+        'calibration'
+      )
+      await shouldLogDeviceCalibration(
+        knex,
+        device.id,
+        payload,
+        deviceMaintenanceTypeId
+      )
     }
   }
 

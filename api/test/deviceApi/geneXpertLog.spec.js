@@ -1,5 +1,5 @@
 const chai = require('chai')
-const { format, subDays, addDays } = require('date-fns')
+const { format, subDays, addDays, addMinutes } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
@@ -87,6 +87,11 @@ describe('Process GeneXpert Logs', () => {
       },
     })
 
+  let deviceMaintenanceTypeId
+  before(async () => {
+    deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+  })
+
   beforeEach(async () => {
     await context.createDeviceWithResult()
   })
@@ -124,40 +129,46 @@ describe('Process GeneXpert Logs', () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
 
-    let logData = logDataWithCalibration
+    let logData
+    let res
+    const deviceMaintenanceProps = {
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    }
 
     /**
      * check that device doesn't have a calibration defined
      */
-    const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
-      'calibration'
-    )
     let deviceMaintenance = await knex('DeviceMaintenance')
-      .where({
-        deviceId,
-        deviceMaintenanceTypeId,
-        current: 1,
-      })
+      .where(deviceMaintenanceProps)
       .first()
     assert.isUndefined(deviceMaintenance)
 
     /**
-     * notice that `logData` contains `Calibrations` array defined, and
-     * device at this point doesn't have any item in DeviceMaintenance.
-     * So we expect that posting logData will add new item in DeviceMaintenance table
+     * post data with empty Calibrations array - no entry should create
+     * in DeviceMaintenance
      */
-    let res = await postLog(deviceAuth, logSource, logData)
+    logData = logDataWithErrors
+    res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
+    // check that device now has calibration defined
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(deviceMaintenanceProps)
+      .first()
+    assert.isUndefined(deviceMaintenance)
 
     /**
-     * check that device now has calibration defined
+     * post `logData` with `Calibrations` array defined.
+     * Because no item for this device/date exists in DeviceMaintenance -
+     * should add new item in DeviceMaintenance table
      */
+    logData = logDataWithCalibration
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    // check that device now has calibration defined
     deviceMaintenance = await knex('DeviceMaintenance')
-      .where({
-        deviceId,
-        deviceMaintenanceTypeId,
-        current: 1,
-      })
+      .where(deviceMaintenanceProps)
       .first()
     assert.isDefined(deviceMaintenance)
 
@@ -172,11 +183,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(res.status, 200)
     //
     deviceMaintenance = await knex('DeviceMaintenance')
-      .where({
-        deviceId,
-        deviceMaintenanceTypeId,
-        current: 1,
-      })
+      .where(deviceMaintenanceProps)
       .first()
     // current calibration date is NOT equal to what we've just posted
     assert.isTrue(deviceMaintenance.contextDate > logData.occurredOn)
@@ -192,16 +199,27 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(res.status, 200)
     //
     deviceMaintenance = await knex('DeviceMaintenance')
-      .where({
-        deviceId,
-        deviceMaintenanceTypeId,
-        current: 1,
-      })
+      .where(deviceMaintenanceProps)
       .first()
     // current calibration date is equal to what we've just posted
     assert.isTrue(
       deviceMaintenance.contextDate.getTime() === logData.occurredOn.getTime()
     )
+
+    /**
+     * post log data with same day but a bit newer date
+     */
+    logData = {
+      ...logData,
+      occurredOn: addMinutes(logData.occurredOn, 2),
+    }
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    const deviceMaintenanceNew = await knex('DeviceMaintenance')
+      .where(deviceMaintenanceProps)
+      .first()
+    // see that API didn't duplicated entry per same device in same day
+    assert.isTrue(deviceMaintenance.id === deviceMaintenanceNew.id)
   })
 
   it('should return 400 if some required props missed for log data', async () => {
