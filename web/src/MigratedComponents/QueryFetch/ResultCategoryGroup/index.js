@@ -1,0 +1,6 @@
+const RESULT_CATEGORY_GROUP_SELECT_LIST = {
+  ENDPOINT: '/result-category-group/select-list',
+  KEY: 'RESULT_CATEGORY_GROUP_SELECT_LIST',
+}
+
+export default RESULT_CATEGORY_GROUP_SELECT_LIST

@@ -36,7 +36,6 @@ async function up(knex) {
     issueStatusSeverity.string('i18nKey').notNullable()
     issueStatusSeverity.string('externalId').notNullable()
     issueStatusSeverity.integer('sortOrder').unsigned().notNullable()
-    issueStatusSeverity.charset('utf8')
   })
 
   await knex('IssueStatusSeverity').insert({
@@ -79,7 +78,6 @@ async function up(knex) {
     fileContentType.string('mimeType')
     // plain html | png jpeg | mpeg | webm | json octet-stream
     fileContentType.string('mimeSubtype')
-    fileContentType.charset('utf8')
   })
 
   await knex.schema.createTable('FileReference', fileReference => {
@@ -95,7 +93,6 @@ async function up(knex) {
     fileReference.integer('length')
     addCreateFieldsNullable(fileReference)
     addUpdateFieldsNullable(fileReference)
-    fileReference.charset('utf8')
   })
 
   await knex.schema.createTable('ResultFileReference', resultFileReference => {
@@ -114,7 +111,6 @@ async function up(knex) {
       .references('id')
       .inTable('FileReference')
     resultFileReference.primary(['resultId', 'fileReferenceId'])
-    resultFileReference.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
@@ -146,7 +142,6 @@ async function up(knex) {
     webhookTemplate.string('fileName')
     addCreateFieldsNullable(webhookTemplate)
     addUpdateFieldsNullable(webhookTemplate)
-    webhookTemplate.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookMessage', webhookMessage => {
@@ -198,7 +193,6 @@ async function up(knex) {
     webhookMessage.specificType('params', 'JSON')
     webhookMessage.text('payload')
     addTimestamps(webhookMessage)
-    webhookMessage.charset('utf8')
   })
 
   await knex.schema.table('MessageType', messageType => {

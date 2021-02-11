@@ -113,11 +113,12 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
     .clone()
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
@@ -205,6 +206,7 @@ async function getResultsForExport(query, auth) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   const data = await resultQuery
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
@@ -238,6 +240,21 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         'r.resultCategory2',
         'rca2.resultCategoryId'
       )
+    })
+    .leftJoin('ResultCategoryGroup as rcg', function () {
+      this.on('r.assayId', 'rcg.assayId')
+        .andOn(function () {
+          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+            'r.resultCategory1',
+            'rcg.resultCategory1Id'
+          )
+        })
+        .andOn(function () {
+          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+            'r.resultCategory2',
+            'rcg.resultCategory2Id'
+          )
+        })
     })
     // only results which are reportable for either ResultCategory
     .where(builder =>
@@ -325,11 +342,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       country: 'c',
     })
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
     .clone()
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'r.updatedOn')
     .select(
       'r.id',
@@ -2095,6 +2113,21 @@ function getBaseQueryForResults() {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const resultQuery = getBaseQueryForResults()
+    .leftJoin('ResultCategoryGroup as rcg', function () {
+      this.on('r.assayId', 'rcg.assayId')
+        .andOn(function () {
+          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+            'r.resultCategory1',
+            'rcg.resultCategory1Id'
+          )
+        })
+        .andOn(function () {
+          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+            'r.resultCategory2',
+            'rcg.resultCategory2Id'
+          )
+        })
+    })
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
@@ -2127,6 +2160,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
       onlyReportableResults: 'rca.reportable',
+      resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {

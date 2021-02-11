@@ -152,6 +152,10 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
         module: 'inventory',
         activity: 'view',
       },
@@ -165,10 +169,6 @@ module.exports = [
       },
       {
         module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'task',
         activity: 'view',
       },
     ],
@@ -236,6 +236,10 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
         module: 'assay',
         activity: 'view',
       },
@@ -273,6 +277,10 @@ module.exports = [
     permissions: [
       {
         module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'device',
         activity: 'edit',
       },
       {
@@ -367,6 +375,10 @@ module.exports = [
       {
         module: 'account',
         activity: 'edit',
+      },
+      {
+        module: 'device',
+        activity: 'view',
       },
       {
         module: 'assay',

@@ -9,7 +9,10 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const timezone = require('./fixtures/TimeZone.json')
+const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
 const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
+const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
@@ -846,6 +849,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
+
+  await upsertResultCategoryGroup(
+    knex,
+    gxResultCategoryGroups,
+    assayExternalIds
+  )
 }
 
 async function createAssay(
@@ -1598,11 +1607,16 @@ async function baseGxAlertMigration(
         }
       })
       .first()
+    const personTimeZone =
+      _.get(
+        _.find(timezone.data, tz => tz.id === person.timezone),
+        'id'
+      ) || countries[0].timezone
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
         existingPerson.partnerId !== partnerId ||
-        existingPerson.timezone !== person.timezone ||
+        existingPerson.timezone !== personTimeZone ||
         existingPerson.title !== person.title ||
         existingPerson.geographyId !== geographyId ||
         existingPerson.email !== person.personEmailAddress ||
@@ -1618,7 +1632,7 @@ async function baseGxAlertMigration(
             ...existingPerson,
             name: person.personName,
             partnerId,
-            timezone: person.timezone,
+            timezone: personTimeZone,
             title: person.title,
             geographyId,
             email: person.personEmailAddress,
@@ -1636,7 +1650,7 @@ async function baseGxAlertMigration(
       ;[personId] = await knex('Person').insert({
         name: person.personName,
         partnerId,
-        timezone: person.timezone || countries[0].timezone,
+        timezone: personTimeZone,
         geographyId,
         title: person.title,
         email: person.personEmailAddress,
@@ -1714,13 +1728,11 @@ async function baseGxAlertMigration(
 
 async function removeJobFunctions(knex, jobFunctionsToDelete) {
   await Promise.each(jobFunctionsToDelete, async ({ id }) => {
-    const jobs = await knex('Job').where('jobFunctionId', id)
-    if (jobs.length > 0) {
-      throw new Error(
-        `Error while trying to remove Job the JobFunctionId = ${id}. You should remove the jobs manually first.`
-      )
+    const jobIds = await knex('Job').where('jobFunctionId', id).pluck('id')
+    if (jobIds.length > 0) {
+      await knex('JobContext').whereIn('jobId', jobIds).delete()
+      await knex('Job').whereIn('id', jobIds).delete()
     }
-
     await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
     await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
     await knex('JobFunctionReport').where('jobFunctionId', id).delete()
@@ -1761,7 +1773,7 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
 
         if (!permissionId)
           throw new Error(
-            `Unexistant permission ${permission.module}:${permission.activity}`
+            `Permission ${permission.module}:${permission.activity} doesn't exist and therefore cannot be assigned to a job function.`
           )
 
         return permissionId

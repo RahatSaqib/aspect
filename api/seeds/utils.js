@@ -45,6 +45,7 @@ const tables = [
   ['DeviceTypeCategory', 'name'],
   ['Unit', 'name'],
   ['Permission', seedStaticDataPermission],
+  ['TimeZone', 'id'],
   'DeviceMaintenanceStatus',
 ]
 
@@ -2485,12 +2486,12 @@ async function insertSites(knex, partnerId, countryId, sites) {
       }
 
       const siteTagDetails = { tagId, siteId }
-
       const { siteTagCount } = await knex('SiteTag')
         .where(siteTagDetails)
         .count('tagId as siteTagCount')
+        .first()
 
-      if (!siteTagCount) {
+      if (siteTagCount === 0) {
         await knex('SiteTag').insert(siteTagDetails)
       }
     })
