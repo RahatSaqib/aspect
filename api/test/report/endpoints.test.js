@@ -10,18 +10,6 @@ const { createTestContext } = require('../deviceApi/utils')
 const { knex } = require('../../src/db')
 const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 
-const baseConfig = {
-  requirePrinter: 'yes',
-  adminPassword: 'pwd123',
-  firmwareUpdateRequired: 'no',
-}
-const context = createTestContext(server, {
-  user: 'admin',
-  type: 'DaktariVirology',
-  partner: 'Partner One',
-  baseConfig,
-})
-
 describe('report endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/report/endpoints', {
@@ -55,8 +43,15 @@ describe('report endpoints', () => {
   })
 
   describe('GET data for report Device Calibration Past Due', () => {
+    let context
     let deviceMaintenanceTypeId
+
     before(async () => {
+      context = createTestContext(server, {
+        user: 'admin',
+        type: 'CepheidGeneXpert',
+        partner: 'Partner One',
+      })
       deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
     })
     beforeEach(async () => {
