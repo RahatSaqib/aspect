@@ -156,10 +156,6 @@ async function getListDevices(query, auth) {
       }
     })
     .modify(queryBuilder => {
-      if (query.resultCategoryId)
-        queryBuilder
-          .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-          .where('rca.resultCategoryId', query.resultCategoryId)
       if (query.onlyOpenIssues || query.issueTypeId) {
         queryBuilder.innerJoin('Issue as issue', 'issue.deviceId', 'd.id')
         if (query.issueTypeId)

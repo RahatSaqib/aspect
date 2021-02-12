@@ -68,14 +68,6 @@ function listDevicesBaseRequest() {
           .positive()
           .optional()
           .description('The disease ID'),
-        resultCategoryId: Joi.number()
-          .allow('')
-          .description('Result Category ID'),
-        resultCategoryGroupId: Joi.string()
-          .allow('')
-          .description(
-            'Result Category Group external id for assays with multiple results'
-          ),
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),

@@ -59,6 +59,7 @@ export function receivedExportResponse(currentFormatType, response) {
  * ---------------- Reducers -----------------
  */
 const ListConfig = Immutable.Record({
+  assayId: false,
   assayAndResultCategory: false,
   geography: false,
   state: true, // under geography, optional
@@ -78,7 +79,6 @@ const ListConfig = Immutable.Record({
   deviceMaintenanceStatus: false,
   externalId: false,
   notificationName: false,
-  assayAndResultCategoryGroup: false,
 })
 
 const ListExport = Immutable.Record({
