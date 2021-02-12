@@ -76,7 +76,7 @@ describe('Global reports', () => {
     })
   })
 
-  describe('GET data for report Device Calibration Past Due', () => {
+  describe(`Validate data for report 'Device Calibration Report'`, () => {
     let context
     let deviceMaintenanceTypeId
 
