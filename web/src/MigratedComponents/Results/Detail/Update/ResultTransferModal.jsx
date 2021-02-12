@@ -210,8 +210,8 @@ const ResultTransferModal = ({
           <p>
             {formatMessage(messages.successMessagePatient, {
               patientId: <strong>{patientId}</strong>,
-              oldSiteName: <strong>{sourceSite && sourceSite.name}</strong>,
-              newSiteName: <strong>{selectedSite && selectedSite.text}</strong>,
+              oldSiteName: <strong>{sourceSite?.name}</strong>,
+              newSiteName: <strong>{selectedSite?.text}</strong>,
             })}
           </p>
           <br />
@@ -219,7 +219,7 @@ const ResultTransferModal = ({
         </div>
       </AspectDialog>
     )
-  }, [history, patientId, formatMessage, sourceSite, selectedSite])
+  }, [history, patientId, formatMessage, sourceSite?.name, selectedSite?.text])
 
   return (
     <AspectDialog

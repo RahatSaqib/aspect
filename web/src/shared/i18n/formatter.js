@@ -2,10 +2,10 @@
 // the json format that "json2po" expects
 exports.format = function(msgs) {
   const results = []
-  for (const [id, msg] of Object.entries(msgs)) {
+  for (const [id, { defaultMessage }] of Object.entries(msgs)) {
     results.push({
       id,
-      defaultMessage: msg.defaultMessage,
+      defaultMessage,
     })
   }
   return results
