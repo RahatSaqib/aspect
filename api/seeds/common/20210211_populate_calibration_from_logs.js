@@ -1,9 +1,7 @@
 const Promise = require('bluebird')
 
-const { transact } = require('../../src/db')
 const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 const { shouldLogDeviceCalibration } = require('../../src/plugin/utils')
-const logger = require('../../src/shared/logger')
 
 async function seed(knex) {
   const deviceOperations = await knex('DeviceOperation as do')
@@ -21,26 +19,21 @@ async function seed(knex) {
     )
 
     // process all DeviceOperation entries with specified Calibrations array
-    await transact(async knex =>
-      Promise.all(
-        deviceOperations.map(({ deviceId, startedOn, data }) => {
-          /**
-           * call same func `shouldLogDeviceCalibration` as in endpoint handler
-           * `addDeviceDataWithContext` from `api/src/deviceApi/service.js`
-           */
-          const payload = { startedOn, data: JSON.parse(data) }
-          return shouldLogDeviceCalibration(
-            knex,
-            deviceId,
-            payload,
-            deviceMaintenanceTypeId
-          )
-        })
-      )
-    ).then(null, err => {
-      logger.error(err)
-      throw err
-    })
+    await Promise.all(
+      deviceOperations.map(({ deviceId, startedOn, data }) => {
+        /**
+         * call same func `shouldLogDeviceCalibration` as in endpoint handler
+         * `addDeviceDataWithContext` from `api/src/deviceApi/service.js`
+         */
+        const payload = { startedOn, data: JSON.parse(data) }
+        return shouldLogDeviceCalibration(
+          knex,
+          deviceId,
+          payload,
+          deviceMaintenanceTypeId
+        )
+      })
+    )
   }
 }
 
