@@ -48,9 +48,9 @@ async function getSheetData(request, sheet) {
     )
   }
   const result = await dataFunc(auth, query)
-  const { ok, data, errorMessage } = result
+  const { ok, data, errorMessage, dynamicColumns = {} } = result
   if (ok) {
-    return data
+    return { data, dynamicColumns }
   }
 
   return Boom.preconditionFailed(
@@ -117,7 +117,10 @@ async function getAllSheetsData(request, sheets) {
     if (!sheet || boomError) return
 
     // get data for this sheet
-    const dataRows = await getSheetData(request, sheet)
+    const { data: dataRows, dynamicColumns } = await getSheetData(
+      request,
+      sheet
+    )
     if (Boom.isBoom(dataRows)) {
       boomError = dataRows
       return
@@ -125,6 +128,7 @@ async function getAllSheetsData(request, sheets) {
 
     data[sheetIndex] = {
       dataRows,
+      dynamicColumns,
       // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
     }
@@ -147,7 +151,6 @@ async function createReport(request, reply) {
   if (Boom.isBoom(data)) {
     throw data
   }
-
   const dataBuffer = await renderExcelTemplate({
     culture,
     templateFolderPath: externalId,

@@ -142,7 +142,6 @@ function setCellStyle(cell, style) {
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
   culture,
-  columns = [], // dynamic columns to generate at run-time and append at the end of predefined header columns
   data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   extension, // xlsx
   replacements = [],
@@ -169,7 +168,7 @@ async function renderExcelTemplate({
     if (extension === 'csv' && sheetIndex > 0) {
       return
     }
-
+    const { dynamicColumns = [] } = data[sheetIndex] || {}
     // replace placeholders, i.e. <Dates>, <States>, etc in the header
     _.each(replacements, ({ placeholder, value }) => {
       replaceSubstringInCell(worksheet, placeholder, value)
@@ -208,8 +207,13 @@ async function renderExcelTemplate({
       })
 
       // append dynamic columns if specified
-      if (columns.length > 0) {
-        addColumnsToHeader(worksheet, columns, headerRow, allHeaderRows.length)
+      if (dynamicColumns.length > 0) {
+        addColumnsToHeader(
+          worksheet,
+          dynamicColumns,
+          headerRow,
+          allHeaderRows.length
+        )
       }
 
       // fill in array 'rows'
@@ -230,9 +234,11 @@ async function renderExcelTemplate({
             return value
           })
           let valuesInDynamicColumns = []
-          if (columns.length > 0 && dataSelector) {
-            const normalizedValues = dataSelector(dataRow)
-            valuesInDynamicColumns = columns.map(
+          if (dynamicColumns.length > 0) {
+            let normalizedValues
+            if (dataSelector) normalizedValues = dataSelector(dataRow)
+            else normalizedValues = dataRow
+            valuesInDynamicColumns = dynamicColumns.map(
               column => normalizedValues[column.key]
             )
           }

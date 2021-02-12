@@ -32,7 +32,7 @@ function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
 
-function listDevicesBaseRequest() {
+function listDevicesBaseRequest(isoDateFormatExpected = false) {
   return {
     auth: { scope: ['device:view', 'operationalData:view'] },
     validate: {
@@ -106,7 +106,7 @@ function listDevicesBaseRequest() {
           .allow('')
           .description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(),
+        ...validateDateRangeParams(isoDateFormatExpected),
         ...validateSortPageParams(
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
@@ -723,7 +723,7 @@ const routes = [
       description: 'Device list with maintenance status history for each day',
       notes:
         'Used as a data source for the device status calendar on the operational dashboard',
-      ...listDevicesBaseRequest(),
+      ...listDevicesBaseRequest(true),
       response: {
         options: {
           allowUnknown: false,

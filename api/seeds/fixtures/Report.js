@@ -90,6 +90,23 @@ const resultsHivNotSuppressed = {
   ],
 }
 
+const deviceActivity = {
+  name: 'Device Activity',
+  description:
+    'This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+  i18nKey: 'deviceActivityReport',
+  externalId: 'device_activity',
+  fileName: 'deviceActivity',
+  sortOrder: 5,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDeviceActivityReport',
+    },
+  ],
+}
+
 const deviceCalibrationReport = {
   name: 'Device Calibration Report',
   description:
@@ -116,5 +133,6 @@ module.exports = {
   rifResistanceRate,
   criticalErrorsByDevice,
   mtbDetectedRRDetected,
+  deviceActivity,
   deviceCalibrationReport,
 }
