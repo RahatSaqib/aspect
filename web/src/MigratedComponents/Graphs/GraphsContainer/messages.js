@@ -6,7 +6,7 @@ export const messages = defineMessages({
     defaultMessage: 'Average Monthly Suppression Rate',
   },
   clinicalIndicatorsPieSubLegend: {
-    id: 'pages.Status.clinicalIndicatorsPieLegend',
+    id: 'pages.Status.clinicalIndicatorsPieSubLegend',
     defaultMessage: 'Total Cases',
   },
   clinicalIndicatorsCovidName: {
