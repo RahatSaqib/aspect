@@ -382,6 +382,12 @@ async function shouldLogDeviceCalibration(
       .whereRaw(`DATE(contextDate) = DATE(?)`, [calibratedOn])
       .first()
 
+    /**
+     * Check different conditions for itemToday and itemCurrent.
+     * Notice to do nothing (no below conditions match) if
+     * - itemToday with calibratedOn exists (i.e. no dupes for same day for this deviceId),
+     * - and no need to change itemCurrent (i.e. shouldResetCurrent = false)
+     */
     if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
       /**
        * condition means itemCurrent had been reset (because
@@ -412,12 +418,6 @@ async function shouldLogDeviceCalibration(
          * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
          */
       })
-    } else {
-      /**
-       * if we are here then itemToday with calibratedOn exists
-       * (i.e. no dupes for same day for this deviceId),
-       * and no need to change itemCurrent
-       */
     }
   }
 }
