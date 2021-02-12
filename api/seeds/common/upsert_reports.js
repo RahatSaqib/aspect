@@ -27,7 +27,7 @@ module.exports = async function upsertReports(knex) {
   ReportFixture.forEach(report => {
     const sheets = []
 
-    report.sheets.forEach(({ query, ...sheet }) => {
+    report.sheets.forEach(({ query = {}, ...sheet }) => {
       // Replace externalIds with Ids
       if (query.resultCategoryId)
         query.resultCategoryId = resultCategoryIds[query.resultCategoryId]
