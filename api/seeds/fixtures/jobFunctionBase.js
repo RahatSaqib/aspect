@@ -484,7 +484,11 @@ const clinician = {
 
 const deviceMaker = {
   name: 'Device Maker',
-  reports: ['critical_errors_by_device', 'device_calibration_report', 'device_activity'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
@@ -541,7 +545,11 @@ const ntp = {
 
 const ntpNoResults = {
   name: 'NTP - No Results',
-  reports: ['critical_errors_by_device', 'device_calibration_report', 'device_activity'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
@@ -560,7 +568,11 @@ const ntpNoResults = {
 
 const technician = {
   name: 'Technician',
-  reports: ['critical_errors_by_device', 'device_calibration_report', 'device_activity'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
@@ -579,7 +591,11 @@ const technician = {
 
 const donor = {
   name: 'Donor',
-  reports: ['critical_errors_by_device', 'device_calibration_report', 'device_activity'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
@@ -610,7 +626,11 @@ const donor = {
 
 const resultViewerNo = {
   name: 'Result Viewer - No',
-  reports: ['critical_errors_by_device', 'device_calibration_report', 'device_activity'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'assay',
