@@ -72,11 +72,11 @@ describe('report endpoints', () => {
     afterEach(async () => context.afterEach)
 
     // helper func which runs func and return same list of devices as for report
-    const getDataForReport = async () => {
+    const getDeviceForReport = async (userName, deviceId) => {
       const {
         getDeviceCalibrationsForReport,
       } = require('../../src/device/service')
-      const auth = { credentials: { name: 'admin' } }
+      const auth = { credentials: { name: userName } }
       const { ok, total, data } = await getDeviceCalibrationsForReport(auth, {})
       assert.isTrue(ok)
       assert.isAbove(total, 0)
@@ -86,16 +86,19 @@ describe('report endpoints', () => {
       assert.property(data[0], 'calibratedOn')
       assert.property(data[0], 'nextCalibrationOn')
 
-      return data
+      const device = data.find(it => it.id === deviceId)
+      assert.isDefined(device)
+
+      return device
     }
 
     it('should return list of devices with at least one expired device', async () => {
-      const { deviceId, userId, now } = context
+      const { deviceId, user: userName, userId, now } = context
       // insert new entry with expired calibration
       await knex('DeviceMaintenance').insert({
         deviceId,
         deviceMaintenanceTypeId,
-        contextDate: subYears(now, 1.5),
+        contextDate: subYears(now, 3),
         current: 1,
         createdOn: now,
         createdBy: userId,
@@ -103,16 +106,13 @@ describe('report endpoints', () => {
         updatedBy: userId,
       })
 
-      const data = await getDataForReport()
-      // at least 1 device has expired calibration
-      assert.isAbove(
-        data.filter(it => it.calibratedOn < subYears(now, 1)).length,
-        0
-      )
+      const device = await getDeviceForReport(userName, deviceId)
+      // at least our device has expired calibration
+      assert.isTrue(device.calibratedOn < subYears(now, 1))
     })
 
     it('should return list of devices with at least one device which is going to expire soon', async () => {
-      const { deviceId, userId, now } = context
+      const { deviceId, user: userName, userId, now } = context
       // insert new entry with expired calibration
       await knex('DeviceMaintenance').insert({
         deviceId,
@@ -125,12 +125,9 @@ describe('report endpoints', () => {
         updatedBy: userId,
       })
 
-      const data = await getDataForReport()
-      // at least 1 device is going to expire soon
-      assert.isAbove(
-        data.filter(it => it.calibratedOn < subMonths(now, 8)).length,
-        0
-      )
+      const device = await getDeviceForReport(userName, deviceId)
+      // at least our device is going to expire soon
+      assert.isTrue(device.calibratedOn < subMonths(now, 8))
     })
   })
 })
