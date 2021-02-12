@@ -33,6 +33,7 @@ module.exports = {
       'averageDurationServiceInterruption',
       'percentageOfDaysWithServiceInterruption',
       'serverUptimeTitle',
+      'deviceCalibrationPastDue',
     ])
   ),
 }
