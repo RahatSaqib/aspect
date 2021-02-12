@@ -82,7 +82,6 @@ async function getDeviceActivityReport(auth, query) {
     )
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
-    .where('dc.hasResults', 1)
     .groupBy('d.id', 'd.name', 'd.serial')
     .orderBy('d.name')
   const deviceResultsPerMonths = await deviceQuery
@@ -142,30 +141,32 @@ async function getDeviceActivityReport(auth, query) {
 
 async function getModuleSwapsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-
   const {
     minDate,
     maxDate,
     minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
-
   // get rows
   const devices = await getDeviceBaseQuery(query, dataConstraints, true, true)
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
-    .join('Result as newModuleResult', builder => {
-      builder.on('d.id', 'newModuleResult.deviceId')
-    })
+    .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
     .join(
       knex
         .from('Result')
         .max('endedOn as lastResultOldModule')
         .select('deviceId', 'moduleSerial')
-        .groupBy('deviceId,moduleSerial')
+        .groupBy('deviceId', 'moduleSerial')
         .as('oldModuleResult'),
-      'oldModuleResult.moduleSerial',
-      "i.data->>'$.replacedModuleSerial'"
+      builder => {
+        builder
+          .on(
+            'oldModuleResult.moduleSerial',
+            knex.raw("i.data->>'$.replacedModuleSerial'")
+          )
+          .andOn('oldModuleResult.deviceId', 'd.id')
+      }
     )
     .leftJoin(
       'DeviceMaintenanceStatusLog as dmsl',
@@ -181,15 +182,16 @@ async function getModuleSwapsReport(auth, query) {
       'd.name as deviceName',
       'd.serial',
       'newModuleResult.moduleName',
+      'newModuleResult.moduleSerial as newModuleSerial',
+      'oldModuleResult.moduleSerial as oldModuleSerial',
       knex.raw(
-        'DATEDIFF(newModuleResult.endedOn, oldModuleResult.lastResultOldModule) as daysDifferences'
+        'DATEDIFF(newModuleResult.endedOn, oldModuleResult.lastResultOldModule) as daysDifference'
       ),
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
       'newModuleResult.endedOn as lastResultNewModule',
       'oldModuleResult.lastResultOldModule'
     )
-    .where('dc.hasResults', 1)
     .andWhere(
       knex.raw('i.createdOn between ? and ?', [
         minDateFormatted,
