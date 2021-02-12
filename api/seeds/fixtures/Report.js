@@ -107,6 +107,23 @@ const deviceActivity = {
   ],
 }
 
+const moduleSwaps = {
+  name: 'Module Swaps',
+  description:
+    'This report shows all module swaps in devices. The report will show you by default the last 12 months',
+  i18nKey: 'moduleSwapsReport',
+  externalId: 'module_swaps',
+  fileName: 'moduleSwaps',
+  sortOrder: 6,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getModuleSwapsReport',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -119,5 +136,6 @@ module.exports = {
     rifResistanceRate,
     criticalErrorsByDevice,
     deviceActivity,
+    moduleSwaps,
   ],
 }

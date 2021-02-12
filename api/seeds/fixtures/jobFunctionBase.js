@@ -8,6 +8,7 @@ const admin = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -133,6 +134,7 @@ const manager = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -214,6 +216,7 @@ const regionalOfficer = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -299,6 +302,7 @@ const labUser = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -384,6 +388,7 @@ const clinician = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -516,6 +521,7 @@ const ntp = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -641,6 +647,7 @@ const resultViewerYes = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -754,6 +761,7 @@ const labManager = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -823,6 +831,7 @@ const labSupervisor = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -892,6 +901,7 @@ const medTech = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -961,6 +971,7 @@ const dataViewer = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -1031,6 +1042,7 @@ const labAdmin = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {

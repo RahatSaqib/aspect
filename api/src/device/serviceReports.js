@@ -140,15 +140,18 @@ async function getDeviceActivityReport(auth, query) {
   return dataset
 }
 
-async function getModuleSwaps(auth, query) {
+async function getModuleSwapsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints, true, true)
-  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
+
+  const {
+    minDate,
+    maxDate,
+    minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
+    maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
+  } = query
 
   // get rows
-  const getItems = deviceQuery
+  const devices = await getDeviceBaseQuery(query, dataConstraints, true, true)
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', builder => {
@@ -157,7 +160,7 @@ async function getModuleSwaps(auth, query) {
     .join(
       knex
         .from('Result')
-        .max('endedOn as lastResultOnModule')
+        .max('endedOn as lastResultOldModule')
         .select('deviceId', 'moduleSerial')
         .groupBy('deviceId,moduleSerial')
         .as('oldModuleResult'),
@@ -177,70 +180,33 @@ async function getModuleSwaps(auth, query) {
     .select(
       'd.name as deviceName',
       'd.serial',
+      'newModuleResult.moduleName',
+      knex.raw(
+        'DATEDIFF(newModuleResult.endedOn, oldModuleResult.lastResultOldModule) as daysDifferences'
+      ),
       'da.name as deviceApprovalStatus',
-      'dms.name as deviceMaintenanceStatus'
+      'dms.name as deviceMaintenanceStatus',
+      'newModuleResult.endedOn as lastResultNewModule',
+      'oldModuleResult.lastResultOldModule'
     )
     .where('dc.hasResults', 1)
     .andWhere(
-      knex.raw('newModuleResult.endedOn between ? and ?', [minDate, maxDate])
+      knex.raw('i.createdOn between ? and ?', [
+        minDateFormatted,
+        maxDateFormatted,
+      ])
     )
-    .groupBy('d.id', 'd.name', 'd.serial')
     .orderBy('d.name')
-  const deviceResultsPerMonths = await deviceQuery
-    .clone()
-    .join('Result as r', 'd.id', 'r.deviceId')
-    .select(
-      'd.id as deviceId',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset)
-    )
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-    .groupBy(
-      'd.id',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
-    )
-
-  // return result when both queries are finished
-  const [data, deviceDetails] = await Promise.all([
-    getItems,
-    deviceResultsPerMonths,
-  ])
-  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
-  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
-  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
-  const dateFields = []
-  const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 0; i <= monthDiff; i++) {
-    dateFields.push({
-      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
-      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
-        locale: locales[locale],
-      }),
-    })
-  }
-  const devices = _.map(data, elem => {
-    _.each(
-      _.filter(
-        deviceDetails,
-        filteredElem => filteredElem.deviceId === elem.id
-      ),
-      detail => {
-        elem[detail.monthYear] = detail.totalResults
-      }
-    )
-
-    return elem
-  })
   const dataset = {
     ok: true,
     total: devices.length,
     length: devices.length,
     data: devices,
-    dynamicColumns: dateFields,
   }
   return dataset
 }
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
-  getModuleSwaps,
+  getModuleSwapsReport,
 }
