@@ -103,6 +103,11 @@ const deviceActivity = {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
     },
   ],
 }
@@ -120,6 +125,11 @@ const moduleSwaps = {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
       functionName: 'getModuleSwapsReport',
+      query: {
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
     },
   ],
 }

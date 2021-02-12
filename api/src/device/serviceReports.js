@@ -5,7 +5,7 @@ const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
 const { getDeviceBaseQuery } = require('./service')
-const { knex, filterDateRangeParams } = require('../db')
+const { knex, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
@@ -83,7 +83,7 @@ async function getDeviceActivityReport(auth, query) {
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
     .groupBy('d.id', 'd.name', 'd.serial')
-    .orderBy('d.name')
+    .modify(sortPageParams, query, 'name')
   const deviceResultsPerMonths = await deviceQuery
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
@@ -168,16 +168,6 @@ async function getModuleSwapsReport(auth, query) {
           .andOn('oldModuleResult.deviceId', 'd.id')
       }
     )
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
     .select(
       'd.name as deviceName',
       'd.serial',
@@ -188,7 +178,6 @@ async function getModuleSwapsReport(auth, query) {
         'DATEDIFF(newModuleResult.endedOn, oldModuleResult.lastResultOldModule) as daysDifference'
       ),
       'da.name as deviceApprovalStatus',
-      'dms.name as deviceMaintenanceStatus',
       'newModuleResult.endedOn as lastResultNewModule',
       'oldModuleResult.lastResultOldModule'
     )
@@ -198,7 +187,7 @@ async function getModuleSwapsReport(auth, query) {
         maxDateFormatted,
       ])
     )
-    .orderBy('d.name')
+    .modify(sortPageParams, query, 'name')
   const dataset = {
     ok: true,
     total: devices.length,
