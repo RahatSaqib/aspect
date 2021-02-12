@@ -140,7 +140,107 @@ async function getDeviceActivityReport(auth, query) {
   return dataset
 }
 
+async function getModuleSwaps(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { culture } = await getUser(auth.credentials.name)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints, true, true)
+  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .innerJoin('Issue as i', 'i.deviceId', 'd.id')
+    .join('Result as newModuleResult', builder => {
+      builder.on('d.id', 'newModuleResult.deviceId')
+    })
+    .join(
+      knex
+        .from('Result')
+        .max('endedOn as lastResultOnModule')
+        .select('deviceId', 'moduleSerial')
+        .groupBy('deviceId,moduleSerial')
+        .as('oldModuleResult'),
+      'oldModuleResult.moduleSerial',
+      "i.data->>'$.replacedModuleSerial'"
+    )
+    .leftJoin(
+      'DeviceMaintenanceStatusLog as dmsl',
+      'd.deviceMaintenanceStatusLogId',
+      'dmsl.id'
+    )
+    .leftJoin(
+      'DeviceMaintenanceStatus as dms',
+      'dmsl.deviceMaintenanceStatusId',
+      'dms.id'
+    )
+    .select(
+      'd.name as deviceName',
+      'd.serial',
+      'da.name as deviceApprovalStatus',
+      'dms.name as deviceMaintenanceStatus'
+    )
+    .where('dc.hasResults', 1)
+    .andWhere(
+      knex.raw('newModuleResult.endedOn between ? and ?', [minDate, maxDate])
+    )
+    .groupBy('d.id', 'd.name', 'd.serial')
+    .orderBy('d.name')
+  const deviceResultsPerMonths = await deviceQuery
+    .clone()
+    .join('Result as r', 'd.id', 'r.deviceId')
+    .select(
+      'd.id as deviceId',
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset)
+    )
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .groupBy(
+      'd.id',
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
+    )
+
+  // return result when both queries are finished
+  const [data, deviceDetails] = await Promise.all([
+    getItems,
+    deviceResultsPerMonths,
+  ])
+  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
+  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
+  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
+  const dateFields = []
+  const locale = culture.split('-')[0].toLowerCase()
+  for (let i = 0; i <= monthDiff; i++) {
+    dateFields.push({
+      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
+      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
+        locale: locales[locale],
+      }),
+    })
+  }
+  const devices = _.map(data, elem => {
+    _.each(
+      _.filter(
+        deviceDetails,
+        filteredElem => filteredElem.deviceId === elem.id
+      ),
+      detail => {
+        elem[detail.monthYear] = detail.totalResults
+      }
+    )
+
+    return elem
+  })
+  const dataset = {
+    ok: true,
+    total: devices.length,
+    length: devices.length,
+    data: devices,
+    dynamicColumns: dateFields,
+  }
+  return dataset
+}
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
+  getModuleSwaps,
 }
