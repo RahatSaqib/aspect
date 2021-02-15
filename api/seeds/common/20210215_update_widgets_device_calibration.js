@@ -1,5 +1,6 @@
 const { upsertDashboardWidgets } = require('../common')
-const updateReportsAndJobFunctions = require('./upsert_reports_&_job_functions')
+const upsertReports = require('./upsert_reports')
+const { upsertJobFunctionFixture } = require('../common')
 const { getPartnerByName } = require('../utils')
 
 module.exports = async (
@@ -9,7 +10,10 @@ module.exports = async (
   jobFunctionFixture
 ) => {
   const { id: partnerId } = await getPartnerByName(knex, partnerName)
-  await updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName)
+
+  await upsertReports(knex)
+  await upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId)
+
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgetFixture, [
     'deviceCalibrationPastDue',
   ])
