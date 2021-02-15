@@ -1953,7 +1953,7 @@ const deviceCalibrationPastDue = {
       ${sqlSnippets.deviceCalibrationPastDue.innerQuery}
     ) AS sub;`,
   statUnit: '{unit} of all devices',
-  statUnitI18nKey: 'deviceCalibrationPastDueStatUnit',
+  statUnitI18nKey: 'ofAllDevices',
   description: `The number of instruments that had their last calibration more than one year ago.`,
   descriptionI18nKey: 'deviceCalibrationPastDueDescription',
   link: '/reports',
