@@ -402,6 +402,8 @@ const ReporterList = () => {
         formatType,
         sortCol,
         sortDir,
+        0,
+        total,
         'Reporters'
       )
     }

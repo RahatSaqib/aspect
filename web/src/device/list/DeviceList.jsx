@@ -316,6 +316,8 @@ export const DeviceList = () => {
         formatType,
         sortCol,
         sortDir,
+        0,
+        total,
         'devices'
       )
     }

@@ -240,6 +240,8 @@ export const NotificationList = () => {
         formatType,
         sortCol,
         sortDir,
+        0,
+        total,
         'notifications'
       )
     }
