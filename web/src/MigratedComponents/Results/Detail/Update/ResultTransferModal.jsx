@@ -60,7 +60,7 @@ const messages = defineMessages({
   },
   successOk: {
     id: 'pages.transferResult.successOk',
-    defaultMessage: `Ok`,
+    defaultMessage: `OK`,
   },
   successHeader: {
     id: 'pages.transferResult.successHeader',
@@ -68,25 +68,15 @@ const messages = defineMessages({
       Result Transfer Completed
     `,
   },
-  successMessage: {
-    id: 'pages.transferResult.successMessage',
-    defaultMessage: `
-      <p>
-        Result for patient <strong>"{{patientId}}"</strong> has been transferred from
-        <strong>
-          "{{oldSiteName}}"
-        </strong>
-        to
-        <strong>
-          "{{newSiteName}}"
-        </strong>
-      </p>
-      <br />
-      <p>
-        After clicking below button <strong>{{buttonOk}}</strong>
-        you will be redirected to the list of results.
-      </p>
-    `,
+  successMessagePatient: {
+    id: 'pages.transferResult.successMessagePatient',
+    defaultMessage:
+      'Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"',
+  },
+  successMessageButton: {
+    id: 'pages.transferResult.successMessageButton',
+    defaultMessage:
+      'After clicking the OK button below, you will be redirected to the list of results.',
   },
 })
 
@@ -197,11 +187,6 @@ const ResultTransferModal = ({
   )
 
   const renderSuccessAlert = useCallback(() => {
-    const html = formatMessage(messages.successMessage)
-      .replace('{{patientId}}', patientId)
-      .replace('{{oldSiteName}}', sourceSite && sourceSite.name)
-      .replace('{{newSiteName}}', selectedSite && selectedSite.text)
-      .replace('{{buttonOk}}', formatMessage(messages.successOk))
     return (
       <AspectDialog
         actions={[
@@ -221,15 +206,20 @@ const ResultTransferModal = ({
         disableBackdropClick
         disableEscapeKeyDown
       >
-        <div
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{
-            __html: html,
-          }}
-        />
+        <div>
+          <p>
+            {formatMessage(messages.successMessagePatient, {
+              patientId: <strong>{patientId}</strong>,
+              oldSiteName: <strong>{sourceSite?.name}</strong>,
+              newSiteName: <strong>{selectedSite?.text}</strong>,
+            })}
+          </p>
+          <br />
+          <p>{formatMessage(messages.successMessageButton)}</p>
+        </div>
       </AspectDialog>
     )
-  }, [history, patientId, formatMessage, sourceSite, selectedSite])
+  }, [history, patientId, formatMessage, sourceSite?.name, selectedSite?.text])
 
   return (
     <AspectDialog

@@ -47,7 +47,6 @@ export const NotificationDetail = ({
         path={`${match.path}/history`}
         render={props => <NotificationDetailHistory intl={intl} {...props} />}
       />
-      />
     </Switch>
   </div>
 )

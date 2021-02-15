@@ -346,7 +346,6 @@ const messages = defineMessages({
     id: 'filter.popover.setFilters',
     defaultMessage: 'Set Filters',
   },
-
   exportExcel: {
     id: 'pages.ListExport.exportExcel',
     defaultMessage: 'Excel',

@@ -42,36 +42,38 @@ import ExportListButton from '../../globals/components/ExportListButton'
 
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
-const messages = defineMessages({
+const messages = {
   ...commonDefinitions,
-  contactsTitle: {
-    id: 'pages.PersonList.title',
-    defaultMessage: 'Contacts',
-  },
-  personName: {
-    id: 'pages.PersonList.personName',
-    defaultMessage: 'Name',
-  },
-  level: {
-    id: 'pages.PersonList.level',
-    defaultMessage: 'Job',
-  },
-  paginatorStatus: {
-    id: 'pages.PersonList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+  ...defineMessages({
+    contactsTitle: {
+      id: 'pages.PersonList.title',
+      defaultMessage: 'Contacts',
+    },
+    personName: {
+      id: 'pages.PersonList.personName',
+      defaultMessage: 'Name',
+    },
+    level: {
+      id: 'pages.PersonList.level',
+      defaultMessage: 'Job',
+    },
+    paginatorStatus: {
+      id: 'pages.PersonList.paginatorStatus',
+      defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
       one {# contact}
       other {# contacts}
     }`,
-  },
-  tags: {
-    id: 'pages.PersonList.tags',
-    defaultMessage: 'Tags',
-  },
-  addContact: {
-    id: 'pages.PersonList.addContact',
-    defaultMessage: 'New Contact',
-  },
-})
+    },
+    tags: {
+      id: 'pages.PersonList.tags',
+      defaultMessage: 'Tags',
+    },
+    addContact: {
+      id: 'pages.PersonList.addContact',
+      defaultMessage: 'New Contact',
+    },
+  }),
+}
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
