@@ -6,8 +6,6 @@ async function getExportableFile(
   fileFormat,
   sortCol,
   sortDir,
-  page,
-  pageSize,
   reportName
 ) {
   const filters = fromPairs([...filtersParams.entries()])
@@ -16,8 +14,6 @@ async function getExportableFile(
     params: {
       sortCol,
       sortDir,
-      page,
-      size: pageSize,
       format: fileFormat,
       ...filters,
     },
