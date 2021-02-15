@@ -51,8 +51,8 @@ const routerNumber = 20
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultMtbNumber = resultMultiplier
 const resultHivVlNumber = 0.6 * resultMultiplier
-const resultEbolaNumber = 0.1 * resultMultiplier
-const resultHcvNumber = 0.2 * resultMultiplier
+const resultEbolaNumber = 0
+const resultHcvNumber = 0
 const now = new Date()
 const patientNumber = patients.length - 1
 
