@@ -5,7 +5,7 @@ import {
   errorUnauthorized,
 } from '../../error/CommonErrorNotifications'
 
-const defaultErrors = endpoint => ({
+const defaultErrors = () => ({
   401: errorUnauthorized(
     defineMessages({
       title: {
@@ -26,7 +26,7 @@ const defaultErrors = endpoint => ({
     defineMessages({
       title: {
         id: 'queryFetch.errorResponseMessages.GET.default.title',
-        defaultMessage: `Error Fetching Endpoint: ${endpoint}`,
+        defaultMessage: 'Error Fetching Endpoint',
       },
     })
   ),
