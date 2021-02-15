@@ -38,13 +38,13 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const { pathname, search } = useLocation()
   const query = useUrlQuery(search)
   const {
-    columnOrder: { initialOrder = false },
+    columnOrder: { initialOrder = false, initialOrderDesc = false },
   } = config
   const {
     size: urlSize = false,
     page: urlPage = 0,
     sortCol: urlSortCol = initialOrder ? initialOrder[0] : null,
-    sortDir: urlSortDir = initialOrder ? 'asc' : 'desc',
+    sortDir: urlSortDir = initialOrderDesc === true ? 'desc' : 'asc',
     filters: urlFilters = null,
   } = getParamsFromUrl(query, search)
   const [allowReset, setAllowReset] = useState(false)
