@@ -356,6 +356,7 @@ class DeviceApiTestContext {
       const { userId } = await knex('User')
         .where({ name: this.user })
         .first('id as userId')
+      this.userId = userId
 
       const clientToken = await this.requestClientToken({
         user: this.user,
@@ -423,6 +424,7 @@ class DeviceApiTestContext {
       const { userId } = await knex('User')
         .where({ name: this.user })
         .first('id as userId')
+      this.userId = userId
 
       const clientToken = await this.requestClientToken({
         user: this.user,
