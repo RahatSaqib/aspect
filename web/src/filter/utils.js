@@ -272,6 +272,8 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'assayId':
               result.assayId = true
+            case 'reportName':
+              result.reportName = true
               break
             default:
           }

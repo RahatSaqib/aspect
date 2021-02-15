@@ -34,6 +34,7 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
+import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -171,6 +172,11 @@ const enhance = compose(
     onStockLeftChange: ({ onChangeFilters }) => stockLeft =>
       onChangeFilters({
         stockLeft,
+      }),
+
+    onReportNameChange: ({ onChangeFilters }) => reportName =>
+      onChangeFilters({
+        reportName,
       }),
   })
 )
@@ -423,6 +429,14 @@ const messages = {
       id: 'filter.popover.stockLeft',
       defaultMessage: 'Days Stock Left',
     },
+    reportName: {
+      id: 'filter.popover.reportName',
+      defaultMessage: 'Report',
+    },
+    enterReportName: {
+      id: 'filter.popover.enterReportName',
+      defaultMessage: 'Enter report name...',
+    },
   }),
 }
 
@@ -460,6 +474,7 @@ export const FiltersPanel = ({
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
   onStockLeftChange,
+  onReportNameChange,
   user,
   assays,
 }) => {
@@ -995,6 +1010,18 @@ export const FiltersPanel = ({
                 hintText={intl.formatMessage(messages.selectStockLeft)}
                 floatingLabelText={intl.formatMessage(messages.stockLeft)}
                 style={{ verticalAlign: 'bottom' }}
+              />
+            </div>
+          )}
+          {config.reportName && (
+            <div className={cssClasses('Control')}>
+              <ReportAutoCompleteField
+                name="reportName"
+                value={filters.reportName || ''}
+                onReportNameChange={onReportNameChange}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.enterReportName)}
+                floatingLabelText={intl.formatMessage(messages.reportName)}
               />
             </div>
           )}
