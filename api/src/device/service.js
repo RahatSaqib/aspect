@@ -3,6 +3,7 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const {
   addDays,
+  addYears,
   subMonths,
   startOfMonth,
   endOfMonth,
@@ -1556,6 +1557,49 @@ async function onDeviceMaintenanceStatusLogScheduled(
   })
 }
 
+async function getDeviceCalibrationsForReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery.clone().count('d.id as count').first()
+
+  // get rows
+  const getItems = deviceQuery
+    .clone()
+    .leftOuterJoin('DeviceMaintenance as dm', queryBuilder => {
+      queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
+    })
+    .modify(sortPageParams, query, 'name')
+    .select([
+      ..._.filter(
+        SELECT_LIST_FIELDS,
+        /**
+         * make sure to exclude columns starting with `dms.` because
+         * we do not have JOIN with DeviceMaintenanceStatus table
+         */
+        elem =>
+          _.isString(elem) &&
+          // is either -1 or > 0
+          elem.indexOf('dms.') !== 0
+      ),
+      'd.serial',
+      'dm.contextDate as calibratedOn',
+    ])
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // add more fields which depend on aggregations
+  data.forEach(async it => {
+    it.nextCalibrationOn = it.calibratedOn ? addYears(it.calibratedOn, 1) : null
+  })
+
+  const result = { ok: true, total, length: data.length, data }
+
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -1579,5 +1623,6 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
+  getDeviceCalibrationsForReport,
   getDeviceBaseQuery,
 }

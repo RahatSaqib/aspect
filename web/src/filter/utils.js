@@ -246,6 +246,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'stockLeft':
               result.stockLeft = true
               break
+            case 'reportName':
+              result.reportName = true
+              break
             default:
           }
         })

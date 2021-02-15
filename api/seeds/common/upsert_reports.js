@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
-const { fixture: ReportFixture } = require('../fixtures/Report')
+const _ = require('lodash')
+const ReportFixture = require('../fixtures/Report')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -24,7 +25,7 @@ module.exports = async function upsertReports(knex) {
 
   const reportsById = {}
 
-  ReportFixture.forEach(report => {
+  _.values(ReportFixture).forEach(report => {
     const sheets = []
 
     report.sheets.forEach(({ query = {}, ...sheet }) => {
