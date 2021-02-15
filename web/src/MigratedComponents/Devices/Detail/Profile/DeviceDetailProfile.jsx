@@ -184,7 +184,6 @@ const messages = defineMessages({
 })
 
 const FILTERS_CONFIG = {
-  assay: true,
   geography: true,
   state: true,
   lga: true,
