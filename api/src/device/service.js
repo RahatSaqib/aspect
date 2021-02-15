@@ -706,7 +706,12 @@ async function getDevicePerformance(request) {
   }
 }
 
-function getDeviceBaseQuery(query, dataConstraints) {
+function getDeviceBaseQuery(
+  query,
+  dataConstraints,
+  showUnapprovedDevices = false,
+  showDecommissionedDevices = false
+) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -764,6 +769,8 @@ function getDeviceBaseQuery(query, dataConstraints) {
       deviceType: 'dt',
       geography: 'g',
       site: 's',
+      showDecommissionedDevices,
+      showUnapprovedDevices,
     })
   return deviceQuery
 }
@@ -1568,4 +1575,5 @@ module.exports = {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
+  getDeviceBaseQuery,
 }

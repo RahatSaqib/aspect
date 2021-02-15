@@ -68,7 +68,8 @@ const getAverageFromData = (data, value, which, notation, culture) => {
     data.map(d => total.push(sum(values(pick(d, value)).map(Number))))
     const totalSum = Number(sum(total))
     const totalSumAvg = which === '*' ? (totalSum / 12).toFixed(1) : totalSum
-    const totalNotation = totalSum > 1000 ? 'notation' : 'standard'
+    const totalNotation =
+      totalSumAvg > 1000 ? 'compact' : notation || 'standard'
 
     if (Array.isArray(which)) {
       const rangeTotal = which.reduce((acc, curr) => {
@@ -124,7 +125,7 @@ const getAverageFromData = (data, value, which, notation, culture) => {
         avg: parseFloat(avg),
         color: filterColour(totalForFilter[0].id),
         totals: new Intl.NumberFormat(culture, {
-          totalNotation,
+          notation: totalNotation,
         }).format(totalSumAvg),
       }
       return avgObj

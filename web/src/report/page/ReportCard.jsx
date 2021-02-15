@@ -22,6 +22,11 @@ const styles = {
   },
   formatCard: {
     boxShadow: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    height: '100%',
   },
   actions: {
     display: 'flex',

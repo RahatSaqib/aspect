@@ -3,13 +3,14 @@ import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
-import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
+import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedFileResponse } from '../globals/GlobalsRedux'
+import fetchWrapperForQueries from '../MigratedComponents/QueryFetch/index'
 
 export const types = {
   REQUEST_REPORTS: 'REQUEST_REPORTS',
@@ -86,39 +87,39 @@ export function fetchReports(filtersParams) {
 export function getReportFile(externalId, filtersParams) {
   return dispatch => {
     const filters = fromPairs([...filtersParams.entries()])
-    return aspectFetchFile(
-      `/reports/${externalId}?${stringify({
+    if (!filters.maxDate) filters.maxDate = new Date()
+    return fetchWrapperForQueries({
+      endpoint: `/reports/${externalId}`,
+      params: {
         ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.getReportFile.GET.400.title',
-                defaultMessage: 'Getting Report File Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.getReportFile.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.getReportFile.GET.default.title',
-                defaultMessage: 'Getting Report File Failed',
-              },
-            })
-          ),
-        },
-      }
-    ).then(async resp => {
+      },
+      customErrorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.getReportFile.GET.400.title',
+              defaultMessage: 'Getting Report File Failed',
+            },
+          })
+        ),
+        403: errorForbidden(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.getReportFile.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.getReportFile.GET.default.title',
+              defaultMessage: 'Getting Report File Failed',
+            },
+          })
+        ),
+      },
+    }).then(async resp => {
       const file = await resp.blob
       dispatch(receivedFileResponse(file, resp.fileName))
     })
