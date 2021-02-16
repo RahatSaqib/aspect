@@ -16,6 +16,6 @@ module.exports = async (
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgetFixture, [
     'deviceCalibrationPastDue',
-    'deviceCalibrationsWhenScheduled',
+    'deviceCalibratedWhenDue',
   ])
 }

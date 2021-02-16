@@ -1967,7 +1967,7 @@ const deviceCalibrationPastDue = {
   },
 }
 
-sqlSnippets.deviceCalibrationsWhenScheduled = {
+sqlSnippets.deviceCalibratedWhenDue = {
   sum: `SUM(DATEDIFF(contextDateCurrent, contextDatePrevious) < 395)`,
   count: `SUM(contextDateCurrent IS NOT NULL AND contextDatePrevious IS NOT NULL)`,
   innerQuery: `
@@ -1991,31 +1991,31 @@ sqlSnippets.deviceCalibrationsWhenScheduled = {
     AND MONTH(dm.contextDate) = MONTH(NOW())
   `,
 }
-const deviceCalibrationsWhenScheduled = {
-  externalId: 'deviceCalibrationsWhenScheduled',
+const deviceCalibratedWhenDue = {
+  externalId: 'deviceCalibratedWhenDue',
   jobFunctions: ['all'],
   sortOrder: 5,
   icon: 'MdBuild',
   title: 'Calibrated When Due',
-  titleI18nKey: 'deviceCalibrationsWhenScheduledTitle',
+  titleI18nKey: 'deviceCalibratedWhenDueTitle',
   sqlForIndicator: `
     SELECT
     CONCAT(
-      ROUND(${sqlSnippets.deviceCalibrationsWhenScheduled.sum} * 100 / ${sqlSnippets.deviceCalibrationsWhenScheduled.count}),
+      ROUND(${sqlSnippets.deviceCalibratedWhenDue.sum} * 100 / ${sqlSnippets.deviceCalibratedWhenDue.count}),
       '%'
     ) AS cnt
   FROM (
-    ${sqlSnippets.deviceCalibrationsWhenScheduled.innerQuery}
+    ${sqlSnippets.deviceCalibratedWhenDue.innerQuery}
   ) AS sub;`,
   sqlForStatUnit: `
-    SELECT IFNULL(${sqlSnippets.deviceCalibrationsWhenScheduled.count}, 0) AS cnt
+    SELECT IFNULL(${sqlSnippets.deviceCalibratedWhenDue.count}, 0) AS cnt
     FROM (
-      ${sqlSnippets.deviceCalibrationsWhenScheduled.innerQuery}
+      ${sqlSnippets.deviceCalibratedWhenDue.innerQuery}
     ) AS sub;`,
   statUnit: '{unit} total calibrations',
   statUnitI18nKey: 'totalCalibrations',
   description: `The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
-  descriptionI18nKey: 'deviceCalibrationsWhenScheduledDescription',
+  descriptionI18nKey: 'deviceCalibratedWhenDueDescription',
   link: '/reports',
   linkParams: {
     reportName: 'Device Calibration Report',
@@ -2064,6 +2064,6 @@ module.exports = {
     dashboardWidgetTitleTotalRecoveredCases,
     serverUptimeTitle,
     deviceCalibrationPastDue,
-    deviceCalibrationsWhenScheduled,
+    deviceCalibratedWhenDue,
   },
 }
