@@ -39,9 +39,7 @@ async function listNotifications(request) {
     .select(
       'n.notificationTypeId as id',
       'nt.name',
-      knex.raw(
-        'SUM(CASE WHEN n.issueId IS NULL then 0 ELSE 1 END) as totalTriggers'
-      ),
+      knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
       knex.raw(
