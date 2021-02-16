@@ -105,6 +105,9 @@ const routes = [
       validate: {
         query: {
           ...requestBaseQuery(),
+          format: Joi.string()
+            .allow('')
+            .description('File format for exporting data'),
         },
         params: {
           externalId: Joi.string()
