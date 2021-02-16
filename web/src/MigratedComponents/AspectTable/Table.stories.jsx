@@ -46,12 +46,14 @@ const baseConfig = () => ({
   columnOrder: {
     allow: true,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
+    initialOrderDesc: true,
   },
 })
 
 baseConfig.columnOrder = {
   allow: false,
   initialOrder: ['contacts', 'name', 'lastTriggeredOn', 'totalTriggers'],
+  initialOrderDesc: true,
 }
 
 export default {
