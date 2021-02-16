@@ -34,6 +34,7 @@ module.exports = {
       'percentageOfDaysWithServiceInterruption',
       'serverUptimeTitle',
       'deviceCalibrationPastDue',
+      'deviceCalibratedWhenDue',
     ])
   ),
 }
