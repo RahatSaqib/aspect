@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const { addYears, subYears, subDays } = require('date-fns')
+const { subYears, subDays } = require('date-fns')
 const { random } = require('lodash')
 
 const { getPartnerByName } = require('../utils')
@@ -33,29 +33,14 @@ module.exports = async (knex, partnerName, adminName, countryAbbreviation) => {
   /**
    * helper func
    */
-  const addCalibration = async (deviceId, contextDate) => {
-    // return if device has valid calibration
-    const item = await knex('DeviceMaintenance')
-      .where({ deviceId, deviceMaintenanceTypeId, current: 1 })
-      .first()
-    if (item && addYears(item.contextDate) > now) {
-      return
-    }
-    // otherwise - reset current calibration
-    await knex('DeviceMaintenance')
-      .where({ deviceId, deviceMaintenanceTypeId })
-      .update({
-        current: 0,
-        updatedOn: new Date(),
-        updatedBy: adminId,
-      })
+  const addCalibration = async (deviceId, contextDate, current) => {
     // create new calibration
     await knex('DeviceMaintenance').insert({
       deviceId,
       contextDate,
       deviceMaintenanceTypeId,
       notes: 'Seeding calibration entries',
-      current: 1,
+      current,
       ...auditFields,
     })
   }
@@ -73,9 +58,20 @@ module.exports = async (knex, partnerName, adminName, countryAbbreviation) => {
       // soon is going to expire
       contextDate = subDays(now, 360)
     } else {
-      // rest of devices have valid calibration date (calibrated less than 1 year ago)
-      contextDate = subDays(now, random(1, 360))
+      // rest of devices have a valid, recent calibration date
+      contextDate = subDays(now, random(1, 60))
     }
-    await addCalibration(deviceId, contextDate)
+
+    // create current record
+    await addCalibration(deviceId, contextDate, true)
+
+    // for most of the devices, also create an older record
+    if (index > 2 && index % 5 !== 0) {
+      await addCalibration(
+        deviceId,
+        subDays(contextDate, random(180, 540)),
+        false
+      )
+    }
   })
 }
