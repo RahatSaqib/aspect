@@ -249,7 +249,9 @@ async function resultsTransmittedDashboard(request) {
     offset
   )
 
-  const roundPercent = percent => percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
+  // eslint-disable-next-line no-confusing-arrow
+  const roundPercent = percent =>
+    percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
 
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
