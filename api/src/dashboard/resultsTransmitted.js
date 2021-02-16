@@ -249,10 +249,14 @@ async function resultsTransmittedDashboard(request) {
     offset
   )
 
+  // eslint-disable-next-line no-confusing-arrow
+  const roundPercent = percent =>
+    percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
+
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
     const percent = denominator === 0 ? 0 : (100.0 * numerator) / denominator
-    return percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
+    return roundPercent(percent)
   }
   // calculate all percentages
   items.forEach(item => {
@@ -281,7 +285,7 @@ async function resultsTransmittedDashboard(request) {
     if (pcPrev === null) {
       return 0
     }
-    return pcCurr - pcPrev
+    return roundPercent(pcCurr - pcPrev)
   }
   const findItem = (yearMonth, assayExternalId) => item =>
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
