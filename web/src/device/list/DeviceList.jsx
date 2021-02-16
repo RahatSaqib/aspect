@@ -19,7 +19,7 @@ import {
   reduceFiltersConfig,
 } from '../../filter/utils'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
-import { receiveList, Items } from '../../shared/metaReducers/items'
+import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -274,7 +274,7 @@ export const DeviceList = () => {
   useEffect(() => {
     if (!isLoading && data) {
       const { data: list, total: totalItems } = data
-      setItems(receiveList(items, Immutable.fromJS(list)))
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems))
     }
