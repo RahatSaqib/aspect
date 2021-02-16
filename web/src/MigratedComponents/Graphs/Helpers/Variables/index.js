@@ -130,14 +130,14 @@ const graphColorMap = [
   {
     id: 101,
     externalId: 'Abbott m2000 Plasma HBV VL',
-    color: abbottSaffronMango,
+    color: abbottCapeHoney,
   },
   { id: 102, externalId: 'Abbott m2000 DBS HIV VL', color: abbottGoldenRod },
   { id: 103, externalId: 'Abbott m2000 HIV EID', color: abbottSweetCorn },
   {
     id: 104,
     externalId: 'Abbott m2000 Daan N COVID-19',
-    color: abbottCapeHoney,
+    color: abbottSaffronMango,
   },
 
   { id: 121, externalId: 'Q HIV VL', color: assayLobLolly },
