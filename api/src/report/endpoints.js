@@ -106,7 +106,7 @@ const routes = [
         query: {
           ...requestBaseQuery(),
           format: Joi.string()
-            .allow('')
+            .allow('', null, 'xlsx', 'csv')
             .description('File format for exporting data'),
         },
         params: {

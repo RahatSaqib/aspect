@@ -147,11 +147,8 @@ async function createReport(request, reply) {
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   const { culture } = await getUser(auth.credentials.name)
 
-  // allow only Excel and CSV files
-  let extension = query.format || 'xlsx'
-  if (!['xlsx', 'csv'].includes(extension)) {
-    extension = 'xlsx'
-  }
+  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
+  const extension = query.format || 'xlsx'
 
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
