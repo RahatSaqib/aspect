@@ -147,6 +147,9 @@ async function createReport(request, reply) {
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   const { culture } = await getUser(auth.credentials.name)
 
+  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
+  const extension = query.format || 'xlsx'
+
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
     throw data
@@ -155,6 +158,7 @@ async function createReport(request, reply) {
     culture,
     templateFolderPath: externalId,
     data,
+    extension,
     replacements: [
       {
         placeholder: '<Dates>',
@@ -173,7 +177,7 @@ async function createReport(request, reply) {
 
   return respondFile({
     dataBuffer,
-    extension: 'xlsx',
+    extension,
     fileNamePrefix: fileName,
     reply,
   })

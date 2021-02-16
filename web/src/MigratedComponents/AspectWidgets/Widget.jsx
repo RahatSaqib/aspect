@@ -42,6 +42,10 @@ const messages = defineMessages({
     id: 'component.Widget.last30Days',
     defaultMessage: 'Last 30 Days',
   },
+  ofAllDevices: {
+    id: 'component.Widget.ofAllDevices',
+    defaultMessage: '{unit} of all devices',
+  },
 })
 
 const EmptyWidget = () => (

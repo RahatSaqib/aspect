@@ -41,6 +41,36 @@ function requestBaseQuery() {
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(),
     siteName: Joi.string().allow('').description('Filter for site name'),
+    reportName: Joi.string().allow('').description('Filter for report name'),
+  }
+}
+
+function responseBaseReports() {
+  return {
+    options: {
+      allowUnknown: false,
+    },
+    schema: Joi.object().keys({
+      ok: Joi.bool()
+        .required()
+        .description('False if there was some sort of error'),
+      total: Joi.number().required(),
+      data: Joi.array()
+        .required()
+        .description('List of reports')
+        .items(
+          Joi.object().keys({
+            name: Joi.string().required().description('Report name'),
+            description: Joi.string()
+              .required()
+              .description('Report description'),
+            externalId: Joi.string()
+              .required()
+              .description('Report unique externalId'),
+            sortOrder: Joi.number().required().description('Report sort order'),
+          })
+        ),
+    }),
   }
 }
 
@@ -59,32 +89,7 @@ const routes = [
         },
       },
       response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          total: Joi.number().required(),
-          data: Joi.array()
-            .required()
-            .description('List of reports')
-            .items(
-              Joi.object().keys({
-                name: Joi.string().required().description('Report name'),
-                description: Joi.string()
-                  .required()
-                  .description('Report description'),
-                externalId: Joi.string()
-                  .required()
-                  .description('Report unique externalId'),
-                sortOrder: Joi.number()
-                  .required()
-                  .description('Report sort order'),
-              })
-            ),
-        }),
+        ...responseBaseReports(),
       },
     },
   },
@@ -100,6 +105,9 @@ const routes = [
       validate: {
         query: {
           ...requestBaseQuery(),
+          format: Joi.string()
+            .allow('', null, 'xlsx', 'csv')
+            .description('File format for exporting data'),
         },
         params: {
           externalId: Joi.string()
@@ -169,6 +177,19 @@ const routes = [
           dateFrom: Joi.string().allow(''),
           dateTo: Joi.string().allow(''),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/report/select-list',
+    handler: asyncHandler(getReports),
+    config: {
+      description: 'Reports for Select List',
+      notes: "List of report externalID's and names",
+      auth: { scope: ['report:view'] },
+      response: {
+        ...responseBaseReports(),
       },
     },
   },

@@ -1135,19 +1135,19 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
   )
   await ensureResultCategories(abbottM2000DaanNCOVID19Id, [
     {
-      name: 'Not Detected',
-      i18nKey: 'resultCategoryNotDetected',
-      externalId: 'NotDetected',
+      name: 'Negative',
+      i18nKey: 'resultCategoryNegative',
+      externalId: 'Negative',
     },
     {
-      name: 'Detected',
-      i18nKey: 'resultCategoryDetected',
-      externalId: 'Detected',
+      name: 'Positive',
+      i18nKey: 'resultCategoryPositive',
+      externalId: 'Positive',
     },
     {
-      name: 'Indeterminate',
-      i18nKey: 'resultCategoryIndeterminate',
-      externalId: 'Indeterminate',
+      name: 'Inconclusive',
+      i18nKey: 'resultCategoryInconclusive',
+      externalId: 'Inconclusive',
     },
     {
       name: 'Error',

@@ -36,6 +36,7 @@ const config = {
   columnOrder: {
     allow: true,
     initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
+    initialOrderDesc: true,
   },
 }
 
