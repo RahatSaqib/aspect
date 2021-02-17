@@ -719,9 +719,6 @@ async function queryValue(sql, dataConstraints, query) {
       query
     )
 
-    if (sql.indexOf('SUM(q2.usedModulesInLast7Days)') > 0)
-      console.log('sqlBuilder', sqlBuilder.toString())
-
     try {
       if (sqlBuilder) {
         firstResult = await sqlBuilder
