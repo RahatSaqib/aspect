@@ -453,12 +453,28 @@ describe('Process GeneXpert Logs', () => {
 
 describe('Process Calibration data in GeneXpert Logs', () => {
   let deviceMaintenanceTypeId
+  let deviceMaintenance
+  let deviceAuth
+  let deviceId
+
   before(async () => {
     deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
   })
 
   beforeEach(async () => {
     await context.createDeviceWithResult()
+
+    const { apiKey } = context
+    ;[{ deviceAuth, deviceId }] = [context]
+    assert.isOk(apiKey)
+
+    /**
+     * check that device doesn't have a calibration defined
+     */
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isUndefined(deviceMaintenance)
   })
   afterEach(context.afterEach)
 
@@ -469,17 +485,6 @@ describe('Process Calibration data in GeneXpert Logs', () => {
   })
 
   it('should NOT create entry in DeviceMaintenance if posted log has missing Calibrations', async () => {
-    const { apiKey, deviceAuth, deviceId } = context
-    assert.isOk(apiKey)
-
-    /**
-     * check that device doesn't have a calibration defined
-     */
-    let deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
-    assert.isUndefined(deviceMaintenance)
-
     /**
      * post data with empty Calibrations array - no entry should create
      * in DeviceMaintenance
@@ -495,17 +500,6 @@ describe('Process Calibration data in GeneXpert Logs', () => {
   })
 
   it('should create entry in DeviceMaintenance because posted log has Calibrations', async () => {
-    const { apiKey, deviceAuth, deviceId } = context
-    assert.isOk(apiKey)
-
-    /**
-     * check that device doesn't have a calibration defined
-     */
-    let deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
-    assert.isUndefined(deviceMaintenance)
-
     /**
      * post `logData` with `Calibrations` array defined.
      * Because no item for this device/date exists in DeviceMaintenance -
@@ -522,19 +516,8 @@ describe('Process Calibration data in GeneXpert Logs', () => {
   })
 
   it('should NOT create new entry in DeviceMaintenance if posted log has calibration for past date', async () => {
-    const { apiKey, deviceAuth, deviceId } = context
-    assert.isOk(apiKey)
-
     let logData
     let res
-
-    /**
-     * check that device doesn't have a calibration defined
-     */
-    let deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
-    assert.isUndefined(deviceMaintenance)
 
     /**
      * post `logData` with `Calibrations` array defined.
@@ -568,19 +551,8 @@ describe('Process Calibration data in GeneXpert Logs', () => {
   })
 
   it('should create NEW entry in DeviceMaintenance for log with future date', async () => {
-    const { apiKey, deviceAuth, deviceId } = context
-    assert.isOk(apiKey)
-
     let logData
     let res
-
-    /**
-     * check that device doesn't have a calibration defined
-     */
-    let deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
-    assert.isUndefined(deviceMaintenance)
 
     /**
      * post `logData` with `Calibrations` array defined.
@@ -616,19 +588,8 @@ describe('Process Calibration data in GeneXpert Logs', () => {
   })
 
   it('should NOT create entry in DeviceMaintenance for log in the same date', async () => {
-    const { apiKey, deviceAuth, deviceId } = context
-    assert.isOk(apiKey)
-
     let logData
     let res
-
-    /**
-     * check that device doesn't have a calibration defined
-     */
-    let deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
-    assert.isUndefined(deviceMaintenance)
 
     /**
      * post `logData` with `Calibrations` array defined.
