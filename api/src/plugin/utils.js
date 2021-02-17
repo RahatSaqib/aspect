@@ -332,7 +332,7 @@ async function shouldLogDeviceCalibration(
         deviceId,
         calibratedOn,
       })}`,
-      { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
+      { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
     )
 
     if (!deviceMaintenanceTypeId) {
@@ -396,7 +396,7 @@ async function shouldLogDeviceCalibration(
        */
       logger.silly(
         `shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true`,
-        { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
+        { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
       )
       await knex('DeviceMaintenance').update({ current: 1 }).where({
         id: itemToday.id,
@@ -404,7 +404,7 @@ async function shouldLogDeviceCalibration(
     } else if (!itemToday) {
       logger.silly(
         `shouldLogDeviceCalibration: insert item for today, because it is missing`,
-        { reLabel: 'deviceApi: shouldLogDeviceCalibration' }
+        { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
       )
       await knex('DeviceMaintenance').insert({
         deviceId,
