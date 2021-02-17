@@ -90,6 +90,10 @@ const valueRepresentations = defineMessages({
     id: 'widgetAlerts.averageDaysOfServiceInterruption',
     defaultMessage: 'percentage of devices service interruption',
   },
+  percentageOfModulesFunctioning: {
+    id: 'widgetAlerts.percentageOfModulesFunctioning',
+    defaultMessage: 'percentage of modules functioning',
+  },
   defaultMessage: {
     id: 'widgetAlerts.defaultMessage',
     defaultMessage: 'indicator',

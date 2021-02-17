@@ -19,6 +19,7 @@ const isURL = to => {
 }
 
 const AspectLink = ({ to = '#', children, className, ...restProps }) => {
+  to = to || '#'
   let linkClassName
   const { isPermitted } = useUserIsPermitted(to)
   if (isObject(className)) {
