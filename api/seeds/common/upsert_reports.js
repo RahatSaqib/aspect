@@ -47,8 +47,13 @@ module.exports = async function upsertReports(knex) {
 
   const whitelist = Object.keys(reportsById)
 
-  // Remote
-  await knex('Report').whereNotIn('externalId', whitelist).delete()
+  // remove reports which are not in a whitelist
+  const removeReportIds = await knex('Report')
+    .whereNotIn('externalId', whitelist)
+    .pluck('id')
+  // delete report job functions and then reports
+  await knex('JobFunctionReport').whereIn('reportId', removeReportIds).delete()
+  await knex('Report').whereIn('id', removeReportIds).delete()
 
   await Promise.each(whitelist, async externalId => {
     const { sheets, ...report } = reportsById[externalId]
