@@ -10,7 +10,10 @@ const {
   deviceHardwareError,
   hardwareErrorActions,
 } = require('../device/actions')
-const { issueTypeToId } = require('../shared/dictionary')
+const {
+  deviceMaintenanceTypeToId,
+  issueTypeToId,
+} = require('../shared/dictionary')
 const logger = require('../shared/logger')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
@@ -266,7 +269,6 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
 }
 
 async function shouldTriggerHardwareErrorAnalysis(
-  knex,
   messageContext,
   device,
   payload,
@@ -304,6 +306,122 @@ async function shouldTriggerHardwareErrorAnalysis(
   }
 }
 
+async function shouldLogDeviceCalibration(
+  knex,
+  deviceId,
+  payload,
+  deviceMaintenanceTypeId
+) {
+  const {
+    startedOn: calibratedOn,
+    data: { details = {} },
+  } = payload
+  /**
+   * if log entry contains non-empty array `Calibrations`
+   * then insert/update entry into DeviceMaintenance table
+   */
+  if (
+    details.Calibrations &&
+    _.isArray(details.Calibrations) &&
+    details.Calibrations.length &&
+    deviceId &&
+    calibratedOn
+  ) {
+    logger.silly(
+      `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
+        deviceId,
+        calibratedOn,
+      })}`,
+      { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
+    )
+
+    if (!deviceMaintenanceTypeId) {
+      deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+    }
+
+    // get currently active maintenance item
+    const itemCurrent = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+      /**
+       * below ordering is actually not needed cuz we should have only single entry with
+       * above WHERE condition, but let's keep this 'orderBy' here to have such
+       * extra validation to get item with latest 'contextDate'
+       */
+      .orderBy('contextDate', 'desc')
+      .first()
+
+    // set `current` to 1 if ...
+    const current =
+      // ... missing current entry ...
+      !itemCurrent ||
+      // ... or when current calibration date is less than new date
+      itemCurrent.contextDate < calibratedOn
+        ? 1
+        : 0
+
+    // reset 'current' if current calibration date is less than new date
+    const shouldResetCurrent =
+      itemCurrent && itemCurrent.contextDate < calibratedOn
+    if (shouldResetCurrent) {
+      await knex('DeviceMaintenance').update({ current: 0 }).where({
+        id: itemCurrent.id,
+      })
+    }
+
+    // get today's maintenance item
+    const itemToday = await knex('DeviceMaintenance')
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+      })
+      // only one entry per day
+      .whereRaw(`DATE(contextDate) = DATE(?)`, [calibratedOn])
+      .first()
+
+    /**
+     * Check different conditions for itemToday and itemCurrent.
+     * Notice to do nothing (no below conditions match) if
+     * - itemToday with calibratedOn exists (i.e. no dupes for same day for this deviceId),
+     * - and no need to change itemCurrent (i.e. shouldResetCurrent = false)
+     */
+    if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
+      /**
+       * condition means itemCurrent had been reset (because
+       * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
+       * exists and by some reason is NOT set as 'current'
+       */
+      logger.silly(
+        `shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true`,
+        { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
+      )
+      await knex('DeviceMaintenance').update({ current: 1 }).where({
+        id: itemToday.id,
+      })
+    } else if (!itemToday) {
+      logger.silly(
+        `shouldLogDeviceCalibration: insert item for today, because it is missing`,
+        { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
+      )
+      await knex('DeviceMaintenance').insert({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current,
+        contextDate: calibratedOn,
+        notes: 'Create calibration from GeneXpert logs',
+        createdOn: new Date(),
+        updatedOn: new Date(),
+        /**
+         * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
+         */
+      })
+    }
+  }
+}
+
 module.exports = {
   getPartnerPluginName,
   getDeviceTypePluginName,
@@ -313,4 +431,5 @@ module.exports = {
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
   shouldTriggerHardwareErrorAnalysis,
+  shouldLogDeviceCalibration,
 }
