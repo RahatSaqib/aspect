@@ -548,6 +548,11 @@ describe('Process Calibration data in GeneXpert Logs', () => {
       .first()
     // current calibration date is NOT equal to what we've just posted
     assert.isTrue(deviceMaintenance.contextDate > logData.occurredOn)
+    assert.equal(
+      deviceMaintenance.contextDate.toDateString(),
+      // previous value we've posted before
+      logDataWithCalibration.occurredOn.toDateString()
+    )
   })
 
   it('should create NEW entry in DeviceMaintenance for log with future date', async () => {
