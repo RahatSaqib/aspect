@@ -59,7 +59,8 @@ const baseConfig = ({ formatMessage }) => ({
   ],
   columnOrder: {
     allow: false,
-    initialOrder: [],
+    initialOrder: ['date'],
+    initialOrderDesc: true,
   },
 })
 

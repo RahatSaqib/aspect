@@ -79,9 +79,13 @@ const enhance = compose(
         fetchReports(filtersParams)
       }
     },
-    onClickDownload: ({ location, getReportFile }) => externalId => {
+    onClickDownload: ({ location, getReportFile }) => (
+      externalId,
+      fileExtension = 'xlsx'
+    ) => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
+        filtersParams.set('format', fileExtension)
         getReportFile(externalId, filtersParams)
       }
     },
@@ -150,7 +154,9 @@ const ReportIndex = ({
           <ReportCard
             title={report.get('name')}
             description={report.get('description')}
-            onClick={() => onClickDownload(externalId)}
+            onClick={fileExtension =>
+              onClickDownload(externalId, fileExtension)
+            }
             history={history}
           />
         )

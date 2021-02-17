@@ -15,6 +15,7 @@ const NotificationsContextualMenu = ({ item: { id } }) => {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
       action: () => history.push(`/browse/notification/${id}`),
+      disabled: true,
     },
     {
       icon: 'FaCopy',
