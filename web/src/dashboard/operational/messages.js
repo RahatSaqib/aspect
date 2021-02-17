@@ -38,11 +38,6 @@ export const messages = defineMessages({
       'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
     defaultMessage: 'Devices Experiencing Service Interruption',
   },
-  numberOfDevicesExperiencingServiceInterruptionUnit: {
-    id:
-      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionUnit',
-    defaultMessage: '{unit} last month',
-  },
   numberOfDevicesExperiencingServiceInterruptionDescription: {
     id:
       'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
@@ -52,10 +47,6 @@ export const messages = defineMessages({
   averageDurationServiceInterruptionTitle: {
     id: 'pages.OperationalData.averageDurationServiceInterruptionTitle',
     defaultMessage: 'Average Duration of Service Interruption',
-  },
-  averageDurationServiceInterruptionUnit: {
-    id: 'pages.OperationalData.averageDurationServiceInterruptionUnit',
-    defaultMessage: '{unit} last month',
   },
   averageDurationServiceInterruptionDescription: {
     id: 'pages.OperationalData.averageDurationServiceInterruptionDescription',
@@ -86,11 +77,11 @@ export const messages = defineMessages({
     defaultMessage: 'Percent Reported',
   },
   sentViaSms: {
-    id: 'pages.OperationalData.totalPositiveResults',
+    id: 'pages.OperationalData.sentViaSms',
     defaultMessage: 'Sent via SMS',
   },
   sentViaEmail: {
-    id: 'pages.OperationalData.totalPositiveResults',
+    id: 'pages.OperationalData.sentViaEmail',
     defaultMessage: 'Sent via Email',
   },
   averageDaysForInstrumentReplacement: {
@@ -123,10 +114,6 @@ export const messages = defineMessages({
   percentageOfDaysWithServiceInterruptionTitle: {
     id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle',
     defaultMessage: 'Percentage of Days with Service Interruption',
-  },
-  percentageOfDaysWithServiceInterruptionUnit: {
-    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionUnit',
-    defaultMessage: '{unit} last month',
   },
   percentageOfDaysWithServiceInterruptionDescription: {
     id:

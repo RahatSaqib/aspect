@@ -391,8 +391,8 @@ const ResultList = () => {
         formatType,
         sortCol,
         sortDir,
-        page,
-        size,
+        0,
+        total,
         'results'
       )
     }

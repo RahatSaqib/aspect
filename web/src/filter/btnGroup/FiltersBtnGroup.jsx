@@ -110,7 +110,6 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereNotificationNameIncludes',
     defaultMessage: 'notification name includes "{notificationName}"',
   },
-
   withRevoked: {
     id: 'filter.btnGroup.withRevoked',
     defaultMessage: 'revoked is "{revokedStatus}"',
@@ -123,6 +122,38 @@ const messages = defineMessages({
     id: 'filter.btnGroup.deviceIssueType',
     defaultMessage: 'Device Issue: {issueTypeId}',
   },
+  outOfStock: {
+    id: 'filter.btnGroup.stockLeft.outOfStock',
+    defaultMessage: 'Out of Stock',
+  },
+  upTo14: {
+    id: 'filter.btnGroup.stockLeft.upTo14',
+    defaultMessage: '1-14 Days',
+  },
+  upTo30: {
+    id: 'filter.btnGroup.stockLeft.upTo30',
+    defaultMessage: '15-30 Days',
+  },
+  upTo90: {
+    id: 'filter.btnGroup.stockLeft.upTo90',
+    defaultMessage: '1-3 Months',
+  },
+  upTo180: {
+    id: 'filter.btnGroup.stockLeft.upTo180',
+    defaultMessage: '4-6 Months',
+  },
+  moreThan180: {
+    id: 'filter.btnGroup.stockLeft.moreThan180',
+    defaultMessage: '>6 Months',
+  },
+  notRecorded: {
+    id: 'filter.btnGroup.stockLeft.notRecorded',
+    defaultMessage: 'Not Recorded',
+  },
+  noConsumption: {
+    id: 'filter.btnGroup.stockLeft.noConsumption',
+    defaultMessage: 'No Consumption',
+  },
   stockLeft: reduce(
     stockLeftOptions,
     (acc, { externalId, name }) => {
@@ -134,6 +165,10 @@ const messages = defineMessages({
     },
     {}
   ),
+  whereReportNameIncludes: {
+    id: 'filter.btnGroup.whereReportNameIncludes',
+    defaultMessage: 'report name includes "{reportName}"',
+  },
 })
 const revokedOptions = [
   {
@@ -197,7 +232,8 @@ const filtersOrdering = {
   patientOrCaseId: 23,
   onlyReportableResults: 23,
   issueTypeId: 24,
-  stockLeft: 99,
+  stockLeft: 31,
+  reportName: 32,
 }
 
 const makeButton = labelFn => (props, filterKey) => (
@@ -462,7 +498,12 @@ const buttonBy = {
   ),
   assayOverride: () => false,
   stockLeft: makeButton(({ intl }, stockLeft) =>
-    intl.formatMessage(messages.stockLeft[stockLeft])
+    intl.formatMessage(messages[stockLeft])
+  ),
+  reportName: makeButton(({ intl }, reportName) =>
+    intl.formatMessage(messages.whereReportNameIncludes, {
+      reportName,
+    })
   ),
 }
 

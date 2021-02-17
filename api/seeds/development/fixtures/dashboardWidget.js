@@ -33,6 +33,8 @@ const {
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
     dashboardWidgetTitleConfirmedCases,
+    deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   },
 } = dashboardWidgetsBase
 
@@ -84,5 +86,7 @@ module.exports = {
       ...dashboardWidgetTitleTotalRecoveredCases,
       partnerNames: ['Wakanda'],
     },
+    deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   ],
 }

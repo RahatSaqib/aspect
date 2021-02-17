@@ -33,9 +33,32 @@ export const mergeToFiltersParams = (filters, filtersParams) => {
   )
 }
 
-const defaultSanitizer = (a, k) => {
+const groups = {
+  assayAndResultCategory: [
+    'assayId',
+    'resultCategoryId',
+    'resultCategoryGroupId',
+    'diseaseId',
+  ],
+  geography: ['countryId', 'stateId', 'lgaId'],
+  date: ['minDate', 'maxDate'],
+}
+
+const findFilterConfigByKey = (config, key) =>
+  find(config, configObject => configObject[key]) && !config[key]
+
+const defaultSanitizer = ({ a, k, config }) => {
   const { value } = a
-  if (nonEmptyFilterValue(value.get(k))) {
+  const filterGroupsContainingKey = filter(Object.keys(groups), groupKey =>
+    groups[groupKey].includes(k)
+  )
+  if (
+    !find(filterGroupsContainingKey, groupKey =>
+      findFilterConfigByKey(config, groupKey)
+    ) &&
+    nonEmptyFilterValue(value.get(k))
+  ) {
+    // If there isn't any filter group configured that contains the specified key and the value is set, then remove the key from filters
     value.delete(k)
     return {
       sanitized: true,
@@ -45,21 +68,22 @@ const defaultSanitizer = (a, k) => {
   return a
 }
 
-const makeArraySanitizer = keys => a => keys.reduce(defaultSanitizer, a)
+const makeArraySanitizer = keys => ({ a, config }) =>
+  // Removes from the filters only the keys that weren't configured independently
+  keys
+    .filter(k => !findFilterConfigByKey(config, k))
+    .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
 
-const makeKeySanitizer = k => a => defaultSanitizer(a, k)
+const makeKeySanitizer = k => ({ a, config }) =>
+  defaultSanitizer({ a, k, config })
 
 const sanitizerByConfigKey = {
-  assayAndResultCategory: makeArraySanitizer([
-    'assayId',
-    'resultCategoryId',
-    'resultCategoryGroupId',
-    'diseaseId',
-  ]),
-  geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
+  assayId: defaultSanitizer,
+  assayAndResultCategory: makeArraySanitizer(groups.assayAndResultCategory),
+  geography: makeArraySanitizer(groups.geography),
   state: identity,
   lga: identity,
-  date: makeArraySanitizer(['minDate', 'maxDate']),
+  date: makeArraySanitizer(groups.date),
   patientOrResearchId: defaultSanitizer,
   partnerId: defaultSanitizer,
   sampleId: defaultSanitizer,
@@ -81,10 +105,10 @@ export const sanitizeFiltersStringBy = config => filtersString =>
   reduce(
     sanitizerByConfigKey,
     (acc, sanitizer, key) => {
-      if (find(config, configObject => configObject[key]) || config[key]) {
+      if (findFilterConfigByKey(config, key)) {
         return acc
       }
-      return sanitizer(acc, key)
+      return sanitizer({ a: acc, k: key, config })
     },
     {
       sanitized: false,
@@ -163,10 +187,10 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
         mapKeys(source, (value, key) => {
           switch (key) {
             case 'assayAndResultCategory':
-              result.assayAndResultCategory = true
-              break
-            case 'assayAndResultCategoryGroup':
-              result.assayAndResultCategoryGroup = true
+              result.assayId = true
+              result.diseaseId = true
+              result.resultCategory = true
+              result.resultCategoryGroup = true
               break
             case 'geography':
               result.geography = true
@@ -245,6 +269,11 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'stockLeft':
               result.stockLeft = true
+              break
+            case 'assayId':
+              result.assayId = true
+            case 'reportName':
+              result.reportName = true
               break
             default:
           }

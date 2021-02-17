@@ -33,6 +33,9 @@ const WIDGET_FILTER_KEYS = {
   CURRENT_MONTH: 'currentMonth',
 }
 
+// props will be defined below for each object
+const sqlSnippets = {}
+
 const geneXpertDevices = {
   jobFunctions: ['all'],
   icon: 'MdDesktopWindows',
@@ -44,7 +47,7 @@ const geneXpertDevices = {
   sqlForStatUnit: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId = 'CepheidGeneXpert'
       AND d.createdOn <=  DATE_FORMAT(NOW() ,'%Y-%m-01')`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
@@ -108,7 +111,7 @@ const resultsTitle = {
   title: 'Results',
   titleI18nKey: 'resultsTitle',
   subTitle: 'Last 30 Days',
-  subTitleI18nKey: 'subResultsTitle',
+  subTitleI18nKey: 'last30Days',
   sqlForIndicator: `select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30`,
   link: '/browse/result',
   linkParams: {
@@ -183,7 +186,7 @@ const dashboardWidgetTestsPerDayTitle = {
     AND
     dt.externalId = 'CepheidGeneXpert'`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetTestsPerDayUnit',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
@@ -224,7 +227,7 @@ const dashboardWidgetValidResultsPc = {
       dt.externalId = 'CepheidGeneXpert'
   `,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetValidResultsPcUnit',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
@@ -304,8 +307,8 @@ const utilizationRate = {
       dt.externalId = 'CepheidGeneXpert'
     GROUP BY d.id, dc.dailyCapacity
   ) AS innerQuery`,
-  statUnit: '{unit} in last month',
-  statUnitI18nKey: 'dashboardWidgetUtilizationRate',
+  statUnit: '{unit} last month',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
@@ -371,7 +374,7 @@ const activeDevices = {
   AND DAYOFWEEK(dml.day) <> 1
   AND DAYOFWEEK(dml.day) <> 7`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetActiveDevices',
+  statUnitI18nKey: 'lastMonth',
   link: '/operational-data#deviceStatus',
   sortOrder: 1,
   externalId: 'activeDevices',
@@ -465,7 +468,7 @@ const stockouts = {
           ) AS innerQuery
     ON s.id = innerQuery.siteId`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetStockouts',
+  statUnitI18nKey: 'lastMonth',
   link: '/operational-data#inventoryStatus',
   sortOrder: 9,
   externalId: 'stockouts',
@@ -537,7 +540,7 @@ const deviceDaysActive = {
     GROUP BY dml.deviceId
   ) as innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetDeviceDaysActiveTitle',
+  statUnitI18nKey: 'lastMonth',
   link: '/operational-data#deviceStatus',
   sortOrder: 2,
   externalId: 'deviceDaysActive',
@@ -607,7 +610,7 @@ const errorRate = {
         GROUP BY r.deviceId, dc.dailyCapacity
       ) AS innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetErrorRate',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
@@ -673,7 +676,7 @@ const stockNotRecorded = {
   LEFT OUTER JOIN ConsumableReason AS cr ON il.consumableReasonId = cr.id
   WHERE dt.externalId = 'CepheidGeneXpert';`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetStockNotRecorded',
+  statUnitI18nKey: 'lastMonth',
   link: '/operational-data#inventoryStatus',
   sortOrder: 12,
   externalId: 'stockNotRecorded',
@@ -745,13 +748,13 @@ const moduleSwaps = {
         AND dt.externalId = 'CepheidGeneXpert'
         AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND LAST_DAY(CURRENT_DATE-INTERVAL 1 MONTH)`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetModuleSwaps',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
     issueTypeId: 'ModuleReplaced',
   },
-  sortOrder: 4,
+  sortOrder: 6,
   externalId: 'moduleSwaps',
   description: 'The number of module swaps made at the current month',
   descriptionI18nKey: 'moduleSwapsDescription',
@@ -836,7 +839,7 @@ const gxPositiveResultsNotified = {
               OR ISNULL(deviceApproval.token))
       GROUP BY r.id) AS q`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'gxPositiveResultsNotifiedPreviousMonth',
+  statUnitI18nKey: 'lastMonth',
   sortOrder: 7,
   description:
     "The percentage of positive GeneXpert's results that were notified via SMS or email.",
@@ -917,7 +920,7 @@ WHERE TIMESTAMPDIFF(
     AND r.endedOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01')
                   AND last_day(NOW()- interval 1 month)`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'avgTimeToUploadStat',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   sortOrder: 6,
   externalId: 'avgTimeToUpload',
@@ -1003,13 +1006,13 @@ const unusedModules = {
     ) AS innerquery
   `,
   statUnit: 'of {unit} currently reported',
-  statUnitI18nKey: 'unusedModulesStats',
+  statUnitI18nKey: 'ofCurrentlyReported',
   link: '/browse/device',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
     issueTypeId: 'UnusedModules',
   },
-  sortOrder: 6,
+  sortOrder: 9,
   externalId: 'unusedModules',
   description:
     "Counts devices that didn't use all available module bays for running the most recent 20 results during the last month. This can indicate a faulty module.",
@@ -1082,7 +1085,7 @@ const instrumentsReplaced = {
     GROUP by r.deviceId, r.instrumentSerial
   ) as innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetInstrumentsReplaced',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
@@ -1148,7 +1151,7 @@ const averageRecipientsOfEmail = {
   GROUP BY em.resultId
   ) AS innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardAverageRecipientsOfEmail',
+  statUnitI18nKey: 'lastMonth',
   link: '/operational-data#resultsTransmitted',
   sortOrder: 9,
   externalId: 'averageRecipientsOfEmail',
@@ -1200,7 +1203,7 @@ const averageRecipientsOfSms = {
   GROUP BY sms.resultId
   ) AS innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardAverageRecipientsOfSms',
+  statUnitI18nKey: 'lastMonth',
   link: '/operational-data#resultsTransmitted',
   sortOrder: 10,
   externalId: 'averageRecipientsOfSms',
@@ -1252,7 +1255,7 @@ const averageLengthOfSms = {
   GROUP BY sms.resultId
   ) AS innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardAverageLengthOfSms',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/notification',
   sortOrder: 11,
   externalId: 'averageLengthOfSms',
@@ -1310,7 +1313,7 @@ const smsSent = {
     AND dt.externalId = 'CepheidGeneXpert'
   `,
   statUnit: '{unit} YTD',
-  statUnitI18nKey: 'dashboardWidgetSmsSentStat',
+  statUnitI18nKey: 'ytd',
   link: '/browse/notification',
   sortOrder: 12,
   externalId: 'smsSent',
@@ -1377,9 +1380,9 @@ const averageDaysModuleSwap = {
     GROUP by r.deviceId, r.moduleName, r.moduleSerial
   ) as innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardAverageDaysModuleSwap',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/notification',
-  sortOrder: 4,
+  sortOrder: 7,
   externalId: 'averageDaysModuleSwap',
   description:
     'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
@@ -1479,9 +1482,9 @@ const averageTimeToModuleReplacement = {
     AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
   `,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'averageTimeToModuleReplacementUnit',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/notification',
-  sortOrder: 5,
+  sortOrder: 8,
   externalId: 'averageTimeToModuleReplacement',
   description: `The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.`,
   descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
@@ -1552,7 +1555,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
           AND dt.externalId = 'CepheidGeneXpert'
   `,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'numberOfDevicesExperiencingServiceInterruptionUnit',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
@@ -1643,7 +1646,7 @@ const averageDurationServiceInterruption = {
     ORDER BY deviceId , minInactive) AS innerQuery
   `,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'averageDurationServiceInterruptionUnit',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
@@ -1749,7 +1752,7 @@ const percentageOfDaysWithServiceInterruption = {
     AND dt.externalId = 'CepheidGeneXpert'
   `,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'percentageOfDaysWithServiceInterruptionUnit',
+  statUnitI18nKey: 'lastMonth',
   link: '/browse/device',
   linkParams: {
     deviceName: 'GeneXpert',
@@ -1776,7 +1779,7 @@ const dashboardWidgetTitleTotalDeaths = {
   sqlForIndicator: `SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE fu.externalId='Died'`,
   sqlForStatUnit: `SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE fu.externalId='Died' AND rfu.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY)`,
   statUnit: '{unit} since last week',
-  statUnitI18nKey: 'dashboardWidgetUnitDeathUnitCases',
+  statUnitI18nKey: 'sinceLastWeek',
   link: '/browse/case?filters=',
   sortOrder: 7,
   externalId: 'dashboardWidgetTitleTotalDeaths',
@@ -1797,7 +1800,7 @@ const dashboardWidgetTitleConfirmedCases = {
   sqlForIndicator: `SELECT IFNULL(SUM(f.resultCount), 0) AS cnt FROM FactResultsDeviceByCategory1 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.assayId= a.id INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' and f.days=9999`,
   sqlForStatUnit: `SELECT IFNULL(SUM(f.resultCount), 0) AS cnt FROM FactResultsDeviceByCategory1 AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.assayId= a.id INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' and f.days=7`,
   statUnit: '{unit} since last week',
-  statUnitI18nKey: 'dashboardWidgetUnitConfirmedCases',
+  statUnitI18nKey: 'sinceLastWeek',
   link: '/browse/case?filters=',
   sortOrder: 4,
   externalId: 'dashboardWidgetTitleConfirmedCases',
@@ -1818,7 +1821,7 @@ const dashboardWidgetTitleTotalActiveCases = {
   sqlForIndicator: `SELECT IFNULL(COUNT(f.id), 0) AS cnt FROM Result AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.assayId= a.id INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN FollowUp fu ON fu.id=rfu.followUpId INNER JOIN FollowUpType ft ON fu.followUpTypeId =ft.id WHERE ft.externalid='outcome' AND rfu.resultId=f.id)`,
   sqlForStatUnit: `SELECT IFNULL(COUNT(f.id), 0) AS cnt FROM Result AS f INNER JOIN Device AS d ON d.id = f.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId INNER JOIN Assay a ON f.assayId= a.id INNER JOIN ResultCategory rc ON f.resultCategory1 = rc.id LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id WHERE rc.externalid='Positive' and f.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOT EXISTS (SELECT * FROM ResultFollowUp rfu INNER JOIN FollowUp fu ON fu.id=rfu.followUpId INNER JOIN FollowUpType ft ON fu.followUpTypeId =ft.id WHERE ft.externalid='outcome' AND rfu.resultId=f.id)`,
   statUnit: '{unit} since last week',
-  statUnitI18nKey: 'dashboardWidgetUnitActiveCases',
+  statUnitI18nKey: 'sinceLastWeek',
   link: '/browse/case?filters=',
   sortOrder: 5,
   externalId: 'dashboardWidgetTitleTotalActiveCases',
@@ -1839,7 +1842,7 @@ const dashboardWidgetTitleTotalRecoveredCases = {
   sqlForIndicator: `SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE ft.externalid = 'outcome' AND fu.externalId='Recovered'`,
   sqlForStatUnit: `SELECT COUNT(rfu.resultId) as cnt FROM ResultFollowUp AS rfu INNER JOIN FollowUp AS fu ON fu.id = rfu.followUpId INNER JOIN FollowUpType AS ft ON fu.followUpTypeId = ft.id INNER JOIN Result AS r ON rfu.resultId = r.id INNER JOIN Device AS d ON d.id = r.deviceId INNER JOIN Site AS s ON s.id = d.siteId INNER JOIN Partner AS p ON p.id = s.partnerId WHERE ft.externalid = 'outcome' AND fu.externalId='Recovered' AND rfu.createdOn >= DATE_SUB(NOW(), INTERVAL 7 DAY)`,
   statUnit: '{unit} since last week',
-  statUnitI18nKey: 'dashboardWidgetUnitRecoveredCases',
+  statUnitI18nKey: 'sinceLastWeek',
   link: '/browse/case?filters=',
   sortOrder: 6,
   externalId: 'dashboardWidgetTitleTotalRecoveredCases',
@@ -1881,7 +1884,7 @@ const serverUptimeTitle = {
       LIMIT 1
   ) AS innerQuery`,
   statUnit: '{unit} last month',
-  statUnitI18nKey: 'dashboardWidgetUnitServerUptime',
+  statUnitI18nKey: 'lastMonth',
   description: `The average uptime of the Aspect server this month.`,
   descriptionI18nKey: 'serverUptimeDescription',
   link: 'https://stats.uptimerobot.com/R6WjlCrRW4',
@@ -1898,6 +1901,128 @@ const serverUptimeTitle = {
         comparedTo: '95%',
         representing: 'percentageOfServerUptime',
       },
+    },
+  },
+}
+
+sqlSnippets.deviceCalibrationPastDue = {
+  sum: `
+    SUM(CASE
+      WHEN daysSinceCalibration > 365 THEN 1
+      ELSE 0
+    END)
+  `,
+  innerQuery: `
+    SELECT
+      d.id AS deviceId,
+      CASE
+        WHEN MAX(dm.contextDate) IS NULL THEN null
+        ELSE DATEDIFF( NOW(), MAX(dm.contextDate) )
+      END as daysSinceCalibration
+    FROM Device AS d
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+      LEFT OUTER JOIN DeviceMaintenance as dm on d.id = dm.deviceId and dm.current = 1
+      LEFT OUTER JOIN DeviceMaintenanceType as dmt on dm.deviceMaintenanceTypeId = dmt.id and dmt.externalId = 'calibration'
+    WHERE
+        dt.externalId = 'CepheidGeneXpert'
+    GROUP BY d.id
+  `,
+}
+const deviceCalibrationPastDue = {
+  externalId: 'deviceCalibrationPastDue',
+  jobFunctions: ['all'],
+  sortOrder: 4,
+  icon: 'MdBuild',
+  title: 'Calibration Past Due',
+  titleI18nKey: 'deviceCalibrationPastDueTitle',
+  sqlForIndicator: `
+    SELECT
+      ${sqlSnippets.deviceCalibrationPastDue.sum} AS cnt
+    FROM (
+      ${sqlSnippets.deviceCalibrationPastDue.innerQuery}
+    ) AS sub;`,
+  sqlForStatUnit: `
+    SELECT
+      CONCAT(
+        ROUND(${sqlSnippets.deviceCalibrationPastDue.sum} * 100 / COUNT(deviceId)),
+        '%'
+      ) AS cnt
+    FROM (
+      ${sqlSnippets.deviceCalibrationPastDue.innerQuery}
+    ) AS sub;`,
+  statUnit: '{unit} of all devices',
+  statUnitI18nKey: 'ofAllDevices',
+  description: `The number of instruments that had their last calibration more than one year ago.`,
+  descriptionI18nKey: 'deviceCalibrationPastDueDescription',
+  link: '/reports',
+  linkParams: {
+    reportName: 'Device Calibration Report',
+  },
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+}
+
+sqlSnippets.deviceCalibratedWhenDue = {
+  sum: `SUM(DATEDIFF(contextDateCurrent, contextDatePrevious) < 395)`,
+  count: `SUM(contextDateCurrent IS NOT NULL AND contextDatePrevious IS NOT NULL)`,
+  innerQuery: `
+    SELECT d.id, dm.contextDate as contextDateCurrent, dmPrev.contextDate as contextDatePrevious
+    FROM Device AS d
+    INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN Site AS s ON d.siteId = s.id
+    LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+    INNER JOIN DeviceMaintenance AS dm on d.id = dm.deviceId
+    INNER JOIN DeviceMaintenanceType AS dmt on dm.deviceMaintenanceTypeId = dmt.id
+    INNER JOIN (  SELECT MAX(contextDate) AS contextDate, deviceId
+                  FROM DeviceMaintenance AS dm
+                  INNER JOIN DeviceMaintenanceType AS dmt on dm.deviceMaintenanceTypeId = dmt.id
+                  WHERE dmt.externalId = 'calibration'
+                  AND dm.current = 0
+                  GROUP BY dm.deviceId) AS dmPrev ON d.id = dmPrev.deviceId
+    WHERE dt.externalId = 'CepheidGeneXpert'
+    AND dmt.externalId = 'calibration'
+    AND dm.current = 1
+    AND YEAR(dm.contextDate) = YEAR(NOW())
+    AND MONTH(dm.contextDate) = MONTH(NOW())
+  `,
+}
+const deviceCalibratedWhenDue = {
+  externalId: 'deviceCalibratedWhenDue',
+  jobFunctions: ['all'],
+  sortOrder: 5,
+  icon: 'MdBuild',
+  title: 'Calibrated When Due',
+  titleI18nKey: 'deviceCalibratedWhenDueTitle',
+  sqlForIndicator: `
+    SELECT
+    CONCAT(
+      ROUND(${sqlSnippets.deviceCalibratedWhenDue.sum} * 100 / ${sqlSnippets.deviceCalibratedWhenDue.count}),
+      '%'
+    ) AS cnt
+  FROM (
+    ${sqlSnippets.deviceCalibratedWhenDue.innerQuery}
+  ) AS sub;`,
+  sqlForStatUnit: `
+    SELECT IFNULL(${sqlSnippets.deviceCalibratedWhenDue.count}, 0) AS cnt
+    FROM (
+      ${sqlSnippets.deviceCalibratedWhenDue.innerQuery}
+    ) AS sub;`,
+  statUnit: '{unit} total calibrations',
+  statUnitI18nKey: 'totalCalibrations',
+  description: `The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
+  descriptionI18nKey: 'deviceCalibratedWhenDueDescription',
+  link: '/reports',
+  linkParams: {
+    reportName: 'Device Calibration Report',
+  },
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
     },
   },
 }
@@ -1938,5 +2063,7 @@ module.exports = {
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
     serverUptimeTitle,
+    deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   },
 }

@@ -28,11 +28,11 @@ const messages = defineMessages({
   },
   filterTemplate: {
     id: 'pages.ManageDevices.filterTemplate',
-    defaultMessage: 'Viewing all devices<GEOGRAPHY><NAME>.',
+    defaultMessage: 'Viewing all devices {GEOGRAPHY} {NAME}.',
   },
   filterTemplateOptional: {
     id: 'pages.ManageDevices.filterTemplateOptional',
-    defaultMessage: 'Counting only <ASSAY> assays<RESULT><DATE>.',
+    defaultMessage: 'Counting only {ASSAY} assays {RESULT}{DATE}.',
   },
 })
 

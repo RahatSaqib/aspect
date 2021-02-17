@@ -1,8 +1,9 @@
 const chai = require('chai')
-const { format, subDays } = require('date-fns')
+const { format, subDays, addDays, addMinutes } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
+const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 const { deviceHardwareError } = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
@@ -72,20 +73,21 @@ const logDataWithErrorThatProducesDuplicatLogEntries = {
   }),
 }
 
-describe('Process GeneXpert Logs', () => {
-  const getTotalsOfDeviceOperation = async () => {
-    const [{ count }] = await knex('DeviceOperation').count('id as count')
-    return count
-  }
-  // helper func to post log
-  const postLog = async (deviceAuth, source, data) =>
-    server.post(devicePath).set('Authorization', deviceAuth).send({
-      log: {
-        source,
-        data,
-      },
-    })
+const getTotalsOfDeviceOperation = async () => {
+  const [{ count }] = await knex('DeviceOperation').count('id as count')
+  return count
+}
 
+// helper func to post log
+const postLog = async (deviceAuth, source, data) =>
+  server.post(devicePath).set('Authorization', deviceAuth).send({
+    log: {
+      source,
+      data,
+    },
+  })
+
+describe('Process GeneXpert Logs', () => {
   beforeEach(async () => {
     await context.createDeviceWithResult()
   })
@@ -446,5 +448,181 @@ describe('Process GeneXpert Logs', () => {
     )
     const { details: detailsStored } = JSON.parse(deviceOperation.data)
     expect(detailsStored).to.containSubset(detailsSent)
+  })
+})
+
+describe('Process Calibration data in GeneXpert Logs', () => {
+  let deviceMaintenanceTypeId
+  let deviceMaintenance
+  let deviceAuth
+  let deviceId
+
+  before(async () => {
+    deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+  })
+
+  beforeEach(async () => {
+    await context.createDeviceWithResult()
+
+    const { apiKey } = context
+    ;[{ deviceAuth, deviceId }] = [context]
+    assert.isOk(apiKey)
+
+    /**
+     * check that device doesn't have a calibration defined
+     */
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isUndefined(deviceMaintenance)
+  })
+  afterEach(context.afterEach)
+
+  const getDeviceMaintenanceProps = deviceId => ({
+    deviceId,
+    deviceMaintenanceTypeId,
+    current: 1,
+  })
+
+  it('should NOT create entry in DeviceMaintenance if posted log has missing Calibrations', async () => {
+    /**
+     * post data with empty Calibrations array - no entry should create
+     * in DeviceMaintenance
+     */
+    const logData = logDataWithErrors
+    const res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    // check that device now has calibration defined
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isUndefined(deviceMaintenance)
+  })
+
+  it('should create entry in DeviceMaintenance because posted log has Calibrations', async () => {
+    /**
+     * post `logData` with `Calibrations` array defined.
+     * Because no item for this device/date exists in DeviceMaintenance -
+     * should add new item in DeviceMaintenance table
+     */
+    const logData = logDataWithCalibration
+    const res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    // check that device now has calibration defined
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isDefined(deviceMaintenance)
+  })
+
+  it('should NOT create new entry in DeviceMaintenance if posted log has calibration for past date', async () => {
+    let logData
+    let res
+
+    /**
+     * post `logData` with `Calibrations` array defined.
+     * Because no item for this device/date exists in DeviceMaintenance -
+     * should add new item in DeviceMaintenance table
+     */
+    logData = logDataWithCalibration
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    // check that device now has calibration defined
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isDefined(deviceMaintenance)
+
+    /**
+     * post log data with past date
+     */
+    logData = {
+      ...logDataWithCalibration,
+      occurredOn: subDays(logDataWithCalibration.occurredOn, 5),
+    }
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    //
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    // current calibration date is NOT equal to what we've just posted
+    assert.isTrue(deviceMaintenance.contextDate > logData.occurredOn)
+    assert.equal(
+      deviceMaintenance.contextDate.toDateString(),
+      // previous value we've posted before
+      logDataWithCalibration.occurredOn.toDateString()
+    )
+  })
+
+  it('should create NEW entry in DeviceMaintenance for log with future date', async () => {
+    let logData
+    let res
+
+    /**
+     * post `logData` with `Calibrations` array defined.
+     * Because no item for this device/date exists in DeviceMaintenance -
+     * should add new item in DeviceMaintenance table
+     */
+    logData = logDataWithCalibration
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    // check that device now has calibration defined
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isDefined(deviceMaintenance)
+
+    /**
+     * post log data with future date
+     */
+    logData = {
+      ...logDataWithCalibration,
+      occurredOn: addDays(logDataWithCalibration.occurredOn, 5),
+    }
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    //
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    // current calibration date is equal to what we've just posted
+    assert.isTrue(
+      deviceMaintenance.contextDate.getTime() === logData.occurredOn.getTime()
+    )
+  })
+
+  it('should NOT create entry in DeviceMaintenance for log in the same date', async () => {
+    let logData
+    let res
+
+    /**
+     * post `logData` with `Calibrations` array defined.
+     * Because no item for this device/date exists in DeviceMaintenance -
+     * should add new item in DeviceMaintenance table
+     */
+    logData = logDataWithCalibration
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    // check that device now has calibration defined
+    deviceMaintenance = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    assert.isDefined(deviceMaintenance)
+
+    /**
+     * post log data with same day but a bit newer date
+     */
+    logData = {
+      ...logData,
+      occurredOn: addMinutes(logData.occurredOn, 2),
+    }
+    res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+    const deviceMaintenanceNew = await knex('DeviceMaintenance')
+      .where(getDeviceMaintenanceProps(deviceId))
+      .first()
+    // see that API didn't duplicated entry per same device in same day
+    assert.isTrue(deviceMaintenance.id === deviceMaintenanceNew.id)
   })
 })

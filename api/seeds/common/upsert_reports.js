@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
-const { fixture: ReportFixture } = require('../fixtures/Report')
+const _ = require('lodash')
+const ReportFixture = require('../fixtures/Report')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -24,7 +25,7 @@ module.exports = async function upsertReports(knex) {
 
   const reportsById = {}
 
-  ReportFixture.forEach(report => {
+  _.values(ReportFixture).forEach(report => {
     const sheets = []
 
     report.sheets.forEach(({ query = {}, ...sheet }) => {
@@ -46,8 +47,13 @@ module.exports = async function upsertReports(knex) {
 
   const whitelist = Object.keys(reportsById)
 
-  // Remote
-  await knex('Report').whereNotIn('externalId', whitelist).delete()
+  // remove reports which are not in a whitelist
+  const removeReportIds = await knex('Report')
+    .whereNotIn('externalId', whitelist)
+    .pluck('id')
+  // delete report job functions and then reports
+  await knex('JobFunctionReport').whereIn('reportId', removeReportIds).delete()
+  await knex('Report').whereIn('id', removeReportIds).delete()
 
   await Promise.each(whitelist, async externalId => {
     const { sheets, ...report } = reportsById[externalId]

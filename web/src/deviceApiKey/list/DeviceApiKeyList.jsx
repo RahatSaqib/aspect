@@ -59,15 +59,6 @@ const messages = defineMessages({
     id: 'pages.DeviceApiKeyList.title',
     defaultMessage: 'Device API Keys',
   },
-  /* ---------------- Filter ----------------- */
-  filterTemplate: {
-    id: 'pages.DeviceApiKeyList.filterTemplate',
-    defaultMessage: 'Viewing all device api keys<GEOGRAPHY><NAME>.',
-  },
-  filterTemplateOptional: {
-    id: 'pages.DeviceApiKeyList.filterTemplateOptional',
-    defaultMessage: 'Counting only <PARTNER_ID>.',
-  },
   /* ---------------- Dialog ----------------- */
   generate: {
     id: 'pages.DeviceApiKeyList.generate',
