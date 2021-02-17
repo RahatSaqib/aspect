@@ -46,14 +46,12 @@ const enhance = compose(
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
-
-    onAssayChange: ({ onChangeFilters }) => assayId => {
+    onAssayChange: ({ onChangeFilters }) => assayId =>
       onChangeFilters({
         assayId,
         resultCategoryId: null,
         resultCategoryGroupId: null,
-      })
-    },
+      }),
     onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
       onChangeFilters({ diseaseId }),
     onDateChange: ({ onChangeFilters }) => dateValues =>
@@ -493,7 +491,6 @@ export const FiltersPanel = ({
       assayResultCategory2Label = resultCategory2Label
     }
   }
-
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -626,7 +623,7 @@ export const FiltersPanel = ({
               />
             </div>
           )}
-          {config.assayAndResultCategory && (
+          {config.disease && (
             <div className={cssClasses('Control')}>
               <DiseaseSelectField
                 allItemText={intl.formatMessage(messages.all)}
@@ -642,7 +639,7 @@ export const FiltersPanel = ({
             </div>
           )}
 
-          {config.assayAndResultCategory && !config.onlyDisease && (
+          {config.assayId && !config.onlyDisease && (
             <div className={cssClasses('Control')}>
               <AssaySelectField
                 allItemText={intl.formatMessage(messages.all)}
@@ -659,7 +656,7 @@ export const FiltersPanel = ({
           )}
 
           {!assayResultCategory2Label &&
-            config.assayAndResultCategory &&
+            config.resultCategory &&
             !config.onlyDisease && (
               <div className={cssClasses('Control')}>
                 <ResultCategorySelectField
@@ -677,7 +674,7 @@ export const FiltersPanel = ({
             )}
 
           {assayResultCategory2Label &&
-            config.assayAndResultCategory &&
+            config.resultCategoryGroup &&
             !config.onlyDisease && (
               <div className={cssClasses('Control', 'Control--wide')}>
                 <ResultCategoryGroupSelectField

@@ -34,6 +34,7 @@ const {
     dashboardWidgetTitleTotalRecoveredCases,
     dashboardWidgetTitleConfirmedCases,
     deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   },
 } = dashboardWidgetsBase
 
@@ -86,5 +87,6 @@ module.exports = {
       partnerNames: ['Wakanda'],
     },
     deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   ],
 }

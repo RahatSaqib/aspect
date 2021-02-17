@@ -50,6 +50,10 @@ const messages = defineMessages({
     id: 'component.Widget.ofAllDevices',
     defaultMessage: '{unit} of all devices',
   },
+  totalCalibrations: {
+    id: 'component.Widget.totalCalibrations',
+    defaultMessage: '{unit} total calibrations',
+  },
 })
 
 const EmptyWidget = () => (

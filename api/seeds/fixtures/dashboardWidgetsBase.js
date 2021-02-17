@@ -754,7 +754,7 @@ const moduleSwaps = {
     deviceType: 'CepheidGeneXpert',
     issueTypeId: 'ModuleReplaced',
   },
-  sortOrder: 4,
+  sortOrder: 6,
   externalId: 'moduleSwaps',
   description: 'The number of module swaps made at the current month',
   descriptionI18nKey: 'moduleSwapsDescription',
@@ -1402,7 +1402,7 @@ const averageDaysModuleSwap = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/notification',
-  sortOrder: 4,
+  sortOrder: 7,
   externalId: 'averageDaysModuleSwap',
   description:
     'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
@@ -1504,7 +1504,7 @@ const averageTimeToModuleReplacement = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/notification',
-  sortOrder: 5,
+  sortOrder: 8,
   externalId: 'averageTimeToModuleReplacement',
   description: `The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.`,
   descriptionI18nKey: 'averageTimeToModuleReplacementDescription',
@@ -1987,6 +1987,66 @@ const deviceCalibrationPastDue = {
   },
 }
 
+sqlSnippets.deviceCalibratedWhenDue = {
+  sum: `SUM(DATEDIFF(contextDateCurrent, contextDatePrevious) < 395)`,
+  count: `SUM(contextDateCurrent IS NOT NULL AND contextDatePrevious IS NOT NULL)`,
+  innerQuery: `
+    SELECT d.id, dm.contextDate as contextDateCurrent, dmPrev.contextDate as contextDatePrevious
+    FROM Device AS d
+    INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN Site AS s ON d.siteId = s.id
+    LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+    INNER JOIN DeviceMaintenance AS dm on d.id = dm.deviceId
+    INNER JOIN DeviceMaintenanceType AS dmt on dm.deviceMaintenanceTypeId = dmt.id
+    INNER JOIN (  SELECT MAX(contextDate) AS contextDate, deviceId
+                  FROM DeviceMaintenance AS dm
+                  INNER JOIN DeviceMaintenanceType AS dmt on dm.deviceMaintenanceTypeId = dmt.id
+                  WHERE dmt.externalId = 'calibration'
+                  AND dm.current = 0
+                  GROUP BY dm.deviceId) AS dmPrev ON d.id = dmPrev.deviceId
+    WHERE dt.externalId = 'CepheidGeneXpert'
+    AND dmt.externalId = 'calibration'
+    AND dm.current = 1
+    AND YEAR(dm.contextDate) = YEAR(NOW())
+    AND MONTH(dm.contextDate) = MONTH(NOW())
+  `,
+}
+const deviceCalibratedWhenDue = {
+  externalId: 'deviceCalibratedWhenDue',
+  jobFunctions: ['all'],
+  sortOrder: 5,
+  icon: 'MdBuild',
+  title: 'Calibrated When Due',
+  titleI18nKey: 'deviceCalibratedWhenDueTitle',
+  sqlForIndicator: `
+    SELECT
+    CONCAT(
+      ROUND(${sqlSnippets.deviceCalibratedWhenDue.sum} * 100 / ${sqlSnippets.deviceCalibratedWhenDue.count}),
+      '%'
+    ) AS cnt
+  FROM (
+    ${sqlSnippets.deviceCalibratedWhenDue.innerQuery}
+  ) AS sub;`,
+  sqlForStatUnit: `
+    SELECT IFNULL(${sqlSnippets.deviceCalibratedWhenDue.count}, 0) AS cnt
+    FROM (
+      ${sqlSnippets.deviceCalibratedWhenDue.innerQuery}
+    ) AS sub;`,
+  statUnit: '{unit} total calibrations',
+  statUnitI18nKey: 'totalCalibrations',
+  description: `The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
+  descriptionI18nKey: 'deviceCalibratedWhenDueDescription',
+  link: '/reports',
+  linkParams: {
+    reportName: 'Device Calibration Report',
+  },
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
+    },
+  },
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
   WIDGET_FILTER_KEYS,
@@ -2024,5 +2084,6 @@ module.exports = {
     dashboardWidgetTitleTotalRecoveredCases,
     serverUptimeTitle,
     deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   },
 }
