@@ -161,6 +161,8 @@ module.exports = {
   criticalErrorsByDevice,
   mtbDetectedRRDetected,
   deviceActivity,
+  moduleSwaps,
+  deviceCalibrationReport,
   fixture: [
     mtbDetectedRRDetected,
     resultsHivNotSuppressed,
@@ -168,6 +170,6 @@ module.exports = {
     criticalErrorsByDevice,
     deviceActivity,
     moduleSwaps,
+    deviceCalibrationReport,
   ],
-  deviceCalibrationReport,
 }
