@@ -3,7 +3,10 @@ const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
 const locales = require('date-fns/locale')
 const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
-const { issueCategoryIntlToShortname } = require('../shared/dictionary')
+const {
+  issueCategoryIntlToShortname,
+  issueTypeToId,
+} = require('../shared/dictionary')
 const { getDeviceBaseQuery } = require('./service')
 const { knex, filterDateRangeParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
@@ -147,6 +150,8 @@ async function getModuleSwapsReport(auth, query) {
     minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
+
+  const issueTypeId = await issueTypeToId('ModuleReplaced')
   // get rows
   const devices = await getDeviceBaseQuery(query, dataConstraints, true, true)
     .clone()
@@ -154,19 +159,39 @@ async function getModuleSwapsReport(auth, query) {
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
     .join(
       knex
-        .from('Result')
+        .from('Result as innerResult')
+        .innerJoin(
+          'Issue as innerIssue',
+          'innerIssue.deviceId',
+          'innerResult.deviceId'
+        )
         .max('endedOn as lastResultOldModule')
-        .select('deviceId', 'moduleSerial')
-        .groupBy('deviceId', 'moduleSerial')
+        .select(
+          'innerResult.deviceId',
+          'innerResult.moduleSerial',
+          'innerResult.moduleName',
+          'innerIssue.id as issueId'
+        )
+        .where('innerResult.endedOn', '<=', knex.raw('innerIssue.createdOn'))
+        .andWhere(
+          'innerResult.moduleName',
+          knex.raw("innerIssue.data->>'$.moduleName'")
+        )
+        .andWhere(
+          'innerResult.moduleSerial',
+          knex.raw("innerIssue.data->>'$.replacedModuleSerial'")
+        )
+        .andWhere('innerIssue.issueTypeId', issueTypeId)
+        .groupBy(
+          'innerResult.deviceId',
+          'innerResult.moduleSerial',
+          'innerResult.moduleName',
+          'innerIssue.id'
+        )
         .as('oldModuleResult'),
-      builder => {
-        builder
-          .on(
-            'oldModuleResult.moduleSerial',
-            knex.raw("i.data->>'$.replacedModuleSerial'")
-          )
-          .andOn('oldModuleResult.deviceId', 'd.id')
-      }
+
+      'oldModuleResult.issueId',
+      'i.id'
     )
     .select(
       'd.name as deviceName',
@@ -187,6 +212,7 @@ async function getModuleSwapsReport(auth, query) {
         maxDateFormatted,
       ])
     )
+    .andWhere('i.issueTypeId', issueTypeId)
     .modify(sortPageParams, query, 'name')
   const dataset = {
     ok: true,
