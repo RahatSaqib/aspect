@@ -43,12 +43,12 @@ async function getDeviceTypePluginName(deviceId) {
 }
 
 async function getReplacedModuleSerials(knex, deviceId) {
-  const replacedModuleSerials = knex('Issue as i')
+  const replacedModuleSerials = await knex('Issue as i')
     .join('IssueType as it', 'it.id', 'i.issueTypeId')
     .where('it.externalId', 'ModuleReplaced')
     .where('i.deviceId', deviceId)
     .select(knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial'))
-    .then(items => items.map(s => s.replacedModuleSerial))
+    .pluck('replacedModuleSerial')
 
   return replacedModuleSerials
 }
@@ -91,61 +91,45 @@ async function shouldTriggerResultErrorAnalysis(
   )
 }
 
-async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
-  const result = await knex('Result')
-    .where('id', resultId)
-    .first(
-      'id',
-      'deviceId',
-      'moduleName',
-      'moduleSerial',
-      'createdOn',
-      'endedOn',
-      'updatedOn'
-    )
-  if (!result) {
+async function shouldTriggerModuleReplaced(
+  knex,
+  messageContext,
+  resultId,
+  deviceId,
+  moduleSerial,
+  moduleName,
+  endedOn
+) {
+  if (!moduleSerial && !moduleName && !endedOn && !deviceId) {
     return
   }
-  logger.debug(`shouldTriggerModuleReplaced resultid:${resultId}`)
+  logger.debug(`shouldTriggerModuleReplaced resultid: ${resultId}`, {
+    reLabel: 'onResultLogged:shouldTriggerModuleReplaced',
+  })
 
   if (!messageContext.resultModuleReplaced) {
     messageContext = messageContext.bindActionCreators({
       resultModuleReplaced,
     })
   }
-
-  // get all modules that were replaced so we can ignore them in the queries below:
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    result.deviceId
-  )
   // check if a module was just now replaced and trigger replacement-issue if it was
-  if (
-    result.moduleName &&
-    result.moduleSerial &&
-    result.createdOn.getTime() === result.updatedOn.getTime()
-  ) {
-    // get the most recent result from the same moduleName as the current result
-    const previousResultOnModule = await knex('Result')
-      .where('deviceId', result.deviceId)
-      .where('moduleName', result.moduleName)
-      .whereNotNull('moduleSerial')
-      .whereNot('id', result.id)
-      .whereRaw('endedOn < ?', [result.endedOn])
-      .orderBy('endedOn', 'desc')
-      .first('moduleSerial')
-    if (
-      previousResultOnModule &&
-      previousResultOnModule.moduleSerial !== result.moduleSerial &&
-      !replacedModuleSerials.includes(previousResultOnModule.moduleSerial)
-    ) {
-      messageContext.resultModuleReplaced(result.id, {
-        moduleName: result.moduleName,
-        replacedModuleSerial: previousResultOnModule.moduleSerial,
-        newModuleSerial: result.moduleSerial,
-      })
-      replacedModuleSerials.push(previousResultOnModule.moduleSerial)
-    }
+  // get the most recent result from the same moduleName as the current result
+  const previousResultOnModule = await knex('Result')
+    .where('deviceId', deviceId)
+    .where('moduleName', moduleName)
+    .whereNotNull('moduleSerial')
+    .where('moduleSerial', '<>', moduleSerial)
+    .whereRaw('endedOn < ?', [endedOn])
+    .orderBy('endedOn', 'desc')
+    .first('moduleSerial', 'id')
+
+  if (previousResultOnModule) {
+    messageContext.resultModuleReplaced(resultId, {
+      moduleName,
+      replacedModuleSerial: previousResultOnModule.moduleSerial,
+      newModuleSerial: moduleSerial,
+      oldResultId: previousResultOnModule.id,
+    })
   }
 }
 

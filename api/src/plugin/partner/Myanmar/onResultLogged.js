@@ -64,7 +64,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
   await messageContext.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
-    const { deviceId, siteId } = result
+    const { deviceId, siteId, moduleName, moduleSerial, endedOn } = result
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
@@ -72,7 +72,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
     // get all modules that were replaced so we can ignore them in the queries below:
     const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
 
-    await shouldTriggerModuleReplaced(knex, messageContext, resultId)
+    await shouldTriggerModuleReplaced(
+      knex,
+      messageContext,
+      resultId,
+      deviceId,
+      moduleSerial,
+      moduleName,
+      endedOn
+    )
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
