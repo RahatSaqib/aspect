@@ -5427,7 +5427,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.errorRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.avgTimeToUpload },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.percentageOfModulesFunctioning },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.percentageOfModulesFunctioning,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.gxPositiveResultsNotified,

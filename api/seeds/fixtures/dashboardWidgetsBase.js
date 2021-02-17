@@ -1035,7 +1035,7 @@ FROM
   sortOrder: 6,
   externalId: 'percentageOfModulesFunctioning',
   description:
-    "Counts the percentage of module bays used in the last 7 days, based on the count of all available bays for all the GeneXpert devices.",
+    'Counts the percentage of module bays used in the last 7 days, based on the count of all available bays for all the GeneXpert devices.',
   descriptionI18nKey: 'percentageOfModulesFunctioningDescription',
   icon: 'MdSwapVert',
   dashboards: {
