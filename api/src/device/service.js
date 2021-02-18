@@ -33,6 +33,7 @@ const {
   startOfDayUtc,
   startOfTodayUtc,
   formatDateOrDefault,
+  getArrayOfDaysInRange
 } = require('../shared/date')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 
@@ -922,62 +923,118 @@ async function setDeviceMaintenanceStatus(
   return deviceMaintenanceStatusLogId
 }
 
+async function getDeviceOrBoom(deviceId, dataConstraints) {
+  // Check if device exists
+  const device = await knex('Device').where('id', deviceId).first()
+  if (!device)
+    throw Boom.badRequest("The provided device id does not exist")
+
+  // Check if device is accessible
+  const accessibleDeviceIds = await knex('Device as d')
+    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      partner: 'p',
+      geography: 'g',
+      site: 's',
+      device: 'd',
+    })
+    .pluck('d.id')
+
+  if (accessibleDeviceIds.indexOf(deviceId) === -1)
+    throw Boom.forbidden("You don't have permissions for updating the requested device")
+
+  return device
+}
+
+async function getDeviceMaintenanceStatusOrBoom(maintenanceStatusExternalId, onlyManuallySetable = false) {
+  // Check if deviceMaintenanceStatusExternalId exist
+  const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus').where('externalId', maintenanceStatusExternalId).first()
+  if (!deviceMaintenanceStatus)
+    throw Boom.badRequest("The provided device maintenance status external id does not exist")
+  if (onlyManuallySetable && !deviceMaintenanceStatus.manuallySet)
+    throw Boom.badRequest(
+      `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
+    )
+
+  return deviceMaintenanceStatus
+}
+
+async function setStatusForDateRange(request) {
+  const {
+    auth: { credentials },
+    params: { deviceId },
+    payload,
+    plugins: { messageContext },
+  } = request
+  const { externalId, dateFrom, dateTo, notes } = payload
+  const dataConstraints = await getConstraints(credentials)
+  const user = await getUser(credentials.name)
+
+  // Get device or throw boom error if it's a bad request
+  const device = await getDeviceOrBoom(deviceId, dataConstraints)
+  
+  // Get device maintenance status id or throw boom error if it's a bad request
+  const { id: deviceMaintenanceStatusId } = await getDeviceMaintenanceStatusOrBoom(externalId, true)
+
+  if (dateFrom >= device.createdOn && dateFrom <= dateTo && dateTo <= new Date())
+  {
+    // Everything all right, then insert logs
+    if (notes) {
+      _.set(payload, 'options.data.notes', notes)
+    }
+
+    await Promise.all(getArrayOfDaysInRange(dateFrom, dateTo).map(async day =>setDeviceMaintenanceStatus(deviceId, user.id, deviceMaintenanceStatusId, startOfDayUtc(day), payload, messageContext)))
+    return {
+      ok: true
+    }
+  } else
+    throw Boom.badRequest("Invalid date range")
+}
+
 async function manuallySetDeviceMaintenanceStatus(request) {
   const {
     auth: { credentials },
-    params,
+    params: { deviceId },
     payload,
     plugins: { messageContext },
   } = request
   const { externalId, day = startOfTodayUtc(), notes } = payload
-  const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus')
-    .where({ externalId })
-    .first()
-  if (!deviceMaintenanceStatus) {
-    return Boom.badRequest(`${externalId} is not a known maintenance status`)
-  }
-  if (!deviceMaintenanceStatus.manuallySet) {
-    return Boom.badRequest(
-      `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
-    )
-  }
+  const deviceMaintenanceStatus = await getDeviceMaintenanceStatusOrBoom(externalId, true)
+  
   const dataConstraints = await getConstraints(credentials)
-  const { id: deviceId } = await knex('Device as d')
-    .where('d.id', +params.deviceId)
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
-    })
-    .first('d.id')
+  const device = await getDeviceOrBoom(deviceId, dataConstraints)
 
-  if (!deviceId) {
-    return Boom.notFound()
-  }
   const currentlyLoggedInUser = await getUser(credentials.name)
-  if (notes) {
-    _.set(payload, 'options.data.notes', notes)
-  }
-  const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
-    deviceId,
-    currentlyLoggedInUser.id,
-    deviceMaintenanceStatus.id,
-    startOfDayUtc(day),
-    payload,
-    messageContext
-  )
-  return {
-    ok: true,
-    data: {
-      deviceMaintenanceStatusLogId,
-      maintenanceStatus: deviceMaintenanceStatus.externalId,
-      maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
-      maintenanceStatusName: deviceMaintenanceStatus.name,
-      maintenanceStatusActive: deviceMaintenanceStatus.active,
-      maintenanceStatusNotes: notes,
-      maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
-    },
-  }
+
+  if (day >= device.createdOn) {
+    if (notes) {
+      _.set(payload, 'options.data.notes', notes)
+    }
+  
+    const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
+      deviceId,
+      currentlyLoggedInUser.id,
+      deviceMaintenanceStatus.id,
+      startOfDayUtc(day),
+      payload,
+      messageContext
+    )
+    return {
+      ok: true,
+      data: {
+        deviceMaintenanceStatusLogId,
+        maintenanceStatus: deviceMaintenanceStatus.externalId,
+        maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
+        maintenanceStatusName: deviceMaintenanceStatus.name,
+        maintenanceStatusActive: deviceMaintenanceStatus.active,
+        maintenanceStatusNotes: notes,
+        maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
+      },
+    }
+  } else
+    throw Boom.badRequest("The maintenance date should be later than the creation date of the device")
 }
 
 async function automaticallySetDeviceMaintenanceStatus(
@@ -1621,4 +1678,5 @@ module.exports = {
   onDeviceMaintenanceStatusLogScheduled,
   getDeviceCalibrationsForReport,
   getDeviceBaseQuery,
+  setStatusForDateRange,
 }

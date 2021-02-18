@@ -14,6 +14,7 @@ const {
   updateDeviceMaintenance,
   getDevicePerformance,
   manuallySetDeviceMaintenanceStatus,
+  setStatusForDateRange,
   onDeviceMaintenanceStatusLogged,
   onResultLogged,
   onDeviceUpdateMaintenanceStatus,
@@ -703,6 +704,81 @@ const routes = [
                 .allow(null)
                 .description('Whether the device status was manually set'),
             }),
+        }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/maintenance-status/range/{deviceId}',
+    handler: asyncHandler(setStatusForDateRange),
+    config: {
+      description: 'Set Device Maintenance for a date range',
+      // notes: 'Update maintenance status of a device',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.number().description('Device ID').required(),
+        },
+        payload: {
+          externalId: Joi.string().required().description(
+            'The external ID of the maintenance status EG. active, reportedActive, inactiveOutOfInventory...'
+          ),
+          dateFrom: Joi.date()
+            .iso()
+            .required()
+            .description(
+              'Specified initial date for the maintenance status so that it can be updated as an historical snapshot'
+            ),
+          dateTo: Joi.date()
+            .iso()
+            .required()
+            .description(
+              'Specified end date for the maintenance status so that it can be updated as an historical snapshot'
+            ),
+          notes: Joi.string()
+            .allow('', null)
+            .description(
+              'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'
+            ),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          // data: Joi.object()
+          //   .required()
+          //   .description('Device maintenance status details fields')
+          //   .keys({
+          //     deviceMaintenanceStatusLogId: Joi.number()
+          //       .required()
+          //       .description('DeviceMaintenanceStatusLog.id that was created'),
+          //     maintenanceStatus: Joi.string()
+          //       .allow('', null)
+          //       .description('The maintenance status of the device'),
+          //     maintenanceStatusI18nKey: Joi.string()
+          //       .allow('', null)
+          //       .description(
+          //         'The i18n key for the name of the maintenance status'
+          //       ),
+          //     maintenanceStatusName: Joi.string()
+          //       .allow('', null)
+          //       .description('The default name of the maintenance status'),
+          //     maintenanceStatusNotes: Joi.string()
+          //       .allow('', null)
+          //       .description('The notes of the last the maintenance status'),
+          //     maintenanceStatusActive: Joi.number()
+          //       .allow(null)
+          //       .description('Whether the device was active or not'),
+          //     maintenanceStatusManuallySet: Joi.number()
+          //       .allow(null)
+          //       .description('Whether the device status was manually set'),
+          //   }),
         }),
       },
     },

@@ -2,11 +2,14 @@ const groupBy = require('lodash/groupBy')
 const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
+const includes = require('lodash/includes')
 const uniq = require('lodash/uniq')
+const range = require('lodash/range')
 const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
+const Boom = require('@hapi/boom')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
 const {
@@ -194,6 +197,49 @@ async function deviceStatusOverTime(request) {
   data = orderBy(data, ['name'])
 
   return { ok: true, data }
+}
+
+async function update(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  let { dateFrom, dateTo, deviceId, deviceMaintenanceStatusExternalId, note } = request.query
+  dateFrom = startOfDayUtc(dateFrom).toISOString()
+  dateTo = startOfDayUtc(min([dateTo, addDays(new Date(), 1)])).toISOString()
+
+  // Check if device exists
+  const device = await knex('Device').where('id', deviceId)
+  if (!device)
+    throw Boom.badRequest("The provided device id does not exist")
+
+  // Check if device is accessible
+  const accessibleDeviceIds = await knex('Device as d')
+    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      partner: 'p',
+      geography: 'g',
+      result: 'r',
+      site: 's',
+      device: 'd',
+    })
+    .select(['id'])
+  if (!includes(accessibleDeviceIds, deviceId))
+    throw Boom.forbidden("You don't have permissions for updating the requested device")
+  
+  // Check if deviceMaintenanceStatusExternalId exist
+  const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+  const deviceMaintenanceStatusId = deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId] || false
+  if (!deviceMaintenanceStatusId)
+    Boom.badRequest("The provided device maintenance status external id does not exist")
+
+  if (dateFrom <= device.createdOn && dateTo >= createdOn)
+  {
+    // Everything all right
+    getArrayOfDaysInRange(dateFrom, dateTo).forEach(day => {
+      console.log(day)
+    })
+  }
 }
 
 module.exports = {

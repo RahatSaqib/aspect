@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi')
 
 const { asyncHandler } = require('../routes')
-const { deviceStatusOverTime } = require('./service')
+const { deviceStatusOverTime, update } = require('./service')
 
 const routes = [
   {
@@ -80,6 +80,40 @@ const routes = [
                 ),
             })
           ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/maintenance/update',
+    handler: asyncHandler(deviceStatusOverTime),
+    config: {
+      description: 'Updates the maintenance status of a device in a date range',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        query: {
+          deviceId: Joi.number().required(),
+          dateFrom: Joi.date()
+            .iso()
+            .required()
+            .description('From Date, inclusive'),
+          dateTo: Joi.date()
+            .iso()
+            .required()
+            .description('To Date, inclusive'),
+          deviceMaintenanceStatusExternalId: Joi.string().required(),
+          note: Joi.string()
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
         }),
       },
     },
