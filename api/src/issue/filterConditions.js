@@ -60,9 +60,28 @@ const filterByLotAndAssay = (
   return queryBuilder
 }
 
+const filterByModuleReplaced = (
+  queryBuilder,
+  { newModuleSerial, replacedModuleSerial },
+  aliases = { issue: 'i' }
+) => {
+  logger.debug(
+    `moduleName: ${newModuleSerial}, Module Serial: ${replacedModuleSerial}`,
+    {
+      reLabel: 'issues:filterByLotAndAssay',
+    }
+  )
+  if (newModuleSerial && replacedModuleSerial)
+    queryBuilder.whereRaw(
+      `${aliases.issue}.data->>"$.newModuleSerial"=? and ${aliases.issue}.data->>"$.replacedModuleSerial"=?`,
+      [newModuleSerial, replacedModuleSerial]
+    )
+  return queryBuilder
+}
 module.exports = {
   filterByInstrumentSerial,
   filterByLotAndAssay,
   filterByModuleSerial,
+  filterByModuleReplaced,
   filterByInstrumentAndModuleSerial,
 }
