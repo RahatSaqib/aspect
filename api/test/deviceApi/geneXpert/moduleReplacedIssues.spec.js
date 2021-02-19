@@ -21,7 +21,7 @@ const {
   dispatchAndWaitForAction,
 } = require('../../utils/mqUtils')
 
-describe.skip('Module Replaced Issue testing', () => {
+describe.only('Module Replaced Issue testing', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -46,10 +46,8 @@ describe.skip('Module Replaced Issue testing', () => {
   })
 
   afterEach(afterCleanUp)
-
+  const now = new Date()
   it('should create a module replaced issue when a new serial is detected in a slot', async () => {
-    const { now } = context
-
     // Post to deviceApi to ensure the device in in Aspect
     let response = await postToDeviceApi({
       authHeader: deviceAuth,
@@ -156,8 +154,6 @@ describe.skip('Module Replaced Issue testing', () => {
   })
 
   it('should NOT create a module replaced issue when a new serial is detected in a different slot', async () => {
-    const { now } = context
-
     // Post to deviceApi to ensure the device in in Aspect
     const response = await postToDeviceApi({
       authHeader: deviceAuth,
@@ -248,8 +244,6 @@ describe.skip('Module Replaced Issue testing', () => {
   })
 
   it('should NOT create a module replaced issue when the same serial is detected in a slot', async () => {
-    const { now } = context
-
     // Post to deviceApi to ensure the device in in Aspect
     const response = await postToDeviceApi({
       authHeader: deviceAuth,
