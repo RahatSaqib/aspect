@@ -7,8 +7,13 @@ const {
 const logger = require('../../src/shared/logger')
 
 const { createNewIssue, findOpenIssue } = require('../../src/issue/service')
+const cleanIssueTypes = require('./remove_unused_issues')
 
-module.exports = async function cleanModuleReplacedIssues(knex) {
+module.exports = async function cleanModuleReplacedIssues(
+  knex,
+  adminUserName,
+  partnerName
+) {
   try {
     await knex.transaction(async trx => {
       const moduleReplacedIssue = await issueTypeToId('ModuleReplaced')
@@ -27,30 +32,33 @@ module.exports = async function cleanModuleReplacedIssues(knex) {
         if (previousResultWithDifferentSerial) {
           const action = {
             type: 'RESULT_MODULE_REPLACED',
+            deviceId: result.deviceId,
             resultId: result.id,
             options: {
-              moduleName: result.moduleName,
-              replacedModuleSerial:
-                previousResultWithDifferentSerial.moduleSerial,
-              newModuleSerial: result.moduleSerial,
-              oldResultId: previousResultWithDifferentSerial.id,
+              data: {
+                moduleName: result.moduleName,
+                replacedModuleSerial:
+                  previousResultWithDifferentSerial.moduleSerial,
+                newModuleSerial: result.moduleSerial,
+                oldResultId: previousResultWithDifferentSerial.id,
+              },
             },
           }
 
           const openIssue = await findOpenIssue(
             knex,
-            moduleReplacedIssue,
-            action
+            'ModuleReplaced',
+            action,
+            { evaluationFunction: 'filterByModuleReplaced' }
           )
 
           if (!openIssue) {
-            // console.log('we are going to create the issue')
-            createNewIssue(trx, 'ModuleReplaced', action)
+            await createNewIssue(trx, 'ModuleReplaced', action)
           }
         }
       })
-      // await updateOpenIssues(trx, moduleReplacedIssue)
     })
+    cleanIssueTypes(knex, adminUserName, partnerName)
   } catch (error) {
     logger.error(error, { reLabel: 'seed:cleanModuleReplacedIssues' })
     throw error

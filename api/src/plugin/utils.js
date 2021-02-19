@@ -124,7 +124,7 @@ async function shouldTriggerModuleReplaced(
     .first('moduleSerial', 'id')
 
   if (previousResultOnModule) {
-    messageContext.resultModuleReplaced(resultId, {
+    messageContext.resultModuleReplaced(resultId, deviceId, {
       moduleName,
       replacedModuleSerial: previousResultOnModule.moduleSerial,
       newModuleSerial: moduleSerial,
