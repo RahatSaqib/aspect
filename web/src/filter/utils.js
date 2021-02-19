@@ -48,6 +48,7 @@ const findFilterConfigByKey = (config, key) =>
   find(config, configObject => configObject[key]) && !config[key]
 
 const defaultSanitizer = ({ a, k, config }) => {
+  if (!a.value) a.value = new URLSearchParams()
   const { value } = a
   const filterGroupsContainingKey = filter(Object.keys(groups), groupKey =>
     groups[groupKey].includes(k)
