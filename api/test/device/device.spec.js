@@ -892,7 +892,6 @@ describe('Device routes', () => {
             .whereIn('id', deviceMaintenanceStatusLogIds)
             .delete()
         })
-
         ;[deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({

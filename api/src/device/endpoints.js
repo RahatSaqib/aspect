@@ -753,10 +753,11 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
-          data: Joi.object()
-            .keys({
-              deviceMaintenanceStatusLogIds: Joi.array().description('The list of ids of the inserted DeviceMaintenanceStatusLog')
-            }),
+          data: Joi.object().keys({
+            deviceMaintenanceStatusLogIds: Joi.array().description(
+              'The list of ids of the inserted DeviceMaintenanceStatusLog'
+            ),
+          }),
         }),
       },
     },
