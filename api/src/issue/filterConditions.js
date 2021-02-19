@@ -68,7 +68,7 @@ const filterByModuleReplaced = (
   logger.debug(
     `moduleName: ${newModuleSerial}, Module Serial: ${replacedModuleSerial}`,
     {
-      reLabel: 'issues:filterByLotAndAssay',
+      reLabel: 'issues:filterByModuleReplaced',
     }
   )
   if (newModuleSerial && replacedModuleSerial)

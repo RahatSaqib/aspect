@@ -728,6 +728,7 @@ module.exports = {
   getAllActions,
   getIssueEventTriggerSubscriptions,
   triggerIssue,
+  findOpenIssue,
   updateIssueStatus,
   createNewIssue,
 }
