@@ -33,7 +33,7 @@ const {
   startOfDayUtc,
   startOfTodayUtc,
   formatDateOrDefault,
-  getArrayOfDaysInRange
+  getArrayOfDaysInRange,
 } = require('../shared/date')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 
@@ -926,8 +926,7 @@ async function setDeviceMaintenanceStatus(
 async function getDeviceOrBoom(deviceId, dataConstraints) {
   // Check if device exists
   const device = await knex('Device').where('id', deviceId).first()
-  if (!device)
-    throw Boom.badRequest("The provided device id does not exist")
+  if (!device) throw Boom.badRequest('The provided device id does not exist')
 
   // Check if device is accessible
   const accessibleDeviceIds = await knex('Device as d')
@@ -943,16 +942,25 @@ async function getDeviceOrBoom(deviceId, dataConstraints) {
     .pluck('d.id')
 
   if (accessibleDeviceIds.indexOf(deviceId) === -1)
-    throw Boom.forbidden("You don't have permissions for updating the requested device")
+    throw Boom.forbidden(
+      "You don't have permissions for updating the requested device"
+    )
 
   return device
 }
 
-async function getDeviceMaintenanceStatusOrBoom(maintenanceStatusExternalId, onlyManuallySetable = false) {
+async function getDeviceMaintenanceStatusOrBoom(
+  maintenanceStatusExternalId,
+  onlyManuallySetable = false
+) {
   // Check if deviceMaintenanceStatusExternalId exist
-  const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus').where('externalId', maintenanceStatusExternalId).first()
+  const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus')
+    .where('externalId', maintenanceStatusExternalId)
+    .first()
   if (!deviceMaintenanceStatus)
-    throw Boom.badRequest("The provided device maintenance status external id does not exist")
+    throw Boom.badRequest(
+      'The provided device maintenance status external id does not exist'
+    )
   if (onlyManuallySetable && !deviceMaintenanceStatus.manuallySet)
     throw Boom.badRequest(
       `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
@@ -974,23 +982,45 @@ async function setStatusForDateRange(request) {
 
   // Get device or throw boom error if it's a bad request
   const device = await getDeviceOrBoom(deviceId, dataConstraints)
-  
-  // Get device maintenance status id or throw boom error if it's a bad request
-  const { id: deviceMaintenanceStatusId } = await getDeviceMaintenanceStatusOrBoom(externalId, true)
 
-  if (dateFrom >= device.createdOn && dateFrom <= dateTo && dateTo <= new Date())
-  {
+  // Get device maintenance status id or throw boom error if it's a bad request
+  const {
+    id: deviceMaintenanceStatusId,
+  } = await getDeviceMaintenanceStatusOrBoom(externalId, true)
+
+  if (
+    dateFrom >= device.createdOn &&
+    dateFrom <= dateTo &&
+    dateTo <= new Date()
+  ) {
     // Everything all right, then insert logs
     if (notes) {
       _.set(payload, 'options.data.notes', notes)
     }
 
-    await Promise.all(getArrayOfDaysInRange(dateFrom, dateTo).map(async day =>setDeviceMaintenanceStatus(deviceId, user.id, deviceMaintenanceStatusId, startOfDayUtc(day), payload, messageContext)))
+    const deviceMaintenanceStatusLogIds = []
+    await Promise.all(
+      getArrayOfDaysInRange(dateFrom, dateTo).map(async day => {
+        deviceMaintenanceStatusLogIds.push(
+          await setDeviceMaintenanceStatus(
+            deviceId,
+            user.id,
+            deviceMaintenanceStatusId,
+            startOfDayUtc(day),
+            payload,
+            messageContext
+          )
+        )
+      })
+    )
     return {
-      ok: true
+      ok: true,
+      data: {
+        deviceMaintenanceStatusLogIds,
+      },
     }
-  } else
-    throw Boom.badRequest("Invalid date range")
+  }
+  throw Boom.badRequest('Invalid date range')
 }
 
 async function manuallySetDeviceMaintenanceStatus(request) {
@@ -1001,8 +1031,11 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     plugins: { messageContext },
   } = request
   const { externalId, day = startOfTodayUtc(), notes } = payload
-  const deviceMaintenanceStatus = await getDeviceMaintenanceStatusOrBoom(externalId, true)
-  
+  const deviceMaintenanceStatus = await getDeviceMaintenanceStatusOrBoom(
+    externalId,
+    true
+  )
+
   const dataConstraints = await getConstraints(credentials)
   const device = await getDeviceOrBoom(deviceId, dataConstraints)
 
@@ -1012,7 +1045,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
     if (notes) {
       _.set(payload, 'options.data.notes', notes)
     }
-  
+
     const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
       deviceId,
       currentlyLoggedInUser.id,
@@ -1033,8 +1066,10 @@ async function manuallySetDeviceMaintenanceStatus(request) {
         maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
       },
     }
-  } else
-    throw Boom.badRequest("The maintenance date should be later than the creation date of the device")
+  }
+  throw Boom.badRequest(
+    'The maintenance date should be later than the creation date of the device'
+  )
 }
 
 async function automaticallySetDeviceMaintenanceStatus(

@@ -721,9 +721,11 @@ const routes = [
           deviceId: Joi.number().description('Device ID').required(),
         },
         payload: {
-          externalId: Joi.string().required().description(
-            'The external ID of the maintenance status EG. active, reportedActive, inactiveOutOfInventory...'
-          ),
+          externalId: Joi.string()
+            .required()
+            .description(
+              'The external ID of the maintenance status EG. active, reportedActive, inactiveOutOfInventory...'
+            ),
           dateFrom: Joi.date()
             .iso()
             .required()
@@ -751,6 +753,7 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
+          data: Joi.object(),
           // data: Joi.object()
           //   .required()
           //   .description('Device maintenance status details fields')

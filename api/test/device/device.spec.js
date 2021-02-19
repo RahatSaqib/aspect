@@ -802,8 +802,12 @@ describe('Device routes', () => {
           .join('Partner as p', 'd.partnerId', 'p.id')
           .where('p.name', 'Partner One')
           .where('dtc.hasResults', true)
-          .first('d.id', 'd.deviceMaintenanceStatusLogId')
+          .first('d.id', 'd.deviceMaintenanceStatusLogId', 'd.createdOn')
         deviceId = device.id
+
+        await knex('Device')
+          .where('id', deviceId)
+          .update('createdOn', subDays(startOfToday(), 6))
       })
       afterEach(async () => {
         if (deviceMaintenanceStatusLogId) {
@@ -818,6 +822,10 @@ describe('Device routes', () => {
           // reset value
           deviceMaintenanceStatusLogId = null
         }
+
+        await knex('Device')
+          .where('id', deviceId)
+          .update('createdOn', device.createdOn)
       })
 
       const maintenanceStatusPath = `${path}/maintenance-status`
@@ -874,6 +882,50 @@ describe('Device routes', () => {
           deviceMaitnenanceStatusLog.data
         )
         expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
+      })
+
+      it.only('should save the maintenance status of the device for a date range', async () => {
+        let deviceMaintenanceStatusLogIds
+
+        after(async () => {
+          await knex('DeviceMaintenanceStatusLog')
+            .whereIn('id', deviceMaintenanceStatusLogIds)
+            .delete()
+        })
+        ;[deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId,
+          deviceMaintenanceStatusId,
+          data: '{}',
+          day: startOfToday(),
+          createdOn: new Date(),
+        })
+        await knex('Device').where({ id: deviceId }).update({
+          deviceMaintenanceStatusLogId,
+        })
+
+        const payload = {
+          externalId: 'inactiveDownForRepair',
+          dateFrom: subDays(startOfToday(), 5),
+          dateTo: startOfToday(),
+          notes:
+            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+        }
+
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusPath}/range/${device.id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        deviceMaintenanceStatusLogIds =
+          updateMaintenanceStatusResponse.body.data
+            .deviceMaintenanceStatusLogIds
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.equal(
+          updateMaintenanceStatusResponse.body.data
+            .deviceMaintenanceStatusLogIds.length,
+          6
+        )
       })
 
       it('should provide shallow access to write to data.options.data.notes', async () => {
