@@ -753,35 +753,10 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
-          data: Joi.object(),
-          // data: Joi.object()
-          //   .required()
-          //   .description('Device maintenance status details fields')
-          //   .keys({
-          //     deviceMaintenanceStatusLogId: Joi.number()
-          //       .required()
-          //       .description('DeviceMaintenanceStatusLog.id that was created'),
-          //     maintenanceStatus: Joi.string()
-          //       .allow('', null)
-          //       .description('The maintenance status of the device'),
-          //     maintenanceStatusI18nKey: Joi.string()
-          //       .allow('', null)
-          //       .description(
-          //         'The i18n key for the name of the maintenance status'
-          //       ),
-          //     maintenanceStatusName: Joi.string()
-          //       .allow('', null)
-          //       .description('The default name of the maintenance status'),
-          //     maintenanceStatusNotes: Joi.string()
-          //       .allow('', null)
-          //       .description('The notes of the last the maintenance status'),
-          //     maintenanceStatusActive: Joi.number()
-          //       .allow(null)
-          //       .description('Whether the device was active or not'),
-          //     maintenanceStatusManuallySet: Joi.number()
-          //       .allow(null)
-          //       .description('Whether the device status was manually set'),
-          //   }),
+          data: Joi.object()
+            .keys({
+              deviceMaintenanceStatusLogIds: Joi.array().description('The list of ids of the inserted DeviceMaintenanceStatusLog')
+            }),
         }),
       },
     },

@@ -884,7 +884,7 @@ describe('Device routes', () => {
         expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
       })
 
-      it.only('should save the maintenance status of the device for a date range', async () => {
+      it('should save the maintenance status of the device for a date range', async () => {
         let deviceMaintenanceStatusLogIds
 
         after(async () => {
@@ -892,6 +892,7 @@ describe('Device routes', () => {
             .whereIn('id', deviceMaintenanceStatusLogIds)
             .delete()
         })
+
         ;[deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
