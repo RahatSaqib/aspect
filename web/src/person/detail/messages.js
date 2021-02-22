@@ -554,5 +554,9 @@ export default {
       id: 'filter.AssaySelectField.assayGenericDst',
       defaultMessage: 'TB DST',
     },
+    userCanAlsoLogIn: {
+      id: 'page.contacts.person.userCanAlsoLogIn',
+      defaultMessage: 'This contact can log in as a user',
+    },
   }),
 }
