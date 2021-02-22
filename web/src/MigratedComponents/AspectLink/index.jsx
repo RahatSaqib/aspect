@@ -18,7 +18,7 @@ const isURL = to => {
   return to.match(regex)
 }
 
-const AspectLink = ({ to = '#', children, className, ...restProps }) => {
+const AspectLink = ({ to, children, className, ...restProps }) => {
   to = to || '#'
   let linkClassName
   const { isPermitted } = useUserIsPermitted(to)
