@@ -1040,8 +1040,7 @@ async function manuallySetDeviceMaintenanceStatus(request) {
   const device = await getDeviceOrBoom(deviceId, dataConstraints)
 
   const currentlyLoggedInUser = await getUser(credentials.name)
-
-  if (day >= device.createdOn) {
+  if (day >= startOfDayUtc(device.createdOn)) {
     if (notes) {
       _.set(payload, 'options.data.notes', notes)
     }

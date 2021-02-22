@@ -645,7 +645,7 @@ const routes = [
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string().description('Device ID').required(),
+          deviceId: Joi.number().description('Device ID').required(),
         },
         payload: {
           externalId: Joi.string().description(

@@ -822,7 +822,9 @@ describe('Device routes', () => {
           // reset value
           deviceMaintenanceStatusLogId = null
         }
+      })
 
+      after(async () => {
         await knex('Device')
           .where('id', deviceId)
           .update('createdOn', device.createdOn)
