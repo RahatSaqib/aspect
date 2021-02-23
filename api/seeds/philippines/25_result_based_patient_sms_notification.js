@@ -23,7 +23,7 @@ async function seed(knex) {
   }
   const smsDateFormat = 'dd/MM/yyyy'
   const [patientSmsTemplateId] = await knex('SmsTemplate').insert({
-    message: `Your {{result.assay.name}} result tested last {{formatDate result.patient.dateReceived formatString='${smsDateFormat}'}} is already available. Please contact {{result.patient.referringHealthFacility}} to schedule a follow-up consultation`,
+    message: `Your {{result.assay.name}} result tested last {{formatDate (coalesce result.endedOn result.startedOn result.patient.dateReceived) formatString='${smsDateFormat}'}} is already available. Please contact {{result.patient.referringHealthFacility}} to schedule a follow-up consultation`,
     phoneNumber: `{{result.patient.phone}}`,
     ...auditFields,
   })
