@@ -710,7 +710,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/device/maintenance-status/range/{deviceId}',
+    path: '/device/maintenance-status-by-period/{deviceId}',
     handler: asyncHandler(setStatusForDateRange),
     config: {
       description: 'Set Device Maintenance for a date range',
@@ -724,7 +724,7 @@ const routes = [
           externalId: Joi.string()
             .required()
             .description(
-              'The external ID of the maintenance status EG. active, reportedActive, inactiveOutOfInventory...'
+              'The external ID of the maintenance status (active, reportedActive, inactiveOutOfInventory...)'
             ),
           dateFrom: Joi.date()
             .iso()

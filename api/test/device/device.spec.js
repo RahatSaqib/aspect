@@ -831,6 +831,7 @@ describe('Device routes', () => {
       })
 
       const maintenanceStatusPath = `${path}/maintenance-status`
+      const maintenanceStatusByPeriodPath = `${path}/maintenance-status-by-period`
       it('should save the maintenance status of the device', async () => {
         ;[deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
@@ -916,7 +917,7 @@ describe('Device routes', () => {
         }
 
         const updateMaintenanceStatusResponse = await server
-          .post(`${maintenanceStatusPath}/range/${device.id}`)
+          .post(`${maintenanceStatusByPeriodPath}/${device.id}`)
           .set('Authorization', `Bearer ${shared.token}`)
           .send(payload)
         deviceMaintenanceStatusLogIds =
