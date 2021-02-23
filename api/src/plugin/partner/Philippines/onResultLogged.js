@@ -1,8 +1,11 @@
-const { resultUpdated } = require('../../../result/actions')
+const { resultLogged } = require('../../../result/actions')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
-async function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ resultUpdated })
+async function onResultLogged(
+  { resultId, deviceLogId, userId },
+  { messageContext }
+) {
+  const context = messageContext.bindActionCreators({ resultLogged })
   return context.transact(async knex => {
     const { deviceTypeExternalId, diseaseExternalId } = await knex(
       'Result as r'
@@ -25,6 +28,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
         knex,
         context,
         resultId,
+        deviceLogId,
+        userId,
         'Automatically Deliver GeneXpert Results'
       )
     } else {
@@ -52,6 +57,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
           knex,
           context,
           resultId,
+          deviceLogId,
+          userId,
           'Validated Result Updated from NTRL Database'
         )
       }
@@ -59,7 +66,31 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-async function updateResultToDeliverable(knex, context, resultId, reason) {
+async function updateResultToDeliverable(
+  knex,
+  context,
+  resultId,
+  deviceLogId,
+  userId,
+  reason
+) {
+  const { currentResultWorkflowStatus } =
+    (await knex('Result as r')
+      .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
+      .join(
+        'ResultWorkflowStatus as rws',
+        'rwl.resultWorkflowStatusId',
+        'rws.id'
+      )
+      .where('r.id', resultId)
+      .first('rws.externalId as currentResultWorkflowStatus')) || {}
+  if (
+    ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged', 'Purged'].includes(
+      currentResultWorkflowStatus
+    )
+  ) {
+    return
+  }
   const now = new Date()
   const resultWorkflowDeliverableId = await resultWorkflowStatusToId(
     'Deliverable'
@@ -75,6 +106,7 @@ async function updateResultToDeliverable(knex, context, resultId, reason) {
   await knex('Result').where('id', resultId).update({
     resultWorkflowStatusLogId: resultWorkflowLogId,
   })
+  return context.resultLogged(resultId, deviceLogId, userId)
 }
 
 module.exports = onResultLogged
