@@ -775,6 +775,60 @@ describe('Device routes', () => {
       }
     })
 
+    describe.only('/maintenance-status-by-period/{deviceId}', () => {
+      const maintenanceStatusByPeriodPath = `${path}/maintenance-status-by-period`
+      let statusTestDeviceContext
+      let theGreatestDeviceIEverCreated
+
+      before(async () => {
+        statusTestDeviceContext = createGxConnectTestContext(server, {
+          macAddress: 'It is not a Mac, it is a PC',
+          adminUsername: 'admin',
+          adminPassword: 'test07',
+          countryCode: 'US',
+          deviceName: 'Oh, this device is great',
+          deviceSerialNumber: 'And look that serial! Amazing',
+          hostId: 'What should I put here?',
+        })
+        await statusTestDeviceContext.registerAndSetDevice()
+        theGreatestDeviceIEverCreated = await knex('Device')
+          .where({ name: 'Oh, this device is great' })
+          .first()
+
+        // Set the createdOn date to 6 days ago, so we can update the status log for a range of days
+        await knex('Device')
+          .where({ id: theGreatestDeviceIEverCreated.id })
+          .update({ createdOn: subDays(new Date(), 6) })
+      })
+
+      it('should save the maintenance status of the device for a date range', async () => {
+        const { id: deviceId } = theGreatestDeviceIEverCreated
+
+        const payload = {
+          externalId: 'inactiveDownForRepair',
+          dateFrom: subDays(startOfToday(), 5),
+          dateTo: startOfToday(),
+          notes:
+            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+        }
+
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.equal(
+          updateMaintenanceStatusResponse.body.data
+            .deviceMaintenanceStatusLogIds.length,
+          6
+        )
+      })
+
+      after(async () => {
+        await statusTestDeviceContext.cleanUp()
+      })
+    })
+
     describe('/maintenance-status/{deviceId}', () => {
       let editableDeviceMaintenanceStatusIds
       let device
@@ -831,7 +885,6 @@ describe('Device routes', () => {
       })
 
       const maintenanceStatusPath = `${path}/maintenance-status`
-      const maintenanceStatusByPeriodPath = `${path}/maintenance-status-by-period`
       it('should save the maintenance status of the device', async () => {
         ;[deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
@@ -885,50 +938,6 @@ describe('Device routes', () => {
           deviceMaitnenanceStatusLog.data
         )
         expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
-      })
-
-      it('should save the maintenance status of the device for a date range', async () => {
-        let deviceMaintenanceStatusLogIds
-
-        after(async () => {
-          await knex('DeviceMaintenanceStatusLog')
-            .whereIn('id', deviceMaintenanceStatusLogIds)
-            .delete()
-        })
-        ;[deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
-          deviceId,
-          deviceMaintenanceStatusId,
-          data: '{}',
-          day: startOfToday(),
-          createdOn: new Date(),
-        })
-        await knex('Device').where({ id: deviceId }).update({
-          deviceMaintenanceStatusLogId,
-        })
-
-        const payload = {
-          externalId: 'inactiveDownForRepair',
-          dateFrom: subDays(startOfToday(), 5),
-          dateTo: startOfToday(),
-          notes:
-            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
-        }
-
-        const updateMaintenanceStatusResponse = await server
-          .post(`${maintenanceStatusByPeriodPath}/${device.id}`)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .send(payload)
-        deviceMaintenanceStatusLogIds =
-          updateMaintenanceStatusResponse.body.data
-            .deviceMaintenanceStatusLogIds
-        assert.isOk(updateMaintenanceStatusResponse.body.ok)
-        assert.equal(
-          updateMaintenanceStatusResponse.body.data
-            .deviceMaintenanceStatusLogIds.length,
-          6
-        )
       })
 
       it('should provide shallow access to write to data.options.data.notes', async () => {

@@ -26,7 +26,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe.only('Backward update db after getting tests from offline device', () => {
+describe('Backward update db after getting tests from offline device', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
