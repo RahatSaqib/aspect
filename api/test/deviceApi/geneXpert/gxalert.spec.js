@@ -1911,6 +1911,71 @@ describe('Device API routes for GxAlert Device', () => {
               incompleteResultExternalId
             )
           })
+          it("should NOT merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", async () => {
+            const { deviceAuth } = context
+            const instrumentSerial = '803165'
+            const cartridgeSerial = '12345'
+            const startedOnDate = setMilliseconds(now, 0)
+            const startedOn = dateFormat(
+              startedOnDate,
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            )
+            const endedOnDate = addMinutes(startedOnDate, 103)
+            const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+            const incompleteResultPayload = _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  startedOn,
+                  endedOn: null,
+                  instrument: {
+                    serial: instrumentSerial,
+                  },
+                  consumable: {
+                    serial: cartridgeSerial,
+                  },
+                  data: { resultText: 'NO RESULT' },
+                },
+              }
+            )
+            delete incompleteResultPayload.result.id
+            // Initial incomplete result details
+            let deviceApiResponse = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: incompleteResultPayload,
+              expectedStatusCode: 200,
+            })
+            const {
+              body: {
+                result: { id: incompleteResultId },
+              },
+            } = deviceApiResponse
+
+            const completeResultPayload = _.merge({}, incompleteResultPayload, {
+              result: {
+                sample: { id: 'othersample' },
+                endedOn,
+                data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+              },
+            })
+
+            // Then complete result details
+            deviceApiResponse = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: completeResultPayload,
+              expectedStatusCode: 200,
+            })
+            const {
+              body: {
+                result: { id: completeResultId },
+              },
+            } = deviceApiResponse
+            assert.notEqual(incompleteResultId, completeResultId)
+          })
         })
       })
 
@@ -2051,6 +2116,81 @@ describe('Device API routes for GxAlert Device', () => {
             })
           })
         })
+      })
+    })
+
+    it('should create 2 different results (fixing bug ASP-1972)', async () => {
+      const now = new Date()
+      const beforeResultDetails = await getLastResult()
+
+      assert.isUndefined(beforeResultDetails)
+
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              sample: { id: 'new sample' },
+              instrument: { serial: 'new instrument' },
+              startedOn: testStartedOn,
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      assert.typeOf(response.body, 'Object')
+
+      const afterResultDetails = await getLastResult()
+      const currentGeneXpertDevice = await getCurrentGeneXpertDevice()
+
+      // this device is located in the America/New_York time zone, so we have to
+      // convert testStartedOn to UTC in order to compare it to the value in the database
+      expect(afterResultDetails).to.containSubset({
+        deviceId: currentGeneXpertDevice.id,
+        siteId: currentGeneXpertDevice.siteId,
+        geographyId: currentGeneXpertDevice.geographyId,
+        assay: basicResultPayload.result.assay.id,
+        assayVersion: basicResultPayload.result.assay.version,
+        resultWorkflowStatus: 'Deliverable',
+        resultSource: 'DiagnosticDevice',
+        resultType: 'Patient',
+        resultCategory1: 'Success',
+        resultCategory2: null,
+        sampleId: 'new sample',
+        sampleCollectedOn: null,
+        sampleOriginSiteId: currentGeneXpertDevice.siteId,
+        sampleTypeId: null,
+        resultData: _.assign({}, basicResultPayload.result.data, {
+          geneXpertTestId: basicResultPayload.result.id,
+        }),
+        startedOn: getLocalDateTimeStringInUtc(
+          testStartedOn.toISOString().replace('Z', ''),
+          'America/New_York'
+        ),
+        endedOn: null,
+        consumableSerial: null,
+        consumableExpirationDate: null,
+        consumableLot: null,
+        instrumentSerial: 'new instrument',
+        moduleName: basicResultPayload.result.instrument.module.name,
+        moduleSerial: basicResultPayload.result.instrument.module.serial,
+        patientData: basicResultPayload.result.patient,
+        senderVersion: basicResultPayload.result.sender.version,
+        senderOperator: basicResultPayload.result.sender.operator,
+        notes: null,
+        errorCode: null,
       })
     })
   })
