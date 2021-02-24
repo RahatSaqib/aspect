@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
@@ -17,9 +17,25 @@ const FormItem = ({
   controlType,
   hideIfNull,
   initialValue,
+  containerClassName,
+  itemClassName,
 }) => {
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps } = formik
+
+  const inputProps = useMemo(() => {
+    return {
+      readOnly: !toggleEdit,
+      disabled: !toggleEdit || type === 'readOnly',
+      disableUnderline: !toggleEdit || type === 'readOnly',
+    }
+  }, [toggleEdit, type])
+
+  const inputLabelProps = useMemo(() => {
+    return {
+      shrink: true,
+    }
+  }, [])
 
   return !hideIfNull || initialValue ? (
     <Grid
@@ -27,7 +43,9 @@ const FormItem = ({
       xs={12}
       md={6}
       lg={4}
-      className={cssClasses('form__sectionItemContainer')}
+      className={cssClasses('form__sectionItemContainer', {
+        [containerClassName]: !!containerClassName,
+      })}
     >
       <AspectInput
         {...getFieldProps(id)}
@@ -40,16 +58,11 @@ const FormItem = ({
         className={cssClasses('form__sectionItemInput', {
           'form__sectionItemInput--enabled': toggleEdit,
           'form__sectionItemInput--disabled': !toggleEdit,
+          [itemClassName]: !!itemClassName,
         })}
         fullWidth
-        InputProps={{
-          readOnly: !toggleEdit,
-          disabled: !toggleEdit || type === 'readOnly',
-          disableUnderline: !toggleEdit || type === 'readOnly',
-        }}
-        InputLabelProps={{
-          shrink: true,
-        }}
+        InputProps={inputProps}
+        InputLabelProps={inputLabelProps}
         formik={formik}
       />
     </Grid>
@@ -59,6 +72,8 @@ const FormItem = ({
 FormItem.defaultProps = {
   hideIfNull: false,
   link: false,
+  containerClassName: '',
+  itemClassName: '',
 }
 
 FormItem.propTypes = {
@@ -66,9 +81,11 @@ FormItem.propTypes = {
   label: PropTypes.string.isRequired,
   link: PropTypes.oneOf([PropTypes.object, PropTypes.bool]),
   type: PropTypes.string.isRequired,
-  controlType: PropTypes.string.isRequired,
+  controlType: PropTypes.objectOf(PropTypes.shape).isRequired,
   hideIfNull: PropTypes.bool,
   initialValue: PropTypes.string.isRequired,
+  containerClassName: PropTypes.string,
+  itemClassName: PropTypes.string,
 }
 
 export default FormItem

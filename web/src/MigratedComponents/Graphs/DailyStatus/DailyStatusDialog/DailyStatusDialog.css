@@ -1,0 +1,37 @@
+.reset-overflow {
+  overflow: visible;
+}
+
+.Form__Content {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.Form__Controls {
+  flex-grow: 1;
+}
+.formContainerClassName {
+  padding-top: 0;
+}
+.sectionItemsContainerClassName:last-of-type {
+  padding-bottom: 0;
+}
+
+.sectionItemContainer {
+  display: flex;
+  max-width: none;
+  flex-basis: auto;
+}
+.sectionItem {
+  flex-grow: 1;
+}
+
+
+.dailystatus__spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

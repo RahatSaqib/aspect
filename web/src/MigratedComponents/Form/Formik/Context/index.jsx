@@ -10,7 +10,7 @@ import DisplayFormikState from '../Helpers/debug'
 
 const FormikContext = React.createContext()
 
-const FormikProvider = ({ config, children }) => {
+const FormikProviderBase = ({ config, children, formikRef }) => {
   const debug = false
   const { actions } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
@@ -31,6 +31,10 @@ const FormikProvider = ({ config, children }) => {
       ),
   })
 
+  if (formikRef) {
+    formikRef.current = formik
+  }
+
   return (
     <FormikContext.Provider value={{ formik, toggleEdit, setToggleEdit }}>
       {children}
@@ -38,6 +42,10 @@ const FormikProvider = ({ config, children }) => {
     </FormikContext.Provider>
   )
 }
+
+const FormikProvider = React.forwardRef((props, formikRef) => (
+  <FormikProviderBase {...props} formikRef={formikRef} />
+))
 
 function useFormikState() {
   const context = React.useContext(FormikContext)

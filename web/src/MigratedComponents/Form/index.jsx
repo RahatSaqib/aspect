@@ -9,21 +9,38 @@ import FormSectionHeader from './FormSectionHeader'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const AspectForm = ({ config: { sections } }) => (
-  <Grid container className={cssClasses('form__container')}>
+const AspectFormBase = ({ config: { sections, formContainerClassName } }) => (
+  <Grid
+    container
+    className={cssClasses('form__container', {
+      [formContainerClassName]: !!formContainerClassName,
+    })}
+  >
     <form noValidate autoComplete="off" className={cssClasses('form__parent')}>
       {sections &&
-        sections.map(({ label, rows }) => (
-          <Grid item xs={12} className={cssClasses('form__sectionContainer')}>
-            <Grid container>
-              <FormSectionHeader header={label} />
-              <FormSection rows={rows} />
+        sections.map(
+          ({ label, rows, hideHeader, sectionItemsContainerClassName }) => (
+            <Grid item xs={12} className={cssClasses('form__sectionContainer')}>
+              <Grid container>
+                {hideHeader === true ? null : (
+                  <FormSectionHeader header={label} />
+                )}
+                <FormSection
+                  rows={rows}
+                  fullWidth={hideHeader === true}
+                  sectionItemsContainerClassName={
+                    sectionItemsContainerClassName
+                  }
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        ))}
+          )
+        )}
     </form>
   </Grid>
 )
+
+const AspectForm = React.memo(AspectFormBase)
 
 AspectForm.propTypes = {
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,

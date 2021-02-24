@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { defineMessages, useIntl } from 'react-intl'
@@ -32,7 +32,7 @@ const messages = defineMessages({
   },
 })
 
-const DayBlock = ({ consts, dayModifier }) => {
+const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
@@ -44,6 +44,8 @@ const DayBlock = ({ consts, dayModifier }) => {
         height: `${blockHeight}px`,
         margin: `0 ${marginWidth / 2}px`,
       }}
+      onClick={onClick}
+      role="presentation"
     />
   )
 }
@@ -53,6 +55,7 @@ DayBlock.propTypes = {
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
+  onClick: PropTypes.func.isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -63,6 +66,7 @@ const DailyStatusClinicDay = ({
   maintenanceStatusI18nKey,
   statusses,
   totalResults,
+  onClickDay,
 }) => {
   const isActive =
     maintenanceStatusI18nKey === 'active' ||
@@ -82,39 +86,44 @@ const DailyStatusClinicDay = ({
       ? weekend
       : maintenanceStatusI18nKey
   }
+  const title = useMemo(() => {
+    if (checked && daysInSameStatus) {
+      return maintenanceStatusName
+        ? formatMessage(messages.toolTipTitleWithStatus, {
+            maintenanceStatusName,
+            daysInSameStatus,
+            totalResults,
+          })
+        : formatMessage(messages.toolTipTitleWithoutStatus, {
+            daysInSameStatus,
+          })
+    }
+    return isActive
+      ? formatMessage(messages.toolTipTitleResultsReported, {
+          maintenanceStatusName,
+          totalResults,
+        })
+      : maintenanceStatusName
+  }, [
+    checked,
+    daysInSameStatus,
+    formatMessage,
+    isActive,
+    maintenanceStatusName,
+    totalResults,
+  ])
 
-  return checked && daysInSameStatus ? (
+  return (
     <AspectTooltip
-      title={
-        maintenanceStatusName
-          ? formatMessage(messages.toolTipTitleWithStatus, {
-              maintenanceStatusName,
-              daysInSameStatus,
-              totalResults,
-            })
-          : formatMessage(messages.toolTipTitleWithoutStatus, {
-              daysInSameStatus,
-            })
-      }
+      title={title}
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock consts={consts} dayModifier={dayModifier} />
-    </AspectTooltip>
-  ) : (
-    <AspectTooltip
-      title={
-        isActive
-          ? formatMessage(messages.toolTipTitleResultsReported, {
-              maintenanceStatusName,
-              totalResults,
-            })
-          : maintenanceStatusName
-      }
-      toolTipContainerClass="inline__tooltip"
-      placement="right"
-    >
-      <DayBlock consts={consts} dayModifier={dayModifier} />
+      <DayBlock
+        consts={consts}
+        dayModifier={dayModifier}
+        onClick={onClickDay}
+      />
     </AspectTooltip>
   )
 }
@@ -137,6 +146,7 @@ DailyStatusClinicDay.propTypes = {
     weekend: PropTypes.string,
   }).isRequired,
   totalResults: PropTypes.number,
+  onClickDay: PropTypes.func.isRequired,
 }
 
 export { DailyStatusClinicDay, DayBlock }

@@ -7,12 +7,17 @@ import FormItem from './FormItem'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const FormSection = ({ rows }) => {
+const FormSection = ({ fullWidth, rows, sectionItemsContainerClassName }) => {
   return (
-    <Grid item xs={10}>
+    <Grid item xs={fullWidth ? 12 : 10}>
       {rows &&
         rows.map(({ items }) => (
-          <Grid container className={cssClasses('form__sectionItemsContainer')}>
+          <Grid
+            container
+            className={cssClasses('form__sectionItemsContainer', {
+              [sectionItemsContainerClassName]: !!sectionItemsContainerClassName,
+            })}
+          >
             {items && items.map(item => <FormItem {...item} />)}
           </Grid>
         ))}
@@ -20,8 +25,15 @@ const FormSection = ({ rows }) => {
   )
 }
 
+FormSection.defaultProps = {
+  fullWidth: false,
+  sectionItemsContainerClassName: '',
+}
+
 FormSection.propTypes = {
   rows: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  fullWidth: PropTypes.bool,
+  sectionItemsContainerClassName: PropTypes.string,
 }
 
 export default FormSection
