@@ -91,6 +91,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
+        'c.countryCode as countryCode',
         'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
@@ -150,6 +151,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    siteExternalId: string
  *    siteName: string
  *    countryName: string
+ *    countryCode: int
  *    siteShortName: string
  *    siteStreet1: string
  *    siteStreet2: string
@@ -222,6 +224,8 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  * @param  {object} data the result record with the following properties:
  *  {
  *    partnerPlugin: string
+ *    countryName: string
+ *    countryCode: int
  *    siteExternalId: string
  *    siteName: string
  *    siteShortName: string
@@ -266,6 +270,10 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *  }
  * @return a nested JSON object containing the data from the result record
  *  {
+      country: {
+        name: countryName,
+        dialingCode: countryCode,
+      },
       site: {
         id: siteExternalId,
         name: siteName,
@@ -346,6 +354,7 @@ async function getBaseDataSource(data) {
   return {
     country: {
       name: d.countryName,
+      dialingCode: d.countryCode,
     },
     site: {
       id: d.siteExternalId,
