@@ -64,12 +64,6 @@ module.exports = async function cleanModuleReplacedIssues(
     throw error
   } //
 }
-/*
-const updateOpenIssues = async (knex, issueTypeId) =>
-  knex('Issue')
-    .where({ issueTypeId })
-    .update({ issueStatusId: await issueStatusToId('Resolved') })
-*/
 const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
   const issuesToUpdate = await getRightTriggeredIssues(
     knex,
