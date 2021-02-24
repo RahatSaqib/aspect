@@ -702,14 +702,10 @@ async function findExistingResult(availableResultDetails, knex) {
   // if not we are not going to take that as a match.
   if (
     !_.isEmpty(matchingResult) &&
-    ((!gxAlertUniqueId && !geneXpertTestId) ||
-      _.intersection(
-        [gxAlertUniqueId, geneXpertTestId],
-        [matchingResult.externalId, matchingResult.geneXpertTestId]
-      ).length)
+    (!geneXpertTestId ||
+      _.isEqual(geneXpertTestId, matchingResult.geneXpertTestId))
   )
     return matchingResult
-
   return null
 }
 
