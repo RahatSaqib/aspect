@@ -11,7 +11,6 @@ const {
   format,
   isWeekend,
   parseISO,
-  startOfDay,
 } = require('date-fns')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
@@ -490,14 +489,14 @@ async function listApprovalTypes() {
   return result
 }
 
-const getMaintenanceStatusesQuery = (filter = null) => 
+const getMaintenanceStatusesQuery = (filter = null) =>
   knex('DeviceMaintenanceStatus as dms').modify(q => {
-    if (filter) q.where(filter) 
+    if (filter) q.where(filter)
   })
 
 async function listMaintenanceStatuses() {
   const resultQuery = getMaintenanceStatusesQuery()
-  
+
   // get total count for paging
   const getCount = resultQuery.clone().count('dms.id as count').first()
 
@@ -939,8 +938,7 @@ function getDeviceByIdBaseQuery(dataConstraints, deviceId, fields = null) {
     .where('d.id', +deviceId)
     .first()
 
-  if (fields)
-    query.select(fields)
+  if (fields) query.select(fields)
 
   return query
 }
@@ -952,16 +950,15 @@ async function setStatusForDateRange(request) {
     payload,
     plugins: { messageContext },
   } = request
-  let { externalId, dateFrom, dateTo, day = startOfTodayUtc(), notes } = payload
+  const { externalId, day = startOfTodayUtc(), notes } = payload
+  let { dateFrom, dateTo } = payload
 
   let isSingleDayUpdate = true
-  if (dateFrom && dateTo)
-  {
+  if (dateFrom && dateTo) {
     isSingleDayUpdate = false
   }
 
-  if (isSingleDayUpdate)
-  {
+  if (isSingleDayUpdate) {
     dateFrom = day
     dateTo = day
   }
@@ -970,9 +967,10 @@ async function setStatusForDateRange(request) {
   const user = await getUser(credentials.name)
 
   // Get device or throw boom error if it's a bad request
-  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, ['d.createdOn', 'd.id'])
-
-  console.log(device)
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, [
+    'd.createdOn',
+    'd.id',
+  ])
 
   if (!device)
     throw Boom.forbidden(
@@ -980,7 +978,9 @@ async function setStatusForDateRange(request) {
     )
 
   // Get device maintenance status or throw boom error if it's a bad request
-  let deviceMaintenanceStatus = await getMaintenanceStatusesQuery({ externalId }).first()
+  const deviceMaintenanceStatus = await getMaintenanceStatusesQuery({
+    externalId,
+  }).first()
   if (deviceMaintenanceStatus) {
     if (!deviceMaintenanceStatus.manuallySet)
       throw Boom.badRequest(
@@ -1000,7 +1000,6 @@ async function setStatusForDateRange(request) {
     maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
   }
 
-  console.log(dateFrom, dateTo, device.createdOn)
   if (
     dateFrom >= startOfDayUtc(device.createdOn) &&
     dateFrom <= dateTo &&
@@ -1027,14 +1026,13 @@ async function setStatusForDateRange(request) {
       })
     )
 
-    if (isSingleDayUpdate)
-      data.deviceMaintenanceStatusLogId = deviceMaintenanceStatusLogIds[0]
-    else 
-      data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
+    if (isSingleDayUpdate) {
+      ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
+    } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
 
     return {
       ok: true,
-      data
+      data,
     }
   }
   throw Boom.badRequest('Invalid date range')
