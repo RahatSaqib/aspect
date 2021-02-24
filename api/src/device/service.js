@@ -1011,8 +1011,9 @@ async function setStatusForDateRange(request) {
     }
 
     const deviceMaintenanceStatusLogIds = []
-    await Promise.all(
-      getArrayOfDaysInRange(dateFrom, dateTo).map(async day => {
+    await Promise.mapSeries(
+      getArrayOfDaysInRange(dateFrom, dateTo),
+      async day => {
         deviceMaintenanceStatusLogIds.push(
           await setDeviceMaintenanceStatus(
             deviceId,
@@ -1023,7 +1024,7 @@ async function setStatusForDateRange(request) {
             messageContext
           )
         )
-      })
+      }
     )
 
     if (isSingleDayUpdate) {
