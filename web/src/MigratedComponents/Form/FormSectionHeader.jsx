@@ -1,9 +1,8 @@
 import React from 'react'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
-import PropTypeOf from '../../shared/types'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
@@ -44,14 +43,16 @@ const messages = {
   }),
 }
 
-const FormSectionHeader = ({ intl, header, headerI18nKey }) => (
-  <Grid item xs={2} className={cssClasses('form__sectionHeader')}>
-    {headerI18nKey ? intl.formatMessage(messages[headerI18nKey]) : header}
-  </Grid>
-)
+const FormSectionHeader = ({ header, headerI18nKey }) => {
+  const intl = useIntl()
+  return (
+    <Grid item xs={2} className={cssClasses('form__sectionHeader')}>
+      {headerI18nKey ? intl.formatMessage(messages[headerI18nKey]) : header}
+    </Grid>
+  )
+}
 
 FormSectionHeader.propTypes = {
-  intl: PropTypeOf.intl.isRequired,
   header: PropTypes.string.isRequired,
   headerI18nKey: PropTypes.string,
 }
