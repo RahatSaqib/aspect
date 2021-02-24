@@ -3,12 +3,18 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
+import orderBy from 'lodash/orderBy'
 
 import { Unit } from '../../components/pureGrids'
 import { AspectWidget } from './Widget'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
+
+const OrderedAspectWidget = ({ items }) =>
+  orderBy(items, item => item?.alert?.display || '', ['desc']).map(widget => (
+    <AspectWidget data={widget} />
+  ))
 
 const AspectWidgetGroup = ({ data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
@@ -26,9 +32,7 @@ const AspectWidgetGroup = ({ data }) => {
               {intlFormatMessage(messages[groupI18nKey])}
             </div>
             <div className={cssClasses('summary__groupWidgets')}>
-              {items.map(widget => (
-                <AspectWidget data={widget} />
-              ))}
+              <OrderedAspectWidget items={items} />
             </div>
           </div>
         </Unit>
