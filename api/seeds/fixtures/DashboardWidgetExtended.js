@@ -22,7 +22,7 @@ module.exports = {
       'avgTimeToUpload',
       'moduleSwaps',
       'instrumentsReplaced',
-      'unusedModules',
+      'percentageOfModulesFunctioning',
       'averageRecipientsOfEmail',
       'averageRecipientsOfSms',
       'averageLengthOfSms',
