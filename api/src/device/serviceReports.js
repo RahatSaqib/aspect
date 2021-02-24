@@ -51,7 +51,7 @@ async function exportDevices(request, reply) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints, true, true)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
   const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
