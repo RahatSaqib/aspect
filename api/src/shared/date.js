@@ -21,6 +21,18 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
   return parseDateOrDefault(date, defaultValue)
 }
 
+const getMonthYearUserTimeZoneField = (
+  knex,
+  field,
+  alias = 'monthYear',
+  offset = '+00:00'
+) =>
+  knex.raw(`CONCAT_WS(
+    '-',
+    CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
+    LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
+    ) ${alias ? ` as ${alias}` : ''}`)
+
 function parseDateOrDefault(
   date,
   options = { formatString: null, backupDate: null, defaultDate: null }
@@ -186,4 +198,5 @@ module.exports = {
   getOffsetFromIsoDateString,
   REGEX_ISODATESTRING,
   getDateSubstring,
+  getMonthYearUserTimeZoneField,
 }

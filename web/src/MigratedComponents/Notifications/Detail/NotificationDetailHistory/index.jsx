@@ -17,11 +17,11 @@ const cssClasses = classnames.bind(require('../../Notifications.css'))
 
 const messages = defineMessages({
   notificationsTitle: {
-    id: 'pages.NotificationList.title',
+    id: 'pages.NotificationList.notificationsTitle',
     defaultMessage: 'Notifications History',
   },
   backButton: {
-    id: 'pages.NotificationList.title',
+    id: 'pages.NotificationList.backButton',
     defaultMessage: 'Back',
   },
 })

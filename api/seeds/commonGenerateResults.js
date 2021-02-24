@@ -38,7 +38,7 @@ function calculateDateForResultForCovid(
   totalResults,
   randomMillisToAdd
 ) {
-  const resultTimeFrameInDays = 60
+  const resultTimeFrameInDays = 360
 
   // unlike TB and HIV, we want to generate an exponential curve here
   const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
@@ -342,9 +342,24 @@ async function addCovidResults(
     : resultCovidNumber
   // seed samples
   const samples = []
+
+  // does the partner have any clinics? If so, use them as the sample origin:
+  const hasClinics = _.some(
+    siteDatas,
+    site =>
+      site.externalId.indexOf('_clinic') || site.name.indexOf('Clinic') >= 0
+  )
+
   await Promise.each(_.range(quantity), async i => {
     const siteData = _.sample(
-      _.filter(siteDatas, sites => sites.externalId.indexOf('_clinic') >= 0)
+      hasClinics
+        ? _.filter(
+            siteDatas,
+            site =>
+              site.externalId.indexOf('_clinic') >= 0 ||
+              site.name.indexOf('Clinic') >= 0
+          )
+        : siteDatas
     )
     const sample = {
       externalId: `SMP-CV-${format(new Date(), 'TT')}`,
@@ -424,7 +439,8 @@ async function addCovidResults(
     .first()
   const elegiblesSites = _.filter(
     siteDatas,
-    site => site.externalId.indexOf('_lab') >= 0
+    site =>
+      site.externalId.indexOf('_lab') >= 0 || site.name.indexOf(' Lab') >= 0
   )
 
   const assayDiseases = await knex('Assay as a')

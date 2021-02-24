@@ -11,9 +11,9 @@ import parseISO from 'date-fns/parseISO'
 
 const cssClasses = classnames.bind(require('./Milestones.css'))
 
-const sampleTexts = {
+const messages = defineMessages({
   sampleId: {
-    id: 'pages.Milestones.sampleId',
+    id: 'pages.MilestonesSample.sampleId',
     defaultMessage: 'Sample ',
   },
   originalSiteName: {
@@ -32,9 +32,6 @@ const sampleTexts = {
     id: 'pages.Milestones.notes',
     defaultMessage: 'Description: ',
   },
-}
-
-const resultsTexts = {
   result: {
     id: 'pages.Milestones.resultNotes',
     defaultMessage: 'Result ',
@@ -55,17 +52,6 @@ const resultsTexts = {
     id: 'pages.Milestones.viewResultsDetails',
     defaultMessage: 'view Results Details ',
   },
-  notes: {
-    id: 'pages.Milestones.notes',
-    defaultMessage: 'Description: ',
-  },
-  sampleId: {
-    id: 'pages.Milestones.sampleId',
-    defaultMessage: 'Sample Id: ',
-  },
-}
-
-const followUpsTexts = {
   date: {
     id: 'pages.Milestones.date',
     defaultMessage: 'Date ',
@@ -82,15 +68,9 @@ const followUpsTexts = {
     id: 'pages.Milestones.followUpCreatedOn',
     defaultMessage: 'Created On: ',
   },
-}
-const treatmentTexts = {
   resultTreatmentStatusLogDate: {
     id: 'pages.Milestones.resultTreatmentStatusLogData',
     defaultMessage: 'Treatment date: ',
-  },
-  date: {
-    id: 'pages.Milestones.date',
-    defaultMessage: 'Created on: ',
   },
   resultTreatmentStatusLogMethod: {
     id: 'pages.Milestones.resultTreatmentStatusLogMethod',
@@ -104,7 +84,7 @@ const treatmentTexts = {
     id: 'pages.Milestones.resultTreatmentName',
     defaultMessage: 'Treatment',
   },
-}
+})
 
 const TimelineGenericPatientMilestone = ({
   title,
@@ -169,42 +149,41 @@ const TimelineGenericPatientMilestone = ({
 }
 
 const TimelineItemResult = ({ result, intl, expand }) => {
-  const messagesResult = defineMessages(resultsTexts)
   const detailsFields = [
     {
-      key: intl.formatMessage(messagesResult.resultSiteName),
+      key: intl.formatMessage(messages.resultSiteName),
       value: result.get('resultSiteName'),
     },
     {
-      key: intl.formatMessage(messagesResult.assayType),
+      key: intl.formatMessage(messages.assayType),
       value: result.get('assayAbbreviation'),
     },
     {
-      key: intl.formatMessage(messagesResult.resultEndedOn),
+      key: intl.formatMessage(messages.resultEndedOn),
       value: format(
         parseISO(result.get('resultEndedOn')),
         'yyyy-MM-dd HH:mm:ss'
       ),
     },
     {
-      key: intl.formatMessage(messagesResult.notes),
+      key: intl.formatMessage(messages.notes),
       value: result.get('resultNotes'),
     },
     {
-      key: intl.formatMessage(messagesResult.sampleId),
+      key: intl.formatMessage(messages.sampleId),
       value: result.get('sampleId'),
     },
   ]
   return (
     <TimelineGenericPatientMilestone
       title={{
-        key: intl.formatMessage(messagesResult.result),
+        key: intl.formatMessage(messages.result),
         value: result.get('description'),
       }}
       details={detailsFields}
       link={{
         to: `/browse/result/${result.get('resultId')}`,
-        text: intl.formatMessage(messagesResult.viewResultsDetails),
+        text: intl.formatMessage(messages.viewResultsDetails),
       }}
       expand={expand}
       color="#c2f9e3"
@@ -213,7 +192,6 @@ const TimelineItemResult = ({ result, intl, expand }) => {
 }
 
 const TimelineItemFollowUp = ({ fu, intl, expand }) => {
-  const messages = defineMessages(followUpsTexts)
   const detailsFields = [
     {
       key: intl.formatMessage(messages.date),
@@ -241,7 +219,6 @@ const TimelineItemFollowUp = ({ fu, intl, expand }) => {
   )
 }
 const TimelineItemSample = ({ sample, intl, expand }) => {
-  const messages = defineMessages(sampleTexts)
   const detailsFields = [
     {
       key: intl.formatMessage(messages.originalSiteName),
@@ -277,7 +254,6 @@ const TimelineItemSample = ({ sample, intl, expand }) => {
 }
 
 const TimelineItemTreatment = ({ treatment, intl, expand }) => {
-  const messages = defineMessages(treatmentTexts)
   const detailsFields = [
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogDate),

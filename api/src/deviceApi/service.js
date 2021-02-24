@@ -6,6 +6,7 @@ const { asyncHandler } = require('../routes')
 const {
   deviceApprovalToId,
   deviceTypeToPlugin,
+  deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
 const {
   resultUpdated,
@@ -25,7 +26,10 @@ const {
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
-const { shouldTriggerHardwareErrorAnalysis } = require('../plugin/utils')
+const {
+  shouldTriggerHardwareErrorAnalysis,
+  shouldLogDeviceCalibration,
+} = require('../plugin/utils')
 const logger = require('../shared/logger')
 
 const DEVICE_LOG_TYPE_NONE = 0
@@ -368,11 +372,20 @@ async function addDeviceDataWithContext(context) {
       })
 
       await shouldTriggerHardwareErrorAnalysis(
-        knex,
         messageContext,
         device,
         payload,
         deviceOperationId
+      )
+
+      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+        'calibration'
+      )
+      await shouldLogDeviceCalibration(
+        knex,
+        device.id,
+        payload,
+        deviceMaintenanceTypeId
       )
     }
   }

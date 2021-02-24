@@ -1,63 +1,67 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
 import ThemedLink from './ThemedLink'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
-const rawLinks = [
-  {
-    href: '/dashboard',
-    label: 'Home',
-    requiredPermissions: ['dashboard:summary'],
-  },
-  {
-    href: '/task-list',
-    label: 'Task List',
-    requiredPermissions: ['taskMenu'],
-  },
-  {
-    href: '/operational-data',
-    label: 'Operational  Data',
-    requiredPermissions: ['operationalData'],
-  },
-  {
-    href: '/clinical-indicators',
-    label: 'Clinical Indicators',
-    requiredPermissions: ['clinicalIndicators'],
-  },
-  {
-    href: '/browse',
-    label: 'Browse',
-    requiredPermissions: ['browse'],
-  },
-  {
-    href: '/reports',
-    label: 'Reports',
-    requiredPermissions: ['report'],
-  },
-  {
-    href: '/manage',
-    label: 'Manage',
-    requiredPermissions: ['manage'],
-  },
-]
-
-export const LinkNavigation = ({ type, onClick, children }) => (
-  <nav
-    type={type}
-    className={cssClasses('Navigation', {
-      'Navigation--vertical': type === 'vertical',
-      'Navigation--horizontal': type === 'horizontal',
-    })}
-  >
-    {rawLinks.map(link => (
-      <ThemedLink key={link.label} {...link} onClick={onClick} />
-    ))}
-    {children}
-  </nav>
-)
+export const LinkNavigation = ({ type, onClick, children }) => {
+  const { formatMessage } = useIntl()
+  const rawLinks = [
+    {
+      href: '/dashboard',
+      label: formatMessage(messages.homeTitle),
+      requiredPermissions: ['dashboard:summary'],
+    },
+    {
+      href: '/task-list',
+      label: formatMessage(messages.taskListTitle),
+      requiredPermissions: ['taskMenu'],
+    },
+    {
+      href: '/operational-data',
+      label: formatMessage(messages.operationDataTitle),
+      requiredPermissions: ['operationalData'],
+    },
+    {
+      href: '/clinical-indicators',
+      label: formatMessage(messages.clinicalIndicatorsTitle),
+      requiredPermissions: ['clinicalIndicators'],
+    },
+    {
+      href: '/browse',
+      label: formatMessage(messages.browseTitle),
+      requiredPermissions: ['browse'],
+    },
+    {
+      href: '/reports',
+      label: formatMessage(messages.reportsTitle),
+      requiredPermissions: ['report'],
+    },
+    {
+      href: '/manage',
+      label: formatMessage(messages.manageTitle),
+      requiredPermissions: ['manage'],
+    },
+  ]
+  return (
+    <nav
+      type={type}
+      className={cssClasses('Navigation', {
+        'Navigation--vertical': type === 'vertical',
+        'Navigation--horizontal': type === 'horizontal',
+      })}
+    >
+      {rawLinks.map(link => (
+        <ThemedLink key={link.label} {...link} onClick={onClick} />
+      ))}
+      {children}
+    </nav>
+  )
+}
 
 LinkNavigation.defaultProps = {
   children: null,

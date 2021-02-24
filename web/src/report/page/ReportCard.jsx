@@ -19,9 +19,15 @@ const styles = {
     // Justify the content so that CardContent will always be at the top of the card,
     // and CardActions will be at the bottom
     justifyContent: 'space-between',
+    minWidth: 200,
   },
   formatCard: {
     boxShadow: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    height: '100%',
   },
   actions: {
     display: 'flex',
@@ -44,8 +50,11 @@ const reportCardStyleless = ({ classes, description, onClick, title }) => {
           </CardContent>
         </CardActionArea>
         <CardActions className={classes.actions}>
-          <Button size="small" color="primary" onClick={onClick}>
-            Download
+          <Button size="small" color="primary" onClick={() => onClick('xlsx')}>
+            Excel
+          </Button>
+          <Button size="small" color="primary" onClick={() => onClick('csv')}>
+            CSV
           </Button>
         </CardActions>
       </Card>

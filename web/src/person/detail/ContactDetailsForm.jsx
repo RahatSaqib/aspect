@@ -298,7 +298,7 @@ export const ContactDetailsForm = ({
             onChange={onUserCanLogInChange}
             // disabled={isNew}
           />{' '}
-          This contact can log in as a user
+          {intl.formatMessage(messages.userCanAlsoLogIn)}
         </div>
       )}
       <section className={cssClasses('NameField')}>
