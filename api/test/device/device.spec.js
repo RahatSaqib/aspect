@@ -29,6 +29,8 @@ const {
 const {
   formatDateOrDefault,
   getLocalDateInUtc,
+  getArrayOfDaysInRange,
+  startOfDayUtc,
 } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
@@ -42,7 +44,7 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device routes', () => {
+describe.only('Device routes', () => {
   const path = '/api/device'
   let deviceMaintenanceStatuses
   let deviceApprovals
@@ -775,10 +777,12 @@ describe('Device routes', () => {
       }
     })
 
-    describe.only('/maintenance-status-by-period/{deviceId}', () => {
+    describe('/maintenance-status-by-period/{deviceId}', () => {
       const maintenanceStatusByPeriodPath = `${path}/maintenance-status-by-period`
       let statusTestDeviceContext
       let theGreatestDeviceIEverCreated
+      const deviceName = 'Oh, this device is great'
+      const deviceMaintenanceStatusExternalId = 'inactiveDownForRepair'
 
       before(async () => {
         statusTestDeviceContext = createGxConnectTestContext(server, {
@@ -798,16 +802,22 @@ describe('Device routes', () => {
         // Set the createdOn date to 6 days ago, so we can update the status log for a range of days
         await knex('Device')
           .where({ id: theGreatestDeviceIEverCreated.id })
-          .update({ createdOn: subDays(new Date(), 6) })
+          .update({ createdOn: new Date('2020-01-01T12:00:00.000Z') })
+      })
+
+      after(async () => {
+        await statusTestDeviceContext.cleanUp()
       })
 
       it('should save the maintenance status of the device for a date range', async () => {
         const { id: deviceId } = theGreatestDeviceIEverCreated
 
+        const dateFrom = '2020-12-12T00:00:00.000-03:00'
+        const dateTo = '2020-12-19T00:00:00.000-03:00'
         const payload = {
-          externalId: 'inactiveDownForRepair',
-          dateFrom: subDays(startOfToday(), 5),
-          dateTo: startOfToday(),
+          externalId: deviceMaintenanceStatusExternalId,
+          dateFrom,
+          dateTo,
           notes:
             "Service engineer visited yesterday and couldn't finish by 3:30 PM",
         }
@@ -816,16 +826,42 @@ describe('Device routes', () => {
           .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
           .set('Authorization', `Bearer ${shared.token}`)
           .send(payload)
+
+        const logs = await knex('DeviceMaintenanceStatusLog as dmsl')
+          .innerJoin('Device as d', 'dmsl.deviceId', 'd.id')
+          .innerJoin(
+            'DeviceMaintenanceStatus as dms',
+            'dmsl.deviceMaintenanceStatusId',
+            'dms.id'
+          )
+          .whereIn(
+            'dmsl.id',
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogIds
+          )
+          .select(
+            'd.name as deviceName',
+            'dms.externalId',
+            knex.raw('DATE(dmsl.day) as day')
+          )
+        const logsByDay = []
+        logs.forEach(log => {
+          logsByDay[log.day.toISOString()] = _.omit(log, 'day')
+        })
+        getArrayOfDaysInRange(dateFrom, dateTo).forEach(day => {
+          const utcDay = startOfDayUtc(day).toISOString()
+          assert.equal(logsByDay[utcDay].deviceName, deviceName)
+          assert.equal(
+            logsByDay[utcDay].externalId,
+            deviceMaintenanceStatusExternalId
+          )
+        })
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
         assert.equal(
           updateMaintenanceStatusResponse.body.data
             .deviceMaintenanceStatusLogIds.length,
-          6
+          8
         )
-      })
-
-      after(async () => {
-        await statusTestDeviceContext.cleanUp()
       })
     })
 

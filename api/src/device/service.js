@@ -11,6 +11,7 @@ const {
   format,
   isWeekend,
   parseISO,
+  startOfDay,
 } = require('date-fns')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
@@ -321,11 +322,10 @@ async function getDeviceByDeviceId({
 
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
-  const device = await knex('Device as d')
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId)
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('DeviceCapacity as dp', 'd.deviceCapacityId', 'dp.id')
     .leftJoin('FactResultsDevice as frd30', function () {
       this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
@@ -365,11 +365,9 @@ async function getDeviceByDeviceId({
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
-    .where('d.id', +deviceId)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       deviceType: 'dt',
-      site: 's',
       showUnapprovedDevices: true,
       showDecommissionedDevices: true,
     })
@@ -492,9 +490,14 @@ async function listApprovalTypes() {
   return result
 }
 
-async function listMaintenanceStatuses() {
-  const resultQuery = knex('DeviceMaintenanceStatus as dms')
+const getMaintenanceStatusesQuery = (filter = null) => 
+  knex('DeviceMaintenanceStatus as dms').modify(q => {
+    if (filter) q.where(filter) 
+  })
 
+async function listMaintenanceStatuses() {
+  const resultQuery = getMaintenanceStatusesQuery()
+  
   // get total count for paging
   const getCount = resultQuery.clone().count('dms.id as count').first()
 
@@ -505,7 +508,6 @@ async function listMaintenanceStatuses() {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
-
   return result
 }
 
@@ -923,13 +925,8 @@ async function setDeviceMaintenanceStatus(
   return deviceMaintenanceStatusLogId
 }
 
-async function getDeviceOrBoom(deviceId, dataConstraints) {
-  // Check if device exists
-  const device = await knex('Device').where('id', deviceId).first()
-  if (!device) throw Boom.badRequest('The provided device id does not exist')
-
-  // Check if device is accessible
-  const accessibleDeviceIds = await knex('Device as d')
+function getDeviceByIdBaseQuery(dataConstraints, deviceId, fields = null) {
+  const query = knex('Device as d')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -939,34 +936,13 @@ async function getDeviceOrBoom(deviceId, dataConstraints) {
       site: 's',
       device: 'd',
     })
-    .pluck('d.id')
-
-  if (accessibleDeviceIds.indexOf(deviceId) === -1)
-    throw Boom.forbidden(
-      "You don't have permissions for updating the requested device"
-    )
-
-  return device
-}
-
-async function getDeviceMaintenanceStatusOrBoom(
-  maintenanceStatusExternalId,
-  onlyManuallySetable = false
-) {
-  // Check if deviceMaintenanceStatusExternalId exist
-  const deviceMaintenanceStatus = await knex('DeviceMaintenanceStatus')
-    .where('externalId', maintenanceStatusExternalId)
+    .where('d.id', +deviceId)
     .first()
-  if (!deviceMaintenanceStatus)
-    throw Boom.badRequest(
-      'The provided device maintenance status external id does not exist'
-    )
-  if (onlyManuallySetable && !deviceMaintenanceStatus.manuallySet)
-    throw Boom.badRequest(
-      `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
-    )
 
-  return deviceMaintenanceStatus
+  if (fields)
+    query.select(fields)
+
+  return query
 }
 
 async function setStatusForDateRange(request) {
@@ -976,20 +952,57 @@ async function setStatusForDateRange(request) {
     payload,
     plugins: { messageContext },
   } = request
-  const { externalId, dateFrom, dateTo, notes } = payload
+  let { externalId, dateFrom, dateTo, day = startOfTodayUtc(), notes } = payload
+
+  let isSingleDayUpdate = true
+  if (dateFrom && dateTo)
+  {
+    isSingleDayUpdate = false
+  }
+
+  if (isSingleDayUpdate)
+  {
+    dateFrom = day
+    dateTo = day
+  }
+
   const dataConstraints = await getConstraints(credentials)
   const user = await getUser(credentials.name)
 
   // Get device or throw boom error if it's a bad request
-  const device = await getDeviceOrBoom(deviceId, dataConstraints)
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, ['d.createdOn', 'd.id'])
 
-  // Get device maintenance status id or throw boom error if it's a bad request
-  const {
-    id: deviceMaintenanceStatusId,
-  } = await getDeviceMaintenanceStatusOrBoom(externalId, true)
+  console.log(device)
 
+  if (!device)
+    throw Boom.forbidden(
+      "You don't have permissions for updating the requested device"
+    )
+
+  // Get device maintenance status or throw boom error if it's a bad request
+  let deviceMaintenanceStatus = await getMaintenanceStatusesQuery({ externalId }).first()
+  if (deviceMaintenanceStatus) {
+    if (!deviceMaintenanceStatus.manuallySet)
+      throw Boom.badRequest(
+        `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
+      )
+  } else
+    throw Boom.badRequest(
+      'The provided device maintenance status external id does not exist'
+    )
+
+  const data = {
+    maintenanceStatus: deviceMaintenanceStatus.externalId,
+    maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
+    maintenanceStatusName: deviceMaintenanceStatus.name,
+    maintenanceStatusActive: deviceMaintenanceStatus.active,
+    maintenanceStatusNotes: notes,
+    maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
+  }
+
+  console.log(dateFrom, dateTo, device.createdOn)
   if (
-    dateFrom >= device.createdOn &&
+    dateFrom >= startOfDayUtc(device.createdOn) &&
     dateFrom <= dateTo &&
     dateTo <= new Date()
   ) {
@@ -1005,7 +1018,7 @@ async function setStatusForDateRange(request) {
           await setDeviceMaintenanceStatus(
             deviceId,
             user.id,
-            deviceMaintenanceStatusId,
+            deviceMaintenanceStatus.id,
             startOfDayUtc(day),
             payload,
             messageContext
@@ -1013,63 +1026,67 @@ async function setStatusForDateRange(request) {
         )
       })
     )
+
+    if (isSingleDayUpdate)
+      data.deviceMaintenanceStatusLogId = deviceMaintenanceStatusLogIds[0]
+    else 
+      data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
+
     return {
       ok: true,
-      data: {
-        deviceMaintenanceStatusLogIds,
-      },
+      data
     }
   }
   throw Boom.badRequest('Invalid date range')
 }
 
-async function manuallySetDeviceMaintenanceStatus(request) {
-  const {
-    auth: { credentials },
-    params: { deviceId },
-    payload,
-    plugins: { messageContext },
-  } = request
-  const { externalId, day = startOfTodayUtc(), notes } = payload
-  const deviceMaintenanceStatus = await getDeviceMaintenanceStatusOrBoom(
-    externalId,
-    true
-  )
+// async function manuallySetDeviceMaintenanceStatus(request) {
+//   const {
+//     auth: { credentials },
+//     params: { deviceId },
+//     payload,
+//     plugins: { messageContext },
+//   } = request
+//   const { externalId, day = startOfTodayUtc(), notes } = payload
+//   const deviceMaintenanceStatus = await getDeviceMaintenanceStatusOrBoom(
+//     externalId,
+//     true
+//   )
 
-  const dataConstraints = await getConstraints(credentials)
-  const device = await getDeviceOrBoom(deviceId, dataConstraints)
+//   const dataConstraints = await getConstraints(credentials)
+//   const device = await getDeviceOrBoom(deviceId, dataConstraints)
 
-  const currentlyLoggedInUser = await getUser(credentials.name)
-  if (day >= startOfDayUtc(device.createdOn)) {
-    if (notes) {
-      _.set(payload, 'options.data.notes', notes)
-    }
+//   const currentlyLoggedInUser = await getUser(credentials.name)
+//   if (day >= startOfDayUtc(device.createdOn)) {
+//     if (notes) {
+//       _.set(payload, 'options.data.notes', notes)
+//     }
 
-    const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
-      deviceId,
-      currentlyLoggedInUser.id,
-      deviceMaintenanceStatus.id,
-      startOfDayUtc(day),
-      payload,
-      messageContext
-    )
-    return {
-      ok: true,
-      data: {
-        deviceMaintenanceStatusLogId,
-        maintenanceStatus: deviceMaintenanceStatus.externalId,
-        maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
-        maintenanceStatusName: deviceMaintenanceStatus.name,
-        maintenanceStatusActive: deviceMaintenanceStatus.active,
-        maintenanceStatusNotes: notes,
-        maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
-      },
-    }
-  }
-  throw Boom.badRequest(
-    'The maintenance date should be later than the creation date of the device'
-  )
-}
+//     const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
+//       deviceId,
+//       currentlyLoggedInUser.id,
+//       deviceMaintenanceStatus.id,
+//       startOfDayUtc(day),
+//       payload,
+//       messageContext
+//     )
+//     return {
+//       ok: true,
+//       data: {
+//         deviceMaintenanceStatusLogId,
+//         maintenanceStatus: deviceMaintenanceStatus.externalId,
+//         maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
+//         maintenanceStatusName: deviceMaintenanceStatus.name,
+//         maintenanceStatusActive: deviceMaintenanceStatus.active,
+//         maintenanceStatusNotes: notes,
+//         maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
+//       },
+//     }
+//   }
+//   throw Boom.badRequest(
+//     'The maintenance date should be later than the creation date of the device'
+//   )
+// }
 
 async function automaticallySetDeviceMaintenanceStatus(
   deviceId,
@@ -1700,7 +1717,6 @@ module.exports = {
   getDevicesForReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
-  manuallySetDeviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogged,
   automaticallySetDeviceMaintenanceStatus,
   onResultLogged,
