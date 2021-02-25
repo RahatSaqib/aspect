@@ -24,7 +24,7 @@ const Loading = () => (
   </div>
 )
 
-const filterAndShowLastDay = (data, statuses) => {
+const buildMarkersForDailyStatus = (data, statuses) => {
   const { customPropertiesVariables } = variables
   const visible = map(filter(statuses, 'checked'), 'i18nKey')
   const yesterday = getTimePeriod(1, 'days', 'yyyy-MM-dd')
@@ -79,7 +79,7 @@ const DailyStatusMap = () => {
     throw new Error(deviceStatussesError)
   }
 
-  const filtered = filterAndShowLastDay(devicesDaily, visibleStatuses)
+  const filtered = buildMarkersForDailyStatus(devicesDaily, visibleStatuses)
 
   const mapConfig = {
     zoom: 15,
