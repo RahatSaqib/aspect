@@ -85,6 +85,25 @@ Updating `.po` files means updating existing translations with newly added messa
 4. Select language of the translation from the dropdown
 5. When done, click `File > Save`. Set filename to `web.${LOCALE_NAME}.po` and store it under `src/shared/i18n` folder.
 
+#### Using existing GxAlert translations when adding a new new language
+
+A lot of the strings in GxAlert and Aspect are the same. The translations on GxAlert have already been reviewed by our clients and adjusted by us over the years, so it makes sense to use them as a foundation.
+
+We'll use "csv2po" for converting the CSV from GxAlert to .po. It's part of the [translate toolkit](http://docs.translatehouse.org/projects/translate-toolkit/en/latest/index.html)
+
+Complete the steps under "Create `.po` files" above. Then:
+
+1. Install the translate toolkit: `pip3 install translate-toolkit`
+2. Make sure that the CSV from GxAlert has three columns:
+  a. Location (resource ID)
+  b. Source Language (the English string)
+  c. Target Language (the translated string)
+3. Run csv2po: `csv2po -i gxalert_translations.csv -o web.LANGUAGECODE.po -t diff.pot`, where:
+  -i: The CSV containing translations from GxAlert
+  -o: The .po file you created in POEdit
+  -t: The diff.pot that is generated when running `yarn run updatemessages:start`
+4. The translations should now be part of the po file and you can now edit the .po file as usual in POEdit
+
 ### Update `.po` files
 
 1. Open [Poedit](https://poedit.net)

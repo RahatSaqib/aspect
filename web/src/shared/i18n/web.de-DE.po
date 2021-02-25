@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-17T14:37:38.949Z\n"
+"POT-Creation-Date: 2021-02-22T15:55:14.772Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -457,6 +457,12 @@ msgstr "Gebiet"
 msgid "Aspect has Encountered a Problem."
 msgstr "Aspect ist auf ein Problem gestoßen."
 
+#. [forms.formItem.assay]
+#. defaultMessage is:
+#. Assay
+#. [forms.formSectionHeader.assay]
+#. defaultMessage is:
+#. Assay
 #. [filter.popover.assay]
 #. defaultMessage is:
 #. Assay
@@ -747,6 +753,9 @@ msgstr "Kalibrierungsdatum ist erforderlich"
 msgid "Cancel"
 msgstr "Abbrechen"
 
+#. [forms.formItem.caseId]
+#. defaultMessage is:
+#. Case ID
 #. [pages.CasesList.caseId]
 #. defaultMessage is:
 #. Case ID
@@ -789,6 +798,9 @@ msgstr "Posteingang prüfen"
 msgid "Choose tags"
 msgstr "Schlagwörter auswählen"
 
+#. [forms.formItem.city]
+#. defaultMessage is:
+#. City
 #. [pages.SiteDetail.fieldCity]
 #. defaultMessage is:
 #. City
@@ -836,6 +848,20 @@ msgstr "Klinische Indikatoren"
 #: extracted_strings.json
 msgid "Close"
 msgstr "Schließen"
+
+#. [forms.formItem.collectedBy]
+#. defaultMessage is:
+#. Collected By
+#: extracted_strings.json
+msgid "Collected By"
+msgstr "Genommen von"
+
+#. [forms.formItem.collectedOn]
+#. defaultMessage is:
+#. Collected On
+#: extracted_strings.json
+msgid "Collected On"
+msgstr "Genommen am"
 
 #. [pages.Milestones.sampleCollectedOn]
 #. defaultMessage is:
@@ -940,12 +966,16 @@ msgstr "Konnektivität"
 #. [pages.InventoryItemsList.consumableName]
 #. defaultMessage is:
 #. Consumable
-#. [pages.Inventory.List.table.consumableName]
-#. defaultMessage is:
-#. Consumable
 #: extracted_strings.json
 msgid "Consumable"
 msgstr "Verbrauchsmaterial"
+
+#. [forms.formItem.consumableSerial]
+#. defaultMessage is:
+#. Consumable Serial
+#: extracted_strings.json
+msgid "Consumable Serial"
+msgstr "Seriennummer"
 
 #. [pages.PersonDetails.detailsCreatedSuccessfully]
 #. defaultMessage is:
@@ -1086,6 +1116,9 @@ msgstr "Anzahl (1-100)"
 msgid "Counting only {ASSAY} assays {RESULT}{DATE}."
 msgstr "Zählen nur {ASSAY} Assays {RESULT}{DATE}."
 
+#. [forms.formItem.country]
+#. defaultMessage is:
+#. Country
 #. [pages.LocationSelector.country]
 #. defaultMessage is:
 #. Country
@@ -1216,6 +1249,9 @@ msgstr "Dashboard"
 msgid "Data"
 msgstr "Daten"
 
+#. [forms.formSectionHeader.date]
+#. defaultMessage is:
+#. Date
 #. [pages.CaseList.createdOn]
 #. defaultMessage is:
 #. Date
@@ -1358,6 +1394,9 @@ msgstr "Details wurden erfolgreich geändert"
 msgid "Details..."
 msgstr "Details..."
 
+#. [forms.formSectionHeader.device]
+#. defaultMessage is:
+#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
@@ -1414,6 +1453,23 @@ msgstr "Gerätekalibrierung"
 msgid "Device Maintenance"
 msgstr "Gerätewartung"
 
+#. [forms.formItem.deviceName]
+#. defaultMessage is:
+#. Device Name
+#: extracted_strings.json
+msgid "Device Name"
+msgstr "Name des Geräts"
+
+#. [forms.formItem.deviceSerial]
+#. defaultMessage is:
+#. Device Serial
+#: extracted_strings.json
+msgid "Device Serial"
+msgstr "Seriennummer des Geräts"
+
+#. [forms.formItem.deviceType]
+#. defaultMessage is:
+#. Device Type
 #. [filter.popover.deviceType]
 #. defaultMessage is:
 #. Device Type
@@ -1585,6 +1641,13 @@ msgstr "E-Mail Adresse"
 msgid "Email Sent"
 msgstr "Email gesendet"
 
+#. [forms.formItem.endDate]
+#. defaultMessage is:
+#. End Date
+#: extracted_strings.json
+msgid "End Date"
+msgstr "Enddatum"
+
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
 #. defaultMessage is:
 #. Enter Current Password
@@ -1659,10 +1722,8 @@ msgstr "Patienten-/Fall-ID eingeben..."
 #. defaultMessage is:
 #. Enter report name...
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Enter site name..."
 msgid "Enter report name..."
-msgstr "Standortnamen eingeben..."
+msgstr "Berichtnamen eingeben…"
 
 #. [filter.popover.enterSampleId]
 #. defaultMessage is:
@@ -1695,6 +1756,9 @@ msgstr "Standort-ID eingeben..."
 msgid "Enter site name..."
 msgstr "Standortnamen eingeben..."
 
+#. [forms.formItem.errorCode]
+#. defaultMessage is:
+#. Error Code
 #. [filter.popover.errorCode]
 #. defaultMessage is:
 #. Error Code
@@ -1841,6 +1905,13 @@ msgstr "Excel"
 msgid "Expand Row"
 msgstr "Zeile erweitern"
 
+#. [forms.formItem.consumableExpirationDate]
+#. defaultMessage is:
+#. Expiration Date
+#: extracted_strings.json
+msgid "Expiration Date"
+msgstr "Verfallsdatum"
+
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Expired]
 #. defaultMessage is:
 #. Expired
@@ -1849,9 +1920,6 @@ msgid "Expired"
 msgstr "Abgelaufen"
 
 #. [pages.InventoryItemsList.expiresIn]
-#. defaultMessage is:
-#. Expires
-#. [pages.Inventory.List.table.expiresOn]
 #. defaultMessage is:
 #. Expires
 #: extracted_strings.json
@@ -2407,6 +2475,13 @@ msgstr "ALLE Ergebnisse in Bezug auf die Patienten-ID einbeziehen"
 msgid "Incorrect password"
 msgstr "Ungültiges Passwort"
 
+#. [forms.formItem.instrumentSerial]
+#. defaultMessage is:
+#. Instrument Serial
+#: extracted_strings.json
+msgid "Instrument Serial"
+msgstr "Seriennummer"
+
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -2471,9 +2546,6 @@ msgid "Invalid username or password"
 msgstr "Ungültiger Benutzername oder Passwort"
 
 #. [pages.Status.summaryWidgetGroup.inventory]
-#. defaultMessage is:
-#. Inventory
-#. [pages.Inventory.List.table.title]
 #. defaultMessage is:
 #. Inventory
 #: extracted_strings.json
@@ -2964,6 +3036,13 @@ msgstr "Längengrad"
 msgid "Lost"
 msgstr "Verloren"
 
+#. [forms.formItem.consumableLot]
+#. defaultMessage is:
+#. Lot
+#: extracted_strings.json
+msgid "Lot"
+msgstr "Charge"
+
 #. [pages.InventoryAdjustmentDialogForm.lotNumber]
 #. defaultMessage is:
 #. Lot Number
@@ -3029,6 +3108,20 @@ msgstr "Verwalten"
 #: extracted_strings.json
 msgid "Mobile"
 msgstr "Mobil"
+
+#. [forms.formItem.moduleName]
+#. defaultMessage is:
+#. Module Name
+#: extracted_strings.json
+msgid "Module Name"
+msgstr "Name des Moduls"
+
+#. [forms.formItem.moduleSerial]
+#. defaultMessage is:
+#. Module Serial
+#: extracted_strings.json
+msgid "Module Serial"
+msgstr "Seriennummer des Moduls"
 
 #. [pages.dateRangeSelector.month]
 #. defaultMessage is:
@@ -3253,6 +3346,9 @@ msgstr "Nicht möglich"
 msgid "Not yet confirmed on treatment"
 msgstr "Behandlung noch nicht bestätigt"
 
+#. [forms.formItem.notes]
+#. defaultMessage is:
+#. Notes
 #. [pages.InventoryAdjustmentDialogForm.notes]
 #. defaultMessage is:
 #. Notes
@@ -3492,6 +3588,12 @@ msgstr "Passwort zurücksetzen fehlgeschlagen"
 #. [pages.ClinicalHistory.patient]
 #. defaultMessage is:
 #. Patient
+#. [forms.formItem.patient]
+#. defaultMessage is:
+#. Patient
+#. [forms.formSectionHeader.patient]
+#. defaultMessage is:
+#. Patient
 #: extracted_strings.json
 msgid "Patient"
 msgstr "Patient"
@@ -3503,6 +3605,9 @@ msgstr "Patient"
 msgid "Patient Data"
 msgstr "Patientendaten"
 
+#. [forms.formItem.patientId]
+#. defaultMessage is:
+#. Patient ID
 #. [pages.CasesList.patientId]
 #. defaultMessage is:
 #. Patient ID
@@ -3914,9 +4019,6 @@ msgstr "Empfangene Menge"
 #. [pages.InventoryItemsList.quantityOnHand]
 #. defaultMessage is:
 #. Quantity on Hand
-#. [pages.Inventory.List.table.quantityOnHand]
-#. defaultMessage is:
-#. Quantity on Hand
 #: extracted_strings.json
 msgid "Quantity on Hand"
 msgstr "Vorrätige Menge"
@@ -4036,10 +4138,15 @@ msgstr "Entfernen des Inventars fehlgeschlagen"
 #. defaultMessage is:
 #. Report
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Reports"
 msgid "Report"
-msgstr "Berichte"
+msgstr "Bericht"
+
+#. [forms.formItem.reportableSite]
+#. defaultMessage is:
+#. Reportable Site
+#: extracted_strings.json
+msgid "Reportable Site"
+msgstr "Standort der Entnahme"
 
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive]
 #. defaultMessage is:
@@ -4127,6 +4234,9 @@ msgstr "Passwort zurücksetzen"
 msgid "Reset all filters"
 msgstr "Alle Filter zurücksetzen"
 
+#. [forms.formSectionHeader.result]
+#. defaultMessage is:
+#. Result
 #. [filter.popover.result]
 #. defaultMessage is:
 #. Result
@@ -4137,6 +4247,9 @@ msgstr "Alle Filter zurücksetzen"
 msgid "Result"
 msgstr "Ergebnis"
 
+#. [forms.formItem.resultText]
+#. defaultMessage is:
+#. Result Text
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result Text
@@ -4258,6 +4371,9 @@ msgstr "Gesendete SMS"
 msgid "SMS Sent MTD"
 msgstr "SMS gesendet diesen Monat"
 
+#. [forms.formSectionHeader.sample]
+#. defaultMessage is:
+#. Sample
 #. [pages.MilestonesSample.sampleId]
 #. defaultMessage is:
 #. Sample
@@ -4265,6 +4381,9 @@ msgstr "SMS gesendet diesen Monat"
 msgid "Sample"
 msgstr "Probe"
 
+#. [forms.formItem.sampleCollectionSite]
+#. defaultMessage is:
+#. Sample Collection Site
 #. [pages.CasesList.sampleOriginSite]
 #. defaultMessage is:
 #. Sample Collection Site
@@ -4285,6 +4404,9 @@ msgstr "Ort der Probenentnahme"
 msgid "Sample Collection Site:"
 msgstr "Ort der Probenentnahme:"
 
+#. [forms.formItem.sampleId]
+#. defaultMessage is:
+#. Sample ID
 #. [filter.popover.sampleId]
 #. defaultMessage is:
 #. Sample ID
@@ -4297,6 +4419,13 @@ msgstr "Ort der Probenentnahme:"
 #: extracted_strings.json
 msgid "Sample ID"
 msgstr "Probe ID"
+
+#. [forms.formItem.sampleType]
+#. defaultMessage is:
+#. Sample Type
+#: extracted_strings.json
+msgid "Sample Type"
+msgstr "Probenart"
 
 #. [pages.Milestones.sampleType]
 #. defaultMessage is:
@@ -4656,6 +4785,13 @@ msgstr "Senaite LIMS TB Kultur"
 msgid "Senaite LIMS Unknown"
 msgstr "Senaite LIMS Unbekannt"
 
+#. [forms.formItem.senderOperator]
+#. defaultMessage is:
+#. Sender Operator
+#: extracted_strings.json
+msgid "Sender Operator"
+msgstr "Betreiber"
+
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
 #. Sent via Email
@@ -4891,6 +5027,9 @@ msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 
+#. [forms.formSectionHeader.site]
+#. defaultMessage is:
+#. Site
 #. [pages.DeviceApiKeyList.siteId]
 #. defaultMessage is:
 #. Site
@@ -4953,10 +5092,10 @@ msgstr "Standort-ID"
 msgid "Site Id"
 msgstr "Standort-ID"
 
-#. [pages.InventoryItemsList.siteName]
+#. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
-#. [pages.Inventory.List.table.siteName]
+#. [pages.InventoryItemsList.siteName]
 #. defaultMessage is:
 #. Site Name
 #: extracted_strings.json
@@ -4970,6 +5109,16 @@ msgstr "Standort Name"
 msgid "Sites"
 msgstr "Standorte"
 
+#. [forms.formItem.startDate]
+#. defaultMessage is:
+#. Start Date
+#: extracted_strings.json
+msgid "Start Date"
+msgstr "Startdatum"
+
+#. [forms.formItem.state]
+#. defaultMessage is:
+#. State
 #. [pages.LocationSelector.state]
 #. defaultMessage is:
 #. State
@@ -5124,6 +5273,16 @@ msgstr "Aufgabenliste"
 #: extracted_strings.json
 msgid "Tasks"
 msgstr "Aufgaben"
+
+#. [forms.formItem.technicalDetails]
+#. defaultMessage is:
+#. Technical Details
+#. [forms.formSectionHeader.technicalDetails]
+#. defaultMessage is:
+#. Technical Details
+#: extracted_strings.json
+msgid "Technical Details"
+msgstr "Technische Details"
 
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:

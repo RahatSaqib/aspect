@@ -951,12 +951,13 @@ const percentageOfModulesFunctioning = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `
-  SELECT 
+  SELECT
     CONCAT(ROUND(SUM(q2.usedModulesInLast7Days) * 100 / SUM(q2.totalModules)), '%') AS cnt
 FROM
-    (SELECT 
+    (SELECT
         q.id,
             q.usedModulesInLast7Days,
+            CASE WHEN q.activeModules = 0 THEN 0 ELSE
             (CASE
                 WHEN q.activeModules <= 4 THEN 4
                 ELSE (CASE
@@ -966,19 +967,19 @@ FROM
                         ELSE 80
                     END)
                 END)
-            END) AS totalModules
+            END) END AS totalModules
     FROM
-        (SELECT 
+        (SELECT
         d.id,
         COUNT(DISTINCT r.moduleName) AS usedModulesInLast7Days,
-            (SELECT 
+            (SELECT
                     COUNT(DISTINCT r2.moduleName)
                 FROM
                     Result AS r2
                 WHERE
                     r2.deviceId = d.id
-                ORDER BY r2.endedOn DESC
-                LIMIT 100) AS activeModules
+                AND r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+                ORDER BY r2.endedOn DESC) AS activeModules
     FROM
         Device AS d
     INNER JOIN Site AS s ON s.id = d.siteId
@@ -993,11 +994,12 @@ FROM
     GROUP BY d.id) AS q) AS q2
   `,
   sqlForStatUnit: `
-  SELECT 
+  SELECT
     SUM(q2.totalModules) AS cnt
 FROM
-    (SELECT 
+    (SELECT
         q.id,
+    CASE WHEN q.activeModules = 0 THEN 0 ELSE
 		(CASE
 			WHEN q.activeModules <= 4 THEN 4
 			ELSE (CASE
@@ -1007,18 +1009,18 @@ FROM
 					ELSE 80
 				END)
 			END)
-		END) AS totalModules
+		END) END AS totalModules
     FROM
-        (SELECT 
+        (SELECT
         d.id,
-		(SELECT 
+		(SELECT
 				COUNT(DISTINCT r2.moduleName)
 			FROM
 				Result AS r2
 			WHERE
-				r2.deviceId = d.id
-			ORDER BY r2.endedOn DESC
-			LIMIT 100) AS activeModules
+				  r2.deviceId = d.id
+      AND r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+			ORDER BY r2.endedOn DESC) AS activeModules
     FROM
         Device AS d
     INNER JOIN Site AS s ON s.id = d.siteId
@@ -1035,7 +1037,7 @@ FROM
   sortOrder: 6,
   externalId: 'percentageOfModulesFunctioning',
   description:
-    'Counts the percentage of module bays used in the last 7 days, based on the count of all available bays for all the GeneXpert devices.',
+    'Counts the percentage of module bays used in the last 7 days, based on the count of all available bays in all GeneXpert devices that were active in the last 7 days.',
   descriptionI18nKey: 'percentageOfModulesFunctioningDescription',
   icon: 'MdSwapVert',
   dashboards: {
