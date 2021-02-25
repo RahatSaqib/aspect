@@ -12,7 +12,7 @@ import { DEVICE_STATUS } from '../../../QueryFetch/Device'
 import Loading from '../../../../globals/components/Loading'
 
 import formConfig from './formConfig'
-import { FormikProvider } from '../../../Form/Formik/Context'
+import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
 
 const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
@@ -87,7 +87,6 @@ const setInitialValue = (items, id, initialValue, callback) => {
 
 export const DailyStatusDialog = React.memo(
   ({ data = {}, isOpen, onCancel, onSubmit, title }) => {
-    const formikRef = React.createRef()
     const [statuses, setStatuses] = useState([])
     const { formatMessage } = useIntl()
 
@@ -146,47 +145,51 @@ export const DailyStatusDialog = React.memo(
     }
 
     return (
-      <AspectDialog
-        actions={[
-          <Button color="primary" onClick={onCancel}>
-            {formatMessage(messages.cancel)}
-          </Button>,
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              const { values } = formikRef.current
-              onSubmit({
-                values,
-                day: data.day,
-                deviceId: data.deviceId,
-              })
-            }}
-          >
-            {formatMessage(messages.submit)}
-          </Button>,
-        ]}
-        classes={{
-          paper: cssClasses('reset-overflow'),
-        }}
-        maxWidth="xs"
-        open={isOpen}
-        onEscapeKeyDown={onCancel}
-        onClose={onCancel}
-        title={title || formatMessage(messages.title)}
-      >
-        <div className={cssClasses('Form__Content')}>
-          {deviceStatussesIsLoading ? (
-            <Loading className={cssClasses('dailystatus__spinner')} />
-          ) : (
-            <div className={cssClasses('Form__Controls')}>
-              <FormikProvider config={config} ref={formikRef}>
+      <FormikProvider config={config}>
+        <AspectDialog
+          actions={[
+            <Button color="primary" onClick={onCancel}>
+              {formatMessage(messages.cancel)}
+            </Button>,
+            <FormikContext.Consumer>
+              {({ formik }) => (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => {
+                    const { values } = formik
+                    onSubmit({
+                      values,
+                      day: data.day,
+                      deviceId: data.deviceId,
+                    })
+                  }}
+                >
+                  {formatMessage(messages.submit)}
+                </Button>
+              )}
+            </FormikContext.Consumer>,
+          ]}
+          classes={{
+            paper: cssClasses('reset-overflow'),
+          }}
+          maxWidth="xs"
+          open={isOpen}
+          onEscapeKeyDown={onCancel}
+          onClose={onCancel}
+          title={title || formatMessage(messages.title)}
+        >
+          <div className={cssClasses('Form__Content')}>
+            {deviceStatussesIsLoading ? (
+              <Loading className={cssClasses('dailystatus__spinner')} />
+            ) : (
+              <div className={cssClasses('Form__Controls')}>
                 <AspectForm config={config} />
-              </FormikProvider>
-            </div>
-          )}
-        </div>
-      </AspectDialog>
+              </div>
+            )}
+          </div>
+        </AspectDialog>
+      </FormikProvider>
     )
   }
 )

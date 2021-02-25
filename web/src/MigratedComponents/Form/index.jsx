@@ -19,7 +19,13 @@ const AspectFormBase = ({ config: { sections, formContainerClassName } }) => (
     <form noValidate autoComplete="off" className={cssClasses('form__parent')}>
       {sections &&
         sections.map(
-          ({ label, labelI18nKey, rows, hideHeader, sectionItemsContainerClassName }) => (
+          ({
+            label,
+            labelI18nKey,
+            rows,
+            hideHeader,
+            sectionItemsContainerClassName,
+          }) => (
             <Grid item xs={12} className={cssClasses('form__sectionContainer')}>
               <Grid container>
                 {hideHeader === true ? null : (

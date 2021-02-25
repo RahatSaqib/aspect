@@ -72,7 +72,7 @@ const DailyStatus = () => {
   const {
     isLoading: devicesIsLoading,
     isError: devicesIsError,
-    data: { data: devicesDaily } = false,
+    data: { data: devicesDaily = [] } = false,
     error: devicesError,
   } = useQuery([DAILY_STATUS.KEY, { params }], async (key, { params }) =>
     fetchWrapperForQueries({
