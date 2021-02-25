@@ -508,7 +508,11 @@ function isoDate(date) {
 }
 
 function getArgumentFromOptions(options, keyInOptionsHash) {
-  if (typeof options === 'string') {
+  if (
+    ['string', 'number', 'undefined', 'null', 'boolean', 'symbol'].includes(
+      typeof options
+    )
+  ) {
     return options
   }
   return _.get(options, ['hash', keyInOptionsHash])
