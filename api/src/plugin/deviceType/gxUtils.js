@@ -527,9 +527,7 @@ async function findExistingResult(availableResultDetails, knex) {
     'rc2.externalId as resultCategory2',
     'a.externalId as assayId',
     's.externalId as sampleId',
-    knex.raw(
-      'JSON_EXTRACT(r.resultData, "$.geneXpertTestId") as geneXpertTestId'
-    ),
+    knex.raw('r.resultData->>"$.geneXpertTestId" as geneXpertTestId'),
   ]
   const queryStart = knex
     .from('Result as r')
