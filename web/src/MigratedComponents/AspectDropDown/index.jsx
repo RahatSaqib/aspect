@@ -9,6 +9,7 @@ import sortBy from 'lodash/sortBy'
 import filter from 'lodash/filter'
 
 import fetchWrapperForQueries from '../QueryFetch'
+import UI_CONSTS from '../../globals/consts/UI'
 
 const cssClasses = classnames.bind(require('./Dropdown.css'))
 
@@ -34,8 +35,8 @@ function indexForDefaultSelected(data, defaultOption) {
   return false
 }
 
-const buildCustomStyles = () => {
-  const styles = {
+const getAspectTheme = () => {
+  return {
     option: (provided, state) => {
       const { isSelected, isFocused } = state
       return {
@@ -78,11 +79,75 @@ const buildCustomStyles = () => {
       color: aspectWhite,
     }),
   }
+}
+const getMuiTheme = () => {
+  return {
+    control: provided => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      border: 0,
+      height: 'auto',
+      background: 'transparent',
+      '&:hover': {
+        boxShadow: 'none',
+      },
+      width: '100%',
+      '&::before': {
+        left: 0,
+        right: 0,
+        bottom: 0,
+        content: '" "',
+        position: 'absolute',
+        transition:
+          'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+        pointerEvents: 'none',
+      },
+      '&::after': {
+        left: 0,
+        right: 0,
+        bottom: 0,
+        content: '""',
+        position: 'absolute',
+        transform: 'scaleX(0)',
+        transition: 'transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms',
+        borderBottom: '2px solid #689f38',
+        pointerEvents: 'none',
+      },
+    }),
+    menu: provided => ({
+      ...provided,
+      backgroundColor: aspectWhite,
+      width: '100%',
+    }),
+    menuList: provided => ({
+      ...provided,
+      overflowY: 'auto',
+    }),
+    valueContainer: provided => ({
+      ...provided,
+      paddingLeft: 0,
+    }),
+    indicatorSeparator: provided => ({
+      ...provided,
+      display: 'none',
+    }),
+  }
+}
 
-  return styles
+const buildCustomStyles = theme => {
+  if (theme === UI_CONSTS.themeName.mui) {
+    return getMuiTheme()
+  }
+
+  if (theme === UI_CONSTS.themeName.aspect) {
+    return getAspectTheme()
+  }
 }
 
 const SelectComponent = ({
+  classNames,
   data,
   selectedValue,
   action: dispatchFromRedux,
@@ -90,6 +155,7 @@ const SelectComponent = ({
   keyMapping: { idKey, nameKey },
   isClearable,
   defaultSelectedOption,
+  theme,
 }) => {
   const defaultOptionValue = indexForDefaultSelected(
     data,
@@ -106,15 +172,20 @@ const SelectComponent = ({
   }, [inputValue])
 
   return (
-    <div className={cssClasses('select__container')}>
+    <div
+      className={cssClasses('select__container', {
+        [classNames.controlContainer]: !!classNames.controlContainer,
+      })}
+    >
       <Select
+        name={identifier}
         getOptionLabel={val => val[nameKey]}
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         defaultValue={defaultOptionValue}
         options={data}
         placeholder={defaultOption}
-        styles={buildCustomStyles(defaultOption)}
+        styles={buildCustomStyles(theme)}
         onChange={(selectedOption, { action }) =>
           setInputValue({ selectedOption, action })
         }
@@ -124,6 +195,7 @@ const SelectComponent = ({
 }
 
 SelectComponent.defaultProps = {
+  classNames: {},
   keyMapping: {
     idKey: 'id',
     nameKey: 'name',
@@ -133,6 +205,7 @@ SelectComponent.defaultProps = {
 }
 
 SelectComponent.propTypes = {
+  classNames: PropTypes.oneOf([PropTypes.object]),
   keyMapping: PropTypes.oneOf([PropTypes.object]),
   data: PropTypes.oneOf([PropTypes.object]).isRequired,
   selectedValue: PropTypes.string.isRequired,
@@ -140,10 +213,12 @@ SelectComponent.propTypes = {
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
   defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
+  theme: PropTypes.string.isRequired,
 }
 
 const AspectDropDown = ({
   props: {
+    classNames,
     selectedValue,
     state: reduxStateId,
     identifier,
@@ -155,6 +230,7 @@ const AspectDropDown = ({
     defaultSelectedOption,
   },
   action,
+  theme,
 }) => {
   const [selectOptions, setSelectOptions] = useState(false)
   const { isError, data = false, error } = useQuery(
@@ -181,6 +257,7 @@ const AspectDropDown = ({
 
   return selectOptions && selectOptions.length ? (
     <SelectComponent
+      classNames={classNames}
       data={sortBy(get(data, reduxStateId), sortByKeys)}
       selectedValue={selectedValue}
       action={action}
@@ -188,21 +265,22 @@ const AspectDropDown = ({
       keyMapping={keyMapping}
       isClearable={isClearable}
       defaultSelectedOption={defaultSelectedOption}
+      theme={theme}
     />
   ) : null
 }
 
-AspectDropDown.defaulProps = {
-  props: {
-    sortByKeys: ['name'],
-    keyMapping: {},
-  },
-  isClearable: true,
-  defaultSelectedOption: false,
+AspectDropDown.defaultProps = {
+  // props: {
+  //   sortByKeys: ['name'],
+  //   keyMapping: {},
+  // },
+  theme: UI_CONSTS.themeName.aspect,
 }
 
 AspectDropDown.propTypes = {
   props: PropTypes.shape({
+    classNames: PropTypes.oneOf([PropTypes.object]),
     selectedValue: PropTypes.string.isRequired,
     state: PropTypes.string.isRequired,
     identifier: PropTypes.string.isRequired,
@@ -217,6 +295,7 @@ AspectDropDown.propTypes = {
     defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
   }).isRequired,
   action: PropTypes.func.isRequired,
+  theme: PropTypes.string,
 }
 
 export default AspectDropDown

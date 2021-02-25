@@ -86,11 +86,13 @@ const setInitialValue = (items, id, initialValue, callback) => {
 }
 
 const getFormConfig = (formConfig, statuses, data) => {
-  formConfig.formContainerClassName = cssClasses('formContainerClassName')
+  formConfig.classNames = {
+    container: cssClasses('form-container'),
+  }
   formConfig.sections.forEach(section => {
-    section.sectionItemsContainerClassName = cssClasses(
-      'sectionItemsContainerClassName'
-    )
+    section.classNames = {
+      container: cssClasses('section-items-container'),
+    }
     section.rows.forEach(({ items }) => {
       setInitialValue(items, 'startedOn', data.startedOn)
       setInitialValue(items, 'endedOn', data.endedOn)
@@ -100,16 +102,22 @@ const getFormConfig = (formConfig, statuses, data) => {
         data.maintenanceStatusExternalId,
         item => {
           item.controlType.options = statuses.map(({ externalId, name }) => ({
-            text: name,
+            label: name,
             value: externalId,
           }))
-          item.containerClassName = cssClasses('sectionItemContainer')
-          item.itemClassName = cssClasses('sectionItem')
+          item.classNames = {
+            sectionItemContainer: cssClasses('section-item-container'),
+            item: cssClasses('section-item'),
+            controlContainer: cssClasses('control-container'),
+            controlLabel: cssClasses('control-label'),
+          }
         }
       )
       setInitialValue(items, 'note', '', item => {
-        item.containerClassName = cssClasses('sectionItemContainer')
-        item.itemClassName = cssClasses('sectionItem')
+        item.classNames = {
+          sectionItemContainer: cssClasses('section-item-container'),
+          item: cssClasses('section-item'),
+        }
       })
     })
   })
@@ -177,6 +185,9 @@ export const DailyStatusDialog = ({
         ]}
         classes={{
           paper: cssClasses('reset-overflow'),
+        }}
+        dialogContentClasses={{
+          root: cssClasses('reset-overflow'),
         }}
         maxWidth="xs"
         open={isOpen}

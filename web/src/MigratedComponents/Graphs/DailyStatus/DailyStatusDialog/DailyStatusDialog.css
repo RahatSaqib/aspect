@@ -12,20 +12,31 @@
 .Form__Controls {
   flex-grow: 1;
 }
-.formContainerClassName {
+.form-container {
   padding-top: 0;
 }
-.sectionItemsContainerClassName:last-of-type {
+.section-items-container:last-of-type {
   padding-bottom: 0;
 }
 
-.sectionItemContainer {
+.section-item-container {
   display: flex;
   max-width: none;
   flex-basis: auto;
 }
-.sectionItem {
+.section-item {
   flex-grow: 1;
+}
+.control-container {
+  width: 100%;
+  margin: 0;
+}
+.control-label {
+  font-size: 0.75rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1;
+  color: #34717c;
+  margin-bottom: 5px;
 }
 
 

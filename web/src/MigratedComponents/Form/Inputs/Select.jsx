@@ -1,51 +1,67 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import omit from 'lodash/omit'
 
 import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import Select from '@material-ui/core/Select'
+
+import AspectDropDown from '../../AspectDropDown'
+import { FormikContext } from '../Formik/Context'
+import UI_CONSTS from '../../../globals/consts/UI'
 
 const AspectSelect = props => {
   const {
+    className,
+    classNames,
+    controlType: { options = [] },
     id,
     label,
-    className,
-    controlType: { options = [] },
   } = props
 
-  const mergedProps = {
-    ...omit(props, ['controlType']),
-  }
-
   return (
-    <FormControl className={className}>
-      <InputLabel id={`${id}-label`}>{label}</InputLabel>
-      <Select {...mergedProps} labelId={`${id}-label`}>
-        {options.map(({ text, value }) => (
-          <MenuItem value={value}>{text}</MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <FormikContext.Consumer>
+      {({ formik }) => (
+        <FormControl className={className}>
+          <div className={classNames.controlLabel}>{label}</div>
+          <AspectDropDown
+            props={{
+              classNames,
+              identifier: id,
+              data: {
+                [id]: options,
+              },
+              state: id,
+              isClearable: false,
+              keyMapping: {
+                idKey: 'value',
+                nameKey: 'label',
+              },
+              defaultSelectedOption: options.findIndex(
+                it => it.value === formik.values[id]
+              ),
+            }}
+            action={({ identifier, selectedOption }) => {
+              const value = selectedOption
+                ? selectedOption.value // selected value
+                : formik.initialValues[id] // reset to initial value
+              formik.setFieldValue(identifier, value)
+            }}
+            theme={UI_CONSTS.themeName.mui}
+          />
+        </FormControl>
+      )}
+    </FormikContext.Consumer>
   )
 }
 
 AspectSelect.defaultProps = {
   className: '',
+  classNames: {},
   label: '',
 }
 
 AspectSelect.propTypes = {
-  id: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.object,
-  ]).isRequired,
-  InputProps: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
   className: PropTypes.string,
+  classNames: PropTypes.objectOf(PropTypes.shape),
+  id: PropTypes.string.isRequired,
   label: PropTypes.string,
   controlType: PropTypes.objectOf(PropTypes.shape).isRequired,
 }
