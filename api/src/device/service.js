@@ -1033,7 +1033,6 @@ async function setStatusForDateRange(request) {
   throw Boom.badRequest('Invalid date range')
 }
 
-
 async function automaticallySetDeviceMaintenanceStatus(
   deviceId,
   day,
