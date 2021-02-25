@@ -534,7 +534,7 @@ function formatPhone(phoneNumber, options) {
   }
   const countryDialingCode = `${
     getArgumentFromOptions(options, 'dialingCode') || ''
-  }`.replace(/[\s-\+]/, '')
+  }`.replace(/[\s-\\+]/, '')
   let sanitizedPhoneNumber = phoneNumber.replace(/[\s-]/, '')
   if (countryDialingCode) {
     if (sanitizedPhoneNumber.indexOf(countryDialingCode) === 0) {

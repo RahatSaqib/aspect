@@ -1,11 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { getPartnerByName } = require('../utils')
-const {
-  messageSeverityToId,
-  issueCategoryToId,
-  issueEventStatusToId,
-} = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
