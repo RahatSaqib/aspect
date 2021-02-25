@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import find from 'lodash/find'
 
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
-import messages from './messages'
+import messages from '../../intlMessages'
 
 const cssClasses = classnames.bind(require('./CustomLegend.css'))
 
@@ -74,7 +74,7 @@ LegendKey.propTypes = {
 
 const CustomBarGraphLegend = ({
   keys,
-  generateLegend,
+  generateLegendIntl,
   assaysFromState,
   type,
   legendsNotToRender,
@@ -82,6 +82,8 @@ const CustomBarGraphLegend = ({
   legendsToPopover,
   symbolShape,
 }) => {
+  const { formatMessage } = useIntl()
+
   return (
     <div
       className={cssClasses([
@@ -93,8 +95,9 @@ const CustomBarGraphLegend = ({
         const { tooltip } =
           find(legendsToPopover, { externalId: k, tooltip: { show: true } }) ||
           false
-
-        const { label, color } = generateLegend(
+        const { label, color } = generateLegendIntl(
+          formatMessage,
+          messages,
           k,
           assaysFromState,
           type,
@@ -122,7 +125,7 @@ CustomBarGraphLegend.defaultProps = {
 
 CustomBarGraphLegend.propTypes = {
   keys: PropTypes.oneOf([PropTypes.object]).isRequired,
-  generateLegend: PropTypes.func.isRequired,
+  generateLegendIntl: PropTypes.func.isRequired,
   assaysFromState: PropTypes.oneOf([PropTypes.object]),
   type: PropTypes.string.isRequired,
   symbolShape: PropTypes.string,
