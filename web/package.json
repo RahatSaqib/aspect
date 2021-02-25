@@ -180,6 +180,7 @@
     "@nivo/calendar": "^0.61.1",
     "@nivo/line": "^0.61.1",
     "@nivo/pie": "^0.61.1",
+    "@react-google-maps/api": "^2.1.1",
     "@vx/axis": "^0.0.196",
     "@vx/event": "^0.0.196",
     "@vx/geo": "^0.0.196",
