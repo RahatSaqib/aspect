@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { defineMessages, useIntl } from 'react-intl'
@@ -31,6 +31,33 @@ const messages = defineMessages({
     } since last update`,
   },
 })
+
+const getTitle = ({
+  checked,
+  daysInSameStatus,
+  formatMessage,
+  isActive,
+  maintenanceStatusName,
+  totalResults,
+}) => {
+  if (checked && daysInSameStatus) {
+    return maintenanceStatusName
+      ? formatMessage(messages.toolTipTitleWithStatus, {
+          maintenanceStatusName,
+          daysInSameStatus,
+          totalResults,
+        })
+      : formatMessage(messages.toolTipTitleWithoutStatus, {
+          daysInSameStatus,
+        })
+  }
+  return isActive
+    ? formatMessage(messages.toolTipTitleResultsReported, {
+        maintenanceStatusName,
+        totalResults,
+      })
+    : maintenanceStatusName
+}
 
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
@@ -86,32 +113,15 @@ const DailyStatusClinicDay = ({
       ? weekend
       : maintenanceStatusI18nKey
   }
-  const title = useMemo(() => {
-    if (checked && daysInSameStatus) {
-      return maintenanceStatusName
-        ? formatMessage(messages.toolTipTitleWithStatus, {
-            maintenanceStatusName,
-            daysInSameStatus,
-            totalResults,
-          })
-        : formatMessage(messages.toolTipTitleWithoutStatus, {
-            daysInSameStatus,
-          })
-    }
-    return isActive
-      ? formatMessage(messages.toolTipTitleResultsReported, {
-          maintenanceStatusName,
-          totalResults,
-        })
-      : maintenanceStatusName
-  }, [
+
+  const title = getTitle({
     checked,
     daysInSameStatus,
     formatMessage,
     isActive,
     maintenanceStatusName,
     totalResults,
-  ])
+  })
 
   return (
     <AspectTooltip
