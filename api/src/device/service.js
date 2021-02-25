@@ -950,12 +950,7 @@ async function setStatusForDateRange(request) {
   const { externalId, day = startOfTodayUtc(), notes } = payload
   let { dateFrom, dateTo } = payload
 
-  let isSingleDayUpdate = true
-  if (dateFrom && dateTo) {
-    isSingleDayUpdate = false
-  }
-
-  if (isSingleDayUpdate) {
+  if (!dateFrom && !dateTo) {
     dateFrom = day
     dateTo = day
   }
@@ -1021,7 +1016,7 @@ async function setStatusForDateRange(request) {
       }
     )
 
-    if (isSingleDayUpdate) {
+    if (!payload.dateFrom && !payload.dateTo) {
       ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
     } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
 
