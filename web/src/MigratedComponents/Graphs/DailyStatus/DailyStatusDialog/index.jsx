@@ -1,7 +1,7 @@
 import identity from 'lodash/identity'
 import isUndefined from 'lodash/isUndefined'
 import classnames from 'classnames/bind'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import { useQuery } from 'react-query'
@@ -85,113 +85,117 @@ const setInitialValue = (items, id, initialValue, callback) => {
   return item
 }
 
-export const DailyStatusDialog = React.memo(
-  ({ data = {}, isOpen, onCancel, onSubmit, title }) => {
-    const [statuses, setStatuses] = useState([])
-    const { formatMessage } = useIntl()
-
-    const {
-      isLoading: deviceStatussesIsLoading,
-      isError: deviceStatussesIsError,
-      error: deviceStatussesError,
-    } = useQuery(
-      DEVICE_STATUS.KEY,
-      async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
-      {
-        onSuccess: ({ data }) => {
-          const output = []
-          data.map(status => output.push({ ...status, checked: true }))
-          setStatuses(output)
-        },
-      }
+const getFormConfig = (formConfig, statuses, data) => {
+  formConfig.formContainerClassName = cssClasses('formContainerClassName')
+  formConfig.sections.forEach(section => {
+    section.sectionItemsContainerClassName = cssClasses(
+      'sectionItemsContainerClassName'
     )
-
-    const config = useMemo(() => {
-      formConfig.formContainerClassName = cssClasses('formContainerClassName')
-      formConfig.sections.forEach(section => {
-        section.sectionItemsContainerClassName = cssClasses(
-          'sectionItemsContainerClassName'
-        )
-        section.rows.forEach(({ items }) => {
-          setInitialValue(items, 'startedOn', data.startedOn)
-          setInitialValue(items, 'endedOn', data.endedOn)
-          setInitialValue(
-            items,
-            'reason',
-            data.maintenanceStatusExternalId,
-            item => {
-              item.controlType.options = statuses.map(
-                ({ externalId, name }) => ({
-                  text: name,
-                  value: externalId,
-                })
-              )
-              item.containerClassName = cssClasses('sectionItemContainer')
-              item.itemClassName = cssClasses('sectionItem')
-            }
-          )
-          setInitialValue(items, 'note', '', item => {
-            item.containerClassName = cssClasses('sectionItemContainer')
-            item.itemClassName = cssClasses('sectionItem')
-          })
-        })
+    section.rows.forEach(({ items }) => {
+      setInitialValue(items, 'startedOn', data.startedOn)
+      setInitialValue(items, 'endedOn', data.endedOn)
+      setInitialValue(
+        items,
+        'reason',
+        data.maintenanceStatusExternalId,
+        item => {
+          item.controlType.options = statuses.map(({ externalId, name }) => ({
+            text: name,
+            value: externalId,
+          }))
+          item.containerClassName = cssClasses('sectionItemContainer')
+          item.itemClassName = cssClasses('sectionItem')
+        }
+      )
+      setInitialValue(items, 'note', '', item => {
+        item.containerClassName = cssClasses('sectionItemContainer')
+        item.itemClassName = cssClasses('sectionItem')
       })
+    })
+  })
 
-      return formConfig
-    }, [statuses, data])
+  return formConfig
+}
 
-    if (deviceStatussesIsError) {
-      throw new Error(deviceStatussesError)
+export const DailyStatusDialog = ({
+  data = {},
+  isOpen,
+  onCancel,
+  onSubmit,
+  title,
+}) => {
+  const [statuses, setStatuses] = useState([])
+  const { formatMessage } = useIntl()
+
+  const {
+    isLoading: deviceStatussesIsLoading,
+    isError: deviceStatussesIsError,
+    error: deviceStatussesError,
+  } = useQuery(
+    DEVICE_STATUS.KEY,
+    async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
+    {
+      onSuccess: ({ data }) => {
+        const output = []
+        data.map(status => output.push({ ...status, checked: true }))
+        setStatuses(output)
+      },
     }
+  )
 
-    return (
-      <FormikProvider config={config}>
-        <AspectDialog
-          actions={[
-            <Button color="primary" onClick={onCancel}>
-              {formatMessage(messages.cancel)}
-            </Button>,
-            <FormikContext.Consumer>
-              {({ formik }) => (
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={() => {
-                    const { values } = formik
-                    onSubmit({
-                      values,
-                      day: data.day,
-                      deviceId: data.deviceId,
-                    })
-                  }}
-                >
-                  {formatMessage(messages.submit)}
-                </Button>
-              )}
-            </FormikContext.Consumer>,
-          ]}
-          classes={{
-            paper: cssClasses('reset-overflow'),
-          }}
-          maxWidth="xs"
-          open={isOpen}
-          onEscapeKeyDown={onCancel}
-          onClose={onCancel}
-          title={title || formatMessage(messages.title)}
-        >
-          <div className={cssClasses('Form__Content')}>
-            {deviceStatussesIsLoading ? (
-              <Loading className={cssClasses('dailystatus__spinner')} />
-            ) : (
-              <div className={cssClasses('Form__Controls')}>
-                <AspectForm config={config} />
-              </div>
-            )}
-          </div>
-        </AspectDialog>
-      </FormikProvider>
-    )
+  const config = getFormConfig(formConfig, statuses, data)
+
+  if (deviceStatussesIsError) {
+    throw new Error(deviceStatussesError)
   }
-)
+
+  return (
+    <FormikProvider config={config}>
+      <AspectDialog
+        actions={[
+          <Button color="primary" onClick={onCancel}>
+            {formatMessage(messages.cancel)}
+          </Button>,
+          <FormikContext.Consumer>
+            {({ formik }) => (
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  const { values } = formik
+                  onSubmit({
+                    values,
+                    day: data.day,
+                    deviceId: data.deviceId,
+                  })
+                }}
+              >
+                {formatMessage(messages.submit)}
+              </Button>
+            )}
+          </FormikContext.Consumer>,
+        ]}
+        classes={{
+          paper: cssClasses('reset-overflow'),
+        }}
+        maxWidth="xs"
+        open={isOpen}
+        onEscapeKeyDown={onCancel}
+        onClose={onCancel}
+        title={title || formatMessage(messages.title)}
+      >
+        <div className={cssClasses('Form__Content')}>
+          {deviceStatussesIsLoading ? (
+            <Loading className={cssClasses('dailystatus__spinner')} />
+          ) : (
+            <div className={cssClasses('Form__Controls')}>
+              <AspectForm config={config} />
+            </div>
+          )}
+        </div>
+      </AspectDialog>
+    </FormikProvider>
+  )
+}
 
 export default DailyStatusDialog

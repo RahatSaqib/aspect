@@ -24,7 +24,7 @@ const cssClasses = classnames.bind(require('./DatePicker.css'))
 const getDisplayValue = (value, showTimeSelect) =>
   value ? (showTimeSelect ? formatDateTime(value) : formatDate(value)) : null
 
-const AspectDatePickerPure = React.memo(props => {
+const AspectDatePickerBase = props => {
   const {
     id,
     value,
@@ -74,7 +74,7 @@ const AspectDatePickerPure = React.memo(props => {
       locale={culture}
     />
   )
-})
+}
 
 const AspectDatePicker = props => {
   const { displayPreferences, culture } = useSelector(({ user }) => ({
@@ -122,7 +122,7 @@ const AspectDatePicker = props => {
       : showTimeSelect, // otherwise use value from `controlType`
   }
 
-  return <AspectDatePickerPure {...mergedProps} />
+  return <AspectDatePickerBase {...mergedProps} />
 }
 
 AspectDatePicker.defaultProps = {
