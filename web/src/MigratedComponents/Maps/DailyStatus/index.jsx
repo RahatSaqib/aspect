@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useIntl } from 'react-intl'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
@@ -108,16 +108,16 @@ const DailyStatusMap = () => {
       name="dailyStatus"
     >
       {!devicesIsLoading && !deviceStatussesIsLoading ? (
-        <>
+        <Fragment>
           <DailyStatusFilters
             toggleAll={toggleAll}
             statusses={visibleStatuses}
             action={toggleStatusVisibility}
           />
-          <div style={{ width: '100%', minHeight: '300px', background: 'red' }}>
+          <div style={{ width: '100%', minHeight: '300px' }}>
             <AspectMap config={mapConfig} />
           </div>
-        </>
+        </Fragment>
       ) : (
         <Loading />
       )}
