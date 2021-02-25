@@ -918,6 +918,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="en-US"
           value="en-US"
         >
@@ -1876,6 +1900,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -2840,6 +2888,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="en-US"
           value="en-US"
         >
@@ -3798,6 +3870,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -4762,6 +4858,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="en-US"
           value="en-US"
         >
@@ -5721,6 +5841,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="en-US"
           value="en-US"
         >
@@ -6663,6 +6807,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
