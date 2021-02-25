@@ -1039,53 +1039,6 @@ async function setStatusForDateRange(request) {
   throw Boom.badRequest('Invalid date range')
 }
 
-// async function manuallySetDeviceMaintenanceStatus(request) {
-//   const {
-//     auth: { credentials },
-//     params: { deviceId },
-//     payload,
-//     plugins: { messageContext },
-//   } = request
-//   const { externalId, day = startOfTodayUtc(), notes } = payload
-//   const deviceMaintenanceStatus = await getDeviceMaintenanceStatusOrBoom(
-//     externalId,
-//     true
-//   )
-
-//   const dataConstraints = await getConstraints(credentials)
-//   const device = await getDeviceOrBoom(deviceId, dataConstraints)
-
-//   const currentlyLoggedInUser = await getUser(credentials.name)
-//   if (day >= startOfDayUtc(device.createdOn)) {
-//     if (notes) {
-//       _.set(payload, 'options.data.notes', notes)
-//     }
-
-//     const deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatus(
-//       deviceId,
-//       currentlyLoggedInUser.id,
-//       deviceMaintenanceStatus.id,
-//       startOfDayUtc(day),
-//       payload,
-//       messageContext
-//     )
-//     return {
-//       ok: true,
-//       data: {
-//         deviceMaintenanceStatusLogId,
-//         maintenanceStatus: deviceMaintenanceStatus.externalId,
-//         maintenanceStatusI18nKey: deviceMaintenanceStatus.i18nKey,
-//         maintenanceStatusName: deviceMaintenanceStatus.name,
-//         maintenanceStatusActive: deviceMaintenanceStatus.active,
-//         maintenanceStatusNotes: notes,
-//         maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
-//       },
-//     }
-//   }
-//   throw Boom.badRequest(
-//     'The maintenance date should be later than the creation date of the device'
-//   )
-// }
 
 async function automaticallySetDeviceMaintenanceStatus(
   deviceId,
