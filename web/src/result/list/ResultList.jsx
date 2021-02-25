@@ -171,7 +171,7 @@ const getBaseColumns = intl => {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
       sortable: true,
-      hiddenOn: 'md',
+      hiddenOn: 'lg',
     },
     {
       key: 'resultWorkflowStatus',
