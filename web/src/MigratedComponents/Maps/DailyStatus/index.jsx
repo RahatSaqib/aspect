@@ -19,7 +19,7 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./DailyStatusMap.css'))
 
 const Loading = () => (
-  <div className={cssClasses('dailystatus__spinner')}>
+  <div className={cssClasses('dailystatusMap__spinner')}>
     <CircularProgress />
   </div>
 )
