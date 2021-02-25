@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
@@ -150,20 +150,6 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps } = formik
 
-  const inputProps = useMemo(() => {
-    return {
-      readOnly: !toggleEdit,
-      disabled: !toggleEdit || type === 'readOnly',
-      disableUnderline: !toggleEdit || type === 'readOnly',
-    }
-  }, [toggleEdit, type])
-
-  const inputLabelProps = useMemo(() => {
-    return {
-      shrink: true,
-    }
-  }, [])
-
   return !hideIfNull || initialValue ? (
     <Grid
       item
@@ -192,8 +178,14 @@ const FormItem = ({
         })}
         classNames={classNames}
         fullWidth
-        InputProps={inputProps}
-        InputLabelProps={inputLabelProps}
+        InputProps={{
+          readOnly: !toggleEdit,
+          disabled: !toggleEdit || type === 'readOnly',
+          disableUnderline: !toggleEdit || type === 'readOnly',
+        }}
+        InputLabelProps={{
+          shrink: true,
+        }}
         formik={formik}
       />
     </Grid>
