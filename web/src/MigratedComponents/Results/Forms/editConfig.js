@@ -16,6 +16,7 @@ export default {
     {
       id: 'Site',
       label: 'Site',
+      labelI18nKey: 'site',
       rows: [
         {
           id: 0,
@@ -27,6 +28,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Site Name',
+              labelI18nKey: 'siteName',
               link: {
                 key: 'siteId',
                 url: '/browse/site/:siteId',
@@ -39,6 +41,7 @@ export default {
               },
               type: 'readOnly',
               label: 'City',
+              labelI18nKey: 'city',
             },
             {
               id: 'stateName',
@@ -47,6 +50,7 @@ export default {
               },
               type: 'readOnly',
               label: 'State',
+              labelI18nKey: 'state',
             },
           ],
         },
@@ -60,6 +64,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Country',
+              labelI18nKey: 'country',
             },
           ],
         },
@@ -68,6 +73,7 @@ export default {
     {
       id: 'Device',
       label: 'Device',
+      labelI18nKey: 'device',
       rows: [
         {
           id: 0,
@@ -79,6 +85,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Device Name',
+              labelI18nKey: 'deviceName',
               link: {
                 key: 'deviceId',
                 url: '/browse/device/:deviceId',
@@ -91,6 +98,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Device Type',
+              labelI18nKey: 'deviceType',
             },
             {
               id: 'deviceSerial',
@@ -99,6 +107,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Device Serial',
+              labelI18nKey: 'deviceSerial',
             },
           ],
         },
@@ -107,6 +116,7 @@ export default {
     {
       id: 'Assay',
       label: 'Assay',
+      labelI18nKey: 'assay',
       rows: [
         {
           id: 0,
@@ -117,6 +127,7 @@ export default {
                 component: 'textField',
               },
               label: 'Assay',
+              labelI18nKey: 'assay',
               type: 'readOnly',
             },
           ],
@@ -126,6 +137,7 @@ export default {
     {
       id: 'Result',
       label: 'Result',
+      labelI18nKey: 'result',
       rows: [
         {
           id: 0,
@@ -153,6 +165,7 @@ export default {
                 component: 'textField',
               },
               label: 'Result Text',
+              labelI18nKey: 'resultText',
               type: 'readOnly',
             },
           ],
@@ -167,6 +180,7 @@ export default {
               },
               type: 'string',
               label: 'Error Code',
+              labelI18nKey: 'errorCode',
             },
             {
               id: 'notes',
@@ -175,6 +189,7 @@ export default {
               },
               type: 'string',
               label: 'Notes',
+              labelI18nKey: 'notes',
             },
           ],
         },
@@ -183,6 +198,7 @@ export default {
     {
       id: 'Date',
       label: 'Date',
+      labelI18nKey: 'date',
       rows: [
         {
           id: 0,
@@ -195,6 +211,7 @@ export default {
               },
               type: 'string',
               label: 'Start Date',
+              labelI18nKey: 'startDate',
             },
             {
               id: 'endedOn',
@@ -203,6 +220,7 @@ export default {
               },
               type: 'string',
               label: 'End Date',
+              labelI18nKey: 'endDate',
             },
           ],
         },
@@ -211,6 +229,7 @@ export default {
     {
       id: 'Sample',
       label: 'Sample',
+      labelI18nKey: 'sample',
       rows: [
         {
           id: 0,
@@ -222,6 +241,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Sample ID',
+              labelI18nKey: 'sampleId',
             },
             {
               id: 'sampleTypeName',
@@ -230,6 +250,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Sample Type',
+              labelI18nKey: 'sampleType',
             },
             {
               id: 'sampleCollectedOn',
@@ -239,6 +260,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Collected On',
+              labelI18nKey: 'collectedOn',
             },
           ],
         },
@@ -252,6 +274,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Sample Collection Site',
+              labelI18nKey: 'sampleCollectionSite',
             },
             {
               id: 'senderOperator',
@@ -260,6 +283,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Collected By',
+              labelI18nKey: 'collectedBy',
             },
             {
               id: 'reportableSiteName',
@@ -268,6 +292,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Reportable Site',
+              labelI18nKey: 'reportableSite',
             },
           ],
         },
@@ -276,6 +301,7 @@ export default {
     {
       id: 'Patient',
       label: 'Patient',
+      labelI18nKey: 'patient',
       rows: [
         {
           id: 0,
@@ -287,6 +313,7 @@ export default {
               },
               type: 'string',
               label: 'Patient ID',
+              labelI18nKey: 'patientId',
             },
             {
               id: 'externalId',
@@ -295,6 +322,7 @@ export default {
               },
               type: 'string',
               label: 'Case ID',
+              labelI18nKey: 'caseId',
             },
           ],
         },
@@ -303,6 +331,7 @@ export default {
     {
       id: 'TechicalDetails',
       label: 'Technical Details',
+      labelI18nKey: 'technicalDetails',
       rows: [
         {
           id: 0,
@@ -314,6 +343,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Instrument Serial',
+              labelI18nKey: 'instrumentSerial',
             },
             {
               id: 'moduleName',
@@ -322,6 +352,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Module Name',
+              labelI18nKey: 'moduleName',
             },
             {
               id: 'moduleSerial',
@@ -330,6 +361,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Module Serial',
+              labelI18nKey: 'moduleSerial',
             },
           ],
         },
@@ -343,6 +375,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Consumable Expiration Date',
+              labelI18nKey: 'consumableExpirationDate',
             },
             {
               id: 'consumableLot',
@@ -351,6 +384,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Consumable Lot',
+              labelI18nKey: 'consumableLot',
             },
             {
               id: 'consumableSerial',
@@ -359,6 +393,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Consumable Serial',
+              labelI18nKey: 'consumableSerial',
             },
           ],
         },
@@ -372,6 +407,7 @@ export default {
               },
               type: 'readOnly',
               label: 'Sender Operator',
+              labelI18nKey: 'senderOperator',
             },
           ],
         },
