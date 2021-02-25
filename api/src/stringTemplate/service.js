@@ -12,6 +12,7 @@ handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
+handlebars.registerHelper('formatPhone', formatPhone)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
 handlebars.registerHelper('defaultTo', defaultTo)
@@ -521,6 +522,38 @@ function formatDate(date, options) {
     getArgumentFromOptions(options, 'formatString') ||
     _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
   return formatDateOrDefault(date, dateFormat)
+}
+
+function formatPhone(phoneNumber, options) {
+  if (_.isNil(phoneNumber) || !phoneNumber.replace(/\s/, '')) {
+    return ''
+  }
+  const countryDialingCode = `${
+    getArgumentFromOptions(options, 'dialingCode') || ''
+  }`.replace(/[\s-\+]/, '')
+  let sanitizedPhoneNumber = phoneNumber.replace(/[\s-]/, '')
+  if (countryDialingCode) {
+    if (sanitizedPhoneNumber.indexOf(countryDialingCode) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
+        countryDialingCode.length
+      )
+    } else if (sanitizedPhoneNumber.indexOf(`0${countryDialingCode}`) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
+        countryDialingCode.length + 1
+      )
+    } else if (sanitizedPhoneNumber.indexOf(`00${countryDialingCode}`) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
+        countryDialingCode.length + 2
+      )
+    }
+    if (sanitizedPhoneNumber.indexOf('0') === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(1)
+    }
+    if (sanitizedPhoneNumber.indexOf('+') !== 0) {
+      sanitizedPhoneNumber = `+${countryDialingCode}${sanitizedPhoneNumber}`
+    }
+  }
+  return sanitizedPhoneNumber
 }
 
 function toLowerCase(stringValue) {

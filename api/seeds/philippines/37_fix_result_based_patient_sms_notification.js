@@ -35,7 +35,7 @@ async function seed(knex) {
       .where('id', patientSmsTemplateId)
       .update({
         message: `Your {{result.assay.name}} result tested last {{formatDate (coalesce result.endedOn result.startedOn result.patient.dateReceived) formatString='${smsDateFormat}'}} is already available. Please contact {{result.patient.referringHealthFacility}} to schedule a follow-up consultation`,
-        phoneNumber: `{{result.patient.phone}}`,
+        phoneNumber: `{{(formatPhone result.patient.phone result.country.dialingCode)}}`,
         ...auditFields,
       })
   }
