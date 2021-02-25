@@ -1,0 +1,54 @@
+/*
+ * Statusses targeted:
+ * active
+ * reportedActive
+ * inactiveUnknown
+ * inactiveNoResultsReported
+ * inactiveOutOfInventory
+ * inactiveDownForRepair
+ * inactiveConnectivity
+ * inactiveDecommissioned
+ */
+
+.map__marker--weekend {
+  color: var('--aspect-device-weekend');
+}
+
+.map__marker--active,
+.map__marker--reportedActive {
+  color: var('--aspect-device-active');
+  color: var('--aspect-color-black-2');
+}
+
+.map__marker--inactive {
+  color: var('--aspect-device-connectivity');
+}
+
+.map__marker--inactiveNoResultsReported {
+  color: var('--storm-gray');
+}
+
+.map__marker--inactiveDownForRepair {
+  color: var('--aspect-device-needs-repair');
+}
+
+.map__marker--inactiveUnknown {
+  color: var('--white');
+  border: 1px solid var('--black');
+}
+
+.map__marker--inactiveOutOfInventory {
+  color: var('--aspect-device-inactiveOutOfInventory');
+}
+
+.map__marker--noResultsReported {
+  color: var('--aspect-device-inactiveNoResultsReported');
+}
+
+.map__marker--inactiveConnectivity {
+  color: var('--aspect-device-connectivity');
+}
+
+.map__marker--inactiveDecommissioned {
+  color: var('--aspect-device-inactiveDecommissioned');
+}
