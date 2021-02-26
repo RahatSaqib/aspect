@@ -193,6 +193,7 @@ exports.customPropertiesVariables = {
 
   // Operational Data screen
   '--aspect-device-active': '#99D25D',
+  '--aspect-device-reportedActive': '#99D25D',
   '--aspect-device-inactive': '#D8D8D8',
   '--aspect-device-no-samples': '#CCDCE1',
   '--aspect-device-stockout': '#72ECFF',
