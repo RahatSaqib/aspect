@@ -7,7 +7,7 @@ import IconProvider from '../../../IconProvider'
 
 const cssClasses = classnames.bind(require('./GooglePin.css'))
 
-const GooglePin = ({ position, config, id = 0, color }) => {
+const GooglePin = ({ position, config, id, color }) => {
   const { size, click } = config
   return (
     <OverlayView
@@ -15,6 +15,7 @@ const GooglePin = ({ position, config, id = 0, color }) => {
       mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
     >
       <div
+        key={id}
         className={cssClasses('markers--google-pin')}
         onClick={click}
         onKeyDown={() => false}
@@ -38,13 +39,16 @@ GooglePin.defaultProps = {
   color: 'transparent',
 }
 
+const configShape = {
+  size: number,
+  click: func,
+}
+
+const positionShape = { lat: number.isRequired, lng: number.isRequired }
+
 GooglePin.propTypes = {
-  position: shape({ lat: number.isRequired, lng: number.isRequired })
-    .isRequired,
-  config: shape({
-    size: number,
-    click: func,
-  }).isRequired,
+  position: shape(positionShape).isRequired,
+  config: shape(configShape).isRequired,
   color: string,
   id: number,
 }
