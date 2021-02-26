@@ -16,7 +16,7 @@ describe('/result/clinical-indicator-aggregations', () => {
 
   let resultsForUser = null
   let reportableResultCategories = null
-
+  let assays = null
   shared.checkToken(server, path)
 
   const getResultsForUser = () =>
@@ -28,6 +28,7 @@ describe('/result/clinical-indicator-aggregations', () => {
   before(() =>
     runTestWithKnex(async knex => {
       resultsForUser = await getResultsForUser()
+      assays = await knex('Assay').select('id', 'externalId')
       reportableResultCategories = await knex('ResultCategoryAssay as rca')
         .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
         .where('rca.reportable', true)
@@ -142,6 +143,7 @@ describe('/result/clinical-indicator-aggregations', () => {
       .get(`${path}?groupBy=month&groupBy=resultCategory1&siteName=Cuyahoga`)
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
+        console.log(res.body.data, resultsForUser)
         const expectedResponse = _.chain(resultsForUser)
           .filter(function (o) {
             return (
@@ -175,10 +177,9 @@ describe('/result/clinical-indicator-aggregations', () => {
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
-            categoryMonth: `${o.assayName}_${format(
-              new Date(o.endedOn),
-              'yyyy-MM'
-            )}`,
+            categoryMonth: `${
+              _.find(assays, assay => assay.id === o.assayId).externalId
+            }_${format(new Date(o.endedOn), 'yyyy-MM')}`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
