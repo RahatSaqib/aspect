@@ -171,7 +171,7 @@ const getBaseColumns = intl => {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
       sortable: true,
-      hiddenOn: 'lg',
+      hiddenOn: 'md',
     },
     {
       key: 'resultWorkflowStatus',
@@ -242,32 +242,36 @@ export const ResultListWithProps = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <ResultDataTable
-          selectable={false}
-          className={cssClasses('ResultDataTable')}
-        >
-          <ResultDataTableHead
-            history={history}
-            location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={columns}
-          />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(result => (
-                <ResultDataTableRow
-                  key={result.get('id')}
-                  intl={intl}
-                  extraColumns={table.extraColumns}
-                  result={result}
-                  onClick={onRowClick(history)}
-                  data-result-id={result.get('id')}
-                />
-              ))}
-          </TableBody>
-        </ResultDataTable>
+        <div className={cssClasses('datatable_scroll__outer')}>
+          <div className={cssClasses('datatable_scroll__inner')}>
+            <ResultDataTable
+              selectable={false}
+              className={cssClasses('ResultDataTable')}
+            >
+              <ResultDataTableHead
+                history={history}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={columns}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(result => (
+                    <ResultDataTableRow
+                      key={result.get('id')}
+                      intl={intl}
+                      extraColumns={table.extraColumns}
+                      result={result}
+                      onClick={onRowClick(history)}
+                      data-result-id={result.get('id')}
+                    />
+                  ))}
+              </TableBody>
+            </ResultDataTable>
+          </div>
+        </div>
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
