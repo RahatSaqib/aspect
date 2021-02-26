@@ -32,7 +32,7 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell>
       {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
     </TableCell>
-    <TableCell hiddenOn="sm">{result.get('deviceName')}</TableCell>
+    <TableCell>{result.get('deviceName')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
     <TableCell>{result.get('assayName')}</TableCell>
