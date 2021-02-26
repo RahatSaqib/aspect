@@ -143,7 +143,6 @@ describe('/result/clinical-indicator-aggregations', () => {
       .get(`${path}?groupBy=month&groupBy=resultCategory1&siteName=Cuyahoga`)
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
-        console.log(res.body.data, resultsForUser)
         const expectedResponse = _.chain(resultsForUser)
           .filter(function (o) {
             return (
