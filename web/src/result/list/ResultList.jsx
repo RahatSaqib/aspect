@@ -44,6 +44,7 @@ import {
 import AspectButton from '../../components/shared/AspectButton'
 import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
+import TableXScrollWrapper from '../../MigratedComponents/AspectTable/TableXScrollWrapper/index.jsx'
 import { RESULT_LIST } from '../../MigratedComponents/QueryFetch/Result'
 
 const cssClasses = classnames.bind(require('./ResultList.css'))
@@ -242,36 +243,34 @@ export const ResultListWithProps = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <div className={cssClasses('datatable_scroll__outer')}>
-          <div className={cssClasses('datatable_scroll__inner')}>
-            <ResultDataTable
-              selectable={false}
-              className={cssClasses('ResultDataTable')}
-            >
-              <ResultDataTableHead
-                history={history}
-                location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={columns}
-              />
-              <TableBody>
-                {items.currentIdList
-                  .map(id => items.byId.get(id))
-                  .map(result => (
-                    <ResultDataTableRow
-                      key={result.get('id')}
-                      intl={intl}
-                      extraColumns={table.extraColumns}
-                      result={result}
-                      onClick={onRowClick(history)}
-                      data-result-id={result.get('id')}
-                    />
-                  ))}
-              </TableBody>
-            </ResultDataTable>
-          </div>
-        </div>
+        <TableXScrollWrapper>
+          <ResultDataTable
+            selectable={false}
+            className={cssClasses('ResultDataTable')}
+          >
+            <ResultDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={columns}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(result => (
+                  <ResultDataTableRow
+                    key={result.get('id')}
+                    intl={intl}
+                    extraColumns={table.extraColumns}
+                    result={result}
+                    onClick={onRowClick(history)}
+                    data-result-id={result.get('id')}
+                  />
+                ))}
+            </TableBody>
+          </ResultDataTable>
+        </TableXScrollWrapper>
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
