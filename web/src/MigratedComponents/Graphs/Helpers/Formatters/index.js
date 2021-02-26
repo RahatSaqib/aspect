@@ -312,8 +312,8 @@ const generateLegend = (
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = false,
-  legendsToRename = false
+  legendsNotToRender = [],
+  legendsToRename = []
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {

@@ -11,6 +11,7 @@ const BarGraph = ({ data, keys, config, assaysFromState }) => {
     displayLegend,
     legendsToRename,
     legendsToPopover,
+    legendsToHide,
     type,
   } = config
   return (
@@ -22,6 +23,7 @@ const BarGraph = ({ data, keys, config, assaysFromState }) => {
       indexBy={indexBy}
       legendsToRename={legendsToRename}
       legendsToPopover={legendsToPopover}
+      legendsToHide={legendsToHide}
       tickValuesYShape={tickValuesYShape}
       tickValuesXShape={tickValuesXShape}
       displayMethod={displayMethod}

@@ -27,13 +27,14 @@ const AspectResponsiveBar = ({
   indexBy,
   legendsToRename,
   legendsToPopover,
+  legendsToHide,
   keys,
   tickValuesYShape,
   tickValuesXShape,
   type,
 }) => {
   const { setConfig } = useGraphClickThrough()
-  const legendsNotToRender = []
+  const legendsNotToRender = legendsToHide
   const graphsToHaveCustomLegend = [
     'bar',
     'stackedDeviceActivity',
@@ -297,6 +298,7 @@ AspectResponsiveBar.defaultProps = {
   type: 'bar',
   legendsToRename: false,
   legendsToPopover: false,
+  legendsToHide: [],
 }
 
 AspectResponsiveBar.propTypes = {
@@ -309,6 +311,7 @@ AspectResponsiveBar.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   legendsToRename: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  legendsToHide: PropTypes.oneOfType([PropTypes.array]),
   tickValuesYShape: PropTypes.oneOf([
     'bookends',
     'clubsandwich',
