@@ -1,9 +1,6 @@
 const Promise = require('bluebird')
 const { map } = require('lodash')
-const {
-  issueTypeToId,
-  // issueStatusToId,
-} = require('../../src/shared/dictionary')
+const { issueTypeToId } = require('../../src/shared/dictionary')
 const logger = require('../../src/shared/logger')
 
 const { createNewIssue, findOpenIssue } = require('../../src/issue/service')
@@ -17,16 +14,17 @@ module.exports = async function cleanModuleReplacedIssues(
   try {
     await knex.transaction(async trx => {
       const moduleReplacedIssue = await issueTypeToId('ModuleReplaced')
+      if (!moduleReplacedIssue) return
       await dropBadTriggeredIssues(trx, moduleReplacedIssue)
       await updateIssueData(trx, moduleReplacedIssue)
       const possibleResultsWithIssues = await getPossibleResultsWithIssues(trx)
       await Promise.each(possibleResultsWithIssues, async result => {
-        const previousResultWithDifferentSerial = await previousResult(
+        const previousResultWithDifferentSerial = await getPreviousResultWithDifferentModuleSerial(
           knex,
           result.deviceId,
           result.moduleName,
           result.moduleSerial,
-          result.endedOn
+          result.startedOn
         )
 
         if (previousResultWithDifferentSerial) {
@@ -62,7 +60,7 @@ module.exports = async function cleanModuleReplacedIssues(
   } catch (error) {
     logger.error(error, { reLabel: 'seed:cleanModuleReplacedIssues' })
     throw error
-  } //
+  }
 }
 const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
   const issuesToUpdate = await getRightTriggeredIssues(
@@ -93,7 +91,6 @@ const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
 
   await Promise.each(issuesToUpdate, ({ oldResultId, issueId }) =>
     knex('Issue as i')
-      .join('Result as r', 'i.resultId', 'r.id')
       .update({
         'i.data': knex.raw("JSON_SET(i.data, '$.oldResultId', ?)", [
           oldResultId,
@@ -160,12 +157,18 @@ const getPossibleResultsWithIssues = knex =>
     .select(
       'r1.id',
       'r1.deviceId',
-      'r1.endedOn',
+      'r1.startedOn',
       'r1.moduleSerial',
       'r1.moduleName'
     )
 
-const previousResult = (knex, deviceId, moduleName, moduleSerial, endedOn) =>
+const getPreviousResultWithDifferentModuleSerial = (
+  knex,
+  deviceId,
+  moduleName,
+  moduleSerial,
+  startedOn
+) =>
   // check if a module was just now replaced and trigger replacement-issue if it was
   // get the most recent result from the same moduleName as the current result
   knex('Result')
@@ -173,6 +176,6 @@ const previousResult = (knex, deviceId, moduleName, moduleSerial, endedOn) =>
     .where('moduleName', moduleName)
     .whereNotNull('moduleSerial')
     .where('moduleSerial', '<>', moduleSerial)
-    .whereRaw('endedOn < ?', [endedOn])
+    .whereRaw('startedOn < ?', [startedOn])
     .orderBy('endedOn', 'desc')
     .first('moduleSerial', 'id')

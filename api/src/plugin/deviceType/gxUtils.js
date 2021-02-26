@@ -631,12 +631,11 @@ async function findExistingResult(availableResultDetails, knex) {
       }
     }
   }
-
   if (
     _.isEmpty(matchingResult) &&
-    !_.isEmpty(potentialSampleIds) &&
+    !_.isEmpty(_.filter(potentialSampleIds, elem => elem)) &&
     siteId &&
-    !_.isEmpty(potentialAssayIds) &&
+    !_.isEmpty(_.filter(potentialAssayIds, elem => elem)) &&
     startedOn
   ) {
     matchingResults = await queryStart
@@ -701,6 +700,7 @@ async function findExistingResult(availableResultDetails, knex) {
   if (
     !_.isEmpty(matchingResult) &&
     (!geneXpertTestId ||
+      !matchingResult.geneXpertTestId ||
       _.isEqual(geneXpertTestId, matchingResult.geneXpertTestId))
   )
     return matchingResult

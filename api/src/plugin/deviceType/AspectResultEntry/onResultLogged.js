@@ -77,7 +77,7 @@ async function onResultLogged(
         resultCategory1,
         instrumentSerial,
         resultModuleName,
-        resultEndedOn,
+        resultStartedOn,
       } = result
       await shouldTriggerModuleReplaced(
         knex,
@@ -86,7 +86,7 @@ async function onResultLogged(
         resultDeviceId,
         resultModuleSerial,
         resultModuleName,
-        resultEndedOn
+        resultStartedOn
       )
       await shouldTriggerResultErrorAnalysis(
         messageContext,

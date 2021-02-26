@@ -43,14 +43,12 @@ async function getDeviceTypePluginName(deviceId) {
 }
 
 async function getReplacedModuleSerials(knex, deviceId) {
-  const replacedModuleSerials = await knex('Issue as i')
+  return knex('Issue as i')
     .join('IssueType as it', 'it.id', 'i.issueTypeId')
     .where('it.externalId', 'ModuleReplaced')
     .where('i.deviceId', deviceId)
     .select(knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial'))
     .pluck('replacedModuleSerial')
-
-  return replacedModuleSerials
 }
 
 async function shouldTriggerResultErrorAnalysis(
@@ -98,9 +96,9 @@ async function shouldTriggerModuleReplaced(
   deviceId,
   moduleSerial,
   moduleName,
-  endedOn
+  startedOn
 ) {
-  if (!moduleSerial && !moduleName && !endedOn && !deviceId) {
+  if (!moduleSerial && !moduleName && !startedOn && !deviceId) {
     return
   }
   logger.debug(`shouldTriggerModuleReplaced resultid: ${resultId}`, {
@@ -119,8 +117,8 @@ async function shouldTriggerModuleReplaced(
     .where('moduleName', moduleName)
     .whereNotNull('moduleSerial')
     .where('moduleSerial', '<>', moduleSerial)
-    .whereRaw('endedOn < ?', [endedOn])
-    .orderBy('endedOn', 'desc')
+    .whereRaw('startedOn < ?', [startedOn])
+    .orderBy('startedOn', 'desc')
     .first('moduleSerial', 'id')
 
   if (previousResultOnModule) {
