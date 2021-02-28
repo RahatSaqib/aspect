@@ -29,6 +29,8 @@ const {
 const {
   formatDateOrDefault,
   getLocalDateInUtc,
+  getArrayOfDaysInRange,
+  startOfDayUtc,
 } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
@@ -775,6 +777,94 @@ describe('Device routes', () => {
       }
     })
 
+    describe('/maintenance-status-by-period/{deviceId}', () => {
+      const maintenanceStatusByPeriodPath = `${path}/maintenance-status-by-period`
+      let statusTestDeviceContext
+      let theGreatestDeviceIEverCreated
+      const deviceName = 'Oh, this device is great'
+      const deviceMaintenanceStatusExternalId = 'inactiveDownForRepair'
+
+      before(async () => {
+        statusTestDeviceContext = createGxConnectTestContext(server, {
+          macAddress: 'It is not a Mac, it is a PC',
+          adminUsername: 'admin',
+          adminPassword: 'test07',
+          countryCode: 'US',
+          deviceName: 'Oh, this device is great',
+          deviceSerialNumber: 'And look that serial! Amazing',
+          hostId: 'What should I put here?',
+        })
+        await statusTestDeviceContext.registerAndSetDevice()
+        theGreatestDeviceIEverCreated = await knex('Device')
+          .where({ name: 'Oh, this device is great' })
+          .first()
+
+        // Set the createdOn date to 6 days ago, so we can update the status log for a range of days
+        await knex('Device')
+          .where({ id: theGreatestDeviceIEverCreated.id })
+          .update({ createdOn: new Date('2020-01-01T12:00:00.000Z') })
+      })
+
+      after(async () => {
+        await statusTestDeviceContext.cleanUp()
+      })
+
+      it('should save the maintenance status of the device for a date range', async () => {
+        const { id: deviceId } = theGreatestDeviceIEverCreated
+
+        const dateFrom = '2020-12-12T00:00:00.000-03:00'
+        const dateTo = '2020-12-19T00:00:00.000-03:00'
+        const payload = {
+          externalId: deviceMaintenanceStatusExternalId,
+          dateFrom,
+          dateTo,
+          notes:
+            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+        }
+
+        const updateMaintenanceStatusResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+
+        const logs = await knex('DeviceMaintenanceStatusLog as dmsl')
+          .innerJoin('Device as d', 'dmsl.deviceId', 'd.id')
+          .innerJoin(
+            'DeviceMaintenanceStatus as dms',
+            'dmsl.deviceMaintenanceStatusId',
+            'dms.id'
+          )
+          .whereIn(
+            'dmsl.id',
+            updateMaintenanceStatusResponse.body.data
+              .deviceMaintenanceStatusLogIds
+          )
+          .select(
+            'd.name as deviceName',
+            'dms.externalId',
+            knex.raw('DATE(dmsl.day) as day')
+          )
+        const logsByDay = []
+        logs.forEach(log => {
+          logsByDay[log.day.toISOString()] = _.omit(log, 'day')
+        })
+        getArrayOfDaysInRange(dateFrom, dateTo).forEach(day => {
+          const utcDay = startOfDayUtc(day).toISOString()
+          assert.equal(logsByDay[utcDay].deviceName, deviceName)
+          assert.equal(
+            logsByDay[utcDay].externalId,
+            deviceMaintenanceStatusExternalId
+          )
+        })
+        assert.isOk(updateMaintenanceStatusResponse.body.ok)
+        assert.equal(
+          updateMaintenanceStatusResponse.body.data
+            .deviceMaintenanceStatusLogIds.length,
+          8
+        )
+      })
+    })
+
     describe('/maintenance-status/{deviceId}', () => {
       let editableDeviceMaintenanceStatusIds
       let device
@@ -802,8 +892,12 @@ describe('Device routes', () => {
           .join('Partner as p', 'd.partnerId', 'p.id')
           .where('p.name', 'Partner One')
           .where('dtc.hasResults', true)
-          .first('d.id', 'd.deviceMaintenanceStatusLogId')
+          .first('d.id', 'd.deviceMaintenanceStatusLogId', 'd.createdOn')
         deviceId = device.id
+
+        await knex('Device')
+          .where('id', deviceId)
+          .update('createdOn', subDays(startOfToday(), 6))
       })
       afterEach(async () => {
         if (deviceMaintenanceStatusLogId) {
@@ -818,6 +912,12 @@ describe('Device routes', () => {
           // reset value
           deviceMaintenanceStatusLogId = null
         }
+      })
+
+      after(async () => {
+        await knex('Device')
+          .where('id', deviceId)
+          .update('createdOn', device.createdOn)
       })
 
       const maintenanceStatusPath = `${path}/maintenance-status`
