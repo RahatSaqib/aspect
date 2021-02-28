@@ -360,13 +360,13 @@ const groupForDeviceStatusAPI = (
         'inactiveNoPower',
         'inactiveOther',
       ],
-      (acc, propName) => {
-        acc[propName] = weekendOrHolidayInactive(
+      (memo, propName) => {
+        memo[propName] = weekendOrHolidayInactive(
           curr[propName],
           devicesTotal,
           isWeekendOrHoliday
         )
-        return acc
+        return memo
       },
       {}
     )
