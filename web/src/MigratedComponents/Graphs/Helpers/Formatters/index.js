@@ -9,6 +9,8 @@ import isNull from 'lodash/isNull'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
+import nth from 'lodash/nth'
+import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
 import split from 'lodash/split'
@@ -241,11 +243,19 @@ const generateToolTip = (
   displayMethod,
   assaysFromState,
   formatNumber,
-  type
+  type,
+  formatMessage,
+  intlMessages
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
-  let displayId = translateLabel(id, assaysFromState)
+  let displayId = translateLabel(
+    id,
+    assaysFromState,
+    false,
+    formatMessage,
+    intlMessages
+  )
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
@@ -288,27 +298,37 @@ const removeStringsFromArray = string => {
   return newString.length > 1 ? newString[1] : newString[0]
 }
 
-const translateLabel = (string, assaysFromState, legendsToRename) => {
+const translateLabel = (
+  string,
+  assaysFromState,
+  legendsToRename,
+  formatMessage,
+  intlMessages
+) => {
   const dictionary = legendsToRename ? [...legendsToRename] : []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
-      resultCategories.map(({ externalId, name }) =>
-        dictionary.push({ externalId, name })
+      resultCategories.map(
+        ({ resultCategories }) =>
+          Array.isArray(resultCategories) &&
+          resultCategories.map(({ externalId, name }) =>
+            dictionary.push({ externalId, name })
+          )
       )
   )
-
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
 
-  return newString.length
-    ? newString[0].name
+  return formatMessage && intlMessages[string]
+    ? formatMessage(intlMessages[string]) || get(nth(newString, 0), 'name')
     : makeProperCase(removeStringsFromArray(string))
 }
-
-const generateLegend = (
+const generateLegendIntl = (
+  formatMessage,
+  intlMessages,
   string,
   assaysFromState,
   type = false,
@@ -317,7 +337,13 @@ const generateLegend = (
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {
-      label: translateLabel(string, assaysFromState, legendsToRename, type),
+      label: translateLabel(
+        string,
+        assaysFromState,
+        legendsToRename,
+        formatMessage,
+        intlMessages
+      ),
       color: generateColorForLegend(string, type),
     }
   }
@@ -492,7 +518,7 @@ export {
   formatValuesForGraphs,
   generateColorForLegend,
   generateColorForValue,
-  generateLegend,
+  generateLegendIntl,
   generateMargin,
   generateTickValues,
   generateToolTip,
