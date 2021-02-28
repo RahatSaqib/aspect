@@ -9,9 +9,9 @@ import sortBy from 'lodash/sortBy'
 import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
+import reduce from 'lodash/reduce'
 import format from 'date-fns/format'
 
-import graphColorMap from '../Variables'
 import {
   calcPercentageSplitBar,
   normaliseKeys,
@@ -33,7 +33,8 @@ const groupByKey = (
   const grouped = filtered.reduce((acc, curr) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
-      : filter(graphColorMap, ['id', 99])[0].externalId
+      : // default prop for value 'curr.cnt', former `filter(graphColorMap, ['id', 99])[0].externalId`
+        'FallbackColor'
 
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
@@ -339,12 +340,6 @@ const groupForDeviceStatusAPI = (
       devicesActive,
       devicesTotal,
       devicesInactive,
-      inactiveUnknown,
-      inactiveConnectivity,
-      inactiveDecommissioned,
-      inactiveDownForRepair,
-      inactiveNoResultsReported,
-      inactiveOutOfInventory,
     } = curr
 
     const dateFormatted = formatDate
@@ -352,6 +347,29 @@ const groupForDeviceStatusAPI = (
       : curr[indexBy]
 
     const shouldBeZero = devicesTotal === 0
+
+    const inactiveProps = reduce(
+      [
+        'inactiveUnknown',
+        'inactiveConnectivity',
+        'inactiveDecommissioned',
+        'inactiveDownForRepair',
+        'inactiveNoResultsReported',
+        'inactiveOutOfInventory',
+        'inactiveNoStaff',
+        'inactiveNoPower',
+        'inactiveOther',
+      ],
+      (acc, propName) => {
+        acc[propName] = weekendOrHolidayInactive(
+          curr[propName],
+          devicesTotal,
+          isWeekendOrHoliday
+        )
+        return acc
+      },
+      {}
+    )
 
     acc[curr[indexBy]] = {
       date: dateFormatted,
@@ -363,36 +381,7 @@ const groupForDeviceStatusAPI = (
           ? 0
           : calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
-      inactiveUnknown: weekendOrHolidayInactive(
-        inactiveUnknown,
-        devicesTotal,
-        isWeekendOrHoliday
-      ),
-      inactiveConnectivity: weekendOrHolidayInactive(
-        inactiveConnectivity,
-        devicesTotal,
-        isWeekendOrHoliday
-      ),
-      inactiveDecommissioned: weekendOrHolidayInactive(
-        inactiveDecommissioned,
-        devicesTotal,
-        isWeekendOrHoliday
-      ),
-      inactiveDownForRepair: weekendOrHolidayInactive(
-        inactiveDownForRepair,
-        devicesTotal,
-        isWeekendOrHoliday
-      ),
-      inactiveNoResultsReported: weekendOrHolidayInactive(
-        inactiveNoResultsReported,
-        devicesTotal,
-        isWeekendOrHoliday
-      ),
-      inactiveOutOfInventory: weekendOrHolidayInactive(
-        inactiveOutOfInventory,
-        devicesTotal,
-        isWeekendOrHoliday
-      ),
+      ...inactiveProps,
     }
     return acc
   }, {})

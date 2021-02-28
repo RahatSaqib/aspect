@@ -217,7 +217,7 @@ const generateTickValues = (
 
 const filterColour = value =>
   graphColorMap.filter(
-    color => color.externalId === value || color.id === 99
+    color => color.externalId === value || color.externalId === 'FallbackColor'
   )[0].color
 
 const generateColorForValue = ({ id: valueId }) => filterColour(valueId)
