@@ -6,13 +6,13 @@ import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
 import useGraphClickThrough from '../Hooks/useGraphClickThrough'
-
+import messages from '../intlMessages'
 import {
   formatValuesForGraphs,
   generateColorForValue,
   generateTickValues,
   generateToolTip,
-  generateLegend,
+  generateLegendIntl,
   getMaxValueForDivergent,
 } from '../Helpers/Formatters'
 
@@ -39,7 +39,7 @@ const AspectResponsiveBar = ({
     'stackedDeviceActivity',
     'barLegacyTreatment',
   ]
-  const { formatNumber: intlFormatNumber } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
 
   const config = (type, data) => {
     switch (true) {
@@ -185,7 +185,14 @@ const AspectResponsiveBar = ({
           {
             dataFrom: 'keys',
             data: keys.map(k =>
-              generateLegend(k, assaysFromState, type, legendsNotToRender)
+              generateLegendIntl(
+                formatMessage,
+                messages,
+                k,
+                assaysFromState,
+                type,
+                legendsNotToRender
+              )
             ),
             anchor: 'bottom-right',
             direction: 'row',
@@ -290,7 +297,7 @@ const AspectResponsiveBar = ({
         <CustomBarGraphLegend
           style={{ flex: 1 }}
           keys={keys}
-          generateLegend={generateLegend}
+          generateLegendIntl={generateLegendIntl}
           assaysFromState={assaysFromState}
           type={type}
           symbolShape={config(type, data, displayMethod).symbolShape}

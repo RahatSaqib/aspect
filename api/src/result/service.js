@@ -2282,7 +2282,6 @@ async function clinicalIndicatorAggregations(request) {
     .count('r.id as cnt')
 
   const data = await processGroupedQuery(resultQuery, groupBy)
-
   return { data }
 }
 
@@ -2291,7 +2290,7 @@ async function processGroupedQuery(resultQuery, groupBy) {
   const paramToDb = {
     resultCategory1: 'rc1.externalId as resultCategory1',
     resultCategory2: 'rc2.externalId as resultCategory2',
-    assay: 'a.name as assay',
+    assay: 'a.externalId as assay',
 
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),
