@@ -101,7 +101,7 @@ async function createDevicesForAllMissingTypes(
         const deviceToInsert = {
           ...auditFields,
           name: `${siteData.shortName} Router`,
-          shortName: `r${i}`,
+          shortName: `${siteData.shortName} Router`,
           deviceTypeId: elem.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId: siteData.partnerId,
