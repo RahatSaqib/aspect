@@ -64,7 +64,14 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
   await messageContext.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
-    const { deviceId, siteId, moduleName, moduleSerial, endedOn } = result
+    const {
+      deviceId,
+      siteId,
+      moduleName,
+      moduleSerial,
+      startedOn,
+      instrumentSerial,
+    } = result
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
@@ -78,8 +85,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
       resultId,
       deviceId,
       moduleSerial,
+      instrumentSerial,
       moduleName,
-      endedOn
+      startedOn
     )
 
     // prepare query for device results

@@ -95,6 +95,7 @@ async function shouldTriggerModuleReplaced(
   resultId,
   deviceId,
   moduleSerial,
+  instrumentSerial,
   moduleName,
   startedOn
 ) {
@@ -117,6 +118,7 @@ async function shouldTriggerModuleReplaced(
     .where('moduleName', moduleName)
     .whereNotNull('moduleSerial')
     .where('moduleSerial', '<>', moduleSerial)
+    .andWhere('instrumentSerial', instrumentSerial)
     .whereRaw('startedOn < ?', [startedOn])
     .orderBy('startedOn', 'desc')
     .first('moduleSerial', 'id')
@@ -126,6 +128,7 @@ async function shouldTriggerModuleReplaced(
       moduleName,
       replacedModuleSerial: previousResultOnModule.moduleSerial,
       newModuleSerial: moduleSerial,
+      instrumentSerial,
       oldResultId: previousResultOnModule.id,
     })
   }

@@ -24,6 +24,7 @@ module.exports = async function cleanModuleReplacedIssues(
           result.deviceId,
           result.moduleName,
           result.moduleSerial,
+          result.instrumentSerial,
           result.startedOn
         )
 
@@ -37,6 +38,7 @@ module.exports = async function cleanModuleReplacedIssues(
                 moduleName: result.moduleName,
                 replacedModuleSerial:
                   previousResultWithDifferentSerial.moduleSerial,
+                instrumentSerial: result.instrumentSerial,
                 newModuleSerial: result.moduleSerial,
                 oldResultId: previousResultWithDifferentSerial.id,
               },
@@ -70,6 +72,7 @@ const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
     .clone()
     .groupBy(
       'q.newModuleSerial',
+      'q.instrumentSerial',
       'oldResult.moduleSerial',
       'oldResult.moduleName',
       'q.moduleName',
@@ -77,12 +80,14 @@ const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
       'q.endedOn'
     )
     .max('oldResult.id as oldResultId')
-    .select('q.moduleName')
+    .select('q.moduleName', 'q.instrumentSerial')
 
   await knex('Issue as i')
     .join('Result as r', 'i.resultId', 'r.id')
     .update({
-      'i.data': knex.raw("JSON_SET(i.data, '$.moduleName', r.moduleName)"),
+      'i.data': knex.raw(
+        "JSON_SET(i.data, '$.moduleName', r.moduleName,'$.instrumentSerial',r.instrumentSerial)"
+      ),
     })
     .whereIn(
       'i.id',
@@ -113,8 +118,9 @@ const getRightTriggeredIssues = (knex, moduleReplacedIssue) =>
             "innerIssue.data->>'$.replacedModuleSerial' AS oldModuleSerial"
           ),
           'newResult.moduleSerial as newModuleSerial',
-          'newResult.moduleName AS moduleName',
-          'innerIssue.deviceId'
+          'newResult.moduleName',
+          'innerIssue.deviceId',
+          'newResult.instrumentSerial'
         )
         .as('q'),
       builder => {
@@ -123,6 +129,7 @@ const getRightTriggeredIssues = (knex, moduleReplacedIssue) =>
           .andOn('q.endedOn', '>', 'oldResult.endedOn')
           .andOn('q.moduleName', 'oldResult.moduleName')
           .andOn('q.oldModuleSerial', 'oldResult.moduleSerial')
+          .andOn('q.instrumentSerial', 'oldResult.instrumentSerial')
       }
     )
     .distinct('q.issueId as issueId')
@@ -144,7 +151,12 @@ const getPossibleResultsWithIssues = knex =>
     .join(
       knex('Result as r')
         .whereNotNull('r.moduleName')
-        .groupBy('r.moduleName', 'r.moduleSerial', 'r.deviceId')
+        .groupBy(
+          'r.instrumentSerial',
+          'r.moduleName',
+          'r.moduleSerial',
+          'r.deviceId'
+        )
         .select('r.modulename', 'r.moduleSerial', 'r.deviceId')
         .min('r.endedOn as endedOn')
         .as('q'),
@@ -159,7 +171,8 @@ const getPossibleResultsWithIssues = knex =>
       'r1.deviceId',
       'r1.startedOn',
       'r1.moduleSerial',
-      'r1.moduleName'
+      'r1.moduleName',
+      'r1.instrumentSerial'
     )
 
 const getPreviousResultWithDifferentModuleSerial = (
@@ -167,15 +180,17 @@ const getPreviousResultWithDifferentModuleSerial = (
   deviceId,
   moduleName,
   moduleSerial,
+  instrumentSerial,
   startedOn
 ) =>
-  // check if a module was just now replaced and trigger replacement-issue if it was
+  // check if a module was replaced and trigger replacement-issue if it was
   // get the most recent result from the same moduleName as the current result
   knex('Result')
     .where('deviceId', deviceId)
     .where('moduleName', moduleName)
     .whereNotNull('moduleSerial')
     .where('moduleSerial', '<>', moduleSerial)
-    .whereRaw('startedOn < ?', [startedOn])
+    .where('instrumentSerial', instrumentSerial)
+    .where('startedOn', '<', startedOn)
     .orderBy('endedOn', 'desc')
     .first('moduleSerial', 'id')

@@ -85,6 +85,7 @@ async function onResultLogged(
         resultId,
         resultDeviceId,
         resultModuleSerial,
+        instrumentSerial,
         resultModuleName,
         resultStartedOn
       )

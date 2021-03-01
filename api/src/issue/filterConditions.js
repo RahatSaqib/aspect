@@ -62,19 +62,19 @@ const filterByLotAndAssay = (
 
 const filterByModuleReplaced = (
   queryBuilder,
-  { newModuleSerial, replacedModuleSerial },
+  { newModuleSerial, replacedModuleSerial, instrumentSerial },
   aliases = { issue: 'i' }
 ) => {
   logger.debug(
-    `moduleName: ${newModuleSerial}, Module Serial: ${replacedModuleSerial}`,
+    `moduleName: ${newModuleSerial}, Module Serial: ${replacedModuleSerial} and instrumentSerial: ${instrumentSerial}`,
     {
       reLabel: 'issues:filterByModuleReplaced',
     }
   )
   if (newModuleSerial && replacedModuleSerial)
     queryBuilder.whereRaw(
-      `${aliases.issue}.data->>"$.newModuleSerial"=? and ${aliases.issue}.data->>"$.replacedModuleSerial"=?`,
-      [newModuleSerial, replacedModuleSerial]
+      `${aliases.issue}.data->>"$.newModuleSerial"=? and ${aliases.issue}.data->>"$.replacedModuleSerial"=? and ${aliases.issue}.data->>"$.instrumentSerial"=?`,
+      [newModuleSerial, replacedModuleSerial, instrumentSerial]
     )
   return queryBuilder
 }
