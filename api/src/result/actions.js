@@ -425,14 +425,15 @@ function resultMachineUnknownError(deviceId) {
  *
  * resultId is required
  */
-function resultModuleReplaced(resultId, options) {
+function resultModuleReplaced(resultId, deviceId, options) {
   if (!resultId) {
     throw new Error('Must specify resultId for resultModuleReplaced')
   }
   return {
     type: types.RESULT_MODULE_REPLACED,
+    deviceId,
     resultId,
-    options,
+    options: { data: options },
   }
 }
 
