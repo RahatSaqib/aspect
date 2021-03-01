@@ -315,7 +315,7 @@ export const visibleAllExpected = [
     shortName: 'GeneXpert #29',
   },
   {
-    color: '#004759',
+    color: '#0088aa',
     day: '2021-02-25',
     id: '108',
     lat: 32.925388,

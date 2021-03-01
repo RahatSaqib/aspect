@@ -33,7 +33,7 @@ const groupByKey = (
   const grouped = filtered.reduce((acc, curr) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
-      : filter(graphColorMap, ['id', 99])[0].externalId
+      : filter(graphColorMap, ['id', 999])[0].externalId
 
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
@@ -339,12 +339,6 @@ const groupForDeviceStatusAPI = (
       devicesActive,
       devicesTotal,
       devicesInactive,
-      inactiveUnknown,
-      inactiveConnectivity,
-      inactiveDecommissioned,
-      inactiveDownForRepair,
-      inactiveNoResultsReported,
-      inactiveOutOfInventory,
     } = curr
 
     const dateFormatted = formatDate
@@ -364,32 +358,47 @@ const groupForDeviceStatusAPI = (
           : calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
       inactiveUnknown: weekendOrHolidayInactive(
-        inactiveUnknown,
+        curr.inactiveUnknown,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveConnectivity: weekendOrHolidayInactive(
-        inactiveConnectivity,
+        curr.inactiveConnectivity,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveDecommissioned: weekendOrHolidayInactive(
-        inactiveDecommissioned,
+        curr.inactiveDecommissioned,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveDownForRepair: weekendOrHolidayInactive(
-        inactiveDownForRepair,
+        curr.inactiveDownForRepair,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveNoResultsReported: weekendOrHolidayInactive(
-        inactiveNoResultsReported,
+        curr.inactiveNoResultsReported,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveOutOfInventory: weekendOrHolidayInactive(
-        inactiveOutOfInventory,
+        curr.inactiveOutOfInventory,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoStaff: weekendOrHolidayInactive(
+        curr.inactiveNoStaff,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoPower: weekendOrHolidayInactive(
+        curr.inactiveNoPower,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveOther: weekendOrHolidayInactive(
+        curr.inactiveOther,
         devicesTotal,
         isWeekendOrHoliday
       ),
