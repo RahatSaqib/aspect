@@ -9,6 +9,7 @@ const admin = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'genexpert_issues',
   ],
   permissions: [
     {
@@ -488,6 +489,7 @@ const deviceMaker = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'genexpert_issues',
   ],
   permissions: [
     {

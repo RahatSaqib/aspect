@@ -128,6 +128,27 @@ const deviceCalibrationReport = {
   ],
 }
 
+const geneXpertIssues = {
+  name: 'GeneXpert Issues',
+  description: 'This report shows all issues that apply to GeneXpert devices',
+  i18nKey: 'geneXpertIssues',
+  externalId: 'genexpert_issues',
+  fileName: 'geneXpertIssues',
+  sortOrder: 7,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getGeneXpertIssuesReport',
+      query: {
+        sortCol: 'triggeredOn',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -135,4 +156,5 @@ module.exports = {
   mtbDetectedRRDetected,
   deviceActivity,
   deviceCalibrationReport,
+  geneXpertIssues,
 }

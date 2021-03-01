@@ -5,8 +5,13 @@ const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
 const { getDeviceBaseQuery } = require('./service')
-const { knex, filterDateRangeParams } = require('../db')
-const { getConstraints } = require('../auth/constraints')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
@@ -140,7 +145,74 @@ async function getDeviceActivityReport(auth, query) {
   return dataset
 }
 
+async function getGeneXpertIssuesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // get rows
+  const issues = await knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueEventTrigger as iet', 'it.id', 'iet.issueTypeId')
+    .join('Device as d', 'i.deviceId', 'd.id')
+    .join('Site as s', 'i.siteId', 's.id')
+    .join('Geography as g', 'i.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Result as r', 'i.resultId', 'r.id')
+    .where(function () {
+      this.where('it.externalId', 'like', '%Lot')
+        .orWhere('it.externalId', 'like', '%Module')
+        .orWhere('it.externalId', 'like', 'Hardware%')
+    })
+    .modify(filterDateRangeParams, query, 'i.createdOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      deviceApprovalId: 'd.deviceApprovalId',
+      deviceTypeId: 'd.deviceTypeId',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
+    })
+    .modify(sortPageParams, query, 'i.createdOn')
+    .select(
+      'i.createdOn as triggeredOn',
+      's.name as siteName',
+      'st.name as stateName',
+      'l.name as lgaName',
+      'r.instrumentSerial as instrumentSerial',
+      'it.name as error',
+      knex.raw(
+        "replace(replace(iet.triggerConditions ->> '$.conditions.evaluationFilterParameters.errorCodes', '[', ''), ']', '') as errorCodes"
+      ),
+      knex.raw("i.data ->> '$.totalResults' as totalResults"),
+      knex.raw("i.data ->> '$.resultsWithErrors' as resultsWithErrors"),
+      knex.raw("i.data ->> '$.moduleSerial' as moduleSerial"),
+      knex.raw("i.data ->> '$.consumableLot' as consumableLot")
+    )
+
+  const data = issues.map(issue => ({
+    ...issue,
+    errorPercentage: issue.resultsWithErrors / issue.totalResults,
+  }))
+
+  const dataset = {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
+  return dataset
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
+  getGeneXpertIssuesReport,
 }
