@@ -272,7 +272,6 @@ async function findOpenIssue(
         action.options.data
       )
   }
-
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 
@@ -662,8 +661,8 @@ async function triggerIssue(request) {
       break
     }
     case 'ModuleReplaced'.toLowerCase(): {
-      const { resultId, options } = data
-      await messageContext.resultModuleReplaced(resultId, options)
+      const { resultId, deviceId, options } = data
+      await messageContext.resultModuleReplaced(resultId, deviceId, options)
       triggered = true
       break
     }
@@ -728,6 +727,7 @@ module.exports = {
   getAllActions,
   getIssueEventTriggerSubscriptions,
   triggerIssue,
+  findOpenIssue,
   updateIssueStatus,
   createNewIssue,
 }
