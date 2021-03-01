@@ -138,6 +138,9 @@
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "RESULT_MODULE_REPLACED"
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByModuleReplaced"
       }
     },
     {
