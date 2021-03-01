@@ -1,5 +1,3 @@
-import isString from 'lodash/isString'
-
 const groupByKeyGrouped = {
   '2019-11': {
     month: 'Nov 19',
@@ -38,7 +36,7 @@ const groupByKeyGrouped = {
   },
 }
 
-const mockedDeviceStatusRaw = [
+const mockedDeviceStatus = [
   {
     date: '2020-08-01T00:00:00.000Z',
     devicesActive: 1,
@@ -444,7 +442,7 @@ const mockedDeviceStatusRaw = [
   },
 ]
 
-const mockedDeviceStatusOutRaw = [
+const mockedDeviceStatusOut = [
   {
     date: 'August 1st',
     devicesTotal: 52,
@@ -849,22 +847,5 @@ const mockedDeviceStatusOutRaw = [
     inactiveOutOfInventory: '0.0000',
   },
 ]
-
-const addNewProps = arr =>
-  arr.map(it => {
-    const val = isString(it.inactiveDecommissioned) ? '0.0000' : 0
-    const inactiveNoStaff = val
-    const inactiveNoPower = val
-    const inactiveOther = val
-    return {
-      ...it,
-      inactiveNoStaff,
-      inactiveNoPower,
-      inactiveOther,
-    }
-  })
-
-const mockedDeviceStatus = addNewProps(mockedDeviceStatusRaw)
-const mockedDeviceStatusOut = addNewProps(mockedDeviceStatusOutRaw)
 
 export { groupByKeyGrouped, mockedDeviceStatus, mockedDeviceStatusOut }

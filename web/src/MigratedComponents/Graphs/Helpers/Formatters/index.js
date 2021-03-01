@@ -332,8 +332,8 @@ const generateLegendIntl = (
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = [],
-  legendsToRename = []
+  legendsNotToRender = false,
+  legendsToRename = false
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {

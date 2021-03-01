@@ -21,8 +21,6 @@ const {
   '--geyser': geyser,
   '--golden-dream': goldenDream,
   '--purple-mountains-majesty': colorPurple,
-  // '--ship-cove': shipCove,
-  // '--storm-gray': stormGray,
   '--tundora': tundora,
   '--web-orange': webOrange,
   '--aspect-device-active': odActive,

@@ -9,7 +9,6 @@ import sortBy from 'lodash/sortBy'
 import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
-import reduce from 'lodash/reduce'
 import format from 'date-fns/format'
 
 import {
@@ -348,29 +347,6 @@ const groupForDeviceStatusAPI = (
 
     const shouldBeZero = devicesTotal === 0
 
-    const inactiveProps = reduce(
-      [
-        'inactiveUnknown',
-        'inactiveConnectivity',
-        'inactiveDecommissioned',
-        'inactiveDownForRepair',
-        'inactiveNoResultsReported',
-        'inactiveOutOfInventory',
-        'inactiveNoStaff',
-        'inactiveNoPower',
-        'inactiveOther',
-      ],
-      (memo, propName) => {
-        memo[propName] = weekendOrHolidayInactive(
-          curr[propName],
-          devicesTotal,
-          isWeekendOrHoliday
-        )
-        return memo
-      },
-      {}
-    )
-
     acc[curr[indexBy]] = {
       date: dateFormatted,
       devicesTotal,
@@ -381,7 +357,51 @@ const groupForDeviceStatusAPI = (
           ? 0
           : calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
-      ...inactiveProps,
+      inactiveUnknown: weekendOrHolidayInactive(
+        curr.inactiveUnknown,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveConnectivity: weekendOrHolidayInactive(
+        curr.inactiveConnectivity,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveDecommissioned: weekendOrHolidayInactive(
+        curr.inactiveDecommissioned,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveDownForRepair: weekendOrHolidayInactive(
+        curr.inactiveDownForRepair,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoResultsReported: weekendOrHolidayInactive(
+        curr.inactiveNoResultsReported,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveOutOfInventory: weekendOrHolidayInactive(
+        curr.inactiveOutOfInventory,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoStaff: weekendOrHolidayInactive(
+        curr.inactiveNoStaff,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoPower: weekendOrHolidayInactive(
+        curr.inactiveNoPower,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveOther: weekendOrHolidayInactive(
+        curr.inactiveOther,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
     }
     return acc
   }, {})

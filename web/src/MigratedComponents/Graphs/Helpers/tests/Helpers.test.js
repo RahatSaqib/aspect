@@ -1,3 +1,5 @@
+import isString from 'lodash/isString'
+
 import {
   calcPercentageSplitBar,
   getISOFromString,
@@ -191,15 +193,29 @@ describe('Graph Helpers', () => {
         const filterBy = false
         const displayMethod = 'percentage'
 
+        const addNewProps = arr =>
+          arr.map(it => {
+            const val = isString(it.inactiveDecommissioned) ? '0.0000' : 0
+            return {
+              ...it,
+              inactiveNoStaff: val,
+              inactiveNoPower: val,
+              inactiveOther: val,
+            }
+          })
+
+        const mockedDeviceStatusNew = addNewProps(mockedDeviceStatus)
+        const mockedDeviceStatusOutNew = addNewProps(mockedDeviceStatusOut)
+
         const grouped = groupForDeviceStatusAPI(
-          mockedDeviceStatus,
+          mockedDeviceStatusNew,
           keyToConsume,
           indexBy,
           formatDate,
           filterBy,
           displayMethod
         )
-        expect(grouped).toEqual(mockedDeviceStatusOut)
+        expect(grouped).toEqual(mockedDeviceStatusOutNew)
       })
     })
   })
