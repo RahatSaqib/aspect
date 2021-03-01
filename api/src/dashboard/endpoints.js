@@ -183,6 +183,15 @@ const routes = [
                 isWeekendOrHoliday: Joi.bool().description(
                   'Indicates whether the day is a weekend day or a holiday.'
                 ),
+                inactiveNoStaff: Joi.number().description(
+                  'The number of inactive "No Staff" devices in the system as of that day'
+                ),
+                inactiveNoPower: Joi.number().description(
+                  'The number of inactive "No Power" devices in the system as of that day'
+                ),
+                inactiveOther: Joi.number().description(
+                  'The number of inactive "Other" devices in the system as of that day'
+                ),
               })
             ),
         }),
