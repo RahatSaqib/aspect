@@ -33,14 +33,13 @@
 }
 .control-label {
   font-size: 0.75rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   line-height: 1;
   color: #34717c;
   margin-bottom: 5px;
 }
 
-
-.dailystatus__spinner {
+.dailyStatus__spinner {
   height: 100%;
   display: flex;
   justify-content: center;

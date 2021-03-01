@@ -91,7 +91,7 @@ const DailyStatusClinicDay = ({
   isWeekend,
   maintenanceStatusName,
   maintenanceStatusI18nKey,
-  statusses,
+  statuses,
   totalResults,
   onClickDay,
 }) => {
@@ -101,7 +101,7 @@ const DailyStatusClinicDay = ({
   const { formatMessage } = useIntl()
   const { weekend } = consts
   const { checked } =
-    filter(statusses, {
+    filter(statuses, {
       i18nKey: maintenanceStatusI18nKey,
     })[0] || false
 
@@ -151,7 +151,7 @@ DailyStatusClinicDay.propTypes = {
     PropTypes.bool,
   ]),
   daysInSameStatus: PropTypes.string.isRequired,
-  statusses: PropTypes.string.isRequired,
+  statuses: PropTypes.string.isRequired,
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,

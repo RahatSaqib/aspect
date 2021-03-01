@@ -12,7 +12,7 @@ import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
 
 const useDailyStatus = (minDate, maxDate) => {
   const { formatMessage } = useIntl()
-  const [statusses, setStatusses] = useState(false)
+  const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
   const [toggleAll, setToggleAll] = useState({
     checked: true,
@@ -38,9 +38,9 @@ const useDailyStatus = (minDate, maxDate) => {
   )
 
   const {
-    isLoading: deviceStatussesIsLoading,
-    isError: deviceStatussesIsError,
-    error: deviceStatussesError,
+    isLoading: deviceStatusesIsLoading,
+    isError: deviceStatusesIsError,
+    error: deviceStatusesError,
   } = useQuery(
     DEVICE_STATUS.KEY,
     async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
@@ -48,35 +48,38 @@ const useDailyStatus = (minDate, maxDate) => {
       onSuccess: ({ data }) => {
         const output = []
         data.map(status => output.push({ ...status, checked: true }))
-        setStatusses(
-          output.filter(it => it.externalId !== 'inactiveDecommissioned')
-        )
+        setStatuses(output)
       },
     }
   )
 
   const toggleStatusVisibility = name => {
-    const tempStatusses = [...visibleStatuses]
+    const tempStatuses = [...visibleStatuses]
     if (name === 'all') {
-      tempStatusses.map(status => (status.checked = !toggleAll.checked))
+      tempStatuses.map(status => (status.checked = !toggleAll.checked))
       setToggleAll({
         ...toggleAll,
         checked: !toggleAll.checked,
       })
-      setVisibleStatuses(tempStatusses)
+      setVisibleStatuses(tempStatuses)
     } else {
-      const index = getIndex(tempStatusses, 'i18nKey', name)
-      const currentChecked = tempStatusses[index].checked
-      tempStatusses[index].checked = !currentChecked
-      setVisibleStatuses(tempStatusses)
+      const index = getIndex(tempStatuses, 'i18nKey', name)
+      const currentChecked = tempStatuses[index].checked
+      tempStatuses[index].checked = !currentChecked
+      setVisibleStatuses(tempStatuses)
     }
   }
 
   useEffect(() => {
     if (!visibleStatuses) {
-      setVisibleStatuses(statusses)
+      setVisibleStatuses(
+        // do not use 'Decommissioned' for graphs
+        !statuses
+          ? statuses
+          : statuses.filter(it => it.externalId !== 'inactiveDecommissioned')
+      )
     }
-  }, [statusses, visibleStatuses])
+  }, [statuses, visibleStatuses])
 
   const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setParams(extractOptionValue(identifier, selectedOption))
@@ -89,10 +92,11 @@ const useDailyStatus = (minDate, maxDate) => {
       devicesError,
     },
     statuses: {
+      allStatuses: !statuses ? [] : statuses,
       visibleStatuses,
-      deviceStatussesIsLoading,
-      deviceStatussesIsError,
-      deviceStatussesError,
+      deviceStatusesIsLoading,
+      deviceStatusesIsError,
+      deviceStatusesError,
     },
     actions: {
       toggleAll,

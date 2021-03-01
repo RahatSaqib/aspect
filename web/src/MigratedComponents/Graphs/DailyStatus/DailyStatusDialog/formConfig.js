@@ -1,5 +1,4 @@
 export default {
-  title: '',
   icon: 'document',
   actions: {
     default: 'save',

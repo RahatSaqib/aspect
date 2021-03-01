@@ -12,7 +12,7 @@ const DailyStatusClinic = ({
   data,
   deviceId,
   total,
-  statusses,
+  statuses,
   consts,
   totalDays,
   onClickDay,
@@ -44,7 +44,7 @@ const DailyStatusClinic = ({
               maintenanceStatusI18nKey={maintenanceStatusI18nKey}
               maintenanceStatusName={maintenanceStatusName}
               totalResults={totalResults}
-              statusses={statusses}
+              statuses={statuses}
               onClickDay={() => onClickDay({ day, deviceId })}
             />
           )
@@ -72,7 +72,7 @@ DailyStatusClinic.propTypes = {
   data: PropTypes.oneOfType([PropTypes.object]).isRequired,
   deviceId: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
-  statusses: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  statuses: PropTypes.oneOfType([PropTypes.object]).isRequired,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),

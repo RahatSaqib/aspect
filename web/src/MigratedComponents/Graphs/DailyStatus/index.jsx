@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import findIndex from 'lodash/findIndex'
@@ -37,22 +37,19 @@ const selectorModifiers = [
   },
 ]
 
-const DIALOG_DAILY_STATUS = 'DIALOG_DAILY_STATUS'
-const initialDialogState = {
-  openedDialogName: null,
-}
-
 const DailyStatus = () => {
+  const [dialogState, setDialogState] = useState({ isOpen: false })
   const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
   const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
   const { formatMessage } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: {
+      allStatuses,
       visibleStatuses,
-      deviceStatussesIsLoading,
-      deviceStatussesIsError,
-      deviceStatussesError,
+      deviceStatusesIsLoading,
+      deviceStatusesIsError,
+      deviceStatusesError,
     },
     actions: { toggleAll, toggleStatusVisibility, updateFromActionComponent },
     dateTime: { dateRanges, totalDays },
@@ -88,7 +85,7 @@ const DailyStatus = () => {
       const endedOn = maintenanceStatusHistory[endedOnIndex].day
 
       setDialogState({
-        openedDialogName: DIALOG_DAILY_STATUS,
+        isOpen: true,
         data: {
           day, // day clicked (formatted as "YYYY-MM-DD")
           startedOn,
@@ -102,25 +99,21 @@ const DailyStatus = () => {
   )
 
   const onHideDailyStatusDialog = useCallback(() => {
-    setDialogState(d => ({ ...d, openedDialogName: null }))
+    setDialogState({ isOpen: false })
   }, [])
 
-  const onDailyStatusSubmit = useCallback(({ values }) => {
-    // TODO: remove console after API endpoint is ready
-    // eslint-disable-next-line no-console
-    console.log('>>>>>>>>> onDailyStatusSubmit', {
-      values,
-    })
-    // close dialog
-    setDialogState(d => ({ ...d, openedDialogName: null }))
+  const onDailyStatusSubmitted = useCallback(() => {
+    setDialogState({ isOpen: false })
+
+    // values, deviceId
   }, [])
 
   if (devicesIsError) {
     throw new Error(devicesError)
   }
 
-  if (deviceStatussesIsError) {
-    throw new Error(deviceStatussesError)
+  if (deviceStatusesIsError) {
+    throw new Error(deviceStatusesError)
   }
 
   return (
@@ -135,11 +128,11 @@ const DailyStatus = () => {
       }}
       name="dailyStatus"
     >
-      {!devicesIsLoading && !deviceStatussesIsLoading ? (
+      {!devicesIsLoading && !deviceStatusesIsLoading ? (
         <div className={cssClasses('dailystatus__container')}>
           <DailyStatusFilters
             toggleAll={toggleAll}
-            statusses={visibleStatuses}
+            statuses={visibleStatuses}
             action={toggleStatusVisibility}
           />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
@@ -156,7 +149,7 @@ const DailyStatus = () => {
                 name={shortName || name}
                 data={maintenanceStatusHistory}
                 total={totalResults}
-                statusses={visibleStatuses}
+                statuses={visibleStatuses}
                 consts={GRAPH_CONSTS}
                 totalDays={totalDays}
                 onClickDay={onClickDay}
@@ -167,13 +160,14 @@ const DailyStatus = () => {
 
           <DailyStatusDialog
             data={dialogState.data}
-            isOpen={dialogState.openedDialogName === DIALOG_DAILY_STATUS}
+            isOpen={dialogState.isOpen}
             onCancel={onHideDailyStatusDialog}
-            onSubmit={onDailyStatusSubmit}
+            onSubmit={onDailyStatusSubmitted}
+            statuses={allStatuses}
           />
         </div>
       ) : (
-        <Loading className={cssClasses('dailystatus__spinner')} />
+        <Loading className={cssClasses('dailyStatus__spinner')} />
       )}
     </AspectCard>
   )

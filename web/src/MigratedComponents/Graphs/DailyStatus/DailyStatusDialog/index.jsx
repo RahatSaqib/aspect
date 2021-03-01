@@ -1,16 +1,14 @@
 import identity from 'lodash/identity'
 import isUndefined from 'lodash/isUndefined'
 import classnames from 'classnames/bind'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
-import { useQuery } from 'react-query'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import fetchWrapperForQueries from '../../../QueryFetch'
-import { DEVICE_STATUS } from '../../../QueryFetch/Device'
-import Loading from '../../../../globals/components/Loading'
 
+import { formatDate } from '../../../../shared/utils/dateFormat'
 import formConfig from './formConfig'
 import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
@@ -125,58 +123,67 @@ const getFormConfig = (formConfig, statuses, data) => {
   return formConfig
 }
 
+const MODE = {
+  EDITING: 'EDITING',
+  SAVING: 'SAVING',
+}
 export const DailyStatusDialog = ({
   data = {},
   isOpen,
   onCancel,
   onSubmit,
+  statuses,
   title,
 }) => {
-  const [statuses, setStatuses] = useState([])
+  const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useIntl()
 
-  const {
-    isLoading: deviceStatussesIsLoading,
-    isError: deviceStatussesIsError,
-    error: deviceStatussesError,
-  } = useQuery(
-    DEVICE_STATUS.KEY,
-    async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
-    {
-      onSuccess: ({ data }) => {
-        const output = []
-        data.map(status => output.push({ ...status, checked: true }))
-        setStatuses(output)
-      },
+  useEffect(() => {
+    if (isOpen) {
+      setMode(MODE.EDITING)
     }
-  )
+  }, [isOpen])
+
+  const onSaveChanges = (values, deviceId) => {
+    setMode(MODE.SAVING)
+
+    fetchWrapperForQueries({
+      endpoint: `/device/maintenance-status-by-period/${deviceId}`,
+      method: 'POST',
+      params: {
+        externalId: values.reason,
+        dateFrom: formatDate(values.startedOn),
+        dateTo: formatDate(values.endedOn),
+        notes: values.note,
+      },
+    })
+      .then(() => {
+        // setMode(MODE.EDITING)
+        onSubmit(values, deviceId)
+      })
+      .catch(err => err)
+  }
 
   const config = getFormConfig(formConfig, statuses, data)
-
-  if (deviceStatussesIsError) {
-    throw new Error(deviceStatussesError)
-  }
 
   return (
     <FormikProvider config={config}>
       <AspectDialog
         actions={[
-          <Button color="primary" onClick={onCancel}>
+          <Button
+            disabled={mode === MODE.SAVING}
+            color="primary"
+            onClick={onCancel}
+          >
             {formatMessage(messages.cancel)}
           </Button>,
           <FormikContext.Consumer>
             {({ formik }) => (
               <Button
                 color="primary"
+                disabled={mode === MODE.SAVING || !formik.isValid}
+                onClick={() => onSaveChanges(formik.values, data.deviceId)}
                 variant="contained"
-                onClick={() => {
-                  const { values } = formik
-                  onSubmit({
-                    values,
-                    day: data.day,
-                    deviceId: data.deviceId,
-                  })
-                }}
               >
                 {formatMessage(messages.submit)}
               </Button>
@@ -196,13 +203,9 @@ export const DailyStatusDialog = ({
         title={title || formatMessage(messages.title)}
       >
         <div className={cssClasses('Form__Content')}>
-          {deviceStatussesIsLoading ? (
-            <Loading className={cssClasses('dailystatus__spinner')} />
-          ) : (
-            <div className={cssClasses('Form__Controls')}>
-              <AspectForm config={config} />
-            </div>
-          )}
+          <div className={cssClasses('Form__Controls')}>
+            <AspectForm config={config} />
+          </div>
         </div>
       </AspectDialog>
     </FormikProvider>
