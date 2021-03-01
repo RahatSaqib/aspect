@@ -7,7 +7,7 @@ import { getTimePeriod } from '../../../Graphs/Helpers/Formatters'
 const buildMarkersForDailyStatus = (data, statuses) => {
   const { customPropertiesVariables } = variables
   const visible = map(filter(statuses, 'checked'), 'i18nKey')
-  const yesterday = getTimePeriod(1, 'days', 'yyyy-MM-dd')
+  const yesterday = getTimePeriod(0, 'days', 'yyyy-MM-dd')
   const output = []
   map(data, ({ maintenanceStatusHistory, latitude, longitude, ...rest }) => {
     const maintenanceStatus = filter(
