@@ -2,11 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
+import classnames from 'classnames/bind'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
 import useGraphClickThrough from '../Hooks/useGraphClickThrough'
-
 import {
   formatValuesForGraphs,
   generateColorForValue,
@@ -209,17 +209,10 @@ const AspectResponsiveBar = ({
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
+  const cssClasses = classnames.bind(require('./AspectResponsiveBar.css'))
   return (
-    <div
-      style={{
-        height: '100%',
-        display: 'flex',
-
-        flexDirection: 'row',
-        flexWrap: ' wrap',
-      }}
-    >
-      <div style={{ maxHeight: '350px', height: '100%', width: '100%' }}>
+    <div className={cssClasses('aspectresponsivebar__container')}>
+      <div className={cssClasses('aspectresponsivebar__chart__container')}>
         <ResponsiveBar
           style={{ flex: 1 }}
           data={data}
