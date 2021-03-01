@@ -26,7 +26,7 @@ const buildMarkersForDailyStatus = (data, statuses) => {
           ...maintenanceStatus[0],
           color:
             customPropertiesVariables[
-              `--aspect-device-${maintenanceStatus[0].maintenanceStatusI18nKey}`
+              `--aspect-device-${maintenanceStatus[0].maintenanceStatusExternalId}`
             ],
         })
       : false
