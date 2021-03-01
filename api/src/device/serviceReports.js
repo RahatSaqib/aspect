@@ -157,54 +157,27 @@ async function getModuleSwapsReport(auth, query) {
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
-    .join(
-      knex
-        .from('Result as innerResult')
-        .innerJoin(
-          'Issue as innerIssue',
-          'innerIssue.deviceId',
-          'innerResult.deviceId'
-        )
-        .max('endedOn as lastResultOldModule')
-        .select(
-          'innerResult.deviceId',
-          'innerResult.moduleSerial',
-          'innerResult.moduleName',
-          'innerIssue.id as issueId'
-        )
-        .where('innerResult.endedOn', '<=', knex.raw('innerIssue.createdOn'))
-        .andWhere(
-          'innerResult.moduleName',
-          knex.raw("innerIssue.data->>'$.moduleName'")
-        )
-        .andWhere(
-          'innerResult.moduleSerial',
-          knex.raw("innerIssue.data->>'$.replacedModuleSerial'")
-        )
-        .andWhere('innerIssue.issueTypeId', issueTypeId)
-        .groupBy(
-          'innerResult.deviceId',
-          'innerResult.moduleSerial',
-          'innerResult.moduleName',
-          'innerIssue.id'
-        )
-        .as('oldModuleResult'),
-
-      'oldModuleResult.issueId',
-      'i.id'
+    .join('Result as oldResult', builder =>
+      builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id '))
     )
+
     .select(
       'd.name as deviceName',
       'd.serial',
       'newModuleResult.moduleName',
+      'newModuleResult.instrumentSerial',
       'newModuleResult.moduleSerial as newModuleSerial',
-      'oldModuleResult.moduleSerial as oldModuleSerial',
+      'oldResult.moduleSerial as oldModuleSerial',
       knex.raw(
-        'DATEDIFF(newModuleResult.endedOn, oldModuleResult.lastResultOldModule) as daysDifference'
+        'DATEDIFF(COALESCE(newModuleResult.endedOn,newModuleResult.startedOn), COALESCE(oldResult.endedOn,oldResult.startedOn)) as daysDifference'
       ),
       'da.name as deviceApprovalStatus',
-      'newModuleResult.endedOn as lastResultNewModule',
-      'oldModuleResult.lastResultOldModule'
+      knex.raw(
+        'COALESCE(newModuleResult.endedOn,newModuleResult.startedOn) as lastResultNewModule'
+      ),
+      knex.raw(
+        'COALESCE(oldResult.endedOn,oldResult.startedOn) as lastResultOldModule'
+      )
     )
     .andWhere(
       knex.raw('i.createdOn between ? and ?', [
