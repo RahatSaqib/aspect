@@ -4,6 +4,7 @@ exports[`App Notification Dialog component should shallow render correctly 1`] =
 <AspectDialog
   actions={Array []}
   autoScrollBodyContent={true}
+  dialogContentClasses={Object {}}
   maxWidth="md"
   modal={false}
   onRequestClose={[Function]}
