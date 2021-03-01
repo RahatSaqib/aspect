@@ -88,12 +88,24 @@ async function seed(knex) {
     }
     const dayNumber = getDate(date)
     const pc = _.random(0, 100)
-    const pcActive = _.random(75, 82)
-    const pcInactiveDownForRepair = pcActive + _.random(3, 5)
+    const pcActive = _.random(75, 80)
+    const pcInactiveNoStaff = pcActive + _.random(1, 2)
+    const pcInactiveNoPower = pcInactiveNoStaff + _.random(1, 2)
+    const pcInactiveOther = pcInactiveNoPower + _.random(1, 2)
+    const pcInactiveDownForRepair = pcInactiveOther + _.random(3, 5)
     const pcInactiveOutOfInventory =
       pcInactiveDownForRepair + getPcInactiveDownForRepair(dayNumber)
     if (pc <= pcActive) {
       return deviceMaintenanceStatusToId.active
+    }
+    if (pc <= pcInactiveNoStaff) {
+      return deviceMaintenanceStatusToId.inactiveNoStaff
+    }
+    if (pc <= pcInactiveNoPower) {
+      return deviceMaintenanceStatusToId.inactiveNoPower
+    }
+    if (pc <= pcInactiveOther) {
+      return deviceMaintenanceStatusToId.inactiveOther
     }
     if (pc <= pcInactiveDownForRepair) {
       return deviceMaintenanceStatusToId.inactiveDownForRepair

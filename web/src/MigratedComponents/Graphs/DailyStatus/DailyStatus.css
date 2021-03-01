@@ -93,6 +93,15 @@
 .clinic__day--inactiveDecommissioned {
   background-color: var('--aspect-device-inactiveDecommissioned');
 }
+.clinic__day--inactiveNoStaff {
+  background-color: var('--aspect-device-inactiveNoStaff');
+}
+.clinic__day--inactiveNoPower {
+  background-color: var('--aspect-device-inactiveNoPower');
+}
+.clinic__day--inactiveOther {
+  background-color: var('--aspect-device-inactiveOther');
+}
 
 .status__checkbox {
   transform: scale(1.5);
