@@ -8,7 +8,7 @@ import {
   PieInnerLegendSolid,
   PieInnerLegendDoughNut,
 } from '../GraphLegend'
-
+import messages from '../intlMessages'
 import {
   generateColorForValue,
   generateToolTip,
@@ -29,7 +29,7 @@ const AspectResponsivePie = ({
   type = false,
   link,
 }) => {
-  const { formatNumber: intlFormatNumber } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
   const config = (type, data, displayMethod) => {
     switch (true) {
       case type === 'doughnut':
@@ -97,7 +97,9 @@ const AspectResponsivePie = ({
               displayMethod,
               assaysFromState,
               intlFormatNumber,
-              type
+              type,
+              formatMessage,
+              messages
             )}
           />
         )}
