@@ -195,14 +195,8 @@ const graphColorMap = [
   { id: 133, externalId: 'assayGXCovid19', color: covidConch },
   { id: 134, externalId: 'value', color: geneSanMarino },
   { id: 134, externalId: 'assayGenericCovid19', color: covidOpal2 },
-  { id: 135, externalId: 'Cases', color: colorMantis },
 
-  { id: 999, externalId: 'FallbackColor', color: colorMantis },
+  { id: 999, externalId: 'Cases', color: colorMantis },
 ]
 
-export default graphColorMap.map((it, index) => {
-  return {
-    ...it,
-    id: index + 1,
-  }
-})
+export default graphColorMap

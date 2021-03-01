@@ -11,6 +11,7 @@ import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
 import format from 'date-fns/format'
 
+import graphColorMap from '../Variables'
 import {
   calcPercentageSplitBar,
   normaliseKeys,
@@ -32,8 +33,7 @@ const groupByKey = (
   const grouped = filtered.reduce((acc, curr) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
-      : // default prop for value 'curr.cnt', former `filter(graphColorMap, ['id', 99])[0].externalId`
-        'FallbackColor'
+      : filter(graphColorMap, ['id', 999])[0].externalId
 
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
