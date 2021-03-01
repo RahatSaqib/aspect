@@ -10,6 +10,7 @@ const admin = {
     'device_calibration_report',
     'device_activity',
     'module_swaps',
+    'genexpert_issues',
   ],
   permissions: [
     {
@@ -493,6 +494,7 @@ const deviceMaker = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'genexpert_issues',
   ],
   permissions: [
     {
