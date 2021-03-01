@@ -30,6 +30,10 @@ const messages = defineMessages({
     id: 'component.Widget.lastMonth',
     defaultMessage: '{unit} last month',
   },
+  ofTotalModules: {
+    id: 'component.Widget.ofTotalModules',
+    defaultMessage: 'of {unit} total modules',
+  },
   sinceLastWeek: {
     id: 'component.Widget.sinceLastWeek',
     defaultMessage: '{unit} since last week',
@@ -82,7 +86,7 @@ const AspectWidget = ({
   },
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
-  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : false
+  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
   return (
     <AspectLink
       to={linkParam}

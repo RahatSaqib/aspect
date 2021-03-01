@@ -944,79 +944,101 @@ WHERE TIMESTAMPDIFF(
   },
 }
 
-const unusedModules = {
+const percentageOfModulesFunctioning = {
   jobFunctions: ['all'],
-  title: 'Devices with Unused Modules',
-  titleI18nKey: 'unusedModulesTitle',
+  title: 'Percentage of Modules Functioning',
+  titleI18nKey: 'percentageOfModulesFunctioningTitle',
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `
   SELECT
-    SUM(CASE
-        WHEN numberOfUnusedModulesIssues > 0 THEN 1
-        ELSE 0
-    END) AS cnt,
-    CONCAT(ROUND(SUM(CASE
-                        WHEN numberOfUnusedModulesIssues > 0 THEN 1
-                        ELSE 0
-                    END) * 100 / COUNT(DISTINCT deviceid)),
-            '%') AS percentage
-  FROM
-      (SELECT
-          d.id AS deviceid,
-              SUM(CASE
-                  WHEN
-                      ISNULL(i.id) = 0 AND ISNULL(it.id) = 0
-                          AND ISNULL(ist.id) = 0
-                  THEN
-                      1
-                  ELSE 0
-              END) AS numberOfUnusedModulesIssues
-      FROM
-          Device AS d
-      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      INNER JOIN Site AS s ON d.siteId = s.id
-      LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-      LEFT OUTER JOIN Issue AS i ON d.id = i.deviceId
-          AND (DATE(i.createdOn) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW())
-      LEFT OUTER JOIN IssueType AS it ON i.issueTypeId = it.id
-          AND it.externalId = 'unusedModules'
-      LEFT OUTER JOIN IssueStatus AS ist ON i.issueStatusId = ist.id
-          AND ist.externalId NOT IN ('Inactive' , 'Resolved')
-      WHERE
-          dt.externalId = 'CepheidGeneXpert'
-      GROUP BY d.id) AS innerquery;
+    CONCAT(ROUND(SUM(q2.usedModulesInLast7Days) * 100 / SUM(q2.totalModules)), '%') AS cnt
+FROM
+    (SELECT
+        q.id,
+            q.usedModulesInLast7Days,
+            CASE WHEN q.activeModules = 0 THEN 0 ELSE
+            (CASE
+                WHEN q.activeModules <= 4 THEN 4
+                ELSE (CASE
+                    WHEN q.activeModules <= 16 THEN 16
+                    ELSE (CASE
+                        WHEN q.activeModules <= 48 THEN 48
+                        ELSE 80
+                    END)
+                END)
+            END) END AS totalModules
+    FROM
+        (SELECT
+        d.id,
+        COUNT(DISTINCT r.moduleName) AS usedModulesInLast7Days,
+            (SELECT
+                    COUNT(DISTINCT r2.moduleName)
+                FROM
+                    Result AS r2
+                WHERE
+                    r2.deviceId = d.id
+                AND r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+                ORDER BY r2.endedOn DESC) AS activeModules
+    FROM
+        Device AS d
+    INNER JOIN Site AS s ON s.id = d.siteId
+    INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
+    LEFT JOIN Geography AS g ON s.geographyId = g.id
+    INNER JOIN Result AS r ON d.id = r.deviceId
+        AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+    WHERE
+        dc.hasResults = 1
+            AND dt.externalId = 'CepheidGeneXpert'
+    GROUP BY d.id) AS q) AS q2
   `,
   sqlForStatUnit: `
-  SELECT COUNT(DISTINCT deviceid) AS cnt
-    FROM(
-              SELECT d.id AS deviceid
-                FROM Device AS d
-                INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-                INNER JOIN Site AS s ON d.siteId = s.id
-                LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-                INNER JOIN Issue as i ON d.id = i.deviceId
-                INNER JOIN IssueType as it ON i.issueTypeId = it.id
-                INNER JOIN IssueStatus as ist ON i.issueStatusId = ist.id
-                WHERE
-          it.externalId = 'unusedModules' AND
-                      ist.externalId NOT IN ('Inactive', 'Resolved') AND
-                      dt.externalId = 'CepheidGeneXpert'
-              GROUP BY d.id
-    ) AS innerquery
+  SELECT
+    SUM(q2.totalModules) AS cnt
+FROM
+    (SELECT
+        q.id,
+    CASE WHEN q.activeModules = 0 THEN 0 ELSE
+		(CASE
+			WHEN q.activeModules <= 4 THEN 4
+			ELSE (CASE
+				WHEN q.activeModules <= 16 THEN 16
+				ELSE (CASE
+					WHEN q.activeModules <= 48 THEN 48
+					ELSE 80
+				END)
+			END)
+		END) END AS totalModules
+    FROM
+        (SELECT
+        d.id,
+		(SELECT
+				COUNT(DISTINCT r2.moduleName)
+			FROM
+				Result AS r2
+			WHERE
+				  r2.deviceId = d.id
+      AND r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+			ORDER BY r2.endedOn DESC) AS activeModules
+    FROM
+        Device AS d
+    INNER JOIN Site AS s ON s.id = d.siteId
+    INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
+    LEFT JOIN Geography AS g ON s.geographyId = g.id
+    WHERE
+        dc.hasResults = 1
+            AND dt.externalId = 'CepheidGeneXpert'
+    GROUP BY d.id) AS q) AS q2
   `,
-  statUnit: 'of {unit} currently reported',
-  statUnitI18nKey: 'ofCurrentlyReported',
-  link: '/browse/device',
-  linkParams: {
-    deviceType: 'CepheidGeneXpert',
-    issueTypeId: 'UnusedModules',
-  },
-  sortOrder: 9,
-  externalId: 'unusedModules',
+  statUnit: 'of {unit} total modules',
+  statUnitI18nKey: 'ofTotalModules',
+  sortOrder: 6,
+  externalId: 'percentageOfModulesFunctioning',
   description:
-    "Counts devices that didn't use all available module bays for running the most recent 20 results during the last month. This can indicate a faulty module.",
-  descriptionI18nKey: 'unusedModulesDescription',
+    'Counts the percentage of module bays used in the last 7 days, based on the count of all available bays in all GeneXpert devices that were active in the last 7 days.',
+  descriptionI18nKey: 'percentageOfModulesFunctioningDescription',
   icon: 'MdSwapVert',
   dashboards: {
     operational: {
@@ -1026,10 +1048,10 @@ const unusedModules = {
   options: {
     extraFields: {
       alert: {
-        dependsOn: 'percentage',
-        whenIs: 'greaterThan',
-        comparedTo: '10%',
-        representing: 'percentageOfDevicesWithUnusedModules',
+        dependsOn: 'count',
+        whenIs: 'lessThan',
+        comparedTo: '80%',
+        representing: 'percentageOfModulesFunctioning',
       },
     },
   },
@@ -2044,7 +2066,7 @@ module.exports = {
     moduleSwaps,
     gxPositiveResultsNotified,
     avgTimeToUpload,
-    unusedModules,
+    percentageOfModulesFunctioning,
     instrumentsReplaced,
     averageRecipientsOfEmail,
     averageRecipientsOfSms,

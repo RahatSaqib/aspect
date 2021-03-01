@@ -4010,6 +4010,8 @@ async function seed(knex) {
   const countries = {}
   const geographies = []
   const preventRandomSitesForCountries = ['ZANHLS', 'MZ']
+  const modules = ['A', 'B', 'C', 'D']
+
   await Promise.all(
     _.map(geography.countries, async country => {
       const countryData = _.pick(country, [
@@ -4494,6 +4496,7 @@ async function seed(knex) {
         const randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
 
         const rnd = _.random(0, 100)
+        const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
           r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
@@ -4527,7 +4530,7 @@ async function seed(knex) {
           consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
           consumableLot: `Lot ${i % 5}`,
           instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: 'Module A',
+          moduleName: `Module ${modules[rndModule]}`,
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(
@@ -4613,7 +4616,7 @@ async function seed(knex) {
                   ),
                   consumableLot: `Lot ${i % 5}`,
                   instrumentSerial: `S-1234-${i % 3}`,
-                  moduleName: 'Module A',
+                  moduleName: `Module ${modules[rndModule]}`,
                   moduleSerial: `M-1234-${i % 4}`,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(
@@ -4727,6 +4730,7 @@ async function seed(knex) {
         const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultEbolaNumber, 6000)
+        const rndModule = _.random(0, 3)
 
         let j = 0
         await Promise.each(possibleResults, async result => {
@@ -4761,7 +4765,7 @@ async function seed(knex) {
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,
               instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
+              moduleName: `Module ${modules[rndModule]}`,
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
               patientData: JSON.stringify(patients[_.random(patientNumber)]),
@@ -4904,6 +4908,7 @@ async function seed(knex) {
         const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
         const rnd = _.random(0, 100)
+        const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
           r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
@@ -4961,7 +4966,7 @@ async function seed(knex) {
           consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
           consumableLot: `Lot ${i % 5}`,
           instrumentSerial: `S-1234-${i % 3}`,
-          moduleName: 'Module A',
+          moduleName: `Module ${modules[rndModule]}`,
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(patients[_.random(patientNumber)]),
@@ -5069,6 +5074,7 @@ async function seed(knex) {
         const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
         const rnd = _.random(0, 100)
+        const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
           r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
@@ -5128,7 +5134,7 @@ async function seed(knex) {
                 ),
                 consumableLot: `Lot ${i % 5}`,
                 instrumentSerial: `S-1234-${i % 3}`,
-                moduleName: 'Module A',
+                moduleName: `Module ${modules[rndModule]}`,
                 moduleSerial: `M-1234-${i % 4}`,
                 researchId: `R-ID-${i}`,
                 patientData: JSON.stringify(patients[_.random(patientNumber)]),
@@ -5421,7 +5427,10 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.errorRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockNotRecorded },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.avgTimeToUpload },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.unusedModules },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      widgetId: widgetIds.percentageOfModulesFunctioning,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       widgetId: widgetIds.gxPositiveResultsNotified,

@@ -144,7 +144,7 @@ const getBaseColumns = intl => {
       key: 'deviceName',
       label: intl.formatMessage(messages.deviceName),
       sortable: true,
-      hiddenOn: 'sm',
+      hiddenOn: 'xs',
     },
     {
       key: 'sampleOriginSiteName',
@@ -171,19 +171,19 @@ const getBaseColumns = intl => {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
       sortable: true,
-      hiddenOn: 'md',
+      hiddenOn: 'lg',
     },
     {
       key: 'resultWorkflowStatus',
       label: intl.formatMessage(messages.resultWorkflowStatus),
       sortable: true,
-      hiddenOn: 'sm',
+      hiddenOn: 'md',
     },
     {
       key: 'treatmentStatusInfo',
       label: intl.formatMessage(messages.resultTreatmentStatus),
       sortable: true,
-      hiddenOn: 'sm',
+      hiddenOn: 'md',
     },
     {
       key: 'patientId',
@@ -193,7 +193,6 @@ const getBaseColumns = intl => {
     },
   ])
 }
-
 export const ResultListWithProps = ({
   intl,
   history,
