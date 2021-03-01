@@ -11,7 +11,7 @@ import {
 import buildMarkersForDailyStatus from '../Helpers'
 
 describe('DailyStatusMaps', () => {
-  MockDate.set('2021-02-26')
+  MockDate.set('2021-02-25')
   it('should not filter any results out', () => {
     const filtered = buildMarkersForDailyStatus(
       devicesDaily,
