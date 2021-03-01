@@ -32,14 +32,14 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell>
       {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
     </TableCell>
-    <TableCell>{result.get('deviceName')}</TableCell>
+    <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
     <TableCell>{result.get('sampleId')}</TableCell>
     <TableCell>{result.get('assayName')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
-    <TableCell hiddenOn="md">{result.get('errorCode')}</TableCell>
-    <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
-    <TableCell hiddenOn="sm">
+    <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
+    <TableCell hiddenOn="md">{result.get('resultWorkflowStatus')}</TableCell>
+    <TableCell hiddenOn="md">
       {result.get('treatmentStatusInfo') && (
         <Tooltip title={result.get('resultTreatmentStatusName')}>
           <PermIdentity

@@ -9,8 +9,9 @@ import {
   generateColorForValue,
   generateMargin,
   generateToolTip,
-  generateLegend,
+  generateLegendIntl,
 } from '../Helpers/Formatters'
+import messages from '../intlMessages'
 
 const AspectResponsiveCalendar = ({
   assaysFromState,
@@ -22,12 +23,16 @@ const AspectResponsiveCalendar = ({
   keys,
   tickValuesYShape,
 }) => {
-  const { formatNumber: intlFormatNumber } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
   const legends = displayLegend
     ? [
         {
           dataFrom: 'keys',
-          data: keys && keys.map(k => generateLegend(k, assaysFromState)),
+          data:
+            keys &&
+            keys.map(k =>
+              generateLegendIntl(formatMessage, messages, k, assaysFromState)
+            ),
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
