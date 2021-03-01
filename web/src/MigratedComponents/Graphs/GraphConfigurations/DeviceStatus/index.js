@@ -67,7 +67,7 @@ const deviceStatusGraphs = {
             },
           },
         ],
-        legendsToHide: ['inactiveDecommissioned'],
+        legendsNotToRender: ['inactiveDecommissioned'],
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',

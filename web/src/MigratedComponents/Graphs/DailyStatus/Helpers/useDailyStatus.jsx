@@ -48,7 +48,9 @@ const useDailyStatus = (minDate, maxDate) => {
       onSuccess: ({ data }) => {
         const output = []
         data.map(status => output.push({ ...status, checked: true }))
-        setStatusses(output)
+        setStatusses(
+          output.filter(it => it.externalId !== 'inactiveDecommissioned')
+        )
       },
     }
   )
