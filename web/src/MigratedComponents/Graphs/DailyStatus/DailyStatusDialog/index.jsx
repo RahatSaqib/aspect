@@ -29,8 +29,8 @@ const getFormConfig = (formConfig, statuses, data) => {
         item => {
           // init dropdown options
           item.controlType.options = statuses
-            // user can not manually set to Active - only to ReportedActive
-            .filter(({ externalId }) => externalId !== 'active')
+            // show only statuses with manuallySet flag
+            .filter(({ manuallySet }) => manuallySet === 1)
             .map(({ externalId, name }) => ({
               label: name,
               value: externalId,
