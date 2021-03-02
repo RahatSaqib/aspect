@@ -70,7 +70,7 @@ const ReportIndex = () => {
   const onClickDownload = (externalId, fileExtension = 'xlsx') => {
     setFilters({ format: fileExtension })
     filtersFromLocation.format = fileExtension
-
+    if (!filtersFromLocation.maxDate) filtersFromLocation.maxDate = new Date()
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
       params: { ...filtersFromLocation },
@@ -139,49 +139,4 @@ const ReportIndex = () => {
     </div>
   )
 }
-
-// const ReportList = ({
-//   intl,
-//   history,
-//   location,
-//   items,
-//   reducedFilters,
-//   onClickDownload,
-// }) => {
-//   console.log(items)
-//   return (
-//     <div className={cssClasses('Container')}>
-//       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-//       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
-//       {reducedFilters && (
-//         <BrowseFilters
-//           history={history}
-//           location={location}
-//           intl={intl}
-//           config={reducedFilters}
-//           showBrowseDropdown={false}
-//         />
-//       )}
-//       <Grid container>
-//         reports
-//         {/* {items &&
-//           items.map(report => {
-//             const externalId = report.get('externalId')
-//             return (
-//               <ReportCard
-//                 title={report.get('name')}
-//                 description={report.get('description')}
-//                 onClick={fileExtension =>
-//                   onClickDownload(externalId, fileExtension)
-//                 }
-//                 history={history}
-//               />
-//             )
-//     }
-//           })} */}
-//       </Grid>
-//     </div>
-//   )
-// }
-
 export default ReportIndex

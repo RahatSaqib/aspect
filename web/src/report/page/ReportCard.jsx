@@ -15,11 +15,12 @@ const styles = {
     // (CardContent and CardActions)
     display: 'flex',
     flexDirection: 'column',
-
+    // Depending the amount of boxes we will have, it will render 3 or 4 per row.
+    maxWidth: '30%',
+    minWidth: '25%',
     // Justify the content so that CardContent will always be at the top of the card,
     // and CardActions will be at the bottom
     justifyContent: 'space-between',
-    minWidth: 200,
   },
   formatCard: {
     boxShadow: 'none',
@@ -39,7 +40,7 @@ const reportCardStyleless = ({ classes, description, onClick, title }) => {
   return (
     <Grid component={Card} xs className={classes.card}>
       <Card className={classes.formatCard}>
-        <CardActionArea onClick={onClick}>
+        <CardActionArea onClick={() => onClick('xlsx')}>
           <CardContent>
             <Typography gutterBottom variant="h6" component="h4">
               {title}
