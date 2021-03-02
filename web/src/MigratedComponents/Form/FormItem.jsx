@@ -157,7 +157,7 @@ const FormItem = ({
       md={6}
       lg={4}
       className={cssClasses('form__sectionItemContainer', {
-        [classNames.sectionItemContainer]: !!classNames.sectionItemContainer,
+        [classNames.itemContainer]: !!classNames.itemContainer,
       })}
     >
       <AspectInput

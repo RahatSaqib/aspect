@@ -18,7 +18,7 @@
   flex-grow: 1;
 }
 .form-container {
-  padding-top: 0;
+  padding-top: 0 !important;
 }
 .section-items-container:last-of-type {
   padding-bottom: 0;
@@ -31,6 +31,11 @@
 }
 .section-item {
   flex-grow: 1;
+}
+.date-range-item-container {
+  display: flex;
+  max-width: 50%;
+  flex-basis: 50%;
 }
 .control-container {
   width: 100%;

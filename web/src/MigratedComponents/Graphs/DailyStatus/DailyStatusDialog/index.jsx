@@ -1,4 +1,3 @@
-import isUndefined from 'lodash/isUndefined'
 import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -9,40 +8,26 @@ import formConfig from './formConfig'
 import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
 import { getDateString } from '../../../../shared/utils/dateFormat'
+import { setClassNames, setInitialValue } from '../Helpers'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
 
-const setInitialValue = (items, id, initialValue, callback) => {
-  const item = items.find(x => x.id === id)
-  if (item) {
-    if (!isUndefined(initialValue)) {
-      item.initialValue = initialValue
-    }
-
-    if (callback) {
-      callback(item)
-    }
-  }
-  return item
-}
-
 const getFormConfig = (formConfig, statuses, data) => {
-  formConfig.classNames = {
-    container: cssClasses('form-container'),
-  }
+  setClassNames(formConfig, cssClasses)
+
   formConfig.sections.forEach(section => {
-    section.classNames = {
-      container: cssClasses('section-items-container'),
-    }
+    setClassNames(section, cssClasses)
     section.rows.forEach(({ items }) => {
-      setInitialValue(items, 'startedOn', data.startedOn)
-      setInitialValue(items, 'endedOn', data.endedOn)
+      setInitialValue(items, 'startedOn', data.startedOn, cssClasses)
+      setInitialValue(items, 'endedOn', data.endedOn, cssClasses)
       setInitialValue(
         items,
         'reason',
         data.maintenanceStatusExternalId,
+        cssClasses,
         item => {
+          // init dropdown options
           item.controlType.options = statuses
             // user can not manually set to Active - only to ReportedActive
             .filter(({ externalId }) => externalId !== 'active')
@@ -50,20 +35,9 @@ const getFormConfig = (formConfig, statuses, data) => {
               label: name,
               value: externalId,
             }))
-          item.classNames = {
-            sectionItemContainer: cssClasses('section-item-container'),
-            item: cssClasses('section-item'),
-            controlContainer: cssClasses('control-container'),
-            controlLabel: cssClasses('control-label'),
-          }
         }
       )
-      setInitialValue(items, 'note', '', item => {
-        item.classNames = {
-          sectionItemContainer: cssClasses('section-item-container'),
-          item: cssClasses('section-item'),
-        }
-      })
+      setInitialValue(items, 'note', '', cssClasses)
     })
   })
 

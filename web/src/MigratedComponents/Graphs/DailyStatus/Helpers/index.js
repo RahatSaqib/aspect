@@ -3,6 +3,9 @@ import first from 'lodash/first'
 import last from 'lodash/last'
 import range from 'lodash/range'
 import findIndex from 'lodash/findIndex'
+import mapValues from 'lodash/mapValues'
+import isUndefined from 'lodash/isUndefined'
+
 import isWeekend from 'date-fns/isWeekend'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
@@ -76,10 +79,36 @@ const getDayTitle = ({
     : maintenanceStatusName
 }
 
+const setClassNames = (item, cssClasses) => {
+  if (item.classNames) {
+    item.classNames = mapValues(item.classNames, className =>
+      cssClasses(className)
+    )
+  }
+}
+
+const setInitialValue = (items, id, initialValue, cssClasses, callback) => {
+  const item = items.find(x => x.id === id)
+  if (item) {
+    if (!isUndefined(initialValue)) {
+      item.initialValue = initialValue
+    }
+
+    setClassNames(item, cssClasses)
+
+    if (callback) {
+      callback(item)
+    }
+  }
+  return item
+}
+
 export {
   dateRangeByWeekDay,
   getDayTitle,
   getIndex,
   getTotalDays,
   groupDateRanges,
+  setClassNames,
+  setInitialValue,
 }

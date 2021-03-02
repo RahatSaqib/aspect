@@ -3,10 +3,16 @@ export default {
   actions: {
     default: 'save',
   },
+  classNames: {
+    container: 'form-container',
+  },
   sections: [
     {
       id: 0,
       hideHeader: true,
+      classNames: {
+        container: 'section-items-container',
+      },
       rows: [
         {
           id: 0,
@@ -26,6 +32,9 @@ export default {
               type: 'string',
               label: 'Start Date',
               initialValue: new Date().toDateString(),
+              classNames: {
+                itemContainer: 'date-range-item-container',
+              },
             },
             {
               id: 'endedOn',
@@ -42,6 +51,9 @@ export default {
               type: 'string',
               label: 'End Date',
               initialValue: new Date().toDateString(),
+              classNames: {
+                itemContainer: 'date-range-item-container',
+              },
             },
           ],
         },
@@ -54,6 +66,12 @@ export default {
                 component: 'select',
               },
               label: 'Reason',
+              classNames: {
+                itemContainer: 'section-item-container',
+                item: 'section-item',
+                controlContainer: 'control-container',
+                controlLabel: 'control-label',
+              },
             },
           ],
         },
@@ -67,6 +85,10 @@ export default {
                 rowsMax: 4,
               },
               label: 'Note',
+              classNames: {
+                itemContainer: 'section-item-container',
+                item: 'section-item',
+              },
             },
           ],
         },
