@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import { useHistory, useLocation } from 'react-router-dom'
-import Immutable from 'immutable'
+import { safeDownloadFile } from '../../shared/utils/files'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import REPORT_LIST from '../../MigratedComponents/QueryFetch/Report/index'
 import {
@@ -62,28 +62,25 @@ const ReportIndex = () => {
   const userPermissions = useSelector(state => state.user.jwt.permissions)
   const [items, setItems] = useState()
   const [filters, setFilters] = useState()
-  // const { sanitized, value: filtersParams } = filtersFromLocation(location)
-  const { data, isError, error } = useQuery(REPORT_LIST.KEY, async () =>
+  const { data } = useQuery(REPORT_LIST.KEY, async () =>
     fetchWrapperForQueries({
       endpoint: REPORT_LIST.ENDPOINT,
     })
   )
-  if (isError) {
-    console.log('error', error)
-  }
   const onClickDownload = (externalId, fileExtension = 'xlsx') => {
-    if (!false) {
-      filters.set('format', fileExtension)
-      return fetchWrapperForQueries({
-        endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
-        params: { ...filters },
-      })
-    }
+    setFilters({ format: fileExtension })
+    filtersFromLocation.format = fileExtension
+
+    return fetchWrapperForQueries({
+      endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
+      params: { ...filtersFromLocation },
+    }).then(async resp => {
+      const file = await resp.blob
+      safeDownloadFile(file, resp.fileName)
+    })
   }
-  /*
+
   useEffect(() => {
-    console.log('use effect')
-    console.log(data, error, status)
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
       sanitized: filtersSanitized,
@@ -98,32 +95,17 @@ const ReportIndex = () => {
       })
     }
     const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-
-    setFilters(fromPairs([...reducedFilters.entries()]))
+    setFilters(fromPairs([...Object.entries(reducedFilters)]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
-*/
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
-    console.log('data', data)
-    if (data) {
+    if (data && !items) {
       setItems(data.data)
-      // setItems(Immutable.fromJS(data))
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
-
-  // const props = {
-  //   items: Immutable.fromJS(data),
-  //   intl,
-  //   history,
-  //   location,
-  //   reducedFilters: filters,
-  //   // onClickDownload,
-  // }
-
-  console.log(items)
 
   return (
     <div className={cssClasses('Container')}>
