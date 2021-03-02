@@ -61,14 +61,17 @@ const ReportIndex = () => {
   const intl = useIntl()
   const userPermissions = useSelector(state => state.user.jwt.permissions)
   const [items, setItems] = useState()
-  const [filters, setFilters] = useState()
-  const { data } = useQuery(REPORT_LIST.KEY, async () =>
-    fetchWrapperForQueries({
+  const [filters, setFilters] = useState([])
+
+  const { data } = useQuery([REPORT_LIST.KEY, location.search], async () => {
+    const { value: filtersParams } = filtersFromLocation(location)
+    return fetchWrapperForQueries({
       endpoint: REPORT_LIST.ENDPOINT,
+      params: { ...fromPairs([...filtersParams.entries()]) },
     })
-  )
+  })
   const onClickDownload = (externalId, fileExtension = 'xlsx') => {
-    setFilters({ format: fileExtension })
+    setFilters({ ...filters, format: fileExtension })
     filtersFromLocation.format = fileExtension
     if (!filtersFromLocation.maxDate) filtersFromLocation.maxDate = new Date()
     return fetchWrapperForQueries({
@@ -79,7 +82,6 @@ const ReportIndex = () => {
       safeDownloadFile(file, resp.fileName)
     })
   }
-
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
@@ -100,7 +102,7 @@ const ReportIndex = () => {
   }, [location])
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
-    if (data && !items) {
+    if (data) {
       setItems(data.data)
     }
 
