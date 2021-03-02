@@ -143,6 +143,18 @@ export const messages = {
       id: 'pages.DeviceList.status.reportedActive',
       defaultMessage: 'Active',
     },
+    inactiveNoStaff: {
+      id: 'pages.DeviceList.status.inactiveNoStaff',
+      defaultMessage: 'No Staff',
+    },
+    inactiveNoPower: {
+      id: 'pages.DeviceList.status.inactiveNoPower',
+      defaultMessage: 'No Power',
+    },
+    inactiveOther: {
+      id: 'pages.DeviceList.status.inactiveOther',
+      defaultMessage: 'Other',
+    },
     deviceApprovalProvisioned: {
       id: 'pages.DeviceList.status.provisioned',
       defaultMessage: 'Provisioned',

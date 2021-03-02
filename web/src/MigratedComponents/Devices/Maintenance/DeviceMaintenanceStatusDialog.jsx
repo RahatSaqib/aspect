@@ -114,7 +114,7 @@ const FormDialog = ({
           <div>
             <DeviceMaintenanceStatusSelectField
               value={values.maintenanceStatus || ''}
-              onMaintenanceStatusChange={onMaintenanceStatusChange}
+              onDeviceMaintenanceStatusChange={onMaintenanceStatusChange}
               floatingLabelText={intl.formatMessage(messages.maintenanceStatus)}
               fullWidth
               helperText={
