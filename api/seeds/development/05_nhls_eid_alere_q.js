@@ -106,6 +106,7 @@ async function seed(knex) {
     'Device'
   ).insert({
     name: 'South Africa NHLS Alere FTP Connector',
+    shortName: 'SA NHLS Alere FTP',
     deviceTypeId: deviceTypes.AlereFtpConnector.id,
     deviceApprovalId: approvedDeviceApprovalId,
     partnerId,
