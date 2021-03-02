@@ -990,7 +990,10 @@ async function setStatusForDateRange(request) {
   }
 
   if (
-    dateFrom >= startOfDayUtc(device.createdOn) &&
+    /**
+     * TODO: reflect i UI statuses for days BEFORE device createdOn
+     */
+    // dateFrom >= startOfDayUtc(device.createdOn) &&
     dateFrom <= dateTo &&
     dateTo <= new Date()
   ) {

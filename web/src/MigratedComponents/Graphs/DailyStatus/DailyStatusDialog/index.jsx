@@ -100,10 +100,13 @@ const getFormConfig = (formConfig, statuses, data) => {
         'reason',
         data.maintenanceStatusExternalId,
         item => {
-          item.controlType.options = statuses.map(({ externalId, name }) => ({
-            label: name,
-            value: externalId,
-          }))
+          item.controlType.options = statuses
+            // user can not manually set to Active - only to ReportedActive
+            .filter(it => it.externalId !== 'active')
+            .map(({ externalId, name }) => ({
+              label: name,
+              value: externalId,
+            }))
           item.classNames = {
             sectionItemContainer: cssClasses('section-item-container'),
             item: cssClasses('section-item'),
