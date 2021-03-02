@@ -3,12 +3,15 @@ const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
 const locales = require('date-fns/locale')
 const { listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
-const { issueCategoryIntlToShortname } = require('../shared/dictionary')
+const {
+  issueCategoryIntlToShortname,
+  issueTypeToId,
+} = require('../shared/dictionary')
 const { getDeviceBaseQuery } = require('./service')
 const {
   knex,
-  filterParams,
   filterDateRangeParams,
+  filterParams,
   sortPageParams,
 } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -87,9 +90,8 @@ async function getDeviceActivityReport(auth, query) {
     )
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
-    .where('dc.hasResults', 1)
     .groupBy('d.id', 'd.name', 'd.serial')
-    .orderBy('d.name')
+    .modify(sortPageParams, query, 'name')
   const deviceResultsPerMonths = await deviceQuery
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
@@ -141,6 +143,59 @@ async function getDeviceActivityReport(auth, query) {
     length: devices.length,
     data: devices,
     dynamicColumns: dateFields,
+  }
+  return dataset
+}
+
+async function getModuleSwapsReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const {
+    minDate,
+    maxDate,
+    minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
+    maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
+  } = query
+
+  const issueTypeId = await issueTypeToId('ModuleReplaced')
+  // get rows
+  const devices = await getDeviceBaseQuery(query, dataConstraints)
+    .clone()
+    .innerJoin('Issue as i', 'i.deviceId', 'd.id')
+    .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
+    .join('Result as oldResult', builder =>
+      builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id '))
+    )
+    .select(
+      'd.name as deviceName',
+      'd.serial',
+      'newModuleResult.moduleName',
+      'newModuleResult.instrumentSerial',
+      'newModuleResult.moduleSerial as newModuleSerial',
+      'oldResult.moduleSerial as oldModuleSerial',
+      knex.raw(
+        'DATEDIFF(COALESCE(newModuleResult.endedOn,newModuleResult.startedOn), COALESCE(oldResult.endedOn,oldResult.startedOn)) as daysDifference'
+      ),
+      'da.name as deviceApprovalStatus',
+      knex.raw(
+        'COALESCE(newModuleResult.endedOn,newModuleResult.startedOn) as lastResultNewModule'
+      ),
+      knex.raw(
+        'COALESCE(oldResult.endedOn,oldResult.startedOn) as lastResultOldModule'
+      )
+    )
+    .andWhere(
+      knex.raw('i.createdOn between ? and ?', [
+        minDateFormatted,
+        maxDateFormatted,
+      ])
+    )
+    .andWhere('i.issueTypeId', issueTypeId)
+    .modify(sortPageParams, query, 'name')
+  const dataset = {
+    ok: true,
+    total: devices.length,
+    length: devices.length,
+    data: devices,
   }
   return dataset
 }
@@ -214,5 +269,6 @@ async function getGeneXpertIssuesReport(auth, query) {
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
+  getModuleSwapsReport,
   getGeneXpertIssuesReport,
 }
