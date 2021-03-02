@@ -49,6 +49,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-02T00:00:00.000Z',
@@ -62,6 +65,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-03T00:00:00.000Z',
@@ -75,6 +81,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 5,
     inactiveDecommissioned: 10,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-04T00:00:00.000Z',
@@ -88,6 +97,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-05T00:00:00.000Z',
@@ -101,6 +113,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 43,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-06T00:00:00.000Z',
@@ -114,6 +129,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 9,
     inactiveDecommissioned: 42,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-07T00:00:00.000Z',
@@ -127,6 +145,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 10,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-08T00:00:00.000Z',
@@ -140,6 +161,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-09T00:00:00.000Z',
@@ -153,6 +177,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-10T00:00:00.000Z',
@@ -166,6 +193,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-11T00:00:00.000Z',
@@ -179,6 +209,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 31,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-12T00:00:00.000Z',
@@ -192,6 +225,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 20,
     inactiveDecommissioned: 30,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-13T00:00:00.000Z',
@@ -205,6 +241,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 21,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-14T00:00:00.000Z',
@@ -218,6 +257,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-15T00:00:00.000Z',
@@ -231,6 +273,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-16T00:00:00.000Z',
@@ -244,6 +289,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-17T00:00:00.000Z',
@@ -257,6 +305,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 23,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-18T00:00:00.000Z',
@@ -270,6 +321,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 27,
     inactiveDecommissioned: 21,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-19T00:00:00.000Z',
@@ -283,6 +337,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 1,
     inactiveDecommissioned: 29,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-20T00:00:00.000Z',
@@ -296,6 +353,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 1,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-21T00:00:00.000Z',
@@ -309,6 +369,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-22T00:00:00.000Z',
@@ -322,6 +385,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-23T00:00:00.000Z',
@@ -335,6 +401,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-24T00:00:00.000Z',
@@ -348,6 +417,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 36,
     inactiveDecommissioned: 12,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-25T00:00:00.000Z',
@@ -361,6 +433,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 1,
     inactiveDecommissioned: 37,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-26T00:00:00.000Z',
@@ -374,6 +449,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 2,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-27T00:00:00.000Z',
@@ -387,6 +465,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-28T00:00:00.000Z',
@@ -400,6 +481,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-29T00:00:00.000Z',
@@ -413,6 +497,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-30T00:00:00.000Z',
@@ -426,6 +513,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 0,
     inactiveDecommissioned: 0,
     isWeekendOrHoliday: true,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: '2020-08-31T00:00:00.000Z',
@@ -439,6 +529,9 @@ const mockedDeviceStatus = [
     inactiveConnectivity: 4,
     inactiveDecommissioned: 36,
     isWeekendOrHoliday: false,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
 ]
 
@@ -455,6 +548,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 2nd',
@@ -468,6 +564,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 3rd',
@@ -481,6 +580,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '10.0000',
     inactiveNoResultsReported: '20.0000',
     inactiveOutOfInventory: '10.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 4th',
@@ -494,6 +596,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '86.2745',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '11.7647',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 5th',
@@ -507,6 +612,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '13.4615',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 6th',
@@ -520,6 +628,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 7th',
@@ -533,6 +644,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 8th',
@@ -546,6 +660,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 9th',
@@ -559,6 +676,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 10th',
@@ -572,6 +692,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '69.2308',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '28.8462',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 11th',
@@ -585,6 +708,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '31.3725',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 12th',
@@ -598,6 +724,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 13th',
@@ -611,6 +740,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 14th',
@@ -624,6 +756,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '52.9412',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 15th',
@@ -637,6 +772,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 16th',
@@ -650,6 +788,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 17th',
@@ -663,6 +804,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '52.9412',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 18th',
@@ -676,6 +820,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 19th',
@@ -689,6 +836,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 20th',
@@ -702,6 +852,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '35.2941',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 21st',
@@ -715,6 +868,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '62.7451',
     inactiveOutOfInventory: '33.3333',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 22nd',
@@ -728,6 +884,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 23rd',
@@ -741,6 +900,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 24th',
@@ -754,6 +916,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '1.9608',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 25th',
@@ -767,6 +932,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 26th',
@@ -780,6 +948,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '19.6078',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 27th',
@@ -793,6 +964,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '0.0000',
     inactiveNoResultsReported: '72.5490',
     inactiveOutOfInventory: '19.6078',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 28th',
@@ -806,6 +980,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '19.6078',
     inactiveNoResultsReported: '7.8431',
     inactiveOutOfInventory: '70.5882',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
   {
     date: 'August 29th',
@@ -819,6 +996,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 30th',
@@ -832,6 +1012,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: 0,
     inactiveNoResultsReported: 0,
     inactiveOutOfInventory: 0,
+    inactiveNoStaff: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
   },
   {
     date: 'August 31st',
@@ -845,6 +1028,9 @@ const mockedDeviceStatusOut = [
     inactiveDownForRepair: '1.9608',
     inactiveNoResultsReported: '0.0000',
     inactiveOutOfInventory: '0.0000',
+    inactiveNoStaff: '0.0000',
+    inactiveNoPower: '0.0000',
+    inactiveOther: '0.0000',
   },
 ]
 

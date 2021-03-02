@@ -148,7 +148,6 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.testHistory',
     defaultMessage: 'Test history',
   },
-
   active: {
     id: 'pages.DeviceDetailProfile.maintenanceStatus.active',
     defaultMessage: 'Active',
@@ -180,6 +179,18 @@ const messages = defineMessages({
   reportedActive: {
     id: 'pages.DeviceDetailProfile.maintenanceStatus.reportedActive',
     defaultMessage: 'Active',
+  },
+  inactiveNoStaff: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoStaff',
+    defaultMessage: 'No Staff',
+  },
+  inactiveNoPower: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoPower',
+    defaultMessage: 'No Power',
+  },
+  inactiveOther: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveOther',
+    defaultMessage: 'Other',
   },
 })
 

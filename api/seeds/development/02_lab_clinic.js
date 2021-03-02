@@ -362,7 +362,7 @@ async function seed(knex) {
           deviceTypeId: deviceTypeIdReporter,
           deviceApprovalId: approvedDeviceApprovalId,
           name: `${siteData.name} Reporter`,
-          shortName: `R-${_.random(100000, 999999)}`,
+          shortName: `${siteData.city || siteData.name} Reporter`,
           serial: `S1-R-${_.random(100000, 999999)}`,
           lastSeenOn: lastTime,
           lastPingOn: lastTime,

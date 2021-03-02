@@ -4225,7 +4225,7 @@ async function seed(knex) {
       const [routerId] = await knex('Device').insert({
         ...auditFields,
         name: `${siteData.shortName} Router`,
-        shortName: `r${i}`,
+        shortName: `${siteData.city} Router`,
         deviceTypeId: deviceTypeIdRouter,
         deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
@@ -4261,7 +4261,7 @@ async function seed(knex) {
       const device = {
         ...auditFields,
         name: `${siteData.name} GeneXpert`,
-        shortName: `GeneXpert #${i}`,
+        shortName: `${siteData.city} GeneXpert`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceApprovalId: deviceApprovalApproved,
         configurationData: JSON.stringify({
