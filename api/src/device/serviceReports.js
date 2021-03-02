@@ -165,7 +165,6 @@ async function getModuleSwapsReport(auth, query) {
     .join('Result as oldResult', builder =>
       builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id '))
     )
-
     .select(
       'd.name as deviceName',
       'd.serial',
