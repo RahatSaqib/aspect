@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
+import classnames from 'classnames/bind'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
@@ -216,74 +217,79 @@ const AspectResponsiveBar = ({
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
+  const cssClasses = classnames.bind(require('./AspectResponsiveBar.css'))
   return (
-    <div style={{ height: '100%', maxHeight: '350px' }}>
-      <ResponsiveBar
-        data={data}
-        keys={keys}
-        indexBy={indexBy}
-        colorBy="index"
-        onClick={(value, event) => setConfig({ value, event, baseConfig })}
-        enableLabel={false}
-        enableGridY={config(type, data, displayMethod).enableGridY}
-        enableGridX={config(type, data, displayMethod).enableGridX}
-        gridYValues={config(type, data, displayMethod).gridYValues}
-        {...config(type, data, displayMethod).extraConfig}
-        padding={config(type, data, displayMethod).padding}
-        borderWidth={0}
-        borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-        axisTop={null}
-        axisRight={null}
-        labelSkipWidth={12}
-        labelSkipHeight={12}
-        animate
-        motionStiffness={90}
-        motionDamping={15}
-        layers={config(type, data, displayMethod).layers}
-        colors={v => generateColorForValue(v)}
-        margin={config(type, data, displayMethod).margin}
-        tooltip={v =>
-          v && legendsNotToRender.includes(v.id) ? (
-            <EmptyTooltip title={v.id} />
-          ) : (
-            <GraphToolTip
-              clickThrough={(baseConfig && baseConfig.clickThrough) || false}
-              displayMethod={displayMethod}
-              values={generateToolTip(
-                v,
-                displayMethod,
-                assaysFromState,
-                intlFormatNumber,
-                type
-              )}
-            />
-          )
-        }
-        axisLeft={{
-          tickSize: 5,
-          tickValues: config(type, data, displayMethod).yTickValues,
-          format: v =>
-            formatValuesForGraphs(v, displayMethod, intlFormatNumber),
-          legendPosition: 'middle',
-          legendOffset: -60,
-          legend: config(type, data, displayMethod).legend,
-        }}
-        axisBottom={{
-          legend: config(type, data, displayMethod).ylegend,
-          tickSize: 5,
-          tickValues: config(type, data, displayMethod).xTickValues,
-          tickPadding: 10,
-          tickRotation: 0,
-          legendPosition: 'middle',
-          legendOffset: 50,
-          format: v => format(v, displayMethod, intlFormatNumber),
-        }}
-        legends={baseLegend}
-        theme={config(type, data, displayMethod).theme}
-        markers={config(type, data, displayMethod).markers}
-      />
+    <div className={cssClasses('aspectresponsivebar__container')}>
+      <div className={cssClasses('aspectresponsivebar__chart__container')}>
+        <ResponsiveBar
+          style={{ flex: 1 }}
+          data={data}
+          keys={keys}
+          indexBy={indexBy}
+          colorBy="index"
+          onClick={(value, event) => setConfig({ value, event, baseConfig })}
+          enableLabel={false}
+          enableGridY={config(type, data, displayMethod).enableGridY}
+          enableGridX={config(type, data, displayMethod).enableGridX}
+          gridYValues={config(type, data, displayMethod).gridYValues}
+          {...config(type, data, displayMethod).extraConfig}
+          padding={config(type, data, displayMethod).padding}
+          borderWidth={0}
+          borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+          axisTop={null}
+          axisRight={null}
+          labelSkipWidth={12}
+          labelSkipHeight={12}
+          animate
+          motionStiffness={90}
+          motionDamping={15}
+          layers={config(type, data, displayMethod).layers}
+          colors={v => generateColorForValue(v)}
+          margin={config(type, data, displayMethod).margin}
+          tooltip={v =>
+            v && legendsNotToRender.includes(v.id) ? (
+              <EmptyTooltip title={v.id} />
+            ) : (
+              <GraphToolTip
+                clickThrough={(baseConfig && baseConfig.clickThrough) || false}
+                displayMethod={displayMethod}
+                values={generateToolTip(
+                  v,
+                  displayMethod,
+                  assaysFromState,
+                  intlFormatNumber,
+                  type
+                )}
+              />
+            )
+          }
+          axisLeft={{
+            tickSize: 5,
+            tickValues: config(type, data, displayMethod).yTickValues,
+            format: v =>
+              formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+            legendPosition: 'middle',
+            legendOffset: -60,
+            legend: config(type, data, displayMethod).legend,
+          }}
+          axisBottom={{
+            legend: config(type, data, displayMethod).ylegend,
+            tickSize: 5,
+            tickValues: config(type, data, displayMethod).xTickValues,
+            tickPadding: 10,
+            tickRotation: 0,
+            legendPosition: 'middle',
+            legendOffset: 50,
+            format: v => format(v, displayMethod, intlFormatNumber),
+          }}
+          legends={baseLegend}
+          theme={config(type, data, displayMethod).theme}
+          markers={config(type, data, displayMethod).markers}
+        />
+      </div>
       {displayLegend && graphsToHaveCustomLegend.includes(type) ? (
         <CustomBarGraphLegend
+          style={{ flex: 1 }}
           keys={keys}
           generateLegendIntl={generateLegendIntl}
           assaysFromState={assaysFromState}
