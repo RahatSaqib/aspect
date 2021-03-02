@@ -1,0 +1,12 @@
+.aspectresponsivebar__chart__container {
+  max-height: 350px;
+  height: 100%;
+  width: 100%;
+}
+.aspectresponsivebar__container {
+  height: 100%;
+  display: flex;
+
+  flex-direction: row;
+  flex-wrap: wrap;
+}
