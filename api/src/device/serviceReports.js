@@ -158,7 +158,7 @@ async function getModuleSwapsReport(auth, query) {
 
   const issueTypeId = await issueTypeToId('ModuleReplaced')
   // get rows
-  const devices = await getDeviceBaseQuery(query, dataConstraints, true, true)
+  const devices = await getDeviceBaseQuery(query, dataConstraints)
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
