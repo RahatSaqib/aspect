@@ -1,74 +1,16 @@
-import identity from 'lodash/identity'
 import isUndefined from 'lodash/isUndefined'
 import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import formConfig from './formConfig'
 import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
-
-export const sharedMessages = defineMessages({
-  notes: {
-    id: 'pages.BaseDialog.notes',
-    defaultMessage: 'Notes',
-  },
-})
-
-export const SHARED_DEFAULT_VALUES = {
-  contextDate: undefined,
-  notes: '',
-}
-
-export const sharedFields = {
-  contextDate: {
-    fieldName: 'contextDate',
-    valueFromChangeEvent: identity,
-  },
-  notes: {
-    fieldName: 'notes',
-    valueFromChangeEvent: it => it.target.value,
-  },
-}
-
-export const messages = defineMessages({
-  title: {
-    id: 'pages.DailyStatusDialog.title',
-    defaultMessage: 'Set Maintenance Status',
-  },
-  deviceLabel: {
-    id: 'pages.DailyStatusDialog.deviceLabel',
-    defaultMessage: 'Device',
-  },
-  dateRange: {
-    id: 'pages.DailyStatusDialog.dateRange',
-    defaultMessage: 'Date Range',
-  },
-  reason: {
-    id: 'pages.DailyStatusDialog.reason',
-    defaultMessage: 'Reason',
-  },
-  selectReason: {
-    id: 'pages.DailyStatusDialog.selectReason',
-    defaultMessage: 'Select Reason',
-  },
-  note: {
-    id: 'pages.DailyStatusDialog.note',
-    defaultMessage: 'Note',
-  },
-  submit: {
-    id: 'pages.DailyStatusDialog.submit',
-    defaultMessage: 'Submit',
-  },
-  cancel: {
-    id: 'pages.DailyStatusDialog.cancel',
-    defaultMessage: 'Cancel',
-  },
-})
 
 const setInitialValue = (items, id, initialValue, callback) => {
   const item = items.find(x => x.id === id)
@@ -102,7 +44,7 @@ const getFormConfig = (formConfig, statuses, data) => {
         item => {
           item.controlType.options = statuses
             // user can not manually set to Active - only to ReportedActive
-            .filter(it => it.externalId !== 'active')
+            .filter(({ externalId }) => externalId !== 'active')
             .map(({ externalId, name }) => ({
               label: name,
               value: externalId,

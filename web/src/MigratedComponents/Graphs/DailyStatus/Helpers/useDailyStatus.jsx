@@ -55,7 +55,7 @@ const useDailyStatus = (minDate, maxDate) => {
       onSuccess: (responseData, requestData) => {
         const { deviceId, values } = requestData
         const selectedStatus = statuses.find(
-          it => it.externalId === values.reason
+          ({ externalId }) => externalId === values.reason
         )
         queryCache.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
           const { data: devicesDailyOld } = oldData
@@ -65,7 +65,7 @@ const useDailyStatus = (minDate, maxDate) => {
           )
           maintenanceStatusHistory
             .filter(
-              it => it.day >= values.startedOn && it.day <= values.endedOn
+              ({ day }) => day >= values.startedOn && day <= values.endedOn
             )
             .forEach(it => {
               it.maintenanceStatusExternalId = selectedStatus.externalId
@@ -120,7 +120,9 @@ const useDailyStatus = (minDate, maxDate) => {
         // do not use 'Decommissioned' for graphs
         !statuses
           ? statuses
-          : statuses.filter(it => it.externalId !== 'inactiveDecommissioned')
+          : statuses.filter(
+              ({ externalId }) => externalId !== 'inactiveDecommissioned'
+            )
       )
     }
   }, [statuses, visibleStatuses])

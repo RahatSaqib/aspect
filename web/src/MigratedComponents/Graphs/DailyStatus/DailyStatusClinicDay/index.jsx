@@ -5,6 +5,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import filter from 'lodash/filter'
 
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
+import { getDayTitle } from '../Helpers'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
@@ -31,33 +32,6 @@ const messages = defineMessages({
     } since last update`,
   },
 })
-
-const getTitle = ({
-  checked,
-  daysInSameStatus,
-  formatMessage,
-  isActive,
-  maintenanceStatusName,
-  totalResults,
-}) => {
-  if (checked && daysInSameStatus) {
-    return maintenanceStatusName
-      ? formatMessage(messages.toolTipTitleWithStatus, {
-          maintenanceStatusName,
-          daysInSameStatus,
-          totalResults,
-        })
-      : formatMessage(messages.toolTipTitleWithoutStatus, {
-          daysInSameStatus,
-        })
-  }
-  return isActive
-    ? formatMessage(messages.toolTipTitleResultsReported, {
-        maintenanceStatusName,
-        totalResults,
-      })
-    : maintenanceStatusName
-}
 
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
@@ -114,13 +88,14 @@ const DailyStatusClinicDay = ({
       : maintenanceStatusI18nKey
   }
 
-  const title = getTitle({
+  const title = getDayTitle({
     checked,
     daysInSameStatus,
     formatMessage,
     isActive,
     maintenanceStatusName,
     totalResults,
+    messages,
   })
 
   return (

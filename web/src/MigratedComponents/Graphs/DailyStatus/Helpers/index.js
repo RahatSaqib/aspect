@@ -48,4 +48,38 @@ function getTotalDays({ minDate, maxDate }) {
   return differenceInCalendarDays(new Date(maxDate), new Date(minDate)) + 1
 }
 
-export { getIndex, getTotalDays, groupDateRanges, dateRangeByWeekDay }
+const getDayTitle = ({
+  checked,
+  daysInSameStatus,
+  formatMessage,
+  isActive,
+  maintenanceStatusName,
+  totalResults,
+  messages,
+}) => {
+  if (checked && daysInSameStatus) {
+    return maintenanceStatusName
+      ? formatMessage(messages.toolTipTitleWithStatus, {
+          maintenanceStatusName,
+          daysInSameStatus,
+          totalResults,
+        })
+      : formatMessage(messages.toolTipTitleWithoutStatus, {
+          daysInSameStatus,
+        })
+  }
+  return isActive
+    ? formatMessage(messages.toolTipTitleResultsReported, {
+        maintenanceStatusName,
+        totalResults,
+      })
+    : maintenanceStatusName
+}
+
+export {
+  dateRangeByWeekDay,
+  getDayTitle,
+  getIndex,
+  getTotalDays,
+  groupDateRanges,
+}

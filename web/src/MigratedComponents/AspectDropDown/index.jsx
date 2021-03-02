@@ -271,10 +271,6 @@ const AspectDropDown = ({
 }
 
 AspectDropDown.defaultProps = {
-  // props: {
-  //   sortByKeys: ['name'],
-  //   keyMapping: {},
-  // },
   theme: UI_CONSTS.themeName.aspect,
 }
 
