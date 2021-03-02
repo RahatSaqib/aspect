@@ -10,7 +10,6 @@ import { extractOptionValue } from '../../Helpers/Formatters'
 
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
-import { getDateString } from '../../../../shared/utils/dateFormat'
 
 const useDailyStatus = (minDate, maxDate) => {
   const { formatMessage } = useIntl()
@@ -46,8 +45,8 @@ const useDailyStatus = (minDate, maxDate) => {
         method: 'POST',
         params: {
           externalId: values.reason,
-          dateFrom: getDateString(values.startedOn),
-          dateTo: getDateString(values.endedOn),
+          dateFrom: values.startedOn,
+          dateTo: values.endedOn,
           notes: values.note,
         },
       }),
@@ -65,6 +64,10 @@ const useDailyStatus = (minDate, maxDate) => {
           )
           maintenanceStatusHistory
             .filter(
+              /**
+               * notice that all values (`day`, 'startedOn', 'endedOn') are
+               * dates formatted as 'YYYY-MM-DD'
+               */
               ({ day }) => day >= values.startedOn && day <= values.endedOn
             )
             .forEach(it => {

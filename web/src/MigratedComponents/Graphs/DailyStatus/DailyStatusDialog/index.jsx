@@ -8,6 +8,7 @@ import AspectDialog from '../../../../components/shared/AspectDialog'
 import formConfig from './formConfig'
 import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
+import { getDateString } from '../../../../shared/utils/dateFormat'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
@@ -93,7 +94,15 @@ export const DailyStatusDialog = ({
 
   const onSaveChanges = (deviceId, values) => {
     setMode(MODE.SAVING)
-    onSubmit({ deviceId, values })
+    onSubmit({
+      deviceId,
+      values: {
+        ...values,
+        // make sure dates are strings as 'YYYY-MM-DD'
+        startedOn: getDateString(values.startedOn),
+        endedOn: getDateString(values.endedOn),
+      },
+    })
   }
 
   const config = getFormConfig(formConfig, statuses, data)
