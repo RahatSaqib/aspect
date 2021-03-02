@@ -321,7 +321,13 @@ async function getDeviceByDeviceId({
 
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
-  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields)
+  const device = await getDeviceByIdBaseQuery(
+    dataConstraints,
+    deviceId,
+    fields,
+    true,
+    true
+  )
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
@@ -923,7 +929,13 @@ async function setDeviceMaintenanceStatus(
   return deviceMaintenanceStatusLogId
 }
 
-function getDeviceByIdBaseQuery(dataConstraints, deviceId, fields = 'd.*') {
+function getDeviceByIdBaseQuery(
+  dataConstraints,
+  deviceId,
+  fields = 'd.*',
+  showUnapprovedDevices = false,
+  showDecommissionedDevices = false
+) {
   const query = knex('Device as d')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
@@ -933,6 +945,8 @@ function getDeviceByIdBaseQuery(dataConstraints, deviceId, fields = 'd.*') {
       geography: 'g',
       site: 's',
       device: 'd',
+      showUnapprovedDevices,
+      showDecommissionedDevices,
     })
     .where('d.id', +deviceId)
     .first(fields)
@@ -959,7 +973,13 @@ async function setStatusForDateRange(request) {
   const user = await getUser(credentials.name)
 
   // Get device or throw boom error if it's a bad request
-  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId)
+  const device = await getDeviceByIdBaseQuery(
+    dataConstraints,
+    deviceId,
+    'd.*',
+    true,
+    true
+  )
 
   if (!device)
     throw Boom.forbidden(

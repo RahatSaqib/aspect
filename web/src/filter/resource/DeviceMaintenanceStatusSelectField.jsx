@@ -52,6 +52,21 @@ const messages = defineMessages({
       'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned',
     defaultMessage: 'Decommissioned',
   },
+  inactiveNoStaff: {
+    id:
+      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff',
+    defaultMessage: 'No Staff',
+  },
+  inactiveNoPower: {
+    id:
+      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower',
+    defaultMessage: 'No Power',
+  },
+  inactiveOther: {
+    id:
+      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther',
+    defaultMessage: 'Other',
+  },
 })
 
 export default ({ onDeviceMaintenanceStatusChange, value, ...restProps }) => {
