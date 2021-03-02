@@ -60,7 +60,7 @@ const ReportIndex = () => {
   const location = useLocation()
   const intl = useIntl()
   const userPermissions = useSelector(state => state.user.jwt.permissions)
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState()
   const [filters, setFilters] = useState()
   // const { sanitized, value: filtersParams } = filtersFromLocation(location)
   const { data, isError, error } = useQuery(REPORT_LIST.KEY, async () =>
@@ -71,15 +71,15 @@ const ReportIndex = () => {
   if (isError) {
     console.log('error', error)
   }
-  // const onClickDownload = (externalId, fileExtension = 'xlsx') => {
-  //   if (!sanitized) {
-  //     filtersParams.set('format', fileExtension)
-  //     return fetchWrapperForQueries({
-  //       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
-  //       params: { ...filtersParams },
-  //     })
-  //   }
-  // }
+  const onClickDownload = (externalId, fileExtension = 'xlsx') => {
+    if (!false) {
+      filters.set('format', fileExtension)
+      return fetchWrapperForQueries({
+        endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
+        params: { ...filters },
+      })
+    }
+  }
   /*
   useEffect(() => {
     console.log('use effect')
@@ -107,60 +107,99 @@ const ReportIndex = () => {
   useEffect(() => {
     console.log('data', data)
     if (data) {
-      setItems(Immutable.fromJS(data))
+      setItems(data.data)
+      // setItems(Immutable.fromJS(data))
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  const props = {
-    items: Immutable.fromJS(data),
-    intl,
-    history,
-    location,
-    reducedFilters: filters,
-    // onClickDownload,
-  }
+  // const props = {
+  //   items: Immutable.fromJS(data),
+  //   intl,
+  //   history,
+  //   location,
+  //   reducedFilters: filters,
+  //   // onClickDownload,
+  // }
 
-  return <ReportList {...props} />
-}
+  console.log(items)
 
-const ReportList = ({
-  intl,
-  history,
-  location,
-  items,
-  reducedFilters,
-  onClickDownload,
-}) => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
-      {reducedFilters && (
+      {filters && (
         <BrowseFilters
           history={history}
           location={location}
           intl={intl}
-          config={reducedFilters}
+          config={filters}
           showBrowseDropdown={false}
         />
       )}
       <Grid container>
-        {items.map(report => {
-          const externalId = report.get('externalId')
-          return (
-            <ReportCard
-              title={report.get('name')}
-              description={report.get('description')}
-              onClick={fileExtension =>
-                onClickDownload(externalId, fileExtension)
-              }
-              history={history}
-            />
-          )
-        })}
+        {items && items.length
+          ? items.map(({ externalId, name, description }) => {
+              return (
+                <ReportCard
+                  title={name}
+                  description={description}
+                  onClick={fileExtension =>
+                    onClickDownload(externalId, fileExtension)
+                  }
+                  history={history}
+                />
+              )
+            })
+          : null}
       </Grid>
     </div>
   )
 }
+
+// const ReportList = ({
+//   intl,
+//   history,
+//   location,
+//   items,
+//   reducedFilters,
+//   onClickDownload,
+// }) => {
+//   console.log(items)
+//   return (
+//     <div className={cssClasses('Container')}>
+//       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
+//       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
+//       {reducedFilters && (
+//         <BrowseFilters
+//           history={history}
+//           location={location}
+//           intl={intl}
+//           config={reducedFilters}
+//           showBrowseDropdown={false}
+//         />
+//       )}
+//       <Grid container>
+//         reports
+//         {/* {items &&
+//           items.map(report => {
+//             const externalId = report.get('externalId')
+//             return (
+//               <ReportCard
+//                 title={report.get('name')}
+//                 description={report.get('description')}
+//                 onClick={fileExtension =>
+//                   onClickDownload(externalId, fileExtension)
+//                 }
+//                 history={history}
+//               />
+//             )
+//     }
+//           })} */}
+//       </Grid>
+//     </div>
+//   )
+// }
+
 export default ReportIndex
