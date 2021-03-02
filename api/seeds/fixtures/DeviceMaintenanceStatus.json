@@ -55,6 +55,27 @@
       "externalId": "inactiveDecommissioned",
       "active": false,
       "manuallySet": true
+    },
+    {
+      "name": "No Staff",
+      "i18nKey": "inactiveNoStaff",
+      "externalId": "inactiveNoStaff",
+      "active": false,
+      "manuallySet": true
+    },
+    {
+      "name": "No Power",
+      "i18nKey": "inactiveNoPower",
+      "externalId": "inactiveNoPower",
+      "active": false,
+      "manuallySet": true
+    },
+    {
+      "name": "Other",
+      "i18nKey": "inactiveOther",
+      "externalId": "inactiveOther",
+      "active": false,
+      "manuallySet": true
     }
   ]
 }

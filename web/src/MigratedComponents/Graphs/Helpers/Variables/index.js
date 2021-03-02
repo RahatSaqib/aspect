@@ -21,18 +21,22 @@ const {
   '--geyser': geyser,
   '--golden-dream': goldenDream,
   '--purple-mountains-majesty': colorPurple,
-  '--ship-cove': shipCove,
-  '--storm-gray': stormGray,
   '--tundora': tundora,
   '--web-orange': webOrange,
   '--aspect-device-active': odActive,
-  '--aspect-device-stockout': odStockOut,
-  '--aspect-device-no-staff': odNoStaff,
-  '--aspect-device-needs-repair': odNeedsRepair,
-  '--aspect-device-connectivity': odDeviceConnectivity,
-  '--aspect-device-unknown': odUnknown,
   '--aspect-device-transfer-time': odTransferTime,
   '--aspect-device-weekend': odWeekend,
+
+  // for `inactive*` device statuses
+  '--aspect-device-inactiveUnknown': odUnknown,
+  '--aspect-device-inactiveConnectivity': odDeviceConnectivity,
+  '--aspect-device-inactiveDecommissioned': odDecommissioned,
+  '--aspect-device-inactiveDownForRepair': odNeedsRepair,
+  '--aspect-device-inactiveNoResultsReported': odNotReported,
+  '--aspect-device-inactiveOutOfInventory': odOutOfInventory,
+  '--aspect-device-inactiveNoStaff': odNoStaff,
+  '--aspect-device-inactiveNoPower': odNoPower,
+  '--aspect-device-inactiveOther': odOther,
 
   '--lightning-yellow': abbottLightning,
   '--saffron-mango': abbottSaffronMango,
@@ -101,16 +105,18 @@ const graphColorMap = [
   { id: 25, externalId: 'NotConfirmed', color: colorBlue4 },
   { id: 30, externalId: 'devicesActive', color: odActive },
   { id: 31, externalId: 'weekendOrHoliday', color: odWeekend },
-  { id: 32, externalId: 'devicesNeedsRepair', color: odNeedsRepair },
-  { id: 33, externalId: 'devicesUnknown', color: odUnknown },
-  { id: 34, externalId: 'devicesStockOut', color: odStockOut },
+
+  // for `inactive*` device statuses
   { id: 40, externalId: 'inactiveUnknown', color: odUnknown },
   { id: 41, externalId: 'inactiveConnectivity', color: odDeviceConnectivity },
-  { id: 42, externalId: 'inactiveDecommissioned', color: shipCove },
+  { id: 42, externalId: 'inactiveDecommissioned', color: odDecommissioned },
   { id: 43, externalId: 'inactiveDownForRepair', color: odNeedsRepair },
-  { id: 44, externalId: 'inactiveNoResultsReported', color: stormGray },
-  { id: 45, externalId: 'inactiveOutOfInventory', color: anakiwa },
+  { id: 44, externalId: 'inactiveNoResultsReported', color: odNotReported },
+  { id: 45, externalId: 'inactiveOutOfInventory', color: odOutOfInventory },
   { id: 46, externalId: 'inactiveNoStaff', color: odNoStaff },
+  { id: 46, externalId: 'inactiveNoPower', color: odNoPower },
+  { id: 46, externalId: 'inactiveOther', color: odOther },
+
   { id: 50, externalId: 'medianMarker', color: easternBlue },
   { id: 60, externalId: 'percentPositive', color: colorMandy },
   { id: 61, externalId: 'percentReported', color: colorMantis },
@@ -189,6 +195,7 @@ const graphColorMap = [
   { id: 133, externalId: 'assayGXCovid19', color: covidConch },
   { id: 134, externalId: 'value', color: geneSanMarino },
   { id: 134, externalId: 'assayGenericCovid19', color: covidOpal2 },
+
   { id: 999, externalId: 'Cases', color: colorMantis },
 ]
 
