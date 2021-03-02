@@ -24,6 +24,10 @@ export function getDateObject(date, defaultValue) {
   return defaultValue
 }
 
+export const getDateString = date => {
+  return isString(date) ? date : formatDate(date)
+}
+
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = getTimezoneId()

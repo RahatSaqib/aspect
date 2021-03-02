@@ -6,9 +6,6 @@ import { defineMessages, useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
-import fetchWrapperForQueries from '../../../QueryFetch'
-
-import { formatDate } from '../../../../shared/utils/dateFormat'
 import formConfig from './formConfig'
 import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
@@ -41,7 +38,11 @@ export const sharedFields = {
 export const messages = defineMessages({
   title: {
     id: 'pages.DailyStatusDialog.title',
-    defaultMessage: 'Device Status',
+    defaultMessage: 'Set Maintenance Status',
+  },
+  deviceLabel: {
+    id: 'pages.DailyStatusDialog.deviceLabel',
+    defaultMessage: 'Device',
   },
   dateRange: {
     id: 'pages.DailyStatusDialog.dateRange',
@@ -134,6 +135,7 @@ export const DailyStatusDialog = ({
   onSubmit,
   statuses,
   title,
+  deviceName,
 }) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useIntl()
@@ -144,24 +146,9 @@ export const DailyStatusDialog = ({
     }
   }, [isOpen])
 
-  const onSaveChanges = (values, deviceId) => {
+  const onSaveChanges = (deviceId, values) => {
     setMode(MODE.SAVING)
-
-    fetchWrapperForQueries({
-      endpoint: `/device/maintenance-status-by-period/${deviceId}`,
-      method: 'POST',
-      params: {
-        externalId: values.reason,
-        dateFrom: formatDate(values.startedOn),
-        dateTo: formatDate(values.endedOn),
-        notes: values.note,
-      },
-    })
-      .then(() => {
-        // setMode(MODE.EDITING)
-        onSubmit(values, deviceId)
-      })
-      .catch(err => err)
+    onSubmit({ deviceId, values })
   }
 
   const config = getFormConfig(formConfig, statuses, data)
@@ -182,7 +169,7 @@ export const DailyStatusDialog = ({
               <Button
                 color="primary"
                 disabled={mode === MODE.SAVING || !formik.isValid}
-                onClick={() => onSaveChanges(formik.values, data.deviceId)}
+                onClick={() => onSaveChanges(data.deviceId, formik.values)}
                 variant="contained"
               >
                 {formatMessage(messages.submit)}
@@ -202,8 +189,11 @@ export const DailyStatusDialog = ({
         onClose={onCancel}
         title={title || formatMessage(messages.title)}
       >
-        <div className={cssClasses('Form__Content')}>
-          <div className={cssClasses('Form__Controls')}>
+        <div className={cssClasses('Form__content')}>
+          <div className={cssClasses('Form__device-name')}>
+            {formatMessage(messages.deviceLabel)}: {deviceName}
+          </div>
+          <div className={cssClasses('Form__controls')}>
             <AspectForm config={config} />
           </div>
         </div>

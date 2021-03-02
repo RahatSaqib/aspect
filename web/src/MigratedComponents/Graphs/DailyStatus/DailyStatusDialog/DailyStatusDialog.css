@@ -2,14 +2,19 @@
   overflow: visible;
 }
 
-.Form__Content {
+.Form__content {
   min-height: 250px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.Form__Controls {
+.Form__device-name {
+  margin-top: -10px;
+  margin-bottom: 30px;
+}
+
+.Form__controls {
   flex-grow: 1;
 }
 .form-container {

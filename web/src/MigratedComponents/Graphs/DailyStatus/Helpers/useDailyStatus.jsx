@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { queryCache, useMutation, useQuery } from 'react-query'
 import { useIntl } from 'react-intl'
+import cloneDeep from 'lodash/cloneDeep'
 
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
 import messages from '../messages'
@@ -9,6 +10,7 @@ import { extractOptionValue } from '../../Helpers/Formatters'
 
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
+import { getDateString } from '../../../../shared/utils/dateFormat'
 
 const useDailyStatus = (minDate, maxDate) => {
   const { formatMessage } = useIntl()
@@ -35,6 +37,48 @@ const useDailyStatus = (minDate, maxDate) => {
       endpoint: DAILY_STATUS.ENDPOINT,
       params,
     })
+  )
+
+  const [changeDeviceStatus] = useMutation(
+    ({ deviceId, values }) =>
+      fetchWrapperForQueries({
+        endpoint: `/device/maintenance-status-by-period/${deviceId}`,
+        method: 'POST',
+        params: {
+          externalId: values.reason,
+          dateFrom: getDateString(values.startedOn),
+          dateTo: getDateString(values.endedOn),
+          notes: values.note,
+        },
+      }),
+    {
+      onSuccess: (responseData, requestData) => {
+        const { deviceId, values } = requestData
+        const selectedStatus = statuses.find(
+          it => it.externalId === values.reason
+        )
+        queryCache.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
+          const { data: devicesDailyOld } = oldData
+          const devicesDailyNew = cloneDeep(devicesDailyOld)
+          const { maintenanceStatusHistory } = devicesDailyNew.find(
+            ({ id }) => id === deviceId
+          )
+          maintenanceStatusHistory
+            .filter(
+              it => it.day >= values.startedOn && it.day <= values.endedOn
+            )
+            .forEach(it => {
+              it.maintenanceStatusExternalId = selectedStatus.externalId
+              it.maintenanceStatusI18nKey = selectedStatus.i18nKey
+              it.maintenanceStatusName = selectedStatus.name
+            })
+          return {
+            ...oldData,
+            data: devicesDailyNew,
+          }
+        })
+      },
+    }
   )
 
   const {
@@ -99,6 +143,7 @@ const useDailyStatus = (minDate, maxDate) => {
       deviceStatusesError,
     },
     actions: {
+      changeDeviceStatus,
       toggleAll,
       toggleStatusVisibility,
       updateFromActionComponent,

@@ -51,13 +51,18 @@ const DailyStatus = () => {
       deviceStatusesIsError,
       deviceStatusesError,
     },
-    actions: { toggleAll, toggleStatusVisibility, updateFromActionComponent },
+    actions: {
+      changeDeviceStatus,
+      toggleAll,
+      toggleStatusVisibility,
+      updateFromActionComponent,
+    },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
 
   const onClickDay = useCallback(
     ({ day, deviceId }) => {
-      const { maintenanceStatusHistory } = devicesDaily.find(
+      const { maintenanceStatusHistory, shortName } = devicesDaily.find(
         ({ id }) => id === deviceId
       )
       const {
@@ -86,6 +91,7 @@ const DailyStatus = () => {
 
       setDialogState({
         isOpen: true,
+        deviceName: shortName,
         data: {
           day, // day clicked (formatted as "YYYY-MM-DD")
           startedOn,
@@ -102,11 +108,13 @@ const DailyStatus = () => {
     setDialogState({ isOpen: false })
   }, [])
 
-  const onDailyStatusSubmitted = useCallback(() => {
-    setDialogState({ isOpen: false })
-
-    // values, deviceId
-  }, [])
+  const onDailyStatusSubmit = useCallback(
+    ({ deviceId, values }) => {
+      setDialogState({ isOpen: false })
+      changeDeviceStatus({ deviceId, values })
+    },
+    [changeDeviceStatus]
+  )
 
   if (devicesIsError) {
     throw new Error(devicesError)
@@ -160,9 +168,10 @@ const DailyStatus = () => {
 
           <DailyStatusDialog
             data={dialogState.data}
+            deviceName={dialogState.deviceName}
             isOpen={dialogState.isOpen}
             onCancel={onHideDailyStatusDialog}
-            onSubmit={onDailyStatusSubmitted}
+            onSubmit={onDailyStatusSubmit}
             statuses={allStatuses}
           />
         </div>
