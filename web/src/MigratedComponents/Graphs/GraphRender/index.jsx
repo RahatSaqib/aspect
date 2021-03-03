@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import uniq from 'lodash/uniq'
 import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isEmpty from 'lodash/isEmpty'
-
+import messages from '../intlMessages'
 import fetchWrapperForQueries from '../../QueryFetch'
 import {
   formatDataByGraphType,
@@ -43,6 +44,7 @@ const GraphRender = ({
     indexBy,
     keyToConsume,
     keysToRename,
+    i18nKey,
     type,
   } = config
   const assayParams = prepAssaysForParams(whiteListed, method)
@@ -50,6 +52,7 @@ const GraphRender = ({
 
   const mergedParams = [...assayParams, ...endpointParams]
   const [rawData, setRawData] = useState(false)
+  const [i18nKeys, setI18nKeys] = useState(false)
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
   const { culture } = useSelector(({ user }) => {
@@ -90,10 +93,15 @@ const GraphRender = ({
         const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
         setGraphData(grouped)
         setGraphKeys(keysFromGrouped)
+        const i18nkeys = rawData.map(elem => ({
+          [elem[keyToConsume]]: elem[i18nKey],
+        }))
+
+        // const externali18nkeys = keysFromGrouped.map()
+        // setI18nKeys()
       }
     }
   }, [rawData])
-
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
@@ -107,6 +115,7 @@ const GraphRender = ({
             culture={culture}
             averages={averages}
             assaysFromState={assaysFromState}
+            i18n={messages}
           />
         ) : null}
       </div>
