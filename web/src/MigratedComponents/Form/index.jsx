@@ -9,26 +9,44 @@ import FormSectionHeader from './FormSectionHeader'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const AspectForm = ({ config: { sections } }) => {
+const AspectForm = ({ config: { sections, classNames } }) => {
+  classNames = classNames || {}
   return (
-    <Grid container className={cssClasses('form__container')}>
+    <Grid
+      container
+      className={cssClasses('form__container', {
+        [classNames.container]: !!classNames.container,
+      })}
+    >
       <form
         noValidate
         autoComplete="off"
         className={cssClasses('form__parent')}
       >
         {sections &&
-          sections.map(({ label, labelI18nKey, rows }) => (
-            <Grid item xs={12} className={cssClasses('form__sectionContainer')}>
-              <Grid container>
-                <FormSectionHeader
-                  header={label}
-                  headerI18nKey={labelI18nKey}
-                />
-                <FormSection rows={rows} />
+          sections.map(
+            ({ label, labelI18nKey, rows, hideHeader, classNames = {} }) => (
+              <Grid
+                item
+                xs={12}
+                className={cssClasses('form__sectionContainer')}
+              >
+                <Grid container>
+                  {hideHeader === true ? null : (
+                    <FormSectionHeader
+                      header={label}
+                      headerI18nKey={labelI18nKey}
+                    />
+                  )}
+                  <FormSection
+                    classNames={classNames}
+                    fullWidth={hideHeader === true}
+                    rows={rows}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-          ))}
+            )
+          )}
       </form>
     </Grid>
   )

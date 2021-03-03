@@ -1010,7 +1010,11 @@ async function setStatusForDateRange(request) {
   }
 
   if (
-    dateFrom >= startOfDayUtc(device.createdOn) &&
+    /**
+     * TODO: empty/disable days in UI for dates BEFORE device createdOn
+     * see ASP-2007 for details
+     */
+    // dateFrom >= startOfDayUtc(device.createdOn) &&
     dateFrom <= dateTo &&
     dateTo <= new Date()
   ) {

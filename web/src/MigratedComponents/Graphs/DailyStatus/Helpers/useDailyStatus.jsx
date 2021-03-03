@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { queryCache, useMutation, useQuery } from 'react-query'
 import { useIntl } from 'react-intl'
+import cloneDeep from 'lodash/cloneDeep'
+import findIndex from 'lodash/findIndex'
+import findLastIndex from 'lodash/findLastIndex'
 
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
 import messages from '../messages'
@@ -12,7 +15,7 @@ import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
 
 const useDailyStatus = (minDate, maxDate) => {
   const { formatMessage } = useIntl()
-  const [statusses, setStatusses] = useState(false)
+  const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
   const [toggleAll, setToggleAll] = useState({
     checked: true,
@@ -37,10 +40,56 @@ const useDailyStatus = (minDate, maxDate) => {
     })
   )
 
+  const [changeDeviceStatus] = useMutation(
+    ({ deviceId, values }) =>
+      fetchWrapperForQueries({
+        endpoint: `/device/maintenance-status-by-period/${deviceId}`,
+        method: 'POST',
+        params: {
+          externalId: values.reason,
+          dateFrom: values.startedOn,
+          dateTo: values.endedOn,
+          notes: values.note,
+        },
+      }),
+    {
+      onSuccess: (responseData, requestData) => {
+        const { deviceId, values } = requestData
+        const selectedStatus = statuses.find(
+          ({ externalId }) => externalId === values.reason
+        )
+        queryCache.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
+          const { data: devicesDailyOld } = oldData
+          const devicesDailyNew = cloneDeep(devicesDailyOld)
+          const { maintenanceStatusHistory } = devicesDailyNew.find(
+            ({ id }) => id === deviceId
+          )
+          maintenanceStatusHistory
+            .filter(
+              /**
+               * notice that all values (`day`, 'startedOn', 'endedOn') are
+               * dates formatted as 'YYYY-MM-DD'
+               */
+              ({ day }) => day >= values.startedOn && day <= values.endedOn
+            )
+            .forEach(it => {
+              it.maintenanceStatusExternalId = selectedStatus.externalId
+              it.maintenanceStatusI18nKey = selectedStatus.i18nKey
+              it.maintenanceStatusName = selectedStatus.name
+            })
+          return {
+            ...oldData,
+            data: devicesDailyNew,
+          }
+        })
+      },
+    }
+  )
+
   const {
-    isLoading: deviceStatussesIsLoading,
-    isError: deviceStatussesIsError,
-    error: deviceStatussesError,
+    isLoading: deviceStatusesIsLoading,
+    isError: deviceStatusesIsError,
+    error: deviceStatusesError,
   } = useQuery(
     DEVICE_STATUS.KEY,
     async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
@@ -48,38 +97,91 @@ const useDailyStatus = (minDate, maxDate) => {
       onSuccess: ({ data }) => {
         const output = []
         data.map(status => output.push({ ...status, checked: true }))
-        setStatusses(
-          output.filter(it => it.externalId !== 'inactiveDecommissioned')
-        )
+        setStatuses(output)
       },
     }
   )
 
   const toggleStatusVisibility = name => {
-    const tempStatusses = [...visibleStatuses]
+    const tempStatuses = [...visibleStatuses]
     if (name === 'all') {
-      tempStatusses.map(status => (status.checked = !toggleAll.checked))
+      tempStatuses.map(status => (status.checked = !toggleAll.checked))
       setToggleAll({
         ...toggleAll,
         checked: !toggleAll.checked,
       })
-      setVisibleStatuses(tempStatusses)
+      setVisibleStatuses(tempStatuses)
     } else {
-      const index = getIndex(tempStatusses, 'i18nKey', name)
-      const currentChecked = tempStatusses[index].checked
-      tempStatusses[index].checked = !currentChecked
-      setVisibleStatuses(tempStatusses)
+      const index = getIndex(tempStatuses, 'i18nKey', name)
+      const currentChecked = tempStatuses[index].checked
+      tempStatuses[index].checked = !currentChecked
+      setVisibleStatuses(tempStatuses)
     }
   }
 
   useEffect(() => {
     if (!visibleStatuses) {
-      setVisibleStatuses(statusses)
+      setVisibleStatuses(
+        // do not use 'Decommissioned' for graphs
+        !statuses
+          ? statuses
+          : statuses.filter(
+              ({ externalId }) => externalId !== 'inactiveDecommissioned'
+            )
+      )
     }
-  }, [statusses, visibleStatuses])
+  }, [statuses, visibleStatuses])
 
   const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setParams(extractOptionValue(identifier, selectedOption))
+
+  /**
+   * getDeviceDayDetails
+   *
+   * Returns data needed to open AspectDialog for setting maintenance
+   * status for selected date range.
+   * Notice that date range is _continuous dates with SAME status
+   * between edge of weekends_
+   */
+  const getDeviceDayDetails = ({ day, deviceId }) => {
+    const { maintenanceStatusHistory, shortName } = devicesDaily.find(
+      ({ id }) => id === deviceId
+    )
+    const {
+      isWeekend,
+      maintenanceStatusExternalId,
+    } = maintenanceStatusHistory.find(it => it.day === day)
+    const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
+    // helper to get forward or backward index of first day with another status
+    const getIndex = findFn =>
+      findFn(
+        maintenanceStatusHistory,
+        it =>
+          it.maintenanceStatusExternalId !== maintenanceStatusExternalId ||
+          it.isWeekend !== isWeekend,
+        fromIndex
+      )
+
+    const startedOnIndex = getIndex(findLastIndex) + 1
+    let endedOnIndex = getIndex(findIndex)
+    endedOnIndex =
+      endedOnIndex === -1
+        ? maintenanceStatusHistory.length - 1
+        : endedOnIndex - 1
+    const startedOn = maintenanceStatusHistory[startedOnIndex].day
+    const endedOn = maintenanceStatusHistory[endedOnIndex].day
+
+    return {
+      deviceId,
+      deviceName: shortName,
+      day, // day clicked (formatted as "YYYY-MM-DD")
+      periodWithSameStatus: {
+        startedOn,
+        endedOn,
+        maintenanceStatusExternalId,
+      },
+    }
+  }
 
   return {
     devices: {
@@ -89,12 +191,15 @@ const useDailyStatus = (minDate, maxDate) => {
       devicesError,
     },
     statuses: {
+      allStatuses: !statuses ? [] : statuses,
       visibleStatuses,
-      deviceStatussesIsLoading,
-      deviceStatussesIsError,
-      deviceStatussesError,
+      deviceStatusesIsLoading,
+      deviceStatusesIsError,
+      deviceStatusesError,
     },
     actions: {
+      changeDeviceStatus,
+      getDeviceDayDetails,
       toggleAll,
       toggleStatusVisibility,
       updateFromActionComponent,

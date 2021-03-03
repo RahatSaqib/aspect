@@ -136,6 +136,7 @@ const messages = {
 }
 
 const FormItem = ({
+  classNames,
   id,
   label,
   labelI18nKey,
@@ -155,7 +156,9 @@ const FormItem = ({
       xs={12}
       md={6}
       lg={4}
-      className={cssClasses('form__sectionItemContainer')}
+      className={cssClasses('form__sectionItemContainer', {
+        [classNames.itemContainer]: !!classNames.itemContainer,
+      })}
     >
       <AspectInput
         {...getFieldProps(id)}
@@ -171,7 +174,9 @@ const FormItem = ({
         className={cssClasses('form__sectionItemInput', {
           'form__sectionItemInput--enabled': toggleEdit,
           'form__sectionItemInput--disabled': !toggleEdit,
+          [classNames.item]: !!classNames.item,
         })}
+        classNames={classNames}
         fullWidth
         InputProps={{
           readOnly: !toggleEdit,
@@ -188,18 +193,20 @@ const FormItem = ({
 }
 
 FormItem.defaultProps = {
+  classNames: {},
   hideIfNull: false,
-  link: false,
   labelI18nKey: null,
+  link: false,
 }
 
 FormItem.propTypes = {
+  classNames: PropTypes.objectOf(PropTypes.shape),
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   labelI18nKey: PropTypes.string,
   link: PropTypes.oneOf([PropTypes.object, PropTypes.bool]),
   type: PropTypes.string.isRequired,
-  controlType: PropTypes.string.isRequired,
+  controlType: PropTypes.objectOf(PropTypes.shape).isRequired,
   hideIfNull: PropTypes.bool,
   initialValue: PropTypes.string.isRequired,
 }

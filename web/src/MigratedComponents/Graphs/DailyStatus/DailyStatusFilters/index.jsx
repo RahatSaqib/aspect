@@ -9,15 +9,15 @@ const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
 const DailyStatusFilters = ({
   toggleAll: { checked, key, label },
-  statusses,
+  statuses,
   action,
 }) => {
   return (
-    <div className={cssClasses('statusses__row')}>
-      <div className={cssClasses('statusses__spacer')} />
-      <div className={cssClasses('statusses__container')}>
+    <div className={cssClasses('statuses__row')}>
+      <div className={cssClasses('statuses__spacer')} />
+      <div className={cssClasses('statuses__container')}>
         <FormGroup row>
-          <div className={cssClasses('statusses__status')}>
+          <div className={cssClasses('statuses__status')}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -37,13 +37,13 @@ const DailyStatusFilters = ({
           </div>
         </FormGroup>
         <FormGroup row>
-          <div className={cssClasses('statusses__status')}>
-            {statusses
-              ? statusses.map(({ externalId, name, checked }) => (
+          <div className={cssClasses('statuses__status')}>
+            {statuses
+              ? statuses.map(({ externalId, name, checked }) => (
                   <FormControlLabel
                     classes={{
-                      root: cssClasses('statusses__statusroot'),
-                      label: cssClasses('statusses__statuslabel'),
+                      root: cssClasses('statuses__statusroot'),
+                      label: cssClasses('statuses__statuslabel'),
                     }}
                     control={
                       <Checkbox
@@ -75,7 +75,7 @@ DailyStatusFilters.propTypes = {
     label: PropTypes.string,
     key: PropTypes.string,
   }).isRequired,
-  statusses: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  statuses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   action: PropTypes.func.isRequired,
 }
 

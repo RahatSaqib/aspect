@@ -1,6 +1,8 @@
-import isString from 'lodash/isString'
+import isDate from 'lodash/isDate'
+import isNumber from 'lodash/isNumber'
 import isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
+import isString from 'lodash/isString'
 import startOfDay from 'date-fns/startOfDay'
 import format from 'date-fns/format'
 import { withProps } from 'recompose'
@@ -11,6 +13,20 @@ import {
 } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
+
+export function getDateObject(date, defaultValue) {
+  if (isString(date) || isNumber(date)) {
+    return new Date(date)
+  }
+  if (isDate(date)) {
+    return date
+  }
+  return defaultValue
+}
+
+export const getDateString = date => {
+  return isString(date) ? date : formatDate(date)
+}
 
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()

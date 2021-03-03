@@ -28,9 +28,9 @@ const DailyStatusMap = () => {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: {
       visibleStatuses,
-      deviceStatussesIsLoading,
-      deviceStatussesIsError,
-      deviceStatussesError,
+      deviceStatusesIsLoading,
+      deviceStatusesIsError,
+      deviceStatusesError,
     },
     actions: { toggleAll, toggleStatusVisibility },
   } = useDailyStatus(minDate, maxDate)
@@ -39,8 +39,8 @@ const DailyStatusMap = () => {
     throw new Error(devicesError)
   }
 
-  if (deviceStatussesIsError) {
-    throw new Error(deviceStatussesError)
+  if (deviceStatusesIsError) {
+    throw new Error(deviceStatusesError)
   }
 
   const filtered = buildMarkersForDailyStatus(devicesDaily, visibleStatuses)
@@ -71,11 +71,11 @@ const DailyStatusMap = () => {
       actionComponent={false}
       name="dailyStatus"
     >
-      {!devicesIsLoading && !deviceStatussesIsLoading ? (
+      {!devicesIsLoading && !deviceStatusesIsLoading ? (
         <Fragment>
           <DailyStatusFilters
             toggleAll={toggleAll}
-            statusses={visibleStatuses}
+            statuses={visibleStatuses}
             action={toggleStatusVisibility}
           />
           <div style={{ width: '100%', minHeight: '300px' }}>

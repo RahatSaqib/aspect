@@ -41,7 +41,7 @@
 }
 
 /*
- * Statusses targeted:
+ * Statuses targeted:
  * active
  * reportedActive
  * inactiveUnknown
@@ -180,32 +180,32 @@
   text-transform: uppercase;
 }
 
-.statusses__spacer {
+.statuses__spacer {
   width: 415px;
 }
 
-.statusses__row {
+.statuses__row {
   display: flex;
   height: 120px;
 }
 
-.statusses__container {
+.statuses__container {
   margin: 20px 18px;
 }
 
-.statusses__status {
+.statuses__status {
   width: 70%;
 }
 
-.statusses__statusroot {
+.statuses__statusroot {
   margin-top: 5px;
 }
 
-.statusses__statuslabel {
+.statuses__statuslabel {
   margin-right: 10px;
 }
 
-.dailystatus__spinner {
+.dailyStatus__spinner {
   height: 100%;
   display: flex;
   justify-content: center;
