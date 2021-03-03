@@ -63,13 +63,16 @@ const ReportIndex = () => {
   const [items, setItems] = useState()
   const [filters, setFilters] = useState([])
 
-  const { data } = useQuery([REPORT_LIST.KEY, location.search], async () => {
-    const { value: filtersParams } = filtersFromLocation(location)
-    return fetchWrapperForQueries({
-      endpoint: REPORT_LIST.ENDPOINT,
-      params: { ...fromPairs([...filtersParams.entries()]) },
-    })
-  })
+  const { data: { data } = false } = useQuery(
+    [REPORT_LIST.KEY, location.search],
+    async () => {
+      const { value: filtersParams } = filtersFromLocation(location)
+      return fetchWrapperForQueries({
+        endpoint: REPORT_LIST.ENDPOINT,
+        params: { ...fromPairs([...filtersParams.entries()]) },
+      })
+    }
+  )
   const onClickDownload = (externalId, fileExtension = 'xlsx') => {
     setFilters({ ...filters, format: fileExtension })
     filtersFromLocation.format = fileExtension
@@ -98,15 +101,12 @@ const ReportIndex = () => {
     }
     const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
     setFilters(fromPairs([...Object.entries(reducedFilters)]))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
-  // >>>>>> Lifecycles <<<<<<
+  }, [history, location, userPermissions])
+
   useEffect(() => {
     if (data) {
-      setItems(data.data)
+      setItems(data)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return (
@@ -123,20 +123,16 @@ const ReportIndex = () => {
         />
       )}
       <Grid container>
-        {items && items.length
-          ? items.map(({ externalId, name, description }) => {
-              return (
-                <ReportCard
-                  title={name}
-                  description={description}
-                  onClick={fileExtension =>
-                    onClickDownload(externalId, fileExtension)
-                  }
-                  history={history}
-                />
-              )
-            })
-          : null}
+        {items?.map(({ externalId, name, description }) => (
+          <ReportCard
+            title={name}
+            description={description}
+            onClick={fileExtension =>
+              onClickDownload(externalId, fileExtension)
+            }
+            history={history}
+          />
+        ))}
       </Grid>
     </div>
   )
