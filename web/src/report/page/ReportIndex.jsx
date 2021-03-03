@@ -122,7 +122,7 @@ const ReportIndex = () => {
           showBrowseDropdown={false}
         />
       )}
-      <Grid container>
+      <Grid container spacing={16}>
         {items?.map(({ externalId, name, description }) => (
           <ReportCard
             title={name}
