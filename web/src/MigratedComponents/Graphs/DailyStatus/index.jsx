@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import { useIntl } from 'react-intl'
 
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
+import DailyStatusDialog from './DailyStatusDialog'
 import DateRanges from './DateRanges'
 import messages from './messages'
 import GRAPH_CONSTS from '../../../globals/consts/Graphs/CONSTS'
 import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
+import Loading from '../../../globals/components/Loading'
 
 import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
 import AspectDropDown from '../../AspectDropDown'
@@ -34,34 +35,63 @@ const selectorModifiers = [
   },
 ]
 
-const Loading = () => (
-  <div className={cssClasses('dailystatus__spinner')}>
-    <CircularProgress />
-  </div>
-)
-
 const DailyStatus = () => {
+  const [dialogState, setDialogState] = useState({ isOpen: false })
   const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
   const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
   const { formatMessage } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: {
+      allStatuses,
       visibleStatuses,
-      deviceStatussesIsLoading,
-      deviceStatussesIsError,
-      deviceStatussesError,
+      deviceStatusesIsLoading,
+      deviceStatusesIsError,
+      deviceStatusesError,
     },
-    actions: { toggleAll, toggleStatusVisibility, updateFromActionComponent },
+    actions: {
+      changeDeviceStatus,
+      getDeviceDayDetails,
+      toggleAll,
+      toggleStatusVisibility,
+      updateFromActionComponent,
+    },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
+
+  const onClickDay = ({ day, deviceId }) => {
+    const {
+      deviceName,
+      periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
+    } = getDeviceDayDetails({ day, deviceId })
+    setDialogState({
+      isOpen: true,
+      deviceName,
+      data: {
+        day, // day clicked (formatted as "YYYY-MM-DD")
+        startedOn,
+        endedOn,
+        deviceId,
+        maintenanceStatusExternalId,
+      },
+    })
+  }
+
+  const onHideDailyStatusDialog = () => {
+    setDialogState({ isOpen: false })
+  }
+
+  const onDailyStatusSubmit = ({ deviceId, values }) => {
+    setDialogState({ isOpen: false })
+    changeDeviceStatus({ deviceId, values })
+  }
 
   if (devicesIsError) {
     throw new Error(devicesError)
   }
 
-  if (deviceStatussesIsError) {
-    throw new Error(deviceStatussesError)
+  if (deviceStatusesIsError) {
+    throw new Error(deviceStatusesError)
   }
 
   return (
@@ -76,29 +106,47 @@ const DailyStatus = () => {
       }}
       name="dailyStatus"
     >
-      {!devicesIsLoading && !deviceStatussesIsLoading ? (
+      {!devicesIsLoading && !deviceStatusesIsLoading ? (
         <div className={cssClasses('dailystatus__container')}>
           <DailyStatusFilters
             toggleAll={toggleAll}
-            statusses={visibleStatuses}
+            statuses={visibleStatuses}
             action={toggleStatusVisibility}
           />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
           {devicesDaily.map(
-            ({ name, shortName, maintenanceStatusHistory, totalResults }) => (
+            ({
+              id: deviceId,
+              name,
+              shortName,
+              maintenanceStatusHistory,
+              totalResults,
+            }) => (
               <DailyStatusClinic
+                key={deviceId}
                 name={shortName || name}
                 data={maintenanceStatusHistory}
                 total={totalResults}
-                statusses={visibleStatuses}
+                statuses={visibleStatuses}
                 consts={GRAPH_CONSTS}
                 totalDays={totalDays}
+                onClickDay={onClickDay}
+                deviceId={deviceId}
               />
             )
           )}
+
+          <DailyStatusDialog
+            data={dialogState.data}
+            deviceName={dialogState.deviceName}
+            isOpen={dialogState.isOpen}
+            onCancel={onHideDailyStatusDialog}
+            onSubmit={onDailyStatusSubmit}
+            statuses={allStatuses}
+          />
         </div>
       ) : (
-        <Loading />
+        <Loading className={cssClasses('dailyStatus__spinner')} />
       )}
     </AspectCard>
   )

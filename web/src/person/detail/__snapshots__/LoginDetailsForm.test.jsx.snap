@@ -141,6 +141,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -318,6 +319,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -495,6 +497,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -672,6 +675,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -849,6 +853,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -1026,6 +1031,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}

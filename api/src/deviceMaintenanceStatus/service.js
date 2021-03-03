@@ -165,9 +165,7 @@ async function deviceStatusOverTime(request) {
           // when device has no tests on this day ...
           totalResults === 0 &&
           // ... and it's current maintenance status for the day is active ...
-          ['active', 'reportedActive'].includes(
-            status.maintenanceStatusExternalId
-          )
+          status.maintenanceStatusExternalId === 'active'
         ) {
           // ... then change it's status to 'No Results Reported' for this day
           status = {

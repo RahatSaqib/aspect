@@ -10,10 +10,12 @@ const cssClasses = classnames.bind(require('../DailyStatus.css'))
 const DailyStatusClinic = ({
   name,
   data,
+  deviceId,
   total,
-  statusses,
+  statuses,
   consts,
   totalDays,
+  onClickDay,
 }) => {
   const dataDays = data.length
   const fillerDays = times(totalDays - dataDays)
@@ -28,6 +30,7 @@ const DailyStatusClinic = ({
       <div className={cssClasses('clinic__dayrow')}>
         {data.map(
           ({
+            day,
             daysInSameStatus,
             isWeekend,
             maintenanceStatusI18nKey,
@@ -41,7 +44,8 @@ const DailyStatusClinic = ({
               maintenanceStatusI18nKey={maintenanceStatusI18nKey}
               maintenanceStatusName={maintenanceStatusName}
               totalResults={totalResults}
-              statusses={statusses}
+              statuses={statuses}
+              onClickDay={() => onClickDay({ day, deviceId })}
             />
           )
         )}
@@ -66,13 +70,15 @@ const DailyStatusClinic = ({
 DailyStatusClinic.propTypes = {
   name: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  deviceId: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
-  statusses: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  statuses: PropTypes.oneOfType([PropTypes.object]).isRequired,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
   totalDays: PropTypes.number.isRequired,
+  onClickDay: PropTypes.func.isRequired,
 }
 
 export default DailyStatusClinic
