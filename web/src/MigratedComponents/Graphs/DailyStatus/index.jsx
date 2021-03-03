@@ -1,8 +1,6 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
-import findIndex from 'lodash/findIndex'
-import findLastIndex from 'lodash/findLastIndex'
 
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
@@ -53,6 +51,7 @@ const DailyStatus = () => {
     },
     actions: {
       changeDeviceStatus,
+      getDeviceDayDetails,
       toggleAll,
       toggleStatusVisibility,
       updateFromActionComponent,
@@ -60,61 +59,32 @@ const DailyStatus = () => {
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
 
-  const onClickDay = useCallback(
-    ({ day, deviceId }) => {
-      const { maintenanceStatusHistory, shortName } = devicesDaily.find(
-        ({ id }) => id === deviceId
-      )
-      const {
-        isWeekend,
+  const onClickDay = ({ day, deviceId }) => {
+    const {
+      deviceName,
+      periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
+    } = getDeviceDayDetails({ day, deviceId })
+    setDialogState({
+      isOpen: true,
+      deviceName,
+      data: {
+        day, // day clicked (formatted as "YYYY-MM-DD")
+        startedOn,
+        endedOn,
+        deviceId,
         maintenanceStatusExternalId,
-      } = maintenanceStatusHistory.find(it => it.day === day)
-      const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
-      // helper to get forward or backward index of first day with another status
-      const getIndex = findFn =>
-        findFn(
-          maintenanceStatusHistory,
-          it =>
-            it.maintenanceStatusExternalId !== maintenanceStatusExternalId ||
-            it.isWeekend !== isWeekend,
-          fromIndex
-        )
+      },
+    })
+  }
 
-      const startedOnIndex = getIndex(findLastIndex) + 1
-      let endedOnIndex = getIndex(findIndex)
-      endedOnIndex =
-        endedOnIndex === -1
-          ? maintenanceStatusHistory.length - 1
-          : endedOnIndex - 1
-      const startedOn = maintenanceStatusHistory[startedOnIndex].day
-      const endedOn = maintenanceStatusHistory[endedOnIndex].day
-
-      setDialogState({
-        isOpen: true,
-        deviceName: shortName,
-        data: {
-          day, // day clicked (formatted as "YYYY-MM-DD")
-          startedOn,
-          endedOn,
-          deviceId,
-          maintenanceStatusExternalId,
-        },
-      })
-    },
-    [devicesDaily]
-  )
-
-  const onHideDailyStatusDialog = useCallback(() => {
+  const onHideDailyStatusDialog = () => {
     setDialogState({ isOpen: false })
-  }, [])
+  }
 
-  const onDailyStatusSubmit = useCallback(
-    ({ deviceId, values }) => {
-      setDialogState({ isOpen: false })
-      changeDeviceStatus({ deviceId, values })
-    },
-    [changeDeviceStatus]
-  )
+  const onDailyStatusSubmit = ({ deviceId, values }) => {
+    setDialogState({ isOpen: false })
+    changeDeviceStatus({ deviceId, values })
+  }
 
   if (devicesIsError) {
     throw new Error(devicesError)

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { queryCache, useMutation, useQuery } from 'react-query'
 import { useIntl } from 'react-intl'
 import cloneDeep from 'lodash/cloneDeep'
+import findIndex from 'lodash/findIndex'
+import findLastIndex from 'lodash/findLastIndex'
 
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
 import messages from '../messages'
@@ -133,6 +135,54 @@ const useDailyStatus = (minDate, maxDate) => {
   const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setParams(extractOptionValue(identifier, selectedOption))
 
+  /**
+   * getDeviceDayDetails
+   *
+   * Returns data needed to open AspectDialog for setting maintenance
+   * status for selected date range.
+   * Notice that date range is _continuous dates with SAME status
+   * between edge of weekends_
+   */
+  const getDeviceDayDetails = ({ day, deviceId }) => {
+    const { maintenanceStatusHistory, shortName } = devicesDaily.find(
+      ({ id }) => id === deviceId
+    )
+    const {
+      isWeekend,
+      maintenanceStatusExternalId,
+    } = maintenanceStatusHistory.find(it => it.day === day)
+    const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
+    // helper to get forward or backward index of first day with another status
+    const getIndex = findFn =>
+      findFn(
+        maintenanceStatusHistory,
+        it =>
+          it.maintenanceStatusExternalId !== maintenanceStatusExternalId ||
+          it.isWeekend !== isWeekend,
+        fromIndex
+      )
+
+    const startedOnIndex = getIndex(findLastIndex) + 1
+    let endedOnIndex = getIndex(findIndex)
+    endedOnIndex =
+      endedOnIndex === -1
+        ? maintenanceStatusHistory.length - 1
+        : endedOnIndex - 1
+    const startedOn = maintenanceStatusHistory[startedOnIndex].day
+    const endedOn = maintenanceStatusHistory[endedOnIndex].day
+
+    return {
+      deviceId,
+      deviceName: shortName,
+      day, // day clicked (formatted as "YYYY-MM-DD")
+      periodWithSameStatus: {
+        startedOn,
+        endedOn,
+        maintenanceStatusExternalId,
+      },
+    }
+  }
+
   return {
     devices: {
       devicesIsLoading,
@@ -149,6 +199,7 @@ const useDailyStatus = (minDate, maxDate) => {
     },
     actions: {
       changeDeviceStatus,
+      getDeviceDayDetails,
       toggleAll,
       toggleStatusVisibility,
       updateFromActionComponent,
