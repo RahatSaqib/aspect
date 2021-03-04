@@ -5,7 +5,7 @@ import head from 'lodash/head'
 import Paper from '@material-ui/core/Paper'
 import { compose } from 'recompose'
 
-import { RoutesPermissionProvider } from '../../Hooks/RoutePermissions'
+import { RoutesPermissionProvider } from '../../Providers/RoutePermissions'
 import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'

@@ -3,7 +3,6 @@ import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { defineMessages, useIntl } from 'react-intl'
-import { useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import partial from 'lodash/partial'
@@ -23,6 +22,7 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+import { useAuthState } from '../../Providers/AuthProvider'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -291,7 +291,9 @@ const ReporterList = () => {
   const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())

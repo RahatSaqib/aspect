@@ -10,7 +10,7 @@ import { buildWidgetToLinkParams } from '../Helpers'
 import {
   useUserIsPermitted,
   RoutesPermissionProvider,
-} from '../../../Hooks/RoutePermissions'
+} from '../../../Providers/RoutePermissions'
 import { links, users } from './mocks'
 
 const initialState = {

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
 import {
@@ -14,6 +14,8 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { useQuery, useMutation, queryCache } from 'react-query'
+
+import { useAuthState } from '../../../Providers/AuthProvider'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -58,7 +60,7 @@ const messages = defineMessages({
 
 export const DeviceDetail = ({ match }) => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const user = useAuthState()
   const editable = isEditable(user, 'device')
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)

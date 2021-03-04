@@ -1,6 +1,5 @@
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 
 import {
   DataTableRow as TableRow,
@@ -9,6 +8,7 @@ import {
 import isEditable from '../../shared/selectors/isEditable'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import { formatRelative } from '../../shared/utils/dateFormat'
+import { useAuthState } from '../../Providers/AuthProvider'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -16,14 +16,16 @@ const cssClasses = classnames.bind(
 
 const ReporterTableRow = ({ intl, reporter, onRevokedItem, ...restProps }) => {
   const [disabled, setDisabled] = useState({})
-  const user = useSelector(state => state.user)
+  const user = useAuthState()
 
   const onRevokedChange = ({ target }, revoked) => {
     onRevokedItem({ id: target.dataset.id, revoked })
   }
+
   useEffect(() => {
     setDisabled(!isEditable(user, 'reporter'))
   }, [user])
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{reporter.get('user')}</TableCell>
