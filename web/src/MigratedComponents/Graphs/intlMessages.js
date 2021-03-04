@@ -7,25 +7,25 @@ export const messages = defineMessages({
     defaultMessage:
       "The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.",
   },
-  abbottM2000PlasmaHivVL: {
-    id: 'legends.Unknown.abbottM2000PlasmaHivVL',
+  assayAbbottM2000PlasmaHivVL: {
+    id: 'legends.Unknown.assayAbbottM2000PlasmaHivVL',
     defaultMessage: 'Abbott m2000 Plasma HIV VL',
   },
 
-  abbottM2000PlasmaHbvVL: {
-    id: 'legends.Unknown.abbottM2000PlasmaHbvVL',
+  assayAbbottM2000PlasmaHbvVL: {
+    id: 'legends.Unknown.assayAbbottM2000PlasmaHbvVL',
     defaultMessage: 'Abbott m2000 Plasma HBV VL',
   },
-  abbottM2000DBSHivVL: {
-    id: 'legends.Unknown.abbottM2000DBSHivVL',
+  assayAbbottM2000DBSHivVL: {
+    id: 'legends.Unknown.assayAbbottM2000DBSHivVL',
     defaultMessage: 'Abbott m2000 DBS HIV VL',
   },
-  abbottM2000HIVEID: {
-    id: 'legends.Unknown.abbottM2000HIVEID',
+  assayAbbottM2000HIVEID: {
+    id: 'legends.Unknown.assayAbbottM2000HIVEID',
     defaultMessage: 'Abbott m2000 HIV EID',
   },
-  abbottM2000DaanNCOVID19: {
-    id: 'legends.Unknown.abbottM2000DaanNCOVID19',
+  assayAbbottM2000DaanNCOVID19: {
+    id: 'legends.Unknown.assayAbbottM2000DaanNCOVID19',
     defaultMessage: 'Abbott m2000 Daan N COVID-19',
   },
   assayBdMgitAst: {
@@ -60,32 +60,32 @@ export const messages = defineMessages({
     id: 'legends.Unknown.assayGenoTypeMTBDRslV2',
     defaultMessage: 'GenoType MTBDRsl VER 2.0',
   },
-  GxMtbRif: {
-    id: 'legends.Unknown.GxMtbRif',
+  assayGeneXpertMtbRif: {
+    id: 'legends.Unknown.assayGeneXpertMtbRif',
     defaultMessage: 'GeneXpert MTB/Rif',
   },
-  GxMtbRifUltra: {
-    id: 'legends.Unknown.GxMtbRifUltra',
+  assayGeneXpertMtbRifUltra: {
+    id: 'legends.Unknown.assayGeneXpertMtbRifUltra',
     defaultMessage: 'GeneXpert MTB/Rif Ultra',
   },
-  GxHiv1Vl: {
-    id: 'legends.Unknown.GxHiv1Vl',
+  assayGeneXpertHiv1Vl: {
+    id: 'legends.Unknown.assayGeneXpertHiv1Vl',
     defaultMessage: 'GeneXpert HIV-1 VL',
   },
-  GxHiv1Qual: {
-    id: 'legends.Unknown.GxHiv1Qual',
+  assayGeneXpertHiv1Qual: {
+    id: 'legends.Unknown.assayGeneXpertHiv1Qual',
     defaultMessage: 'GeneXpert HIV-1 Qual',
   },
-  GxEbola: {
-    id: 'legends.Unknown.GxEbola',
+  assayGeneXpertEbola: {
+    id: 'legends.Unknown.assayGeneXpertEbola',
     defaultMessage: 'GeneXpert Ebola',
   },
-  GxUnknown: {
-    id: 'legends.Unknown.GxUnknown',
+  assayGeneXpertUnknown: {
+    id: 'legends.Unknown.assayGeneXpertUnknown',
     defaultMessage: 'GeneXpert Unknown',
   },
-  GxHcv: {
-    id: 'legends.Unknown.GxHcv',
+  assayGeneXpertHcv: {
+    id: 'legends.Unknown.assayGeneXpertHcv',
     defaultMessage: 'GeneXpert HCV',
   },
   QHivVL: {

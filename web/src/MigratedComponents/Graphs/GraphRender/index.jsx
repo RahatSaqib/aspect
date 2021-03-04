@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import uniqWith from 'lodash/uniqWith'
-import isEqual from 'lodash/isEqual'
+import reduce from 'lodash/reduce'
 import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -94,11 +93,13 @@ const GraphRender = ({
         const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
         setGraphData(grouped)
         setGraphKeys(keysFromGrouped)
-        const i18nKeysCollection = uniqWith(
-          rawData.map(elem => ({
-            [elem[keyToConsume]]: elem[i18nKey],
-          })),
-          isEqual
+        const i18nKeysCollection = reduce(
+          rawData,
+          (acc, curr) => {
+            acc[curr[keyToConsume]] = curr[i18nKey]
+            return acc
+          },
+          {}
         )
         setI18nKeys(i18nKeysCollection)
       }

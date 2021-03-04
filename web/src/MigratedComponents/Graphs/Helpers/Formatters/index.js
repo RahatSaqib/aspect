@@ -245,7 +245,8 @@ const generateToolTip = (
   formatNumber,
   type,
   formatMessage,
-  intlMessages
+  intlMessages,
+  i18nKeys = {}
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
@@ -254,7 +255,8 @@ const generateToolTip = (
     assaysFromState,
     false,
     formatMessage,
-    intlMessages
+    intlMessages,
+    i18nKeys
   )
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
@@ -322,17 +324,11 @@ const translateLabel = (
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
-  console.log(
-    i18nKeys,
-    i18nKeys[string],
-    string,
-    intlMessages[i18nKeys[string]]
-  )
   return formatMessage && intlMessages[i18nKeys[string]]
     ? formatMessage(intlMessages[i18nKeys[string]]) ||
-        'ariel' ||
+        'Ariel' ||
         get(nth(newString, 0), 'name')
-    : 'ariel2' || makeProperCase(removeStringsFromArray(string))
+    : 'Ariel 2' || makeProperCase(removeStringsFromArray(string))
 }
 const generateLegendIntl = (
   formatMessage,

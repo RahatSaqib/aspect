@@ -260,7 +260,10 @@ const AspectResponsiveBar = ({
                   displayMethod,
                   assaysFromState,
                   intlFormatNumber,
-                  type
+                  type,
+                  formatMessage,
+                  messages,
+                  i18nKeys
                 )}
               />
             )
