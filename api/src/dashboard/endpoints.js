@@ -14,6 +14,7 @@ const {
   actionDashboard,
   resultsTransmittedDashboard,
   activityOverTimeDashboard,
+  reportersDashboard,
 } = require('./service')
 
 const { REGEX_ISODATESTRING } = require('../shared/date')
@@ -215,6 +216,77 @@ const routes = [
               'Set "current" month to return data for this and previous month with the next format 2020-11-26T15:00:24.317-03:00'
             ),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/site-reporters',
+    handler: asyncHandler(reportersDashboard),
+    config: {
+      description: 'Sites with for Reporter Dashboard',
+      notes: `List of sites with some aggregations about reporters`,
+      auth: { scope: ['site', 'reporter', 'dashboard'] },
+      validate: {
+        query: {
+          minDate: Joi.date()
+            .iso()
+            .required()
+            .description('From Date, inclusive'),
+          maxDate: Joi.date()
+            .iso()
+            .required()
+            .description('To Date, inclusive'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .description('List of site with statistics on reporters')
+            .items(
+              Joi.object().keys({
+                siteId: Joi.number().description('Partner Id'),
+                siteName: Joi.string().description('Site name'),
+                siteShortName: Joi.string().description('Site short name'),
+                partnerId: Joi.number().description('Partner Id'),
+                countryId: Joi.number().description('Country Id'),
+                stateId: Joi.number().allow(null).description('State Id'),
+                stateName: Joi.string()
+                  .allow('', null)
+                  .description('State name'),
+                lgaId: Joi.number().allow(null).description('Lga Id'),
+                lgaName: Joi.string().allow('', null).description('Lga name'),
+                totalResults: Joi.number().description(
+                  'The number of results where the reportable site is the clinic'
+                ),
+                delivered: Joi.number().description(
+                  'The number of those results that were delivered to any Reporter'
+                ),
+                requiresTreatment: Joi.number().description(
+                  'The number of delivered results that require treatment'
+                ),
+                onTreatment: Joi.number().description(
+                  'The number of delivered results on treatment'
+                ),
+                notPossible: Joi.number().description(
+                  'The number of results where "Not Possible" was selected for treatment'
+                ),
+                notOnTreatment: Joi.number().description(
+                  `The number of results that require treatment, but that weren't put on treatment yet (not including "Not Possible" in this count)`
+                ),
+                transferred: Joi.number().description(
+                  'The number of delivered results that were transferred to another clinic'
+                ),
+              })
+            ),
+        }),
       },
     },
   },
