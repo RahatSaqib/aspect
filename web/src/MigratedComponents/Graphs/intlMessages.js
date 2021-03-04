@@ -299,7 +299,7 @@ export const messages = defineMessages({
   },
   inactiveUnknown: {
     id: 'legends.Unknown.inactiveUnknown',
-    defaultMessage: 'Unknownw',
+    defaultMessage: 'Unknown',
   },
   inactiveNoResultsReported: {
     id: 'legends.Unknown.inactiveNoResultsReported',
@@ -323,7 +323,7 @@ export const messages = defineMessages({
   },
   weekendOrHoliday: {
     id: 'legends.Unknown.weekendOrHoliday',
-    defaultMessage: 'Weel or holiday',
+    defaultMessage: 'Week or holiday',
   },
   inactiveNoStaff: {
     id: 'legends.Unknown.inactiveNoStaff',

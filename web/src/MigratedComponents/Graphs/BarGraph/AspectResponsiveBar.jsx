@@ -310,7 +310,6 @@ AspectResponsiveBar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
   type: 'bar',
-  legendsToRename: false,
   legendsToPopover: false,
   legendsNotToRender: [],
 }
@@ -323,7 +322,6 @@ AspectResponsiveBar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  legendsToRename: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsNotToRender: PropTypes.oneOfType([PropTypes.array]),
   tickValuesYShape: PropTypes.oneOf([

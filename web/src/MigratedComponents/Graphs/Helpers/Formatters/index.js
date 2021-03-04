@@ -324,9 +324,8 @@ const translateLabel = (
   )
   return formatMessage && intlMessages[i18nKeys[string]]
     ? formatMessage(intlMessages[i18nKeys[string]]) ||
-        'Ariel' ||
         get(nth(newString, 0), 'name')
-    : 'Ariel 2' || makeProperCase(removeStringsFromArray(string))
+    : makeProperCase(removeStringsFromArray(string))
 }
 const generateLegendIntl = (
   formatMessage,
@@ -335,15 +334,13 @@ const generateLegendIntl = (
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = false,
-  legendsToRename = false
+  legendsNotToRender = false
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {
       label: translateLabel(
         string,
         assaysFromState,
-        legendsToRename,
         formatMessage,
         intlMessages,
         i18nKeys

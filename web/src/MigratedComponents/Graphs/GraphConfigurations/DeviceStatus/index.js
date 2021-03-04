@@ -62,16 +62,6 @@ const deviceStatusGraphs = {
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
-        legendsToRename: [
-          {
-            externalId: 'devicesActive',
-            name: 'Active',
-          },
-          {
-            externalId: 'inactiveUnknown',
-            name: 'Unknown ',
-          },
-        ],
         legendsToPopover: [
           {
             externalId: 'inactiveUnknown',
