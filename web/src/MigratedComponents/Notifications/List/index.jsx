@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import { useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -8,6 +7,7 @@ import classnames from 'classnames/bind'
 import NavTitle from '../../../globals/components/NavTitle'
 import BrowseFilters from '../../../globals/components/BrowseFilters'
 import { reduceFiltersConfig } from '../../../filter/utils'
+import { useAuthState } from '../../../Providers/AuthProvider'
 
 import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
@@ -28,7 +28,9 @@ const NotificationList = () => {
   const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
   const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
   const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
   return (
