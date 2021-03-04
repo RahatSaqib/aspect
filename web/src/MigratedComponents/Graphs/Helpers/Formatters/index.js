@@ -6,11 +6,11 @@ import keys from 'lodash/keys'
 import last from 'lodash/last'
 import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
+import get from 'lodash/get'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import nth from 'lodash/nth'
-import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
 import split from 'lodash/split'
@@ -303,7 +303,8 @@ const translateLabel = (
   assaysFromState,
   legendsToRename,
   formatMessage,
-  intlMessages
+  intlMessages,
+  i18nKeys
 ) => {
   const dictionary = legendsToRename ? [...legendsToRename] : []
   assaysFromState.map(
@@ -321,14 +322,22 @@ const translateLabel = (
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
-
-  return formatMessage && intlMessages[string]
-    ? formatMessage(intlMessages[string]) || get(nth(newString, 0), 'name')
-    : makeProperCase(removeStringsFromArray(string))
+  console.log(
+    i18nKeys,
+    i18nKeys[string],
+    string,
+    intlMessages[i18nKeys[string]]
+  )
+  return formatMessage && intlMessages[i18nKeys[string]]
+    ? formatMessage(intlMessages[i18nKeys[string]]) ||
+        'ariel' ||
+        get(nth(newString, 0), 'name')
+    : 'ariel2' || makeProperCase(removeStringsFromArray(string))
 }
 const generateLegendIntl = (
   formatMessage,
   intlMessages,
+  i18nKeys,
   string,
   assaysFromState,
   type = false,
@@ -342,7 +351,8 @@ const generateLegendIntl = (
         assaysFromState,
         legendsToRename,
         formatMessage,
-        intlMessages
+        intlMessages,
+        i18nKeys
       ),
       color: generateColorForLegend(string, type),
     }

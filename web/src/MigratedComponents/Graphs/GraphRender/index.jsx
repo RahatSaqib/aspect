@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import uniq from 'lodash/uniq'
+import uniqWith from 'lodash/uniqWith'
+import isEqual from 'lodash/isEqual'
 import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -52,7 +53,7 @@ const GraphRender = ({
 
   const mergedParams = [...assayParams, ...endpointParams]
   const [rawData, setRawData] = useState(false)
-  const [i18nKeys, setI18nKeys] = useState(false)
+  const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
   const { culture } = useSelector(({ user }) => {
@@ -93,12 +94,13 @@ const GraphRender = ({
         const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
         setGraphData(grouped)
         setGraphKeys(keysFromGrouped)
-        const i18nkeys = rawData.map(elem => ({
-          [elem[keyToConsume]]: elem[i18nKey],
-        }))
-
-        // const externali18nkeys = keysFromGrouped.map()
-        // setI18nKeys()
+        const i18nKeysCollection = uniqWith(
+          rawData.map(elem => ({
+            [elem[keyToConsume]]: elem[i18nKey],
+          })),
+          isEqual
+        )
+        setI18nKeys(i18nKeysCollection)
       }
     }
   }, [rawData])
@@ -116,6 +118,7 @@ const GraphRender = ({
             averages={averages}
             assaysFromState={assaysFromState}
             i18n={messages}
+            i18nKeys={i18nKeys}
           />
         ) : null}
       </div>

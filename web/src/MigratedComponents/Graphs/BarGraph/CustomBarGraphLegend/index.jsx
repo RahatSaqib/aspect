@@ -81,9 +81,9 @@ const CustomBarGraphLegend = ({
   legendsToRename,
   legendsToPopover,
   symbolShape,
+  i18nKeys,
 }) => {
   const { formatMessage } = useIntl()
-
   return (
     <div
       className={cssClasses([
@@ -98,6 +98,7 @@ const CustomBarGraphLegend = ({
         const { label, color } = generateLegendIntl(
           formatMessage,
           messages,
+          i18nKeys,
           k,
           assaysFromState,
           type,
@@ -132,6 +133,7 @@ CustomBarGraphLegend.propTypes = {
   legendsNotToRender: PropTypes.oneOf([PropTypes.object]).isRequired,
   legendsToRename: PropTypes.oneOf([PropTypes.array]).isRequired,
   legendsToPopover: PropTypes.oneOf([PropTypes.array]).isRequired,
+  i18nKeys: PropTypes.oneOf([PropTypes.array]).isRequired,
 }
 
 export default CustomBarGraphLegend

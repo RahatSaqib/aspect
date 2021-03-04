@@ -33,6 +33,7 @@ const AspectResponsiveBar = ({
   tickValuesYShape,
   tickValuesXShape,
   type,
+  i18nKeys,
 }) => {
   const { setConfig } = useGraphClickThrough()
   const graphsToHaveCustomLegend = [
@@ -189,6 +190,7 @@ const AspectResponsiveBar = ({
               generateLegendIntl(
                 formatMessage,
                 messages,
+                i18nKeys,
                 k,
                 assaysFromState,
                 type,
@@ -292,6 +294,7 @@ const AspectResponsiveBar = ({
           style={{ flex: 1 }}
           keys={keys}
           generateLegendIntl={generateLegendIntl}
+          i18nKeys={i18nKeys}
           assaysFromState={assaysFromState}
           type={type}
           symbolShape={config(type, data, displayMethod).symbolShape}
@@ -339,6 +342,7 @@ AspectResponsiveBar.propTypes = {
     'barLegacyTreatment',
     'stackedDeviceActivity',
   ]),
+  i18nKeys: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default AspectResponsiveBar
