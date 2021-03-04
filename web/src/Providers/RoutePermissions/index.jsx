@@ -35,8 +35,6 @@ function RoutesPermissionProvider({ children }) {
     props: { children: routes = [] },
   } = children
 
-  // MOVE_ME
-
   const { permissions: userPermissions } = useSelector(
     ({ user }) => user.toJS().jwt
   )
