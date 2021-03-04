@@ -4,7 +4,7 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route } from 'react-router-dom'
 
-import { RoutesPermissionProvider } from '../../../Hooks/RoutePermissions'
+import { RoutesPermissionProvider } from '../../../Providers/RoutePermissions'
 import AspectLink from '../index'
 import { permissions, links } from '../tests/mocks'
 
