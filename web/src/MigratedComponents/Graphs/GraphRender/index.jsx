@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isEmpty from 'lodash/isEmpty'
+import isObject from 'lodash/isObject'
 import messages from '../intlMessages'
 import fetchWrapperForQueries from '../../QueryFetch'
 import {
@@ -31,6 +32,7 @@ const GraphRender = ({
   assays: { assaysFromState, whiteListed } = false,
   config,
   updatedParams = {},
+  formatMessage,
 }) => {
   const {
     api: { endpoint, params, method } = false,
@@ -43,10 +45,10 @@ const GraphRender = ({
     id,
     indexBy,
     keyToConsume,
-    keysToRename,
     i18nKey,
     type,
   } = config
+
   const assayParams = prepAssaysForParams(whiteListed, method)
   const endpointParams = prepParamsForEndPoint(params, updatedParams)
 
@@ -71,13 +73,26 @@ const GraphRender = ({
       }),
     { onSuccess: ({ data }) => setRawData(data) }
   )
-
   if (isError) {
     throw new Error(`Graph data fetch failed: ${error.message}`)
   }
 
   useEffect(() => {
+    let i18nKeysCollection = {}
     if (rawData && !isLoading) {
+      if (i18nKey) {
+        if (isObject(i18nKey)) i18nKeysCollection = i18nKey
+        else
+          i18nKeysCollection = reduce(
+            rawData,
+            (acc, curr) => {
+              acc[curr[keyToConsume]] = curr[i18nKey]
+              return acc
+            },
+            {}
+          )
+        setI18nKeys(i18nKeysCollection)
+      }
       const grouped = formatDataByGraphType(
         rawData,
         displayMethod,
@@ -85,26 +100,20 @@ const GraphRender = ({
         formatDate,
         indexBy,
         keyToConsume,
-        keysToRename,
+        i18nKeysCollection,
         type,
-        mergedParams
+        mergedParams,
+        formatMessage,
+        messages
       )
       if (grouped) {
         const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
         setGraphData(grouped)
         setGraphKeys(keysFromGrouped)
-        const i18nKeysCollection = reduce(
-          rawData,
-          (acc, curr) => {
-            acc[curr[keyToConsume]] = curr[i18nKey]
-            return acc
-          },
-          {}
-        )
-        setI18nKeys(i18nKeysCollection)
       }
     }
   }, [rawData])
+
   return (
     <Grid item xs={12} lg={size}>
       <div className={cssClasses('graphrender__container')}>
@@ -136,6 +145,7 @@ GraphRender.propTypes = {
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   id: PropTypes.string.isRequired,
   updatedParams: PropTypes.oneOfType([PropTypes.object]),
+  formatMessage: PropTypes.func.isRequired,
 }
 
 export default GraphRender

@@ -408,13 +408,12 @@ const groupForDeviceStatusAPI = (
   return normaliseKeys(grouped)
 }
 
-const groupForInvetoryStatusAPI = (data, keysToRename) => {
+const groupForInvetoryStatusAPI = (data, i18nKeys, formatMessage, messages) => {
   const grouped = []
   map(data, ({ consumableId, consumableName, ...rest }) =>
     map(rest, (val, key) => {
-      const findRenamedKey = filter(keysToRename, { externalId: key })
-      const renamedKey =
-        findRenamedKey && findRenamedKey.length ? findRenamedKey[0].name : key
+      const findRenamedKey = formatMessage(messages[i18nKeys[key]])
+      const renamedKey = findRenamedKey || key
       return grouped.push({
         consumableId,
         consumableName,

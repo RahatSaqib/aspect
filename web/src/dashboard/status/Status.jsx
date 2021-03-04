@@ -73,7 +73,7 @@ const Status = ({ history, location, colorDemo }) => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
-      {/*    <ErrorBoundary>
+      <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           <SummaryStatus
             intl={intl}
@@ -124,7 +124,7 @@ const Status = ({ history, location, colorDemo }) => {
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
-*/}
+
       <ErrorBoundary>
         <PermissionsProvider
           permissions={treatmentStatus.graphRenderPermissions}
@@ -137,7 +137,7 @@ const Status = ({ history, location, colorDemo }) => {
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
-      {/*
+
       <ErrorBoundary>
         <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
           {assays && assays.length ? (
@@ -145,7 +145,6 @@ const Status = ({ history, location, colorDemo }) => {
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
-
       <ErrorBoundary>
         <PermissionsProvider
           permissions={covidDailyConfirmed.graphRenderPermissions}
@@ -196,18 +195,15 @@ const Status = ({ history, location, colorDemo }) => {
             />
           ) : null}
         </PermissionsProvider>
-      </ErrorBoundary> */}
-
+      </ErrorBoundary>
       {colorDemo && <ColorDemo vars={process.env} />}
-
-      {/* <ErrorBoundary>
+      <ErrorBoundary>
         <PermissionsProvider
           permissions={inventoryStatus.graphRenderPermissions}
         >
           <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
         </PermissionsProvider>
-      </ErrorBoundary> */}
-
+      </ErrorBoundary>
       <Reports
         intl={intl}
         location={location}

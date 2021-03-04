@@ -26,7 +26,6 @@ const AspectResponsiveBar = ({
   displayLegend,
   displayMethod,
   indexBy,
-  legendsToRename,
   legendsToPopover,
   legendsNotToRender,
   keys,
@@ -180,7 +179,6 @@ const AspectResponsiveBar = ({
         }
     }
   }
-
   const baseLegend =
     displayLegend && !graphsToHaveCustomLegend.includes(type)
       ? [
@@ -213,7 +211,6 @@ const AspectResponsiveBar = ({
           },
         ]
       : []
-
   const format = (v, displayMethod, intlFormatNumber) =>
     type === 'stackedDeviceActivity'
       ? v.replace(/\D/g, '')
@@ -302,7 +299,6 @@ const AspectResponsiveBar = ({
           type={type}
           symbolShape={config(type, data, displayMethod).symbolShape}
           legendsNotToRender={legendsNotToRender}
-          legendsToRename={legendsToRename}
           legendsToPopover={legendsToPopover}
         />
       ) : null}

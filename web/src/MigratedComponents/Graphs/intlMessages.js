@@ -7,6 +7,7 @@ export const messages = defineMessages({
     defaultMessage:
       "The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.",
   },
+  // assays
   assayAbbottM2000PlasmaHivVL: {
     id: 'legends.Unknown.assayAbbottM2000PlasmaHivVL',
     defaultMessage: 'Abbott m2000 Plasma HIV VL',
@@ -140,6 +141,7 @@ export const messages = defineMessages({
     id: 'legends.Unknown.assayGXCovid19',
     defaultMessage: 'GeneXpert COVID-19',
   },
+  // Result categories.
   ResultCategoryDetected: {
     id: 'legends.Unknown.ResultCategoryDetected',
     defaultMessage: 'Detected',
@@ -275,6 +277,99 @@ export const messages = defineMessages({
   resultCategoryPresumptivePositive: {
     id: 'legends.Unknown.resultCategoryPresumptivePositive',
     defaultMessage: 'Presumptive Positive',
+  },
+  // treatment
+  Confirmed: {
+    id: 'legends.Unknown.Confirmed',
+    defaultMessage: 'Confirmed',
+  },
+  NotConfirmed: {
+    id: 'legends.Unknown.NotConfirmed',
+    defaultMessage: 'Not Confirmed',
+  },
+  // device maintenance status.
+
+  devicesActive: {
+    id: 'legends.Unknown.devicesActive',
+    defaultMessage: 'Active',
+  },
+  devicesInactive: {
+    id: 'legends.Unknown.devicesInactive',
+    defaultMessage: 'Inactive',
+  },
+  inactiveUnknown: {
+    id: 'legends.Unknown.inactiveUnknown',
+    defaultMessage: 'Unknownw',
+  },
+  inactiveNoResultsReported: {
+    id: 'legends.Unknown.inactiveNoResultsReported',
+    defaultMessage: 'No Results',
+  },
+  inactiveOutOfInventory: {
+    id: 'legends.Unknown.inactiveOutOfInventory',
+    defaultMessage: 'Out of inventory',
+  },
+  inactiveDownForRepair: {
+    id: 'legends.Unknown.inactiveDownForRepair',
+    defaultMessage: 'Down for Repair',
+  },
+  inactiveConnectivity: {
+    id: 'legends.Unknown.inactiveConnectivity',
+    defaultMessage: 'Connectivity issues',
+  },
+  inactiveDecommissioned: {
+    id: 'legends.Unknown.inactiveDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  weekendOrHoliday: {
+    id: 'legends.Unknown.weekendOrHoliday',
+    defaultMessage: 'Weel or holiday',
+  },
+  inactiveNoStaff: {
+    id: 'legends.Unknown.inactiveNoStaff',
+    defaultMessage: 'No Staff',
+  },
+  inactiveNoPower: {
+    id: 'legends.Unknown.inactiveNoPower',
+    defaultMessage: 'No Power',
+  },
+  inactiveOther: {
+    id: 'legends.Unknown.inactiveOther',
+    defaultMessage: 'Other Reasons',
+  },
+  // inventory statuses
+  outOfStock: {
+    id: 'legends.Unknown.outOfStock',
+    defaultMessage: 'Out of Stock',
+  },
+  upTo14: {
+    id: 'legends.Unknown.upTo14',
+    defaultMessage: '1-14 Days',
+  },
+  upTo30: {
+    id: 'legends.Unknown.upTo30',
+    defaultMessage: '15-30 Days',
+  },
+  upTo90: {
+    id: 'legends.Unknown.upTo90',
+    defaultMessage: '1-3 Months',
+  },
+  upTo180: {
+    id: 'legends.Unknown.upTo180',
+    defaultMessage: '4-6 Months',
+  },
+
+  moreThan180: {
+    id: 'legends.Unknown.moreThan180',
+    defaultMessage: '>6 Months',
+  },
+  notRecorded: {
+    id: 'legends.Unknown.notRecorded',
+    defaultMessage: 'Not Recorded',
+  },
+  noConsumption: {
+    id: 'legends.Unknown.noConsumption',
+    defaultMessage: 'No Consumption',
   },
 })
 

@@ -213,7 +213,6 @@ const generateTickValues = (
     default:
       break
   }
-
   return values
 }
 
@@ -253,7 +252,6 @@ const generateToolTip = (
   let displayId = translateLabel(
     id,
     assaysFromState,
-    false,
     formatMessage,
     intlMessages,
     i18nKeys
@@ -303,12 +301,11 @@ const removeStringsFromArray = string => {
 const translateLabel = (
   string,
   assaysFromState,
-  legendsToRename,
   formatMessage,
   intlMessages,
   i18nKeys
 ) => {
-  const dictionary = legendsToRename ? [...legendsToRename] : []
+  const dictionary = []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
@@ -320,6 +317,7 @@ const translateLabel = (
           )
       )
   )
+
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
@@ -363,9 +361,11 @@ const formatDataByGraphType = (
   formatDate,
   indexBy,
   keyToConsume,
-  keysToRename,
+  i18nKeys,
   type,
-  mergedParams
+  mergedParams,
+  formatMessage,
+  messages
 ) => {
   let grouped
   switch (type) {
@@ -408,7 +408,12 @@ const formatDataByGraphType = (
       break
 
     case 'barInventory':
-      grouped = groupForInvetoryStatusAPI(data, keysToRename)
+      grouped = groupForInvetoryStatusAPI(
+        data,
+        i18nKeys,
+        formatMessage,
+        messages
+      )
       break
 
     case 'pieLegacyTreatment':
