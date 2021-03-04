@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
-  const auth = useSelector(({ user }) => user.toJS().jwt)
+  const auth = useSelector(({ user }) => user.toJS())
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
 }
 

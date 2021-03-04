@@ -3,7 +3,6 @@ import fromPairs from 'lodash/fromPairs'
 import React, { useState, useEffect } from 'react'
 
 import { defineMessages, useIntl } from 'react-intl'
-import { useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
@@ -23,6 +22,7 @@ import {
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
+import { useAuthState } from '../../Providers/AuthProvider'
 
 const cssClasses = classnames.bind(require('./ReportIndex.css'))
 
@@ -59,7 +59,9 @@ const ReportIndex = () => {
   const history = useHistory()
   const location = useLocation()
   const intl = useIntl()
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
   const [items, setItems] = useState()
   const [filters, setFilters] = useState([])
 

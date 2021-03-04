@@ -16,7 +16,9 @@ const PermissionsProvider = ({
   extra: extraPermissions,
   children,
 }) => {
-  const { permissions } = useAuthState()
+  const {
+    jwt: { permissions },
+  } = useAuthState()
   const permissionsByTypes = flowRight([
     groupByPermissionTypes,
     getPermissions,
