@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { MemoryRouter } from 'react-router-dom'
 
+import { AuthProvider } from '../../../Providers/AuthProvider'
 import { LinkNavigation } from './LinkNavigation'
 
 const initialState = {
@@ -32,9 +33,11 @@ describe('LinkNavigation', () => {
 
   const Wrapper = ({ children }) => (
     <Provider store={store}>
-      <MemoryRouter>
-        <IntlProvider locale="en">{children}</IntlProvider>
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <IntlProvider locale="en">{children}</IntlProvider>
+        </MemoryRouter>
+      </AuthProvider>
     </Provider>
   )
 

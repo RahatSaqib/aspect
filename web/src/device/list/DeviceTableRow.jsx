@@ -43,7 +43,7 @@ const DeviceTableRow = ({
   intl,
   device,
   onAlertClick,
-  displayPreferences,
+  displayPreferences: { errorRateThreshold },
   ...restProps
 }) => (
   <TableRow
@@ -65,7 +65,7 @@ const DeviceTableRow = ({
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
-        threshold={displayPreferences.get('errorRateThreshold')}
+        threshold={errorRateThreshold}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
