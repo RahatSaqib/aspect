@@ -31,8 +31,7 @@ async function onResultLogged(
       .first(
         'dt.externalId as deviceTypeExternalId',
         'dis.externalId as diseaseExternalId',
-        'rws.externalId as currentResultWorkflowStatusExternalId',
-        'r.'
+        'rws.externalId as currentResultWorkflowStatusExternalId'
       )
     if (diseaseExternalId !== 'tb' || !currentResultWorkflowStatusExternalId) {
       return
