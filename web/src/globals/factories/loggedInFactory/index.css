@@ -36,22 +36,10 @@
 }
 .Footer-wrapper {
   font-size: 0.75rem;
-  margin-top: 10px;
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-.Footer-section {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}
-.Footer-stretch {
-  flex-grow: 1;
-}
-
-.Footer-align-right {
-  text-align: right;
+  padding: 15px 10px;
 }
 
 .VerticalAppBar {
