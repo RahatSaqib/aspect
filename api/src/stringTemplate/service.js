@@ -70,6 +70,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
       .leftJoin('Assay as a', `r.assayId`, 'a.id')
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
@@ -119,7 +120,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'a.name as assayName',
         'sample.externalId as sampleExternalId',
         'rc1.externalId as resultCategory1ExternalId',
-        'rc2.externalId as resultCategory2ExternalId'
+        'rc2.externalId as resultCategory2ExternalId',
+        'rs.name as reportableSiteName'
       )
   }
 
@@ -423,6 +425,7 @@ async function getBaseDataSource(data) {
       category2: {
         id: d.resultCategory2ExternalId,
       },
+      reportableSiteName: d.reportableSiteName,
     },
     person: {
       name: d.personName,
