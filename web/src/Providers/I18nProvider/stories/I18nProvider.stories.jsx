@@ -10,6 +10,9 @@ const messages = defineMessages({
     id: 'pages.Storybook.demoString',
     defaultMessage: 'Hello Storybook!',
   },
+  missingDefault: {
+    id: 'pages.Storybook.missingDefault',
+  },
 })
 
 function timezoneFromLocale(locale) {
@@ -52,6 +55,7 @@ const styles = {
   items: {
     display: 'flex',
     flexDirection: 'row',
+    marginBottom: '8px',
   },
   item: {
     fontFamily: 'arial',
@@ -71,8 +75,6 @@ const styles = {
 }
 
 const DemoComponent = ({ config: { flag } }) => {
-  const i18n = useI18n()
-
   const {
     culture,
     format,
@@ -82,7 +84,9 @@ const DemoComponent = ({ config: { flag } }) => {
     formatMessage,
     formatTime,
     formatTimezone,
-  } = i18n
+    formatWithOffset,
+    timezone,
+  } = useI18n()
 
   const now = new Date()
   const then = subDays(now, 56)
@@ -119,15 +123,21 @@ const DemoComponent = ({ config: { flag } }) => {
             <div>formatDate(date) [react-intl]</div>
             <div>formatTimezone(date) [vanilla-js]</div>
             <div>format(date, dateFormat) [date-fns]</div>
+            <div>formatTime(date) [react-intl]</div>
             <div>formatDistance(date1, date2) [date-fns]</div>
+            <div>formatWithOffset(date) [luxon]</div>
           </pre>
         </h4>
         <div style={styles.items}>
           <div style={styles.item}>{formatDate(now)}</div>
           <div style={styles.item}>{formatTimezone(now)}</div>
           <div style={styles.item}>{format(now, 'EEEE MMMM do')}</div>
+        </div>
+        <div style={styles.items}>
           <div style={styles.item}>{formatTime(now)}</div>
           <div style={styles.item}>{formatDistance(now, then)}</div>
+          <div style={styles.item}>{formatWithOffset(now)}</div>
+          <div style={styles.item}>{timezone}</div>
         </div>
       </div>
       <div style={styles.container}>
@@ -139,6 +149,10 @@ const DemoComponent = ({ config: { flag } }) => {
         </h4>
         <div style={styles.items}>
           <div style={styles.item}>{formatMessage(messages.demoString)}</div>
+          <div style={styles.item}>
+            {formatMessage(messages.missingDefault)}
+          </div>
+          <div style={styles.item}>{formatMessage(messages.dontExist)}</div>
         </div>
       </div>
     </div>

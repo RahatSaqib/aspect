@@ -1,5 +1,6 @@
 import React, { createContext } from 'react'
 import { useIntl } from 'react-intl'
+import { DateTime } from 'luxon'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import deLocale from 'date-fns/locale/de'
@@ -22,16 +23,13 @@ export const dateFNSLocales = {
 }
 
 const I18nProvider = ({ children }) => {
-  const {
-    locale,
-    formats: {
-      time: {
-        'user-timezone': { timeZone: timezone },
-      },
-    },
-    ...rest
-  } = useIntl()
+  const { locale, formats, formatMessage, ...rest } = useIntl()
   const dateFNSLocale = dateFNSLocales[locale]
+  const {
+    time: {
+      'user-timezone': { timeZone: timezone },
+    },
+  } = formats
 
   return (
     <I18nContext.Provider
@@ -39,9 +37,18 @@ const I18nProvider = ({ children }) => {
         culture: locale,
         dateFNSLocale,
         format: (d, f) => format(d, f, { locale: dateFNSLocale }),
+        formats,
+        formatWithOffset: d =>
+          DateTime.fromJSDate(d)
+            .setZone(timezone)
+            .toISO(),
         formatDistance: (f, t) =>
           formatDistance(f, t, { locale: dateFNSLocale }),
-        formatTimezone: d => d.toLocaleString(locale),
+        formatTimezone: d =>
+          d.toLocaleString(locale, {
+            timeZone: timezone,
+          }),
+        formatMessage: s => (!s ? '!! I18N ID not set !!' : formatMessage(s)),
         timezone,
         ...rest,
       }}
