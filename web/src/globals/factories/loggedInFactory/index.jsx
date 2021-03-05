@@ -10,6 +10,7 @@ import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 import ConnectedNavDrawer from './ConnectedNavDrawer'
 import VerticalAppBar from './VerticalAppBar'
 import HorizontalAppBar from './HorizontalAppBar'
+import Footer from './Footer'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
@@ -22,7 +23,11 @@ export const loggedInFactory = compose(
         <VerticalAppBar history={props.history} location={props.location} />
         <HorizontalAppBar history={props.history} location={props.location} />
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        {render(props)}
+
+        <div className={cssClasses('Page-Content')}>{render(props)}</div>
+
+        <Footer />
+
         <IdleDialog intl={props.intl} />
         <AppNotificationDialog intl={props.intl} />
         <AppNotificationSnackBar intl={props.intl} />

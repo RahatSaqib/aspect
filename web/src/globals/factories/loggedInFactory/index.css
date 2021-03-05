@@ -24,6 +24,34 @@
   position: absolute;
   right: 0;
   top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.Page-Content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.Footer-wrapper {
+  font-size: 0.75rem;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.Footer-section {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+.Footer-stretch {
+  flex-grow: 1;
+}
+
+.Footer-align-right {
+  text-align: right;
 }
 
 .VerticalAppBar {
