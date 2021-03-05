@@ -64,6 +64,50 @@ const messages = defineMessages({
         other {# results}
       }`,
   },
+  ResultWorkflowStatusOK: {
+    id: 'pages.ResultList.ResultWorkflowStatusOK',
+    defaultMessage: 'OK',
+  },
+  ResultWorkflowStatusError: {
+    id: 'pages.ResultList.ResultWorkflowStatusError',
+    defaultMessage: 'Error',
+  },
+  ResultWorkflowStatusOrdered: {
+    id: 'pages.ResultList.ResultWorkflowStatusOrdered',
+    defaultMessage: 'Ordered',
+  },
+  ResultWorkflowStatusInProgress: {
+    id: 'pages.ResultList.ResultWorkflowStatusInProgress',
+    defaultMessage: 'In Progress',
+  },
+  ResultWorkflowStatusFlagged: {
+    id: 'pages.ResultList.ResultWorkflowStatusFlagged',
+    defaultMessage: 'Flagged',
+  },
+  ResultWorkflowStatusAcknowledged: {
+    id: 'pages.ResultList.ResultWorkflowStatusAcknowledged',
+    defaultMessage: 'Acknowledged',
+  },
+  ResultWorkflowStatusDelivered: {
+    id: 'pages.ResultList.ResultWorkflowStatusDelivered',
+    defaultMessage: 'Delivered',
+  },
+  ResultWorkflowStatusDeliverable: {
+    id: 'pages.ResultList.ResultWorkflowStatusDeliverable',
+    defaultMessage: 'Ready for delivery',
+  },
+  Validated: {
+    id: 'pages.ResultList.ResultWorkflowStatusValidated',
+    defaultMessage: 'OK',
+  },
+  ResultWorkflowStatusProcessed: {
+    id: 'pages.ResultList.ResultWorkflowStatusProcessed',
+    defaultMessage: 'Processed',
+  },
+  ResultWorkflowStatusPurged: {
+    id: 'pages.ResultList.ResultWorkflowStatusPurged',
+    defaultMessage: 'Purged',
+  },
 })
 
 export default messages

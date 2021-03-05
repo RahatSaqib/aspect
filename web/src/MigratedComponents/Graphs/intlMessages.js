@@ -371,6 +371,18 @@ export const messages = defineMessages({
     id: 'legends.Unknown.noConsumption',
     defaultMessage: 'No Consumption',
   },
+  location: {
+    id: 'legends.Unknown.location',
+    defaultMessage: 'Location',
+  },
+  devices: {
+    id: 'legends.Unknown.devices',
+    defaultMessage: 'Devices',
+  },
+  device: {
+    id: 'legends.Unknown.device',
+    defaultMessage: 'Device',
+  },
 })
 
 export default messages

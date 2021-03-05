@@ -27,7 +27,13 @@ const formatterByType = partial(
   }
 )
 
-const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
+const ResultTableRow = ({
+  intl,
+  extraColumns,
+  result,
+  messages,
+  ...restProps
+}) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>
       {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
@@ -38,7 +44,9 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell>{result.get('assayName')}</TableCell>
     <TableCell>{result.get('resultText')}</TableCell>
     <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
-    <TableCell hiddenOn="md">{result.get('resultWorkflowStatus')}</TableCell>
+    <TableCell hiddenOn="md">
+      {intl.formatMessage(messages[result.get('resultWorkflowStatusI18nkey')])}
+    </TableCell>
     <TableCell hiddenOn="md">
       {result.get('treatmentStatusInfo') && (
         <Tooltip title={result.get('resultTreatmentStatusName')}>

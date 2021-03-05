@@ -2,6 +2,7 @@ import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { FaExclamationTriangle } from 'react-icons/fa'
+import { useIntl } from 'react-intl'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
 import {
@@ -14,70 +15,75 @@ const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
 const enhance = identity
 
-const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      <AlertType alertType={task.get('issueStatus')} />
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      <div className={cssClasses('Message')}>
-        <ColoredButton
-          className={cssClasses('ColoredButton')}
-          shipCove={
-            task
-              .get('issueCategoryExternalId')
-              .toString()
-              .toLowerCase() === 'devicehealth'
-          }
-          shakespeare={
-            task
-              .get('issueCategoryExternalId')
-              .toString()
-              .toLowerCase() === 'reagenthealth'
-          }
-          mountain={
-            task
-              .get('issueCategoryExternalId')
-              .toString()
-              .toLowerCase() === 'datahealth'
-          }
-          brink={
-            task
-              .get('issueCategoryExternalId')
-              .toString()
-              .toLowerCase() === 'connectivityhealth'
-          }
-          label={task.get('issueCategory')}
+const TaskTableRow = ({ intl, messages, task, ...restProps }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <TableRow
+      {...restProps}
+      className={cssClasses(restProps.className, 'TableRow')}
+    >
+      <TableCell className={cssClasses('TableCell')}>
+        <AlertType
+          alertType={formatMessage(messages[task.get('issueStatusI18nKey')])}
         />
-        <span className={cssClasses('Message__Subject')}>
-          {addEllipsis(task.get('title'))}
-        </span>
-        <span className={cssClasses('Message__Text')}>
-          {task.get('message')}
-        </span>
-        {messages.alertCount && task.get('issueCount') > 1 && (
-          <span className={cssClasses('Message__Alert')}>
-            <FaExclamationTriangle
-              className={cssClasses('FaExclamationTriangle')}
-            />
-            {intl.formatMessage(messages.alertCount, {
-              alertCount: task.get('issueCount'),
-            })}
+      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>
+        <div className={cssClasses('Message')}>
+          <ColoredButton
+            className={cssClasses('ColoredButton')}
+            shipCove={
+              task
+                .get('issueCategoryExternalId')
+                .toString()
+                .toLowerCase() === 'devicehealth'
+            }
+            shakespeare={
+              task
+                .get('issueCategoryExternalId')
+                .toString()
+                .toLowerCase() === 'reagenthealth'
+            }
+            mountain={
+              task
+                .get('issueCategoryExternalId')
+                .toString()
+                .toLowerCase() === 'datahealth'
+            }
+            brink={
+              task
+                .get('issueCategoryExternalId')
+                .toString()
+                .toLowerCase() === 'connectivityhealth'
+            }
+            label={formatMessage(messages[task.get('issueCategoryI18nKey')])}
+          />
+          <span className={cssClasses('Message__Subject')}>
+            {addEllipsis(task.get('title'))}
           </span>
-        )}
-      </div>
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {addEllipsis(task.get('site'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {formatRelative(intl, task.get('time'))}
-    </TableCell>
-  </TableRow>
-)
+          <span className={cssClasses('Message__Text')}>
+            {task.get('message')}
+          </span>
+          {messages.alertCount && task.get('issueCount') > 1 && (
+            <span className={cssClasses('Message__Alert')}>
+              <FaExclamationTriangle
+                className={cssClasses('FaExclamationTriangle')}
+              />
+              {intl.formatMessage(messages.alertCount, {
+                alertCount: task.get('issueCount'),
+              })}
+            </span>
+          )}
+        </div>
+      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>
+        {addEllipsis(task.get('site'))}
+      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>
+        {formatRelative(intl, task.get('time'))}
+      </TableCell>
+    </TableRow>
+  )
+}
 function addEllipsis(words) {
   const wordsArray = words.split(',')
   if (wordsArray.length > 2) return `${wordsArray[0]}, ${wordsArray[1]} ...`

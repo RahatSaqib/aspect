@@ -260,12 +260,15 @@ const generateToolTip = (
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
     const displayCount = Math.round(devicesTotal * valuePercentage)
-    const displayTitle = `device${displayCount === 1 ? '' : 's'}`
+    const displayTitle = formatMessage(
+      intlMessages[`device${displayCount === 1 ? '' : 's'}`]
+    )
+
     displayValue = `${displayCount} ${displayTitle}`
   } else if (type === 'solid') {
     displayValue = value
   } else if (type === 'barInventory') {
-    displayId = 'Locations'
+    displayId = formatMessage(intlMessages.location)
     displayValue = value
   } else if (type === 'bar' || type === 'barLegacyTreatment') {
     let totalOut = 0

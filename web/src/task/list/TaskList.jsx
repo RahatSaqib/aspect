@@ -68,6 +68,51 @@ const messages = defineMessages({
       other {# tasks}
     }`,
   },
+  issueStatusInactive: {
+    id: 'pages.TaskList.issueStatusInactive',
+    defaultMessage: 'Inactive',
+  },
+  issueStatusActive: {
+    id: 'pages.TaskList.issueStatusActive',
+    defaultMessage: 'Active',
+  },
+  issueStatusAcknowledged: {
+    id: 'pages.TaskList.issueStatusAcknowledged',
+    defaultMessage: 'Acknowledged',
+  },
+  issueStatusOK: { id: 'pages.TaskList.issueStatusOK', defaultMessage: 'OK' },
+  issueStatusDueSoon: {
+    id: 'pages.TaskList.issueStatusDueSoon',
+    defaultMessage: 'Due Soon',
+  },
+  issueStatusDueNow: {
+    id: 'pages.TaskList.issueStatusDueNow',
+    defaultMessage: 'Due Now',
+  },
+  issueStatusOverdue: {
+    id: 'pages.TaskList.issueStatusOverdue',
+    defaultMessage: 'Overdue',
+  },
+  issueStatusResolved: {
+    id: 'pages.TaskList.issueStatusResolved',
+    defaultMessage: 'Resolved',
+  },
+  issueCategoryDeviceHealth: {
+    id: 'pages.TaskList.issueCategoryDeviceHealth',
+    defaultMessage: 'Device Health',
+  },
+  issueCategoryReagentHealth: {
+    id: 'pages.TaskList.issueCategoryReagentHealth',
+    defaultMessage: 'Reagent Health',
+  },
+  issueCategoryDataHealth: {
+    id: 'pages.TaskList.issueCategoryDataHealth',
+    defaultMessage: 'Data Health',
+  },
+  issueCategoryConnectivityHealth: {
+    id: 'pages.TaskList.issueCategoryConnectivityHealth',
+    defaultMessage: 'Connectivity Health',
+  },
 })
 
 const FILTERS_CONFIG = {
