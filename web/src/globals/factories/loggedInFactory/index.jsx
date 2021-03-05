@@ -10,7 +10,7 @@ import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 import ConnectedNavDrawer from './ConnectedNavDrawer'
 import VerticalAppBar from './VerticalAppBar'
 import HorizontalAppBar from './HorizontalAppBar'
-import Footer from './Footer'
+import Footer from '../../../MigratedComponents/Shell/PageFooter'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
@@ -26,11 +26,11 @@ export const loggedInFactory = compose(
 
         <div className={cssClasses('Page-Content')}>{render(props)}</div>
 
-        <Footer />
-
         <IdleDialog intl={props.intl} />
         <AppNotificationDialog intl={props.intl} />
         <AppNotificationSnackBar intl={props.intl} />
+
+        <Footer />
       </div>
     </div>
   ),
