@@ -123,7 +123,7 @@ const DemoComponent = ({ config: { flag } }) => {
           </pre>
         </h4>
         <div style={styles.items}>
-          <div style={styles.item}>{formatDate(123)}</div>
+          <div style={styles.item}>{formatDate(now)}</div>
           <div style={styles.item}>{formatTimezone(now)}</div>
           <div style={styles.item}>{format(now, 'EEEE MMMM do')}</div>
           <div style={styles.item}>{formatTime(now)}</div>
