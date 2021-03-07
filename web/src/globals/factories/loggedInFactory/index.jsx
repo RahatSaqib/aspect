@@ -10,7 +10,7 @@ import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 import ConnectedNavDrawer from './ConnectedNavDrawer'
 import VerticalAppBar from './VerticalAppBar'
 import HorizontalAppBar from './HorizontalAppBar'
-import Footer from '../../../MigratedComponents/Shell/PageFooter'
+import Footer from '../../../MigratedComponents/Footer'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
