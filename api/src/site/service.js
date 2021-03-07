@@ -289,6 +289,167 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
     .first(SELECT_SHOW_FIELDS)
 }
 
+async function listSitesWithReporters(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(
+    auth.credentials,
+    'actionDashboard'
+  )
+  const { minDate, maxDate } = query
+
+  const sites = await knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Result as r', queryBuilder => {
+      queryBuilder.on('r.reportableSiteId', 's.id').orOn('r.siteId', 's.id')
+      if (minDate) {
+        queryBuilder.andOn('r.endedOn', '>=', knex.raw('?', [minDate]))
+      }
+      if (maxDate) {
+        queryBuilder.andOn('r.endedOn', '<=', knex.raw('?', [maxDate]))
+      }
+    })
+    .leftOuterJoin('Sample as sample', 'r.sampleId', 'sample.id')
+    .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftOuterJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .leftOuterJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftOuterJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftOuterJoin('SiteTag as siteTag', 's.id', 'siteTag.siteId')
+    .leftOuterJoin('Tag as tag', 'siteTag.tagId', 'tag.id')
+    /**
+     * for counting results 'delivered' to Reporters
+     */
+    .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
+    /**
+     * Notice that we do not use comparison 'on r.resultStatusLogId = rslog.id' here
+     * because current status may change and we are interested in current or previous statuses for
+     * resultStatus.externalId = 'Transfer' - ie. regardless it's current status or not
+     */
+    .leftOuterJoin('ResultStatusLog as rslog', 'r.id', 'rslog.resultId') // see comment above
+    .leftOuterJoin(
+      'ResultStatus as resultStatus',
+      'rslog.resultStatusId',
+      'resultStatus.id'
+    )
+    /**
+     * for counting different statuses rts.externalId = 'XXX'
+     */
+    .leftOuterJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'rtsl.id',
+      'r.treatmentStatusLogId'
+    )
+    .leftOuterJoin(
+      'ResultTreatmentStatus as rts',
+      'rts.id',
+      'rtsl.resultTreatmentStatusId'
+    )
+    /**
+     * for counting  rca.requiresTreatment = 1
+     */
+    .leftOuterJoin('ResultCategoryAssay as rca', builder => {
+      builder
+        .on('r.assayId', 'rca.assayId')
+        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+    })
+    /**
+     * take only clinics
+     */
+    .whereRaw(
+      `
+      tag.title LIKE ? or 
+      tag.title LIKE ? or
+      s.name like ? or
+      s.externalId like ?
+      `,
+      ['%clinic%', '%dots%', '%clinic%', '%clinic%']
+    )
+    .where(function () {
+      if (!query.siteIds) {
+        return
+      }
+      this.whereIn('s.id', query.siteIds.split(','))
+    })
+    .where(function () {
+      if (!query.deviceName) {
+        return
+      }
+      const deviceQuery = knex('Device as d')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .select('d.siteId')
+        .modify(filterParams, query, {
+          deviceName: 'd.name',
+          deviceType: 'dt.externalId',
+        })
+
+      this.whereIn('s.id', deviceQuery)
+    })
+    .groupBy(['s.id'])
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      siteId: 's.id',
+      externalId: 's.externalId',
+      partnerId: 's.partnerId',
+      deviceId: 'd.id',
+      deviceName: 'd.name',
+      deviceType: 'dt.externalId',
+      assayId: 'r.assayId',
+      diseaseId: 'dis.id',
+    })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    // all counts
+    .count({
+      totalResults: knex.raw('DISTINCT r.id'),
+      delivered: knex.raw('DISTINCT rdl.resultId'),
+      requiresTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id
+          THEN r.id ELSE null
+        END`),
+      onTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
+          THEN r.id ELSE null
+        END`),
+      notPossible: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
+          THEN r.id ELSE null
+        END`),
+      notOnTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId != 'NotPossible'
+          THEN r.id ELSE null
+        END`),
+      transferred: knex.raw(`DISTINCT
+        CASE
+          WHEN r.siteId = s.id AND resultStatus.externalId = 'Transfer' and sample.originSiteId != r.reportableSiteId
+          THEN r.id ELSE null
+        END`),
+    })
+    .select(
+      'g.countryId',
+      's.partnerId',
+      's.id as siteId',
+      's.name as siteName',
+      's.shortName as siteShortName',
+      'g.stateId',
+      'st.name as stateName',
+      'g.lgaId',
+      'l.name as lgaName'
+    )
+
+  return {
+    ok: true,
+    data: sites,
+  }
+}
+
 module.exports = {
   listSites,
   getSite,
@@ -296,4 +457,5 @@ module.exports = {
   showSite,
   updateSite,
   listSitesForSelectList,
+  listSitesWithReporters,
 }

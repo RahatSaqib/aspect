@@ -12,38 +12,36 @@ const {
   showSite,
   updateSite,
   listSitesForSelectList,
+  listSitesWithReporters,
 } = require('./service')
 
 const { exportSites } = require('./serviceReports')
 
+const filterQueryBase = {
+  siteIds: Joi.string().allow('').description('Filter for site ids'),
+  deviceName: Joi.string().allow('').description('Filter for device name'),
+  siteName: Joi.string().allow('').description('Filter for site name'),
+  externalId: Joi.string().allow('').description('Filter for facility code'),
+  format: Joi.string().allow('').description('File format for exporting data'),
+  ...validateAllGeographyFilterParams(),
+  ...validateDateRangeParams(),
+  ...validateSortPageParams(
+    'name',
+    'shortName',
+    'state',
+    'lga',
+    'createdOn',
+    'totalDevices',
+    'externalId',
+    'inventoryUpdatedOn'
+  ),
+}
 function listSitesBaseConfig() {
   return {
     auth: { scope: ['site'] },
     validate: {
       query: {
-        siteIds: Joi.string().allow('').description('Filter for site ids'),
-        deviceName: Joi.string()
-          .allow('')
-          .description('Filter for device name'),
-        siteName: Joi.string().allow('').description('Filter for site name'),
-        externalId: Joi.string()
-          .allow('')
-          .description('Filter for facility code'),
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(),
-        ...validateSortPageParams(
-          'name',
-          'shortName',
-          'state',
-          'lga',
-          'createdOn',
-          'totalDevices',
-          'externalId',
-          'inventoryUpdatedOn'
-        ),
+        ...filterQueryBase,
       },
     },
   }
@@ -211,6 +209,75 @@ const routes = [
                 externalId: Joi.string()
                   .required()
                   .description('External ID of the site'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/site/reporters',
+    handler: asyncHandler(listSitesWithReporters),
+    config: {
+      description: 'Sites with for Reporter Dashboard',
+      notes: `List of sites with some aggregations about reporters`,
+      /**
+       * we may put shortcut as `scope: ['reporter']` but still let's keep `:view` since
+       * we are going to use `reporter:edit` for the list of reporters in the manage section
+       * (see ASP-1866)
+       */
+      auth: { scope: ['reporter:view'] },
+      validate: {
+        query: {
+          ...filterQueryBase,
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .description('List of sites with statistics of reporters')
+            .items(
+              Joi.object().keys({
+                siteId: Joi.number().description('ID of the site'),
+                siteName: Joi.string().description('Site name'),
+                siteShortName: Joi.string().description('Site short name'),
+                partnerId: Joi.number().description('Partner Id'),
+                countryId: Joi.number().description('Country Id'),
+                stateId: Joi.number().allow(null).description('State Id'),
+                stateName: Joi.string()
+                  .allow('', null)
+                  .description('State name'),
+                lgaId: Joi.number().allow(null).description('Lga Id'),
+                lgaName: Joi.string().allow('', null).description('Lga name'),
+                totalResults: Joi.number().description(
+                  'The number of results where the reportable site is the clinic'
+                ),
+                delivered: Joi.number().description(
+                  'The number of those results that were delivered to any Reporter'
+                ),
+                requiresTreatment: Joi.number().description(
+                  'The number of delivered results that require treatment'
+                ),
+                onTreatment: Joi.number().description(
+                  'The number of delivered results on treatment'
+                ),
+                notPossible: Joi.number().description(
+                  'The number of results where "Not Possible" was selected for treatment'
+                ),
+                notOnTreatment: Joi.number().description(
+                  `The number of results that require treatment, but that weren't put on treatment yet (not including "Not Possible" in this count)`
+                ),
+                transferred: Joi.number().description(
+                  'The number of delivered results that were transferred to another clinic'
+                ),
               })
             ),
         }),

@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 const differenceInDays = require('date-fns/differenceInDays')
-const { knex, filterParams } = require('../db')
+const { knex } = require('../db')
 const {
   getConstraints,
   addConstraints,
@@ -797,122 +797,6 @@ async function getAssayResultCategoryList(dataConstraints) {
   return assayResultCategory
 }
 
-async function reportersDashboard(request) {
-  const { auth, query } = request
-  const dataConstraints = await getConstraints(
-    auth.credentials,
-    'actionDashboard'
-  )
-  const { minDate, maxDate } = query
-
-  const sites = await knex('Site as s')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-
-    .leftOuterJoin('Result as r', queryBuilder => {
-      queryBuilder.on('r.reportableSiteId', 's.id').orOn('r.siteId', 's.id')
-      if (minDate) {
-        queryBuilder.andOn('r.endedOn', '>=', knex.raw('?', [minDate]))
-      }
-      if (maxDate) {
-        queryBuilder.andOn('r.endedOn', '<=', knex.raw('?', [maxDate]))
-      }
-    })
-    .leftOuterJoin('Sample as sample', 'r.sampleId', 'sample.id')
-    /**
-     * for counting results 'delivered' to Reporters
-     */
-    .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
-    /**
-     * Notice that we do not use comparison 'on r.resultStatusLogId = rslog.id' here
-     * because current status may change and we are interested in current or previous statuses for
-     * resultStatus.externalId = 'Transfer' - ie. regardless it's current status or not
-     */
-    .leftOuterJoin('ResultStatusLog as rslog', 'r.id', 'rslog.resultId') // see comment above
-    .leftOuterJoin(
-      'ResultStatus as resultStatus',
-      'rslog.resultStatusId',
-      'resultStatus.id'
-    )
-    /**
-     * for counting different statuses rts.externalId = 'XXX'
-     */
-    .leftOuterJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'rtsl.id',
-      'r.treatmentStatusLogId'
-    )
-    .leftOuterJoin(
-      'ResultTreatmentStatus as rts',
-      'rts.id',
-      'rtsl.resultTreatmentStatusId'
-    )
-    /**
-     * for counting  rca.requiresTreatment = 1
-     */
-    .leftOuterJoin('ResultCategoryAssay as rca', builder => {
-      builder
-        .on('r.assayId', 'rca.assayId')
-        .andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
-
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      partnerId: 's.partnerId',
-      siteName: 's.name',
-      siteId: 's.id',
-    })
-    // .whereRaw(`(s.externalId like '%clinic%' or s.name like '%clinic%')`)
-    .groupBy('s.id')
-    .count({
-      totalResults: knex.raw('DISTINCT r.id'),
-      delivered: knex.raw('DISTINCT rdl.resultId'),
-      requiresTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id
-          THEN r.id ELSE null
-        END`),
-      onTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
-          THEN r.id ELSE null
-        END`),
-      notPossible: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
-          THEN r.id ELSE null
-        END`),
-      notOnTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId <> 'NotPossible'
-          THEN r.id ELSE null
-        END`),
-      transferred: knex.raw(`DISTINCT
-        CASE
-          WHEN r.siteId = s.id AND resultStatus.externalId = 'Transfer' and sample.originSiteId != r.reportableSiteId
-          THEN r.id ELSE null
-        END`),
-    })
-    .select(
-      'g.countryId',
-      's.partnerId',
-      's.id as siteId',
-      's.name as siteName',
-      's.shortName as siteShortName',
-      'g.stateId',
-      'st.name as stateName',
-      'g.lgaId',
-      'l.name as lgaName'
-    )
-
-  return {
-    ok: true,
-    data: sites,
-  }
-}
-
 module.exports = {
   summaryDashboard,
   targetDashboard,
@@ -923,5 +807,4 @@ module.exports = {
   actionDashboard,
   resultsTransmittedDashboard,
   activityOverTimeDashboard,
-  reportersDashboard,
 }

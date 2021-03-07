@@ -51,14 +51,14 @@ const getLastId = async tableName => {
   return id
 }
 // ------------------------
-const reset = async (tableName, id) =>
+const reset = async (tableName, value, columnName = 'id') =>
   knex(tableName)
-    .where('id', '>', id || 0)
+    .where(columnName, '>', value || 0)
     .delete()
 // ------------------------
 
-describe('Reporters Dashboard - GET /dashboard/site-reporters', () => {
-  const path = '/api/dashboard/site-reporters'
+describe.only('Reporters Dashboard - GET /site/reporters', () => {
+  const path = '/api/site/reporters'
   shared.checkToken(server, path)
 
   const now = parseISO(new Date().toISOString())
@@ -80,6 +80,7 @@ describe('Reporters Dashboard - GET /dashboard/site-reporters', () => {
       resultDownloadLogId: await getLastId('ResultDownloadLog'),
       resultStatusLogId: await getLastId('ResultStatusLog'),
       resultTreatmentStatusLogId: await getLastId('ResultTreatmentStatusLog'),
+      tagId: await getLastId('Tag'),
     }
     // -----------------------------
     // get data for adding results
@@ -142,10 +143,20 @@ describe('Reporters Dashboard - GET /dashboard/site-reporters', () => {
         weekDays.push(day)
       }
     }
+    const { id: deviceId, geographyId, siteId } = device
+
+    // -----------------------------
+    // add site tag 'clinic'
+    // -----------------------------
+    const [tagId] = await knex('Tag').insert({
+      title: 'clinic',
+    })
+    initialState.tagId = tagId
+    await knex('SiteTag').insert({ siteId, tagId })
+
     // -----------------------------
     // insert few results for few weekdays
     // -----------------------------
-    const { id: deviceId, geographyId, siteId } = device
     initialState.siteId = siteId
     const samples = []
     const results = []
@@ -245,7 +256,9 @@ describe('Reporters Dashboard - GET /dashboard/site-reporters', () => {
       initialState.resultTreatmentStatusLogId
     )
     await reset('Result', initialState.resultId)
-    await reset('Sample', initialState.sampleId || 0)
+    await reset('Sample', initialState.sampleId)
+    await reset('SiteTag', initialState.tagId, 'tagId')
+    await reset('Tag', initialState.tagId)
   })
 
   it('should return data for Reporters Dashboard', async () => {
