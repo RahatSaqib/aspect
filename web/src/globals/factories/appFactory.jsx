@@ -16,6 +16,7 @@ import LocalStorage from '../sideEffects/LocalStorage'
 import { actions as idleActions } from '../../idle/IdleRedux'
 import uiProvidersFactory from './uiProvidersFactory'
 import routerFactory from './routerFactory'
+import { AuthProvider } from '../../Providers/AuthProvider'
 
 const formatsByTimezoneId = timezoneId => {
   const formats = {}
@@ -87,7 +88,11 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
 })
 
 export const appFactory = compose(
-  render => ({ store }) => <Provider store={store}>{render()}</Provider>,
+  render => ({ store }) => (
+    <Provider store={store}>
+      <AuthProvider>{render()}</AuthProvider>
+    </Provider>
+  ),
   uiProvidersFactory,
   render => {
     const App = ({

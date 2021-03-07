@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
-import { useSelector } from 'react-redux'
 import isFunction from 'lodash/isFunction'
 
 import { useFormikState } from './Formik/Context'
+import { useAuthState } from '../../Providers/AuthProvider'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
@@ -36,7 +36,9 @@ const getDefaultDisplayState = defaultAction => {
 }
 
 const FormActions = ({ config }) => {
-  const permissions = useSelector(({ user }) => user.jwt.permissions)
+  const {
+    jwt: { permissions },
+  } = useAuthState()
   const { actions } = config
   const { items: formActions, default: defaultAction } = actions
   const { formik, toggleEdit, setToggleEdit } = useFormikState()

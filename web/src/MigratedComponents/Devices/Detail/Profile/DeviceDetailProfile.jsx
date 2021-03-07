@@ -4,7 +4,7 @@ import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import { defineMessages, injectIntl, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { connect, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -17,6 +17,7 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../../shared/selectors/searchParams'
+import { useAuthState } from '../../../../Providers/AuthProvider'
 import { formatDate, formatRelative } from '../../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../../filter/utils'
 import Results from '../../../../result/historyResults/HistoryResults'
@@ -637,7 +638,11 @@ const DeviceDetailProfile = ({
   onExportClick,
 }) => {
   const intl = useIntl()
-  const user = useSelector(state => state.user)
+  const {
+    culture,
+    displayPreferences: { utilizationRateThreshold, errorRateThreshold },
+  } = useAuthState()
+
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')
@@ -645,8 +650,6 @@ const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
-
-  const { displayPreferences } = user
 
   const maintenanceStatusNotes =
     !device.get('maintenanceStatusNotes') ||
@@ -831,10 +834,7 @@ const DeviceDetailProfile = ({
                     number={utilizationRateThisMonth}
                     intl={intl}
                     formatNumberStyle="percent"
-                    error={
-                      utilizationRateThisMonth <
-                      displayPreferences.get('utilizationRateThreshold')
-                    }
+                    error={utilizationRateThisMonth < utilizationRateThreshold}
                   />
                 }
               />
@@ -866,10 +866,7 @@ const DeviceDetailProfile = ({
                     number={errorRateThisMonth}
                     intl={intl}
                     formatNumberStyle="percent"
-                    error={
-                      errorRateThisMonth >
-                      displayPreferences.get('errorRateThreshold')
-                    }
+                    error={errorRateThisMonth > errorRateThreshold}
                   />
                 ) : (
                   intl.formatMessage(messages.undefinedValue)
@@ -919,7 +916,7 @@ const DeviceDetailProfile = ({
         performanceReport={devicePerformance}
         match={match}
         location={location}
-        culture={user?.culture}
+        culture={culture}
       />
 
       <AuthenticatedResults

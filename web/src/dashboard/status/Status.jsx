@@ -5,12 +5,14 @@ import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
+
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import { useAuthState } from '../../Providers/AuthProvider'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
@@ -43,10 +45,11 @@ const Status = ({ history, location, colorDemo }) => {
   } = covidGraphs
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
-  const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2CodeIgnored = useSelector(
-    ({ user }) => user.countryAbbreviation
-  )
+  const {
+    countryAbbreviation: countryIsoAlpha2CodeIgnored,
+    jwt: { name: userName },
+  } = useAuthState()
+
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
   )
