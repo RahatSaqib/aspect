@@ -18,4 +18,3 @@ ShellFooter.propTypes = {
 }
 
 export default ShellFooter
-// some
