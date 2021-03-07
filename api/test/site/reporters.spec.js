@@ -28,9 +28,9 @@ const {
 
 const { assert } = chai
 
-// ------------------------
+// ------------------------------------------------------------------------
 // helpers
-// ------------------------
+// ------------------------------------------------------------------------
 const addRtsl = async (result, userId, resultTreatmentStatusId) => {
   const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
     resultId: result.id,
@@ -45,17 +45,17 @@ const addRtsl = async (result, userId, resultTreatmentStatusId) => {
     })
     .where('id', result.id)
 }
-// ------------------------
+// ------------------------------------------------------------------------
 const getLastId = async tableName => {
   const [id] = (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
   return id
 }
-// ------------------------
+// ------------------------------------------------------------------------
 const reset = async (tableName, value, columnName = 'id') =>
   knex(tableName)
     .where(columnName, '>', value || 0)
     .delete()
-// ------------------------
+// ------------------------------------------------------------------------
 
 describe('Reporters Dashboard - GET /site/reporters', () => {
   const path = '/api/site/reporters'
@@ -70,6 +70,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
   let initialState = {}
   let assayGeneXpertMtbRif
   const weekDays = []
+
   before(async () => {
     // -----------------------------
     // get last item id from tables we touch in test
@@ -90,27 +91,11 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .where('u.name', 'admin')
       .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
     const countryAbbreviation = 'US'
-    const now = new Date().toISOString()
-    const auditFields = {
-      createdOn: now,
-      createdBy: userId,
-      updatedOn: now,
-      updatedBy: userId,
-    }
-    const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const {
-      DiagnosticDevice: resultSourceDiagnosticId,
-    } = await allResultSourceToId()
-    const resultTypePatientId = await resultTypeToId('Patient')
-    const {
-      Detected: resultCategoryDetectedId,
-      NotDetected: resultCategoryNotDetectedId,
-    } = await allResultCategoryToId()
-    const resultStatusIds = await allResultStatusToId()
-    const resultTreatmentStatusIds = await allResultTreatmentStatusToId()
+
     ;[assayGeneXpertMtbRif] = [
       await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name'),
     ]
+
     const device = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -125,17 +110,6 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .where('c.abbreviation', countryAbbreviation)
       .where('da.token', 'approved')
       .first('d.id', 'd.partnerId', 'd.geographyId', 'd.siteId')
-
-    // get sites
-    const resSites = await server
-      .get('/api/site')
-      .set('Authorization', `Bearer ${shared.token}`)
-    assert.equal(resSites.status, 200)
-    assert.typeOf(resSites.body, 'Object')
-    assert.property(resSites.body, 'data')
-    const {
-      body: { data: sites },
-    } = resSites
 
     // week-day dates
     for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
@@ -154,10 +128,64 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     initialState.tagId = tagId
     await knex('SiteTag').insert({ siteId, tagId })
 
+    initialState.deviceId = deviceId
+    initialState.geographyId = geographyId
+    initialState.partnerId = partnerId
+    initialState.siteId = siteId
+    initialState.userId = userId
+  })
+
+  after(async () => {
+    // reset all data tables affected in test
+    await reset('ResultDownloadLog', initialState.resultDownloadLogId)
+    await reset('ResultStatusLog', initialState.resultStatusLogId)
+    await reset(
+      'ResultTreatmentStatusLog',
+      initialState.resultTreatmentStatusLogId
+    )
+    await reset('Result', initialState.resultId)
+    await reset('Sample', initialState.sampleId)
+    await reset('SiteTag', initialState.tagId, 'tagId')
+    await reset('Tag', initialState.tagId)
+  })
+
+  // ------------------------------------------------------------------------
+  const createResults = async () => {
+    const { deviceId, geographyId, partnerId, siteId, userId } = initialState
+    const now = new Date().toISOString()
+    const auditFields = {
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+    }
+
+    const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
+    const {
+      DiagnosticDevice: resultSourceDiagnosticId,
+    } = await allResultSourceToId()
+    const resultTypePatientId = await resultTypeToId('Patient')
+    const {
+      Detected: resultCategoryDetectedId,
+      NotDetected: resultCategoryNotDetectedId,
+    } = await allResultCategoryToId()
+    const resultStatusIds = await allResultStatusToId()
+    const resultTreatmentStatusIds = await allResultTreatmentStatusToId()
+
+    // get sites
+    const resSites = await server
+      .get('/api/site')
+      .set('Authorization', `Bearer ${shared.token}`)
+    assert.equal(resSites.status, 200)
+    assert.typeOf(resSites.body, 'Object')
+    assert.property(resSites.body, 'data')
+    const {
+      body: { data: sites },
+    } = resSites
+
     // -----------------------------
     // insert few results for few weekdays
     // -----------------------------
-    initialState.siteId = siteId
     const samples = []
     const results = []
     await Promise.each(_.range(totalResults), async index => {
@@ -184,7 +212,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         partnerId,
         geographyId,
         siteId,
-        reportableSiteId: sample.originSiteId, // || siteId,
+        reportableSiteId: sample.originSiteId,
         deviceId,
         resultSourceId: resultSourceDiagnosticId,
         resultTypeId: resultTypePatientId,
@@ -245,23 +273,9 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     // 5-th result - AwaitingTreatment
     ;[, , , , result] = results
     await addRtsl(result, userId, resultTreatmentStatusIds.AwaitingTreatment)
-  })
-
-  after(async () => {
-    // reset all data tables affected in test
-    await reset('ResultDownloadLog', initialState.resultDownloadLogId)
-    await reset('ResultStatusLog', initialState.resultStatusLogId)
-    await reset(
-      'ResultTreatmentStatusLog',
-      initialState.resultTreatmentStatusLogId
-    )
-    await reset('Result', initialState.resultId)
-    await reset('Sample', initialState.sampleId)
-    await reset('SiteTag', initialState.tagId, 'tagId')
-    await reset('Tag', initialState.tagId)
-  })
-
-  it('should return data for Reporters Dashboard', async () => {
+  }
+  // ------------------------------------------------------------------------
+  const getSiteReporters = async () => {
     const res = await server
       .get(`${path}`)
       .query({
@@ -277,36 +291,65 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     const { data } = res.body
     assert.typeOf(data, 'array')
 
-    // has items for at least 1 site with 5 inserted results
-    assert.isAtLeast(data.length, 1)
+    return data
+  }
 
-    const item = data[0]
-    assert.property(item, 'countryId')
-    assert.property(item, 'delivered')
-    assert.property(item, 'lgaId')
-    assert.property(item, 'lgaName')
-    assert.property(item, 'notPossible')
-    assert.property(item, 'notOnTreatment')
-    assert.property(item, 'onTreatment')
-    assert.property(item, 'partnerId')
-    assert.property(item, 'requiresTreatment')
-    assert.property(item, 'siteId')
-    assert.property(item, 'siteName')
-    assert.property(item, 'siteShortName')
-    assert.property(item, 'stateId')
-    assert.property(item, 'stateName')
-    assert.property(item, 'totalResults')
-    assert.property(item, 'transferred')
+  // ------------------------------------------------------------------------
+  it('should return data for Reporters Dashboard', async () => {
+    // fetch sites before creating new results
+    const dataBefore = await getSiteReporters()
+
+    // get initial counts
+    let site = dataBefore.find(({ siteId }) => siteId === initialState.siteId)
+    const {
+      delivered = 0,
+      notPossible = 0,
+      notOnTreatment = 0,
+      onTreatment = 0,
+      requiresTreatment = 0,
+      totalResults = 0,
+      transferred = 0,
+    } = site || {}
+
+    // create 5 new results
+    await createResults()
+
+    // fetch sites after creating results
+    const dataAfter = await getSiteReporters()
+
+    // has items for at least 1 site with 5 inserted results
+    assert.isAtLeast(dataAfter.length, 1)
 
     // get site for which we just inserted results
-    const site = data.find(({ siteId }) => siteId === initialState.siteId)
+    site = dataAfter.find(({ siteId }) => siteId === initialState.siteId)
+
+    assert.property(site, 'countryId')
+    assert.property(site, 'delivered')
+    assert.property(site, 'lgaId')
+    assert.property(site, 'lgaName')
+    assert.property(site, 'notPossible')
+    assert.property(site, 'notOnTreatment')
+    assert.property(site, 'onTreatment')
+    assert.property(site, 'partnerId')
+    assert.property(site, 'requiresTreatment')
+    assert.property(site, 'siteId')
+    assert.property(site, 'siteName')
+    assert.property(site, 'siteShortName')
+    assert.property(site, 'stateId')
+    assert.property(site, 'stateName')
+    assert.property(site, 'totalResults')
+    assert.property(site, 'transferred')
+
     // it should contain all counts
-    assert.isAtLeast(site.delivered, 1)
-    assert.isAtLeast(site.notPossible, 1)
-    assert.isAtLeast(site.notOnTreatment, 1)
-    assert.isAtLeast(site.onTreatment, 1)
-    assert.isAtLeast(site.requiresTreatment, 1)
-    assert.isAtLeast(site.totalResults, 1)
-    assert.isAtLeast(site.transferred, 1)
+    assert.equal(site.delivered, delivered + 1)
+    assert.equal(site.notPossible, notPossible + 1)
+    // 1 AwaitingTreatment + 1 OnTreatment
+    assert.equal(site.notOnTreatment, notOnTreatment + 2)
+    assert.equal(site.onTreatment, onTreatment + 1)
+    // we inserted 5 results, and then transferred 1 - so the rest 4 requires treatment
+    assert.equal(site.requiresTreatment, requiresTreatment + 4)
+    // 5 results inserted
+    assert.equal(site.totalResults, totalResults + 5)
+    assert.equal(site.transferred, transferred + 1)
   })
 })
