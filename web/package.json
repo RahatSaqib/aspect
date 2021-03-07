@@ -2,6 +2,10 @@
   "name": "aspect-web",
   "private": true,
   "version": "0.0.1",
+  "appVersions": {
+    "api": "0.0.1",
+    "web": "0.0.1"
+  },
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
@@ -29,11 +33,12 @@
     "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json",
     "storybook": "start-storybook -p 8001",
     "build-storybook": "build-storybook",
-    "scaffold": "plop "
+    "scaffold": "plop ",
+    "versions:update": "node updateVersions.js"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn versions:update && lint-staged"
     }
   },
   "lint-staged": {
