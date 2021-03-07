@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "appVersions": {
-    "api": "0.0.1",
+    "api": "0.9.1",
     "web": "0.0.1"
   },
   "description": "The web client for the aspect API",
