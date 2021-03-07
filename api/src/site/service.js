@@ -311,6 +311,7 @@ async function listSitesWithReporters(request) {
       }
     })
     .leftOuterJoin('Sample as sample', 'r.sampleId', 'sample.id')
+    .leftOuterJoin('Site as originSite', 'sample.originSiteId', 'originSite.id')
     .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftOuterJoin('Disease as dis', 'at.diseaseId', 'dis.id')
@@ -428,7 +429,9 @@ async function listSitesWithReporters(request) {
         END`),
       transferred: knex.raw(`DISTINCT
         CASE
-          WHEN r.siteId = s.id AND resultStatus.externalId = 'Transfer' and sample.originSiteId != r.reportableSiteId
+          WHEN originSite.id is not null
+            and originSite.id != r.reportableSiteId
+            and resultStatus.externalId = 'Transfer'
           THEN r.id ELSE null
         END`),
     })

@@ -57,7 +57,7 @@ const reset = async (tableName, value, columnName = 'id') =>
     .delete()
 // ------------------------
 
-describe.only('Reporters Dashboard - GET /site/reporters', () => {
+describe('Reporters Dashboard - GET /site/reporters', () => {
   const path = '/api/site/reporters'
   shared.checkToken(server, path)
 
