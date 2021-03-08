@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-08T18:47:15.916Z\n"
+"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -60,62 +60,6 @@ msgstr ""
 "...контакты, множественное число, один {# больше {name}} другой {# больше "
 "{name}s} }"
 
-#. [pages.deviceDetail.resultCategoryLessThan1000]
-#. defaultMessage is:
-#. < 1000
-#: extracted_strings.json
-msgid "< 1000"
-msgstr "< 1000"
-
-#. [pages.deviceDetail.resultCategoryLessThan150]
-#. defaultMessage is:
-#. < 150
-#: extracted_strings.json
-msgid "< 150"
-msgstr "< 150"
-
-#. [pages.deviceDetail.resultCategoryLessThan40]
-#. defaultMessage is:
-#. < 40
-#: extracted_strings.json
-msgid "< 40"
-msgstr "< 40"
-
-#. [pages.deviceDetail.resultCategoryLessThan550]
-#. defaultMessage is:
-#. < 550
-#: extracted_strings.json
-msgid "< 550"
-msgstr "< 550"
-
-#. [pages.deviceDetail.resultCategoryMoreThan1000]
-#. defaultMessage is:
-#. >= 1000
-#: extracted_strings.json
-msgid ">= 1000"
-msgstr ">= 1000"
-
-#. [pages.deviceDetail.resultCategoryMoreThan150]
-#. defaultMessage is:
-#. >= 150
-#: extracted_strings.json
-msgid ">= 150"
-msgstr ">= 150"
-
-#. [pages.deviceDetail.resultCategoryMoreThan40]
-#. defaultMessage is:
-#. >= 40
-#: extracted_strings.json
-msgid ">= 40"
-msgstr ">= 40"
-
-#. [pages.deviceDetail.resultCategoryMoreThan550]
-#. defaultMessage is:
-#. >= 550
-#: extracted_strings.json
-msgid ">= 550"
-msgstr ">= 550"
-
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
 #. A username is required
@@ -137,6 +81,8 @@ msgstr "Abbott m2000 DBS ВИЧ VL"
 #. defaultMessage is:
 #. Abbott m2000 Daan N COVID-19
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Abbott m2000 DBS HIV VL"
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 DBS ВИЧ VL"
 
@@ -517,9 +463,6 @@ msgstr "Статус одобрения"
 #. [pages.DeviceList.status.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.filter.status.approved]
-#. defaultMessage is:
-#. Approved
 #. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
@@ -611,9 +554,6 @@ msgstr "Назначьте {count} ключи"
 #. [pages.DeviceList.status.assigned]
 #. defaultMessage is:
 #. Assigned
-#. [pages.filter.status.assigned]
-#. defaultMessage is:
-#. Assigned
 #: extracted_strings.json
 msgid "Assigned"
 msgstr "Прикреплен"
@@ -694,13 +634,6 @@ msgstr "Среднее количество тестов в день, зарег
 #: extracted_strings.json
 msgid "Average time to replace disabled module"
 msgstr "Среднее время замены отключенного модуля"
-
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
-#. defaultMessage is:
-#. Awaiting Treatment
-#: extracted_strings.json
-msgid "Awaiting Treatment"
-msgstr "На лечении"
 
 #. [legends.Unknown.assayBdMgitAst]
 #. defaultMessage is:
@@ -956,13 +889,6 @@ msgstr "Клинические показатели"
 msgid "Close"
 msgstr "Закрыть"
 
-#. [pages.deviceDetail.resultCategoryCollectNewSample]
-#. defaultMessage is:
-#. Collect New Sample
-#: extracted_strings.json
-msgid "Collect New Sample"
-msgstr "Собрано"
-
 #. [forms.formItem.collectedBy]
 #. defaultMessage is:
 #. Collected By
@@ -1136,13 +1062,6 @@ msgstr "Имя/электронная почта"
 msgid "Contacts"
 msgstr "Контакты"
 
-#. [pages.deviceDetail.resultCategoryContaminated]
-#. defaultMessage is:
-#. Contaminated
-#: extracted_strings.json
-msgid "Contaminated"
-msgstr "Контакты"
-
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
 #. Copy
@@ -1304,6 +1223,8 @@ msgstr "Культура"
 #. defaultMessage is:
 #. Current Network Status
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Treatment Status"
 msgid "Current Network Status"
 msgstr "Статус лечения"
 
@@ -1419,8 +1340,10 @@ msgstr "Дата добавления"
 #. defaultMessage is:
 #. Date Range
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Date Removed"
 msgid "Date Range"
-msgstr "Диапазон дат"
+msgstr "Дата удаления"
 
 #. [pages.ReceiveInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -1471,9 +1394,6 @@ msgstr "Дни замены инструмента"
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceList.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.filter.status.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
@@ -1534,13 +1454,6 @@ msgstr "Детали изменены успешно"
 #: extracted_strings.json
 msgid "Details..."
 msgstr "Детали..."
-
-#. [pages.deviceDetail.ResultCategoryDetected]
-#. defaultMessage is:
-#. Detected
-#: extracted_strings.json
-msgid "Detected"
-msgstr "Обнаружен"
 
 #. [forms.formSectionHeader.device]
 #. defaultMessage is:
@@ -1670,13 +1583,6 @@ msgstr "Устройства, испытывающие перебои в обс�
 #. Discard
 #: extracted_strings.json
 msgid "Discard"
-msgstr "Отменить"
-
-#. [pages.deviceDetail.resultCategoryDiscordant]
-#. defaultMessage is:
-#. Discordant
-#: extracted_strings.json
-msgid "Discordant"
 msgstr "Отменить"
 
 #. [pages.CasesList.diseaseName]
@@ -1913,13 +1819,6 @@ msgstr "Введите ID сайта..."
 #: extracted_strings.json
 msgid "Enter site name..."
 msgstr "Введите имя сайта..."
-
-#. [pages.deviceDetail.resultCategoryError]
-#. defaultMessage is:
-#. Error
-#: extracted_strings.json
-msgid "Error"
-msgstr "Ошибка"
 
 #. [forms.formItem.errorCode]
 #. defaultMessage is:
@@ -2669,26 +2568,12 @@ msgstr ""
 msgid "Include ALL results related to Patient ID"
 msgstr "Включите ВСЕ результаты, связанные с идентификатором пациента"
 
-#. [pages.deviceDetail.resultCategoryInconclusive]
-#. defaultMessage is:
-#. Inconclusive
-#: extracted_strings.json
-msgid "Inconclusive"
-msgstr "Эксклюзивный"
-
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
 #. Incorrect password
 #: extracted_strings.json
 msgid "Incorrect password"
 msgstr "Неверный пароль"
-
-#. [pages.deviceDetail.resultCategoryIndeterminate]
-#. defaultMessage is:
-#. Indeterminate
-#: extracted_strings.json
-msgid "Indeterminate"
-msgstr "Неопределенный"
 
 #. [forms.formItem.instrumentSerial]
 #. defaultMessage is:
@@ -2724,13 +2609,6 @@ msgstr "Серийный номер инструмента"
 #: extracted_strings.json
 msgid "Insufficient Permissions"
 msgstr "Недостаточное количество разрешений"
-
-#. [pages.deviceDetail.resultCategoryInvalid]
-#. defaultMessage is:
-#. Invalid
-#: extracted_strings.json
-msgid "Invalid"
-msgstr "Недействительный"
 
 #. [queryFetch.errorResponseMessages.GET.401.title]
 #. defaultMessage is:
@@ -3327,13 +3205,6 @@ msgstr "Мужской"
 msgid "Manage"
 msgstr "Организовать"
 
-#. [pages.deviceDetail.resultCategoryMissing]
-#. defaultMessage is:
-#. Missing
-#: extracted_strings.json
-msgid "Missing"
-msgstr "Отсутствует"
-
 #. [pages.AccountDetails.cell]
 #. defaultMessage is:
 #. Mobile
@@ -3426,13 +3297,6 @@ msgstr "Имя"
 msgid "Needs Repair"
 msgstr "Нуждается в ремонте"
 
-#. [pages.deviceDetail.resultCategoryNegative]
-#. defaultMessage is:
-#. Negative
-#: extracted_strings.json
-msgid "Negative"
-msgstr "Отрицательный"
-
 #. [pages.InventoryItemsList.never]
 #. defaultMessage is:
 #. Never
@@ -3505,14 +3369,7 @@ msgstr "Данные отсутствуют"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr "Нет Энергия"
-
-#. [pages.deviceDetail.resultCategoryNoResult]
-#. defaultMessage is:
-#. No Result
-#: extracted_strings.json
-msgid "No Result"
-msgstr "Нет результатов"
+msgstr ""
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -3538,7 +3395,7 @@ msgstr "Результаты отсутствуют"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr "Нет сотрудников"
+msgstr ""
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3585,13 +3442,6 @@ msgstr "Нет"
 msgid "Not Configured"
 msgstr "Не настроено"
 
-#. [pages.deviceDetail.resultCategoryNotDetected]
-#. defaultMessage is:
-#. Not Detected
-#: extracted_strings.json
-msgid "Not Detected"
-msgstr "Не обнаружено"
-
 #. [errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title]
 #. defaultMessage is:
 #. Not Found
@@ -3611,13 +3461,6 @@ msgstr "Не обнаружено"
 msgid "Not Found"
 msgstr "Не найдено"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
-#. defaultMessage is:
-#. Not Possible
-#: extracted_strings.json
-msgid "Not Possible"
-msgstr "Невозможно"
-
 #. [pages.resultTreatmentPanel.notPossible]
 #. defaultMessage is:
 #. Not possible
@@ -3636,8 +3479,10 @@ msgstr "Еще не подтверждено при лечении"
 #. defaultMessage is:
 #. Note
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Notes"
 msgid "Note"
-msgstr "Заметка"
+msgstr "Примечания"
 
 #. [forms.formItem.notes]
 #. defaultMessage is:
@@ -3753,9 +3598,6 @@ msgstr "Хорошо"
 msgid "Older"
 msgstr "Старее"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
-#. defaultMessage is:
-#. On Treatment
 #. [pages.ReporterList.totalOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -3802,7 +3644,7 @@ msgstr "Оператор"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr "Другое"
+msgstr ""
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -4211,48 +4053,6 @@ msgstr ""
 "Пожалуйста, попробуйте еще раз через несколько минут. Если ошибка "
 "сохраняется, обратитесь к администратору за поддержкой."
 
-#. [pages.deviceDetail.resultCategoryPositive]
-#. defaultMessage is:
-#. Positive
-#: extracted_strings.json
-msgid "Positive"
-msgstr "Положительный"
-
-#. [pages.deviceDetail.resultCategoryPositive1]
-#. defaultMessage is:
-#. Positive (+)
-#: extracted_strings.json
-msgid "Positive (+)"
-msgstr "Положительный"
-
-#. [pages.deviceDetail.resultCategoryPositive2]
-#. defaultMessage is:
-#. Positive (++)
-#: extracted_strings.json
-msgid "Positive (++)"
-msgstr "Положительный"
-
-#. [pages.deviceDetail.resultCategoryPositive3]
-#. defaultMessage is:
-#. Positive (+++)
-#: extracted_strings.json
-msgid "Positive (+++)"
-msgstr "Положительных"
-
-#. [pages.deviceDetail.resultCategoryPositiveMOTT]
-#. defaultMessage is:
-#. Positive MOTT
-#: extracted_strings.json
-msgid "Positive MOTT"
-msgstr "Положительных"
-
-#. [pages.deviceDetail.resultCategoryPositiveMTB]
-#. defaultMessage is:
-#. Positive MTB
-#: extracted_strings.json
-msgid "Positive MTB"
-msgstr "Положительных"
-
 #. [pages.OperationalData.resultsTransmittedTitle]
 #. defaultMessage is:
 #. Positive Test Results Transmitted
@@ -4276,13 +4076,6 @@ msgstr "Положительных"
 #: extracted_strings.json
 msgid "Press enter to add tag"
 msgstr "Нажмите enter, чтобы добавить тег"
-
-#. [pages.deviceDetail.resultCategoryPresumptivePositive]
-#. defaultMessage is:
-#. Presumptive Positive
-#: extracted_strings.json
-msgid "Presumptive Positive"
-msgstr "Положительный процент"
 
 #. [contextualMenu.notifications.preview.title]
 #. defaultMessage is:
@@ -4336,9 +4129,6 @@ msgid "Province"
 msgstr "Провинция"
 
 #. [pages.DeviceList.status.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#. [pages.filter.status.provisioned]
 #. defaultMessage is:
 #. Provisioned
 #: extracted_strings.json
@@ -4479,13 +4269,6 @@ msgstr "Регион"
 msgid "Region: {region}"
 msgstr "Регион: {region}"
 
-#. [pages.deviceDetail.resultCategoryRejected]
-#. defaultMessage is:
-#. Rejected
-#: extracted_strings.json
-msgid "Rejected"
-msgstr "Отклонено"
-
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
 #. Remove Inventory
@@ -4612,13 +4395,6 @@ msgstr "Сброс пароля"
 #: extracted_strings.json
 msgid "Reset all filters"
 msgstr "Сбросить все фильтры"
-
-#. [pages.deviceDetail.resultCategoryResistant]
-#. defaultMessage is:
-#. Resistant
-#: extracted_strings.json
-msgid "Resistant"
-msgstr "Сопротивление туберкулёза"
 
 #. [forms.formSectionHeader.result]
 #. defaultMessage is:
@@ -4861,13 +4637,6 @@ msgstr "Сохранение данных входа не удалось"
 msgid "Saving User Preferences Failed"
 msgstr "Сохранение настроек пользователя Не удалось"
 
-#. [pages.deviceDetail.resultCategoryScanty]
-#. defaultMessage is:
-#. Scanty (1-9/100)
-#: extracted_strings.json
-msgid "Scanty (1-9/100)"
-msgstr "Счёт (1-100)"
-
 #. [errorResponseMessages.fetchAssayTypes.GET.400.title]
 #. defaultMessage is:
 #. Searching Assay Types Failed
@@ -5060,6 +4829,8 @@ msgstr "Выберите квартал…"
 #. defaultMessage is:
 #. Select Reason
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Select Job"
 msgid "Select Reason"
 msgstr "Выбрать задание"
 
@@ -5253,6 +5024,8 @@ msgstr "Установочные фильтры"
 #. defaultMessage is:
 #. Set Maintenance Status
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Maintenance Status"
 msgid "Set Maintenance Status"
 msgstr "Состояние обслуживания"
 
@@ -5611,26 +5384,12 @@ msgstr "Стилегид"
 msgid "Submit"
 msgstr "Отправить"
 
-#. [pages.deviceDetail.resultCategorySuccess]
-#. defaultMessage is:
-#. Success
-#: extracted_strings.json
-msgid "Success"
-msgstr "Успех"
-
 #. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
 msgid "Supply in Stock"
 msgstr "Поставка на складе"
-
-#. [pages.deviceDetail.resultCategorySusceptible]
-#. defaultMessage is:
-#. Susceptible
-#: extracted_strings.json
-msgid "Susceptible"
-msgstr "Susceptible"
 
 #. [filter.AssayTypeSelectField.assayTypeTbAst]
 #. defaultMessage is:
@@ -6196,13 +5955,6 @@ msgstr "Итоговые результаты"
 msgid "Total Triggers"
 msgstr "Тотальные триггеры"
 
-#. [pages.deviceDetail.ResultCategoryTraceDetected]
-#. defaultMessage is:
-#. Trace Detected
-#: extracted_strings.json
-msgid "Trace Detected"
-msgstr "Обнаружен след"
-
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
 #. Transfer
@@ -6332,9 +6084,6 @@ msgstr "Колонна Разгруппы"
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
@@ -6872,6 +6621,8 @@ msgstr "от {unit}сообщаемого в настоящее время"
 #. defaultMessage is:
 #. of {unit} total modules
 #: extracted_strings.json
+#, fuzzy
+#| msgid "{unit} of all devices"
 msgid "of {unit} total modules"
 msgstr "всех устройств"
 
@@ -6907,6 +6658,8 @@ msgstr "процент устройств с неиспользуемыми мо
 #. defaultMessage is:
 #. percentage of modules functioning
 #: extracted_strings.json
+#, fuzzy
+#| msgid "percentage of positive results notified"
 msgid "percentage of modules functioning"
 msgstr "процент положительных результатов"
 

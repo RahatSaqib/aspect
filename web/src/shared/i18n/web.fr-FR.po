@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-08T18:47:15.916Z\n"
-"PO-Revision-Date: 2021-03-08 15:52-0300\n"
+"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
+"PO-Revision-Date: 2021-03-05 13:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -59,62 +59,6 @@ msgstr "* en transit de {inTransitFromSiteName}"
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
 msgstr "…{contacts, plural, one {# more {name}} other {# more {name}s} }"
 
-#. [pages.deviceDetail.resultCategoryLessThan1000]
-#. defaultMessage is:
-#. < 1000
-#: extracted_strings.json
-msgid "< 1000"
-msgstr "< 1000"
-
-#. [pages.deviceDetail.resultCategoryLessThan150]
-#. defaultMessage is:
-#. < 150
-#: extracted_strings.json
-msgid "< 150"
-msgstr "< 150"
-
-#. [pages.deviceDetail.resultCategoryLessThan40]
-#. defaultMessage is:
-#. < 40
-#: extracted_strings.json
-msgid "< 40"
-msgstr "< 40"
-
-#. [pages.deviceDetail.resultCategoryLessThan550]
-#. defaultMessage is:
-#. < 550
-#: extracted_strings.json
-msgid "< 550"
-msgstr "< 550"
-
-#. [pages.deviceDetail.resultCategoryMoreThan1000]
-#. defaultMessage is:
-#. >= 1000
-#: extracted_strings.json
-msgid ">= 1000"
-msgstr ">= 1000"
-
-#. [pages.deviceDetail.resultCategoryMoreThan150]
-#. defaultMessage is:
-#. >= 150
-#: extracted_strings.json
-msgid ">= 150"
-msgstr ">= 150"
-
-#. [pages.deviceDetail.resultCategoryMoreThan40]
-#. defaultMessage is:
-#. >= 40
-#: extracted_strings.json
-msgid ">= 40"
-msgstr ">= 40"
-
-#. [pages.deviceDetail.resultCategoryMoreThan550]
-#. defaultMessage is:
-#. >= 550
-#: extracted_strings.json
-msgid ">= 550"
-msgstr ">= 550"
-
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
 #. A username is required
@@ -136,6 +80,8 @@ msgstr "Abbott m2000 DBS HIV VL"
 #. defaultMessage is:
 #. Abbott m2000 Daan N COVID-19
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Abbott m2000 DBS HIV VL"
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 DBS HIV VL"
 
@@ -528,9 +474,6 @@ msgstr "Statut d'Approbation"
 #. [pages.DeviceList.status.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.filter.status.approved]
-#. defaultMessage is:
-#. Approved
 #. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
@@ -622,9 +565,6 @@ msgstr "Assigner {count} clés"
 #. [pages.DeviceList.status.assigned]
 #. defaultMessage is:
 #. Assigned
-#. [pages.filter.status.assigned]
-#. defaultMessage is:
-#. Assigned
 #: extracted_strings.json
 msgid "Assigned"
 msgstr "Assigné"
@@ -705,13 +645,6 @@ msgstr "Nombre moyen de tests par jour rapportés le mois en cours"
 #: extracted_strings.json
 msgid "Average time to replace disabled module"
 msgstr "Temps moyen de remplacement du module désactivé"
-
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
-#. defaultMessage is:
-#. Awaiting Treatment
-#: extracted_strings.json
-msgid "Awaiting Treatment"
-msgstr "Sur le traitement"
 
 #. [legends.Unknown.assayBdMgitAst]
 #. defaultMessage is:
@@ -967,13 +900,6 @@ msgstr "Indicateurs cliniques"
 msgid "Close"
 msgstr "Fermer"
 
-#. [pages.deviceDetail.resultCategoryCollectNewSample]
-#. defaultMessage is:
-#. Collect New Sample
-#: extracted_strings.json
-msgid "Collect New Sample"
-msgstr "Collecté par"
-
 #. [forms.formItem.collectedBy]
 #. defaultMessage is:
 #. Collected By
@@ -1147,13 +1073,6 @@ msgstr "Nom du contact / email"
 msgid "Contacts"
 msgstr "Contacts"
 
-#. [pages.deviceDetail.resultCategoryContaminated]
-#. defaultMessage is:
-#. Contaminated
-#: extracted_strings.json
-msgid "Contaminated"
-msgstr "Contaminé"
-
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
 #. Copy
@@ -1315,6 +1234,8 @@ msgstr "Culture"
 #. defaultMessage is:
 #. Current Network Status
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Treatment Status"
 msgid "Current Network Status"
 msgstr "Statut du traitement"
 
@@ -1430,8 +1351,10 @@ msgstr "Date ajoutée"
 #. defaultMessage is:
 #. Date Range
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Date Removed"
 msgid "Date Range"
-msgstr "Plage de dates"
+msgstr "Date supprimée"
 
 #. [pages.ReceiveInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -1482,9 +1405,6 @@ msgstr "Jours de remplacement des instruments"
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceList.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.filter.status.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
@@ -1545,13 +1465,6 @@ msgstr "Détails modifiés avec succès"
 #: extracted_strings.json
 msgid "Details..."
 msgstr "Détails..."
-
-#. [pages.deviceDetail.ResultCategoryDetected]
-#. defaultMessage is:
-#. Detected
-#: extracted_strings.json
-msgid "Detected"
-msgstr "Détecté"
 
 #. [forms.formSectionHeader.device]
 #. defaultMessage is:
@@ -1681,13 +1594,6 @@ msgstr "Appareils subissant une interruption de service"
 #. Discard
 #: extracted_strings.json
 msgid "Discard"
-msgstr "Jeter"
-
-#. [pages.deviceDetail.resultCategoryDiscordant]
-#. defaultMessage is:
-#. Discordant
-#: extracted_strings.json
-msgid "Discordant"
 msgstr "Jeter"
 
 #. [pages.CasesList.diseaseName]
@@ -1924,13 +1830,6 @@ msgstr "Entrez l'ID du site..."
 #: extracted_strings.json
 msgid "Enter site name..."
 msgstr "Entrez le nom du site ..."
-
-#. [pages.deviceDetail.resultCategoryError]
-#. defaultMessage is:
-#. Error
-#: extracted_strings.json
-msgid "Error"
-msgstr "Erreur"
 
 #. [forms.formItem.errorCode]
 #. defaultMessage is:
@@ -2681,26 +2580,12 @@ msgstr ""
 msgid "Include ALL results related to Patient ID"
 msgstr "Inclure TOUS les résultats liés à l'identification du patient"
 
-#. [pages.deviceDetail.resultCategoryInconclusive]
-#. defaultMessage is:
-#. Inconclusive
-#: extracted_strings.json
-msgid "Inconclusive"
-msgstr "Peu concluant"
-
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
 #. Incorrect password
 #: extracted_strings.json
 msgid "Incorrect password"
 msgstr "Mot de passe incorrect"
-
-#. [pages.deviceDetail.resultCategoryIndeterminate]
-#. defaultMessage is:
-#. Indeterminate
-#: extracted_strings.json
-msgid "Indeterminate"
-msgstr "Indéterminé"
 
 #. [forms.formItem.instrumentSerial]
 #. defaultMessage is:
@@ -2736,13 +2621,6 @@ msgstr "Numéro de série"
 #: extracted_strings.json
 msgid "Insufficient Permissions"
 msgstr "Permissions insuffisantes"
-
-#. [pages.deviceDetail.resultCategoryInvalid]
-#. defaultMessage is:
-#. Invalid
-#: extracted_strings.json
-msgid "Invalid"
-msgstr "Invalide"
 
 #. [queryFetch.errorResponseMessages.GET.401.title]
 #. defaultMessage is:
@@ -3339,13 +3217,6 @@ msgstr "Homme"
 msgid "Manage"
 msgstr "Gérer"
 
-#. [pages.deviceDetail.resultCategoryMissing]
-#. defaultMessage is:
-#. Missing
-#: extracted_strings.json
-msgid "Missing"
-msgstr "Manquant"
-
 #. [pages.AccountDetails.cell]
 #. defaultMessage is:
 #. Mobile
@@ -3438,13 +3309,6 @@ msgstr "Prénom"
 msgid "Needs Repair"
 msgstr "Besoin de réparation"
 
-#. [pages.deviceDetail.resultCategoryNegative]
-#. defaultMessage is:
-#. Negative
-#: extracted_strings.json
-msgid "Negative"
-msgstr "Négatif"
-
 #. [pages.InventoryItemsList.never]
 #. defaultMessage is:
 #. Never
@@ -3517,14 +3381,7 @@ msgstr "Aucune donnée disponible"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr "Pas de pouvoir"
-
-#. [pages.deviceDetail.resultCategoryNoResult]
-#. defaultMessage is:
-#. No Result
-#: extracted_strings.json
-msgid "No Result"
-msgstr "Aucun résultats"
+msgstr ""
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -3550,7 +3407,7 @@ msgstr "Aucun résultat n'a été communiqué"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr "Pas de personnel"
+msgstr ""
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3597,13 +3454,6 @@ msgstr "Aucun"
 msgid "Not Configured"
 msgstr "Non configuré"
 
-#. [pages.deviceDetail.resultCategoryNotDetected]
-#. defaultMessage is:
-#. Not Detected
-#: extracted_strings.json
-msgid "Not Detected"
-msgstr "Pas enregistré"
-
 #. [errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title]
 #. defaultMessage is:
 #. Not Found
@@ -3623,13 +3473,6 @@ msgstr "Pas enregistré"
 msgid "Not Found"
 msgstr "Pas trouvé"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
-#. defaultMessage is:
-#. Not Possible
-#: extracted_strings.json
-msgid "Not Possible"
-msgstr "Impossible"
-
 #. [pages.resultTreatmentPanel.notPossible]
 #. defaultMessage is:
 #. Not possible
@@ -3648,8 +3491,10 @@ msgstr "Le traitement n'a pas encore été confirmé"
 #. defaultMessage is:
 #. Note
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Notes"
 msgid "Note"
-msgstr "Note"
+msgstr "Remarques"
 
 #. [forms.formItem.notes]
 #. defaultMessage is:
@@ -3765,9 +3610,6 @@ msgstr "D'accord"
 msgid "Older"
 msgstr "Plus âgée"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
-#. defaultMessage is:
-#. On Treatment
 #. [pages.ReporterList.totalOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -3814,7 +3656,7 @@ msgstr "Opérateur"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr "Autre"
+msgstr ""
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -4223,48 +4065,6 @@ msgstr ""
 "Veuillez réessayer dans quelques minutes. Si l'erreur persiste, contactez "
 "votre administrateur pour obtenir de l'aide."
 
-#. [pages.deviceDetail.resultCategoryPositive]
-#. defaultMessage is:
-#. Positive
-#: extracted_strings.json
-msgid "Positive"
-msgstr "Positif"
-
-#. [pages.deviceDetail.resultCategoryPositive1]
-#. defaultMessage is:
-#. Positive (+)
-#: extracted_strings.json
-msgid "Positive (+)"
-msgstr "Positif"
-
-#. [pages.deviceDetail.resultCategoryPositive2]
-#. defaultMessage is:
-#. Positive (++)
-#: extracted_strings.json
-msgid "Positive (++)"
-msgstr "Positif"
-
-#. [pages.deviceDetail.resultCategoryPositive3]
-#. defaultMessage is:
-#. Positive (+++)
-#: extracted_strings.json
-msgid "Positive (+++)"
-msgstr "Positifs"
-
-#. [pages.deviceDetail.resultCategoryPositiveMOTT]
-#. defaultMessage is:
-#. Positive MOTT
-#: extracted_strings.json
-msgid "Positive MOTT"
-msgstr "Positifs"
-
-#. [pages.deviceDetail.resultCategoryPositiveMTB]
-#. defaultMessage is:
-#. Positive MTB
-#: extracted_strings.json
-msgid "Positive MTB"
-msgstr "Positifs"
-
 #. [pages.OperationalData.resultsTransmittedTitle]
 #. defaultMessage is:
 #. Positive Test Results Transmitted
@@ -4288,13 +4088,6 @@ msgstr "Positifs"
 #: extracted_strings.json
 msgid "Press enter to add tag"
 msgstr "Appuyez sur la touche Entrée pour ajouter une balise"
-
-#. [pages.deviceDetail.resultCategoryPresumptivePositive]
-#. defaultMessage is:
-#. Presumptive Positive
-#: extracted_strings.json
-msgid "Presumptive Positive"
-msgstr "Pourcentage positif"
 
 #. [contextualMenu.notifications.preview.title]
 #. defaultMessage is:
@@ -4348,9 +4141,6 @@ msgid "Province"
 msgstr "Province"
 
 #. [pages.DeviceList.status.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#. [pages.filter.status.provisioned]
 #. defaultMessage is:
 #. Provisioned
 #: extracted_strings.json
@@ -4491,13 +4281,6 @@ msgstr "Région"
 msgid "Region: {region}"
 msgstr "Région: {région}"
 
-#. [pages.deviceDetail.resultCategoryRejected]
-#. defaultMessage is:
-#. Rejected
-#: extracted_strings.json
-msgid "Rejected"
-msgstr "Rejeté"
-
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
 #. Remove Inventory
@@ -4624,13 +4407,6 @@ msgstr "Réinitialiser le mot de Passe"
 #: extracted_strings.json
 msgid "Reset all filters"
 msgstr "Retirer tous les filtres"
-
-#. [pages.deviceDetail.resultCategoryResistant]
-#. defaultMessage is:
-#. Resistant
-#: extracted_strings.json
-msgid "Resistant"
-msgstr "Resistant"
 
 #. [forms.formSectionHeader.result]
 #. defaultMessage is:
@@ -4873,13 +4649,6 @@ msgstr "L'enregistrement des informations de connexion a échoué"
 msgid "Saving User Preferences Failed"
 msgstr "L'enregistrement des préférences de l'utilisateur a échoué"
 
-#. [pages.deviceDetail.resultCategoryScanty]
-#. defaultMessage is:
-#. Scanty (1-9/100)
-#: extracted_strings.json
-msgid "Scanty (1-9/100)"
-msgstr "Compter (1-100)"
-
 #. [errorResponseMessages.fetchAssayTypes.GET.400.title]
 #. defaultMessage is:
 #. Searching Assay Types Failed
@@ -5072,8 +4841,10 @@ msgstr "Sélectionnez le trimestre ..."
 #. defaultMessage is:
 #. Select Reason
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Select Job"
 msgid "Select Reason"
-msgstr "Sélectionner une raison"
+msgstr "Sélectionnez une emploi"
 
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
@@ -5265,6 +5036,8 @@ msgstr "Définir les filtres"
 #. defaultMessage is:
 #. Set Maintenance Status
 #: extracted_strings.json
+#, fuzzy
+#| msgid "Maintenance Status"
 msgid "Set Maintenance Status"
 msgstr "Statut de maintenance"
 
@@ -5310,6 +5083,10 @@ msgstr "Nom court"
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "site} other {# sites}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} "
 "other {# cases} }"
@@ -5321,6 +5098,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "contact} other {# contacts}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "contact} other {# contacts} }"
@@ -5332,6 +5113,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device API key} other {# device API keys} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "device API key} other {# device API keys}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "device API key} other {# device API keys} }"
@@ -5343,6 +5128,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "device} other {# devices}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "device} other {# devices} }"
@@ -5354,6 +5143,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "log} other {# logs}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
 "other {# logs} }"
@@ -5365,6 +5158,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "record} other {# records}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "record} other {# records} }"
@@ -5376,6 +5173,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# reporter} other {# reporters} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "reporter} other {# reporters}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "reporter} other {# reporters} }"
@@ -5393,6 +5194,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "result} other {# results}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "result} other {# results} }"
@@ -5404,6 +5209,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "router} other {# routers}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "router} other {# routers} }"
@@ -5415,6 +5224,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} other {# sites} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "site} other {# sites}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} "
 "other {# sites} }"
@@ -5426,6 +5239,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "supply} other {# supplies}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "supply} other {# supplies} }"
@@ -5437,6 +5254,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "task} other {# tasks}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
 "other {# tasks} }"
@@ -5448,6 +5269,10 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# {name}} other {# {name}s} }
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#| "site} other {# sites}}"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
@@ -5623,26 +5448,12 @@ msgstr "Guide de style"
 msgid "Submit"
 msgstr "Soumettre"
 
-#. [pages.deviceDetail.resultCategorySuccess]
-#. defaultMessage is:
-#. Success
-#: extracted_strings.json
-msgid "Success"
-msgstr "Succès"
-
 #. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
 msgid "Supply in Stock"
 msgstr "Approvisionnement en stock"
-
-#. [pages.deviceDetail.resultCategorySusceptible]
-#. defaultMessage is:
-#. Susceptible
-#: extracted_strings.json
-msgid "Susceptible"
-msgstr "Susceptible"
 
 #. [filter.AssayTypeSelectField.assayTypeTbAst]
 #. defaultMessage is:
@@ -6214,13 +6025,6 @@ msgstr "Total des résultats"
 msgid "Total Triggers"
 msgstr "Nombre total de déclencheurs"
 
-#. [pages.deviceDetail.ResultCategoryTraceDetected]
-#. defaultMessage is:
-#. Trace Detected
-#: extracted_strings.json
-msgid "Trace Detected"
-msgstr "Trace détectée"
-
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
 #. Transfer
@@ -6350,9 +6154,6 @@ msgstr "Colonne des dégroupés"
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
@@ -6896,6 +6697,8 @@ msgstr "de {unit} actuellement signalés"
 #. defaultMessage is:
 #. of {unit} total modules
 #: extracted_strings.json
+#, fuzzy
+#| msgid "{unit} of all devices"
 msgid "of {unit} total modules"
 msgstr "{unit} de tous les appareils"
 
@@ -6931,6 +6734,8 @@ msgstr "pourcentage d'appareils avec des modules non utilisés"
 #. defaultMessage is:
 #. percentage of modules functioning
 #: extracted_strings.json
+#, fuzzy
+#| msgid "percentage of positive results notified"
 msgid "percentage of modules functioning"
 msgstr "pourcentage de résultats positifs notifiés"
 
@@ -7164,6 +6969,9 @@ msgstr ""
 #~ msgid "No Consumption"
 #~ msgstr "Pas de consommation"
 
+#~ msgid "Not Recorded"
+#~ msgstr "Pas enregistré"
+
 #~ msgid "Out of Stock"
 #~ msgstr "Rupture de stock"
 
@@ -7323,6 +7131,9 @@ msgstr ""
 #~ msgid "Enter sample group..."
 #~ msgstr "Entrez le groupe d'échantillons ..."
 
+#~ msgid "Error"
+#~ msgstr "Erreur"
+
 #~ msgid "Error Loading Action Data"
 #~ msgstr "Erreur lors du chargement des données d'action"
 
@@ -7385,6 +7196,9 @@ msgstr ""
 
 #~ msgid "Misc."
 #~ msgstr "Divers."
+
+#~ msgid "Negative"
+#~ msgstr "Négatif"
 
 #~ msgid "No images attached for this result"
 #~ msgstr "Aucune image jointe pour ce résultat"
