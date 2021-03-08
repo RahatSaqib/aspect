@@ -5,14 +5,13 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { defineMessages } from 'react-intl'
+
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceTypesForSelectList as fetchDeviceTypes } from '../../deviceType/DeviceTypeRedux'
 
-const messages = defineMessages({})
 export class DeviceTypeSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
@@ -25,8 +24,6 @@ export class DeviceTypeSelectField extends PureComponent {
       })
     ).isRequired,
     onDeviceTypeChange: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
     value: PropTypes.string,
   }
 
@@ -44,7 +41,7 @@ export class DeviceTypeSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, deviceTypeItems, value, intl } = this.props
+    const { allItemText, deviceTypeItems, value } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchDeviceTypes',
@@ -52,19 +49,13 @@ export class DeviceTypeSelectField extends PureComponent {
       'onDeviceTypeChange',
       'value',
     ])
-    const textForItem = item => {
-      return (
-        (messages[item.get('i18nKey')]
-          ? intl.formatMessage(messages[item.get('i18nKey')])
-          : item.get('name')) || item.get('name')
-      )
-    }
+
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceTypeItems.map(a => (
           <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
-            {textForItem(a)}
+            {a.get('name')}
           </MenuItem>
         ))}
       </SelectField>

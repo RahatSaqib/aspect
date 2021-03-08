@@ -5,31 +5,12 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import MenuItem from '@material-ui/core/MenuItem'
-import { defineMessages } from 'react-intl'
+
 // Material-UI
+import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
-
-const messages = defineMessages({
-  deviceApprovalProvisioned: {
-    id: 'pages.filter.status.provisioned',
-    defaultMessage: 'Provisioned',
-  },
-  deviceApprovalAssigned: {
-    id: 'pages.filter.status.assigned',
-    defaultMessage: 'Assigned',
-  },
-  deviceApprovalApproved: {
-    id: 'pages.filter.status.approved',
-    defaultMessage: 'Approved',
-  },
-  deviceApprovalDecommissioned: {
-    id: 'pages.filter.status.decommissioned',
-    defaultMessage: 'Decommissioned',
-  },
-})
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {
@@ -43,8 +24,6 @@ export class DeviceApprovalSelectField extends PureComponent {
     ).isRequired,
     onDeviceApprovalChange: PropTypes.func.isRequired,
     value: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -61,7 +40,7 @@ export class DeviceApprovalSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, deviceApprovalItems, value, intl } = this.props
+    const { allItemText, deviceApprovalItems, value } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchDeviceApprovals',
@@ -69,19 +48,13 @@ export class DeviceApprovalSelectField extends PureComponent {
       'onDeviceApprovalChange',
       'value',
     ])
-    const textForItem = item => {
-      return (
-        (messages[item.get('i18nKey')]
-          ? intl.formatMessage(messages[item.get('i18nKey')])
-          : item.get('name')) || item.get('name')
-      )
-    }
+
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceApprovalItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {textForItem(a)}
+            {a.get('name')}
           </MenuItem>
         ))}
       </SelectField>

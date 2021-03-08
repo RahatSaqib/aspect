@@ -669,7 +669,6 @@ export const FiltersPanel = ({
                   hintText={intl.formatMessage(messages.selectResult)}
                   floatingLabelText={intl.formatMessage(messages.result)}
                   style={{ verticalAlign: 'bottom' }}
-                  intl={intl}
                 />
               </div>
             )}
@@ -688,7 +687,6 @@ export const FiltersPanel = ({
                   hintText={intl.formatMessage(messages.selectResult)}
                   floatingLabelText={intl.formatMessage(messages.result)}
                   style={{ verticalAlign: 'bottom' }}
-                  intl={intl}
                 />
               </div>
             )}
@@ -972,7 +970,6 @@ export const FiltersPanel = ({
                 floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
-                intl={intl}
               />
             </div>
           )}

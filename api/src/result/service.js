@@ -958,10 +958,7 @@ async function listTreatmentStatusTypes() {
   const getCount = resultQuery.clone().count('rsl.id as count').first()
 
   // get rows
-  const getItems = resultQuery
-    .clone()
-    .orderBy('id', 'asc')
-    .select('id', 'i18nKey', 'name')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
