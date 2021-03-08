@@ -2968,6 +2968,721 @@
       "shortName": "ALGON",
       "stateName": "Osun",
       "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2730",
+      "lgaName": "Akinyele",
+      "name": "General Hospital Moniya",
+      "shortName": "General Hospital Moniya",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2743",
+      "lgaName": "Orelope",
+      "name": "General Hospital Igboho",
+      "shortName": "General Hospital Igboho",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2737",
+      "lgaName": "Ibadan South-East",
+      "name": "Phc Agbongbon",
+      "shortName": "Phc Agbongbon",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2721",
+      "lgaName": "Ibadan North",
+      "name": "Idi Ogungun Primary Health Center",
+      "shortName": "Idi Ogungun Primary Health Center",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2739",
+      "lgaName": "Ibadan North-East",
+      "name": "St Peter General Hospital",
+      "shortName": "St Peter General Hospital",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2735",
+      "lgaName": "Ido",
+      "name": "Omi Adio Primary Health Center",
+      "shortName": "Omi Adio Primary Health Center",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2732",
+      "lgaName": "Lagelu",
+      "name": "Alegongo Primary Health Center",
+      "shortName": "Alegongo Primary Health Center",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Phc Iwo Road",
+      "lgaName": "Ibadan North-East",
+      "name": "Phc Iwo Road",
+      "shortName": "Phc Iwo Road",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Phc Molete",
+      "lgaName": "Ibadan South-West",
+      "name": "Phc Molete",
+      "shortName": "Phc Molete",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2722",
+      "lgaName": "Ibadan North",
+      "name": "General Hospital Adeoyo",
+      "shortName": "General Hospital Adeoyo",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2741",
+      "lgaName": "Oluyole",
+      "name": "Phc Odo Ona Elewe",
+      "shortName": "Phc Odo Ona Elewe",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2719",
+      "lgaName": "Ibarapa East",
+      "name": "General Hospital Eruwa",
+      "shortName": "General Hospital Eruwa",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2718",
+      "lgaName": "Ibarapa Central",
+      "name": "Gh Igbo Ora",
+      "shortName": "Gh Igbo Ora",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2717",
+      "lgaName": "Ibadan North-West",
+      "name": "Jericho Specialist Hospital",
+      "shortName": "Jericho Specialist Hospital",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2740",
+      "lgaName": "Ibadan South-West",
+      "name": "Ring Road State Hospital",
+      "shortName": "Ring Road State Hospital",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Phc Adaramagbo",
+      "lgaName": "Oluyole",
+      "name": "Phc Adaramagbo",
+      "shortName": "Phc Adaramagbo",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2731",
+      "lgaName": "Akinyele",
+      "name": "Phc Ojoo",
+      "shortName": "Phc Ojoo",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2742",
+      "lgaName": "Saki West",
+      "name": "General Hospital Saki",
+      "shortName": "General Hospital Saki",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2nd Division Hospital",
+      "lgaName": "Akinyele",
+      "name": "2nd Division Hospital",
+      "shortName": "2nd Division Hospital",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2734",
+      "lgaName": "Ido",
+      "name": "Phc Apete",
+      "shortName": "Phc Apete",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2744",
+      "lgaName": "Oyo East",
+      "name": "Sh Oyo",
+      "shortName": "Sh Oyo",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2725",
+      "lgaName": "Ogbomosho South",
+      "name": "Sh Ogbomosho",
+      "shortName": "Sh Ogbomosho",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Odo Oba Phc",
+      "lgaName": "Ogo Oluwa",
+      "name": "Odo Oba Phc",
+      "shortName": "Odo Oba Phc",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Iseyin Gh",
+      "lgaName": "Iseyin",
+      "name": "Iseyin Gh",
+      "shortName": "Iseyin Gh",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2729",
+      "lgaName": "Akinyele",
+      "name": "Phc Ajibode",
+      "shortName": "Phc Ajibode",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2727",
+      "lgaName": "Ogbomosho North",
+      "name": "Lautech Teaching Hospital",
+      "shortName": "Lautech Teaching Hospital",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Lad Medical Centre",
+      "lgaName": "Oluyole",
+      "name": "Lad Medical Centre",
+      "shortName": "Lad Medical Centre",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Durojaiye Hospital",
+      "lgaName": "Oluyole",
+      "name": "Durojaiye Hospital",
+      "shortName": "Durojaiye Hospital",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Alafara",
+      "lgaName": "Ibadan North-East",
+      "name": "Alafara",
+      "shortName": "Alafara",
+      "stateName": "Oyo",
+      "tags": ["Clinic", "Primary"]
+    },
+
+    {
+      "externalId": "Aderemi PHC ",
+      "lgaName": "Ife Central",
+      "name": "Aderemi PHC ",
+      "shortName": "Aderemi PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Total PHC ",
+      "lgaName": "Isokan",
+      "name": "Total PHC ",
+      "shortName": "Total PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Sabo Owoope",
+      "lgaName": "Olorunda",
+      "name": "Sabo Owoope",
+      "shortName": "Sabo Owoope",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Lautech Hospital",
+      "lgaName": "Olorunda",
+      "name": "Lautech Hospital",
+      "shortName": "Lautech Hospital",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Popo Olupona PHC ",
+      "lgaName": "Aiyedire",
+      "name": "Popo Olupona PHC ",
+      "shortName": "Popo Olupona PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Wesley Guild",
+      "lgaName": "Ilesa East",
+      "name": "Wesley Guild",
+      "shortName": "Wesley Guild",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Irojo PHC ",
+      "lgaName": "Ilesa East",
+      "name": "Irojo PHC ",
+      "shortName": "Irojo PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Imo PHC  ",
+      "lgaName": "Ilesa East",
+      "name": "Imo PHC  ",
+      "shortName": "Imo PHC  ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ayedaade PHC ",
+      "lgaName": "Irewole",
+      "name": "Ayedaade PHC ",
+      "shortName": "Ayedaade PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Popo PHC ",
+      "lgaName": "Ejigbo",
+      "name": "Popo PHC ",
+      "shortName": "Popo PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ikoyi PHC ",
+      "lgaName": "Isokan",
+      "name": "Ikoyi PHC ",
+      "shortName": "Ikoyi PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ifelodun PHC ",
+      "lgaName": "Ife East",
+      "name": "Ifelodun PHC ",
+      "shortName": "Ifelodun PHC ",
+      "stateName": "Osun",
+      "tags": ["Clinic", "Primary"]
+    },
+
+    {
+      "externalId": "2644",
+      "lgaName": "Abeokuta North",
+      "name": "Hansens Disease Centre",
+      "shortName": "Hansens Disease Centre",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2649",
+      "lgaName": "Abeokuta South",
+      "name": "Chest Clinic, State Hospital Ijaye",
+      "shortName": "Chest Clinic, State Hospital Ijaye",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2650",
+      "lgaName": "Abeokuta South",
+      "name": "Sacred Heart Hospital, Lantoro",
+      "shortName": "Sacred Heart Hospital, Lantoro",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2652",
+      "lgaName": "Abeokuta South",
+      "name": "Federal Medical Centre, Abeokuta",
+      "shortName": "Federal Medical Centre, Abeokuta",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2662",
+      "lgaName": "Ado-Odo/Ota",
+      "name": "Ota",
+      "shortName": "Ota",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2664",
+      "lgaName": "Ado-Odo/Ota",
+      "name": "Atan Health Centre",
+      "shortName": "Atan Health Centre",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2666",
+      "lgaName": "Ado-Odo/Ota",
+      "name": "State Hospital Ota",
+      "shortName": "State Hospital Ota",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2672",
+      "lgaName": "Ado-Odo/Ota",
+      "name": "Oluwalogbon Medical Centre",
+      "shortName": "Oluwalogbon Medical Centre",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2678",
+      "lgaName": "Yewa South",
+      "name": "State Hospital, Ilaro",
+      "shortName": "State Hospital, Ilaro",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2679",
+      "lgaName": "Yewa South",
+      "name": "Health Centre, Isaga Owode",
+      "shortName": "Health Centre, Isaga Owode",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2681",
+      "lgaName": "Ifo",
+      "name": "Olose",
+      "shortName": "Olose",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2682",
+      "lgaName": "Ifo",
+      "name": "General Hospital Ifo",
+      "shortName": "General Hospital Ifo",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2684",
+      "lgaName": "Ifo",
+      "name": "HC Agbado",
+      "shortName": "HC Agbado",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2688",
+      "lgaName": "Ijebu North",
+      "name": "Obada Prim Health Centre",
+      "shortName": "Obada Prim Health Centre",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2690",
+      "lgaName": "Ijebu Ode",
+      "name": "State Hospital Ijebu Ode",
+      "shortName": "State Hospital Ijebu Ode",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2691",
+      "lgaName": "Ijebu Ode",
+      "name": "Health Centre, Idobi(Oke Oyinbo)",
+      "shortName": "Health Centre, Idobi(Oke Oyinbo)",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2697",
+      "lgaName": "Ikenne",
+      "name": "General Hosp Iperu",
+      "shortName": "General Hosp Iperu",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2698",
+      "lgaName": "Ipokia",
+      "name": "General Hosp Idiroko",
+      "shortName": "General Hosp Idiroko",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2699",
+      "lgaName": "Remo North",
+      "name": "General Hospital Isara",
+      "shortName": "General Hospital Isara",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2700",
+      "lgaName": "Sagamu",
+      "name": "CMPC OOUTH Sagamu",
+      "shortName": "CMPC OOUTH Sagamu",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Itori",
+      "lgaName": "Ewekoro",
+      "name": "Itori",
+      "shortName": "Itori",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2703",
+      "lgaName": "Ijebu East",
+      "name": "GH Ijebu Ife",
+      "shortName": "GH Ijebu Ife",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2705",
+      "lgaName": "Obafemi Owode",
+      "name": "GH Owode",
+      "shortName": "GH Owode",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2707",
+      "lgaName": "Odeda",
+      "name": "Obantoko",
+      "shortName": "Obantoko",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2709",
+      "lgaName": "Imeko Afon",
+      "name": "GH Imeko",
+      "shortName": "GH Imeko",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2711",
+      "lgaName": "Yewa North",
+      "name": "GH Ayetoro",
+      "shortName": "GH Ayetoro",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Abigi",
+      "lgaName": "Ogun Waterside",
+      "name": "Abigi",
+      "shortName": "Abigi",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2713",
+      "lgaName": "Ijebu North East",
+      "name": "M IJARI",
+      "shortName": "M IJARI",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2714",
+      "lgaName": "Odogbolu",
+      "name": "Odogbolu",
+      "shortName": "Odogbolu",
+      "stateName": "Ogun",
+      "tags": ["Clinic", "Primary"]
+    },
+
+    {
+      "externalId": "2605",
+      "lgaName": "Lagos Mainland",
+      "name": "NIMR",
+      "shortName": "NIMR",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2633",
+      "lgaName": "Shomolu ",
+      "name": "Orthopedic National Hospital Igbobi",
+      "shortName": "Orthopedic National Hospital Igbobi",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2634",
+      "lgaName": "Lagos Mainland",
+      "name": "Mainland GH",
+      "shortName": "Mainland GH",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2635",
+      "lgaName": "Ikorodu",
+      "name": "Ori Okuta",
+      "shortName": "Ori Okuta",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2638",
+      "lgaName": "Ajeromi-Ifelodun",
+      "name": "Tolu",
+      "shortName": "Tolu",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "2639",
+      "lgaName": "Surulere",
+      "name": "Akerele",
+      "shortName": "Akerele",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "LUTH",
+      "lgaName": "Mushin",
+      "name": "LUTH",
+      "shortName": "LUTH",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Emmanuel (EOOCC)",
+      "lgaName": "Ikorodu",
+      "name": "Emmanuel (EOOCC)",
+      "shortName": "Emmanuel (EOOCC)",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Olowogbowo",
+      "lgaName": "Lagos Island",
+      "name": "Olowogbowo",
+      "shortName": "Olowogbowo",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Oloja",
+      "lgaName": "Shomolu",
+      "name": "Oloja",
+      "shortName": "Oloja",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ebute Metta HC",
+      "lgaName": "Lagos Mainland",
+      "name": "Ebute Metta HC",
+      "shortName": "Ebute Metta HC",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Fed Med Centre",
+      "lgaName": "Lagos Mainland",
+      "name": "Fed Med Centre",
+      "shortName": "Fed Med Centre",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Harvey Road HC",
+      "lgaName": "Lagos Mainland",
+      "name": "Harvey Road HC",
+      "shortName": "Harvey Road HC",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ijede GH",
+      "lgaName": "Ikorodu",
+      "name": "Ijede GH",
+      "shortName": "Ijede GH",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Onikan HC",
+      "lgaName": "Lagos Island",
+      "name": "Onikan HC",
+      "shortName": "Onikan HC",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Shomolu GH",
+      "lgaName": "Shomolu",
+      "name": "Shomolu GH",
+      "shortName": "Shomolu GH",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ita Elewa",
+      "lgaName": "Ikorodu",
+      "name": "Ita Elewa",
+      "shortName": "Ita Elewa",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Ajegunle ilo",
+      "lgaName": "Ifako-Ijaiye",
+      "name": "Ajegunle ilo",
+      "shortName": "Ajegunle ilo",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Mowo",
+      "lgaName": "Badagry",
+      "name": "Mowo",
+      "shortName": "Mowo",
+      "stateName": "Lagos",
+      "tags": ["Clinic", "Primary"]
     }
   ]
 }
