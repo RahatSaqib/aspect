@@ -1823,7 +1823,13 @@
 						},
 						{
 							"name": "Sagamu"
-						}
+						},
+            {
+              "name": "Yewa North"
+            },
+            {
+              "name": "Yewa South"
+            }
 					]
 				},
 				{
@@ -1907,23 +1913,23 @@
 							"name": "Ede South"
 						},
 						{
-							"name": "Ife Central"
-						},
-						{
-							"name": "Ife East"
-						},
-						{
-							"name": "Ife North"
-						},
-						{
-							"name": "Ife South"
-						},
-						{
 							"name": "Egbedore"
 						},
 						{
 							"name": "Ejigbo"
 						},
+            {
+              "name": "Ife Central"
+            },
+            {
+              "name": "Ife East"
+            },
+            {
+              "name": "Ife North"
+            },
+            {
+              "name": "Ife South"
+            },
 						{
 							"name": "Ifedayo"
 						},
