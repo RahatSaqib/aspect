@@ -13,14 +13,16 @@ import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 
 const I18nContext = createContext()
 
-// console.log(deLocale)
-
 export const dateFNSLocales = {
+  de: deLocale,
   'de-DE': deLocale,
   en: usLocale,
   'en-US': usLocale,
+  fr: frLocale,
   'fr-FR': frLocale,
+  ru: ruLocale,
   'ru-RU': ruLocale,
+  uk: ukLocale,
   'uk-UA': ukLocale,
 }
 

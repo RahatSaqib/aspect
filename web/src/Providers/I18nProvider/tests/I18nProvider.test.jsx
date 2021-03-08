@@ -1,28 +1,38 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { IntlProvider } from 'react-intl'
-import { addLocaleData, renderHook } from '@testing-library/react-hooks'
+import { render as rtlRender, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
-
-import de from 'date-fns/locale/de'
-import us from 'date-fns/locale/en-US'
-import fr from 'date-fns/locale/fr'
-import ru from 'date-fns/locale/ru'
-import uk from 'date-fns/locale/uk'
+import IntlPolyfill from 'intl'
+import 'intl/locale-data/jsonp/de'
+import 'intl/locale-data/jsonp/ru'
+import 'intl/locale-data/jsonp/fr'
+import 'intl/locale-data/jsonp/uk'
+import 'intl/locale-data/jsonp/en-us'
+import MockDate from 'mockdate'
+import subDays from 'date-fns/subDays'
 
 import { I18nProvider, useI18n } from '../index'
 
-addLocaleData([ru, fr])
+const setupTests = () => {
+  // https://formatjs.io/docs/guides/runtime-requirements/#nodejs
+  if (global.Intl) {
+    Intl.NumberFormat = IntlPolyfill.NumberFormat
+    Intl.DateTimeFormat = IntlPolyfill.DateTimeFormat
+  } else {
+    global.Intl = IntlPolyfill
+  }
+}
 
-describe('I18nProvider', () => {
-  const wrapper = props => {
-    const { children, locale } = props
-    console.log(locale)
+function render(ui) {
+  function Wrapper({ children }) {
+    const {
+      props: { locale, timezone },
+    } = ui
 
     return (
       <IntlProvider
         key={locale}
         locale={locale}
-        messages={{}}
         formats={{
           time: {
             'user-timezone': {
@@ -35,29 +45,106 @@ describe('I18nProvider', () => {
       </IntlProvider>
     )
   }
+  return rtlRender(ui, { wrapper: Wrapper })
+}
 
+const I18nWrapper = () => {
   const {
-    result: {
-      current: {
-        culture,
-        format,
-        formatNumber,
-        formatDate,
-        formatDistance,
-        formatMessage,
-        formatTime,
-        formatTimezone,
-        formatWithOffset,
-        timezone,
-      },
-    },
-  } = renderHook(() => useI18n(), {
-    wrapper,
-    initialProps: { locale: 'ru' },
-  })
+    culture,
+    format,
+    formatNumber,
+    formatDate,
+    formatDistance,
+    timezone,
+  } = useI18n()
 
-  it('should format numbers correctly', () => {
-    expect(formatNumber(0.23)).toBe('0.23')
-    expect(formatNumber(100293475)).toBe('100 293 475')
+  MockDate.set(new Date('2021-02-25 14:10:29'))
+  const now = new Date()
+  const then = subDays(now, 56)
+
+  return (
+    <Fragment>
+      <div data-testid="culture">{culture}</div>
+      <div data-testid="timezone">{timezone}</div>
+      <div data-testid="number-display">{formatNumber(33902837)}</div>
+      <div data-testid="number-display2">{formatNumber(1230)}</div>
+      <div data-testid="date-display">{formatDate(now)}</div>
+      <div data-testid="date-display2">{format(now, 'EEEE MMMM do')}</div>
+      <div data-testid="date-display3">{formatDistance(now, then)}</div>
+    </Fragment>
+  )
+}
+
+describe('I18nProvider', () => {
+  it('should format values for ru-RU correctly', () => {
+    setupTests()
+    render(<I18nWrapper locale="ru" timezone="Europe/Moscow" />)
+    expect(screen.getByTestId('culture')).toHaveTextContent('ru')
+    expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Moscow')
+    expect(screen.getByTestId('number-display')).toHaveTextContent('33 902 837')
+    expect(screen.getByTestId('number-display2')).toHaveTextContent('1 230')
+    expect(screen.getByTestId('date-display')).toHaveTextContent('25.02.2021')
+    expect(screen.getByTestId('date-display2')).toHaveTextContent(
+      'четверг февраля 25-е'
+    )
+    expect(screen.getByTestId('date-display3')).toHaveTextContent(
+      'около 2 месяцев'
+    )
+  })
+})
+
+describe('I18nProvider', () => {
+  it('should format values for fr-FR correctly', () => {
+    setupTests()
+    render(<I18nWrapper locale="fr" timezone="Europe/Paris" />)
+    expect(screen.getByTestId('culture')).toHaveTextContent('fr')
+    expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Paris')
+    expect(screen.getByTestId('number-display')).toHaveTextContent('33 902 837')
+    expect(screen.getByTestId('number-display2')).toHaveTextContent('1 230')
+    expect(screen.getByTestId('date-display')).toHaveTextContent('25/02/2021')
+    expect(screen.getByTestId('date-display2')).toHaveTextContent(
+      'jeudi février 25ème'
+    )
+    expect(screen.getByTestId('date-display3')).toHaveTextContent(
+      'environ 2 mois'
+    )
+  })
+})
+
+describe('I18nProvider', () => {
+  it('should format values for en-US correctly', () => {
+    setupTests()
+    render(<I18nWrapper locale="en" timezone="America/Los_Angeles" />)
+    expect(screen.getByTestId('culture')).toHaveTextContent('en')
+    expect(screen.getByTestId('timezone')).toHaveTextContent(
+      'America/Los_Angeles'
+    )
+    expect(screen.getByTestId('number-display')).toHaveTextContent('33,902,837')
+    expect(screen.getByTestId('number-display2')).toHaveTextContent('1,230')
+    expect(screen.getByTestId('date-display')).toHaveTextContent('2/25/2021')
+    expect(screen.getByTestId('date-display2')).toHaveTextContent(
+      'Thursday February 25th'
+    )
+    expect(screen.getByTestId('date-display3')).toHaveTextContent(
+      'about 2 months'
+    )
+  })
+})
+
+describe('I18nProvider', () => {
+  it('should format values for de-DE correctly', () => {
+    setupTests()
+    render(<I18nWrapper locale="de" timezone="Europe/Berlin" />)
+    expect(screen.getByTestId('culture')).toHaveTextContent('de')
+    expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Berlin')
+    expect(screen.getByTestId('number-display')).toHaveTextContent('33.902.837')
+    expect(screen.getByTestId('number-display2')).toHaveTextContent('1.230')
+    expect(screen.getByTestId('date-display')).toHaveTextContent('25.2.2021')
+    expect(screen.getByTestId('date-display2')).toHaveTextContent(
+      'Donnerstag Februar 25.'
+    )
+    expect(screen.getByTestId('date-display3')).toHaveTextContent(
+      'etwa 2 Monate'
+    )
   })
 })
