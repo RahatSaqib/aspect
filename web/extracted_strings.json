@@ -1,0 +1,4626 @@
+[
+  {
+    "defaultMessage": "Loading Account Details Failed",
+    "id": "errorResponseMessages.fetchAccountDetails.GET.default.title"
+  },
+  {
+    "defaultMessage": "Saving Contact Details Failed",
+    "id": "errorResponseMessages.saveContactDetails.PUT.default.title"
+  },
+  {
+    "defaultMessage": "This Username is Unavailable",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.409.title"
+  },
+  {
+    "defaultMessage": "The username that you have entered is already in use by another user on the system",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.409.message"
+  },
+  {
+    "defaultMessage": "Please try another username",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.409.resolution"
+  },
+  {
+    "defaultMessage": "Invalid Password",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.403.title"
+  },
+  {
+    "defaultMessage": "The current password that you have entered is incorrect.",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.403.message"
+  },
+  {
+    "defaultMessage": "Please try re-entering your password or contact us to reset your login details",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.403.resolution"
+  },
+  {
+    "defaultMessage": "Saving Login Details Failed",
+    "id": "errorResponseMessages.saveLoginDetails.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Saving User Preferences Failed",
+    "id": "errorResponseMessages.saveUserPreferences.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Aspect has Encountered a Problem.",
+    "id": "errorResponseMessages.generic.title"
+  },
+  {
+    "defaultMessage": "Our technical team has been notified of the problem and will attend to it as soon as possible.",
+    "id": "errorResponseMessages.generic.message"
+  },
+  {
+    "defaultMessage": "Close",
+    "id": "errorResponseMessages.generic.closeText"
+  },
+  {
+    "defaultMessage": "Proceed",
+    "id": "errorResponseMessages.generic.proceedText"
+  },
+  {
+    "defaultMessage": "Details...",
+    "id": "errorResponseMessages.inline.moreDetails"
+  },
+  {
+    "defaultMessage": "Searching Assays Failed",
+    "id": "errorResponseMessages.fetchAssays.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Assays Failed",
+    "id": "errorResponseMessages.fetchAssays.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Assay Types Failed",
+    "id": "errorResponseMessages.fetchAssayTypes.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Assay Types Failed",
+    "id": "errorResponseMessages.fetchAssayTypes.GET.default.title"
+  },
+  {
+    "defaultMessage": "Login Failed",
+    "id": "errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title"
+  },
+  {
+    "defaultMessage": "Invalid username or password",
+    "id": "errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message"
+  },
+  {
+    "defaultMessage": "We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
+    "id": "errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution"
+  },
+  {
+    "defaultMessage": "Login Failed",
+    "id": "errorResponseMessages.loginStart.POST.401.authenticationFailed.title"
+  },
+  {
+    "defaultMessage": "Incorrect password",
+    "id": "errorResponseMessages.loginStart.POST.401.authenticationFailed.message"
+  },
+  {
+    "defaultMessage": "Please, correct the credentials your entered and try again.",
+    "id": "errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution"
+  },
+  {
+    "defaultMessage": "Could not update your credentials",
+    "id": "errorResponseMessages.loginStart.POST.401.incorrectPassword.title"
+  },
+  {
+    "defaultMessage": "The password you entered is incorrect",
+    "id": "errorResponseMessages.loginStart.POST.401.incorrectPassword.message"
+  },
+  {
+    "defaultMessage": "Please, re-enter your password and try again.",
+    "id": "errorResponseMessages.loginStart.POST.401.incorrectPassword.resolution"
+  },
+  {
+    "defaultMessage": "Login failed",
+    "id": "errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title"
+  },
+  {
+    "defaultMessage": "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
+    "id": "errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message"
+  },
+  {
+    "defaultMessage": "Couldn't login with your credentials",
+    "id": "errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title"
+  },
+  {
+    "defaultMessage": "There was a conflict with your credentials. Please, contact an administrator for support.",
+    "id": "errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message"
+  },
+  {
+    "defaultMessage": "Login failed",
+    "id": "errorResponseMessages.loginStart.POST.403.accountLocked.title"
+  },
+  {
+    "defaultMessage": "Your user account has been locked",
+    "id": "errorResponseMessages.loginStart.POST.403.accountLocked.message"
+  },
+  {
+    "defaultMessage": "You can contact us to unlock your account for you by email ({supportEmail})",
+    "id": "errorResponseMessages.loginStart.POST.403.accountLocked.resolution"
+  },
+  {
+    "defaultMessage": "Login Error",
+    "id": "errorResponseMessages.loginStart.POST.default.title"
+  },
+  {
+    "defaultMessage": "Error Sending Reset Password Email",
+    "id": "errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title"
+  },
+  {
+    "defaultMessage": "Error Saving New Password",
+    "id": "errorResponseMessages.resetPasswordEnterPassword.POST.default.title"
+  },
+  {
+    "defaultMessage": "You've successfully logged out",
+    "id": "pages.Login.reasonUserRequested"
+  },
+  {
+    "defaultMessage": "You were logged out due to inactivity",
+    "id": "pages.Login.reasonIdle"
+  },
+  {
+    "defaultMessage": "You were logged out due to an expired session",
+    "id": "pages.Login.reasonExpiredJWT"
+  },
+  {
+    "defaultMessage": "You were logged out due to refreshing session failure",
+    "id": "pages.Login.reasonRefreshJWTFailure"
+  },
+  {
+    "defaultMessage": "Searching Cases Failed",
+    "id": "errorResponseMessages.fetchCases.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.fetchPersons.GET.403.title"
+  },
+  {
+    "defaultMessage": "Loading Cases Failed",
+    "id": "errorResponseMessages.fetchCases.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Consumables Failed",
+    "id": "errorResponseMessages.fetchConsumables.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Consumables Failed",
+    "id": "errorResponseMessages.fetchConsumables.GET.default.title"
+  },
+  {
+    "defaultMessage": "Loading Consumable Reasons Failed",
+    "id": "errorResponseMessages.fetchConsumableReasons.GET.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Find Device Details",
+    "id": "errorResponseMessages.fetchSingleDevice.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Loading Device Details",
+    "id": "errorResponseMessages.fetchSingleDevice.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the Device",
+    "id": "errorResponseMessages.updateSingleDevice.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Searching Devices Failed",
+    "id": "errorResponseMessages.fetchDevices.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Devices Failed",
+    "id": "errorResponseMessages.fetchDevices.GET.default.title"
+  },
+  {
+    "defaultMessage": "Loading Devices Failed",
+    "id": "errorResponseMessages.fetchDevicesForSelectList.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting Devices Failed",
+    "id": "errorResponseMessages.exportDevices.GET.400.title"
+  },
+  {
+    "defaultMessage": "Exporting Devices Failed",
+    "id": "errorResponseMessages.exportDevices.GET.default.title"
+  },
+  {
+    "defaultMessage": "Setting Maintenance Status Failed",
+    "id": "errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title"
+  },
+  {
+    "defaultMessage": "Setting Device Calibration Date Failed",
+    "id": "errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title"
+  },
+  {
+    "defaultMessage": "Setting Device Warranty Due Date Failed",
+    "id": "errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title"
+  },
+  {
+    "defaultMessage": "Error Loading Device profile performance report",
+    "id": "errorResponseMessages.fetchPerformanceReport.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching DeviceApiKeys Failed",
+    "id": "errorResponseMessages.fetchDeviceApiKeys.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading DeviceApiKeys Failed",
+    "id": "errorResponseMessages.fetchDeviceApiKeys.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting DeviceApiKeys Failed",
+    "id": "errorResponseMessages.exportDeviceApiKeys.GET.400.title"
+  },
+  {
+    "defaultMessage": "Exporting DeviceApiKeys Failed",
+    "id": "errorResponseMessages.exportDeviceApiKeys.GET.default.title"
+  },
+  {
+    "defaultMessage": "Generate DeviceApiKeys Failed",
+    "id": "errorResponseMessages.generateDeviceApiKeys.POST.400.title"
+  },
+  {
+    "defaultMessage": "Generate DeviceApiKeys Failed",
+    "id": "errorResponseMessages.generateDeviceApiKeys.POST.default.title"
+  },
+  {
+    "defaultMessage": "Assign DeviceApiKeys Failed",
+    "id": "errorResponseMessages.assignDeviceApiKeys.POST.400.title"
+  },
+  {
+    "defaultMessage": "Assign DeviceApiKeys Failed",
+    "id": "errorResponseMessages.assignDeviceApiKeys.POST.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the DeviceApiKey",
+    "id": "errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Searching Device Approvals Failed",
+    "id": "errorResponseMessages.fetchDeviceApprovals.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Device Approval Statuses Failed",
+    "id": "errorResponseMessages.fetchDeviceApprovals.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching DeviceOperations Failed",
+    "id": "errorResponseMessages.fetchDeviceOperations.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading DeviceOperations Failed",
+    "id": "errorResponseMessages.fetchDeviceOperations.GET.default.title"
+  },
+  {
+    "defaultMessage": "Loading DeviceTypes Failed",
+    "id": "errorResponseMessages.fetchDeviceTypes.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Diseases Failed",
+    "id": "errorResponseMessages.fetchDiseases.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Diseases Failed",
+    "id": "errorResponseMessages.fetchDiseases.GET.default.title"
+  },
+  {
+    "defaultMessage": "Please, try again in a few minutes. If the error persists, contact your administrator for support.",
+    "id": "errorResponseMessages.common.tryAgainLater.resolution"
+  },
+  {
+    "defaultMessage": "Invalid credentials. Please, login again.",
+    "id": "errorResponseMessages.common.unauthorized.resolution"
+  },
+  {
+    "defaultMessage": "Access denied for this resource. Please, contact your administrator for support.",
+    "id": "errorResponseMessages.common.forbidden.resolution"
+  },
+  {
+    "defaultMessage": "It might have been deleted or renamed",
+    "id": "errorResponseMessages.common.notFound.message"
+  },
+  {
+    "defaultMessage": "Please check that it still exists",
+    "id": "errorResponseMessages.common.notFound.resolution"
+  },
+  {
+    "defaultMessage": "The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.",
+    "id": "errorResponseMessages.common.filterError.message"
+  },
+  {
+    "defaultMessage": "In the meantime, you could try to adjust the values in these filter fields, change the column that you are sorting on in the list or change the page number that you are viewing",
+    "id": "errorResponseMessages.common.filterError.resolution"
+  },
+  {
+    "defaultMessage": "Error Loading Countries",
+    "id": "errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title"
+  },
+  {
+    "defaultMessage": "Error Loading States for {countryName}",
+    "id": "errorResponseMessages.fetchStatesForLocationSelector.GET.default.title"
+  },
+  {
+    "defaultMessage": "Error Loading Areas for {stateName}",
+    "id": "errorResponseMessages.fetchLgasForLocationSelector.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting Supplies Failed",
+    "id": "errorResponseMessages.exportSupplies.GET.400.title"
+  },
+  {
+    "defaultMessage": "Exporting Supplies Failed",
+    "id": "errorResponseMessages.exportSupplies.GET.default.title"
+  },
+  {
+    "defaultMessage": "Adding Inventory Failed",
+    "id": "errorResponseMessages.addInventory.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Adding Inventory Failed",
+    "id": "errorResponseMessages.addInventory.POST.default.title"
+  },
+  {
+    "defaultMessage": "Removing Inventory Failed",
+    "id": "errorResponseMessages.removeInventory.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Transferring Inventory Failed",
+    "id": "errorResponseMessages.transferInventory.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Receiving Inventory Failed",
+    "id": "errorResponseMessages.receiveInventory.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Updating Inventory Failed",
+    "id": "errorResponseMessages.updateInventory.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Acknowledging Issue Failed",
+    "id": "errorResponseMessages.acknowledgeIssue..default.title"
+  },
+  {
+    "defaultMessage": "Error Loading Partners And Job Functions",
+    "id": "errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title"
+  },
+  {
+    "defaultMessage": "Clinical History",
+    "id": "pages.ClinicalHistory.clinicalHistory"
+  },
+  {
+    "defaultMessage": "Patient",
+    "id": "pages.ClinicalHistory.patient"
+  },
+  {
+    "defaultMessage": "Patient Data",
+    "id": "pages.ClinicalHistory.patientData"
+  },
+  {
+    "defaultMessage": "Searching Patient Result Failed",
+    "id": "errorResponseMessages.fetchPatientResult.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.fetchPatientDetails.GET.403.title"
+  },
+  {
+    "defaultMessage": "Loading Patient results details Failed",
+    "id": "errorResponseMessages.fetchPatientDetails.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Contacts Failed",
+    "id": "errorResponseMessages.fetchPersons.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Contacts Failed",
+    "id": "errorResponseMessages.fetchPersons.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting Contacts Failed",
+    "id": "errorResponseMessages.exportContacts.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.exportContacts.GET.403.title"
+  },
+  {
+    "defaultMessage": "Exporting Contacts Failed",
+    "id": "errorResponseMessages.exportContacts.GET.default.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.fetchAvailablePersons.GET.403.title"
+  },
+  {
+    "defaultMessage": "Invalid Site ID",
+    "id": "errorResponseMessages.fetchASiteContacts.GET.400.title"
+  },
+  {
+    "defaultMessage": "Could Not Find Contact's Details",
+    "id": "errorResponseMessages.fetchSinglePerson.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Loading Contact's Details",
+    "id": "errorResponseMessages.fetchSinglePerson.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Create the Contact",
+    "id": "errorResponseMessages.createPerson.POST.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Find Contact's Details",
+    "id": "errorResponseMessages.updatePerson.PUT.404.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the Contact",
+    "id": "errorResponseMessages.updatePerson.PUT.default.title"
+  },
+  {
+    "defaultMessage": "This Username is Unavailable",
+    "id": "errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title"
+  },
+  {
+    "defaultMessage": "The username that you have entered is already in use by another user on the system",
+    "id": "errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message"
+  },
+  {
+    "defaultMessage": "Please try another username",
+    "id": "errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution"
+  },
+  {
+    "defaultMessage": "Could Not Find User's Details",
+    "id": "errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title"
+  },
+  {
+    "defaultMessage": "Saving Login Details Failed",
+    "id": "errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Not Found",
+    "id": "errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title"
+  },
+  {
+    "defaultMessage": "Not Found",
+    "id": "errorResponseMessages.fetchPersonAssignments.GET.404.title"
+  },
+  {
+    "defaultMessage": "Not Found",
+    "id": "errorResponseMessages.addPersonAssignment.POST.404.title"
+  },
+  {
+    "defaultMessage": "Not Found",
+    "id": "errorResponseMessages.deletePersonAssignment.DELETE.404.title"
+  },
+  {
+    "defaultMessage": "Searching Reports Failed",
+    "id": "errorResponseMessages.fetchReports.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.fetchReports.GET.403.title"
+  },
+  {
+    "defaultMessage": "Loading Reports Failed",
+    "id": "errorResponseMessages.fetchReports.GET.default.title"
+  },
+  {
+    "defaultMessage": "Getting Report File Failed",
+    "id": "errorResponseMessages.getReportFile.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.getReportFile.GET.403.title"
+  },
+  {
+    "defaultMessage": "Getting Report File Failed",
+    "id": "errorResponseMessages.getReportFile.GET.default.title"
+  },
+  {
+    "defaultMessage": "Loading Reports Failed",
+    "id": "errorResponseMessages.fetchReportsForSelectList.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the Result",
+    "id": "errorResponseMessages.updateSingleResult.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Error Loading Result Logs",
+    "id": "errorResponseMessages.fetchDeviceLog.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Results Failed",
+    "id": "errorResponseMessages.fetchResults.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Results Failed",
+    "id": "errorResponseMessages.fetchResults.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the Workflow Status",
+    "id": "errorResponseMessages.updateResultWorkflowStatus.PUT.default.title"
+  },
+  {
+    "defaultMessage": "An error occurred when trying to update the result.",
+    "id": "errorResponseMessages.saveResultFormDataValue.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Searching Result Workflow Status Logs Failed",
+    "id": "errorResponseMessages.fetchWorkflowLogs.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Result Workflow Status Logs Failed",
+    "id": "errorResponseMessages.fetchWorkflowLogs.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting Results Failed",
+    "id": "errorResponseMessages.exportResults.GET.400.title"
+  },
+  {
+    "defaultMessage": "Exporting Results Failed",
+    "id": "errorResponseMessages.exportResults.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Result Treatment Statuses Failed",
+    "id": "errorResponseMessages.fetchTreatmentStatuses.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Result Treatment Statuses Failed",
+    "id": "errorResponseMessages.fetchTreatmentStatuses.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Result Workflow Statuses Failed",
+    "id": "errorResponseMessages.fetchWorkflowStatuses.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Result Workflow Statuses Failed",
+    "id": "errorResponseMessages.fetchWorkflowStatuses.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Routers Failed",
+    "id": "errorResponseMessages.fetchRouters.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Routers Failed",
+    "id": "errorResponseMessages.fetchRouters.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting Routers Failed",
+    "id": "errorResponseMessages.exportRouters.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.exportPersons.GET.403.title"
+  },
+  {
+    "defaultMessage": "Exporting Routers Failed",
+    "id": "errorResponseMessages.exportRouters.GET.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Find Router Details",
+    "id": "errorResponseMessages.fetchSingleRouter.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Loading Router Details",
+    "id": "errorResponseMessages.fetchSingleRouter.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the Router",
+    "id": "errorResponseMessages.updateSingleRouter.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Searching Sites Failed",
+    "id": "errorResponseMessages.fetchSites.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Sites Failed",
+    "id": "errorResponseMessages.fetchSites.GET.default.title"
+  },
+  {
+    "defaultMessage": "Exporting Sites Failed",
+    "id": "errorResponseMessages.exportSites.GET.400.title"
+  },
+  {
+    "defaultMessage": "Insufficient Permissions",
+    "id": "errorResponseMessages.exportSites.GET.403.title"
+  },
+  {
+    "defaultMessage": "Exporting Sites Failed",
+    "id": "errorResponseMessages.exportSites.GET.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Find Site Details",
+    "id": "errorResponseMessages.fetchSingleSite.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Loading Site Details",
+    "id": "errorResponseMessages.fetchSingleSite.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Save the Site",
+    "id": "errorResponseMessages.updateSingleSite.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Loading Tags Failed",
+    "id": "errorResponseMessages.fetchTags.GET.default.title"
+  },
+  {
+    "defaultMessage": "Loading Possible Tags Failed",
+    "id": "errorResponseMessages.fetchPossibleTags.GET.default.title"
+  },
+  {
+    "defaultMessage": "An Error Occurred When Trying to Update Tags",
+    "id": "errorResponseMessages.updateTags.PUT.default.title"
+  },
+  {
+    "defaultMessage": "Searching Task Failed",
+    "id": "errorResponseMessages.getTasksByStatus.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Tasks Failed",
+    "id": "errorResponseMessages.getTasksByStatus.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Task Failed",
+    "id": "errorResponseMessages.fetchTask.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Task Failed",
+    "id": "errorResponseMessages.fetchTask.GET.default.title"
+  },
+  {
+    "defaultMessage": "Searching Tasks Failed",
+    "id": "errorResponseMessages.fetchTasks.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Tasks Failed",
+    "id": "errorResponseMessages.fetchTasks.GET.default.title"
+  },
+  {
+    "defaultMessage": "for {unit} MTB+",
+    "id": "component.Widget.forMtbPositive"
+  },
+  {
+    "defaultMessage": "for {unit} Results",
+    "id": "component.Widget.forResults"
+  },
+  {
+    "defaultMessage": "of {unit} currently reported",
+    "id": "component.Widget.ofCurrentlyReported"
+  },
+  {
+    "defaultMessage": "{unit} last month",
+    "id": "component.Widget.lastMonth"
+  },
+  {
+    "defaultMessage": "of {unit} total modules",
+    "id": "component.Widget.ofTotalModules"
+  },
+  {
+    "defaultMessage": "{unit} since last week",
+    "id": "component.Widget.sinceLastWeek"
+  },
+  {
+    "defaultMessage": "{unit} YTD",
+    "id": "component.Widget.ytd"
+  },
+  {
+    "defaultMessage": "Last 30 Days",
+    "id": "component.Widget.last30Days"
+  },
+  {
+    "defaultMessage": "{unit} of all devices",
+    "id": "component.Widget.ofAllDevices"
+  },
+  {
+    "defaultMessage": "{unit} total calibrations",
+    "id": "component.Widget.totalCalibrations"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.Status.summaryWidgetGroup.connectivity"
+  },
+  {
+    "defaultMessage": "Inventory",
+    "id": "pages.Status.summaryWidgetGroup.inventory"
+  },
+  {
+    "defaultMessage": "Devices",
+    "id": "pages.Status.summaryWidgetGroup.devices"
+  },
+  {
+    "defaultMessage": "Service",
+    "id": "pages.Status.summaryWidgetGroup.service"
+  },
+  {
+    "defaultMessage": "Tests Per Day",
+    "id": "pages.Status.dashboardWidgetTestsPerDayTitle"
+  },
+  {
+    "defaultMessage": "SMS Sent MTD",
+    "id": "pages.Status.dashboardWidgetSmsSentTitle"
+  },
+  {
+    "defaultMessage": "The total number of text messages sent in the month",
+    "id": "pages.Status.dashboardWidgetSmsSentDescription"
+  },
+  {
+    "defaultMessage": "Average number of tests per day reported the current month",
+    "id": "pages.Status.dashboardWidgetTestsPerDayDescription"
+  },
+  {
+    "defaultMessage": "Valid Results",
+    "id": "pages.Status.dashboardWidgetValidResultsPc"
+  },
+  {
+    "defaultMessage": "Percentage of valid results reported the current month",
+    "id": "pages.Status.dashboardWidgetValidResultsPcDescription"
+  },
+  {
+    "defaultMessage": "Site Name",
+    "id": "forms.formItem.siteName"
+  },
+  {
+    "defaultMessage": "City",
+    "id": "forms.formItem.city"
+  },
+  {
+    "defaultMessage": "State",
+    "id": "forms.formItem.state"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "forms.formItem.country"
+  },
+  {
+    "defaultMessage": "Device Name",
+    "id": "forms.formItem.deviceName"
+  },
+  {
+    "defaultMessage": "Device Type",
+    "id": "forms.formItem.deviceType"
+  },
+  {
+    "defaultMessage": "Device Serial",
+    "id": "forms.formItem.deviceSerial"
+  },
+  {
+    "defaultMessage": "Assay",
+    "id": "forms.formItem.assay"
+  },
+  {
+    "defaultMessage": "Result Text",
+    "id": "forms.formItem.resultText"
+  },
+  {
+    "defaultMessage": "Error Code",
+    "id": "forms.formItem.errorCode"
+  },
+  {
+    "defaultMessage": "Notes",
+    "id": "forms.formItem.notes"
+  },
+  {
+    "defaultMessage": "Start Date",
+    "id": "forms.formItem.startDate"
+  },
+  {
+    "defaultMessage": "End Date",
+    "id": "forms.formItem.endDate"
+  },
+  {
+    "defaultMessage": "Sample ID",
+    "id": "forms.formItem.sampleId"
+  },
+  {
+    "defaultMessage": "Sample Type",
+    "id": "forms.formItem.sampleType"
+  },
+  {
+    "defaultMessage": "Collected On",
+    "id": "forms.formItem.collectedOn"
+  },
+  {
+    "defaultMessage": "Sample Collection Site",
+    "id": "forms.formItem.sampleCollectionSite"
+  },
+  {
+    "defaultMessage": "Collected By",
+    "id": "forms.formItem.collectedBy"
+  },
+  {
+    "defaultMessage": "Reportable Site",
+    "id": "forms.formItem.reportableSite"
+  },
+  {
+    "defaultMessage": "Patient",
+    "id": "forms.formItem.patient"
+  },
+  {
+    "defaultMessage": "Patient ID",
+    "id": "forms.formItem.patientId"
+  },
+  {
+    "defaultMessage": "Case ID",
+    "id": "forms.formItem.caseId"
+  },
+  {
+    "defaultMessage": "Technical Details",
+    "id": "forms.formItem.technicalDetails"
+  },
+  {
+    "defaultMessage": "Instrument Serial",
+    "id": "forms.formItem.instrumentSerial"
+  },
+  {
+    "defaultMessage": "Module Name",
+    "id": "forms.formItem.moduleName"
+  },
+  {
+    "defaultMessage": "Module Serial",
+    "id": "forms.formItem.moduleSerial"
+  },
+  {
+    "defaultMessage": "Expiration Date",
+    "id": "forms.formItem.consumableExpirationDate"
+  },
+  {
+    "defaultMessage": "Lot",
+    "id": "forms.formItem.consumableLot"
+  },
+  {
+    "defaultMessage": "Consumable Serial",
+    "id": "forms.formItem.consumableSerial"
+  },
+  {
+    "defaultMessage": "Sender Operator",
+    "id": "forms.formItem.senderOperator"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "forms.formSectionHeader.site"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "forms.formSectionHeader.device"
+  },
+  {
+    "defaultMessage": "Assay",
+    "id": "forms.formSectionHeader.assay"
+  },
+  {
+    "defaultMessage": "Result",
+    "id": "forms.formSectionHeader.result"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "forms.formSectionHeader.date"
+  },
+  {
+    "defaultMessage": "Sample",
+    "id": "forms.formSectionHeader.sample"
+  },
+  {
+    "defaultMessage": "Patient",
+    "id": "forms.formSectionHeader.patient"
+  },
+  {
+    "defaultMessage": "Technical Details",
+    "id": "forms.formSectionHeader.technicalDetails"
+  },
+  {
+    "defaultMessage": "The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.",
+    "id": "legends.Unknown.hover"
+  },
+  {
+    "defaultMessage": "Abbott m2000 Plasma HIV VL",
+    "id": "legends.Unknown.abbottM2000PlasmaHivVL"
+  },
+  {
+    "defaultMessage": "Abbott m2000 Plasma HBV VL",
+    "id": "legends.Unknown.abbottM2000PlasmaHbvVL"
+  },
+  {
+    "defaultMessage": "Abbott m2000 DBS HIV VL",
+    "id": "legends.Unknown.abbottM2000DBSHivVL"
+  },
+  {
+    "defaultMessage": "Abbott m2000 HIV EID",
+    "id": "legends.Unknown.abbottM2000HIVEID"
+  },
+  {
+    "defaultMessage": "Abbott m2000 Daan N COVID-19",
+    "id": "legends.Unknown.abbottM2000DaanNCOVID19"
+  },
+  {
+    "defaultMessage": "BD MGIT AST",
+    "id": "legends.Unknown.assayBdMgitAst"
+  },
+  {
+    "defaultMessage": "BD MGIT GND",
+    "id": "legends.Unknown.assayBdMgitGnd"
+  },
+  {
+    "defaultMessage": "TB DST",
+    "id": "legends.Unknown.assayGenericDst"
+  },
+  {
+    "defaultMessage": "Culture",
+    "id": "legends.Unknown.assayGenericCulture"
+  },
+  {
+    "defaultMessage": "GenoType MTBC VER 1.X",
+    "id": "legends.Unknown.assayGenoTypeMTBCV1"
+  },
+  {
+    "defaultMessage": "GenoType MTBDRplus VER 2.0",
+    "id": "legends.Unknown.assayGenoTypeMTBDRplusV2"
+  },
+  {
+    "defaultMessage": "GenoType MTBDRsl VER 1.0",
+    "id": "legends.Unknown.assayGenoTypeMTBDRslV1"
+  },
+  {
+    "defaultMessage": "GenoType MTBDRsl VER 2.0",
+    "id": "legends.Unknown.assayGenoTypeMTBDRslV2"
+  },
+  {
+    "defaultMessage": "GeneXpert MTB/Rif",
+    "id": "legends.Unknown.GxMtbRif"
+  },
+  {
+    "defaultMessage": "GeneXpert MTB/Rif Ultra",
+    "id": "legends.Unknown.GxMtbRifUltra"
+  },
+  {
+    "defaultMessage": "GeneXpert HIV-1 VL",
+    "id": "legends.Unknown.GxHiv1Vl"
+  },
+  {
+    "defaultMessage": "GeneXpert HIV-1 Qual",
+    "id": "legends.Unknown.GxHiv1Qual"
+  },
+  {
+    "defaultMessage": "GeneXpert Ebola",
+    "id": "legends.Unknown.GxEbola"
+  },
+  {
+    "defaultMessage": "GeneXpert Unknown",
+    "id": "legends.Unknown.GxUnknown"
+  },
+  {
+    "defaultMessage": "GeneXpert HCV",
+    "id": "legends.Unknown.GxHcv"
+  },
+  {
+    "defaultMessage": "Q HIV VL",
+    "id": "legends.Unknown.QHivVL"
+  },
+  {
+    "defaultMessage": "Reporter HIV VL",
+    "id": "legends.Unknown.ReporterHivVL"
+  },
+  {
+    "defaultMessage": "Reporter EID",
+    "id": "legends.Unknown.ReporterEID"
+  },
+  {
+    "defaultMessage": "Alere Q HIV-1/2 Detect",
+    "id": "legends.Unknown.assayAlereQHiv12Detect"
+  },
+  {
+    "defaultMessage": "Alere Q HIV-1/2 VL plasma",
+    "id": "legends.Unknown.assayAlereQHiv12VLPlasma"
+  },
+  {
+    "defaultMessage": "Senaite LIMS Smear Microscopy",
+    "id": "legends.Unknown.senaiteSmearMicroscopy"
+  },
+  {
+    "defaultMessage": "Senaite LIMS TB Culture",
+    "id": "legends.Unknown.senaiteTbCulture"
+  },
+  {
+    "defaultMessage": "Senaite LIMS Unknown",
+    "id": "legends.Unknown.senaiteUnknown"
+  },
+  {
+    "defaultMessage": "COBAS 4800 VL",
+    "id": "legends.Unknown.assayCobasHivVl"
+  },
+  {
+    "defaultMessage": "COVID-19 Generic Test",
+    "id": "legends.Unknown.assayGenericCovid19"
+  },
+  {
+    "defaultMessage": "MagNA Pure-96 COVID-19",
+    "id": "legends.Unknown.assayMP96Covid19"
+  },
+  {
+    "defaultMessage": "QuantStudio7 Flex COVID-19",
+    "id": "legends.Unknown.assayQS7Covid19"
+  },
+  {
+    "defaultMessage": "GeneXpert COVID-19",
+    "id": "legends.Unknown.assayGXCovid19"
+  },
+  {
+    "defaultMessage": "Invalid Credentials",
+    "id": "queryFetch.errorResponseMessages.GET.401.title"
+  },
+  {
+    "defaultMessage": "Access denied",
+    "id": "queryFetch.errorResponseMessages.GET.403.title"
+  },
+  {
+    "defaultMessage": "Error Fetching Endpoint",
+    "id": "queryFetch.errorResponseMessages.GET.default.title"
+  },
+  {
+    "defaultMessage": "Account Details",
+    "id": "pages.AccountDetails.title"
+  },
+  {
+    "defaultMessage": "Login",
+    "id": "pages.AccountDetails.usernameAndPassword"
+  },
+  {
+    "defaultMessage": "License",
+    "id": "pages.License.title"
+  },
+  {
+    "defaultMessage": "I Accept",
+    "id": "pages.License.accept"
+  },
+  {
+    "defaultMessage": "I Do Not Accept",
+    "id": "pages.License.doNotAccept"
+  },
+  {
+    "defaultMessage": "Login",
+    "id": "pages.Login.title"
+  },
+  {
+    "defaultMessage": "Username",
+    "id": "pages.Login.user"
+  },
+  {
+    "defaultMessage": "Password",
+    "id": "pages.Login.password"
+  },
+  {
+    "defaultMessage": "Login",
+    "id": "pages.Login.login"
+  },
+  {
+    "defaultMessage": "Forgot Password?",
+    "id": "pages.Login.resetPasswordLink"
+  },
+  {
+    "defaultMessage": "Reset Password",
+    "id": "pages.ResetPassword.title"
+  },
+  {
+    "defaultMessage": "Enter Email Address",
+    "id": "pages.ResetPassword.enterEmailAddress"
+  },
+  {
+    "defaultMessage": "Please enter the email address that you are registered with",
+    "id": "pages.ResetPassword.enterEmailAddressContent"
+  },
+  {
+    "defaultMessage": "Email Address",
+    "id": "pages.ResetPassword.emailAddress"
+  },
+  {
+    "defaultMessage": "Please enter a valid email address",
+    "id": "pages.ResetPassword.invalidEmailAddress"
+  },
+  {
+    "defaultMessage": "Unable to Reset Password",
+    "id": "pages.ResetPassword.generateTokenFailedTitle"
+  },
+  {
+    "defaultMessage": "We were unable to reset your password.",
+    "id": "pages.ResetPassword.generateTokenFailedMessage"
+  },
+  {
+    "defaultMessage": "You can request further help by sending an email to {supportEmail}",
+    "id": "pages.ResetPassword.generateTokenFailedResolution"
+  },
+  {
+    "defaultMessage": "I don't know what email address I am registered with",
+    "id": "pages.ResetPassword.iDontHaveAnEmailAddress"
+  },
+  {
+    "defaultMessage": "Next",
+    "id": "pages.ResetPassword.next"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.ResetPassword.cancel"
+  },
+  {
+    "defaultMessage": "An email has been sent to you",
+    "id": "pages.ResetPassword.emailSent"
+  },
+  {
+    "defaultMessage": "Check Inbox",
+    "id": "pages.ResetPassword.checkEmail"
+  },
+  {
+    "defaultMessage": "We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox.",
+    "id": "pages.ResetPassword.checkEmailContent"
+  },
+  {
+    "defaultMessage": "I didn't receive an email",
+    "id": "pages.ResetPassword.iDidntReceiveAnEmail"
+  },
+  {
+    "defaultMessage": "Back to Login Page",
+    "id": "pages.ResetPassword.backToLogin"
+  },
+  {
+    "defaultMessage": "Request a New Password From Aspect",
+    "id": "pages.ResetPassword.adminHelpHeader"
+  },
+  {
+    "defaultMessage": "If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}",
+    "id": "pages.ResetPassword.adminHelpContent"
+  },
+  {
+    "defaultMessage": "Close",
+    "id": "pages.ResetPassword.adminHelpClose"
+  },
+  {
+    "defaultMessage": "Enter New Password",
+    "id": "pages.ResetPassword.enterNewPassword"
+  },
+  {
+    "defaultMessage": "Please enter your new password?",
+    "id": "pages.ResetPassword.enterNewPasswordContent"
+  },
+  {
+    "defaultMessage": "New Password",
+    "id": "pages.ResetPassword.newPassword"
+  },
+  {
+    "defaultMessage": "Please enter a new password",
+    "id": "pages.ResetPassword.newPasswordRequired"
+  },
+  {
+    "defaultMessage": "Your password needs to be at least 8 characters long",
+    "id": "pages.ResetPassword.newPasswordTooShort"
+  },
+  {
+    "defaultMessage": "Your password needs to contain at least one number or special character (%!$*...)",
+    "id": "pages.ResetPassword.newPasswordMustContainANumber"
+  },
+  {
+    "defaultMessage": "Confirm New Password",
+    "id": "pages.ResetPassword.confirmNewPassword"
+  },
+  {
+    "defaultMessage": "These passwords don't match",
+    "id": "pages.ResetPassword.passwordsDoNotMatch"
+  },
+  {
+    "defaultMessage": "Password Changed Successfully",
+    "id": "pages.ResetPassword.passwordUpdatedTitle"
+  },
+  {
+    "defaultMessage": "You may now login with your new login details.",
+    "id": "pages.ResetPassword.passwordUpdatedMessage"
+  },
+  {
+    "defaultMessage": "Password Reset Failed",
+    "id": "pages.ResetPassword.passwordUpdateFailedTitle"
+  },
+  {
+    "defaultMessage": "We were unable to reset your password.",
+    "id": "pages.ResetPassword.passwordUpdateFailedMessage"
+  },
+  {
+    "defaultMessage": "You can request further help by sending an email to {supportEmail}",
+    "id": "pages.ResetPassword.passwordUpdateFailedResolution"
+  },
+  {
+    "defaultMessage": "Finish",
+    "id": "pages.ResetPassword.finish"
+  },
+  {
+    "defaultMessage": "Your password has been changed successfully. You can now login with your new details",
+    "id": "pages.ResetPassword.finishContent"
+  },
+  {
+    "defaultMessage": "Login with my new password",
+    "id": "pages.ResetPassword.loginWithMyNewPassword"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "pages.CaseList.createdOn"
+  },
+  {
+    "defaultMessage": "Cases",
+    "id": "pages.CaseList.title"
+  },
+  {
+    "defaultMessage": "Case ID",
+    "id": "pages.CasesList.caseId"
+  },
+  {
+    "defaultMessage": "Sample Collection Site",
+    "id": "pages.CasesList.sampleOriginSite"
+  },
+  {
+    "defaultMessage": "Status",
+    "id": "pages.CasesList.status"
+  },
+  {
+    "defaultMessage": "Patient ID",
+    "id": "pages.CasesList.patientId"
+  },
+  {
+    "defaultMessage": "Disease",
+    "id": "pages.CasesList.diseaseName"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases} }",
+    "id": "pages.CaseList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "No results match your selected filters",
+    "id": "shared.EmptyList.noResultsTitle"
+  },
+  {
+    "defaultMessage": "Clear filters",
+    "id": "shared.EmptyList.clearFilters"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "pages.LocationSelector.country"
+  },
+  {
+    "defaultMessage": "State",
+    "id": "pages.LocationSelector.state"
+  },
+  {
+    "defaultMessage": "Area",
+    "id": "pages.LocationSelector.lga"
+  },
+  {
+    "defaultMessage": "Weak",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterWeak"
+  },
+  {
+    "defaultMessage": "Okay",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterOkay"
+  },
+  {
+    "defaultMessage": "Strong",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterStrong"
+  },
+  {
+    "defaultMessage": "Is at least {minLength} characters long",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterMinLength"
+  },
+  {
+    "defaultMessage": "Has a number",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterContainsNumber"
+  },
+  {
+    "defaultMessage": "Has a mix of UPPER and lower case characters",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase"
+  },
+  {
+    "defaultMessage": "Has a special character (%!$*...)",
+    "id": "pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter"
+  },
+  {
+    "defaultMessage": "All",
+    "id": "pages.TablePaginator.all"
+  },
+  {
+    "defaultMessage": "First",
+    "id": "pages.TablePaginator.first"
+  },
+  {
+    "defaultMessage": "Previous",
+    "id": "pages.TablePaginator.previous"
+  },
+  {
+    "defaultMessage": "Newer",
+    "id": "pages.TablePaginator.newer"
+  },
+  {
+    "defaultMessage": "Older",
+    "id": "pages.TablePaginator.older"
+  },
+  {
+    "defaultMessage": "Next",
+    "id": "pages.TablePaginator.next"
+  },
+  {
+    "defaultMessage": "Last",
+    "id": "pages.TablePaginator.last"
+  },
+  {
+    "defaultMessage": "Dashboard",
+    "id": "pages.OperationalDashboard.operationalDashboardTitle"
+  },
+  {
+    "defaultMessage": "Daily Status",
+    "id": "pages.OperationalDashboard.dailyStatusTitle"
+  },
+  {
+    "defaultMessage": "stock outs",
+    "id": "pages.OperationalData.stockOutsTitle"
+  },
+  {
+    "defaultMessage": "expiring",
+    "id": "pages.OperationalData.expiringTitle"
+  },
+  {
+    "defaultMessage": "{count} site with problems",
+    "id": "pages.OperationalData.siteWithProblems"
+  },
+  {
+    "defaultMessage": "days unavailable",
+    "id": "pages.OperationalData.daysUnavailable"
+  },
+  {
+    "defaultMessage": "test failures",
+    "id": "pages.OperationalData.testFailures"
+  },
+  {
+    "defaultMessage": "calibration compliance",
+    "id": "pages.OperationalData.calibrationCompliance"
+  },
+  {
+    "defaultMessage": "{count} device with problems",
+    "id": "pages.OperationalData.deviceWithProblems"
+  },
+  {
+    "defaultMessage": "All device calibrations up to date",
+    "id": "pages.OperationalData.deviceCalibrationsUpToDate"
+  },
+  {
+    "defaultMessage": "Devices Experiencing Service Interruption",
+    "id": "pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle"
+  },
+  {
+    "defaultMessage": "The number of devices experiencing service interruption on this and the previous month.",
+    "id": "pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription"
+  },
+  {
+    "defaultMessage": "Average Duration of Service Interruption",
+    "id": "pages.OperationalData.averageDurationServiceInterruptionTitle"
+  },
+  {
+    "defaultMessage": "The average duration of a service interruption, in days",
+    "id": "pages.OperationalData.averageDurationServiceInterruptionDescription"
+  },
+  {
+    "defaultMessage": "Positive Test Results Transmitted",
+    "id": "pages.OperationalData.resultsTransmittedTitle"
+  },
+  {
+    "defaultMessage": "Assay Name",
+    "id": "pages.OperationalData.assayName"
+  },
+  {
+    "defaultMessage": "Total Results",
+    "id": "pages.OperationalData.totalResults"
+  },
+  {
+    "defaultMessage": "Positives",
+    "id": "pages.OperationalData.totalPositiveResults"
+  },
+  {
+    "defaultMessage": "Percent Positive",
+    "id": "pages.OperationalData.percentPositiveResults"
+  },
+  {
+    "defaultMessage": "Percent Reported",
+    "id": "pages.OperationalData.percentReported"
+  },
+  {
+    "defaultMessage": "Sent via SMS",
+    "id": "pages.OperationalData.sentViaSms"
+  },
+  {
+    "defaultMessage": "Sent via Email",
+    "id": "pages.OperationalData.sentViaEmail"
+  },
+  {
+    "defaultMessage": "Days for Instrument Replacement",
+    "id": "pages.OperationalData.instrumentsReplaced"
+  },
+  {
+    "defaultMessage": "Within 2 hours of testing",
+    "id": "pages.OperationalData.withinTwoHoursOfTesting"
+  },
+  {
+    "defaultMessage": "Average time to replace disabled module",
+    "id": "pages.OperationalData.averageTimeToModuleReplacementTitle"
+  },
+  {
+    "defaultMessage": "The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.",
+    "id": "pages.OperationalData.averageTimeToModuleReplacementDescription"
+  },
+  {
+    "defaultMessage": "Percentage of Days with Service Interruption",
+    "id": "pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle"
+  },
+  {
+    "defaultMessage": "The percentage of \"device-days\" that were statused as \"down for repair\", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 \"device-days\". If one device was down half of the month, this number would be 10%",
+    "id": "pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription"
+  },
+  {
+    "defaultMessage": "Reports",
+    "id": "pages.Status.reportsTitle"
+  },
+  {
+    "defaultMessage": "Devices",
+    "id": "pages.DeviceList.devicesTitle"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.DeviceList.device"
+  },
+  {
+    "defaultMessage": "Status",
+    "id": "pages.DeviceList.status"
+  },
+  {
+    "defaultMessage": "Active",
+    "id": "pages.DeviceList.availabilityRate"
+  },
+  {
+    "defaultMessage": "Test failures",
+    "id": "pages.DeviceList.errorRate"
+  },
+  {
+    "defaultMessage": "Issues",
+    "id": "pages.DeviceList.issues"
+  },
+  {
+    "defaultMessage": "Issues",
+    "id": "pages.DeviceList.issueCategory"
+  },
+  {
+    "defaultMessage": "Reporting Since",
+    "id": "pages.DeviceList.reportingFor"
+  },
+  {
+    "defaultMessage": "Last Seen",
+    "id": "pages.DeviceList.lastSeen"
+  },
+  {
+    "defaultMessage": "Number of Tests",
+    "id": "pages.DeviceList.numberOfTests"
+  },
+  {
+    "defaultMessage": "Last Month",
+    "id": "pages.DeviceList.lastMonth"
+  },
+  {
+    "defaultMessage": "This Month",
+    "id": "pages.DeviceList.thisMonth"
+  },
+  {
+    "defaultMessage": "Needs Repair",
+    "id": "pages.DeviceList.needsRepair"
+  },
+  {
+    "defaultMessage": "Warranty",
+    "id": "pages.DeviceList.warranty"
+  },
+  {
+    "defaultMessage": "Quality Control",
+    "id": "pages.DeviceList.qualityControl"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.DeviceList.connectivity"
+  },
+  {
+    "defaultMessage": "{count} of {total} days",
+    "id": "pages.DeviceList.availabilityOfDays"
+  },
+  {
+    "defaultMessage": "{count} of {total}",
+    "id": "pages.DeviceList.errorOfTotal"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }",
+    "id": "pages.DeviceList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Export device list",
+    "id": "pages.DeviceList.exportDevices"
+  },
+  {
+    "defaultMessage": "For {period}",
+    "id": "pages.DeviceList.reportingForDays"
+  },
+  {
+    "defaultMessage": "N/A",
+    "id": "pages.DeviceList.notAvailable"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.DeviceList.deviceHealth"
+  },
+  {
+    "defaultMessage": "Reagent",
+    "id": "pages.DeviceList.reagentHealth"
+  },
+  {
+    "defaultMessage": "Data",
+    "id": "pages.DeviceList.dataHealth"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.DeviceList.connectivityHealth"
+  },
+  {
+    "defaultMessage": "Active",
+    "id": "pages.DeviceList.status.active"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.DeviceList.status.inactiveConnectivity"
+  },
+  {
+    "defaultMessage": "Decommissioned",
+    "id": "pages.DeviceList.status.inactiveDecommissioned"
+  },
+  {
+    "defaultMessage": "Down For Repair",
+    "id": "pages.DeviceList.status.inactiveDownForRepair"
+  },
+  {
+    "defaultMessage": "No Results Reported",
+    "id": "pages.DeviceList.status.inactiveNoResultsReported"
+  },
+  {
+    "defaultMessage": "Out Of Inventory",
+    "id": "pages.DeviceList.status.inactiveOutOfInventory"
+  },
+  {
+    "defaultMessage": "Unknown",
+    "id": "pages.DeviceList.status.inactiveUnknown"
+  },
+  {
+    "defaultMessage": "Active",
+    "id": "pages.DeviceList.status.reportedActive"
+  },
+  {
+    "defaultMessage": "No Staff",
+    "id": "pages.DeviceList.status.inactiveNoStaff"
+  },
+  {
+    "defaultMessage": "No Power",
+    "id": "pages.DeviceList.status.inactiveNoPower"
+  },
+  {
+    "defaultMessage": "Other",
+    "id": "pages.DeviceList.status.inactiveOther"
+  },
+  {
+    "defaultMessage": "Provisioned",
+    "id": "pages.DeviceList.status.provisioned"
+  },
+  {
+    "defaultMessage": "Assigned",
+    "id": "pages.DeviceList.status.assigned"
+  },
+  {
+    "defaultMessage": "Approved",
+    "id": "pages.DeviceList.status.approved"
+  },
+  {
+    "defaultMessage": "Decommissioned",
+    "id": "pages.DeviceList.status.decommissioned"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.DeviceApiKeyList.cancel"
+  },
+  {
+    "defaultMessage": "Assign",
+    "id": "pages.DeviceApiKeyList.assign"
+  },
+  {
+    "defaultMessage": "Assign {count} Keys",
+    "id": "pages.DeviceApiKeyList.assignerDialogTitle"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "pages.DeviceApiKeyList.countryId"
+  },
+  {
+    "defaultMessage": "Partner",
+    "id": "pages.DeviceApiKeyList.partnerId"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.DeviceApiKeyList.siteId"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.DeviceApiKeyList.deviceId"
+  },
+  {
+    "defaultMessage": "Generate",
+    "id": "pages.DeviceApiKeyList.generate"
+  },
+  {
+    "defaultMessage": "Device API Keys Generator",
+    "id": "pages.DeviceApiKeyList.generatorDialogTitle"
+  },
+  {
+    "defaultMessage": "Count (1-100)",
+    "id": "pages.DeviceApiKeyList.count"
+  },
+  {
+    "defaultMessage": "Please select a country",
+    "id": "pages.DeviceApiKeyList.countryRequired"
+  },
+  {
+    "defaultMessage": "Please select a partner",
+    "id": "pages.DeviceApiKeyList.partnerRequired"
+  },
+  {
+    "defaultMessage": "Device API Keys",
+    "id": "pages.DeviceApiKeyList.title"
+  },
+  {
+    "defaultMessage": "Created On",
+    "id": "pages.DeviceApiKeyList.createdOn"
+  },
+  {
+    "defaultMessage": "Key",
+    "id": "pages.DeviceApiKeyList.token"
+  },
+  {
+    "defaultMessage": "Partner",
+    "id": "pages.DeviceApiKeyList.partner"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "pages.DeviceApiKeyList.country"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.DeviceApiKeyList.site"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.DeviceApiKeyList.device"
+  },
+  {
+    "defaultMessage": "Revoked",
+    "id": "pages.DeviceApiKeyList.revoked"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device API key} other {# device API keys} }",
+    "id": "pages.DeviceApiKeyList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Not Found",
+    "id": "pages.NotFound.title"
+  },
+  {
+    "defaultMessage": "The page you're looking for doesn't exist.",
+    "id": "pages.NotFound.help"
+  },
+  {
+    "defaultMessage": "Any",
+    "id": "pages.dateRangeSelector.any"
+  },
+  {
+    "defaultMessage": "Day",
+    "id": "pages.dateRangeSelector.day"
+  },
+  {
+    "defaultMessage": "Week",
+    "id": "pages.dateRangeSelector.week"
+  },
+  {
+    "defaultMessage": "Month",
+    "id": "pages.dateRangeSelector.month"
+  },
+  {
+    "defaultMessage": "Quarter",
+    "id": "pages.dateRangeSelector.quarter"
+  },
+  {
+    "defaultMessage": "Year",
+    "id": "pages.dateRangeSelector.year"
+  },
+  {
+    "defaultMessage": "Select Day...",
+    "id": "pages.dateRangeSelector.selectDay"
+  },
+  {
+    "defaultMessage": "Select Week...",
+    "id": "pages.dateRangeSelector.selectWeek"
+  },
+  {
+    "defaultMessage": "Select Month...",
+    "id": "pages.dateRangeSelector.selectMonth"
+  },
+  {
+    "defaultMessage": "Select Quarter...",
+    "id": "pages.dateRangeSelector.selectQuarter"
+  },
+  {
+    "defaultMessage": "Select Year...",
+    "id": "pages.dateRangeSelector.selectYear"
+  },
+  {
+    "defaultMessage": "From...",
+    "id": "pages.dateRangeSelector.fromDate"
+  },
+  {
+    "defaultMessage": "To...",
+    "id": "pages.dateRangeSelector.toDate"
+  },
+  {
+    "defaultMessage": "Custom",
+    "id": "pages.dateRangeSelector.custom"
+  },
+  {
+    "defaultMessage": "Today",
+    "id": "pages.dateRangeSelector.today"
+  },
+  {
+    "defaultMessage": "Yesterday",
+    "id": "pages.dateRangeSelector.yesterday"
+  },
+  {
+    "defaultMessage": "Last 30 Days",
+    "id": "pages.dateRangeSelector.last30Days"
+  },
+  {
+    "defaultMessage": "This Month",
+    "id": "pages.dateRangeSelector.thisMonth"
+  },
+  {
+    "defaultMessage": "Last Month",
+    "id": "pages.dateRangeSelector.lastMonth"
+  },
+  {
+    "defaultMessage": "Last 7 Days",
+    "id": "pages.dateRangeSelector.last7Days"
+  },
+  {
+    "defaultMessage": "This Week",
+    "id": "pages.dateRangeSelector.thisWeek"
+  },
+  {
+    "defaultMessage": "Last Week",
+    "id": "pages.dateRangeSelector.lastWeek"
+  },
+  {
+    "defaultMessage": "This Quarter",
+    "id": "pages.dateRangeSelector.thisQuarter"
+  },
+  {
+    "defaultMessage": "This Year",
+    "id": "pages.dateRangeSelector.thisYear"
+  },
+  {
+    "defaultMessage": "Last Year",
+    "id": "pages.dateRangeSelector.lastYear"
+  },
+  {
+    "defaultMessage": "More filters",
+    "id": "filter.popover.moreFilters"
+  },
+  {
+    "defaultMessage": "Close",
+    "id": "filter.popover.close"
+  },
+  {
+    "defaultMessage": "All",
+    "id": "filter.popover.all"
+  },
+  {
+    "defaultMessage": "None",
+    "id": "filter.popover.none"
+  },
+  {
+    "defaultMessage": "Contact name/email",
+    "id": "filter.popover.contactNameEmail"
+  },
+  {
+    "defaultMessage": "Enter contact name/email...",
+    "id": "filter.popover.setContactNameEmail"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "filter.popover.site"
+  },
+  {
+    "defaultMessage": "Site Id",
+    "id": "filter.popover.siteId"
+  },
+  {
+    "defaultMessage": "Enter site name...",
+    "id": "filter.popover.enterSiteName"
+  },
+  {
+    "defaultMessage": "Enter site ID...",
+    "id": "filter.popover.enterSiteId"
+  },
+  {
+    "defaultMessage": "Sample collection site",
+    "id": "filter.popover.sampleOriginSite"
+  },
+  {
+    "defaultMessage": "Enter sample origin site name...",
+    "id": "filter.popover.enterSampleOriginSite"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "filter.popover.date"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "filter.popover.deviceName"
+  },
+  {
+    "defaultMessage": "Enter device name...",
+    "id": "filter.popover.enterDeviceName"
+  },
+  {
+    "defaultMessage": "Consumable",
+    "id": "filter.popover.consumable"
+  },
+  {
+    "defaultMessage": "Select consumable...",
+    "id": "filter.popover.selectConsumable"
+  },
+  {
+    "defaultMessage": "Partner",
+    "id": "filter.popover.partner"
+  },
+  {
+    "defaultMessage": "Select partner...",
+    "id": "filter.popover.selectPartner"
+  },
+  {
+    "defaultMessage": "Patient ID",
+    "id": "filter.popover.patientOrResearchId"
+  },
+  {
+    "defaultMessage": "Enter patient ID...",
+    "id": "filter.popover.enterPatientOrResearchId"
+  },
+  {
+    "defaultMessage": "Patient/Case ID",
+    "id": "filter.popover.patientOrCaseId"
+  },
+  {
+    "defaultMessage": "Enter patient/case ID...",
+    "id": "filter.popover.enterPatientOrCaseId"
+  },
+  {
+    "defaultMessage": "Sample ID",
+    "id": "filter.popover.sampleId"
+  },
+  {
+    "defaultMessage": "Enter sample ID...",
+    "id": "filter.popover.enterSampleId"
+  },
+  {
+    "defaultMessage": "Error Code",
+    "id": "filter.popover.errorCode"
+  },
+  {
+    "defaultMessage": "Enter error code...",
+    "id": "filter.popover.enterErrorCode"
+  },
+  {
+    "defaultMessage": "Result",
+    "id": "filter.popover.result"
+  },
+  {
+    "defaultMessage": "Select result...",
+    "id": "filter.popover.selectResult"
+  },
+  {
+    "defaultMessage": "Assay",
+    "id": "filter.popover.assay"
+  },
+  {
+    "defaultMessage": "Select assay...",
+    "id": "filter.popover.selectAssay"
+  },
+  {
+    "defaultMessage": "Disease",
+    "id": "filter.popover.disease"
+  },
+  {
+    "defaultMessage": "Select Disease...",
+    "id": "filter.popover.selectDisease"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "filter.popover.country"
+  },
+  {
+    "defaultMessage": "Select country...",
+    "id": "filter.popover.selectCountry"
+  },
+  {
+    "defaultMessage": "Set Filters",
+    "id": "filter.popover.setFilters"
+  },
+  {
+    "defaultMessage": "Excel",
+    "id": "pages.ListExport.exportExcel"
+  },
+  {
+    "defaultMessage": "CSV",
+    "id": "pages.ListExport.exportCsv"
+  },
+  {
+    "defaultMessage": "Workflow Status",
+    "id": "filter.popover.workflowStatus"
+  },
+  {
+    "defaultMessage": "Select status...",
+    "id": "filter.popover.selectWorkflowStatus"
+  },
+  {
+    "defaultMessage": "Treatment Status",
+    "id": "filter.popover.treatmentStatus"
+  },
+  {
+    "defaultMessage": "Select status...",
+    "id": "filter.popover.selectTreatmentStatus"
+  },
+  {
+    "defaultMessage": "Approval",
+    "id": "filter.popover.deviceApproval"
+  },
+  {
+    "defaultMessage": "Select approval status...",
+    "id": "filter.popover.selectDeviceApproval"
+  },
+  {
+    "defaultMessage": "Device Type",
+    "id": "filter.popover.deviceType"
+  },
+  {
+    "defaultMessage": "Select type...",
+    "id": "filter.popover.selectDeviceType"
+  },
+  {
+    "defaultMessage": "Site ID",
+    "id": "filter.popover.externalId"
+  },
+  {
+    "defaultMessage": "Enter site ID...",
+    "id": "filter.popover.enterExternalId"
+  },
+  {
+    "defaultMessage": "Notification",
+    "id": "filter.popover.notificationName"
+  },
+  {
+    "defaultMessage": "Enter notification name...",
+    "id": "filter.popover.selectNotificationName"
+  },
+  {
+    "defaultMessage": "Revoked",
+    "id": "filter.popover.revoked"
+  },
+  {
+    "defaultMessage": "Select revoked status...",
+    "id": "filter.popover.selectRevoked"
+  },
+  {
+    "defaultMessage": "Only Reportable Results",
+    "id": "filter.popover.onlyReportableResults"
+  },
+  {
+    "defaultMessage": "Maintenance Status",
+    "id": "filter.popover.deviceMaintenanceStatus"
+  },
+  {
+    "defaultMessage": "Select maintenance status...",
+    "id": "filter.popover.selectDeviceMaintenanceStatus"
+  },
+  {
+    "defaultMessage": "Select stock left...",
+    "id": "filter.popover.selectStockLeft"
+  },
+  {
+    "defaultMessage": "Days Stock Left",
+    "id": "filter.popover.stockLeft"
+  },
+  {
+    "defaultMessage": "Report",
+    "id": "filter.popover.reportName"
+  },
+  {
+    "defaultMessage": "Enter report name...",
+    "id": "filter.popover.enterReportName"
+  },
+  {
+    "defaultMessage": "Abbott m2000 DBS HIV VL",
+    "id": "filter.AssaySelectField.AssayAbbottM2000DBSHivVl"
+  },
+  {
+    "defaultMessage": "Abbott m2000 HIV EID",
+    "id": "filter.AssaySelectField.AssayAbbottM2000HivEid"
+  },
+  {
+    "defaultMessage": "Abbott m2000 Plasma HBV VL",
+    "id": "filter.AssaySelectField.abbottM2000PlasmaHbvVL"
+  },
+  {
+    "defaultMessage": "Abbott m2000 Plasma HIV VL",
+    "id": "filter.AssaySelectField.abbottM2000PlasmaHivVL"
+  },
+  {
+    "defaultMessage": "Alere Q HIV-1/2 Detect",
+    "id": "filter.AssaySelectField.assayAlereQHiv12Detect"
+  },
+  {
+    "defaultMessage": "Alere Q HIV-1/2 VL plasma",
+    "id": "filter.AssaySelectField.assayAlereQHiv12VLPlasma"
+  },
+  {
+    "defaultMessage": "BD MGIT AST",
+    "id": "filter.AssaySelectField.assayBdMgitAst"
+  },
+  {
+    "defaultMessage": "BD MGIT GND",
+    "id": "filter.AssaySelectField.assayBdMgitGnd"
+  },
+  {
+    "defaultMessage": "CHAI EID",
+    "id": "filter.AssaySelectField.AssayChaiEid"
+  },
+  {
+    "defaultMessage": "CHAI HIV VL",
+    "id": "filter.AssaySelectField.AssayChaiHivVl"
+  },
+  {
+    "defaultMessage": "COBAS 4800 VL",
+    "id": "filter.AssaySelectField.assayCobasHivVl"
+  },
+  {
+    "defaultMessage": "CommCare Gates RDT",
+    "id": "filter.AssaySelectField.assayCommCareGatesRDT"
+  },
+  {
+    "defaultMessage": "CommCare HIV",
+    "id": "filter.AssaySelectField.commCareHiv"
+  },
+  {
+    "defaultMessage": "COVID-19 Generic Test",
+    "id": "filter.AssaySelectField.assayGenericCovid19"
+  },
+  {
+    "defaultMessage": "Culture",
+    "id": "filter.AssaySelectField.assayCulture"
+  },
+  {
+    "defaultMessage": "Daktari CD4",
+    "id": "filter.AssaySelectField.assayDaktariCD4"
+  },
+  {
+    "defaultMessage": "Daktari HCV",
+    "id": "filter.AssaySelectField.assayDaktariHcv"
+  },
+  {
+    "defaultMessage": "Daktari HIV-VL",
+    "id": "filter.AssaySelectField.assayDaktariHivVl"
+  },
+  {
+    "defaultMessage": "Generic RDT",
+    "id": "filter.AssaySelectField.genericRdt"
+  },
+  {
+    "defaultMessage": "GeneXpert COVID-19",
+    "id": "filter.AssaySelectField.assayGXCovid19"
+  },
+  {
+    "defaultMessage": "GeneXpert Ebola",
+    "id": "filter.AssaySelectField.assayGeneXpertEbola"
+  },
+  {
+    "defaultMessage": "GeneXpert HCV",
+    "id": "filter.AssaySelectField.assayGeneXpertHcv"
+  },
+  {
+    "defaultMessage": "GeneXpert HIV-1 Qual",
+    "id": "filter.AssaySelectField.assayGeneXpertHiv1Qual"
+  },
+  {
+    "defaultMessage": "GeneXpert HIV-1 VL",
+    "id": "filter.AssaySelectField.assayGeneXpertHiv1Vl"
+  },
+  {
+    "defaultMessage": "GeneXpert MTB/Rif",
+    "id": "filter.AssaySelectField.assayGeneXpertMtbRif"
+  },
+  {
+    "defaultMessage": "GeneXpert MTB/Rif Ultra",
+    "id": "filter.AssaySelectField.assayGeneXpertMtbRifUltra"
+  },
+  {
+    "defaultMessage": "GeneXpert Unknown",
+    "id": "filter.AssaySelectField.assayGeneXpertUnknown"
+  },
+  {
+    "defaultMessage": "GenoType MTBC VER 1.X",
+    "id": "filter.AssaySelectField.assayGenoTypeMTBCV1"
+  },
+  {
+    "defaultMessage": "GenoType MTBDRplus VER 2.0",
+    "id": "filter.AssaySelectField.assayGenoTypeMTBDRplusV2"
+  },
+  {
+    "defaultMessage": "GenoType MTBDRsl VER 1.0",
+    "id": "filter.AssaySelectField.assayGenoTypeMTBDRslV1"
+  },
+  {
+    "defaultMessage": "GenoType MTBDRsl VER 2.0",
+    "id": "filter.AssaySelectField.assayGenoTypeMTBDRslV2"
+  },
+  {
+    "defaultMessage": "MagNA Pure-96 COVID-19",
+    "id": "filter.AssaySelectField.assayMP96Covid19"
+  },
+  {
+    "defaultMessage": "Q HIV VL",
+    "id": "filter.AssaySelectField.assayQHivVl"
+  },
+  {
+    "defaultMessage": "QuantStudio7 Flex COVID-19",
+    "id": "filter.AssaySelectField.assayQS7Covid19"
+  },
+  {
+    "defaultMessage": "Reporter EID",
+    "id": "filter.AssaySelectField.AssayReporterEid"
+  },
+  {
+    "defaultMessage": "Reporter HIV VL",
+    "id": "filter.AssaySelectField.AssayReporterHivVl"
+  },
+  {
+    "defaultMessage": "Senaite LIMS Smear Microscopy",
+    "id": "filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy"
+  },
+  {
+    "defaultMessage": "Senaite LIMS TB Culture",
+    "id": "filter.AssaySelectField.assaySenaiteLIMSTbCulture"
+  },
+  {
+    "defaultMessage": "Senaite LIMS Unknown",
+    "id": "filter.AssaySelectField.assaySenaiteLIMSUnknown"
+  },
+  {
+    "defaultMessage": "TB DST",
+    "id": "filter.AssaySelectField.assayGenericDst"
+  },
+  {
+    "defaultMessage": "CD4 Count",
+    "id": "filter.AssayTypeSelectField.assayTypeCD4"
+  },
+  {
+    "defaultMessage": "COVID-19 Test",
+    "id": "filter.AssayTypeSelectField.covid19"
+  },
+  {
+    "defaultMessage": "Dengue",
+    "id": "filter.AssayTypeSelectField.assayTypeDengue"
+  },
+  {
+    "defaultMessage": "Ebola",
+    "id": "filter.AssayTypeSelectField.assayTypeEbola"
+  },
+  {
+    "defaultMessage": "EID",
+    "id": "filter.AssayTypeSelectField.assayTypeEid"
+  },
+  {
+    "defaultMessage": "Generic RDT",
+    "id": "filter.AssayTypeSelectField.genericRDT"
+  },
+  {
+    "defaultMessage": "GenoType Test Strip",
+    "id": "filter.AssayTypeSelectField.genoTypeTestStrip"
+  },
+  {
+    "defaultMessage": "HBV VL",
+    "id": "filter.AssayTypeSelectField.assayTypeHbvVl"
+  },
+  {
+    "defaultMessage": "HCV",
+    "id": "filter.AssayTypeSelectField.assayTypeHcv"
+  },
+  {
+    "defaultMessage": "HIV Qual",
+    "id": "filter.AssayTypeSelectField.assayTypeHivQual"
+  },
+  {
+    "defaultMessage": "HIV VL",
+    "id": "filter.AssayTypeSelectField.assayTypeHivVl"
+  },
+  {
+    "defaultMessage": "Lipid Panel",
+    "id": "filter.AssayTypeSelectField.assayTypeLipidPanel"
+  },
+  {
+    "defaultMessage": "MTB/Rif",
+    "id": "filter.AssayTypeSelectField.assayTypeMtbRif"
+  },
+  {
+    "defaultMessage": "TB AST",
+    "id": "filter.AssayTypeSelectField.assayTypeTbAst"
+  },
+  {
+    "defaultMessage": "TB G&D",
+    "id": "filter.AssayTypeSelectField.assayTypeTbGnd"
+  },
+  {
+    "defaultMessage": "Unknown",
+    "id": "filter.AssayTypeSelectField.assayTypeUnknown"
+  },
+  {
+    "defaultMessage": "Zika",
+    "id": "filter.AssayTypeSelectField.assayTypeZika"
+  },
+  {
+    "defaultMessage": "Expired",
+    "id": "filter.ConsumableReasonSelectField.ConsumableReason_Expired"
+  },
+  {
+    "defaultMessage": "Lost",
+    "id": "filter.ConsumableReasonSelectField.ConsumableReason_Lost"
+  },
+  {
+    "defaultMessage": "Stolen",
+    "id": "filter.ConsumableReasonSelectField.ConsumableReason_Stolen"
+  },
+  {
+    "defaultMessage": "Test Conducted",
+    "id": "bbe12"
+  },
+  {
+    "defaultMessage": "Provisioned",
+    "id": "pages.filter.status.provisioned"
+  },
+  {
+    "defaultMessage": "Assigned",
+    "id": "pages.filter.status.assigned"
+  },
+  {
+    "defaultMessage": "Approved",
+    "id": "pages.filter.status.approved"
+  },
+  {
+    "defaultMessage": "Decommissioned",
+    "id": "pages.filter.status.decommissioned"
+  },
+  {
+    "defaultMessage": "Active",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.active"
+  },
+  {
+    "defaultMessage": "Reported Active",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive"
+  },
+  {
+    "defaultMessage": "Unknown",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown"
+  },
+  {
+    "defaultMessage": "No Results Reported",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported"
+  },
+  {
+    "defaultMessage": "Out Of Inventory",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory"
+  },
+  {
+    "defaultMessage": "Down For Repair",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity"
+  },
+  {
+    "defaultMessage": "Decommissioned",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned"
+  },
+  {
+    "defaultMessage": "No Staff",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff"
+  },
+  {
+    "defaultMessage": "No Power",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower"
+  },
+  {
+    "defaultMessage": "Other",
+    "id": "pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther"
+  },
+  {
+    "defaultMessage": "Dengue Fever",
+    "id": "filter.DiseaseSelectField.diseaseNameDengueFever"
+  },
+  {
+    "defaultMessage": "Ebola",
+    "id": "filter.DiseaseSelectField.diseaseNameEbola"
+  },
+  {
+    "defaultMessage": "Hepatitis B",
+    "id": "filter.DiseaseSelectField.diseaseNameHepatitisB"
+  },
+  {
+    "defaultMessage": "Hepatitis C",
+    "id": "filter.DiseaseSelectField.diseaseNameHepatitisC"
+  },
+  {
+    "defaultMessage": "HIV/AIDS",
+    "id": "filter.DiseaseSelectField.diseaseNameHIVAIDS"
+  },
+  {
+    "defaultMessage": "SARS-CoV-2 (COVID-19)",
+    "id": "filter.DiseaseSelectField.diseaseNameCovid19"
+  },
+  {
+    "defaultMessage": "Tuberculosis",
+    "id": "filter.DiseaseSelectField.diseaseNameTuberculosis"
+  },
+  {
+    "defaultMessage": "Zika Fever",
+    "id": "filter.DiseaseSelectField.diseaseNameZikaFever"
+  },
+  {
+    "defaultMessage": "Awaiting Treatment",
+    "id": "pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment"
+  },
+  {
+    "defaultMessage": "On Treatment",
+    "id": "pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment"
+  },
+  {
+    "defaultMessage": "Not Possible",
+    "id": "pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible"
+  },
+  {
+    "defaultMessage": "False",
+    "id": "pages.revokedSelectField.false"
+  },
+  {
+    "defaultMessage": "True",
+    "id": "pages.revokedSelectField.true"
+  },
+  {
+    "defaultMessage": "Detected",
+    "id": "pages.deviceDetail.ResultCategoryDetected"
+  },
+  {
+    "defaultMessage": "Trace Detected",
+    "id": "pages.deviceDetail.ResultCategoryTraceDetected"
+  },
+  {
+    "defaultMessage": "Not Detected",
+    "id": "pages.deviceDetail.resultCategoryNotDetected"
+  },
+  {
+    "defaultMessage": "Indeterminate",
+    "id": "pages.deviceDetail.resultCategoryIndeterminate"
+  },
+  {
+    "defaultMessage": "Invalid",
+    "id": "pages.deviceDetail.resultCategoryInvalid"
+  },
+  {
+    "defaultMessage": "No Result",
+    "id": "pages.deviceDetail.resultCategoryNoResult"
+  },
+  {
+    "defaultMessage": "Error",
+    "id": "pages.deviceDetail.resultCategoryError"
+  },
+  {
+    "defaultMessage": "Success",
+    "id": "pages.deviceDetail.resultCategorySuccess"
+  },
+  {
+    "defaultMessage": "Collect New Sample",
+    "id": "pages.deviceDetail.resultCategoryCollectNewSample"
+  },
+  {
+    "defaultMessage": "Discordant",
+    "id": "pages.deviceDetail.resultCategoryDiscordant"
+  },
+  {
+    "defaultMessage": "< 40",
+    "id": "pages.deviceDetail.resultCategoryLessThan40"
+  },
+  {
+    "defaultMessage": ">= 40",
+    "id": "pages.deviceDetail.resultCategoryMoreThan40"
+  },
+  {
+    "defaultMessage": "< 150",
+    "id": "pages.deviceDetail.resultCategoryLessThan150"
+  },
+  {
+    "defaultMessage": ">= 150",
+    "id": "pages.deviceDetail.resultCategoryMoreThan150"
+  },
+  {
+    "defaultMessage": "< 550",
+    "id": "pages.deviceDetail.resultCategoryLessThan550"
+  },
+  {
+    "defaultMessage": ">= 550",
+    "id": "pages.deviceDetail.resultCategoryMoreThan550"
+  },
+  {
+    "defaultMessage": "< 1000",
+    "id": "pages.deviceDetail.resultCategoryLessThan1000"
+  },
+  {
+    "defaultMessage": ">= 1000",
+    "id": "pages.deviceDetail.resultCategoryMoreThan1000"
+  },
+  {
+    "defaultMessage": "Rejected",
+    "id": "pages.deviceDetail.resultCategoryRejected"
+  },
+  {
+    "defaultMessage": "Missing",
+    "id": "pages.deviceDetail.resultCategoryMissing"
+  },
+  {
+    "defaultMessage": "Unknown",
+    "id": "pages.deviceDetail.resultCategoryUnknown"
+  },
+  {
+    "defaultMessage": "Susceptible",
+    "id": "pages.deviceDetail.resultCategorySusceptible"
+  },
+  {
+    "defaultMessage": "Resistant",
+    "id": "pages.deviceDetail.resultCategoryResistant"
+  },
+  {
+    "defaultMessage": "Negative",
+    "id": "pages.deviceDetail.resultCategoryNegative"
+  },
+  {
+    "defaultMessage": "Positive (+)",
+    "id": "pages.deviceDetail.resultCategoryPositive1"
+  },
+  {
+    "defaultMessage": "Positive (++)",
+    "id": "pages.deviceDetail.resultCategoryPositive2"
+  },
+  {
+    "defaultMessage": "Positive (+++)",
+    "id": "pages.deviceDetail.resultCategoryPositive3"
+  },
+  {
+    "defaultMessage": "Scanty (1-9/100)",
+    "id": "pages.deviceDetail.resultCategoryScanty"
+  },
+  {
+    "defaultMessage": "Contaminated",
+    "id": "pages.deviceDetail.resultCategoryContaminated"
+  },
+  {
+    "defaultMessage": "Positive MOTT",
+    "id": "pages.deviceDetail.resultCategoryPositiveMOTT"
+  },
+  {
+    "defaultMessage": "Positive MTB",
+    "id": "pages.deviceDetail.resultCategoryPositiveMTB"
+  },
+  {
+    "defaultMessage": "Inconclusive",
+    "id": "pages.deviceDetail.resultCategoryInconclusive"
+  },
+  {
+    "defaultMessage": "Positive",
+    "id": "pages.deviceDetail.resultCategoryPositive"
+  },
+  {
+    "defaultMessage": "Presumptive Positive",
+    "id": "pages.deviceDetail.resultCategoryPresumptivePositive"
+  },
+  {
+    "defaultMessage": "Region: {region}",
+    "id": "pages.SiteDropdown.allSites"
+  },
+  {
+    "defaultMessage": "Automatic Logout",
+    "id": "pages.IdleDialog.title"
+  },
+  {
+    "defaultMessage": "You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.",
+    "id": "shared.IdleDialog.help"
+  },
+  {
+    "defaultMessage": "Please specify the quantity to add",
+    "id": "pages.AddInventoryDialogForm.quantityRequired"
+  },
+  {
+    "defaultMessage": "Add {consumableName}",
+    "id": "pages.AddInventoryDialogForm.dialogTitle"
+  },
+  {
+    "defaultMessage": "Quantity to Add",
+    "id": "pages.AddInventoryDialogForm.quantity"
+  },
+  {
+    "defaultMessage": "Date Added",
+    "id": "pages.AddInventoryDialogForm.dateAdjusted"
+  },
+  {
+    "defaultMessage": "(New quantity on hand: {nextQuantity} {unitShortName})",
+    "id": "pages.AddInventoryDialogForm.nextQuantityStatus"
+  },
+  {
+    "defaultMessage": "Please specify a consumable",
+    "id": "pages.InventoryAdjustmentDialogForm.consumableRequired"
+  },
+  {
+    "defaultMessage": "Please specify an expiry date",
+    "id": "pages.InventoryAdjustmentDialogForm.expiryDateRequired"
+  },
+  {
+    "defaultMessage": "Please select a site",
+    "id": "pages.InventoryAdjustmentDialogForm.siteRequired"
+  },
+  {
+    "defaultMessage": "Please select a reason",
+    "id": "pages.InventoryAdjustmentDialogForm.reasonRequired"
+  },
+  {
+    "defaultMessage": "Please specify a date",
+    "id": "pages.InventoryAdjustmentDialogForm.dateRequired"
+  },
+  {
+    "defaultMessage": "Please choose a date later or equal to from date",
+    "id": "pages.InventoryAdjustmentDialogForm.dateFromAfterDateTo"
+  },
+  {
+    "defaultMessage": "Please specify the quantity to add",
+    "id": "pages.NewInventoryDialogForm.quantityRequired"
+  },
+  {
+    "defaultMessage": "Inventory Item",
+    "id": "pages.NewInventoryDialogForm.defaultConsumableName"
+  },
+  {
+    "defaultMessage": "Add {consumableName}",
+    "id": "pages.NewInventoryDialogForm.dialogTitle"
+  },
+  {
+    "defaultMessage": "Quantity to Add",
+    "id": "pages.NewInventoryDialogForm.quantity"
+  },
+  {
+    "defaultMessage": "Date Added",
+    "id": "pages.NewInventoryDialogForm.dateAdjusted"
+  },
+  {
+    "defaultMessage": "(New quantity on hand: {nextQuantity} {unitShortName})",
+    "id": "pages.NewInventoryDialogForm.nextQuantityStatus"
+  },
+  {
+    "defaultMessage": "Please choose a different site",
+    "id": "pages.ReceiveInventoryDialogForm.siteShouldBeDifferent"
+  },
+  {
+    "defaultMessage": "Please specify the quantity to receive",
+    "id": "pages.ReceiveInventoryDialogForm.quantityRequired"
+  },
+  {
+    "defaultMessage": "Receive {consumableName}",
+    "id": "pages.ReceiveInventoryDialogForm.dialogTitle"
+  },
+  {
+    "defaultMessage": "Quantity Received",
+    "id": "pages.ReceiveInventoryDialogForm.quantity"
+  },
+  {
+    "defaultMessage": "Date Received",
+    "id": "pages.ReceiveInventoryDialogForm.dateAdjusted"
+  },
+  {
+    "defaultMessage": "(New quantity on hand: {nextQuantity} {unitShortName})",
+    "id": "pages.ReceiveInventoryDialogForm.nextQuantityStatus"
+  },
+  {
+    "defaultMessage": "Please specify the quantity to remove",
+    "id": "pages.RemoveInventoryDialogForm.quantityRequired"
+  },
+  {
+    "defaultMessage": "The most that you can remove is {currentQuantity}",
+    "id": "pages.RemoveInventoryDialogForm.positiveQuantityRequired"
+  },
+  {
+    "defaultMessage": "Remove {consumableName}",
+    "id": "pages.RemoveInventoryDialogForm.dialogTitle"
+  },
+  {
+    "defaultMessage": "Quantity to Remove",
+    "id": "pages.RemoveInventoryDialogForm.quantity"
+  },
+  {
+    "defaultMessage": "Date Removed",
+    "id": "pages.RemoveInventoryDialogForm.dateAdjusted"
+  },
+  {
+    "defaultMessage": "(New quantity on hand: {nextQuantity} {unitShortName})",
+    "id": "pages.RemoveInventoryDialogForm.nextQuantityStatus"
+  },
+  {
+    "defaultMessage": "Please choose a different site",
+    "id": "pages.TransferInventoryDialogForm.siteShouldBeDifferent"
+  },
+  {
+    "defaultMessage": "Please specify the quantity to transfer",
+    "id": "pages.TransferInventoryDialogForm.quantityRequired"
+  },
+  {
+    "defaultMessage": "The most that you can transfer is {currentQuantity}",
+    "id": "pages.TransferInventoryDialogForm.positiveQuantityRequired"
+  },
+  {
+    "defaultMessage": "Transfer {consumableName}",
+    "id": "pages.TransferInventoryDialogForm.dialogTitle"
+  },
+  {
+    "defaultMessage": "Quantity to Transfer",
+    "id": "pages.TransferInventoryDialogForm.quantity"
+  },
+  {
+    "defaultMessage": "Date Transferred",
+    "id": "pages.TransferInventoryDialogForm.dateAdjusted"
+  },
+  {
+    "defaultMessage": "(New quantity on hand: {nextQuantity} {unitShortName})",
+    "id": "pages.TransferInventoryDialogForm.nextQuantityStatus"
+  },
+  {
+    "defaultMessage": "Submit",
+    "id": "pages.InventoryAdjustmentDialogForm.submit"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.InventoryAdjustmentDialogForm.cancel"
+  },
+  {
+    "defaultMessage": "Consumable",
+    "id": "pages.InventoryAdjustmentDialogForm.consumable"
+  },
+  {
+    "defaultMessage": "Lot Number",
+    "id": "pages.InventoryAdjustmentDialogForm.lotNumber"
+  },
+  {
+    "defaultMessage": "Expiry Date",
+    "id": "pages.InventoryAdjustmentDialogForm.expiryDate"
+  },
+  {
+    "defaultMessage": "To Site",
+    "id": "pages.InventoryAdjustmentDialogForm.toSiteName"
+  },
+  {
+    "defaultMessage": "From Site",
+    "id": "pages.InventoryAdjustmentDialogForm.fromSiteName"
+  },
+  {
+    "defaultMessage": "Reason",
+    "id": "pages.InventoryAdjustmentDialogForm.reason"
+  },
+  {
+    "defaultMessage": "Tests Run Between",
+    "id": "pages.InventoryAdjustmentDialogForm.testsRunBetween"
+  },
+  {
+    "defaultMessage": "and",
+    "id": "pages.InventoryAdjustmentDialogForm.and"
+  },
+  {
+    "defaultMessage": "Notes",
+    "id": "pages.InventoryAdjustmentDialogForm.notes"
+  },
+  {
+    "defaultMessage": "Inventory on Hand",
+    "id": "pages.InventoryItemsList.inventoryItemsTitle"
+  },
+  {
+    "defaultMessage": "Group by Site",
+    "id": "pages.InventoryItemsList.groupBySite"
+  },
+  {
+    "defaultMessage": "Site Name",
+    "id": "pages.InventoryItemsList.siteName"
+  },
+  {
+    "defaultMessage": "Consumable",
+    "id": "pages.InventoryItemsList.consumableName"
+  },
+  {
+    "defaultMessage": "Quantity on Hand",
+    "id": "pages.InventoryItemsList.quantityOnHand"
+  },
+  {
+    "defaultMessage": "Expires On",
+    "id": "pages.InventoryItemsList.expiresOn"
+  },
+  {
+    "defaultMessage": "Expires",
+    "id": "pages.InventoryItemsList.expiresIn"
+  },
+  {
+    "defaultMessage": "Adjust",
+    "id": "pages.InventoryItemsList.adjust"
+  },
+  {
+    "defaultMessage": "Add Inventory",
+    "id": "pages.InventoryItemsList.addInventory"
+  },
+  {
+    "defaultMessage": "Transfer Inventory",
+    "id": "pages.InventoryItemsList.transferInventory"
+  },
+  {
+    "defaultMessage": "Receive Inventory in Transit",
+    "id": "pages.InventoryItemsList.receiveInventory"
+  },
+  {
+    "defaultMessage": "Remove Inventory",
+    "id": "pages.InventoryItemsList.removeInventory"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }",
+    "id": "pages.InventoryItemsList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "* in transit from {inTransitFromSiteName}",
+    "id": "pages.InventoryItemsList.inTransitFromSiteName"
+  },
+  {
+    "defaultMessage": "Never",
+    "id": "pages.InventoryItemsList.never"
+  },
+  {
+    "defaultMessage": "Inventory levels have been adjusted successfully",
+    "id": "pages.InventoryItemsList.inventoryAdjustedSuccessfully"
+  },
+  {
+    "defaultMessage": "Days Stock Left",
+    "id": "pages.InventoryItemsList.stockLeft"
+  },
+  {
+    "defaultMessage": "View",
+    "id": "pages.NotificationDetail.view"
+  },
+  {
+    "defaultMessage": "Edit",
+    "id": "pages.NotificationDetail.edit"
+  },
+  {
+    "defaultMessage": "History",
+    "id": "pages.NotificationDetail.history"
+  },
+  {
+    "defaultMessage": "Sample",
+    "id": "pages.MilestonesSample.sampleId"
+  },
+  {
+    "defaultMessage": "Sample Collection Site:",
+    "id": "pages.Milestones.originalSiteName"
+  },
+  {
+    "defaultMessage": "Collected On:",
+    "id": "pages.Milestones.sampleCollectedOn"
+  },
+  {
+    "defaultMessage": "Sample Type:",
+    "id": "pages.Milestones.sampleType"
+  },
+  {
+    "defaultMessage": "Description:",
+    "id": "pages.Milestones.notes"
+  },
+  {
+    "defaultMessage": "Result",
+    "id": "pages.Milestones.resultNotes"
+  },
+  {
+    "defaultMessage": "Result ended on:",
+    "id": "pages.Milestones.resultEndedOn"
+  },
+  {
+    "defaultMessage": "Lab:",
+    "id": "pages.Milestones.resultSiteName"
+  },
+  {
+    "defaultMessage": "Assay Type:",
+    "id": "pages.Milestones.assayType"
+  },
+  {
+    "defaultMessage": "view Results Details",
+    "id": "pages.Milestones.viewResultsDetails"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "pages.Milestones.date"
+  },
+  {
+    "defaultMessage": "Outcome",
+    "id": "pages.Milestones.followUpName"
+  },
+  {
+    "defaultMessage": "Outcome type:",
+    "id": "pages.Milestones.followUpTypeName"
+  },
+  {
+    "defaultMessage": "Created On:",
+    "id": "pages.Milestones.followUpCreatedOn"
+  },
+  {
+    "defaultMessage": "Treatment date:",
+    "id": "pages.Milestones.resultTreatmentStatusLogData"
+  },
+  {
+    "defaultMessage": "Treatment method:",
+    "id": "pages.Milestones.resultTreatmentStatusLogMethod"
+  },
+  {
+    "defaultMessage": "Treatment created by:",
+    "id": "pages.Milestones.resultTreatmentStatusLogCreatedBy"
+  },
+  {
+    "defaultMessage": "Treatment",
+    "id": "pages.Milestones.resultTreatmentName"
+  },
+  {
+    "defaultMessage": "Person Detail",
+    "id": "pages.PersonDetail.title"
+  },
+  {
+    "defaultMessage": "Contact Details",
+    "id": "pages.PersonDetails.contactDetails"
+  },
+  {
+    "defaultMessage": "Login",
+    "id": "pages.PersonDetails.systemAccessControl"
+  },
+  {
+    "defaultMessage": "None",
+    "id": "pages.PersonDetails.none"
+  },
+  {
+    "defaultMessage": "Language & Timezone",
+    "id": "pages.PersonDetails.languageAndTimezone"
+  },
+  {
+    "defaultMessage": "Contact Created Successfully",
+    "id": "pages.PersonDetails.detailsCreatedSuccessfully"
+  },
+  {
+    "defaultMessage": "Contact details created successfully",
+    "id": "pages.PersonDetails.contactDetailsCreatedMessage"
+  },
+  {
+    "defaultMessage": "Details Changed Successfully",
+    "id": "pages.PersonDetails.detailsUpdatedSuccessfully"
+  },
+  {
+    "defaultMessage": "Contact details changed successfully",
+    "id": "pages.PersonDetails.contactDetailsUpdatedMessage"
+  },
+  {
+    "defaultMessage": "You can now login with these new details",
+    "id": "pages.PersonDetails.loginDetailsUpdatedMessage"
+  },
+  {
+    "defaultMessage": "User preferences changed successfully",
+    "id": "pages.PersonDetails.userPreferencesUpdatedMessage"
+  },
+  {
+    "defaultMessage": "Full Name",
+    "id": "pages.ContactDetails.name"
+  },
+  {
+    "defaultMessage": "Title",
+    "id": "pages.ContactDetails.title"
+  },
+  {
+    "defaultMessage": "Email",
+    "id": "pages.ContactDetails.emailHeader"
+  },
+  {
+    "defaultMessage": "Email",
+    "id": "pages.ContactDetails.email"
+  },
+  {
+    "defaultMessage": "Alternate Email",
+    "id": "pages.ContactDetails.email2"
+  },
+  {
+    "defaultMessage": "Phone",
+    "id": "pages.ContactDetails.phoneHeader"
+  },
+  {
+    "defaultMessage": "Telephone",
+    "id": "pages.ContactDetails.phone"
+  },
+  {
+    "defaultMessage": "Mobile",
+    "id": "pages.AccountDetails.cell"
+  },
+  {
+    "defaultMessage": "Partner",
+    "id": "pages.AccountDetails.partner"
+  },
+  {
+    "defaultMessage": "Location",
+    "id": "pages.ContactDetails.locationHeader"
+  },
+  {
+    "defaultMessage": "All",
+    "id": "pages.PersonDetails.all"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "pages.PersonDetails.country"
+  },
+  {
+    "defaultMessage": "Zip Code",
+    "id": "pages.ContactDetails.zip"
+  },
+  {
+    "defaultMessage": "Notes",
+    "id": "pages.ContactDetails.notes"
+  },
+  {
+    "defaultMessage": "Save",
+    "id": "pages.PersonDetails.save"
+  },
+  {
+    "defaultMessage": "Please enter your Full name",
+    "id": "pages.ContactDetails.nameRequired"
+  },
+  {
+    "defaultMessage": "Please select Country",
+    "id": "pages.ContactDetails.countryRequired"
+  },
+  {
+    "defaultMessage": "Please enter a valid email address",
+    "id": "pages.ContactDetails.invalidEmailAddress"
+  },
+  {
+    "defaultMessage": "Username",
+    "id": "pages.UpdateLoginDetails.username"
+  },
+  {
+    "defaultMessage": "New Password",
+    "id": "pages.UpdateLoginDetails.newPassword"
+  },
+  {
+    "defaultMessage": "Confirm New Password",
+    "id": "pages.UpdateLoginDetails.confirmNewPassword"
+  },
+  {
+    "defaultMessage": "Current Password",
+    "id": "pages.UpdateLoginDetails.currentPassword"
+  },
+  {
+    "defaultMessage": "A username is required",
+    "id": "pages.UpdateLoginDetails.usernameRequired"
+  },
+  {
+    "defaultMessage": "Please enter your current password to update your login details",
+    "id": "pages.UpdateLoginDetails.currentPasswordRequired"
+  },
+  {
+    "defaultMessage": "The password needs to be at least 8 characters long",
+    "id": "pages.UpdateLoginDetails.newPasswordTooShort"
+  },
+  {
+    "defaultMessage": "The password needs to contain at least one number or special character (%!$*...)",
+    "id": "pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter"
+  },
+  {
+    "defaultMessage": "User lockedout",
+    "id": "pages.UpdateLoginDetails.userEnableLabel"
+  },
+  {
+    "defaultMessage": "These passwords don't match",
+    "id": "pages.UpdateLoginDetails.passwordsDoNotMatch"
+  },
+  {
+    "defaultMessage": "Enter Current Password",
+    "id": "pages.UpdateLoginDetails.currentPasswordDialogHeader"
+  },
+  {
+    "defaultMessage": "To update your login details, please enter your current password",
+    "id": "pages.UpdateLoginDetails.currentPasswordDialogMessage"
+  },
+  {
+    "defaultMessage": "Submit",
+    "id": "pages.UpdateLoginDetails.submitCurrentPassword"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.UpdateLoginDetails.cancelCurrentPassword"
+  },
+  {
+    "defaultMessage": "This username is unavailable",
+    "id": "pages.UpdateLoginDetails.usernameUnavailable"
+  },
+  {
+    "defaultMessage": "The password that you entered is not valid",
+    "id": "pages.UpdateLoginDetails.invalidPassword"
+  },
+  {
+    "defaultMessage": "Time Zone",
+    "id": "pages.UserPreferences.timezone"
+  },
+  {
+    "defaultMessage": "Language",
+    "id": "pages.UserPreferences.language"
+  },
+  {
+    "defaultMessage": "Tags",
+    "id": "pages.UserPreferences.tags"
+  },
+  {
+    "defaultMessage": "Choose tags",
+    "id": "pages.UserPreferences.chooseTags"
+  },
+  {
+    "defaultMessage": "Job Assignment",
+    "id": "pages.UserPreferences.jobAssignment"
+  },
+  {
+    "defaultMessage": "Job",
+    "id": "pages.UserPreferences.job"
+  },
+  {
+    "defaultMessage": "Assignment Details",
+    "id": "pages.UserPreferences.assignmentDetails"
+  },
+  {
+    "defaultMessage": "This contact is assigned to:",
+    "id": "pages.UserPreferences.assignments"
+  },
+  {
+    "defaultMessage": "Create",
+    "id": "pages.PersonDetails.create"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.JobAssignments.site"
+  },
+  {
+    "defaultMessage": "Select Job",
+    "id": "pages.JobAssignments.selectJob"
+  },
+  {
+    "defaultMessage": "Please select Job",
+    "id": "pages.JobAssignments.jobRequired"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.JobAssignments.cancel"
+  },
+  {
+    "defaultMessage": "Yes, delete",
+    "id": "pages.JobAssignments.yesDelete"
+  },
+  {
+    "defaultMessage": "All states",
+    "id": "pages.JobAssignments.allStates"
+  },
+  {
+    "defaultMessage": "All areas",
+    "id": "pages.JobAssignments.allAreas"
+  },
+  {
+    "defaultMessage": "All sites",
+    "id": "pages.JobAssignments.allSites"
+  },
+  {
+    "defaultMessage": "Disease",
+    "id": "pages.JobAssignments.disease"
+  },
+  {
+    "defaultMessage": "All diseases",
+    "id": "pages.JobAssignments.allDiseases"
+  },
+  {
+    "defaultMessage": "Device Type",
+    "id": "pages.JobAssignments.deviceType"
+  },
+  {
+    "defaultMessage": "All device types",
+    "id": "pages.JobAssignments.allDeviceTypes"
+  },
+  {
+    "defaultMessage": "Assay Type",
+    "id": "pages.JobAssignments.assayType"
+  },
+  {
+    "defaultMessage": "All assay types",
+    "id": "pages.JobAssignments.allAssayTypes"
+  },
+  {
+    "defaultMessage": "Assay",
+    "id": "pages.JobAssignments.assay"
+  },
+  {
+    "defaultMessage": "All assays",
+    "id": "pages.JobAssignments.allAssays"
+  },
+  {
+    "defaultMessage": "This contact can log in as a user",
+    "id": "page.contacts.person.userCanAlsoLogIn"
+  },
+  {
+    "defaultMessage": "Contacts",
+    "id": "pages.PersonList.title"
+  },
+  {
+    "defaultMessage": "Name",
+    "id": "pages.PersonList.personName"
+  },
+  {
+    "defaultMessage": "Job",
+    "id": "pages.PersonList.level"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts} }",
+    "id": "pages.PersonList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Tags",
+    "id": "pages.PersonList.tags"
+  },
+  {
+    "defaultMessage": "New Contact",
+    "id": "pages.PersonList.addContact"
+  },
+  {
+    "defaultMessage": "Reports",
+    "id": "pages.ReportIndex.title"
+  },
+  {
+    "defaultMessage": "Reporters",
+    "id": "pages.ReporterList.reportersTitle"
+  },
+  {
+    "defaultMessage": "User",
+    "id": "pages.ReporterList.user"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.ReporterList.reporterDevice"
+  },
+  {
+    "defaultMessage": "Revoked",
+    "id": "pages.ReporterList.revoked"
+  },
+  {
+    "defaultMessage": "Connected Since",
+    "id": "pages.ReporterList.connectedSince"
+  },
+  {
+    "defaultMessage": "Last Seen",
+    "id": "pages.ReporterList.lastSeen"
+  },
+  {
+    "defaultMessage": "Number Of Tests Delivered",
+    "id": "pages.ReporterList.numberOfTestsLeft"
+  },
+  {
+    "defaultMessage": "Delivered",
+    "id": "pages.ReporterList.delivered"
+  },
+  {
+    "defaultMessage": "Requires Follow-up",
+    "id": "pages.ReporterList.requiresFollowUp"
+  },
+  {
+    "defaultMessage": "% Confirmed Follow-up",
+    "id": "pages.ReporterList.followup"
+  },
+  {
+    "defaultMessage": "% Acknowledged",
+    "id": "pages.ReporterList.acknowledgedRatio"
+  },
+  {
+    "defaultMessage": "On Treatment",
+    "id": "pages.ReporterList.totalOnTreatment"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# reporter} other {# reporters} }",
+    "id": "pages.ReporterList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Linked to treatment",
+    "id": "pages.resultTreatmentPanel.linkedToTreatment"
+  },
+  {
+    "defaultMessage": "Confirm",
+    "id": "pages.resultTreatmentPanel.confirm"
+  },
+  {
+    "defaultMessage": "Not possible",
+    "id": "pages.resultTreatmentPanel.notPossible"
+  },
+  {
+    "defaultMessage": "Not yet confirmed on treatment",
+    "id": "pages.resultTreatmentPanel.notYetConfirmedOnTreatment"
+  },
+  {
+    "defaultMessage": "days",
+    "id": "pages.resultTreatmentPanel.days"
+  },
+  {
+    "defaultMessage": "Add Note",
+    "id": "pages.resultTreatmentPanel.addNote"
+  },
+  {
+    "defaultMessage": "NOTE:",
+    "id": "pages.resultTreatmentPanel.note"
+  },
+  {
+    "defaultMessage": "Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }",
+    "id": "pages.ResultWorkflowStatusLog.totalWorkflowStatusLog"
+  },
+  {
+    "defaultMessage": "No logs for this result.",
+    "id": "pages.ResultWorkflowStatusLog.noWorkflowStatusLog"
+  },
+  {
+    "defaultMessage": "Changed On",
+    "id": "pages.ResultWorkflowStatusLog.logChangedOn"
+  },
+  {
+    "defaultMessage": "Status",
+    "id": "pages.ResultWorkflowStatusLog.logStatus"
+  },
+  {
+    "defaultMessage": "Operator",
+    "id": "pages.ResultWorkflowStatusLog.logOperator"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }",
+    "id": "pages.ResultWorkflowStatusLog.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }",
+    "id": "component.historyResults.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Results",
+    "id": "pages.ResultList.title"
+  },
+  {
+    "defaultMessage": "New Result",
+    "id": "pages.ResultList.newResult"
+  },
+  {
+    "defaultMessage": "Test Date",
+    "id": "pages.ResultList.EndedOn"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.ResultList.deviceName"
+  },
+  {
+    "defaultMessage": "Sample Collection Site",
+    "id": "pages.ResultList.sampleOriginSiteName"
+  },
+  {
+    "defaultMessage": "Sample ID",
+    "id": "pages.ResultList.sampleId"
+  },
+  {
+    "defaultMessage": "Assay",
+    "id": "pages.ResultList.assayName"
+  },
+  {
+    "defaultMessage": "Error Code",
+    "id": "pages.ResultList.errorCode"
+  },
+  {
+    "defaultMessage": "Result Text",
+    "id": "pages.ResultList.resultText"
+  },
+  {
+    "defaultMessage": "Workflow Status",
+    "id": "pages.ResultList.resultWorkflowStatus"
+  },
+  {
+    "defaultMessage": "Treatment Status",
+    "id": "pages.ResultList.resultTreatmentStatus"
+  },
+  {
+    "defaultMessage": "Assay",
+    "id": "pages.ResultList.assayId"
+  },
+  {
+    "defaultMessage": "Patient ID",
+    "id": "pages.ResultList.patiendId"
+  },
+  {
+    "defaultMessage": "HIV",
+    "id": "pages.ResultList.resultCategoryHiv"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }",
+    "id": "pages.ResultList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Router Detail",
+    "id": "pages.RouterDetail.title"
+  },
+  {
+    "defaultMessage": "Edit",
+    "id": "pages.RouterDetail.editTooltip"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.RouterDetail.cancel"
+  },
+  {
+    "defaultMessage": "Update",
+    "id": "pages.RouterDetail.update"
+  },
+  {
+    "defaultMessage": "Approved",
+    "id": "pages.RouterDetail.approved"
+  },
+  {
+    "defaultMessage": "Name",
+    "id": "pages.RouterDetail.fieldName"
+  },
+  {
+    "defaultMessage": "ShortName",
+    "id": "pages.RouterDetail.fieldShortName"
+  },
+  {
+    "defaultMessage": "Notes",
+    "id": "pages.RouterDetail.fieldNotes"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.RouterDetail.fieldSiteId"
+  },
+  {
+    "defaultMessage": "Configuration",
+    "id": "pages.RouterDetail.fieldConfiguration"
+  },
+  {
+    "defaultMessage": "First Approved On",
+    "id": "pages.RouterDetail.fieldFirstApprovedOn"
+  },
+  {
+    "defaultMessage": "First Approved By",
+    "id": "pages.RouterDetail.fieldFirstApprovedBy"
+  },
+  {
+    "defaultMessage": "Host Id",
+    "id": "pages.RouterDetail.fieldHostId"
+  },
+  {
+    "defaultMessage": "Serial",
+    "id": "pages.RouterDetail.fieldSerial"
+  },
+  {
+    "defaultMessage": "Last Seen",
+    "id": "pages.RouterDetail.fieldLastSeen"
+  },
+  {
+    "defaultMessage": "Connected",
+    "id": "pages.RouterDetail.fieldFirstConnected"
+  },
+  {
+    "defaultMessage": "Status",
+    "id": "pages.RouterDetail.fieldStatus"
+  },
+  {
+    "defaultMessage": "Tests",
+    "id": "pages.RouterDetail.fieldTotalNumberOfTests"
+  },
+  {
+    "defaultMessage": "{count} fields",
+    "id": "pages.RouterDetail.nestedDataSubtitle"
+  },
+  {
+    "defaultMessage": "Routers",
+    "id": "pages.RouterList.routersTitle"
+  },
+  {
+    "defaultMessage": "Router",
+    "id": "pages.RouterList.router"
+  },
+  {
+    "defaultMessage": "Approval Status",
+    "id": "pages.RouterList.approval"
+  },
+  {
+    "defaultMessage": "Reporting Since",
+    "id": "pages.RouterList.reportingFor"
+  },
+  {
+    "defaultMessage": "Last Seen",
+    "id": "pages.RouterList.lastSeen"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers} }",
+    "id": "pages.RouterList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Select {entity}...",
+    "id": "pages.common.selectPlaceholder"
+  },
+  {
+    "defaultMessage": "State",
+    "id": "pages.common.state"
+  },
+  {
+    "defaultMessage": "District",
+    "id": "pages.common.state_MW"
+  },
+  {
+    "defaultMessage": "Province",
+    "id": "pages.common.state_ZANHLS"
+  },
+  {
+    "defaultMessage": "State/Region",
+    "id": "pages.common.state_MM"
+  },
+  {
+    "defaultMessage": "Province",
+    "id": "pages.common.state_ZW"
+  },
+  {
+    "defaultMessage": "Region",
+    "id": "pages.common.state_CM"
+  },
+  {
+    "defaultMessage": "LGA",
+    "id": "pages.common.lga"
+  },
+  {
+    "defaultMessage": "District",
+    "id": "pages.common.lga_ZANHLS"
+  },
+  {
+    "defaultMessage": "County",
+    "id": "pages.common.lga_US"
+  },
+  {
+    "defaultMessage": "District",
+    "id": "pages.common.lga_MM"
+  },
+  {
+    "defaultMessage": "District",
+    "id": "pages.common.lga_ZW"
+  },
+  {
+    "defaultMessage": "Division",
+    "id": "pages.common.lga_CM"
+  },
+  {
+    "defaultMessage": "Either your computer has been disconnected from the internet or our server has failed to respond.",
+    "id": "errorResponseMessages.disconnected.default.message"
+  },
+  {
+    "defaultMessage": "Sites",
+    "id": "pages.SiteList.title"
+  },
+  {
+    "defaultMessage": "Name",
+    "id": "pages.SiteList.siteName"
+  },
+  {
+    "defaultMessage": "Number of Devices",
+    "id": "pages.SiteList.totalDevices"
+  },
+  {
+    "defaultMessage": "Site ID",
+    "id": "pages.SiteList.externalId"
+  },
+  {
+    "defaultMessage": "Issues",
+    "id": "pages.SiteList.siteIssues"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.SiteList.issueCategoryDeviceHealth"
+  },
+  {
+    "defaultMessage": "Reagent",
+    "id": "pages.SiteList.issueCategoryReagentHealth"
+  },
+  {
+    "defaultMessage": "Data",
+    "id": "pages.SiteList.issueCategoryDataHealth"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.SiteList.issueCategoryConnectivityHealth"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} other {# sites} }",
+    "id": "pages.SiteList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Latest Inventory Update",
+    "id": "pages.SiteList.latestInventoryUpdate"
+  },
+  {
+    "defaultMessage": "Styleguide",
+    "id": "pages.StyleguideMain.title"
+  },
+  {
+    "defaultMessage": "Viewing all devices {GEOGRAPHY} {NAME}.",
+    "id": "pages.ManageDevices.filterTemplate"
+  },
+  {
+    "defaultMessage": "Counting only {ASSAY} assays {RESULT}{DATE}.",
+    "id": "pages.ManageDevices.filterTemplateOptional"
+  },
+  {
+    "defaultMessage": "Task",
+    "id": "pages.TaskAggre.title"
+  },
+  {
+    "defaultMessage": "Topic",
+    "id": "pages.TaskList.topic"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.TaskList.site"
+  },
+  {
+    "defaultMessage": "Time",
+    "id": "pages.TaskList.time"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }",
+    "id": "pages.TaskList.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Task",
+    "id": "pages.TaskDetail.title"
+  },
+  {
+    "defaultMessage": "Tasks",
+    "id": "pages.TaskList.title"
+  },
+  {
+    "defaultMessage": "{alertCount, plural, one {# alert} other {# alerts} }",
+    "id": "pages.TaskList.alertCount"
+  },
+  {
+    "defaultMessage": "Not Configured",
+    "id": "pages.TableCell.notConfigured"
+  },
+  {
+    "defaultMessage": "Expand Row",
+    "id": "pages.TableCell.expandRow"
+  },
+  {
+    "defaultMessage": "{elapsed} elapsed, {upcoming} upcoming",
+    "id": "pages.TableCell.timeClassification"
+  },
+  {
+    "defaultMessage": "...{contacts, plural, one {# more {name}} other {# more {name}s} }",
+    "id": "pages.TableCell.moreContacts"
+  },
+  {
+    "defaultMessage": "Hidden Columns:",
+    "id": "pages.TableHeader.hiddenColumns"
+  },
+  {
+    "defaultMessage": "Group By Column",
+    "id": "pages.TableHeader.groupByColumn"
+  },
+  {
+    "defaultMessage": "Ungroup Column",
+    "id": "pages.TableHeader.unGroupByColumn"
+  },
+  {
+    "defaultMessage": "Hide Column",
+    "id": "pages.TableHeader.hideColumn"
+  },
+  {
+    "defaultMessage": "Move Column Left",
+    "id": "pages.TableHeader.moveColumnLeft"
+  },
+  {
+    "defaultMessage": "Move Column Right",
+    "id": "pages.TableHeader.moveColumnRight"
+  },
+  {
+    "defaultMessage": "All",
+    "id": "pages.TablePagination.all"
+  },
+  {
+    "defaultMessage": "First",
+    "id": "pages.TablePagination.first"
+  },
+  {
+    "defaultMessage": "Previous",
+    "id": "pages.TablePagination.previous"
+  },
+  {
+    "defaultMessage": "Newer",
+    "id": "pages.TablePagination.newer"
+  },
+  {
+    "defaultMessage": "Older",
+    "id": "pages.TablePagination.older"
+  },
+  {
+    "defaultMessage": "Next",
+    "id": "pages.TablePagination.next"
+  },
+  {
+    "defaultMessage": "Last",
+    "id": "pages.TablePagination.last"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# {name}} other {# {name}s} }",
+    "id": "pages.TablePagination.nowShowing"
+  },
+  {
+    "defaultMessage": "Reset all filters",
+    "id": "pages.Table.ResetTable.resetTableMessage"
+  },
+  {
+    "defaultMessage": "The {representing} is greater than {comparedTo}",
+    "id": "widgetAlerts.greaterThan"
+  },
+  {
+    "defaultMessage": "The {representing} is less than {comparedTo}",
+    "id": "widgetAlerts.lessThan"
+  },
+  {
+    "defaultMessage": "The {representing} is between {comparedToFrom} and {comparedToTo}",
+    "id": "widgetAlerts.between"
+  },
+  {
+    "defaultMessage": "The {representing} is one of {comparedTo}",
+    "id": "widgetAlerts.containerIn"
+  },
+  {
+    "defaultMessage": "percentage of active devices",
+    "id": "widgetAlerts.percentageOfActiveDevices"
+  },
+  {
+    "defaultMessage": "average hours to upload",
+    "id": "widgetAlerts.averageHoursToUpload"
+  },
+  {
+    "defaultMessage": "percentage of server uptime",
+    "id": "widgetAlerts.percentageOfServerUptime"
+  },
+  {
+    "defaultMessage": "percentage of positive results notified",
+    "id": "widgetAlerts.percentageOfPositiveResultsNotified"
+  },
+  {
+    "defaultMessage": "average length of SMS",
+    "id": "widgetAlerts.averageLengthOfSMS"
+  },
+  {
+    "defaultMessage": "number of text messages sent",
+    "id": "widgetAlerts.numberOfTextMessagesSent"
+  },
+  {
+    "defaultMessage": "utilization rate",
+    "id": "widgetAlerts.utilizationRate"
+  },
+  {
+    "defaultMessage": "percentage of valid results",
+    "id": "widgetAlerts.percentageOfValidResults"
+  },
+  {
+    "defaultMessage": "error rate",
+    "id": "widgetAlerts.errorRate"
+  },
+  {
+    "defaultMessage": "percentage of active sites experiencing stockouts",
+    "id": "widgetAlerts.percentageOfStockouts"
+  },
+  {
+    "defaultMessage": "percentage of sites that never entered stock of GeneXpert assays",
+    "id": "widgetAlerts.percentageOfSitesWithoutGxStockEntered"
+  },
+  {
+    "defaultMessage": "average days of service interrumption",
+    "id": "widgetAlerts.averageDurationOfServiceInterrumption"
+  },
+  {
+    "defaultMessage": "average days for instrument replacement",
+    "id": "widgetAlerts.averageDaysForInstrumentReplacement"
+  },
+  {
+    "defaultMessage": "average days between module swaps",
+    "id": "widgetAlerts.averageDaysBetweenModuleSwaps"
+  },
+  {
+    "defaultMessage": "average time to replace disabled modules",
+    "id": "widgetAlerts.averageTimeToReplaceDisabledModules"
+  },
+  {
+    "defaultMessage": "percentage of devices with unused modules",
+    "id": "widgetAlerts.percentageOfDevicesWithUnusedModules"
+  },
+  {
+    "defaultMessage": "percentage of devices service interruption",
+    "id": "widgetAlerts.averageDaysOfServiceInterruption"
+  },
+  {
+    "defaultMessage": "percentage of modules functioning",
+    "id": "widgetAlerts.percentageOfModulesFunctioning"
+  },
+  {
+    "defaultMessage": "indicator",
+    "id": "widgetAlerts.defaultMessage"
+  },
+  {
+    "defaultMessage": "Profile",
+    "id": "pages.DeviceDetail.profile"
+  },
+  {
+    "defaultMessage": "Operation",
+    "id": "pages.DeviceDetail.operation"
+  },
+  {
+    "defaultMessage": "Alerts",
+    "id": "pages.DeviceDetail.alerts"
+  },
+  {
+    "defaultMessage": "Edit",
+    "id": "pages.DeviceDetail.edit"
+  },
+  {
+    "defaultMessage": "Notes",
+    "id": "pages.BaseDialog.notes"
+  },
+  {
+    "defaultMessage": "Submit",
+    "id": "pages.BaseDialog.submit"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.BaseDialog.cancel"
+  },
+  {
+    "defaultMessage": "Device Calibration",
+    "id": "pages.CalibrationDialog.dialogTitle"
+  },
+  {
+    "defaultMessage": "Calibration Date",
+    "id": "pages.CalibrationDialog.calibrationDate"
+  },
+  {
+    "defaultMessage": "Calibration Date is required",
+    "id": "pages.WarrantyDialog.calibrationDateIsRequired"
+  },
+  {
+    "defaultMessage": "Device Maintenance",
+    "id": "pages.MaintenanceStatusDialog.dialogTitle"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.MaintenanceStatusDialog.cancel"
+  },
+  {
+    "defaultMessage": "Submit",
+    "id": "pages.MaintenanceStatusDialog.submit"
+  },
+  {
+    "defaultMessage": "Notes",
+    "id": "pages.MaintenanceStatusDialog.notes"
+  },
+  {
+    "defaultMessage": "Maintenance status",
+    "id": "pages.MaintenanceStatusDialog.maintenanceStatus"
+  },
+  {
+    "defaultMessage": "Maintenance status is required",
+    "id": "pages.MaintenanceStatusDialog.maintenanceStatusIsRequired"
+  },
+  {
+    "defaultMessage": "Searching Device Maintenance status Failed",
+    "id": "errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Device Maintenance Status Failed",
+    "id": "errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title"
+  },
+  {
+    "defaultMessage": "Device Warranty",
+    "id": "pages.WarrantyDialog.dialogTitle"
+  },
+  {
+    "defaultMessage": "Warranty Due Date",
+    "id": "pages.WarrantyDialog.warrantyDueDate"
+  },
+  {
+    "defaultMessage": "Warranty Due Date is required",
+    "id": "pages.WarrantyDialog.warrantyDueDateIsRequired"
+  },
+  {
+    "defaultMessage": "This field is required",
+    "id": "forms.isRequired"
+  },
+  {
+    "defaultMessage": "Field cannot contain less than {total} characters",
+    "id": "forms.minAllowed"
+  },
+  {
+    "defaultMessage": "Field cannot contain more than {total} characters",
+    "id": "forms.maxAllowed"
+  },
+  {
+    "defaultMessage": "This email is not valid",
+    "id": "forms.validEmail"
+  },
+  {
+    "defaultMessage": "Value is not valid. Try {options}.",
+    "id": "forms.mustMatch"
+  },
+  {
+    "defaultMessage": "Overall Network Health Daily",
+    "id": "pages.DailyStatus.dailyStatusMainTitle"
+  },
+  {
+    "defaultMessage": "Toggle All",
+    "id": "pages.DailyStatus.dailyStatusToggleAll"
+  },
+  {
+    "defaultMessage": "No Data Available",
+    "id": "pages.graphs.emptyGraphPlaceholderTitle"
+  },
+  {
+    "defaultMessage": "{value} ({records}/{total, plural, one {# result} other {# results} })",
+    "id": "pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit"
+  },
+  {
+    "defaultMessage": "Click to view results in table format",
+    "id": "pages.Graphs.toolTipAllowClickThrough"
+  },
+  {
+    "defaultMessage": "Average Monthly Suppression Rate",
+    "id": "pages.Status.clinicalIndicatorsPieLegend"
+  },
+  {
+    "defaultMessage": "Total Cases",
+    "id": "pages.Status.clinicalIndicatorsPieSubLegend"
+  },
+  {
+    "defaultMessage": "Daily Confirmed Cases",
+    "id": "pages.Status.clinicalIndicatorsCovidName"
+  },
+  {
+    "defaultMessage": "Recovery Rates by Gender",
+    "id": "pages.Status.clinicalIndicatorsCovidGenderRecoveryRates"
+  },
+  {
+    "defaultMessage": "COVID Results",
+    "id": "pages.Status.clinicalIndicatorsCovidTitle.title"
+  },
+  {
+    "defaultMessage": "Average Monthly Positivity Rate",
+    "id": "pages.Status.clinicalIndicatorsCovidPieLegend"
+  },
+  {
+    "defaultMessage": "VL Results",
+    "id": "pages.Status.clinicalIndicatorsVL.title"
+  },
+  {
+    "defaultMessage": "TB Rif Resistance",
+    "id": "pages.Status.clinicalIndicatorsTB.title"
+  },
+  {
+    "defaultMessage": "TB Results",
+    "id": "pages.Status.clinicalIndicatorsTBDetected.title"
+  },
+  {
+    "defaultMessage": "Supply in Stock",
+    "id": "pages.Status.inventoryGraphStatus.title"
+  },
+  {
+    "defaultMessage": "Average monthly TB Detected Rate",
+    "id": "pages.Status.clinicalIndicatorsTBDetectedPie.title"
+  },
+  {
+    "defaultMessage": "Average Monthly Rif Resistance Rate",
+    "id": "pages.Status.clinicalIndicatorsTB.pie"
+  },
+  {
+    "defaultMessage": "Daily Mortality and Recovery",
+    "id": "pages.Status.covidGraphDailyMortalityAndrecovery.pie"
+  },
+  {
+    "defaultMessage": "Male",
+    "id": "pages.Status.covidGraphDailyMortalityAndRecoveryByGenderMale.pie"
+  },
+  {
+    "defaultMessage": "Female",
+    "id": "pages.Status.covidGraphDailyMortalityAndRecoveryByGenderFemale.pi"
+  },
+  {
+    "defaultMessage": "Tests",
+    "id": "pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie"
+  },
+  {
+    "defaultMessage": "Age and Gender",
+    "id": "pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph"
+  },
+  {
+    "defaultMessage": "Confirmed Response",
+    "id": "pages.Status.treatmentGraphStatusMonthly.graph"
+  },
+  {
+    "defaultMessage": "Average Confirmed Response",
+    "id": "pages.Status.treatmentStatusTotalTitle.graph"
+  },
+  {
+    "defaultMessage": "Valid Tests",
+    "id": "pages.Status.treatmentStatusTotalValidTitle.graph"
+  },
+  {
+    "defaultMessage": "Overall Activity Rate",
+    "id": "pages.Status.deviceStatusTitle.graph"
+  },
+  {
+    "defaultMessage": "Results Transmitted",
+    "id": "pages.Status.resultsTransmittedTitle.graph"
+  },
+  {
+    "defaultMessage": "Tests Performed",
+    "id": "pages.Status.testsOverTimeTitle.graph"
+  },
+  {
+    "defaultMessage": "Average Monthly Tests Performed",
+    "id": "pages.Status.testsOverTimeAvgTitle.graph"
+  },
+  {
+    "defaultMessage": "",
+    "id": "pages.OperationalDataPie.assayName"
+  },
+  {
+    "defaultMessage": "Total Results",
+    "id": "pages.OperationalData.cntAll"
+  },
+  {
+    "defaultMessage": "Positives",
+    "id": "pages.OperationalData.cntPositive"
+  },
+  {
+    "defaultMessage": "Percent Positive",
+    "id": "pages.OperationalData.percentPositive"
+  },
+  {
+    "defaultMessage": "Sent via SMS",
+    "id": "pages.OperationalData.percentViaSms"
+  },
+  {
+    "defaultMessage": "Sent via Email",
+    "id": "pages.OperationalData.percentViaEmail"
+  },
+  {
+    "defaultMessage": "The percentage of reported results that were reported via SMS.",
+    "id": "pages.OperationalData.percentViaSmsDescription"
+  },
+  {
+    "defaultMessage": "The percentage of reported results that were reported via Email.",
+    "id": "pages.OperationalData.percentViaEmailDescription"
+  },
+  {
+    "defaultMessage": "The percentage of positive results that were reported within two hours of test completion.",
+    "id": "pages.OperationalData.percentWithin2HoursDescription"
+  },
+  {
+    "defaultMessage": "The percentage of positive results that were reported via Email or SMS.",
+    "id": "pages.OperationalData.percentReportedDescription"
+  },
+  {
+    "defaultMessage": "Within 2 hours of testing",
+    "id": "pages.OperationalData.percentWithin2Hours"
+  },
+  {
+    "defaultMessage": "Current Network Status",
+    "id": "pages.DailyStatus.dailyStatusMapTitle"
+  },
+  {
+    "defaultMessage": "Notifications",
+    "id": "pages.NotificationList.title"
+  },
+  {
+    "defaultMessage": "Name",
+    "id": "pages.Notifications.table.nameHeader"
+  },
+  {
+    "defaultMessage": "{itemCount, plural, one {# Name} other {# Names} }",
+    "id": "pages.Notifications.notificationsTableHeaderNameCount"
+  },
+  {
+    "defaultMessage": "Last Triggered",
+    "id": "pages.Notifications.table.lastTriggeredHeader"
+  },
+  {
+    "defaultMessage": "Total Triggers",
+    "id": "pages.Notifications.table.totalTriggersHeader"
+  },
+  {
+    "defaultMessage": "{itemCount} (total)",
+    "id": "pages.Notifications.notificationsTableTotalTriggersCount"
+  },
+  {
+    "defaultMessage": "Contacts",
+    "id": "pages.Notifications.table.contactsHeader"
+  },
+  {
+    "defaultMessage": "{itemCount, plural, one {# Contact} other {# Contacts} }",
+    "id": "pages.Notifications.notificationsTableContactsCount"
+  },
+  {
+    "defaultMessage": "Profile",
+    "id": "pages.SiteDetail.profile"
+  },
+  {
+    "defaultMessage": "Alerts",
+    "id": "pages.SiteDetail.alerts"
+  },
+  {
+    "defaultMessage": "Edit",
+    "id": "pages.SiteDetail.edit"
+  },
+  {
+    "defaultMessage": "Site Detail",
+    "id": "pages.SiteDetail.title"
+  },
+  {
+    "defaultMessage": "Name",
+    "id": "pages.SiteDetail.fieldName"
+  },
+  {
+    "defaultMessage": "ShortName",
+    "id": "pages.SiteDetail.fieldShortName"
+  },
+  {
+    "defaultMessage": "Facility Code",
+    "id": "pages.SiteDetail.fieldFacilityCode"
+  },
+  {
+    "defaultMessage": "Site ID",
+    "id": "pages.SiteDetail.fieldExternalId"
+  },
+  {
+    "defaultMessage": "Time Zone",
+    "id": "pages.SiteDetail.fieldTimeZone"
+  },
+  {
+    "defaultMessage": "State",
+    "id": "pages.SiteDetail.fieldState"
+  },
+  {
+    "defaultMessage": "Country",
+    "id": "pages.SiteDetail.fieldCountry"
+  },
+  {
+    "defaultMessage": "LGA",
+    "id": "pages.SiteDetail.fieldLGA"
+  },
+  {
+    "defaultMessage": "Address",
+    "id": "pages.SiteDetail.fieldAddress"
+  },
+  {
+    "defaultMessage": "Address 2",
+    "id": "pages.SiteDetail.fieldAddress2"
+  },
+  {
+    "defaultMessage": "City",
+    "id": "pages.SiteDetail.fieldCity"
+  },
+  {
+    "defaultMessage": "Zip",
+    "id": "pages.SiteDetail.fieldZip"
+  },
+  {
+    "defaultMessage": "Longitude",
+    "id": "pages.SiteDetail.fieldLongitude"
+  },
+  {
+    "defaultMessage": "Latitude",
+    "id": "pages.SiteDetail.fieldLatitude"
+  },
+  {
+    "defaultMessage": "Tags",
+    "id": "pages.SiteDetail.fieldTags"
+  },
+  {
+    "defaultMessage": "Devices",
+    "id": "pages.SiteDetail.fieldDevices"
+  },
+  {
+    "defaultMessage": "Site Contacts",
+    "id": "pages.SiteDetail.fieldContact"
+  },
+  {
+    "defaultMessage": "Set based on address",
+    "id": "pages.SiteDetail.buttonSetBasedonAddress"
+  },
+  {
+    "defaultMessage": "UPDATE",
+    "id": "pages.SiteDetail.buttonUpdate"
+  },
+  {
+    "defaultMessage": "No contacts assigned to site",
+    "id": "pages.SiteDetail.fieldNoContact"
+  },
+  {
+    "defaultMessage": "No matching results found",
+    "id": "pages.SiteDetail.fieldNoMatch"
+  },
+  {
+    "defaultMessage": "Press enter to add tag",
+    "id": "pages.SiteDetail.fieldNoMatchTags"
+  },
+  {
+    "defaultMessage": "Year",
+    "id": "component.DateTimeInput.year.placeholder"
+  },
+  {
+    "defaultMessage": "Month",
+    "id": "component.DateTimeInput.month.placeholder"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "component.DateTimeInput.date.placeholder"
+  },
+  {
+    "defaultMessage": "Hours",
+    "id": "component.DateTimeInput.hours.placeholder"
+  },
+  {
+    "defaultMessage": "min.",
+    "id": "component.DateTimeInput.minutes.placeholder"
+  },
+  {
+    "defaultMessage": "Now",
+    "id": "component.DateTimeInput.button.now"
+  },
+  {
+    "defaultMessage": "Searching Device Maintenance status Failed",
+    "id": "errorResponseMessages.fetchResultCategoryGroup.GET.400.title"
+  },
+  {
+    "defaultMessage": "Loading Device Maintenance Status Failed",
+    "id": "errorResponseMessages.fetchResultCategoryGroup.GET.default.title"
+  },
+  {
+    "defaultMessage": "Home",
+    "id": "header.link.home.title"
+  },
+  {
+    "defaultMessage": "Task List",
+    "id": "header.link.taskList.title"
+  },
+  {
+    "defaultMessage": "Operational Data",
+    "id": "header.link.operationData.title"
+  },
+  {
+    "defaultMessage": "Clinical Indicators",
+    "id": "header.link.clinicalIndicators.title"
+  },
+  {
+    "defaultMessage": "Browse",
+    "id": "header.link.browse.title"
+  },
+  {
+    "defaultMessage": "Reports",
+    "id": "header.link.reports.title"
+  },
+  {
+    "defaultMessage": "Manage",
+    "id": "header.link.manage.title"
+  },
+  {
+    "defaultMessage": "Tags",
+    "id": "pages.DeviceDetailEdit.tags"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.DeviceDetailEdit.location"
+  },
+  {
+    "defaultMessage": "Discard",
+    "id": "pages.DeviceDetailEdit.discard"
+  },
+  {
+    "defaultMessage": "Save",
+    "id": "pages.DeviceDetailEdit.save"
+  },
+  {
+    "defaultMessage": "Firmware",
+    "id": "pages.DeviceDetailOperation.firmware"
+  },
+  {
+    "defaultMessage": "Require printer",
+    "id": "pages.DeviceDetailOperation.requirePrinter"
+  },
+  {
+    "defaultMessage": "Host ID",
+    "id": "pages.DeviceDetailEdit.hostId"
+  },
+  {
+    "defaultMessage": "Serial number",
+    "id": "pages.DeviceDetailEdit.serialNumber"
+  },
+  {
+    "defaultMessage": "First approved",
+    "id": "pages.DeviceDetailEdit.firstApproved"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "pages.DeviceDetailOperation.startedOn"
+  },
+  {
+    "defaultMessage": "ID",
+    "id": "pages.DeviceDetailOperation.id"
+  },
+  {
+    "defaultMessage": "Voltage",
+    "id": "pages.DeviceDetailOperation.voltage"
+  },
+  {
+    "defaultMessage": "Temperature",
+    "id": "pages.DeviceDetailOperation.temperature"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }",
+    "id": "pages.DeviceDetailOperation.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Device type",
+    "id": "pages.DeviceDetailProfile.deviceType"
+  },
+  {
+    "defaultMessage": "Approval",
+    "id": "pages.DeviceDetailProfile.approval"
+  },
+  {
+    "defaultMessage": "Calibration",
+    "id": "pages.DeviceDetailProfile.calibration"
+  },
+  {
+    "defaultMessage": "Site",
+    "id": "pages.DeviceDetailProfile.site"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.DeviceDetailProfile.connectivity"
+  },
+  {
+    "defaultMessage": "Last seen {lastSeen}",
+    "id": "pages.DeviceDetailProfile.lastSeenOn"
+  },
+  {
+    "defaultMessage": "Warranty",
+    "id": "pages.DeviceDetailProfile.warranty"
+  },
+  {
+    "defaultMessage": "Utilization Rate",
+    "id": "pages.DeviceDetailProfile.utilizationRate"
+  },
+  {
+    "defaultMessage": "Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days",
+    "id": "pages.DeviceDetailProfile.utilizationRateExplain"
+  },
+  {
+    "defaultMessage": "Error Rate",
+    "id": "pages.DeviceDetailProfile.errorRate"
+  },
+  {
+    "defaultMessage": "Number of errors divided by number of results in the last 30 days",
+    "id": "pages.DeviceDetailProfile.errorRateExplain"
+  },
+  {
+    "defaultMessage": "Test Date",
+    "id": "pages.DeviceDetailProfile.endedOn"
+  },
+  {
+    "defaultMessage": "Sample Collection Site",
+    "id": "pages.DeviceDetailProfile.sampleOriginSiteName"
+  },
+  {
+    "defaultMessage": "Sample ID",
+    "id": "pages.DeviceDetailProfile.sampleId"
+  },
+  {
+    "defaultMessage": "Error Code",
+    "id": "pages.DeviceDetailProfile.errorCode"
+  },
+  {
+    "defaultMessage": "Result Text",
+    "id": "pages.DeviceDetailProfile.resultText"
+  },
+  {
+    "defaultMessage": "Result Workflow Status",
+    "id": "pages.DeviceDetailProfile.resultWorkflowStatus"
+  },
+  {
+    "defaultMessage": "Patient ID",
+    "id": "pages.DeviceDetailProfile.patientId"
+  },
+  {
+    "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }",
+    "id": "pages.DeviceDetailProfile.paginatorStatus"
+  },
+  {
+    "defaultMessage": "Maintenance Status",
+    "id": "pages.DeviceDetailProfile.maintenance"
+  },
+  {
+    "defaultMessage": "n/a",
+    "id": "pages.DeviceDetailProfile.undefinedValue"
+  },
+  {
+    "defaultMessage": "notes",
+    "id": "pages.DeviceDetailProfile.notes"
+  },
+  {
+    "defaultMessage": "Add Record",
+    "id": "pages.DeviceDetailProfile.buttonAddRecord"
+  },
+  {
+    "defaultMessage": "Update",
+    "id": "pages.DeviceDetailProfile.buttonUpdate"
+  },
+  {
+    "defaultMessage": "Change",
+    "id": "pages.DeviceDetailProfile.buttonChange"
+  },
+  {
+    "defaultMessage": "Test history",
+    "id": "pages.DeviceDetailProfile.testHistory"
+  },
+  {
+    "defaultMessage": "Active",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.active"
+  },
+  {
+    "defaultMessage": "Connectivity",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity"
+  },
+  {
+    "defaultMessage": "Decommissioned",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned"
+  },
+  {
+    "defaultMessage": "Down For Repair",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair"
+  },
+  {
+    "defaultMessage": "No Results Reported",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveNoResultsReported"
+  },
+  {
+    "defaultMessage": "Out Of Inventory",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory"
+  },
+  {
+    "defaultMessage": "Unknown",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown"
+  },
+  {
+    "defaultMessage": "Active",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.reportedActive"
+  },
+  {
+    "defaultMessage": "No Staff",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveNoStaff"
+  },
+  {
+    "defaultMessage": "No Power",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveNoPower"
+  },
+  {
+    "defaultMessage": "Other",
+    "id": "pages.DeviceDetailProfile.maintenanceStatus.inactiveOther"
+  },
+  {
+    "defaultMessage": "{maintenanceStatusName} ({totalResults, plural, one {# result reported} other {# results reported} })",
+    "id": "pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported"
+  },
+  {
+    "defaultMessage": "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one {# day} other {# days} }",
+    "id": "pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus"
+  },
+  {
+    "defaultMessage": "{daysInSameStatus, plural, one {# day} other {# days} } since last update",
+    "id": "pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus"
+  },
+  {
+    "defaultMessage": "Set Maintenance Status",
+    "id": "pages.DailyStatusDialog.title"
+  },
+  {
+    "defaultMessage": "Device",
+    "id": "pages.DailyStatusDialog.deviceLabel"
+  },
+  {
+    "defaultMessage": "Date Range",
+    "id": "pages.DailyStatusDialog.dateRange"
+  },
+  {
+    "defaultMessage": "Reason",
+    "id": "pages.DailyStatusDialog.reason"
+  },
+  {
+    "defaultMessage": "Select Reason",
+    "id": "pages.DailyStatusDialog.selectReason"
+  },
+  {
+    "defaultMessage": "Note",
+    "id": "pages.DailyStatusDialog.note"
+  },
+  {
+    "defaultMessage": "Submit",
+    "id": "pages.DailyStatusDialog.submit"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.DailyStatusDialog.cancel"
+  },
+  {
+    "defaultMessage": "Tests",
+    "id": "pages.DailyStatus.ClinicRow.totalTests"
+  },
+  {
+    "defaultMessage": "Notifications History",
+    "id": "pages.NotificationList.notificationsTitle"
+  },
+  {
+    "defaultMessage": "Back",
+    "id": "pages.NotificationList.backButton"
+  },
+  {
+    "defaultMessage": "Webhook Sent",
+    "id": "pages.Notifications.table.webhookSentHeader"
+  },
+  {
+    "defaultMessage": "Date",
+    "id": "pages.Notifications.table.dateHeader"
+  },
+  {
+    "defaultMessage": "Email Sent",
+    "id": "pages.Notifications.table.emailSentHeader"
+  },
+  {
+    "defaultMessage": "SMS Sent",
+    "id": "pages.Notifications.table.smsSentHeader"
+  },
+  {
+    "defaultMessage": "Edit",
+    "id": "contextualMenu.notifications.edit.title"
+  },
+  {
+    "defaultMessage": "Copy",
+    "id": "contextualMenu.notifications.copy.title"
+  },
+  {
+    "defaultMessage": "Preview",
+    "id": "contextualMenu.notifications.preview.title"
+  },
+  {
+    "defaultMessage": "View Log",
+    "id": "contextualMenu.notifications.viewLog.title"
+  },
+  {
+    "defaultMessage": "Delete",
+    "id": "contextualMenu.notifications.delete.title"
+  },
+  {
+    "defaultMessage": "Transfer Result",
+    "id": "pages.transferResult.header"
+  },
+  {
+    "defaultMessage": "Transfer to Clinic",
+    "id": "pages.transferResult.titleSites"
+  },
+  {
+    "defaultMessage": "Enter clinic name",
+    "id": "pages.transferResult.hint"
+  },
+  {
+    "defaultMessage": "Cancel",
+    "id": "pages.transferResult.buttonCancel"
+  },
+  {
+    "defaultMessage": "Transfer",
+    "id": "pages.transferResult.buttonTransfer"
+  },
+  {
+    "defaultMessage": "Include ALL results related to Patient ID",
+    "id": "pages.transferResult.includeAllResults"
+  },
+  {
+    "defaultMessage": "Processing...",
+    "id": "pages.transferResult.processing"
+  },
+  {
+    "defaultMessage": "Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone.",
+    "id": "pages.transferResult.note"
+  },
+  {
+    "defaultMessage": "OK",
+    "id": "pages.transferResult.successOk"
+  },
+  {
+    "defaultMessage": "Result Transfer Completed",
+    "id": "pages.transferResult.successHeader"
+  },
+  {
+    "defaultMessage": "Result for patient \"{patientId}\" has been transferred from \"{oldSiteName}\" to \"{newSiteName}\"",
+    "id": "pages.transferResult.successMessagePatient"
+  },
+  {
+    "defaultMessage": "After clicking the OK button below, you will be redirected to the list of results.",
+    "id": "pages.transferResult.successMessageButton"
+  },
+  {
+    "defaultMessage": "Transfer Result Error",
+    "id": "errorResponseMessages.transferResult.POST.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Find Test Result",
+    "id": "errorResponseMessages.fetchResultsDetail.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Loading Result Details",
+    "id": "errorResponseMessages.fetchResultsDetailDetails.GET.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Load All Sites",
+    "id": "errorResponseMessages.fetchAllSites.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Loading All Sites",
+    "id": "errorResponseMessages.fetchAllSites.GET.default.title"
+  },
+  {
+    "defaultMessage": "Could Not Transfer Result",
+    "id": "errorResponseMessages.transferResult.GET.404.title"
+  },
+  {
+    "defaultMessage": "Error Transferring Result",
+    "id": "errorResponseMessages.transferResult.GET.default.title"
+  }
+]
