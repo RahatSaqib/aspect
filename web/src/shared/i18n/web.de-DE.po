@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-08T18:47:15.916Z\n"
+"POT-Creation-Date: 2021-02-22T15:55:14.772Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -122,9 +122,6 @@ msgstr "Weniger als 550"
 msgid "A username is required"
 msgstr "Ein Benutzername ist erforderlich"
 
-#. [legends.Unknown.abbottM2000DBSHivVL]
-#. defaultMessage is:
-#. Abbott m2000 DBS HIV VL
 #. [filter.AssaySelectField.AssayAbbottM2000DBSHivVl]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
@@ -132,16 +129,6 @@ msgstr "Ein Benutzername ist erforderlich"
 msgid "Abbott m2000 DBS HIV VL"
 msgstr "Abbott m2000 DBS HIV VL"
 
-#. [legends.Unknown.abbottM2000DaanNCOVID19]
-#. defaultMessage is:
-#. Abbott m2000 Daan N COVID-19
-#: extracted_strings.json
-msgid "Abbott m2000 Daan N COVID-19"
-msgstr "Abbott m2000 DBS HIV VL"
-
-#. [legends.Unknown.abbottM2000HIVEID]
-#. defaultMessage is:
-#. Abbott m2000 HIV EID
 #. [filter.AssaySelectField.AssayAbbottM2000HivEid]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
@@ -149,9 +136,6 @@ msgstr "Abbott m2000 DBS HIV VL"
 msgid "Abbott m2000 HIV EID"
 msgstr "Abbott m2000 HIV EID"
 
-#. [legends.Unknown.abbottM2000PlasmaHbvVL]
-#. defaultMessage is:
-#. Abbott m2000 Plasma HBV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
@@ -159,9 +143,6 @@ msgstr "Abbott m2000 HIV EID"
 msgid "Abbott m2000 Plasma HBV VL"
 msgstr "Abbott m2000 Plasma HBV VL"
 
-#. [legends.Unknown.abbottM2000PlasmaHivVL]
-#. defaultMessage is:
-#. Abbott m2000 Plasma HIV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHivVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HIV VL
@@ -301,9 +282,6 @@ msgstr "Nach dem Klicken auf OK werden Sie zur Ergebnisliste weitergeleitet."
 msgid "Age and Gender"
 msgstr "Alter und Geschlecht"
 
-#. [legends.Unknown.assayAlereQHiv12Detect]
-#. defaultMessage is:
-#. Alere Q HIV-1/2 Detect
 #. [filter.AssaySelectField.assayAlereQHiv12Detect]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 Detect
@@ -311,9 +289,6 @@ msgstr "Alter und Geschlecht"
 msgid "Alere Q HIV-1/2 Detect"
 msgstr "Alere Q HIV-1/2 Detect"
 
-#. [legends.Unknown.assayAlereQHiv12VLPlasma]
-#. defaultMessage is:
-#. Alere Q HIV-1/2 VL plasma
 #. [filter.AssaySelectField.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL plasma
@@ -697,16 +672,6 @@ msgstr ""
 msgid "Average time to replace disabled module"
 msgstr "Durchschnittliche Zeit für den Austausch eines deaktivierten Moduls"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
-#. defaultMessage is:
-#. Awaiting Treatment
-#: extracted_strings.json
-msgid "Awaiting Treatment"
-msgstr "Zur Behandlung"
-
-#. [legends.Unknown.assayBdMgitAst]
-#. defaultMessage is:
-#. BD MGIT AST
 #. [filter.AssaySelectField.assayBdMgitAst]
 #. defaultMessage is:
 #. BD MGIT AST
@@ -714,9 +679,6 @@ msgstr "Zur Behandlung"
 msgid "BD MGIT AST"
 msgstr "BD MGIT AST"
 
-#. [legends.Unknown.assayBdMgitGnd]
-#. defaultMessage is:
-#. BD MGIT GND
 #. [filter.AssaySelectField.assayBdMgitGnd]
 #. defaultMessage is:
 #. BD MGIT GND
@@ -766,9 +728,6 @@ msgstr "CHAI EID"
 msgid "CHAI HIV VL"
 msgstr "Abbott m2000 DBS HIV VL"
 
-#. [legends.Unknown.assayCobasHivVl]
-#. defaultMessage is:
-#. COBAS 4800 VL
 #. [filter.AssaySelectField.assayCobasHivVl]
 #. defaultMessage is:
 #. COBAS 4800 VL
@@ -783,9 +742,6 @@ msgstr "COBAS 4800 VL"
 msgid "COVID Results"
 msgstr "COVID-Ergebnisse"
 
-#. [legends.Unknown.assayGenericCovid19]
-#. defaultMessage is:
-#. COVID-19 Generic Test
 #. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
@@ -850,9 +806,6 @@ msgstr "Kalibrierungsdatum ist erforderlich"
 #. defaultMessage is:
 #. Cancel
 #. [pages.MaintenanceStatusDialog.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.transferResult.buttonCancel]
@@ -1292,22 +1245,12 @@ msgstr "Erstellt am"
 msgid "Created On:"
 msgstr "Erstellt am:"
 
-#. [legends.Unknown.assayGenericCulture]
-#. defaultMessage is:
-#. Culture
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
 #: extracted_strings.json
 msgid "Culture"
 msgstr "Kultur"
-
-#. [pages.DailyStatus.dailyStatusMapTitle]
-#. defaultMessage is:
-#. Current Network Status
-#: extracted_strings.json
-msgid "Current Network Status"
-msgstr "Behandlungsstatus"
 
 #. [pages.UpdateLoginDetails.currentPassword]
 #. defaultMessage is:
@@ -1416,13 +1359,6 @@ msgstr "Datum"
 #: extracted_strings.json
 msgid "Date Added"
 msgstr "Hinzugefügt am"
-
-#. [pages.DailyStatusDialog.dateRange]
-#. defaultMessage is:
-#. Date Range
-#: extracted_strings.json
-msgid "Date Range"
-msgstr "Entfernt am"
 
 #. [pages.ReceiveInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -1569,9 +1505,6 @@ msgstr "Erkannt"
 #. defaultMessage is:
 #. Device
 #. [pages.SiteList.issueCategoryDeviceHealth]
-#. defaultMessage is:
-#. Device
-#. [pages.DailyStatusDialog.deviceLabel]
 #. defaultMessage is:
 #. Device
 #: extracted_strings.json
@@ -2299,9 +2232,6 @@ msgstr "Von…"
 msgid "Full Name"
 msgstr "Vollständiger Name"
 
-#. [legends.Unknown.assayGXCovid19]
-#. defaultMessage is:
-#. GeneXpert COVID-19
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
@@ -2309,9 +2239,6 @@ msgstr "Vollständiger Name"
 msgid "GeneXpert COVID-19"
 msgstr "GeneXpert COVID-19"
 
-#. [legends.Unknown.GxEbola]
-#. defaultMessage is:
-#. GeneXpert Ebola
 #. [filter.AssaySelectField.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
@@ -2319,9 +2246,6 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert Ebola"
 msgstr "GeneXpert Ebola"
 
-#. [legends.Unknown.GxHcv]
-#. defaultMessage is:
-#. GeneXpert HCV
 #. [filter.AssaySelectField.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
@@ -2329,9 +2253,6 @@ msgstr "GeneXpert Ebola"
 msgid "GeneXpert HCV"
 msgstr "GeneXpert HCV"
 
-#. [legends.Unknown.GxHiv1Qual]
-#. defaultMessage is:
-#. GeneXpert HIV-1 Qual
 #. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
@@ -2339,9 +2260,6 @@ msgstr "GeneXpert HCV"
 msgid "GeneXpert HIV-1 Qual"
 msgstr "GeneXpert HIV-1 Qual"
 
-#. [legends.Unknown.GxHiv1Vl]
-#. defaultMessage is:
-#. GeneXpert HIV-1 VL
 #. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
@@ -2349,9 +2267,6 @@ msgstr "GeneXpert HIV-1 Qual"
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
 
-#. [legends.Unknown.GxMtbRif]
-#. defaultMessage is:
-#. GeneXpert MTB/Rif
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -2359,9 +2274,6 @@ msgstr "GeneXpert HIV-1 VL"
 msgid "GeneXpert MTB/Rif"
 msgstr "GeneXpert MTB/Rif"
 
-#. [legends.Unknown.GxMtbRifUltra]
-#. defaultMessage is:
-#. GeneXpert MTB/Rif Ultra
 #. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
@@ -2369,9 +2281,6 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
-#. [legends.Unknown.GxUnknown]
-#. defaultMessage is:
-#. GeneXpert Unknown
 #. [filter.AssaySelectField.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
@@ -2406,9 +2315,6 @@ msgstr "Generieren von Geräte-API-Schlüssel fehlgeschlagen"
 msgid "Generic RDT"
 msgstr "Generischer RDT"
 
-#. [legends.Unknown.assayGenoTypeMTBCV1]
-#. defaultMessage is:
-#. GenoType MTBC VER 1.X
 #. [filter.AssaySelectField.assayGenoTypeMTBCV1]
 #. defaultMessage is:
 #. GenoType MTBC VER 1.X
@@ -2416,9 +2322,6 @@ msgstr "Generischer RDT"
 msgid "GenoType MTBC VER 1.X"
 msgstr "GenoType MTBC VER 1.X"
 
-#. [legends.Unknown.assayGenoTypeMTBDRplusV2]
-#. defaultMessage is:
-#. GenoType MTBDRplus VER 2.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
@@ -2426,9 +2329,6 @@ msgstr "GenoType MTBC VER 1.X"
 msgid "GenoType MTBDRplus VER 2.0"
 msgstr "GenoType MTBDRplus VER 2.0"
 
-#. [legends.Unknown.assayGenoTypeMTBDRslV1]
-#. defaultMessage is:
-#. GenoType MTBDRsl VER 1.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRslV1]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 1.0
@@ -2436,9 +2336,6 @@ msgstr "GenoType MTBDRplus VER 2.0"
 msgid "GenoType MTBDRsl VER 1.0"
 msgstr "GenoType MTBDRsl VER 1.0"
 
-#. [legends.Unknown.assayGenoTypeMTBDRslV2]
-#. defaultMessage is:
-#. GenoType MTBDRsl VER 2.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
@@ -3281,9 +3178,6 @@ msgstr "Losnummer"
 msgid "MTB/Rif"
 msgstr "MTB/Rif"
 
-#. [legends.Unknown.assayMP96Covid19]
-#. defaultMessage is:
-#. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
@@ -3496,26 +3390,6 @@ msgstr "Weiter"
 msgid "No Data Available"
 msgstr "Keine Daten verfügbar"
 
-#. [pages.DeviceList.status.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#: extracted_strings.json
-msgid "No Power"
-msgstr "Keine Leistung"
-
-#. [pages.deviceDetail.resultCategoryNoResult]
-#. defaultMessage is:
-#. No Result
-#: extracted_strings.json
-msgid "No Result"
-msgstr "Keine Ergebnisse"
-
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
 #. No Results Reported
@@ -3528,19 +3402,6 @@ msgstr "Keine Ergebnisse"
 #: extracted_strings.json
 msgid "No Results Reported"
 msgstr "Keine Ergebnisse berichtet"
-
-#. [pages.DeviceList.status.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#: extracted_strings.json
-msgid "No Staff"
-msgstr "Kein Personal"
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3633,13 +3494,6 @@ msgstr "Nicht möglich"
 #: extracted_strings.json
 msgid "Not yet confirmed on treatment"
 msgstr "Behandlung noch nicht bestätigt"
-
-#. [pages.DailyStatusDialog.note]
-#. defaultMessage is:
-#. Note
-#: extracted_strings.json
-msgid "Note"
-msgstr "Hinweis"
 
 #. [forms.formItem.notes]
 #. defaultMessage is:
@@ -3793,19 +3647,6 @@ msgstr "Betriebsdaten"
 #: extracted_strings.json
 msgid "Operator"
 msgstr "Betreiber"
-
-#. [pages.DeviceList.status.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveOther]
-#. defaultMessage is:
-#. Other
-#: extracted_strings.json
-msgid "Other"
-msgstr "Andere"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -4351,9 +4192,6 @@ msgstr "Provinz"
 msgid "Provisioned"
 msgstr "Bereitgestellt"
 
-#. [legends.Unknown.QHivVL]
-#. defaultMessage is:
-#. Q HIV VL
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
 #. Q HIV VL
@@ -4368,9 +4206,6 @@ msgstr "Q HIV VL"
 msgid "Quality Control"
 msgstr "Quality Control"
 
-#. [legends.Unknown.assayQS7Covid19]
-#. defaultMessage is:
-#. QuantStudio7 Flex COVID-19
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
@@ -4434,9 +4269,6 @@ msgid "Reagent"
 msgstr "Reagenz"
 
 #. [pages.InventoryAdjustmentDialogForm.reason]
-#. defaultMessage is:
-#. Reason
-#. [pages.DailyStatusDialog.reason]
 #. defaultMessage is:
 #. Reason
 #: extracted_strings.json
@@ -4534,9 +4366,6 @@ msgstr "Standort der Entnahme"
 msgid "Reported Active"
 msgstr "Gemeldet Aktiv"
 
-#. [legends.Unknown.ReporterEID]
-#. defaultMessage is:
-#. Reporter EID
 #. [filter.AssaySelectField.AssayReporterEid]
 #. defaultMessage is:
 #. Reporter EID
@@ -4544,9 +4373,6 @@ msgstr "Gemeldet Aktiv"
 msgid "Reporter EID"
 msgstr "Reporter EID"
 
-#. [legends.Unknown.ReporterHivVL]
-#. defaultMessage is:
-#. Reporter HIV VL
 #. [filter.AssaySelectField.AssayReporterHivVl]
 #. defaultMessage is:
 #. Reporter HIV VL
@@ -4563,13 +4389,13 @@ msgstr "Reporter"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting Since
+#. Reporting For
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting Since
+#. Reporting For
 #: extracted_strings.json
-msgid "Reporting Since"
-msgstr "Berichterstattung seit"
+msgid "Reporting For"
+msgstr "Bericht für"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:
@@ -5062,13 +4888,6 @@ msgstr "Monat auswählen..."
 msgid "Select Quarter..."
 msgstr "Quartal auswählen..."
 
-#. [pages.DailyStatusDialog.selectReason]
-#. defaultMessage is:
-#. Select Reason
-#: extracted_strings.json
-msgid "Select Reason"
-msgstr "Grund auswählen"
-
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
 #. Select Week...
@@ -5170,9 +4989,6 @@ msgstr "Typ auswählen ..."
 msgid "Select {entity}..."
 msgstr "Wählen Sie {entity}..."
 
-#. [legends.Unknown.senaiteSmearMicroscopy]
-#. defaultMessage is:
-#. Senaite LIMS Smear Microscopy
 #. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
@@ -5180,9 +4996,6 @@ msgstr "Wählen Sie {entity}..."
 msgid "Senaite LIMS Smear Microscopy"
 msgstr "Senaite LIMS Ausstrichmikroskopie"
 
-#. [legends.Unknown.senaiteTbCulture]
-#. defaultMessage is:
-#. Senaite LIMS TB Culture
 #. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
@@ -5190,9 +5003,6 @@ msgstr "Senaite LIMS Ausstrichmikroskopie"
 msgid "Senaite LIMS TB Culture"
 msgstr "Senaite LIMS TB Kultur"
 
-#. [legends.Unknown.senaiteUnknown]
-#. defaultMessage is:
-#. Senaite LIMS Unknown
 #. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
@@ -5254,13 +5064,6 @@ msgstr "Service"
 #: extracted_strings.json
 msgid "Set Filters"
 msgstr "Filter einstellen"
-
-#. [pages.DailyStatusDialog.title]
-#. defaultMessage is:
-#. Set Maintenance Status
-#: extracted_strings.json
-msgid "Set Maintenance Status"
-msgstr "Wartungsstatus setzen"
 
 #. [pages.SiteDetail.buttonSetBasedonAddress]
 #. defaultMessage is:
@@ -5610,9 +5413,6 @@ msgstr "Styleguide"
 #. [pages.MaintenanceStatusDialog.submit]
 #. defaultMessage is:
 #. Submit
-#. [pages.DailyStatusDialog.submit]
-#. defaultMessage is:
-#. Submit
 #: extracted_strings.json
 msgid "Submit"
 msgstr "Senden"
@@ -5645,9 +5445,6 @@ msgstr "Empfindlich"
 msgid "TB AST"
 msgstr "TB AST"
 
-#. [legends.Unknown.assayGenericDst]
-#. defaultMessage is:
-#. TB DST
 #. [filter.AssaySelectField.assayGenericDst]
 #. defaultMessage is:
 #. TB DST
@@ -6883,13 +6680,6 @@ msgstr "Anzahl der gesendeten Textnachrichten"
 msgid "of {unit} currently reported"
 msgstr "von {unit} aktuell gemeldet"
 
-#. [component.Widget.ofTotalModules]
-#. defaultMessage is:
-#. of {unit} total modules
-#: extracted_strings.json
-msgid "of {unit} total modules"
-msgstr "von {unit} Gesamtmodulen"
-
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
 #. percentage of active devices
@@ -6917,13 +6707,6 @@ msgstr "Prozentsatz der Geräte mit Betriebsunterbrechung"
 #: extracted_strings.json
 msgid "percentage of devices with unused modules"
 msgstr "Prozentsatz der Geräte mit unbenutzten Modulen"
-
-#. [widgetAlerts.percentageOfModulesFunctioning]
-#. defaultMessage is:
-#. percentage of modules functioning
-#: extracted_strings.json
-msgid "percentage of modules functioning"
-msgstr "prozentsatz der funktionierenden Module"
 
 #. [widgetAlerts.percentageOfPositiveResultsNotified]
 #. defaultMessage is:
