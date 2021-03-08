@@ -21,8 +21,13 @@ import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const cssClasses = classnames.bind(require('./DatePicker.css'))
 
-const getDisplayValue = (value, showTimeSelect) =>
-  value ? (showTimeSelect ? formatDateTime(value) : formatDate(value)) : null
+const getDisplayValue = (value, showTimeSelect) => {
+  return value
+    ? showTimeSelect
+      ? formatDateTime(value)
+      : formatDate(value)
+    : null
+}
 
 const AspectDatePickerBase = props => {
   const {
@@ -37,7 +42,6 @@ const AspectDatePickerBase = props => {
     showTimeSelect,
   } = props
   registerLocale(culture, enUS)
-
   const [selectedDate, setSelectedDate] = useState(getDateObject(value))
 
   // skip all 'null' and 'undefined' props

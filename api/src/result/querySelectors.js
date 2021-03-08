@@ -23,6 +23,7 @@ const LIST_FIELDS = [
   'st.name as stateName',
   'si.name as siteName',
   'a.name as assayName',
+  'a.i18nkey as assayI18nKey',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
   'dis.name as diseaseName',

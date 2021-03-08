@@ -78,6 +78,7 @@ const SELECT_SHOW_FIELDS = [
   'dms.active as maintenanceStatusActive',
   'dms.manuallySet as maintenanceStatusManuallySet',
   'da.token as approvalToken',
+  'da.i18nKey as approvalStatusI18nKey',
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',

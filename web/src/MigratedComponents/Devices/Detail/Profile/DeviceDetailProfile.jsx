@@ -11,7 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
-
+import resultMessages from '../../../../result/list/messages.js'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -191,6 +191,38 @@ const messages = defineMessages({
   inactiveOther: {
     id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveOther',
     defaultMessage: 'Other',
+  },
+  deviceApprovalProvisioned: {
+    id: 'pages.deviceDetail.deviceApprovalProvisioned',
+    defaultMessage: 'Provisioned',
+  },
+  deviceApprovalAssigned: {
+    id: 'pages.deviceDetail.deviceApprovalAssigned',
+    defaultMessage: 'Assigned',
+  },
+  deviceApprovalApproved: {
+    id: 'pages.deviceDetail.deviceApprovalApproved',
+    defaultMessage: 'Approved',
+  },
+  deviceApprovalDecommissioned: {
+    id: 'pages.deviceDetail.deviceApprovalDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  target: {
+    id: 'pages.deviceDetail.target',
+    defaultMessage: 'Target',
+  },
+  aboveTarget: {
+    id: 'pages.deviceDetail.aboveTarget',
+    defaultMessage: 'Above Target',
+  },
+  aboveAverage: {
+    id: 'pages.deviceDetail.aboveAverage',
+    defaultMessage: 'Above Average',
+  },
+  countryAverage: {
+    id: 'pages.deviceDetail.countryAverage',
+    defaultMessage: 'Country Average',
   },
 })
 
@@ -464,6 +496,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
+  const { formatMessage } = useIntl()
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
@@ -549,24 +582,25 @@ const PerformanceReport = ({ performanceReport, culture }) => {
             >
               {data && (
                 <div>
-                  <p>Utilization Rate</p>
+                  <p>{formatMessage(messages.utilizationRate)}</p>
                   <PerformanceBarChart
                     data={data}
                     series={utilizationRateSeries}
                     color="--aspect-color-shakespeare"
                     avgValue={avgUtilizationRate}
                     maxValue={maxUtilizationRate}
-                    info="Utilization Rate"
+                    info={formatMessage(messages.utilizationRate)}
                   />
                   <div className={cssClasses('Graph_Legend')}>
                     <div data-utilization-rate-legend>
-                      <div /> <span> Utilization Rate</span>
+                      <div />
+                      <span>{formatMessage(messages.utilizationRate)}</span>
                     </div>
                     <div data-utilization-rate-average-legend>
-                      <div /> <span> Target </span>
+                      <div /> <span> {formatMessage(messages.target)} </span>
                     </div>
                     <div data-utilization-rate-above-average-legend>
-                      <div /> <span> Above Target </span>
+                      <div /> <span>{formatMessage(messages.aboveTarget)}</span>
                     </div>
                   </div>
                 </div>
@@ -587,13 +621,14 @@ const PerformanceReport = ({ performanceReport, culture }) => {
                 />
                 <div className={cssClasses('Graph_Legend')}>
                   <div data-error-rate-legend>
-                    <div /> <span> Error Rate</span>
+                    <div /> <span>{formatMessage(messages.errorRate)} </span>
                   </div>
                   <div data-error-rate-average-legend>
-                    <div /> <span> Country Average </span>
+                    <div />
+                    <span> {formatMessage(messages.countryAverage)}</span>
                   </div>
                   <div data-error-rate-above-average-legend>
-                    <div /> <span> Above Average</span>
+                    <div /> <span>{formatMessage(messages.aboveAverage)}</span>
                   </div>
                 </div>
               </div>
@@ -681,7 +716,8 @@ const DeviceDetailProfile = ({
       sortable: true,
     },
     {
-      key: 'resultWorkflowStatus',
+      key: 'resultWorkflowStatusI18nkey',
+      formatter: value => intl.formatMessage(resultMessages[value]),
       label: intl.formatMessage(messages.resultWorkflowStatus),
       sortable: true,
     },
@@ -879,7 +915,9 @@ const DeviceDetailProfile = ({
             {/* Approval Status Summary */}
             <Summary
               title={intl.formatMessage(messages.approval)}
-              description={device.get('approval')}
+              description={intl.formatMessage(
+                messages[device.get('approvalStatusI18nKey')]
+              )}
               action={
                 <Button
                   variant="contained"

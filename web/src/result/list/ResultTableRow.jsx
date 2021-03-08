@@ -26,47 +26,51 @@ const formatterByType = partial(
     default: identity,
   }
 )
-
 const ResultTableRow = ({
   intl,
   extraColumns,
   result,
   messages,
   ...restProps
-}) => (
-  <TableRow {...restProps} className={cssClasses(restProps.className)}>
-    <TableCell>
-      {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
-    </TableCell>
-    <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
-    <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
-    <TableCell>{result.get('sampleId')}</TableCell>
-    <TableCell>{result.get('assayName')}</TableCell>
-    <TableCell>{result.get('resultText')}</TableCell>
-    <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
-    <TableCell hiddenOn="md">
-      {intl.formatMessage(messages[result.get('resultWorkflowStatusI18nkey')])}
-    </TableCell>
-    <TableCell hiddenOn="md">
-      {result.get('treatmentStatusInfo') && (
-        <Tooltip title={result.get('resultTreatmentStatusName')}>
-          <PermIdentity
-            className={styles[`${result.get('treatmentStatusInfo')}`]}
-          />
-        </Tooltip>
-      )}
-    </TableCell>
-    <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
-    {extraColumns.map(column => (
-      // TODO: refactor, see DeviceOperationTableRow
-      <TableCell key={column.get('db')} hiddenOn="nd">
-        {formatterByType(column.get('type'))(
-          result.get(column.get('db')),
-          intl
+}) => {
+  const formatI18n = (key, defaultMessage) =>
+    messages[result.get(key)]
+      ? intl.formatMessage(messages[result.get(key)])
+      : result.get(defaultMessage)
+  return (
+    <TableRow {...restProps} className={cssClasses(restProps.className)}>
+      <TableCell>
+        {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
+      </TableCell>
+      <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
+      <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
+      <TableCell>{result.get('sampleId')}</TableCell>
+      <TableCell>{formatI18n('assayI18nKey', 'assayName')}</TableCell>
+      <TableCell>{result.get('resultText')}</TableCell>
+      <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
+      <TableCell hiddenOn="md">
+        {formatI18n('resultWorkflowStatusI18nkey', 'resultWorkflowStatus')}
+      </TableCell>
+      <TableCell hiddenOn="md">
+        {result.get('treatmentStatusInfo') && (
+          <Tooltip title={result.get('resultTreatmentStatusName')}>
+            <PermIdentity
+              className={styles[`${result.get('treatmentStatusInfo')}`]}
+            />
+          </Tooltip>
         )}
       </TableCell>
-    ))}
-  </TableRow>
-)
-
+      <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
+      {extraColumns.map(column => (
+        // TODO: refactor, see DeviceOperationTableRow
+        <TableCell key={column.get('db')} hiddenOn="nd">
+          {formatterByType(column.get('type'))(
+            result.get(column.get('db')),
+            intl
+          )}
+        </TableCell>
+      ))}
+    </TableRow>
+  )
+}
 export default ResultTableRow

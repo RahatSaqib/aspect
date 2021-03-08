@@ -108,6 +108,74 @@ const messages = defineMessages({
     id: 'pages.ResultList.ResultWorkflowStatusPurged',
     defaultMessage: 'Purged',
   },
+  assayBdMgitAst: {
+    id: 'pages.ResultList.assayBdMgitAst',
+    defaultMessage: 'BD MGIT AST',
+  },
+  assayBdMgitGnd: {
+    id: 'pages.ResultList.assayBdMgitGnd',
+    defaultMessage: 'BD MGIT GND',
+  },
+  assayGenoTypeMTBCV1: {
+    id: 'pages.ResultList.assayGenoTypeMTBCV1',
+    defaultMessage: 'GenoType MTBC VER 1.X',
+  },
+  assayGenoTypeMTBDRplusV2: {
+    id: 'pages.ResultList.assayGenoTypeMTBDRplusV2',
+    defaultMessage: 'GenoType MTBDRplus VER 2.0',
+  },
+  assayGenoTypeMTBDRslV1: {
+    id: 'pages.ResultList.assayGenoTypeMTBDRslV1',
+    defaultMessage: 'GenoType MTBDRsl VER 1.0',
+  },
+  assayGenoTypeMTBDRslV2: {
+    id: 'pages.ResultList.assayGenoTypeMTBDRslV2',
+    defaultMessage: 'GenoType MTBDRsl VER 2.0',
+  },
+  assaySenaiteLIMSSmearMicroscopy: {
+    id: 'pages.ResultList.assaySenaiteLIMSSmearMicroscopy',
+    defaultMessage: 'Senaite LIMS Smear Microscopy',
+  },
+  assaySenaiteLIMSTbCulture: {
+    id: 'pages.ResultList.assaySenaiteLIMSTbCulture',
+    defaultMessage: 'Senaite LIMS TB Culture',
+  },
+  assaySenaiteLIMSUnknown: {
+    id: 'pages.ResultList.assaySenaiteLIMSUnknown',
+    defaultMessage: 'Senaite LIMS Unknown',
+  },
+  assayGeneXpertUnknown: {
+    id: 'pages.ResultList.assayGeneXpertUnknown',
+    defaultMessage: 'GeneXpert Unknown',
+  },
+  assayGeneXpertHcv: {
+    id: 'pages.ResultList.assayGeneXpertHcv',
+    defaultMessage: 'GeneXpert HCV',
+  },
+  assayGeneXpertMtbRif: {
+    id: 'pages.ResultList.assayGeneXpertMtbRif',
+    defaultMessage: 'GeneXpert MTB/Rif',
+  },
+  assayGeneXpertMtbRifUltra: {
+    id: 'pages.ResultList.assayGeneXpertMtbRifUltra',
+    defaultMessage: 'GeneXpert MTB/Rif Ultra',
+  },
+  assayGeneXpertHiv1Vl: {
+    id: 'pages.ResultList.assayGeneXpertHiv1Vl',
+    defaultMessage: 'GeneXpert HIV-1 VL',
+  },
+  assayGeneXpertHiv1Qual: {
+    id: 'pages.ResultList.assayGeneXpertHiv1Qual',
+    defaultMessage: 'GeneXpert HIV-1 Qual',
+  },
+  assayGeneXpertEbola: {
+    id: 'pages.ResultList.assayGeneXpertEbola',
+    defaultMessage: 'GeneXpert Ebola',
+  },
+  assayGXCovid19: {
+    id: 'pages.ResultList.assayGXCovid19',
+    defaultMessage: 'GeneXpert COVID-19',
+  },
 })
 
 export default messages
