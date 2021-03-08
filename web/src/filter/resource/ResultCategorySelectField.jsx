@@ -6,10 +6,10 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
-
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
+import messages from './messages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
@@ -21,6 +21,8 @@ export class ResultCategorySelectField extends PureComponent {
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    intl: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -38,7 +40,7 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, assayItems, assayId, value } = this.props
+    const { allItemText, assayItems, assayId, value, intl } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchAssays',
@@ -51,13 +53,20 @@ export class ResultCategorySelectField extends PureComponent {
     const resultCategories = possibleAssay
       ? possibleAssay.get('resultCategories')
       : []
+    const textForItem = item => {
+      return (
+        (messages[item.get('i18nKey')]
+          ? intl.formatMessage(messages[item.get('i18nKey')])
+          : item.get('name')) || item.get('name')
+      )
+    }
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {resultCategories.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {textForItem(a)}
           </MenuItem>
         ))}
       </SelectField>
