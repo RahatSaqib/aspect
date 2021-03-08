@@ -123,6 +123,9 @@ msgstr ">= 550"
 msgid "A username is required"
 msgstr "Требуется имя пользователя"
 
+#. [legends.Unknown.abbottM2000DBSHivVL]
+#. defaultMessage is:
+#. Abbott m2000 DBS HIV VL
 #. [filter.AssaySelectField.AssayAbbottM2000DBSHivVl]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
@@ -147,6 +150,9 @@ msgstr "Abbott m2000 DBS ВИЧ VL"
 msgid "Abbott m2000 HIV EID"
 msgstr "Abbott m2000 ВИЧ EID"
 
+#. [legends.Unknown.abbottM2000PlasmaHbvVL]
+#. defaultMessage is:
+#. Abbott m2000 Plasma HBV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
@@ -154,6 +160,9 @@ msgstr "Abbott m2000 ВИЧ EID"
 msgid "Abbott m2000 Plasma HBV VL"
 msgstr "Abbott m2000 Плазма HBV VL"
 
+#. [legends.Unknown.abbottM2000PlasmaHivVL]
+#. defaultMessage is:
+#. Abbott m2000 Plasma HIV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHivVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HIV VL
@@ -295,6 +304,9 @@ msgstr ""
 msgid "Age and Gender"
 msgstr "Возраст и пол"
 
+#. [legends.Unknown.assayAlereQHiv12Detect]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 Detect
 #. [filter.AssaySelectField.assayAlereQHiv12Detect]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 Detect
@@ -302,6 +314,9 @@ msgstr "Возраст и пол"
 msgid "Alere Q HIV-1/2 Detect"
 msgstr "Alere Q HIV-1/2 Обнаружение"
 
+#. [legends.Unknown.assayAlereQHiv12VLPlasma]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 VL plasma
 #. [filter.AssaySelectField.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL plasma
@@ -697,6 +712,9 @@ msgstr "На лечении"
 msgid "BD MGIT AST"
 msgstr "BD MGIT AST"
 
+#. [legends.Unknown.assayBdMgitGnd]
+#. defaultMessage is:
+#. BD MGIT GND
 #. [filter.AssaySelectField.assayBdMgitGnd]
 #. defaultMessage is:
 #. BD MGIT GND
@@ -746,6 +764,9 @@ msgstr "CHAI EID"
 msgid "CHAI HIV VL"
 msgstr "CHAI HIV VL"
 
+#. [legends.Unknown.assayCobasHivVl]
+#. defaultMessage is:
+#. COBAS 4800 VL
 #. [filter.AssaySelectField.assayCobasHivVl]
 #. defaultMessage is:
 #. COBAS 4800 VL
@@ -760,6 +781,9 @@ msgstr "COBAS 4800 VL"
 msgid "COVID Results"
 msgstr "Результаты КОВИД"
 
+#. [legends.Unknown.assayGenericCovid19]
+#. defaultMessage is:
+#. COVID-19 Generic Test
 #. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
@@ -824,6 +848,9 @@ msgstr "Требуется дата калибровки"
 #. defaultMessage is:
 #. Cancel
 #. [pages.MaintenanceStatusDialog.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.transferResult.buttonCancel]
@@ -1263,6 +1290,9 @@ msgstr "Создано"
 msgid "Created On:"
 msgstr "Создано на:"
 
+#. [legends.Unknown.assayGenericCulture]
+#. defaultMessage is:
+#. Culture
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
@@ -1537,6 +1567,9 @@ msgstr "Обнаружен"
 #. defaultMessage is:
 #. Device
 #. [pages.SiteList.issueCategoryDeviceHealth]
+#. defaultMessage is:
+#. Device
+#. [pages.DailyStatusDialog.deviceLabel]
 #. defaultMessage is:
 #. Device
 #: extracted_strings.json
@@ -2264,6 +2297,9 @@ msgstr "От…"
 msgid "Full Name"
 msgstr "Полное имя"
 
+#. [legends.Unknown.assayGXCovid19]
+#. defaultMessage is:
+#. GeneXpert COVID-19
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
@@ -2271,6 +2307,9 @@ msgstr "Полное имя"
 msgid "GeneXpert COVID-19"
 msgstr "GeneXpert COVID-19"
 
+#. [legends.Unknown.GxEbola]
+#. defaultMessage is:
+#. GeneXpert Ebola
 #. [filter.AssaySelectField.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
@@ -2278,6 +2317,9 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert Ebola"
 msgstr "GeneXpert Ebola"
 
+#. [legends.Unknown.GxHcv]
+#. defaultMessage is:
+#. GeneXpert HCV
 #. [filter.AssaySelectField.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
@@ -2285,6 +2327,9 @@ msgstr "GeneXpert Ebola"
 msgid "GeneXpert HCV"
 msgstr "GeneXpert HCV"
 
+#. [legends.Unknown.GxHiv1Qual]
+#. defaultMessage is:
+#. GeneXpert HIV-1 Qual
 #. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
@@ -2292,6 +2337,9 @@ msgstr "GeneXpert HCV"
 msgid "GeneXpert HIV-1 Qual"
 msgstr "GeneXpert HIV-1 Qual"
 
+#. [legends.Unknown.GxHiv1Vl]
+#. defaultMessage is:
+#. GeneXpert HIV-1 VL
 #. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
@@ -2299,6 +2347,9 @@ msgstr "GeneXpert HIV-1 Qual"
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
 
+#. [legends.Unknown.GxMtbRif]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -2306,6 +2357,9 @@ msgstr "GeneXpert HIV-1 VL"
 msgid "GeneXpert MTB/Rif"
 msgstr "GeneXpert MTB/Rif"
 
+#. [legends.Unknown.GxMtbRifUltra]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif Ultra
 #. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
@@ -2313,6 +2367,9 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
+#. [legends.Unknown.GxUnknown]
+#. defaultMessage is:
+#. GeneXpert Unknown
 #. [filter.AssaySelectField.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
@@ -2347,6 +2404,9 @@ msgstr "Сгенерировать DeviceApiKeys Не удалось"
 msgid "Generic RDT"
 msgstr "Общий ГДТ"
 
+#. [legends.Unknown.assayGenoTypeMTBCV1]
+#. defaultMessage is:
+#. GenoType MTBC VER 1.X
 #. [filter.AssaySelectField.assayGenoTypeMTBCV1]
 #. defaultMessage is:
 #. GenoType MTBC VER 1.X
@@ -2354,6 +2414,9 @@ msgstr "Общий ГДТ"
 msgid "GenoType MTBC VER 1.X"
 msgstr "GenoType MTBC VER 1.X"
 
+#. [legends.Unknown.assayGenoTypeMTBDRplusV2]
+#. defaultMessage is:
+#. GenoType MTBDRplus VER 2.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
@@ -2361,6 +2424,9 @@ msgstr "GenoType MTBC VER 1.X"
 msgid "GenoType MTBDRplus VER 2.0"
 msgstr "GenoType MTBDRplus VER 2.0"
 
+#. [legends.Unknown.assayGenoTypeMTBDRslV1]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 1.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRslV1]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 1.0
@@ -2368,6 +2434,9 @@ msgstr "GenoType MTBDRplus VER 2.0"
 msgid "GenoType MTBDRsl VER 1.0"
 msgstr "GenoType MTBDRsl VER 1.0"
 
+#. [legends.Unknown.assayGenoTypeMTBDRslV2]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 2.0
 #. [filter.AssaySelectField.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
@@ -3210,6 +3279,9 @@ msgstr "Номер партии"
 msgid "MTB/Rif"
 msgstr "МТБ/Риф"
 
+#. [legends.Unknown.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
@@ -4273,6 +4345,9 @@ msgstr "Провинция"
 msgid "Provisioned"
 msgstr "Выделено"
 
+#. [legends.Unknown.QHivVL]
+#. defaultMessage is:
+#. Q HIV VL
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
 #. Q HIV VL
@@ -4287,6 +4362,9 @@ msgstr "Q HIV VL"
 msgid "Quality Control"
 msgstr "Quality Control"
 
+#. [legends.Unknown.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
@@ -4350,6 +4428,9 @@ msgid "Reagent"
 msgstr "Реагент"
 
 #. [pages.InventoryAdjustmentDialogForm.reason]
+#. defaultMessage is:
+#. Reason
+#. [pages.DailyStatusDialog.reason]
 #. defaultMessage is:
 #. Reason
 #: extracted_strings.json
@@ -4447,6 +4528,9 @@ msgstr "Отчетный сайт"
 msgid "Reported Active"
 msgstr "Сообщено как активный"
 
+#. [legends.Unknown.ReporterEID]
+#. defaultMessage is:
+#. Reporter EID
 #. [filter.AssaySelectField.AssayReporterEid]
 #. defaultMessage is:
 #. Reporter EID
@@ -4454,6 +4538,9 @@ msgstr "Сообщено как активный"
 msgid "Reporter EID"
 msgstr "Репортёр EID"
 
+#. [legends.Unknown.ReporterHivVL]
+#. defaultMessage is:
+#. Reporter HIV VL
 #. [filter.AssaySelectField.AssayReporterHivVl]
 #. defaultMessage is:
 #. Reporter HIV VL
@@ -4470,13 +4557,13 @@ msgstr "Отчеты"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Отправка данных по"
+msgid "Reporting Since"
+msgstr "Отчетность с"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:
@@ -5077,6 +5164,9 @@ msgstr "Выберите тип..."
 msgid "Select {entity}..."
 msgstr "Выберите {entity}..."
 
+#. [legends.Unknown.senaiteSmearMicroscopy]
+#. defaultMessage is:
+#. Senaite LIMS Smear Microscopy
 #. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
@@ -5084,6 +5174,9 @@ msgstr "Выберите {entity}..."
 msgid "Senaite LIMS Smear Microscopy"
 msgstr "Микроскопия мазка ЛИМС сенаита"
 
+#. [legends.Unknown.senaiteTbCulture]
+#. defaultMessage is:
+#. Senaite LIMS TB Culture
 #. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
@@ -5091,6 +5184,9 @@ msgstr "Микроскопия мазка ЛИМС сенаита"
 msgid "Senaite LIMS TB Culture"
 msgstr "Сенайт ЛИМС ТБ Культура"
 
+#. [legends.Unknown.senaiteUnknown]
+#. defaultMessage is:
+#. Senaite LIMS Unknown
 #. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
@@ -5508,6 +5604,9 @@ msgstr "Стилегид"
 #. [pages.MaintenanceStatusDialog.submit]
 #. defaultMessage is:
 #. Submit
+#. [pages.DailyStatusDialog.submit]
+#. defaultMessage is:
+#. Submit
 #: extracted_strings.json
 msgid "Submit"
 msgstr "Отправить"
@@ -5540,6 +5639,9 @@ msgstr "Susceptible"
 msgid "TB AST"
 msgstr "TB AST"
 
+#. [legends.Unknown.assayGenericDst]
+#. defaultMessage is:
+#. TB DST
 #. [filter.AssaySelectField.assayGenericDst]
 #. defaultMessage is:
 #. TB DST
