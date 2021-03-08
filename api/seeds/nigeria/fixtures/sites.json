@@ -2751,7 +2751,7 @@
       "name": "SH IWO",
       "shortName": "IWO",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary"]
+      "tags": ["Clinic", "Primary", "Lab"]
     },
     {
       "externalId": 2606,
@@ -3074,12 +3074,13 @@
       "tags": ["Clinic", "Primary"]
     },
     {
+      "oldExternalId": "GCH Jericho Ibadan",
       "externalId": "2717",
       "lgaName": "Ibadan North-West",
       "name": "Jericho Specialist Hospital",
       "shortName": "Jericho Specialist Hospital",
       "stateName": "Oyo",
-      "tags": ["Clinic", "Primary"]
+      "tags": ["Clinic", "Primary", "Lab"]
     },
     {
       "externalId": "2740",
