@@ -7,17 +7,17 @@ import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import DatePicker, { registerLocale } from 'react-datepicker'
-import { useSelector } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
+
+import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 import {
   formatDate,
   formatDateTime,
   getDateObject,
 } from '../../../shared/utils/dateFormat'
-
-import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
+import { useAuthState } from '../../../Providers/AuthProvider'
 
 const cssClasses = classnames.bind(require('./DatePicker.css'))
 
@@ -81,9 +81,7 @@ const AspectDatePickerBase = props => {
 }
 
 const AspectDatePicker = props => {
-  const { displayPreferences, culture } = useSelector(({ user }) => ({
-    ...user.toJS(),
-  }))
+  const { displayPreferences, culture } = useAuthState()
   const {
     controlType,
     formik: { setFieldValue, values },

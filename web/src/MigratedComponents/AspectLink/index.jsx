@@ -3,7 +3,7 @@ import { string, object, oneOfType } from 'prop-types'
 import { Link } from 'react-router-dom'
 import isObject from 'lodash/isObject'
 
-import { useUserIsPermitted } from '../../Hooks/RoutePermissions/index.jsx'
+import { useUserIsPermitted } from '../../Providers/RoutePermissions'
 
 /**
  * The AspectLink component provides

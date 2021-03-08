@@ -19,6 +19,7 @@ import {
 } from '../Helpers/Formatters'
 
 import EmptyGraph from '../EmptyData'
+import { useAuthState } from '../../../Providers/AuthProvider'
 
 const cssClasses = classnames.bind(require('./GraphRender.css'))
 
@@ -48,7 +49,8 @@ const GraphRender = ({
     i18nKey,
     type,
   } = config
-
+  
+  const { culture } = useAuthState()
   const assayParams = prepAssaysForParams(whiteListed, method)
   const endpointParams = prepParamsForEndPoint(params, updatedParams)
 
@@ -57,12 +59,6 @@ const GraphRender = ({
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
-  const { culture } = useSelector(({ user }) => {
-    const { culture } = user.toJS()
-    return {
-      culture,
-    }
-  })
   const { isLoading, isError, error } = useQuery(
     [id, { mergedParams }],
     async (key, { mergedParams }) =>

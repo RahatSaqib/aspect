@@ -3,21 +3,24 @@ import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
+
 import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+
+import { useAuthState } from '../../Providers/AuthProvider'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import NavTitle from '../../globals/components/NavTitle'
@@ -228,9 +231,11 @@ export const DeviceList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
   const history = useHistory()
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const {
+    jwt: { permissions: userPermissions },
+    displayPreferences,
+  } = useAuthState()
   const location = useLocation()
-  const displayPreferences = useSelector(state => state.user.displayPreferences)
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
