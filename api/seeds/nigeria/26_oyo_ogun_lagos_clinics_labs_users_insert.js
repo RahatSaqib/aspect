@@ -1,5 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const Promise = require('bluebird')
+
 const { sites } = require('./fixtures/sites.json')
 const { insertSites } = require('../utils')
 const contacts = require('./fixtures/contacts.json')
