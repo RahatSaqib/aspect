@@ -865,6 +865,7 @@ export const FiltersPanel = ({
                 hintText={intl.formatMessage(messages.selectWorkflowStatus)}
                 floatingLabelText={intl.formatMessage(messages.workflowStatus)}
                 style={{ verticalAlign: 'bottom' }}
+                intl={intl}
                 autoWidth
               />
             </div>

@@ -53,6 +53,27 @@ const messages = defineMessages({
     id: 'pages.DailyStatus.maintenanceStatus.inactiveOther',
     defaultMessage: 'Other',
   },
+  toolTipTitleResultsReported: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported',
+    defaultMessage: `{maintenanceStatusName} ({totalResults, plural,
+      one {# result reported}
+      other {# results reported}
+    })`,
+  },
+  toolTipTitleWithStatus: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus',
+    defaultMessage: `{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural,
+      one {# day}
+      other {# days}
+    }`,
+  },
+  toolTipTitleWithoutStatus: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus',
+    defaultMessage: `{daysInSameStatus, plural,
+      one {# day}
+      other {# days}
+    } since last update`,
+  },
 })
 
 export default messages

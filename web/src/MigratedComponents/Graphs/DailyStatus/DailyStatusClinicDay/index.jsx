@@ -1,37 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import filter from 'lodash/filter'
-
+import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
-
-const messages = defineMessages({
-  toolTipTitleResultsReported: {
-    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleResultsReported',
-    defaultMessage: `{maintenanceStatusName} ({totalResults, plural,
-      one {# result reported}
-      other {# results reported}
-    })`,
-  },
-  toolTipTitleWithStatus: {
-    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus',
-    defaultMessage: `{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural,
-      one {# day}
-      other {# days}
-    }`,
-  },
-  toolTipTitleWithoutStatus: {
-    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus',
-    defaultMessage: `{daysInSameStatus, plural,
-      one {# day}
-      other {# days}
-    } since last update`,
-  },
-})
 
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
@@ -96,6 +72,7 @@ const DailyStatusClinicDay = ({
     maintenanceStatusName,
     totalResults,
     messages,
+    maintenanceStatusI18nKey,
   })
 
   return (

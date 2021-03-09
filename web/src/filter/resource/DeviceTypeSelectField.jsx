@@ -53,11 +53,9 @@ export class DeviceTypeSelectField extends PureComponent {
       'value',
     ])
     const textForItem = item => {
-      return (
-        (messages[item.get('i18nKey')]
-          ? intl.formatMessage(messages[item.get('i18nKey')])
-          : item.get('name')) || item.get('name')
-      )
+      return messages[item.get('i18nKey')]
+        ? intl.formatMessage(messages[item.get('i18nKey')])
+        : item.get('name')
     }
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>

@@ -11,6 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
+import messages from './messages'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -24,6 +25,8 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     ).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    intl: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -40,7 +43,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, workflowStatusItems, value } = this.props
+    const { allItemText, workflowStatusItems, value, intl } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchWorkflowStatuses',
@@ -48,13 +51,17 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
       'onWorkflowStatusChange',
       'value',
     ])
-
+    const textForItem = item => {
+      return messages[item.get('i18nKey')]
+        ? intl.formatMessage(messages[item.get('i18nKey')])
+        : item.get('name')
+    }
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {workflowStatusItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {textForItem(a)}
           </MenuItem>
         ))}
       </SelectField>

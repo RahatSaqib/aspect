@@ -1462,7 +1462,10 @@ async function listWorkflowStatusTypes() {
   const getCount = resultQuery.clone().count('rs.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name', 'i18nKey')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T10:32:25.805Z\n"
+"POT-Creation-Date: 2021-03-09T11:36:21.815Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -63,11 +63,17 @@ msgstr ""
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
+#. [filter.btnGroup.stockLeft.upTo14]
+#. defaultMessage is:
+#. 1-14 Days
 #: extracted_strings.json
 msgid "1-14 Days"
 msgstr "1-14 дней"
 
 #. [legends.Unknown.upTo90]
+#. defaultMessage is:
+#. 1-3 Months
+#. [filter.btnGroup.stockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
@@ -81,7 +87,17 @@ msgstr "Месяц"
 msgid "15-30 Days"
 msgstr "Последние 30 дней"
 
+#. [filter.btnGroup.stockLeft.upTo30]
+#. defaultMessage is:
+#. 15-30 Daysssssssssssss
+#: extracted_strings.json
+msgid "15-30 Daysssssssssssss"
+msgstr "Последние 30 дней"
+
 #. [legends.Unknown.upTo180]
+#. defaultMessage is:
+#. 4-6 Months
+#. [filter.btnGroup.stockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -117,6 +133,9 @@ msgid "< 550"
 msgstr "< 550"
 
 #. [legends.Unknown.moreThan180]
+#. defaultMessage is:
+#. >6 Months
+#. [filter.btnGroup.stockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -244,6 +263,9 @@ msgstr ""
 msgid "Account Details"
 msgstr "Детали учетной записи"
 
+#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
+#. defaultMessage is:
+#. Acknowledged
 #. [pages.ResultList.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
@@ -1630,6 +1652,9 @@ msgstr "Вывод из эксплуатации"
 msgid "Delete"
 msgstr "Удалить"
 
+#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
+#. defaultMessage is:
+#. Delivered
 #. [pages.ReporterList.delivered]
 #. defaultMessage is:
 #. Delivered
@@ -2109,6 +2134,9 @@ msgstr "Введите имя сайта..."
 #. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
+#. [pages.deviceDetail.ResultWorkflowStatusError]
+#. defaultMessage is:
+#. Error
 #. [pages.ResultList.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
@@ -2457,6 +2485,9 @@ msgstr "Впервые утвержден"
 msgid "First approved"
 msgstr "Первый одобренный"
 
+#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
+#. defaultMessage is:
+#. Flagged
 #. [pages.ResultList.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
@@ -2896,6 +2927,9 @@ msgstr ""
 "свяжитесь с нами, чтобы мы могли помочь вам. Вы можете запросить нашу "
 "помощь, отправив электронное письмо на адрес {supportEmail}"
 
+#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
+#. defaultMessage is:
+#. In Progress
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -3828,6 +3862,9 @@ msgstr "Следующий"
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
+#. [filter.btnGroup.stockLeft.noConsumption]
+#. defaultMessage is:
+#. No Consumption
 #: extracted_strings.json
 msgid "No Consumption"
 msgstr "Отсутствие потребления"
@@ -4005,6 +4042,9 @@ msgstr "Невозможно"
 #. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
+#. [filter.btnGroup.stockLeft.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
 #: extracted_strings.json
 msgid "Not Recorded"
 msgstr "Добавить запись"
@@ -4120,6 +4160,9 @@ msgstr ""
 "Количество результатов за последние 30 дней, деленное на суточную "
 "производительность прибора, умноженное на 30 дней"
 
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. OK
 #. [pages.ResultList.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
@@ -4191,6 +4234,9 @@ msgstr "Оперативные данные"
 msgid "Operator"
 msgstr "Оператор"
 
+#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
+#. defaultMessage is:
+#. Ordered
 #. [pages.ResultList.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
@@ -4249,6 +4295,9 @@ msgid "Out Of Inventory"
 msgstr "Не инвентаризованный"
 
 #. [legends.Unknown.outOfStock]
+#. defaultMessage is:
+#. Out of Stock
+#. [filter.btnGroup.stockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -4782,6 +4831,9 @@ msgstr "Предыдущий"
 msgid "Proceed"
 msgstr "Продолжить"
 
+#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
+#. defaultMessage is:
+#. Processed
 #. [pages.ResultList.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
@@ -4829,6 +4881,9 @@ msgstr "Провинция"
 msgid "Provisioned"
 msgstr "Выделено"
 
+#. [pages.deviceDetail.ResultWorkflowStatusPurged]
+#. defaultMessage is:
+#. Purged
 #. [pages.ResultList.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
@@ -4908,6 +4963,9 @@ msgstr "Количество для передачи"
 msgid "Quarter"
 msgstr "Квартал"
 
+#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
+#. defaultMessage is:
+#. Ready for delivery
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -6983,6 +7041,13 @@ msgstr "достоверные результаты"
 #. Valid Tests
 #: extracted_strings.json
 msgid "Valid Tests"
+msgstr "надёжные испытания"
+
+#. [pages.deviceDetail.ResultWorkflowStatusValidated]
+#. defaultMessage is:
+#. Validated
+#: extracted_strings.json
+msgid "Validated"
 msgstr "надёжные испытания"
 
 #. [forms.mustMatch]

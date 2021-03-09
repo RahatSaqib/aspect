@@ -59,6 +59,7 @@ const getDayTitle = ({
   maintenanceStatusName,
   totalResults,
   messages,
+  maintenanceStatusI18nKey,
 }) => {
   if (checked && daysInSameStatus) {
     return maintenanceStatusName
@@ -76,6 +77,8 @@ const getDayTitle = ({
         maintenanceStatusName,
         totalResults,
       })
+    : messages[maintenanceStatusI18nKey]
+    ? formatMessage(messages[maintenanceStatusI18nKey])
     : maintenanceStatusName
 }
 

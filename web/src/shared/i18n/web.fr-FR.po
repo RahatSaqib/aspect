@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-09T10:32:25.805Z\n"
-"PO-Revision-Date: 2021-03-09 07:36-0300\n"
+"POT-Creation-Date: 2021-03-09T11:36:21.815Z\n"
+"PO-Revision-Date: 2021-03-09 08:38-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -62,11 +62,17 @@ msgstr "…{contacts, plural, one {# more {name}} other {# more {name}s} }"
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
+#. [filter.btnGroup.stockLeft.upTo14]
+#. defaultMessage is:
+#. 1-14 Days
 #: extracted_strings.json
 msgid "1-14 Days"
 msgstr "1-14 Jours"
 
 #. [legends.Unknown.upTo90]
+#. defaultMessage is:
+#. 1-3 Months
+#. [filter.btnGroup.stockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
@@ -80,7 +86,17 @@ msgstr "1-3 Mois"
 msgid "15-30 Days"
 msgstr "15-30 Jours"
 
+#. [filter.btnGroup.stockLeft.upTo30]
+#. defaultMessage is:
+#. 15-30 Daysssssssssssss
+#: extracted_strings.json
+msgid "15-30 Daysssssssssssss"
+msgstr "15-30 Jours"
+
 #. [legends.Unknown.upTo180]
+#. defaultMessage is:
+#. 4-6 Months
+#. [filter.btnGroup.stockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -116,6 +132,9 @@ msgid "< 550"
 msgstr "< 550"
 
 #. [legends.Unknown.moreThan180]
+#. defaultMessage is:
+#. >6 Months
+#. [filter.btnGroup.stockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -243,6 +262,9 @@ msgstr ""
 msgid "Account Details"
 msgstr "Details du compte"
 
+#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
+#. defaultMessage is:
+#. Acknowledged
 #. [pages.ResultList.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
@@ -1641,6 +1663,9 @@ msgstr "Déclassé"
 msgid "Delete"
 msgstr "Supprimer"
 
+#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
+#. defaultMessage is:
+#. Delivered
 #. [pages.ReporterList.delivered]
 #. defaultMessage is:
 #. Delivered
@@ -2120,6 +2145,9 @@ msgstr "Entrez le nom du site ..."
 #. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
+#. [pages.deviceDetail.ResultWorkflowStatusError]
+#. defaultMessage is:
+#. Error
 #. [pages.ResultList.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
@@ -2469,6 +2497,9 @@ msgstr "Premier approuvé le"
 msgid "First approved"
 msgstr "D'abord approuvé"
 
+#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
+#. defaultMessage is:
+#. Flagged
 #. [pages.ResultList.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
@@ -2908,6 +2939,9 @@ msgstr ""
 "veuillez nous contacter afin que nous puissions vous aider. Vous pouvez "
 "demander notre aide en envoyant un courrier électronique à {supportEmail}"
 
+#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
+#. defaultMessage is:
+#. In Progress
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -3840,6 +3874,9 @@ msgstr "Suivant"
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
+#. [filter.btnGroup.stockLeft.noConsumption]
+#. defaultMessage is:
+#. No Consumption
 #: extracted_strings.json
 msgid "No Consumption"
 msgstr "Pas de consommation"
@@ -4017,6 +4054,9 @@ msgstr "Impossible"
 #. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
+#. [filter.btnGroup.stockLeft.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
 #: extracted_strings.json
 msgid "Not Recorded"
 msgstr "Pas enregistré"
@@ -4132,6 +4172,9 @@ msgstr ""
 "Nombre de résultats dans les 30 derniers jours divisé par la capacité "
 "quotidienne de l'instrument multipliée par 30 jours"
 
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. OK
 #. [pages.ResultList.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
@@ -4203,6 +4246,9 @@ msgstr "Données opérationnelles"
 msgid "Operator"
 msgstr "Opérateur"
 
+#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
+#. defaultMessage is:
+#. Ordered
 #. [pages.ResultList.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
@@ -4261,6 +4307,9 @@ msgid "Out Of Inventory"
 msgstr "En rupture de stock"
 
 #. [legends.Unknown.outOfStock]
+#. defaultMessage is:
+#. Out of Stock
+#. [filter.btnGroup.stockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -4794,6 +4843,9 @@ msgstr "Précédent"
 msgid "Proceed"
 msgstr "Procéder"
 
+#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
+#. defaultMessage is:
+#. Processed
 #. [pages.ResultList.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
@@ -4841,6 +4893,9 @@ msgstr "Province"
 msgid "Provisioned"
 msgstr "Provisionné(e)"
 
+#. [pages.deviceDetail.ResultWorkflowStatusPurged]
+#. defaultMessage is:
+#. Purged
 #. [pages.ResultList.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
@@ -4920,6 +4975,9 @@ msgstr "Quantité à transférer"
 msgid "Quarter"
 msgstr "Trimestre"
 
+#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
+#. defaultMessage is:
+#. Ready for delivery
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -7001,6 +7059,13 @@ msgstr "Résultats valides"
 #. Valid Tests
 #: extracted_strings.json
 msgid "Valid Tests"
+msgstr "Tests valides"
+
+#. [pages.deviceDetail.ResultWorkflowStatusValidated]
+#. defaultMessage is:
+#. Validated
+#: extracted_strings.json
+msgid "Validated"
 msgstr "Tests valides"
 
 #. [forms.mustMatch]

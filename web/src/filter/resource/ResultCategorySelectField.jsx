@@ -54,11 +54,9 @@ export class ResultCategorySelectField extends PureComponent {
       ? possibleAssay.get('resultCategories')
       : []
     const textForItem = item => {
-      return (
-        (messages[item.get('i18nKey')]
-          ? intl.formatMessage(messages[item.get('i18nKey')])
-          : item.get('name')) || item.get('name')
-      )
+      return messages[item.get('i18nKey')]
+        ? intl.formatMessage(messages[item.get('i18nKey')])
+        : item.get('name')
     }
 
     return (
