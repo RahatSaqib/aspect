@@ -34,7 +34,7 @@ export const messages = {
     },
     reportingFor: {
       id: 'pages.DeviceList.reportingFor',
-      defaultMessage: 'Reporting For',
+      defaultMessage: 'Reporting Since',
     },
     lastSeen: {
       id: 'pages.DeviceList.lastSeen',
