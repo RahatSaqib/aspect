@@ -2449,7 +2449,20 @@ async function insertSites(knex, partnerId, countryId, sites) {
           qb.where('externalId', site.externalId)
         }
       })
-      .first('id')
+      .first('id', 'externalId')
+    if (
+      site.oldExternalId &&
+      site.externalId !== site.oldExternalId &&
+      existingSite.externalId === site.oldExternalId
+    ) {
+      const otherExistingSite = await knex('Site')
+        .where('externalId', site.externalId)
+        .first('id')
+      if (otherExistingSite) {
+        existingSite.id = otherExistingSite.id
+        existingSite.externalId = otherExistingSite.externalId
+      }
+    }
 
     const { id: siteGeographyId } = await knex('Geography as g')
       .join('State as s', 'g.stateId', 's.id')
