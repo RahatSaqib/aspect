@@ -302,7 +302,7 @@ async function listSitesWithReporters(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('Result as r', queryBuilder => {
-      queryBuilder.on('r.reportableSiteId', 's.id').orOn('r.siteId', 's.id')
+      queryBuilder.on('r.reportableSiteId', 's.id')
       if (minDate) {
         queryBuilder.andOn('r.endedOn', '>=', knex.raw('?', [minDate]))
       }
@@ -311,7 +311,6 @@ async function listSitesWithReporters(request) {
       }
     })
     .leftOuterJoin('Sample as sample', 'r.sampleId', 'sample.id')
-    .leftOuterJoin('Site as originSite', 'sample.originSiteId', 'originSite.id')
     .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftOuterJoin('Disease as dis', 'at.diseaseId', 'dis.id')
@@ -324,11 +323,19 @@ async function listSitesWithReporters(request) {
      */
     .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
     /**
-     * Notice that we do not use comparison 'on r.resultStatusLogId = rslog.id' here
-     * because current status may change and we are interested in current or previous statuses for
-     * resultStatus.externalId = 'Transfer' - ie. regardless it's current status or not
+     * for counting `transferred` results -
+     * we join `Site.id` to `ResultStatusLog.data.previousReportableSiteId`
+     * and count all 'ResultStatusLog.resultId' which have ResultStatus = 'Transfer'
+     * See func `transferResult` in `api/src/result/service.js` for details
+     * about what we store in field ResultStatusLog.data
      */
-    .leftOuterJoin('ResultStatusLog as rslog', 'r.id', 'rslog.resultId') // see comment above
+    .leftOuterJoin(
+      'ResultStatusLog as rslog',
+      's.id',
+      knex.raw(
+        `CAST(IFNULL(rslog.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`
+      )
+    )
     .leftOuterJoin(
       'ResultStatus as resultStatus',
       'rslog.resultStatusId',
@@ -413,12 +420,11 @@ async function listSitesWithReporters(request) {
           WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId != 'NotPossible'
           THEN r.id ELSE null
         END`),
+      // see comment above for joining table ResultStatusLog
       transferred: knex.raw(`DISTINCT
         CASE
-          WHEN originSite.id is not null
-            and originSite.id != r.reportableSiteId
-            and resultStatus.externalId = 'Transfer'
-          THEN r.id ELSE null
+          WHEN resultStatus.externalId = 'Transfer'
+          THEN rslog.resultId ELSE null
         END`),
     })
     .select(

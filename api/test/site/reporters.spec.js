@@ -248,14 +248,19 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     // -----------------------------
     // insert ResultStatusLog - 2-nd result transferred to another site
     // -----------------------------
+    const { id: anotherSiteId } = sites.find(({ id }) => id !== siteId)
     ;[, result] = results
     await knex('ResultStatusLog').insert({
       resultId: result.id,
       createdOn: result.endedOn,
       createdBy: userId,
       resultStatusId: resultStatusIds.Transfer,
+      data: JSON.stringify({
+        siteId: result.siteId,
+        reportableSiteId: anotherSiteId,
+        previousReportableSiteId: siteId,
+      }),
     })
-    const { id: anotherSiteId } = sites.find(({ id }) => id !== siteId)
     await knex('Result')
       .update({
         reportableSiteId: anotherSiteId,
@@ -348,8 +353,8 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     assert.equal(site.onTreatment, onTreatment + 1)
     // we inserted 5 results, and then transferred 1 - so the rest 4 requires treatment
     assert.equal(site.requiresTreatment, requiresTreatment + 4)
-    // 5 results inserted
-    assert.equal(site.totalResults, totalResults + 5)
+    // 5 results inserted but 1 transferred away, so 4 total results for this site
+    assert.equal(site.totalResults, totalResults + 4)
     assert.equal(site.transferred, transferred + 1)
   })
 })
