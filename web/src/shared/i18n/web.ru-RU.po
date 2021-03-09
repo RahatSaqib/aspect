@@ -5126,13 +5126,13 @@ msgstr "Отчеты"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Отправка данных по"
+msgid "Reporting Since"
+msgstr "Отчетность с"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:

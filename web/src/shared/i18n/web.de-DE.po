@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T11:36:21.815Z\n"
+"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -193,6 +193,15 @@ msgstr "Abbott m2000 DBS HIV VL"
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 DBS HIV VL"
 
+#. [legends.Unknown.abbottM2000DaanNCOVID19]
+#. defaultMessage is:
+#. Abbott m2000 Daan N COVID-19
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Abbott m2000 DBS HIV VL"
+msgid "Abbott m2000 Daan N COVID-19"
+msgstr "Abbott m2000 DBS HIV VL"
+
 #. [legends.Unknown.assayAbbottM2000HIVEID]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
@@ -204,6 +213,7 @@ msgid "Abbott m2000 HIV EID"
 msgstr "Abbott m2000 HIV EID"
 
 #. [legends.Unknown.assayAbbottM2000PlasmaHbvVL]
+
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
@@ -5132,13 +5142,13 @@ msgstr "Reporter"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Bericht für"
+msgid "Reporting Since"
+msgstr "Berichterstattung seit"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:

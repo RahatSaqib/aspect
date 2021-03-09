@@ -5120,13 +5120,13 @@ msgstr "Журналісти"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Відправка даних по"
+msgid "Reporting Since"
+msgstr "Звітність з"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:

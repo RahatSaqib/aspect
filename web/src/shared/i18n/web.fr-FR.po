@@ -5138,13 +5138,13 @@ msgstr "Reporters"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Rapport pour"
+msgid "Reporting Since"
+msgstr "Reporting depuis"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:
