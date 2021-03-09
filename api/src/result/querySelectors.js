@@ -20,6 +20,7 @@ const LIST_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.assayId',
   'rc1.name as resultCategory1Name',
+  'rc1.i18nKey as resultCategory1I18nKey',
   'st.name as stateName',
   'si.name as siteName',
   'a.name as assayName',
