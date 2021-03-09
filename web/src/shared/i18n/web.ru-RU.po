@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T15:26:18.258Z\n"
+"POT-Creation-Date: 2021-03-09T19:30:17.601Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -204,16 +204,14 @@ msgstr "Признание проблемы не удалось"
 #. Active
 #: extracted_strings.json
 msgid "Active"
-msgstr "Активный"
+msgstr "Активно"
 
 #. [component.Widget.dashboardWidgetTitleTotalActiveCases]
 #. defaultMessage is:
 #. Active cases
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Active"
 msgid "Active cases"
-msgstr "Активный"
+msgstr "Активные случаи"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -681,7 +679,7 @@ msgstr "Среднемесячные выполненные тесты"
 #. Average SMS recipients per positive result
 #: extracted_strings.json
 msgid "Average SMS recipients per positive result"
-msgstr "Среднее кол-во SMS на положительный тест"
+msgstr "Число получателей SMS на положительный тест"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
@@ -695,7 +693,7 @@ msgstr "В среднем дней между заменами модулей"
 #. Average email recipients per positive result
 #: extracted_strings.json
 msgid "Average email recipients per positive result"
-msgstr "Среднее кол-во емэйл на положительный тест"
+msgstr "Число получателей емэйл на положительный тест"
 
 #. [component.Widget.averageLengthOfSms]
 #. defaultMessage is:
@@ -717,6 +715,8 @@ msgstr "Средний ежемесячный показатель выявле�
 #: extracted_strings.json
 msgid "Average number of days each device has been active, excluding weekends."
 msgstr ""
+"Среднее количество дней, в течение которых каждое устройство было активным, "
+"за исключением выходных."
 
 #. [component.Widget.dashboardWidgetTestsPerDayDescription]
 #. defaultMessage is:
@@ -842,10 +842,8 @@ msgstr "CSV"
 #. defaultMessage is:
 #. Calibrated When Due
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Calibration Date"
 msgid "Calibrated When Due"
-msgstr "Дата калибровки"
+msgstr "Откалиброван до"
 
 #. [pages.DeviceDetailProfile.calibration]
 #. defaultMessage is:
@@ -872,10 +870,8 @@ msgstr "Требуется дата калибровки"
 #. defaultMessage is:
 #. Calibration Past Due
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Calibration Date"
 msgid "Calibration Past Due"
-msgstr "Дата калибровки"
+msgstr "Просроченная калибровка"
 
 #. [pages.ResetPassword.cancel]
 #. defaultMessage is:
@@ -1077,10 +1073,8 @@ msgstr "Подтвержденный ответ"
 #. defaultMessage is:
 #. Confirmed cases
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Daily Confirmed Cases"
 msgid "Confirmed cases"
-msgstr "Ежедневно подтверждаемые случаи"
+msgstr "Подтвержденные случаи"
 
 #. [pages.RouterDetail.fieldFirstConnected]
 #. defaultMessage is:
@@ -1320,6 +1314,9 @@ msgid ""
 "count of all available bays in all GeneXpert devices that were active in the "
 "last 7 days."
 msgstr ""
+"Подсчитывает процент отсеков для модулей, использованных за последние 7 "
+"дней, на основе подсчета всех доступных отсеков на всех устройствах "
+"GeneXpert, которые были активны за последние 7 дней."
 
 #. [pages.common.lga_US]
 #. defaultMessage is:
@@ -1363,10 +1360,8 @@ msgstr "Культура"
 #. defaultMessage is:
 #. Current Network Status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Treatment Status"
 msgid "Current Network Status"
-msgstr "Статус лечения"
+msgstr "Текущий Статус Сети"
 
 #. [pages.UpdateLoginDetails.currentPassword]
 #. defaultMessage is:
@@ -1480,10 +1475,8 @@ msgstr "Дата добавления"
 #. defaultMessage is:
 #. Date Range
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Date Removed"
 msgid "Date Range"
-msgstr "Дата удаления"
+msgstr "Диапазон дат"
 
 #. [pages.ReceiveInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -1527,17 +1520,15 @@ msgstr "Дни Запасы налево"
 #. defaultMessage is:
 #. Days With Service Interruption
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Percentage of Days with Service Interruption"
 msgid "Days With Service Interruption"
-msgstr "Процент дней с перерывами в обслуживании"
+msgstr "Дней с перебоями в обслуживании"
 
 #. [component.Widget.deviceDaysActiveTitle]
 #. defaultMessage is:
 #. Days active
 #: extracted_strings.json
 msgid "Days active"
-msgstr "Дней Активно"
+msgstr "Дней Активности"
 
 #. [pages.OperationalData.instrumentsReplaced]
 #. defaultMessage is:
@@ -1755,10 +1746,8 @@ msgstr "Устройства, испытывающие перебои в обс�
 #. defaultMessage is:
 #. Devices With Service Interruption
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Devices Experiencing Service Interruption"
 msgid "Devices With Service Interruption"
-msgstr "Устройства, испытывающие перебои в обслуживании"
+msgstr "Устройства с перебоями в обслуживании"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2396,7 +2385,7 @@ msgstr "GeneXpert COVID-19"
 #. GeneXpert Devices
 #: extracted_strings.json
 msgid "GeneXpert Devices"
-msgstr "Устройство GeneXpert"
+msgstr "Устройства GeneXpert"
 
 #. [filter.AssaySelectField.assayGeneXpertEbola]
 #. defaultMessage is:
@@ -3429,10 +3418,8 @@ msgstr "Серийный номер модуля"
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Module Serial"
 msgid "Module Swaps"
-msgstr "Серийный номер модуля"
+msgstr "Замена модулей"
 
 #. [pages.dateRangeSelector.month]
 #. defaultMessage is:
@@ -3680,10 +3667,8 @@ msgstr "Не найдено"
 #. defaultMessage is:
 #. Not Recorded
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Add Record"
 msgid "Not Recorded"
-msgstr "Добавить запись"
+msgstr "Не записано"
 
 #. [pages.resultTreatmentPanel.notPossible]
 #. defaultMessage is:
@@ -3703,8 +3688,6 @@ msgstr "Еще не подтверждено при лечении"
 #. defaultMessage is:
 #. Note
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Notes"
 msgid "Note"
 msgstr "Примечания"
 
@@ -4040,10 +4023,8 @@ msgstr "Процент дней с перерывами в обслуживан�
 #. defaultMessage is:
 #. Percentage of Modules Functioning
 #: extracted_strings.json
-#, fuzzy
-#| msgid "percentage of positive results notified"
 msgid "Percentage of Modules Functioning"
-msgstr "процент положительных результатов"
+msgstr "Процент работающих модулей"
 
 #. [component.Widget.dashboardWidgetValidResultsPcDescription]
 #. defaultMessage is:
@@ -4053,6 +4034,9 @@ msgid ""
 "Percentage of valid results reported this month. Valid results includes all "
 "results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
 msgstr ""
+"Процент достоверных результатов, представленных в этом месяце. К допустимым "
+"результатам относятся все результаты, которые не привели к появлению "
+"«Ошибка», «Нет результата» или «Недействительный»."
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -4299,10 +4283,8 @@ msgstr ""
 #. defaultMessage is:
 #. Positive Results Notified
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Positive Test Results Transmitted"
 msgid "Positive Results Notified"
-msgstr "Переданы положительные результаты теста"
+msgstr "Уведомлено о положительных тестах"
 
 #. [pages.OperationalData.resultsTransmittedTitle]
 #. defaultMessage is:
@@ -4785,7 +4767,7 @@ msgstr "SARS-CoV-2 (COVID-19)"
 #. SMS Sent
 #: extracted_strings.json
 msgid "SMS Sent"
-msgstr "Сообщение отправлено"
+msgstr "SMS отправлено"
 
 #. [pages.Status.dashboardWidgetSmsSentTitle]
 #. defaultMessage is:
@@ -4795,7 +4777,7 @@ msgstr "Сообщение отправлено"
 #. SMS Sent MTD
 #: extracted_strings.json
 msgid "SMS Sent MTD"
-msgstr "Отправленное SMS-сообщение MTD"
+msgstr "Отправлено SMS за месяц"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -5093,10 +5075,8 @@ msgstr "Выберите квартал…"
 #. defaultMessage is:
 #. Select Reason
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select Job"
 msgid "Select Reason"
-msgstr "Выбрать задание"
+msgstr "Выбрать Причину"
 
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
@@ -5274,10 +5254,8 @@ msgstr "Серийный номер"
 #. defaultMessage is:
 #. Server Uptime
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Service"
 msgid "Server Uptime"
-msgstr "Услуга"
+msgstr "Безотказная работа сервера"
 
 #. [pages.Status.summaryWidgetGroup.service]
 #. defaultMessage is:
@@ -5297,10 +5275,8 @@ msgstr "Установочные фильтры"
 #. defaultMessage is:
 #. Set Maintenance Status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Maintenance Status"
 msgid "Set Maintenance Status"
-msgstr "Состояние обслуживания"
+msgstr "Задать статус обслуживания"
 
 #. [pages.SiteDetail.buttonSetBasedonAddress]
 #. defaultMessage is:
@@ -5344,10 +5320,8 @@ msgstr "Короткое имя"
 #. defaultMessage is:
 #. Show Only Reportable Results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Only Reportable Results"
 msgid "Show Only Reportable Results"
-msgstr "Только сообщаемые результаты"
+msgstr "Показать только отчетные результаты"
 
 #. [pages.CaseList.paginatorStatus]
 #. defaultMessage is:
@@ -5634,16 +5608,14 @@ msgstr "Статус"
 #. Stock not recorded
 #: extracted_strings.json
 msgid "Stock not recorded"
-msgstr ""
+msgstr "Запас не зарегистрирован"
 
 #. [component.Widget.StockoutsTitle]
 #. defaultMessage is:
 #. Stockouts
 #: extracted_strings.json
-#, fuzzy
-#| msgid "stock outs"
 msgid "Stockouts"
-msgstr "складские запасы"
+msgstr "Складские запасы"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
 #. defaultMessage is:
@@ -5843,7 +5815,7 @@ msgstr "Тесты"
 #. Tests Per Day
 #: extracted_strings.json
 msgid "Tests Per Day"
-msgstr "Тесты в день"
+msgstr "Тестов в день"
 
 #. [pages.Status.testsOverTimeTitle.graph]
 #. defaultMessage is:
@@ -5866,6 +5838,8 @@ msgstr "Пробег тестов между"
 msgid ""
 "The average daily percentage of devices sending results, excluding weekends."
 msgstr ""
+"Средний дневной процент устройств, отправляющих результаты, за исключением "
+"выходных."
 
 #. [component.Widget.avgTimeToUploadDescription]
 #. defaultMessage is:
@@ -5875,6 +5849,8 @@ msgid ""
 "The average delay of uploading results, in hours. Only considering results "
 "where the delay was greater than two hours."
 msgstr ""
+"Средняя задержка загрузки результатов в часах. Только с учетом результатов, "
+"для которых задержка составила более двух часов."
 
 #. [pages.OperationalData.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
@@ -5887,10 +5863,8 @@ msgstr "Средняя продолжительность перерыва в о
 #. defaultMessage is:
 #. The average duration of a service interruption, in days.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The average duration of a service interruption, in days"
 msgid "The average duration of a service interruption, in days."
-msgstr "Средняя продолжительность перерыва в обслуживании, в днях"
+msgstr "Средняя продолжительность перерыва в обслуживании, в днях."
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -5898,6 +5872,7 @@ msgstr "Средняя продолжительность перерыва в о
 #: extracted_strings.json
 msgid "The average number of SMS recipients per positive GeneXpert result."
 msgstr ""
+"Среднее количество получателей SMS на один положительный результат GeneXpert."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
@@ -5907,15 +5882,13 @@ msgid ""
 "The average number of characters in SMS messages sent about positive "
 "GeneXpert results."
 msgstr ""
+"Среднее количество символов в отправленных SMS-сообщениях о положительных "
+"результатах GeneXpert."
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
 #. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The average time (in days) between when a module was disabled and a "
-#| "different module serial being detected in the same slot."
 msgid ""
 "The average number of days between the last result reported under a replaced "
 "module serial and the new module serial in that module slot reporting its "
@@ -5932,6 +5905,8 @@ msgid ""
 "The average number of days between when an instrument serial last reported "
 "from a device and a new instrument serial reporting."
 msgstr ""
+"Среднее количество дней между последним сообщением серийного номера прибора "
+"от устройства и новым сообщением серийного номера прибора."
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
@@ -5939,6 +5914,8 @@ msgstr ""
 #: extracted_strings.json
 msgid "The average number of email recipients per positive GeneXpert result."
 msgstr ""
+"Среднее количество получателей электронной почты на один положительный "
+"результат GeneXpert."
 
 #. [pages.OperationalData.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
@@ -5959,7 +5936,7 @@ msgstr ""
 #. The average uptime of the Aspect server this month.
 #: extracted_strings.json
 msgid "The average uptime of the Aspect server this month."
-msgstr ""
+msgstr "Среднее время безотказной работы сервера Aspect в этом месяце."
 
 #. [errorResponseMessages.saveLoginDetails.PUT.403.message]
 #. defaultMessage is:
@@ -5988,6 +5965,9 @@ msgid ""
 "in the month and dividing that number by the total tests carried out of all "
 "devices."
 msgstr ""
+"Коэффициент ошибок рассчитывается путем подсчета всех ошибок в тестах, "
+"проведенных за месяц, и деления этого числа на общее количество тестов, "
+"проведенных для всех устройств."
 
 #. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
 #. defaultMessage is:
@@ -6010,6 +5990,7 @@ msgstr "Самое большее, что вы можете перевести, 
 msgid ""
 "The number of approved GeneXpert devices (excluding decommissioned devices)."
 msgstr ""
+"Количество одобренных устройств GeneXpert (исключая списанные устройства)."
 
 #. [component.Widget.devicesDescription]
 #. defaultMessage is:
@@ -6017,13 +5998,14 @@ msgstr ""
 #: extracted_strings.json
 msgid "The number of approved lab devices (excluding decommissioned devices)"
 msgstr ""
+"Количество одобренных лабораторных устройств (исключая списанные устройства)"
 
 #. [component.Widget.personDescription]
 #. defaultMessage is:
 #. The number of contacts in the system.
 #: extracted_strings.json
 msgid "The number of contacts in the system."
-msgstr ""
+msgstr "Количество контактов в системе."
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -6046,70 +6028,56 @@ msgstr ""
 msgid ""
 "The number of instruments that had their last calibration more than one year "
 "ago."
-msgstr ""
+msgstr "Количество приборов, прошедших последнюю калибровку более года назад."
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
 #. The number of module swaps made at the current month
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average number of tests per day reported the current month"
 msgid "The number of module swaps made at the current month"
-msgstr "Среднее количество тестов в день, зарегистрированных в текущем месяце"
+msgstr "Количество замен модулей в текущем месяце"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
 #. The number of positive results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "percentage of positive results notified"
 msgid "The number of positive results"
-msgstr "процент положительных результатов"
+msgstr "Количество положительных результатов"
 
 #. [component.Widget.totalActiveCasesDescription]
 #. defaultMessage is:
 #. The number of positive results that are still active
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The percentage of positive results that were reported via Email or SMS."
 msgid "The number of positive results that are still active"
-msgstr ""
-"Процент положительных результатов, которые были сообщены по электронной "
-"почте или SMS."
+msgstr "Количество активных положительных результатов"
 
 #. [component.Widget.resultsDescription]
 #. defaultMessage is:
 #. The number of results in the last 30 days
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Number of errors divided by number of results in the last 30 days"
 msgid "The number of results in the last 30 days"
-msgstr ""
-"Количество ошибок, деленное на количество результатов за последние 30 дней"
+msgstr "Количество результатов за последние 30 дней"
 
 #. [component.Widget.dashboardWidgetDescriptionTotalDeaths]
 #. defaultMessage is:
 #. The number of results that belong to a patient that died
 #: extracted_strings.json
 msgid "The number of results that belong to a patient that died"
-msgstr ""
+msgstr "Количество результатов, принадлежащих умершему пациенту"
 
 #. [component.Widget.totalRecoveredCasesDescription]
 #. defaultMessage is:
 #. The number of results that belong to a patient that recovered
 #: extracted_strings.json
 msgid "The number of results that belong to a patient that recovered"
-msgstr ""
+msgstr "Количество результатов, принадлежащих пациенту, который выздоровел"
 
 #. [component.Widget.sitesDescription]
 #. defaultMessage is:
 #. The number of sites.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Number of Tests"
 msgid "The number of sites."
-msgstr "Количество тестов"
+msgstr "Количество сайтов."
 
 #. [pages.NotFound.help]
 #. defaultMessage is:
@@ -6177,20 +6145,20 @@ msgid ""
 "date. Note that this only counts calibrations for devices that had a "
 "calibration record before."
 msgstr ""
+"Процент калибровок, которые были выполнены в пределах 30 дней от "
+"запланированной даты. Обратите внимание, что при этом учитываются только "
+"калибровки для устройств, для которых ранее была калибровочная запись."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
 #. The percentage of positive GeneXpert's results that were notified via SMS or email.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The percentage of positive results that were reported via Email or SMS."
 msgid ""
 "The percentage of positive GeneXpert's results that were notified via SMS or "
 "email."
 msgstr ""
-"Процент положительных результатов, которые были сообщены по электронной "
-"почте или SMS."
+"Процент положительных результатов GeneXpert, о которых было сообщено по SMS "
+"или электронной почте."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
@@ -6247,6 +6215,9 @@ msgid ""
 "any stock for any of the GeneXpert assays and dividing that number by the "
 "total number of sites."
 msgstr ""
+"Незарегистрированный запас рассчитывается путем подсчета всех сайтов, "
+"которые не попали ни в один из тестов GeneXpert, и деления этого числа на "
+"общее количество сайтов."
 
 #. [component.Widget.stockoutsDescription]
 #. defaultMessage is:
@@ -6256,6 +6227,8 @@ msgid ""
 "The stockout percentage is calculated by counting all sites with stockout "
 "issues during the month and dividing by all active sites."
 msgstr ""
+"Процент дефицита рассчитывается путем подсчета всех сайтов с дефицитом в "
+"течение месяца и деления на все активные сайты."
 
 #. [pages.Status.dashboardWidgetSmsSentDescription]
 #. defaultMessage is:
@@ -6289,6 +6262,9 @@ msgid ""
 "month and dividing that number by the total capacity of all devices. This "
 "calculation excludes weekends."
 msgstr ""
+"Коэффициент использования рассчитывается путем подсчета всех тестов, "
+"проведенных за месяц, и деления этого числа на общую емкость всех устройств. "
+"Этот расчет не включает выходные."
 
 #. [widgetAlerts.between]
 #. defaultMessage is:
@@ -7043,7 +7019,7 @@ msgstr "и"
 #. approval status is {deviceApprovalName}
 #: extracted_strings.json
 msgid "approval status is {deviceApprovalName}"
-msgstr ""
+msgstr "статус подтверждения - {deviceApprovalName}"
 
 #. [widgetAlerts.averageDaysBetweenModuleSwaps]
 #. defaultMessage is:
@@ -7113,7 +7089,7 @@ msgstr "дни недели"
 #. device name includes "{deviceName}"
 #: extracted_strings.json
 msgid "device name includes \"{deviceName}\""
-msgstr ""
+msgstr "имя устройства включает \"{deviceName}\""
 
 #. [filter.btnGroup.whereDeviceIdIsIn]
 #. defaultMessage is:
@@ -7127,7 +7103,7 @@ msgstr ""
 #. error code includes "{errorCode}"
 #: extracted_strings.json
 msgid "error code includes \"{errorCode}\""
-msgstr ""
+msgstr "код ошибки включает \"{errorCode}\""
 
 #. [widgetAlerts.errorRate]
 #. defaultMessage is:
@@ -7168,10 +7144,8 @@ msgstr "показатель"
 #. defaultMessage is:
 #. maintenance status is {deviceMaintenanceStatusName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Loading Device Maintenance Status Failed"
 msgid "maintenance status is {deviceMaintenanceStatusName}"
-msgstr "Загрузка Устройство Обслуживание устройства Ошибка"
+msgstr "статус обслуживания: {deviceMaintenanceStatusName}"
 
 #. [component.DateTimeInput.minutes.placeholder]
 #. defaultMessage is:
@@ -7192,7 +7166,7 @@ msgstr "н/д"
 #. name/email includes "{contactNameOrEmail}"
 #: extracted_strings.json
 msgid "name/email includes \"{contactNameOrEmail}\""
-msgstr ""
+msgstr "имя/емэйл включает \"{contactNameOrEmail}\""
 
 #. [pages.DeviceDetailProfile.notes]
 #. defaultMessage is:
@@ -7206,7 +7180,7 @@ msgstr "примечания"
 #. notification name includes "{notificationName}"
 #: extracted_strings.json
 msgid "notification name includes \"{notificationName}\""
-msgstr ""
+msgstr "название уведомления включает \"{notificationName}\""
 
 #. [widgetAlerts.numberOfTextMessagesSent]
 #. defaultMessage is:
@@ -7226,10 +7200,8 @@ msgstr "от {unit}сообщаемого в настоящее время"
 #. defaultMessage is:
 #. of {unit} total modules
 #: extracted_strings.json
-#, fuzzy
-#| msgid "{unit} of all devices"
 msgid "of {unit} total modules"
-msgstr "всех устройств"
+msgstr "из {unit} всех модулей"
 
 #. [filter.btnGroup.partnerId]
 #. defaultMessage is:
@@ -7284,10 +7256,8 @@ msgstr "процент устройств с неиспользуемыми мо
 #. defaultMessage is:
 #. percentage of modules functioning
 #: extracted_strings.json
-#, fuzzy
-#| msgid "percentage of positive results notified"
 msgid "percentage of modules functioning"
-msgstr "процент положительных результатов"
+msgstr "процент функционирующих модулей"
 
 #. [widgetAlerts.percentageOfPositiveResultsNotified]
 #. defaultMessage is:
@@ -7335,10 +7305,8 @@ msgstr ""
 #. defaultMessage is:
 #. sample collection site is {sampleOriginSiteName}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Sample collection site"
 msgid "sample collection site is {sampleOriginSiteName}"
-msgstr "Место сбора проб"
+msgstr "сайт сбора образцов: {sampleOriginSiteName}"
 
 #. [filter.btnGroup.sampleId]
 #. defaultMessage is:
