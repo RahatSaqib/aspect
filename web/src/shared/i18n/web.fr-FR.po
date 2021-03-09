@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-05T08:04:35.139Z\n"
-"PO-Revision-Date: 2021-03-05 11:05+0300\n"
+"POT-Creation-Date: 2021-03-09T12:55:54.531Z\n"
+"PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -4359,13 +4359,13 @@ msgstr "Reporters"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Rapport pour"
+msgid "Reporting Since"
+msgstr "Reporting depuis"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:
@@ -6788,6 +6788,13 @@ msgstr "ruptures de stock"
 #: extracted_strings.json
 msgid "test failures"
 msgstr "échecs de test"
+
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. undefined
+#: extracted_strings.json
+msgid "undefined"
+msgstr "undefined"
 
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
