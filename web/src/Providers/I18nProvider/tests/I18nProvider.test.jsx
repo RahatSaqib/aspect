@@ -11,7 +11,8 @@ import 'intl/locale-data/jsonp/en-us'
 import MockDate from 'mockdate'
 import subDays from 'date-fns/subDays'
 
-import { I18nProvider, useI18n } from '../index'
+import { I18nProvider } from '../index'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const setupTests = () => {
   // https://formatjs.io/docs/guides/runtime-requirements/#nodejs

@@ -77,12 +77,4 @@ const I18nProvider = ({ children }) => {
   )
 }
 
-const useI18n = () => {
-  const context = React.useContext(I18nContext)
-  if (context === undefined) {
-    throw new Error('useI18n must be used within a I18nProvider')
-  }
-  return context
-}
-
-export { I18nProvider, useI18n }
+export { I18nProvider, I18nContext }

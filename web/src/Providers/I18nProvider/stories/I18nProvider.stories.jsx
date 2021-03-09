@@ -2,7 +2,8 @@ import React from 'react'
 import { defineMessages, IntlProvider } from 'react-intl'
 import subDays from 'date-fns/subDays'
 
-import { I18nProvider, useI18n } from '../index'
+import { I18nProvider } from '../index'
+import useI18n from '../../../Hooks/i18n/useI18n'
 import translation from '../../../shared/i18n/translation'
 
 const messages = defineMessages({
