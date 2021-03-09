@@ -187,7 +187,7 @@ const getBaseColumns = intl => {
     },
     {
       key: 'patientId',
-      label: intl.formatMessage(messages.patiendId),
+      label: intl.formatMessage(messages.patientId),
       sortable: true,
       hiddenOn: 'xs',
     },
