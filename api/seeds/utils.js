@@ -2439,32 +2439,8 @@ async function insertSites(knex, partnerId, countryId, sites) {
   await Promise.each(sites, async site => {
     let siteId = null
     const existingSite = await knex('Site')
-      .where(qb => {
-        if (site.oldExternalId) {
-          qb.where('externalId', site.oldExternalId).orWhere(
-            'externalId',
-            site.externalId
-          )
-        } else {
-          qb.where('externalId', site.externalId)
-        }
-      })
-      .first('id', 'externalId')
-    if (
-      existingSite &&
-      site.oldExternalId &&
-      site.externalId !== site.oldExternalId &&
-      existingSite.externalId === site.oldExternalId
-    ) {
-      const otherExistingSite = await knex('Site')
-        .where('externalId', site.externalId)
-        .first('id')
-      if (otherExistingSite) {
-        existingSite.id = otherExistingSite.id
-        existingSite.externalId = otherExistingSite.externalId
-      }
-    }
-
+      .where('externalId', site.externalId)
+      .first('id')
     const { id: siteGeographyId } = await knex('Geography as g')
       .join('State as s', 'g.stateId', 's.id')
       .join('Lga as l', 'g.lgaId', 'l.id')

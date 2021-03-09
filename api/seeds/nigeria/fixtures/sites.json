@@ -3074,7 +3074,6 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "GCH Jericho Ibadan",
       "externalId": "2717",
       "lgaName": "Ibadan North-West",
       "name": "Jericho Specialist Hospital",
@@ -3083,13 +3082,12 @@
       "tags": ["Clinic", "Primary", "Lab"]
     },
     {
-      "oldExternalId": "Ring-Road State Hosp. Ibadan",
       "externalId": "2740",
       "lgaName": "Ibadan South-West",
       "name": "Ring Road State Hospital",
       "shortName": "Ring Road State Hospital",
       "stateName": "Oyo",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "Phc Adaramagbo",
@@ -3108,7 +3106,6 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "State Hospital, Saki ",
       "externalId": "2742",
       "lgaName": "Saki West",
       "name": "General Hospital Saki",
@@ -3133,7 +3130,6 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "State Hospital Oyo",
       "externalId": "2744",
       "lgaName": "Oyo East",
       "name": "Sh Oyo",
@@ -3174,7 +3170,6 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "LAUTECH Teaching Hosp., Osogbo",
       "externalId": "2727",
       "lgaName": "Ogbomosho North",
       "name": "Lautech Teaching Hospital",
@@ -3228,15 +3223,6 @@
       "lgaName": "Olorunda",
       "name": "Sabo Owoope",
       "shortName": "Sabo Owoope",
-      "stateName": "Osun",
-      "tags": ["Clinic", "Primary"]
-    },
-    {
-      "oldExternalId": "2727",
-      "externalId": "Lautech Hospital - DOTS",
-      "lgaName": "Olorunda",
-      "name": "Lautech Hospital",
-      "shortName": "Lautech Hospital",
       "stateName": "Osun",
       "tags": ["Clinic", "Primary"]
     },
@@ -3587,7 +3573,7 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "externalId": "LUTH",
+      "externalId": "322",
       "lgaName": "Mushin",
       "name": "LUTH",
       "shortName": "LUTH",
@@ -3659,7 +3645,7 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "externalId": "Shomolu GH",
+      "externalId": "1621",
       "lgaName": "Shomolu",
       "name": "Shomolu GH",
       "shortName": "Shomolu GH",
