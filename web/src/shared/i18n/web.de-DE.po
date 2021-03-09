@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
+"POT-Creation-Date: 2021-03-09T11:48:53.079Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -193,15 +193,6 @@ msgstr "Abbott m2000 DBS HIV VL"
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 DBS HIV VL"
 
-#. [legends.Unknown.abbottM2000DaanNCOVID19]
-#. defaultMessage is:
-#. Abbott m2000 Daan N COVID-19
-#: extracted_strings.json
-#, fuzzy
-#| msgid "Abbott m2000 DBS HIV VL"
-msgid "Abbott m2000 Daan N COVID-19"
-msgstr "Abbott m2000 DBS HIV VL"
-
 #. [legends.Unknown.assayAbbottM2000HIVEID]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
@@ -213,7 +204,6 @@ msgid "Abbott m2000 HIV EID"
 msgstr "Abbott m2000 HIV EID"
 
 #. [legends.Unknown.assayAbbottM2000PlasmaHbvVL]
-
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
 #. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]

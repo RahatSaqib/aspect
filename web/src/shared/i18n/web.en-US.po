@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T11:36:21.815Z\n"
+"POT-Creation-Date: 2021-03-09T11:48:53.079Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5121,13 +5121,13 @@ msgstr "Reporters"
 
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #. [pages.RouterList.reportingFor]
 #. defaultMessage is:
-#. Reporting For
+#. Reporting Since
 #: extracted_strings.json
-msgid "Reporting For"
-msgstr "Reporting For"
+msgid "Reporting Since"
+msgstr "Reporting Since"
 
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:
