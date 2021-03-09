@@ -91,9 +91,7 @@ describe('I18nProvider', () => {
       'около 2 месяцев'
     )
   })
-})
 
-describe('I18nProvider', () => {
   it('should format values for fr-FR correctly', () => {
     setupTests()
     render(<I18nWrapper locale="fr" timezone="Europe/Paris" />)
@@ -109,9 +107,7 @@ describe('I18nProvider', () => {
       'environ 2 mois'
     )
   })
-})
 
-describe('I18nProvider', () => {
   it('should format values for en-US correctly', () => {
     setupTests()
     render(<I18nWrapper locale="en" timezone="America/Los_Angeles" />)
@@ -129,9 +125,7 @@ describe('I18nProvider', () => {
       'about 2 months'
     )
   })
-})
 
-describe('I18nProvider', () => {
   it('should format values for de-DE correctly', () => {
     setupTests()
     render(<I18nWrapper locale="de" timezone="Europe/Berlin" />)
@@ -145,6 +139,20 @@ describe('I18nProvider', () => {
     )
     expect(screen.getByTestId('date-display3')).toHaveTextContent(
       'etwa 2 Monate'
+    )
+  })
+
+  it('should fall back elegantly for no-PE to en', () => {
+    setupTests()
+    render(<I18nWrapper locale="nope" timezone="Mars/Cassini" />)
+    expect(screen.getByTestId('number-display')).toHaveTextContent('33,902,837')
+    expect(screen.getByTestId('number-display2')).toHaveTextContent('1,230')
+    expect(screen.getByTestId('date-display')).toHaveTextContent('2/25/2021')
+    expect(screen.getByTestId('date-display2')).toHaveTextContent(
+      'Thursday February 25th'
+    )
+    expect(screen.getByTestId('date-display3')).toHaveTextContent(
+      'about 2 months'
     )
   })
 })

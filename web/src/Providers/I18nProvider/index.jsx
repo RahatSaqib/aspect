@@ -26,6 +26,20 @@ export const dateFNSLocales = {
   'uk-UA': ukLocale,
 }
 
+function timeZoneFallBack(timezone) {
+  try {
+    new Date().toLocaleString('en', {
+      timeZone: timezone,
+    })
+    return timezone
+  } catch (e) {
+    console.warn(
+      `${timezone}: Invalid timezone, falling back to America/Los_Angeles`
+    )
+    return 'America/Los_Angeles'
+  }
+}
+
 const I18nProvider = ({ children }) => {
   const { locale, formats, formatMessage, ...rest } = useIntl()
   const dateFNSLocale = dateFNSLocales[locale]
@@ -34,6 +48,7 @@ const I18nProvider = ({ children }) => {
       'user-timezone': { timeZone: timezone },
     },
   } = formats
+  const validTimeZone = timeZoneFallBack(timezone)
 
   return (
     <I18nContext.Provider
@@ -44,16 +59,16 @@ const I18nProvider = ({ children }) => {
         formats,
         formatWithOffset: d =>
           DateTime.fromJSDate(d)
-            .setZone(timezone)
+            .setZone(validTimeZone)
             .toISO(),
         formatDistance: (f, t) =>
           formatDistance(f, t, { locale: dateFNSLocale }),
         formatTimezone: d =>
           d.toLocaleString(locale, {
-            timeZone: timezone,
+            timeZone: validTimeZone,
           }),
         formatMessage: s => (!s ? '!! I18N ID not set !!' : formatMessage(s)),
-        timezone,
+        timezone: validTimeZone,
         ...rest,
       }}
     >

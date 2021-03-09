@@ -30,6 +30,8 @@ function timezoneFromLocale(locale) {
       return { timezone: 'Europe/Moscow', flag: '🇷🇺' }
     case 'uk-UA':
       return { timezone: 'Europe/Kiev', flag: '🇺🇦' }
+    case 'no-PE':
+      return { timezone: 'Mars/Cassini', flag: '🥮' }
   }
 }
 
@@ -39,7 +41,7 @@ export default {
     locale: {
       control: {
         type: 'select',
-        options: ['de-DE', 'en-US', 'fr-FR', 'ru-RU', 'uk-UA'],
+        options: ['de-DE', 'en-US', 'fr-FR', 'ru-RU', 'uk-UA', 'no-PE'],
       },
     },
   },
