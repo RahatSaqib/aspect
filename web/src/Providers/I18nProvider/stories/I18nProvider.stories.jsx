@@ -13,6 +13,7 @@ const messages = defineMessages({
   },
   missingDefault: {
     id: 'pages.Storybook.missingDefault',
+    defaultMessage: 'missing',
   },
 })
 

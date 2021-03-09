@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T12:55:54.531Z\n"
+"POT-Creation-Date: 2021-03-09T13:35:31.945Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -6610,6 +6610,13 @@ msgstr "Indikator"
 msgid "min."
 msgstr "Min."
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. missing
+#: extracted_strings.json
+msgid "missing"
+msgstr ""
+
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:
 #. n/a
@@ -6726,13 +6733,6 @@ msgstr "Stockouts"
 #: extracted_strings.json
 msgid "test failures"
 msgstr "Testfehler"
-
-#. [pages.Storybook.missingDefault]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "undefined"
 
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
@@ -6892,6 +6892,9 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "undefined"
+#~ msgstr "undefined"
 
 #, fuzzy
 #~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
