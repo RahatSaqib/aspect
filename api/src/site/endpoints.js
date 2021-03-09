@@ -222,12 +222,7 @@ const routes = [
     config: {
       description: 'Sites with for Reporter Dashboard',
       notes: `List of sites with some aggregations about reporters`,
-      /**
-       * we may put shortcut as `scope: ['reporter']` but still let's keep `:view` since
-       * we are going to use `reporter:edit` for the list of reporters in the manage section
-       * (see ASP-1866)
-       */
-      auth: { scope: ['reporter:view'] },
+      auth: { scope: ['reporter'] },
       validate: {
         query: {
           ...filterQueryBase,

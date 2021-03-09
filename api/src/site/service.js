@@ -373,20 +373,6 @@ async function listSitesWithReporters(request) {
       }
       this.whereIn('s.id', query.siteIds.split(','))
     })
-    .where(function () {
-      if (!query.deviceName) {
-        return
-      }
-      const deviceQuery = knex('Device as d')
-        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .select('d.siteId')
-        .modify(filterParams, query, {
-          deviceName: 'd.name',
-          deviceType: 'dt.externalId',
-        })
-
-      this.whereIn('s.id', deviceQuery)
-    })
     .groupBy(['s.id'])
     .modify(filterParams, query, {
       countryId: 'g.countryId',
