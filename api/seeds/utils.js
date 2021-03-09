@@ -2451,6 +2451,7 @@ async function insertSites(knex, partnerId, countryId, sites) {
       })
       .first('id', 'externalId')
     if (
+      existingSite &&
       site.oldExternalId &&
       site.externalId !== site.oldExternalId &&
       existingSite.externalId === site.oldExternalId

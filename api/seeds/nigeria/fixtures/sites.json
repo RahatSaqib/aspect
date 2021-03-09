@@ -2751,7 +2751,7 @@
       "name": "SH IWO",
       "shortName": "IWO",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "2606",
@@ -2778,13 +2778,12 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "GH, Ede",
       "externalId": "2609",
       "lgaName": "Ede South",
       "name": "GH, Ede - DOTS",
       "shortName": "EDE DOTS",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "2610",
@@ -2896,7 +2895,7 @@
       "name": "SH ILESA - DOTS",
       "shortName": "ILESA DOTS",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "2624",
@@ -2915,13 +2914,12 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "STATE HOSPITAL IKIRE",
       "externalId": "2626",
       "lgaName": "Irewole",
       "name": "STATE HOSPITAL IKIRE - DOTS",
       "shortName": "IKIRE DOTS",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "2627",
@@ -2929,7 +2927,7 @@
       "name": "SH ASUBIARO - DOTS",
       "shortName": "ASUBIARO DOTS",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "2628",
@@ -2948,13 +2946,12 @@
       "tags": ["Clinic", "Primary"]
     },
     {
-      "oldExternalId": "PHC Oke Baale",
       "externalId": "2630",
       "lgaName": "Osogbo",
       "name": "OKE BAALE PHC - DOTS",
       "shortName": "OKE BAALE DOTS",
       "stateName": "Osun",
-      "tags": ["Clinic", "Primary", "Lab"]
+      "tags": ["Clinic", "Primary"]
     },
     {
       "externalId": "2631",
