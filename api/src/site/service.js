@@ -8,6 +8,7 @@ const {
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { resultStatusToId } = require('../shared/dictionary')
 
 const totalDevicesQuery = knex('Device as d')
   .whereRaw('d.siteId = s.id')
@@ -296,6 +297,7 @@ async function listSitesWithReporters(request) {
     'actionDashboard'
   )
   const { minDate, maxDate } = query
+  const resultStatusId = await resultStatusToId('Transfer')
 
   const sites = await knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -329,18 +331,17 @@ async function listSitesWithReporters(request) {
      * See func `transferResult` in `api/src/result/service.js` for details
      * about what we store in field ResultStatusLog.data
      */
-    .leftOuterJoin(
-      'ResultStatusLog as rslog',
-      's.id',
-      knex.raw(
-        `CAST(IFNULL(rslog.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`
-      )
-    )
-    .leftOuterJoin(
-      'ResultStatus as resultStatus',
-      'rslog.resultStatusId',
-      'resultStatus.id'
-    )
+    .leftOuterJoin('ResultStatusLog as rslog', builder => {
+      builder
+        .on(
+          's.id',
+          knex.raw(
+            `CAST(IFNULL(rslog.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`
+          )
+        )
+        // limit this join by `Transfer` result status only
+        .andOn('rslog.resultStatusId', resultStatusId)
+    })
     /**
      * for counting different statuses rts.externalId = 'XXX'
      */
@@ -421,11 +422,7 @@ async function listSitesWithReporters(request) {
           THEN r.id ELSE null
         END`),
       // see comment above for joining table ResultStatusLog
-      transferred: knex.raw(`DISTINCT
-        CASE
-          WHEN resultStatus.externalId = 'Transfer'
-          THEN rslog.resultId ELSE null
-        END`),
+      transferred: knex.raw(`DISTINCT rslog.resultId`),
     })
     .select(
       'g.countryId',
