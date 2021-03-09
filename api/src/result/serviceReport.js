@@ -170,9 +170,10 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     .where('r.endedOn', '<=', maxDate)
     .where(function () {
       // get only errors and invalids
-      this.whereNotNull('r.errorCode')
-        .orWhereIn('rc1.externalId', resultCategories)
-        .orWhereIn('rc2.externalId', resultCategories)
+      this.whereNotNull('r.errorCode').orWhereIn(
+        'rc1.externalId',
+        resultCategories
+      )
     })
     .select(
       knex.raw('"Assay" as source'),
