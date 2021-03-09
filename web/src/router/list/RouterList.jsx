@@ -49,7 +49,7 @@ const messages = defineMessages({
   },
   reportingFor: {
     id: 'pages.RouterList.reportingFor',
-    defaultMessage: 'Reporting For',
+    defaultMessage: 'Reporting Since',
   },
   lastSeen: {
     id: 'pages.RouterList.lastSeen',
