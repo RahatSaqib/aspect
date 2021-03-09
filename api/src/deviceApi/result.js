@@ -100,7 +100,7 @@ async function mergeResult(
   if (categoryIds.length > 1 && categoryIds[1]) {
     resultCategory2 = await resultCategoryToId(categoryIds[1])
   } else if (existingResult && existingResult.resultCategory2) {
-    ;({ resultCategory2 } = existingResult)
+    resultCategory2 = null
   }
 
   const [assays, site] = await Promise.all([assayQ, siteQ])
