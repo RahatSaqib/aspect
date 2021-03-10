@@ -3,6 +3,9 @@ const Boom = require('@hapi/boom')
 const { query, knex, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
+const {
+  deviceTypeToId,
+} = require('../../src/shared/dictionary')
 
 const MODE_INSERT = 'MODE_INSERT'
 const MODE_DELETE = 'MODE_DELETE'
@@ -391,15 +394,15 @@ async function assignPersonTo(request) {
   // ----------------
   // siteId or geographyId
   // ----------------
-  const {
+    const {
     countryId,
     stateId = null,
     lgaId = null,
     siteId = null,
     diseaseId = null,
-    deviceTypeId = null,
     assayTypeId = null,
     assayId = null,
+    deviceTypeId: deviceTypeExternalId = null
   } = payload
   let geographyId
   if (!siteId && (countryId || stateId || lgaId)) {
@@ -414,6 +417,11 @@ async function assignPersonTo(request) {
       geographyId = geography.id
     }
   }
+
+  let deviceTypeId
+  if (!deviceTypeExternalId)
+    ;[deviceTypeId] = (await knex('DeviceType').where('externalId', deviceTypeExternalId).pluck('id')) || {}
+    
   // ----------------
   // JobContext
   // ----------------
