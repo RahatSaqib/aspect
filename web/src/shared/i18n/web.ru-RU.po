@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T19:30:17.601Z\n"
+"POT-Creation-Date: 2021-03-10T16:15:11.427Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2721,7 +2721,7 @@ msgstr "ID"
 #. ID includes "{externalId}"
 #: extracted_strings.json
 msgid "ID includes \"{externalId}\""
-msgstr ""
+msgstr "ID включает \"{externalId}\""
 
 #. [pages.ResetPassword.adminHelpContent]
 #. defaultMessage is:
@@ -3551,7 +3551,7 @@ msgstr "Следующий"
 #. No Consumption
 #: extracted_strings.json
 msgid "No Consumption"
-msgstr ""
+msgstr "Нет потребления"
 
 #. [pages.graphs.emptyGraphPlaceholderTitle]
 #. defaultMessage is:
@@ -3571,7 +3571,7 @@ msgstr "Данные отсутствуют"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr ""
+msgstr "Нет питания"
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -3597,7 +3597,7 @@ msgstr "Результаты отсутствуют"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr ""
+msgstr "Нет персонала"
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3851,7 +3851,7 @@ msgstr "Оператор"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr ""
+msgstr "Другой"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -3882,7 +3882,7 @@ msgstr "Не инвентаризованный"
 #. Out of Stock
 #: extracted_strings.json
 msgid "Out of Stock"
-msgstr ""
+msgstr "Распродано"
 
 #. [pages.Milestones.followUpName]
 #. defaultMessage is:
@@ -4486,7 +4486,7 @@ msgstr "Приемка Инвентаризация провалилась"
 #. Recovered cases
 #: extracted_strings.json
 msgid "Recovered cases"
-msgstr ""
+msgstr "Восстановленные случаи"
 
 #. [pages.Status.clinicalIndicatorsCovidGenderRecoveryRates]
 #. defaultMessage is:
@@ -7096,7 +7096,7 @@ msgstr "имя устройства включает \"{deviceName}\""
 #. deviceId is in ({joinedIds})
 #: extracted_strings.json
 msgid "deviceId is in ({joinedIds})"
-msgstr ""
+msgstr "deviceId находится в ({connectedIds})"
 
 #. [filter.btnGroup.errorCode]
 #. defaultMessage is:
@@ -7208,21 +7208,21 @@ msgstr "из {unit} всех модулей"
 #. partner "{partnerName}"
 #: extracted_strings.json
 msgid "partner \"{partnerName}\""
-msgstr ""
+msgstr "партнер \"{partnerName}\""
 
 #. [filter.btnGroup.patientOrResearchId]
 #. defaultMessage is:
 #. patient ID includes {patientOrResearchId}
 #: extracted_strings.json
 msgid "patient ID includes {patientOrResearchId}"
-msgstr ""
+msgstr "идентификатор пациента включает {patientOrResearchId}"
 
 #. [filter.btnGroup.patientOrCaseId]
 #. defaultMessage is:
 #. patient/case ID includes {patientOrCaseId}
 #: extracted_strings.json
 msgid "patient/case ID includes {patientOrCaseId}"
-msgstr ""
+msgstr "идентификатор пациента / случая включает {patientOrCaseId}"
 
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
@@ -7292,14 +7292,14 @@ msgstr "процент достоверных результатов"
 #. report name includes "{reportName}"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
-msgstr ""
+msgstr "название отчета включает \"{reportName}\""
 
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:
 #. revoked is "{revokedStatus}"
 #: extracted_strings.json
 msgid "revoked is \"{revokedStatus}\""
-msgstr ""
+msgstr "отозвано: \"{revokedStatus}\""
 
 #. [filter.btnGroup.sampleOriginSite]
 #. defaultMessage is:
@@ -7313,35 +7313,35 @@ msgstr "сайт сбора образцов: {sampleOriginSiteName}"
 #. sample includes "{sampleId}"
 #: extracted_strings.json
 msgid "sample includes \"{sampleId}\""
-msgstr ""
+msgstr "образец включает \"{sampleId}\""
 
 #. [filter.btnGroup.dateFrom]
 #. defaultMessage is:
 #. since {date}
 #: extracted_strings.json
 msgid "since {date}"
-msgstr ""
+msgstr "с {date}"
 
 #. [filter.btnGroup.whereSiteIdIncludes]
 #. defaultMessage is:
 #. site ID includes "{siteId}"
 #: extracted_strings.json
 msgid "site ID includes \"{siteId}\""
-msgstr ""
+msgstr "идентификатор сайта включает \"{siteId}\""
 
 #. [filter.btnGroup.whereSiteIdIsIn]
 #. defaultMessage is:
 #. site ID is in ({joinedIds})
 #: extracted_strings.json
 msgid "site ID is in ({joinedIds})"
-msgstr ""
+msgstr "идентификатор сайта находится в ({joinedIds})"
 
 #. [filter.btnGroup.whereSiteNameIncludes]
 #. defaultMessage is:
 #. site name includes "{siteName}"
 #: extracted_strings.json
 msgid "site name includes \"{siteName}\""
-msgstr ""
+msgstr "название сайта включает \"{siteName}\""
 
 #. [pages.OperationalData.stockOutsTitle]
 #. defaultMessage is:
@@ -7362,21 +7362,21 @@ msgstr "сбои тестирования"
 #. treatment status is {treatmentStatusName}
 #: extracted_strings.json
 msgid "treatment status is {treatmentStatusName}"
-msgstr ""
+msgstr "статус лечения: {treatmentStatusName}"
 
 #. [filter.btnGroup.withDeviceType]
 #. defaultMessage is:
 #. type is {deviceTypeName}
 #: extracted_strings.json
 msgid "type is {deviceTypeName}"
-msgstr ""
+msgstr "тип - {deviceTypeName}"
 
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
 #: extracted_strings.json
 msgid "until {date}"
-msgstr ""
+msgstr "до {date}"
 
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
@@ -7397,21 +7397,21 @@ msgstr "посмотреть Детали Результатов"
 #. with result {resultCategoryGroupName}
 #: extracted_strings.json
 msgid "with result {resultCategoryGroupName}"
-msgstr ""
+msgstr "с результатом {resultCategoryGroupName}"
 
 #. [filter.btnGroup.withResultCategory]
 #. defaultMessage is:
 #. with result {resultCategoryName}
 #: extracted_strings.json
 msgid "with result {resultCategoryName}"
-msgstr ""
+msgstr "с результатом {resultCategoryName}"
 
 #. [filter.btnGroup.withWorkflowStatus]
 #. defaultMessage is:
 #. workflow status is {workflowStatusName}
 #: extracted_strings.json
 msgid "workflow status is {workflowStatusName}"
-msgstr ""
+msgstr "статус рабочего процесса: {workflowStatusName}"
 
 #. [pages.TaskList.alertCount]
 #. defaultMessage is:

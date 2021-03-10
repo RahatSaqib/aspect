@@ -47,6 +47,7 @@ const AspectWidget = ({
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
+  const titleText = translate(intlFormatMessage, titleI18nKey, messages, title)
   return (
     <AspectLink
       to={linkParam}
@@ -60,10 +61,10 @@ const AspectWidget = ({
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
             <AspectTooltip
-              title={title}
+              title={titleText}
               toolTipContainerClass="inline__tooltip"
             >
-              {translate(intlFormatMessage, titleI18nKey, messages, title)}
+              {titleText}
             </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
               {translate(
