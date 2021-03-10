@@ -416,7 +416,7 @@ async function assignPersonTo(request) {
   }
 
   let deviceTypeId
-  if (!deviceTypeExternalId) {
+  if (deviceTypeExternalId) {
     ;[deviceTypeId] =
       (await knex('DeviceType')
         .where('externalId', deviceTypeExternalId)
