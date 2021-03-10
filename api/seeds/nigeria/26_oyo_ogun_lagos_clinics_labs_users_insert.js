@@ -46,6 +46,14 @@ async function seed(knex) {
       defaultReportableSiteExternalId: '2744',
     },
     {
+      hostId: 'STATE HOSPITAL OYO',
+      defaultReportableSiteExternalId: '2744',
+    },
+    {
+      hostId: 'State Hospital, OYO',
+      defaultReportableSiteExternalId: '2744',
+    },
+    {
       hostId: '2 Division Hospital',
       defaultReportableSiteExternalId: '1953',
     },
@@ -104,6 +112,22 @@ async function seed(knex) {
     {
       hostId: 'GH, Shomolu',
       defaultReportableSiteExternalId: '1621',
+    },
+    {
+      hostId: 'State Hospital, Ogbo',
+      defaultReportableSiteExternalId: '2725',
+    },
+    {
+      hostId: 'St. Hosp. Oyo Lab',
+      defaultReportableSiteExternalId: '2744',
+    },
+    {
+      hostId: 'STATE HOSPITAL OYO',
+      defaultReportableSiteExternalId: '2744',
+    },
+    {
+      hostId: 'State Hospital, OYO',
+      defaultReportableSiteExternalId: '2744',
     },
   ]
 
