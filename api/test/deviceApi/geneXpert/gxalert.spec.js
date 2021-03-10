@@ -26,6 +26,7 @@ const { knex } = require('../../../src/db')
 const {
   allDeviceMaintenanceStatusToId,
   deviceApprovalToId,
+  resultCategoryToId,
 } = require('../../../src/shared/dictionary')
 const {
   getLocalDateTimeStringInUtc,
@@ -744,6 +745,81 @@ describe('Device API routes for GxAlert Device', () => {
       )
     })
 
+    it('should update a result and set result category 2 correctly if it was previously set and is now null', async () => {
+      const now = new Date()
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+      const sampleId = 'dupe'
+      const instrumentSerial = 'Tested on the same instrument'
+
+      // Send a new result
+      const firstResponse = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_1',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+              data: { resultText: 'NO RESULT' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+
+      await waitForApproximately(2, 'seconds')
+
+      // Send another result with the same sample ID, but different start date
+      const secondResponse = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_2',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+              data: { resultText: 'NOT DETECTED' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+
+      const {
+        body: { result: firstResult },
+      } = firstResponse
+      const {
+        body: { result: secondResult },
+      } = secondResponse
+      assert.equal(secondResult.id, firstResult.id)
+
+      const [result] = await knex('Result')
+        .select('resultCategory1', 'resultCategory2')
+        .where('id', firstResult.id)
+
+      assert.equal(
+        result.resultCategory1,
+        await resultCategoryToId('NotDetected')
+      )
+      assert.equal(result.resultCategory2, null)
+    })
+
     it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', async () => {
       const now = new Date()
       const testStartedOn = setMilliseconds(
@@ -804,7 +880,7 @@ describe('Device API routes for GxAlert Device', () => {
       )
     })
 
-    it('should map result categorizes based on result text', async () => {
+    it('should map result categories based on result text', async () => {
       const sendResult = async (
         resultId,
         assay,
