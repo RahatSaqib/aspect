@@ -247,7 +247,10 @@ const start = async () => {
   server.route({
     method: 'GET',
     path: '/',
-    handler: () => 'Hello! The API is at /api.',
+    handler: () => ({
+      message: 'Hello! The API is at /api.',
+      version,
+    }),
     config: {
       auth: false,
     },

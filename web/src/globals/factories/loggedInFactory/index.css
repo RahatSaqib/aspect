@@ -24,6 +24,16 @@
   position: absolute;
   right: 0;
   top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.Page-Content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .VerticalAppBar {
