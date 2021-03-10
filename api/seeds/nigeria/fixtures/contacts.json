@@ -1,7 +1,6 @@
 [
   {
     "personName": "SH IWO",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "iwo_dots",
@@ -21,7 +20,6 @@
   },
   {
     "personName": "AGBOGBO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "agbogbo_dots",
@@ -41,7 +39,6 @@
   },
   {
     "personName": "FEESU PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "feesu_dots",
@@ -61,7 +58,6 @@
   },
   {
     "personName": "KARA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "kara_dots",
@@ -81,7 +77,6 @@
   },
   {
     "personName": "SH EDE",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ede_dots",
@@ -101,7 +96,6 @@
   },
   {
     "personName": "JAGUNJAGUN PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "jagunjagun_dots",
@@ -121,7 +115,6 @@
   },
   {
     "personName": "OJA TIMI PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "oja_dots",
@@ -141,7 +134,6 @@
   },
   {
     "personName": "MASIFA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "masifa_dots",
@@ -161,7 +153,6 @@
   },
   {
     "personName": "SH OKE OGBO",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "oke_ogbo_dots",
@@ -181,7 +172,6 @@
   },
   {
     "personName": "OLORUNSHINDARA HOSPITAL",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "olorunindara_dots",
@@ -201,7 +191,6 @@
   },
   {
     "personName": "SAKO IGBALA HOSPITAL",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "sako_dots",
@@ -221,7 +210,6 @@
   },
   {
     "personName": "ALAFIA HOSPITAL",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "alafia_dots",
@@ -241,7 +229,6 @@
   },
   {
     "personName": "ONIGBODOGI PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "onigbodogi_dots",
@@ -261,7 +248,6 @@
   },
   {
     "personName": "ENUWA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "enuwa_dots",
@@ -281,7 +267,6 @@
   },
   {
     "personName": "ELEYELE",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "eleyele_dots",
@@ -301,7 +286,6 @@
   },
   {
     "personName": "ARUBIEWE CHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "arubiewe_dots",
@@ -321,7 +305,6 @@
   },
   {
     "personName": "OKOOKO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "okooko_dots",
@@ -341,7 +324,6 @@
   },
   {
     "personName": "MORO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "moro_dots",
@@ -361,7 +343,6 @@
   },
   {
     "personName": "SH ILESA",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ilesa_dots",
@@ -381,7 +362,6 @@
   },
   {
     "personName": "ADETI PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "adeti_dots",
@@ -401,7 +381,6 @@
   },
   {
     "personName": "ISOKUN PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "isokun_dots",
@@ -421,7 +400,6 @@
   },
   {
     "personName": "SH IKIRE",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ikire_dots",
@@ -441,7 +419,6 @@
   },
   {
     "personName": "SH ASUBIARO",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "asubiaro_dots",
@@ -461,7 +438,6 @@
   },
   {
     "personName": "ODI OLOWO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "odi_dots",
@@ -481,7 +457,6 @@
   },
   {
     "personName": "ISALE AGBARA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "isale_dots",
@@ -501,7 +476,6 @@
   },
   {
     "personName": "OKE BAALE PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "oke_baale_dots",
@@ -521,7 +495,6 @@
   },
   {
     "personName": "IFON PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ifon_dots",
@@ -541,7 +514,6 @@
   },
   {
     "personName": "ALGON PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "algon_dots",
@@ -849,7 +821,6 @@
   },
   {
     "personName": "2nd Division Hospital",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "nddivision_dots",
@@ -865,7 +836,6 @@
   },
   {
     "personName": "Phc Apete",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "apete_dots",
@@ -913,7 +883,6 @@
   },
   {
     "personName": "Odo Oba Phc",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "odo_dots",
@@ -929,7 +898,6 @@
   },
   {
     "personName": "Iseyin Gh",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "iseyin_dots",
@@ -993,7 +961,6 @@
   },
   {
     "personName": "Durojaiye Hospital",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "durojaiye_dots",
@@ -1169,7 +1136,6 @@
   },
   {
     "personName": "Health Centre, Isaga Owode",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "isaga_dots",
@@ -1201,7 +1167,6 @@
   },
   {
     "personName": "General Hospital Ifo",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ifo_dots",
@@ -1217,7 +1182,6 @@
   },
   {
     "personName": "HC Agbado",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "agbado_dots",
@@ -1233,7 +1197,6 @@
   },
   {
     "personName": "Obada Prim Health Centre",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "obada_dots",
@@ -1249,7 +1212,6 @@
   },
   {
     "personName": "State Hospital Ijebu Ode",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "shijebu_dots",
@@ -1265,7 +1227,6 @@
   },
   {
     "personName": "Health Centre, Idobi(Oke Oyinbo)",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "idobi_dots",
@@ -1361,7 +1322,6 @@
   },
   {
     "personName": "GH Ijebu Ife",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ghijebu_dots",
@@ -1377,7 +1337,6 @@
   },
   {
     "personName": "GH Owode",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "owode_dots",
@@ -1393,7 +1352,6 @@
   },
   {
     "personName": "Obantoko",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "obantoko_dots",
@@ -1409,7 +1367,6 @@
   },
   {
     "personName": "GH Imeko",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "imeko_dots",
@@ -1425,7 +1382,6 @@
   },
   {
     "personName": "GH Ayetoro",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ayetoro_dots",
@@ -1441,7 +1397,6 @@
   },
   {
     "personName": "Abigi",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "abigi_dots",
@@ -1457,7 +1412,6 @@
   },
   {
     "personName": "M IJARI",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ijari_dots",
@@ -1473,7 +1427,6 @@
   },
   {
     "personName": "Odogbolu",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "odogbolu_dots",
@@ -1489,7 +1442,6 @@
   },
   {
     "personName": "NIMR",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "nimr_dots",
@@ -1505,7 +1457,6 @@
   },
   {
     "personName": "Orthopedic National Hospital Igbobi",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "orthopedic_dots",
@@ -1521,7 +1472,6 @@
   },
   {
     "personName": "Mainland GH",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "mainland_dots",
@@ -1553,7 +1503,6 @@
   },
   {
     "personName": "Tolu",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "tolu_dots",
@@ -1569,7 +1518,6 @@
   },
   {
     "personName": "Akerele",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "akerele_dots",
@@ -1601,7 +1549,6 @@
   },
   {
     "personName": "Emmanuel (EOOCC)",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "emmanuel_dots",
@@ -1617,7 +1564,6 @@
   },
   {
     "personName": "Olowogbowo",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "olowogbowo_dots",
@@ -1665,7 +1611,6 @@
   },
   {
     "personName": "Fed Med Centre",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "fedmed_dots",
@@ -1681,7 +1626,6 @@
   },
   {
     "personName": "Harvey Road HC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "harvey_dots",
@@ -1697,7 +1641,6 @@
   },
   {
     "personName": "Ijede GH",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ijede_dots",
@@ -1729,7 +1672,6 @@
   },
   {
     "personName": "Shomolu GH",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "shomolu_dots",
@@ -1745,7 +1687,6 @@
   },
   {
     "personName": "Ita Elewa",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ita_dots",
@@ -1777,7 +1718,6 @@
   },
   {
     "personName": "Mowo",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "mowo_dots",
