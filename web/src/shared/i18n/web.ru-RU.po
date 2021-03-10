@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T11:48:53.079Z\n"
+"POT-Creation-Date: 2021-03-10T13:03:47.561Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -263,13 +263,13 @@ msgstr ""
 msgid "Account Details"
 msgstr "Детали учетной записи"
 
-#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
 #. [pages.ResultList.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
 #. [pages.TaskList.issueStatusAcknowledged]
+#. defaultMessage is:
+#. Acknowledged
+#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
 #: extracted_strings.json
@@ -607,10 +607,10 @@ msgstr "Статус одобрения"
 #. [pages.DeviceList.status.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.filter.status.approved]
+#. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.RouterDetail.approved]
+#. [pages.filter.status.approved]
 #. defaultMessage is:
 #. Approved
 #. [pages.deviceDetail.deviceApprovalApproved]
@@ -1626,13 +1626,13 @@ msgstr "Дни замены инструмента"
 #. [pages.DeviceList.status.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
-#. [pages.filter.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DailyStatus.maintenanceStatus.inactiveDecommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#. [pages.filter.status.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned]
@@ -1652,13 +1652,13 @@ msgstr "Вывод из эксплуатации"
 msgid "Delete"
 msgstr "Удалить"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
-#. defaultMessage is:
-#. Delivered
 #. [pages.ReporterList.delivered]
 #. defaultMessage is:
 #. Delivered
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
+#. defaultMessage is:
+#. Delivered
+#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
 #. Delivered
 #: extracted_strings.json
@@ -2131,13 +2131,16 @@ msgstr "Введите имя сайта..."
 #. [legends.Unknown.resultCategoryError]
 #. defaultMessage is:
 #. Error
+#. [pages.ResultList.ResultWorkflowStatusError]
+#. defaultMessage is:
+#. Error
+#. [pages.filters.gxEbolaGPError]
+#. defaultMessage is:
+#. Error
 #. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
 #. [pages.deviceDetail.ResultWorkflowStatusError]
-#. defaultMessage is:
-#. Error
-#. [pages.ResultList.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -2485,10 +2488,10 @@ msgstr "Впервые утвержден"
 msgid "First approved"
 msgstr "Первый одобренный"
 
-#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
+#. [pages.ResultList.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
-#. [pages.ResultList.ResultWorkflowStatusFlagged]
+#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
 #: extracted_strings.json
@@ -2529,6 +2532,55 @@ msgstr "От…"
 #: extracted_strings.json
 msgid "Full Name"
 msgstr "Полное имя"
+
+#. [pages.filters.gxEbolaGPDetected]
+#. defaultMessage is:
+#. GP Detected
+#: extracted_strings.json
+msgid "GP Detected"
+msgstr "Обнаружен"
+
+#. [pages.filters.gxEbolaGPDetectedNPDetected]
+#. defaultMessage is:
+#. GP Detected - NP Detected
+#: extracted_strings.json
+msgid "GP Detected - NP Detected"
+msgstr "GP Обнаружено - NP Обнаружено"
+
+#. [pages.filters.gxEbolaGPDetectedNPNotDetected]
+#. defaultMessage is:
+#. GP Detected - NP Not Detected
+#: extracted_strings.json
+msgid "GP Detected - NP Not Detected"
+msgstr "GP Обнаружено - NP Не обнаружено"
+
+#. [pages.filters.gxEbolaGPInvalid]
+#. defaultMessage is:
+#. GP Invalid
+#: extracted_strings.json
+msgid "GP Invalid"
+msgstr "Недействительный"
+
+#. [pages.filters.gxEbolaGPNoResult]
+#. defaultMessage is:
+#. GP No Result
+#: extracted_strings.json
+msgid "GP No Result"
+msgstr "Нет результатов"
+
+#. [pages.filters.gxEbolaGPNotDetectedNPDetected]
+#. defaultMessage is:
+#. GP Not Detected - NP Detected
+#: extracted_strings.json
+msgid "GP Not Detected - NP Detected"
+msgstr "GP Не обнаружено - NP Обнаружено"
+
+#. [pages.filters.gxEbolaGPNotDetectedNPNotDetected]
+#. defaultMessage is:
+#. GP Not Detected - NP Not Detected
+#: extracted_strings.json
+msgid "GP Not Detected - NP Not Detected"
+msgstr "GP Не обнаружено - NP Не обнаружено"
 
 #. [legends.Unknown.assayGXCovid19]
 #. defaultMessage is:
@@ -2927,10 +2979,10 @@ msgstr ""
 "свяжитесь с нами, чтобы мы могли помочь вам. Вы можете запросить нашу "
 "помощь, отправив электронное письмо на адрес {supportEmail}"
 
-#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
+#. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
-#. [pages.ResultList.ResultWorkflowStatusInProgress]
+#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
 #: extracted_strings.json
@@ -3610,6 +3662,105 @@ msgstr "Ло"
 msgid "Lot Number"
 msgstr "Номер партии"
 
+#. [pages.filters.gxMtbRifMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
+#. [pages.filters.gxMtbRifUltraMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
+#: extracted_strings.json
+msgid "MTB Detected"
+msgstr "Обнаружен"
+
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifDetected]
+#. defaultMessage is:
+#. MTB Detected - Rif Detected
+#: extracted_strings.json
+msgid "MTB Detected - Rif Detected"
+msgstr "Обнаружена MTB - обнаружена неисправность"
+
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Detected - Rif Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected - Rif Indeterminate"
+msgstr "Обнаружено МТБ - Риф неопределенный"
+
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifNotDetected]
+#. defaultMessage is:
+#. MTB Detected - Rif Not Detected
+#: extracted_strings.json
+msgid "MTB Detected - Rif Not Detected"
+msgstr "Обнаружена MTB - Риф не обнаружен"
+
+#. [pages.filters.gxMtbRifMtbDetectedRifDetected]
+#. defaultMessage is:
+#. MTB Detected RIF Detected
+#: extracted_strings.json
+msgid "MTB Detected RIF Detected"
+msgstr "Обнаружен след"
+
+#. [pages.filters.gxMtbRifMtbDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Detected RIF Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected RIF Indeterminate"
+msgstr "Неопределенный"
+
+#. [pages.filters.gxMtbRifMtbDetectedRifNotDetected]
+#. defaultMessage is:
+#. MTB Detected RIF Not Detected
+#: extracted_strings.json
+msgid "MTB Detected RIF Not Detected"
+msgstr "MTB Обнаружен RIF Не обнаружен"
+
+#. [pages.filters.gxMtbRifMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#: extracted_strings.json
+msgid "MTB Error"
+msgstr "Ошибка"
+
+#. [pages.filters.gxMtbRifMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [pages.filters.gxMtbRifUltraMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#: extracted_strings.json
+msgid "MTB Invalid"
+msgstr "Недействительный"
+
+#. [pages.filters.gxMtbRifMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#. [pages.filters.gxMtbRifUltraMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#: extracted_strings.json
+msgid "MTB No Result"
+msgstr "Нет результатов"
+
+#. [pages.filters.gxMtbRifMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#: extracted_strings.json
+msgid "MTB Not Detected"
+msgstr "Не обнаружено"
+
+#. [pages.filters.gxMtbRifUltraMtbTraceDetected]
+#. defaultMessage is:
+#. MTB Trace Detected
+#: extracted_strings.json
+msgid "MTB Trace Detected"
+msgstr "Обнаружен след"
+
 #. [filter.AssayTypeSelectField.assayTypeMtbRif]
 #. defaultMessage is:
 #. MTB/Rif
@@ -3768,6 +3919,13 @@ msgstr "Нет данных"
 #: extracted_strings.json
 msgid "NOTE:"
 msgstr "ПРИМЕЧАНИЕ:"
+
+#. [pages.filters.gxEbolaNPDetected]
+#. defaultMessage is:
+#. NP Detected
+#: extracted_strings.json
+msgid "NP Detected"
+msgstr "Не обнаружено"
 
 #. [pages.PersonList.personName]
 #. defaultMessage is:
@@ -4160,9 +4318,6 @@ msgstr ""
 "Количество результатов за последние 30 дней, деленное на суточную "
 "производительность прибора, умноженное на 30 дней"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.ResultList.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
@@ -4170,6 +4325,9 @@ msgstr ""
 #. defaultMessage is:
 #. OK
 #. [pages.TaskList.issueStatusOK]
+#. defaultMessage is:
+#. OK
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
 #. [pages.transferResult.successOk]
@@ -4196,10 +4354,10 @@ msgstr "Хорошо"
 msgid "Older"
 msgstr "Старее"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
+#. [pages.ReporterList.totalOnTreatment]
 #. defaultMessage is:
 #. On Treatment
-#. [pages.ReporterList.totalOnTreatment]
+#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
 #: extracted_strings.json
@@ -4234,10 +4392,10 @@ msgstr "Оперативные данные"
 msgid "Operator"
 msgstr "Оператор"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
+#. [pages.ResultList.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
-#. [pages.ResultList.ResultWorkflowStatusOrdered]
+#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
 #: extracted_strings.json
@@ -4831,10 +4989,10 @@ msgstr "Предыдущий"
 msgid "Proceed"
 msgstr "Продолжить"
 
-#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
+#. [pages.ResultList.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
-#. [pages.ResultList.ResultWorkflowStatusProcessed]
+#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
 #: extracted_strings.json
@@ -4881,10 +5039,10 @@ msgstr "Провинция"
 msgid "Provisioned"
 msgstr "Выделено"
 
-#. [pages.deviceDetail.ResultWorkflowStatusPurged]
+#. [pages.ResultList.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
-#. [pages.ResultList.ResultWorkflowStatusPurged]
+#. [pages.deviceDetail.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
 #: extracted_strings.json
@@ -4963,10 +5121,10 @@ msgstr "Количество для передачи"
 msgid "Quarter"
 msgstr "Квартал"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
+#. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
-#. [pages.ResultList.ResultWorkflowStatusDeliverable]
+#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
 #: extracted_strings.json
@@ -6954,10 +7112,10 @@ msgstr "Колонна Разгруппы"
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.deviceDetail.resultCategoryUnknown]
+#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
+#. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]

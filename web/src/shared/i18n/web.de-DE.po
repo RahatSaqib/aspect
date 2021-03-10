@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-09T11:48:53.079Z\n"
+"POT-Creation-Date: 2021-03-10T13:03:47.561Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -262,13 +262,13 @@ msgstr ""
 msgid "Account Details"
 msgstr "Kontodetails"
 
-#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
 #. [pages.ResultList.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
 #. [pages.TaskList.issueStatusAcknowledged]
+#. defaultMessage is:
+#. Acknowledged
+#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
 #: extracted_strings.json
@@ -607,10 +607,10 @@ msgstr "Genehmigungsstatus"
 #. [pages.DeviceList.status.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.filter.status.approved]
+#. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.RouterDetail.approved]
+#. [pages.filter.status.approved]
 #. defaultMessage is:
 #. Approved
 #. [pages.deviceDetail.deviceApprovalApproved]
@@ -1628,13 +1628,13 @@ msgstr "Tage für Gerätetausch"
 #. [pages.DeviceList.status.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
-#. [pages.filter.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DailyStatus.maintenanceStatus.inactiveDecommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#. [pages.filter.status.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned]
@@ -1654,13 +1654,13 @@ msgstr "Außer Betrieb genommen"
 msgid "Delete"
 msgstr "Löschen"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
-#. defaultMessage is:
-#. Delivered
 #. [pages.ReporterList.delivered]
 #. defaultMessage is:
 #. Delivered
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
+#. defaultMessage is:
+#. Delivered
+#. [pages.deviceDetail.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
 #. Delivered
 #: extracted_strings.json
@@ -2133,13 +2133,16 @@ msgstr "Standortnamen eingeben..."
 #. [legends.Unknown.resultCategoryError]
 #. defaultMessage is:
 #. Error
+#. [pages.ResultList.ResultWorkflowStatusError]
+#. defaultMessage is:
+#. Error
+#. [pages.filters.gxEbolaGPError]
+#. defaultMessage is:
+#. Error
 #. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
 #. [pages.deviceDetail.ResultWorkflowStatusError]
-#. defaultMessage is:
-#. Error
-#. [pages.ResultList.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -2487,10 +2490,10 @@ msgstr "Erste Freigabe am"
 msgid "First approved"
 msgstr "Erstmals zugelassen"
 
-#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
+#. [pages.ResultList.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
-#. [pages.ResultList.ResultWorkflowStatusFlagged]
+#. [pages.deviceDetail.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
 #: extracted_strings.json
@@ -2531,6 +2534,55 @@ msgstr "Von…"
 #: extracted_strings.json
 msgid "Full Name"
 msgstr "Vollständiger Name"
+
+#. [pages.filters.gxEbolaGPDetected]
+#. defaultMessage is:
+#. GP Detected
+#: extracted_strings.json
+msgid "GP Detected"
+msgstr "Erkannt"
+
+#. [pages.filters.gxEbolaGPDetectedNPDetected]
+#. defaultMessage is:
+#. GP Detected - NP Detected
+#: extracted_strings.json
+msgid "GP Detected - NP Detected"
+msgstr "GP Erkannt - NP Erkannt"
+
+#. [pages.filters.gxEbolaGPDetectedNPNotDetected]
+#. defaultMessage is:
+#. GP Detected - NP Not Detected
+#: extracted_strings.json
+msgid "GP Detected - NP Not Detected"
+msgstr "GP Erkannt - NP Nicht Erkannt"
+
+#. [pages.filters.gxEbolaGPInvalid]
+#. defaultMessage is:
+#. GP Invalid
+#: extracted_strings.json
+msgid "GP Invalid"
+msgstr "Ungültig"
+
+#. [pages.filters.gxEbolaGPNoResult]
+#. defaultMessage is:
+#. GP No Result
+#: extracted_strings.json
+msgid "GP No Result"
+msgstr "Keine Ergebnisse"
+
+#. [pages.filters.gxEbolaGPNotDetectedNPDetected]
+#. defaultMessage is:
+#. GP Not Detected - NP Detected
+#: extracted_strings.json
+msgid "GP Not Detected - NP Detected"
+msgstr "GP Nicht erkannt - NP Erkannt"
+
+#. [pages.filters.gxEbolaGPNotDetectedNPNotDetected]
+#. defaultMessage is:
+#. GP Not Detected - NP Not Detected
+#: extracted_strings.json
+msgid "GP Not Detected - NP Not Detected"
+msgstr "GP Nicht erkannt - NP Nicht erkannt"
 
 #. [legends.Unknown.assayGXCovid19]
 #. defaultMessage is:
@@ -2929,10 +2981,10 @@ msgstr ""
 "kontaktieren Sie uns bitte, damit wir Ihnen helfen können. Sie können unsere "
 "Hilfe anfordern, indem Sie eine E-Mail an {supportEmail} senden"
 
-#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
+#. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
-#. [pages.ResultList.ResultWorkflowStatusInProgress]
+#. [pages.deviceDetail.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
 #: extracted_strings.json
@@ -3612,6 +3664,105 @@ msgstr "Charge"
 msgid "Lot Number"
 msgstr "Losnummer"
 
+#. [pages.filters.gxMtbRifMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
+#. [pages.filters.gxMtbRifUltraMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
+#: extracted_strings.json
+msgid "MTB Detected"
+msgstr "Erkannt"
+
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifDetected]
+#. defaultMessage is:
+#. MTB Detected - Rif Detected
+#: extracted_strings.json
+msgid "MTB Detected - Rif Detected"
+msgstr "MTB Erkannt - Rif Erkannt"
+
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Detected - Rif Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected - Rif Indeterminate"
+msgstr "MTB erkannt - Rif indeterminiert"
+
+#. [pages.filters.gxMtbRifUltraMtbDetectedRifNotDetected]
+#. defaultMessage is:
+#. MTB Detected - Rif Not Detected
+#: extracted_strings.json
+msgid "MTB Detected - Rif Not Detected"
+msgstr "MTB erkannt - Rif nicht erkannt"
+
+#. [pages.filters.gxMtbRifMtbDetectedRifDetected]
+#. defaultMessage is:
+#. MTB Detected RIF Detected
+#: extracted_strings.json
+msgid "MTB Detected RIF Detected"
+msgstr "Erkannte Spur"
+
+#. [pages.filters.gxMtbRifMtbDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Detected RIF Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected RIF Indeterminate"
+msgstr "Unbestimmt"
+
+#. [pages.filters.gxMtbRifMtbDetectedRifNotDetected]
+#. defaultMessage is:
+#. MTB Detected RIF Not Detected
+#: extracted_strings.json
+msgid "MTB Detected RIF Not Detected"
+msgstr "MTB Erkannt RIF Nicht Erkannt"
+
+#. [pages.filters.gxMtbRifMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#: extracted_strings.json
+msgid "MTB Error"
+msgstr "Fehlercode"
+
+#. [pages.filters.gxMtbRifMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [pages.filters.gxMtbRifUltraMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#: extracted_strings.json
+msgid "MTB Invalid"
+msgstr "Ungültig"
+
+#. [pages.filters.gxMtbRifMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#. [pages.filters.gxMtbRifUltraMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#: extracted_strings.json
+msgid "MTB No Result"
+msgstr "Keine Ergebnisse"
+
+#. [pages.filters.gxMtbRifMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#: extracted_strings.json
+msgid "MTB Not Detected"
+msgstr "Nicht erkannt"
+
+#. [pages.filters.gxMtbRifUltraMtbTraceDetected]
+#. defaultMessage is:
+#. MTB Trace Detected
+#: extracted_strings.json
+msgid "MTB Trace Detected"
+msgstr "Erkannte Spur"
+
 #. [filter.AssayTypeSelectField.assayTypeMtbRif]
 #. defaultMessage is:
 #. MTB/Rif
@@ -3770,6 +3921,13 @@ msgstr "N/A"
 #: extracted_strings.json
 msgid "NOTE:"
 msgstr "NOTIZ:"
+
+#. [pages.filters.gxEbolaNPDetected]
+#. defaultMessage is:
+#. NP Detected
+#: extracted_strings.json
+msgid "NP Detected"
+msgstr "Nicht erkannt"
 
 #. [pages.PersonList.personName]
 #. defaultMessage is:
@@ -4163,9 +4321,6 @@ msgstr ""
 "Anzahl der Ergebnisse in den letzten 30 Tagen geteilt durch die "
 "Tageskapazität des Geräts multipliziert mit 30 Tagen"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.ResultList.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
@@ -4173,6 +4328,9 @@ msgstr ""
 #. defaultMessage is:
 #. OK
 #. [pages.TaskList.issueStatusOK]
+#. defaultMessage is:
+#. OK
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
 #. [pages.transferResult.successOk]
@@ -4199,10 +4357,10 @@ msgstr "Okay"
 msgid "Older"
 msgstr "Älter"
 
-#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
+#. [pages.ReporterList.totalOnTreatment]
 #. defaultMessage is:
 #. On Treatment
-#. [pages.ReporterList.totalOnTreatment]
+#. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
 #: extracted_strings.json
@@ -4237,10 +4395,10 @@ msgstr "Betriebsdaten"
 msgid "Operator"
 msgstr "Betreiber"
 
-#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
+#. [pages.ResultList.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
-#. [pages.ResultList.ResultWorkflowStatusOrdered]
+#. [pages.deviceDetail.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
 #: extracted_strings.json
@@ -4837,10 +4995,10 @@ msgstr "Zurück"
 msgid "Proceed"
 msgstr "Fortfahren"
 
-#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
+#. [pages.ResultList.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
-#. [pages.ResultList.ResultWorkflowStatusProcessed]
+#. [pages.deviceDetail.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
 #: extracted_strings.json
@@ -4887,10 +5045,10 @@ msgstr "Provinz"
 msgid "Provisioned"
 msgstr "Bereitgestellt"
 
-#. [pages.deviceDetail.ResultWorkflowStatusPurged]
+#. [pages.ResultList.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
-#. [pages.ResultList.ResultWorkflowStatusPurged]
+#. [pages.deviceDetail.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
 #: extracted_strings.json
@@ -4969,10 +5127,10 @@ msgstr "Zu übertragende Menge"
 msgid "Quarter"
 msgstr "Quartal"
 
-#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
+#. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
-#. [pages.ResultList.ResultWorkflowStatusDeliverable]
+#. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
 #: extracted_strings.json
@@ -6966,10 +7124,10 @@ msgstr "Auflösen der Gruppenspalte"
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.deviceDetail.resultCategoryUnknown]
+#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
+#. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
