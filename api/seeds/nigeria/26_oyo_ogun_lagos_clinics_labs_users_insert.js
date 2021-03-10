@@ -34,7 +34,7 @@ async function seed(knex) {
       defaultReportableSiteExternalId: '2727',
     },
     {
-      hostId: 'GCH Jericho',
+      hostId: 'GCH Jericho Ibadan',
       defaultReportableSiteExternalId: '2717',
     },
     {

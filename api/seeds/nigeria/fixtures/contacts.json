@@ -255,7 +255,7 @@
     ],
     "sites": [
       {
-        "shortName": "ONIGBODOGI"
+        "shortName": "ONIGBODOGI PHC"
       }
     ]
   },
@@ -561,7 +561,7 @@
   },
   {
     "personName": "General Hospital Moniya",
-    "personEmailAddress": "tunrayoakingbeyin@gmail.com ",
+    "personEmailAddress": "tunrayoakingbeyin@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ghmoniya_dots",
@@ -625,7 +625,7 @@
   },
   {
     "personName": "St Peter General Hospital",
-    "personEmailAddress": "oyindamolaagoola@gmail.com ",
+    "personEmailAddress": "oyindamolaagoola@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "omi_dots",
@@ -641,7 +641,7 @@
   },
   {
     "personName": "Omi Adio Primary Health Center",
-    "personEmailAddress": "omolaraadesiyan1@gmail.com ",
+    "personEmailAddress": "omolaraadesiyan1@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "omi_dots",
@@ -689,7 +689,7 @@
   },
   {
     "personName": "Phc Molete",
-    "personEmailAddress": "dammyjacob374@gmail.com ",
+    "personEmailAddress": "dammyjacob374@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "molete_dots",
@@ -753,7 +753,7 @@
   },
   {
     "personName": "Gh Igbo Ora",
-    "personEmailAddress": "okegbemuakinlolu1@gmail.com ",
+    "personEmailAddress": "okegbemuakinlolu1@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ghigbo_dots",
@@ -780,7 +780,7 @@
       "lgaName": "Ibadan North-West"
     }],
     "sites": [{
-      "shortName": "Jericho Specialist Hospital"
+      "shortName": "GCH Jericho Ibadan"
     }]
   },
   {
@@ -796,12 +796,12 @@
       "lgaName": "Ibadan South-West"
     }],
     "sites": [{
-      "shortName": "Ring Road State Hospital"
+      "shortName": "Ring-Road State Hosp. Ibadan"
     }]
   },
   {
     "personName": "Phc Adaramagbo",
-    "personEmailAddress": "oluyinkaajayi74@gmail.com ",
+    "personEmailAddress": "oluyinkaajayi74@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "adaramagbo_dots",
@@ -844,7 +844,7 @@
       "lgaName": "Saki West"
     }],
     "sites": [{
-      "shortName": "General Hospital Saki"
+      "shortName": "State Hospital, Saki"
     }]
   },
   {
@@ -860,7 +860,7 @@
       "lgaName": "Akinyele"
     }],
     "sites": [{
-      "shortName": "2nd Division Hospital"
+      "shortName": "2 Division Hospital"
     }]
   },
   {
@@ -892,7 +892,7 @@
       "lgaName": "Oyo East"
     }],
     "sites": [{
-      "shortName": "Sh Oyo"
+      "shortName": "State Hospital, OYO"
     }]
   },
   {
@@ -972,7 +972,7 @@
       "lgaName": "Ogbomosho North"
     }],
     "sites": [{
-      "shortName": "Lautech Teaching Hospital"
+      "shortName": "LAUTECH Teaching Hosp., Osogbo"
     }]
   },
   {
@@ -1009,7 +1009,7 @@
   },
   {
     "personName": "Alafara",
-    "personEmailAddress": "oluyemiagboola1972@gmail.com ",
+    "personEmailAddress": "oluyemiagboola1972@gmail.com",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "alafara_dots",
@@ -1052,7 +1052,7 @@
       "lgaName": "Abeokuta South"
     }],
     "sites": [{
-      "shortName": "Chest Clinic, State Hospital Ijaye"
+      "shortName": "State Hospital Ijaye, Abeokuta"
     }]
   },
   {
@@ -1068,7 +1068,7 @@
       "lgaName": "Abeokuta South"
     }],
     "sites": [{
-      "shortName": "Sacred Heart Hospital, Lantoro"
+      "shortName": "Sacred Heart Hosp."
     }]
   },
   {
@@ -1084,7 +1084,7 @@
       "lgaName": "Abeokuta South"
     }],
     "sites": [{
-      "shortName": "Federal Medical Centre, Abeokuta"
+      "shortName": "FMC Abeokuta"
     }]
   },
   {
@@ -1132,7 +1132,7 @@
       "lgaName": "Ado-Odo/Ota"
     }],
     "sites": [{
-      "shortName": "State Hospital Ota"
+      "shortName": "State Hospital, Ota"
     }]
   },
   {
@@ -1212,7 +1212,7 @@
       "lgaName": "Ifo"
     }],
     "sites": [{
-      "shortName": "General Hospital Ifo"
+      "shortName": "GH Ifo, Ogun State"
     }]
   },
   {
@@ -1260,7 +1260,7 @@
       "lgaName": "Ijebu Ode"
     }],
     "sites": [{
-      "shortName": "State Hospital Ijebu Ode"
+      "shortName": "SH Ijebu-Ode"
     }]
   },
   {
@@ -1308,7 +1308,7 @@
       "lgaName": "Ipokia"
     }],
     "sites": [{
-      "shortName": "General Hosp Idiroko"
+      "shortName": "GH Idiroko Ogun State"
     }]
   },
   {
@@ -1324,7 +1324,7 @@
       "lgaName": "Remo North"
     }],
     "sites": [{
-      "shortName": "General Hospital Isara"
+      "shortName": "State Hospital Isara Ogun State"
     }]
   },
   {
@@ -1340,7 +1340,7 @@
       "lgaName": "Sagamu"
     }],
     "sites": [{
-      "shortName": "CMPC OOUTH Sagamu"
+      "shortName": "OOUTH Sagamu"
     }]
   },
   {
@@ -1388,7 +1388,7 @@
       "lgaName": "Obafemi Owode"
     }],
     "sites": [{
-      "shortName": "GH Owode"
+      "shortName": "GH Owode-Egba Ogun State"
     }]
   },
   {
@@ -1500,7 +1500,7 @@
       "lgaName": "Lagos"
     }],
     "sites": [{
-      "shortName": "NIMR"
+      "shortName": "NIMR3"
     }]
   },
   {
@@ -1532,7 +1532,7 @@
       "lgaName": "Lagos"
     }],
     "sites": [{
-      "shortName": "Mainland GH"
+      "shortName": "Mainland Hospital Yaba"
     }]
   },
   {
@@ -1596,7 +1596,7 @@
       "lgaName": "Lagos"
     }],
     "sites": [{
-      "shortName": "LUTH"
+      "shortName": "LUTH Idi-Araba"
     }]
   },
   {
@@ -1740,7 +1740,7 @@
       "lgaName": "Lagos"
     }],
     "sites": [{
-      "shortName": "Shomolu GH"
+      "shortName": "GH, Shomolu"
     }]
   },
   {
@@ -1792,7 +1792,7 @@
     }]
   },
   {
-    "personName": "Aderemi PHC ",
+    "personName": "Aderemi PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "aderemi_dots",
@@ -1803,11 +1803,11 @@
       "lgaName": "Ife Central"
     }],
     "sites": [{
-      "shortName": "Aderemi PHC "
+      "shortName": "Aderemi PHC"
     }]
   },
   {
-    "personName": "Total PHC ",
+    "personName": "Total PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "total_dots",
@@ -1818,7 +1818,7 @@
       "lgaName": "Isokan"
     }],
     "sites": [{
-      "shortName": "Total PHC "
+      "shortName": "Total PHC"
     }]
   },
   {
@@ -1852,7 +1852,7 @@
     }]
   },
   {
-    "personName": "Popo Olupona PHC ",
+    "personName": "Popo Olupona PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "olupona_dots",
@@ -1863,7 +1863,7 @@
       "lgaName": "Aiyedire"
     }],
     "sites": [{
-      "shortName": "Popo Olupona PHC "
+      "shortName": "Popo Olupona PHC"
     }]
   },
   {
@@ -1882,7 +1882,7 @@
     }]
   },
   {
-    "personName": "Irojo PHC ",
+    "personName": "Irojo PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "irojo_dots",
@@ -1893,11 +1893,11 @@
       "lgaName": "Ilesa East"
     }],
     "sites": [{
-      "shortName": "Irojo PHC "
+      "shortName": "Irojo PHC"
     }]
   },
   {
-    "personName": "Imo PHC  ",
+    "personName": "Imo PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "imo_dots",
@@ -1908,11 +1908,11 @@
       "lgaName": "Ilesa East"
     }],
     "sites": [{
-      "shortName": "Imo PHC  "
+      "shortName": "Imo PHC"
     }]
   },
   {
-    "personName": "Ayedaade PHC ",
+    "personName": "Ayedaade PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ayedaade_dots",
@@ -1923,11 +1923,11 @@
       "lgaName": "Irewole"
     }],
     "sites": [{
-      "shortName": "Ayedaade PHC "
+      "shortName": "Ayedaade PHC"
     }]
   },
   {
-    "personName": "Popo PHC ",
+    "personName": "Popo PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "popo_dots",
@@ -1938,11 +1938,11 @@
       "lgaName": "Ejigbo"
     }],
     "sites": [{
-      "shortName": "Popo PHC "
+      "shortName": "Popo PHC"
     }]
   },
   {
-    "personName": "Ikoyi PHC ",
+    "personName": "Ikoyi PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ikoyi_dots",
@@ -1953,11 +1953,11 @@
       "lgaName": "Isokan"
     }],
     "sites": [{
-      "shortName": "Ikoyi PHC "
+      "shortName": "Ikoyi PHC"
     }]
   },
   {
-    "personName": "Ifelodun PHC ",
+    "personName": "Ifelodun PHC",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ifelodun_dots",
@@ -1968,7 +1968,7 @@
       "lgaName": "Ife East"
     }],
     "sites": [{
-      "shortName": "Ifelodun PHC "
+      "shortName": "Ifelodun PHC"
     }]
   }
 ]
