@@ -427,7 +427,9 @@ const routes = [
           siteId: Joi.number().allow(null),
           // device/assay type
           diseaseId: Joi.number().allow(null),
-          deviceTypeId: Joi.number().allow(null),
+          deviceTypeId: Joi.string()
+            .allow(null)
+            .description('The device type external id'),
           assayTypeId: Joi.number().allow(null),
           assayId: Joi.number().allow(null),
         },

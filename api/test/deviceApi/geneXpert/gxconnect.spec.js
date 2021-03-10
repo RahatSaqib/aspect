@@ -32,6 +32,7 @@ const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
+const { resultCategoryToId } = require('../../../src/shared/dictionary')
 const {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
@@ -1350,6 +1351,76 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const secondResultId = await getLastResultId(knex, device.id)
         assert.equal(firstResultId, secondResultId)
+      }))
+
+    it('should update a result and set result category 2 correctly if it was previously set and is now null', () =>
+      runTest(async knex => {
+        const { deviceAuth, device, now } = context
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'dupe'
+        const instrumentSerial = 'Tested on the same instrument'
+
+        // Send a new result
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_1',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+                data: { resultText: 'NO RESULT' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        const firstResultId = await getLastResultId(knex, device.id)
+
+        // Send another result with the same sample ID, but different start date
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_2',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+                data: { resultText: 'NOT DETECTED' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        const secondResultId = await getLastResultId(knex, device.id)
+        assert.equal(firstResultId, secondResultId)
+
+        const [result] = await knex('Result')
+          .select('resultCategory1', 'resultCategory2')
+          .where('id', firstResultId)
+
+        assert.equal(
+          result.resultCategory1,
+          await resultCategoryToId('NotDetected')
+        )
+        assert.equal(result.resultCategory2, null)
       }))
 
     it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', () =>
