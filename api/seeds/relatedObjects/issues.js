@@ -356,6 +356,9 @@ async function getBaseIssues(auditFields) {
         i18nKey: 'issueTypeResultReceived',
         issueCategoryId: issueCategories.DataHealth,
       },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
     },
     DeviceOffline: {
       issueType: {
