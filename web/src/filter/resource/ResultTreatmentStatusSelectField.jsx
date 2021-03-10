@@ -11,28 +11,13 @@ import {
 } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { defineMessages } from 'react-intl'
+import { useIntl } from 'react-intl'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
-
+import messages from './i18n/resultTreatmentStatusMessages'
 import { fetchTreatmentStatuses } from '../../resultTreatmentStatus/ResultTreatmentStatusRedux'
 
-const messages = defineMessages({
-  ResultTreatmentStatusAwaitingTreatment: {
-    id:
-      'pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment',
-    defaultMessage: 'Awaiting Treatment',
-  },
-  ResultTreatmentStatusOnTreatment: {
-    id: 'pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment',
-    defaultMessage: 'On Treatment',
-  },
-  ResultTreatmentStatusNotPossible: {
-    id: 'pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible',
-    defaultMessage: 'Not Possible',
-  },
-})
 const enhance = compose(
   pure,
   setPropTypes({
@@ -78,12 +63,12 @@ const enhance = compose(
 export function TreatmentSelectField({
   treatmentSelectList,
   allItemText,
-  intl,
   ...restProps
 }) {
+  const { formatMessage } = useIntl()
   const textForItem = item =>
     messages[item.i18nKey]
-      ? intl.formatMessage(messages[item.i18nKey])
+      ? formatMessage(messages[item.i18nKey])
       : item.i18nKey
 
   return (

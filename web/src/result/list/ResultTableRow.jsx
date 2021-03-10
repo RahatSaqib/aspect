@@ -6,6 +6,7 @@ import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
 
+import { useIntl } from 'react-intl'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -18,24 +19,19 @@ const cssClasses = classnames.bind(
 
 const styles = require('../../components/shared/DataTableRow.css')
 
-const formatterByType = partial(
-  // TODO: refactor, see DeviceOperationTableRow
-  (formatterBy, type) => formatterBy[type] || formatterBy.default,
-  {
-    number: (n, intl) => (isNumber(n) ? intl.formatNumber(n) : false),
-    default: identity,
-  }
-)
-const ResultTableRow = ({
-  intl,
-  extraColumns,
-  result,
-  messages,
-  ...restProps
-}) => {
+const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
+  const { formatMessage, formatNumber } = useIntl()
+  const formatterByType = partial(
+    // TODO: refactor, see DeviceOperationTableRow
+    (formatterBy, type) => formatterBy[type] || formatterBy.default,
+    {
+      number: n => (isNumber(n) ? formatNumber(n) : false),
+      default: identity,
+    }
+  )
   const formatI18n = (key, defaultMessage) =>
     messages[result.get(key)]
-      ? intl.formatMessage(messages[result.get(key)])
+      ? formatMessage(messages[result.get(key)])
       : result.get(defaultMessage)
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -64,10 +60,7 @@ const ResultTableRow = ({
       {extraColumns.map(column => (
         // TODO: refactor, see DeviceOperationTableRow
         <TableCell key={column.get('db')} hiddenOn="nd">
-          {formatterByType(column.get('type'))(
-            result.get(column.get('db')),
-            intl
-          )}
+          {formatterByType(column.get('type'))(result.get(column.get('db')))}
         </TableCell>
       ))}
     </TableRow>

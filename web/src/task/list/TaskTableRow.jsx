@@ -15,8 +15,9 @@ const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
 const enhance = identity
 
-const TaskTableRow = ({ intl, messages, task, ...restProps }) => {
-  const { formatMessage } = useIntl()
+const TaskTableRow = ({ messages, task, ...restProps }) => {
+  const intl = useIntl()
+  const { formatMessage } = intl
   return (
     <TableRow
       {...restProps}

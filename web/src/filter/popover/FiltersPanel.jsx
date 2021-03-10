@@ -633,7 +633,6 @@ export const FiltersPanel = ({
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectDisease)}
                 floatingLabelText={intl.formatMessage(messages.disease)}
-                intl={intl}
                 style={{ verticalAlign: 'bottom' }}
               />
             </div>
@@ -973,7 +972,6 @@ export const FiltersPanel = ({
                 floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
-                intl={intl}
               />
             </div>
           )}

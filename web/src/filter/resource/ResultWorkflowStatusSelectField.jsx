@@ -11,7 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
-import messages from './messages'
+import messages from './i18n/generalMessages'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -25,8 +25,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     ).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {

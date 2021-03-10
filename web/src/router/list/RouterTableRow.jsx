@@ -1,6 +1,7 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import messages from '../../device/list/messages'
 import {
   DataTableRow as TableRow,
@@ -14,7 +15,9 @@ const cssClasses = classnames.bind(
 
 const enhance = identity
 
-const RouterTableRow = ({ intl, router, ...restProps }) => {
+const RouterTableRow = ({ router, ...restProps }) => {
+  const intl = useIntl()
+
   const formatI18n = (key, defaultMessage) =>
     messages[router.get(key)]
       ? intl.formatMessage(messages[router.get(key)])

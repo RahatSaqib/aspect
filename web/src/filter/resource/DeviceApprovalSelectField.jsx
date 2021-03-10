@@ -6,30 +6,11 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
-import { defineMessages } from 'react-intl'
+import messages from './i18n/deviceApprovalMessages'
 // Material-UI
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
-
-const messages = defineMessages({
-  deviceApprovalProvisioned: {
-    id: 'pages.filter.status.provisioned',
-    defaultMessage: 'Provisioned',
-  },
-  deviceApprovalAssigned: {
-    id: 'pages.filter.status.assigned',
-    defaultMessage: 'Assigned',
-  },
-  deviceApprovalApproved: {
-    id: 'pages.filter.status.approved',
-    defaultMessage: 'Approved',
-  },
-  deviceApprovalDecommissioned: {
-    id: 'pages.filter.status.decommissioned',
-    defaultMessage: 'Decommissioned',
-  },
-})
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {
@@ -43,8 +24,7 @@ export class DeviceApprovalSelectField extends PureComponent {
     ).isRequired,
     onDeviceApprovalChange: PropTypes.func.isRequired,
     value: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {

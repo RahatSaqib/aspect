@@ -25,8 +25,7 @@ export class DeviceTypeSelectField extends PureComponent {
       })
     ).isRequired,
     onDeviceTypeChange: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
     value: PropTypes.string,
   }
 

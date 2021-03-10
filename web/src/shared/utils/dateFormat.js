@@ -25,7 +25,7 @@ export function getDateObject(date, defaultValue) {
       formatedDate = date
     }
   } catch (e) {
-    //
+    return null
   }
   return formatedDate
 }

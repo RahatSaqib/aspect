@@ -9,7 +9,7 @@ import Immutable from 'immutable'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
-import messages from './messages'
+import messages from './i18n/generalMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
@@ -21,8 +21,7 @@ export class ResultCategorySelectField extends PureComponent {
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {
