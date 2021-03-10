@@ -220,12 +220,35 @@ const routes = [
     path: '/site/reporters',
     handler: asyncHandler(listSitesWithReporters),
     config: {
-      description: 'Sites with for Reporter Dashboard',
+      description: 'Sites for Reporter Dashboard',
       notes: `List of sites with some aggregations about reporters`,
       auth: { scope: ['reporter'] },
       validate: {
         query: {
           ...filterQueryBase,
+          deviceType: Joi.string()
+            .optional()
+            .description('Filter for device type externalId'),
+          siteId: Joi.number()
+            .integer()
+            .positive()
+            .optional()
+            .description('Filter for site Id'),
+          partnerId: Joi.number()
+            .integer()
+            .positive()
+            .optional()
+            .description('Filter for Partner Id'),
+          assayId: Joi.number()
+            .integer()
+            .positive()
+            .optional()
+            .description('ID of the assay'),
+          diseaseId: Joi.number()
+            .integer()
+            .positive()
+            .optional()
+            .description('The disease ID'),
         },
       },
       response: {
@@ -236,6 +259,14 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of items that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of items included in this response'),
           data: Joi.array()
             .required()
             .description('List of sites with statistics of reporters')

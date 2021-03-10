@@ -56,6 +56,14 @@ const reset = async (tableName, value, columnName = 'id') =>
     .where(columnName, '>', value || 0)
     .delete()
 // ------------------------------------------------------------------------
+const getMonthDateRange = someDate => {
+  const minDate = getLocalDateInUtc(startOfMonth(someDate))
+  const maxDate = getLocalDateInUtc(endOfMonth(someDate))
+  return {
+    minDate,
+    maxDate,
+  }
+}
 
 describe('Reporters Dashboard - GET /site/reporters', () => {
   const path = '/api/site/reporters'
@@ -63,13 +71,13 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
 
   const now = parseISO(new Date().toISOString())
   const previousMonth = subMonths(now, 1)
-  const minDate = getLocalDateInUtc(startOfMonth(previousMonth))
-  const maxDate = getLocalDateInUtc(endOfMonth(previousMonth))
+  const { minDate, maxDate } = getMonthDateRange(previousMonth)
 
+  const weekDays = []
   const totalResults = 5
   let initialState = {}
   let assayGeneXpertMtbRif
-  const weekDays = []
+  let initialCounts
 
   before(async () => {
     // -----------------------------
@@ -101,6 +109,8 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .join('Site as s', 'd.siteId', 's.id')
       .join('Geography as g', 's.geographyId', 'g.id')
+      .join('State as st', 'st.id', 'g.stateId')
+      .join('Lga as lg', 'lg.id', 'g.lgaId')
       .join('Country as c', 'g.countryId', 'c.id')
       .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
       .where('dt.externalId', 'CepheidGeneXpert')
@@ -109,7 +119,18 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .where('s.partnerId', partnerId)
       .where('c.abbreviation', countryAbbreviation)
       .where('da.token', 'approved')
-      .first('d.id', 'd.partnerId', 'd.geographyId', 'd.siteId')
+      .first(
+        'd.id as deviceId',
+        'd.name as deviceName',
+        'd.partnerId',
+        'd.geographyId',
+        'd.siteId',
+        'g.countryId',
+        'g.stateId',
+        'g.lgaId',
+        's.name as siteName',
+        'dt.externalId as deviceType'
+      )
 
     // week-day dates
     for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
@@ -117,7 +138,17 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         weekDays.push(day)
       }
     }
-    const { id: deviceId, geographyId, siteId } = device
+    const {
+      deviceId,
+      deviceName,
+      geographyId,
+      siteId,
+      siteName,
+      countryId,
+      stateId,
+      lgaId,
+      deviceType,
+    } = device
 
     // -----------------------------
     // add site tag 'clinic'
@@ -129,10 +160,23 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     await knex('SiteTag').insert({ siteId, tagId })
 
     initialState.deviceId = deviceId
+    initialState.deviceName = deviceName
+    initialState.deviceType = deviceType
     initialState.geographyId = geographyId
     initialState.partnerId = partnerId
     initialState.siteId = siteId
+    initialState.siteName = siteName
     initialState.userId = userId
+    initialState.countryId = countryId
+    initialState.stateId = stateId
+    initialState.lgaId = lgaId
+
+    // -----------------------------
+    // fetch data before creating new results, and keep initial counts
+    // -----------------------------
+    initialCounts = await getInitialCounts()
+    // create 5 new results
+    await createResults()
   })
 
   after(async () => {
@@ -280,12 +324,13 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     await addRtsl(result, userId, resultTreatmentStatusIds.AwaitingTreatment)
   }
   // ------------------------------------------------------------------------
-  const getSiteReporters = async () => {
+  const getSiteReporters = async ({ minDate, maxDate, ...restFilter }) => {
     const res = await server
       .get(`${path}`)
       .query({
         minDate,
         maxDate,
+        ...restFilter,
       })
       .set('Authorization', `Bearer ${shared.token}`)
 
@@ -298,14 +343,12 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
 
     return data
   }
-
   // ------------------------------------------------------------------------
-  it('should return data for Reporters Dashboard', async () => {
+  const getInitialCounts = async () => {
     // fetch sites before creating new results
-    const dataBefore = await getSiteReporters()
-
+    const dataBefore = await getSiteReporters({ minDate, maxDate })
     // get initial counts
-    let site = dataBefore.find(({ siteId }) => siteId === initialState.siteId)
+    const site = dataBefore.find(({ siteId }) => siteId === initialState.siteId)
     const {
       delivered = 0,
       notPossible = 0,
@@ -315,19 +358,18 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       totalResults = 0,
       transferred = 0,
     } = site || {}
-
-    // create 5 new results
-    await createResults()
-
-    // fetch sites after creating results
-    const dataAfter = await getSiteReporters()
-
-    // has items for at least 1 site with 5 inserted results
-    assert.isAtLeast(dataAfter.length, 1)
-
-    // get site for which we just inserted results
-    site = dataAfter.find(({ siteId }) => siteId === initialState.siteId)
-
+    return {
+      delivered,
+      notPossible,
+      notOnTreatment,
+      onTreatment,
+      requiresTreatment,
+      totalResults,
+      transferred,
+    }
+  }
+  // ------------------------------------------------------------------------
+  const assertBaseProps = site => {
     assert.property(site, 'countryId')
     assert.property(site, 'delivered')
     assert.property(site, 'lgaId')
@@ -344,7 +386,20 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     assert.property(site, 'stateName')
     assert.property(site, 'totalResults')
     assert.property(site, 'transferred')
-
+  }
+  // ------------------------------------------------------------------------
+  const assertAllCounts = (
+    site,
+    {
+      delivered,
+      notPossible,
+      notOnTreatment,
+      onTreatment,
+      requiresTreatment,
+      totalResults,
+      transferred,
+    }
+  ) => {
     // it should contain all counts
     assert.equal(site.delivered, delivered + 1)
     assert.equal(site.notPossible, notPossible + 1)
@@ -356,5 +411,94 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     // 5 results inserted but 1 transferred away, so 4 total results for this site
     assert.equal(site.totalResults, totalResults + 4)
     assert.equal(site.transferred, transferred + 1)
+  }
+
+  // ------------------------------------------------------------------------
+  it('should return data for Reporters Dashboard', async () => {
+    // fetch sites after creating results
+    const data = await getSiteReporters({ minDate, maxDate })
+
+    // has items for at least 1 site with 5 inserted results
+    assert.isAtLeast(data.length, 1)
+
+    // get site for which we just inserted results
+    const site = data.find(({ siteId }) => siteId === initialState.siteId)
+    assertBaseProps(site)
+
+    assertAllCounts(site, initialCounts)
+  })
+
+  // ------------------------------------------------------------------------
+  it('should return data with different filters', async () => {
+    // check all needed filters
+    const data = await getSiteReporters({
+      minDate,
+      maxDate,
+      countryId: initialState.countryId,
+      stateId: initialState.stateId,
+      lgaId: initialState.lgaId,
+      siteId: initialState.siteId,
+      siteName: initialState.siteName,
+      deviceName: initialState.deviceName,
+      deviceType: initialState.deviceType,
+      assayId: assayGeneXpertMtbRif.id,
+      partnerId: initialState.partnerId,
+    })
+
+    assert.isAtLeast(data.length, 1)
+
+    // get site for which we just inserted results
+    const site = data.find(({ siteId }) => siteId === initialState.siteId)
+    assertBaseProps(site)
+
+    assertAllCounts(site, initialCounts)
+  })
+
+  // ------------------------------------------------------------------------
+  it('should return empty array for incorrect filters', async () => {
+    const validDateRange = { minDate, maxDate }
+    const assertWrongFilter = async invalidFilter => {
+      const data = await getSiteReporters({
+        ...validDateRange,
+        ...invalidFilter,
+      })
+      assert.equal(data.length, 0)
+    }
+    // send wrong filter values
+    await assertWrongFilter({ countryId: initialState.countryId + 999999 })
+    await assertWrongFilter({ stateId: initialState.stateId + 999999 })
+    await assertWrongFilter({ lgaId: initialState.lgaId + 999999 })
+    await assertWrongFilter({ assayId: assayGeneXpertMtbRif.id + 999999 })
+    await assertWrongFilter({ siteId: initialState.siteId + 999999 })
+    await assertWrongFilter({ partnerId: initialState.partnerId + 999999 })
+    await assertWrongFilter({ siteName: `${initialState.siteName}__` })
+    await assertWrongFilter({ deviceName: `${initialState.deviceName}__` })
+    await assertWrongFilter({ deviceType: `${initialState.deviceType}__` })
+  })
+
+  // ------------------------------------------------------------------------
+  it('should return all counts = 0 for another date range', async () => {
+    const fewMonthsAgo = subMonths(now, 3)
+    const { minDate, maxDate } = getMonthDateRange(fewMonthsAgo)
+    const data = await getSiteReporters({
+      minDate,
+      maxDate,
+    })
+
+    // has items for at least 1 site with 5 inserted results
+    assert.isAtLeast(data.length, 1)
+
+    // get site for which we just inserted results
+    const site = data.find(({ siteId }) => siteId === initialState.siteId)
+    assertBaseProps(site)
+
+    // should return all 0 - because we inserted results in another date range
+    assert.equal(site.delivered, 0)
+    assert.equal(site.notPossible, 0)
+    assert.equal(site.notOnTreatment, 0)
+    assert.equal(site.onTreatment, 0)
+    assert.equal(site.requiresTreatment, 0)
+    assert.equal(site.totalResults, 0)
+    assert.equal(site.transferred, 0)
   })
 })

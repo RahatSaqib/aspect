@@ -299,8 +299,9 @@ async function listSitesWithReporters(request) {
   const { minDate, maxDate } = query
   const resultStatusId = await resultStatusToId('Transfer')
 
-  const sites = await knex('Site as s')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+  // const sites
+  const siteQuery = knex('Site as s')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('Result as r', queryBuilder => {
@@ -343,6 +344,27 @@ async function listSitesWithReporters(request) {
         .andOn('rslog.resultStatusId', resultStatusId)
     })
     /**
+     * join ResultStatusLog and Result to limit transferred results
+     * by date range - count resultTransferred.id for `transferred` results
+     */
+    .leftOuterJoin('Result as resultTransferred', queryBuilder => {
+      queryBuilder.on('rslog.resultId', 'resultTransferred.id')
+      if (minDate) {
+        queryBuilder.andOn(
+          'resultTransferred.endedOn',
+          '>=',
+          knex.raw('?', [minDate])
+        )
+      }
+      if (maxDate) {
+        queryBuilder.andOn(
+          'resultTransferred.endedOn',
+          '<=',
+          knex.raw('?', [maxDate])
+        )
+      }
+    })
+    /**
      * for counting different statuses rts.externalId = 'XXX'
      */
     .leftOuterJoin(
@@ -367,12 +389,12 @@ async function listSitesWithReporters(request) {
      * take only clinics
      */
     .whereRaw(
-      `
-      tag.title LIKE ? or 
-      tag.title LIKE ? or
-      s.name like ? or
-      s.externalId like ?
-      `,
+      `(
+        tag.title     LIKE ? or 
+        tag.title     LIKE ? or
+        s.name        LIKE ? or
+        s.externalId  LIKE ?
+      )`,
       ['%clinic%', '%dots%', '%clinic%', '%clinic%']
     )
     .where(function () {
@@ -381,22 +403,33 @@ async function listSitesWithReporters(request) {
       }
       this.whereIn('s.id', query.siteIds.split(','))
     })
-    .groupBy(['s.id'])
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
       siteId: 's.id',
-      externalId: 's.externalId',
       partnerId: 's.partnerId',
-      deviceId: 'd.id',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
       assayId: 'r.assayId',
       diseaseId: 'dis.id',
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .groupBy('s.id')
+
+  // totals available items
+  const getCount = knex
+    .count('siteId as count')
+    .from(
+      siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery')
+    )
+    .first()
+
+  // get page items
+  const getItems = siteQuery
+    .clone()
+    .modify(sortPageParams, query, 'siteName')
     // all counts
     .count({
       totalResults: knex.raw('DISTINCT r.id'),
@@ -418,28 +451,28 @@ async function listSitesWithReporters(request) {
         END`),
       notOnTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId != 'NotPossible'
+          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
           THEN r.id ELSE null
         END`),
-      // see comment above for joining table ResultStatusLog
-      transferred: knex.raw(`DISTINCT rslog.resultId`),
+      // see comment for joining table ResultStatusLog
+      transferred: knex.raw(`DISTINCT resultTransferred.id`),
     })
     .select(
       'g.countryId',
-      's.partnerId',
-      's.id as siteId',
-      's.name as siteName',
-      's.shortName as siteShortName',
       'g.stateId',
       'st.name as stateName',
       'g.lgaId',
-      'l.name as lgaName'
+      'l.name as lgaName',
+      's.partnerId',
+      's.id as siteId',
+      's.name as siteName',
+      's.shortName as siteShortName'
     )
 
-  return {
-    ok: true,
-    data: sites,
-  }
+  // run both queries
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  return { ok: true, total, length: data.length, data }
 }
 
 module.exports = {
