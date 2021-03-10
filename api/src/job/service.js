@@ -417,12 +417,11 @@ async function assignPersonTo(request) {
 
   let deviceTypeId
   if (!deviceTypeExternalId) {
-    ;[deviceTypeId] = (await knex('DeviceType')
+    ;[deviceTypeId] =
+      (await knex('DeviceType')
         .where('externalId', deviceTypeExternalId)
         .pluck('id')) || []
   }
-    
-      
 
   // ----------------
   // JobContext
