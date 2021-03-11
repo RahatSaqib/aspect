@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-10T13:03:47.561Z\n"
+"POT-Creation-Date: 2021-03-11T21:33:52.258Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4055,7 +4055,7 @@ msgstr "Дані відсутні"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr "Немає Живлення"
+msgstr "Немає живлення"
 
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
@@ -4420,7 +4420,7 @@ msgstr "Замовлено"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr "Інше"
+msgstr "Інший"
 
 #. [legends.Unknown.inactiveOther]
 #. defaultMessage is:
@@ -7642,7 +7642,7 @@ msgstr "мін."
 #. missing
 #: extracted_strings.json
 msgid "missing"
-msgstr ""
+msgstr "丢失的"
 
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:

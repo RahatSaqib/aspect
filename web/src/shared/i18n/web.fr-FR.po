@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-09T12:55:54.531Z\n"
+"POT-Creation-Date: 2021-03-11T21:33:52.258Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2881,13 +2881,13 @@ msgstr "A un caractère spécial (%! $ * ...)"
 msgid "Hello Storybook!"
 msgstr "Bonjour Storybook!"
 
+#. [pages.caseRow.diseaseNameHepatitisB]
+#. defaultMessage is:
+#. Hepatitis B
 #. [filter.DiseaseSelectField.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
 #: extracted_strings.json
-#. [pages.caseRow.diseaseNameHepatitisB]
-#. defaultMessage is:
-#. Hepatitis B
 msgid "Hepatitis B"
 msgstr "Hépatite B"
 
@@ -4070,7 +4070,7 @@ msgstr "Aucune donnée disponible"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr "Pas de pouvoir"
+msgstr "Aucune puissance"
 
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
@@ -7669,6 +7669,13 @@ msgstr "indicateur"
 msgid "min."
 msgstr "min."
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. missing
+#: extracted_strings.json
+msgid "missing"
+msgstr "manquant"
+
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:
 #. n/a
@@ -7781,13 +7788,6 @@ msgstr "ruptures de stock"
 #: extracted_strings.json
 msgid "test failures"
 msgstr "échecs de test"
-
-#. [pages.Storybook.missingDefault]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "undefined"
 
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
@@ -7949,6 +7949,9 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, un {# résultat} autre {# résultats} })"
 
+#~ msgid "undefined"
+#~ msgstr "undefined"
+
 #, fuzzy
 #~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
 #~ msgid ""
@@ -7959,21 +7962,6 @@ msgstr ""
 #~| msgid "{alertCount, plural, one {# alert} other {# alerts} }"
 #~ msgid "We have {locales, plural, one {# {item}} other {# {item}s} }"
 #~ msgstr "{alertCount, plural, one {# alert} other {# alerts} }"
-
-#~ msgid "1-14 Days"
-#~ msgstr "1-14 Jours"
-
-#~ msgid "1-3 Months"
-#~ msgstr "1-3 Mois"
-
-#~ msgid "15-30 Days"
-#~ msgstr "15-30 Jours"
-
-#~ msgid "4-6 Months"
-#~ msgstr "4-6 Mois"
-
-#~ msgid ">6 Months"
-#~ msgstr "> 6 Mois"
 
 #~ msgid "Device Issue: {issueTypeId}"
 #~ msgstr "Question de dispositif : {issueTypeId}"

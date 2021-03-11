@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-10T13:03:47.561Z\n"
+"POT-Creation-Date: 2021-03-11T21:33:52.258Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4058,7 +4058,7 @@ msgstr "Данные отсутствуют"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr "Нет Энергия"
+msgstr "Нет питания"
 
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
@@ -4423,7 +4423,7 @@ msgstr "Упорядоченный"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr "Другое"
+msgstr "Другой"
 
 #. [legends.Unknown.inactiveOther]
 #. defaultMessage is:
@@ -7645,6 +7645,13 @@ msgstr "показатель"
 msgid "min."
 msgstr "мин."
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. missing
+#: extracted_strings.json
+msgid "missing"
+msgstr "отсутствует"
+
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:
 #. n/a
@@ -7756,13 +7763,6 @@ msgstr "складские запасы"
 #: extracted_strings.json
 msgid "test failures"
 msgstr "сбои тестирования"
-
-#. [pages.Storybook.missingDefault]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "undefined"
 
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
@@ -7925,6 +7925,9 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{тотал, множественное число, один {# результат} другой {# "
 "результат}))"
+
+#~ msgid "undefined"
+#~ msgstr "undefined"
 
 #, fuzzy
 #~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
