@@ -141,7 +141,16 @@ module.exports = async (knex, partnerData, contacts) => {
     let personId = null
     const existingPerson = await knex('Person')
       .where({ userId })
-      .orWhere({ name: person.personName, email: person.personEmailAddress })
+      .orWhere(qb => {
+        if (person.personEmailAddress) {
+          qb.where({
+            name: person.personName,
+            email: person.personEmailAddress,
+          })
+        } else {
+          qb.where({ name: person.personName })
+        }
+      })
       .first()
     if (existingPerson) {
       if (
