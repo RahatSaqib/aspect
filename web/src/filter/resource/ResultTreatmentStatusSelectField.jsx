@@ -17,6 +17,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import messages from './i18n/resultTreatmentStatusMessages'
 import { fetchTreatmentStatuses } from '../../resultTreatmentStatus/ResultTreatmentStatusRedux'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 const enhance = compose(
   pure,
@@ -66,17 +67,12 @@ export function TreatmentSelectField({
   ...restProps
 }) {
   const { formatMessage } = useIntl()
-  const textForItem = item =>
-    messages[item.i18nKey]
-      ? formatMessage(messages[item.i18nKey])
-      : item.i18nKey
-
   return (
     <SelectField {...restProps} value={restProps.value}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {treatmentSelectList.map(s => (
         <MenuItem key={s.value} value={s.value}>
-          {textForItem(s)}
+          {formatI18nMessage(messages, formatMessage, s.i18nKey, s.name)}
         </MenuItem>
       ))}
     </SelectField>

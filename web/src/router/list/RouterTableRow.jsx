@@ -8,6 +8,7 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import { formatRelative } from '../../shared/utils/dateFormat'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -18,14 +19,17 @@ const enhance = identity
 const RouterTableRow = ({ router, ...restProps }) => {
   const intl = useIntl()
 
-  const formatI18n = (key, defaultMessage) =>
-    messages[router.get(key)]
-      ? intl.formatMessage(messages[router.get(key)])
-      : router.get(defaultMessage)
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{router.get('name')}</TableCell>
-      <TableCell>{formatI18n('statusI18nKey', 'approval')}</TableCell>
+      <TableCell>
+        {formatI18nMessage(
+          messages,
+          intl.formatMessage,
+          router.get('statusI18nKey'),
+          router.get('approval')
+        )}
+      </TableCell>
       <TableCell>{formatRelative(intl, router.get('createdOn'))}</TableCell>
       <TableCell>{formatRelative(intl, router.get('lastSeen'))}</TableCell>
     </TableRow>

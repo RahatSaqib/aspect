@@ -10,3 +10,6 @@ exports.format = function(msgs) {
   }
   return results
 }
+
+exports.formatI18nMessage = (messages, formatMessage, key, defaultMessage) =>
+  messages[key] ? formatMessage(messages[key]) : defaultMessage

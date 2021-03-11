@@ -12,6 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import messages from './i18n/generalMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
@@ -52,18 +53,18 @@ export class ResultCategorySelectField extends PureComponent {
     const resultCategories = possibleAssay
       ? possibleAssay.get('resultCategories')
       : []
-    const textForItem = item => {
-      return messages[item.get('i18nKey')]
-        ? intl.formatMessage(messages[item.get('i18nKey')])
-        : item.get('name')
-    }
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {resultCategories.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {textForItem(a)}
+            {formatI18nMessage(
+              messages,
+              intl.formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

@@ -12,6 +12,7 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -45,7 +46,12 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell>{result.get('resultText')}</TableCell>
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
-        {formatI18n('resultWorkflowStatusI18nkey', 'resultWorkflowStatus')}
+        {formatI18nMessage(
+          messages,
+          formatMessage,
+          result.get('resultWorkflowStatusI18nkey'),
+          result.get('resultWorkflowStatus')
+        )}
       </TableCell>
       <TableCell hiddenOn="md">
         {result.get('treatmentStatusInfo') && (

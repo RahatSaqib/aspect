@@ -9,6 +9,7 @@ import messages from './i18n/diseaseMessages'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDiseases } from '../../disease/DiseaseRedux'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 const enhance = compose(
   pure,
@@ -41,14 +42,6 @@ const enhance = compose(
   })
 )
 
-const textForDiseaseItem = (diseaseItem, formatMessage) => {
-  return (
-    (messages[diseaseItem.get('i18nKey')]
-      ? formatMessage(messages[diseaseItem.get('i18nKey')])
-      : diseaseItem.get('name')) || diseaseItem.get('name')
-  )
-}
-
 export const DiseaseSelectField = ({
   allItemText,
   onlyWithResults,
@@ -74,7 +67,12 @@ export const DiseaseSelectField = ({
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {validDisease.map(d => (
         <MenuItem key={d.get('id')} value={d.get('id')}>
-          {textForDiseaseItem(d, formatMessage)}
+          {formatI18nMessage(
+            messages,
+            formatMessage,
+            d.get('i18nKey'),
+            d.get('name')
+          )}
         </MenuItem>
       ))}
     </SelectField>

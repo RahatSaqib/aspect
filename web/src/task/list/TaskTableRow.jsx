@@ -25,7 +25,11 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
     >
       <TableCell className={cssClasses('TableCell')}>
         <AlertType
-          alertType={formatMessage(messages[task.get('issueStatusI18nKey')])}
+          alertType={
+            messages[task.get('issueStatusI18nKey')]
+              ? formatMessage(messages[task.get('issueStatusI18nKey')])
+              : task.get('issueStatus')
+          }
         />
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>

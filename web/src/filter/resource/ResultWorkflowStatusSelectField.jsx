@@ -12,6 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
 import messages from './i18n/generalMessages'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -50,17 +51,17 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
       'onWorkflowStatusChange',
       'value',
     ])
-    const textForItem = item => {
-      return messages[item.get('i18nKey')]
-        ? intl.formatMessage(messages[item.get('i18nKey')])
-        : item.get('name')
-    }
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {workflowStatusItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {textForItem(a)}
+            {formatI18nMessage(
+              messages,
+              intl.formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

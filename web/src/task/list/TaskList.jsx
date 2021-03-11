@@ -13,7 +13,7 @@ import {
   setPropTypes,
   defaultProps,
 } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
@@ -34,86 +34,9 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from './TaskDataTable'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./TaskList.css'))
-
-const messages = defineMessages({
-  tasksTitle: {
-    id: 'pages.TaskList.title',
-    defaultMessage: 'Tasks',
-  },
-  topic: {
-    id: 'pages.TaskList.topic',
-    defaultMessage: 'Topic',
-  },
-  site: {
-    id: 'pages.TaskList.site',
-    defaultMessage: 'Site',
-  },
-  time: {
-    id: 'pages.TaskList.time',
-    defaultMessage: 'Time',
-  },
-  alertCount: {
-    id: 'pages.TaskList.alertCount',
-    defaultMessage: `{alertCount, plural,
-      one {# alert}
-      other {# alerts}
-    }`,
-  },
-  paginatorStatus: {
-    id: 'pages.TaskList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
-    }`,
-  },
-  issueStatusInactive: {
-    id: 'pages.TaskList.issueStatusInactive',
-    defaultMessage: 'Inactive',
-  },
-  issueStatusActive: {
-    id: 'pages.TaskList.issueStatusActive',
-    defaultMessage: 'Active',
-  },
-  issueStatusAcknowledged: {
-    id: 'pages.TaskList.issueStatusAcknowledged',
-    defaultMessage: 'Acknowledged',
-  },
-  issueStatusOK: { id: 'pages.TaskList.issueStatusOK', defaultMessage: 'OK' },
-  issueStatusDueSoon: {
-    id: 'pages.TaskList.issueStatusDueSoon',
-    defaultMessage: 'Due Soon',
-  },
-  issueStatusDueNow: {
-    id: 'pages.TaskList.issueStatusDueNow',
-    defaultMessage: 'Due Now',
-  },
-  issueStatusOverdue: {
-    id: 'pages.TaskList.issueStatusOverdue',
-    defaultMessage: 'Overdue',
-  },
-  issueStatusResolved: {
-    id: 'pages.TaskList.issueStatusResolved',
-    defaultMessage: 'Resolved',
-  },
-  issueCategoryDeviceHealth: {
-    id: 'pages.TaskList.issueCategoryDeviceHealth',
-    defaultMessage: 'Device Health',
-  },
-  issueCategoryReagentHealth: {
-    id: 'pages.TaskList.issueCategoryReagentHealth',
-    defaultMessage: 'Reagent Health',
-  },
-  issueCategoryDataHealth: {
-    id: 'pages.TaskList.issueCategoryDataHealth',
-    defaultMessage: 'Data Health',
-  },
-  issueCategoryConnectivityHealth: {
-    id: 'pages.TaskList.issueCategoryConnectivityHealth',
-    defaultMessage: 'Connectivity Health',
-  },
-})
 
 const FILTERS_CONFIG = {
   contactNameOrEmail: true,
