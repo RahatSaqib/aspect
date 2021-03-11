@@ -2441,17 +2441,23 @@ async function insertSites(knex, partnerId, countryId, sites) {
     const existingSite = await knex('Site')
       .where('externalId', site.externalId)
       .first('id')
-
+    const { id: siteGeographyId } = await knex('Geography as g')
+      .join('State as s', 'g.stateId', 's.id')
+      .join('Lga as l', 'g.lgaId', 'l.id')
+      .where({ countryId })
+      .where('s.name', site.stateName)
+      .where('l.name', site.lgaName)
+      .first('g.id')
     if (existingSite) {
       siteId = existingSite.id
+      await knex('Site').where('id', siteId).update({
+        geographyId: siteGeographyId,
+        name: site.name,
+        externalId: site.externalId,
+        updatedOn: now,
+        updatedBy: adminId,
+      })
     } else {
-      const { id: siteGeographyId } = await knex('Geography as g')
-        .join('State as s', 'g.stateId', 's.id')
-        .join('Lga as l', 'g.lgaId', 'l.id')
-        .where({ countryId })
-        .where('s.name', site.stateName)
-        .where('l.name', site.lgaName)
-        .first('g.id')
       ;[siteId] = await knex('Site').insert({
         partnerId,
         geographyId: siteGeographyId,
