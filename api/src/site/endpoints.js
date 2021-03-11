@@ -17,31 +17,34 @@ const {
 
 const { exportSites } = require('./serviceReports')
 
-const filterQueryBase = {
-  siteIds: Joi.string().allow('').description('Filter for site ids'),
-  deviceName: Joi.string().allow('').description('Filter for device name'),
-  siteName: Joi.string().allow('').description('Filter for site name'),
-  externalId: Joi.string().allow('').description('Filter for facility code'),
-  format: Joi.string().allow('').description('File format for exporting data'),
-  ...validateAllGeographyFilterParams(),
-  ...validateDateRangeParams(),
-  ...validateSortPageParams(
-    'name',
-    'shortName',
-    'state',
-    'lga',
-    'createdOn',
-    'totalDevices',
-    'externalId',
-    'inventoryUpdatedOn'
-  ),
-}
 function listSitesBaseConfig() {
   return {
     auth: { scope: ['site'] },
     validate: {
       query: {
-        ...filterQueryBase,
+        siteIds: Joi.string().allow('').description('Filter for site ids'),
+        deviceName: Joi.string()
+          .allow('')
+          .description('Filter for device name'),
+        siteName: Joi.string().allow('').description('Filter for site name'),
+        externalId: Joi.string()
+          .allow('')
+          .description('Filter for facility code'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+        ...validateAllGeographyFilterParams(),
+        ...validateDateRangeParams(),
+        ...validateSortPageParams(
+          'name',
+          'shortName',
+          'state',
+          'lga',
+          'createdOn',
+          'totalDevices',
+          'externalId',
+          'inventoryUpdatedOn'
+        ),
       },
     },
   }
