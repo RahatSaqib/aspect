@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
+"POT-Creation-Date: 2021-03-09T12:55:54.531Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2437,6 +2437,13 @@ msgstr "Имеет номер"
 msgid "Has a special character (%!$*...)"
 msgstr "Имеет особый характер (%!$*...).."
 
+#. [pages.Storybook.demoString]
+#. defaultMessage is:
+#. Hello Storybook!
+#: extracted_strings.json
+msgid "Hello Storybook!"
+msgstr "Привет Storybook!"
+
 #. [filter.DiseaseSelectField.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
@@ -3369,7 +3376,7 @@ msgstr "Данные отсутствуют"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr ""
+msgstr "Нет питания"
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -3395,7 +3402,7 @@ msgstr "Результаты отсутствуют"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr ""
+msgstr "Нет персонала"
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3644,7 +3651,7 @@ msgstr "Оператор"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr ""
+msgstr "Другой"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -6705,6 +6712,13 @@ msgstr "складские запасы"
 msgid "test failures"
 msgstr "сбои тестирования"
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. undefined
+#: extracted_strings.json
+msgid "undefined"
+msgstr "undefined"
+
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
 #. utilization rate
@@ -6866,3 +6880,15 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{тотал, множественное число, один {# результат} другой {# "
 "результат}))"
+
+#, fuzzy
+#~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
+#~ msgid ""
+#~ "But you selected {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr "{пунктСчет, множественное число, один {# Имя} другой {# Имена} }"
+
+#, fuzzy
+#~| msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgid "We have {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr ""
+#~ "Счетчик, множественное число, один сигнал тревоги, другой сигнал тревоги }"
