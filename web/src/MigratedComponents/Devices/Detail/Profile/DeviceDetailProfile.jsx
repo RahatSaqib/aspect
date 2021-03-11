@@ -159,11 +159,14 @@ const enhance = compose(
       // TODO: correct path?
     }) => history.push(`/browse/result/${resultId}`),
     onToggleDeviceApproval: ({ device, updateSingleDevice }) => () =>
-      updateSingleDevice(device.get('id'), {
-        approvalToken:
-          device.get('approvalToken') !== tokens.APPROVED
-            ? tokens.APPROVED
-            : tokens.ASSIGNED,
+      updateSingleDevice({
+        deviceId: device.get('id'),
+        data: {
+          approvalToken:
+            device.get('approvalToken') !== tokens.APPROVED
+              ? tokens.APPROVED
+              : tokens.ASSIGNED,
+        },
       }),
     onShowCalibrationDialog: ({ showDialog, device }) => () => {
       showDialog('calibration', device)

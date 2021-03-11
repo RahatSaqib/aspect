@@ -1947,6 +1947,7 @@ async function transferResult(request) {
       data: JSON.stringify({
         siteId: result.siteId,
         reportableSiteId: siteId,
+        previousReportableSiteId: result.reportableSiteId,
         sampleOriginSiteId: result.sampleOriginSiteId,
         comment,
       }),

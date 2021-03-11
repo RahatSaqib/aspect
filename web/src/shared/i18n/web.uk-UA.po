@@ -2859,6 +2859,13 @@ msgstr "Має номер"
 msgid "Has a special character (%!$*...)"
 msgstr "Має спеціальний символ (%! $ * ...)"
 
+#. [pages.Storybook.demoString]
+#. defaultMessage is:
+#. Hello Storybook!
+#: extracted_strings.json
+msgid "Hello Storybook!"
+msgstr "Привіт Storybook!"
+
 #. [pages.caseRow.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
@@ -7630,6 +7637,13 @@ msgstr "індикатор"
 msgid "min."
 msgstr "мін."
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. missing
+#: extracted_strings.json
+msgid "missing"
+msgstr ""
+
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:
 #. n/a
@@ -7900,3 +7914,14 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# result} other {# results}})"
+
+#~ msgid "undefined"
+#~ msgstr "undefined"
+
+#~ msgid ""
+#~ "But you selected {locales, plural, one {# {locale}} other {# {locales}} }"
+#~ msgstr ""
+#~ "Але ви вибрали {locales, plural, one {# {регіон}} other {# {регіон}} }"
+
+#~ msgid "We have {locales, plural, one {# {locale}} other {# {locales}} }"
+#~ msgstr "У нас є  {locales, plural, one {# {мов}} other {# {мов}} }"

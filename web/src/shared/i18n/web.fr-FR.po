@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-10T13:03:47.561Z\n"
-"PO-Revision-Date: 2021-03-10 10:06-0300\n"
+"POT-Creation-Date: 2021-03-09T12:55:54.531Z\n"
+"PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -2874,13 +2874,20 @@ msgstr "A un numéro"
 msgid "Has a special character (%!$*...)"
 msgstr "A un caractère spécial (%! $ * ...)"
 
-#. [pages.caseRow.diseaseNameHepatitisB]
+#. [pages.Storybook.demoString]
 #. defaultMessage is:
-#. Hepatitis B
+#. Hello Storybook!
+#: extracted_strings.json
+msgid "Hello Storybook!"
+msgstr "Bonjour Storybook!"
+
 #. [filter.DiseaseSelectField.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
 #: extracted_strings.json
+#. [pages.caseRow.diseaseNameHepatitisB]
+#. defaultMessage is:
+#. Hepatitis B
 msgid "Hepatitis B"
 msgstr "Hépatite B"
 
@@ -7775,6 +7782,13 @@ msgstr "ruptures de stock"
 msgid "test failures"
 msgstr "échecs de test"
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. undefined
+#: extracted_strings.json
+msgid "undefined"
+msgstr "undefined"
+
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
 #. utilization rate
@@ -7934,6 +7948,32 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, un {# résultat} autre {# résultats} })"
+
+#, fuzzy
+#~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
+#~ msgid ""
+#~ "But you selected {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr "{itemCount, pluriel, un {# Nom} autre {# Noms} }"
+
+#, fuzzy
+#~| msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgid "We have {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr "{alertCount, plural, one {# alert} other {# alerts} }"
+
+#~ msgid "1-14 Days"
+#~ msgstr "1-14 Jours"
+
+#~ msgid "1-3 Months"
+#~ msgstr "1-3 Mois"
+
+#~ msgid "15-30 Days"
+#~ msgstr "15-30 Jours"
+
+#~ msgid "4-6 Months"
+#~ msgstr "4-6 Mois"
+
+#~ msgid ">6 Months"
+#~ msgstr "> 6 Mois"
 
 #~ msgid "Device Issue: {issueTypeId}"
 #~ msgstr "Question de dispositif : {issueTypeId}"

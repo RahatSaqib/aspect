@@ -2862,6 +2862,13 @@ msgstr "Имеет номер"
 msgid "Has a special character (%!$*...)"
 msgstr "Имеет особый характер (%!$*...).."
 
+#. [pages.Storybook.demoString]
+#. defaultMessage is:
+#. Hello Storybook!
+#: extracted_strings.json
+msgid "Hello Storybook!"
+msgstr "Привет Storybook!"
+
 #. [pages.caseRow.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
@@ -4100,7 +4107,7 @@ msgstr "Результаты отсутствуют"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr "Нет сотрудников"
+msgstr "Нет персонала"
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -7750,6 +7757,13 @@ msgstr "складские запасы"
 msgid "test failures"
 msgstr "сбои тестирования"
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. undefined
+#: extracted_strings.json
+msgid "undefined"
+msgstr "undefined"
+
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
 #. utilization rate
@@ -7911,3 +7925,15 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{тотал, множественное число, один {# результат} другой {# "
 "результат}))"
+
+#, fuzzy
+#~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
+#~ msgid ""
+#~ "But you selected {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr "{пунктСчет, множественное число, один {# Имя} другой {# Имена} }"
+
+#, fuzzy
+#~| msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgid "We have {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr ""
+#~ "Счетчик, множественное число, один сигнал тревоги, другой сигнал тревоги }"
