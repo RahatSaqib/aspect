@@ -895,6 +895,7 @@ export const FiltersPanel = ({
                 floatingLabelText={intl.formatMessage(messages.deviceType)}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
+                intl={intl}
               />
             </div>
           )}
