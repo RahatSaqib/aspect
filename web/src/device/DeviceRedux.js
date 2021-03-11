@@ -236,8 +236,7 @@ function receiveUpdatedSingleDevice(requestedAt, item) {
 
 export function updateSingleDevice(deviceId, data) {
   return dispatch => {
-    const requestedAt = Date.now()
-    dispatch(requestUpdatingSingleDevice(requestedAt, deviceId, data))
+    dispatch(requestUpdatingSingleDevice(new Date(), deviceId, data))
 
     return aspectFetch(`/device/${deviceId}`, {
       method: 'PUT',
@@ -254,7 +253,12 @@ export function updateSingleDevice(deviceId, data) {
         ),
       },
     }).then(json =>
-      dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
+      dispatch(
+        receiveUpdatedSingleDevice(new Date(), {
+          ...json.data,
+          id: deviceId,
+        })
+      )
     )
   }
 }
