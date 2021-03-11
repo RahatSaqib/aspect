@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
+"POT-Creation-Date: 2021-03-09T13:35:31.945Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. [pages.ReporterList.acknowledgedRatio]
 #. defaultMessage is:
@@ -2439,6 +2438,13 @@ msgstr "Hat eine Nummer"
 msgid "Has a special character (%!$*...)"
 msgstr "Hat ein Sonderzeichen (%!$*...)"
 
+#. [pages.Storybook.demoString]
+#. defaultMessage is:
+#. Hello Storybook!
+#: extracted_strings.json
+msgid "Hello Storybook!"
+msgstr "Hallo Storybook!"
+
 #. [filter.DiseaseSelectField.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
@@ -3371,7 +3377,7 @@ msgstr "Keine Daten verfügbar"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr ""
+msgstr "Keine Energie"
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -3397,7 +3403,7 @@ msgstr "Keine Ergebnisse berichtet"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr ""
+msgstr "Kein Personal"
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3647,7 +3653,7 @@ msgstr "Betreiber"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr ""
+msgstr "Andere"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -6604,6 +6610,13 @@ msgstr "Indikator"
 msgid "min."
 msgstr "Min."
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. missing
+#: extracted_strings.json
+msgid "missing"
+msgstr ""
+
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:
 #. n/a
@@ -6879,6 +6892,20 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "undefined"
+#~ msgstr "undefined"
+
+#, fuzzy
+#~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
+#~ msgid ""
+#~ "But you selected {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr "{itemCount, plural, one {# Name} other {# Namen} }"
+
+#, fuzzy
+#~| msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgid "We have {locales, plural, one {# {item}} other {# {item}s} }"
+#~ msgstr "{alertCount, plural, ein {# Warnung} other {# Warnungen} }"
 
 #~ msgid "1-14 Days"
 #~ msgstr "1-14 Tage"

@@ -17,6 +17,7 @@ import { actions as idleActions } from '../../idle/IdleRedux'
 import uiProvidersFactory from './uiProvidersFactory'
 import routerFactory from './routerFactory'
 import { AuthProvider } from '../../Providers/AuthProvider'
+import { I18nProvider } from '../../Providers/I18nProvider'
 
 const formatsByTimezoneId = timezoneId => {
   const formats = {}
@@ -117,27 +118,29 @@ export const appFactory = compose(
         messages={translation[culture]}
         formats={formatsByTimezoneId(timezoneId)}
       >
-        <div id="I-am-reactroot">
-          <RefreshToken refreshStart={refreshStart} />
-          <IdleDetection
-            isLoggedOut={restProps.isLoggedOut}
-            idleStart={idleStart}
-            idleStop={idleStop}
-          />
-          <LocalStorage
-            access={access}
-            refresh={refresh}
-            clientId={clientId}
-            culture={culture}
-            timezoneId={timezoneId}
-            displayPreferences={displayPreferences}
-            drawerOpen={drawerOpen}
-          />
-          {render(restProps)}
-          {process.env.NODE_ENV !== 'production' ? (
-            <ReactQueryDevtools initialIsOpen />
-          ) : null}
-        </div>
+        <I18nProvider>
+          <div id="I-am-reactroot">
+            <RefreshToken refreshStart={refreshStart} />
+            <IdleDetection
+              isLoggedOut={restProps.isLoggedOut}
+              idleStart={idleStart}
+              idleStop={idleStop}
+            />
+            <LocalStorage
+              access={access}
+              refresh={refresh}
+              clientId={clientId}
+              culture={culture}
+              timezoneId={timezoneId}
+              displayPreferences={displayPreferences}
+              drawerOpen={drawerOpen}
+            />
+            {render(restProps)}
+            {process.env.NODE_ENV !== 'production' ? (
+              <ReactQueryDevtools initialIsOpen />
+            ) : null}
+          </div>
+        </I18nProvider>
       </IntlProvider>
     )
 

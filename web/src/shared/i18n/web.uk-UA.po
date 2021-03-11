@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-05T10:22:09.287Z\n"
+"POT-Creation-Date: 2021-03-09T13:35:31.945Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2434,6 +2434,13 @@ msgstr "Має номер"
 msgid "Has a special character (%!$*...)"
 msgstr "Має спеціальний символ (%! $ * ...)"
 
+#. [pages.Storybook.demoString]
+#. defaultMessage is:
+#. Hello Storybook!
+#: extracted_strings.json
+msgid "Hello Storybook!"
+msgstr "Привіт Storybook!"
+
 #. [filter.DiseaseSelectField.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
@@ -3366,7 +3373,7 @@ msgstr "Дані відсутні"
 #. No Power
 #: extracted_strings.json
 msgid "No Power"
-msgstr ""
+msgstr "Немає живлення"
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -3392,7 +3399,7 @@ msgstr "Результати не повідомляються"
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
-msgstr ""
+msgstr "Немає персоналу"
 
 #. [pages.SiteDetail.fieldNoContact]
 #. defaultMessage is:
@@ -3641,7 +3648,7 @@ msgstr "Оператор"
 #. Other
 #: extracted_strings.json
 msgid "Other"
-msgstr ""
+msgstr "Інший"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -6581,6 +6588,13 @@ msgstr "індикатор"
 msgid "min."
 msgstr "мін."
 
+#. [pages.Storybook.missingDefault]
+#. defaultMessage is:
+#. missing
+#: extracted_strings.json
+msgid "missing"
+msgstr ""
+
 #. [pages.DeviceDetailProfile.undefinedValue]
 #. defaultMessage is:
 #. n/a
@@ -6855,3 +6869,14 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# result} other {# results}})"
+
+#~ msgid "undefined"
+#~ msgstr "undefined"
+
+#~ msgid ""
+#~ "But you selected {locales, plural, one {# {locale}} other {# {locales}} }"
+#~ msgstr ""
+#~ "Але ви вибрали {locales, plural, one {# {регіон}} other {# {регіон}} }"
+
+#~ msgid "We have {locales, plural, one {# {locale}} other {# {locales}} }"
+#~ msgstr "У нас є  {locales, plural, one {# {мов}} other {# {мов}} }"
