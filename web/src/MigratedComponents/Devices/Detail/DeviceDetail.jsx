@@ -33,6 +33,7 @@ import {
   DEVICE_PERFORMANCE,
 } from '../../QueryFetch/Device/index'
 import {
+  updateSingleDevice,
   updateDeviceMaintenanceStatus,
   updateDeviceMaintenance,
 } from '../../../device/DeviceRedux'
@@ -82,20 +83,16 @@ export const DeviceDetail = ({ match }) => {
     return { device, devicePerformance }
   })
 
-  const [updateSingleDevice] = useMutation(data =>
-    fetchWrapperForQueries({
-      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-      method: 'PUT',
-      params: data,
-    })
-  )
-
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
     queryCache.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
   }, [deviceId])
 
-  //
+  const [updateDevice] = useMutation(
+    ({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)),
+    { onSuccess }
+  )
+
   const [onMaintenanceSubmit] = useMutation(
     values =>
       dispatch(
@@ -196,7 +193,7 @@ export const DeviceDetail = ({ match }) => {
                   device={Immutable.fromJS(device)}
                   devicePerformance={Immutable.fromJS(devicePerformance)}
                   disabled={!editable}
-                  updateSingleDevice={updateSingleDevice}
+                  updateSingleDevice={updateDevice}
                   onMaintenanceSubmit={onMaintenanceSubmit}
                   onCalibrationSubmit={onCalibrationSubmit}
                   onWarrantySubmit={onWarrantySubmit}
@@ -236,7 +233,7 @@ export const DeviceDetail = ({ match }) => {
                     {...props}
                     device={Immutable.fromJS(device)}
                     editable={editable}
-                    updateSingleDevice={updateSingleDevice}
+                    updateSingleDevice={updateDevice}
                   />
                 ) : (
                   <Redirect to={match.url} />
