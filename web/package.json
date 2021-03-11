@@ -216,6 +216,7 @@
     "jwt-decode": "^2.2.0",
     "keycode": "^2.2.0",
     "lodash": "^4.17.15",
+    "luxon": "^1.26.0",
     "piwik-react-router": "^0.12.1",
     "prop-types": "^15.7.2",
     "raven-js": "^3.27.2",
