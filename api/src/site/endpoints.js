@@ -225,30 +225,50 @@ const routes = [
       auth: { scope: ['reporter'] },
       validate: {
         query: {
-          ...filterQueryBase,
+          ...validateAllGeographyFilterParams(), // countryId, stateId, lgaId
+          ...validateDateRangeParams(), // minDate, maxDate
+          ...validateSortPageParams(
+            'stateName',
+            'lgaName',
+            'partnerId',
+            'siteId',
+            'siteName',
+            'siteShortName',
+            // sort by counting fields
+            'totalResults',
+            'delivered',
+            'requiresTreatment',
+            'onTreatment',
+            'notPossible',
+            'notOnTreatment',
+            'transferred'
+          ),
+          deviceName: Joi.string().allow('').description('Device name'),
           deviceType: Joi.string()
             .optional()
-            .description('Filter for device type externalId'),
+            .description('Filter by device type externalId'),
+          siteName: Joi.string().allow('').description('Filter by site name'),
+          siteIds: Joi.string().allow('').description('Filter by site ids'),
           siteId: Joi.number()
             .integer()
             .positive()
             .optional()
-            .description('Filter for site Id'),
+            .description('Filter by site Id'),
           partnerId: Joi.number()
             .integer()
             .positive()
             .optional()
-            .description('Filter for Partner Id'),
+            .description('Filter by Partner Id'),
           assayId: Joi.number()
             .integer()
             .positive()
             .optional()
-            .description('ID of the assay'),
+            .description('Filter by Assay Id'),
           diseaseId: Joi.number()
             .integer()
             .positive()
             .optional()
-            .description('The disease ID'),
+            .description('Filter by disease Id'),
         },
       },
       response: {

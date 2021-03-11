@@ -412,6 +412,23 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     assert.equal(site.totalResults, totalResults + 4)
     assert.equal(site.transferred, transferred + 1)
   }
+  // ------------------------------------------------------------------------
+  const assertSorting = async (sortCol, sortDir = 'asc') => {
+    const data = await getSiteReporters({
+      sortCol,
+      sortDir,
+      page: 0,
+      size: 10,
+    })
+
+    assert.isAtLeast(data.length, 1)
+
+    // get site for which we just inserted results
+    const site = data.find(({ siteId }) => siteId === initialState.siteId)
+    assertBaseProps(site)
+
+    assertAllCounts(site, initialCounts)
+  }
 
   // ------------------------------------------------------------------------
   it('should return data for Reporters Dashboard', async () => {
@@ -452,6 +469,24 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     assertBaseProps(site)
 
     assertAllCounts(site, initialCounts)
+  })
+
+  // ------------------------------------------------------------------------
+  it('should return data with different sorting columns', async () => {
+    await assertSorting('stateName')
+    await assertSorting('lgaName')
+    await assertSorting('partnerId')
+    await assertSorting('siteId')
+    await assertSorting('siteName')
+    await assertSorting('siteShortName')
+    // sort by counts fields
+    await assertSorting('totalResults')
+    await assertSorting('delivered')
+    await assertSorting('requiresTreatment')
+    await assertSorting('onTreatment')
+    await assertSorting('notPossible')
+    await assertSorting('notOnTreatment')
+    await assertSorting('transferred')
   })
 
   // ------------------------------------------------------------------------
