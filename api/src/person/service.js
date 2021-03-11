@@ -415,12 +415,20 @@ async function listRefreshTokens(request) {
 
   const tokenQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
-    .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
+    .leftJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
-  const getCount = tokenQuery.clone().count('r.clientId as count').first()
+  const getCount = knex
+    .from(
+      tokenQuery
+        .clone()
+        .select(knex.raw("CONCAT(p.name, ':', r.clientName) as id"))
+        .as('reporterIds')
+    )
+    .countDistinct('id as count')
+    .first()
 
   const getItems = tokenQuery
     .clone()
@@ -482,9 +490,9 @@ async function listRefreshTokens(request) {
         .on('rca.resultCategoryId', 'rt.resultCategory1')
         .andOn('rca.assayId', 'rt.assayId')
     })
-    .groupBy('r.clientId', 'p.name', 'r.clientName')
+    .groupBy('p.name', 'r.clientName')
     .select(
-      'r.clientId as id',
+      knex.raw("CONCAT(p.name, ':', r.clientName) as id"),
       'p.name as user',
       'r.clientName as deviceName',
       'r.createdOn',
@@ -506,6 +514,7 @@ async function listRefreshTokens(request) {
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
       )
     )
+    .distinct()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }
