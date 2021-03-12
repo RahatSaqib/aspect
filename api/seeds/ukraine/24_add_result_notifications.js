@@ -1,13 +1,12 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const {
+  getPartnerByName,
   seedIssueEventTriggersForPartner,
   seedIssueEscalationTriggersForPartner,
 } = require('../utils')
 
 const { addIssueTypes } = require('../relativeObjectsSeeds')
-
-const { getPartnerByName } = require('../utils')
 
 const { partnerName, adminUserName } = require('./fixtures/partnerData')
 
