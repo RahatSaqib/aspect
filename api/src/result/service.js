@@ -958,7 +958,10 @@ async function listTreatmentStatusTypes() {
   const getCount = resultQuery.clone().count('rsl.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'i18nKey', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -1459,7 +1462,10 @@ async function listWorkflowStatusTypes() {
   const getCount = resultQuery.clone().count('rs.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name', 'i18nKey')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -2289,9 +2295,15 @@ async function clinicalIndicatorAggregations(request) {
 async function processGroupedQuery(resultQuery, groupBy) {
   // handle possible groups:
   const paramToDb = {
-    resultCategory1: 'rc1.externalId as resultCategory1',
-    resultCategory2: 'rc2.externalId as resultCategory2',
-    assay: 'a.externalId as assay',
+    resultCategory1: [
+      'rc1.externalId as resultCategory1',
+      'rc1.i18nKey as resultCategory1I18nKey ',
+    ],
+    resultCategory2: [
+      'rc2.externalId as resultCategory2',
+      'rc2.i18nKey as resultCategory2I18nKey ',
+    ],
+    assay: ['a.externalId as assay', 'a.i18nKey as assayI18nKey'],
 
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),
@@ -2303,7 +2315,7 @@ async function processGroupedQuery(resultQuery, groupBy) {
     ),
     age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
-    followUp: `fu.externalId as followUp`,
+    followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
   }
 
   const reservedWords = ['day', 'month', 'week', 'year']

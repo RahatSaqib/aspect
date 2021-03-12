@@ -16,6 +16,7 @@ const deviceStatusGraphs = {
     componentSize: 'full',
     group: 'assaysNotNeeded',
     assays: [],
+
     selectorModifiers: [
       {
         selectedValue: 'Date Range',
@@ -37,6 +38,20 @@ const deviceStatusGraphs = {
         type: 'stackedDeviceActivity',
         size: 12,
         componentClasses: ['BARCLASS'],
+        i18nKey: {
+          devicesActive: 'devicesActive',
+          devicesInactive: 'devicesInactive',
+          inactiveUnknown: 'inactiveUnknown',
+          inactiveNoResultsReported: 'inactiveNoResultsReported',
+          inactiveOutOfInventory: 'inactiveOutOfInventory',
+          inactiveDownForRepair: 'inactiveDownForRepair',
+          inactiveConnectivity: 'inactiveConnectivity',
+          inactiveDecommissioned: 'inactiveDecommissioned',
+          weekendOrHoliday: 'weekendOrHoliday',
+          inactiveNoStaff: 'inactiveNoStaff',
+          inactiveNoPower: 'inactiveNoPower',
+          inactiveOther: 'inactiveOther',
+        },
         api: {
           method: 'GET',
           endpoint: '/dashboard/operational-data/activity-over-time',
@@ -47,16 +62,6 @@ const deviceStatusGraphs = {
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
-        legendsToRename: [
-          {
-            externalId: 'devicesActive',
-            name: 'Active',
-          },
-          {
-            externalId: 'inactiveUnknown',
-            name: 'Unknown ',
-          },
-        ],
         legendsToPopover: [
           {
             externalId: 'inactiveUnknown',

@@ -40,6 +40,7 @@ const covidGraphs = {
           },
         },
         indexBy: 'month',
+        i18nKey: 'resultCategory1I18nKey',
         keyToConsume: 'resultCategory1',
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
@@ -67,6 +68,7 @@ const covidGraphs = {
             [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
+        i18nKey: 'resultCategory1I18nKey',
         indexBy: 'cnt',
         keyToConsume: 'resultCategory1',
         displayMethod: 'percentage',
@@ -192,6 +194,7 @@ const covidGraphs = {
             [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
           },
         },
+        i18nKey: 'resultCategory1I18nKey',
         indexBy: 'day',
         keyToConsume: 'resultCategory1',
         filterBy: {

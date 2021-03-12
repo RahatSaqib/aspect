@@ -2,6 +2,7 @@ import isDate from 'lodash/isDate'
 import isNumber from 'lodash/isNumber'
 import isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
+import isEmpty from 'lodash/isEmpty'
 import isString from 'lodash/isString'
 import startOfDay from 'date-fns/startOfDay'
 import format from 'date-fns/format'
@@ -15,13 +16,18 @@ import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 
 export function getDateObject(date, defaultValue) {
-  if (isString(date) || isNumber(date)) {
-    return new Date(date)
+  let formatedDate = defaultValue || null
+  try {
+    if (!isEmpty(date) && (isString(date) || isNumber(date))) {
+      formatedDate = new Date(date)
+    }
+    if (isDate(date)) {
+      formatedDate = date
+    }
+  } catch (e) {
+    return null
   }
-  if (isDate(date)) {
-    return date
-  }
-  return defaultValue
+  return formatedDate
 }
 
 export const getDateString = date => {

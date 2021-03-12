@@ -6,12 +6,13 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
-
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
+import messages from './i18n/generalMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
@@ -21,6 +22,7 @@ export class ResultCategorySelectField extends PureComponent {
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {
@@ -38,7 +40,7 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, assayItems, assayId, value } = this.props
+    const { allItemText, assayItems, assayId, value, intl } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchAssays',
@@ -57,7 +59,12 @@ export class ResultCategorySelectField extends PureComponent {
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {resultCategories.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {formatI18nMessage(
+              messages,
+              intl.formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

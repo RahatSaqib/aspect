@@ -49,6 +49,10 @@ const treatmentStatusGraphs = {
         },
         indexBy: 'monthTested',
         keyToConsume: 'pcConfirmed',
+        i18nKey: {
+          Confirmed: 'Confirmed',
+          NotConfirmed: 'NotConfirmed',
+        },
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage', // todo: actual
@@ -66,6 +70,10 @@ const treatmentStatusGraphs = {
         type: 'pieLegacyTreatment',
         size: 4,
         componentClasses: ['piegraph__container'],
+        i18nKey: {
+          Confirmed: 'Confirmed',
+          NotConfirmed: 'NotConfirmed',
+        },
         api: {
           method: 'POST',
           endpoint: '/result/confirmed-treatment-tracking',

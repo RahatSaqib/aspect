@@ -263,6 +263,7 @@ export const ResultListWithProps = ({
                   result={result}
                   onClick={onRowClick(history)}
                   data-result-id={result.get('id')}
+                  messages={messages}
                 />
               ))}
           </TableBody>

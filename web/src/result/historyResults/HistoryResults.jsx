@@ -1,7 +1,6 @@
 import map from 'lodash/map'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { defineMessages } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import Card from '@material-ui/core/Card'
 import { MdFileDownload } from 'react-icons/md'
@@ -9,7 +8,7 @@ import TableBody from '@material-ui/core/TableBody'
 import Table from '@material-ui/core/Table'
 import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
-
+import messages from '../list/messages'
 import DataTableHead from '../../components/shared/tableHead'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
@@ -21,16 +20,6 @@ import {
 
 const cssClasses = classnames.bind(require('./HistoryResults.css'))
 const styles = require('../../components/shared/DataTableRow.css')
-
-const messages = defineMessages({
-  paginatorStatus: {
-    id: 'component.historyResults.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# result}
-      other {# results}
-    }`,
-  },
-})
 
 export const Results = ({
   intl,

@@ -1,14 +1,16 @@
 import React from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
 
+import { useIntl } from 'react-intl'
 import SelectField from '../../components/shared/SelectField'
 import stockLeftOptions from './stockLeftOptions'
+import messages from './messages'
 
 export default ({ allItemText, onChange, value, ...restProps }) => {
   const handleSelectFieldChange = ({ target: { value } }) => {
     onChange(value === 'all' ? undefined : value)
   }
-
+  const { formatMessage } = useIntl()
   return (
     <SelectField
       {...restProps}
@@ -18,7 +20,7 @@ export default ({ allItemText, onChange, value, ...restProps }) => {
       {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
       {stockLeftOptions.map(({ externalId, name }) => (
         <MenuItem key={externalId} value={externalId}>
-          {name}
+          {messages[externalId] ? formatMessage(messages[externalId]) : name}
         </MenuItem>
       ))}
     </SelectField>

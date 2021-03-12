@@ -6,11 +6,11 @@ import keys from 'lodash/keys'
 import last from 'lodash/last'
 import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
+import get from 'lodash/get'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import nth from 'lodash/nth'
-import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
 import split from 'lodash/split'
@@ -213,7 +213,6 @@ const generateTickValues = (
     default:
       break
   }
-
   return values
 }
 
@@ -245,27 +244,31 @@ const generateToolTip = (
   formatNumber,
   type,
   formatMessage,
-  intlMessages
+  intlMessages,
+  i18nKeys = {}
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
   let displayId = translateLabel(
     id,
     assaysFromState,
-    false,
     formatMessage,
-    intlMessages
+    intlMessages,
+    i18nKeys
   )
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
     const displayCount = Math.round(devicesTotal * valuePercentage)
-    const displayTitle = `device${displayCount === 1 ? '' : 's'}`
+    const displayTitle = formatMessage(
+      intlMessages[`device${displayCount === 1 ? '' : 's'}`]
+    )
+
     displayValue = `${displayCount} ${displayTitle}`
   } else if (type === 'solid') {
     displayValue = value
   } else if (type === 'barInventory') {
-    displayId = 'Locations'
+    displayId = formatMessage(intlMessages.location)
     displayValue = value
   } else if (type === 'bar' || type === 'barLegacyTreatment') {
     let totalOut = 0
@@ -301,11 +304,11 @@ const removeStringsFromArray = string => {
 const translateLabel = (
   string,
   assaysFromState,
-  legendsToRename,
   formatMessage,
-  intlMessages
+  intlMessages,
+  i18nKeys
 ) => {
-  const dictionary = legendsToRename ? [...legendsToRename] : []
+  const dictionary = []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
@@ -317,32 +320,33 @@ const translateLabel = (
           )
       )
   )
+
   const assayResults = uniqBy(dictionary, 'externalId')
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
-
-  return formatMessage && intlMessages[string]
-    ? formatMessage(intlMessages[string]) || get(nth(newString, 0), 'name')
+  return formatMessage && intlMessages[i18nKeys[string]]
+    ? formatMessage(intlMessages[i18nKeys[string]]) ||
+        get(nth(newString, 0), 'name')
     : makeProperCase(removeStringsFromArray(string))
 }
 const generateLegendIntl = (
   formatMessage,
   intlMessages,
+  i18nKeys,
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = false,
-  legendsToRename = false
+  legendsNotToRender = false
 ) => {
   if (!legendsNotToRender.includes(string)) {
     return {
       label: translateLabel(
         string,
         assaysFromState,
-        legendsToRename,
         formatMessage,
-        intlMessages
+        intlMessages,
+        i18nKeys
       ),
       color: generateColorForLegend(string, type),
     }
@@ -357,9 +361,11 @@ const formatDataByGraphType = (
   formatDate,
   indexBy,
   keyToConsume,
-  keysToRename,
+  i18nKeys,
   type,
-  mergedParams
+  mergedParams,
+  formatMessage,
+  messages
 ) => {
   let grouped
   switch (type) {
@@ -402,7 +408,12 @@ const formatDataByGraphType = (
       break
 
     case 'barInventory':
-      grouped = groupForInvetoryStatusAPI(data, keysToRename)
+      grouped = groupForInvetoryStatusAPI(
+        data,
+        i18nKeys,
+        formatMessage,
+        messages
+      )
       break
 
     case 'pieLegacyTreatment':

@@ -633,7 +633,6 @@ export const FiltersPanel = ({
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectDisease)}
                 floatingLabelText={intl.formatMessage(messages.disease)}
-                intl={intl}
                 style={{ verticalAlign: 'bottom' }}
               />
             </div>
@@ -669,6 +668,7 @@ export const FiltersPanel = ({
                   hintText={intl.formatMessage(messages.selectResult)}
                   floatingLabelText={intl.formatMessage(messages.result)}
                   style={{ verticalAlign: 'bottom' }}
+                  intl={intl}
                 />
               </div>
             )}
@@ -687,6 +687,7 @@ export const FiltersPanel = ({
                   hintText={intl.formatMessage(messages.selectResult)}
                   floatingLabelText={intl.formatMessage(messages.result)}
                   style={{ verticalAlign: 'bottom' }}
+                  intl={intl}
                 />
               </div>
             )}
@@ -863,6 +864,7 @@ export const FiltersPanel = ({
                 hintText={intl.formatMessage(messages.selectWorkflowStatus)}
                 floatingLabelText={intl.formatMessage(messages.workflowStatus)}
                 style={{ verticalAlign: 'bottom' }}
+                intl={intl}
                 autoWidth
               />
             </div>
@@ -893,6 +895,7 @@ export const FiltersPanel = ({
                 floatingLabelText={intl.formatMessage(messages.deviceType)}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
+                intl={intl}
               />
             </div>
           )}

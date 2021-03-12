@@ -120,7 +120,9 @@ describe('Result Follow-Up Aggregations for reports', () => {
           'st.name as stateName',
           's.name as siteName',
           'rc1.externalId as resultCategory1',
+          'rc1.i18nKey as resultCategory1I18nKey',
           'rc2.externalId as resultCategory2',
+          'rc2.i18nKey as resultCategory2I18nKey',
           'a.name as assayName',
           ...fields,
         ])
@@ -140,6 +142,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .groupBy('treatmentFollowUp')
           .map((value, key) => ({
             followUp: getValue(key),
+            followUpI18nKey: getValue(key),
             cnt: value.length,
           }))
           .orderBy('followUp')
@@ -213,6 +216,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
             return {
               month: getValue(groups[0]),
               followUp: getValue(groups[1]),
+              followUpI18nKey: getValue(groups[1]),
               state: getValue(groups[2]),
               cnt: value.length,
             }
@@ -250,6 +254,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
             return {
               day: getValue(groups[0]),
               followUp: getValue(groups[1]),
+              followUpI18nKey: getValue(groups[1]),
               cnt: value.length,
             }
           })
@@ -281,7 +286,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .map(o => ({
             joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
               o.treatmentFollowUp
-            }_${o.resultCategory1}`,
+            }_${o.resultCategory1}_${o.resultCategory1I18nKey}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
@@ -289,7 +294,9 @@ describe('Result Follow-Up Aggregations for reports', () => {
             return {
               month: getValue(groups[0]),
               followUp: getValue(groups[1]),
+              followUpI18nKey: getValue(groups[1]),
               resultCategory1: getValue(groups[2]),
+              resultCategory1I18nKey: getValue(groups[3]),
               cnt: value.length,
             }
           })

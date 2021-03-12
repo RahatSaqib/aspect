@@ -32,6 +32,16 @@ const inventoryGraphs = {
         component: BarGraph,
         type: 'barInventory',
         size: 12,
+        i18nKey: {
+          moreThan180: 'moreThan180',
+          noConsumption: 'noConsumption',
+          notRecorded: 'notRecorded',
+          outOfStock: 'outOfStock',
+          upTo14: 'upTo14',
+          upTo30: 'upTo30',
+          upTo90: 'upTo90',
+          upTo180: 'upTo180',
+        },
         componentClasses: ['BARCLASS'],
         api: {
           endpoint: '/inventory/days-by-location',
@@ -41,40 +51,6 @@ const inventoryGraphs = {
         },
         indexBy: 'increment',
         keyToConsume: 'count',
-        keysToRename: [
-          {
-            externalId: 'outOfStock',
-            name: 'Out of Stock',
-          },
-          {
-            externalId: 'upTo14',
-            name: '1-14 Days ',
-          },
-          {
-            externalId: 'upTo30',
-            name: '15-30 Days',
-          },
-          {
-            externalId: 'upTo90',
-            name: '1-3 Months',
-          },
-          {
-            externalId: 'upTo180',
-            name: '4-6 Months',
-          },
-          {
-            externalId: 'moreThan180',
-            name: '>6 Months',
-          },
-          {
-            externalId: 'notRecorded',
-            name: 'Not Recorded',
-          },
-          {
-            externalId: 'noConsumption',
-            name: 'No Consumption',
-          },
-        ],
         filterBy: {},
         tickValuesYShape: 'twos',
         tickValuesXShape: 'all',

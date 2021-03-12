@@ -11,12 +11,13 @@ import {
 } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
+import { useIntl } from 'react-intl'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
-
+import messages from './i18n/resultTreatmentStatusMessages'
 import { fetchTreatmentStatuses } from '../../resultTreatmentStatus/ResultTreatmentStatusRedux'
+import { formatI18nMessage } from '../../shared/i18n/formatter'
 
 const enhance = compose(
   pure,
@@ -46,15 +47,18 @@ const enhance = compose(
       props.onTreatmentStatusChange(value === 'all' ? undefined : value)
     },
   }),
-  mapProps(props => ({
-    ...props,
-    treatmentSelectList: props.resultTreatmentStatusList.items
-      .map(item => ({
-        value: item.get('id'),
-        text: item.get('name'),
-      }))
-      .toJS(),
-  }))
+  mapProps(props => {
+    return {
+      ...props,
+      treatmentSelectList: props.resultTreatmentStatusList.items
+        .map(item => ({
+          value: item.get('id'),
+          text: item.get('name'),
+          i18nKey: item.get('i18nKey'),
+        }))
+        .toJS(),
+    }
+  })
 )
 
 export function TreatmentSelectField({
@@ -62,12 +66,13 @@ export function TreatmentSelectField({
   allItemText,
   ...restProps
 }) {
+  const { formatMessage } = useIntl()
   return (
     <SelectField {...restProps} value={restProps.value}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {treatmentSelectList.map(s => (
         <MenuItem key={s.value} value={s.value}>
-          {s.text}
+          {formatI18nMessage(messages, formatMessage, s.i18nKey, s.name)}
         </MenuItem>
       ))}
     </SelectField>
