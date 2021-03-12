@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const { map } = require('lodash')
+const { map, isEmpty } = require('lodash')
 const { issueTypeToId } = require('../../src/shared/dictionary')
 const logger = require('../../src/shared/logger')
 
@@ -140,9 +140,13 @@ const dropBadTriggeredIssues = async (knex, moduleReplacedIssue) => {
     .clone()
     .pluck('issueId')
   // Removes those issues triggered badly because the module serial was different but there the result wasn't on the same module bay or because the modulename is null
-  await knex('Issue as i')
-    .where('issueTypeid', moduleReplacedIssue)
-    .whereNotIn('i.id', rightIssues)
+  await knex('Issue')
+    .where('issueTypeId', moduleReplacedIssue)
+    .where(builder => {
+      if (!isEmpty(rightIssues)) {
+        builder.whereNotIn('id', rightIssues)
+      }
+    })
     .delete()
 }
 
