@@ -835,22 +835,18 @@ async function seedIssueEscalationTriggersForPartner(
           issueTypeId: issueTypes[issueType].id,
           escalateToLevel,
         }
-        const existingTrigger = await knex('IssueEscalationTrigger')
-          .where(triggerData)
-          .first('id')
-        if (existingTrigger == null) {
-          await upsertSingle(
-            knex,
-            'IssueEscalationTrigger',
-            uniqueKeys.IssueEscalationTrigger,
-            {
-              ...triggerData,
-              escalationConditions: JSON.stringify(escalationConditions),
-              createdOn: now,
-              updatedOn: now,
-            }
-          )
-        }
+
+        await upsertSingle(
+          knex,
+          'IssueEscalationTrigger',
+          uniqueKeys.IssueEscalationTrigger,
+          {
+            ...triggerData,
+            escalationConditions: JSON.stringify(escalationConditions),
+            createdOn: now,
+            updatedOn: now,
+          }
+        )
       }
     }
   )
