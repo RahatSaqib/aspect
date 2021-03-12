@@ -112,9 +112,9 @@ const buildDateRange = term => {
   return dateRange
 }
 
-const translate = (formatMessage, i18nKey, messages, defaultValue) => {
+const translate = (i18nKey, defaultValue, { formatMessage, messages }) => {
   try {
-    return i18nKey ? formatMessage(messages[i18nKey]) : defaultValue
+    return messages[i18nKey] ? formatMessage(messages[i18nKey]) : defaultValue
   } catch (e) {
     return defaultValue
   }

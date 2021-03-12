@@ -45,9 +45,10 @@ const AspectWidget = ({
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage } = useIntl()
+  const translator = { formatMessage, messages }
   const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
-  const titleText = translate(intlFormatMessage, titleI18nKey, messages, title)
+  const titleText = translate(titleI18nKey, title, translator)
   return (
     <AspectLink
       to={linkParam}
@@ -67,23 +68,13 @@ const AspectWidget = ({
               {titleText}
             </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
-              {translate(
-                intlFormatMessage,
-                subTitleI18nKey,
-                messages,
-                subTitle
-              )}
+              {translate(subTitleI18nKey, subTitle, translator)}
             </span>
           </span>
           {description ? (
             <AspectTooltip
               showHelpIcon
-              title={translate(
-                intlFormatMessage,
-                descriptionI18nKey,
-                messages,
-                description
-              )}
+              title={translate(descriptionI18nKey, description, translator)}
             />
           ) : null}
         </div>
@@ -98,7 +89,7 @@ const AspectWidget = ({
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
                 {statUnitI18nKey !== null &&
-                  intlFormatMessage(messages[statUnitI18nKey], { unit })}
+                  formatMessage(messages[statUnitI18nKey], { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
                 {statStatus}
