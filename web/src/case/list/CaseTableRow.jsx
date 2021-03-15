@@ -7,7 +7,7 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatI18nMessage } from '../../shared/i18n/formatter'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')

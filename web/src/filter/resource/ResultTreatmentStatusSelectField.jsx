@@ -17,7 +17,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import messages from './i18n/resultTreatmentStatusMessages'
 import { fetchTreatmentStatuses } from '../../resultTreatmentStatus/ResultTreatmentStatusRedux'
-import { formatI18nMessage } from '../../shared/i18n/formatter'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const enhance = compose(
   pure,

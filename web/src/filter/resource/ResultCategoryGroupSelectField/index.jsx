@@ -9,7 +9,7 @@ import SelectField from '../../../components/shared/SelectField'
 import fetchWrapperForQueries from '../../../MigratedComponents/QueryFetch'
 import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../MigratedComponents/QueryFetch/ResultCategoryGroup'
 import { types } from './ResultCategoryGroupSelectFieldRedux'
-import { formatI18nMessage } from '../../../shared/i18n/formatter'
+import formatI18nMessage from '../../../shared/i18n/formatterWeb'
 
 const cssClasses = classnames.bind(require('../../popover/FiltersPanel.css'))
 

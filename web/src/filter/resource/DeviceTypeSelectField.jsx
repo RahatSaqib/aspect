@@ -11,7 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceTypesForSelectList as fetchDeviceTypes } from '../../deviceType/DeviceTypeRedux'
-import { formatI18nMessage } from '../../shared/i18n/formatter'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const messages = defineMessages({})
 export class DeviceTypeSelectField extends PureComponent {
