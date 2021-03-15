@@ -49,8 +49,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayId',
     defaultMessage: 'Assay',
   },
-  patiendId: {
-    id: 'pages.ResultList.patiendId',
+  patientId: {
+    id: 'pages.ResultList.patientId',
     defaultMessage: 'Patient ID',
   },
   resultCategoryCopiesMl: {

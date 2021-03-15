@@ -1,60 +1,18 @@
 import React from 'react'
 import { func, object, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import AspectLink from '../AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
-import { buildWidgetToLinkParams } from './Helpers'
+import { buildWidgetToLinkParams, translate } from './Helpers'
 import WidgetAlert from './Alerts'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
-
-const messages = defineMessages({
-  forMtbPositive: {
-    id: 'component.Widget.forMtbPositive',
-    defaultMessage: 'for {unit} MTB+',
-  },
-  forResults: {
-    id: 'component.Widget.forResults',
-    defaultMessage: 'for {unit} Results',
-  },
-  ofCurrentlyReported: {
-    id: 'component.Widget.ofCurrentlyReported',
-    defaultMessage: 'of {unit} currently reported',
-  },
-  lastMonth: {
-    id: 'component.Widget.lastMonth',
-    defaultMessage: '{unit} last month',
-  },
-  ofTotalModules: {
-    id: 'component.Widget.ofTotalModules',
-    defaultMessage: 'of {unit} total modules',
-  },
-  sinceLastWeek: {
-    id: 'component.Widget.sinceLastWeek',
-    defaultMessage: '{unit} since last week',
-  },
-  ytd: {
-    id: 'component.Widget.ytd',
-    defaultMessage: '{unit} YTD',
-  },
-  last30Days: {
-    id: 'component.Widget.last30Days',
-    defaultMessage: 'Last 30 Days',
-  },
-  ofAllDevices: {
-    id: 'component.Widget.ofAllDevices',
-    defaultMessage: '{unit} of all devices',
-  },
-  totalCalibrations: {
-    id: 'component.Widget.totalCalibrations',
-    defaultMessage: '{unit} total calibrations',
-  },
-})
 
 const EmptyWidget = () => (
   <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
@@ -73,9 +31,11 @@ const AspectWidget = ({
     linkParams,
     icon,
     description,
+    descriptionI18nKey,
     count,
     extra,
     title,
+    titleI18nKey,
     unit,
     subTitle,
     subTitleI18nKey,
@@ -85,8 +45,10 @@ const AspectWidget = ({
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage } = useIntl()
+  const translator = { formatMessage, messages }
   const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
+  const titleText = translate(titleI18nKey, title, translator)
   return (
     <AspectLink
       to={linkParam}
@@ -100,19 +62,20 @@ const AspectWidget = ({
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
             <AspectTooltip
-              title={title}
+              title={titleText}
               toolTipContainerClass="inline__tooltip"
             >
-              {title}
+              {titleText}
             </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
-              {subTitleI18nKey
-                ? intlFormatMessage(messages[subTitleI18nKey])
-                : subTitle}
+              {translate(subTitleI18nKey, subTitle, translator)}
             </span>
           </span>
           {description ? (
-            <AspectTooltip showHelpIcon title={description} />
+            <AspectTooltip
+              showHelpIcon
+              title={translate(descriptionI18nKey, description, translator)}
+            />
           ) : null}
         </div>
         <div className={cssClasses('Summary__Card__Content')}>
@@ -126,7 +89,7 @@ const AspectWidget = ({
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
                 {statUnitI18nKey !== null &&
-                  intlFormatMessage(messages[statUnitI18nKey], { unit })}
+                  formatMessage(messages[statUnitI18nKey], { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
                 {statStatus}
