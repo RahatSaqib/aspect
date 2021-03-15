@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-15T09:04:07.008Z\n"
+"POT-Creation-Date: 2021-03-15T16:38:28.780Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -60,111 +60,111 @@ msgstr ""
 "...контакты, множественное число, один {# больше {name}} другой {# больше "
 "{name}s} }"
 
-#. [legends.Unknown.upTo14]
+#. [filter.btnGroup.stockLeft.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
-#. [filter.btnGroup.stockLeft.upTo14]
+#. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
 #: extracted_strings.json
 msgid "1-14 Days"
 msgstr "1-14 дней"
 
-#. [legends.Unknown.upTo90]
+#. [filter.btnGroup.stockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
-#. [filter.btnGroup.stockLeft.upTo90]
+#. [legends.Unknown.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
 msgid "1-3 Months"
-msgstr "Месяц"
+msgstr "1-3 Месяца"
 
-#. [legends.Unknown.upTo30]
+#. [filter.btnGroup.stockLeft.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#. [filter.btnGroup.stockLeft.upTo30]
+#. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
 #: extracted_strings.json
 msgid "15-30 Days"
-msgstr "Последние 30 дней"
+msgstr "15-30 дней"
 
-#. [legends.Unknown.upTo180]
+#. [filter.btnGroup.stockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
-#. [filter.btnGroup.stockLeft.upTo180]
+#. [legends.Unknown.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
 msgid "4-6 Months"
-msgstr "Месяц"
+msgstr "4-6 Месяцев"
 
 #. [pages.deviceDetail.resultCategoryLessThan1000]
 #. defaultMessage is:
 #. < 1000
 #: extracted_strings.json
 msgid "< 1000"
-msgstr "< 1000"
+msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan150]
 #. defaultMessage is:
 #. < 150
 #: extracted_strings.json
 msgid "< 150"
-msgstr "< 150"
+msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan40]
 #. defaultMessage is:
 #. < 40
 #: extracted_strings.json
 msgid "< 40"
-msgstr "< 40"
+msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan550]
 #. defaultMessage is:
 #. < 550
 #: extracted_strings.json
 msgid "< 550"
-msgstr "< 550"
+msgstr ""
 
-#. [legends.Unknown.moreThan180]
+#. [filter.btnGroup.stockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
-#. [filter.btnGroup.stockLeft.moreThan180]
+#. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
 msgid ">6 Months"
-msgstr "Месяц"
+msgstr ">6 Месяцев"
 
 #. [pages.deviceDetail.resultCategoryMoreThan1000]
 #. defaultMessage is:
 #. >= 1000
 #: extracted_strings.json
 msgid ">= 1000"
-msgstr ">= 1000"
+msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan150]
 #. defaultMessage is:
 #. >= 150
 #: extracted_strings.json
 msgid ">= 150"
-msgstr ">= 150"
+msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan40]
 #. defaultMessage is:
 #. >= 40
 #: extracted_strings.json
 msgid ">= 40"
-msgstr ">= 40"
+msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan550]
 #. defaultMessage is:
 #. >= 550
 #: extracted_strings.json
 msgid ">= 550"
-msgstr ">= 550"
+msgstr ""
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -173,10 +173,10 @@ msgstr ">= 550"
 msgid "A username is required"
 msgstr "Требуется имя пользователя"
 
-#. [legends.Unknown.assayAbbottM2000DBSHivVL]
+#. [filter.AssaySelectField.AssayAbbottM2000DBSHivVl]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
-#. [filter.AssaySelectField.AssayAbbottM2000DBSHivVl]
+#. [legends.Unknown.assayAbbottM2000DBSHivVL]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
 #: extracted_strings.json
@@ -188,32 +188,32 @@ msgstr "Abbott m2000 DBS ВИЧ VL"
 #. Abbott m2000 Daan N COVID-19
 #: extracted_strings.json
 msgid "Abbott m2000 Daan N COVID-19"
-msgstr "Abbott m2000 DBS ВИЧ VL"
+msgstr "Abbott m2000 Daan N COVID-19"
 
-#. [legends.Unknown.assayAbbottM2000HIVEID]
+#. [filter.AssaySelectField.AssayAbbottM2000HivEid]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
-#. [filter.AssaySelectField.AssayAbbottM2000HivEid]
+#. [legends.Unknown.assayAbbottM2000HIVEID]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
 #: extracted_strings.json
 msgid "Abbott m2000 HIV EID"
 msgstr "Abbott m2000 ВИЧ EID"
 
-#. [legends.Unknown.assayAbbottM2000PlasmaHbvVL]
+#. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
-#. [filter.AssaySelectField.abbottM2000PlasmaHbvVL]
+#. [legends.Unknown.assayAbbottM2000PlasmaHbvVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HBV VL
 #: extracted_strings.json
 msgid "Abbott m2000 Plasma HBV VL"
 msgstr "Abbott m2000 Плазма HBV VL"
 
-#. [legends.Unknown.assayAbbottM2000PlasmaHivVL]
+#. [filter.AssaySelectField.abbottM2000PlasmaHivVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HIV VL
-#. [filter.AssaySelectField.abbottM2000PlasmaHivVL]
+#. [legends.Unknown.assayAbbottM2000PlasmaHivVL]
 #. defaultMessage is:
 #. Abbott m2000 Plasma HIV VL
 #: extracted_strings.json
@@ -270,7 +270,7 @@ msgstr "Детали учетной записи"
 #. Acknowledged
 #: extracted_strings.json
 msgid "Acknowledged"
-msgstr "Принято"
+msgstr "Подтвержденный"
 
 #. [errorResponseMessages.acknowledgeIssue..default.title]
 #. defaultMessage is:
@@ -279,9 +279,6 @@ msgstr "Принято"
 msgid "Acknowledging Issue Failed"
 msgstr "Признание проблемы не удалось"
 
-#. [legends.Unknown.devicesActive]
-#. defaultMessage is:
-#. Active
 #. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
@@ -292,6 +289,12 @@ msgstr "Признание проблемы не удалось"
 #. defaultMessage is:
 #. Active
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.active]
+#. defaultMessage is:
+#. Active
+#. [component.Widget.activeDevicesTitle]
+#. defaultMessage is:
+#. Active
+#. [legends.Unknown.devicesActive]
 #. defaultMessage is:
 #. Active
 #. [pages.TaskList.issueStatusActive]
@@ -308,7 +311,14 @@ msgstr "Признание проблемы не удалось"
 #. Active
 #: extracted_strings.json
 msgid "Active"
-msgstr "Активный"
+msgstr "Активно"
+
+#. [component.Widget.dashboardWidgetTitleTotalActiveCases]
+#. defaultMessage is:
+#. Active cases
+#: extracted_strings.json
+msgid "Active cases"
+msgstr "Активные случаи"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -390,20 +400,20 @@ msgstr ""
 msgid "Age and Gender"
 msgstr "Возраст и пол"
 
-#. [legends.Unknown.assayAlereQHiv12Detect]
+#. [filter.AssaySelectField.assayAlereQHiv12Detect]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 Detect
-#. [filter.AssaySelectField.assayAlereQHiv12Detect]
+#. [legends.Unknown.assayAlereQHiv12Detect]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 Detect
 #: extracted_strings.json
 msgid "Alere Q HIV-1/2 Detect"
 msgstr "Alere Q HIV-1/2 Обнаружение"
 
-#. [legends.Unknown.assayAlereQHiv12VLPlasma]
+#. [filter.AssaySelectField.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL plasma
-#. [filter.AssaySelectField.assayAlereQHiv12VLPlasma]
+#. [legends.Unknown.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL plasma
 #: extracted_strings.json
@@ -630,13 +640,13 @@ msgstr "Площадь"
 msgid "Aspect has Encountered a Problem."
 msgstr "Аспект столкнулся с проблемой."
 
+#. [filter.popover.assay]
+#. defaultMessage is:
+#. Assay
 #. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
 #. [forms.formSectionHeader.assay]
-#. defaultMessage is:
-#. Assay
-#. [filter.popover.assay]
 #. defaultMessage is:
 #. Assay
 #. [pages.JobAssignments.assay]
@@ -731,7 +741,24 @@ msgstr "Автоматический выход"
 msgid "Average Confirmed Response"
 msgstr "Среднее количество подтвержденных ответов"
 
+#. [component.Widget.instrumentsReplaced]
+#. defaultMessage is:
+#. Average Days for Instrument Replacement
+#: extracted_strings.json
+msgid "Average Days for Instrument Replacement"
+msgstr "Средний срок замены инструмента"
+
+#. [component.Widget.avgTimeToUploadTitle]
+#. defaultMessage is:
+#. Average Delay to Upload
+#: extracted_strings.json
+msgid "Average Delay to Upload"
+msgstr "Среднее время загрузки"
+
 #. [pages.OperationalData.averageDurationServiceInterruptionTitle]
+#. defaultMessage is:
+#. Average Duration of Service Interruption
+#. [component.Widget.averageDurationServiceInterruptionTitle]
 #. defaultMessage is:
 #. Average Duration of Service Interruption
 #: extracted_strings.json
@@ -766,6 +793,34 @@ msgstr "Среднемесячная скорость подавления"
 msgid "Average Monthly Tests Performed"
 msgstr "Среднемесячные выполненные тесты"
 
+#. [component.Widget.averageRecipientsOfSms]
+#. defaultMessage is:
+#. Average SMS recipients per positive result
+#: extracted_strings.json
+msgid "Average SMS recipients per positive result"
+msgstr "Число получателей SMS на положительный тест"
+
+#. [component.Widget.averageDaysModuleSwap]
+#. defaultMessage is:
+#. Average days between module swaps
+#: extracted_strings.json
+msgid "Average days between module swaps"
+msgstr "В среднем дней между заменами модулей"
+
+#. [component.Widget.averageRecipientsOfEmail]
+#. defaultMessage is:
+#. Average email recipients per positive result
+#: extracted_strings.json
+msgid "Average email recipients per positive result"
+msgstr "Число получателей емэйл на положительный тест"
+
+#. [component.Widget.averageLengthOfSms]
+#. defaultMessage is:
+#. Average length of SMS
+#: extracted_strings.json
+msgid "Average length of SMS"
+msgstr "Средняя длина SMS"
+
 #. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
 #. defaultMessage is:
 #. Average monthly TB Detected Rate
@@ -773,14 +828,26 @@ msgstr "Среднемесячные выполненные тесты"
 msgid "Average monthly TB Detected Rate"
 msgstr "Средний ежемесячный показатель выявленного туберкулеза"
 
-#. [pages.Status.dashboardWidgetTestsPerDayDescription]
+#. [component.Widget.deviceDaysActiveDescription]
 #. defaultMessage is:
-#. Average number of tests per day reported the current month
+#. Average number of days each device has been active, excluding weekends.
 #: extracted_strings.json
-msgid "Average number of tests per day reported the current month"
-msgstr "Среднее количество тестов в день, зарегистрированных в текущем месяце"
+msgid "Average number of days each device has been active, excluding weekends."
+msgstr ""
+"Среднее количество дней, в течение которых каждое устройство было активным, "
+"за исключением выходных."
+
+#. [component.Widget.dashboardWidgetTestsPerDayDescription]
+#. defaultMessage is:
+#. Average number of tests per weekday conducted this month.
+#: extracted_strings.json
+msgid "Average number of tests per weekday conducted this month."
+msgstr "Среднее количество тестов в день в текущем месяце."
 
 #. [pages.OperationalData.averageTimeToModuleReplacementTitle]
+#. defaultMessage is:
+#. Average time to replace disabled module
+#. [component.Widget.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
 #. Average time to replace disabled module
 #: extracted_strings.json
@@ -792,12 +859,12 @@ msgstr "Среднее время замены отключенного моду
 #. Awaiting Treatment
 #: extracted_strings.json
 msgid "Awaiting Treatment"
-msgstr "На лечении"
+msgstr "В ожидании лечения"
 
-#. [legends.Unknown.assayBdMgitAst]
+#. [filter.AssaySelectField.assayBdMgitAst]
 #. defaultMessage is:
 #. BD MGIT AST
-#. [filter.AssaySelectField.assayBdMgitAst]
+#. [legends.Unknown.assayBdMgitAst]
 #. defaultMessage is:
 #. BD MGIT AST
 #. [pages.ResultList.assayBdMgitAst]
@@ -807,10 +874,10 @@ msgstr "На лечении"
 msgid "BD MGIT AST"
 msgstr "BD MGIT AST"
 
-#. [legends.Unknown.assayBdMgitGnd]
+#. [filter.AssaySelectField.assayBdMgitGnd]
 #. defaultMessage is:
 #. BD MGIT GND
-#. [filter.AssaySelectField.assayBdMgitGnd]
+#. [legends.Unknown.assayBdMgitGnd]
 #. defaultMessage is:
 #. BD MGIT GND
 #. [pages.ResultList.assayBdMgitGnd]
@@ -862,10 +929,10 @@ msgstr "CHAI EID"
 msgid "CHAI HIV VL"
 msgstr "CHAI HIV VL"
 
-#. [legends.Unknown.assayCobasHivVl]
+#. [filter.AssaySelectField.assayCobasHivVl]
 #. defaultMessage is:
 #. COBAS 4800 VL
-#. [filter.AssaySelectField.assayCobasHivVl]
+#. [legends.Unknown.assayCobasHivVl]
 #. defaultMessage is:
 #. COBAS 4800 VL
 #: extracted_strings.json
@@ -879,10 +946,10 @@ msgstr "COBAS 4800 VL"
 msgid "COVID Results"
 msgstr "Результаты КОВИД"
 
-#. [legends.Unknown.assayGenericCovid19]
+#. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
-#. [filter.AssaySelectField.assayGenericCovid19]
+#. [legends.Unknown.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
 #: extracted_strings.json
@@ -902,6 +969,13 @@ msgstr "Испытание КОВИД-19"
 #: extracted_strings.json
 msgid "CSV"
 msgstr "CSV"
+
+#. [component.Widget.deviceCalibratedWhenDueTitle]
+#. defaultMessage is:
+#. Calibrated When Due
+#: extracted_strings.json
+msgid "Calibrated When Due"
+msgstr "Откалиброван до"
 
 #. [pages.DeviceDetailProfile.calibration]
 #. defaultMessage is:
@@ -923,6 +997,13 @@ msgstr "Дата калибровки"
 #: extracted_strings.json
 msgid "Calibration Date is required"
 msgstr "Требуется дата калибровки"
+
+#. [component.Widget.deviceCalibrationPastDueTitle]
+#. defaultMessage is:
+#. Calibration Past Due
+#: extracted_strings.json
+msgid "Calibration Past Due"
+msgstr "Просроченная калибровка"
 
 #. [pages.ResetPassword.cancel]
 #. defaultMessage is:
@@ -958,10 +1039,10 @@ msgstr "Требуется дата калибровки"
 msgid "Cancel"
 msgstr "Отмена"
 
-#. [forms.formItem.caseId]
+#. [pages.CasesList.caseId]
 #. defaultMessage is:
 #. Case ID
-#. [pages.CasesList.caseId]
+#. [forms.formItem.caseId]
 #. defaultMessage is:
 #. Case ID
 #: extracted_strings.json
@@ -1059,14 +1140,14 @@ msgstr "Закрыть"
 #. Collect New Sample
 #: extracted_strings.json
 msgid "Collect New Sample"
-msgstr "Собрано"
+msgstr "Собрать новый образец"
 
 #. [legends.Unknown.resultCategoryCollectNewSample]
 #. defaultMessage is:
 #. Collect new sample
 #: extracted_strings.json
 msgid "Collect new sample"
-msgstr "Собрано"
+msgstr "Собрать новый образец"
 
 #. [forms.formItem.collectedBy]
 #. defaultMessage is:
@@ -1141,6 +1222,13 @@ msgstr "Подтверждено"
 msgid "Confirmed Response"
 msgstr "Подтвержденный ответ"
 
+#. [component.Widget.dashboardWidgetTitleConfirmedCases]
+#. defaultMessage is:
+#. Confirmed cases
+#: extracted_strings.json
+msgid "Confirmed cases"
+msgstr "Подтвержденные случаи"
+
 #. [pages.RouterDetail.fieldFirstConnected]
 #. defaultMessage is:
 #. Connected
@@ -1155,9 +1243,6 @@ msgstr "Подключено"
 msgid "Connected Since"
 msgstr "Присоединился"
 
-#. [pages.Status.summaryWidgetGroup.connectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
@@ -1168,6 +1253,9 @@ msgstr "Присоединился"
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1191,14 +1279,14 @@ msgstr "Связь"
 #. Connectivity Health
 #: extracted_strings.json
 msgid "Connectivity Health"
-msgstr "Связь"
+msgstr "Состояние подключения"
 
 #. [legends.Unknown.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity issues
 #: extracted_strings.json
 msgid "Connectivity issues"
-msgstr "Связь"
+msgstr "Проблемы с подключением"
 
 #. [filter.popover.consumable]
 #. defaultMessage is:
@@ -1255,6 +1343,9 @@ msgstr "Контактные данные созданы успешно"
 msgid "Contact name/email"
 msgstr "Имя/электронная почта"
 
+#. [component.Widget.personTitle]
+#. defaultMessage is:
+#. Contacts
 #. [pages.PersonList.title]
 #. defaultMessage is:
 #. Contacts
@@ -1273,7 +1364,7 @@ msgstr "Контакты"
 #. Contaminated
 #: extracted_strings.json
 msgid "Contaminated"
-msgstr "Контакты"
+msgstr "Загрязненный"
 
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
@@ -1369,9 +1460,6 @@ msgstr "Счёт (1-100)"
 msgid "Counting only {ASSAY} assays {RESULT}{DATE}."
 msgstr "Считаю только {ASSAY}пробы {RESULT}{DATE}."
 
-#. [forms.formItem.country]
-#. defaultMessage is:
-#. Country
 #. [pages.LocationSelector.country]
 #. defaultMessage is:
 #. Country
@@ -1382,6 +1470,9 @@ msgstr "Считаю только {ASSAY}пробы {RESULT}{DATE}."
 #. defaultMessage is:
 #. Country
 #. [filter.popover.country]
+#. defaultMessage is:
+#. Country
+#. [forms.formItem.country]
 #. defaultMessage is:
 #. Country
 #. [pages.PersonDetails.country]
@@ -1399,7 +1490,20 @@ msgstr "Страна"
 #. Country Average
 #: extracted_strings.json
 msgid "Country Average"
-msgstr "Страна"
+msgstr "В среднем по стране"
+
+#. [component.Widget.percentageOfModulesFunctioningDescription]
+#. defaultMessage is:
+#. Counts the percentage of module bays used in the last 7 days, based on the count of all available bays in all GeneXpert devices that were active in the last 7 days.
+#: extracted_strings.json
+msgid ""
+"Counts the percentage of module bays used in the last 7 days, based on the "
+"count of all available bays in all GeneXpert devices that were active in the "
+"last 7 days."
+msgstr ""
+"Подсчитывает процент отсеков для модулей, использованных за последние 7 "
+"дней, на основе подсчета всех доступных отсеков на всех устройствах "
+"GeneXpert, которые были активны за последние 7 дней."
 
 #. [pages.common.lga_US]
 #. defaultMessage is:
@@ -1429,10 +1533,10 @@ msgstr "Создано"
 msgid "Created On:"
 msgstr "Создано на:"
 
-#. [legends.Unknown.assayGenericCulture]
+#. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
-#. [filter.AssaySelectField.assayCulture]
+#. [legends.Unknown.assayGenericCulture]
 #. defaultMessage is:
 #. Culture
 #: extracted_strings.json
@@ -1444,7 +1548,7 @@ msgstr "Культура"
 #. Current Network Status
 #: extracted_strings.json
 msgid "Current Network Status"
-msgstr "Статус лечения"
+msgstr "Текущий Статус Сети"
 
 #. [pages.UpdateLoginDetails.currentPassword]
 #. defaultMessage is:
@@ -1524,15 +1628,15 @@ msgstr "Данные"
 #. Data Health
 #: extracted_strings.json
 msgid "Data Health"
-msgstr "Здоровье данных"
+msgstr "Состояние данных"
 
-#. [forms.formSectionHeader.date]
-#. defaultMessage is:
-#. Date
 #. [pages.CaseList.createdOn]
 #. defaultMessage is:
 #. Date
 #. [filter.popover.date]
+#. defaultMessage is:
+#. Date
+#. [forms.formSectionHeader.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Milestones.date]
@@ -1606,6 +1710,20 @@ msgstr "День"
 msgid "Days Stock Left"
 msgstr "Дни Запасы налево"
 
+#. [component.Widget.percentageOfDaysWithServiceInterruptionTitle]
+#. defaultMessage is:
+#. Days With Service Interruption
+#: extracted_strings.json
+msgid "Days With Service Interruption"
+msgstr "Дней с перебоями в обслуживании"
+
+#. [component.Widget.deviceDaysActiveTitle]
+#. defaultMessage is:
+#. Days active
+#: extracted_strings.json
+msgid "Days active"
+msgstr "Дней Активности"
+
 #. [pages.OperationalData.instrumentsReplaced]
 #. defaultMessage is:
 #. Days for Instrument Replacement
@@ -1613,9 +1731,13 @@ msgstr "Дни Запасы налево"
 msgid "Days for Instrument Replacement"
 msgstr "Дни замены инструмента"
 
-#. [legends.Unknown.inactiveDecommissioned]
+#. [component.Widget.dashboardWidgetTitleTotalDeaths]
 #. defaultMessage is:
-#. Decommissioned
+#. Deaths
+#: extracted_strings.json
+msgid "Deaths"
+msgstr "Смертей"
+
 #. [pages.DeviceList.status.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
@@ -1625,10 +1747,13 @@ msgstr "Дни замены инструмента"
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
-#. [pages.DailyStatus.maintenanceStatus.inactiveDecommissioned]
+#. [legends.Unknown.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.filter.status.decommissioned]
+#. defaultMessage is:
+#. Decommissioned
+#. [pages.DailyStatus.maintenanceStatus.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned]
@@ -1709,12 +1834,6 @@ msgstr "Детали..."
 msgid "Detected"
 msgstr "Обнаружен"
 
-#. [forms.formSectionHeader.device]
-#. defaultMessage is:
-#. Device
-#. [legends.Unknown.device]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
@@ -1728,6 +1847,12 @@ msgstr "Обнаружен"
 #. defaultMessage is:
 #. Device
 #. [filter.popover.deviceName]
+#. defaultMessage is:
+#. Device
+#. [forms.formSectionHeader.device]
+#. defaultMessage is:
+#. Device
+#. [legends.Unknown.device]
 #. defaultMessage is:
 #. Device
 #. [pages.ReporterList.reporterDevice]
@@ -1772,7 +1897,14 @@ msgstr "Калибровка устройства"
 #. Device Health
 #: extracted_strings.json
 msgid "Device Health"
-msgstr "Последовательный порт устройства"
+msgstr "Состояние устройства"
+
+#. [filter.btnGroup.deviceIssueType]
+#. defaultMessage is:
+#. Device Issue: {issueTypeId}
+#: extracted_strings.json
+msgid "Device Issue: {issueTypeId}"
+msgstr "Проблема Устройства: {issueTypeId}"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -1795,10 +1927,10 @@ msgstr "Имя устройства"
 msgid "Device Serial"
 msgstr "Последовательный порт устройства"
 
-#. [forms.formItem.deviceType]
+#. [filter.popover.deviceType]
 #. defaultMessage is:
 #. Device Type
-#. [filter.popover.deviceType]
+#. [forms.formItem.deviceType]
 #. defaultMessage is:
 #. Device Type
 #. [pages.JobAssignments.deviceType]
@@ -1822,13 +1954,16 @@ msgstr "Гарантия на устройство"
 msgid "Device type"
 msgstr "Тип устройства"
 
+#. [pages.DeviceList.devicesTitle]
+#. defaultMessage is:
+#. Devices
 #. [pages.Status.summaryWidgetGroup.devices]
 #. defaultMessage is:
 #. Devices
-#. [legends.Unknown.devices]
+#. [component.Widget.devicesTitle]
 #. defaultMessage is:
 #. Devices
-#. [pages.DeviceList.devicesTitle]
+#. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.SiteDetail.fieldDevices]
@@ -1845,6 +1980,13 @@ msgstr "Устройства"
 msgid "Devices Experiencing Service Interruption"
 msgstr "Устройства, испытывающие перебои в обслуживании"
 
+#. [component.Widget.numberOfDevicesExperiencingServiceInterruptionTitle]
+#. defaultMessage is:
+#. Devices With Service Interruption
+#: extracted_strings.json
+msgid "Devices With Service Interruption"
+msgstr "Устройства с перебоями в обслуживании"
+
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
 #. Discard
@@ -1860,7 +2002,7 @@ msgstr "Отменить"
 #. Discordant
 #: extracted_strings.json
 msgid "Discordant"
-msgstr "Отменить"
+msgstr "Несогласный"
 
 #. [pages.CasesList.diseaseName]
 #. defaultMessage is:
@@ -1912,28 +2054,28 @@ msgstr "Дивизион"
 #. Down For Repair
 #: extracted_strings.json
 msgid "Down For Repair"
-msgstr "Вниз для ремонта"
+msgstr "Выключен для ремонта"
 
 #. [legends.Unknown.inactiveDownForRepair]
 #. defaultMessage is:
 #. Down for Repair
 #: extracted_strings.json
 msgid "Down for Repair"
-msgstr "Вниз для ремонта"
+msgstr "Выключен для ремонта"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
 #. Due Now
 #: extracted_strings.json
 msgid "Due Now"
-msgstr "Должно быть сделано сейчас"
+msgstr "Срок сдачи"
 
 #. [pages.TaskList.issueStatusDueSoon]
 #. defaultMessage is:
 #. Due Soon
 #: extracted_strings.json
 msgid "Due Soon"
-msgstr "Скоро должен состояться"
+msgstr "В ближайшее время"
 
 #. [filter.AssayTypeSelectField.assayTypeEid]
 #. defaultMessage is:
@@ -2130,23 +2272,23 @@ msgstr "Введите имя сайта..."
 #. [pages.ResultList.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
-#. defaultMessage is:
-#. Error
 #. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
+#. [pages.filters.gxEbolaGPError]
+#. defaultMessage is:
+#. Error
 #: extracted_strings.json
 msgid "Error"
 msgstr "Ошибка"
 
-#. [forms.formItem.errorCode]
+#. [filter.popover.errorCode]
 #. defaultMessage is:
 #. Error Code
-#. [filter.popover.errorCode]
+#. [forms.formItem.errorCode]
 #. defaultMessage is:
 #. Error Code
 #. [pages.ResultList.errorCode]
@@ -2250,6 +2392,9 @@ msgstr "Ошибка загрузки сайта Детали"
 msgid "Error Loading States for {countryName}"
 msgstr "Ошибка загрузки государств для {countryName}"
 
+#. [component.Widget.errorRateTitle]
+#. defaultMessage is:
+#. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
 #. defaultMessage is:
 #. Error Rate
@@ -2492,7 +2637,7 @@ msgstr "Первый одобренный"
 #. Flagged
 #: extracted_strings.json
 msgid "Flagged"
-msgstr "Отмечено"
+msgstr "Помечено"
 
 #. [pages.DeviceList.reportingForDays]
 #. defaultMessage is:
@@ -2534,54 +2679,54 @@ msgstr "Полное имя"
 #. GP Detected
 #: extracted_strings.json
 msgid "GP Detected"
-msgstr "Обнаружен"
+msgstr "Обнаружен GP"
 
 #. [pages.filters.gxEbolaGPDetectedNPDetected]
 #. defaultMessage is:
 #. GP Detected - NP Detected
 #: extracted_strings.json
 msgid "GP Detected - NP Detected"
-msgstr "GP Обнаружено - NP Обнаружено"
+msgstr "Обнаружен GP - Обнаружен NP"
 
 #. [pages.filters.gxEbolaGPDetectedNPNotDetected]
 #. defaultMessage is:
 #. GP Detected - NP Not Detected
 #: extracted_strings.json
 msgid "GP Detected - NP Not Detected"
-msgstr "GP Обнаружено - NP Не обнаружено"
+msgstr "Обнаружен GP - NP не обнаружен"
 
 #. [pages.filters.gxEbolaGPInvalid]
 #. defaultMessage is:
 #. GP Invalid
 #: extracted_strings.json
 msgid "GP Invalid"
-msgstr "Недействительный"
+msgstr "GP недействительный"
 
 #. [pages.filters.gxEbolaGPNoResult]
 #. defaultMessage is:
 #. GP No Result
 #: extracted_strings.json
 msgid "GP No Result"
-msgstr "Нет результатов"
+msgstr "GP Нет результата"
 
 #. [pages.filters.gxEbolaGPNotDetectedNPDetected]
 #. defaultMessage is:
 #. GP Not Detected - NP Detected
 #: extracted_strings.json
 msgid "GP Not Detected - NP Detected"
-msgstr "GP Не обнаружено - NP Обнаружено"
+msgstr "GP не обнаружен - обнаружен NP"
 
 #. [pages.filters.gxEbolaGPNotDetectedNPNotDetected]
 #. defaultMessage is:
 #. GP Not Detected - NP Not Detected
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
-msgstr "GP Не обнаружено - NP Не обнаружено"
+msgstr "GP не обнаружен - NP не обнаружен"
 
-#. [legends.Unknown.assayGXCovid19]
+#. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
-#. [filter.AssaySelectField.assayGXCovid19]
+#. [legends.Unknown.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
 #. [pages.ResultList.assayGXCovid19]
@@ -2591,10 +2736,17 @@ msgstr "GP Не обнаружено - NP Не обнаружено"
 msgid "GeneXpert COVID-19"
 msgstr "GeneXpert COVID-19"
 
-#. [legends.Unknown.assayGeneXpertEbola]
+#. [component.Widget.geneXpertDevicesTitle]
+#. defaultMessage is:
+#. GeneXpert Devices
+#: extracted_strings.json
+msgid "GeneXpert Devices"
+msgstr "Устройства GeneXpert"
+
+#. [filter.AssaySelectField.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
-#. [filter.AssaySelectField.assayGeneXpertEbola]
+#. [legends.Unknown.assayGeneXpertEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
 #. [pages.ResultList.assayGeneXpertEbola]
@@ -2604,10 +2756,10 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert Ebola"
 msgstr "GeneXpert Ebola"
 
-#. [legends.Unknown.assayGeneXpertHcv]
+#. [filter.AssaySelectField.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
-#. [filter.AssaySelectField.assayGeneXpertHcv]
+#. [legends.Unknown.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
 #. [pages.ResultList.assayGeneXpertHcv]
@@ -2617,10 +2769,10 @@ msgstr "GeneXpert Ebola"
 msgid "GeneXpert HCV"
 msgstr "GeneXpert HCV"
 
-#. [legends.Unknown.assayGeneXpertHiv1Qual]
+#. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
-#. [filter.AssaySelectField.assayGeneXpertHiv1Qual]
+#. [legends.Unknown.assayGeneXpertHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
 #. [pages.ResultList.assayGeneXpertHiv1Qual]
@@ -2630,10 +2782,10 @@ msgstr "GeneXpert HCV"
 msgid "GeneXpert HIV-1 Qual"
 msgstr "GeneXpert HIV-1 Qual"
 
-#. [legends.Unknown.assayGeneXpertHiv1Vl]
+#. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
-#. [filter.AssaySelectField.assayGeneXpertHiv1Vl]
+#. [legends.Unknown.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
 #. [pages.ResultList.assayGeneXpertHiv1Vl]
@@ -2643,10 +2795,10 @@ msgstr "GeneXpert HIV-1 Qual"
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
 
-#. [legends.Unknown.assayGeneXpertMtbRif]
+#. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
-#. [filter.AssaySelectField.assayGeneXpertMtbRif]
+#. [legends.Unknown.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
 #. [pages.ResultList.assayGeneXpertMtbRif]
@@ -2656,10 +2808,10 @@ msgstr "GeneXpert HIV-1 VL"
 msgid "GeneXpert MTB/Rif"
 msgstr "GeneXpert MTB/Rif"
 
-#. [legends.Unknown.assayGeneXpertMtbRifUltra]
+#. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
-#. [filter.AssaySelectField.assayGeneXpertMtbRifUltra]
+#. [legends.Unknown.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
 #. [pages.ResultList.assayGeneXpertMtbRifUltra]
@@ -2669,10 +2821,10 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
-#. [legends.Unknown.assayGeneXpertUnknown]
+#. [filter.AssaySelectField.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
-#. [filter.AssaySelectField.assayGeneXpertUnknown]
+#. [legends.Unknown.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
 #. [pages.ResultList.assayGeneXpertUnknown]
@@ -2709,10 +2861,10 @@ msgstr "Сгенерировать DeviceApiKeys Не удалось"
 msgid "Generic RDT"
 msgstr "Общий ГДТ"
 
-#. [legends.Unknown.assayGenoTypeMTBCV1]
+#. [filter.AssaySelectField.assayGenoTypeMTBCV1]
 #. defaultMessage is:
 #. GenoType MTBC VER 1.X
-#. [filter.AssaySelectField.assayGenoTypeMTBCV1]
+#. [legends.Unknown.assayGenoTypeMTBCV1]
 #. defaultMessage is:
 #. GenoType MTBC VER 1.X
 #. [pages.ResultList.assayGenoTypeMTBCV1]
@@ -2722,10 +2874,10 @@ msgstr "Общий ГДТ"
 msgid "GenoType MTBC VER 1.X"
 msgstr "GenoType MTBC VER 1.X"
 
-#. [legends.Unknown.assayGenoTypeMTBDRplusV2]
+#. [filter.AssaySelectField.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
-#. [filter.AssaySelectField.assayGenoTypeMTBDRplusV2]
+#. [legends.Unknown.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
 #. [pages.ResultList.assayGenoTypeMTBDRplusV2]
@@ -2735,10 +2887,10 @@ msgstr "GenoType MTBC VER 1.X"
 msgid "GenoType MTBDRplus VER 2.0"
 msgstr "GenoType MTBDRplus VER 2.0"
 
-#. [legends.Unknown.assayGenoTypeMTBDRslV1]
+#. [filter.AssaySelectField.assayGenoTypeMTBDRslV1]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 1.0
-#. [filter.AssaySelectField.assayGenoTypeMTBDRslV1]
+#. [legends.Unknown.assayGenoTypeMTBDRslV1]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 1.0
 #. [pages.ResultList.assayGenoTypeMTBDRslV1]
@@ -2748,10 +2900,10 @@ msgstr "GenoType MTBDRplus VER 2.0"
 msgid "GenoType MTBDRsl VER 1.0"
 msgstr "GenoType MTBDRsl VER 1.0"
 
-#. [legends.Unknown.assayGenoTypeMTBDRslV2]
+#. [filter.AssaySelectField.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
-#. [filter.AssaySelectField.assayGenoTypeMTBDRslV2]
+#. [legends.Unknown.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
 #. [pages.ResultList.assayGenoTypeMTBDRslV2]
@@ -2863,7 +3015,7 @@ msgstr "Имеет особый характер (%!$*...).."
 #. Hello Storybook!
 #: extracted_strings.json
 msgid "Hello Storybook!"
-msgstr "Привет Storybook!"
+msgstr "Привет, Storybook!"
 
 #. [pages.caseRow.diseaseNameHepatitisB]
 #. defaultMessage is:
@@ -2969,6 +3121,13 @@ msgstr "Я не знаю, на какой адрес электронной по
 msgid "ID"
 msgstr "ID"
 
+#. [filter.btnGroup.whereExternalIdIncludes]
+#. defaultMessage is:
+#. ID includes "{externalId}"
+#: extracted_strings.json
+msgid "ID includes \"{externalId}\""
+msgstr "ID включает \"{externalId}\""
+
 #. [pages.ResetPassword.adminHelpContent]
 #. defaultMessage is:
 #. If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}
@@ -2990,7 +3149,7 @@ msgstr ""
 #. In Progress
 #: extracted_strings.json
 msgid "In Progress"
-msgstr "В процессе"
+msgstr "Выполняется"
 
 #. [errorResponseMessages.common.filterError.resolution]
 #. defaultMessage is:
@@ -3013,7 +3172,7 @@ msgstr ""
 #. Inactive
 #: extracted_strings.json
 msgid "Inactive"
-msgstr "Неактивный"
+msgstr "Неактивно"
 
 #. [pages.transferResult.includeAllResults]
 #. defaultMessage is:
@@ -3030,7 +3189,7 @@ msgstr "Включите ВСЕ результаты, связанные с ид
 #. Inconclusive
 #: extracted_strings.json
 msgid "Inconclusive"
-msgstr "Эксклюзивный"
+msgstr "Незавершенный"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
@@ -3249,10 +3408,10 @@ msgstr "Язык и часовой пояс"
 msgid "Last"
 msgstr "Последний"
 
-#. [component.Widget.last30Days]
+#. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
-#. [pages.dateRangeSelector.last30Days]
+#. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
 #: extracted_strings.json
@@ -3339,28 +3498,28 @@ msgstr "Широта"
 #. Less Than 1000
 #: extracted_strings.json
 msgid "Less Than 1000"
-msgstr "Менее 1000"
+msgstr "Меньше 1000"
 
 #. [legends.Unknown.resultCategoryLessThan150]
 #. defaultMessage is:
 #. Less Than 150
 #: extracted_strings.json
 msgid "Less Than 150"
-msgstr "Менее 150"
+msgstr "Меньше 150"
 
 #. [legends.Unknown.resultCategoryLessThan40]
 #. defaultMessage is:
 #. Less Than 40
 #: extracted_strings.json
 msgid "Less Than 40"
-msgstr "Менее 40"
+msgstr "Меньше 40"
 
 #. [legends.Unknown.resultCategoryLessThan550]
 #. defaultMessage is:
 #. Less Than 550
 #: extracted_strings.json
 msgid "Less Than 550"
-msgstr "Менее 550"
+msgstr "Меньше 550"
 
 #. [pages.License.title]
 #. defaultMessage is:
@@ -3439,10 +3598,10 @@ msgstr "Загрузка Контакты Ошибка"
 msgid "Loading Device Approval Statuses Failed"
 msgstr "Загрузка Устройство не прошло аттестацию"
 
-#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title]
+#. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
 #. defaultMessage is:
 #. Loading Device Maintenance Status Failed
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
+#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title]
 #. defaultMessage is:
 #. Loading Device Maintenance Status Failed
 #: extracted_strings.json
@@ -3673,49 +3832,49 @@ msgstr "Номер партии"
 #. MTB Detected
 #: extracted_strings.json
 msgid "MTB Detected"
-msgstr "Обнаружен"
+msgstr "Обнаружен MTB"
 
 #. [pages.filters.gxMtbRifUltraMtbDetectedRifDetected]
 #. defaultMessage is:
 #. MTB Detected - Rif Detected
 #: extracted_strings.json
 msgid "MTB Detected - Rif Detected"
-msgstr "Обнаружена MTB - обнаружена неисправность"
+msgstr "Обнаружен MTB - Обнаружен Rif"
 
 #. [pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Detected - Rif Indeterminate
 #: extracted_strings.json
 msgid "MTB Detected - Rif Indeterminate"
-msgstr "Обнаружено МТБ - Риф неопределенный"
+msgstr "Обнаружен MTB - Неопределенный Rif"
 
 #. [pages.filters.gxMtbRifUltraMtbDetectedRifNotDetected]
 #. defaultMessage is:
 #. MTB Detected - Rif Not Detected
 #: extracted_strings.json
 msgid "MTB Detected - Rif Not Detected"
-msgstr "Обнаружена MTB - Риф не обнаружен"
+msgstr "Обнаружен MTB - Rif не обнаружен"
 
 #. [pages.filters.gxMtbRifMtbDetectedRifDetected]
 #. defaultMessage is:
 #. MTB Detected RIF Detected
 #: extracted_strings.json
 msgid "MTB Detected RIF Detected"
-msgstr "Обнаружен след"
+msgstr "Обнаружен MTB Обнаружен Rif"
 
 #. [pages.filters.gxMtbRifMtbDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Detected RIF Indeterminate
 #: extracted_strings.json
 msgid "MTB Detected RIF Indeterminate"
-msgstr "Неопределенный"
+msgstr "Обнаружен MTB Неопределенный Rif"
 
 #. [pages.filters.gxMtbRifMtbDetectedRifNotDetected]
 #. defaultMessage is:
 #. MTB Detected RIF Not Detected
 #: extracted_strings.json
 msgid "MTB Detected RIF Not Detected"
-msgstr "MTB Обнаружен RIF Не обнаружен"
+msgstr "Обнаружен MTB Rif не обнаружен"
 
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
@@ -3725,7 +3884,7 @@ msgstr "MTB Обнаружен RIF Не обнаружен"
 #. MTB Error
 #: extracted_strings.json
 msgid "MTB Error"
-msgstr "Ошибка"
+msgstr "Ошибка MTB"
 
 #. [pages.filters.gxMtbRifMtbInvalid]
 #. defaultMessage is:
@@ -3735,7 +3894,7 @@ msgstr "Ошибка"
 #. MTB Invalid
 #: extracted_strings.json
 msgid "MTB Invalid"
-msgstr "Недействительный"
+msgstr "MTB недействительный"
 
 #. [pages.filters.gxMtbRifMtbNoResult]
 #. defaultMessage is:
@@ -3745,7 +3904,7 @@ msgstr "Недействительный"
 #. MTB No Result
 #: extracted_strings.json
 msgid "MTB No Result"
-msgstr "Нет результатов"
+msgstr "MTB Нет результата"
 
 #. [pages.filters.gxMtbRifMtbNotDetected]
 #. defaultMessage is:
@@ -3755,14 +3914,14 @@ msgstr "Нет результатов"
 #. MTB Not Detected
 #: extracted_strings.json
 msgid "MTB Not Detected"
-msgstr "Не обнаружено"
+msgstr "MTB не обнаружен"
 
 #. [pages.filters.gxMtbRifUltraMtbTraceDetected]
 #. defaultMessage is:
 #. MTB Trace Detected
 #: extracted_strings.json
 msgid "MTB Trace Detected"
-msgstr "Обнаружен след"
+msgstr "Обнаружен след MTB"
 
 #. [filter.AssayTypeSelectField.assayTypeMtbRif]
 #. defaultMessage is:
@@ -3771,10 +3930,10 @@ msgstr "Обнаружен след"
 msgid "MTB/Rif"
 msgstr "МТБ/Риф"
 
-#. [legends.Unknown.assayMP96Covid19]
+#. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
-#. [filter.AssaySelectField.assayMP96Covid19]
+#. [legends.Unknown.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #: extracted_strings.json
@@ -3850,6 +4009,13 @@ msgstr "Имя модуля"
 msgid "Module Serial"
 msgstr "Серийный номер модуля"
 
+#. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps
+#: extracted_strings.json
+msgid "Module Swaps"
+msgstr "Замена модулей"
+
 #. [pages.dateRangeSelector.month]
 #. defaultMessage is:
 #. Month
@@ -3872,21 +4038,21 @@ msgstr "Более 1000"
 #. More Than 150
 #: extracted_strings.json
 msgid "More Than 150"
-msgstr "Больше чем 150"
+msgstr "Более 150"
 
 #. [legends.Unknown.resultCategoryMoreThan40]
 #. defaultMessage is:
 #. More Than 40
 #: extracted_strings.json
 msgid "More Than 40"
-msgstr "Больше 40"
+msgstr "Более 40"
 
 #. [legends.Unknown.resultCategoryMoreThan550]
 #. defaultMessage is:
 #. More Than 550
 #: extracted_strings.json
 msgid "More Than 550"
-msgstr "Больше чем 550"
+msgstr "Более 550"
 
 #. [filter.popover.moreFilters]
 #. defaultMessage is:
@@ -3928,7 +4094,7 @@ msgstr "ПРИМЕЧАНИЕ:"
 #. NP Detected
 #: extracted_strings.json
 msgid "NP Detected"
-msgstr "Не обнаружено"
+msgstr "Обнаружен NP"
 
 #. [pages.PersonList.personName]
 #. defaultMessage is:
@@ -4020,15 +4186,15 @@ msgstr "Новые"
 msgid "Next"
 msgstr "Следующий"
 
-#. [legends.Unknown.noConsumption]
+#. [filter.btnGroup.stockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
-#. [filter.btnGroup.stockLeft.noConsumption]
+#. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #: extracted_strings.json
 msgid "No Consumption"
-msgstr "Отсутствие потребления"
+msgstr "Нет потребления"
 
 #. [pages.graphs.emptyGraphPlaceholderTitle]
 #. defaultMessage is:
@@ -4037,13 +4203,13 @@ msgstr "Отсутствие потребления"
 msgid "No Data Available"
 msgstr "Данные отсутствуют"
 
-#. [legends.Unknown.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
 #. [pages.DeviceList.status.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower]
+#. defaultMessage is:
+#. No Power
+#. [legends.Unknown.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
 #. [pages.DailyStatus.maintenanceStatus.inactiveNoPower]
@@ -4061,14 +4227,14 @@ msgstr "Нет питания"
 #. No Result
 #: extracted_strings.json
 msgid "No Result"
-msgstr "Нет результатов"
+msgstr "Нет результата"
 
 #. [legends.Unknown.inactiveNoResultsReported]
 #. defaultMessage is:
 #. No Results
 #: extracted_strings.json
 msgid "No Results"
-msgstr "Нет результатов"
+msgstr "Нет Результатов"
 
 #. [pages.DeviceList.status.inactiveNoResultsReported]
 #. defaultMessage is:
@@ -4086,13 +4252,13 @@ msgstr "Нет результатов"
 msgid "No Results Reported"
 msgstr "Результаты отсутствуют"
 
-#. [legends.Unknown.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
 #. [pages.DeviceList.status.inactiveNoStaff]
 #. defaultMessage is:
 #. No Staff
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff]
+#. defaultMessage is:
+#. No Staff
+#. [legends.Unknown.inactiveNoStaff]
 #. defaultMessage is:
 #. No Staff
 #. [pages.DailyStatus.maintenanceStatus.inactiveNoStaff]
@@ -4172,7 +4338,7 @@ msgstr "Не подтвержден"
 #. Not Detected
 #: extracted_strings.json
 msgid "Not Detected"
-msgstr "Не обнаружено"
+msgstr "Не обнаружен"
 
 #. [errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title]
 #. defaultMessage is:
@@ -4200,15 +4366,15 @@ msgstr "Не найдено"
 msgid "Not Possible"
 msgstr "Невозможно"
 
-#. [legends.Unknown.notRecorded]
+#. [filter.btnGroup.stockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
-#. [filter.btnGroup.stockLeft.notRecorded]
+#. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #: extracted_strings.json
 msgid "Not Recorded"
-msgstr "Добавить запись"
+msgstr "Не записано"
 
 #. [pages.resultTreatmentPanel.notPossible]
 #. defaultMessage is:
@@ -4229,12 +4395,12 @@ msgstr "Еще не подтверждено при лечении"
 #. Note
 #: extracted_strings.json
 msgid "Note"
-msgstr "Заметка"
+msgstr "Примечания"
 
-#. [forms.formItem.notes]
+#. [pages.InventoryAdjustmentDialogForm.notes]
 #. defaultMessage is:
 #. Notes
-#. [pages.InventoryAdjustmentDialogForm.notes]
+#. [forms.formItem.notes]
 #. defaultMessage is:
 #. Notes
 #. [pages.ContactDetails.notes]
@@ -4426,7 +4592,7 @@ msgstr "Другой"
 #. Other Reasons
 #: extracted_strings.json
 msgid "Other Reasons"
-msgstr "Причина"
+msgstr "Другие Причины"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -4455,22 +4621,22 @@ msgstr ""
 msgid "Out Of Inventory"
 msgstr "Не инвентаризованный"
 
-#. [legends.Unknown.outOfStock]
+#. [filter.btnGroup.stockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
-#. [filter.btnGroup.stockLeft.outOfStock]
+#. [legends.Unknown.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
 msgid "Out of Stock"
-msgstr "Нет в наличии"
+msgstr "Распродано"
 
 #. [legends.Unknown.inactiveOutOfInventory]
 #. defaultMessage is:
 #. Out of inventory
 #: extracted_strings.json
 msgid "Out of inventory"
-msgstr "Не инвентаризованный"
+msgstr "Нет в наличии"
 
 #. [pages.Milestones.followUpName]
 #. defaultMessage is:
@@ -4505,7 +4671,7 @@ msgstr "Общее состояние здоровья сети ежедневн
 #. Overdue
 #: extracted_strings.json
 msgid "Overdue"
-msgstr "Просрочено"
+msgstr "Просроченный"
 
 #. [pages.DeviceApiKeyList.partnerId]
 #. defaultMessage is:
@@ -4564,16 +4730,16 @@ msgstr "Пациент"
 msgid "Patient Data"
 msgstr "Данные пациента"
 
-#. [forms.formItem.patientId]
-#. defaultMessage is:
-#. Patient ID
 #. [pages.CasesList.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [filter.popover.patientOrResearchId]
 #. defaultMessage is:
 #. Patient ID
-#. [pages.ResultList.patiendId]
+#. [forms.formItem.patientId]
+#. defaultMessage is:
+#. Patient ID
+#. [pages.ResultList.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [pages.DeviceDetailProfile.patientId]
@@ -4614,12 +4780,24 @@ msgstr "Процент отчитавшихся"
 msgid "Percentage of Days with Service Interruption"
 msgstr "Процент дней с перерывами в обслуживании"
 
-#. [pages.Status.dashboardWidgetValidResultsPcDescription]
+#. [component.Widget.percentageOfModulesFunctioningTitle]
 #. defaultMessage is:
-#. Percentage of valid results reported the current month
+#. Percentage of Modules Functioning
 #: extracted_strings.json
-msgid "Percentage of valid results reported the current month"
-msgstr "Процент достоверных результатов за текущий месяц"
+msgid "Percentage of Modules Functioning"
+msgstr "Процент работающих модулей"
+
+#. [component.Widget.dashboardWidgetValidResultsPcDescription]
+#. defaultMessage is:
+#. Percentage of valid results reported this month. Valid results includes all results that didn't result in "Error", "No Result", or "Invalid".
+#: extracted_strings.json
+msgid ""
+"Percentage of valid results reported this month. Valid results includes all "
+"results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
+msgstr ""
+"Процент достоверных результатов, представленных в этом месяце. К допустимым "
+"результатам относятся все результаты, которые не привели к появлению "
+"«Ошибка», «Нет результата» или «Недействительный»."
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -4870,49 +5048,49 @@ msgstr ""
 #. Positive
 #: extracted_strings.json
 msgid "Positive"
-msgstr "Положительный"
+msgstr "Положительный "
 
 #. [pages.deviceDetail.resultCategoryPositive1]
 #. defaultMessage is:
 #. Positive (+)
 #: extracted_strings.json
 msgid "Positive (+)"
-msgstr "Положительный"
+msgstr "Положительный (+)"
 
 #. [pages.deviceDetail.resultCategoryPositive2]
 #. defaultMessage is:
 #. Positive (++)
 #: extracted_strings.json
 msgid "Positive (++)"
-msgstr "Положительный"
+msgstr "Положительный (++)"
 
 #. [pages.deviceDetail.resultCategoryPositive3]
 #. defaultMessage is:
 #. Positive (+++)
 #: extracted_strings.json
 msgid "Positive (+++)"
-msgstr "Положительных"
+msgstr "Положительный (+++)"
 
 #. [legends.Unknown.resultCategoryPositive1]
 #. defaultMessage is:
 #. Positive 1
 #: extracted_strings.json
 msgid "Positive 1"
-msgstr "Положительных"
+msgstr "Положительный 1"
 
 #. [legends.Unknown.resultCategoryPositive2]
 #. defaultMessage is:
 #. Positive 2
 #: extracted_strings.json
 msgid "Positive 2"
-msgstr "Положительных"
+msgstr "Положительный 2"
 
 #. [legends.Unknown.resultCategoryPositive3]
 #. defaultMessage is:
 #. Positive 3
 #: extracted_strings.json
 msgid "Positive 3"
-msgstr "Положительных"
+msgstr "Положительный 3"
 
 #. [legends.Unknown.resultCategoryPositiveMOTT]
 #. defaultMessage is:
@@ -4922,7 +5100,7 @@ msgstr "Положительных"
 #. Positive MOTT
 #: extracted_strings.json
 msgid "Positive MOTT"
-msgstr "Положительных"
+msgstr "Положительный MOTT"
 
 #. [legends.Unknown.resultCategoryPositiveMTB]
 #. defaultMessage is:
@@ -4932,7 +5110,14 @@ msgstr "Положительных"
 #. Positive MTB
 #: extracted_strings.json
 msgid "Positive MTB"
-msgstr "Положительных"
+msgstr "Положительный MTB"
+
+#. [component.Widget.gxPositiveResultsNotifiedTitle]
+#. defaultMessage is:
+#. Positive Results Notified
+#: extracted_strings.json
+msgid "Positive Results Notified"
+msgstr "Уведомлено о положительных тестах"
 
 #. [pages.OperationalData.resultsTransmittedTitle]
 #. defaultMessage is:
@@ -4966,7 +5151,7 @@ msgstr "Нажмите enter, чтобы добавить тег"
 #. Presumptive Positive
 #: extracted_strings.json
 msgid "Presumptive Positive"
-msgstr "Положительный процент"
+msgstr "Предположительно положительный"
 
 #. [contextualMenu.notifications.preview.title]
 #. defaultMessage is:
@@ -5000,7 +5185,7 @@ msgstr "Продолжить"
 #. Processed
 #: extracted_strings.json
 msgid "Processed"
-msgstr "Обработан"
+msgstr "Обработанный"
 
 #. [pages.transferResult.processing]
 #. defaultMessage is:
@@ -5050,12 +5235,12 @@ msgstr "Выделено"
 #. Purged
 #: extracted_strings.json
 msgid "Purged"
-msgstr "Очищенный"
+msgstr "Очищен"
 
-#. [legends.Unknown.QHivVL]
+#. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
 #. Q HIV VL
-#. [filter.AssaySelectField.assayQHivVl]
+#. [legends.Unknown.QHivVL]
 #. defaultMessage is:
 #. Q HIV VL
 #: extracted_strings.json
@@ -5069,10 +5254,10 @@ msgstr "Q HIV VL"
 msgid "Quality Control"
 msgstr "Quality Control"
 
-#. [legends.Unknown.assayQS7Covid19]
+#. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
-#. [filter.AssaySelectField.assayQS7Covid19]
+#. [legends.Unknown.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
 #: extracted_strings.json
@@ -5132,7 +5317,7 @@ msgstr "Квартал"
 #. Ready for delivery
 #: extracted_strings.json
 msgid "Ready for delivery"
-msgstr "Готовы к доставке"
+msgstr "Готов к доставке"
 
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
@@ -5149,7 +5334,7 @@ msgstr "Реагент"
 #. Reagent Health
 #: extracted_strings.json
 msgid "Reagent Health"
-msgstr "Реагент"
+msgstr "Состояние Реагента"
 
 #. [pages.InventoryAdjustmentDialogForm.reason]
 #. defaultMessage is:
@@ -5182,6 +5367,13 @@ msgstr "Получить {consumableName}"
 msgid "Receiving Inventory Failed"
 msgstr "Приемка Инвентаризация провалилась"
 
+#. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
+#. defaultMessage is:
+#. Recovered cases
+#: extracted_strings.json
+msgid "Recovered cases"
+msgstr "Восстановленные случаи"
+
 #. [pages.Status.clinicalIndicatorsCovidGenderRecoveryRates]
 #. defaultMessage is:
 #. Recovery Rates by Gender
@@ -5211,7 +5403,7 @@ msgstr "Регион: {region}"
 #. Rejected
 #: extracted_strings.json
 msgid "Rejected"
-msgstr "Отклонено"
+msgstr "Отклоненный"
 
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
@@ -5258,20 +5450,20 @@ msgstr "Отчетный сайт"
 msgid "Reported Active"
 msgstr "Сообщено как активный"
 
-#. [legends.Unknown.ReporterEID]
+#. [filter.AssaySelectField.AssayReporterEid]
 #. defaultMessage is:
 #. Reporter EID
-#. [filter.AssaySelectField.AssayReporterEid]
+#. [legends.Unknown.ReporterEID]
 #. defaultMessage is:
 #. Reporter EID
 #: extracted_strings.json
 msgid "Reporter EID"
 msgstr "Репортёр EID"
 
-#. [legends.Unknown.ReporterHivVL]
+#. [filter.AssaySelectField.AssayReporterHivVl]
 #. defaultMessage is:
 #. Reporter HIV VL
-#. [filter.AssaySelectField.AssayReporterHivVl]
+#. [legends.Unknown.ReporterHivVL]
 #. defaultMessage is:
 #. Reporter HIV VL
 #: extracted_strings.json
@@ -5351,7 +5543,7 @@ msgstr "Сбросить все фильтры"
 #. Resistant
 #: extracted_strings.json
 msgid "Resistant"
-msgstr "Сопротивление туберкулёза"
+msgstr "Устойчивый"
 
 #. [pages.TaskList.issueStatusResolved]
 #. defaultMessage is:
@@ -5360,10 +5552,10 @@ msgstr "Сопротивление туберкулёза"
 msgid "Resolved"
 msgstr "Решено"
 
-#. [forms.formSectionHeader.result]
+#. [filter.popover.result]
 #. defaultMessage is:
 #. Result
-#. [filter.popover.result]
+#. [forms.formSectionHeader.result]
 #. defaultMessage is:
 #. Result
 #. [pages.Milestones.resultNotes]
@@ -5428,6 +5620,9 @@ msgstr ""
 "Результат для пациента \"{patientId}\" был перенесен с \"{oldSiteName}\" на "
 "\"{newSiteName}\""
 
+#. [component.Widget.resultsTitle]
+#. defaultMessage is:
+#. Results
 #. [pages.ResultList.title]
 #. defaultMessage is:
 #. Results
@@ -5491,14 +5686,17 @@ msgstr "SARS-CoV-2 (COVID-19)"
 #. SMS Sent
 #: extracted_strings.json
 msgid "SMS Sent"
-msgstr "Сообщение отправлено"
+msgstr "SMS отправлено"
 
 #. [pages.Status.dashboardWidgetSmsSentTitle]
 #. defaultMessage is:
 #. SMS Sent MTD
+#. [component.Widget.dashboardWidgetSmsSentTitle]
+#. defaultMessage is:
+#. SMS Sent MTD
 #: extracted_strings.json
 msgid "SMS Sent MTD"
-msgstr "Отправленное SMS-сообщение MTD"
+msgstr "Отправлено SMS за месяц"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -5510,10 +5708,10 @@ msgstr "Отправленное SMS-сообщение MTD"
 msgid "Sample"
 msgstr "Пример"
 
-#. [forms.formItem.sampleCollectionSite]
+#. [pages.CasesList.sampleOriginSite]
 #. defaultMessage is:
 #. Sample Collection Site
-#. [pages.CasesList.sampleOriginSite]
+#. [forms.formItem.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
@@ -5533,10 +5731,10 @@ msgstr "Сайт взятия проб"
 msgid "Sample Collection Site:"
 msgstr "Сайт взятия проб:"
 
-#. [forms.formItem.sampleId]
+#. [filter.popover.sampleId]
 #. defaultMessage is:
 #. Sample ID
-#. [filter.popover.sampleId]
+#. [forms.formItem.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -5616,7 +5814,7 @@ msgstr "Скудный"
 #. Scanty (1-9/100)
 #: extracted_strings.json
 msgid "Scanty (1-9/100)"
-msgstr "Счёт (1-100)"
+msgstr "Скудный (1-100)"
 
 #. [errorResponseMessages.fetchAssayTypes.GET.400.title]
 #. defaultMessage is:
@@ -5660,10 +5858,10 @@ msgstr "Поиск контактов Не удалось"
 msgid "Searching Device Approvals Failed"
 msgstr "Ошибка при поиске устройств"
 
-#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title]
+#. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
 #. defaultMessage is:
 #. Searching Device Maintenance status Failed
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
+#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title]
 #. defaultMessage is:
 #. Searching Device Maintenance status Failed
 #: extracted_strings.json
@@ -5811,7 +6009,7 @@ msgstr "Выберите квартал…"
 #. Select Reason
 #: extracted_strings.json
 msgid "Select Reason"
-msgstr "Выбрать задание"
+msgstr "Выбрать Причину"
 
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
@@ -5914,10 +6112,10 @@ msgstr "Выберите тип..."
 msgid "Select {entity}..."
 msgstr "Выберите {entity}..."
 
-#. [legends.Unknown.senaiteSmearMicroscopy]
+#. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
-#. [filter.AssaySelectField.assaySenaiteLIMSSmearMicroscopy]
+#. [legends.Unknown.senaiteSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
 #. [pages.ResultList.assaySenaiteLIMSSmearMicroscopy]
@@ -5927,10 +6125,10 @@ msgstr "Выберите {entity}..."
 msgid "Senaite LIMS Smear Microscopy"
 msgstr "Микроскопия мазка ЛИМС сенаита"
 
-#. [legends.Unknown.senaiteTbCulture]
+#. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
-#. [filter.AssaySelectField.assaySenaiteLIMSTbCulture]
+#. [legends.Unknown.senaiteTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
 #. [pages.ResultList.assaySenaiteLIMSTbCulture]
@@ -5940,10 +6138,10 @@ msgstr "Микроскопия мазка ЛИМС сенаита"
 msgid "Senaite LIMS TB Culture"
 msgstr "Сенайт ЛИМС ТБ Культура"
 
-#. [legends.Unknown.senaiteUnknown]
+#. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
-#. [filter.AssaySelectField.assaySenaiteLIMSUnknown]
+#. [legends.Unknown.senaiteUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
 #. [pages.ResultList.assaySenaiteLIMSUnknown]
@@ -5994,6 +6192,13 @@ msgstr "Серийный номер"
 msgid "Serial number"
 msgstr "Серийный номер"
 
+#. [component.Widget.serverUptimeTitle]
+#. defaultMessage is:
+#. Server Uptime
+#: extracted_strings.json
+msgid "Server Uptime"
+msgstr "Безотказная работа сервера"
+
 #. [pages.Status.summaryWidgetGroup.service]
 #. defaultMessage is:
 #. Service
@@ -6013,7 +6218,7 @@ msgstr "Установочные фильтры"
 #. Set Maintenance Status
 #: extracted_strings.json
 msgid "Set Maintenance Status"
-msgstr "Состояние обслуживания"
+msgstr "Задать статус обслуживания"
 
 #. [pages.SiteDetail.buttonSetBasedonAddress]
 #. defaultMessage is:
@@ -6052,6 +6257,13 @@ msgstr "Установка Статус техобслуживания Ошиб�
 #: extracted_strings.json
 msgid "ShortName"
 msgstr "Короткое имя"
+
+#. [filter.btnGroup.onlyReportableResults]
+#. defaultMessage is:
+#. Show Only Reportable Results
+#: extracted_strings.json
+msgid "Show Only Reportable Results"
+msgstr "Показать только отчетные результаты"
 
 #. [pages.CaseList.paginatorStatus]
 #. defaultMessage is:
@@ -6199,9 +6411,6 @@ msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 
-#. [forms.formSectionHeader.site]
-#. defaultMessage is:
-#. Site
 #. [pages.DeviceApiKeyList.siteId]
 #. defaultMessage is:
 #. Site
@@ -6209,6 +6418,9 @@ msgstr ""
 #. defaultMessage is:
 #. Site
 #. [filter.popover.site]
+#. defaultMessage is:
+#. Site
+#. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
 #. [pages.JobAssignments.site]
@@ -6264,16 +6476,19 @@ msgstr "ID сайта"
 msgid "Site Id"
 msgstr "Идентификатор сайта"
 
-#. [forms.formItem.siteName]
+#. [pages.InventoryItemsList.siteName]
 #. defaultMessage is:
 #. Site Name
-#. [pages.InventoryItemsList.siteName]
+#. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
 #: extracted_strings.json
 msgid "Site Name"
 msgstr "Название сайта"
 
+#. [component.Widget.sitesTitle]
+#. defaultMessage is:
+#. Sites
 #. [pages.SiteList.title]
 #. defaultMessage is:
 #. Sites
@@ -6288,10 +6503,10 @@ msgstr "Сайты"
 msgid "Start Date"
 msgstr "Дата начала"
 
-#. [forms.formItem.state]
+#. [pages.LocationSelector.state]
 #. defaultMessage is:
 #. State
-#. [pages.LocationSelector.state]
+#. [forms.formItem.state]
 #. defaultMessage is:
 #. State
 #. [pages.common.state]
@@ -6326,6 +6541,20 @@ msgstr "Регион"
 #: extracted_strings.json
 msgid "Status"
 msgstr "Статус"
+
+#. [component.Widget.stockNotRecordedTitle]
+#. defaultMessage is:
+#. Stock not recorded
+#: extracted_strings.json
+msgid "Stock not recorded"
+msgstr "Запас не зарегистрирован"
+
+#. [component.Widget.StockoutsTitle]
+#. defaultMessage is:
+#. Stockouts
+#: extracted_strings.json
+msgid "Stockouts"
+msgstr "Складские запасы"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
 #. defaultMessage is:
@@ -6375,7 +6604,7 @@ msgstr "Отправить"
 #. Success
 #: extracted_strings.json
 msgid "Success"
-msgstr "Успех"
+msgstr "Успешно"
 
 #. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
@@ -6392,7 +6621,7 @@ msgstr "Поставка на складе"
 #. Susceptible
 #: extracted_strings.json
 msgid "Susceptible"
-msgstr "Susceptible"
+msgstr "Восприимчивый"
 
 #. [filter.AssayTypeSelectField.assayTypeTbAst]
 #. defaultMessage is:
@@ -6401,10 +6630,10 @@ msgstr "Susceptible"
 msgid "TB AST"
 msgstr "TB AST"
 
-#. [legends.Unknown.assayGenericDst]
+#. [filter.AssaySelectField.assayGenericDst]
 #. defaultMessage is:
 #. TB DST
-#. [filter.AssaySelectField.assayGenericDst]
+#. [legends.Unknown.assayGenericDst]
 #. defaultMessage is:
 #. TB DST
 #: extracted_strings.json
@@ -6547,12 +6776,12 @@ msgstr "История тестирования"
 msgid "Tests"
 msgstr "Тесты"
 
-#. [pages.Status.dashboardWidgetTestsPerDayTitle]
+#. [component.Widget.dashboardWidgetTestsPerDayTitle]
 #. defaultMessage is:
 #. Tests Per Day
 #: extracted_strings.json
 msgid "Tests Per Day"
-msgstr "Тесты в день"
+msgstr "Тестов в день"
 
 #. [pages.Status.testsOverTimeTitle.graph]
 #. defaultMessage is:
@@ -6568,6 +6797,27 @@ msgstr "Проведенные тесты"
 msgid "Tests Run Between"
 msgstr "Пробег тестов между"
 
+#. [component.Widget.activeDevicesDescription]
+#. defaultMessage is:
+#. The average daily percentage of devices sending results, excluding weekends.
+#: extracted_strings.json
+msgid ""
+"The average daily percentage of devices sending results, excluding weekends."
+msgstr ""
+"Средний дневной процент устройств, отправляющих результаты, за исключением "
+"выходных."
+
+#. [component.Widget.avgTimeToUploadDescription]
+#. defaultMessage is:
+#. The average delay of uploading results, in hours. Only considering results where the delay was greater than two hours.
+#: extracted_strings.json
+msgid ""
+"The average delay of uploading results, in hours. Only considering results "
+"where the delay was greater than two hours."
+msgstr ""
+"Средняя задержка загрузки результатов в часах. Только с учетом результатов, "
+"для которых задержка составила более двух часов."
+
 #. [pages.OperationalData.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
 #. The average duration of a service interruption, in days
@@ -6575,7 +6825,68 @@ msgstr "Пробег тестов между"
 msgid "The average duration of a service interruption, in days"
 msgstr "Средняя продолжительность перерыва в обслуживании, в днях"
 
+#. [component.Widget.averageDurationServiceInterruptionDescription]
+#. defaultMessage is:
+#. The average duration of a service interruption, in days.
+#: extracted_strings.json
+msgid "The average duration of a service interruption, in days."
+msgstr "Средняя продолжительность перерыва в обслуживании, в днях."
+
+#. [component.Widget.averageRecipientsOfSmsDescription]
+#. defaultMessage is:
+#. The average number of SMS recipients per positive GeneXpert result.
+#: extracted_strings.json
+msgid "The average number of SMS recipients per positive GeneXpert result."
+msgstr ""
+"Среднее количество получателей SMS на один положительный результат GeneXpert."
+
+#. [component.Widget.averageLengthOfSmsDescription]
+#. defaultMessage is:
+#. The average number of characters in SMS messages sent about positive GeneXpert results.
+#: extracted_strings.json
+msgid ""
+"The average number of characters in SMS messages sent about positive "
+"GeneXpert results."
+msgstr ""
+"Среднее количество символов в отправленных SMS-сообщениях о положительных "
+"результатах GeneXpert."
+
+#. [component.Widget.averageDaysModuleSwapDescription]
+#. defaultMessage is:
+#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
+#: extracted_strings.json
+msgid ""
+"The average number of days between the last result reported under a replaced "
+"module serial and the new module serial in that module slot reporting its "
+"first result."
+msgstr ""
+"Среднее время (в днях) между моментом отключения модуля и моментом "
+"обнаружения другого последовательного модуля в одном и том же слоте."
+
+#. [component.Widget.instrumentsReplacedDescription]
+#. defaultMessage is:
+#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.
+#: extracted_strings.json
+msgid ""
+"The average number of days between when an instrument serial last reported "
+"from a device and a new instrument serial reporting."
+msgstr ""
+"Среднее количество дней между последним сообщением серийного номера прибора "
+"от устройства и новым сообщением серийного номера прибора."
+
+#. [component.Widget.averageRecipientsOfEmailDescription]
+#. defaultMessage is:
+#. The average number of email recipients per positive GeneXpert result.
+#: extracted_strings.json
+msgid "The average number of email recipients per positive GeneXpert result."
+msgstr ""
+"Среднее количество получателей электронной почты на один положительный "
+"результат GeneXpert."
+
 #. [pages.OperationalData.averageTimeToModuleReplacementDescription]
+#. defaultMessage is:
+#. The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.
+#. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
 #. The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.
 #: extracted_strings.json
@@ -6585,6 +6896,13 @@ msgid ""
 msgstr ""
 "Среднее время (в днях) между моментом отключения модуля и моментом "
 "обнаружения другого последовательного модуля в одном и том же слоте."
+
+#. [component.Widget.serverUptimeDescription]
+#. defaultMessage is:
+#. The average uptime of the Aspect server this month.
+#: extracted_strings.json
+msgid "The average uptime of the Aspect server this month."
+msgstr "Среднее время безотказной работы сервера Aspect в этом месяце."
 
 #. [errorResponseMessages.saveLoginDetails.PUT.403.message]
 #. defaultMessage is:
@@ -6604,6 +6922,19 @@ msgstr ""
 "Устройство не подключалось к Aspect несколько дней. Может быть, оно проводит "
 "тесты, но тесты еще не загружены в Aspect."
 
+#. [component.Widget.errorRateDescription]
+#. defaultMessage is:
+#. The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices.
+#: extracted_strings.json
+msgid ""
+"The error rate is calculated by counting all errors in the tests conducted "
+"in the month and dividing that number by the total tests carried out of all "
+"devices."
+msgstr ""
+"Коэффициент ошибок рассчитывается путем подсчета всех ошибок в тестах, "
+"проведенных за месяц, и деления этого числа на общее количество тестов, "
+"проведенных для всех устройств."
+
 #. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
 #. defaultMessage is:
 #. The most that you can remove is {currentQuantity}
@@ -6618,7 +6949,34 @@ msgstr "Самое большее, что вы можете удалить, эт
 msgid "The most that you can transfer is {currentQuantity}"
 msgstr "Самое большее, что вы можете перевести, это {currentQuantity}"
 
+#. [component.Widget.geneXpertDevices]
+#. defaultMessage is:
+#. The number of approved GeneXpert devices (excluding decommissioned devices).
+#: extracted_strings.json
+msgid ""
+"The number of approved GeneXpert devices (excluding decommissioned devices)."
+msgstr ""
+"Количество одобренных устройств GeneXpert (исключая списанные устройства)."
+
+#. [component.Widget.devicesDescription]
+#. defaultMessage is:
+#. The number of approved lab devices (excluding decommissioned devices)
+#: extracted_strings.json
+msgid "The number of approved lab devices (excluding decommissioned devices)"
+msgstr ""
+"Количество одобренных лабораторных устройств (исключая списанные устройства)"
+
+#. [component.Widget.personDescription]
+#. defaultMessage is:
+#. The number of contacts in the system.
+#: extracted_strings.json
+msgid "The number of contacts in the system."
+msgstr "Количество контактов в системе."
+
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month.
+#. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month.
 #: extracted_strings.json
@@ -6628,6 +6986,64 @@ msgid ""
 msgstr ""
 "Количество устройств, на которых было прервано обслуживание в этом и "
 "предыдущем месяце."
+
+#. [component.Widget.deviceCalibrationPastDueDescription]
+#. defaultMessage is:
+#. The number of instruments that had their last calibration more than one year ago.
+#: extracted_strings.json
+msgid ""
+"The number of instruments that had their last calibration more than one year "
+"ago."
+msgstr "Количество приборов, прошедших последнюю калибровку более года назад."
+
+#. [component.Widget.moduleSwapsDescription]
+#. defaultMessage is:
+#. The number of module swaps made at the current month
+#: extracted_strings.json
+msgid "The number of module swaps made at the current month"
+msgstr "Количество замен модулей в текущем месяце"
+
+#. [component.Widget.confirmedCasesDescription]
+#. defaultMessage is:
+#. The number of positive results
+#: extracted_strings.json
+msgid "The number of positive results"
+msgstr "Количество положительных результатов"
+
+#. [component.Widget.totalActiveCasesDescription]
+#. defaultMessage is:
+#. The number of positive results that are still active
+#: extracted_strings.json
+msgid "The number of positive results that are still active"
+msgstr "Количество активных положительных результатов"
+
+#. [component.Widget.resultsDescription]
+#. defaultMessage is:
+#. The number of results in the last 30 days
+#: extracted_strings.json
+msgid "The number of results in the last 30 days"
+msgstr "Количество результатов за последние 30 дней"
+
+#. [component.Widget.dashboardWidgetDescriptionTotalDeaths]
+#. defaultMessage is:
+#. The number of results that belong to a patient that died
+#: extracted_strings.json
+msgid "The number of results that belong to a patient that died"
+msgstr "Количество результатов, принадлежащих умершему пациенту"
+
+#. [component.Widget.totalRecoveredCasesDescription]
+#. defaultMessage is:
+#. The number of results that belong to a patient that recovered
+#: extracted_strings.json
+msgid "The number of results that belong to a patient that recovered"
+msgstr "Количество результатов, принадлежащих пациенту, который выздоровел"
+
+#. [component.Widget.sitesDescription]
+#. defaultMessage is:
+#. The number of sites.
+#: extracted_strings.json
+msgid "The number of sites."
+msgstr "Количество сайтов."
 
 #. [pages.NotFound.help]
 #. defaultMessage is:
@@ -6671,6 +7087,9 @@ msgstr "Введенный вами пароль неверен"
 #. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
+#. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
+#. defaultMessage is:
+#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
 msgid ""
 "The percentage of \"device-days\" that were statused as \"down for repair\", "
@@ -6682,6 +7101,30 @@ msgstr ""
 "\", за исключением выходных дней. Например, 20 рабочих дней в месяце и 5 "
 "устройств приравниваются к 100 \"приборам-приборам-дням\". Если бы один "
 "прибор не работал половину месяца, то это число составляло бы 10%"
+
+#. [component.Widget.deviceCalibratedWhenDueDescription]
+#. defaultMessage is:
+#. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
+#: extracted_strings.json
+msgid ""
+"The percentage of calibrations that were within 30 days of the scheduled "
+"date. Note that this only counts calibrations for devices that had a "
+"calibration record before."
+msgstr ""
+"Процент калибровок, которые были выполнены в пределах 30 дней от "
+"запланированной даты. Обратите внимание, что при этом учитываются только "
+"калибровки для устройств, для которых ранее была калибровочная запись."
+
+#. [component.Widget.gxPositiveResultsNotifiedDescription]
+#. defaultMessage is:
+#. The percentage of positive GeneXpert's results that were notified via SMS or email.
+#: extracted_strings.json
+msgid ""
+"The percentage of positive GeneXpert's results that were notified via SMS or "
+"email."
+msgstr ""
+"Процент положительных результатов GeneXpert, о которых было сообщено по SMS "
+"или электронной почте."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
@@ -6729,7 +7172,34 @@ msgstr ""
 "Сервер отклонил значения, указанные в этих полях фильтра. Наша техническая "
 "команда была уведомлена и займется проблемой в кратчайшие сроки."
 
+#. [component.Widget.stockNotRecordedDescription]
+#. defaultMessage is:
+#. The stock not recorded is calculated by counting all sites that didn't enter any stock for any of the GeneXpert assays and dividing that number by the total number of sites.
+#: extracted_strings.json
+msgid ""
+"The stock not recorded is calculated by counting all sites that didn't enter "
+"any stock for any of the GeneXpert assays and dividing that number by the "
+"total number of sites."
+msgstr ""
+"Незарегистрированный запас рассчитывается путем подсчета всех сайтов, "
+"которые не попали ни в один из тестов GeneXpert, и деления этого числа на "
+"общее количество сайтов."
+
+#. [component.Widget.stockoutsDescription]
+#. defaultMessage is:
+#. The stockout percentage is calculated by counting all sites with stockout issues during the month and dividing by all active sites.
+#: extracted_strings.json
+msgid ""
+"The stockout percentage is calculated by counting all sites with stockout "
+"issues during the month and dividing by all active sites."
+msgstr ""
+"Процент дефицита рассчитывается путем подсчета всех сайтов с дефицитом в "
+"течение месяца и деления на все активные сайты."
+
 #. [pages.Status.dashboardWidgetSmsSentDescription]
+#. defaultMessage is:
+#. The total number of text messages sent in the month
+#. [component.Widget.dashboardWidgetSmsSentDescription]
 #. defaultMessage is:
 #. The total number of text messages sent in the month
 #: extracted_strings.json
@@ -6748,6 +7218,19 @@ msgid ""
 "system"
 msgstr ""
 "Введенное вами имя пользователя уже используется другим пользователем системы"
+
+#. [component.Widget.utilizationRateDescription]
+#. defaultMessage is:
+#. The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices. This calculation excludes weekends.
+#: extracted_strings.json
+msgid ""
+"The utilization rate is calculated by counting all tests conducted in the "
+"month and dividing that number by the total capacity of all devices. This "
+"calculation excludes weekends."
+msgstr ""
+"Коэффициент использования рассчитывается путем подсчета всех тестов, "
+"проведенных за месяц, и деления этого числа на общую емкость всех устройств. "
+"Этот расчет не включает выходные."
 
 #. [widgetAlerts.between]
 #. defaultMessage is:
@@ -7100,12 +7583,6 @@ msgstr "Невозможно сбросить пароль"
 msgid "Ungroup Column"
 msgstr "Колонна Разгруппы"
 
-#. [legends.Unknown.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [legends.Unknown.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
 #. [pages.DeviceList.status.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -7115,10 +7592,16 @@ msgstr "Колонна Разгруппы"
 #. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
+#. [legends.Unknown.resultCategoryUnknown]
+#. defaultMessage is:
+#. Unknown
+#. [legends.Unknown.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.deviceDetail.resultCategoryUnknown]
+#. defaultMessage is:
+#. Unknown
+#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
@@ -7176,6 +7659,9 @@ msgstr "Пользовательские настройки успешно из�
 msgid "Username"
 msgstr "Имя пользователя"
 
+#. [component.Widget.utilizationRateTitle]
+#. defaultMessage is:
+#. Utilization Rate
 #. [pages.DeviceDetailProfile.utilizationRate]
 #. defaultMessage is:
 #. Utilization Rate
@@ -7190,26 +7676,26 @@ msgstr "Коэффициент использования"
 msgid "VL Results"
 msgstr "VL Результаты"
 
-#. [pages.Status.dashboardWidgetValidResultsPc]
+#. [component.Widget.dashboardWidgetValidResultsPc]
 #. defaultMessage is:
 #. Valid Results
 #: extracted_strings.json
 msgid "Valid Results"
-msgstr "достоверные результаты"
+msgstr "Достоверные результаты"
 
 #. [pages.Status.treatmentStatusTotalValidTitle.graph]
 #. defaultMessage is:
 #. Valid Tests
 #: extracted_strings.json
 msgid "Valid Tests"
-msgstr "надёжные испытания"
+msgstr "Надёжные испытания"
 
 #. [pages.deviceDetail.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. Validated
 #: extracted_strings.json
 msgid "Validated"
-msgstr "надёжные испытания"
+msgstr "Подтверждено"
 
 #. [forms.mustMatch]
 #. defaultMessage is:
@@ -7340,7 +7826,7 @@ msgstr "Неделя"
 #. Week or holiday
 #: extracted_strings.json
 msgid "Week or holiday"
-msgstr "неделя или праздник"
+msgstr "Неделя или праздник"
 
 #. [pages.OperationalData.withinTwoHoursOfTesting]
 #. defaultMessage is:
@@ -7428,7 +7914,7 @@ msgstr ""
 #. You were logged out due to an expired session
 #: extracted_strings.json
 msgid "You were logged out due to an expired session"
-msgstr "Вы вышли из системы из-за просроченного сеанса.."
+msgstr "Вы вышли из системы из-за просроченного сеанса"
 
 #. [pages.Login.reasonIdle]
 #. defaultMessage is:
@@ -7513,7 +7999,7 @@ msgstr "Зика"
 #. Zika Fever
 #: extracted_strings.json
 msgid "Zika Fever"
-msgstr "лихорадка Зика"
+msgstr "Лихорадка Зика"
 
 #. [pages.SiteDetail.fieldZip]
 #. defaultMessage is:
@@ -7535,6 +8021,13 @@ msgstr "Почтовый индекс"
 #: extracted_strings.json
 msgid "and"
 msgstr "и"
+
+#. [filter.btnGroup.withDeviceApproval]
+#. defaultMessage is:
+#. approval status is {deviceApprovalName}
+#: extracted_strings.json
+msgid "approval status is {deviceApprovalName}"
+msgstr "статус подтверждения - {deviceApprovalName}"
 
 #. [widgetAlerts.averageDaysBetweenModuleSwaps]
 #. defaultMessage is:
@@ -7599,6 +8092,27 @@ msgstr "дней"
 msgid "days unavailable"
 msgstr "дни недели"
 
+#. [filter.btnGroup.whereDeviceNameIncludes]
+#. defaultMessage is:
+#. device name includes "{deviceName}"
+#: extracted_strings.json
+msgid "device name includes \"{deviceName}\""
+msgstr "имя устройства включает \"{deviceName}\""
+
+#. [filter.btnGroup.whereDeviceIdIsIn]
+#. defaultMessage is:
+#. deviceId is in ({joinedIds})
+#: extracted_strings.json
+msgid "deviceId is in ({joinedIds})"
+msgstr "deviceId находится в ({connectedIds})"
+
+#. [filter.btnGroup.errorCode]
+#. defaultMessage is:
+#. error code includes "{errorCode}"
+#: extracted_strings.json
+msgid "error code includes \"{errorCode}\""
+msgstr "код ошибки включает \"{errorCode}\""
+
 #. [widgetAlerts.errorRate]
 #. defaultMessage is:
 #. error rate
@@ -7634,6 +8148,13 @@ msgstr "за {unit} результаты"
 msgid "indicator"
 msgstr "показатель"
 
+#. [filter.btnGroup.withDeviceMaintenanceStatus]
+#. defaultMessage is:
+#. maintenance status is {deviceMaintenanceStatusName}
+#: extracted_strings.json
+msgid "maintenance status is {deviceMaintenanceStatusName}"
+msgstr "статус обслуживания: {deviceMaintenanceStatusName}"
+
 #. [component.DateTimeInput.minutes.placeholder]
 #. defaultMessage is:
 #. min.
@@ -7655,12 +8176,26 @@ msgstr "отсутствует"
 msgid "n/a"
 msgstr "н/д"
 
+#. [filter.btnGroup.whoseNameOrEmailIncludes]
+#. defaultMessage is:
+#. name/email includes "{contactNameOrEmail}"
+#: extracted_strings.json
+msgid "name/email includes \"{contactNameOrEmail}\""
+msgstr "имя/емэйл включает \"{contactNameOrEmail}\""
+
 #. [pages.DeviceDetailProfile.notes]
 #. defaultMessage is:
 #. notes
 #: extracted_strings.json
 msgid "notes"
 msgstr "примечания"
+
+#. [filter.btnGroup.whereNotificationNameIncludes]
+#. defaultMessage is:
+#. notification name includes "{notificationName}"
+#: extracted_strings.json
+msgid "notification name includes \"{notificationName}\""
+msgstr "название уведомления включает \"{notificationName}\""
 
 #. [widgetAlerts.numberOfTextMessagesSent]
 #. defaultMessage is:
@@ -7681,7 +8216,28 @@ msgstr "от {unit}сообщаемого в настоящее время"
 #. of {unit} total modules
 #: extracted_strings.json
 msgid "of {unit} total modules"
-msgstr "всех устройств"
+msgstr "из {unit} всех модулей"
+
+#. [filter.btnGroup.partnerId]
+#. defaultMessage is:
+#. partner "{partnerName}"
+#: extracted_strings.json
+msgid "partner \"{partnerName}\""
+msgstr "партнер \"{partnerName}\""
+
+#. [filter.btnGroup.patientOrResearchId]
+#. defaultMessage is:
+#. patient ID includes {patientOrResearchId}
+#: extracted_strings.json
+msgid "patient ID includes {patientOrResearchId}"
+msgstr "идентификатор пациента включает {patientOrResearchId}"
+
+#. [filter.btnGroup.patientOrCaseId]
+#. defaultMessage is:
+#. patient/case ID includes {patientOrCaseId}
+#: extracted_strings.json
+msgid "patient/case ID includes {patientOrCaseId}"
+msgstr "идентификатор пациента / случая включает {patientOrCaseId}"
 
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
@@ -7716,7 +8272,7 @@ msgstr "процент устройств с неиспользуемыми мо
 #. percentage of modules functioning
 #: extracted_strings.json
 msgid "percentage of modules functioning"
-msgstr "процент положительных результатов"
+msgstr "процент функционирующих модулей"
 
 #. [widgetAlerts.percentageOfPositiveResultsNotified]
 #. defaultMessage is:
@@ -7746,6 +8302,62 @@ msgstr "процент сайтов, которые никогда не вход
 msgid "percentage of valid results"
 msgstr "процент достоверных результатов"
 
+#. [filter.btnGroup.whereReportNameIncludes]
+#. defaultMessage is:
+#. report name includes "{reportName}"
+#: extracted_strings.json
+msgid "report name includes \"{reportName}\""
+msgstr "название отчета включает \"{reportName}\""
+
+#. [filter.btnGroup.withRevoked]
+#. defaultMessage is:
+#. revoked is "{revokedStatus}"
+#: extracted_strings.json
+msgid "revoked is \"{revokedStatus}\""
+msgstr "отозвано: \"{revokedStatus}\""
+
+#. [filter.btnGroup.sampleOriginSite]
+#. defaultMessage is:
+#. sample collection site is {sampleOriginSiteName}
+#: extracted_strings.json
+msgid "sample collection site is {sampleOriginSiteName}"
+msgstr "сайт сбора образцов: {sampleOriginSiteName}"
+
+#. [filter.btnGroup.sampleId]
+#. defaultMessage is:
+#. sample includes "{sampleId}"
+#: extracted_strings.json
+msgid "sample includes \"{sampleId}\""
+msgstr "образец включает \"{sampleId}\""
+
+#. [filter.btnGroup.dateFrom]
+#. defaultMessage is:
+#. since {date}
+#: extracted_strings.json
+msgid "since {date}"
+msgstr "с {date}"
+
+#. [filter.btnGroup.whereSiteIdIncludes]
+#. defaultMessage is:
+#. site ID includes "{siteId}"
+#: extracted_strings.json
+msgid "site ID includes \"{siteId}\""
+msgstr "идентификатор сайта включает \"{siteId}\""
+
+#. [filter.btnGroup.whereSiteIdIsIn]
+#. defaultMessage is:
+#. site ID is in ({joinedIds})
+#: extracted_strings.json
+msgid "site ID is in ({joinedIds})"
+msgstr "идентификатор сайта находится в ({joinedIds})"
+
+#. [filter.btnGroup.whereSiteNameIncludes]
+#. defaultMessage is:
+#. site name includes "{siteName}"
+#: extracted_strings.json
+msgid "site name includes \"{siteName}\""
+msgstr "название сайта включает \"{siteName}\""
+
 #. [pages.OperationalData.stockOutsTitle]
 #. defaultMessage is:
 #. stock outs
@@ -7760,6 +8372,27 @@ msgstr "складские запасы"
 msgid "test failures"
 msgstr "сбои тестирования"
 
+#. [filter.btnGroup.withTreatmentStatus]
+#. defaultMessage is:
+#. treatment status is {treatmentStatusName}
+#: extracted_strings.json
+msgid "treatment status is {treatmentStatusName}"
+msgstr "статус лечения: {treatmentStatusName}"
+
+#. [filter.btnGroup.withDeviceType]
+#. defaultMessage is:
+#. type is {deviceTypeName}
+#: extracted_strings.json
+msgid "type is {deviceTypeName}"
+msgstr "тип - {deviceTypeName}"
+
+#. [filter.btnGroup.dateTo]
+#. defaultMessage is:
+#. until {date}
+#: extracted_strings.json
+msgid "until {date}"
+msgstr "до {date}"
+
 #. [widgetAlerts.utilizationRate]
 #. defaultMessage is:
 #. utilization rate
@@ -7772,7 +8405,28 @@ msgstr "коэффициент использования"
 #. view Results Details
 #: extracted_strings.json
 msgid "view Results Details"
-msgstr "Посмотреть Результаты Подробнее"
+msgstr "посмотреть Детали Результатов"
+
+#. [filter.btnGroup.withResultCategoryGroup]
+#. defaultMessage is:
+#. with result {resultCategoryGroupName}
+#: extracted_strings.json
+msgid "with result {resultCategoryGroupName}"
+msgstr "с результатом {resultCategoryGroupName}"
+
+#. [filter.btnGroup.withResultCategory]
+#. defaultMessage is:
+#. with result {resultCategoryName}
+#: extracted_strings.json
+msgid "with result {resultCategoryName}"
+msgstr "с результатом {resultCategoryName}"
+
+#. [filter.btnGroup.withWorkflowStatus]
+#. defaultMessage is:
+#. workflow status is {workflowStatusName}
+#: extracted_strings.json
+msgid "workflow status is {workflowStatusName}"
+msgstr "статус рабочего процесса: {workflowStatusName}"
 
 #. [pages.TaskList.alertCount]
 #. defaultMessage is:
@@ -7922,17 +8576,5 @@ msgstr ""
 "{value} ({records}/{тотал, множественное число, один {# результат} другой {# "
 "результат}))"
 
-#~ msgid "undefined"
-#~ msgstr "undefined"
-
-#, fuzzy
-#~| msgid "{itemCount, plural, one {# Name} other {# Names} }"
-#~ msgid ""
-#~ "But you selected {locales, plural, one {# {item}} other {# {item}s} }"
-#~ msgstr "{пунктСчет, множественное число, один {# Имя} другой {# Имена} }"
-
-#, fuzzy
-#~| msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-#~ msgid "We have {locales, plural, one {# {item}} other {# {item}s} }"
-#~ msgstr ""
-#~ "Счетчик, множественное число, один сигнал тревоги, другой сигнал тревоги }"
+#~ msgid "Percentage of valid results reported the current month"
+#~ msgstr "Процент достоверных результатов за текущий месяц"
