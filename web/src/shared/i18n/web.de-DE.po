@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-11T21:33:52.258Z\n"
+"POT-Creation-Date: 2021-03-15T08:38:33.337Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -81,15 +81,11 @@ msgstr "1-3 Monate"
 #. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#: extracted_strings.json
-msgid "15-30 Days"
-msgstr "15-30 Tage"
-
 #. [filter.btnGroup.stockLeft.upTo30]
 #. defaultMessage is:
-#. 15-30 Daysssssssssssss
+#. 15-30 Days
 #: extracted_strings.json
-msgid "15-30 Daysssssssssssss"
+msgid "15-30 Days"
 msgstr "15-30 Tage"
 
 #. [legends.Unknown.upTo180]
@@ -7937,6 +7933,9 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "15-30 Daysssssssssssss"
+#~ msgstr "15-30 Tage"
 
 #~ msgid "undefined"
 #~ msgstr "undefined"

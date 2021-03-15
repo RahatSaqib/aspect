@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-11T21:33:52.258Z\n"
+"POT-Creation-Date: 2021-03-15T08:40:24.543Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -82,15 +82,11 @@ msgstr "1-3 Mois"
 #. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#: extracted_strings.json
-msgid "15-30 Days"
-msgstr "15-30 Jours"
-
 #. [filter.btnGroup.stockLeft.upTo30]
 #. defaultMessage is:
-#. 15-30 Daysssssssssssss
+#. 15-30 Days
 #: extracted_strings.json
-msgid "15-30 Daysssssssssssss"
+msgid "15-30 Days"
 msgstr "15-30 Jours"
 
 #. [legends.Unknown.upTo180]
@@ -7948,6 +7944,9 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, un {# résultat} autre {# résultats} })"
+
+#~ msgid "15-30 Daysssssssssssss"
+#~ msgstr "15-30 Jours"
 
 #~ msgid "undefined"
 #~ msgstr "undefined"

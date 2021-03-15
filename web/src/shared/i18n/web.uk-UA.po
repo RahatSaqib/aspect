@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-11T21:33:52.258Z\n"
+"POT-Creation-Date: 2021-03-15T08:34:25.643Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -81,15 +81,11 @@ msgstr "Місяць"
 #. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#: extracted_strings.json
-msgid "15-30 Days"
-msgstr "Останні 30 днів"
-
 #. [filter.btnGroup.stockLeft.upTo30]
 #. defaultMessage is:
-#. 15-30 Daysssssssssssss
+#. 15-30 Days
 #: extracted_strings.json
-msgid "15-30 Daysssssssssssss"
+msgid "15-30 Days"
 msgstr "Останні 30 днів"
 
 #. [legends.Unknown.upTo180]
@@ -7914,6 +7910,9 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# result} other {# results}})"
+
+#~ msgid "15-30 Daysssssssssssss"
+#~ msgstr "Останні 30 днів"
 
 #~ msgid "undefined"
 #~ msgstr "undefined"
