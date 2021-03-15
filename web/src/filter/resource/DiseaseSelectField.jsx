@@ -9,7 +9,7 @@ import messages from './i18n/diseaseMessages'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDiseases } from '../../disease/DiseaseRedux'
-import { formatI18nMessage } from '../../shared/i18n/formatter'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const enhance = compose(
   pure,

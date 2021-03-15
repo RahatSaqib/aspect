@@ -11,7 +11,7 @@ import messages from './i18n/deviceApprovalMessages'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
-import { formatI18nMessage } from '../../shared/i18n/formatter'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {

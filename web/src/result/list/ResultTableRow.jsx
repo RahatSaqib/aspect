@@ -12,7 +12,7 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
-import { formatI18nMessage } from '../../shared/i18n/formatter'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
