@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   upTo30: {
     id: 'filter.btnGroup.stockLeft.upTo30',
-    defaultMessage: '15-30 Daysssssssssssss',
+    defaultMessage: '15-30 Days',
   },
   upTo90: {
     id: 'filter.btnGroup.stockLeft.upTo90',
