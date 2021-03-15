@@ -1869,7 +1869,7 @@ const dashboardWidgetTitleTotalRecoveredCases = {
   sortOrder: 6,
   externalId: 'dashboardWidgetTitleTotalRecoveredCases',
   description: `The number of results that belong to a patient that recovered`,
-  descriptionI18nKey: 'totalActiveCasesDescription',
+  descriptionI18nKey: 'totalRecoveredCasesDescription',
   dashboards: {
     home: {},
   },
