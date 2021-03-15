@@ -45,7 +45,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
     action.onClick = () => setTransferResultOpen(true)
     action.isVisible = (permissions, isEditMode) => {
       return (
-        isEditMode &&
+        !isEditMode &&
         // eslint-disable-next-line lodash/prefer-some
         findIndex(permissions, elem => elem === 'result:edit') >= 0
       )
