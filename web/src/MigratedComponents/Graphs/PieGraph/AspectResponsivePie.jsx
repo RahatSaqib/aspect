@@ -28,6 +28,7 @@ const AspectResponsivePie = ({
   keys,
   type = false,
   link,
+  i18nKeys,
 }) => {
   const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
   const config = (type, data, displayMethod) => {
@@ -99,7 +100,8 @@ const AspectResponsivePie = ({
               intlFormatNumber,
               type,
               formatMessage,
-              messages
+              messages,
+              i18nKeys
             )}
           />
         )}
@@ -130,6 +132,7 @@ AspectResponsivePie.propTypes = {
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  i18nKeys: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectResponsivePie

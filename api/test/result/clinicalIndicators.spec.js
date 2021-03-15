@@ -28,7 +28,7 @@ describe('/result/clinical-indicator-aggregations', () => {
   before(() =>
     runTestWithKnex(async knex => {
       resultsForUser = await getResultsForUser()
-      assays = await knex('Assay').select('id', 'externalId')
+      assays = await knex('Assay').select('id', 'externalId', 'i18nKey')
       reportableResultCategories = await knex('ResultCategoryAssay as rca')
         .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
         .where('rca.reportable', true)
@@ -45,13 +45,19 @@ describe('/result/clinical-indicator-aggregations', () => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
             resultCategory1: o.resultCategory1Name.replace(' ', ''),
+            resultCategory1I18nKey: o.resultCategory1I18nKey,
           }))
           .filter(function (o) {
             return reportableResultCategories.indexOf(o.resultCategory1) > -1
           })
-          .groupBy('resultCategory1')
+          .map(
+            ({ resultCategory1, resultCategory1I18nKey }) =>
+              `${resultCategory1}_${resultCategory1I18nKey}`
+          )
+          .groupBy()
           .map((value, key) => ({
-            resultCategory1: key,
+            resultCategory1: key.split('_')[0],
+            resultCategory1I18nKey: key.split('_')[1],
             cnt: value.length,
           }))
           .value()
@@ -156,12 +162,13 @@ describe('/result/clinical-indicator-aggregations', () => {
             categoryMonth: `${o.resultCategory1Name.replace(' ', '')}_${format(
               new Date(o.endedOn),
               'yyyy-MM'
-            )}`,
+            )}_${o.resultCategory1I18nKey}`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
-            resultCategory1: key.substring(0, key.indexOf('_')),
-            month: key.substring(key.indexOf('_') + 1),
+            resultCategory1: key.split('_')[0],
+            resultCategory1I18nKey: key.split('_')[2],
+            month: key.split('_')[1],
             cnt: value.length,
           }))
           .value()
@@ -178,12 +185,13 @@ describe('/result/clinical-indicator-aggregations', () => {
           .map(o => ({
             categoryMonth: `${
               _.find(assays, assay => assay.id === o.assayId).externalId
-            }_${format(new Date(o.endedOn), 'yyyy-MM')}`,
+            }_${format(new Date(o.endedOn), 'yyyy-MM')}_${o.assayI18nKey}`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
-            assay: key.substring(0, key.indexOf('_')),
-            month: key.substring(key.indexOf('_') + 1),
+            assay: key.split('_')[0],
+            assayI18nKey: key.split('_')[2],
+            month: key.split('_')[1],
             cnt: value.length,
           }))
           .value()

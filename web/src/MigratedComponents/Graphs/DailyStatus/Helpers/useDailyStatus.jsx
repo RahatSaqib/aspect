@@ -96,7 +96,13 @@ const useDailyStatus = (minDate, maxDate) => {
     {
       onSuccess: ({ data }) => {
         const output = []
-        data.map(status => output.push({ ...status, checked: true }))
+        data.map(status =>
+          output.push({
+            ...status,
+            name: formatMessage(messages[status.i18nKey]),
+            checked: true,
+          })
+        )
         setStatuses(output)
       },
     }

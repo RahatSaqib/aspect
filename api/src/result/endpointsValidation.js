@@ -55,10 +55,19 @@ const resultAggregationsResponseItem = {
   resultCategory1: Joi.string()
     .allow(null)
     .description('Result Category 1 that the count is grouped by'),
+  resultCategory1I18nKey: Joi.string()
+    .allow(null)
+    .description('Result Category 1 intl key that the count is grouped by'),
   resultCategory2: Joi.string()
     .allow(null)
     .description('Result Category 2 that the count is grouped by'),
+  resultCategory2I18nKey: Joi.string()
+    .allow(null)
+    .description('Result Category 2 intl key that the count is grouped by'),
   assay: Joi.string()
+    .allow(null)
+    .description('Assay name that the count is grouped by'),
+  assayI18nKey: Joi.string()
     .allow(null)
     .description('Assay name that the count is grouped by'),
   week: Joi.string().description('The week that the count is grouped by'),

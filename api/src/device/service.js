@@ -78,6 +78,7 @@ const SELECT_SHOW_FIELDS = [
   'dms.active as maintenanceStatusActive',
   'dms.manuallySet as maintenanceStatusManuallySet',
   'da.token as approvalToken',
+  'da.i18nKey as approvalStatusI18nKey',
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',
@@ -484,7 +485,10 @@ async function listApprovalTypes() {
   const getCount = resultQuery.clone().count('da.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name', 'i18nKey')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

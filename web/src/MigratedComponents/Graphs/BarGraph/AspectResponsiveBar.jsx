@@ -26,13 +26,13 @@ const AspectResponsiveBar = ({
   displayLegend,
   displayMethod,
   indexBy,
-  legendsToRename,
   legendsToPopover,
   legendsNotToRender,
   keys,
   tickValuesYShape,
   tickValuesXShape,
   type,
+  i18nKeys,
 }) => {
   const { setConfig } = useGraphClickThrough()
   const graphsToHaveCustomLegend = [
@@ -179,7 +179,6 @@ const AspectResponsiveBar = ({
         }
     }
   }
-
   const baseLegend =
     displayLegend && !graphsToHaveCustomLegend.includes(type)
       ? [
@@ -189,6 +188,7 @@ const AspectResponsiveBar = ({
               generateLegendIntl(
                 formatMessage,
                 messages,
+                i18nKeys,
                 k,
                 assaysFromState,
                 type,
@@ -211,7 +211,6 @@ const AspectResponsiveBar = ({
           },
         ]
       : []
-
   const format = (v, displayMethod, intlFormatNumber) =>
     type === 'stackedDeviceActivity'
       ? v.replace(/\D/g, '')
@@ -258,7 +257,10 @@ const AspectResponsiveBar = ({
                   displayMethod,
                   assaysFromState,
                   intlFormatNumber,
-                  type
+                  type,
+                  formatMessage,
+                  messages,
+                  i18nKeys
                 )}
               />
             )
@@ -292,11 +294,11 @@ const AspectResponsiveBar = ({
           style={{ flex: 1 }}
           keys={keys}
           generateLegendIntl={generateLegendIntl}
+          i18nKeys={i18nKeys}
           assaysFromState={assaysFromState}
           type={type}
           symbolShape={config(type, data, displayMethod).symbolShape}
           legendsNotToRender={legendsNotToRender}
-          legendsToRename={legendsToRename}
           legendsToPopover={legendsToPopover}
         />
       ) : null}
@@ -308,7 +310,6 @@ AspectResponsiveBar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
   type: 'bar',
-  legendsToRename: false,
   legendsToPopover: false,
   legendsNotToRender: [],
 }
@@ -321,7 +322,6 @@ AspectResponsiveBar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  legendsToRename: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsNotToRender: PropTypes.oneOfType([PropTypes.array]),
   tickValuesYShape: PropTypes.oneOf([
@@ -339,6 +339,7 @@ AspectResponsiveBar.propTypes = {
     'barLegacyTreatment',
     'stackedDeviceActivity',
   ]),
+  i18nKeys: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default AspectResponsiveBar

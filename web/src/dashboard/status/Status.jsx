@@ -148,7 +148,6 @@ const Status = ({ history, location, colorDemo }) => {
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
-
       <ErrorBoundary>
         <PermissionsProvider
           permissions={covidDailyConfirmed.graphRenderPermissions}
@@ -200,9 +199,7 @@ const Status = ({ history, location, colorDemo }) => {
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
-
       {colorDemo && <ColorDemo vars={process.env} />}
-
       <ErrorBoundary>
         <PermissionsProvider
           permissions={inventoryStatus.graphRenderPermissions}
@@ -210,7 +207,6 @@ const Status = ({ history, location, colorDemo }) => {
           <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
         </PermissionsProvider>
       </ErrorBoundary>
-
       <Reports
         intl={intl}
         location={location}

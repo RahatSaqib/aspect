@@ -7,25 +7,26 @@ export const messages = defineMessages({
     defaultMessage:
       "The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.",
   },
-  abbottM2000PlasmaHivVL: {
-    id: 'legends.Unknown.abbottM2000PlasmaHivVL',
+  // assays
+  assayAbbottM2000PlasmaHivVL: {
+    id: 'legends.Unknown.assayAbbottM2000PlasmaHivVL',
     defaultMessage: 'Abbott m2000 Plasma HIV VL',
   },
 
-  abbottM2000PlasmaHbvVL: {
-    id: 'legends.Unknown.abbottM2000PlasmaHbvVL',
+  assayAbbottM2000PlasmaHbvVL: {
+    id: 'legends.Unknown.assayAbbottM2000PlasmaHbvVL',
     defaultMessage: 'Abbott m2000 Plasma HBV VL',
   },
-  abbottM2000DBSHivVL: {
-    id: 'legends.Unknown.abbottM2000DBSHivVL',
+  assayAbbottM2000DBSHivVL: {
+    id: 'legends.Unknown.assayAbbottM2000DBSHivVL',
     defaultMessage: 'Abbott m2000 DBS HIV VL',
   },
-  abbottM2000HIVEID: {
-    id: 'legends.Unknown.abbottM2000HIVEID',
+  assayAbbottM2000HIVEID: {
+    id: 'legends.Unknown.assayAbbottM2000HIVEID',
     defaultMessage: 'Abbott m2000 HIV EID',
   },
-  abbottM2000DaanNCOVID19: {
-    id: 'legends.Unknown.abbottM2000DaanNCOVID19',
+  assayAbbottM2000DaanNCOVID19: {
+    id: 'legends.Unknown.assayAbbottM2000DaanNCOVID19',
     defaultMessage: 'Abbott m2000 Daan N COVID-19',
   },
   assayBdMgitAst: {
@@ -60,32 +61,32 @@ export const messages = defineMessages({
     id: 'legends.Unknown.assayGenoTypeMTBDRslV2',
     defaultMessage: 'GenoType MTBDRsl VER 2.0',
   },
-  GxMtbRif: {
-    id: 'legends.Unknown.GxMtbRif',
+  assayGeneXpertMtbRif: {
+    id: 'legends.Unknown.assayGeneXpertMtbRif',
     defaultMessage: 'GeneXpert MTB/Rif',
   },
-  GxMtbRifUltra: {
-    id: 'legends.Unknown.GxMtbRifUltra',
+  assayGeneXpertMtbRifUltra: {
+    id: 'legends.Unknown.assayGeneXpertMtbRifUltra',
     defaultMessage: 'GeneXpert MTB/Rif Ultra',
   },
-  GxHiv1Vl: {
-    id: 'legends.Unknown.GxHiv1Vl',
+  assayGeneXpertHiv1Vl: {
+    id: 'legends.Unknown.assayGeneXpertHiv1Vl',
     defaultMessage: 'GeneXpert HIV-1 VL',
   },
-  GxHiv1Qual: {
-    id: 'legends.Unknown.GxHiv1Qual',
+  assayGeneXpertHiv1Qual: {
+    id: 'legends.Unknown.assayGeneXpertHiv1Qual',
     defaultMessage: 'GeneXpert HIV-1 Qual',
   },
-  GxEbola: {
-    id: 'legends.Unknown.GxEbola',
+  assayGeneXpertEbola: {
+    id: 'legends.Unknown.assayGeneXpertEbola',
     defaultMessage: 'GeneXpert Ebola',
   },
-  GxUnknown: {
-    id: 'legends.Unknown.GxUnknown',
+  assayGeneXpertUnknown: {
+    id: 'legends.Unknown.assayGeneXpertUnknown',
     defaultMessage: 'GeneXpert Unknown',
   },
-  GxHcv: {
-    id: 'legends.Unknown.GxHcv',
+  assayGeneXpertHcv: {
+    id: 'legends.Unknown.assayGeneXpertHcv',
     defaultMessage: 'GeneXpert HCV',
   },
   QHivVL: {
@@ -139,6 +140,248 @@ export const messages = defineMessages({
   assayGXCovid19: {
     id: 'legends.Unknown.assayGXCovid19',
     defaultMessage: 'GeneXpert COVID-19',
+  },
+  // Result categories.
+  ResultCategoryDetected: {
+    id: 'legends.Unknown.ResultCategoryDetected',
+    defaultMessage: 'Detected',
+  },
+  ResultCategoryTraceDetected: {
+    id: 'legends.Unknown.ResultCategoryTraceDetected',
+    defaultMessage: 'Trace Detected',
+  },
+  resultCategoryNotDetected: {
+    id: 'legends.Unknown.resultCategoryNotDetected',
+    defaultMessage: 'Not Detected',
+  },
+  resultCategoryIndeterminate: {
+    id: 'legends.Unknown.resultCategoryIndeterminate',
+    defaultMessage: 'Indeterminate',
+  },
+  resultCategoryInvalid: {
+    id: 'legends.Unknown.resultCategoryInvalid',
+    defaultMessage: 'Invalid',
+  },
+  resultCategoryNoResult: {
+    id: 'legends.Unknown.resultCategoryNoResult',
+    defaultMessage: 'No result',
+  },
+  resultCategoryError: {
+    id: 'legends.Unknown.resultCategoryError',
+    defaultMessage: 'Error',
+  },
+  resultCategorySuccess: {
+    id: 'legends.Unknown.resultCategorySuccess',
+    defaultMessage: 'Success',
+  },
+  resultCategoryCollectNewSample: {
+    id: 'legends.Unknown.resultCategoryCollectNewSample',
+    defaultMessage: 'Collect new sample',
+  },
+  resultCategoryDiscordant: {
+    id: 'legends.Unknown.resultCategoryDiscordant',
+    defaultMessage: 'Discordant',
+  },
+  resultCategoryLessThan40: {
+    id: 'legends.Unknown.resultCategoryLessThan40',
+    defaultMessage: 'Less Than 40',
+  },
+  resultCategoryMoreThan40: {
+    id: 'legends.Unknown.resultCategoryMoreThan40',
+    defaultMessage: 'More Than 40',
+  },
+  resultCategoryLessThan150: {
+    id: 'legends.Unknown.resultCategoryLessThan150',
+    defaultMessage: 'Less Than 150',
+  },
+  resultCategoryMoreThan150: {
+    id: 'legends.Unknown.resultCategoryMoreThan150',
+    defaultMessage: 'More Than 150',
+  },
+  resultCategoryLessThan550: {
+    id: 'legends.Unknown.resultCategoryLessThan550',
+    defaultMessage: 'Less Than 550',
+  },
+  resultCategoryMoreThan550: {
+    id: 'legends.Unknown.resultCategoryMoreThan550',
+    defaultMessage: 'More Than 550',
+  },
+  resultCategoryLessThan1000: {
+    id: 'legends.Unknown.resultCategoryLessThan1000',
+    defaultMessage: 'Less Than 1000',
+  },
+  resultCategoryMoreThan1000: {
+    id: 'legends.Unknown.resultCategoryMoreThan1000',
+    defaultMessage: 'More Than 1000',
+  },
+  resultCategoryRejected: {
+    id: 'legends.Unknown.resultCategoryRejected',
+    defaultMessage: 'Rejected',
+  },
+  resultCategoryMissing: {
+    id: 'legends.Unknown.resultCategoryMissing',
+    defaultMessage: 'Missing',
+  },
+  resultCategoryUnknown: {
+    id: 'legends.Unknown.resultCategoryUnknown',
+    defaultMessage: 'Unknown',
+  },
+  resultCategorySusceptible: {
+    id: 'legends.Unknown.resultCategorySusceptible',
+    defaultMessage: 'Susceptible',
+  },
+  resultCategoryResistant: {
+    id: 'legends.Unknown.resultCategoryResistant',
+    defaultMessage: 'Resistant',
+  },
+  resultCategoryNegative: {
+    id: 'legends.Unknown.resultCategoryNegative',
+    defaultMessage: 'Negative',
+  },
+  resultCategoryPositive1: {
+    id: 'legends.Unknown.resultCategoryPositive1',
+    defaultMessage: 'Positive 1',
+  },
+  resultCategoryPositive2: {
+    id: 'legends.Unknown.resultCategoryPositive2',
+    defaultMessage: 'Positive 2',
+  },
+  resultCategoryPositive3: {
+    id: 'legends.Unknown.resultCategoryPositive3',
+    defaultMessage: 'Positive 3',
+  },
+  resultCategoryScanty: {
+    id: 'legends.Unknown.resultCategoryScanty',
+    defaultMessage: 'Scanty',
+  },
+  resultCategoryContaminated: {
+    id: 'legends.Unknown.resultCategoryContaminated',
+    defaultMessage: 'Contaminated',
+  },
+  resultCategoryPositiveMOTT: {
+    id: 'legends.Unknown.resultCategoryPositiveMOTT',
+    defaultMessage: 'Positive MOTT',
+  },
+  resultCategoryPositiveMTB: {
+    id: 'legends.Unknown.resultCategoryPositiveMTB',
+    defaultMessage: 'Positive MTB',
+  },
+  resultCategoryInconclusive: {
+    id: 'legends.Unknown.resultCategoryInconclusive',
+    defaultMessage: 'Inconclusive',
+  },
+  resultCategoryPositive: {
+    id: 'legends.Unknown.resultCategoryPositive',
+    defaultMessage: 'Positive',
+  },
+  resultCategoryPresumptivePositive: {
+    id: 'legends.Unknown.resultCategoryPresumptivePositive',
+    defaultMessage: 'Presumptive Positive',
+  },
+  // treatment
+  Confirmed: {
+    id: 'legends.Unknown.Confirmed',
+    defaultMessage: 'Confirmed',
+  },
+  NotConfirmed: {
+    id: 'legends.Unknown.NotConfirmed',
+    defaultMessage: 'Not Confirmed',
+  },
+  // device maintenance status.
+
+  devicesActive: {
+    id: 'legends.Unknown.devicesActive',
+    defaultMessage: 'Active',
+  },
+  devicesInactive: {
+    id: 'legends.Unknown.devicesInactive',
+    defaultMessage: 'Inactive',
+  },
+  inactiveUnknown: {
+    id: 'legends.Unknown.inactiveUnknown',
+    defaultMessage: 'Unknown',
+  },
+  inactiveNoResultsReported: {
+    id: 'legends.Unknown.inactiveNoResultsReported',
+    defaultMessage: 'No Results',
+  },
+  inactiveOutOfInventory: {
+    id: 'legends.Unknown.inactiveOutOfInventory',
+    defaultMessage: 'Out of inventory',
+  },
+  inactiveDownForRepair: {
+    id: 'legends.Unknown.inactiveDownForRepair',
+    defaultMessage: 'Down for Repair',
+  },
+  inactiveConnectivity: {
+    id: 'legends.Unknown.inactiveConnectivity',
+    defaultMessage: 'Connectivity issues',
+  },
+  inactiveDecommissioned: {
+    id: 'legends.Unknown.inactiveDecommissioned',
+    defaultMessage: 'Decommissioned',
+  },
+  weekendOrHoliday: {
+    id: 'legends.Unknown.weekendOrHoliday',
+    defaultMessage: 'Week or holiday',
+  },
+  inactiveNoStaff: {
+    id: 'legends.Unknown.inactiveNoStaff',
+    defaultMessage: 'No Staff',
+  },
+  inactiveNoPower: {
+    id: 'legends.Unknown.inactiveNoPower',
+    defaultMessage: 'No Power',
+  },
+  inactiveOther: {
+    id: 'legends.Unknown.inactiveOther',
+    defaultMessage: 'Other Reasons',
+  },
+  // inventory statuses
+  outOfStock: {
+    id: 'legends.Unknown.outOfStock',
+    defaultMessage: 'Out of Stock',
+  },
+  upTo14: {
+    id: 'legends.Unknown.upTo14',
+    defaultMessage: '1-14 Days',
+  },
+  upTo30: {
+    id: 'legends.Unknown.upTo30',
+    defaultMessage: '15-30 Days',
+  },
+  upTo90: {
+    id: 'legends.Unknown.upTo90',
+    defaultMessage: '1-3 Months',
+  },
+  upTo180: {
+    id: 'legends.Unknown.upTo180',
+    defaultMessage: '4-6 Months',
+  },
+
+  moreThan180: {
+    id: 'legends.Unknown.moreThan180',
+    defaultMessage: '>6 Months',
+  },
+  notRecorded: {
+    id: 'legends.Unknown.notRecorded',
+    defaultMessage: 'Not Recorded',
+  },
+  noConsumption: {
+    id: 'legends.Unknown.noConsumption',
+    defaultMessage: 'No Consumption',
+  },
+  location: {
+    id: 'legends.Unknown.location',
+    defaultMessage: 'Location',
+  },
+  devices: {
+    id: 'legends.Unknown.devices',
+    defaultMessage: 'Devices',
+  },
+  device: {
+    id: 'legends.Unknown.device',
+    defaultMessage: 'Device',
   },
 })
 

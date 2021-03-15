@@ -142,6 +142,7 @@ async function getCases({ query, auth }) {
       'sos.name as sampleOriginSite',
       'd.name as diseaseName',
       'd.id as diseaseId',
+      'd.i18nkey as diseaseI18nKey',
       'd.externalId as diseaseExternalId',
       knex.raw(`'Active' as status`),
       knex.raw(

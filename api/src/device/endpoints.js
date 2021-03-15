@@ -361,6 +361,9 @@ const deviceDetailsResponseFields = Joi.object()
     approvalToken: Joi.string()
       .required()
       .description('The external ID of the approval'),
+    approvalStatusI18nKey: Joi.string()
+      .required()
+      .description('The i18nkey  of the device approval status'),
     category: Joi.string().required().description('The device category'),
     hasResults: Joi.number()
       .required()
