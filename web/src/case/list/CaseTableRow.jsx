@@ -13,8 +13,6 @@ const cssClasses = classnames.bind(
 
 const CaseTableRow = ({ _case, ...restProps }) => {
   const { formatDate, formatMessage } = useI18n()
-  // formatI18nMessage
-
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{formatDate(_case.get('createdOn'))}</TableCell>
