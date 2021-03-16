@@ -21,7 +21,7 @@ const CaseTableRow = ({ _case, ...restProps }) => {
       <TableCell>{_case.get('patientId')}</TableCell>
       <TableCell>
         {formatMessage(
-          messages[_case.get('diseaseI18nKeys')],
+          messages[_case.get('diseaseI18nKey')],
           _case.get('diseaseName')
         )}
       </TableCell>
