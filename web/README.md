@@ -65,7 +65,7 @@ Make sure to run the command in the root of the folder you want to create the co
 
 ## i18n
 
-## Merging with develop
+### Merging with develop
 
 As a general rule please remember:
 **NOT MERGE .PO, .MO, translations.js files with develop on your PR**
