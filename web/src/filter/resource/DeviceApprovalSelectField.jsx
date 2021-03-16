@@ -1,13 +1,11 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 import messages from './i18n/deviceApprovalMessages'
-// Material-UI
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
