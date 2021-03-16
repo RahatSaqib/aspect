@@ -61,13 +61,14 @@ const I18nProvider = ({ children }) => {
           DateTime.fromJSDate(d)
             .setZone(validTimeZone)
             .toISO(),
-        formatDistance: (f, t) =>
-          formatDistance(f, t, { locale: dateFNSLocale }),
+        formatDistance: (f, t, s = false) =>
+          formatDistance(f, t, { locale: dateFNSLocale, addSuffix: s }),
         formatTimezone: d =>
           d.toLocaleString(locale, {
             timeZone: validTimeZone,
           }),
-        formatMessage: s => (!s ? '!! I18N ID not set !!' : formatMessage(s)),
+        formatMessage: (s, f = '!! I18N ID not set !!') =>
+          !s ? f : formatMessage(s),
         timezone: validTimeZone,
         ...rest,
       }}
