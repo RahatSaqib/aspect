@@ -772,12 +772,12 @@ async function seedIssueEventTriggersForPartner(
                 "JSON_CONTAINS(triggerConditions, '?')",
                 triggerConditions
               )
-              if (filterIssueCondition && filterIssueCondition.length > 1) {
-                this.whereRaw(
-                  "JSON_CONTAINS(filterIssueCondition, '?')",
-                  filterIssueCondition
-                )
-              }
+            }
+            if (filterIssueCondition && filterIssueCondition.length > 1) {
+              this.whereRaw(
+                "JSON_CONTAINS(filterIssueCondition, '?')",
+                filterIssueCondition
+              )
             }
           })
           .first('id')

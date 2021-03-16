@@ -36,7 +36,7 @@ async function seed(knex) {
     .whereNull('lgaId')
     .first()
 
-  Promise.each(persons, async person => {
+  await Promise.each(persons, async person => {
     const [jobId] = await knex('Job').insert({
       personId: person.id,
       jobFunctionId,
