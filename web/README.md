@@ -70,7 +70,7 @@ Make sure to run the command in the root of the folder you want to create the co
 As a general rule please remember:
 **NOT MERGE .PO, .MO, translations.js files with develop on your PR**
 
-For avoid inserting bad and duplicated keys we are not going to do the merge with this files. No matter which one you are going to accept in a merge action (Keep local changes or develop branch changes) but just pick only one and accept it completely. Once, this action was made and commited just continue with the next step to generate the ``.pot`` file and sync all the language files.
+To avoid inserting bad and duplicated keys we are not going to merge these files. It doesn't matter which one you are going to accept in a merge action (Keep local changes or develop branch changes), just pick only one and accept it completely. Once this action was made and committed just continue with the next step to generate the ``.pot`` file and sync all the language files.
 
 ### Extracting new translations
 
