@@ -6,13 +6,12 @@ import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
 
-import { useIntl } from 'react-intl'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
-import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -21,7 +20,7 @@ const cssClasses = classnames.bind(
 const styles = require('../../components/shared/DataTableRow.css')
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
-  const { formatMessage, formatNumber } = useIntl()
+  const { formatMessage, formatNumber } = useI18n()
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
@@ -30,10 +29,6 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       default: identity,
     }
   )
-  const formatI18n = (key, defaultMessage) =>
-    messages[result.get(key)]
-      ? formatMessage(messages[result.get(key)])
-      : result.get(defaultMessage)
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
@@ -42,14 +37,17 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
       <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
       <TableCell>{result.get('sampleId')}</TableCell>
-      <TableCell>{formatI18n('assayI18nKey', 'assayName')}</TableCell>
+      <TableCell>
+        {formatMessage(
+          messages[result.get('assayI18nKey')],
+          result.get('assayName')
+        )}
+      </TableCell>
       <TableCell>{result.get('resultText')}</TableCell>
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
-        {formatI18nMessage(
-          messages,
-          formatMessage,
-          result.get('resultWorkflowStatusI18nkey'),
+        {formatMessage(
+          messages[result.get('resultWorkflowStatusI18nkey')],
           result.get('resultWorkflowStatus')
         )}
       </TableCell>
