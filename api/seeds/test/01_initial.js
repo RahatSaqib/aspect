@@ -22,13 +22,13 @@ const {
   sampleTypeToId,
   resultTypeToId,
   resultWorkflowStatusToId,
-  unitToId,
 } = require('../../src/shared/dictionary')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
+const { default: getConsumables } = require('../fixtures/Consumable')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -1267,64 +1267,41 @@ async function seed(knex) {
   })
 
   // Units
-  const piece = await unitToId('Piece')
+  const consumables = await getConsumables()
 
   // Consumable types
-  const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  // Consumable types
+  const [consumableGxTbCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxMtbRifCartridge')
+  )
 
-  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Ultra Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxMtbRifUltraCartridge')
+  )
 
-  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert Ebola Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxEbolaCartridge')
+  )
 
-  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxHiv1VlCartridge')
+  )
 
-  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HCV Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxHCVCartridge')
+  )
 
-  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Qual Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxHiv1QualCartridge')
+  )
 
-  await knex('Consumable').insert({
-    name: 'Daktari CD4 Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Daktari',
-  })
+  await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'DaktariCD4Cartridge')
+  )
 
-  const [consumableDaktariHivVlCartridgeId] = await knex('Consumable').insert({
-    name: 'Daktari HIV-VL Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Daktari',
-  })
+  const [consumableDaktariHivVlCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'DaktariHivVLCartridge')
+  )
 
   // Assay Consumables
   await knex('ConsumableAssay').insert({

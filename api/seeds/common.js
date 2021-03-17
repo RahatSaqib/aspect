@@ -34,6 +34,7 @@ const {
   unitToId,
   partnerTypeToId,
 } = require('../src/shared/dictionary')
+const { default: getConsumables } = require('./fixtures/Consumable')
 
 /**
  *
@@ -2127,12 +2128,16 @@ async function upsertConsumables(
   const [assayId] = await knex('Assay')
     .where('externalId', assayExternalId)
     .pluck('id')
-
+  const consumableFromFixture = _.find(
+    await getConsumables(),
+    cons => cons.name === consumableName
+  )
   const propsConsumables = {
     name: consumableName,
     unit,
     canExpire,
     manufacturer,
+    externalId: consumableFromFixture.externalId,
   }
   let { id: consumableId } =
     (await knex('Consumable').where(propsConsumables).first()) || {}

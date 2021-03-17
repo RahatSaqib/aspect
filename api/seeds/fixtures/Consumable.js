@@ -19,11 +19,6 @@ const getConsumables = async () => {
       ...commonProps,
     },
     {
-      name: 'GeneXpert TB Cartridge',
-      externalId: 'GxMtbRifCartridge',
-      ...commonProps,
-    },
-    {
       name: 'GeneXpert TB Ultra Cartridge',
       externalId: 'GxMtbRifUltraCartridge',
       ...commonProps,
@@ -68,8 +63,15 @@ const getConsumables = async () => {
       manufacturer: 'Hain Lifescience',
     },
     {
-      name: 'GenoType MTBDRsl VER 2.0 Test Strip',
+      name: 'GenoType MTBDRsl VER 1.0 Test Strip',
       externalId: 'GenoTypeMTBDRslStrip',
+      unit: piece,
+      canExpire: 1,
+      manufacturer: 'Hain Lifescience',
+    },
+    {
+      name: 'GenoType MTBDRsl VER 2.0 Test Strip',
+      externalId: 'GenoTypeMTBDRslV2Strip',
       unit: piece,
       canExpire: 1,
       manufacturer: 'Hain Lifescience',
@@ -97,7 +99,7 @@ const getConsumables = async () => {
     },
     {
       name: 'Daktari HIV-VL Cartridge',
-      externalId: 'DaktariHIV-VLCartridge',
+      externalId: 'DaktariHivVLCartridge',
       unit: piece,
       canExpire: 1,
       manufacturer: 'Daktari',
@@ -106,4 +108,4 @@ const getConsumables = async () => {
   return consumables
 }
 
-export default getConsumables
+module.exports = getConsumables
