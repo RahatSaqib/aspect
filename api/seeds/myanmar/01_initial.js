@@ -11,7 +11,7 @@ const {
   allResultCategoryToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
-const { default: getConsumables } = require('../fixtures/Consumable')
+const getConsumables = require('../fixtures/Consumable')
 
 const now = new Date()
 

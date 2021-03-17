@@ -24,7 +24,6 @@ const {
   assayTypeToId,
   resultSourceToId,
   resultTypeToId,
-  unitToId,
 } = require('../../src/shared/dictionary')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
@@ -41,7 +40,7 @@ const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOn
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const { upsertJobFunctionFixture } = require('../common')
 const upsertReports = require('../common/upsert_reports')
-const { default: getConsumables } = require('../fixtures/Consumable')
+const getConsumables = require('../fixtures/Consumable')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -246,8 +245,6 @@ async function seed(knex) {
   }
   await upsertMGITDeviceTypeAndAssays(knex)
   await upsertCultureAssays(knex, deviceTypeSenaiteLimsId)
-  // Units
-  const piece = await unitToId('Piece')
 
   /*
   GenoType Test Strips for Tuberculosis
@@ -3908,12 +3905,9 @@ async function seed(knex) {
   })
 
   // Consumable types
-  const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxTbCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxMtbRifCartridge')
+  )
 
   const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert(
     _.find(consumables, cons => cons.externalId === 'GxMtbRifUltraCartridge')
@@ -3932,7 +3926,7 @@ async function seed(knex) {
   )
 
   const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHiv1VlCartridge')
+    _.find(consumables, cons => cons.externalId === 'GxHiv1QualCartridge')
   )
 
   // Assay Consumables

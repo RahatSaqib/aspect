@@ -6,7 +6,7 @@ const {
   assayTypeToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
-const { default: getConsumables } = require('../fixtures/Consumable')
+const getConsumables = require('../fixtures/Consumable')
 
 async function seed(knex) {
   // Skip this seed file if we already have an AlereFtpConnector Device Type

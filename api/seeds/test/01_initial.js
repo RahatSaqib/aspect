@@ -28,7 +28,7 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { default: getConsumables } = require('../fixtures/Consumable')
+const getConsumables = require('../fixtures/Consumable')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60

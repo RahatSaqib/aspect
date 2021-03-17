@@ -34,7 +34,7 @@ const {
   unitToId,
   partnerTypeToId,
 } = require('../src/shared/dictionary')
-const { default: getConsumables } = require('./fixtures/Consumable')
+const getConsumables = require('./fixtures/Consumable')
 
 /**
  *
