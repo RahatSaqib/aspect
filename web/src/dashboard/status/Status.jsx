@@ -73,7 +73,7 @@ const Status = ({ history, location, colorDemo }) => {
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
-      <div className={cssClasses('FiltersGroup')}>
+      {/* <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
       <ErrorBoundary>
@@ -199,7 +199,7 @@ const Status = ({ history, location, colorDemo }) => {
           ) : null}
         </PermissionsProvider>
       </ErrorBoundary>
-      {colorDemo && <ColorDemo vars={process.env} />}
+      {colorDemo && <ColorDemo vars={process.env} />} */}
       <ErrorBoundary>
         <PermissionsProvider
           permissions={inventoryStatus.graphRenderPermissions}
@@ -207,12 +207,12 @@ const Status = ({ history, location, colorDemo }) => {
           <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
         </PermissionsProvider>
       </ErrorBoundary>
-      <Reports
+      {/* <Reports
         intl={intl}
         location={location}
         className={cssClasses('Section--withStatus')}
         title={intl.formatMessage(messages.reportsTitle)}
-      />
+      /> */}
     </div>
   )
 }

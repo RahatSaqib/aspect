@@ -46,7 +46,7 @@ const inventoryGraphs = {
         api: {
           endpoint: '/inventory/days-by-location',
           params: {
-            consumableId: 5,
+            consumableId: 3,
           },
         },
         indexBy: 'increment',
