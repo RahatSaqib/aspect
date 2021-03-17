@@ -32,11 +32,6 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.alterTable('Consumable', tbl => {
-    /**
-     * first drop FK and index, and then
-     * repeat same settings as in `api/migrations/20190304072614_device_maintenance.js`
-     */
-
     tbl.dropColumn('externalId')
   })
 }
