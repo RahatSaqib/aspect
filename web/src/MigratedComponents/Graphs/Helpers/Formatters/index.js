@@ -489,7 +489,13 @@ const extractOptionValue = (identifier, selectedOption) => {
         consumableId: selectedOption ? selectedOption.consumableId : null,
       }
       break
-
+    case 'consumableExternalId':
+      optionValue = {
+        consumableExternalId: selectedOption
+          ? selectedOption.consumableExternalId
+          : null,
+      }
+      break
     default:
       break
   }
