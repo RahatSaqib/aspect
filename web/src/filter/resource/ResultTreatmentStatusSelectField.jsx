@@ -1,6 +1,5 @@
-// Imports from packages
-import PropTypes from 'prop-types'
 import React from 'react'
+import PropTypes from 'prop-types'
 import {
   compose,
   pure,
@@ -12,8 +11,8 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { useIntl } from 'react-intl'
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
+
 import SelectField from '../../components/shared/SelectField'
 import messages from './i18n/resultTreatmentStatusMessages'
 import { fetchTreatmentStatuses } from '../../resultTreatmentStatus/ResultTreatmentStatusRedux'

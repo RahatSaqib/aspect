@@ -1,12 +1,9 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'

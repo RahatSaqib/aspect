@@ -55,19 +55,20 @@ const I18nProvider = ({ children }) => {
       value={{
         culture: locale,
         dateFNSLocale,
-        format: (d, f) => format(d, f, { locale: dateFNSLocale }),
+        format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
         formats,
-        formatWithOffset: d =>
-          DateTime.fromJSDate(d)
+        formatWithOffset: dateIn =>
+          DateTime.fromJSDate(dateIn)
             .setZone(validTimeZone)
             .toISO(),
-        formatDistance: (f, t) =>
-          formatDistance(f, t, { locale: dateFNSLocale }),
-        formatTimezone: d =>
-          d.toLocaleString(locale, {
+        formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
+          formatDistance(firstDateIn, secondDateIn, { locale: dateFNSLocale, addSuffix: showSuffix }),
+        formatTimezone: dateIn =>
+          dateIn.toLocaleString(locale, {
             timeZone: validTimeZone,
           }),
-        formatMessage: s => (!s ? '!! I18N ID not set !!' : formatMessage(s)),
+        formatMessage: (stringIn, fallback = '!! I18N ID not set !!') =>
+          !stringIn ? fallback : formatMessage(stringIn),
         timezone: validTimeZone,
         ...rest,
       }}
