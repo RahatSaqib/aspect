@@ -553,13 +553,10 @@ async function seed(knex) {
 
   const consumables = await getConsumables()
   const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'AlereHIV-1/2Cartridge')
+    _.find(consumables, cons => cons.externalId === 'AlereHivDetectCartridge')
   )
   const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert(
-    _.find(
-      consumables,
-      cons => cons.externalId === 'AlereHIV-1/2VLPlasmaCartridge'
-    )
+    _.find(consumables, cons => cons.externalId === 'AlereHivVLPlasmaCartridge')
   )
 
   await knex('ConsumableAssay').insert([

@@ -2130,7 +2130,7 @@ async function upsertConsumables(
     .pluck('id')
   const consumableFromFixture = _.find(
     await getConsumables(),
-    cons => cons.name === consumableName
+    ({ name }) => name === consumableName
   )
   const propsConsumables = {
     name: consumableName,

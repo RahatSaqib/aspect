@@ -11,17 +11,17 @@ async function up(knex) {
   const consumables = await knex('Consumable').select()
 
   if (consumables.length > 0)
-    await Promise.each(consumables, cons => {
+    await Promise.each(consumables, ({ name: consumableName, id }) => {
       const consumableInDb = _.find(
         consumableFixtures,
-        elem => elem.name === cons.name
+        ({ name }) => name === consumableName
       )
       return knex('Consumable')
         .update({
           externalId: consumableInDb.externalId,
         })
         .where({
-          id: cons.id,
+          id,
         })
     })
 

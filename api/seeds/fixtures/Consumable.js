@@ -78,14 +78,14 @@ const getConsumables = async () => {
     },
     {
       name: 'Alere Q HIV-1/2 Detect Cartridge',
-      externalId: 'AlereHIV-1/2Cartridge',
+      externalId: 'AlereHivDetectCartridge',
       unit: piece,
       canExpire: 1,
       manufacturer: 'Alere',
     },
     {
       name: 'Alere Q HIV-1/2 VL Plasma Cartridge',
-      externalId: 'AlereHIV-1/2VLPlasmaCartridge',
+      externalId: 'AlereHivVLPlasmaCartridge',
       unit: piece,
       canExpire: 1,
       manufacturer: 'Alere',
