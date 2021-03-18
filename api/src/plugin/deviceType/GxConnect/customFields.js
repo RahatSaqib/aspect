@@ -1,6 +1,6 @@
 const objectMapper = require('object-mapper')
 const _ = require('lodash')
-const aspectFields = require('./form.json')
+const aspectFields = require('../../../forms/formsDefinition/TBCaseTreatment.json')
 
 let i = 1
 const map = {
@@ -13,7 +13,10 @@ const map = {
   'fields[].name': 'CustomFields.Fields[].Name',
   'fields[].title': 'CustomFields.Fields[].Label',
   'fields[].caption': 'CustomFields.Fields[].Help',
-  'fields[].required': 'CustomFields.Fields[].Required',
+  'fields[].required': {
+    key: 'CustomFields.Fields[].Optional',
+    transform: value => !value,
+  },
   'fields[].encrypted': 'CustomFields.Fields[].Encrypted',
   'fields[].controlType': {
     key: 'CustomFields.Fields[].Control',
@@ -30,7 +33,8 @@ const map = {
     'CustomFields.Fields[].InputControlData.options[].text',
 }
 
-const dest = objectMapper(aspectFields, map)
-return dest
+objectMapper(aspectFields, map)
+
+// return destinationInventoryItem
 // console.log(dest.CustomFields.Fields)
 // console.log(JSON.stringify(dest,null,'\t'))
