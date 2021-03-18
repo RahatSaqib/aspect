@@ -1,0 +1,1605 @@
+{
+  "CustomFields": {
+    "Fields": [
+      {
+        "Id": 7,
+        "MigrateFromId": 1,
+        "Label": "Patient First Name",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "textbox",
+        "Type": "string",
+        "DisplayOrder": 10,
+        "LimitToTestTypeIds": [],
+        "InputControlData": null
+      },
+      {
+        "Id": 1,
+        "MigrateFromId": -4,
+        "Label": "Gender",
+        "DbColumn": "PatientGender",
+        "Help": "",
+        "Control": "ComboBox",
+        "Type": "int",
+        "DisplayOrder": 20,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": 1,
+              "text": "Male",
+              "displayOrder": 0
+            },
+            {
+              "value": 0,
+              "text": "Female",
+              "displayOrder": 10
+            },
+            {
+              "value": 2,
+              "text": "Other",
+              "displayOrder": 20
+            }
+          ]
+        }
+      },
+      {
+        "Id": 2,
+        "MigrateFromId": -3,
+        "Label": "Age",
+        "DbColumn": "PatientAge",
+        "Help": "",
+        "Control": "TextBox",
+        "Type": "int",
+        "DisplayOrder": 30,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "minValue": 0,
+          "maxValue": 110
+        }
+      },
+      {
+        "Id": 4,
+        "MigrateFromId": -18,
+        "Label": "Age in Months",
+        "DbColumn": "PatientAgeMonths",
+        "Help": "",
+        "Control": "TextBox",
+        "Type": "int",
+        "DisplayOrder": 31,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "minValue": 0,
+          "maxValue": 12
+        }
+      },
+      {
+        "Id": 6,
+        "MigrateFromId": -9,
+        "Label": "Patient Address",
+        "DbColumn": "PatientStreet",
+        "Help": "",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 32,
+        "LimitToTestTypeIds": [],
+        "InputControlData": null
+      },
+      {
+        "Id": 16,
+        "MigrateFromId": null,
+        "Label": "Patient Contact Number",
+        "DbColumn": "PatientPhone",
+        "Help": "",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 38,
+        "LimitToTestTypeIds": [],
+        "InputControlData": null
+      },
+      {
+        "Id": 8,
+        "MigrateFromId": 2,
+        "Label": "Home District",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "textbox",
+        "Type": "string",
+        "DisplayOrder": 40,
+        "LimitToTestTypeIds": [],
+        "InputControlData": null
+      },
+      {
+        "Id": 17,
+        "MigrateFromId": null,
+        "Label": "Referring Health Facility Province",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "int",
+        "DisplayOrder": 40,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": "Punjab",
+              "text": "Punjab",
+              "displayOrder": 0
+            },
+            {
+              "value": "Sindh",
+              "text": "Sindh",
+              "displayOrder": 1
+            },
+            {
+              "value": "Balochistan",
+              "text": "Balochistan",
+              "displayOrder": 3
+            },
+            {
+              "value": "Khyber Pakhtunkhwa",
+              "text": "Khyber Pakhtunkhwa",
+              "displayOrder": 4
+            },
+            {
+              "value": "FATA",
+              "text": "FATA",
+              "displayOrder": 5
+            },
+            {
+              "value": "Azad Jammu & Kahmir",
+              "text": "Azad Jammu & Kahmir",
+              "displayOrder": 6
+            },
+            {
+              "value": "Gilgit Baltistan",
+              "text": "Gilgit Baltistan",
+              "displayOrder": 7
+            },
+            {
+              "value": "Islamabad & CT",
+              "text": "Islamabad & CT",
+              "displayOrder": 8
+            }
+          ]
+        }
+      },
+      {
+        "Id": 18,
+        "MigrateFromId": null,
+        "Label": "Referring Health Facility District",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "int",
+        "DisplayOrder": 41,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "filters": [
+            {
+              "refId": "17",
+              "propName": "state",
+              "operator": "="
+            }
+          ],
+          "options": [
+            {
+              "value": "Attock",
+              "text": "Attock",
+              "displayOrder": 0,
+              "state": "Punjab"
+            },
+            {
+              "value": "Bahawalnagar",
+              "text": "Bahawalnagar",
+              "displayOrder": 1,
+              "state": "Punjab"
+            },
+            {
+              "value": "Bahawalpur",
+              "text": "Bahawalpur",
+              "displayOrder": 2,
+              "state": "Punjab"
+            },
+            {
+              "value": "Bhakkar",
+              "text": "Bhakkar",
+              "displayOrder": 3,
+              "state": "Punjab"
+            },
+            {
+              "value": "Chakwal",
+              "text": "Chakwal",
+              "displayOrder": 4,
+              "state": "Punjab"
+            },
+            {
+              "value": "Chiniot",
+              "text": "Chiniot",
+              "displayOrder": 5,
+              "state": "Punjab"
+            },
+            {
+              "value": "Dera Ghazi Khan",
+              "text": "Dera Ghazi Khan",
+              "displayOrder": 6,
+              "state": "Punjab"
+            },
+            {
+              "value": "Faisalabad",
+              "text": "Faisalabad",
+              "displayOrder": 7,
+              "state": "Punjab"
+            },
+            {
+              "value": "Gujranwala",
+              "text": "Gujranwala",
+              "displayOrder": 8,
+              "state": "Punjab"
+            },
+            {
+              "value": "Gujrat",
+              "text": "Gujrat",
+              "displayOrder": 9,
+              "state": "Punjab"
+            },
+            {
+              "value": "Hafizabad",
+              "text": "Hafizabad",
+              "displayOrder": 10,
+              "state": "Punjab"
+            },
+            {
+              "value": "Jhang",
+              "text": "Jhang",
+              "displayOrder": 11,
+              "state": "Punjab"
+            },
+            {
+              "value": "Jhelum",
+              "text": "Jhelum",
+              "displayOrder": 12,
+              "state": "Punjab"
+            },
+            {
+              "value": "Kasur",
+              "text": "Kasur",
+              "displayOrder": 13,
+              "state": "Punjab"
+            },
+            {
+              "value": "Khanewal",
+              "text": "Khanewal",
+              "displayOrder": 14,
+              "state": "Punjab"
+            },
+            {
+              "value": "Khushab",
+              "text": "Khushab",
+              "displayOrder": 15,
+              "state": "Punjab"
+            },
+            {
+              "value": "Lahore",
+              "text": "Lahore",
+              "displayOrder": 16,
+              "state": "Punjab"
+            },
+            {
+              "value": "Layyah",
+              "text": "Layyah",
+              "displayOrder": 17,
+              "state": "Punjab"
+            },
+            {
+              "value": "Lodhran",
+              "text": "Lodhran",
+              "displayOrder": 18,
+              "state": "Punjab"
+            },
+            {
+              "value": "Mandi Bahaudin",
+              "text": "Mandi Bahaudin",
+              "displayOrder": 19,
+              "state": "Punjab"
+            },
+            {
+              "value": "Mianwali",
+              "text": "Mianwali",
+              "displayOrder": 20,
+              "state": "Punjab"
+            },
+            {
+              "value": "Multan",
+              "text": "Multan",
+              "displayOrder": 21,
+              "state": "Punjab"
+            },
+            {
+              "value": "Muzaffargarh",
+              "text": "Muzaffargarh",
+              "displayOrder": 22,
+              "state": "Punjab"
+            },
+            {
+              "value": "Nankana Sahib",
+              "text": "Nankana Sahib",
+              "displayOrder": 23,
+              "state": "Punjab"
+            },
+            {
+              "value": "Narowal",
+              "text": "Narowal",
+              "displayOrder": 24,
+              "state": "Punjab"
+            },
+            {
+              "value": "Okara",
+              "text": "Okara",
+              "displayOrder": 25,
+              "state": "Punjab"
+            },
+            {
+              "value": "Pak Pattan",
+              "text": "Pak Pattan",
+              "displayOrder": 26,
+              "state": "Punjab"
+            },
+            {
+              "value": "Rahim Yar Khan",
+              "text": "Rahim Yar Khan",
+              "displayOrder": 27,
+              "state": "Punjab"
+            },
+            {
+              "value": "Rajanpur",
+              "text": "Rajanpur",
+              "displayOrder": 28,
+              "state": "Punjab"
+            },
+            {
+              "value": "Rawalpindi",
+              "text": "Rawalpindi",
+              "displayOrder": 29,
+              "state": "Punjab"
+            },
+            {
+              "value": "Sahiwal",
+              "text": "Sahiwal",
+              "displayOrder": 30,
+              "state": "Punjab"
+            },
+            {
+              "value": "Sargodha",
+              "text": "Sargodha",
+              "displayOrder": 31,
+              "state": "Punjab"
+            },
+            {
+              "value": "Sheikhupura",
+              "text": "Sheikhupura",
+              "displayOrder": 32,
+              "state": "Punjab"
+            },
+            {
+              "value": "Sialkot",
+              "text": "Sialkot",
+              "displayOrder": 33,
+              "state": "Punjab"
+            },
+            {
+              "value": "Toba Tek Singh",
+              "text": "Toba Tek Singh",
+              "displayOrder": 34,
+              "state": "Punjab"
+            },
+            {
+              "value": "Vehari",
+              "text": "Vehari",
+              "displayOrder": 35,
+              "state": "Punjab"
+            },
+            {
+              "value": "Badin",
+              "text": "Badin ",
+              "displayOrder": 0,
+              "state": "Sindh"
+            },
+            {
+              "value": "Dadu",
+              "text": "Dadu",
+              "displayOrder": 1,
+              "state": "Sindh"
+            },
+            {
+              "value": "Ghotki",
+              "text": "Ghotki",
+              "displayOrder": 2,
+              "state": "Sindh"
+            },
+            {
+              "value": "Hyderabad",
+              "text": "Hyderabad",
+              "displayOrder": 3,
+              "state": "Sindh"
+            },
+            {
+              "value": "Jacobabad",
+              "text": "Jacobabad",
+              "displayOrder": 4,
+              "state": "Sindh"
+            },
+            {
+              "value": "Jamshoro",
+              "text": "Jamshoro",
+              "displayOrder": 5,
+              "state": "Sindh"
+            },
+            {
+              "value": "Karachi",
+              "text": "Karachi",
+              "displayOrder": 6,
+              "state": "Sindh"
+            },
+            {
+              "value": "Kashmore",
+              "text": "Kashmore",
+              "displayOrder": 7,
+              "state": "Sindh"
+            },
+            {
+              "value": "Khairpur",
+              "text": "Khairpur",
+              "displayOrder": 8,
+              "state": "Sindh"
+            },
+            {
+              "value": "Larkana",
+              "text": "Larkana",
+              "displayOrder": 9,
+              "state": "Sindh"
+            },
+            {
+              "value": "Matiari",
+              "text": "Matiari",
+              "displayOrder": 10,
+              "state": "Sindh"
+            },
+            {
+              "value": "Mirpurkhas",
+              "text": "Mirpurkhas",
+              "displayOrder": 11,
+              "state": "Sindh"
+            },
+            {
+              "value": "Naushahro Feroz",
+              "text": "Naushahro Feroz",
+              "displayOrder": 12,
+              "state": "Sindh"
+            },
+            {
+              "value": "Qamber Shahdadkot",
+              "text": "Qamber Shahdadkot",
+              "displayOrder": 13,
+              "state": "Sindh"
+            },
+            {
+              "value": "Sanghar",
+              "text": "Sanghar",
+              "displayOrder": 14,
+              "state": "Sindh"
+            },
+            {
+              "value": "Shaheed Benazirabad",
+              "text": "Shaheed Benazirabad",
+              "displayOrder": 15,
+              "state": "Sindh"
+            },
+            {
+              "value": "Shikarpur",
+              "text": "Shikarpur",
+              "displayOrder": 16,
+              "state": "Sindh"
+            },
+            {
+              "value": "Sujawal",
+              "text": "Sujawal",
+              "displayOrder": 17,
+              "state": "Sindh"
+            },
+            {
+              "value": "Sukkur",
+              "text": "Sukkur",
+              "displayOrder": 18,
+              "state": "Sindh"
+            },
+            {
+              "value": "Tando Allahyar",
+              "text": "Tando Allahyar",
+              "displayOrder": 19,
+              "state": "Sindh"
+            },
+            {
+              "value": "Tando Muhammad Khan",
+              "text": "Tando Muhammad Khan",
+              "displayOrder": 20,
+              "state": "Sindh"
+            },
+            {
+              "value": "Tharparkar",
+              "text": "Tharparkar",
+              "displayOrder": 21,
+              "state": "Sindh"
+            },
+            {
+              "value": "Thatha",
+              "text": "Thatha",
+              "displayOrder": 22,
+              "state": "Sindh"
+            },
+            {
+              "value": "Umerkot",
+              "text": "Umerkot",
+              "displayOrder": 23,
+              "state": "Sindh"
+            },
+            {
+              "value": "Killa Saifullah",
+              "text": "Killa Saifullah",
+              "displayOrder": 12,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Kohlu",
+              "text": "Kohlu",
+              "displayOrder": 13,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Lasbela",
+              "text": "Lasbela",
+              "displayOrder": 14,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Loralai",
+              "text": "Loralai",
+              "displayOrder": 15,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Mastung",
+              "text": "Mastung",
+              "displayOrder": 16,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Musakhel",
+              "text": "Musakhel",
+              "displayOrder": 17,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Nasirabad",
+              "text": "Nasirabad",
+              "displayOrder": 18,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Nuskhi",
+              "text": "Nuskhi",
+              "displayOrder": 19,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Panjgur",
+              "text": "Panjgur",
+              "displayOrder": 20,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Pishin",
+              "text": "Pishin",
+              "displayOrder": 21,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Quetta",
+              "text": "Quetta",
+              "displayOrder": 22,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Sibi",
+              "text": "Sibi",
+              "displayOrder": 23,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Sherani",
+              "text": "Sherani",
+              "displayOrder": 24,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Turbat",
+              "text": "Turbat",
+              "displayOrder": 25,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Washuk",
+              "text": "Washuk",
+              "displayOrder": 26,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Zhob",
+              "text": "Zhob",
+              "displayOrder": 27,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Ziarat",
+              "text": "Ziarat",
+              "displayOrder": 28,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Abbottabad",
+              "text": "Abbottabad",
+              "displayOrder": 0,
+              "state": "KP"
+            },
+            {
+              "value": "Bannu",
+              "text": "Bannu",
+              "displayOrder": 1,
+              "state": "KP"
+            },
+            {
+              "value": "Battagram",
+              "text": "Battagram",
+              "displayOrder": 2,
+              "state": "KP"
+            },
+            {
+              "value": "Buner",
+              "text": "Buner",
+              "displayOrder": 3,
+              "state": "KP"
+            },
+            {
+              "value": "Charsadda",
+              "text": "Charsadda",
+              "displayOrder": 4,
+              "state": "KP"
+            },
+            {
+              "value": "Chitral",
+              "text": "Chitral",
+              "displayOrder": 5,
+              "state": "KP"
+            },
+            {
+              "value": "Dera Ismail Khan",
+              "text": "Dera Ismail Khan",
+              "displayOrder": 6,
+              "state": "KP"
+            },
+            {
+              "value": "Hangu",
+              "text": "Hangu",
+              "displayOrder": 7,
+              "state": "KP"
+            },
+            {
+              "value": "Haripur",
+              "text": "Haripur",
+              "displayOrder": 8,
+              "state": "KP"
+            },
+            {
+              "value": "Karak",
+              "text": "Karak",
+              "displayOrder": 9,
+              "state": "KP"
+            },
+            {
+              "value": "Kohat",
+              "text": "Kohat",
+              "displayOrder": 10,
+              "state": "KP"
+            },
+            {
+              "value": "Kohistan",
+              "text": "Kohistan",
+              "displayOrder": 11,
+              "state": "KP"
+            },
+            {
+              "value": "Lakki Marwat",
+              "text": "Lakki Marwat",
+              "displayOrder": 12,
+              "state": "KP"
+            },
+            {
+              "value": "Lower Dir",
+              "text": "Lower Dir",
+              "displayOrder": 13,
+              "state": "KP"
+            },
+            {
+              "value": "Malakand",
+              "text": "Malakand",
+              "displayOrder": 14,
+              "state": "KP"
+            },
+            {
+              "value": "Mansehra",
+              "text": "Mansehra",
+              "displayOrder": 15,
+              "state": "KP"
+            },
+            {
+              "value": "Mardan",
+              "text": "Mardan",
+              "displayOrder": 16,
+              "state": "KP"
+            },
+            {
+              "value": "Nowshera",
+              "text": "Nowshera",
+              "displayOrder": 17,
+              "state": "KP"
+            },
+            {
+              "value": "Peshawar",
+              "text": "Peshawar",
+              "displayOrder": 18,
+              "state": "KP"
+            },
+            {
+              "value": "Shangla",
+              "text": "Shangla",
+              "displayOrder": 19,
+              "state": "KP"
+            },
+            {
+              "value": "Swabi",
+              "text": "Swabi",
+              "displayOrder": 20,
+              "state": "KP"
+            },
+            {
+              "value": "Swat",
+              "text": "Swat",
+              "displayOrder": 21,
+              "state": "KP"
+            },
+            {
+              "value": "Tank",
+              "text": "Tank",
+              "displayOrder": 22,
+              "state": "KP"
+            },
+            {
+              "value": "Upper Dir",
+              "text": "Upper Dir",
+              "displayOrder": 23,
+              "state": "KP"
+            },
+            {
+              "value": "Bajour Agency",
+              "text": "Bajour Agency",
+              "displayOrder": 0,
+              "state": "FATA"
+            },
+            {
+              "value": "Khyber Agency",
+              "text": "Khyber Agency",
+              "displayOrder": 1,
+              "state": "FATA"
+            },
+            {
+              "value": "Kurram Agency",
+              "text": "Kurram Agency",
+              "displayOrder": 2,
+              "state": "FATA"
+            },
+            {
+              "value": "Mohmand Agency",
+              "text": "Mohmand Agency",
+              "displayOrder": 3,
+              "state": "FATA"
+            },
+            {
+              "value": "North Waziristan",
+              "text": "North Waziristan",
+              "displayOrder": 4,
+              "state": "FATA"
+            },
+            {
+              "value": "South Warizistan",
+              "text": "South Warizistan",
+              "displayOrder": 5,
+              "state": "FATA"
+            },
+            {
+              "value": "Orakzai Agency",
+              "text": "Orakzai Agency",
+              "displayOrder": 6,
+              "state": "FATA"
+            },
+            {
+              "value": "Bagh",
+              "text": "Bagh",
+              "displayOrder": 0,
+              "state": "AJK"
+            },
+            {
+              "value": "Bhimber",
+              "text": "Bhimber",
+              "displayOrder": 1,
+              "state": "AJK"
+            },
+            {
+              "value": "Hattian Bala",
+              "text": "Hattian Bala",
+              "displayOrder": 2,
+              "state": "AJK"
+            },
+            {
+              "value": "Haveli",
+              "text": "Haveli",
+              "displayOrder": 3,
+              "state": "AJK"
+            },
+            {
+              "value": "Kotli",
+              "text": "Kotli",
+              "displayOrder": 4,
+              "state": "AJK"
+            },
+            {
+              "value": "Mirpur",
+              "text": "Mirpur",
+              "displayOrder": 5,
+              "state": "AJK"
+            },
+            {
+              "value": "Muzaffarabad",
+              "text": "Muzaffarabad",
+              "displayOrder": 6,
+              "state": "AJK"
+            },
+            {
+              "value": "Neelum",
+              "text": "Neelum",
+              "displayOrder": 7,
+              "state": "AJK"
+            },
+            {
+              "value": "Poonch",
+              "text": "Poonch",
+              "displayOrder": 8,
+              "state": "AJK"
+            },
+            {
+              "value": "Sudhnoti",
+              "text": "Sudhnoti",
+              "displayOrder": 9,
+              "state": "AJK"
+            },
+            {
+              "value": "Astore",
+              "text": "Astore",
+              "displayOrder": 0,
+              "state": "GB"
+            },
+            {
+              "value": "Diamir",
+              "text": "Diamir",
+              "displayOrder": 1,
+              "state": "GB"
+            },
+            {
+              "value": "Ghanche",
+              "text": "Ghanche",
+              "displayOrder": 2,
+              "state": "GB"
+            },
+            {
+              "value": "Ghizer",
+              "text": "Ghizer",
+              "displayOrder": 3,
+              "state": "GB"
+            },
+            {
+              "value": "Gilgit",
+              "text": "Gilgit",
+              "displayOrder": 4,
+              "state": "GB"
+            },
+            {
+              "value": "Hunza",
+              "text": "Hunza",
+              "displayOrder": 5,
+              "state": "GB"
+            },
+            {
+              "value": "Kharmang",
+              "text": "Kharmang",
+              "displayOrder": 6,
+              "state": "GB"
+            },
+            {
+              "value": "Nagar",
+              "text": "Nagar",
+              "displayOrder": 7,
+              "state": "GB"
+            },
+            {
+              "value": "Shigar",
+              "text": "Shigar",
+              "displayOrder": 8,
+              "state": "GB"
+            },
+            {
+              "value": "Skardu",
+              "text": "Skardu",
+              "displayOrder": 9,
+              "state": "GB"
+            },
+            {
+              "value": "Islamabad",
+              "text": "Islamabad",
+              "displayOrder": 0,
+              "state": "ICT"
+            }
+          ]
+        }
+      },
+      {
+        "Id": 21,
+        "MigrateFromId": null,
+        "Label": "Referring Health Facility Level",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "int",
+        "DisplayOrder": 42,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": "Public-DHQ",
+              "text": "Public-DHQ",
+              "displayOrder": 0
+            },
+            {
+              "value": "Public-THQ",
+              "text": "Public-THQ",
+              "displayOrder": 10
+            },
+            {
+              "value": "Public-RHC",
+              "text": "Public-RHC",
+              "displayOrder": 20
+            },
+            {
+              "value": "Public-BHU",
+              "text": "Public-BHU",
+              "displayOrder": 30
+            },
+            {
+              "value": "Public-Other",
+              "text": "Public-Other",
+              "displayOrder": 40
+            },
+            {
+              "value": "Private-Hospital",
+              "text": "Private-Hospital",
+              "displayOrder": 50
+            },
+            {
+              "value": "Private-GP",
+              "text": "Private-GP",
+              "displayOrder": 70
+            },
+            {
+              "value": "Private-Other",
+              "text": "Private-Other",
+              "displayOrder": 80
+            },
+            {
+              "value": "Parastatal",
+              "text": "Parastatal",
+              "displayOrder": 90
+            },
+            {
+              "value": "Community",
+              "text": "Community",
+              "displayOrder": 100
+            }
+          ]
+        }
+      },
+      {
+        "Id": 9,
+        "MigrateFromId": 3,
+        "Label": "Sample Collection Site",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "string",
+        "DisplayOrder": 50,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": "Abbasi Shaheed Hospital",
+              "text": "Abbasi Shaheed Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Aga khan",
+              "text": "Aga khan",
+              "displayOrder": 0
+            },
+            {
+              "value": "Bantwa Hospital",
+              "text": "Bantwa Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Behbood",
+              "text": "Behbood",
+              "displayOrder": 0
+            },
+            {
+              "value": "Bridge Consultants Foundation",
+              "text": "Bridge Consultants Foundation",
+              "displayOrder": 0
+            },
+            {
+              "value": "Childern Hospital",
+              "text": "Childern Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Civil Hospital",
+              "text": "Civil Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Community Ibrahim Hyderi",
+              "text": "Community Ibrahim Hyderi",
+              "displayOrder": 0
+            },
+            {
+              "value": "Creek General Hospital",
+              "text": "Creek General Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Delhi Medical and Dialysis Center",
+              "text": "Delhi Medical and Dialysis Center",
+              "displayOrder": 0
+            },
+            {
+              "value": "Dr Ziauddin Hospital - Clifton",
+              "text": "Dr Ziauddin Hospital - Clifton",
+              "displayOrder": 0
+            },
+            {
+              "value": "Dr Ziauddin Hospital - Kemari",
+              "text": "Dr Ziauddin Hospital - Kemari",
+              "displayOrder": 0
+            },
+            {
+              "value": "Fatima Teaching Hospital",
+              "text": "Fatima Teaching Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Greenstar Social Marketing",
+              "text": "Greenstar Social Marketing",
+              "displayOrder": 0
+            },
+            {
+              "value": "Indus Hospital Bhong",
+              "text": "Indus Hospital Bhong",
+              "displayOrder": 0
+            },
+            {
+              "value": "Indus Hospital Korangi",
+              "text": "Indus Hospital Korangi",
+              "displayOrder": 0
+            },
+            {
+              "value": "JPMC",
+              "text": "JPMC",
+              "displayOrder": 0
+            },
+            {
+              "value": "Karachi Central Jail",
+              "text": "Karachi Central Jail",
+              "displayOrder": 0
+            },
+            {
+              "value": "Karachi Community Sample",
+              "text": "Karachi Community Sample",
+              "displayOrder": 0
+            },
+            {
+              "value": "Karachi Factory Sample",
+              "text": "Karachi Factory Sample",
+              "displayOrder": 0
+            },
+            {
+              "value": "Karachi Metropolitan Corporation",
+              "text": "Karachi Metropolitan Corporation",
+              "displayOrder": 0
+            },
+            {
+              "value": "Karachi School Sample",
+              "text": "Karachi School Sample",
+              "displayOrder": 0
+            },
+            {
+              "value": "Kutiyana Memon Hospital, Karachi",
+              "text": "Kutiyana Memon Hospital, Karachi",
+              "displayOrder": 0
+            },
+            {
+              "value": "KVSS, SITE-Karachi",
+              "text": "KVSS, SITE-Karachi",
+              "displayOrder": 0
+            },
+            {
+              "value": "Landhi Medical Complex",
+              "text": "Landhi Medical Complex",
+              "displayOrder": 0
+            },
+            {
+              "value": "LRBT Korangi",
+              "text": "LRBT Korangi",
+              "displayOrder": 0
+            },
+            {
+              "value": "Lyari General Hospital",
+              "text": "Lyari General Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Marie Adelaide Leprosy Centre",
+              "text": "Marie Adelaide Leprosy Centre",
+              "displayOrder": 0
+            },
+            {
+              "value": "Murshid Hospital",
+              "text": "Murshid Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "NICH-Karachi",
+              "text": "NICH-Karachi",
+              "displayOrder": 0
+            },
+            {
+              "value": "Others",
+              "text": "Others",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Central Jail",
+              "text": "Peshawar Central Jail",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Community",
+              "text": "Peshawar Community",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Emergency Satellite Hospital Nahaqi",
+              "text": "Peshawar Emergency Satellite Hospital Nahaqi",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Factory Sample",
+              "text": "Peshawar Factory Sample",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Govt Naseer Ullah Khan Baber Memorial Hospital",
+              "text": "Peshawar Govt Naseer Ullah Khan Baber Memorial Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Hayatabad Medical Complex MTI",
+              "text": "Peshawar Hayatabad Medical Complex MTI",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Khyber Teaching Hospital MTI",
+              "text": "Peshawar Khyber Teaching Hospital MTI",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Lady Reading Hospital MTI",
+              "text": "Peshawar Lady Reading Hospital MTI",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar Molvi Ameer Shah Memorial Hospital",
+              "text": "Peshawar Molvi Ameer Shah Memorial Hospital",
+              "displayOrder": 0
+            },
+            {
+              "value": "Peshawar School Sample",
+              "text": "Peshawar School Sample",
+              "displayOrder": 0
+            },
+            {
+              "value": "PNS Shifa",
+              "text": "PNS Shifa",
+              "displayOrder": 0
+            },
+            {
+              "value": "SESSI, Landhi-Karachi",
+              "text": "SESSI, Landhi-Karachi",
+              "displayOrder": 0
+            },
+            {
+              "value": "SGH Ibrahim Hyderi",
+              "text": "SGH Ibrahim Hyderi",
+              "displayOrder": 0
+            },
+            {
+              "value": "SGH Korangi",
+              "text": "SGH Korangi",
+              "displayOrder": 0
+            },
+            {
+              "value": "SGH Liaquatabad",
+              "text": "SGH Liaquatabad",
+              "displayOrder": 0
+            },
+            {
+              "value": "SGH New Karachi",
+              "text": "SGH New Karachi",
+              "displayOrder": 0
+            },
+            {
+              "value": "SGH Orangi Qatar",
+              "text": "SGH Orangi Qatar",
+              "displayOrder": 0
+            },
+            {
+              "value": "SGH Saudabad",
+              "text": "SGH Saudabad",
+              "displayOrder": 0
+            },
+            {
+              "value": "Shaukat Omer Memorial Hospital Fauji Foudation",
+              "text": "Shaukat Omer Memorial Hospital Fauji Foudation",
+              "displayOrder": 0
+            },
+            {
+              "value": "Sheikh Muhammad Saeed Memorial Hospital (HMS)",
+              "text": "Sheikh Muhammad Saeed Memorial Hospital (HMS)",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Bahadurabad",
+              "text": "SZC - Bahadurabad",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Faisalabad",
+              "text": "SZC - Faisalabad",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Mughalpura",
+              "text": "SZC - Mughalpura",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Rawalpindi",
+              "text": "SZC - Rawalpindi",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Sahiwal",
+              "text": "SZC - Sahiwal",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Samnabad LHR",
+              "text": "SZC - Samnabad LHR",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Sialkot",
+              "text": "SZC - Sialkot",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC - Sukkur",
+              "text": "SZC - Sukkur",
+              "displayOrder": 0
+            },
+            {
+              "value": "SZC- HYD",
+              "text": "SZC- HYD",
+              "displayOrder": 0
+            },
+            {
+              "value": "UHC 5C3 North Karachi",
+              "text": "UHC 5C3 North Karachi",
+              "displayOrder": 0
+            },
+            {
+              "value": "UHC Baber Market",
+              "text": "UHC Baber Market",
+              "displayOrder": 0
+            },
+            {
+              "value": "UHC Orangi",
+              "text": "UHC Orangi",
+              "displayOrder": 0
+            },
+            {
+              "value": "ZTTS",
+              "text": "ZTTS",
+              "displayOrder": 0
+            }
+          ]
+        }
+      },
+      {
+        "Id": 10,
+        "MigrateFromId": 4,
+        "Label": "Disease Site",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "string",
+        "DisplayOrder": 60,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": "Pulmonary",
+              "text": "Pulmonary",
+              "displayOrder": 0
+            },
+            {
+              "value": "Ex-pulmonary",
+              "text": "Ex-pulmonary",
+              "displayOrder": 10
+            }
+          ]
+        }
+      },
+      {
+        "Id": 11,
+        "MigrateFromId": 5,
+        "Label": "Referring Physician Name",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "textbox",
+        "Type": "string",
+        "DisplayOrder": 70,
+        "LimitToTestTypeIds": [],
+        "InputControlData": null
+      },
+      {
+        "Id": 12,
+        "MigrateFromId": 6,
+        "Label": "Referring Physician Contact",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "textbox",
+        "Type": "string",
+        "DisplayOrder": 80,
+        "LimitToTestTypeIds": [],
+        "InputControlData": null
+      },
+      {
+        "Id": 13,
+        "MigrateFromId": 7,
+        "Label": "Specimen Type",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "int",
+        "DisplayOrder": 90,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": 0,
+              "text": "Sputum",
+              "displayOrder": 0
+            },
+            {
+              "value": 2,
+              "text": "Other",
+              "displayOrder": 10
+            }
+          ]
+        }
+      },
+      {
+        "Id": 5,
+        "MigrateFromId": -19,
+        "Label": "Repeat Test",
+        "DbColumn": "RepeatTest",
+        "Help": "",
+        "Control": "ComboBox",
+        "Type": "int",
+        "DisplayOrder": 100,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": 0,
+              "text": "First or second",
+              "displayOrder": 10
+            },
+            {
+              "value": 1,
+              "text": "Follow-up",
+              "displayOrder": 20
+            },
+            {
+              "value": 2,
+              "text": "Repeat Baseline",
+              "displayOrder": 30
+            },
+            {
+              "value": 3,
+              "text": "MTB Trace/Rif Indeterminate",
+              "displayOrder": 40
+            }
+          ]
+        }
+      },
+      {
+        "Id": 19,
+        "MigrateFromId": null,
+        "Label": "Previous GeneXpert Result",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "int",
+        "DisplayOrder": 105,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "displayConditions": [
+            {
+              "refId": 5,
+              "value": 1,
+              "operator": "="
+            }
+          ],
+          "options": [
+            {
+              "value": 1,
+              "text": "Positive",
+              "displayOrder": 10
+            },
+            {
+              "value": 0,
+              "text": "Negative",
+              "displayOrder": 20
+            },
+            {
+              "value": 2,
+              "text": "NA",
+              "displayOrder": 30
+            }
+          ]
+        }
+      },
+      {
+        "Id": 14,
+        "MigrateFromId": 9,
+        "Label": "AFB Microbiology Report",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "string",
+        "DisplayOrder": 110,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": "Positive",
+              "text": "Positive",
+              "displayOrder": 0
+            },
+            {
+              "value": "Negative",
+              "text": "Negative",
+              "displayOrder": 10
+            },
+            {
+              "value": "N/A",
+              "text": "N/A",
+              "displayOrder": 20
+            }
+          ]
+        }
+      },
+      {
+        "Id": 15,
+        "MigrateFromId": 10,
+        "Label": "Previous History of Treatment",
+        "DbColumn": null,
+        "Help": "",
+        "Control": "combobox",
+        "Type": "string",
+        "DisplayOrder": 120,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": "Yes",
+              "text": "Yes",
+              "displayOrder": 0
+            },
+            {
+              "value": "No",
+              "text": "No",
+              "displayOrder": 10
+            },
+            {
+              "value": "Not Available",
+              "text": "Not Available",
+              "displayOrder": 20
+            }
+          ]
+        }
+      },
+      {
+        "Id": 3,
+        "MigrateFromId": -1,
+        "Label": "HIV Status",
+        "DbColumn": "HivStatus",
+        "Help": "",
+        "Control": "ComboBox",
+        "Type": "int",
+        "DisplayOrder": 130,
+        "LimitToTestTypeIds": [],
+        "InputControlData": {
+          "options": [
+            {
+              "value": 1,
+              "text": "HIV Positive",
+              "displayOrder": 0
+            },
+            {
+              "value": 0,
+              "text": "HIV Negative",
+              "displayOrder": 10
+            },
+            {
+              "value": 2,
+              "text": "HIV Unknown",
+              "displayOrder": 20
+            }
+          ]
+        }
+      }
+    ],
+    "Version": 2
+  },
+  "DeviceApiKey": "vdiasoc2xgbbgrravnhq",
+  "DeploymentName": "EPEL",
+  "ConnectSettings": null
+}

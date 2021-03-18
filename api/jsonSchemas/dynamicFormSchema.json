@@ -83,7 +83,9 @@
             "description": "This allow multiples files to be attached",
             "default": false,
             "dependencies": {
-              "typeOfOptionSource": { "required": ["filePicker"] }
+              "typeOfOptionSource": {
+                "required": ["filePicker"]
+              }
             }
           },
           "controlType": {
@@ -134,7 +136,7 @@
               "required": ["validationType"],
               "properties": {
                 "validationType": {
-                  "$id": "#/properties/fields/items/properties/validation/items/validatinType",
+                  "$id": "#/properties/fields/items/properties/validation/items/validationType",
                   "type": "string",
                   "title": "The type of the validation",
                   "description": "This property is for defying the type of the validation we are going to perform",
@@ -147,7 +149,9 @@
                   "title": "Regular Expression to validate",
                   "description": "The regular expression to be matched",
                   "dependencies": {
-                    "validationType": { "required": ["regex"] }
+                    "validationType": {
+                      "required": ["regex"]
+                    }
                   }
                 },
                 "min": {
@@ -156,7 +160,9 @@
                   "title": "the minumun value",
                   "description": "The minimun value of the field",
                   "dependencies": {
-                    "validationType": { "required": ["integer", "float"] }
+                    "validationType": {
+                      "required": ["integer", "float"]
+                    }
                   }
                 },
                 "max": {
@@ -165,7 +171,9 @@
                   "title": "the maximun value",
                   "description": "The maximun value for the number field",
                   "dependencies": {
-                    "validationType": { "required": ["integer", "float"] }
+                    "validationType": {
+                      "required": ["integer", "float"]
+                    }
                   }
                 },
                 "minLength": {
@@ -174,7 +182,9 @@
                   "title": "Minimun length requiered",
                   "description": "The Minimun length for the string field",
                   "dependencies": {
-                    "validationType": { "required": ["string"] }
+                    "validationType": {
+                      "required": ["string"]
+                    }
                   }
                 },
                 "maxLength": {
@@ -183,7 +193,9 @@
                   "title": "Maximun length requiered",
                   "description": "The Maximun length for the string field",
                   "dependencies": {
-                    "validationType": { "required": ["string"] }
+                    "validationType": {
+                      "required": ["string"]
+                    }
                   }
                 },
                 "email": {
@@ -191,7 +203,9 @@
                   "type": "integer",
                   "title": "the email validation value value",
                   "dependencies": {
-                    "validationType": { "required": ["string"] }
+                    "validationType": {
+                      "required": ["string"]
+                    }
                   }
                 },
                 "errorMessage": {
@@ -327,7 +341,9 @@
             "description": "url for an existing endpoint (Aspect or thirdparty one) for filling a list",
             "default": "https://demo.aspect.id/api",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["aspectUrl", "customUrl"] }
+              "typeOfOptionSource": {
+                "required": ["aspectUrl", "customUrl"]
+              }
             }
           },
           "optionValues": {
@@ -335,7 +351,9 @@
             "type": "array",
             "title": "The fixed list ",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["fixedList"] }
+              "typeOfOptionSource": {
+                "required": ["fixedList"]
+              }
             },
             "minItems": 1,
             "description": "This is the list of options to filled the dropdown list, checkbox/radio list or single lists",
@@ -411,7 +429,9 @@
             "description": "The response type of the custom url",
             "enum": ["json | xml"],
             "dependencies": {
-              "typeOfOptionSource": { "required": ["customUrl"] }
+              "typeOfOptionSource": {
+                "required": ["customUrl"]
+              }
             }
           },
           "functionModule": {
@@ -420,7 +440,9 @@
             "title": "The module name for the function",
             "description": "The module where the function is placed",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["function"] }
+              "typeOfOptionSource": {
+                "required": ["function"]
+              }
             }
           },
           "functionName": {
@@ -429,7 +451,9 @@
             "title": "The function name",
             "description": "The function name which retrieves the option list",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["function"] }
+              "typeOfOptionSource": {
+                "required": ["function"]
+              }
             }
           }
         }
