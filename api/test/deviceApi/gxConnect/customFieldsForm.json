@@ -8,12 +8,14 @@
       "order": 1,
       "caption": "PlainField value",
       "i18nKeyCaption": "PlainFieldi18nCaptionKey",
+      "assayId": 1,
       "controlType": "textBox"
     },
     {
       "name": "ConditionalField",
       "i18nKey": "ConditionalFieldi18nKey",
       "fieldType": "text",
+      "assayId": 2,
       "order": 0,
       "caption": "ConditionalField value",
       "i18nKeyCaption": "ConditionalFieldi18nCaptionKey",

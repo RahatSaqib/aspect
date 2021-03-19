@@ -7,10 +7,12 @@
         "Help": "PlainField value",
         "Control": "TextBox",
         "Type": "string",
-        "DisplayOrder": 1
+        "DisplayOrder": 1,
+        "LimitToTestTypeIds": [1]
       },
       {
         "Name": "ConditionalField",
+        "LimitToTestTypeIds": [2],
         "Help": "ConditionalField value",
         "Control": "TextBox",
         "Type": "string",

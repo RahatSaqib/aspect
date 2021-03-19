@@ -5,6 +5,7 @@ const map = aspectFields => {
   return {
     'fields[].id': 'CustomFields.Fields[].Id',
     'fields[].name': 'CustomFields.Fields[].Name',
+    'fields[].assayId': 'CustomFields.Fields[].LimitToTestTypeIds[]',
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',
     'fields[].required': {
@@ -71,7 +72,8 @@ const translateCondition = (sourceValue, aspectFields) => {
   return map
 }
 
-const mapGxConnectCustomFields = (aspectFields, mapper = null) =>
-  objectMapper(aspectFields, mapper || map(aspectFields))
+const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
+  return objectMapper(aspectFields, mapper || map(aspectFields))
+}
 
 module.exports = mapGxConnectCustomFields

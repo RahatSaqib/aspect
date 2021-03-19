@@ -8,7 +8,7 @@ async function getForms(request) {
   const {
     partner: { id: partnerId },
   } = await getConstraints(auth.credentials)
-  const formQuery = getFormsBaseQuery(knex, partnerId, query)
+  const formQuery = getFormsBaseQuery(partnerId, query)
   const forms = {}
   // eslint-disable-next-line no-return-assign
   _.each(await formQuery, form => {
@@ -21,31 +21,33 @@ async function getForms(request) {
   })
   return forms
 }
-const getCustomFields = async ({ knex, partnerId, deviceId }) => {
-  const formQuery = getFormsBaseQuery(knex, partnerId, {
+const getCustomFields = async (partnerId, deviceId) => {
+  const formQuery = await getFormsBaseQuery(partnerId, {
     formTypeId: 'gxConnectForm',
   })
-    .join('Disease as di', 'di.id', 'ft.diseaseId')
+    .join('Disease as di', 'di.id', 'fd.diseaseId')
     .join('AssayType as assayType', 'di.id', 'assayType.diseaseId')
     .join('Assay as a', 'assayType.id', 'a.assayTypeid')
     .join('DeviceType as dt', 'a.devicetypeid', 'dt.id')
-    .join('Device AS d', 'd.deviceTypeId', 'dt.id')
+    .join('Device as d', 'd.deviceTypeId', 'dt.id')
     .where('d.id', deviceId)
 
   let forms = {}
   // eslint-disable-next-line no-return-assign
-  _.each(await formQuery, form => {
-    forms = _.merge(forms, formDictionary[form.externalId], {
+  _.each(formQuery, form => {
+    const fields = _.map(formDictionary[form.externalId].fields, field => ({
+      ...field,
       assayId: form.assayId,
       diseaseId: form.diseaseId,
-    })
+    }))
+    forms = _.merge(forms, { fields })
   })
   return forms
 }
-const getFormsBaseQuery = async (knex, partnerId, query) => {
-  return knex('FormType AS ft')
-    .innerJoin('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .innerJoin(
+function getFormsBaseQuery(partnerId, query) {
+  const queryForm = knex('FormType AS ft')
+    .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
+    .join(
       'FormDefinitionSchema as fschema',
       'fd.formDefinitionSchemaId',
       'fschema.id'
@@ -63,6 +65,7 @@ const getFormsBaseQuery = async (knex, partnerId, query) => {
       'fd.diseaseId',
       'ft.externalId as formTypeId'
     )
+  return queryForm
 }
 module.exports = {
   getForms,

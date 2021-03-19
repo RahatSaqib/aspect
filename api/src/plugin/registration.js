@@ -84,7 +84,7 @@ const plugins = {
     transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
     onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
-    getCustomFields: require('./deviceType/GxConnect/customFields/customFieldsMappingTemplates'),
+    getCustomFields: require('./deviceType/GxConnect/customFields/customFields'),
   },
   gxalert: {
     getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),

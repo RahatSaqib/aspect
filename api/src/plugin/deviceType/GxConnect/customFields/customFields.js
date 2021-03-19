@@ -3,13 +3,8 @@ const {
 } = require('../../../../forms/service')
 const mapGxConnectCustomFields = require('./customFieldsMappingTemplates')
 
-const getCustomFields = async ({ knex, partnerId, deviceId }) => {
-  const customFields = await getCustomFieldsService({
-    knex,
-    deviceId,
-    partnerId,
-  })
-
+const getCustomFields = async (partnerId, deviceId) => {
+  const customFields = await getCustomFieldsService(partnerId, deviceId)
   return mapGxConnectCustomFields(customFields)
 }
 

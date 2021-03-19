@@ -42,7 +42,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device API routes for GxConnect Devices', () => {
+describe.only('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -51,7 +51,7 @@ describe('Device API routes for GxConnect Devices', () => {
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
 
-  describe('registration and configuration', () => {
+  describe.only('registration and configuration', () => {
     describe('when no device API key is specified', () => {
       const context = createGxConnectTestContext(server, {
         macAddress,

@@ -394,14 +394,7 @@ async function addDeviceDataWithContext(context) {
 }
 
 async function getDeviceDataWithContext(context) {
-  const {
-    knex,
-    now,
-    device,
-    deviceLog,
-    deviceLogType,
-    pluginNames: plugins,
-  } = context
+  const { knex, now, device, deviceLog, deviceLogType } = context
 
   // include fields based on device log type configured in endpoints
   const includeAll = deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
@@ -451,8 +444,6 @@ async function getDeviceDataWithContext(context) {
       }
     }
   }
-  const customFields = await loadPlugin(plugins, 'getCustomFields')
-  if (customFields) response.CustomFields = customFields(device.id)
   return response
 }
 
@@ -460,7 +451,7 @@ async function addDeviceOperationWithContext(context) {
   const {
     knex,
     payload,
-    device: { id: deviceId },
+    device: { id: deviceId /* , partnerId */ },
     now,
     pluginNames: plugins,
   } = context
@@ -469,6 +460,14 @@ async function addDeviceOperationWithContext(context) {
 
   const postProcess = await loadPlugin(plugins, 'postProcessAddDeviceOperation')
   const postProcessResult = await postProcess(context)
+  /**
+   * TODO: check if this is needed
+   */
+  // const customFields = await loadPlugin(plugins, 'getCustomFields')
+  // const CustomFields = {}
+  // if (customFields) CustomFields = await customFields(partnerId, deviceId)
+  // console.log('postProcessResult', postProcessResult)
+  // console.log('CustomFields', CustomFields)
   return postProcessResult
 }
 
@@ -476,7 +475,7 @@ async function updateDeviceConfigurationWithContext(context) {
   const {
     knex,
     payload,
-    device: { id: deviceId },
+    device: { id: deviceId, partnerId },
     now,
     pluginNames: plugins,
   } = context
@@ -494,6 +493,12 @@ async function updateDeviceConfigurationWithContext(context) {
     'postProcessUpdateDeviceConfiguration'
   )
   const postProcessResult = await postProcess(context)
+  const customFields = await loadPlugin(plugins, 'getCustomFields')
+  if (customFields)
+    postProcessResult.CustomFields = _.get(
+      await customFields(partnerId, deviceId),
+      'CustomFields'
+    )
   return postProcessResult
 }
 
