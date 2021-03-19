@@ -52,6 +52,7 @@
       "id": 5,
       "name": "ProbeB",
       "i18nKey": "ProbeBi18nKey",
+      "gxAlertDbColumn": "PatientPhone",
       "fieldType": "text",
       "order": 6,
       "title": "Probe B",

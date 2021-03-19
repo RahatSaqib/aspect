@@ -260,6 +260,13 @@
                   "default": "",
                   "examples": ["propName"]
                 },
+                "gxAlertDbColumn": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/gxAlertDbColumn",
+                  "type": "string",
+                  "title": "The db column name for gxalert custom fields this will be removed in the sunset of gxalert",
+                  "default": "",
+                  "examples": ["gxAlertDbColumn"]
+                },
                 "gxAlertPropName": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/gxAlertPropName",
                   "type": "string",

@@ -21,6 +21,7 @@ const map = aspectFields => {
       transform: sourceValue => (sourceValue === 'number' ? 'int' : 'string'),
     },
     'fields[].order': 'CustomFields.Fields[].DisplayOrder',
+    'fields[].gxAlertDbColumn': 'CustomFields.Fields[].DbColumn',
     'fields[].items[].key':
       'CustomFields.Fields[].InputControlData.options[].value',
     'fields[].items[].value':

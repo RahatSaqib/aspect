@@ -42,6 +42,7 @@
         "Name": "ProbeB",
         "Label": "Probe B",
         "Help": "Probe B value",
+        "DbColumn": "PatientPhone",
         "Control": "TextBox",
         "Type": "string",
         "DisplayOrder": 6
