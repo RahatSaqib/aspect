@@ -1,0 +1,96 @@
+{
+  "CustomFields": {
+    "Fields": [
+      {
+        "Id": 2,
+        "Name": "PlainField",
+        "Help": "PlainField value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 1
+      },
+      {
+        "Name": "ConditionalField",
+        "Help": "ConditionalField value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 0,
+        "InputControlData": {
+          "filters": [
+            {
+              "propName": "PlainField",
+              "operator": "!=",
+              "refId": 2
+            }
+          ]
+        }
+      },
+      {
+        "Id": 4,
+        "Name": "ValidationField",
+        "Label": "ValidationField",
+        "Help": "ValidationField value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 2,
+        "InputControlData": {
+          "minValue": 0
+        }
+      },
+      {
+        "Id": 5,
+        "Name": "ProbeB",
+        "Label": "Probe B",
+        "Help": "Probe B value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 6
+      },
+      {
+        "Id": 8,
+        "Name": "ProbeSpc",
+        "Label": "Probe Spc",
+        "Help": "Probe Spc value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 15
+      },
+      {
+        "Name": "underlyingConditionsAndComorbidity",
+        "Label": "any Underlaying condition?",
+        "Optional": true,
+        "Control": "RadioButton",
+        "Type": "string",
+        "DisplayOrder": 0,
+        "InputControlData": {
+          "options": [
+            {
+              "value": "no",
+              "text": "No"
+            },
+            {
+              "value": "yes",
+              "text": "Yes"
+            },
+            {
+              "value": "unknown",
+              "text": "Unknown"
+            }
+          ]
+        }
+      },
+      {
+        "Id": 15,
+        "Name": "probeDendpt",
+        "Label": "Probe D Endpt",
+        "Help": "Probe D Endpt value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 22,
+        "InputControlData": {
+          "maxValue": 0
+        }
+      }
+    ]
+  }
+}
