@@ -22,6 +22,10 @@ const { exportSupplies } = require('./serviceReports')
 
 const inventoryFilters = {
   consumableId: Joi.number().integer().positive().allow('', null),
+  consumableExternalId: Joi.string()
+    .optional()
+    .allow('', null)
+    .description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
   stockLeft: Joi.string().allow('', null),
 }
@@ -164,6 +168,9 @@ const routes = [
             .items(
               Joi.object().keys({
                 consumableId: Joi.number().description('The consumable id'),
+                consumableExternalId: Joi.number().description(
+                  'The consumable external id'
+                ),
                 consumableName: Joi.string().description('The consumable name'),
 
                 outOfStock: Joi.number().description(

@@ -1,12 +1,12 @@
 module.exports = require('../utils').seed(seed, __filename)
-
+const _ = require('lodash')
 const { rowsAsObject } = require('../utils')
 const {
   deviceTypeCategoryToId,
   assayTypeToId,
   resultSourceToId,
-  unitToId,
 } = require('../../src/shared/dictionary')
+const getConsumables = require('../fixtures/Consumable')
 
 async function seed(knex) {
   // Skip this seed file if we already have an AlereFtpConnector Device Type
@@ -307,19 +307,13 @@ async function seed(knex) {
     }),
   })
 
-  const piece = await unitToId('Piece')
-  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere q HIV-1/2 Detect Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Alere',
-  })
-  const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere q HIV-1/2 VL Plasma Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Alere',
-  })
+  const consumables = await getConsumables()
+  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'AlereHivDetectCartridge')
+  )
+  const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'AlereHivVLPlasmaCartridge')
+  )
 
   await knex('ConsumableAssay').insert([
     {
