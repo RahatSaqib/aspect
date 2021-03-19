@@ -30,6 +30,12 @@
         "description": "All the properties needed for this field to be rendered",
         "required": ["name", "i18nKey", "fieldType", "order"],
         "properties": {
+          "id": {
+            "$id": "#/properties/fields/items/properties/id",
+            "type": "string",
+            "title": "The custom field id in gxalert, this will be removed",
+            "description": "The id of the field in gxalert"
+          },
           "name": {
             "$id": "#/properties/fields/items/properties/name",
             "type": "string",
@@ -253,6 +259,13 @@
                   "description": "We are going to use this as a key for obtaining the property value for compearing the condition",
                   "default": "",
                   "examples": ["propName"]
+                },
+                "gxAlertPropName": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/gxAlertPropName",
+                  "type": "string",
+                  "title": "The name of the property propName for gxalert custom fields this will be removed in the sunset of gxalert",
+                  "default": "",
+                  "examples": ["gxAlertPropName"]
                 },
                 "operator": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/operator",
