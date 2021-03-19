@@ -64,6 +64,7 @@ const plugins = {
     onCaseUpdated,
     onPatientAdded,
     onPatientUpdated,
+    getCustomFields,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -83,6 +84,7 @@ const plugins = {
     transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
     onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
+    getCustomFields: require('./deviceType/GxConnect/customFields/customFieldsMappingTemplates'),
   },
   gxalert: {
     getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),
@@ -311,6 +313,15 @@ async function preProcessMergeResult(/* context */) {
  */
 async function transformMergeResultPayload(context) {
   return context.payload
+}
+
+/**
+ * In daily details we are going to send the custom fields configured.
+ * This function will return the daily details to be shared with all the gxconnect deployments.
+ *
+ */
+async function getCustomFields() {
+  return null
 }
 
 /**

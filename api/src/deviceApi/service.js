@@ -394,7 +394,14 @@ async function addDeviceDataWithContext(context) {
 }
 
 async function getDeviceDataWithContext(context) {
-  const { knex, now, device, deviceLog, deviceLogType } = context
+  const {
+    knex,
+    now,
+    device,
+    deviceLog,
+    deviceLogType,
+    pluginNames: plugins,
+  } = context
 
   // include fields based on device log type configured in endpoints
   const includeAll = deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
@@ -444,7 +451,8 @@ async function getDeviceDataWithContext(context) {
       }
     }
   }
-
+  const customFields = await loadPlugin(plugins, 'getCustomFields')
+  if (customFields) response.CustomFields = customFields(device.id)
   return response
 }
 
