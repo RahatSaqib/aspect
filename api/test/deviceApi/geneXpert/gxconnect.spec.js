@@ -51,7 +51,7 @@ describe.only('Device API routes for GxConnect Devices', () => {
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
 
-  describe.only('registration and configuration', () => {
+  describe('registration and configuration', () => {
     describe('when no device API key is specified', () => {
       const context = createGxConnectTestContext(server, {
         macAddress,
@@ -633,6 +633,51 @@ describe.only('Device API routes for GxConnect Devices', () => {
           }))
       })
     })
+  })
+
+  describe.only('Device Daily details', () => {
+    const macAddress = 'MAC00000321PING'
+
+    const context = createGxConnectTestContext(server, {
+      countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      deviceSerialNumber,
+    })
+    beforeEach(context.beforeRegisterAndSetDevice)
+    const { runTest } = context
+    afterEach(context.afterCleanUp)
+
+    it('Download the custom fields', () =>
+      runTest(async () => {
+        const { basicDevicePayload, deviceAuth } = context
+
+        const res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(basicDevicePayload)
+          .catch(assert.fail)
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'CustomFields')
+        assert.typeOf(res.body.CustomFields, 'Object')
+        assert.typeOf(res.body.CustomFields.Fields, 'Array')
+        assert.isAtLeast(res.body.CustomFields.Fields.length, 1)
+
+        const customFieldProperties = [
+          'Label',
+          'Control',
+          'Type',
+          'DisplayOrder',
+
+          'InputControlData',
+        ]
+        _.each(customFieldProperties, fieldName => {
+          assert.property(res.body.CustomFields.Fields[0], fieldName)
+        })
+      }))
   })
 
   describe('ping', () => {
