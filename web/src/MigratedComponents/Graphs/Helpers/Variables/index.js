@@ -6,7 +6,6 @@ const envSource =
     : Object.assign(process.env, variables.customPropertiesVariables)
 
 const {
-  '--anakiwa': anakiwa,
   '--aspect-color-mandy': colorMandy,
   '--aspect-color-mandy-2': colorMandy2,
   '--aspect-color-mantis': colorMantis,
@@ -38,24 +37,24 @@ const {
   '--aspect-device-inactiveNoPower': odNoPower,
   '--aspect-device-inactiveOther': odOther,
 
-  '--lightning-yellow': abbottLightning,
-  '--saffron-mango': abbottSaffronMango,
-  '--goldenrod': abbottGoldenRod,
-  '--sweet-corn': abbottSweetCorn,
-  '--cape-honey': abbottCapeHoney,
-  '--san-marino': geneSanMarino,
-  '--pirate-gold': bdPirateGold,
-  '--chelsea-gem': bdChelseaGem,
+  '--abbott-orange-1': abbott1,
+  '--abbott-orange-2': abbott2,
+  '--abbott-orange-3': abbott3,
+  '--abbott-orange-4': abbott4,
+  '--abbott-orange-5': abbott5,
 
-  '--sea-nymph': covidSeaNymph,
-  '--summer-green2': covidSummerGreen,
-  '--opal': covidOpal,
-  '--conch': covidConch,
-  '--hot-pink': reporterHotPink,
-  '--opal2': covidOpal2,
+  '--bd-gray-1': bdGray1,
+  '--bd-gray-2': bdGray2,
 
-  '--cotton-candy': reporterCottonCandy,
-  '--oyster-bay': alereOysterBay,
+  '--covid-green1': covid1,
+  '--covid-green2': covid2,
+  '--covid-green3': covid3,
+  '--covid-green4': covid4,
+  '--covid-green5': covid5,
+
+  '--alere-green1': alere1,
+  '--alere-green2': alere2,
+
   '--loblolly': assayLobLolly,
   '--hit-gray': assayHitGray,
   '--regent-gray': assayrecentGray,
@@ -65,16 +64,17 @@ const {
   '--frangipani': senaiteFrangipani,
 
   '--geno-lavender1': geno1,
+  '--geno-lavender2': geno2,
   '--geno-lavender3': geno3,
-  '--geno-lavender5': geno5,
-  '--geno-lavender7': geno7,
+  '--geno-lavender4': geno4,
   '--genex-blue1': genex1,
+  '--genex-blue2': genex2,
   '--genex-blue3': genex3,
+  '--genex-blue4': genex4,
   '--genex-blue5': genex5,
+  '--genex-blue6': genex6,
   '--genex-blue7': genex7,
-  '--genex-blue9': genex9,
-  '--genex-blue11': genex11,
-  '--genex-blue13': genex13,
+  '--san-marino': geneSanMarino,
 } = envSource
 
 const graphColorMap = [
@@ -134,18 +134,18 @@ const graphColorMap = [
   { id: 95, externalId: 'moreThan180', color: odTransferTime },
   { id: 96, externalId: 'notRecorded', color: odUnknown },
   { id: 97, externalId: 'noConsumption', color: odActive },
-  { id: 100, externalId: 'abbottM2000PlasmaHivVL', color: abbottLightning },
+  { id: 100, externalId: 'abbottM2000PlasmaHivVL', color: abbott1 },
   {
     id: 101,
     externalId: 'abbottM2000PlasmaHbvVL',
-    color: abbottCapeHoney,
+    color: abbott2,
   },
-  { id: 102, externalId: 'abbottM2000DBSHivVl', color: abbottGoldenRod },
-  { id: 103, externalId: 'abbottM2000HivEid', color: abbottSweetCorn },
+  { id: 102, externalId: 'abbottM2000DBSHivVl', color: abbott3 },
+  { id: 103, externalId: 'abbottM2000HivEid', color: abbott4 },
   {
     id: 104,
     externalId: 'abbottM2000DaanNCOVID19',
-    color: abbottSaffronMango,
+    color: abbott5,
   },
 
   { id: 121, externalId: 'QHivVl', color: assayLobLolly },
@@ -153,28 +153,25 @@ const graphColorMap = [
   { id: 108, externalId: 'assayGenericCulture', color: assayrecentGray },
   { id: 129, externalId: 'assayCobasHivVl', color: assayRollingStone },
 
-  { id: 105, externalId: 'assayBdMgitAst', color: bdPirateGold },
-  { id: 106, externalId: 'assayBdMgitGnd', color: bdChelseaGem },
+  { id: 105, externalId: 'assayBdMgitAst', color: bdGray1 },
+  { id: 106, externalId: 'assayBdMgitGnd', color: bdGray2 },
 
   { id: 110, externalId: 'assayGenoTypeMTBCV1', color: geno1 },
-  { id: 111, externalId: 'assayGenoTypeMTBDRplusV2', color: geno3 },
-  { id: 112, externalId: 'assayGenoTypeMTBDRslV1', color: geno5 },
-  { id: 113, externalId: 'assayGenoTypeMTBDRslV2', color: geno7 },
+  { id: 111, externalId: 'assayGenoTypeMTBDRplusV2', color: geno2 },
+  { id: 112, externalId: 'assayGenoTypeMTBDRslV1', color: geno3 },
+  { id: 113, externalId: 'assayGenoTypeMTBDRslV2', color: geno4 },
 
   { id: 114, externalId: 'GxMtbRif', color: genex1 },
-  { id: 115, externalId: 'GxMtbRifUltra', color: genex3 },
+  { id: 115, externalId: 'GxMtbRifUltra', color: genex2 },
 
-  { id: 116, externalId: 'GxHiv1Vl', color: genex5 },
-  { id: 117, externalId: 'GxHiv1Qual', color: genex7 },
-  { id: 118, externalId: 'GxEbola', color: genex9 },
-  { id: 119, externalId: 'GxUnknown', color: genex11 },
-  { id: 120, externalId: 'GxHcv', color: genex13 },
+  { id: 116, externalId: 'GxHiv1Vl', color: genex3 },
+  { id: 117, externalId: 'GxHiv1Qual', color: genex4 },
+  { id: 118, externalId: 'GxEbola', color: genex5 },
+  { id: 119, externalId: 'GxUnknown', color: genex6 },
+  { id: 120, externalId: 'GxHcv', color: genex7 },
 
-  { id: 122, externalId: 'ReporterHivVl', color: reporterHotPink },
-  { id: 123, externalId: 'ReporterEid', color: reporterCottonCandy },
-
-  { id: 124, externalId: 'assayAlereQHiv12Detect', color: anakiwa },
-  { id: 125, externalId: 'assayAlereQHiv12VLPlasma', color: alereOysterBay },
+  { id: 124, externalId: 'assayAlereQHiv12Detect', color: alere1 },
+  { id: 125, externalId: 'assayAlereQHiv12VLPlasma', color: alere2 },
 
   {
     id: 126,
@@ -189,13 +186,12 @@ const graphColorMap = [
   },
   { id: 128, externalId: 'senaiteTbCulture', color: senaiteFrangipani },
 
-  { id: 130, externalId: 'assayGenericDst', color: covidSeaNymph },
-  { id: 131, externalId: 'assayMP96Covid19', color: covidSummerGreen },
-  { id: 132, externalId: 'assayQS7Covid19', color: covidOpal },
-  { id: 133, externalId: 'assayGXCovid19', color: covidConch },
-  { id: 134, externalId: 'value', color: geneSanMarino },
-  { id: 134, externalId: 'assayGenericCovid19', color: covidOpal2 },
-
+  { id: 130, externalId: 'assayGenericDst', color: covid1 },
+  { id: 131, externalId: 'assayMP96Covid19', color: covid2 },
+  { id: 132, externalId: 'assayQS7Covid19', color: covid3 },
+  { id: 133, externalId: 'assayGXCovid19', color: covid4 },
+  { id: 134, externalId: 'assayGenericCovid19', color: covid5 },
+  { id: 135, externalId: 'value', color: geneSanMarino },
   { id: 999, externalId: 'Cases', color: colorMantis },
 ]
 
