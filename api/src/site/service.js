@@ -381,9 +381,25 @@ async function listSitesWithReporters(request) {
      * for counting  rca.requiresTreatment = 1
      */
     .leftOuterJoin('ResultCategoryAssay as rca', builder => {
+      builder.on('r.assayId', 'rca.assayId').andOn(function () {
+        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
+          'r.resultCategory2',
+          'rca.resultCategoryId'
+        )
+      })
+    })
+    .leftOuterJoin('ResultCategoryAssay as rcaTransferred', builder => {
       builder
-        .on('r.assayId', 'rca.assayId')
-        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+        .on('resultTransferred.assayId', 'rcaTransferred.assayId')
+        .andOn(function () {
+          this.on(
+            'resultTransferred.resultCategory1',
+            'rcaTransferred.resultCategoryId'
+          ).orOn(
+            'resultTransferred.resultCategory2',
+            'rcaTransferred.resultCategoryId'
+          )
+        })
     })
     /**
      * take only clinics
@@ -436,26 +452,31 @@ async function listSitesWithReporters(request) {
       delivered: knex.raw('DISTINCT rdl.resultId'),
       requiresTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
           THEN r.id ELSE null
         END`),
       onTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
           THEN r.id ELSE null
         END`),
       notPossible: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
           THEN r.id ELSE null
         END`),
       notOnTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
           THEN r.id ELSE null
         END`),
       // see comment for joining table ResultStatusLog
-      transferred: knex.raw(`DISTINCT resultTransferred.id`),
+      transferred: knex.raw(`DISTINCT
+        CASE
+          WHEN rcaTransferred.requiresTreatment = 1  AND  rcaTransferred.reportable = 1
+          THEN resultTransferred.id
+          ELSE null
+        END`),
     })
     .select(
       'g.countryId',
@@ -471,6 +492,15 @@ async function listSitesWithReporters(request) {
 
   // run both queries
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  /**
+   * to make last 4 columns to add up to the total-columns - add 'transferred' to first 3 counts
+   */
+  data.forEach(item => {
+    item.totalResults += item.transferred
+    item.delivered += item.transferred
+    item.requiresTreatment += item.transferred
+  })
 
   return { ok: true, total, length: data.length, data }
 }

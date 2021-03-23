@@ -401,15 +401,15 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     }
   ) => {
     // it should contain all counts
-    assert.equal(site.delivered, delivered + 1)
+    assert.equal(site.delivered, delivered + 2) // +1 for delivered, +1 for transferred
     assert.equal(site.notPossible, notPossible + 1)
     // 1 AwaitingTreatment + 1 OnTreatment
     assert.equal(site.notOnTreatment, notOnTreatment + 2)
     assert.equal(site.onTreatment, onTreatment + 1)
-    // we inserted 5 results, and then transferred 1 - so the rest 4 requires treatment
-    assert.equal(site.requiresTreatment, requiresTreatment + 4)
-    // 5 results inserted but 1 transferred away, so 4 total results for this site
-    assert.equal(site.totalResults, totalResults + 4)
+    // 5 results inserted, and 1 transferred away - but we count totals WITH transferred results
+    assert.equal(site.requiresTreatment, requiresTreatment + 5)
+    // 5 results inserted, and 1 transferred away - but we count totals WITH transferred results
+    assert.equal(site.totalResults, totalResults + 5)
     assert.equal(site.transferred, transferred + 1)
   }
   // ------------------------------------------------------------------------
