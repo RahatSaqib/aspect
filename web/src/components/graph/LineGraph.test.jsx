@@ -4,7 +4,7 @@ import { shallow } from 'enzyme'
 import LineGraph from './LineGraph'
 
 describe('LineGraph component', () => {
-  const { '--aspect-color-mantis': colorMantis } = process.env
+  const { '--aspect-color-conifer': colorConifer } = process.env
   const props = {
     data: [
       { date: 'Site 1', value: [1, 2, 8] },
@@ -16,7 +16,7 @@ describe('LineGraph component', () => {
       { date: 'Site 7', value: [1, 1, 5] },
       { date: 'Site 8', value: [2, 3, 8] },
     ],
-    color: ['#e85164', '#fcb124', colorMantis],
+    color: ['#e85164', '#fcb124', colorConifer],
     lineSize: 0.4,
     numYTicks: 3,
     hideLabel: false,

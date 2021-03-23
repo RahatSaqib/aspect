@@ -4,7 +4,7 @@ import { shallow } from 'enzyme'
 import ColumnGraph from './ColumnGraph'
 
 describe('ColumnGraph component', () => {
-  const { '--aspect-color-mantis': colorMantis } = process.env
+  const { '--aspect-color-conifer': colorConifer } = process.env
   const props = {
     data: [
       {
@@ -24,7 +24,7 @@ describe('ColumnGraph component', () => {
         data: [9, 1],
       },
     ],
-    color: ['#e85164', '#fcb124', colorMantis],
+    color: ['#e85164', '#fcb124', colorConifer],
     spacing: 0.4,
     hideAxes: false,
     hideLabel: false,
