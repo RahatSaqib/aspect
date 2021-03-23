@@ -19,8 +19,6 @@ const shared = require('../utils/sharedToken')
 const {
   allDeviceMaintenanceStatusToId,
 } = require('../../src/shared/dictionary')
-const { groupToken } = require('../../src/deviceApi/apiKey')
-const groupBy = require('lodash.groupby')
 
 describe('Maintenance Reports', () => {
   const path = '/api/maintenance/over-time'
@@ -154,7 +152,7 @@ describe('Maintenance Reports', () => {
       })
   })
 
-  it.only('should get the correct current status', done => {
+  it('should get the correct current status', done => {
     server
       .get(`${pathLastReported}`)
       .set('Authorization', `Bearer ${shared.token}`)

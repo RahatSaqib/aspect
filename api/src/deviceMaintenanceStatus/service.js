@@ -199,10 +199,12 @@ async function deviceStatusLastReported(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-  const inactiveUnknown = await knex('DeviceMaintenanceStatus').where('id', deviceMaintenanceStatuses.inactiveUnknown).first()
+  const inactiveUnknown = await knex('DeviceMaintenanceStatus')
+    .where('id', deviceMaintenanceStatuses.inactiveUnknown)
+    .first()
 
   // get all scoped devices and their last reported day
-  let devices = knex('Device as d')
+  const devices = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -216,12 +218,23 @@ async function deviceStatusLastReported(request) {
     })
     // Join with DMSL only if it's not on weekend, unless it was reported something different than NO RESULT or UNKNOWN
     .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', dmslJoin => {
-      dmslJoin.on('d.id', 'dmsl.deviceId')
-        .andOn(knex.raw('DAYOFWEEK(dmsl.day) != 7 AND DAYOFWEEK(dmsl.day) != 1'))
+      dmslJoin
+        .on('d.id', 'dmsl.deviceId')
+        .andOn(
+          knex.raw('DAYOFWEEK(dmsl.day) != 7 AND DAYOFWEEK(dmsl.day) != 1')
+        )
         .orOn(w => {
-          w.on(knex.raw(`dmsl.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoResultsReported}`))
-          w.andOn(knex.raw(`dmsl.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}`))
-        })    
+          w.on(
+            knex.raw(
+              `dmsl.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoResultsReported}`
+            )
+          )
+          w.andOn(
+            knex.raw(
+              `dmsl.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}`
+            )
+          )
+        })
     })
     .groupBy('d.id', 's.id')
     // Only get the devices of category types that perform tests
@@ -238,9 +251,10 @@ async function deviceStatusLastReported(request) {
     .as('devices')
 
   // for each device, get the last status log data from the last reported day
-  let data = await knex(devices)
+  const data = await knex(devices)
     .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', joinDmsl => {
-      joinDmsl.on('devices.deviceId', 'dmsl.deviceId')
+      joinDmsl
+        .on('devices.deviceId', 'dmsl.deviceId')
         .andOn('devices.lastReportedOn', 'dmsl.day')
     })
     // Join for checking if the current device maintenance status log ('dmsl') is the last of the last reported day
@@ -276,9 +290,15 @@ async function deviceStatusLastReported(request) {
       'devices.shortName',
       'devices.longitude',
       'devices.latitude',
-      knex.raw(`IFNULL(dms.i18nKey, '${inactiveUnknown.i18nKey}') as maintenanceStatusI18nKey`),
-      knex.raw(`IFNULL(dms.name, '${inactiveUnknown.name}') as maintenanceStatusName`),
-      knex.raw(`IFNULL(dms.externalId, '${inactiveUnknown.externalId}') as maintenanceStatusExternalId`),
+      knex.raw(
+        `IFNULL(dms.i18nKey, '${inactiveUnknown.i18nKey}') as maintenanceStatusI18nKey`
+      ),
+      knex.raw(
+        `IFNULL(dms.name, '${inactiveUnknown.name}') as maintenanceStatusName`
+      ),
+      knex.raw(
+        `IFNULL(dms.externalId, '${inactiveUnknown.externalId}') as maintenanceStatusExternalId`
+      ),
     ])
     .orderBy('devices.name')
 
@@ -287,5 +307,5 @@ async function deviceStatusLastReported(request) {
 
 module.exports = {
   deviceStatusOverTime,
-  deviceStatusLastReported
+  deviceStatusLastReported,
 }
