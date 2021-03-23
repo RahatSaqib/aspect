@@ -450,25 +450,31 @@ async function listSitesWithReporters(request) {
     .count({
       totalResults: knex.raw('DISTINCT r.id'),
       delivered: knex.raw('DISTINCT rdl.resultId'),
+      /**
+       * We should only be counting results that were delivered in the last four columns
+       * because we're measuring how many of the results are linked to treatment on the
+       * Reporter and they can't put results on treatment if they were never delivered
+       * to the reporter.
+       */
       requiresTreatment: knex.raw(`DISTINCT
         CASE
           WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
-          THEN r.id ELSE null
+          THEN rdl.resultId ELSE null
         END`),
       onTreatment: knex.raw(`DISTINCT
         CASE
           WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
-          THEN r.id ELSE null
+          THEN rdl.resultId ELSE null
         END`),
       notPossible: knex.raw(`DISTINCT
         CASE
           WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
-          THEN r.id ELSE null
+          THEN rdl.resultId ELSE null
         END`),
       notOnTreatment: knex.raw(`DISTINCT
         CASE
           WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
-          THEN r.id ELSE null
+          THEN rdl.resultId ELSE null
         END`),
       // see comment for joining table ResultStatusLog
       transferred: knex.raw(`DISTINCT
