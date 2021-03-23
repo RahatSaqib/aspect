@@ -214,6 +214,7 @@ async function deviceStatusLastReported(request) {
       site: 's',
       device: 'd',
     })
+    // Join with DMSL only if it's not on weekend, unless it was reported something different than NO RESULT or UNKNOWN
     .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', dmslJoin => {
       dmslJoin.on('d.id', 'dmsl.deviceId')
         .andOn(knex.raw('DAYOFWEEK(dmsl.day) != 7 AND DAYOFWEEK(dmsl.day) != 1'))
