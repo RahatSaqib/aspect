@@ -115,8 +115,6 @@ const routes = [
               latitude: Joi.number()
                 .allow(null)
                 .description('The latitude where the device is allocated'),
-              lastReportedOn: Joi.date()
-                .description('The day when the device status was last reported'),
               maintenanceStatusName: Joi.string().description(
                 'The name of the maintenance status'
               ),

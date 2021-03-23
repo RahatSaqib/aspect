@@ -198,9 +198,10 @@ async function deviceStatusLastReported(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // helpers
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+  const inactiveUnknown = await knex('DeviceMaintenanceStatus').where('id', deviceMaintenanceStatuses.inactiveUnknown).first()
 
+  // get all scoped devices and their last reported day
   let devices = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -235,21 +236,11 @@ async function deviceStatusLastReported(request) {
     ])
     .as('devices')
 
-  // last day reported for each device
-  // let lastDaysReported = knex('DeviceMaintenanceStatusLog')
-  //   .where(knex.raw('DAYOFWEEK(day) != 7 AND DAYOFWEEK(day) != 1'))
-  //   .orWhere(w => {
-  //     w.where(knex.raw(`deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoResultsReported}`))
-  //     w.andWhere(knex.raw(`deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}`))
-  //   })
-  //   .groupBy('deviceId')
-  //   .select('deviceId', knex.raw('MAX(day) as lastReportedOn')).as('lastReportedDays')
-
-  // maintenance statuses grouped by device id and day
-  let data = await knex('DeviceMaintenanceStatusLog as dmsl')
-    .innerJoin(devices, joinDevices => {
-      joinDevices.on('dmsl.deviceId', 'devices.deviceId')
-        .andOn('dmsl.day', 'devices.lastReportedOn')
+  // for each device, get the last status log data from the last reported day
+  let data = await knex(devices)
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', joinDmsl => {
+      joinDmsl.on('devices.deviceId', 'dmsl.deviceId')
+        .andOn('devices.lastReportedOn', 'dmsl.day')
     })
     // Join for checking if the current device maintenance status log ('dmsl') is the last of the last reported day
     .leftOuterJoin(
@@ -269,25 +260,24 @@ async function deviceStatusLastReported(request) {
           })
       }
     )
-    .innerJoin(
+    .leftOuterJoin(
       'DeviceMaintenanceStatus as dms',
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
     // Only get the current device maintenance status log if the device hasn't any newer statuses the same day (Only the last status of each device and day)
     .whereNull('newerDmslOnSameDay.id')
-    // Grouped by device and day
-    .groupBy(['devices.deviceId', 'dmsl.day'])
+    // Grouped by device
+    .groupBy('devices.deviceId')
     .select([
       'devices.deviceId as id',
       'devices.name',
       'devices.shortName',
       'devices.longitude',
       'devices.latitude',
-      knex.raw(`DATE_FORMAT(dmsl.day, '%Y-%m-%d') as lastReportedOn`),
-      'dms.i18nKey as maintenanceStatusI18nKey',
-      'dms.name as maintenanceStatusName',
-      'dms.externalId as maintenanceStatusExternalId',
+      knex.raw(`IFNULL(dms.i18nKey, '${inactiveUnknown.i18nKey}') as maintenanceStatusI18nKey`),
+      knex.raw(`IFNULL(dms.name, '${inactiveUnknown.name}') as maintenanceStatusName`),
+      knex.raw(`IFNULL(dms.externalId, '${inactiveUnknown.externalId}') as maintenanceStatusExternalId`),
     ])
     .orderBy('devices.name')
 
