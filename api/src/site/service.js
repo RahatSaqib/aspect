@@ -402,6 +402,14 @@ async function listSitesWithReporters(request) {
         })
     })
     /**
+     * for counting only delivered transferred results
+     */
+    .leftOuterJoin(
+      'ResultDownloadLog as rdlTransferred',
+      'rdlTransferred.resultId',
+      'resultTransferred.id'
+    )
+    /**
      * take only clinics
      */
     .whereRaw(
@@ -480,7 +488,7 @@ async function listSitesWithReporters(request) {
       transferred: knex.raw(`DISTINCT
         CASE
           WHEN rcaTransferred.requiresTreatment = 1  AND  rcaTransferred.reportable = 1
-          THEN resultTransferred.id
+          THEN rdlTransferred.resultId
           ELSE null
         END`),
     })
