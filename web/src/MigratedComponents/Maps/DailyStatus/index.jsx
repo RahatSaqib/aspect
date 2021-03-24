@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
+import { DEVICE_STATUS_LAST_REPORTED } from '../../QueryFetch/Device'
 import AspectCard from '../../AspectCard'
 import AspectMap from '../index'
 import { dateRangeOptions } from '../../Graphs/Helpers/Formatters'
@@ -33,7 +34,7 @@ const DailyStatusMap = () => {
       deviceStatusesError,
     },
     actions: { toggleAll, toggleStatusVisibility },
-  } = useDailyStatus(minDate, maxDate)
+  } = useDailyStatus(false, false, DEVICE_STATUS_LAST_REPORTED.ENDPOINT)
 
   if (devicesIsError) {
     throw new Error(devicesError)
