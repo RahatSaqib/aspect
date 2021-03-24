@@ -13,7 +13,11 @@ import { extractOptionValue } from '../../Helpers/Formatters'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
 
-const useDailyStatus = (minDate, maxDate) => {
+const useDailyStatus = (
+  minDate = false,
+  maxDate = false,
+  endpoint = DAILY_STATUS.ENDPOINT
+) => {
   const { formatMessage } = useIntl()
   const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
@@ -35,8 +39,8 @@ const useDailyStatus = (minDate, maxDate) => {
     error: devicesError,
   } = useQuery([DAILY_STATUS.KEY, { params }], async (key, { params }) =>
     fetchWrapperForQueries({
-      endpoint: DAILY_STATUS.ENDPOINT,
-      params,
+      endpoint,
+      params: minDate && maxDate ? params : null,
     })
   )
 
