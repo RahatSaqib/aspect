@@ -13,11 +13,7 @@ import { extractOptionValue } from '../../Helpers/Formatters'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
 
-const useDailyStatus = (
-  minDate = false,
-  maxDate = false,
-  endpoint = DAILY_STATUS.ENDPOINT
-) => {
+const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT) => {
   const { formatMessage } = useIntl()
   const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
