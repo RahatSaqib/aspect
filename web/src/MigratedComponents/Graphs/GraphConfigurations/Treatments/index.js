@@ -61,7 +61,7 @@ const treatmentStatusGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
-          keys: ['treatmentStatusId', 'indexBy'],
+          keys: ['treatmentStatus', 'indexBy'],
         },
       },
       {

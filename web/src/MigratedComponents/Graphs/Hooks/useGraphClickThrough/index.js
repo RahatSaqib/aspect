@@ -15,7 +15,7 @@ import fetchWrapperForQueries from '../../../QueryFetch'
 import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
-const { treatmentStatusId } = GRAPH_CONSTS
+const { treatmentStatus } = GRAPH_CONSTS
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
@@ -100,14 +100,14 @@ const useGraphClickThrough = () => {
           params.assayId = assayId
         }
 
-        if (key === 'treatmentStatusId') {
+        if (key === 'treatmentStatus') {
           switch (id) {
             case 'NotConfirmed':
-              params.treatmentStatusId = treatmentStatusId.NotConfirmed
+              params.treatmentStatus = treatmentStatus.NotConfirmed
               break
 
             case 'Confirmed':
-              params.treatmentStatusId = treatmentStatusId.Confirmed
+              params.treatmentStatus = treatmentStatus.Confirmed
               break
 
             default:
