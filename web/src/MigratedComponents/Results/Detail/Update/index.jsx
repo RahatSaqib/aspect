@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import findIndex from 'lodash/findIndex'
+
 import { FormikProvider } from '../../../Form/Formik/Context'
 import { mergeFormConfigWithData } from '../../../Form/Formik/Helpers'
 import AspectForm from '../../../Form'
@@ -18,8 +18,11 @@ import { RESULT_DETAIL } from '../../../QueryFetch/Result'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
+import useI18n from '../../../../Hooks/i18n/useI18n'
+import messages from '../messages'
 
 const AspectResultDetail = ({ formSchema, resultId }) => {
+  const { formatMessage } = useI18n()
   const [patienId, setPatientId] = useState()
   const [formData, setFormData] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
@@ -66,7 +69,9 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
         <FormikProvider config={formConfig}>
           <ShellHeader
             icon={FaNotesMedical}
-            title={`${formConfig.title}: ${patienId}`}
+            title={`${formatMessage(
+              messages[formConfig.titleI18nKey]
+            )}: ${patienId}`}
           >
             <FormActions config={formConfig} />
           </ShellHeader>

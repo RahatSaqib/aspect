@@ -1,5 +1,6 @@
 export default {
   title: 'Result Details',
+  titleI18nKey: 'resultTitle',
   icon: 'document',
   actions: {
     default: 'edit',
