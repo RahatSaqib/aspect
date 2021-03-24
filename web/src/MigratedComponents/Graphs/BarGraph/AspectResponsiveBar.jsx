@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
+
+import useI18n from '../../../Hooks/i18n/useI18n'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
@@ -26,6 +28,7 @@ const AspectResponsiveBar = ({
   displayLegend,
   displayMethod,
   indexBy,
+  formatDate,
   legendsToPopover,
   legendsNotToRender,
   keys,
@@ -34,6 +37,7 @@ const AspectResponsiveBar = ({
   type,
   i18nKeys,
 }) => {
+  const { format } = useI18n()
   const { setConfig } = useGraphClickThrough()
   const graphsToHaveCustomLegend = [
     'bar',
@@ -211,7 +215,7 @@ const AspectResponsiveBar = ({
           },
         ]
       : []
-  const format = (v, displayMethod, intlFormatNumber) =>
+  const formatAxisLabel = (v, displayMethod, intlFormatNumber) =>
     type === 'stackedDeviceActivity'
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
@@ -282,7 +286,10 @@ const AspectResponsiveBar = ({
             tickRotation: 0,
             legendPosition: 'middle',
             legendOffset: 50,
-            format: v => format(v, displayMethod, intlFormatNumber),
+            format: v =>
+              v && formatDate === 'MMM'
+                ? format(new Date(v), formatDate)
+                : formatAxisLabel(v, formatDate),
           }}
           legends={baseLegend}
           theme={config(type, data, displayMethod).theme}
@@ -310,6 +317,7 @@ AspectResponsiveBar.defaultProps = {
   tickValuesYShape: 'all',
   tickValuesXShape: 'all',
   type: 'bar',
+  formatDate: false,
   legendsToPopover: false,
   legendsNotToRender: [],
 }
@@ -322,6 +330,7 @@ AspectResponsiveBar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  formatDate: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsNotToRender: PropTypes.oneOfType([PropTypes.array]),
   tickValuesYShape: PropTypes.oneOf([
