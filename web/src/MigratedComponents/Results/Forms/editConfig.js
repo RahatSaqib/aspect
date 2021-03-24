@@ -55,20 +55,6 @@ export default {
             },
           ],
         },
-        {
-          id: 1,
-          items: [
-            {
-              id: 'countryName',
-              controlType: {
-                component: 'textField',
-              },
-              type: 'readOnly',
-              label: 'Country',
-              labelI18nKey: 'country',
-            },
-          ],
-        },
       ],
     },
     {
