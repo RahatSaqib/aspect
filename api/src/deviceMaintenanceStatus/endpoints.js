@@ -6,7 +6,7 @@ const { deviceStatusOverTime, deviceStatusLastReported } = require('./service')
 const routes = [
   {
     method: 'GET',
-    path: '/maintenance/over-time',
+    path: 'device/maintenance-over-time',
     handler: asyncHandler(deviceStatusOverTime),
     config: {
       description: 'Device Status Over Time',
@@ -86,7 +86,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/maintenance/last-reported',
+    path: '/device/maintenance-last-reported',
     handler: asyncHandler(deviceStatusLastReported),
     config: {
       description: 'Last Reported Device Status By Device',
