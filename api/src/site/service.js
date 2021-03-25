@@ -381,10 +381,34 @@ async function listSitesWithReporters(request) {
      * for counting  rca.requiresTreatment = 1
      */
     .leftOuterJoin('ResultCategoryAssay as rca', builder => {
-      builder
-        .on('r.assayId', 'rca.assayId')
-        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+      builder.on('r.assayId', 'rca.assayId').andOn(function () {
+        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
+          'r.resultCategory2',
+          'rca.resultCategoryId'
+        )
+      })
     })
+    .leftOuterJoin('ResultCategoryAssay as rcaTransferred', builder => {
+      builder
+        .on('resultTransferred.assayId', 'rcaTransferred.assayId')
+        .andOn(function () {
+          this.on(
+            'resultTransferred.resultCategory1',
+            'rcaTransferred.resultCategoryId'
+          ).orOn(
+            'resultTransferred.resultCategory2',
+            'rcaTransferred.resultCategoryId'
+          )
+        })
+    })
+    /**
+     * for counting only delivered transferred results
+     */
+    .leftOuterJoin(
+      'ResultDownloadLog as rdlTransferred',
+      'rdlTransferred.resultId',
+      'resultTransferred.id'
+    )
     /**
      * take only clinics
      */
@@ -434,28 +458,39 @@ async function listSitesWithReporters(request) {
     .count({
       totalResults: knex.raw('DISTINCT r.id'),
       delivered: knex.raw('DISTINCT rdl.resultId'),
+      /**
+       * We should only be counting results that were delivered in the last four columns
+       * because we're measuring how many of the results are linked to treatment on the
+       * Reporter and they can't put results on treatment if they were never delivered
+       * to the reporter.
+       */
       requiresTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id
-          THEN r.id ELSE null
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
+          THEN rdl.resultId ELSE null
         END`),
       onTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
-          THEN r.id ELSE null
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
+          THEN rdl.resultId ELSE null
         END`),
       notPossible: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
-          THEN r.id ELSE null
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
+          THEN rdl.resultId ELSE null
         END`),
       notOnTreatment: knex.raw(`DISTINCT
         CASE
-          WHEN rca.requiresTreatment = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
-          THEN r.id ELSE null
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
+          THEN rdl.resultId ELSE null
         END`),
       // see comment for joining table ResultStatusLog
-      transferred: knex.raw(`DISTINCT resultTransferred.id`),
+      transferred: knex.raw(`DISTINCT
+        CASE
+          WHEN rcaTransferred.requiresTreatment = 1  AND  rcaTransferred.reportable = 1
+          THEN rdlTransferred.resultId
+          ELSE null
+        END`),
     })
     .select(
       'g.countryId',
@@ -471,6 +506,15 @@ async function listSitesWithReporters(request) {
 
   // run both queries
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  /**
+   * to make last 4 columns to add up to the total-columns - add 'transferred' to first 3 counts
+   */
+  data.forEach(item => {
+    item.totalResults += item.transferred
+    item.delivered += item.transferred
+    item.requiresTreatment += item.transferred
+  })
 
   return { ok: true, total, length: data.length, data }
 }
