@@ -1,5 +1,5 @@
 const DAILY_STATUS = {
-  ENDPOINT: 'device/maintenance-over-time',
+  ENDPOINT: '/device/maintenance-over-time',
   KEY: 'DAILY_STATUS',
 }
 
@@ -19,7 +19,7 @@ const DEVICE_STATUS = {
 }
 
 const DEVICE_STATUS_LAST_REPORTED = {
-  ENDPOINT: '/maintenance/last-reported',
+  ENDPOINT: '/device/maintenance-last-reported',
   KEY: 'DEVICE_STATUS_LAST_REPORTED',
 }
 
