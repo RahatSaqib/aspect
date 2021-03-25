@@ -2,13 +2,18 @@ const {
   getCustomFields: getCustomFieldsService,
 } = require('../../../../forms/service')
 const mapGxConnectCustomFields = require('./customFieldsMappingTemplates')
-const { knex } = require('../../../../db')
 
-const getCustomFields = async (partnerId, deviceId) => {
-  // TODO
-  await knex('Device').update()
+const getCustomFields = async (knex, partnerId, deviceId) => {
   const customFields = await getCustomFieldsService(partnerId, deviceId)
-  return mapGxConnectCustomFields(customFields)
+  if (customFields.fields && customFields.fields.length > 0) {
+    console.log('before update', customFields)
+    await knex('Device')
+      .update({ customFieldsSentOn: new Date() })
+      .where({ id: deviceId })
+
+    return mapGxConnectCustomFields(customFields)
+  }
+  return null
 }
 
 module.exports = getCustomFields

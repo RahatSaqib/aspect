@@ -1,0 +1,195 @@
+{
+  "fields": [
+    {
+      "id": 2,
+      "name": "PlainField",
+      "i18nKey": "PlainFieldi18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "caption": "PlainField value",
+      "i18nKeyCaption": "PlainFieldi18nCaptionKey",
+      "assayId": 1,
+      "controlType": "TextBox"
+    },
+    {
+      "id": 6,
+      "name": "ConditionalField",
+      "i18nKey": "ConditionalFieldi18nKey",
+      "fieldType": "text",
+      "assayId": 2,
+      "order": 0,
+      "caption": "ConditionalField value",
+      "i18nKeyCaption": "ConditionalFieldi18nCaptionKey",
+      "controlType": "textBox",
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "PlainField",
+          "valueToCompare": "unknown",
+          "operator": "!==",
+          "conjunctionGroupName": "PlainFieldCollectionGroup",
+          "gxAlertPropName": "PlainField"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ValidationField",
+      "i18nKey": "ValidationFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "title": "ValidationField",
+      "caption": "ValidationField value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "ProbeB",
+      "i18nKey": "ProbeBi18nKey",
+      "gxAlertDbColumn": "PatientPhone",
+      "fieldType": "text",
+      "order": 6,
+      "title": "Probe B",
+      "caption": "Probe B value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 9,
+      "name": "ProbeSpc",
+      "i18nKey": "ProbeSpci18nKey",
+      "fieldType": "text",
+      "order": 15,
+      "title": "Probe Spc",
+      "caption": "Probe Spc value",
+      "i18nKeyCaption": "ProbeSpci18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 16,
+      "name": "underlyingConditionsAndComorbidity",
+      "title": "any Underlaying condition?",
+      "i18nKey": "underlyingConditionsAndComorbidityi18nkey",
+      "fieldType": "text",
+      "order": 0,
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": true
+    },
+    {
+      "id": 18,
+      "name": "probeDendpt",
+      "i18nKey": "probeDendpti18nKey",
+      "fieldType": "number",
+      "order": 22,
+      "title": "Probe D Endpt",
+      "caption": "Probe D Endpt value",
+      "i18nKeyCaption": "probeDendpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "max": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeDendptErrori18nKey"
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "name": "CheckboxedField",
+      "fieldType": "text",
+      "title": "Treatment Type",
+      "i18nKey": "treatmentTypei18nKey",
+      "caption": "The treatmet type applied to the patient",
+      "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
+      "order": 0,
+      "controlType": "checkBox",
+      "required": true,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": 1,
+          "value": "Request repeat VL"
+        },
+        {
+          "key": 2,
+          "value": "Initiate advanced adherence counselling"
+        },
+        {
+          "key": 3,
+          "value": "Hospitalization"
+        },
+        {
+          "key": 4,
+          "value": "Initiate advanced adherence counselling"
+        },
+        {
+          "key": 5,
+          "value": "Switch to 2nd or 3rd line regime"
+        },
+        {
+          "key": 6,
+          "value": "Maintain current regime"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "name": "outcome",
+      "title": "outcome",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "Cured",
+          "key": 0
+        },
+        {
+          "value": "Died",
+          "key": 2
+        },
+        {
+          "value": "Recovered",
+          "key": 3
+        },
+        {
+          "value": "Not Recovered",
+          "key": 4
+        },
+        {
+          "value": "Unknown",
+          "key": 5
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

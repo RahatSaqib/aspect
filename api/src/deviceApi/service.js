@@ -190,6 +190,11 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
       // update timestamps as necessary for original device
       const originalDeviceId = context.device.id
       await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+      console.log(
+        'context.payload.getFormsDefinition',
+        context.payload.getFormsDefinition,
+        request.payload
+      )
 
       // invoke delegate handler
       response = await handler(context)
@@ -278,6 +283,7 @@ async function addDeviceDataWithContext(context) {
   const { knex, now, payload, device } = context
   const { name, site, result, configuration, log } = payload
   let { operation } = payload
+  const { getFormsDefinition } = payload
 
   if (name) {
     await knex('Device')
@@ -302,7 +308,7 @@ async function addDeviceDataWithContext(context) {
     response = {
       ...response,
       ...(await updateDeviceConfigurationWithContext(
-        context.withPayload(configuration)
+        context.withPayload({ getFormsDefinition, ...configuration })
       )),
     }
   }
@@ -479,7 +485,8 @@ async function updateDeviceConfigurationWithContext(context) {
     now,
     pluginNames: plugins,
   } = context
-
+  const { getFormsDefinition } = payload
+  console.log('getFormsDefinition', payload)
   const preProcess = await loadPlugin(
     plugins,
     'preProcessUpdateDeviceConfiguration'
@@ -493,12 +500,14 @@ async function updateDeviceConfigurationWithContext(context) {
     'postProcessUpdateDeviceConfiguration'
   )
   const postProcessResult = await postProcess(context)
-  const customFields = await loadPlugin(plugins, 'getCustomFields')
-  if (customFields)
-    postProcessResult.CustomFields = _.get(
-      await customFields(partnerId, deviceId),
-      'CustomFields'
-    )
+  if (getFormsDefinition) {
+    const customFields = await loadPlugin(plugins, 'getCustomFields')
+    if (customFields)
+      postProcessResult.CustomFields = _.get(
+        await customFields(knex, partnerId, deviceId),
+        'CustomFields'
+      )
+  }
   return postProcessResult
 }
 

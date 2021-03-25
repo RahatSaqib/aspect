@@ -22,8 +22,8 @@ async function getForms(request) {
   return forms
 }
 const getCustomFields = async (partnerId, deviceId) => {
-  const formQuery = await getFormsBaseQuery(partnerId, {
-    formTypeId: 'gxConnectForm',
+  const formQuery = getFormsBaseQuery(partnerId, {
+    formType: 'gxConnectForm',
   })
     .join('Disease as di', 'di.id', 'fd.diseaseId')
     .join('AssayType as assayType', 'di.id', 'assayType.diseaseId')
@@ -31,14 +31,20 @@ const getCustomFields = async (partnerId, deviceId) => {
     .join('DeviceType as dt', 'a.devicetypeid', 'dt.id')
     .join('Device as d', 'd.deviceTypeId', 'dt.id')
     .where('d.id', deviceId)
-    .select('d.customFieldsSentOn')
+    .distinct('d.customFieldsSentOn')
 
   let forms = {}
   // eslint-disable-next-line no-return-assign
-  _.each(formQuery, form => {
+  _.each(await formQuery, form => {
+    console.log(
+      'should send custom fields',
+      !form.customFieldsSentOn,
+      formDictionary[form.externalId].updatedOn,
+      form.customFieldsSentOn
+    )
     if (
-      !formQuery.customFieldsSentOn ||
-      formDictionary[form.externalId].updatedOn > formQuery.customFieldsSentOn
+      !form.customFieldsSentOn ||
+      formDictionary[form.externalId].updatedOn > form.customFieldsSentOn
     ) {
       const fields = _.map(formDictionary[form.externalId].fields, field => ({
         ...field,
@@ -65,7 +71,7 @@ function getFormsBaseQuery(partnerId, query) {
       externalsId: 'fd.externalId',
       formType: 'ft.externalId',
     })
-    .select(
+    .distinct(
       'fd.externalId',
       'fd.assayId',
       'fd.diseaseId',
