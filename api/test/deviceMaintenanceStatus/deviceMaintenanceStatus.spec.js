@@ -21,8 +21,8 @@ const {
 } = require('../../src/shared/dictionary')
 
 describe('Maintenance Reports', () => {
-  const path = '/api/maintenance/over-time'
-  const pathLastReported = '/api/maintenance/last-reported'
+  const path = '/api/device/maintenance-over-time'
+  const pathLastReported = '/api/device/maintenance-last-reported'
   let context
   let deviceId
 
