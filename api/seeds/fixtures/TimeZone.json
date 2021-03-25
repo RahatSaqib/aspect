@@ -171,6 +171,11 @@
       "timeZone": "Africa/Casablanca"
     },
     {
+      "id": "Coordinated Universal Time",
+      "name": "Coordinated Universal Time",
+      "timeZone": "UTC"
+    },
+    {
       "id": "UTC",
       "name": "Coordinated Universal Time (UTC)",
       "timeZone": "UTC"
@@ -504,6 +509,11 @@
       "id": "Samoa Standard Time",
       "name": "Samoa (UTC+13: 00)",
       "timeZone": "Pacific/Samoa"
+    },
+    {
+      "id": "Malay Peninsula Standard Time",
+      "name": "Malaysian Time (UTC+08:00)",
+      "timeZone": "Asia/Kuala_Lumpur"
     }
   ]
 }
