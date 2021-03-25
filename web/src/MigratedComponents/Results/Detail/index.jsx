@@ -19,7 +19,6 @@ const AspectResultDetail = ({ match }) => {
     }
   }, [schema, formatMessage, resultId])
 
-  console.log(schema)
   return schema ? (
     <Fragment>
       {resultId === 'add' ? <Create formSchema={schema} /> : null}
