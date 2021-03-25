@@ -474,6 +474,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -874,6 +880,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField
@@ -1459,6 +1471,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -1859,6 +1877,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField
@@ -2444,6 +2468,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -2844,6 +2874,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField
@@ -3429,6 +3465,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -3829,6 +3871,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField
@@ -4414,6 +4462,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -4814,6 +4868,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField
@@ -5398,6 +5458,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -5798,6 +5864,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField
@@ -6367,6 +6439,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -6767,6 +6845,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           value="Samoa Standard Time"
         >
           Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
         </WithStyles(MenuItem)>
       </TextField>
       <TextField

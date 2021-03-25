@@ -16,69 +16,9 @@ import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
 import { aspectFetch } from '../../../../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
 import { SitesAllErrors } from './errors'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../Detail.css'))
-
-const messages = defineMessages({
-  header: {
-    id: 'pages.transferResult.header',
-    defaultMessage: 'Transfer Result',
-  },
-  titleSites: {
-    id: 'pages.transferResult.titleSites',
-    defaultMessage: 'Transfer to Clinic',
-  },
-  hint: {
-    id: 'pages.transferResult.hint',
-    defaultMessage: 'Enter clinic name',
-  },
-  buttonCancel: {
-    id: 'pages.transferResult.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-  buttonTransfer: {
-    id: 'pages.transferResult.buttonTransfer',
-    defaultMessage: 'Transfer',
-  },
-  includeAllResults: {
-    id: 'pages.transferResult.includeAllResults',
-    defaultMessage: 'Include ALL results related to Patient ID',
-  },
-  processing: {
-    id: 'pages.transferResult.processing',
-    defaultMessage: 'Processing...',
-  },
-  note: {
-    id: 'pages.transferResult.note',
-    defaultMessage: `
-      Please notice that above field 'Transfer to Clinic' lists all clinics, even those
-      which you may not have access to.
-      In a such case - by transferring this result you won't
-      be able to edit this result record any more, and your
-      action cannot be undone.
-    `,
-  },
-  successOk: {
-    id: 'pages.transferResult.successOk',
-    defaultMessage: `OK`,
-  },
-  successHeader: {
-    id: 'pages.transferResult.successHeader',
-    defaultMessage: `
-      Result Transfer Completed
-    `,
-  },
-  successMessagePatient: {
-    id: 'pages.transferResult.successMessagePatient',
-    defaultMessage:
-      'Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"',
-  },
-  successMessageButton: {
-    id: 'pages.transferResult.successMessageButton',
-    defaultMessage:
-      'After clicking the OK button below, you will be redirected to the list of results.',
-  },
-})
 
 const ResultTransferModal = ({
   intl: { formatMessage },
@@ -263,7 +203,7 @@ const ResultTransferModal = ({
           fullWidth
           multiline
           rowsMax="5"
-          placeholder="Enter comment"
+          placeholder={formatMessage(messages.enterComment)}
           onChange={event => setComment(event.target.value)}
           margin="normal"
           value={comment}

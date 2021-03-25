@@ -225,7 +225,7 @@ async function mergeResult(
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
       .first()
     let siteGeography = {}
-    if (sampleOriginSite.geographyId) {
+    if (sampleOriginSite && sampleOriginSite.geographyId) {
       siteGeography = await knex('Geography')
         .where('id', sampleOriginSite.geographyId)
         .first()

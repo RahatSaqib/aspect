@@ -9,6 +9,7 @@ const BarGraph = ({ data, keys, config, assaysFromState, i18nKeys }) => {
     tickValuesXShape,
     displayMethod,
     displayLegend,
+    formatDate,
     legendsToPopover,
     legendsNotToRender,
     type,
@@ -20,6 +21,7 @@ const BarGraph = ({ data, keys, config, assaysFromState, i18nKeys }) => {
       data={data}
       keys={keys}
       indexBy={indexBy}
+      formatDate={formatDate}
       legendsToPopover={legendsToPopover}
       legendsNotToRender={legendsNotToRender}
       tickValuesYShape={tickValuesYShape}
