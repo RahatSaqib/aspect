@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import reduce from 'lodash/reduce'
-import { useSelector } from 'react-redux'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
@@ -49,7 +48,6 @@ const GraphRender = ({
     i18nKey,
     type,
   } = config
-  
   const { culture } = useAuthState()
   const assayParams = prepAssaysForParams(whiteListed, method)
   const endpointParams = prepParamsForEndPoint(params, updatedParams)

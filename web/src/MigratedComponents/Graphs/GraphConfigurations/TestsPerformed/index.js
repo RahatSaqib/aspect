@@ -39,7 +39,7 @@ const testsPerFormedGraphs = {
         tickValuesXShape: 'all',
         displayMethod: 'actual',
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',

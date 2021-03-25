@@ -1,15 +1,15 @@
 module.exports = require('../utils').seed(seed, __filename)
+const _ = require('lodash')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
-
 const {
   deviceTypeCategoryToId,
   assayTypeToId,
   resultSourceToId,
-  unitToId,
 } = require('../../src/shared/dictionary')
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
+const getConsumables = require('../fixtures/Consumable')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
@@ -162,8 +162,6 @@ async function seed(knex) {
   }
 
   // TODO: ZIMBABWE Determine the standard set of consumables used in MGIT and GenoScan tests
-  const piece = await unitToId('Piece')
-
   /*
   GenoType Test Strips for Tuberculosis
     http://www.hain-lifescience.co.za/products/microbiology/mycobacteria/tubercolusis.html
@@ -604,6 +602,7 @@ async function seed(knex) {
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
+  const consumables = await getConsumables()
   let { id: assayGenoTypeMTBCV1Id } =
     (await knex('Assay')
       .where('externalId', 'assayGenoTypeMTBCV1')
@@ -613,12 +612,10 @@ async function seed(knex) {
       ...assayGenoTypeMTBCV1,
       externalId: 'assayGenoTypeMTBCV1',
     })
-    const [genoTypeMTBCV1TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBC VER 1.X Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+
+    const [genoTypeMTBCV1TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBCStrip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBCV1Id,
@@ -1510,12 +1507,9 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRplusV2,
       externalId: 'assayGenoTypeMTBDRplusV2',
     })
-    const [genoTypeMTBDRplusV2TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBDRplus VER 2.0 Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBDRplusV2TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRplusStrip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBDRplusV2Id,
@@ -2275,12 +2269,9 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRslV1,
       externalId: 'assayGenoTypeMTBDRslV1',
     })
-    const [genoTypeMTBDRslV1TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBDRsl VER 1.0 Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBDRslV1TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRslStrip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBDRslV1Id,
@@ -3161,12 +3152,9 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRslV2,
       externalId: 'assayGenoTypeMTBDRslV2',
     })
-    const [genoTypeMTBDRslV2TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBDRsl VER 2.0 Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBDRslV2TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRslV2Strip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBDRslV2Id,

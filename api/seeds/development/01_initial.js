@@ -24,7 +24,6 @@ const {
   assayTypeToId,
   resultSourceToId,
   resultTypeToId,
-  unitToId,
 } = require('../../src/shared/dictionary')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
@@ -41,6 +40,7 @@ const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOn
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const { upsertJobFunctionFixture } = require('../common')
 const upsertReports = require('../common/upsert_reports')
+const getConsumables = require('../fixtures/Consumable')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -245,8 +245,6 @@ async function seed(knex) {
   }
   await upsertMGITDeviceTypeAndAssays(knex)
   await upsertCultureAssays(knex, deviceTypeSenaiteLimsId)
-  // Units
-  const piece = await unitToId('Piece')
 
   /*
   GenoType Test Strips for Tuberculosis
@@ -692,17 +690,15 @@ async function seed(knex) {
     (await knex('Assay')
       .where('externalId', 'assayGenoTypeMTBCV1')
       .first('id')) || {}
+  const consumables = await getConsumables()
   if (!assayGenoTypeMTBCV1Id) {
     ;[assayGenoTypeMTBCV1Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBCV1,
       externalId: 'assayGenoTypeMTBCV1',
     })
-    const [genoTypeMTBCV1TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBC VER 1.X Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBCV1TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBCStrip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBCV1Id,
@@ -1594,12 +1590,9 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRplusV2,
       externalId: 'assayGenoTypeMTBDRplusV2',
     })
-    const [genoTypeMTBDRplusV2TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBDRplus VER 2.0 Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBDRplusV2TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRplusStrip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBDRplusV2Id,
@@ -2359,12 +2352,9 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRslV1,
       externalId: 'assayGenoTypeMTBDRslV1',
     })
-    const [genoTypeMTBDRslV1TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBDRsl VER 1.0 Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBDRslV1TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRslStrip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBDRslV1Id,
@@ -3245,12 +3235,9 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRslV2,
       externalId: 'assayGenoTypeMTBDRslV2',
     })
-    const [genoTypeMTBDRslV2TestSripId] = await knex('Consumable').insert({
-      name: 'GenoType MTBDRsl VER 2.0 Test Strip',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Hain Lifescience',
-    })
+    const [genoTypeMTBDRslV2TestSripId] = await knex('Consumable').insert(
+      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRslV2Strip')
+    )
     await knex('ConsumableAssay').insert([
       {
         assayId: assayGenoTypeMTBDRslV2Id,
@@ -3918,47 +3905,29 @@ async function seed(knex) {
   })
 
   // Consumable types
-  const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxTbCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxMtbRifCartridge')
+  )
 
-  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Ultra Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxMtbRifUltraCartridge')
+  )
 
-  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert Ebola Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxEbolaCartridge')
+  )
 
-  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxHiv1VlCartridge')
+  )
 
-  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HCV Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxHCVCartridge')
+  )
 
-  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Qual Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
+  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'GxHiv1QualCartridge')
+  )
 
   // Assay Consumables
   await knex('ConsumableAssay').insert({

@@ -12,14 +12,17 @@ const inventoryGraphs = {
         endpoint: '/dashboard/inventory-item',
         state: 'data.inventoryConsumableSummaryList',
         component: AspectDropDown,
-        identifier: 'consumableId',
+        identifier: 'consumableExternalId',
         data: null,
         sortByKeys: ['consumableName'],
-        keyMapping: { idKey: 'consumableId', nameKey: 'consumableName' },
+        keyMapping: {
+          idKey: 'consumableExternalId',
+          nameKey: 'consumableName',
+        },
         isClearable: false,
         defaultSelectedOption: {
-          key: 'consumableName',
-          value: 'GeneXpert TB Cartridge',
+          key: 'consumableExternalId',
+          value: 'GxMtbRifCartridge',
         },
       },
     ],
@@ -46,7 +49,7 @@ const inventoryGraphs = {
         api: {
           endpoint: '/inventory/days-by-location',
           params: {
-            consumableId: 5,
+            consumableExternalId: 'GxMtbRifCartridge',
           },
         },
         indexBy: 'increment',

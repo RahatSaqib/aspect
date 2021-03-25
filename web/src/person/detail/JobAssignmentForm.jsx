@@ -205,6 +205,7 @@ export const JobAssignmentForm = ({
             />
             <DeviceTypeSelectField
               {...baseProps}
+              intl={intl}
               floatingLabelText={formatMessage(messages.deviceType)}
               value={values.deviceTypeId}
               onDeviceTypeChange={onDeviceTypeIdChange}

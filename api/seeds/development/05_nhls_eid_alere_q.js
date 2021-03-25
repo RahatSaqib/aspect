@@ -24,9 +24,9 @@ const {
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
-  unitToId,
   deviceApprovalToId,
 } = require('../../src/shared/dictionary')
+const getConsumables = require('../fixtures/Consumable')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -551,19 +551,13 @@ async function seed(knex) {
     patientDataSchema,
   })
 
-  const piece = await unitToId('Piece')
-  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere Q HIV-1/2 Detect Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Alere',
-  })
-  const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere Q HIV-1/2 VL Plasma Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Alere',
-  })
+  const consumables = await getConsumables()
+  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'AlereHivDetectCartridge')
+  )
+  const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert(
+    _.find(consumables, cons => cons.externalId === 'AlereHivVLPlasmaCartridge')
+  )
 
   await knex('ConsumableAssay').insert([
     {
