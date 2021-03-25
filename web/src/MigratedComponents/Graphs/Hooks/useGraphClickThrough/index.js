@@ -14,6 +14,7 @@ import ASSAY_LIST from '../../../QueryFetch/Assay'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import { negateTimeZoneOffset } from '../../../../components/shared/DateTimeInput/utils/date'
 
 const { treatmentStatusId } = GRAPH_CONSTS
 const {
@@ -22,7 +23,10 @@ const {
 
 const parseDate = (date, dateFormat) => {
   const baseFormat = 'yyyy-MM-dd'
-  const parsedDate = parse(date, dateFormat, new Date())
+  const parsedDate =
+    dateFormat === 'MMM'
+      ? negateTimeZoneOffset(new Date(date), baseFormat)
+      : parse(date, dateFormat, new Date())
   return {
     [MIN_DATE]: format(startOfMonth(parsedDate), baseFormat),
     [MAX_DATE]: format(endOfMonth(parsedDate), baseFormat),
@@ -42,7 +46,7 @@ const assayResultCategoryIdFromKey = async (data, id) => {
 }
 
 const assayIdFromKey = async ({ data }, id) => {
-  return filter(data, { name: id })[0] || false
+  return filter(data, { externalId: id })[0] || false
 }
 
 const diseaseIdFromKey = async ({ data }, id) => {
