@@ -41,10 +41,10 @@ const GooglePin = ({
             title={`${name}: ${maintenanceStatusName}`}
             placement="top"
           >
-            <IconProvider icon="FaMapMarkerAlt" />
+            <IconProvider icon="FaMapMarkerAlt" title={false} />
           </AspectTooltip>
         ) : (
-          <IconProvider icon="FaMapMarkerAlt" />
+          <IconProvider icon="FaMapMarkerAlt" title={false} />
         )}
       </div>
     </OverlayView>

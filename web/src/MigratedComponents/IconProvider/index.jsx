@@ -48,7 +48,7 @@ const IconProvider = memo(({ icon, className, title }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent title={title || ''} />
+          <IconComponent title={!title ? '' : icon} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
@@ -56,7 +56,7 @@ const IconProvider = memo(({ icon, className, title }) => {
 })
 
 IconProvider.defaultProps = {
-  title: false,
+  title: true,
 }
 
 IconProvider.propTypes = {
