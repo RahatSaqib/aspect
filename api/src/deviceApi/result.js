@@ -149,7 +149,7 @@ async function mergeResult(
   }
 
   let sampleOriginSiteId = site.id
-  let reportableSiteId = site.defaultReportableSiteId || site.id
+  let reportableSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
     const originSiteStateName = _.get(payload, 'sample.originSite.state')
