@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-24T12:12:18.676Z\n"
+"POT-Creation-Date: 2021-03-25T08:39:54.193Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -635,10 +635,10 @@ msgstr ""
 msgid "Aspect has Encountered a Problem."
 msgstr ""
 
-#. [forms.formItem.assay]
+#. [forms.formSectionHeader.assay]
 #. defaultMessage is:
 #. Assay
-#. [forms.formSectionHeader.assay]
+#. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
 #. [filter.popover.assay]
@@ -1022,10 +1022,10 @@ msgstr ""
 #. [pages.MaintenanceStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.DailyStatusDialog.cancel]
+#. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.transferResult.buttonCancel]
+#. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -2165,6 +2165,13 @@ msgstr ""
 #. Enter New Password
 #: extracted_strings.json
 msgid "Enter New Password"
+msgstr ""
+
+#. [pages.transferResult.enterComment]
+#. defaultMessage is:
+#. Enter a comment
+#: extracted_strings.json
+msgid "Enter a comment"
 msgstr ""
 
 #. [pages.transferResult.hint]
@@ -4475,10 +4482,10 @@ msgstr ""
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
+#. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
-#. [pages.transferResult.successOk]
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
 #: extracted_strings.json
@@ -4690,10 +4697,10 @@ msgstr ""
 #. [pages.ClinicalHistory.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formItem.patient]
+#. [forms.formSectionHeader.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formSectionHeader.patient]
+#. [forms.formItem.patient]
 #. defaultMessage is:
 #. Patient
 #: extracted_strings.json
@@ -6648,10 +6655,10 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
-#. [forms.formItem.technicalDetails]
+#. [forms.formSectionHeader.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
-#. [forms.formSectionHeader.technicalDetails]
+#. [forms.formItem.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
 #: extracted_strings.json
@@ -7359,6 +7366,9 @@ msgstr ""
 msgid "Transfer Inventory"
 msgstr ""
 
+#. [pages.resultEdit.transferResult]
+#. defaultMessage is:
+#. Transfer Result
 #. [pages.transferResult.header]
 #. defaultMessage is:
 #. Transfer Result

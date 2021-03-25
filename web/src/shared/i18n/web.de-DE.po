@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-24T12:12:18.676Z\n"
+"POT-Creation-Date: 2021-03-25T08:39:54.193Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -640,10 +640,10 @@ msgstr "Gebiet"
 msgid "Aspect has Encountered a Problem."
 msgstr "Aspect ist auf ein Problem gestoßen."
 
-#. [forms.formItem.assay]
+#. [forms.formSectionHeader.assay]
 #. defaultMessage is:
 #. Assay
-#. [forms.formSectionHeader.assay]
+#. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
 #. [filter.popover.assay]
@@ -1031,10 +1031,10 @@ msgstr "Kalibrierung überfällig"
 #. [pages.MaintenanceStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.DailyStatusDialog.cancel]
+#. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.transferResult.buttonCancel]
+#. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -2180,6 +2180,13 @@ msgstr "E-Mail Adresse eingeben"
 #: extracted_strings.json
 msgid "Enter New Password"
 msgstr "Neues Passwort eingeben"
+
+#. [pages.transferResult.enterComment]
+#. defaultMessage is:
+#. Enter a comment
+#: extracted_strings.json
+msgid "Enter a comment"
+msgstr "Geben Sie einen Kommentar ein"
 
 #. [pages.transferResult.hint]
 #. defaultMessage is:
@@ -4499,10 +4506,10 @@ msgstr ""
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
+#. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
-#. [pages.transferResult.successOk]
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
 #: extracted_strings.json
@@ -4716,10 +4723,10 @@ msgstr "Passwort zurücksetzen fehlgeschlagen"
 #. [pages.ClinicalHistory.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formItem.patient]
+#. [forms.formSectionHeader.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formSectionHeader.patient]
+#. [forms.formItem.patient]
 #. defaultMessage is:
 #. Patient
 #: extracted_strings.json
@@ -6721,10 +6728,10 @@ msgstr "Aufgabenliste"
 msgid "Tasks"
 msgstr "Aufgaben"
 
-#. [forms.formItem.technicalDetails]
+#. [forms.formSectionHeader.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
-#. [forms.formSectionHeader.technicalDetails]
+#. [forms.formItem.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
 #: extracted_strings.json
@@ -7502,6 +7509,9 @@ msgstr "Transfer"
 msgid "Transfer Inventory"
 msgstr "Inventar übertragen"
 
+#. [pages.resultEdit.transferResult]
+#. defaultMessage is:
+#. Transfer Result
 #. [pages.transferResult.header]
 #. defaultMessage is:
 #. Transfer Result
