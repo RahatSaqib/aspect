@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
 
@@ -18,6 +17,7 @@ import {
   generateLegendIntl,
   getMaxValueForDivergent,
 } from '../Helpers/Formatters'
+import { negateTimeZoneOffset } from '../../../components/shared/DateTimeInput/utils/date'
 
 import { calcOverallRate } from '../Helpers/Formatters/calcs'
 
@@ -37,14 +37,13 @@ const AspectResponsiveBar = ({
   type,
   i18nKeys,
 }) => {
-  const { format } = useI18n()
   const { setConfig } = useGraphClickThrough()
+  const { format, formatNumber: intlFormatNumber, formatMessage } = useI18n()
   const graphsToHaveCustomLegend = [
     'bar',
     'stackedDeviceActivity',
     'barLegacyTreatment',
   ]
-  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
 
   const config = (type, data) => {
     switch (true) {
@@ -288,7 +287,7 @@ const AspectResponsiveBar = ({
             legendOffset: 50,
             format: v =>
               v && formatDate === 'MMM'
-                ? format(new Date(v), formatDate)
+                ? format(negateTimeZoneOffset(new Date(v)), formatDate)
                 : formatAxisLabel(v, formatDate),
           }}
           legends={baseLegend}
