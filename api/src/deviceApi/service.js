@@ -308,7 +308,7 @@ async function addDeviceDataWithContext(context) {
     response = {
       ...response,
       ...(await updateDeviceConfigurationWithContext(
-        context.withPayload({ getFormsDefinition, ...configuration })
+        context.withPayload({ getFormsDefinition, configuration })
       )),
     }
   }
@@ -486,7 +486,6 @@ async function updateDeviceConfigurationWithContext(context) {
     pluginNames: plugins,
   } = context
   const { getFormsDefinition } = payload
-  console.log('getFormsDefinition', payload)
   const preProcess = await loadPlugin(
     plugins,
     'preProcessUpdateDeviceConfiguration'

@@ -1,11 +1,38 @@
 const objectMapper = require('object-mapper')
 const _ = require('lodash')
 
+const getGxAlertAssayId = {
+  abbottM2000PlasmaHivVL: 9,
+  abbottM2000PlasmaHbvVL: 9,
+  abbottM2000DBSHivVL: 9,
+  abbottM2000HIVEID: 9,
+  abbottM2000DaanNCOVID19: 15,
+  GxMtbRif: 4,
+  GxMtbRifUltra: 10,
+  GxHiv1Vl: 9,
+  GxHiv1Qual: 8,
+  GxEbola: 7,
+  GxHcv: 14,
+  DaktariHcv: 14,
+  DaktariHivVL: 14,
+  QHivVL: 9,
+  CHAIHivVL: 9,
+  CommCareHiv: 8,
+  ReporterHivVL: 9,
+  assayCobasHivVl: 9,
+  assayGenericCovid19: 15,
+  assayMP96Covid19: 15,
+  assayQS7Covid19: 15,
+  assayGXCovid19: 15,
+}
 const map = aspectFields => {
   return {
     'fields[].id': 'CustomFields.Fields[].Id',
     'fields[].name': 'CustomFields.Fields[].Name',
-    'fields[].assayId': 'CustomFields.Fields[].LimitToTestTypeIds[]',
+    'fields[].assayExternalId': {
+      key: 'CustomFields.Fields[].LimitToTestTypeIds[]',
+      transform: value => getGxAlertAssayId[value],
+    },
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',
     'fields[].required': {
@@ -19,7 +46,15 @@ const map = aspectFields => {
     },
     'fields[].fieldType': {
       key: 'CustomFields.Fields[].Type',
-      transform: sourceValue => (sourceValue === 'number' ? 'int' : 'string'),
+      transform: sourceValue => {
+        switch (sourceValue) {
+          case 'number':
+          case 'int':
+            return 'int'
+          default:
+            return 'string'
+        }
+      },
     },
     'fields[].migrateFromId': 'CustomFields.Fields[].MigrateFromId',
     'fields[].order': 'CustomFields.Fields[].DisplayOrder',
@@ -37,6 +72,10 @@ const map = aspectFields => {
       transform: sourceValue => propertyToNumber(sourceValue),
     },
     'fields[].condition': {
+      key: 'CustomFields.Fields[].InputControlData.displayConditions',
+      transform: sourceValue => translateCondition(sourceValue, aspectFields),
+    },
+    'fields[].filters': {
       key: 'CustomFields.Fields[].InputControlData.filters',
       transform: sourceValue => translateCondition(sourceValue, aspectFields),
     },
@@ -51,9 +90,9 @@ const propertyToNumber = sourceValue => {
 }
 const translateCondition = (sourceValue, aspectFields) => {
   const map = _.map(sourceValue, elem => {
-    if (elem.gxAlertPropName)
-      return {
-        propName: elem.gxAlertPropName,
+    if (elem.operator && !elem.refId) {
+      const field = {
+        value: elem.valueToCompare,
         operator:
           elem.operator === '==='
             ? '='
@@ -68,6 +107,11 @@ const translateCondition = (sourceValue, aspectFields) => {
           'id'
         ),
       }
+      if (elem.fieldToCompare) field.propName = elem.fieldToCompare
+
+      return field
+    }
+
     return elem
   })
   return map

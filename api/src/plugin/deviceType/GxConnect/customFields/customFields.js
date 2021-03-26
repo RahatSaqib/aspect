@@ -6,7 +6,6 @@ const mapGxConnectCustomFields = require('./customFieldsMappingTemplates')
 const getCustomFields = async (knex, partnerId, deviceId) => {
   const customFields = await getCustomFieldsService(partnerId, deviceId)
   if (customFields.fields && customFields.fields.length > 0) {
-    console.log('before update', customFields)
     await knex('Device')
       .update({ customFieldsSentOn: new Date() })
       .where({ id: deviceId })

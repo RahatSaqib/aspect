@@ -400,6 +400,117 @@
               ]
             }
           },
+          "filters": {
+            "$id": "#/properties/fields/items/properties/filters",
+            "type": "array",
+            "title": "Condition for filtering a list",
+            "minItems": 0,
+            "description": "these are the conditions for filtering list based on a previous result",
+            "default": [],
+            "dependencies": {
+              "controlType": {
+                "required": [
+                  "comboBox",
+                  "radioButton",
+                  "checkBox",
+                  "list",
+                  "autoComplete"
+                ]
+              }
+            },
+            "items": {
+              "$id": "#/properties/fields/items/properties/condition/items",
+              "type": "object",
+              "title": "The condition preposition",
+              "description": "One part of the condition preposition",
+              "examples": [
+                {
+                  "conjunction": "AND",
+                  "fieldToCompare": "firstName",
+                  "valueToCompare": "David",
+                  "operator": "===",
+                  "conjunctionGroupName": "groupName"
+                }
+              ],
+              "required": [
+                "operator"
+              ],
+              "properties": {
+                "propToCompare": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/propToCompare",
+                  "type": "string",
+                  "title": "The name of the property for comparing the value",
+                  "description": "We are going to use this as a key for obtaining the property value for compearing the condition",
+                  "default": "",
+                  "examples": [
+                    "propName"
+                  ]
+                },
+                "operator": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/operator",
+                  "type": "string",
+                  "title": "The Operator Schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "=",
+                  "enum": [
+                    "===",
+                    "!==",
+                    ">=",
+                    "<="
+                  ]
+                },
+                "fieldToCompare": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/fieldToCompare",
+                  "type": "string",
+                  "title": "The field name to compare",
+                  "description": "The name of the field into the tableNameToCompare table for doing the comparission",
+                  "examples": [
+                    "fieldName"
+                  ]
+                },
+                "valueToCompare": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/valueToCompare",
+                  "type": "string",
+                  "title": "The value of the property to be compared",
+                  "description": "this is the right side of the condition value",
+                  "examples": [
+                    "value"
+                  ]
+                },
+                "conjunction": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/conjunction",
+                  "type": "string",
+                  "title": "The Conjunction operator between prepositions",
+                  "description": "The Conjunction operator between prepositions",
+                  "default": "AND",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conjunctionGroup": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/conjunction",
+                  "type": "string",
+                  "title": "Conjuction Group",
+                  "description": "Under the same group all the prepositions they are going to be enclosed by ()"
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "valueToCompare",
+                    "propToCompare"
+                  ]
+                },
+                {
+                  "required": [
+                    "tableNameToCompare",
+                    "fieldToCompare"
+                  ]
+                }
+              ]
+            }
+          },
           "resultDbColumn": {
             "$id": "#/properties/fields/items/properties/resultDbColumn",
             "type": "string",

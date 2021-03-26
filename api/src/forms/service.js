@@ -27,11 +27,11 @@ const getCustomFields = async (partnerId, deviceId) => {
   })
     .join('Disease as di', 'di.id', 'fd.diseaseId')
     .join('AssayType as assayType', 'di.id', 'assayType.diseaseId')
-    .join('Assay as a', 'assayType.id', 'a.assayTypeid')
+    .join('Assay as a', 'fd.assayId', 'a.id')
     .join('DeviceType as dt', 'a.devicetypeid', 'dt.id')
     .join('Device as d', 'd.deviceTypeId', 'dt.id')
     .where('d.id', deviceId)
-    .distinct('d.customFieldsSentOn')
+    .distinct('d.customFieldsSentOn', 'a.externalId as assayExternalId')
 
   let forms = {}
   // eslint-disable-next-line no-return-assign
@@ -48,7 +48,7 @@ const getCustomFields = async (partnerId, deviceId) => {
     ) {
       const fields = _.map(formDictionary[form.externalId].fields, field => ({
         ...field,
-        assayId: form.assayId,
+        assayExternalId: form.assayExternalId,
         diseaseId: form.diseaseId,
       }))
       forms = _.merge(forms, { fields })
