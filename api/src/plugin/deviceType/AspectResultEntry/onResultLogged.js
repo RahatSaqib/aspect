@@ -29,7 +29,6 @@ async function onResultLogged(
     logger.debug([resultId, deviceLogId, userId], {
       reLabel: 'mq:onResultLogged',
     })
-    await shouldTriggerModuleReplaced(knex, messageContext, resultId)
 
     const { externalId: deviceLogDeviceTypeExternalId } =
       (await knex('DeviceLog as dl')
@@ -77,8 +76,19 @@ async function onResultLogged(
         resultOutcome,
         resultCategory1,
         instrumentSerial,
+        resultModuleName,
+        resultStartedOn,
       } = result
-
+      await shouldTriggerModuleReplaced(
+        knex,
+        messageContext,
+        resultId,
+        resultDeviceId,
+        resultModuleSerial,
+        instrumentSerial,
+        resultModuleName,
+        resultStartedOn
+      )
       await shouldTriggerResultErrorAnalysis(
         messageContext,
         resultDeviceId,

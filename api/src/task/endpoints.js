@@ -49,12 +49,18 @@ const routes = [
                 issueStatus: Joi.string()
                   .required()
                   .description('The name of the issue status'),
+                issueStatusI18nKey: Joi.string()
+                  .required()
+                  .description('The key i18n of the issue status'),
                 issueStatusId: Joi.number()
                   .required()
                   .description('The id of the issue status'),
                 issueCategory: Joi.string()
                   .required()
                   .description('The name of the issue category'),
+                issueCategoryI18nKey: Joi.string()
+                  .required()
+                  .description('The key i18nkey of the issue category'),
                 issueCategoryId: Joi.number()
                   .required()
                   .description('The id of the issue category'),

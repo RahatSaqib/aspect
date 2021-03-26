@@ -2,7 +2,7 @@
 
 This is the web client for the aspect API
 
-It's based on the react-webpack yeoman generator: https://github.com/newtriks/generator-react-webpack
+It's based on the react-webpack yeoman generator: <https://github.com/newtriks/generator-react-webpack>
 
 ## Installation
 
@@ -15,7 +15,7 @@ yarn
 
 ## Available Commands
 
-By default, the site is served at http://localhost:8000/webpack-dev-server/ this gives you compilation/error messages in the browser window. To browse just the "bare" site, go to http://localhost:8000.
+By default, the site is served at <http://localhost:8000/webpack-dev-server/> this gives you compilation/error messages in the browser window. To browse just the "bare" site, go to <http://localhost:8000>.
 
 **Notice** when running `yarn start`, you'll immediately see `Cannot GET /` in the browser. Wait a little bit for the first compilation to be done, then refresh your browser.
 
@@ -65,6 +65,15 @@ Make sure to run the command in the root of the folder you want to create the co
 
 ## i18n
 
+### Merging with develop
+
+As a general rule please remember:
+**NOT MERGE .PO, .MO, translations.js files with develop on your PR**
+
+To avoid inserting bad and duplicated keys we are not going to merge these files. It doesn't matter which one you are going to accept in a merge action (Keep local changes or develop branch changes), just pick only one and accept it completely. Once this action was made and committed just continue with the next step to generate the ``.pot`` file and sync all the language files.
+
+### Extracting new translations
+
 1. Edit your components in `src/**/*`
 2. `yarn run updatemessages:start`
 3. Create or update `.po` files. See below.
@@ -94,6 +103,25 @@ Updating `.po` files means updating existing translations with newly added messa
 5. Select `src/shared/i18n/diff.pot` from the file dialog
 6. Update translations for each items inside the window
 7. When done, click `File > Save`
+
+#### Using existing GxAlert translations when adding a new new language
+
+A lot of the strings in GxAlert and Aspect are the same. The translations on GxAlert have already been reviewed by our clients and adjusted by us over the years, so it makes sense to use them as a foundation.
+
+We'll use "csv2po" for converting the CSV from GxAlert to .po. It's part of the [translate toolkit](http://docs.translatehouse.org/projects/translate-toolkit/en/latest/index.html)
+
+Complete the steps under "Create `.po` files" above. Then:
+
+1. Install the translate toolkit: `pip3 install translate-toolkit`
+2. Make sure that the CSV from GxAlert has three columns:
+  a. Location (resource ID)
+  b. Source Language (the English string)
+  c. Target Language (the translated string)
+3. Run csv2po: `csv2po -i gxalert_translations.csv -o web.LANGUAGECODE.po -t diff.pot`, where:
+  -i: The CSV containing translations from GxAlert
+  -o: The .po file you created in POEdit
+  -t: The diff.pot that is generated when running `yarn run updatemessages:start`
+4. The translations should now be part of the po file and you can now edit the .po file as usual in POEdit
 
 ## Deploying
 
@@ -127,13 +155,13 @@ Also update vendorPackages in dist.js to make sure that vendor packages are bund
 yarn storybook
 ```
 
-To view storybook, visit http://localhost:8001/.
+To view storybook, visit <http://localhost:8001/>.
 
 ## Styleguide [DEPRECATED]
 
-TO BE REMOVED: Once Storybook has been adopted fully, this will be removed. See Issue: https://github.com/SystemOneId/aspect/issues/1546
+TO BE REMOVED: Once Storybook has been adopted fully, this will be removed. See Issue: <https://github.com/SystemOneId/aspect/issues/1546>
 
-To view styleguides, visit http://localhost:6060/.
+To view styleguides, visit <http://localhost:6060/>.
 
 ```bash
 # Run styleguide

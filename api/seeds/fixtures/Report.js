@@ -103,6 +103,33 @@ const deviceActivity = {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
+    },
+  ],
+}
+
+const moduleSwaps = {
+  name: 'Module Swaps',
+  description:
+    'This report shows all module swaps in devices. The report will show you by default the last 12 months',
+  i18nKey: 'moduleSwapsReport',
+  externalId: 'module_swaps',
+  fileName: 'moduleSwaps',
+  sortOrder: 6,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getModuleSwapsReport',
+      query: {
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
     },
   ],
 }
@@ -128,11 +155,44 @@ const deviceCalibrationReport = {
   ],
 }
 
+const geneXpertIssues = {
+  name: 'GeneXpert Issues',
+  description: 'This report shows all issues that apply to GeneXpert devices',
+  i18nKey: 'geneXpertIssues',
+  externalId: 'genexpert_issues',
+  fileName: 'geneXpertIssues',
+  sortOrder: 7,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getGeneXpertIssuesReport',
+      query: {
+        sortCol: 'triggeredOn',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
   criticalErrorsByDevice,
   mtbDetectedRRDetected,
   deviceActivity,
+  moduleSwaps,
   deviceCalibrationReport,
+  geneXpertIssues,
+  fixture: [
+    mtbDetectedRRDetected,
+    resultsHivNotSuppressed,
+    rifResistanceRate,
+    criticalErrorsByDevice,
+    deviceActivity,
+    moduleSwaps,
+    deviceCalibrationReport,
+    geneXpertIssues,
+  ],
 }

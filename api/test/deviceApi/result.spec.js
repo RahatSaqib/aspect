@@ -1351,7 +1351,7 @@ describe('Device Result API routes', () => {
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
       }))
 
-    describe('the reportable site of a result', () => {
+    describe.skip('the reportable site of a result', () => {
       const resultIds = []
 
       afterEach(async () => {

@@ -474,6 +474,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -875,6 +881,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -915,6 +927,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -1435,6 +1471,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -1836,6 +1878,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -1876,6 +1924,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -2396,6 +2468,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -2797,6 +2875,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -2837,6 +2921,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -3357,6 +3465,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -3758,6 +3872,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -3798,6 +3918,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -4318,6 +4462,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -4719,6 +4869,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -4759,6 +4915,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -5278,6 +5458,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -5679,6 +5865,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -5718,6 +5910,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -6223,6 +6439,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           Casablanca (UTC)
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="Coordinated Universal Time"
+          value="Coordinated Universal Time"
+        >
+          Coordinated Universal Time
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="UTC"
           value="UTC"
         >
@@ -6624,6 +6846,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
         >
           Samoa (UTC+13:00)
         </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="Malay Peninsula Standard Time"
+          value="Malay Peninsula Standard Time"
+        >
+          Malaysian Time (UTC+08:00)
+        </WithStyles(MenuItem)>
       </TextField>
       <TextField
         InputLabelProps={
@@ -6663,6 +6891,30 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               withRightMargin={true}
             />
             Française (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="ru-RU"
+          value="ru-RU"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="RU"
+              withRightMargin={true}
+            />
+            русский (RU)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="uk-UA"
+          value="uk-UA"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="UA"
+              withRightMargin={true}
+            />
+            Український (UA)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)

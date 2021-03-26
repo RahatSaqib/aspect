@@ -8,7 +8,7 @@
         "evaluationMethod": "result-category",
         "evaluationParameter": {
           "assays": ["GxMtbRif", "GxMtbRifUltra"],
-          "resultCategory1": ["Detected"],
+          "resultCategory1": ["Detected", "Trace Detected"],
           "resultCategory2": ["NotDetected", "Indeterminate"]
         }
       }
@@ -21,7 +21,7 @@
         "evaluationMethod": "result-category",
         "evaluationParameter": {
           "assays": ["GxMtbRif", "GxMtbRifUltra"],
-          "resultCategory1": ["Detected"],
+          "resultCategory1": ["Detected", "Trace Detected"],
           "resultCategory2": ["Detected"]
         }
       }

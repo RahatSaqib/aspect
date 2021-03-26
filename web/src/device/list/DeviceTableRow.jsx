@@ -1,8 +1,6 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import formatDistanceStrict from 'date-fns/formatDistanceStrict'
-import parseISO from 'date-fns/parseISO'
 import { injectIntl } from 'react-intl'
 
 import {
@@ -43,7 +41,7 @@ const DeviceTableRow = ({
   intl,
   device,
   onAlertClick,
-  displayPreferences,
+  displayPreferences: { errorRateThreshold },
   ...restProps
 }) => (
   <TableRow
@@ -65,7 +63,7 @@ const DeviceTableRow = ({
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
-        threshold={displayPreferences.get('errorRateThreshold')}
+        threshold={errorRateThreshold}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
@@ -84,14 +82,7 @@ const DeviceTableRow = ({
         />
       ))}
     </TableCell>
-    <TableCell>
-      {intl.formatMessage(messages.reportingForDays, {
-        period: formatDistanceStrict(
-          new Date(),
-          parseISO(device.get('createdOn'))
-        ),
-      })}
-    </TableCell>
+    <TableCell>{formatRelative(intl, device.get('createdOn'))}</TableCell>
     <TableCell>{formatRelative(intl, device.get('lastSeen'))}</TableCell>
     <TableCell numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}

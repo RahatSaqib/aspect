@@ -8,6 +8,7 @@ const {
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { resultStatusToId } = require('../shared/dictionary')
 
 const totalDevicesQuery = knex('Device as d')
   .whereRaw('d.siteId = s.id')
@@ -289,6 +290,235 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
     .first(SELECT_SHOW_FIELDS)
 }
 
+async function listSitesWithReporters(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(
+    auth.credentials,
+    'actionDashboard'
+  )
+  const { minDate, maxDate } = query
+  const resultStatusId = await resultStatusToId('Transfer')
+
+  // const sites
+  const siteQuery = knex('Site as s')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Result as r', queryBuilder => {
+      queryBuilder.on('r.reportableSiteId', 's.id')
+      if (minDate) {
+        queryBuilder.andOn('r.endedOn', '>=', knex.raw('?', [minDate]))
+      }
+      if (maxDate) {
+        queryBuilder.andOn('r.endedOn', '<=', knex.raw('?', [maxDate]))
+      }
+    })
+    .leftOuterJoin('Sample as sample', 'r.sampleId', 'sample.id')
+    .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftOuterJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .leftOuterJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftOuterJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftOuterJoin('SiteTag as siteTag', 's.id', 'siteTag.siteId')
+    .leftOuterJoin('Tag as tag', 'siteTag.tagId', 'tag.id')
+    /**
+     * for counting results 'delivered' to Reporters
+     */
+    .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
+    /**
+     * for counting `transferred` results -
+     * we join `Site.id` to `ResultStatusLog.data.previousReportableSiteId`
+     * and count all 'ResultStatusLog.resultId' which have ResultStatus = 'Transfer'
+     * See func `transferResult` in `api/src/result/service.js` for details
+     * about what we store in field ResultStatusLog.data
+     */
+    .leftOuterJoin('ResultStatusLog as rslog', builder => {
+      builder
+        .on(
+          's.id',
+          knex.raw(
+            `CAST(IFNULL(rslog.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`
+          )
+        )
+        // limit this join by `Transfer` result status only
+        .andOn('rslog.resultStatusId', resultStatusId)
+    })
+    /**
+     * join ResultStatusLog and Result to limit transferred results
+     * by date range - count resultTransferred.id for `transferred` results
+     */
+    .leftOuterJoin('Result as resultTransferred', queryBuilder => {
+      queryBuilder.on('rslog.resultId', 'resultTransferred.id')
+      if (minDate) {
+        queryBuilder.andOn(
+          'resultTransferred.endedOn',
+          '>=',
+          knex.raw('?', [minDate])
+        )
+      }
+      if (maxDate) {
+        queryBuilder.andOn(
+          'resultTransferred.endedOn',
+          '<=',
+          knex.raw('?', [maxDate])
+        )
+      }
+    })
+    /**
+     * for counting different statuses rts.externalId = 'XXX'
+     */
+    .leftOuterJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'rtsl.id',
+      'r.treatmentStatusLogId'
+    )
+    .leftOuterJoin(
+      'ResultTreatmentStatus as rts',
+      'rts.id',
+      'rtsl.resultTreatmentStatusId'
+    )
+    /**
+     * for counting  rca.requiresTreatment = 1
+     */
+    .leftOuterJoin('ResultCategoryAssay as rca', builder => {
+      builder.on('r.assayId', 'rca.assayId').andOn(function () {
+        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
+          'r.resultCategory2',
+          'rca.resultCategoryId'
+        )
+      })
+    })
+    .leftOuterJoin('ResultCategoryAssay as rcaTransferred', builder => {
+      builder
+        .on('resultTransferred.assayId', 'rcaTransferred.assayId')
+        .andOn(function () {
+          this.on(
+            'resultTransferred.resultCategory1',
+            'rcaTransferred.resultCategoryId'
+          ).orOn(
+            'resultTransferred.resultCategory2',
+            'rcaTransferred.resultCategoryId'
+          )
+        })
+    })
+    /**
+     * for counting only delivered transferred results
+     */
+    .leftOuterJoin(
+      'ResultDownloadLog as rdlTransferred',
+      'rdlTransferred.resultId',
+      'resultTransferred.id'
+    )
+    /**
+     * take only clinics
+     */
+    .whereRaw(
+      `(
+        tag.title     LIKE ? or 
+        tag.title     LIKE ? or
+        s.name        LIKE ? or
+        s.externalId  LIKE ?
+      )`,
+      ['%clinic%', '%dots%', '%clinic%', '%clinic%']
+    )
+    .where(function () {
+      if (!query.siteIds) {
+        return
+      }
+      this.whereIn('s.id', query.siteIds.split(','))
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      siteId: 's.id',
+      partnerId: 's.partnerId',
+      deviceName: 'd.name',
+      deviceType: 'dt.externalId',
+      assayId: 'r.assayId',
+      diseaseId: 'dis.id',
+    })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .groupBy('s.id')
+
+  // totals available items
+  const getCount = knex
+    .count('siteId as count')
+    .from(
+      siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery')
+    )
+    .first()
+
+  // get page items
+  const getItems = siteQuery
+    .clone()
+    .modify(sortPageParams, query, 'siteName')
+    // all counts
+    .count({
+      totalResults: knex.raw('DISTINCT r.id'),
+      delivered: knex.raw('DISTINCT rdl.resultId'),
+      /**
+       * We should only be counting results that were delivered in the last four columns
+       * because we're measuring how many of the results are linked to treatment on the
+       * Reporter and they can't put results on treatment if they were never delivered
+       * to the reporter.
+       */
+      requiresTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
+          THEN rdl.resultId ELSE null
+        END`),
+      onTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
+          THEN rdl.resultId ELSE null
+        END`),
+      notPossible: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
+          THEN rdl.resultId ELSE null
+        END`),
+      notOnTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
+          THEN rdl.resultId ELSE null
+        END`),
+      // see comment for joining table ResultStatusLog
+      transferred: knex.raw(`DISTINCT
+        CASE
+          WHEN rcaTransferred.requiresTreatment = 1  AND  rcaTransferred.reportable = 1
+          THEN rdlTransferred.resultId
+          ELSE null
+        END`),
+    })
+    .select(
+      'g.countryId',
+      'g.stateId',
+      'st.name as stateName',
+      'g.lgaId',
+      'l.name as lgaName',
+      's.partnerId',
+      's.id as siteId',
+      's.name as siteName',
+      's.shortName as siteShortName'
+    )
+
+  // run both queries
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  /**
+   * to make last 4 columns to add up to the total-columns - add 'transferred' to first 3 counts
+   */
+  data.forEach(item => {
+    item.totalResults += item.transferred
+    item.delivered += item.transferred
+    item.requiresTreatment += item.transferred
+  })
+
+  return { ok: true, total, length: data.length, data }
+}
+
 module.exports = {
   listSites,
   getSite,
@@ -296,4 +526,5 @@ module.exports = {
   showSite,
   updateSite,
   listSitesForSelectList,
+  listSitesWithReporters,
 }

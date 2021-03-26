@@ -20,11 +20,11 @@ const ThemedLink = props => {
   return (
     <PermissionsProvider permissions={requiredPermissions}>
       <Link
-        {...props}
         key={href}
         theme={themes.Link}
         title={label}
         icon={icon}
+        {...props}
       />
     </PermissionsProvider>
   )

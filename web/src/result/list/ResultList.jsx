@@ -7,7 +7,6 @@ import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
@@ -42,6 +41,7 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import AspectButton from '../../components/shared/AspectButton'
+import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { RESULT_LIST } from '../../MigratedComponents/QueryFetch/Result'
@@ -144,7 +144,7 @@ const getBaseColumns = intl => {
       key: 'deviceName',
       label: intl.formatMessage(messages.deviceName),
       sortable: true,
-      hiddenOn: 'sm',
+      hiddenOn: 'xs',
     },
     {
       key: 'sampleOriginSiteName',
@@ -171,29 +171,28 @@ const getBaseColumns = intl => {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
       sortable: true,
-      hiddenOn: 'md',
+      hiddenOn: 'lg',
     },
     {
       key: 'resultWorkflowStatus',
       label: intl.formatMessage(messages.resultWorkflowStatus),
       sortable: true,
-      hiddenOn: 'sm',
+      hiddenOn: 'md',
     },
     {
       key: 'treatmentStatusInfo',
       label: intl.formatMessage(messages.resultTreatmentStatus),
       sortable: true,
-      hiddenOn: 'sm',
+      hiddenOn: 'md',
     },
     {
       key: 'patientId',
-      label: intl.formatMessage(messages.patiendId),
+      label: intl.formatMessage(messages.patientId),
       sortable: true,
       hiddenOn: 'xs',
     },
   ])
 }
-
 export const ResultListWithProps = ({
   intl,
   history,
@@ -264,6 +263,7 @@ export const ResultListWithProps = ({
                   result={result}
                   onClick={onRowClick(history)}
                   data-result-id={result.get('id')}
+                  messages={messages}
                 />
               ))}
           </TableBody>
@@ -291,7 +291,9 @@ const ResultList = () => {
   const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())

@@ -2,15 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import AspectResponsiveBar from './AspectResponsiveBar'
 
-const BarGraph = ({ data, keys, config, assaysFromState }) => {
+const BarGraph = ({ data, keys, config, assaysFromState, i18nKeys }) => {
   const {
     indexBy,
     tickValuesYShape,
     tickValuesXShape,
     displayMethod,
     displayLegend,
-    legendsToRename,
+    formatDate,
     legendsToPopover,
+    legendsNotToRender,
     type,
   } = config
   return (
@@ -20,13 +21,15 @@ const BarGraph = ({ data, keys, config, assaysFromState }) => {
       data={data}
       keys={keys}
       indexBy={indexBy}
-      legendsToRename={legendsToRename}
+      formatDate={formatDate}
       legendsToPopover={legendsToPopover}
+      legendsNotToRender={legendsNotToRender}
       tickValuesYShape={tickValuesYShape}
       tickValuesXShape={tickValuesXShape}
       displayMethod={displayMethod}
       displayLegend={displayLegend}
       type={type}
+      i18nKeys={i18nKeys}
     />
   )
 }
@@ -36,6 +39,7 @@ BarGraph.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  i18nKeys: PropTypes.oneOfType([PropTypes.array]).isRequired,
 }
 
 export default BarGraph

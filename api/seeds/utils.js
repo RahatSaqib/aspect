@@ -67,6 +67,7 @@ const uniqueKeys = {
     'smsTemplateId',
     'emailTemplateId',
     'webhookTemplateId',
+    'pushNotificationTemplateId',
   ],
   IssueType: ['externalId'],
 }
@@ -90,6 +91,7 @@ const foreignKeys = {
     { column: 'alertTemplateId', reference: 'AlertTemplate.id' },
     { column: 'smsTemplateId', reference: 'SmsTemplate.id' },
     { column: 'emailTemplateId', reference: 'EmailTemplate.id' },
+    { column: 'pushNotificationId', reference: 'PushNotification.id' },
   ],
 }
 
@@ -763,10 +765,20 @@ async function seedIssueEventTriggersForPartner(
         const existingTrigger = await knex('IssueEventTrigger')
           .where({
             ...triggerData,
-            triggerConditions: JSON.stringify(triggerConditions),
-            filterIssueCondition: filterIssueCondition
-              ? JSON.stringify(filterIssueCondition)
-              : null,
+          })
+          .where(function () {
+            if (triggerConditions && triggerConditions.length > 1) {
+              this.whereRaw(
+                "JSON_CONTAINS(triggerConditions, '?')",
+                triggerConditions
+              )
+            }
+            if (filterIssueCondition && filterIssueCondition.length > 1) {
+              this.whereRaw(
+                "JSON_CONTAINS(filterIssueCondition, '?')",
+                filterIssueCondition
+              )
+            }
           })
           .first('id')
         if (existingTrigger == null) {
@@ -823,22 +835,18 @@ async function seedIssueEscalationTriggersForPartner(
           issueTypeId: issueTypes[issueType].id,
           escalateToLevel,
         }
-        const existingTrigger = await knex('IssueEscalationTrigger')
-          .where(triggerData)
-          .first('id')
-        if (existingTrigger == null) {
-          await upsertSingle(
-            knex,
-            'IssueEscalationTrigger',
-            uniqueKeys.IssueEscalationTrigger,
-            {
-              ...triggerData,
-              escalationConditions: JSON.stringify(escalationConditions),
-              createdOn: now,
-              updatedOn: now,
-            }
-          )
-        }
+
+        await upsertSingle(
+          knex,
+          'IssueEscalationTrigger',
+          uniqueKeys.IssueEscalationTrigger,
+          {
+            ...triggerData,
+            escalationConditions: JSON.stringify(escalationConditions),
+            createdOn: now,
+            updatedOn: now,
+          }
+        )
       }
     }
   )
@@ -2146,17 +2154,24 @@ async function seedIssues(
 
 // ***********************************************************************
 async function addUniqueKey(knex, tableName) {
+  const uniqueKeysForTable = []
+  await Promise.each(uniqueKeys[tableName], async column => {
+    if (await knex.schema.hasColumn(tableName, column))
+      uniqueKeysForTable.push(column)
+  })
   await knex.schema.alterTable(tableName, table => {
-    table.unique(uniqueKeys[tableName], `${tableName}_unique`)
+    table.unique(uniqueKeysForTable, `${tableName}_unique`)
   })
 }
 
 async function dropUniqueKey(knex, tableName) {
   await Promise.all(
     _.map(foreignKeys[tableName], async ({ column }) => {
-      await knex.schema.table(tableName, table => {
-        table.dropForeign(column)
-      })
+      if (await knex.schema.hasColumn(tableName, column)) {
+        await knex.schema.table(tableName, table => {
+          table.dropForeign(column)
+        })
+      }
     })
   )
 
@@ -2166,9 +2181,11 @@ async function dropUniqueKey(knex, tableName) {
 
   await Promise.all(
     _.map(foreignKeys[tableName], async ({ column, reference }) => {
-      await knex.schema.table(tableName, table => {
-        table.foreign(column).references(reference)
-      })
+      if (await knex.schema.hasColumn(tableName, column)) {
+        await knex.schema.table(tableName, table => {
+          table.foreign(column).references(reference)
+        })
+      }
     })
   )
 }
@@ -2441,17 +2458,23 @@ async function insertSites(knex, partnerId, countryId, sites) {
     const existingSite = await knex('Site')
       .where('externalId', site.externalId)
       .first('id')
-
+    const { id: siteGeographyId } = await knex('Geography as g')
+      .join('State as s', 'g.stateId', 's.id')
+      .join('Lga as l', 'g.lgaId', 'l.id')
+      .where({ countryId })
+      .where('s.name', site.stateName)
+      .where('l.name', site.lgaName)
+      .first('g.id')
     if (existingSite) {
       siteId = existingSite.id
+      await knex('Site').where('id', siteId).update({
+        geographyId: siteGeographyId,
+        name: site.name,
+        externalId: site.externalId,
+        updatedOn: now,
+        updatedBy: adminId,
+      })
     } else {
-      const { id: siteGeographyId } = await knex('Geography as g')
-        .join('State as s', 'g.stateId', 's.id')
-        .join('Lga as l', 'g.lgaId', 'l.id')
-        .where({ countryId })
-        .where('s.name', site.stateName)
-        .where('l.name', site.lgaName)
-        .first('g.id')
       ;[siteId] = await knex('Site').insert({
         partnerId,
         geographyId: siteGeographyId,
@@ -3074,6 +3097,15 @@ async function seedIssueType(
       })
     : {}
 
+  const {
+    id: pushNotificationTemplateId = null,
+  } = issue.PushNotificationTemplate
+    ? await upsertSingle(knex, 'PushNotificationTemplate', ['title', 'body'], {
+        ...issue.PushNotificationTemplate,
+        ...auditFields,
+      })
+    : {}
+
   // ------------------------------------------
   // MessageType
   // ------------------------------------------
@@ -3082,6 +3114,7 @@ async function seedIssueType(
     alertTemplateId,
     smsTemplateId,
     emailTemplateId,
+    pushNotificationTemplateId,
   })
 
   // ------------------------------------------

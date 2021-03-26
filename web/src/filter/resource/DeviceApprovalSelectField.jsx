@@ -1,16 +1,15 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
+import messages from './i18n/deviceApprovalMessages'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {
@@ -24,6 +23,7 @@ export class DeviceApprovalSelectField extends PureComponent {
     ).isRequired,
     onDeviceApprovalChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {
@@ -40,7 +40,7 @@ export class DeviceApprovalSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, deviceApprovalItems, value } = this.props
+    const { allItemText, deviceApprovalItems, value, intl } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchDeviceApprovals',
@@ -54,7 +54,12 @@ export class DeviceApprovalSelectField extends PureComponent {
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceApprovalItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {formatI18nMessage(
+              messages,
+              intl.formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

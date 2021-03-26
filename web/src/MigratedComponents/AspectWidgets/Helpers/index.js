@@ -112,4 +112,17 @@ const buildDateRange = term => {
   return dateRange
 }
 
-export { buildMessagesFromI18nKeys, buildWidgetToLinkParams, groupWidgets }
+const translate = (i18nKey, defaultValue, { formatMessage, messages }) => {
+  try {
+    return messages[i18nKey] ? formatMessage(messages[i18nKey]) : defaultValue
+  } catch (e) {
+    return defaultValue
+  }
+}
+
+export {
+  buildMessagesFromI18nKeys,
+  buildWidgetToLinkParams,
+  groupWidgets,
+  translate,
+}
