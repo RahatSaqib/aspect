@@ -3,6 +3,7 @@ import { createIntl, useIntl } from 'react-intl'
 import { DateTime } from 'luxon'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
+
 import deLocale from 'date-fns/locale/de'
 import usLocale from 'date-fns/locale/en-US'
 import frLocale from 'date-fns/locale/fr'
@@ -42,13 +43,16 @@ function timeZoneFallBack(timezone) {
   }
 }
 
-function i18nWrapper(messages) {
-  const userLocale = getCurrentCulture()
+function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
+  const userLocale = passedCulture || getCurrentCulture()
   const intl = createIntl({
     locale: userLocale,
     messages: messages || translation[userLocale],
   })
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+  const timezone =
+    passedTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+
   const { formatDate, formats, formatMessage, locale, ...rest } = intl
   const dateFNSLocale = dateFNSLocales[locale]
   const validTimeZone = timeZoneFallBack(timezone)
