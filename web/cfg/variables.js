@@ -110,10 +110,10 @@ exports.customPropertiesVariables = {
 
   // Assay hues COVID
   '--covid-green1': '#0f3328',
-  '--covid-green2': '#597e70',
+  '--covid-green2': '#d7fff0',
   '--covid-green3': '#81a799',
   '--covid-green4': '#aad3c3',
-  '--covid-green5': '#d7fff0',
+  '--covid-green5': '#597e70',
 
   // Assay hues Alere
   '--alere-green1': '#004759',
