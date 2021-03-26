@@ -55,14 +55,18 @@ const I18nProvider = ({ children }) => {
       value={{
         culture: locale,
         dateFNSLocale,
-        format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
+        format: (dateIn, formatIn) =>
+          format(dateIn, formatIn, { locale: dateFNSLocale }),
         formats,
         formatWithOffset: dateIn =>
           DateTime.fromJSDate(dateIn)
             .setZone(validTimeZone)
             .toISO(),
         formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
-          formatDistance(firstDateIn, secondDateIn, { locale: dateFNSLocale, addSuffix: showSuffix }),
+          formatDistance(firstDateIn, secondDateIn, {
+            locale: dateFNSLocale,
+            addSuffix: showSuffix,
+          }),
         formatTimezone: dateIn =>
           dateIn.toLocaleString(locale, {
             timeZone: validTimeZone,

@@ -5,14 +5,9 @@ export const devicesDaily = [
     shortName: 'GeneXpert #29',
     longitude: -71.394417,
     latitude: 42.101116,
-    maintenanceStatusHistory: [
-      {
-        day: '2021-02-25',
-        maintenanceStatusI18nKey: 'inactiveDownForRepair',
-        maintenanceStatusName: 'Down for Repair',
-        maintenanceStatusExternalId: 'inactiveDownForRepair',
-      },
-    ],
+    maintenanceStatusI18nKey: 'inactiveDownForRepair',
+    maintenanceStatusName: 'Down for Repair',
+    maintenanceStatusExternalId: 'inactiveDownForRepair',
   },
   {
     id: '108',
@@ -20,14 +15,9 @@ export const devicesDaily = [
     shortName: 'GeneXpert #17',
     longitude: -83.437553,
     latitude: 32.925388,
-    maintenanceStatusHistory: [
-      {
-        day: '2021-02-25',
-        maintenanceStatusI18nKey: 'inactiveOutOfInventory',
-        maintenanceStatusName: 'No Results Reported',
-        maintenanceStatusExternalId: 'inactiveOutOfInventory',
-      },
-    ],
+    maintenanceStatusI18nKey: 'inactiveOutOfInventory',
+    maintenanceStatusName: 'No Results Reported',
+    maintenanceStatusExternalId: 'inactiveOutOfInventory',
   },
   {
     id: '132',
@@ -35,14 +25,9 @@ export const devicesDaily = [
     shortName: 'GeneXpert #41',
     longitude: -121.662003,
     latitude: 44.954861,
-    maintenanceStatusHistory: [
-      {
-        day: '2021-02-25',
-        maintenanceStatusI18nKey: 'active',
-        maintenanceStatusName: 'Active',
-        maintenanceStatusExternalId: 'active',
-      },
-    ],
+    maintenanceStatusI18nKey: 'active',
+    maintenanceStatusName: 'Active',
+    maintenanceStatusExternalId: 'active',
   },
   {
     id: '468',
@@ -50,14 +35,9 @@ export const devicesDaily = [
     shortName: 'D-352297',
     longitude: -121.662003,
     latitude: 44.954861,
-    maintenanceStatusHistory: [
-      {
-        day: '2021-02-25',
-        maintenanceStatusI18nKey: 'inactiveNoResultsReported',
-        maintenanceStatusName: 'No Results Reported',
-        maintenanceStatusExternalId: 'inactiveNoResultsReported',
-      },
-    ],
+    maintenanceStatusI18nKey: 'inactiveNoResultsReported',
+    maintenanceStatusName: 'No Results Reported',
+    maintenanceStatusExternalId: 'inactiveNoResultsReported',
   },
   {
     id: '102',
@@ -65,14 +45,9 @@ export const devicesDaily = [
     shortName: 'GeneXpert #11',
     longitude: -86.959908,
     latitude: 32.684361,
-    maintenanceStatusHistory: [
-      {
-        day: '2021-02-25',
-        maintenanceStatusI18nKey: 'reportedActive',
-        maintenanceStatusName: 'Reported Active',
-        maintenanceStatusExternalId: 'reportedActive',
-      },
-    ],
+    maintenanceStatusI18nKey: 'reportedActive',
+    maintenanceStatusName: 'Reported Active',
+    maintenanceStatusExternalId: 'reportedActive',
   },
 ]
 
@@ -304,7 +279,6 @@ export const visibleStatusesOnlyDownForRepair = [
 export const visibleAllExpected = [
   {
     color: '#DB3018',
-    day: '2021-02-25',
     id: '120',
     lat: 42.101116,
     lng: -71.394417,
@@ -316,7 +290,6 @@ export const visibleAllExpected = [
   },
   {
     color: '#0088aa',
-    day: '2021-02-25',
     id: '108',
     lat: 32.925388,
     lng: -83.437553,
@@ -328,7 +301,6 @@ export const visibleAllExpected = [
   },
   {
     color: '#99D25D',
-    day: '2021-02-25',
     id: '132',
     lat: 44.954861,
     lng: -121.662003,
@@ -340,7 +312,6 @@ export const visibleAllExpected = [
   },
   {
     color: '#6d6f7d',
-    day: '2021-02-25',
     id: '468',
     lat: 44.954861,
     lng: -121.662003,
@@ -352,7 +323,6 @@ export const visibleAllExpected = [
   },
   {
     color: '#99D25D',
-    day: '2021-02-25',
     id: '102',
     lat: 32.684361,
     lng: -86.959908,
@@ -367,7 +337,6 @@ export const visibleAllExpected = [
 export const visibleOnlyActiveExpected = [
   {
     color: '#99D25D',
-    day: '2021-02-25',
     id: '132',
     lat: 44.954861,
     lng: -121.662003,
@@ -379,7 +348,6 @@ export const visibleOnlyActiveExpected = [
   },
   {
     color: '#99D25D',
-    day: '2021-02-25',
     id: '102',
     lat: 32.684361,
     lng: -86.959908,
@@ -394,7 +362,6 @@ export const visibleOnlyActiveExpected = [
 export const visibleOnlyDownForRepairExpected = [
   {
     color: '#DB3018',
-    day: '2021-02-25',
     id: '120',
     lat: 42.101116,
     lng: -71.394417,
