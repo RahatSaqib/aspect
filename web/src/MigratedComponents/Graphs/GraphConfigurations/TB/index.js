@@ -141,7 +141,7 @@ const tbGraphs = {
         averages: {
           showTotal: false,
           title: 'clinicalIndicatorsTBPieLegend',
-          key: ['Detected', 'Indeterminate'],
+          key: ['Detected'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },
