@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-25T08:39:54.193Z\n"
+"POT-Creation-Date: 2021-03-26T12:20:28.938Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3421,6 +3421,9 @@ msgstr "Последний"
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [component.DateTimeInput.Last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr "Последние 30 дней"
@@ -3441,6 +3444,13 @@ msgstr "Последние 7 дней"
 #: extracted_strings.json
 msgid "Last Month"
 msgstr "Последний месяц"
+
+#. [component.DateTimeInput.LastMonth]
+#. defaultMessage is:
+#. Last Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "Last Month ({minDate} - {maxDate})"
+msgstr "Прошлый месяц ({minDate} - {maxDate})"
 
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
@@ -7304,6 +7314,13 @@ msgstr "Эти пароли не совпадают"
 #: extracted_strings.json
 msgid "This Month"
 msgstr "Этот месяц"
+
+#. [component.DateTimeInput.ThisMonth]
+#. defaultMessage is:
+#. This Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "This Month ({minDate} - {maxDate})"
+msgstr "Этот месяц ({minDate} - {maxDate})"
 
 #. [pages.dateRangeSelector.thisQuarter]
 #. defaultMessage is:

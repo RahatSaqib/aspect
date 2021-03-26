@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-25T08:39:54.193Z\n"
-"PO-Revision-Date: 2021-03-25 11:42+0300\n"
+"POT-Creation-Date: 2021-03-26T12:20:28.938Z\n"
+"PO-Revision-Date: 2021-03-26 15:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -3433,6 +3433,9 @@ msgstr "Dernier"
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [component.DateTimeInput.Last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr "Les 30 derniers jours"
@@ -3453,6 +3456,13 @@ msgstr "Les 7 derniers jours"
 #: extracted_strings.json
 msgid "Last Month"
 msgstr "Le mois dernier"
+
+#. [component.DateTimeInput.LastMonth]
+#. defaultMessage is:
+#. Last Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "Last Month ({minDate} - {maxDate})"
+msgstr "Le mois dernier ({minDate} - {maxDate})"
 
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
@@ -7327,6 +7337,13 @@ msgstr "Ces mots de passe ne correspondent pas"
 #: extracted_strings.json
 msgid "This Month"
 msgstr "Ce mois-ci"
+
+#. [component.DateTimeInput.ThisMonth]
+#. defaultMessage is:
+#. This Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "This Month ({minDate} - {maxDate})"
+msgstr "Ce mois-ci ({minDate} - {maxDate})"
 
 #. [pages.dateRangeSelector.thisQuarter]
 #. defaultMessage is:
