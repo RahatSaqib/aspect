@@ -89,10 +89,6 @@ const Status = ({ history, location }) => {
     }
   }, [culture])
 
-  if (graphs?.length) {
-    // console.log(graphs[6].selectorModifiers[0].data.deviceDateRange[0])
-  }
-
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
