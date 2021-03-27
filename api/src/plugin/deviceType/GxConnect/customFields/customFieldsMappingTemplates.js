@@ -63,6 +63,8 @@ const map = aspectFields => {
       'CustomFields.Fields[].InputControlData.options[].value',
     'fields[].items[].value':
       'CustomFields.Fields[].InputControlData.options[].text',
+    'fields[].items[].order':
+      'CustomFields.Fields[].InputControlData.options[].displayOrder',
     'fields[].validation[].min': {
       key: 'CustomFields.Fields[].InputControlData.minValue',
       transform: sourceValue => propertyToNumber(sourceValue),
@@ -89,6 +91,7 @@ const propertyToNumber = sourceValue => {
     : null
 }
 const translateCondition = (sourceValue, aspectFields) => {
+  if (!sourceValue) return null
   const map = _.map(sourceValue, elem => {
     if (elem.operator && !elem.refId) {
       const field = {

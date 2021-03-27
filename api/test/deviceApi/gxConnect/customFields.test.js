@@ -35,7 +35,7 @@ describe.only('Custom field mapper', () => {
         Control: 'TextBox',
         Type: 'string',
         DisplayOrder: 1,
-        InputControlData: { filters: [] },
+        InputControlData: {},
       },
     ])
   })
@@ -84,9 +84,7 @@ describe.only('Custom field mapper', () => {
             Control: 'TextBox',
             Type: 'string',
             DisplayOrder: 1,
-            InputControlData: {
-              filters: [],
-            },
+            InputControlData: {},
           },
           {
             Name: 'ConditionalField',
@@ -107,5 +105,11 @@ describe.only('Custom field mapper', () => {
         ],
       },
     })
+
+    assert.equal(
+      mappingOutput.CustomFields.Fields[1].InputControlData.displayConditions[0]
+        .refId,
+      mappingOutput.CustomFields.Fields[0].Id
+    )
   })
 })
