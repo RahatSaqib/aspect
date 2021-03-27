@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-25T08:39:54.193Z\n"
+"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -101,30 +101,30 @@ msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan1000]
 #. defaultMessage is:
-#. < 1000
+#. < 1000 cp/mL
 #: extracted_strings.json
-msgid "< 1000"
+msgid "< 1000 cp/mL"
 msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan150]
 #. defaultMessage is:
-#. < 150
+#. < 150 cp/mL
 #: extracted_strings.json
-msgid "< 150"
+msgid "< 150 cp/mL"
 msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan40]
 #. defaultMessage is:
-#. < 40
+#. < 40 cp/mL
 #: extracted_strings.json
-msgid "< 40"
+msgid "< 40 cp/mL"
 msgstr ""
 
 #. [pages.deviceDetail.resultCategoryLessThan550]
 #. defaultMessage is:
-#. < 550
+#. < 550 cp/mL
 #: extracted_strings.json
-msgid "< 550"
+msgid "< 550 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.moreThan180]
@@ -139,30 +139,30 @@ msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan1000]
 #. defaultMessage is:
-#. >= 1000
+#. >= 1000 cp/mL
 #: extracted_strings.json
-msgid ">= 1000"
+msgid ">= 1000 cp/mL"
 msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan150]
 #. defaultMessage is:
-#. >= 150
+#. >= 150 cp/mL
 #: extracted_strings.json
-msgid ">= 150"
+msgid ">= 150 cp/mL"
 msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan40]
 #. defaultMessage is:
-#. >= 40
+#. >= 40 cp/mL
 #: extracted_strings.json
-msgid ">= 40"
+msgid ">= 40 cp/mL"
 msgstr ""
 
 #. [pages.deviceDetail.resultCategoryMoreThan550]
 #. defaultMessage is:
-#. >= 550
+#. >= 550 cp/mL
 #: extracted_strings.json
-msgid ">= 550"
+msgid ">= 550 cp/mL"
 msgstr ""
 
 #. [pages.UpdateLoginDetails.usernameRequired]
@@ -3484,30 +3484,30 @@ msgstr ""
 
 #. [legends.Unknown.resultCategoryLessThan1000]
 #. defaultMessage is:
-#. Less Than 1000
+#. Less Than 1000 cp/mL
 #: extracted_strings.json
-msgid "Less Than 1000"
+msgid "Less Than 1000 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryLessThan150]
 #. defaultMessage is:
-#. Less Than 150
+#. Less Than 150 cp/mL
 #: extracted_strings.json
-msgid "Less Than 150"
+msgid "Less Than 150 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryLessThan40]
 #. defaultMessage is:
-#. Less Than 40
+#. Less Than 40 cp/mL
 #: extracted_strings.json
-msgid "Less Than 40"
+msgid "Less Than 40 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryLessThan550]
 #. defaultMessage is:
-#. Less Than 550
+#. Less Than 550 cp/mL
 #: extracted_strings.json
-msgid "Less Than 550"
+msgid "Less Than 550 cp/mL"
 msgstr ""
 
 #. [pages.License.title]
@@ -4017,30 +4017,30 @@ msgstr ""
 
 #. [legends.Unknown.resultCategoryMoreThan1000]
 #. defaultMessage is:
-#. More Than 1000
+#. More Than 1000 cp/mL
 #: extracted_strings.json
-msgid "More Than 1000"
+msgid "More Than 1000 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryMoreThan150]
 #. defaultMessage is:
-#. More Than 150
+#. More Than 150 cp/mL
 #: extracted_strings.json
-msgid "More Than 150"
+msgid "More Than 150 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryMoreThan40]
 #. defaultMessage is:
-#. More Than 40
+#. More Than 40 cp/mL
 #: extracted_strings.json
-msgid "More Than 40"
+msgid "More Than 40 cp/mL"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryMoreThan550]
 #. defaultMessage is:
-#. More Than 550
+#. More Than 550 cp/mL
 #: extracted_strings.json
-msgid "More Than 550"
+msgid "More Than 550 cp/mL"
 msgstr ""
 
 #. [filter.popover.moreFilters]
@@ -4474,9 +4474,6 @@ msgid ""
 msgstr ""
 
 #. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
-#. [pages.ResultList.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. OK
 #. [pages.TaskList.issueStatusOK]
@@ -7587,6 +7584,9 @@ msgstr ""
 msgid "Valid Tests"
 msgstr ""
 
+#. [pages.ResultList.ResultWorkflowStatusValidated]
+#. defaultMessage is:
+#. Validated
 #. [pages.deviceDetail.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. Validated

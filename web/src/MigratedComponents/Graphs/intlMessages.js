@@ -184,35 +184,35 @@ export const messages = defineMessages({
   },
   resultCategoryLessThan40: {
     id: 'legends.Unknown.resultCategoryLessThan40',
-    defaultMessage: 'Less Than 40',
+    defaultMessage: 'Less Than 40 cp/mL',
   },
   resultCategoryMoreThan40: {
     id: 'legends.Unknown.resultCategoryMoreThan40',
-    defaultMessage: 'More Than 40',
+    defaultMessage: 'More Than 40 cp/mL',
   },
   resultCategoryLessThan150: {
     id: 'legends.Unknown.resultCategoryLessThan150',
-    defaultMessage: 'Less Than 150',
+    defaultMessage: 'Less Than 150 cp/mL',
   },
   resultCategoryMoreThan150: {
     id: 'legends.Unknown.resultCategoryMoreThan150',
-    defaultMessage: 'More Than 150',
+    defaultMessage: 'More Than 150 cp/mL',
   },
   resultCategoryLessThan550: {
     id: 'legends.Unknown.resultCategoryLessThan550',
-    defaultMessage: 'Less Than 550',
+    defaultMessage: 'Less Than 550 cp/mL',
   },
   resultCategoryMoreThan550: {
     id: 'legends.Unknown.resultCategoryMoreThan550',
-    defaultMessage: 'More Than 550',
+    defaultMessage: 'More Than 550 cp/mL',
   },
   resultCategoryLessThan1000: {
     id: 'legends.Unknown.resultCategoryLessThan1000',
-    defaultMessage: 'Less Than 1000',
+    defaultMessage: 'Less Than 1000 cp/mL',
   },
   resultCategoryMoreThan1000: {
     id: 'legends.Unknown.resultCategoryMoreThan1000',
-    defaultMessage: 'More Than 1000',
+    defaultMessage: 'More Than 1000 cp/mL',
   },
   resultCategoryRejected: {
     id: 'legends.Unknown.resultCategoryRejected',
