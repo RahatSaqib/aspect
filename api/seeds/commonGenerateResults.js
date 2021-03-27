@@ -17,7 +17,7 @@ const {
   differenceInDays,
 } = require('date-fns')
 const { getLinkedResultDate, getDateFields } = require('./utils')
-const { getMGITResultFromTBPossitive } = require('./commonTB')
+const { getMGITResultFromTBPositive } = require('./commonTB')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
@@ -100,8 +100,8 @@ async function createDevicesForAllMissingTypes(
         const siteData = _.sample(siteDatas)
         const deviceToInsert = {
           ...auditFields,
-          name: `${siteData.shortName} Router`,
-          shortName: `${siteData.shortName} Router`,
+          name: `${siteData.shortName} ${elem.name}`,
+          shortName: `${siteData.shortName} ${elem.name}`,
           deviceTypeId: elem.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId: siteData.partnerId,
@@ -150,6 +150,7 @@ async function generateResults(
   const {
     Detected: resultCategoryDetectedId,
     Positive: resultCategoryPositiveId,
+    'Trace Detected': resultCategoryTraceDetectedId,
     NotDetected: resultCategoryNotDetectedId,
     LessThan1000: resultCategoryLessThan1000,
     MoreThan1000: resultCategoryMoreThan1000,
@@ -172,7 +173,7 @@ async function generateResults(
       partnerOneId,
       auditFields,
       1,
-      ['BDMGIT', 'CepheidGeneXpert', 'GxMtbRif', 'AspectResultEntry']
+      ['BDMGIT', 'CepheidGeneXpert', 'AspectResultEntry']
     )
   const devices = await knex('Device')
     .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
@@ -184,7 +185,8 @@ async function generateResults(
     elem =>
       elem.externalId === 'assayBdMgitAst' ||
       elem.externalId === 'assayBdMgitGnd' ||
-      elem.externalId === 'GxMtbRif'
+      elem.externalId === 'GxMtbRif' ||
+      elem.externalId === 'GxMtbRifUltra'
   )
   const tbResults = await addTBResults(
     knex,
@@ -198,6 +200,7 @@ async function generateResults(
     devices,
     {
       resultCategoryDetectedId,
+      resultCategoryTraceDetectedId,
       resultCategoryNotDetectedId,
       resultCategoryLessThan1000,
       resultCategoryMoreThan1000,
@@ -942,7 +945,7 @@ async function addTBResults(
       qc2Endpt: 1.22,
     },
   }
-  const possitiveMTBResults = []
+  const positiveMTBResults = []
   const deviceTypeBDMGIT = _.find(
     deviceTypes,
     elem => elem.externalId === 'BDMGIT'
@@ -1006,7 +1009,7 @@ async function addTBResults(
       resultTypeId: resultTypePatientId,
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
-      sampleGroup: `GRP-HIV-${i % 5}`,
+      sampleGroup: `GRP-TB-${i % 5}`,
       resultCategory1: result.category1,
       resultCategory2: result.category2,
       resultData: JSON.stringify(resultData),
@@ -1053,8 +1056,8 @@ async function addTBResults(
       assayBdMgit.length > 0
     ) {
       resultElement.id = resultId
-      possitiveMTBResults.push(
-        await getMGITResultFromTBPossitive(
+      positiveMTBResults.push(
+        await getMGITResultFromTBPositive(
           resultElement,
           assayBdMgit,
           devicesMGIT
@@ -1080,9 +1083,9 @@ async function addTBResults(
       .where('id', resultId)
       .update({ resultWorkflowStatusLogId: lastLogId })
   })
-  // insert 80% of mgit results when tb is possitive on mgit.
-  if (possitiveMTBResults.length > 0)
-    await knex('Result').insert(possitiveMTBResults)
+  // insert 80% of mgit results when tb is positive on mgit.
+  if (positiveMTBResults.length > 0)
+    await knex('Result').insert(positiveMTBResults)
   return resultsid
 }
 

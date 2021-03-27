@@ -4188,7 +4188,7 @@ async function seed(knex) {
       return
     }
 
-    // insert some routers with sims:\
+    // insert some routers with sims:
     const routerIds = []
     await Promise.each(_.range(routerNumber), async i => {
       const siteData = siteDatas[i % siteDatas.length]
