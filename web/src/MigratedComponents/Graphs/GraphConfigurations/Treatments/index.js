@@ -57,7 +57,7 @@ const treatmentStatusGraphs = {
         tickValuesXShape: 'all',
         displayMethod: 'percentage', // todo: actual
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
