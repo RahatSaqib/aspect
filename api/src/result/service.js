@@ -2623,8 +2623,7 @@ async function updateOrCreateResult(request, result = {}) {
   result.endedOn = payload.endedOn
   result.updatedOn = now
   result.updatedBy = userId
-  result.reportableSiteId =
-    payload.sampleOriginSiteId || device.defaultReportableSiteId || site.id
+  result.reportableSiteId = payload.sampleOriginSiteId || site.id
 
   // create sample-entry or update it
   result.sampleId = await updateOrCreateSample(

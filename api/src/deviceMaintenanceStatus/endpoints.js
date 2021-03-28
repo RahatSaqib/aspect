@@ -1,12 +1,12 @@
 const Joi = require('@hapi/joi')
 
 const { asyncHandler } = require('../routes')
-const { deviceStatusOverTime } = require('./service')
+const { deviceStatusOverTime, deviceStatusLastReported } = require('./service')
 
 const routes = [
   {
     method: 'GET',
-    path: '/maintenance/over-time',
+    path: '/device/maintenance-over-time',
     handler: asyncHandler(deviceStatusOverTime),
     config: {
       description: 'Device Status Over Time',
@@ -78,6 +78,52 @@ const routes = [
                 .description(
                   'The maintenance status of the device in each day of the date range'
                 ),
+            })
+          ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/maintenance-last-reported',
+    handler: asyncHandler(deviceStatusLastReported),
+    config: {
+      description: 'Last Reported Device Status By Device',
+      notes: 'List of devices and their latest status',
+      auth: { scope: ['device', 'operationalData'] },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.array().items(
+            Joi.object().keys({
+              id: Joi.number().required().description('The id of the device'),
+              name: Joi.string()
+                .required()
+                .description('The name of the device'),
+              shortName: Joi.string().description(
+                'The short name of the device'
+              ),
+              longitude: Joi.number()
+                .allow(null)
+                .description('The longitude where the device is allocated'),
+              latitude: Joi.number()
+                .allow(null)
+                .description('The latitude where the device is allocated'),
+              maintenanceStatusName: Joi.string().description(
+                'The name of the maintenance status'
+              ),
+              maintenanceStatusI18nKey: Joi.string().description(
+                'The format key of the maintenance status name'
+              ),
+              maintenanceStatusExternalId: Joi.string().description(
+                'The external id of the maintenance status'
+              ),
             })
           ),
         }),

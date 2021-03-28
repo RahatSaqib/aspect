@@ -187,6 +187,7 @@
 .statuses__row {
   display: flex;
   height: 120px;
+  margin-bottom: 20px;
 }
 
 .statuses__container {
