@@ -36,12 +36,6 @@ const getCustomFields = async (partnerId, deviceId) => {
   let forms = {}
   // eslint-disable-next-line no-return-assign
   _.each(await formQuery, form => {
-    console.log(
-      'should send custom fields',
-      !form.customFieldsSentOn,
-      formDictionary[form.externalId].updatedOn,
-      form.customFieldsSentOn
-    )
     if (
       !form.customFieldsSentOn ||
       formDictionary[form.externalId].updatedOn > form.customFieldsSentOn
