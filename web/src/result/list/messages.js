@@ -108,6 +108,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.ResultWorkflowStatusPurged',
     defaultMessage: 'Purged',
   },
+  ResultWorkflowStatusValidated: {
+    id: 'pages.ResultList.ResultWorkflowStatusValidated',
+    defaultMessage: 'Validated',
+  },
   assayBdMgitAst: {
     id: 'pages.ResultList.assayBdMgitAst',
     defaultMessage: 'BD MGIT AST',
