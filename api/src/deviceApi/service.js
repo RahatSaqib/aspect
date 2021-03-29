@@ -190,11 +190,6 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
       // update timestamps as necessary for original device
       const originalDeviceId = context.device.id
       await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
-      console.log(
-        'context.payload.getFormsDefinition',
-        context.payload.getFormsDefinition,
-        request.payload
-      )
 
       // invoke delegate handler
       response = await handler(context)

@@ -244,7 +244,7 @@
       ]
     },
     {
-      "id": 117,
+      "id": 118,
       "name": "ReferringHealthFacilityDistrict",
       "title": "Referring Health Facility District",
       "i18nKey": "outcomei18nKey",
@@ -253,11 +253,13 @@
       "controlType": "autoComplete",
       "required": false,
       "typeOfOptionSource": "fixedList",
-      "filters": {
-        "propToCompare": "ReferringHealthFacilityProvince",
-        "fieldToCompare": "state",
-        "operator": "==="
-      },
+      "filters": [
+        {
+          "propToCompare": "ReferringHealthFacilityProvince",
+          "fieldToCompare": "state",
+          "operator": "==="
+        }
+      ],
       "items": [
         {
           "key": "Attock",

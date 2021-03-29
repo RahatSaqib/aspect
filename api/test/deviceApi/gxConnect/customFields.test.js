@@ -2,6 +2,7 @@ const { assert } = require('chai')
 const mapGxConnectCustomFields = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 const aspectFields = require('./customFieldsForm.json')
 const mappingResult = require('./mappingResult.json')
+const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
 
 describe.only('Custom field mapper', () => {
   it('it generates the mapping between aspect dynamic forms and gxconnect expected json', () => {
@@ -33,7 +34,7 @@ describe.only('Custom field mapper', () => {
         Help: 'PlainField value',
         Optional: true,
         Control: 'TextBox',
-        Type: 'string',
+        Type: 'int',
         DisplayOrder: 1,
         InputControlData: {},
       },
@@ -113,7 +114,7 @@ describe.only('Custom field mapper', () => {
     )
   })
 
-  it.only('should render cascading controls', () => {
+  it('should render cascading controls', () => {
     const listCustomFields = {
       fields: [
         {
@@ -181,11 +182,9 @@ describe.only('Custom field mapper', () => {
           typeOfOptionSource: 'fixedList',
           filters: [
             {
-              conjunction: 'AND',
               propToCompare: 'ReferringHealthFacilityProvince',
               fieldToCompare: 'state',
               operator: '===',
-              conjunctionGroupName: 'PlainFieldCollectionGroup',
             },
           ],
           items: [
@@ -322,174 +321,6 @@ describe.only('Custom field mapper', () => {
       ],
     }
     const mappingOutput = mapGxConnectCustomFields(listCustomFields)
-    console.log(JSON.stringify(mappingOutput))
-    assert.equal(mappingOutput, {
-      CustomFields: {
-        Fields: [
-          {
-            Id: 117,
-            Name: 'ReferringHealthFacilityProvince',
-            Label: 'Referring Health Facility Province',
-            Optional: false,
-            Control: 'AutoComplete',
-            Type: 'string',
-            DisplayOrder: 40,
-            InputControlData: {
-              options: [
-                { value: 'Punjab', displayOrder: 0 },
-                { value: 'Sindh', text: 'Sindh', displayOrder: 1 },
-                { value: 'Balochistan', text: 'Balochistan', displayOrder: 3 },
-                {
-                  value: 'Khyber Pakhtunkhwa',
-                  text: 'Khyber Pakhtunkhwa',
-                  displayOrder: 4,
-                },
-                { value: 'FATA', text: 'FATA', displayOrder: 5 },
-                {
-                  value: 'Azad Jammu & Kahmir',
-                  text: 'Azad Jammu & Kahmir',
-                  displayOrder: 6,
-                },
-                {
-                  value: 'Gilgit Baltistan',
-                  text: 'Gilgit Baltistan',
-                  displayOrder: 7,
-                },
-                {
-                  value: 'Islamabad & CT',
-                  text: 'Islamabad & CT',
-                  displayOrder: 8,
-                },
-              ],
-            },
-          },
-          {
-            Id: 118,
-            Name: 'ReferringHealthFacilityDistrict',
-            Label: 'Referring Health Facility District',
-            Optional: false,
-            Control: 'AutoComplete',
-            Type: 'string',
-            DisplayOrder: 45,
-            InputControlData: {
-              options: [
-                {
-                  value: 'Attock',
-                  text: 'Attock',
-                  displayOrder: 0,
-                  state: 'Punjab',
-                },
-                {
-                  value: 'Bahawalnagar',
-                  text: 'Bahawalnagar',
-                  displayOrder: 1,
-                  state: 'Punjab',
-                },
-                {
-                  value: 'Bahawalpur',
-                  text: 'Bahawalpur',
-                  displayOrder: 2,
-                  state: 'Punjab',
-                },
-                {
-                  value: 'Thatha',
-                  text: 'Thatha',
-                  displayOrder: 22,
-                  state: 'Sindh',
-                },
-                {
-                  value: 'Umerkot',
-                  text: 'Umerkot',
-                  displayOrder: 23,
-                  state: 'Sindh',
-                },
-                {
-                  value: 'Zhob',
-                  text: 'Zhob',
-                  displayOrder: 27,
-                  state: 'Balochistan',
-                },
-                {
-                  value: 'Ziarat',
-                  text: 'Ziarat',
-                  displayOrder: 28,
-                  state: 'Balochistan',
-                },
-                {
-                  value: 'Abbottabad',
-                  text: 'Abbottabad',
-                  displayOrder: 0,
-                  state: 'KP',
-                },
-                { value: 'Bannu', text: 'Bannu', displayOrder: 1, state: 'KP' },
-                {
-                  value: 'Battagram',
-                  text: 'Battagram',
-                  displayOrder: 2,
-                  state: 'KP',
-                },
-                { value: 'Tank', text: 'Tank', displayOrder: 22, state: 'KP' },
-                {
-                  value: 'Upper Dir',
-                  text: 'Upper Dir',
-                  displayOrder: 23,
-                  state: 'KP',
-                },
-                {
-                  value: 'Bajour Agency',
-                  text: 'Bajour Agency',
-                  displayOrder: 0,
-                  state: 'FATA',
-                },
-                {
-                  value: 'Khyber Agency',
-                  text: 'Khyber Agency',
-                  displayOrder: 1,
-                  state: 'FATA',
-                },
-                { value: 'Bagh', text: 'Bagh', displayOrder: 0, state: 'AJK' },
-                {
-                  value: 'Bhimber',
-                  text: 'Bhimber',
-                  displayOrder: 1,
-                  state: 'AJK',
-                },
-                {
-                  value: 'Poonch',
-                  text: 'Poonch',
-                  displayOrder: 8,
-                  state: 'AJK',
-                },
-                {
-                  value: 'Sudhnoti',
-                  text: 'Sudhnoti',
-                  displayOrder: 9,
-                  state: 'AJK',
-                },
-                {
-                  value: 'Astore',
-                  text: 'Astore',
-                  displayOrder: 0,
-                  state: 'GB',
-                },
-                {
-                  value: 'Skardu',
-                  text: 'Skardu',
-                  displayOrder: 9,
-                  state: 'GB',
-                },
-                {
-                  value: 'Islamabad',
-                  text: 'Islamabad',
-                  displayOrder: 0,
-                  state: 'ICT',
-                },
-              ],
-              filters: [{ operator: '=', refId: 117, propName: 'state' }],
-            },
-          },
-        ],
-      },
-    })
+    assert.deepEqual(mappingOutput, cascadeFieldsOutput)
   })
 })

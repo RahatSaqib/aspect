@@ -80,18 +80,17 @@ const map = aspectFields => {
     },
     'fields[].filters': {
       key: 'CustomFields.Fields[].InputControlData.filters',
-      transform: sourceValue => translateCondition(sourceValue, aspectFields),
+      transform: sourceValue =>
+        translateCondition(sourceValue, aspectFields, true),
     },
     'fields[].items[]': {
       key: 'CustomFields.Fields[].InputControlData.options[]',
-      transform: (source, sourceObject, destinationValue, sourceKey) => {
+      transform: (source, sourceObject, destinationValue) => {
         _.each(destinationValue, customField => {
-          console.log('customField', source)
           if (
-            customField.InputControlData.filters &&
+            _.get(customField, 'InputControlData.filters') &&
             customField.InputControlData.filters.length > 0
           ) {
-            //   console.log('filters', destinationValue)
             const [{ propName }] = customField.InputControlData.filters
             const { Id } = customField
             const { options } = _.find(
@@ -107,17 +106,13 @@ const map = aspectFields => {
                   source,
                   elem => elem.key === option.value
                 )
-                console.log('seeeee', selectedElem)
                 if (selectedElem && selectedElem[propName])
                   option[propName] = selectedElem[propName]
               }
             )
           }
         })
-        // console.log('----------------', source)
-        // console.log('destinationValue', destinationValue)
-        // console.log('sourceObject', sourceObject)
-        // console.log('sourceKey', sourceKey)
+
         return null
       },
     },
@@ -135,7 +130,6 @@ const translateCondition = (sourceValue, aspectFields) => {
   const map = _.map(sourceValue, elem => {
     if (elem.operator && !elem.refId) {
       const field = {
-        value: elem.valueToCompare,
         operator:
           elem.operator === '==='
             ? '='
@@ -150,6 +144,7 @@ const translateCondition = (sourceValue, aspectFields) => {
           'id'
         ),
       }
+      if (elem.valueToCompare) field.value = elem.valueToCompare
       if (elem.fieldToCompare) field.propName = elem.fieldToCompare
 
       return field
@@ -161,7 +156,8 @@ const translateCondition = (sourceValue, aspectFields) => {
 }
 
 const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
-  return objectMapper(aspectFields, mapper || map(aspectFields))
+  const maped = objectMapper(aspectFields, mapper || map(aspectFields))
+  return maped
 }
 
 module.exports = mapGxConnectCustomFields
