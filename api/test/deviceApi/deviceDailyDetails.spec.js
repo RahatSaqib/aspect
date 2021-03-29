@@ -24,7 +24,7 @@ const context = createTestContext(server, {
   baseConfig,
 })
 
-describe.only('Device daily details', () => {
+describe('Device daily details', () => {
   beforeEach(async () => {
     await context.createDeviceWithApiKey()
   })
