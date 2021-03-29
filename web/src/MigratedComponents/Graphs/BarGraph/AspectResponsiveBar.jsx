@@ -56,7 +56,7 @@ const AspectResponsiveBar = ({
           gridYValues: null,
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
-            layout: 'horisontal',
+            layout: 'horizontal',
           },
           layout: 'horizontal',
           padding: 0.3,
@@ -135,7 +135,7 @@ const AspectResponsiveBar = ({
                 weekendOrHoliday: 0,
               }),
               lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
-              legendOrientation: 'horisontal',
+              legendOrientation: 'horizontal',
               legend: `${calcOverallRate(
                 'devicesActiveRaw',
                 'devicesTotal',

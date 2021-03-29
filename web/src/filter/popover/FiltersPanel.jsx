@@ -124,9 +124,9 @@ const enhance = compose(
         workflowStatusId,
       }),
 
-    onTreatmentStatusIdChange: ({ onChangeFilters }) => treatmentStatusId =>
+    onTreatmentStatusChange: ({ onChangeFilters }) => treatmentStatus =>
       onChangeFilters({
-        treatmentStatusId,
+        treatmentStatus,
       }),
 
     onDeviceApprovalIdChange: ({ onChangeFilters }) => deviceApprovalId =>
@@ -466,7 +466,7 @@ export const FiltersPanel = ({
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
-  onTreatmentStatusIdChange,
+  onTreatmentStatusChange,
   onDeviceApprovalIdChange,
   onResultCategoryGroupChange,
   onDeviceMaintenanceStatusIdChange,
@@ -966,8 +966,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <ResultTreatmentStatusSelectField
                 allItemText={intl.formatMessage(messages.all)}
-                value={filters.treatmentStatusId}
-                onTreatmentStatusChange={onTreatmentStatusIdChange}
+                value={filters.treatmentStatus}
+                onTreatmentStatusChange={onTreatmentStatusChange}
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectTreatmentStatus)}
                 floatingLabelText={intl.formatMessage(messages.treatmentStatus)}

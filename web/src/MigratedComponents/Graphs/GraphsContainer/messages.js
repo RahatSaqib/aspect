@@ -43,7 +43,7 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsTBDetectedPie: {
     id: 'pages.Status.clinicalIndicatorsTBDetectedPie.title',
-    defaultMessage: 'Average monthly TB Detected Rate',
+    defaultMessage: 'Average Monthly TB Detected Rate',
   },
   clinicalIndicatorsTBPieLegend: {
     id: 'pages.Status.clinicalIndicatorsTB.pie',
