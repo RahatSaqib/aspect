@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-29T17:52:16.485Z\n"
-"PO-Revision-Date: 2021-03-29 15:07-0300\n"
+"PO-Revision-Date: 2021-03-29 17:15-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -7961,7 +7961,7 @@ msgstr "Statut du flux de travail"
 #. Xpert HCV Viral Load Cartridge
 #: extracted_strings.json
 msgid "Xpert HCV Viral Load Cartridge"
-msgstr ""
+msgstr "Cartouche de charge virale Xpert HCV"
 
 #. [consumable.gxHiv1QualCartridge]
 #. defaultMessage is:
@@ -7975,7 +7975,7 @@ msgstr "Cartouche Xpert HIV-1 Qual"
 #. Xpert HIV-1 Viral Load Cartridge
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
-msgstr ""
+msgstr "Cartouche de charge virale Xpert HIV-1"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:

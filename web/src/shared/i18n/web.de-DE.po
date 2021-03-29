@@ -7960,7 +7960,7 @@ msgstr "Workflow-Status"
 #. Xpert HCV Viral Load Cartridge
 #: extracted_strings.json
 msgid "Xpert HCV Viral Load Cartridge"
-msgstr ""
+msgstr "Xpert HCV Viruslastpatrone"
 
 #. [consumable.gxHiv1QualCartridge]
 #. defaultMessage is:
@@ -7974,7 +7974,7 @@ msgstr "GeneXpert HIV-1 Qual Kartusche"
 #. Xpert HIV-1 Viral Load Cartridge
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
-msgstr ""
+msgstr "Xpert HIV-1 Viruslastpatrone"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:

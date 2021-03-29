@@ -7935,7 +7935,7 @@ msgstr "Статус процесса"
 #. Xpert HCV Viral Load Cartridge
 #: extracted_strings.json
 msgid "Xpert HCV Viral Load Cartridge"
-msgstr ""
+msgstr "Картридж для вирусной нагрузки Xpert HCV"
 
 #. [consumable.gxHiv1QualCartridge]
 #. defaultMessage is:
@@ -7949,7 +7949,7 @@ msgstr "Картридж Xpert HIV-1 Qual"
 #. Xpert HIV-1 Viral Load Cartridge
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
-msgstr ""
+msgstr "Картридж для вирусной нагрузки Xpert HIV-1"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
