@@ -253,15 +253,11 @@
       "controlType": "autoComplete",
       "required": false,
       "typeOfOptionSource": "fixedList",
-      "filters": [
-        {
-          "conjunction": "AND",
-          "propToCompare": "ReferringHealthFacilityProvince",
-          "fieldToCompare": "state",
-          "operator": "===",
-          "conjunctionGroupName": "PlainFieldCollectionGroup"
-        }
-      ],
+      "filters": {
+        "propToCompare": "ReferringHealthFacilityProvince",
+        "fieldToCompare": "state",
+        "operator": "==="
+      },
       "items": [
         {
           "key": "Attock",

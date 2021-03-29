@@ -63,6 +63,7 @@ const map = aspectFields => {
       'CustomFields.Fields[].InputControlData.options[].value',
     'fields[].items[].value':
       'CustomFields.Fields[].InputControlData.options[].text',
+
     'fields[].items[].order':
       'CustomFields.Fields[].InputControlData.options[].displayOrder',
     'fields[].validation[].min': {
@@ -80,6 +81,45 @@ const map = aspectFields => {
     'fields[].filters': {
       key: 'CustomFields.Fields[].InputControlData.filters',
       transform: sourceValue => translateCondition(sourceValue, aspectFields),
+    },
+    'fields[].items[]': {
+      key: 'CustomFields.Fields[].InputControlData.options[]',
+      transform: (source, sourceObject, destinationValue, sourceKey) => {
+        _.each(destinationValue, customField => {
+          console.log('customField', source)
+          if (
+            customField.InputControlData.filters &&
+            customField.InputControlData.filters.length > 0
+          ) {
+            //   console.log('filters', destinationValue)
+            const [{ propName }] = customField.InputControlData.filters
+            const { Id } = customField
+            const { options } = _.find(
+              destinationValue,
+              elem => elem.Id === Id
+            ).InputControlData
+            // eslint-disable-next-line no-return-assign
+            _.forEach(
+              options,
+              // eslint-disable-next-line no-return-assign
+              option => {
+                const selectedElem = _.find(
+                  source,
+                  elem => elem.key === option.value
+                )
+                console.log('seeeee', selectedElem)
+                if (selectedElem && selectedElem[propName])
+                  option[propName] = selectedElem[propName]
+              }
+            )
+          }
+        })
+        // console.log('----------------', source)
+        // console.log('destinationValue', destinationValue)
+        // console.log('sourceObject', sourceObject)
+        // console.log('sourceKey', sourceKey)
+        return null
+      },
     },
   }
 }
