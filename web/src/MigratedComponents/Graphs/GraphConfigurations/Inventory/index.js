@@ -1,5 +1,6 @@
 import BarGraph from '../../BarGraph'
 import AspectDropDown from '../../../AspectDropDown'
+import messages from '../../../../consumable/messages'
 
 const inventoryGraphs = {
   inventoryStatus: {
@@ -17,13 +18,14 @@ const inventoryGraphs = {
         sortByKeys: ['consumableName'],
         keyMapping: {
           idKey: 'consumableExternalId',
-          nameKey: 'consumableName',
+          // nameKey: 'consumableName',
         },
         isClearable: false,
         defaultSelectedOption: {
           key: 'consumableExternalId',
           value: 'GxMtbRifCartridge',
         },
+        messages,
       },
     ],
     componentSize: 'full',
