@@ -10,7 +10,6 @@ async function up(knex) {
   })
 
   const consumables = await knex('Consumable')
-  console.log(consumables)
   await Promise.all(map(consumables, async ({ externalId }) => knex('Consumable').where({ externalId }).update({ i18nKey: camelCase(externalId) })))
 
   await knex.schema.alterTable('Consumable', tblConsumable => {
