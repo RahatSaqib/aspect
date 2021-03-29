@@ -18,7 +18,6 @@ const inventoryGraphs = {
         sortByKeys: ['consumableName'],
         keyMapping: {
           idKey: 'consumableExternalId',
-          // nameKey: 'consumableName',
         },
         isClearable: false,
         defaultSelectedOption: {
