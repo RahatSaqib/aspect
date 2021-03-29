@@ -1,6 +1,5 @@
 import BarGraph from '../../BarGraph'
-import AspectDropDown from '../../../AspectDropDown'
-import messages from '../../../../consumable/messages'
+import ConsumableDropdown from '../../../../consumable/ConsumableDropdown'
 
 const inventoryGraphs = {
   inventoryStatus: {
@@ -9,22 +8,7 @@ const inventoryGraphs = {
     assays: [],
     selectorModifiers: [
       {
-        selectedValue: 'Consumable',
-        endpoint: '/dashboard/inventory-item',
-        state: 'data.inventoryConsumableSummaryList',
-        component: AspectDropDown,
-        identifier: 'consumableExternalId',
-        data: null,
-        sortByKeys: ['consumableName'],
-        keyMapping: {
-          idKey: 'consumableExternalId',
-        },
-        isClearable: false,
-        defaultSelectedOption: {
-          key: 'consumableExternalId',
-          value: 'GxMtbRifCartridge',
-        },
-        messages,
+        component: ConsumableDropdown,
       },
     ],
     componentSize: 'full',
