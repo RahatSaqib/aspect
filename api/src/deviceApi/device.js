@@ -86,25 +86,19 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
       timezone,
       culture,
     }
-    let personId = await getCreateAssignPerson(knex, {
+    await getCreateAssignPerson(knex, {
       ...baseProps,
       name: labContactName,
       email: labContactEmail,
       cell: labContactCell,
     })
 
-    if (!personId) {
-      personId = await getCreateAssignPerson(knex, {
-        ...baseProps,
-        name: installerName,
-        email: installerEmail,
-        cell: installerCell,
-      })
-    }
-
-    return {
-      personId,
-    }
+    await getCreateAssignPerson(knex, {
+      ...baseProps,
+      name: installerName,
+      email: installerEmail,
+      cell: installerCell,
+    })
   }
 }
 
@@ -135,6 +129,9 @@ const getCreateAssignPerson = async (
 
   let jobId
   let personId
+  // ----------
+  // person-by-name found
+  // ----------
   if (personByName) {
     // update email if it's missing
     if (email && !personByName.email) {
@@ -150,7 +147,11 @@ const getCreateAssignPerson = async (
     }
     personId = personByName.id
     ;[{ jobId }] = [personByName]
-  } else if (personByEmail) {
+  }
+  // ----------
+  // or person-by-email found
+  // ----------
+  else if (personByEmail) {
     // update cell if it's missing
     if (cell && !personByEmail.cell) {
       await knex('Person')
@@ -159,7 +160,11 @@ const getCreateAssignPerson = async (
     }
     personId = personByEmail.id
     ;[{ jobId }] = [personByEmail]
-  } else if (name) {
+  }
+  // ----------
+  // or create person with specified name
+  // ----------
+  else if (name) {
     ;[personId] = await knex('Person').insert({
       geographyId,
       name,
@@ -175,30 +180,35 @@ const getCreateAssignPerson = async (
     })
   }
 
-  if (!personId) return
+  /**
+   * for this person -
+   * - check/create job for 'Lab User'
+   * - assign this person to site, i.e. to JobContext
+   */
+  if (personId) {
+    // create Job for person
+    if (!jobId) {
+      const { id: jobFunctionIdDefault } = await knex('JobFunction')
+        .where({ name: 'Lab User' })
+        .first('id')
+      ;[jobId] = await knex('Job').insert({
+        personId,
+        jobFunctionId: jobFunctionIdDefault,
+      })
+    }
 
-  // create Job for person
-  if (!jobId) {
-    const { id: jobFunctionIdDefault } = await knex('JobFunction')
-      .where({ name: 'Lab User' })
-      .first('id')
-    ;[jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId: jobFunctionIdDefault,
-    })
-  }
-
-  // assign contact to site if it is not assigned yet
-  const newJobContext = { jobId, siteId }
-  const existingJobContext = await knex('JobContext')
-    .where(newJobContext)
-    .whereNull('assayTypeId')
-    .whereNull('assayId')
-    .whereNull('deviceTypeId')
-    .whereNull('diseaseId')
-    .first()
-  if (!existingJobContext) {
-    await knex('JobContext').insert(newJobContext)
+    // assign contact to site if it is not assigned yet
+    const newJobContext = { jobId, siteId }
+    const existingJobContext = await knex('JobContext')
+      .where(newJobContext)
+      .whereNull('assayTypeId')
+      .whereNull('assayId')
+      .whereNull('deviceTypeId')
+      .whereNull('diseaseId')
+      .first()
+    if (!existingJobContext) {
+      await knex('JobContext').insert(newJobContext)
+    }
   }
 
   return personId
