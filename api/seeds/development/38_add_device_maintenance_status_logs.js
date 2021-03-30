@@ -215,7 +215,7 @@ async function seed(knex) {
         // if no pattern specified for the device or there is a pattern, but it doesn't include the current day, the device should be active, unless it's a weekend (in which case there's a 5% chance the device is active)
         if (
           (dayDate.getUTCDay() !== 0 && dayDate.getUTCDay() !== 6) ||
-          _.random() < 0.05
+          _.random(1, true) < 0.1
         ) {
           dayAndStatus.push({ dayDate, statusId: active })
         } else {
