@@ -239,6 +239,30 @@ describe('Device daily details', () => {
         })
         .first()
       assert.isDefined(jobContext)
+
+      /**
+       * post another email/cell and check that email/cell of the person didn't change
+       */
+      const labContactEmailNew = 'another-test@contract.co'
+      const labContactCellNew = '+111-222-3333'
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: {
+          configuration: {
+            data: {
+              ...configurationData,
+              labContactEmail: labContactEmailNew,
+              labContactCell: labContactCellNew,
+            },
+          },
+        },
+      })
+      // NOT created Person for new email
+      const personNew = await getPerson(labContactName)
+      assert.isDefined(personNew)
+      assert.equal(person.id, personNew.id)
+      assert.equal(person.email, personNew.email)
+      assert.equal(person.cell, personNew.cell)
     })
   })
 })

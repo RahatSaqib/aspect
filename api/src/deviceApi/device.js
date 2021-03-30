@@ -120,7 +120,7 @@ const getCreateAssignPerson = async (
   const personQuery = getPeopleBase()
     .where('g.countryId', countryId)
     .groupBy('p.id')
-    .first('p.name', 'p.id', 'p.email', 'p.email2', 'j.id as jobId')
+    .first('p.name', 'p.id', 'p.email', 'p.email2', 'p.cell', 'j.id as jobId')
   //
   const personByName = await personQuery.where('p.name', name)
   const personByEmail = await personQuery.where(builder => {
