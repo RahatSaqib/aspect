@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, memo } from 'react'
-import { string } from 'prop-types'
+import { bool, string, oneOfType } from 'prop-types'
 import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
@@ -22,7 +22,7 @@ async function loadIconModule(icon) {
  * Falls back to default icon if failure
  */
 
-const IconProvider = memo(({ icon, className }) => {
+const IconProvider = memo(({ icon, className, title }) => {
   const IconShell = ({ children }) => (
     <div className={cssClasses([className])}>{children}</div>
   )
@@ -40,7 +40,7 @@ const IconProvider = memo(({ icon, className }) => {
     <Suspense
       fallback={
         <IconShell>
-          <FaSquare className={cssClasses(['icons__proxy'])} title="FaSquare" />
+          <FaSquare className={cssClasses(['icons__proxy'])} />
         </IconShell>
       }
     >
@@ -48,12 +48,16 @@ const IconProvider = memo(({ icon, className }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent title={icon} />
+          <IconComponent title={!title ? '' : icon} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
   )
 })
+
+IconProvider.defaultProps = {
+  title: true,
+}
 
 IconProvider.propTypes = {
   /**
@@ -64,6 +68,10 @@ IconProvider.propTypes = {
     Class name for icon to be displayed
   */
   className: string.isRequired,
+  /**
+    Class name for icon to be displayed
+  */
+  title: oneOfType(bool, string),
 }
 
 export default IconProvider

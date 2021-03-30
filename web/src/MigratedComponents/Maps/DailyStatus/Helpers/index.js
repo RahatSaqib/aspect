@@ -2,35 +2,25 @@ import map from 'lodash/map'
 import filter from 'lodash/filter'
 
 import variables from '../../../../../cfg/variables'
-import { getTimePeriod } from '../../../Graphs/Helpers/Formatters'
 
 const buildMarkersForDailyStatus = (data, statuses) => {
   const { customPropertiesVariables } = variables
   const visible = map(filter(statuses, 'checked'), 'i18nKey')
-  const yesterday = getTimePeriod(0, 'days', 'yyyy-MM-dd')
   const output = []
-  map(data, ({ maintenanceStatusHistory, latitude, longitude, ...rest }) => {
-    const maintenanceStatus = filter(
-      maintenanceStatusHistory,
-      ({ day, maintenanceStatusExternalId }) => {
-        return (
-          day === yesterday && visible.includes(maintenanceStatusExternalId)
-        )
-      }
-    )
-    return maintenanceStatus.length
-      ? output.push({
-          lat: latitude,
-          lng: longitude,
-          ...rest,
-          ...maintenanceStatus[0],
-          color:
-            customPropertiesVariables[
-              `--aspect-device-${maintenanceStatus[0].maintenanceStatusExternalId}`
-            ],
-        })
-      : false
-  })
+  map(
+    filter(data, item => visible.includes(item.maintenanceStatusExternalId)),
+    ({ maintenanceStatusExternalId, latitude, longitude, ...rest }) =>
+      output.push({
+        lat: latitude,
+        lng: longitude,
+        ...rest,
+        maintenanceStatusExternalId,
+        color:
+          customPropertiesVariables[
+            `--aspect-device-${maintenanceStatusExternalId}`
+          ],
+      })
+  )
 
   return output
 }

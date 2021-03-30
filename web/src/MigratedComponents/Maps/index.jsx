@@ -40,13 +40,14 @@ const AspectMap = ({
       mapContainerStyle={containerStyle}
       zoom={zoom}
     >
-      {data?.map(({ lat, lng, color, id }) => (
+      {data?.map(({ lat, lng, color, id, maintenanceStatusName, name }) => (
         <GooglePin
           id={id}
           key={id}
           position={{ lat, lng }}
           config={markersConfig}
           color={color}
+          info={{ maintenanceStatusName, name }}
         />
       ))}
     </GoogleMap>

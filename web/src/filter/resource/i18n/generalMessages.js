@@ -43,35 +43,35 @@ const messages = defineMessages({
   },
   resultCategoryLessThan40: {
     id: 'pages.deviceDetail.resultCategoryLessThan40',
-    defaultMessage: '< 40',
+    defaultMessage: '< 40 cp/mL',
   },
   resultCategoryMoreThan40: {
     id: 'pages.deviceDetail.resultCategoryMoreThan40',
-    defaultMessage: '>= 40',
+    defaultMessage: '>= 40 cp/mL',
   },
   resultCategoryLessThan150: {
     id: 'pages.deviceDetail.resultCategoryLessThan150',
-    defaultMessage: '< 150',
+    defaultMessage: '< 150 cp/mL',
   },
   resultCategoryMoreThan150: {
     id: 'pages.deviceDetail.resultCategoryMoreThan150',
-    defaultMessage: '>= 150',
+    defaultMessage: '>= 150 cp/mL',
   },
   resultCategoryLessThan550: {
     id: 'pages.deviceDetail.resultCategoryLessThan550',
-    defaultMessage: '< 550',
+    defaultMessage: '< 550 cp/mL',
   },
   resultCategoryMoreThan550: {
     id: 'pages.deviceDetail.resultCategoryMoreThan550',
-    defaultMessage: '>= 550',
+    defaultMessage: '>= 550 cp/mL',
   },
   resultCategoryLessThan1000: {
     id: 'pages.deviceDetail.resultCategoryLessThan1000',
-    defaultMessage: '< 1000',
+    defaultMessage: '< 1000 cp/mL',
   },
   resultCategoryMoreThan1000: {
     id: 'pages.deviceDetail.resultCategoryMoreThan1000',
-    defaultMessage: '>= 1000',
+    defaultMessage: '>= 1000 cp/mL',
   },
   resultCategoryRejected: {
     id: 'pages.deviceDetail.resultCategoryRejected',

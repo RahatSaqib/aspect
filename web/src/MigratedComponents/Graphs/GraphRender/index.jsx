@@ -109,7 +109,7 @@ const GraphRender = ({
   }, [rawData])
 
   return (
-    <Grid item xs={12} lg={size}>
+    <Grid item xs={12} md={size} lg={size}>
       <div className={cssClasses('graphrender__container')}>
         {isEmpty(graphData) && isLoading ? <Loading /> : null}
         {isEmpty(graphData) && !isLoading ? <EmptyGraph type={type} /> : null}

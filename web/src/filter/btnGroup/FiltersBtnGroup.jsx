@@ -212,7 +212,7 @@ const filtersOrdering = {
   externalId: 15,
   notificationName: 20,
   revoked: 21,
-  treatmentStatusId: 22,
+  treatmentStatus: 22,
   siteId: 23,
   // -1: Special orderings
   siteIds: -1,
@@ -390,12 +390,12 @@ const buttonBy = {
           .get('name'),
       })
   ),
-  treatmentStatusId: makeButton(
-    ({ intl, treatmentStatusItems }, treatmentStatusId) =>
+  treatmentStatus: makeButton(
+    ({ intl, treatmentStatusItems }, treatmentStatus) =>
       intl.formatMessage(messages.withTreatmentStatus, {
         treatmentStatusName: treatmentStatusItems
           .find(
-            it => it.get('id') === treatmentStatusId,
+            it => it.get('externalId') === treatmentStatus,
             EMPTY_CONTEXT,
             EMPTY_MAP
           )

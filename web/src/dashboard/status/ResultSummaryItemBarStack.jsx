@@ -18,17 +18,17 @@ const {
   '--aspect-color-grey-3': colorGrey3,
   '--aspect-color-mandy': colorMandy,
   '--aspect-color-supernova': colorSupernova,
-  '--aspect-color-mantis': colorMantis,
+  '--aspect-color-conifer': colorConifer,
 } = process.env
 
 export const colorByResultCategoryExternalId = {
   Detected: colorShakespeare,
-  NotDetected: colorMantis,
+  NotDetected: colorConifer,
   Indeterminate: colorMountain,
   Invalid: colorSupernova,
   NoResult: colorGrey3,
   Error: colorMandy,
-  LessThan1000: colorMantis,
+  LessThan1000: colorConifer,
   MoreThan1000: colorShakespeare,
   CollectNewSample: colorMountain,
 }

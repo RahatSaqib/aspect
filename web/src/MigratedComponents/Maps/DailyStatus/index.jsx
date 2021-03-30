@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react'
-import { useIntl } from 'react-intl'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 
+import useI18n from '../../../Hooks/i18n/useI18n'
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
+import { DEVICE_STATUS_LAST_REPORTED } from '../../QueryFetch/Device'
 import AspectCard from '../../AspectCard'
 import AspectMap from '../index'
-import { dateRangeOptions } from '../../Graphs/Helpers/Formatters'
 import buildMarkersForDailyStatus from './Helpers'
 import messages from './messages'
 
@@ -20,10 +20,7 @@ const Loading = () => (
 )
 
 const DailyStatusMap = () => {
-  const { formatMessage } = useIntl()
-  const { deviceDateRange } = dateRangeOptions('deviceDateRange')
-  const minDate = deviceDateRange[1]?.value?.minDate
-  const maxDate = deviceDateRange[1]?.value?.maxDate
+  const { formatMessage } = useI18n()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: {
@@ -33,7 +30,7 @@ const DailyStatusMap = () => {
       deviceStatusesError,
     },
     actions: { toggleAll, toggleStatusVisibility },
-  } = useDailyStatus(minDate, maxDate)
+  } = useDailyStatus(false, false, DEVICE_STATUS_LAST_REPORTED.ENDPOINT)
 
   if (devicesIsError) {
     throw new Error(devicesError)

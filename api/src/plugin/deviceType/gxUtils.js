@@ -568,27 +568,6 @@ async function findExistingResult(availableResultDetails, knex) {
   if (_.isEmpty(matchingResult) && geneXpertTestId) {
     matchingResults = await queryStart
       .clone()
-      .andWhereRaw(
-        'JSON_EXTRACT(r.resultData, "$.geneXpertTestId") = ?',
-        geneXpertTestId
-      )
-      .select(selectFields)
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    }
-    if (matchingResults.length > 1 && gxAlertUniqueId) {
-      matchingResults = _.filter(matchingResults, {
-        externalId: gxAlertUniqueId,
-      })
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
-
-  if (_.isEmpty(matchingResult) && geneXpertTestId) {
-    matchingResults = await queryStart
-      .clone()
       .andWhere('r.externalId', geneXpertTestId)
       .select(selectFields)
     if (matchingResults.length === 1) {

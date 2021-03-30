@@ -35,9 +35,10 @@ const groupByKey = (
       ? curr[keyToConsume]
       : filter(graphColorMap, ['id', 999])[0].externalId
 
-    const dateFormatted = formatDate
-      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
-      : curr[indexBy]
+    const dateFormatted =
+      formatDate && formatDate !== 'MMM'
+        ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
+        : curr[indexBy]
 
     acc[curr[indexBy]] = {
       ...acc[curr[indexBy]],
@@ -269,9 +270,10 @@ const groupForOldTreatmentAPI = (
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
-    const dateFormatted = formatDate
-      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
-      : curr[indexBy]
+    const dateFormatted =
+      formatDate && formatDate !== 'MMM'
+        ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
+        : curr[indexBy]
 
     acc[curr[indexBy]] = {
       monthTested: dateFormatted,

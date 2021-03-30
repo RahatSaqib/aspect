@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-26T12:20:28.938Z\n"
+"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -100,31 +100,31 @@ msgstr "4-6 Місяць"
 
 #. [pages.deviceDetail.resultCategoryLessThan1000]
 #. defaultMessage is:
-#. < 1000
+#. < 1000 cp/mL
 #: extracted_strings.json
-msgid "< 1000"
-msgstr ""
+msgid "< 1000 cp/mL"
+msgstr "< 1000 cp/mL"
 
 #. [pages.deviceDetail.resultCategoryLessThan150]
 #. defaultMessage is:
-#. < 150
+#. < 150 cp/mL
 #: extracted_strings.json
-msgid "< 150"
-msgstr ""
+msgid "< 150 cp/mL"
+msgstr "< 150 cp/mL"
 
 #. [pages.deviceDetail.resultCategoryLessThan40]
 #. defaultMessage is:
-#. < 40
+#. < 40 cp/mL
 #: extracted_strings.json
-msgid "< 40"
-msgstr ""
+msgid "< 40 cp/mL"
+msgstr "< 40 cp/mL"
 
 #. [pages.deviceDetail.resultCategoryLessThan550]
 #. defaultMessage is:
-#. < 550
+#. < 550 cp/mL
 #: extracted_strings.json
-msgid "< 550"
-msgstr ""
+msgid "< 550 cp/mL"
+msgstr "< 550 cp/mL"
 
 #. [legends.Unknown.moreThan180]
 #. defaultMessage is:
@@ -138,31 +138,31 @@ msgstr ">6 Місяць"
 
 #. [pages.deviceDetail.resultCategoryMoreThan1000]
 #. defaultMessage is:
-#. >= 1000
+#. >= 1000 cp/mL
 #: extracted_strings.json
-msgid ">= 1000"
-msgstr ""
+msgid ">= 1000 cp/mL"
+msgstr ">= 1000 cp/mL"
 
 #. [pages.deviceDetail.resultCategoryMoreThan150]
 #. defaultMessage is:
-#. >= 150
+#. >= 150 cp/mL
 #: extracted_strings.json
-msgid ">= 150"
-msgstr ""
+msgid ">= 150 cp/mL"
+msgstr ">= 150 cp/mL"
 
 #. [pages.deviceDetail.resultCategoryMoreThan40]
 #. defaultMessage is:
-#. >= 40
+#. >= 40 cp/mL
 #: extracted_strings.json
-msgid ">= 40"
-msgstr ""
+msgid ">= 40 cp/mL"
+msgstr ">= 40 cp/mL"
 
 #. [pages.deviceDetail.resultCategoryMoreThan550]
 #. defaultMessage is:
-#. >= 550
+#. >= 550 cp/mL
 #: extracted_strings.json
-msgid ">= 550"
-msgstr ""
+msgid ">= 550 cp/mL"
+msgstr ">= 550 cp/mL"
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -784,6 +784,15 @@ msgstr "Середній щомісячний коефіцієнт опору Ri
 msgid "Average Monthly Suppression Rate"
 msgstr "Середній щомісячний рівень придушення"
 
+#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
+#. defaultMessage is:
+#. Average Monthly TB Detected Rate
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Average monthly TB Detected Rate"
+msgid "Average Monthly TB Detected Rate"
+msgstr "Середньомісячний рівень виявленого туберкульозу"
+
 #. [pages.Status.testsOverTimeAvgTitle.graph]
 #. defaultMessage is:
 #. Average Monthly Tests Performed
@@ -819,13 +828,6 @@ msgstr "Середнє значення одержувачів електрон�
 msgid "Average length of SMS"
 msgstr "Середня тривалість SMS"
 
-#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
-#. defaultMessage is:
-#. Average monthly TB Detected Rate
-#: extracted_strings.json
-msgid "Average monthly TB Detected Rate"
-msgstr "Середньомісячний рівень виявленого туберкульозу"
-
 #. [component.Widget.deviceDaysActiveDescription]
 #. defaultMessage is:
 #. Average number of days each device has been active, excluding weekends.
@@ -839,7 +841,7 @@ msgstr ""
 #. Average number of tests per weekday conducted this month.
 #: extracted_strings.json
 msgid "Average number of tests per weekday conducted this month."
-msgstr "Середня кількість тестів на день, повідомлених за поточний місяць"
+msgstr "Середня кількість тестів на день, повідомлених за поточний місяць."
 
 #. [component.Widget.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
@@ -3508,31 +3510,31 @@ msgstr "Широта"
 
 #. [legends.Unknown.resultCategoryLessThan1000]
 #. defaultMessage is:
-#. Less Than 1000
+#. Less Than 1000 cp/mL
 #: extracted_strings.json
-msgid "Less Than 1000"
-msgstr "Менше 1000"
+msgid "Less Than 1000 cp/mL"
+msgstr "Менше 1000 cp/mL"
 
 #. [legends.Unknown.resultCategoryLessThan150]
 #. defaultMessage is:
-#. Less Than 150
+#. Less Than 150 cp/mL
 #: extracted_strings.json
-msgid "Less Than 150"
-msgstr "Менше 150"
+msgid "Less Than 150 cp/mL"
+msgstr "Менше 150 cp/mL"
 
 #. [legends.Unknown.resultCategoryLessThan40]
 #. defaultMessage is:
-#. Less Than 40
+#. Less Than 40 cp/mL
 #: extracted_strings.json
-msgid "Less Than 40"
-msgstr "Менше 40"
+msgid "Less Than 40 cp/mL"
+msgstr "Менше 40 cp/mL"
 
 #. [legends.Unknown.resultCategoryLessThan550]
 #. defaultMessage is:
-#. Less Than 550
+#. Less Than 550 cp/mL
 #: extracted_strings.json
-msgid "Less Than 550"
-msgstr "Менше 550"
+msgid "Less Than 550 cp/mL"
+msgstr "Менше 550 cp/mL"
 
 #. [pages.License.title]
 #. defaultMessage is:
@@ -4041,31 +4043,31 @@ msgstr "Місяць"
 
 #. [legends.Unknown.resultCategoryMoreThan1000]
 #. defaultMessage is:
-#. More Than 1000
+#. More Than 1000 cp/mL
 #: extracted_strings.json
-msgid "More Than 1000"
-msgstr "Більше 1000"
+msgid "More Than 1000 cp/mL"
+msgstr "Більше 1000 cp/mL"
 
 #. [legends.Unknown.resultCategoryMoreThan150]
 #. defaultMessage is:
-#. More Than 150
+#. More Than 150 cp/mL
 #: extracted_strings.json
-msgid "More Than 150"
-msgstr "Більше 150"
+msgid "More Than 150 cp/mL"
+msgstr "Більше 150 cp/mL"
 
 #. [legends.Unknown.resultCategoryMoreThan40]
 #. defaultMessage is:
-#. More Than 40
+#. More Than 40 cp/mL
 #: extracted_strings.json
-msgid "More Than 40"
-msgstr "Більше 40"
+msgid "More Than 40 cp/mL"
+msgstr "Більше 40 cp/mL"
 
 #. [legends.Unknown.resultCategoryMoreThan550]
 #. defaultMessage is:
-#. More Than 550
+#. More Than 550 cp/mL
 #: extracted_strings.json
-msgid "More Than 550"
-msgstr "Більше 550"
+msgid "More Than 550 cp/mL"
+msgstr "Більше 550 cp/mL"
 
 #. [filter.popover.moreFilters]
 #. defaultMessage is:
@@ -4501,9 +4503,6 @@ msgstr ""
 "приладу, помножену на 30 днів"
 
 #. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
-#. [pages.ResultList.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. OK
 #. [pages.TaskList.issueStatusOK]
@@ -7719,6 +7718,9 @@ msgstr "Дійсні результати"
 msgid "Valid Tests"
 msgstr "Дійсні тести"
 
+#. [pages.ResultList.ResultWorkflowStatusValidated]
+#. defaultMessage is:
+#. Validated
 #. [pages.deviceDetail.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. Validated

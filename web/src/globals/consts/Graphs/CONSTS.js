@@ -8,9 +8,9 @@ const GRAPH_CONSTS = {
   totalBlockSize: {
     width: 70,
   },
-  treatmentStatusId: {
-    NotConfirmed: 1,
-    Confirmed: 2,
+  treatmentStatus: {
+    NotConfirmed: 'AwaitingTreatment',
+    Confirmed: 'OnTreatment',
   },
 }
 

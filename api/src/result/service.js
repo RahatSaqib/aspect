@@ -961,7 +961,7 @@ async function listTreatmentStatusTypes() {
   const getItems = resultQuery
     .clone()
     .orderBy('id', 'asc')
-    .select('id', 'i18nKey', 'name')
+    .select('id', 'i18nKey', 'name', 'externalId')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -2180,6 +2180,17 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
       }
+      if (params.treatmentStatus === 'AwaitingTreatment') {
+        queryBuilder
+          .where(builder =>
+            builder
+              .where('rts.externalId', params.treatmentStatus)
+              .orWhereNull('rts.externalId')
+          )
+          .where('rca.requiresTreatment', 1)
+      } else if (params.treatmentStatus) {
+        queryBuilder.where('rts.externalId', params.treatmentStatus)
+      }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, {
@@ -2612,8 +2623,7 @@ async function updateOrCreateResult(request, result = {}) {
   result.endedOn = payload.endedOn
   result.updatedOn = now
   result.updatedBy = userId
-  result.reportableSiteId =
-    payload.sampleOriginSiteId || device.defaultReportableSiteId || site.id
+  result.reportableSiteId = payload.sampleOriginSiteId || site.id
 
   // create sample-entry or update it
   result.sampleId = await updateOrCreateSample(
