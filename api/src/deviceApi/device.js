@@ -133,33 +133,27 @@ const getCreateAssignPerson = async (
   // person-by-name found
   // ----------
   if (personByName) {
+    personId = personByName.id
+    ;[{ jobId }] = [personByName]
     // update email if it's missing
     if (email && !personByName.email) {
-      await knex('Person')
-        .update('email', email)
-        .where('id', personByName.personId)
+      await knex('Person').update('email', email).where('id', personId)
     }
     // update cell if it's missing
     if (cell && !personByName.cell) {
-      await knex('Person')
-        .update('cell', cell)
-        .where('id', personByName.personId)
+      await knex('Person').update('cell', cell).where('id', personId)
     }
-    personId = personByName.id
-    ;[{ jobId }] = [personByName]
   }
   // ----------
   // or person-by-email found
   // ----------
   else if (personByEmail) {
-    // update cell if it's missing
-    if (cell && !personByEmail.cell) {
-      await knex('Person')
-        .update('cell', cell)
-        .where('id', personByEmail.personId)
-    }
     personId = personByEmail.id
     ;[{ jobId }] = [personByEmail]
+    // update cell if it's missing
+    if (cell && !personByEmail.cell) {
+      await knex('Person').update('cell', cell).where('id', personId)
+    }
   }
   // ----------
   // or create person with specified name
