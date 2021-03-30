@@ -294,7 +294,7 @@ const dateRangeOptions = key => {
     {
       id: 0,
       name: formatMessage
-        ? formatMessage(messages.hoursPlaceholder)
+        ? formatMessage(messages.last30Days)
         : messages.hoursPlaceholder.id,
       value: {
         minDate: getTimePeriod(30, 'days', dateFormatValue),
