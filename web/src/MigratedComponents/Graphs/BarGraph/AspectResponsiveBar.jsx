@@ -142,7 +142,7 @@ const AspectResponsiveBar = ({
                 data,
                 { weekendOrHoliday: 0 }
               ).toFixed(0)}%`,
-              legendOffsetX: -3,
+              legendOffsetX: -30,
               legendOffsetY: 0,
               textStyle: {
                 fill: 'rgba(32, 161, 179, 1)',
