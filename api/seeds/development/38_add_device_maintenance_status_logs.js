@@ -229,12 +229,12 @@ async function seed(knex) {
       }
     }
 
-    await Promise.each(dayAndStatus, ({ dayDate, statusId }) => {
-      setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
+    await Promise.each(dayAndStatus, async ({ dayDate, statusId }) => {
+      await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
       if (statusId === active) {
-        ensureResultExists(knex, deviceId, dayDate, userId, partnerId)
+        await ensureResultExists(knex, deviceId, dayDate, userId, partnerId)
       } else {
-        ensureResultDoesNotExist(knex, deviceId, dayDate, patternForDevice)
+        await ensureResultDoesNotExist(knex, deviceId, dayDate)
       }
     })
   })
@@ -287,8 +287,8 @@ async function generateResultForDay(
 }
 
 async function ensureResultExists(knex, deviceId, dayDate, userId, partnerId) {
-  const results = await getResultsOnDay(knex, deviceId, dayDate)
-  if (results.length === 0) {
+  const resultIds = await getResultsOnDay(knex, deviceId, dayDate)
+  if (resultIds.length === 0) {
     // add hours so the result doesn't have an endedOn date around midnight
     await generateResultForDay(
       knex,
@@ -300,19 +300,14 @@ async function ensureResultExists(knex, deviceId, dayDate, userId, partnerId) {
   }
 }
 
-async function ensureResultDoesNotExist(
-  knex,
-  deviceId,
-  dayDate,
-  patternForDevice
-) {
-  const results = await getResultsOnDay(knex, deviceId, dayDate)
-  if (results.length > 0) {
-    await moveResultFromDay(knex, deviceId, dayDate, results, patternForDevice)
+async function ensureResultDoesNotExist(knex, deviceId, dayDate) {
+  const resultIds = await getResultsOnDay(knex, deviceId, dayDate)
+  if (resultIds.length > 0) {
+    await moveResultFromDay(knex, deviceId, dayDate, resultIds)
   }
 }
 
-async function moveResultFromDay(knex, deviceId, dayDate, results) {
+async function moveResultFromDay(knex, deviceId, dayDate, resultIds) {
   // move result to a date before the min date range, somewhere between 10am and 3pm
   const daysToSubtract =
     (dayDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) +
@@ -331,5 +326,5 @@ async function moveResultFromDay(knex, deviceId, dayDate, results) {
         minutesToSubtract
       ),
     })
-    .whereIn('id', results)
+    .whereIn('id', resultIds)
 }
