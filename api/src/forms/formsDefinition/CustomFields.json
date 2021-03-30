@@ -27,8 +27,7 @@
           "propToCompare": "PlainField",
           "valueToCompare": 1,
           "operator": "===",
-          "conjunctionGroupName": "PlainFieldCollectionGroup",
-          "gxAlertPropName": "PlainField"
+          "conjunctionGroupName": "PlainFieldCollectionGroup"
         }
       ]
     },
@@ -44,8 +43,9 @@
       "controlType": "textBox",
       "validation": [
         {
-          "validationType": "float",
-          "min": 0,
+          "validationType": "integer",
+          "min": 1,
+          "max": 10,
           "errorMessage": "This value should be higher than 0",
           "errorMessageI18nKey": "ValidationFieldi18nKey"
         }
@@ -53,109 +53,54 @@
     },
     {
       "id": 5,
-      "name": "ProbeB",
+      "name": "datetime",
       "i18nKey": "ProbeBi18nKey",
-      "gxAlertDbColumn": "PatientPhone",
-      "fieldType": "text",
+      "fieldType": "date",
       "order": 6,
-      "title": "Probe B",
-      "caption": "Probe B value",
+      "title": "datetime field",
+      "caption": "datetime field value",
       "i18nKeyCaption": "i18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "datePicker"
     },
     {
       "id": 9,
-      "name": "ProbeSpc",
-      "i18nKey": "ProbeSpci18nKey",
-      "fieldType": "text",
+      "name": "calculatedLabel",
+      "i18nKey": "calculatedLabelI18nkey",
+      "fieldType": "number",
       "order": 15,
-      "title": "Probe Spc",
-      "caption": "Probe Spc value",
-      "i18nKeyCaption": "ProbeSpci18nCaptionKey",
-      "controlType": "textBox"
+      "title": "Calculated Label",
+      "caption": "calculatedLabel value",
+      "i18nKeyCaption": "calculatedLabel",
+      "controlType": "textBox",
+      "calculated": {
+        "fieldId1": 5,
+        "fixedValue": "now",
+        "function": "datediff",
+        "format": "week"
+      }
     },
     {
       "id": 16,
-      "name": "underlyingConditionsAndComorbidity",
-      "title": "any Underlaying condition?",
-      "i18nKey": "underlyingConditionsAndComorbidityi18nkey",
+      "name": "dataSource",
+      "title": "dataSource",
+      "i18nKey": "dataSource",
       "fieldType": "text",
       "order": 0,
-      "controlType": "radioButton",
-      "typeOfOptionSource": "fixedList",
-      "items": [
-        {
-          "value": "No",
-          "key": "no"
-        },
-        {
-          "value": "Yes",
-          "key": "yes"
-        },
-        {
-          "value": "Unknown",
-          "key": "unknown"
-        }
-      ],
+      "controlType": "comboBox",
+      "optionSource": "state",
       "required": true
-    },
-    {
-      "id": 18,
-      "name": "probeDendpt",
-      "i18nKey": "probeDendpti18nKey",
-      "fieldType": "number",
-      "order": 22,
-      "title": "Probe D Endpt",
-      "caption": "Probe D Endpt value",
-      "i18nKeyCaption": "probeDendpti18nCaptionKey",
-      "controlType": "textBox",
-      "validation": [
-        {
-          "validationType": "float",
-          "max": 0,
-          "errorMessage": "This value should be higher than 0",
-          "errorMessageI18nKey": "probeDendptErrori18nKey"
-        }
-      ]
     },
     {
       "id": 44,
       "name": "CheckboxedField",
       "fieldType": "text",
-      "title": "Treatment Type",
+      "title": "CheckboxedField Type",
       "i18nKey": "treatmentTypei18nKey",
       "caption": "The treatmet type applied to the patient",
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "order": 0,
-      "controlType": "comboBox",
-      "required": true,
-      "typeOfOptionSource": "fixedList",
-      "items": [
-        {
-          "key": 1,
-          "value": "Request repeat VL"
-        },
-        {
-          "key": 2,
-          "value": "Initiate advanced adherence counselling"
-        },
-        {
-          "key": 3,
-          "value": "Hospitalization"
-        },
-        {
-          "key": 4,
-          "value": "Initiate advanced adherence counselling"
-        },
-        {
-          "key": 5,
-          "value": "Switch to 2nd or 3rd line regime"
-        },
-        {
-          "key": 6,
-          "value": "Maintain current regime"
-        }
-      ]
+      "controlType": "checkbox",
+      "required": true
     },
     {
       "id": 36,
@@ -258,6 +203,11 @@
           "propToCompare": "ReferringHealthFacilityProvince",
           "fieldToCompare": "state",
           "operator": "==="
+        },
+        {
+          "propToCompare": "ReferringHealthFacilityProvince",
+          "propName": "state",
+          "operator": "not-selected"
         }
       ],
       "items": [

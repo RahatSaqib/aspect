@@ -19,6 +19,7 @@
         "InputControlData": {
           "displayConditions": [
             {
+              "conjunction": "AND",
               "operator": "!=",
               "refId": 2,
               "value": "unknown"
@@ -61,11 +62,11 @@
       {
         "Name": "underlyingConditionsAndComorbidity",
         "Label": "any Underlaying condition?",
-        "Optional": true,
         "Control": "RadioButton",
         "Type": "string",
         "DisplayOrder": 0,
         "InputControlData": {
+          "optional": true,
           "options": [
             {
               "value": "no",

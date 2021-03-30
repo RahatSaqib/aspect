@@ -1,13 +1,18 @@
 const { assert } = require('chai')
+const Ajv = require('ajv')
 const mapGxConnectCustomFields = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 const aspectFields = require('./customFieldsForm.json')
 const mappingResult = require('./mappingResult.json')
 const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
+const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 
-describe.only('Custom field mapper', () => {
+describe('Custom field mapper', () => {
+  const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
+  const validate = ajv.compile(schema)
+
   it('it generates the mapping between aspect dynamic forms and gxconnect expected json', () => {
+    assert.isTrue(validate(aspectFields))
     const mappingOutput = mapGxConnectCustomFields(aspectFields)
-    // we are going to validate the right mapping
     assert.deepEqual(mappingOutput, mappingResult)
   })
 
@@ -26,20 +31,51 @@ describe.only('Custom field mapper', () => {
         },
       ],
     }
+    assert.isTrue(validate(numberExample))
     const mappingOutput = mapGxConnectCustomFields(numberExample)
     assert.deepEqual(mappingOutput.CustomFields.Fields, [
       {
         Id: 2,
         Name: 'PlainField',
         Help: 'PlainField value',
-        Optional: true,
         Control: 'TextBox',
         Type: 'int',
         DisplayOrder: 1,
-        InputControlData: {},
+        InputControlData: { optional: true },
       },
     ])
   })
+
+  it('should transform a datetime field', () => {
+    const dateTimeExample = {
+      fields: [
+        {
+          id: 2,
+          name: 'Datepicker field',
+          i18nKey: 'PlainFieldi18nKey',
+          fieldType: 'date',
+          order: 1,
+          caption: 'Datepicker value',
+          i18nKeyCaption: 'Datepicker value',
+          controlType: 'datePicker',
+        },
+      ],
+    }
+    assert.isTrue(validate(dateTimeExample))
+    const mappingOutput = mapGxConnectCustomFields(dateTimeExample)
+    assert.deepEqual(mappingOutput.CustomFields.Fields, [
+      {
+        Id: 2,
+        Name: 'Datepicker field',
+        Help: 'Datepicker value',
+        Control: 'DateTimePicker',
+        Type: 'datetime',
+        DisplayOrder: 1,
+        InputControlData: { optional: true },
+      },
+    ])
+  })
+
   it('it should map display conditions', () => {
     const displayConditionalExample = {
       fields: [
@@ -73,6 +109,7 @@ describe.only('Custom field mapper', () => {
         },
       ],
     }
+    assert.isTrue(validate(displayConditionalExample))
     const mappingOutput = mapGxConnectCustomFields(displayConditionalExample)
     assert.deepEqual(mappingOutput, {
       CustomFields: {
@@ -81,11 +118,10 @@ describe.only('Custom field mapper', () => {
             Id: 2,
             Name: 'PlainField',
             Help: 'PlainField value',
-            Optional: true,
             Control: 'TextBox',
             Type: 'string',
             DisplayOrder: 1,
-            InputControlData: {},
+            InputControlData: { optional: true },
           },
           {
             Name: 'ConditionalField',
@@ -96,6 +132,7 @@ describe.only('Custom field mapper', () => {
             InputControlData: {
               displayConditions: [
                 {
+                  conjunction: 'AND',
                   value: 'unknown',
                   operator: '!=',
                   refId: 2,
@@ -125,7 +162,7 @@ describe.only('Custom field mapper', () => {
           fieldType: 'text',
           order: 40,
           controlType: 'autoComplete',
-          required: false,
+          required: true,
           typeOfOptionSource: 'fixedList',
           items: [
             {
@@ -320,7 +357,114 @@ describe.only('Custom field mapper', () => {
         },
       ],
     }
+    assert.isTrue(validate(listCustomFields))
+
     const mappingOutput = mapGxConnectCustomFields(listCustomFields)
     assert.deepEqual(mappingOutput, cascadeFieldsOutput)
+  })
+  it('testing calculated fields', () => {
+    const calculatedFields = {
+      fields: [
+        {
+          id: 2,
+          name: 'PlainField',
+          i18nKey: 'PlainFieldi18nKey',
+          fieldType: 'text',
+          order: 1,
+          caption: 'PlainField value',
+          i18nKeyCaption: 'PlainFieldi18nCaptionKey',
+          controlType: 'textBox',
+        },
+        {
+          id: 3,
+          name: 'calculatedField',
+          i18nKey: 'calculatedFieldi18nKey',
+          fieldType: 'date',
+          order: 0,
+          caption: 'calculatedField value',
+          i18nKeyCaption: 'calculatedFieldi18nCaptionKey',
+          controlType: 'label',
+          calculated: {
+            fieldId1: 2,
+            fixedValue: 'now',
+            function: 'datediff',
+            format: 'week',
+          },
+        },
+      ],
+    }
+    assert.isTrue(validate(calculatedFields))
+
+    const mappingOutput = mapGxConnectCustomFields(calculatedFields)
+    assert.deepEqual(mappingOutput, {
+      CustomFields: {
+        Fields: [
+          {
+            Id: 2,
+            Name: 'PlainField',
+            Help: 'PlainField value',
+            InputControlData: {
+              optional: true,
+            },
+            Control: 'TextBox',
+            Type: 'string',
+            DisplayOrder: 1,
+          },
+          {
+            Id: 3,
+            Name: 'calculatedField',
+            Help: 'calculatedField value',
+            Control: 'Label',
+            Type: 'datetime',
+            DisplayOrder: 0,
+            InputControlData: {
+              calculated: true,
+              fieldId1: 2,
+              fixedValue: 'now',
+              function: 'datediff',
+              format: 'week',
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  it('should transform a datasource input control data field', async () => {
+    const datasourceExample = {
+      fields: [
+        {
+          id: 2,
+          name: 'datasource field',
+          i18nKey: 'datasourcei18nKey',
+          fieldType: 'text',
+          order: 1,
+          caption: 'datasource value',
+          i18nKeyCaption: 'datasource value',
+          controlType: 'textBox',
+          optionSource: 'state',
+        },
+      ],
+    }
+
+    assert.isTrue(validate(datasourceExample))
+
+    const mappingOutput = await mapGxConnectCustomFields(datasourceExample, 1)
+    assert.deepEqual(mappingOutput.CustomFields.Fields, [
+      {
+        Id: 2,
+        Name: 'datasource field',
+        Help: 'datasource value',
+        InputControlData: {
+          optional: true,
+          dataSource: {
+            name: 'state',
+          },
+        },
+        Control: 'TextBox',
+        Type: 'string',
+        DisplayOrder: 1,
+      },
+    ])
   })
 })

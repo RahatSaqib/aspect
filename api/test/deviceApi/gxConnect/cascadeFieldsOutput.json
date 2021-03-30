@@ -5,11 +5,11 @@
         "Id": 117,
         "Name": "ReferringHealthFacilityProvince",
         "Label": "Referring Health Facility Province",
-        "Optional": false,
         "Control": "AutoComplete",
         "Type": "string",
         "DisplayOrder": 40,
         "InputControlData": {
+          "optional": true,
           "options": [
             {
               "value": "Punjab",
@@ -57,11 +57,11 @@
         "Id": 118,
         "Name": "ReferringHealthFacilityDistrict",
         "Label": "Referring Health Facility District",
-        "Optional": false,
         "Control": "AutoComplete",
         "Type": "string",
         "DisplayOrder": 45,
         "InputControlData": {
+          "optional": false,
           "options": [
             {
               "value": "Attock",

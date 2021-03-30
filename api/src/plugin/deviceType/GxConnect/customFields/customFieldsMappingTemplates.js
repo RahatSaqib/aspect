@@ -1,5 +1,7 @@
 const objectMapper = require('object-mapper')
 const _ = require('lodash')
+const sp = require('synchronized-promise')
+const { stateSelectList } = require('../../../../geography/service')
 
 const getGxAlertAssayId = {
   abbottM2000PlasmaHivVL: 9,
@@ -25,7 +27,7 @@ const getGxAlertAssayId = {
   assayQS7Covid19: 15,
   assayGXCovid19: 15,
 }
-const map = aspectFields => {
+const map = (aspectFields, countryId, stateId) => {
   return {
     'fields[].id': 'CustomFields.Fields[].Id',
     'fields[].name': 'CustomFields.Fields[].Name',
@@ -36,13 +38,21 @@ const map = aspectFields => {
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',
     'fields[].required': {
-      key: 'CustomFields.Fields[].Optional',
-      transform: value => !value,
+      key: 'CustomFields.Fields[].InputControlData.optional?',
+      transform: value => (value ? !value : true),
     },
     'fields[].encrypted': 'CustomFields.Fields[].Encrypted',
+    // / TODO: agregar la conjunction y chequearlo en un test para filters.
     'fields[].controlType': {
       key: 'CustomFields.Fields[].Control',
-      transform: sourceValue => _.upperFirst(sourceValue),
+      transform: sourceValue => {
+        switch (sourceValue) {
+          case 'datePicker':
+            return 'DateTimePicker'
+          default:
+            return _.upperFirst(sourceValue)
+        }
+      },
     },
     'fields[].fieldType': {
       key: 'CustomFields.Fields[].Type',
@@ -51,6 +61,9 @@ const map = aspectFields => {
           case 'number':
           case 'int':
             return 'int'
+          case 'datetime':
+          case 'date':
+            return 'datetime'
           default:
             return 'string'
         }
@@ -116,6 +129,30 @@ const map = aspectFields => {
         return null
       },
     },
+    'fields[].optionSource': {
+      key: 'CustomFields.Fields[].InputControlData.options[]',
+      transform: source => {
+        const result = sp(
+          stateSelectList({
+            params: {
+              countryId,
+              stateId: source === 'lga' && stateId ? stateId : null,
+            },
+          })
+        )
+        return _.map(result, geography => ({
+          value: geography.id,
+          text: geography.name,
+        }))
+      },
+    },
+
+    'fields[].calculated': {
+      key: 'CustomFields.Fields[].InputControlData',
+      transform: source => {
+        return source ? { calculated: true, ...source } : null
+      },
+    },
   }
 }
 const propertyToNumber = sourceValue => {
@@ -144,6 +181,7 @@ const translateCondition = (sourceValue, aspectFields) => {
           'id'
         ),
       }
+      if (elem.conjunction) field.conjunction = elem.conjunction
       if (elem.valueToCompare) field.value = elem.valueToCompare
       if (elem.fieldToCompare) field.propName = elem.fieldToCompare
 
@@ -155,8 +193,17 @@ const translateCondition = (sourceValue, aspectFields) => {
   return map
 }
 
-const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
-  const maped = objectMapper(aspectFields, mapper || map(aspectFields))
+const mapGxConnectCustomFields = (
+  aspectFields,
+  countryId,
+  stateId,
+  mapper = null
+) => {
+  const maped = objectMapper(
+    aspectFields,
+    mapper || map(aspectFields, countryId, stateId)
+  )
+
   return maped
 }
 
