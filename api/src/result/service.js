@@ -2798,4 +2798,5 @@ module.exports = {
   createResult,
   updateResult,
   addPartnerQueryConstraints,
+  getBaseQueryForResults,
 }
