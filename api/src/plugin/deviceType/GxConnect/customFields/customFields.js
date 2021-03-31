@@ -9,8 +9,10 @@ const getCustomFields = async (knex, partnerId, deviceId) => {
     await knex('Device')
       .update({ customFieldsSentOn: new Date() })
       .where({ id: deviceId })
-
-    return mapGxConnectCustomFields(customFields)
+    const { countryId, stateId } = await knex('Device as d')
+      .join('Geography as g', 'g.id', 'd.geographyId')
+      .first('g.countryId', 'g.stateId')
+    return mapGxConnectCustomFields(customFields, countryId, stateId)
   }
   return null
 }

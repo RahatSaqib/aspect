@@ -2389,14 +2389,6 @@ dayjs@^1.8.26, dayjs@^1.8.29:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.3.tgz#cf3357c8e7f508432826371672ebf376cb7d619b"
   integrity sha512-/2fdLN987N8Ki7Id8BUN2nhuiRyxTLumQnSQf9CNncFCyqFsSKb9TNhzRYcC8K8eJSJOKvbvkImo/MKKhNi4iw==
 
-deasync@^0.1.15:
-  version "0.1.21"
-  resolved "https://registry.yarnpkg.com/deasync/-/deasync-0.1.21.tgz#bb11eabd4466c0d8776f0d82deb8a6126460d30f"
-  integrity sha512-kUmM8Y+PZpMpQ+B4AuOW9k2Pfx/mSupJtxOsLzmnHY2WqZUYRFccFn2RhzPAqt3Xb+sorK/badW2D4zNzqZz5w==
-  dependencies:
-    bindings "^1.5.0"
-    node-addon-api "^1.7.1"
-
 debug@*, debug@4.1.1, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791"
@@ -6053,11 +6045,6 @@ nise@^4.0.1:
     just-extend "^4.0.2"
     path-to-regexp "^1.7.0"
 
-node-addon-api@^1.7.1:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-1.7.2.tgz#3df30b95720b53c24e59948b49532b662444f54d"
-  integrity sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==
-
 node-addon-api@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.0.2.tgz#04bc7b83fd845ba785bb6eae25bc857e1ef75681"
@@ -8244,13 +8231,6 @@ swagger-ui-dist@^3.22.1:
   version "3.25.3"
   resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-3.25.3.tgz#15a985381c6a2120982618cca37363dd8e9071e8"
   integrity sha512-/8DSx431mdN94t8mIZejhVUdN9r8zM+V1l+VGT0h7smrzYFa9vWi2sLVCg4YfgKgMjXYhU4OKADHPnWkbLb+ZQ==
-
-synchronized-promise@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/synchronized-promise/-/synchronized-promise-0.3.1.tgz#2cb9c1b1a203da7301c3ef068285a4e6d198ea0e"
-  integrity sha512-Iy+JzrERSUrwpOHUDku8HHIddk8V6iLG9bPIzboP2i5RYkn2eSmRB8waSaX7Rc/+DUUsnFsoOHrmniwOp9BOgw==
-  dependencies:
-    deasync "^0.1.15"
 
 table@^6.0.4:
   version "6.0.9"

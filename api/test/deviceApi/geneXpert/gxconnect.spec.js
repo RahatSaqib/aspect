@@ -42,7 +42,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe.only('Device API routes for GxConnect Devices', () => {
+describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -635,7 +635,7 @@ describe.only('Device API routes for GxConnect Devices', () => {
     })
   })
 
-  describe.only('Device Daily details', () => {
+  describe('Device Daily details', () => {
     const macAddress = 'MAC00000321PING'
 
     const context = createGxConnectTestContext(server, {
@@ -657,7 +657,7 @@ describe.only('Device API routes for GxConnect Devices', () => {
         const res = await server
           .post('/device')
           .set('Authorization', deviceAuth)
-          .send(basicDevicePayload)
+          .send({ getFormsDefinition: true, ...basicDevicePayload })
           .catch(assert.fail)
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
@@ -665,14 +665,11 @@ describe.only('Device API routes for GxConnect Devices', () => {
         assert.typeOf(res.body.CustomFields, 'Object')
         assert.typeOf(res.body.CustomFields.Fields, 'Array')
         assert.isAtLeast(res.body.CustomFields.Fields.length, 1)
-
         const customFieldProperties = [
           'Label',
           'Control',
           'Type',
           'DisplayOrder',
-
-          'InputControlData',
         ]
         _.each(customFieldProperties, fieldName => {
           assert.property(res.body.CustomFields.Fields[0], fieldName)

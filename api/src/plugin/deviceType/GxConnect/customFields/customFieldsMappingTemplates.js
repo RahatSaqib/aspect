@@ -1,6 +1,6 @@
 const objectMapper = require('object-mapper')
 const _ = require('lodash')
-const sp = require('synchronized-promise')
+const Promise = require('bluebird')
 const { stateSelectList } = require('../../../../geography/service')
 
 const getGxAlertAssayId = {
@@ -27,7 +27,7 @@ const getGxAlertAssayId = {
   assayQS7Covid19: 15,
   assayGXCovid19: 15,
 }
-const map = (aspectFields, countryId, stateId) => {
+const map = aspectFields => {
   return {
     'fields[].id': 'CustomFields.Fields[].Id',
     'fields[].name': 'CustomFields.Fields[].Name',
@@ -129,23 +129,7 @@ const map = (aspectFields, countryId, stateId) => {
         return null
       },
     },
-    'fields[].optionSource': {
-      key: 'CustomFields.Fields[].InputControlData.options[]',
-      transform: source => {
-        const result = sp(
-          stateSelectList({
-            params: {
-              countryId,
-              stateId: source === 'lga' && stateId ? stateId : null,
-            },
-          })
-        )
-        return _.map(result, geography => ({
-          value: geography.id,
-          text: geography.name,
-        }))
-      },
-    },
+    'fields[].optionSource': 'CustomFields.Fields[].optionSource',
 
     'fields[].calculated': {
       key: 'CustomFields.Fields[].InputControlData',
@@ -193,18 +177,35 @@ const translateCondition = (sourceValue, aspectFields) => {
   return map
 }
 
-const mapGxConnectCustomFields = (
+const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
+  const maped = objectMapper(aspectFields, mapper || map(aspectFields))
+
+  return maped
+}
+
+const mapGxConnectCustomFieldsWithDataSources = async (
   aspectFields,
   countryId,
   stateId,
   mapper = null
 ) => {
-  const maped = objectMapper(
-    aspectFields,
-    mapper || map(aspectFields, countryId, stateId)
+  const fields = mapGxConnectCustomFields(aspectFields, mapper)
+  await Promise.each(
+    _.filter(fields.CustomFields.Fields, elem => elem.optionSource),
+    async field => {
+      const { data: statesOrLgas } = await stateSelectList({
+        params: {
+          countryId,
+          stateId: field.optionSource === 'lga' && stateId ? stateId : null,
+        },
+      })
+      delete field.optionSource
+      field.InputControlData.options = _.map(statesOrLgas, geography => ({
+        value: geography.id,
+        text: geography.name,
+      }))
+    }
   )
-
-  return maped
+  return fields
 }
-
-module.exports = mapGxConnectCustomFields
+module.exports = mapGxConnectCustomFieldsWithDataSources

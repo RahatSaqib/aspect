@@ -449,7 +449,7 @@ describe('Custom field mapper', () => {
 
     assert.isTrue(validate(datasourceExample))
 
-    const mappingOutput = await mapGxConnectCustomFields(datasourceExample, 1)
+    const mappingOutput = mapGxConnectCustomFields(datasourceExample, 1, 1)
     assert.deepEqual(mappingOutput.CustomFields.Fields, [
       {
         Id: 2,

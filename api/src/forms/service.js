@@ -27,14 +27,18 @@ const getCustomFields = async (partnerId, deviceId) => {
   })
     .join('Disease as di', 'di.id', 'fd.diseaseId')
     .join('AssayType as assayType', 'di.id', 'assayType.diseaseId')
-    .join('Assay as a', 'fd.assayId', 'a.id')
+    .join('Assay as a', 'assayType.id', 'a.assayTypeId')
     .join('DeviceType as dt', 'a.devicetypeid', 'dt.id')
     .join('Device as d', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where('d.id', deviceId)
-    .distinct('d.customFieldsSentOn', 'a.externalId as assayExternalId')
+    .distinct(
+      'd.customFieldsSentOn',
+      knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
+    )
+    .groupBy('fd.id', 'd.customFieldsSentOn')
 
   let forms = {}
-  // eslint-disable-next-line no-return-assign
   _.each(await formQuery, form => {
     if (
       !form.customFieldsSentOn ||
@@ -42,7 +46,9 @@ const getCustomFields = async (partnerId, deviceId) => {
     ) {
       const fields = _.map(formDictionary[form.externalId].fields, field => ({
         ...field,
-        assayExternalId: form.assayExternalId,
+        assayExternalId: form.assayExternalId
+          ? form.assayExternalId.split(',')
+          : [],
         diseaseId: form.diseaseId,
       }))
       forms = _.merge(forms, { fields })

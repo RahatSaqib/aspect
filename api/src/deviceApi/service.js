@@ -303,7 +303,7 @@ async function addDeviceDataWithContext(context) {
     response = {
       ...response,
       ...(await updateDeviceConfigurationWithContext(
-        context.withPayload({ getFormsDefinition, configuration })
+        context.withPayload({ getFormsDefinition, ...configuration })
       )),
     }
   }
