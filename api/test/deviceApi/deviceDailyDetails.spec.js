@@ -218,6 +218,13 @@ describe('Device daily details', () => {
       assert.isDefined(person.jobId)
       assert.equal(person.email, configurationData.labContactEmail)
       assert.equal(person.cell, configurationData.labContactCell)
+      // created Person for installerName
+      const installer = await getPerson(installerName)
+      personIds.push(installer.id)
+      assert.isDefined(installer)
+      assert.isDefined(installer.jobId)
+      assert.equal(installer.email, configurationData.installerEmail)
+      assert.equal(installer.cell, configurationData.installerCell)
 
       /**
        * person is assigned to device's site as Lab User
