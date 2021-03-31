@@ -9,15 +9,7 @@ const {
   revokeUsersToken,
   lockedOutUser,
 } = require('../auth/service')
-
-const getPeople = () =>
-  knex('Person as p')
-    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Job as j', 'p.id', 'j.personId')
-    .leftJoin('JobContext as jc', 'jc.jobId', 'j.id')
-    .leftJoin('Site as s', 'jc.siteId', 's.id')
+const { getPeopleBase } = require('../shared/utilsPerson')
 
 async function listPeople(request) {
   const { auth, query } = request
@@ -25,7 +17,7 @@ async function listPeople(request) {
 
   const { geographicLevel, tags } = query
 
-  const personQuery = getPeople()
+  const personQuery = getPeopleBase()
     .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
     .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
     .leftJoin('Tag as t', 'pt.tagId', 't.id')
@@ -112,7 +104,7 @@ async function availableContacts(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const data = await getPeople()
+  const data = await getPeopleBase()
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .groupBy('p.id')
     .select('p.name', 'p.id')

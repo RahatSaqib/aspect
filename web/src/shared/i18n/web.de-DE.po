@@ -2,9 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 <<<<<<< HEAD
+<<<<<<< HEAD
 "POT-Creation-Date: 2021-03-29T17:52:16.485Z\n"
 =======
 "POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
+>>>>>>> develop
+=======
+"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
 >>>>>>> develop
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
@@ -14,7 +18,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. [pages.ReporterList.acknowledgedRatio]
 #. defaultMessage is:
@@ -3492,6 +3495,9 @@ msgstr "Letzte"
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [component.DateTimeInput.Last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr "Letzte 30 Tage"
@@ -3512,6 +3518,13 @@ msgstr "Letzte 7 Tage"
 #: extracted_strings.json
 msgid "Last Month"
 msgstr "Letzter Monat"
+
+#. [component.DateTimeInput.LastMonth]
+#. defaultMessage is:
+#. Last Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "Last Month ({minDate} - {maxDate})"
+msgstr "Im vergangenen Monat ({minDate} - {maxDate})"
 
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
@@ -7392,6 +7405,13 @@ msgstr "Diese Passwörter stimmen nicht überein"
 #: extracted_strings.json
 msgid "This Month"
 msgstr "Aktueller Monat"
+
+#. [component.DateTimeInput.ThisMonth]
+#. defaultMessage is:
+#. This Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "This Month ({minDate} - {maxDate})"
+msgstr "Diesen Monat ({minDate} - {maxDate})"
 
 #. [pages.dateRangeSelector.thisQuarter]
 #. defaultMessage is:
