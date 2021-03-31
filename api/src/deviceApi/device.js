@@ -91,6 +91,7 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
       name: labContactName,
       email: labContactEmail,
       cell: labContactCell,
+      jobFunctionExternalId: 'labUser',
     })
 
     await getCreateAssignPerson(knex, {
@@ -98,6 +99,7 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
       name: installerName,
       email: installerEmail,
       cell: installerCell,
+      jobFunctionExternalId: 'technician',
     })
   }
 }
@@ -115,6 +117,7 @@ const getCreateAssignPerson = async (
     cell,
     timezone,
     culture,
+    jobFunctionExternalId,
   }
 ) => {
   const personQuery = getPeopleBase()
@@ -176,18 +179,24 @@ const getCreateAssignPerson = async (
 
   /**
    * for this person -
-   * - check/create job for 'Lab User'
+   * - check/create job for 'Lab User' or 'Technician'
    * - assign this person to site, i.e. to JobContext
    */
   if (personId) {
     // create Job for person
     if (!jobId) {
-      const { id: jobFunctionIdDefault } = await knex('JobFunction')
-        .where({ name: 'Lab User' })
+      const jobFunction = await knex('JobFunction')
+        .where({ externalId: jobFunctionExternalId })
         .first('id')
+      if (!jobFunction) {
+        throw Boom.expectationFailed(
+          `Required job function '${jobFunctionExternalId}' is missing`
+        )
+      }
+
       ;[jobId] = await knex('Job').insert({
         personId,
-        jobFunctionId: jobFunctionIdDefault,
+        jobFunctionId: jobFunction.id,
       })
     }
 
