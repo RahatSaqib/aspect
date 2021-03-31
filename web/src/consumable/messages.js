@@ -1,4 +1,3 @@
-// Imports from packages
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
