@@ -38,6 +38,8 @@ import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
 import values from 'lodash/values'
 
+import { i18nWrapper } from '../../../../Providers/I18nProvider'
+import messages from '../messages'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const now = new Date()
@@ -278,22 +280,22 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
   maxDate: format(endOfMonth(subMonths(date, offset)), dateFormat),
 })
 
-const lastMonthLabel = (date, count, dateFormat) =>
-  `Last Month (${format(
-    startOfMonth(subMonths(date, count)),
-    dateFormat
-  )} - ${format(endOfMonth(subMonths(date, count)), dateFormat)})`
-
 const dateRangeOptions = key => {
-  const dateFormatLabel = 'dd/MM'
+  const { formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
-  const dateFormatMonths = 'MMMM yyyy'
+  const dateFormatRanges = {
+    day: '2-digit',
+    month: '2-digit',
+  }
+  const dateFormatMonths = { month: 'long', year: 'numeric' }
   const monthsToGet = 12
   const today = negateTimeZoneOffset(new Date())
   const dateRange = [
     {
       id: 0,
-      name: 'Last 30 Days',
+      name: formatMessage
+        ? formatMessage(messages.last30Days)
+        : messages.hoursPlaceholder.id,
       value: {
         minDate: getTimePeriod(30, 'days', dateFormatValue),
         maxDate: format(today, dateFormatValue),
@@ -306,10 +308,12 @@ const dateRangeOptions = key => {
       case 1:
         dateRange.push({
           id: count,
-          name: `This Month (${format(
-            startOfMonth(today),
-            dateFormatLabel
-          )} - ${format(endOfMonth(today), dateFormatLabel)})`,
+          name: formatMessage
+            ? formatMessage(messages.thisMonth, {
+                minDate: formatDate(startOfMonth(today), dateFormatRanges),
+                maxDate: formatDate(endOfMonth(today), dateFormatRanges),
+              })
+            : messages.thisMonth.id,
           value: {
             minDate: format(startOfMonth(today), dateFormatValue),
             maxDate: format(endOfMonth(today), dateFormatValue),
@@ -320,7 +324,16 @@ const dateRangeOptions = key => {
       case 2:
         dateRange.push({
           id: count,
-          name: lastMonthLabel(today, month, dateFormatLabel),
+          name: formatMessage(messages.lastMonth, {
+            minDate: formatDate(
+              startOfMonth(subMonths(today, month)),
+              dateFormatRanges
+            ),
+            maxDate: formatDate(
+              endOfMonth(subMonths(today, month)),
+              dateFormatRanges
+            ),
+          }),
           value: monthRangeByCount(today, month, dateFormatValue),
         })
         break
@@ -328,7 +341,7 @@ const dateRangeOptions = key => {
       default:
         dateRange.push({
           id: count,
-          name: format(subMonths(today, month), dateFormatMonths),
+          name: formatDate(subMonths(today, month), dateFormatMonths),
           value: monthRangeByCount(today, month, dateFormatValue),
         })
         break
@@ -399,6 +412,5 @@ export {
   getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
-  lastMonthLabel,
   negateTimeZoneOffset,
 }

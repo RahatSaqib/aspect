@@ -1,55 +1,27 @@
 import React, { Fragment } from 'react'
-import { IntlProvider } from 'react-intl'
-import { render as rtlRender, screen } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
 import IntlPolyfill from 'intl'
 import 'intl/locale-data/jsonp/de'
 import 'intl/locale-data/jsonp/ru'
 import 'intl/locale-data/jsonp/fr'
 import 'intl/locale-data/jsonp/uk'
 import 'intl/locale-data/jsonp/en-us'
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
 import MockDate from 'mockdate'
 import subDays from 'date-fns/subDays'
 
-import { I18nProvider } from '../index'
-import useI18n from '../../../Hooks/i18n/useI18n'
+import { i18nWrapper } from '../index'
 
-const setupTests = () => {
-  // https://formatjs.io/docs/guides/runtime-requirements/#nodejs
+const ComponentWrapper = ({
+  locale: passedLocale,
+  timezone: passedTimezone,
+}) => {
   if (global.Intl) {
     Intl.NumberFormat = IntlPolyfill.NumberFormat
     Intl.DateTimeFormat = IntlPolyfill.DateTimeFormat
   } else {
     global.Intl = IntlPolyfill
   }
-}
-
-function render(ui) {
-  function Wrapper({ children }) {
-    const {
-      props: { locale, timezone },
-    } = ui
-
-    return (
-      <IntlProvider
-        key={locale}
-        locale={locale}
-        formats={{
-          time: {
-            'user-timezone': {
-              timeZone: timezone,
-            },
-          },
-        }}
-      >
-        <I18nProvider>{children}</I18nProvider>
-      </IntlProvider>
-    )
-  }
-  return rtlRender(ui, { wrapper: Wrapper })
-}
-
-const I18nWrapper = () => {
   const {
     culture,
     format,
@@ -57,7 +29,7 @@ const I18nWrapper = () => {
     formatDate,
     formatDistance,
     timezone,
-  } = useI18n()
+  } = i18nWrapper(false, passedLocale, passedTimezone)
 
   MockDate.set(new Date('2021-02-25 14:10:29'))
   const now = new Date()
@@ -78,8 +50,7 @@ const I18nWrapper = () => {
 
 describe('I18nProvider', () => {
   it('should format values for ru-RU correctly', () => {
-    setupTests()
-    render(<I18nWrapper locale="ru" timezone="Europe/Moscow" />)
+    render(<ComponentWrapper locale="ru-RU" timezone="Europe/Moscow" />)
     expect(screen.getByTestId('culture')).toHaveTextContent('ru')
     expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Moscow')
     expect(screen.getByTestId('number-display')).toHaveTextContent('33 902 837')
@@ -94,8 +65,7 @@ describe('I18nProvider', () => {
   })
 
   it('should format values for fr-FR correctly', () => {
-    setupTests()
-    render(<I18nWrapper locale="fr" timezone="Europe/Paris" />)
+    render(<ComponentWrapper locale="fr" timezone="Europe/Paris" />)
     expect(screen.getByTestId('culture')).toHaveTextContent('fr')
     expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Paris')
     expect(screen.getByTestId('number-display')).toHaveTextContent('33 902 837')
@@ -110,8 +80,7 @@ describe('I18nProvider', () => {
   })
 
   it('should format values for en-US correctly', () => {
-    setupTests()
-    render(<I18nWrapper locale="en" timezone="America/Los_Angeles" />)
+    render(<ComponentWrapper locale="en" timezone="America/Los_Angeles" />)
     expect(screen.getByTestId('culture')).toHaveTextContent('en')
     expect(screen.getByTestId('timezone')).toHaveTextContent(
       'America/Los_Angeles'
@@ -128,8 +97,7 @@ describe('I18nProvider', () => {
   })
 
   it('should format values for de-DE correctly', () => {
-    setupTests()
-    render(<I18nWrapper locale="de" timezone="Europe/Berlin" />)
+    render(<ComponentWrapper locale="de" timezone="Europe/Berlin" />)
     expect(screen.getByTestId('culture')).toHaveTextContent('de')
     expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Berlin')
     expect(screen.getByTestId('number-display')).toHaveTextContent('33.902.837')
@@ -144,8 +112,7 @@ describe('I18nProvider', () => {
   })
 
   it('should fall back elegantly for no-PE to en', () => {
-    setupTests()
-    render(<I18nWrapper locale="nope" timezone="Mars/Cassini" />)
+    render(<ComponentWrapper locale="nope" timezone="Mars/Cassini" />)
     expect(screen.getByTestId('number-display')).toHaveTextContent('33,902,837')
     expect(screen.getByTestId('number-display2')).toHaveTextContent('1,230')
     expect(screen.getByTestId('date-display')).toHaveTextContent('2/25/2021')

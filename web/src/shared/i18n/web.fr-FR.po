@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
-"PO-Revision-Date: 2021-03-26 18:14-0400\n"
+"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
+"PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -797,6 +797,15 @@ msgstr "Taux mensuel moyen de résistance au RIF"
 msgid "Average Monthly Suppression Rate"
 msgstr "Taux de suppression mensuel moyen"
 
+#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
+#. defaultMessage is:
+#. Average Monthly TB Detected Rate
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Average monthly TB Detected Rate"
+msgid "Average Monthly TB Detected Rate"
+msgstr "Taux mensuel moyen de TB détectée"
+
 #. [pages.Status.testsOverTimeAvgTitle.graph]
 #. defaultMessage is:
 #. Average Monthly Tests Performed
@@ -831,13 +840,6 @@ msgstr "Destinataires moyens des e-mails par résultat positif"
 #: extracted_strings.json
 msgid "Average length of SMS"
 msgstr "Durée moyenne des SMS"
-
-#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
-#. defaultMessage is:
-#. Average monthly TB Detected Rate
-#: extracted_strings.json
-msgid "Average monthly TB Detected Rate"
-msgstr "Taux mensuel moyen de TB détectée"
 
 #. [component.Widget.deviceDaysActiveDescription]
 #. defaultMessage is:
@@ -3433,6 +3435,9 @@ msgstr "Dernier"
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [component.DateTimeInput.Last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr "Les 30 derniers jours"
@@ -3453,6 +3458,13 @@ msgstr "Les 7 derniers jours"
 #: extracted_strings.json
 msgid "Last Month"
 msgstr "Le mois dernier"
+
+#. [component.DateTimeInput.LastMonth]
+#. defaultMessage is:
+#. Last Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "Last Month ({minDate} - {maxDate})"
+msgstr "Le mois dernier ({minDate} - {maxDate})"
 
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
@@ -7324,6 +7336,13 @@ msgstr "Ces mots de passe ne correspondent pas"
 #: extracted_strings.json
 msgid "This Month"
 msgstr "Ce mois-ci"
+
+#. [component.DateTimeInput.ThisMonth]
+#. defaultMessage is:
+#. This Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "This Month ({minDate} - {maxDate})"
+msgstr "Ce mois-ci ({minDate} - {maxDate})"
 
 #. [pages.dateRangeSelector.thisQuarter]
 #. defaultMessage is:

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
+"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -784,6 +784,15 @@ msgstr "Середній щомісячний коефіцієнт опору Ri
 msgid "Average Monthly Suppression Rate"
 msgstr "Середній щомісячний рівень придушення"
 
+#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
+#. defaultMessage is:
+#. Average Monthly TB Detected Rate
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Average monthly TB Detected Rate"
+msgid "Average Monthly TB Detected Rate"
+msgstr "Середньомісячний рівень виявленого туберкульозу"
+
 #. [pages.Status.testsOverTimeAvgTitle.graph]
 #. defaultMessage is:
 #. Average Monthly Tests Performed
@@ -818,13 +827,6 @@ msgstr "Середнє значення одержувачів електрон�
 #: extracted_strings.json
 msgid "Average length of SMS"
 msgstr "Середня тривалість SMS"
-
-#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
-#. defaultMessage is:
-#. Average monthly TB Detected Rate
-#: extracted_strings.json
-msgid "Average monthly TB Detected Rate"
-msgstr "Середньомісячний рівень виявленого туберкульозу"
 
 #. [component.Widget.deviceDaysActiveDescription]
 #. defaultMessage is:
@@ -3417,6 +3419,9 @@ msgstr "Останній"
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [component.DateTimeInput.Last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr "Останні 30 днів"
@@ -3437,6 +3442,13 @@ msgstr "Останні 7 днів"
 #: extracted_strings.json
 msgid "Last Month"
 msgstr "Останній місяць"
+
+#. [component.DateTimeInput.LastMonth]
+#. defaultMessage is:
+#. Last Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "Last Month ({minDate} - {maxDate})"
+msgstr "Останній місяць ({minDate} - {maxDate})"
 
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
@@ -7297,6 +7309,13 @@ msgstr "Ці паролі не збігаються"
 #: extracted_strings.json
 msgid "This Month"
 msgstr "Цей місяць"
+
+#. [component.DateTimeInput.ThisMonth]
+#. defaultMessage is:
+#. This Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "This Month ({minDate} - {maxDate})"
+msgstr "Цього місяця ({minDate} - {maxDate})"
 
 #. [pages.dateRangeSelector.thisQuarter]
 #. defaultMessage is:
