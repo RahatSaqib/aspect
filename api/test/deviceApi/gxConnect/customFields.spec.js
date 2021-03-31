@@ -1,6 +1,8 @@
 const { assert } = require('chai')
 const Ajv = require('ajv')
-const mapGxConnectCustomFieldsWithDataSources = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
+const {
+  mapGxConnectCustomFieldsWithDataSources,
+} = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 
 describe('Custom field mapper', () => {

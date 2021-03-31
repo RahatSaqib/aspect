@@ -1,6 +1,8 @@
 const { assert } = require('chai')
 const Ajv = require('ajv')
-const mapGxConnectCustomFields = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
+const {
+  mapGxConnectCustomFields,
+} = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 const aspectFields = require('./customFieldsForm.json')
 const mappingResult = require('./mappingResult.json')
 const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
@@ -428,43 +430,5 @@ describe('Custom field mapper', () => {
         ],
       },
     })
-  })
-
-  it('should transform a datasource input control data field', async () => {
-    const datasourceExample = {
-      fields: [
-        {
-          id: 2,
-          name: 'datasource field',
-          i18nKey: 'datasourcei18nKey',
-          fieldType: 'text',
-          order: 1,
-          caption: 'datasource value',
-          i18nKeyCaption: 'datasource value',
-          controlType: 'textBox',
-          optionSource: 'state',
-        },
-      ],
-    }
-
-    assert.isTrue(validate(datasourceExample))
-
-    const mappingOutput = mapGxConnectCustomFields(datasourceExample, 1, 1)
-    assert.deepEqual(mappingOutput.CustomFields.Fields, [
-      {
-        Id: 2,
-        Name: 'datasource field',
-        Help: 'datasource value',
-        InputControlData: {
-          optional: true,
-          dataSource: {
-            name: 'state',
-          },
-        },
-        Control: 'TextBox',
-        Type: 'string',
-        DisplayOrder: 1,
-      },
-    ])
   })
 })

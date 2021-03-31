@@ -5,9 +5,7 @@
   "readOnly": true,
   "title": "Schema for the result form",
   "description": "This is the schema for adding custom fields related to the clinical response",
-  "required": [
-    "fields"
-  ],
+  "required": ["fields"],
   "properties": {
     "refForms": {
       "$id": "#/properties/refForms",
@@ -30,12 +28,7 @@
         "readOnly": true,
         "title": "Field metadata",
         "description": "All the properties needed for this field to be rendered",
-        "required": [
-          "name",
-          "i18nKey",
-          "fieldType",
-          "order"
-        ],
+        "required": ["name", "i18nKey", "fieldType", "order"],
         "properties": {
           "id": {
             "$id": "#/properties/fields/items/properties/id",
@@ -111,9 +104,7 @@
             "default": false,
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "filePicker"
-                ]
+                "required": ["filePicker"]
               }
             }
           },
@@ -163,9 +154,7 @@
               "type": "object",
               "title": "The validation conditions",
               "description": "The rules of validations that should be addressed",
-              "required": [
-                "validationType"
-              ],
+              "required": ["validationType"],
               "properties": {
                 "validationType": {
                   "$id": "#/properties/fields/items/properties/validation/items/validationType",
@@ -173,13 +162,7 @@
                   "title": "The type of the validation",
                   "description": "This property is for defying the type of the validation we are going to perform",
                   "default": "regex",
-                  "enum": [
-                    "regex",
-                    "float",
-                    "integer",
-                    "datetime",
-                    "string"
-                  ]
+                  "enum": ["regex", "float", "integer", "datetime", "string"]
                 },
                 "regex": {
                   "$id": "#/properties/fields/items/properties/validation/items/regex",
@@ -188,9 +171,7 @@
                   "description": "The regular expression to be matched",
                   "dependencies": {
                     "validationType": {
-                      "required": [
-                        "regex"
-                      ]
+                      "required": ["regex"]
                     }
                   }
                 },
@@ -201,10 +182,7 @@
                   "description": "The minimun value of the field",
                   "dependencies": {
                     "validationType": {
-                      "required": [
-                        "integer",
-                        "float"
-                      ]
+                      "required": ["integer", "float"]
                     }
                   }
                 },
@@ -215,10 +193,7 @@
                   "description": "The maximun value for the number field",
                   "dependencies": {
                     "validationType": {
-                      "required": [
-                        "integer",
-                        "float"
-                      ]
+                      "required": ["integer", "float"]
                     }
                   }
                 },
@@ -229,9 +204,7 @@
                   "description": "The Minimun length for the string field",
                   "dependencies": {
                     "validationType": {
-                      "required": [
-                        "string"
-                      ]
+                      "required": ["string"]
                     }
                   }
                 },
@@ -242,9 +215,7 @@
                   "description": "The Maximun length for the string field",
                   "dependencies": {
                     "validationType": {
-                      "required": [
-                        "string"
-                      ]
+                      "required": ["string"]
                     }
                   }
                 },
@@ -254,9 +225,7 @@
                   "title": "the email validation value value",
                   "dependencies": {
                     "validationType": {
-                      "required": [
-                        "string"
-                      ]
+                      "required": ["string"]
                     }
                   }
                 },
@@ -296,9 +265,7 @@
                   "conjunctionGroupName": "groupName"
                 }
               ],
-              "required": [
-                "operator"
-              ],
+              "required": ["operator"],
               "properties": {
                 "propToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/propToCompare",
@@ -306,18 +273,14 @@
                   "title": "The name of the property for comparing the value",
                   "description": "We are going to use this as a key for obtaining the property value for compearing the condition",
                   "default": "",
-                  "examples": [
-                    "propName"
-                  ]
+                  "examples": ["propName"]
                 },
                 "gxAlertDbColumn": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/gxAlertDbColumn",
                   "type": "string",
                   "title": "The db column name for gxalert custom fields this will be removed in the sunset of gxalert",
                   "default": "",
-                  "examples": [
-                    "gxAlertDbColumn"
-                  ]
+                  "examples": ["gxAlertDbColumn"]
                 },
                 "operator": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/operator",
@@ -325,42 +288,28 @@
                   "title": "The Operator Schema",
                   "description": "An explanation about the purpose of this instance.",
                   "default": "=",
-                  "enum": [
-                    "===",
-                    "!==",
-                    ">=",
-                    "<="
-                  ]
+                  "enum": ["===", "!==", ">=", "<="]
                 },
                 "fieldToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/fieldToCompare",
                   "type": "string",
                   "title": "The field name to compare",
                   "description": "The name of the field into the tableNameToCompare table for doing the comparission",
-                  "examples": [
-                    "fieldName"
-                  ]
+                  "examples": ["fieldName"]
                 },
                 "tableNameToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/tableNameToCompare",
                   "type": "string",
                   "title": "The Table for field comparing",
                   "description": "The name of the table where the field to compare with is placed",
-                  "examples": [
-                    "tableName"
-                  ]
+                  "examples": ["tableName"]
                 },
                 "valueToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/valueToCompare",
-                  "type": [
-                    "number",
-                    "string"
-                  ],
+                  "type": ["number", "string"],
                   "title": "The value of the property to be compared",
                   "description": "this is the right side of the condition value",
-                  "examples": [
-                    "value"
-                  ]
+                  "examples": ["value"]
                 },
                 "conjunction": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/conjunction",
@@ -368,10 +317,7 @@
                   "title": "The Conjunction operator between prepositions",
                   "description": "The Conjunction operator between prepositions",
                   "default": "AND",
-                  "enum": [
-                    "AND",
-                    "OR"
-                  ]
+                  "enum": ["AND", "OR"]
                 },
                 "conjunctionGroup": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/conjunction",
@@ -382,16 +328,10 @@
               },
               "oneOf": [
                 {
-                  "required": [
-                    "valueToCompare",
-                    "propToCompare"
-                  ]
+                  "required": ["valueToCompare", "propToCompare"]
                 },
                 {
-                  "required": [
-                    "tableNameToCompare",
-                    "fieldToCompare"
-                  ]
+                  "required": ["tableNameToCompare", "fieldToCompare"]
                 }
               ]
             }
@@ -426,9 +366,7 @@
                   "operator": "==="
                 }
               ],
-              "required": [
-                "operator"
-              ],
+              "required": ["operator"],
               "properties": {
                 "propToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/propToCompare",
@@ -436,9 +374,7 @@
                   "title": "The name of the property for comparing the value",
                   "description": "We are going to use this as a key for obtaining the property value for compearing the condition",
                   "default": "",
-                  "examples": [
-                    "propName"
-                  ]
+                  "examples": ["propName"]
                 },
                 "operator": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/operator",
@@ -446,48 +382,29 @@
                   "title": "The Operator Schema",
                   "description": "An explanation about the purpose of this instance.",
                   "default": "=",
-                  "enum": [
-                    "===",
-                    "!==",
-                    ">=",
-                    "<=",
-                    "not-selected"
-                  ]
+                  "enum": ["===", "!==", ">=", "<=", "not-selected"]
                 },
                 "fieldToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/fieldToCompare",
                   "type": "string",
                   "title": "The field name to compare",
                   "description": "The name of the field into the tableNameToCompare table for doing the comparission",
-                  "examples": [
-                    "fieldName"
-                  ]
+                  "examples": ["fieldName"]
                 },
                 "valueToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/valueToCompare",
-                  "type": [
-                    "number",
-                    "string"
-                  ],
+                  "type": ["number", "string"],
                   "title": "The value of the property to be compared",
                   "description": "this is the right side of the condition value",
-                  "examples": [
-                    "value"
-                  ]
+                  "examples": ["value"]
                 }
               },
               "oneOf": [
                 {
-                  "required": [
-                    "valueToCompare",
-                    "fieldToCompare",
-                    "propToCompare"
-                  ]
+                  "required": ["propToCompare", "fieldToCompare"]
                 },
                 {
-                  "required": [
-                    "fieldToCompare"
-                  ]
+                  "required": ["propToCompare", "valueToCompare"]
                 }
               ]
             }
@@ -501,10 +418,7 @@
             "default": {},
             "dependencies": {
               "controlType": {
-                "required": [
-                  "textBox",
-                  "label"
-                ]
+                "required": ["textBox", "label"]
               }
             },
             "properties": {
@@ -531,11 +445,7 @@
                 "type": "string",
                 "title": "The function name who will do the calulation between the fields.",
                 "description": "The function name who will do the calulation between the fields.",
-                "enum": [
-                  "add",
-                  "substract",
-                  "datediff"
-                ]
+                "enum": ["add", "substract", "datediff"]
               },
               "format": {
                 "$id": "#/properties/fields/items/properties/calculated/properties/format",
@@ -544,10 +454,7 @@
                 "description": "The format applied to show the result of the calculation"
               }
             },
-            "required": [
-              "function",
-              "fieldId1"
-            ]
+            "required": ["function", "fieldId1"]
           },
           "resultDbColumn": {
             "$id": "#/properties/fields/items/properties/resultDbColumn",
@@ -589,10 +496,7 @@
             "default": "https://demo.aspect.id/api",
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "aspectUrl",
-                  "customUrl"
-                ]
+                "required": ["aspectUrl", "customUrl"]
               }
             }
           },
@@ -602,9 +506,7 @@
             "title": "The fixed list ",
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "fixedList"
-                ]
+                "required": ["fixedList"]
               }
             },
             "minItems": 1,
@@ -620,10 +522,7 @@
                   "value": "value"
                 }
               ],
-              "required": [
-                "key",
-                "value"
-              ],
+              "required": ["key", "value"],
               "properties": {
                 "key": {
                   "$id": "#/properties/fields/items/properties/optionValues/items/properties/key",
@@ -650,11 +549,7 @@
             "description": "Only for third party API option, This property is going to define which properties in the response object collection is going to be the key and the value for filling the different lists",
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "customUrl",
-                  "function",
-                  "aspectUrl"
-                ]
+                "required": ["customUrl", "function", "aspectUrl"]
               }
             },
             "examples": [
@@ -663,10 +558,7 @@
                 "value": "name property for the Value field"
               }
             ],
-            "required": [
-              "key",
-              "value"
-            ],
+            "required": ["key", "value"],
             "properties": {
               "key": {
                 "$id": "#/properties/fields/items/properties/customUrlMappingFields/properties/key",
@@ -674,9 +566,7 @@
                 "title": "The Key option to be mapped",
                 "description": "This will be the name for looking for in the response for mapping into our option list structure",
                 "default": "",
-                "examples": [
-                  "name property for the key field"
-                ]
+                "examples": ["name property for the key field"]
               },
               "value": {
                 "$id": "#/properties/fields/items/properties/customUrlMappingFields/properties/value",
@@ -691,14 +581,10 @@
             "type": "string",
             "title": "The response type of the custom url",
             "description": "The response type of the custom url",
-            "enum": [
-              "json | xml"
-            ],
+            "enum": ["json | xml"],
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "customUrl"
-                ]
+                "required": ["customUrl"]
               }
             }
           },
@@ -709,9 +595,7 @@
             "description": "The module where the function is placed",
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "function"
-                ]
+                "required": ["function"]
               }
             }
           },
@@ -722,9 +606,7 @@
             "description": "The function name which retrieves the option list",
             "dependencies": {
               "typeOfOptionSource": {
-                "required": [
-                  "function"
-                ]
+                "required": ["function"]
               }
             }
           }

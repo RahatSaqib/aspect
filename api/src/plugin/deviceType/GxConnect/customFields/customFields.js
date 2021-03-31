@@ -1,7 +1,9 @@
 const {
   getCustomFields: getCustomFieldsService,
 } = require('../../../../forms/service')
-const mapGxConnectCustomFields = require('./customFieldsMappingTemplates')
+const {
+  mapGxConnectCustomFieldsWithDataSources,
+} = require('./customFieldsMappingTemplates')
 
 const getCustomFields = async (knex, partnerId, deviceId) => {
   const customFields = await getCustomFieldsService(partnerId, deviceId)
@@ -12,7 +14,11 @@ const getCustomFields = async (knex, partnerId, deviceId) => {
     const { countryId, stateId } = await knex('Device as d')
       .join('Geography as g', 'g.id', 'd.geographyId')
       .first('g.countryId', 'g.stateId')
-    return mapGxConnectCustomFields(customFields, countryId, stateId)
+    return mapGxConnectCustomFieldsWithDataSources(
+      customFields,
+      countryId,
+      stateId
+    )
   }
   return null
 }

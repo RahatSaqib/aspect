@@ -208,4 +208,7 @@ const mapGxConnectCustomFieldsWithDataSources = async (
   )
   return fields
 }
-module.exports = mapGxConnectCustomFieldsWithDataSources
+module.exports = {
+  mapGxConnectCustomFieldsWithDataSources,
+  mapGxConnectCustomFields,
+}

@@ -99,7 +99,7 @@
       "caption": "The treatmet type applied to the patient",
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "order": 0,
-      "controlType": "checkbox",
+      "controlType": "checkBox",
       "required": true
     },
     {
@@ -206,7 +206,7 @@
         },
         {
           "propToCompare": "ReferringHealthFacilityProvince",
-          "propName": "state",
+          "fieldToCompare": "state",
           "operator": "not-selected"
         }
       ],
