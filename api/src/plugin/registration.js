@@ -139,6 +139,7 @@ const plugins = {
     onResultLogged: require('./partner/Philippines/onResultLogged'),
     issueTriggers: require('./partner/Philippines/issueTriggers'),
     issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
+    transformMergeResultPayload: require('./partner/Philippines/transformMergeResultPayload'),
   },
 }
 

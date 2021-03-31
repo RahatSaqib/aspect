@@ -484,6 +484,9 @@ function listResultsBaseConfig() {
         treatmentStatusId: Joi.number()
           .allow('')
           .description('Filter for Result Treatment Status ID'),
+        treatmentStatus: Joi.string()
+          .allow('')
+          .description('Filter for Result Treatment Status by External ID'),
         jsonFields: Joi.array()
           .max(10)
           .items(Joi.string().max(50))

@@ -1,8 +1,6 @@
 import messages from '../Detail/messages'
 
 const getConfig = formatMessage => {
-  console.log(formatMessage(messages.transferResult))
-
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',

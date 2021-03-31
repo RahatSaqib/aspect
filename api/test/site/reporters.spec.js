@@ -412,6 +412,8 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
   // ------------------------------------------------------------------------
   const assertSorting = async (sortCol, sortDir = 'asc') => {
     const data = await getSiteReporters({
+      minDate,
+      maxDate,
       sortCol,
       sortDir,
       page: 0,

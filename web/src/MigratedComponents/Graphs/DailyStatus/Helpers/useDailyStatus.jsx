@@ -13,7 +13,7 @@ import { extractOptionValue } from '../../Helpers/Formatters'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS } from '../../../QueryFetch/Device'
 
-const useDailyStatus = (minDate, maxDate) => {
+const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT) => {
   const { formatMessage } = useIntl()
   const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
@@ -35,8 +35,8 @@ const useDailyStatus = (minDate, maxDate) => {
     error: devicesError,
   } = useQuery([DAILY_STATUS.KEY, { params }], async (key, { params }) =>
     fetchWrapperForQueries({
-      endpoint: DAILY_STATUS.ENDPOINT,
-      params,
+      endpoint,
+      params: minDate && maxDate ? params : null,
     })
   )
 
@@ -147,24 +147,20 @@ const useDailyStatus = (minDate, maxDate) => {
    * Returns data needed to open AspectDialog for setting maintenance
    * status for selected date range.
    * Notice that date range is _continuous dates with SAME status
-   * between edge of weekends_
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
     const { maintenanceStatusHistory, shortName } = devicesDaily.find(
       ({ id }) => id === deviceId
     )
-    const {
-      isWeekend,
-      maintenanceStatusExternalId,
-    } = maintenanceStatusHistory.find(it => it.day === day)
+    const { maintenanceStatusExternalId } = maintenanceStatusHistory.find(
+      it => it.day === day
+    )
     const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
     // helper to get forward or backward index of first day with another status
     const getIndex = findFn =>
       findFn(
         maintenanceStatusHistory,
-        it =>
-          it.maintenanceStatusExternalId !== maintenanceStatusExternalId ||
-          it.isWeekend !== isWeekend,
+        it => it.maintenanceStatusExternalId !== maintenanceStatusExternalId,
         fromIndex
       )
 

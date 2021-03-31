@@ -51,7 +51,7 @@ const enhance = compose(
       ...props,
       treatmentSelectList: props.resultTreatmentStatusList.items
         .map(item => ({
-          value: item.get('id'),
+          value: item.get('externalId'),
           text: item.get('name'),
           i18nKey: item.get('i18nKey'),
         }))

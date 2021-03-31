@@ -4,11 +4,19 @@ import { OverlayView } from '@react-google-maps/api'
 import classnames from 'classnames/bind'
 
 import IconProvider from '../../../IconProvider'
+import AspectTooltip from '../../../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(require('./GooglePin.css'))
 
-const GooglePin = ({ position, config, id, color }) => {
+const GooglePin = ({
+  position,
+  config,
+  id,
+  color,
+  info: { maintenanceStatusName, name },
+}) => {
   const { size, click } = config
+
   return (
     <OverlayView
       position={position}
@@ -28,7 +36,16 @@ const GooglePin = ({ position, config, id, color }) => {
           color,
         }}
       >
-        <IconProvider icon="FaMapMarkerAlt" />
+        {name && maintenanceStatusName ? (
+          <AspectTooltip
+            title={`${name}: ${maintenanceStatusName}`}
+            placement="top"
+          >
+            <IconProvider icon="FaMapMarkerAlt" title={false} />
+          </AspectTooltip>
+        ) : (
+          <IconProvider icon="FaMapMarkerAlt" title={false} />
+        )}
       </div>
     </OverlayView>
   )
@@ -37,6 +54,7 @@ const GooglePin = ({ position, config, id, color }) => {
 GooglePin.defaultProps = {
   id: 0,
   color: 'transparent',
+  info: {},
 }
 
 const configShape = {
@@ -45,12 +63,17 @@ const configShape = {
 }
 
 const positionShape = { lat: number.isRequired, lng: number.isRequired }
+const infoShape = {
+  maintenanceStatusName: string,
+  name: string,
+}
 
 GooglePin.propTypes = {
   position: shape(positionShape).isRequired,
   config: shape(configShape).isRequired,
   color: string,
   id: number,
+  info: shape(infoShape),
 }
 
 export default GooglePin

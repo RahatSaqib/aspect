@@ -12,7 +12,7 @@ const {
   generateResults,
   normalizeTreatmentStatusDistributionByResults,
 } = require('../commonGenerateResults')
-const { getMGITResultFromTBPossitive } = require('../commonTB')
+const { getMGITResultFromTBPositive } = require('../commonTB')
 
 async function seed(knex) {
   // Create admin user and audit fields
@@ -54,7 +54,7 @@ async function seed(knex) {
   await Promise.each(tbResults, async result => {
     if (devicesMGIT.length > 0 && MGITAssays && MGITAssays.length > 0)
       return knex('Result').insert(
-        await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
+        await getMGITResultFromTBPositive(result, MGITAssays, devicesMGIT)
       )
   })
 

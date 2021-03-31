@@ -22,6 +22,7 @@ const DEFAULT_DISPLAY_PREFERENCES = {
 
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
 export const getTimezoneId = () => localStorage.getItem(AS_TIMEZONE)
+export const getCurrentCulture = () => localStorage.getItem(AS_CULTURE)
 
 const INITIAL_DISPLAY_PREFERENCES = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
 
