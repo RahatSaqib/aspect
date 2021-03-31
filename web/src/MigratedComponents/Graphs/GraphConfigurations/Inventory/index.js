@@ -1,5 +1,5 @@
 import BarGraph from '../../BarGraph'
-import ConsumableDropdown from '../../../AspectDropDown/ConsumableDropdown'
+import ConsumableDropDown from '../../../AspectDropDown/ConsumableDropDown'
 
 const inventoryGraphs = {
   inventoryStatus: {
@@ -8,7 +8,7 @@ const inventoryGraphs = {
     assays: [],
     selectorModifiers: [
       {
-        component: ConsumableDropdown,
+        component: ConsumableDropDown,
       },
     ],
     componentSize: 'full',
