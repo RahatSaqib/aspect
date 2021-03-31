@@ -11,8 +11,12 @@ async function up(knex) {
 
   const consumables = await knex('Consumable')
   await Promise.all(
-    map(consumables, async ({ externalId }) => 
-      await knex('Consumable').where({ externalId }).update({ i18nKey: camelCase(externalId) })
+    map(
+      consumables,
+      async ({ externalId }) =>
+        knex('Consumable')
+          .where({ externalId })
+          .update({ i18nKey: camelCase(externalId) })
     )
   )
 

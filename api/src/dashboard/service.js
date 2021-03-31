@@ -385,7 +385,12 @@ async function inventoryItemDashboard(request) {
           _.isObject
         )
         if (!_.isEmpty(result)) {
-          const { consumableId, consumableName, consumableExternalId, i18nKey } = list[0]
+          const {
+            consumableId,
+            consumableName,
+            consumableExternalId,
+            i18nKey,
+          } = list[0]
           acc.push({
             consumableId,
             consumableExternalId,
