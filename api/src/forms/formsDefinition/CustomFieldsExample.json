@@ -200,6 +200,7 @@
       "typeOfOptionSource": "fixedList",
       "filters": [
         {
+          "conjunction": "or",
           "propToCompare": "ReferringHealthFacilityProvince",
           "fieldToCompare": "state",
           "operator": "==="

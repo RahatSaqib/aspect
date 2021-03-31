@@ -30,6 +30,7 @@ describe('Custom field mapper', () => {
           caption: 'PlainField value',
           i18nKeyCaption: 'PlainFieldi18nCaptionKey',
           controlType: 'textBox',
+          assayExternalId: [],
         },
       ],
     }

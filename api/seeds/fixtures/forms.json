@@ -1,4 +1,27 @@
 {
+  "CustomFieldsTB": {
+    "fileName": "CustomFieldsTB.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Tuberculosis fields",
+      "i18nKeyTitle": "CustomFieldsTBi18nkey",
+      "externalId": "CustomFieldsTB",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "CustomFieldsHIVVL": {
+    "fileName": "CustomFieldsHIVVL.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFieldsHIVVL",
+      "i18nKeyTitle": "CustomFieldsHIVVLi18nkey",
+      "externalId": "CustomFieldsHIVVL",
+      "formTypeExternalId": "gxConnectForm",
+      "assayExternalId": "GxHiv1Vl",
+      "diseaseExternalId": "hiv"
+    }
+  },
   "CustomFieldsExample": {
     "fileName": "CustomFieldsExample.json",
     "formDefinition": {

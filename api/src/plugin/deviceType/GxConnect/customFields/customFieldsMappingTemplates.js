@@ -33,7 +33,7 @@ const map = aspectFields => {
     'fields[].name': 'CustomFields.Fields[].Name',
     'fields[].assayExternalId': {
       key: 'CustomFields.Fields[].LimitToTestTypeIds[]',
-      transform: value => getGxAlertAssayId[value],
+      transform: value => getGxAlertAssayId[value] || null,
     },
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',

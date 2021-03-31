@@ -37,7 +37,6 @@ const getCustomFields = async (partnerId, deviceId) => {
       knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
     )
     .groupBy('fd.id', 'd.customFieldsSentOn')
-
   let forms = {}
   _.each(await formQuery, form => {
     if (
