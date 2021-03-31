@@ -18,7 +18,7 @@ const {
 } = require('./utils')
 const { deviceTypeCategoryToId } = require('../src/shared/dictionary')
 
-async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
+async function getMGITResultFromTBPositive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = getLinkedResultDate(result)
   const now = new Date()
   const assay = _.sample(assaysMGIT)
@@ -324,6 +324,6 @@ async function upsertCultureAssays(
 
 module.exports = {
   upsertMGITDeviceTypeAndAssays,
-  getMGITResultFromTBPossitive,
+  getMGITResultFromTBPositive,
   upsertCultureAssays,
 }

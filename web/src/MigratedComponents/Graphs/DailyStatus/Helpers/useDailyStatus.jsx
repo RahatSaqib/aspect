@@ -147,24 +147,20 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT) => {
    * Returns data needed to open AspectDialog for setting maintenance
    * status for selected date range.
    * Notice that date range is _continuous dates with SAME status
-   * between edge of weekends_
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
     const { maintenanceStatusHistory, shortName } = devicesDaily.find(
       ({ id }) => id === deviceId
     )
-    const {
-      isWeekend,
-      maintenanceStatusExternalId,
-    } = maintenanceStatusHistory.find(it => it.day === day)
+    const { maintenanceStatusExternalId } = maintenanceStatusHistory.find(
+      it => it.day === day
+    )
     const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
     // helper to get forward or backward index of first day with another status
     const getIndex = findFn =>
       findFn(
         maintenanceStatusHistory,
-        it =>
-          it.maintenanceStatusExternalId !== maintenanceStatusExternalId ||
-          it.isWeekend !== isWeekend,
+        it => it.maintenanceStatusExternalId !== maintenanceStatusExternalId,
         fromIndex
       )
 
