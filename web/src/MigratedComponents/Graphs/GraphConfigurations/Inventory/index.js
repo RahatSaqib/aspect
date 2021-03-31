@@ -1,5 +1,5 @@
 import BarGraph from '../../BarGraph'
-import ConsumableDropdown from '../../../../consumable/ConsumableDropdown.jsx'
+import ConsumableDropdown from '../../../AspectDropDown/ConsumableDropdown'
 
 const inventoryGraphs = {
   inventoryStatus: {

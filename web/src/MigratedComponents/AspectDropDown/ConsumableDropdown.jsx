@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import AspectDropDown from '../MigratedComponents/AspectDropDown'
-import messages from './messages'
+import AspectDropDown from '.'
+import messages from '../../consumable/messages'
 
 const config = {
   selectedValue: 'Consumable',
