@@ -160,6 +160,7 @@ const SelectComponent = ({
   theme,
   messages,
 }) => {
+  messages = messages || {}
   const { formatMessage } = useI18n()
   const [busy, setBusy] = useState(true)
   const [defaultOptionValue, setDefaultOptionValue] = useState(false)
@@ -193,11 +194,9 @@ const SelectComponent = ({
     >
       <Select
         name={identifier}
-        getOptionLabel={val => {
-          return nameKey === 'i18nKey'
-            ? formatMessage(messages[val[nameKey]])
-            : val[nameKey]
-        }}
+        getOptionLabel={val =>
+          formatMessage(messages[val[nameKey]], {}, val[nameKey])
+        }
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         isLoading={isLoading}
