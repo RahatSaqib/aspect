@@ -436,6 +436,7 @@ async function createNewDevice(
       'd.serial',
       'd.macAddress',
       'd.configurationData',
+      'd.connectSettingsSentOn',
       'd.lastSeenOn',
       'd.putInService',
       'da.token as approval',
