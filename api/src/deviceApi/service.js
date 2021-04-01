@@ -276,7 +276,14 @@ async function addDeviceDataWithContext(context) {
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
-  const { name, site, result, configuration, log } = payload
+  const {
+    name,
+    site,
+    result,
+    configuration,
+    log,
+    includeConnectSettings,
+  } = payload
   let { operation } = payload
 
   if (name) {
@@ -304,6 +311,15 @@ async function addDeviceDataWithContext(context) {
       ...(await updateDeviceConfigurationWithContext(
         context.withPayload(configuration)
       )),
+    }
+  }
+  if (includeConnectSettings) {
+    logger.debug('executing getConnectionSettings', {
+      reLabel: 'deviceApi:getConnectionSettings',
+    })
+    response = {
+      ...response,
+      ...(await getConnectionSettings(context)),
     }
   }
 
@@ -391,6 +407,48 @@ async function addDeviceDataWithContext(context) {
   }
 
   return response
+}
+
+async function getConnectionSettings(context) {
+  const {
+    knex,
+    device: { deviceId },
+  } = context
+  const { data } =
+    (await knex('DeviceConfiguration as dc')
+      .join('Geography as g', 'g.id', 'dc.geographyId')
+      .join('Device as d', 'd.deviceTypeId', 'dc.deviceTypeId')
+      .join(
+        'Geography as deviceGeography',
+        'd.geographyId',
+        'deviceGeography.id'
+      )
+      .where(builder => {
+        builder
+          .where({
+            'd.id': deviceId,
+            'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
+            'g.countryId': knex.raw('deviceGeography.countryId'),
+          })
+
+          .where(builder =>
+            builder
+              .whereNull('d.connectSettingsSentOn')
+              .orWhere('d.connectSettingsSentOn', '<', 'dc.updatedOn')
+          )
+          .andWhere(innerBuilder => {
+            innerBuilder
+              .whereNull('g.stateId')
+              .orWhere(orBuilder =>
+                orBuilder
+                  .whereNotNull('g.stateId')
+                  .andWhere('g.stateId', knex.raw('deviceGeography.stateId'))
+              )
+          })
+      })
+      .andWhere('deviceGeography.stateId', 'g.stateId')
+      .first('data')) || {}
+  return data
 }
 
 async function getDeviceDataWithContext(context) {
