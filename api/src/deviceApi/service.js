@@ -303,11 +303,16 @@ async function addDeviceDataWithContext(context) {
     response = {
       ...response,
       ...(await updateDeviceConfigurationWithContext(
-        context.withPayload({ getFormsDefinition, ...configuration })
+        context.withPayload(configuration)
       )),
     }
   }
-
+  if (getFormsDefinition) {
+    response = {
+      ...response,
+      ...(await getCustomFields(context)),
+    }
+  }
   if (operation) {
     logger.debug('executing addDeviceOperationWithContext', {
       reLabel: 'deviceApi:addDeviceOperationWithContext',
@@ -461,14 +466,6 @@ async function addDeviceOperationWithContext(context) {
 
   const postProcess = await loadPlugin(plugins, 'postProcessAddDeviceOperation')
   const postProcessResult = await postProcess(context)
-  /**
-   * TODO: check if this is needed
-   */
-  // const customFields = await loadPlugin(plugins, 'getCustomFields')
-  // const CustomFields = {}
-  // if (customFields) CustomFields = await customFields(partnerId, deviceId)
-  // console.log('postProcessResult', postProcessResult)
-  // console.log('CustomFields', CustomFields)
   return postProcessResult
 }
 
@@ -476,11 +473,10 @@ async function updateDeviceConfigurationWithContext(context) {
   const {
     knex,
     payload,
-    device: { id: deviceId, partnerId },
+    device: { id: deviceId },
     now,
     pluginNames: plugins,
   } = context
-  const { getFormsDefinition } = payload
   const preProcess = await loadPlugin(
     plugins,
     'preProcessUpdateDeviceConfiguration'
@@ -494,15 +490,23 @@ async function updateDeviceConfigurationWithContext(context) {
     'postProcessUpdateDeviceConfiguration'
   )
   const postProcessResult = await postProcess(context)
-  if (getFormsDefinition) {
-    const customFields = await loadPlugin(plugins, 'getCustomFields')
-    if (customFields)
-      postProcessResult.CustomFields = _.get(
-        await customFields(knex, partnerId, deviceId),
-        'CustomFields'
-      )
-  }
+
   return postProcessResult
+}
+const getCustomFields = async context => {
+  const {
+    knex,
+    device: { id: deviceId, partnerId },
+    pluginNames: plugins,
+  } = context
+  let CustomFields = null
+  const customFields = await loadPlugin(plugins, 'getCustomFields')
+  if (customFields)
+    CustomFields = _.get(
+      await customFields(knex, partnerId, deviceId),
+      'CustomFields'
+    )
+  return { CustomFields }
 }
 
 async function getDeviceOperationWithContext(context) {
@@ -1133,4 +1137,5 @@ module.exports = {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
+  getCustomFields,
 }
