@@ -4,10 +4,8 @@ const omit = require('lodash/omit')
 const min = require('lodash/min')
 const uniq = require('lodash/uniq')
 const addDays = require('date-fns/addDays')
-const parseISO = require('date-fns/parseISO')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
-const endOfDay = require('date-fns/endOfDay')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
 const {
@@ -35,18 +33,6 @@ async function deviceStatusOverTime(request) {
     maxDateStatus = addDays(startOfDayUtc(new Date(maxDate)), -1)
   } else
     maxDateStatus = startOfDayUtc(new Date(maxDate))
-
-  console.log('minDate in Date', new Date(minDate))
-  console.log('STARTOFDATE', startOfDayUtc(new Date(minDate)))
-
-  console.log('minDate', minDate)
-  console.log('maxDate', maxDate)
-
-  console.log('minDateResults', minDateResults)
-  console.log('maxDateResults', maxDateResults)
-
-  console.log('minDateStatus', minDateStatus)
-  console.log('maxDateStatus', maxDateStatus)
 
   const days = getArrayOfDaysInRange(minDate, maxDate)
 
@@ -172,29 +158,18 @@ async function deviceStatusOverTime(request) {
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
     ])
-  // console.log('statusData0', statusData[0])
   statusData = groupListBy(statusData, 'deviceId', 'day')
-  // console.log('statusData', statusData)
-  // console.log('days', days)
-
-  // console.log('statusData', statusData)
-
-  console.log(statusData)
 
   let data = []
   devices.forEach(device => {
     const maintenanceStatusHistory = []
     days.forEach(day => {
-      // console.log('day', day)
       const isoDay = getDateSubstring(day.toISOString()) + 'T00:00:00.000' + offset
-      // console.log('isoDay', isoDay)
-      // const onlyDate = getDateSubstring(day.toISOString())
       const groupName = getGroupName(device.id, isoDay)
 
       const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
 
       let [status] = statusData[groupName] || [{}]
-      // console.log('status', status)
       if (status) {
         status = omit(status, 'deviceId')
 
@@ -211,9 +186,6 @@ async function deviceStatusOverTime(request) {
           }
         }
       }
-
-      // console.log('isoDay', isoDay)
-      // console.log('status', status)
 
       maintenanceStatusHistory.push({
         ...status,
