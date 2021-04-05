@@ -262,12 +262,9 @@ const getAllDaysInCurrentMonth = (
 
 const getPreviousPeriod = (period = 'month', dateFormat) => {
   // currently only works for month
-  const previousPeriodStart = format(
-    negateTimeZoneOffset(getTimePeriod(1, period, dateFormat)),
-    dateFormat
-  )
+  const previousPeriodStart = getTimePeriod(1, period, dateFormat)
   const previousPeriodEnd = format(
-    endOfMonth(negateTimeZoneOffset(previousPeriodStart)),
+    endOfMonth(new Date(previousPeriodStart)),
     dateFormat
   )
   return { start: previousPeriodStart, end: previousPeriodEnd }

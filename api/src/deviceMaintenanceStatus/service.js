@@ -26,15 +26,11 @@ async function deviceStatusOverTime(request) {
   let minDateResults = new Date(minDate).toISOString()
   let maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
 
-  // FIlters for statuses
-  const minDateStatus = startOfDayUtc(new Date(minDate))
-  let maxDateStatus
-  if (offset.substring(0, 1) === '+') {
-    maxDateStatus = addDays(startOfDayUtc(new Date(maxDate)), -1)
-  } else
-    maxDateStatus = startOfDayUtc(new Date(maxDate))
+  // Filters for statuses
+  let minDateStatus = startOfDayUtc(new Date(minDate))
+  let maxDateStatus = startOfDayUtc(new Date(maxDate))
 
-  const days = getArrayOfDaysInRange(minDate, maxDate)
+  const days = getArrayOfDaysInRange(minDateStatus, maxDateStatus)
 
   // helpers
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
