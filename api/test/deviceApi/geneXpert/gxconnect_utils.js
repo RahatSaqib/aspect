@@ -81,7 +81,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('DeviceLog').whereIn('resultId', resultIds).delete()
 
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
-
   await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()

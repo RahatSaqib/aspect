@@ -28,11 +28,14 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { run } = require('../../../src/db')
+const { run, knex: knexDb } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
-const { resultCategoryToId } = require('../../../src/shared/dictionary')
+const {
+  resultCategoryToId,
+  deviceTypeToId,
+} = require('../../../src/shared/dictionary')
 const {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
@@ -42,7 +45,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device API routes for GxConnect Devices', () => {
+describe.only('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -3962,6 +3965,118 @@ describe('Device API routes for GxConnect Devices', () => {
             ]
           )
         }))
+    })
+  })
+  describe('Daily details', () => {
+    describe('whole country same settings', () => {
+      const context = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName,
+        macAddress,
+      })
+      let insertedConfiguration = null
+      beforeEach(async () => {
+        await context.beforeRegisterAndSetDevice()
+        const { geographyId } = await knexDb('Site as s')
+          .where({ externalId: 'Ohio_Wayne' })
+          .first('s.geographyId')
+        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
+          deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+          geographyId,
+          data: JSON.stringify({
+            EnableInventoryModule: true,
+            AspectUploadExcludePatientId: true,
+            GxAlertUploadExcludePatientId: true,
+          }),
+          updatedOn: new Date(),
+        })
+      })
+      afterEach(async () => {
+        await context.afterCleanUp()
+        await knexDb('DeviceConfiguration')
+          .where({ id: insertedConfiguration })
+          .delete()
+      })
+
+      it('should receive deviceConfiguration for the whole country', async () => {
+        const { deviceAuth, basicDevicePayload } = context
+        let res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .catch(assert.fail)
+
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(res.body.deviceConfiguration, {
+          EnableInventoryModule: false,
+          AspectUploadExcludePatientId: false,
+          GxAlertUploadExcludePatientId: false,
+        })
+        // the second time, device configuration it will be null because was already responded
+
+        res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .catch(assert.fail)
+
+        assert.equal(res.statusCode, 200)
+        assert.isNull(res.body.deviceConfiguration)
+      })
+    })
+    describe('different configurations depending the state', () => {
+      const context = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName: 'Dayton Ohio 2',
+        macAddress,
+      })
+      let insertedConfiguration = null
+      beforeEach(async () => {
+        const siteOhio = await knexDb('Site as s')
+          .where({ externalId: 'OH_Dayton' })
+          .first()
+        await knexDb('Site').insert({
+          ..._.omit(siteOhio, ['name', 'id', 'externalId']),
+          name: 'Dayton Ohio 2',
+          externalId: 'OH_Dayton_2',
+        })
+        await context.beforeRegisterAndSetDevice()
+        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
+          deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+          geographyId: siteOhio.geographyId,
+          data: JSON.stringify({
+            EnableInventoryModule: true,
+            AspectUploadExcludePatientId: true,
+            GxAlertUploadExcludePatientId: true,
+          }),
+          updatedOn: new Date(),
+        })
+      })
+      afterEach(async () => {
+        await context.afterCleanUp()
+        await knexDb('DeviceConfiguration')
+          .where({ id: insertedConfiguration })
+          .delete()
+      })
+      it('should receive deviceConfiguration for that specific state', async () => {
+        const { deviceAuth, basicDevicePayload } = context
+        const res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .catch(assert.fail)
+
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(res.body.deviceConfiguration, {
+          EnableInventoryModule: true,
+          AspectUploadExcludePatientId: true,
+          GxAlertUploadExcludePatientId: true,
+        })
+      })
     })
   })
 })

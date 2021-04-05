@@ -282,7 +282,7 @@ async function addDeviceDataWithContext(context) {
     result,
     configuration,
     log,
-    includeConnectSettings,
+    includeDeviceConfiguration,
   } = payload
   let { operation } = payload
 
@@ -313,7 +313,7 @@ async function addDeviceDataWithContext(context) {
       )),
     }
   }
-  if (includeConnectSettings) {
+  if (includeDeviceConfiguration) {
     logger.debug('executing getConnectionSettings', {
       reLabel: 'deviceApi:getConnectionSettings',
     })
@@ -412,7 +412,7 @@ async function addDeviceDataWithContext(context) {
 async function getConnectionSettings(context) {
   const {
     knex,
-    device: { deviceId },
+    device: { id: deviceId },
   } = context
   const { data } =
     (await knex('DeviceConfiguration as dc')
@@ -434,7 +434,7 @@ async function getConnectionSettings(context) {
           .where(builder =>
             builder
               .whereNull('d.connectSettingsSentOn')
-              .orWhere('d.connectSettingsSentOn', '<', 'dc.updatedOn')
+              .orWhere('d.connectSettingsSentOn', '<', knex.raw('dc.updatedOn'))
           )
           .andWhere(innerBuilder => {
             innerBuilder
@@ -446,9 +446,14 @@ async function getConnectionSettings(context) {
               )
           })
       })
-      .andWhere('deviceGeography.stateId', 'g.stateId')
+      .orderBy('g.stateId', 'DESC')
       .first('data')) || {}
-  return data
+
+  if (!_.isEmpty(data))
+    await knex('Device')
+      .update({ connectSettingsSentOn: new Date() })
+      .where({ id: deviceId })
+  return { deviceConfiguration: _.isEmpty(data) ? null : JSON.parse(data) }
 }
 
 async function getDeviceDataWithContext(context) {
