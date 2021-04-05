@@ -558,7 +558,8 @@ async function createTestInventory(knex, siteId, partnerId) {
     unit: 1,
     canExpire: 1,
     manufacturer: 'Daktari',
-    externalId: 'TestCartridge',
+    externalId: 'DaktariCartridge',
+    i18nKey: 'DaktariCartridge',
   })
   await knex('ConsumableAssay').insert({
     consumableId,
