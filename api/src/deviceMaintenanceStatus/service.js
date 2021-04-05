@@ -7,12 +7,14 @@ const addDays = require('date-fns/addDays')
 const parseISO = require('date-fns/parseISO')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
+const endOfDay = require('date-fns/endOfDay')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
 const {
   getArrayOfDaysInRange,
-  getDateSubstring,
+  getOffsetFromIsoDateString,
   startOfDayUtc,
+  getDateSubstring
 } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 
@@ -20,8 +22,31 @@ async function deviceStatusOverTime(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   let { minDate, maxDate } = request.query
-  minDate = startOfDayUtc(minDate).toISOString()
-  maxDate = startOfDayUtc(min([maxDate, addDays(new Date(), 1)])).toISOString()
+  const offset = getOffsetFromIsoDateString(minDate)
+
+  // Filters for results
+  let minDateResults = new Date(minDate).toISOString()
+  let maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
+
+  // FIlters for statuses
+  const minDateStatus = startOfDayUtc(new Date(minDate))
+  let maxDateStatus
+  if (offset.substring(0, 1) === '+') {
+    maxDateStatus = addDays(startOfDayUtc(new Date(maxDate)), -1)
+  } else
+    maxDateStatus = startOfDayUtc(new Date(maxDate))
+
+  console.log('minDate in Date', new Date(minDate))
+  console.log('STARTOFDATE', startOfDayUtc(new Date(minDate)))
+
+  console.log('minDate', minDate)
+  console.log('maxDate', maxDate)
+
+  console.log('minDateResults', minDateResults)
+  console.log('maxDateResults', maxDateResults)
+
+  console.log('minDateStatus', minDateStatus)
+  console.log('maxDateStatus', maxDateStatus)
 
   const days = getArrayOfDaysInRange(minDate, maxDate)
 
@@ -40,7 +65,6 @@ async function deviceStatusOverTime(request) {
       'externalId as maintenanceStatusExternalId'
     )
     .first()
-
   // generic query for devices grouped by id with counts of tests
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -51,8 +75,8 @@ async function deviceStatusOverTime(request) {
     .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
@@ -79,8 +103,8 @@ async function deviceStatusOverTime(request) {
     .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -90,7 +114,7 @@ async function deviceStatusOverTime(request) {
     .select(
       'd.id',
       knex.raw('COUNT(r.id) as totalResults'),
-      knex.raw(`DATE_FORMAT(r.endedOn, '%Y-%m-%d') as dayDate`)
+      knex.raw(`CONCAT(DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as dayDate`)
     )
   devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
 
@@ -130,8 +154,8 @@ async function deviceStatusOverTime(request) {
       }
     )
     // Where maintenance status log is in range
-    .where('dmsl.day', '>=', minDate)
-    .where('dmsl.day', '<=', maxDate)
+    .where('dmsl.day', '>=', minDateStatus)
+    .where('dmsl.day', '<=', maxDateStatus)
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
@@ -141,23 +165,36 @@ async function deviceStatusOverTime(request) {
     .groupBy(['d.id', 'dmsl.day'])
     .select([
       'd.id as deviceId',
-      knex.raw(`DATE_FORMAT(dmsl.day, '%Y-%m-%d') as day`),
+      //knex.raw(`CONCAT(DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as dayDate`)
+      // knex.raw(`REPLACE(DATE_FORMAT(dmsl.day, '%Y-%m-%dT%TZ'), 'Z', '${offset}') as day`),
+      knex.raw(`CONCAT(DATE_FORMAT(dmsl.day, '%Y-%m-%dT'), '00:00:00.000', '${offset}') as day`),
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
     ])
+  // console.log('statusData0', statusData[0])
   statusData = groupListBy(statusData, 'deviceId', 'day')
+  // console.log('statusData', statusData)
+  // console.log('days', days)
+
+  // console.log('statusData', statusData)
+
+  console.log(statusData)
 
   let data = []
   devices.forEach(device => {
     const maintenanceStatusHistory = []
     days.forEach(day => {
-      const onlyDate = getDateSubstring(day.toISOString())
-      const groupName = getGroupName(device.id, onlyDate)
+      // console.log('day', day)
+      const isoDay = getDateSubstring(day.toISOString()) + 'T00:00:00.000' + offset
+      // console.log('isoDay', isoDay)
+      // const onlyDate = getDateSubstring(day.toISOString())
+      const groupName = getGroupName(device.id, isoDay)
 
       const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
 
       let [status] = statusData[groupName] || [{}]
+      // console.log('status', status)
       if (status) {
         status = omit(status, 'deviceId')
 
@@ -175,11 +212,14 @@ async function deviceStatusOverTime(request) {
         }
       }
 
+      // console.log('isoDay', isoDay)
+      // console.log('status', status)
+
       maintenanceStatusHistory.push({
         ...status,
-        day: onlyDate,
-        isWeekend: isWeekend(parseISO(onlyDate)),
-        weekNumber: getISOWeek(parseISO(onlyDate)),
+        day: isoDay,
+        isWeekend: isWeekend(new Date(isoDay)),
+        weekNumber: getISOWeek(new Date(isoDay)),
         totalResults,
       })
     })

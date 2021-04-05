@@ -234,6 +234,7 @@ async function resultsTransmittedDashboard(request) {
   // Because all the datetimes are transformed automatically to UTC
   // and it is not possible to take the offset from that date,
   // it is needed to use this function to obtain the offset received from the querystring.
+  console.log('query.currentMonth', query.currentMonth)
   const offset = getOffsetFromIsoDateString(query.currentMonth)
 
   // get all assays which user can access
