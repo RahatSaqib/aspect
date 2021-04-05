@@ -224,6 +224,21 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     }
   }
   payload.id = generatedExternalId
+
+  // if the module name is not part of the payload, try to get it from
+  // existing results on the device
+  const moduleNamePath = 'instrument.module.name'
+  const moduleSerial = _.get(payload, 'instrument.module.serial')
+  if (!_.get(payload, moduleNamePath) && moduleSerial) {
+    const moduleName = await getModuleNameForResult(
+      deviceId,
+      moduleSerial,
+      payload.startedOn,
+      knex
+    )
+    if (moduleName) _.set(payload, moduleNamePath, moduleName)
+    else _.unset(payload, moduleNamePath)
+  }
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {
@@ -1037,6 +1052,19 @@ function macAddressValid(macAddress) {
     macAddress.trim().length > 3 &&
     macAddress !== 'MAC005345000000'
   )
+}
+
+async function getModuleNameForResult(deviceId, moduleSerial, startedOn, knex) {
+  const latestResultOnModuleSerial = await knex('Result')
+    .where({ deviceId, moduleSerial })
+    .where('startedOn', '<=', startedOn)
+    .whereNotNull('moduleName')
+    .orderBy('endedOn', 'desc')
+    .first('moduleName')
+
+  return latestResultOnModuleSerial
+    ? latestResultOnModuleSerial.moduleName
+    : null
 }
 
 module.exports = {
