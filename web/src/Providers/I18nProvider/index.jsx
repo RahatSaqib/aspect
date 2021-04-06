@@ -9,6 +9,7 @@ import usLocale from 'date-fns/locale/en-US'
 import frLocale from 'date-fns/locale/fr'
 import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
+import esLocale from 'date-fns/locale/es'
 
 import translation from '../../shared/i18n/translation'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
@@ -27,6 +28,8 @@ export const dateFNSLocales = {
   'ru-RU': ruLocale,
   uk: ukLocale,
   'uk-UA': ukLocale,
+  es: esLocale,
+  'es-ES': esLocale,
 }
 
 function timeZoneFallBack(timezone) {
