@@ -423,7 +423,6 @@ async function getConnectionSettings(context) {
         'd.geographyId',
         'deviceGeography.id'
       )
-      .where()
       .where(builder => {
         builder
           .where({

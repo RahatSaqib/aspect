@@ -45,7 +45,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe.only('Device API routes for GxConnect Devices', () => {
+describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -3979,12 +3979,14 @@ describe.only('Device API routes for GxConnect Devices', () => {
       let insertedConfiguration = null
       beforeEach(async () => {
         await context.beforeRegisterAndSetDevice()
+        const { partnerId } = context.device
         const { geographyId } = await knexDb('Site as s')
           .where({ externalId: 'Ohio_Wayne' })
           .first('s.geographyId')
         ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
           deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
           geographyId,
+          partnerId,
           data: JSON.stringify({
             EnableInventoryModule: true,
             AspectUploadExcludePatientId: true,
@@ -4045,9 +4047,12 @@ describe.only('Device API routes for GxConnect Devices', () => {
           externalId: 'OH_Dayton_2',
         })
         await context.beforeRegisterAndSetDevice()
+        const { partnerId } = context.device
+
         ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
           deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
           geographyId: siteOhio.geographyId,
+          partnerId,
           data: JSON.stringify({
             EnableInventoryModule: true,
             AspectUploadExcludePatientId: true,
