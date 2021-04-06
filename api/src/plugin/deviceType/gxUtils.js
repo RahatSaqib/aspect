@@ -1078,4 +1078,5 @@ module.exports = {
   getResultCategoriesHivVL,
   getResultCategories,
   getVLCopies,
+  getModuleNameForResult,
 }
