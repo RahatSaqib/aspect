@@ -3,7 +3,6 @@ const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
 const uniq = require('lodash/uniq')
-const addDays = require('date-fns/addDays')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -12,24 +11,24 @@ const {
   getArrayOfDaysInRange,
   getOffsetFromIsoDateString,
   startOfDayUtc,
-  getDateSubstring
+  getDateSubstring,
 } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 
 async function deviceStatusOverTime(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  let { minDate, maxDate } = request.query
+  const { minDate, maxDate } = request.query
   const offset = getOffsetFromIsoDateString(minDate)
 
   // Filters for results: results should be filtered normally, just converting the received date to UTC
-  let minDateResults = new Date(minDate).toISOString()
-  let maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
+  const minDateResults = new Date(minDate).toISOString()
+  const maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
 
   // Filters for statuses: statuses should be filtered differently, as they are saved as only date.
   // If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
-  let minDateStatus = startOfDayUtc(new Date(minDate))
-  let maxDateStatus = startOfDayUtc(new Date(maxDate))
+  const minDateStatus = startOfDayUtc(new Date(minDate))
+  const maxDateStatus = startOfDayUtc(new Date(maxDate))
 
   const days = getArrayOfDaysInRange(minDateStatus, maxDateStatus)
 
@@ -97,7 +96,9 @@ async function deviceStatusOverTime(request) {
     .select(
       'd.id',
       knex.raw('COUNT(r.id) as totalResults'),
-      knex.raw(`CONCAT(DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as dayDate`)
+      knex.raw(
+        `CONCAT(DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as dayDate`
+      )
     )
   devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
 
@@ -149,7 +150,9 @@ async function deviceStatusOverTime(request) {
     .select([
       'd.id as deviceId',
       // We are going to return the dates grouped by the user's timezone, and as the days are stored as only date, then we will just transform (not convert!!!) those dates to the given offset
-      knex.raw(`CONCAT(DATE_FORMAT(dmsl.day, '%Y-%m-%dT'), '00:00:00.000', '${offset}') as day`),
+      knex.raw(
+        `CONCAT(DATE_FORMAT(dmsl.day, '%Y-%m-%dT'), '00:00:00.000', '${offset}') as day`
+      ),
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
@@ -161,7 +164,9 @@ async function deviceStatusOverTime(request) {
     const maintenanceStatusHistory = []
     days.forEach(day => {
       // We need to transform the days to the user's offset for matching with the query results
-      const isoDay = getDateSubstring(day.toISOString()) + 'T00:00:00.000' + offset
+      const isoDay = `${getDateSubstring(
+        day.toISOString()
+      )}T00:00:00.000${offset}`
       const groupName = getGroupName(device.id, isoDay)
 
       const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
