@@ -12,6 +12,7 @@ const {
   getOffsetFromIsoDateString,
   startOfDayUtc,
   getDateSubstring,
+  getISODateUserTimeZoneField,
 } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 
@@ -96,9 +97,10 @@ async function deviceStatusOverTime(request) {
     .select(
       'd.id',
       knex.raw('COUNT(r.id) as totalResults'),
-      knex.raw(
-        `CONCAT(DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as dayDate`
-      )
+      getISODateUserTimeZoneField(knex, 'r.endedOn', 'dayDate', offset)
+      // knex.raw(
+      //   `CONCAT(DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as dayDate`
+      // )
     )
   devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
 
