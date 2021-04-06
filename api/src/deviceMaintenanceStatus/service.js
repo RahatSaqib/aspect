@@ -26,7 +26,8 @@ async function deviceStatusOverTime(request) {
   let minDateResults = new Date(minDate).toISOString()
   let maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
 
-  // Filters for statuses: statuses should be filtered differently, as they are saved as only date. If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
+  // Filters for statuses: statuses should be filtered differently, as they are saved as only date.
+  // If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
   let minDateStatus = startOfDayUtc(new Date(minDate))
   let maxDateStatus = startOfDayUtc(new Date(maxDate))
 
