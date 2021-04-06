@@ -412,7 +412,7 @@ async function addDeviceDataWithContext(context) {
 async function getConnectionSettings(context) {
   const {
     knex,
-    device: { id: deviceId },
+    device: { id: deviceId, partnerId },
   } = context
   const { data } =
     (await knex('DeviceConfiguration as dc')
@@ -423,11 +423,13 @@ async function getConnectionSettings(context) {
         'd.geographyId',
         'deviceGeography.id'
       )
+      .where()
       .where(builder => {
         builder
           .where({
             'd.id': deviceId,
             'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
+            'dc.partnerId': partnerId,
             'g.countryId': knex.raw('deviceGeography.countryId'),
           })
 

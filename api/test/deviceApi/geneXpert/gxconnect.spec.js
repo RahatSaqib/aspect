@@ -45,7 +45,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device API routes for GxConnect Devices', () => {
+describe.only('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'

@@ -20,6 +20,14 @@ async function up(knex) {
       .inTable('DeviceType')
 
     deviceConfiguration
+      .integer('partnerId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Partner')
+
+    deviceConfiguration
       .timestamp('createdOn')
       .notNullable()
       .defaultTo(knex.fn.now())
