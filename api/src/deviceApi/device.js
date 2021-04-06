@@ -1,6 +1,12 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { deviceApprovalToId } = require('../shared/dictionary')
+const {
+  deviceApprovalToId,
+  deviceMaintenanceTypeToId,
+} = require('../shared/dictionary')
+const { parseDateOrDefault } = require('../shared/date')
+const { getPeopleBase } = require('../shared/utilsPerson')
+const { setDeviceCalibrationStatus } = require('../plugin/utils')
 
 async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
@@ -9,6 +15,13 @@ async function updateDeviceConfiguration(knex, deviceId, payload, now) {
       ? payload.data
       : _.merge(previousConfig.data, _.omitBy(payload.data, _.isNull))
 
+  // process prop 'lastCalibrated' in 'payload', if any defined
+  await tryUpdateDeviceMaintenance(knex, deviceId, payload)
+
+  // process props labContact* and installer* in 'payload', if any defined
+  await tryAssignLabTechnicianToSite(knex, deviceId, payload)
+
+  // finally update Device.configurationData
   await knex('Device')
     .where({ id: deviceId })
     .update({
@@ -20,6 +33,191 @@ async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   return {}
 }
 
+// --------------------------------------------------------------------
+async function tryUpdateDeviceMaintenance(knex, deviceId, payload) {
+  const {
+    data: { lastCalibrated },
+  } = payload
+  const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+  const calibratedOn = lastCalibrated
+    ? parseDateOrDefault(lastCalibrated)
+    : null
+
+  if (calibratedOn) {
+    await setDeviceCalibrationStatus(knex, deviceId, calibratedOn, {
+      deviceMaintenanceTypeId,
+      notes: 'From GxConnect basic settings',
+    })
+  }
+}
+
+// --------------------------------------------------------------------
+async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
+  const {
+    data: {
+      timezone,
+      culture,
+      labContactCell,
+      labContactEmail,
+      labContactName,
+      installerCell,
+      installerEmail,
+      installerName,
+    },
+  } = payload
+  if (labContactName || labContactEmail || installerName || installerEmail) {
+    // get device props
+    const device = await knex('Device as d')
+      .join('Geography as g', 'd.geographyId', 'g.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .where('d.id', deviceId)
+      .first('g.countryId', 's.id as siteId', 'd.partnerId', 'd.geographyId')
+    const { countryId, partnerId, geographyId, siteId } = device || {}
+    // throw error if no device found or it is not assigned to site
+    if (!device || !siteId) {
+      return Boom.notFound()
+    }
+
+    const baseProps = {
+      countryId,
+      partnerId,
+      geographyId,
+      siteId,
+      timezone,
+      culture,
+    }
+    await getCreateAssignPerson(knex, {
+      ...baseProps,
+      name: labContactName,
+      email: labContactEmail,
+      cell: labContactCell,
+      jobFunctionExternalId: 'labUser',
+    })
+
+    await getCreateAssignPerson(knex, {
+      ...baseProps,
+      name: installerName,
+      email: installerEmail,
+      cell: installerCell,
+      jobFunctionExternalId: 'technician',
+    })
+  }
+}
+
+// --------------------------------------------------------------------
+const getCreateAssignPerson = async (
+  knex,
+  {
+    countryId,
+    partnerId,
+    geographyId,
+    siteId,
+    name,
+    email,
+    cell,
+    timezone,
+    culture,
+    jobFunctionExternalId,
+  }
+) => {
+  const personQuery = getPeopleBase()
+    .where('g.countryId', countryId)
+    .groupBy('p.id')
+    .first('p.name', 'p.id', 'p.email', 'p.email2', 'p.cell', 'j.id as jobId')
+  //
+  const personByName = await personQuery.where('p.name', name)
+  const personByEmail = await personQuery.where(builder => {
+    builder.where('p.email', email).orWhere('p.email2', email)
+  })
+
+  let jobId
+  let personId
+  // ----------
+  // person-by-name found
+  // ----------
+  if (personByName) {
+    personId = personByName.id
+    ;[{ jobId }] = [personByName]
+    // update email if it's missing
+    if (email && !personByName.email) {
+      await knex('Person').update('email', email).where('id', personId)
+    }
+    // update cell if it's missing
+    if (cell && !personByName.cell) {
+      await knex('Person').update('cell', cell).where('id', personId)
+    }
+  }
+  // ----------
+  // or person-by-email found
+  // ----------
+  else if (personByEmail) {
+    personId = personByEmail.id
+    ;[{ jobId }] = [personByEmail]
+    // update cell if it's missing
+    if (cell && !personByEmail.cell) {
+      await knex('Person').update('cell', cell).where('id', personId)
+    }
+  }
+  // ----------
+  // or create person with specified name
+  // ----------
+  else if (name) {
+    ;[personId] = await knex('Person').insert({
+      geographyId,
+      name,
+      email,
+      cell,
+      lastPartnerId: partnerId,
+      lastCountryId: countryId,
+      timezone,
+      culture,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      partnerId,
+    })
+  }
+
+  /**
+   * for this person -
+   * - check/create job for 'Lab User' or 'Technician'
+   * - assign this person to site, i.e. to JobContext
+   */
+  if (personId) {
+    // create Job for person
+    if (!jobId) {
+      const jobFunction = await knex('JobFunction')
+        .where({ externalId: jobFunctionExternalId })
+        .first('id')
+      if (!jobFunction) {
+        throw Boom.expectationFailed(
+          `Required job function '${jobFunctionExternalId}' is missing`
+        )
+      }
+
+      ;[jobId] = await knex('Job').insert({
+        personId,
+        jobFunctionId: jobFunction.id,
+      })
+    }
+
+    // assign contact to site if it is not assigned yet
+    const newJobContext = { jobId, siteId }
+    const existingJobContext = await knex('JobContext')
+      .where(newJobContext)
+      .whereNull('assayTypeId')
+      .whereNull('assayId')
+      .whereNull('deviceTypeId')
+      .whereNull('diseaseId')
+      .first()
+    if (!existingJobContext) {
+      await knex('JobContext').insert(newJobContext)
+    }
+  }
+
+  return personId
+}
+
+// --------------------------------------------------------------------
 async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
   if (deviceId) {
     // Compare existing device to these details

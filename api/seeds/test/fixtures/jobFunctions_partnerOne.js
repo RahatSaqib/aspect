@@ -3,6 +3,7 @@ const {
   regionalOfficer,
   labUser,
   clinician,
+  technician,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -39,4 +40,5 @@ module.exports = [
       },
     ],
   },
+  technician,
 ]
