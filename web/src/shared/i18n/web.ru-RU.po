@@ -1,15 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-<<<<<<< HEAD
-<<<<<<< HEAD
-"POT-Creation-Date: 2021-03-29T17:52:16.485Z\n"
-=======
-"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
->>>>>>> develop
-=======
-"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
->>>>>>> develop
+"POT-Creation-Date: 2021-04-06T16:41:35.721Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"

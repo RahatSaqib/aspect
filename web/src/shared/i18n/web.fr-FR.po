@@ -2,18 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-<<<<<<< HEAD
-<<<<<<< HEAD
-"POT-Creation-Date: 2021-03-29T17:52:16.485Z\n"
-"PO-Revision-Date: 2021-03-29 17:15-0300\n"
-=======
-"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
-"PO-Revision-Date: 2021-03-26 18:14-0400\n"
->>>>>>> develop
-=======
-"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
+"POT-Creation-Date: 2021-04-06T16:41:35.721Z\n"
 "PO-Revision-Date: \n"
->>>>>>> develop
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -825,8 +815,6 @@ msgstr "Taux de suppression mensuel moyen"
 #. defaultMessage is:
 #. Average Monthly TB Detected Rate
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average monthly TB Detected Rate"
 msgid "Average Monthly TB Detected Rate"
 msgstr "Taux mensuel moyen de TB détectée"
 
