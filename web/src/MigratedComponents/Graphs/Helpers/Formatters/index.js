@@ -28,7 +28,6 @@ import {
   getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
-  lastMonthLabel,
   negateTimeZoneOffset,
 } from '../../../../components/shared/DateTimeInput/utils/date'
 
@@ -555,7 +554,6 @@ export {
   groupForPie,
   groupForPieOldTreatmentAPI,
   groupForPieRow,
-  lastMonthLabel,
   negateTimeZoneOffset,
   normaliseKeys,
   percentageOrActualForPie,

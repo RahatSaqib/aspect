@@ -104,6 +104,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .orWhereIn('resultId', resultIds)
     .delete()
 
+  await knex('DeviceMaintenance').whereIn('deviceId', deviceIds).delete()
+
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
@@ -147,6 +149,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
 
+  await knex('ResultFollowUp').whereIn('resultId', resultIds).delete()
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('ResultGeneratedResult')
@@ -155,10 +158,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .delete()
 
   await knex('ResultTag').delete()
-
+  await knex('SiteTag').delete()
   await knex('Tag').delete()
-
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('Result').whereIn('id', resultIds).delete()
 
@@ -171,8 +172,12 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
-
+  await knex('JobContext').whereIn('siteId', siteIds).delete()
   await knex('Site').whereIn('id', siteIds).delete()
+
+  await knex('DeviceMaintenanceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
 }
 
 function createGxAlertTestContext(server) {
