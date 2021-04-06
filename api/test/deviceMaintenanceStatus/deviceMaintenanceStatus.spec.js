@@ -114,8 +114,9 @@ describe('Maintenance Reports', () => {
   })
 
   it('should get the correct daily status', done => {
-    const minDate = formatISO(monthAgo, { representation: 'date' })
-    const maxDate = formatISO(now, { representation: 'date' })
+    const minDate = formatISO(monthAgo)
+    const maxDate = formatISO(now)
+
     server
       .get(`${path}?minDate=${minDate}&maxDate=${maxDate}`)
       .set('Authorization', `Bearer ${shared.token}`)
