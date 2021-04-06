@@ -74,7 +74,7 @@ describe('Device API Raw routes for cobas', () => {
         createdOn: now,
         updatedOn: now,
       })
-      ;[apiKeyId] = await knex('DeviceApiKey').insert({
+      await knex('DeviceApiKey').insert({
         token: validApiKeyToken,
         deviceId,
         siteId,

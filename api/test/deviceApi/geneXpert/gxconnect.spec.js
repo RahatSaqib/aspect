@@ -647,34 +647,27 @@ describe('Device API routes for GxConnect Devices', () => {
       deviceSerialNumber,
     })
     beforeEach(context.beforeRegisterAndSetDevice)
-    const { runTest } = context
     afterEach(context.afterCleanUp)
 
-    it('Download the custom fields', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
+    it('Download the custom fields', async () => {
+      const { basicDevicePayload, deviceAuth } = context
 
-        const res = await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send({ getFormsDefinition: true, ...basicDevicePayload })
-          .catch(assert.fail)
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'CustomFields')
-        assert.typeOf(res.body.CustomFields, 'Object')
-        assert.typeOf(res.body.CustomFields.Fields, 'Array')
-        assert.isAtLeast(res.body.CustomFields.Fields.length, 1)
-        const customFieldProperties = [
-          'Label',
-          'Control',
-          'Type',
-          'DisplayOrder',
-        ]
-        _.each(customFieldProperties, fieldName => {
-          assert.property(res.body.CustomFields.Fields[0], fieldName)
-        })
-      }))
+      const res = await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send({ getFormsDefinition: true, ...basicDevicePayload })
+        .catch(assert.fail)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'CustomFields')
+      assert.typeOf(res.body.CustomFields, 'Object')
+      assert.typeOf(res.body.CustomFields.Fields, 'Array')
+      assert.isAtLeast(res.body.CustomFields.Fields.length, 1)
+      const customFieldProperties = ['Label', 'Control', 'Type', 'DisplayOrder']
+      _.each(customFieldProperties, fieldName => {
+        assert.property(res.body.CustomFields.Fields[0], fieldName)
+      })
+    })
   })
 
   describe('ping', () => {

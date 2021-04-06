@@ -92,7 +92,7 @@
         "Type": "int",
         "DisplayOrder": 22,
         "InputControlData": {
-          "maxValue": 0
+          "minValue": 0
         }
       }
     ]

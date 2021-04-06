@@ -102,11 +102,9 @@ describe('Custom field mapper', () => {
           controlType: 'textBox',
           condition: [
             {
-              conjunction: 'AND',
               propToCompare: 'PlainField',
               valueToCompare: 'unknown',
               operator: '!==',
-              conjunctionGroupName: 'PlainFieldCollectionGroup',
             },
           ],
         },
@@ -135,7 +133,6 @@ describe('Custom field mapper', () => {
             InputControlData: {
               displayConditions: [
                 {
-                  conjunction: 'AND',
                   value: 'unknown',
                   operator: '!=',
                   refId: 2,

@@ -108,7 +108,7 @@
       "validation": [
         {
           "validationType": "float",
-          "max": 0,
+          "min": 0,
           "errorMessage": "This value should be higher than 0",
           "errorMessageI18nKey": "probeDendptErrori18nKey"
         }

@@ -32,7 +32,7 @@ const getCustomFields = async (partnerId, deviceId) => {
     .join('Device as d', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where('d.id', deviceId)
-    .distinct(
+    .select(
       'd.customFieldsSentOn',
       knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
     )

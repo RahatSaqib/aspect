@@ -457,7 +457,7 @@ async function addDeviceOperationWithContext(context) {
   const {
     knex,
     payload,
-    device: { id: deviceId /* , partnerId */ },
+    device: { id: deviceId },
     now,
     pluginNames: plugins,
   } = context
