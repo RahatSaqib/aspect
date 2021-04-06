@@ -7,7 +7,7 @@ import 'intl/locale-data/jsonp/de'
 import 'intl/locale-data/jsonp/ru'
 import 'intl/locale-data/jsonp/fr'
 import 'intl/locale-data/jsonp/uk'
-import 'intl/locale-data/jsonp/en-us'
+import 'intl/locale-data/jsonp/en-US'
 import MockDate from 'mockdate'
 import subDays from 'date-fns/subDays'
 
