@@ -8,7 +8,7 @@ import get from 'lodash/get'
 import isEqual from 'lodash/isEqual'
 import sortBy from 'lodash/sortBy'
 import filter from 'lodash/filter'
-
+import useI18n from '../../Hooks/i18n/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
 import UI_CONSTS from '../../globals/consts/UI'
 
@@ -153,12 +153,15 @@ const SelectComponent = ({
   selectedValue,
   action: dispatchFromRedux,
   identifier,
-  keyMapping: { idKey, nameKey },
+  keyMapping: { idKey, nameKey = 'i18nKey' },
   isClearable,
   isLoading,
   defaultSelectedOption,
   theme,
+  messages,
 }) => {
+  messages = messages || {}
+  const { formatMessage } = useI18n()
   const [busy, setBusy] = useState(true)
   const [defaultOptionValue, setDefaultOptionValue] = useState(false)
   const [defaultOption] = useState(selectedValue)
@@ -191,7 +194,9 @@ const SelectComponent = ({
     >
       <Select
         name={identifier}
-        getOptionLabel={val => val[nameKey]}
+        getOptionLabel={val =>
+          formatMessage(messages[val[nameKey]], {}, val[nameKey])
+        }
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         isLoading={isLoading}
@@ -216,6 +221,7 @@ SelectComponent.defaultProps = {
   isClearable: true,
   isLoading: false,
   defaultSelectedOption: false,
+  messages: null,
 }
 
 SelectComponent.propTypes = {
@@ -229,6 +235,7 @@ SelectComponent.propTypes = {
   isLoading: PropTypes.bool,
   defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
   theme: PropTypes.string.isRequired,
+  messages: PropTypes.oneOf([PropTypes.object]),
 }
 
 const AspectDropDown = ({
@@ -243,6 +250,7 @@ const AspectDropDown = ({
     keyMapping,
     isClearable,
     defaultSelectedOption,
+    messages,
   },
   action,
   theme,
@@ -281,6 +289,7 @@ const AspectDropDown = ({
       isClearable={isClearable}
       defaultSelectedOption={defaultSelectedOption}
       theme={theme}
+      messages={messages}
     />
   ) : null
 }
@@ -304,6 +313,7 @@ AspectDropDown.propTypes = {
     }),
     isClearable: PropTypes.bool,
     defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
+    messages: PropTypes.oneOf([PropTypes.object]),
   }).isRequired,
   action: PropTypes.func.isRequired,
   theme: PropTypes.string,

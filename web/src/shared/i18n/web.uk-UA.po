@@ -1,7 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+<<<<<<< HEAD
+<<<<<<< HEAD
+"POT-Creation-Date: 2021-03-29T17:52:16.485Z\n"
+=======
+"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
+>>>>>>> develop
+=======
 "POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
+>>>>>>> develop
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -407,6 +415,20 @@ msgstr "Вік і стать"
 #: extracted_strings.json
 msgid "Alere Q HIV-1/2 Detect"
 msgstr "Alere Q Виявлення ВІЛ-1/2"
+
+#. [consumable.alereHivDetectCartridge]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 Detect Cartridge
+#: extracted_strings.json
+msgid "Alere Q HIV-1/2 Detect Cartridge"
+msgstr "Касета для виявлення ВІЛ-1/2 Alere Q"
+
+#. [consumable.alereHivVlPlasmaCartridge]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 VL Plasma Cartridge
+#: extracted_strings.json
+msgid "Alere Q HIV-1/2 VL Plasma Cartridge"
+msgstr "Плазмовий картридж Alere Q HIV-1/2 VL"
 
 #. [legends.Unknown.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
@@ -2761,6 +2783,13 @@ msgstr "Пристрої GeneXpert"
 msgid "GeneXpert Ebola"
 msgstr "GeneXpert Ebola"
 
+#. [consumable.gxEbolaCartridge]
+#. defaultMessage is:
+#. GeneXpert Ebola Cartridge
+#: extracted_strings.json
+msgid "GeneXpert Ebola Cartridge"
+msgstr "Касета GeneXpert Ebola"
+
 #. [legends.Unknown.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
@@ -2826,6 +2855,20 @@ msgstr "GeneXpert MTB / Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB / Rif Ultra"
 
+#. [consumable.gxMtbRifCartridge]
+#. defaultMessage is:
+#. GeneXpert TB Cartridge
+#: extracted_strings.json
+msgid "GeneXpert TB Cartridge"
+msgstr "Картридж GeneXpert TB"
+
+#. [consumable.gxMtbRifUltraCartridge]
+#. defaultMessage is:
+#. GeneXpert TB Ultra Cartridge
+#: extracted_strings.json
+msgid "GeneXpert TB Ultra Cartridge"
+msgstr "Касета GeneXpert TB Ultra"
+
 #. [legends.Unknown.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
@@ -2879,6 +2922,13 @@ msgstr "Загальний RDT"
 msgid "GenoType MTBC VER 1.X"
 msgstr "GenoType MTBC VER 1.X"
 
+#. [consumable.genoTypeMtbcStrip]
+#. defaultMessage is:
+#. GenoType MTBC VER 1.X Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBC VER 1.X Test Strip"
+msgstr "Тестова смужка GenoType MTBC VER 1.X"
+
 #. [legends.Unknown.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
@@ -2891,6 +2941,13 @@ msgstr "GenoType MTBC VER 1.X"
 #: extracted_strings.json
 msgid "GenoType MTBDRplus VER 2.0"
 msgstr "GenoType MTBDRplus VER 2.0"
+
+#. [consumable.genoTypeMtbdRplusStrip]
+#. defaultMessage is:
+#. GenoType MTBDRplus VER 2.0 Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBDRplus VER 2.0 Test Strip"
+msgstr "Тестова смужка GenoType MTBDRplus VER 2.0"
 
 #. [legends.Unknown.assayGenoTypeMTBDRslV1]
 #. defaultMessage is:
@@ -2905,6 +2962,13 @@ msgstr "GenoType MTBDRplus VER 2.0"
 msgid "GenoType MTBDRsl VER 1.0"
 msgstr "GenoType MTBDRsl VER 1.0"
 
+#. [consumable.genoTypeMtbdRslStrip]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 1.0 Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBDRsl VER 1.0 Test Strip"
+msgstr "Тестова смужка GenoType MTBDRsl VER 1.0"
+
 #. [legends.Unknown.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
@@ -2917,6 +2981,13 @@ msgstr "GenoType MTBDRsl VER 1.0"
 #: extracted_strings.json
 msgid "GenoType MTBDRsl VER 2.0"
 msgstr "GenoType MTBDRsl VER 2.0"
+
+#. [consumable.genoTypeMtbdRslV2Strip]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 2.0 Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBDRsl VER 2.0 Test Strip"
+msgstr "Тестова смужка GenoType MTBDRsl VER 2.0"
 
 #. [filter.AssayTypeSelectField.genoTypeTestStrip]
 #. defaultMessage is:
@@ -7877,6 +7948,27 @@ msgstr "Протягом 2 годин після тестування"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Статус робочого процесу"
+
+#. [consumable.gxHcvCartridge]
+#. defaultMessage is:
+#. Xpert HCV Viral Load Cartridge
+#: extracted_strings.json
+msgid "Xpert HCV Viral Load Cartridge"
+msgstr "Касета для вірусного навантаження Xpert HCV"
+
+#. [consumable.gxHiv1QualCartridge]
+#. defaultMessage is:
+#. Xpert HIV-1 Qual Cartridge
+#: extracted_strings.json
+msgid "Xpert HIV-1 Qual Cartridge"
+msgstr "Картридж Xpert HIV-1 Qual"
+
+#. [consumable.gxHiv1VlCartridge]
+#. defaultMessage is:
+#. Xpert HIV-1 Viral Load Cartridge
+#: extracted_strings.json
+msgid "Xpert HIV-1 Viral Load Cartridge"
+msgstr "Касета для вірусного навантаження Xpert HIV-1"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
