@@ -88,10 +88,10 @@ describe('Maintenance Reports', () => {
       .where({ id: deviceId })
       .update({ deviceMaintenanceStatusLogId })
 
-    // Inserting results for the last month
+    // Inserting results for the last 30 days
     const resultsBaseDate = new Date(2020, 1, 3, 0, 0, 0, 0)
     await Promise.each(range(1, 4), async () => {
-      // As the base date is 25th, we subtract between 0 and 15: this will ensure the result will be inserted in the same month
+      // As the base date is 3rd, we subtract between 0 and 30 days: this will ensure the result will be inserted in the last 30 days
       const daysForSubstracting = random(0, 30, false)
       const testDate = subDays(resultsBaseDate, daysForSubstracting)
       await context.createResultForThisDevice({
@@ -102,7 +102,7 @@ describe('Maintenance Reports', () => {
       })
     })
 
-    // Inserting one result out of the last month
+    // Inserting one result out of the last 30 days
     await context.createResultForThisDevice({
       resultDetails: {
         startedOn: subDays(resultsBaseDate, 33),
@@ -117,7 +117,7 @@ describe('Maintenance Reports', () => {
     const maxDate = '2020-01-03T00:00:00.000' + offset
 
     // Then, in the API we consider the same dates but in UTC (without conversion)
-    // The resulting date range for statuses will always be '2020-01-01T00:00:00.000Z' to '2020-01-31T00:00:00.000Z', no matter the given offset
+    // The resulting date range for statuses will always be '2019-12-03T00:00:00.000Z' to '2020-01-03T00:00:00.000Z', no matter the given offset
     server
       .get(`${path}?minDate=${encodeURIComponent(minDate)}&maxDate=${encodeURIComponent(maxDate)}`)
       .set('Authorization', `Bearer ${shared.token}`)
