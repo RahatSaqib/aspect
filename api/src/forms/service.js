@@ -22,7 +22,7 @@ async function getForms(request) {
   return forms
 }
 const getCustomFields = async (partnerId, deviceId) => {
-  const formQuery = getFormsBaseQuery(partnerId, {
+  const formQuery = await getFormsBaseQuery(partnerId, {
     formType: 'gxConnectForm',
   })
     .join('Disease as di', 'di.id', 'fd.diseaseId')
@@ -37,12 +37,22 @@ const getCustomFields = async (partnerId, deviceId) => {
       knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
     )
     .groupBy('fd.id', 'd.customFieldsSentOn')
+  const maxDateUpdated = _.maxBy(formQuery, elem => elem.customFieldsSentOn)
+
+  const hasAnyUpdate =
+    !maxDateUpdated ||
+    _.reduce(
+      formQuery,
+      (prev, curr) => {
+        prev =
+          prev || formDictionary[curr.externalId].updatedOn > maxDateUpdated
+        return prev
+      },
+      false
+    )
   let forms = {}
-  _.each(await formQuery, form => {
-    if (
-      !form.customFieldsSentOn ||
-      formDictionary[form.externalId].updatedOn > form.customFieldsSentOn
-    ) {
+  if (hasAnyUpdate) {
+    _.each(formQuery, form => {
       const fields = _.map(formDictionary[form.externalId].fields, field => ({
         ...field,
         assayExternalId: form.assayExternalId
@@ -51,8 +61,8 @@ const getCustomFields = async (partnerId, deviceId) => {
         diseaseId: form.diseaseId,
       }))
       forms = _.merge(forms, { fields })
-    }
-  })
+    })
+  }
   return forms
 }
 function getFormsBaseQuery(partnerId, query) {
