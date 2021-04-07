@@ -154,11 +154,11 @@ describe('Maintenance Reports', () => {
       })
   }
 
-  it.only('should get the correct daily status for negative timezones', done => {
+  it('should get the correct daily status for negative timezones', done => {
     evaluateCorrectDailyStatus(done, '-03:00')
   })
 
-  it.only('should get the correct daily status for positive timezones', done => {
+  it('should get the correct daily status for positive timezones', done => {
     evaluateCorrectDailyStatus(done, '+03:00')
   })
 
