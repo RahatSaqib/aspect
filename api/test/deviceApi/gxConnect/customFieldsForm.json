@@ -1,0 +1,119 @@
+{
+  "fields": [
+    {
+      "id": 2,
+      "name": "PlainField",
+      "i18nKey": "PlainFieldi18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "caption": "PlainField value",
+      "i18nKeyCaption": "PlainFieldi18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "ConditionalField",
+      "i18nKey": "ConditionalFieldi18nKey",
+      "fieldType": "text",
+      "order": 0,
+      "caption": "ConditionalField value",
+      "i18nKeyCaption": "ConditionalFieldi18nCaptionKey",
+      "controlType": "textBox",
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "PlainField",
+          "valueToCompare": "unknown",
+          "operator": "!==",
+          "conjunctionGroupName": "PlainFieldCollectionGroup"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ValidationField (Min 1 max 12)",
+      "i18nKey": "ValidationFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "title": "ValidationField",
+      "caption": "ValidationField value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 1,
+          "max": 12,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "ProbeB",
+      "i18nKey": "ProbeBi18nKey",
+      "gxAlertDbColumn": "PatientPhone",
+      "fieldType": "text",
+      "order": 6,
+      "title": "Probe B",
+      "caption": "Probe B value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 8,
+      "name": "ProbeSpc",
+      "i18nKey": "ProbeSpci18nKey",
+      "fieldType": "text",
+      "order": 15,
+      "title": "Probe Spc",
+      "caption": "Probe Spc value",
+      "i18nKeyCaption": "ProbeSpci18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "underlyingConditionsAndComorbidity",
+      "title": "any Underlaying condition?",
+      "i18nKey": "underlyingConditionsAndComorbidityi18nkey",
+      "fieldType": "text",
+      "order": 0,
+      "controlType": "radioButton",
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "No",
+          "key": "no"
+        },
+        {
+          "value": "Yes",
+          "key": "yes"
+        },
+        {
+          "value": "Unknown",
+          "key": "unknown"
+        }
+      ],
+      "required": true
+    },
+    {
+      "id": 15,
+      "name": "probeDendpt",
+      "i18nKey": "probeDendpti18nKey",
+      "fieldType": "number",
+      "order": 22,
+      "title": "Probe D Endpt",
+      "caption": "Probe D Endpt value",
+      "i18nKeyCaption": "probeDendpti18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "float",
+          "min": 0,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "probeDendptErrori18nKey"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

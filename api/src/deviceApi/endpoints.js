@@ -450,6 +450,12 @@ const routes = [
             .allow(null)
             .keys(resultPayload)
             .description('Device Result Data.'),
+          getFormsDefinition: Joi.bool()
+            .optional()
+            .allow(null)
+            .description(
+              'This is a flag to tell the API if the request source is a daily details POST'
+            ),
         }),
         failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),
