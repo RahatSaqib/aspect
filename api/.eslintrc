@@ -5,7 +5,8 @@
     "prettier/flowtype"
   ],
   "plugins": [
-    "prettier"
+    "prettier",
+    "no-only-tests"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -27,13 +28,14 @@
     "import/no-extraneous-dependencies": "off",
     "import/no-named-as-default": "off",
     "import/no-unresolved": "off",
+    "no-only-tests/no-only-tests": "warn",
     "import/no-named-as-default-member": "off",
     "max-classes-per-file": [
       "error",
       3
     ],
     "max-len": [
-      "error", 
+      "error",
       {
         "code": 120,
         "ignoreComments": true,
