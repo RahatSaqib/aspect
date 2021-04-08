@@ -208,7 +208,7 @@ describe('Device API routes', () => {
     })
   })
 
-  describe('add new device', () => {
+  describe.only('add new device', () => {
     const newDeviceContext = createTestContext(server, {
       user: 'reporter_admin',
       partner: 'Reporter',
@@ -304,6 +304,73 @@ describe('Device API routes', () => {
         newDevice.id
       )
       assert.equal(onlineFactDevice.offline, 0)
+    })
+
+    it.only('should update timezone', async () => {
+      const { apiKey, deviceAuth } = newDeviceContext
+      assert.isOk(apiKey)
+
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ factGenerateDeviceConnectivity })
+
+      // add device
+      let res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+          site: { id: 'CHIZ' },
+        })
+
+      assert.equal(res.status, 200)
+
+      await waitForIdle()
+
+      let newDevice = await getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(newDevice)
+      assert.isOk(newDevice.name)
+      assert.equal(newDevice.timezone, 'South Africa Standard Time')
+      assert.equal(newDevice.serial, null)
+
+      // update device
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+          site: { id: 'CHIZ' },
+          configuration: {
+            data: {
+              timezone: 'not existing  Standard Time',
+            },
+          },
+        })
+
+      newDevice = await getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(newDevice)
+      assert.isOk(newDevice.name)
+      assert.equal(newDevice.timezone, 'South Africa Standard Time')
+      assert.equal(newDevice.serial, null)
+
+      // update device with a proper timezone
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+          site: { id: 'CHIZ' },
+          configuration: {
+            data: {
+              timezone: 'Egypt Standard Time',
+            },
+          },
+        })
+
+      newDevice = await getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(newDevice)
+      assert.isOk(newDevice.name)
+      assert.equal(newDevice.timezone, 'Egypt Standard Time')
+      assert.equal(newDevice.serial, null)
     })
     it('should assign the Device to the default capacity for the device type and partner', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
