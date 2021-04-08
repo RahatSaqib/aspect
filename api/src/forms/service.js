@@ -5,28 +5,10 @@ const formDictionary = require('./formsFileDictionary')
 
 async function getForms(request) {
   const { auth, query } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-  const formQuery = knex('FormType AS ft')
-    .innerJoin('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .innerJoin(
-      'FormDefinitionSchema as fschema',
-      'fd.formDefinitionSchemaId',
-      'fschema.id'
-    )
-    .where('fd.partnerId', dataConstraints.partner.id)
-    .modify(filterParams, query, {
-      assayId: 'fd.assayId',
-      diseaseId: 'fd.diseaseId',
-      externalsId: 'fd.externalId',
-      formType: 'ft.externalId',
-    })
-    .select(
-      'fd.externalId',
-      'fd.assayId',
-      'fd.diseaseId',
-      'ft.externalId as formTypeId'
-    )
-
+  const {
+    partner: { id: partnerId },
+  } = await getConstraints(auth.credentials)
+  const formQuery = getFormsBaseQuery(partnerId, query)
   const forms = {}
   // eslint-disable-next-line no-return-assign
   _.each(await formQuery, form => {
@@ -39,6 +21,68 @@ async function getForms(request) {
   })
   return forms
 }
+const getCustomFields = async (partnerId, deviceId) => {
+  const formQuery = await getFormsBaseQuery(partnerId, {
+    formType: 'gxConnectForm',
+  })
+    .join('Disease as di', 'di.id', 'fd.diseaseId')
+    .join('AssayType as assayType', 'di.id', 'assayType.diseaseId')
+    .join('Assay as a', 'assayType.id', 'a.assayTypeId')
+    .join('DeviceType as dt', 'a.devicetypeid', 'dt.id')
+    .join('Device as d', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
+    .where('d.id', deviceId)
+    .select(
+      'd.customFieldsSentOn',
+      knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
+    )
+    .groupBy('fd.id', 'd.customFieldsSentOn')
+  const maxDateUpdated = _.maxBy(formQuery, elem => elem.customFieldsSentOn)
+
+  const hasAnyUpdate =
+    !maxDateUpdated ||
+    !!formQuery.find(
+      ({ externalId }) => formDictionary[externalId].updatedOn > maxDateUpdated
+    )
+  let forms = {}
+  if (hasAnyUpdate) {
+    _.each(formQuery, form => {
+      const fields = _.map(formDictionary[form.externalId].fields, field => ({
+        ...field,
+        assayExternalId: form.assayExternalId
+          ? form.assayExternalId.split(',')
+          : [],
+        diseaseId: form.diseaseId,
+      }))
+      forms = _.merge(forms, { fields })
+    })
+  }
+  return forms
+}
+function getFormsBaseQuery(partnerId, query) {
+  const queryForm = knex('FormType AS ft')
+    .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
+    .join(
+      'FormDefinitionSchema as fschema',
+      'fd.formDefinitionSchemaId',
+      'fschema.id'
+    )
+    .where('fd.partnerId', partnerId)
+    .modify(filterParams, query, {
+      assayId: 'fd.assayId',
+      diseaseId: 'fd.diseaseId',
+      externalsId: 'fd.externalId',
+      formType: 'ft.externalId',
+    })
+    .distinct(
+      'fd.externalId',
+      'fd.assayId',
+      'fd.diseaseId',
+      'ft.externalId as formTypeId'
+    )
+  return queryForm
+}
 module.exports = {
   getForms,
+  getCustomFields,
 }
