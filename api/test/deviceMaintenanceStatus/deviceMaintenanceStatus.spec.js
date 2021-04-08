@@ -2,9 +2,6 @@ const chai = require('chai')
 
 const { assert, expect } = chai
 const subDays = require('date-fns/subDays')
-const formatISO = require('date-fns/formatISO')
-const format = require('date-fns/format')
-const { formatToTimeZone } = require('date-fns-timezone')
 const isValid = require('date-fns/isValid')
 const Promise = require('bluebird')
 const find = require('lodash/find')
@@ -113,13 +110,17 @@ describe('Maintenance Reports', () => {
 
   const evaluateCorrectDailyStatus = (done, offset) => {
     // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
-    const minDate = '2019-12-03T00:00:00.000' + offset
-    const maxDate = '2020-01-03T00:00:00.000' + offset
+    const minDate = `2019-12-03T00:00:00.000${offset}`
+    const maxDate = `2020-01-03T00:00:00.000${offset}`
 
     // Then, in the API we consider the same dates but in UTC (without conversion)
     // The resulting date range for statuses will always be '2019-12-03T00:00:00.000Z' to '2020-01-03T00:00:00.000Z', no matter the given offset
     server
-      .get(`${path}?minDate=${encodeURIComponent(minDate)}&maxDate=${encodeURIComponent(maxDate)}`)
+      .get(
+        `${path}?minDate=${encodeURIComponent(
+          minDate
+        )}&maxDate=${encodeURIComponent(maxDate)}`
+      )
       .set('Authorization', `Bearer ${shared.token}`)
       .end((err, res) => {
         assert.equal(res.status, 200)
