@@ -1943,7 +1943,7 @@ msgstr "Nombre del dispositivo"
 #. Device Serial
 #: extracted_strings.json
 msgid "Device Serial"
-msgstr "Número de serie del dispositivos"
+msgstr "Número de serie del dispositivo"
 
 #. [forms.formItem.deviceType]
 #. defaultMessage is:
@@ -3426,7 +3426,7 @@ msgstr "Puede que se haya borrado o cambiado de nombre"
 #. Job
 #: extracted_strings.json
 msgid "Job"
-msgstr "Trabajo"
+msgstr "Rol"
 
 #. [pages.UserPreferences.jobAssignment]
 #. defaultMessage is:
@@ -5856,7 +5856,7 @@ msgstr "Tipo de muestra:"
 #. Sample collection site
 #: extracted_strings.json
 msgid "Sample collection site"
-msgstr "Lugar de recogida de la muestra"
+msgstr "Lugar de recolección de la muestra"
 
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
@@ -6080,7 +6080,7 @@ msgstr "Seleccione la enfermedad..."
 #. Select Job
 #: extracted_strings.json
 msgid "Select Job"
-msgstr "Seleccione el trabajo..."
+msgstr "Seleccione el Rol"
 
 #. [pages.dateRangeSelector.selectMonth]
 #. defaultMessage is:
