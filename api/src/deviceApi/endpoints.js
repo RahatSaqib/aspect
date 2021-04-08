@@ -25,39 +25,37 @@ const errorPayload = Joi.object()
     code: Joi.string().allow('', null).description('Error code'),
     notes: Joi.string().allow('', null).description('Description of the error'),
   })
-
+const logItem = {
+  externalId: Joi.alternatives()
+    .try(Joi.string(), Joi.number())
+    .allow('', null)
+    .description('External unique id of the entry in remote system'),
+  occurredOn: Joi.date()
+    .required()
+    .iso()
+    .description('Date/time of when log entry happened'),
+  logFileName: Joi.string().required().description('Log file name'),
+  logLevel: Joi.string().required().description('Log Level (INFO, ERROR, etc)'),
+  details: Joi.alternatives()
+    .try(
+      Joi.object().description(
+        'Log details JSON - error code, content of the log entry, log file name, category'
+      ),
+      Joi.string().description(
+        'Log details stringified - to be parsed at run-time'
+      )
+    )
+    .required(),
+}
 const logPayload = {
   source: Joi.string()
     .allow('', null)
     .description('The source of the log, determined by client'),
   data: Joi.alternatives()
-    .allow(null) // fallback when 'data' is missing or null - for tests et la
+    .allow(null)
     .try(
-      // either GeneXpert log ...
-      Joi.object().keys({
-        externalId: Joi.alternatives()
-          .try(Joi.string(), Joi.number())
-          .allow('', null)
-          .description('External unique id of the entry in remote system'),
-        occurredOn: Joi.date()
-          .required()
-          .iso()
-          .description('Date/time of when log entry happened'),
-        logFileName: Joi.string().required().description('Log file name'),
-        logLevel: Joi.string()
-          .required()
-          .description('Log Level (INFO, ERROR, etc)'),
-        details: Joi.alternatives()
-          .try(
-            Joi.object().description(
-              'Log details JSON - error code, content of the log entry, log file name, category'
-            ),
-            Joi.string().description(
-              'Log details stringified - to be parsed at run-time'
-            )
-          )
-          .required(),
-      }),
+      Joi.object().keys(logItem),
+      Joi.array().items(Joi.object().keys(logItem)),
       // ... or just a string with serialized data - handler use it upon 'source' value
       Joi.string().description('Some log data, i.e. serialized json object')
     ),

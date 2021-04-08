@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const Promise = require('bluebird')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
@@ -276,8 +277,7 @@ async function addDeviceDataWithContext(context) {
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
-  const { name, site, result, configuration, log } = payload
-  let { operation } = payload
+  const { configuration, log, name, operation, result, site } = payload
 
   if (name) {
     await knex('Device')
@@ -333,64 +333,109 @@ async function addDeviceDataWithContext(context) {
       if (_.isString(data)) {
         data = JSON.parse(data)
       }
-      if (_.isString(data.details)) {
-        data.details = JSON.parse(data.details)
+
+      /**
+       * Notice pattern of `logPayload` in `endpoint.js` for the expected data, and for
+       * `Joi.object()` and `Joi.string()` make sure that `data` is an array of log items
+       */
+      if (_.isPlainObject(data)) {
+        data = [data]
+      } else if (!_.isArray(data)) {
+        throw Boom.expectationFailed(
+          '"log" should be either log item object or array of log items'
+        )
       }
 
-      operation = {
-        id: data.externalId,
-        startedOn: data.occurredOn,
-        data: {
-          type: 'gx-log',
-          logFileName: data.logFileName,
-          logLevel: data.logLevel,
-          details: data.details,
-        },
+      /**
+       * Process all log items one by one
+       * - and return array `response.logIds` with only those id's which where processed
+       * - and store in table DeviceOperation array of successfully processed items
+       */
+      const calibrationDeviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+        'calibration'
+      )
+      const options = {
+        calibrationDeviceMaintenanceTypeId,
+        now,
       }
 
-      const contextWithPayload = context.withPayload(operation)
-      logger.debug('executing addDeviceOperationWithContext', {
-        reLabel: 'deviceApi:addDeviceOperationWithContext',
+      let processedLogIds = []
+      await Promise.each(data, async logItem => {
+        try {
+          const logItemId = await processLogItem(context, logItem, options)
+          processedLogIds = [...processedLogIds, logItemId]
+        } catch (e) {
+          /**
+           * if error happened then we do not return this logId as processed,
+           * meaning that it will be sent again next scheduler run
+           */
+          logger.debug(
+            `execution of processLogItem for log entry with externalId=${logItem.externalId} has failed`,
+            {
+              reLabel: 'deviceApi:processLogItem',
+            }
+          )
+        }
       })
 
       response = {
         ...response,
-        ...(await addDeviceOperationWithContext(contextWithPayload)),
+        logIds: processedLogIds,
       }
-      // check if stored in table 'DeviceOperation' entry is
-      // hardware error and dispatch MQ action if needed
-      const {
-        messageContext,
-        payload,
-        parent: {
-          deviceLogUpdate: { deviceOperationId },
-        },
-      } = contextWithPayload
-
-      logger.debug('executing shouldTriggerHardwareErrorAnalysis', {
-        reLabel: 'deviceApi:shouldTriggerHardwareErrorAnalysis',
-      })
-
-      await shouldTriggerHardwareErrorAnalysis(
-        messageContext,
-        device,
-        payload,
-        deviceOperationId
-      )
-
-      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
-        'calibration'
-      )
-      await shouldLogDeviceCalibration(
-        knex,
-        device.id,
-        payload,
-        deviceMaintenanceTypeId
-      )
     }
   }
 
   return response
+}
+
+async function processLogItem(context, logItem, options) {
+  const { calibrationDeviceMaintenanceTypeId, now } = options
+  const { externalId, logFileName, logLevel, occurredOn } = logItem
+  let { details } = logItem
+  if (_.isString(details)) {
+    details = JSON.parse(details)
+  }
+  const { device, knex } = context
+  const payload = {
+    id: externalId,
+    startedOn: occurredOn,
+    data: {
+      type: 'gx-log',
+      logFileName,
+      logLevel,
+      details,
+    },
+  }
+
+  logger.debug('executing processLogItem', {
+    reLabel: 'deviceApi:processLogItem',
+  })
+
+  const { id: deviceOperationId } = await addDeviceOperation(
+    knex,
+    device.id,
+    payload,
+    now
+  )
+
+  // check if stored in table 'DeviceOperation' entry is
+  // hardware error and dispatch MQ action if needed
+  await shouldTriggerHardwareErrorAnalysis(
+    context.messageContext,
+    device,
+    payload,
+    deviceOperationId
+  )
+
+  // process 'calibration' log item
+  await shouldLogDeviceCalibration(
+    knex,
+    device.id,
+    payload,
+    calibrationDeviceMaintenanceTypeId
+  )
+
+  return externalId
 }
 
 async function getDeviceDataWithContext(context) {
