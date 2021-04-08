@@ -51,7 +51,7 @@ describe('Device API routes for GxConnect Devices', () => {
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
 
-  describe.only('registration and configuration', () => {
+  describe('registration and configuration', () => {
     describe('when no device API key is specified', () => {
       const context = createGxConnectTestContext(server, {
         macAddress,
@@ -98,7 +98,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe.only('when a known device API key is specified', () => {
+    describe('when a known device API key is specified', () => {
       describe('send new device data', () => {
         describe('before a device name and country code have been specified', () => {
           const context = createGxConnectTestContext(server, {
@@ -125,7 +125,7 @@ describe('Device API routes for GxConnect Devices', () => {
             }))
         })
 
-        describe.only('after a device name and country code have been specified', () => {
+        describe('after a device name and country code have been specified', () => {
           const context = createGxConnectTestContext(server, {
             countryCode,
             adminUsername,
@@ -179,16 +179,15 @@ describe('Device API routes for GxConnect Devices', () => {
               ])
             }))
 
-          it.only('should update timezone', async () => {
+          it('should update timezone', async () => {
             const { basicDevicePayload, deviceAuth, device } = context
 
-            console.log(device)
             assert.equal(device.timezone, 'Eastern Standard Time')
             const timezone = 'South Africa Standard Time'
 
             const devicePath = '/device'
             // add device
-            const res = await server
+            let res = await server
               .post(devicePath)
               .set('Authorization', deviceAuth)
               .send({
@@ -198,59 +197,34 @@ describe('Device API routes for GxConnect Devices', () => {
 
               .catch(assert.fail)
 
-            console.log('res.body', res.body)
-
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            const newDevice = await knexDb('Device as d')
+            let newDevice = await knexDb('Device as d')
               .where('d.id', device.id)
               .first('d.*')
 
             assert.isOk(newDevice)
             assert.equal(newDevice.timezone, 'South Africa Standard Time')
 
-            /*
-              // update device
-              res = await server
-                .post(devicePath)
-                .set('Authorization', deviceAuth)
-                .send({
-                  type: { id: 'DaktariInSight' },
-                  site: { id: 'CHIZ' },
-                  data: { a: 'b' },
-                  configuration: {
-                    data: {
-                      timezone: 'not existing  Standard Time',
-                    },
+            // update device
+            res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: {
+                  data: {
+                    timezone: 'not existing  Standard Time',
                   },
-                })
+                },
+              })
 
-              newDevice = await getDeviceFromApiKey(knex, apiKey)
-              assert.isOk(newDevice)
-              assert.isOk(newDevice.name)
-              assert.equal(newDevice.timezone, 'South Africa Standard Time')
-              assert.equal(newDevice.serial, null)
-
-              // update device with a proper timezone
-              res = await server
-                .post(devicePath)
-                .set('Authorization', deviceAuth)
-                .send({
-                  type: { id: 'DaktariInSight' },
-                  site: { id: 'CHIZ' },
-                  data: { a: 'b' },
-                  configuration: {
-                    data: {
-                      timezone: 'Egypt Standard Time',
-                    },
-                  },
-                })
-
-              newDevice = await getDeviceFromApiKey(knex, apiKey)
-              assert.isOk(newDevice)
-              assert.isOk(newDevice.name)
-              assert.equal(newDevice.timezone, 'Egypt Standard Time')
-              assert.equal(newDevice.serial, null) */
+            newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'Eastern Standard Time')
+            assert.equal(newDevice.serial, null)
           })
         })
       })

@@ -241,11 +241,6 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
       deviceDetails.timezone &&
       existingDevice.timezone !== deviceDetails.timezone
     ) {
-      console.log(
-        'differente',
-        existingDevice.geographyId,
-        existingDevice.siteId
-      )
       const { timeZone: defaultTimeZone } =
         (await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
@@ -259,7 +254,6 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
         .first('id as existingTimeZone')) || {
         existingTimeZone: defaultTimeZone,
       }
-      console.log('aValue', existingTimeZone, defaultTimeZone)
 
       deviceDetails.timezone = existingTimeZone
     }
