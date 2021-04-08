@@ -2138,6 +2138,7 @@ async function upsertConsumables(
     canExpire,
     manufacturer,
     externalId: consumableFromFixture.externalId,
+    i18nKey: consumableFromFixture.i18nKey,
   }
   let { id: consumableId } =
     (await knex('Consumable').where(propsConsumables).first()) || {}
