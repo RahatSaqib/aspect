@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-07T17:51:38.304Z\n"
+"POT-Creation-Date: 2021-04-08T19:19:39.446Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -57,7 +57,7 @@ msgstr "* en tránsito desde {inTransitFromSiteName}"
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{contactos, plural, oneo {# más {name}} otro {# más {name}} }"
+msgstr "...{contactos, plural, one {# más {name}} other {# más {name}} }"
 
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
@@ -5690,7 +5690,7 @@ msgid ""
 "Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }"
 msgstr ""
 "Registro del estado del flujo de trabajo de resultados {Cuento de elementos, "
-"plural, =0 {} otro {({itemCount})} }"
+"plural, =0 {} other {({itemCount})} }"
 
 #. [pages.Milestones.resultEndedOn]
 #. defaultMessage is:
@@ -6379,7 +6379,7 @@ msgid ""
 "contact} other {# contacts} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"contacto} otro {# contactos} }"
+"contacto} other {# contactos} }"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
@@ -6390,7 +6390,7 @@ msgid ""
 "device API key} other {# device API keys} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"device API key} otro {# device API keys} }"
+"device API key} other {# device API keys} }"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
@@ -6412,7 +6412,7 @@ msgid ""
 "other {# logs} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"log} otro {# logs} }"
+"log} other {# logs} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -6434,7 +6434,7 @@ msgid ""
 "reporter} other {# reporters} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"reporter} otro {# reporters} }"
+"reporter} other {# reporters} }"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -6481,7 +6481,7 @@ msgid ""
 "supply} other {# supplies} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"suministro} otro {# suministros} }"
+"suministro} other {# suministros} }"
 
 #. [pages.TaskList.paginatorStatus]
 #. defaultMessage is:
@@ -6491,8 +6491,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
 "other {# tasks} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, onea {# "
-"tarea} otras {# tareas} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"tarea} other {# tareas} }"
 
 #. [pages.TablePagination.nowShowing]
 #. defaultMessage is:
@@ -6502,8 +6502,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, oneo {# "
-"{name}} otro {# {name}s} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"{name}} other {# {name}s} }"
 
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
@@ -8573,7 +8573,7 @@ msgstr "el estado del flujo de trabajo es {workflowStatusName}"
 #. {alertCount, plural, one {# alert} other {# alerts} }
 #: extracted_strings.json
 msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-msgstr "{alertCount, plural, onea {# alerta} otras {# alertas} }"
+msgstr "{alertCount, plural, one {# alerta} other {# alertas} }"
 
 #. [pages.OperationalData.deviceWithProblems]
 #. defaultMessage is:
@@ -8617,7 +8617,7 @@ msgstr "{count} sitios con problemas"
 msgid ""
 "{daysInSameStatus, plural, one {# day} other {# days} } since last update"
 msgstr ""
-"{daysInSameStatus, plural, one {# día} otro {# días} } desde la última "
+"{daysInSameStatus, plural, one {# día} other {# días} } desde la última "
 "actualización"
 
 #. [pages.TableCell.timeClassification]
@@ -8632,7 +8632,7 @@ msgstr "{elapsed} transcurrido, {upcoming} restante"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr "{itemCount, plural, one {# Contacto} otro {# Contactos} }"
+msgstr "{itemCount, plural, one {# Contacto} other {# Contactos} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
@@ -8657,7 +8657,7 @@ msgid ""
 "other {# results reported} })"
 msgstr ""
 "{maintenanceStatusName} ({resultados totales, plural, one {# resultado "
-"reportado} otro {# resultados reportados} })"
+"reportado} other {# resultados reportados} })"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
 #. defaultMessage is:
