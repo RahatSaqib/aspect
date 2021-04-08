@@ -57,7 +57,7 @@ msgstr "* en tránsito desde {inTransitFromSiteName}"
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{contactos, plural, uno {# más {name}} otro {# más {name}} }"
+msgstr "...{contactos, plural, oneo {# más {name}} otro {# más {name}} }"
 
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
@@ -1528,7 +1528,7 @@ msgstr ""
 #. County
 #: extracted_strings.json
 msgid "County"
-msgstr "Condado"
+msgstr "Ciudad"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -1601,7 +1601,7 @@ msgstr "Mortalidad y recuperación diaria"
 #. Daily Status
 #: extracted_strings.json
 msgid "Daily Status"
-msgstr "Estado del día"
+msgstr "Reporte diario"
 
 #. [filter.AssaySelectField.assayDaktariCD4]
 #. defaultMessage is:
@@ -4703,7 +4703,7 @@ msgstr ""
 #. Out Of Inventory
 #: extracted_strings.json
 msgid "Out Of Inventory"
-msgstr "Fuera de inventario"
+msgstr "Sin inventario"
 
 #. [legends.Unknown.outOfStock]
 #. defaultMessage is:
@@ -4720,7 +4720,7 @@ msgstr "Agotado"
 #. Out of inventory
 #: extracted_strings.json
 msgid "Out of inventory"
-msgstr "Fuera de inventario"
+msgstr "Sin inventario"
 
 #. [pages.Milestones.followUpName]
 #. defaultMessage is:
@@ -4771,7 +4771,7 @@ msgstr "Vencido"
 #. Partner
 #: extracted_strings.json
 msgid "Partner"
-msgstr "Socio"
+msgstr "Asociado"
 
 #. [pages.Login.password]
 #. defaultMessage is:
@@ -6367,8 +6367,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} "
 "other {# cases} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
-"caso} otros {# casos} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"caso} other {# casos} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -6378,7 +6378,7 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "contact} other {# contacts} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "contacto} otro {# contactos} }"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
@@ -6389,7 +6389,7 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "device API key} other {# device API keys} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "device API key} otro {# device API keys} }"
 
 #. [pages.DeviceList.paginatorStatus]
@@ -6400,8 +6400,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "device} other {# devices} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
-"dispositivo} otros {# dispositivos} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"dispositivo} other {# dispositivos} }"
 
 #. [pages.ResultWorkflowStatusLog.paginatorStatus]
 #. defaultMessage is:
@@ -6411,8 +6411,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
 "other {# logs} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# log} "
-"otro {# logs} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"log} otro {# logs} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -6422,8 +6422,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "record} other {# records} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
-"registro} otros {# registros} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"registro} other {# registros} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -6433,7 +6433,7 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "reporter} other {# reporters} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "reporter} otro {# reporters} }"
 
 #. [pages.ResultList.paginatorStatus]
@@ -6447,8 +6447,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "result} other {# results} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
-"resultado} otros {# resultados} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"resultado} other {# resultados} }"
 
 #. [pages.RouterList.paginatorStatus]
 #. defaultMessage is:
@@ -6458,8 +6458,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "router} other {# routers} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
-"router} otros {# routers} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"router} other {# routers} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
@@ -6469,8 +6469,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} "
 "other {# sites} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
-"sitio} otros {# sitios} }"
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+"sitio} other {# sitios} }"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
@@ -6480,7 +6480,7 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "supply} other {# supplies} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, un {# "
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "suministro} otro {# suministros} }"
 
 #. [pages.TaskList.paginatorStatus]
@@ -6491,7 +6491,7 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
 "other {# tasks} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, una {# "
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, onea {# "
 "tarea} otras {# tareas} }"
 
 #. [pages.TablePagination.nowShowing]
@@ -6502,7 +6502,7 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, uno {# "
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, oneo {# "
 "{name}} otro {# {name}s} }"
 
 #. [forms.formSectionHeader.site]
@@ -6648,7 +6648,7 @@ msgstr "Existencias no registradas"
 #. Stockouts
 #: extracted_strings.json
 msgid "Stockouts"
-msgstr "Stocks agotados"
+msgstr "Existencias agotadas"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
 #. defaultMessage is:
@@ -7103,7 +7103,7 @@ msgstr ""
 #. The number of module swaps made at the current month
 #: extracted_strings.json
 msgid "The number of module swaps made at the current month"
-msgstr "El número de intercambios de módulos realizados en el mes actual"
+msgstr "El número de reemplazos de módulos realizados en el mes actual"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -7350,7 +7350,7 @@ msgstr "El {representing} está entre el {comparedToFrom} y el {comparedToTo}"
 #. The {representing} is greater than {comparedTo}
 #: extracted_strings.json
 msgid "The {representing} is greater than {comparedTo}"
-msgstr "El {representing} es mayor que el {comparedTo}"
+msgstr "El {representing} es mayor que {comparedTo}"
 
 #. [widgetAlerts.lessThan]
 #. defaultMessage is:
@@ -8573,7 +8573,7 @@ msgstr "el estado del flujo de trabajo es {workflowStatusName}"
 #. {alertCount, plural, one {# alert} other {# alerts} }
 #: extracted_strings.json
 msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-msgstr "{alertCount, plural, una {# alerta} otras {# alertas} }"
+msgstr "{alertCount, plural, onea {# alerta} otras {# alertas} }"
 
 #. [pages.OperationalData.deviceWithProblems]
 #. defaultMessage is:
@@ -8617,7 +8617,7 @@ msgstr "{count} sitios con problemas"
 msgid ""
 "{daysInSameStatus, plural, one {# day} other {# days} } since last update"
 msgstr ""
-"{daysInSameStatus, plural, un {# día} otro {# días} } desde la última "
+"{daysInSameStatus, plural, one {# día} otro {# días} } desde la última "
 "actualización"
 
 #. [pages.TableCell.timeClassification]
@@ -8632,14 +8632,14 @@ msgstr "{elapsed} transcurrido, {upcoming} restante"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr "{itemCount, plural, un {# Contacto} otro {# Contactos} }"
+msgstr "{itemCount, plural, one {# Contacto} otro {# Contactos} }"
 
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
-msgstr "{itemCount, plural, un {# Nombre} otros {# Nombres} }"
+msgstr "{itemCount, plural, one {# Nombre} other {# Nombres} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -8656,7 +8656,7 @@ msgid ""
 "{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
 "other {# results reported} })"
 msgstr ""
-"{maintenanceStatusName} ({resultados totales, plural, un {# resultado "
+"{maintenanceStatusName} ({resultados totales, plural, one {# resultado "
 "reportado} otro {# resultados reportados} })"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
@@ -8667,8 +8667,8 @@ msgid ""
 "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
 "{# day} other {# days} }"
 msgstr ""
-"{maintenanceStatusName} ({totalResults}) para {daysInSameStatus, plural, un "
-"{# día} otros {# días} }"
+"{maintenanceStatusName} ({totalResults}) para {daysInSameStatus, plural, one "
+"{# día} other {# días} }"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:
@@ -8711,4 +8711,4 @@ msgstr "{unit} calibraciones totales"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
-"{value} ({records}/{total, plural, un {# resultado} otros {# resultados} })"
+"{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
