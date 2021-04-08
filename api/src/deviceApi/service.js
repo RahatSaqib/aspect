@@ -485,6 +485,7 @@ async function updateDeviceConfigurationWithContext(context) {
     plugins,
     'postProcessUpdateDeviceConfiguration'
   )
+  console.log('postProcessUpdateDeviceConfiguration', postProcess)
   const postProcessResult = await postProcess(context)
   return postProcessResult
 }

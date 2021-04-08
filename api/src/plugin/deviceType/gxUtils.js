@@ -335,6 +335,7 @@ async function postProcessUpdateDeviceConfiguration({
   now,
 }) {
   let device = {}
+  console.warn('Tiene que entrar', !_.isEmpty(_.get(payload, 'data')))
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
       data: {
