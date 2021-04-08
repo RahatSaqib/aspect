@@ -208,7 +208,7 @@ describe('Device API routes', () => {
     })
   })
 
-  describe.only('add new device', () => {
+  describe('add new device', () => {
     const newDeviceContext = createTestContext(server, {
       user: 'reporter_admin',
       partner: 'Reporter',
