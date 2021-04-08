@@ -41,14 +41,8 @@ const getCustomFields = async (partnerId, deviceId) => {
 
   const hasAnyUpdate =
     !maxDateUpdated ||
-    _.reduce(
-      formQuery,
-      (prev, curr) => {
-        prev =
-          prev || formDictionary[curr.externalId].updatedOn > maxDateUpdated
-        return prev
-      },
-      false
+    !!formQuery.find(
+      ({ externalId }) => formDictionary[externalId].updatedOn > maxDateUpdated
     )
   let forms = {}
   if (hasAnyUpdate) {
