@@ -114,12 +114,16 @@ function setConstraintsIfNotSetAlready(
 }
 
 function getFirstExisting(filterConstraints, path) {
-  const propertyValues = _.uniq(
-    filterConstraints.filter(fc => !!_.get(fc, path)).map(fc => _.get(fc, path))
+  const firstUnsetPropertyConstraint = filterConstraints.find(
+    fc => !_.get(fc, path)
   )
-  if (propertyValues.length) {
-    return propertyValues[0]
+  if (firstUnsetPropertyConstraint) {
+    return
   }
+  return _.get(
+    filterConstraints.find(fc => !!_.get(fc, path)),
+    path
+  )
 }
 
 async function getJobConstraints(personId, jobFunctionId) {
