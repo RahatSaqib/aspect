@@ -33,6 +33,16 @@ const getMonthYearUserTimeZoneField = (
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
 
+const getISODateUserTimeZoneField = (
+  knex,
+  field,
+  alias = 'isoDate',
+  offset = '+00:00'
+) =>
+  knex.raw(
+    `CONCAT(DATE_FORMAT(CONVERT_TZ(${field}, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as ${alias}`
+  )
+
 function parseDateOrDefault(
   date,
   options = { formatString: null, backupDate: null, defaultDate: null }
@@ -199,4 +209,5 @@ module.exports = {
   REGEX_ISODATESTRING,
   getDateSubstring,
   getMonthYearUserTimeZoneField,
+  getISODateUserTimeZoneField,
 }
