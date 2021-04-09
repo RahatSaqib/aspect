@@ -305,6 +305,7 @@ describe('Device API routes', () => {
       )
       assert.equal(onlineFactDevice.offline, 0)
     })
+
     it('should assign the Device to the default capacity for the device type and partner', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
       assert.isOk(apiKey)

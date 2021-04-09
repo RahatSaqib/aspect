@@ -20,7 +20,6 @@ async function updateDeviceConfiguration(knex, deviceId, payload, now) {
 
   // process props labContact* and installer* in 'payload', if any defined
   await tryAssignLabTechnicianToSite(knex, deviceId, payload)
-
   // finally update Device.configurationData
   await knex('Device')
     .where({ id: deviceId })
@@ -162,6 +161,18 @@ const getCreateAssignPerson = async (
   // or create person with specified name
   // ----------
   else if (name) {
+    /* validates if the tz is included in our db */
+    const { timeZone: defaultTimeZone } =
+      (await knex('Geography as g')
+        .join('Country as c', 'c.id', 'g.countryId')
+        .where('g.id', geographyId)
+        .first('c.timezone as timeZone')) ||
+      (await knex('Country as c').first('c.timezone as timeZone'))
+    const { existingTimeZone } =
+      (await knex('TimeZone')
+        .where('id', timezone)
+        .first('id as existingTimeZone')) || {}
+    timezone = existingTimeZone || defaultTimeZone
     ;[personId] = await knex('Person').insert({
       geographyId,
       name,
@@ -224,7 +235,28 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
     // which field vakues are different?
     const existingDevice = await knex('Device as d')
       .where({ 'd.id': deviceId })
-      .select()
+      .first()
+    /* validates if the tz is included in our db */
+    if (
+      deviceDetails.timezone &&
+      existingDevice.timezone !== deviceDetails.timezone
+    ) {
+      const { timeZone: defaultTimeZone } =
+        (await knex('Site as s')
+          .join('Geography as g', 's.geographyId', 'g.id')
+          .join('Country as c', 'c.id', 'g.countryId')
+          .where('g.id', existingDevice.geographyId)
+          .orWhere('s.id', existingDevice.siteId)
+          .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
+        (await knex('Country as c').first('c.timezone as timeZone'))
+      const { existingTimeZone } = (await knex('TimeZone')
+        .where('id', deviceDetails.timezone)
+        .first('id as existingTimeZone')) || {
+        existingTimeZone: defaultTimeZone,
+      }
+
+      deviceDetails.timezone = existingTimeZone
+    }
     const changedDetails = _.omitBy(
       deviceDetails,
       (v, k) =>

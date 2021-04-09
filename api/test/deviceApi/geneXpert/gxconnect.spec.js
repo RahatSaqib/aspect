@@ -28,7 +28,7 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { run } = require('../../../src/db')
+const { run, knex: knexDb } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
@@ -178,6 +178,54 @@ describe('Device API routes for GxConnect Devices', () => {
                 },
               ])
             }))
+
+          it('should update timezone', async () => {
+            const { basicDevicePayload, deviceAuth, device } = context
+
+            assert.equal(device.timezone, 'Eastern Standard Time')
+            const timezone = 'South Africa Standard Time'
+
+            const devicePath = '/device'
+            // add device
+            let res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: { data: { timezone } },
+              })
+
+              .catch(assert.fail)
+
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            let newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'South Africa Standard Time')
+
+            // update device
+            res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: {
+                  data: {
+                    timezone: 'not existing  Standard Time',
+                  },
+                },
+              })
+
+            newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'Eastern Standard Time')
+            assert.equal(newDevice.serial, null)
+          })
         })
       })
     })
