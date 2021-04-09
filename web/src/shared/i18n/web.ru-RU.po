@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-06T16:41:35.721Z\n"
+"POT-Creation-Date: 2021-04-09T15:54:07.095Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -697,6 +697,13 @@ msgstr "Тип анализа"
 msgid "Assay Type:"
 msgstr "Тип анализа:"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#: extracted_strings.json
+msgid "Asserted zero inventory"
+msgstr "Утвержденная нулевая инвентаризация"
+
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
 #. Assign
@@ -804,8 +811,6 @@ msgstr "Среднемесячная скорость подавления"
 #. defaultMessage is:
 #. Average Monthly TB Detected Rate
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average monthly TB Detected Rate"
 msgid "Average Monthly TB Detected Rate"
 msgstr "Средний ежемесячный показатель выявленного туберкулеза"
 
@@ -1054,6 +1059,13 @@ msgstr "Просроченная калибровка"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Отмена"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#: extracted_strings.json
+msgid "Captured"
+msgstr "Захваченный"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -3212,6 +3224,13 @@ msgstr ""
 "Если вам нужна помощь в восстановлении регистрационных данных, пожалуйста, "
 "свяжитесь с нами, чтобы мы могли помочь вам. Вы можете запросить нашу "
 "помощь, отправив электронное письмо на адрес {supportEmail}"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
+#. defaultMessage is:
+#. Imported
+#: extracted_strings.json
+msgid "Imported"
+msgstr "Импортировано"
 
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
@@ -7565,6 +7584,13 @@ msgstr "Передать"
 msgid "Transfer Inventory"
 msgstr "Передать запас"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer Received
+#: extracted_strings.json
+msgid "Transfer Received"
+msgstr "Полученный перевод"
+
 #. [pages.resultEdit.transferResult]
 #. defaultMessage is:
 #. Transfer Result
@@ -7581,6 +7607,13 @@ msgstr "Результат передачи"
 #: extracted_strings.json
 msgid "Transfer Result Error"
 msgstr "Ошибка результата передачи"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer Sent
+#: extracted_strings.json
+msgid "Transfer Sent"
+msgstr "Передача Отправлено"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:

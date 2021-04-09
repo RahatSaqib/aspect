@@ -176,7 +176,7 @@ const SelectComponent = ({
   }, [inputValue])
 
   useEffect(() => {
-    if (!isEqual(options, data) || !defaultOptionValue) {
+    if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
       setDefaultOptionValue(
         indexForDefaultSelected(data, defaultSelectedOption)
       )
@@ -185,7 +185,6 @@ const SelectComponent = ({
       setBusy(false)
     }
   }, [data, defaultSelectedOption])
-
   return !busy ? (
     <div
       className={cssClasses('select__container', {
@@ -277,7 +276,6 @@ const AspectDropDown = ({
   if (isError) {
     throw new Error(error)
   }
-
   return selectOptions && selectOptions.length ? (
     <SelectComponent
       classNames={classNames}

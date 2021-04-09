@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-08T19:19:39.446Z\n"
+"POT-Creation-Date: 2021-04-09T15:54:07.095Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -699,6 +699,13 @@ msgstr "Tipo de ensayo"
 msgid "Assay Type:"
 msgstr "Tipo de ensayo:"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#: extracted_strings.json
+msgid "Asserted zero inventory"
+msgstr "Sin inventario"
+
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
 #. Assign
@@ -1056,6 +1063,13 @@ msgstr "Calibración vencida"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#: extracted_strings.json
+msgid "Captured"
+msgstr "Capturado"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -3215,6 +3229,13 @@ msgstr ""
 "Si necesitas ayuda para recuperar tus datos de acceso, ponte en contacto con "
 "nosotros para que podamos ayudarte. Puede solicitar nuestra ayuda enviando "
 "un correo electrónico a {supportEmail}"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
+#. defaultMessage is:
+#. Imported
+#: extracted_strings.json
+msgid "Imported"
+msgstr "Importado"
 
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
@@ -7584,6 +7605,13 @@ msgstr "Transferir"
 msgid "Transfer Inventory"
 msgstr "Transferir inventario"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer Received
+#: extracted_strings.json
+msgid "Transfer Received"
+msgstr "Transferencia recibida"
+
 #. [pages.resultEdit.transferResult]
 #. defaultMessage is:
 #. Transfer Result
@@ -7600,6 +7628,13 @@ msgstr "Transferir resultado"
 #: extracted_strings.json
 msgid "Transfer Result Error"
 msgstr "Fallo en la transferencia del resultado"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer Sent
+#: extracted_strings.json
+msgid "Transfer Sent"
+msgstr "Transferencia enviada"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
