@@ -57,6 +57,16 @@ async function getConstraints(credentials) {
   const filterConstraints = jobContexts.map(getJobContextConstraint)
   if (filterConstraints.length) {
     constraints.$or = filterConstraints
+    const deviceTypeIds = _.uniq(
+      filterConstraints
+        .filter(fc => !!_.get(fc, 'deviceType.id'))
+        .map(fc => _.get(fc, 'deviceType.id'))
+    )
+    if (deviceTypeIds.length) {
+      constraints.deviceType = {
+        id: deviceTypeIds[0],
+      }
+    }
   }
 
   return constraints
@@ -480,27 +490,27 @@ function addConstraintWithJobFunction({
   allowAdminThrough = false,
 }) {
   if (alias && constraint) {
-    queryBuilder.orWhere(function () {
+    queryBuilder.orWhere(qb => {
       if (
         jobFunctionAlias &&
         jobFunctionConstraint &&
         (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
       ) {
-        this.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
+        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
           _.mapKeys(
             _.omit(jobFunctionConstraint, 'isAdmin'),
             (v, k) => `${jobFunctionAlias}.${k}`
           )
         )
       } else {
-        this.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
+        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
       }
       if (personAlias && personConstraint) {
-        this.andWhere(
+        qb.andWhere(
           _.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`)
         )
         if (allowAdminThrough) {
-          this.orWhere(`${jobFunctionAlias}.isAdmin`, true)
+          qb.orWhere(`${jobFunctionAlias}.isAdmin`, true)
         }
       }
     })
