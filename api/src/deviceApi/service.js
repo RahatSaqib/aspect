@@ -430,29 +430,25 @@ async function getConnectionSettings(context) {
         'd.geographyId',
         'deviceGeography.id'
       )
-      .where(builder => {
+      .where({
+        'd.id': deviceId,
+        'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
+        'dc.partnerId': partnerId,
+        'g.countryId': knex.raw('deviceGeography.countryId'),
+      })
+      .andWhere(builder =>
         builder
-          .where({
-            'd.id': deviceId,
-            'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
-            'dc.partnerId': partnerId,
-            'g.countryId': knex.raw('deviceGeography.countryId'),
-          })
-
-          .where(builder =>
-            builder
-              .whereNull('d.connectSettingsSentOn')
-              .orWhere('d.connectSettingsSentOn', '<', knex.raw('dc.updatedOn'))
+          .whereNull('d.connectSettingsSentOn')
+          .orWhere('d.connectSettingsSentOn', '<', knex.raw('dc.updatedOn'))
+      )
+      .andWhere(builder => {
+        builder
+          .whereNull('g.stateId')
+          .orWhere(orBuilder =>
+            orBuilder
+              .whereNotNull('g.stateId')
+              .andWhere('g.stateId', knex.raw('deviceGeography.stateId'))
           )
-          .andWhere(innerBuilder => {
-            innerBuilder
-              .whereNull('g.stateId')
-              .orWhere(orBuilder =>
-                orBuilder
-                  .whereNotNull('g.stateId')
-                  .andWhere('g.stateId', knex.raw('deviceGeography.stateId'))
-              )
-          })
       })
       .orderBy('g.stateId', 'DESC')
       .first('data')) || {}
