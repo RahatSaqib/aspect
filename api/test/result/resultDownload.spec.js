@@ -252,9 +252,13 @@ describe('Result download routes', () => {
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res, results.length)
 
+      /**
+       * see 'api/seeds/commonGenerateResults.js' func 'addTBResults()' - we insert results for
+       * assays 'elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra''
+       */
       res = await server
         .get(
-          `${path}?size=20&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxEbola,GxHiv1Vl,GxHcv`
+          `${path}?size=20&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra`
         )
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res, results.length)
