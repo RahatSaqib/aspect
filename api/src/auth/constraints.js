@@ -238,29 +238,23 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  if (resultAlias) {
-    if (_.get(constraints, 'partner.id')) {
+  if (_.get(constraints, 'partner.id')) {
+    if (resultAlias) {
       queryBuilder.where(qb =>
         qb
           .whereNull(`${resultAlias}.partnerId`)
           .orWhere(`${resultAlias}.partnerId`, constraints.partner.id)
       )
-      if (constraints.result) {
-        queryBuilder.where(qb =>
-          qb.whereNull(`${resultAlias}.partnerId`).orWhere({
-            [`${resultAlias}.partnerId`]: constraints.partner.id,
-          })
-        )
-      }
-      if (partner) {
-        queryBuilder.where(qb =>
-          qb.whereNull(`${resultAlias}.partnerId`).orWhere({
-            [`${resultAlias}.partnerId`]: constraints.partner.id,
-          })
-        )
-      }
     }
-
+    if (partner) {
+      queryBuilder.where(qb =>
+        qb.whereNull(`${partner}.id`).orWhere({
+          [`${partner}.id`]: constraints.partner.id,
+        })
+      )
+    }
+  }
+  if (resultAlias) {
     if (_.get(constraints, 'assay.id')) {
       queryBuilder.where(qb =>
         isNullInOrEqual(qb, `${resultAlias}.assayId`, constraints.assay.id)
