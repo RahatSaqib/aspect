@@ -57,19 +57,69 @@ async function getConstraints(credentials) {
   const filterConstraints = jobContexts.map(getJobContextConstraint)
   if (filterConstraints.length) {
     constraints.$or = filterConstraints
-    const deviceTypeIds = _.uniq(
-      filterConstraints
-        .filter(fc => !!_.get(fc, 'deviceType.id'))
-        .map(fc => _.get(fc, 'deviceType.id'))
-    )
-    if (deviceTypeIds.length) {
-      constraints.deviceType = {
-        id: deviceTypeIds[0],
+    if (
+      !setConstraintsIfNotSetAlready(
+        constraints,
+        filterConstraints,
+        'assay.id',
+        ['assay.id', 'result.assayId']
+      )
+    ) {
+      if (
+        !setConstraintsIfNotSetAlready(
+          constraints,
+          filterConstraints,
+          'assayType.id',
+          ['assayType.id', 'assay.assayTypeId']
+        )
+      ) {
+        setConstraintsIfNotSetAlready(
+          constraints,
+          filterConstraints,
+          'disease.id',
+          ['disease.id', 'assayType.diseaseId']
+        )
       }
     }
+    setConstraintsIfNotSetAlready(
+      constraints,
+      filterConstraints,
+      'deviceType.id',
+      ['deviceType.id', 'device.deviceTypeId']
+    )
   }
 
   return constraints
+}
+
+function setConstraintsIfNotSetAlready(
+  constraints,
+  filterConstraints,
+  getPath,
+  setPaths
+) {
+  let constraintSet = false
+  if (!_.isEmpty(setPaths)) {
+    const constraintValue = getFirstExisting(filterConstraints, getPath)
+    if (constraintValue) {
+      setPaths.forEach(setPath => {
+        if (!_.get(constraints, setPath)) {
+          _.set(constraints, setPath, constraintValue)
+          constraintSet = true
+        }
+      })
+    }
+  }
+  return constraintSet
+}
+
+function getFirstExisting(filterConstraints, path) {
+  const propertyValues = _.uniq(
+    filterConstraints.filter(fc => !!_.get(fc, path)).map(fc => _.get(fc, path))
+  )
+  if (propertyValues.length) {
+    return propertyValues[0]
+  }
 }
 
 async function getJobConstraints(personId, jobFunctionId) {
@@ -196,16 +246,30 @@ function addConstraints(queryBuilder, constraints, aliases) {
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
   if (resultAlias) {
-    if (constraints.partner) {
+    if (_.get(constraints, 'partner.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.partnerId`).orWhere(
           `${resultAlias}.partnerId`,
           constraints.partner.id
         )
       })
+      if (constraints.result) {
+        queryBuilder.where(function () {
+          this.whereNull(`${resultAlias}.partnerId`).orWhere({
+            [`${resultAlias}.partnerId`]: constraints.partner.id,
+          })
+        })
+      }
+      if (partner) {
+        queryBuilder.where(function () {
+          this.whereNull(`${resultAlias}.partnerId`).orWhere({
+            [`${resultAlias}.partnerId`]: constraints.partner.id,
+          })
+        })
+      }
     }
 
-    if (constraints.assay) {
+    if (_.get(constraints, 'assay.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${resultAlias}.assayId`).orWhere(
           `${resultAlias}.assayId`,
@@ -220,20 +284,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
         `${resultAlias}.geographyId`,
         `${geography}.id`
       )
-    }
-    if (partner && constraints.partner) {
-      queryBuilder.where(function () {
-        this.whereNull(`${resultAlias}.partnerId`).orWhere({
-          [`${resultAlias}.partnerId`]: constraints.partner.id,
-        })
-      })
-    }
-    if (constraints.result) {
-      queryBuilder.where(function () {
-        this.whereNull(`${resultAlias}.partnerId`).orWhere({
-          [`${resultAlias}.partnerId`]: constraints.partner.id,
-        })
-      })
     }
     if (
       (constraints.disease ||
@@ -256,21 +306,21 @@ function addConstraints(queryBuilder, constraints, aliases) {
         `${assayType}.id`
       )
     }
-    if (constraints.disease) {
+    if (_.get(constraints, 'disease.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${assayType}.diseaseId`).orWhere({
           [`${assayType}.diseaseId`]: constraints.disease.id,
         })
       })
     }
-    if (constraints.assayType) {
+    if (_.get(constraints, 'assayType.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${assay}.assayTypeId`).orWhere({
           [`${assay}.assayTypeId`]: constraints.assayType.id,
         })
       })
     }
-    if (constraints.deviceType) {
+    if (_.get(constraints, 'deviceType.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${assay}.deviceTypeId`).orWhere({
           [`${assay}.deviceTypeId`]: constraints.deviceType.id,
@@ -307,7 +357,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
       }
     }
     // Partner, country, and constraints are ANDed
-    if (partner && constraints.partner) {
+    if (partner && _.get(constraints, 'partner.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${partner}.id`).orWhere({
           [`${partner}.id`]: constraints.partner.id,
@@ -315,35 +365,39 @@ function addConstraints(queryBuilder, constraints, aliases) {
       })
     }
 
-    if (country && constraints.country) {
-      queryBuilder.where(`${country}.id`, constraints.country.id)
-    } else if (geography && constraints.country) {
-      queryBuilder.where({
-        [`${geography}.countryId`]: constraints.country.id,
-      })
-    }
-    if (device && constraints.deviceType) {
-      queryBuilder.where(function () {
-        this.whereNull(`${device}.deviceTypeId`).orWhere({
-          [`${device}.deviceTypeId`]: constraints.deviceType.id,
+    if (_.get(constraints, 'country.id')) {
+      if (country) {
+        queryBuilder.where(`${country}.id`, constraints.country.id)
+      } else if (geography) {
+        queryBuilder.where({
+          [`${geography}.countryId`]: constraints.country.id,
         })
-      })
+      }
     }
-    if (assay && constraints.assayType) {
+    if (_.get(constraints, 'deviceType.id')) {
+      if (device) {
+        queryBuilder.where(function () {
+          this.whereNull(`${device}.deviceTypeId`).orWhere({
+            [`${device}.deviceTypeId`]: constraints.deviceType.id,
+          })
+        })
+      }
+      if (assay) {
+        queryBuilder.where(function () {
+          this.whereNull(`${assay}.deviceTypeId`).orWhere({
+            [`${assay}.deviceTypeId`]: constraints.deviceType.id,
+          })
+        })
+      }
+    }
+    if (assay && _.get(constraints, 'assayType.id')) {
       queryBuilder.where(function () {
         this.whereNull(`${assay}.assayTypeId`).orWhere({
           [`${assay}.assayTypeId`]: constraints.assayType.id,
         })
       })
     }
-    if (assay && constraints.deviceType) {
-      queryBuilder.where(function () {
-        this.whereNull(`${assay}.deviceTypeId`).orWhere({
-          [`${assay}.deviceTypeId`]: constraints.deviceType.id,
-        })
-      })
-    }
-    if (constraints.disease) {
+    if (constraints.disease && _.get(constraints, 'disease.id')) {
       if (assayType) {
         queryBuilder.where(function () {
           this.whereNull(`${assayType}.diseaseId`).orWhere({
