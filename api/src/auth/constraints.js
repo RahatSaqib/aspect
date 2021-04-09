@@ -376,7 +376,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
         isNullInOrEqual(qb, `${assay}.assayTypeId`, constraints.assayType.id)
       )
     }
-    if (constraints.disease && _.get(constraints, 'disease.id')) {
+    if (_.get(constraints, 'disease.id')) {
       if (assayType) {
         queryBuilder.where(qb =>
           isNullInOrEqual(qb, `${assayType}.diseaseId`, constraints.disease.id)
