@@ -108,76 +108,74 @@ describe('Maintenance Reports', () => {
     })
   })
 
-  const evaluateCorrectDailyStatus = (done, offset) => {
+  const evaluateCorrectDailyStatus = async offset => {
     // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
     const minDate = `2019-12-03T00:00:00.000${offset}`
     const maxDate = `2020-01-03T00:00:00.000${offset}`
 
     // Then, in the API we consider the same dates but in UTC (without conversion)
     // The resulting date range for statuses will always be '2019-12-03T00:00:00.000Z' to '2020-01-03T00:00:00.000Z', no matter the given offset
-    server
+    const maintenanceStatusOverTime = await server
       .get(
         `${path}?minDate=${encodeURIComponent(
           minDate
         )}&maxDate=${encodeURIComponent(maxDate)}`
       )
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'array')
+    assert.equal(maintenanceStatusOverTime.status, 200)
+    assert.typeOf(maintenanceStatusOverTime.body, 'Object')
+    assert.property(maintenanceStatusOverTime.body, 'data')
+    assert.typeOf(maintenanceStatusOverTime.body.data, 'array')
 
-        const tamagotchi = find(res.body.data, d => d.id === deviceId)
-        assert.isNotNull(tamagotchi)
-        assert.equal(tamagotchi.latitude, 1)
-        assert.equal(tamagotchi.longitude, 5)
-        assert.isAtLeast(tamagotchi.totalResults, 1)
-        const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
-        expect(tamagotchiLastStatus).to.have.containSubset(
-          tamagotchiLastStatus.totalResults > 0
-            ? {
-                maintenanceStatusExternalId: 'active',
-                maintenanceStatusI18nKey: 'active',
-                maintenanceStatusName: 'Active',
-              }
-            : {
-                maintenanceStatusExternalId: 'inactiveNoResultsReported',
-                maintenanceStatusI18nKey: 'inactiveNoResultsReported',
-                maintenanceStatusName: 'No Results Reported',
-              }
-        )
-        assert.isBoolean(tamagotchiLastStatus.isWeekend)
-        assert.isNumber(tamagotchiLastStatus.weekNumber)
-        assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
-
-        done()
-      })
+    const tamagotchi = find(
+      maintenanceStatusOverTime.body.data,
+      d => d.id === deviceId
+    )
+    assert.isNotNull(tamagotchi)
+    assert.equal(tamagotchi.latitude, 1)
+    assert.equal(tamagotchi.longitude, 5)
+    assert.isAtLeast(tamagotchi.totalResults, 1)
+    const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
+    expect(tamagotchiLastStatus).to.have.containSubset(
+      tamagotchiLastStatus.totalResults > 0
+        ? {
+            maintenanceStatusExternalId: 'active',
+            maintenanceStatusI18nKey: 'active',
+            maintenanceStatusName: 'Active',
+          }
+        : {
+            maintenanceStatusExternalId: 'inactiveNoResultsReported',
+            maintenanceStatusI18nKey: 'inactiveNoResultsReported',
+            maintenanceStatusName: 'No Results Reported',
+          }
+    )
+    assert.isBoolean(tamagotchiLastStatus.isWeekend)
+    assert.isNumber(tamagotchiLastStatus.weekNumber)
+    assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
   }
 
-  it('should get the correct daily status for negative timezones', done => {
-    evaluateCorrectDailyStatus(done, '-03:00')
-  })
+  it('should get the correct daily status for negative timezones', async () =>
+    evaluateCorrectDailyStatus('-03:00'))
 
-  it('should get the correct daily status for positive timezones', done => {
-    evaluateCorrectDailyStatus(done, '+03:00')
-  })
+  it('should get the correct daily status for positive timezones', async () =>
+    evaluateCorrectDailyStatus('+03:00'))
 
-  it('should get the correct current status', done => {
-    server
+  it('should get the correct current status', async () => {
+    const lastReportedStatus = await server
       .get(`${pathLastReported}`)
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'array')
-        const tamagotchi = find(res.body.data, d => d.id === deviceId)
-        assert.isNotNull(tamagotchi)
-        assert.equal(tamagotchi.latitude, 1)
-        assert.equal(tamagotchi.longitude, 5)
-        expect(tamagotchi.maintenanceStatusExternalId).equals('active')
-        done()
-      })
+
+    assert.equal(lastReportedStatus.status, 200)
+    assert.typeOf(lastReportedStatus.body, 'Object')
+    assert.property(lastReportedStatus.body, 'data')
+    assert.typeOf(lastReportedStatus.body.data, 'array')
+    const tamagotchi = find(
+      lastReportedStatus.body.data,
+      d => d.id === deviceId
+    )
+    assert.isNotNull(tamagotchi)
+    assert.equal(tamagotchi.latitude, 1)
+    assert.equal(tamagotchi.longitude, 5)
+    expect(tamagotchi.maintenanceStatusExternalId).equals('active')
   })
 })
