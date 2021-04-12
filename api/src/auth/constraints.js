@@ -110,9 +110,9 @@ function getFilterConstraintValues(filterConstraints, path) {
   if (firstUnsetPropertyConstraint) {
     return
   }
-  return filterConstraints
-    .filter(fc => !!_.get(fc, path))
-    .map(fc => _.get(fc, path))
+  return _.uniq(
+    filterConstraints.filter(fc => !!_.get(fc, path)).map(fc => _.get(fc, path))
+  )
 }
 
 async function getJobConstraints(personId, jobFunctionId) {
@@ -511,11 +511,13 @@ function addConstraints(queryBuilder, constraints, aliases) {
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {
-  return queryBuilder.whereNull(columnName).orWhere(qb => {
-    return _.isArray(value)
-      ? qb.whereIn(columnName, value)
-      : qb.where(columnName, value)
-  })
+  return queryBuilder.andWhere(qb =>
+    qb.whereNull(columnName).orWhere(qb => {
+      return _.isArray(value)
+        ? qb.whereIn(columnName, value)
+        : qb.where(columnName, value)
+    })
+  )
 }
 
 function addConstraintWithJobFunction({
@@ -529,7 +531,7 @@ function addConstraintWithJobFunction({
   allowAdminThrough = false,
 }) {
   if (alias && constraint) {
-    queryBuilder.orWhere(qb => {
+    queryBuilder.andWhere(qb => {
       if (
         jobFunctionAlias &&
         jobFunctionConstraint &&
