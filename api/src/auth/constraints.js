@@ -435,14 +435,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // data filter constraints are ORed
   if (!_.isEmpty(_.get(constraints, '$or'))) {
-    const getBaseProps = (queryBuilder, constraint) => ({
-      queryBuilder,
-      jobFunctionAlias: jobFunction,
-      jobFunctionConstraint: constraint.jobFunction,
-      personAlias: person,
-      personConstraint: constraint.person,
-      allowAdminThrough,
-    })
     for (const constraint of constraints.$or) {
       if (constraint.disease && assay && !disease && !assayType) {
         assayType = alias('AssayType')
@@ -453,57 +445,67 @@ function addConstraints(queryBuilder, constraints, aliases) {
         )
       }
     }
-    queryBuilder.where(qb => {
+    const getBaseProps = (queryBuilder, constraint) => ({
+      queryBuilder,
+      jobFunctionAlias: jobFunction,
+      jobFunctionConstraint: constraint.jobFunction,
+      personAlias: person,
+      personConstraint: constraint.person,
+      allowAdminThrough,
+    })
+    queryBuilder.andWhere(qb => {
       for (const constraint of constraints.$or) {
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: geography,
-          constraint: constraint.geography,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: site,
-          constraint: constraint.site,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: device,
-          constraint: constraint.device,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: resultAlias,
-          constraint: constraint.result,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: sample,
-          constraint: constraint.sample,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: person,
-          constraint: constraint.person,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: assayType,
-          constraint: constraint.assayType,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: assay,
-          constraint: constraint.assay,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: deviceType,
-          constraint: constraint.deviceType,
-        })
-        addConstraintWithJobFunction({
-          ...getBaseProps(qb, constraint),
-          alias: disease,
-          constraint: constraint.disease,
+        qb.orWhere(qb => {
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: geography,
+            constraint: constraint.geography,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: site,
+            constraint: constraint.site,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: device,
+            constraint: constraint.device,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: resultAlias,
+            constraint: constraint.result,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: sample,
+            constraint: constraint.sample,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: person,
+            constraint: constraint.person,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: assayType,
+            constraint: constraint.assayType,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: assay,
+            constraint: constraint.assay,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: deviceType,
+            constraint: constraint.deviceType,
+          })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: disease,
+            constraint: constraint.disease,
+          })
         })
       }
     })
@@ -511,13 +513,24 @@ function addConstraints(queryBuilder, constraints, aliases) {
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {
-  return queryBuilder.andWhere(qb =>
-    qb.whereNull(columnName).orWhere(qb => {
-      return _.isArray(value)
-        ? qb.whereIn(columnName, value)
-        : qb.where(columnName, value)
-    })
-  )
+  return queryBuilder.andWhere(qb => {
+    qb.whereNull(columnName)
+    if (!_.isNil(value) && !_.isEmpty(value)) {
+      qb.orWhere(qb => {
+        if (_.isArray(value) && value.length > 1) {
+          qb.whereIn(columnName, value)
+        } else if (
+          _.isArray(value) &&
+          value.length === 1 &&
+          !_.isNil(value[0])
+        ) {
+          qb.where(columnName, value[0])
+        } else {
+          qb.where(columnName, value)
+        }
+      })
+    }
+  })
 }
 
 function addConstraintWithJobFunction({
