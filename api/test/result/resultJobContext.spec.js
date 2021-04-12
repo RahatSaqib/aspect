@@ -1,30 +1,44 @@
 const chai = require('chai')
 const Promise = require('bluebird')
+const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
+const { createResult } = require('./result_utils')
 const server = require('../utils/testUtils')
 
 const { assert } = chai
 
 describe('Result route Job constraints', () => {
   const path = '/api/result'
+  const partnerName = 'Partner One'
+  const withinLastXDays = 30
+  const resultIdsToRemove = []
+
+  after(async () => {
+    await Promise.each(resultIdsToRemove, async resultId =>
+      knex('Result').where('id', resultId).del()
+    )
+  })
 
   describe('Assay based', () => {
     shared.checkToken(server, path)
+    const bdMgitDeviceTypeExternalId = 'BDMGIT'
     const assayBdMgitGndAssayExternalId = 'assayBdMgitGnd'
-    const bdmgitGndClinicianUsername = 'mgit_gnd_clinician'
-    const bdmgitGndClinicianPassword = 'mgit-gnd-clinician-pass'
-    let bdmgitGndClinicianUserId
-    let bdmgitGndClinicianAuthAccessToken
+    const bdMgitGndClinicianUsername = 'mgit_gnd_clinician'
+    const bdMgitGndClinicianPassword = 'mgit-gnd-clinician-pass'
+    let bdMgitGndClinicianUserId
+    let bdMgitGndClinicianAuthAccessToken
 
+    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
     const assayDaktariHivVlExternalId = 'DaktariHivVL'
     const daktariHivVlClinicianUsername = 'dak_vl_clinician'
     const daktariHivVlClinicianPassword = 'vl-vl-clinician-pass'
     let daktariHivVlClinicianUserId
     let daktariHivVlClinicianAuthAccessToken
 
+    const geneXpertDeviceTypeExternalId = 'CepheidGeneXpert'
     const assayGxEbolaExternalId = 'GxEbola'
 
     const gxEbolaClinicianUsername = 'gx_ebola_clinician'
@@ -38,11 +52,32 @@ describe('Result route Job constraints', () => {
     let bothAssaysClinicianAuthAccessToken
 
     before(async () => {
-      bdmgitGndClinicianUserId = await createUser(
-        'Partner One',
+      const { id: partnerId } = await knex('Partner')
+        .where('name', partnerName)
+        .first('id')
+      const otherUserId = (
+        await knex('User').where('name', '<>', 'admin').first('id')
+      ).id
+      await Promise.each(_.range(0, 15), async () => {
+        resultIdsToRemove.push(
+          await createResult(
+            partnerId,
+            bdMgitDeviceTypeExternalId,
+            'Sputum',
+            assayBdMgitGndAssayExternalId,
+            otherUserId,
+            {},
+            {},
+            false,
+            withinLastXDays
+          )
+        )
+      })
+      bdMgitGndClinicianUserId = await createUser(
+        partnerName,
         'US',
-        bdmgitGndClinicianUsername,
-        bdmgitGndClinicianPassword,
+        bdMgitGndClinicianUsername,
+        bdMgitGndClinicianPassword,
         [
           {
             jobFunctionExternalId: 'clinician',
@@ -50,13 +85,28 @@ describe('Result route Job constraints', () => {
           },
         ]
       )
-      bdmgitGndClinicianAuthAccessToken = await getAccessToken(
-        bdmgitGndClinicianUsername,
-        bdmgitGndClinicianPassword
+      bdMgitGndClinicianAuthAccessToken = await getAccessToken(
+        bdMgitGndClinicianUsername,
+        bdMgitGndClinicianPassword
       )
 
+      await Promise.each(_.range(0, 15), async () => {
+        resultIdsToRemove.push(
+          await createResult(
+            partnerId,
+            daktariVirologyDeviceTypeExternalId,
+            'Plasma',
+            assayDaktariHivVlExternalId,
+            otherUserId,
+            {},
+            {},
+            false,
+            withinLastXDays
+          )
+        )
+      })
       daktariHivVlClinicianUserId = await createUser(
-        'Partner One',
+        partnerName,
         'US',
         daktariHivVlClinicianUsername,
         daktariHivVlClinicianPassword,
@@ -72,8 +122,23 @@ describe('Result route Job constraints', () => {
         daktariHivVlClinicianPassword
       )
 
-      bothAssaysClinicianUserId = await createUser(
-        'Partner One',
+      await Promise.each(_.range(0, 15), async () => {
+        resultIdsToRemove.push(
+          await createResult(
+            partnerId,
+            geneXpertDeviceTypeExternalId,
+            'DBS',
+            assayGxEbolaExternalId,
+            otherUserId,
+            {},
+            {},
+            false,
+            withinLastXDays
+          )
+        )
+      })
+      gxEbolaClinicianUserId = await createUser(
+        partnerName,
         'US',
         gxEbolaClinicianUsername,
         gxEbolaClinicianPassword,
@@ -111,23 +176,23 @@ describe('Result route Job constraints', () => {
     })
 
     after(async () => {
-      removeUser(bdmgitGndClinicianUserId)
-      removeUser(daktariHivVlClinicianUserId)
-      removeUser(gxEbolaClinicianUserId)
-      removeUser(bothAssaysClinicianUserId)
+      await removeUser(bdMgitGndClinicianUserId)
+      await removeUser(daktariHivVlClinicianUserId)
+      await removeUser(gxEbolaClinicianUserId)
+      await removeUser(bothAssaysClinicianUserId)
     })
 
     it("should constrain results returned based on the user's job context", async () => {
-      const mgitUserResultsResponse = await server
+      const bdMgitUserResultsResponse = await server
         .get(path)
-        .set('Authorization', `Bearer ${bdmgitGndClinicianAuthAccessToken}`)
-      assert.equal(mgitUserResultsResponse.status, 200)
-      assert.typeOf(mgitUserResultsResponse.body, 'Object')
-      assert.property(mgitUserResultsResponse.body, 'data')
-      assert.typeOf(mgitUserResultsResponse.body.data, 'array')
-      assert.equal(mgitUserResultsResponse.body.data.length, 0)
-      assert.property(mgitUserResultsResponse.body, 'total')
-      assert.typeOf(mgitUserResultsResponse.body.extraColumns, 'array')
+        .set('Authorization', `Bearer ${bdMgitGndClinicianAuthAccessToken}`)
+      assert.equal(bdMgitUserResultsResponse.status, 200)
+      assert.typeOf(bdMgitUserResultsResponse.body, 'Object')
+      assert.property(bdMgitUserResultsResponse.body, 'data')
+      assert.typeOf(bdMgitUserResultsResponse.body.data, 'array')
+      assert.equal(bdMgitUserResultsResponse.body.data.length, 0)
+      assert.property(bdMgitUserResultsResponse.body, 'total')
+      assert.typeOf(bdMgitUserResultsResponse.body.extraColumns, 'array')
 
       const daktariHivVlUserResultsResponse = await server
         .get(path)
@@ -136,7 +201,7 @@ describe('Result route Job constraints', () => {
       assert.typeOf(daktariHivVlUserResultsResponse.body, 'Object')
       assert.property(daktariHivVlUserResultsResponse.body, 'data')
       assert.typeOf(daktariHivVlUserResultsResponse.body.data, 'array')
-      assert.isAtLeast(daktariHivVlUserResultsResponse.body.data.length, 5)
+      assert.isAtLeast(daktariHivVlUserResultsResponse.body.data.length, 1)
       const { name: daktariHivVlAssayName } = await knex('Assay')
         .where('externalId', assayDaktariHivVlExternalId)
         .first()
@@ -178,7 +243,11 @@ describe('Result route Job constraints', () => {
 
   describe('Mixed disease and site based', () => {
     shared.checkToken(server, path)
+    const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
+    const assayDaktariHivVlExternalId = 'DaktariHivVL'
     const diseaseHivExternalId = 'hiv'
+    const geneXpertDeviceTypeExternalId = 'CepheidGeneXpert'
+    const assayGxCovid19ExternalId = 'assayGXCovid19'
     const diseaseCovid19ExternalId = 'covid19'
 
     const bothAssaysClinicianUsername = 'both_disease_clinician'
@@ -189,6 +258,27 @@ describe('Result route Job constraints', () => {
     let covid19SiteExternalId
 
     before(async () => {
+      const { id: partnerId } = await knex('Partner')
+        .where('name', partnerName)
+        .first('id')
+      const otherUserId = (
+        await knex('User').where('name', '<>', 'admin').first('id')
+      ).id
+      await Promise.each(_.range(0, 15), async () => {
+        resultIdsToRemove.push(
+          await createResult(
+            partnerId,
+            daktariVirologyDeviceTypeExternalId,
+            'DBS',
+            assayDaktariHivVlExternalId,
+            otherUserId,
+            {},
+            {},
+            false,
+            withinLastXDays
+          )
+        )
+      })
       ;({ externalId: hivSiteExternalId } = await knex('Disease as d')
         .join('AssayType as at', 'd.id', 'at.diseaseId')
         .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -196,6 +286,21 @@ describe('Result route Job constraints', () => {
         .join('Site as rs', 'r.reportableSiteId', 'rs.id')
         .where('d.externalId', diseaseHivExternalId)
         .first('rs.externalId'))
+      await Promise.each(_.range(0, 15), async () => {
+        resultIdsToRemove.push(
+          await createResult(
+            partnerId,
+            geneXpertDeviceTypeExternalId,
+            'Plasma',
+            assayGxCovid19ExternalId,
+            otherUserId,
+            {},
+            {},
+            false,
+            withinLastXDays
+          )
+        )
+      })
       ;({ externalId: covid19SiteExternalId } = await knex('Disease as d')
         .join('AssayType as at', 'd.id', 'at.diseaseId')
         .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -227,9 +332,7 @@ describe('Result route Job constraints', () => {
       )
     })
 
-    after(async () => {
-      removeUser(bothDiseasesClinicianUserId)
-    })
+    after(async () => removeUser(bothDiseasesClinicianUserId))
 
     it("should constrain results returned based on the user's job context", async () => {
       const { name: diseaseHivName } = await knex('Disease')
