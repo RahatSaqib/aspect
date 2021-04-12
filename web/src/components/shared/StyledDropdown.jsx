@@ -4,6 +4,7 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Input from '@material-ui/core/Input'
 import { withStyles } from '@material-ui/core/styles'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const styles = theme => ({
   root: {
@@ -52,20 +53,23 @@ const styles = theme => ({
   },
 })
 
-export const Dropdown = ({ classes, source, ...props }) => (
-  <Select
-    input={<Input disableUnderline />}
-    classes={{ ...omit(classes, 'menu') }}
-    MenuProps={{ classes: { paper: classes.menu } }}
-    {...props}
-  >
-    {source &&
-      source.map(item => (
-        <MenuItem key={item.value} value={item.value}>
-          {item.label}
-        </MenuItem>
-      ))}
-  </Select>
-)
-
+export const Dropdown = ({ classes, source, ...props }) => {
+  const { messages } = props
+  const { formatMessage } = useI18n()
+  return (
+    <Select
+      input={<Input disableUnderline />}
+      classes={{ ...omit(classes, 'menu') }}
+      MenuProps={{ classes: { paper: classes.menu } }}
+      {...props}
+    >
+      {source &&
+        source.map(item => (
+          <MenuItem key={item.value} value={item.value}>
+            {messages ? formatMessage(messages[item.i18nKey]) : item.label}
+          </MenuItem>
+        ))}
+    </Select>
+  )
+}
 export default withStyles(styles)(Dropdown)
