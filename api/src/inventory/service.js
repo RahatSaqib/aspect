@@ -485,6 +485,7 @@ const inventoryItemFields = [
   'inTransitFromSiteId',
   'inTransitFromSiteName',
   'stockLeft',
+  'dailyConsumptionRate',
 ]
 
 async function listInventoryItemsGroupedBySite(request) {
@@ -507,6 +508,12 @@ async function listInventoryItemsGroupedBySite(request) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
+      builder
+        .on('ficr.siteId', 's.id')
+        .andOn('ficr.consumableId', 'c.id')
+        .andOn('ficr.days', 1)
+    })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -574,6 +581,7 @@ async function listInventoryItemsGroupedBySite(request) {
       ...INVENTORY_ITEM_SELECT_LIST_FIELDS,
       knex.raw(`${sortColumnField} as sortBy`),
       'stock.stockLeft',
+      'ficr.rate as dailyConsumptionRate',
     ])
 
   const sites = _.uniqBy(
