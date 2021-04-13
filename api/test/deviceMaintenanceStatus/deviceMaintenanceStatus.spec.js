@@ -135,7 +135,10 @@ describe('Maintenance Reports', () => {
       monthAgo,
       'yyyy-MM-dd'
     )}T00:00:00.000${offset}`
-    const maxDate = `${dateFormat(lastFriday, 'yyyy-MM-dd')}T00:00:00.000${offset}`
+    const maxDate = `${dateFormat(
+      lastFriday,
+      'yyyy-MM-dd'
+    )}T00:00:00.000${offset}`
 
     // Then, in the API we consider the same dates but in UTC (without conversion)
     const maintenanceStatusOverTime = await server
