@@ -1,8 +1,9 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
+import isNull from 'lodash/isNull'
 
+import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -22,34 +23,34 @@ const cssClasses = classnames.bind(
 )
 
 const InventoryTableRow = ({ inventoryItem, key }) => {
-  const intl = useIntl()
+  const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
   const getActions = isInTransit => [
     {
       icon: 'FaCheck',
-      text: intl.formatMessage(messages.receiveInventory),
+      text: formatMessage(messages.receiveInventory),
       disabled: !isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showReceiveInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaPlus',
-      text: intl.formatMessage(messages.addInventory),
+      text: formatMessage(messages.addInventory),
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showAddInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaExchangeAlt',
-      text: intl.formatMessage(messages.transferInventory),
+      text: formatMessage(messages.transferInventory),
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showTransferInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaMinus',
-      text: intl.formatMessage(messages.removeInventory),
+      text: formatMessage(messages.removeInventory),
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showRemoveInventoryDialog(inventoryItemId)),
@@ -59,6 +60,10 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
   // helper funcs
   const hasProp = name => inventoryItem.get('visibleProperties').includes(name)
   const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
+  const hasQtyOnHand = qty =>
+    isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
+  const hasDailyConsumption = qty =>
+    isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(qty)
 
   return (
     <TableRow key={key} className={cssClasses('TableRow')}>
@@ -85,10 +90,10 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
         >
           {inventoryItem.get('inTransitFromSiteName') ? (
             <span>
-              {intl.formatNumber(inventoryItem.get('quantityOnHand'))}
+              {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
               &nbsp;
               <small>
-                {intl.formatMessage(messages.inTransitFromSiteName, {
+                {formatMessage(messages.inTransitFromSiteName, {
                   inTransitFromSiteName: inventoryItem.get(
                     'inTransitFromSiteName'
                   ),
@@ -96,8 +101,16 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
               </small>
             </span>
           ) : (
-            inventoryItem.get('quantityOnHand')
+            hasQtyOnHand(inventoryItem.get('quantityOnHand'))
           )}
+        </TableCell>
+      ) : null}
+      {hasProp('dailyConsumptionRate') ? (
+        <TableCell
+          className={cssClasses('TableCell')}
+          rowSpan={rowSpan('dailyConsumptionRate')}
+        >
+          {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
         </TableCell>
       ) : null}
       {hasProp('expiresOn') ? (

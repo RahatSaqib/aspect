@@ -194,6 +194,11 @@ export const InventoryItemsListWithProps = ({
                   sortable: true,
                 },
                 {
+                  key: 'dailyConsumptionRate',
+                  label: intl.formatMessage(messages.dailyConsumptionRate),
+                  sortable: true,
+                },
+                {
                   key: 'expiresOn',
                   label: intl.formatMessage(messages.expiresOn),
                   sortable: true,
