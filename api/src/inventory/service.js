@@ -416,6 +416,12 @@ async function listInventoryItems(request) {
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
+      builder
+        .on('ficr.siteId', 's.id')
+        .andOn('ficr.consumableId', 'c.id')
+        .andOn('ficr.days', 1)
+    })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -445,7 +451,11 @@ async function listInventoryItems(request) {
       INVENTORY_ITEM_SORT_FIELDS.siteName,
       INVENTORY_ITEM_SORT_FIELDS
     )
-    .select([...INVENTORY_ITEM_SELECT_LIST_FIELDS, 'stock.stockLeft'])
+    .select([
+      ...INVENTORY_ITEM_SELECT_LIST_FIELDS,
+      'stock.stockLeft',
+      'ficr.rate as dailyConsumptionRate',
+    ])
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
