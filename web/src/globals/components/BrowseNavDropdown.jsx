@@ -10,7 +10,7 @@ const messages = defineMessages({
   },
   results: {
     id: 'browsePage.browseDropdown.results',
-    defaultMessage: 'results',
+    defaultMessage: 'Results',
   },
   contacts: {
     id: 'browsePage.browseDropdown.contacts',

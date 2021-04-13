@@ -66,7 +66,9 @@ export const Dropdown = ({ classes, source, ...props }) => {
       {source &&
         source.map(item => (
           <MenuItem key={item.value} value={item.value}>
-            {messages ? formatMessage(messages[item.i18nKey]) : item.label}
+            {messages[item.i18nKey]
+              ? formatMessage(messages[item.i18nKey])
+              : item.label}
           </MenuItem>
         ))}
     </Select>

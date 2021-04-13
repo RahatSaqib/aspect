@@ -43,7 +43,7 @@ async function getReports(request) {
       'r.externalId',
       'r.sortOrder',
       'r.i18nKey',
-      'i18nKeyDescription'
+      'r.i18nKeyDescription'
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

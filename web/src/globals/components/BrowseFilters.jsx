@@ -191,7 +191,7 @@ export const navigations = [
   },
   {
     value: '/browse/deviceApiKey',
-    label: 'Device Api Key',
+    label: 'Device Api Keys',
     i18nKey: 'deviceApiKey',
     requiredPermissions: ['deviceApiKey'],
   },
