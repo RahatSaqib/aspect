@@ -6,7 +6,7 @@ import StyledDropdown from '../../components/shared/StyledDropdown'
 const messages = defineMessages({
   devices: {
     id: 'browsePage.browseDropdown.devices',
-    defaultMessage: 'Devices---',
+    defaultMessage: 'Devices',
   },
   results: {
     id: 'browsePage.browseDropdown.results',

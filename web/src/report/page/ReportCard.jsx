@@ -6,6 +6,8 @@ import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
+import messages from './messages'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const styles = {
   formatCard: {
@@ -22,17 +24,26 @@ const styles = {
   },
 }
 
-const ReportCard = ({ description, onClick, title }) => {
+const ReportCard = ({
+  description,
+  onClick,
+  title,
+  i18nKey,
+  i18nKeyDescription,
+}) => {
+  const { formatMessage } = useI18n()
   return (
     <Grid item xs={12} sm={6} lg={3}>
       <Card style={styles.formatCard}>
         <CardActionArea onClick={() => onClick('xlsx')}>
           <CardContent>
             <Typography gutterBottom variant="h6" component="h4">
-              {title}
+              {messages[i18nKey] ? formatMessage(messages[i18nKey]) : title}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              {description}
+              {messages[i18nKeyDescription]
+                ? formatMessage(messages[i18nKeyDescription])
+                : description}
             </Typography>
           </CardContent>
         </CardActionArea>
