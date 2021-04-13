@@ -1097,6 +1097,78 @@ describe('Device API routes for GxAlert Device', () => {
       )
     })
 
+    it('should get the module name from a previous result on the same module serial if it is not included in the payload', async () => {
+      const now = new Date()
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+
+      // Send a new result
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_1',
+              sample: { id: 'sample_id_1' },
+              instrument: {
+                serial: '820799',
+                module: {
+                  serial: '724158',
+                  name: 'A3',
+                },
+              },
+              consumable: {
+                serial: '12345',
+              },
+              startedOn: testStartedOn,
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+
+      // Send another result with missing module name
+      _.unset(basicResultPayload, 'result.instrument.module.name')
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_2',
+              sample: { id: 'sample_id_2' },
+              instrument: {
+                serial: '820799',
+                module: {
+                  serial: '724158',
+                },
+              },
+              consumable: {
+                serial: '12346',
+              },
+              startedOn: setMilliseconds(addMinutes(testStartedOn, 1), 0),
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+
+      const afterResultDetails = await getLastResult()
+      expect(afterResultDetails.moduleName).to.equal('A3')
+    })
+
     describe(`result's effect on device maintenance status`, () => {
       it('should change the maintenance status of an inactive device to active', async () => {
         useGxAlertDeviceId(gxAlertDeviceId)
@@ -2260,7 +2332,7 @@ describe('Device API routes for GxAlert Device', () => {
         consumableExpirationDate: null,
         consumableLot: null,
         instrumentSerial: 'new instrument',
-        moduleName: basicResultPayload.result.instrument.module.name,
+        moduleName: null,
         moduleSerial: basicResultPayload.result.instrument.module.serial,
         patientData: basicResultPayload.result.patient,
         senderVersion: basicResultPayload.result.sender.version,

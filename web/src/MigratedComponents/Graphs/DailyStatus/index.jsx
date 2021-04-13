@@ -37,8 +37,10 @@ const selectorModifiers = [
 
 const DailyStatus = () => {
   const [dialogState, setDialogState] = useState({ isOpen: false })
-  const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
-  const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
+  const minDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    .start
+  const maxDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    .end
   const { formatMessage } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },

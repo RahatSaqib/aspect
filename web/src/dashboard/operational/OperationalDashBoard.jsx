@@ -18,8 +18,8 @@ import ASSAY_LIST from '../../MigratedComponents/QueryFetch/Assay/index'
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 const OperationalDashBoard = () => {
-  const { deviceStatus } = deviceStatusGraphs
-  const { resultsTransmitted } = resultsTransmittedGraphs
+  const { deviceStatus } = deviceStatusGraphs()
+  const { resultsTransmitted } = resultsTransmittedGraphs()
   const { inventoryStatus } = inventoryStatusGraphs
 
   const {

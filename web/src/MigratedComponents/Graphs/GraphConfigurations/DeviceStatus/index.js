@@ -9,7 +9,7 @@ const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
 
-const deviceStatusGraphs = {
+const deviceStatusGraphs = () => ({
   deviceStatus: {
     id: 'deviceStatus',
     title: 'deviceStatusTitle',
@@ -81,6 +81,6 @@ const deviceStatusGraphs = {
       },
     ],
   },
-}
+})
 
 export default deviceStatusGraphs

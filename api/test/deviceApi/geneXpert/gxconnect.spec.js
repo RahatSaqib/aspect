@@ -28,7 +28,7 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { run } = require('../../../src/db')
+const { run, knex: knexDb } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
@@ -178,6 +178,54 @@ describe('Device API routes for GxConnect Devices', () => {
                 },
               ])
             }))
+
+          it('should update timezone', async () => {
+            const { basicDevicePayload, deviceAuth, device } = context
+
+            assert.equal(device.timezone, 'Eastern Standard Time')
+            const timezone = 'South Africa Standard Time'
+
+            const devicePath = '/device'
+            // add device
+            let res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: { data: { timezone } },
+              })
+
+              .catch(assert.fail)
+
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            let newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'South Africa Standard Time')
+
+            // update device
+            res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: {
+                  data: {
+                    timezone: 'not existing  Standard Time',
+                  },
+                },
+              })
+
+            newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'Eastern Standard Time')
+            assert.equal(newDevice.serial, null)
+          })
         })
       })
     })
@@ -631,6 +679,41 @@ describe('Device API routes for GxConnect Devices', () => {
 
             assert.isEmpty(orphanedDevices)
           }))
+      })
+    })
+  })
+
+  describe('Device Daily details', () => {
+    const macAddress = 'MAC00000321PING'
+
+    const context = createGxConnectTestContext(server, {
+      countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      deviceSerialNumber,
+    })
+    beforeEach(context.beforeRegisterAndSetDevice)
+    afterEach(context.afterCleanUp)
+
+    it('Download the custom fields', async () => {
+      const { basicDevicePayload, deviceAuth } = context
+
+      const res = await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send({ getFormsDefinition: true, ...basicDevicePayload })
+        .catch(assert.fail)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'CustomFields')
+      assert.typeOf(res.body.CustomFields, 'Object')
+      assert.typeOf(res.body.CustomFields.Fields, 'Array')
+      assert.isAtLeast(res.body.CustomFields.Fields.length, 1)
+      const customFieldProperties = ['Label', 'Control', 'Type', 'DisplayOrder']
+      _.each(customFieldProperties, fieldName => {
+        assert.property(res.body.CustomFields.Fields[0], fieldName)
       })
     })
   })
@@ -1632,6 +1715,81 @@ describe('Device API routes for GxConnect Devices', () => {
           Date.now(),
           2000
         )
+      }))
+
+    it('should get the module name from a previous result on the same module serial if it is not included in the payload', () =>
+      runTest(async () => {
+        const { basicDevicePayload, deviceAuth } = context
+        const testStartedOn = '2020-08-10T14:00:00Z'
+
+        // Send a new result
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                startedOn: testStartedOn,
+                assay: _.assign({}, basicResultPayload.result.assay, {
+                  id: 'GxMtbRif',
+                }),
+                id: 'unique_id_1',
+                sample: { id: 'sample_id_1' },
+                instrument: {
+                  serial: '820799',
+                  module: {
+                    serial: '724158',
+                    name: 'A3',
+                  },
+                },
+                consumable: {
+                  serial: '12345',
+                },
+                data: basicResultPayload.result.data,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        // Send another result with missing module name
+        _.unset(basicResultPayload, 'result.instrument.module.name')
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                startedOn: testStartedOn,
+                assay: _.assign({}, basicResultPayload.result.assay, {
+                  id: 'GxMtbRif',
+                }),
+                id: 'unique_id_2',
+                sample: { id: 'sample_id_2' },
+                instrument: {
+                  serial: '820799',
+                  module: {
+                    serial: '724158',
+                  },
+                },
+                consumable: {
+                  serial: '12345',
+                },
+                data: basicResultPayload.result.data,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const afterResultDetails = await getLastResult()
+        expect(afterResultDetails.moduleName).to.equal('A3')
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {

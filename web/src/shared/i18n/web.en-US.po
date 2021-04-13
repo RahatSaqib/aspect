@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
+"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. [pages.ReporterList.acknowledgedRatio]
 #. defaultMessage is:
@@ -781,6 +780,13 @@ msgstr ""
 msgid "Average Monthly Suppression Rate"
 msgstr ""
 
+#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
+#. defaultMessage is:
+#. Average Monthly TB Detected Rate
+#: extracted_strings.json
+msgid "Average Monthly TB Detected Rate"
+msgstr ""
+
 #. [pages.Status.testsOverTimeAvgTitle.graph]
 #. defaultMessage is:
 #. Average Monthly Tests Performed
@@ -814,13 +820,6 @@ msgstr ""
 #. Average length of SMS
 #: extracted_strings.json
 msgid "Average length of SMS"
-msgstr ""
-
-#. [pages.Status.clinicalIndicatorsTBDetectedPie.title]
-#. defaultMessage is:
-#. Average monthly TB Detected Rate
-#: extracted_strings.json
-msgid "Average monthly TB Detected Rate"
 msgstr ""
 
 #. [component.Widget.deviceDaysActiveDescription]
@@ -3403,6 +3402,9 @@ msgstr ""
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [component.DateTimeInput.Last30Days]
+#. defaultMessage is:
+#. Last 30 Days
 #: extracted_strings.json
 msgid "Last 30 Days"
 msgstr ""
@@ -3422,6 +3424,13 @@ msgstr ""
 #. Last Month
 #: extracted_strings.json
 msgid "Last Month"
+msgstr ""
+
+#. [component.DateTimeInput.LastMonth]
+#. defaultMessage is:
+#. Last Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "Last Month ({minDate} - {maxDate})"
 msgstr ""
 
 #. [pages.DeviceList.lastSeen]
@@ -7181,6 +7190,13 @@ msgstr ""
 #. This Month
 #: extracted_strings.json
 msgid "This Month"
+msgstr ""
+
+#. [component.DateTimeInput.ThisMonth]
+#. defaultMessage is:
+#. This Month ({minDate} - {maxDate})
+#: extracted_strings.json
+msgid "This Month ({minDate} - {maxDate})"
 msgstr ""
 
 #. [pages.dateRangeSelector.thisQuarter]

@@ -131,7 +131,9 @@ async function generateResults(
   resultMtbNumber = 20,
   resultHivVlNumber = 20,
   resultEbolaNumber = 0,
-  resultCovidNumber = 0
+  resultCovidNumber = 0,
+  deviceId = null,
+  date = null
 ) {
   const siteDatas = await knex('Site as s')
     .join('Geography as g', 's.geographyId', 'g.id')
@@ -139,7 +141,6 @@ async function generateResults(
     .where('s.partnerId', partnerOneId)
     .where('c.abbreviation', countryAbbreviation)
     .select('s.*')
-
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -178,6 +179,11 @@ async function generateResults(
   const devices = await knex('Device')
     .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
     .whereIn('siteId', _.map(siteDatas, 'id'))
+    .modify(queryBuilder => {
+      if (deviceId) {
+        queryBuilder.where('id', deviceId)
+      }
+    })
     .select()
 
   const tbAssays = _.filter(
@@ -208,7 +214,8 @@ async function generateResults(
       resultCategoryInvalidId,
       resultCategoryNoResultId,
       resultCategoryErrorId,
-    }
+    },
+    date
   )
   const ebolaAssays = _.filter(assays, elem => elem.externalId === 'GxEbola')
   const ebolaResults = await addEbolaResults(
@@ -230,7 +237,8 @@ async function generateResults(
       resultCategoryInvalidId,
       resultCategoryNoResultId,
       resultCategoryErrorId,
-    ]
+    ],
+    date
   )
   const hivAssays = _.filter(
     assays,
@@ -256,7 +264,8 @@ async function generateResults(
       resultCategoryInvalidId,
       resultCategoryNoResultId,
       resultCategoryErrorId,
-    ]
+    ],
+    date
   )
   const covidDevices = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -283,7 +292,9 @@ async function generateResults(
     auditFields,
     siteDatas,
     partnerOneId,
-    covidDevices
+    covidDevices,
+    null,
+    date
   )
   const covidPositiveResults = _.filter(
     covidResults,
@@ -297,7 +308,8 @@ async function generateResults(
     siteDatas,
     partnerOneId,
     covidDevices,
-    covidPositiveResults
+    covidPositiveResults,
+    date
   )
   return [].concat(
     tbResults || [],
@@ -315,7 +327,8 @@ async function addCovidResults(
   siteDatas,
   partnerId,
   devices,
-  positiveResults = null
+  positiveResults = null,
+  date = null
 ) {
   if (resultCovidNumber === 0) return
   const results = []
@@ -475,11 +488,8 @@ async function addCovidResults(
       : siteData
     let result
     let formData = {}
-    const randomDate = calculateDateForResultForCovid(
-      i,
-      resultCovidNumber,
-      6000
-    )
+    const randomDate =
+      date || calculateDateForResultForCovid(i, resultCovidNumber, 6000)
     let linkedResult
     let resultToInsert = {}
     const assayId = resultCapturedInAspect
@@ -558,6 +568,7 @@ async function addCovidResults(
         }),
       }
     }
+
     resultToInsert = _.assign({}, resultToInsert, {
       ...auditFields,
       externalId: `COVID-${uid}-ID`,
@@ -614,7 +625,8 @@ async function addHivVlResults(
   partnerOneId,
   errorCodes,
   devicesGeneXpert,
-  resultCategories
+  resultCategories,
+  date = null
 ) {
   if (resultHivVlNumber) return []
   // Result Workflow Status
@@ -713,7 +725,9 @@ async function addHivVlResults(
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
+    const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
+    const randomDate =
+      date || calculateDateForResult(i, resultHivVlNumber, 6000)
 
     const rnd = _.random(0, 100)
     const selectionConditionNoErrors = r =>
@@ -760,7 +774,7 @@ async function addHivVlResults(
 
     const [resultId] = await knex('Result').insert({
       ...auditFields,
-      externalId: `UQHIV-${i + lastSampleId}-D`,
+      externalId: `UQHIV-${uid}-D`,
       assayId: assayGeneXpertHiv1VlId,
       partnerId: partnerOneId,
       geographyId: siteData.geographyId,
@@ -834,7 +848,8 @@ async function addTBResults(
   partnerOneId,
   errorCodes,
   devicesGeneXpert,
-  resultCategories
+  resultCategories,
+  date = null
 ) {
   if (resultMtbNumber === 0) return []
   const deviceTypes = await knex('DeviceType').select()
@@ -960,7 +975,8 @@ async function addTBResults(
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const randomDate = subDays(new Date(), _.random(5))
+    const randomDate = date || subDays(new Date(), _.random(5))
+    const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
 
     const rnd = _.random(0, 100)
 
@@ -972,7 +988,7 @@ async function addTBResults(
     // we make sure to have at least one error result if error codes are passed
     const result = _.find(
       possibleResults,
-      errorCodes.length > 0 && i === 0
+      errorCodes.length > 0 && i === 0 && resultMtbNumber > 20
         ? selectionConditionWithErros
         : selectionConditionNoErrors
     )
@@ -980,9 +996,12 @@ async function addTBResults(
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
 
-    const assayGeneXpertMtbRifId = _.find(
-      assays,
-      elem => elem.externalId === 'GxMtbRif'
+    const assayGeneXpertMtbRifId = _.sample(
+      _.filter(
+        assays,
+        elem =>
+          elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra'
+      )
     ).id
     const resultStatus =
       ensureResultIds.shift() || _.random(1) < 0.3
@@ -993,10 +1012,7 @@ async function addTBResults(
 
     const resultElement = {
       ...auditFields,
-      externalId: `UQTB-${i}-${format(
-        new Date(new Date() * _.random(1, 8)),
-        'tt'
-      )}-D`,
+      externalId: `UQTB-${i}-${uid}-D`,
       assayId: assayGeneXpertMtbRifId,
       partnerId: partnerOneId,
       geographyId: siteData.geographyId,
@@ -1099,7 +1115,8 @@ async function addEbolaResults(
   partnerOneId,
   errorCodes,
   devicesGeneXpert,
-  resultCategories
+  resultCategories,
+  date = null
 ) {
   if (resultEbolaNumber) return []
   const { Plasma: sampleTypePlasmaId } = await allSampleTypeToId()
@@ -1194,7 +1211,8 @@ async function addEbolaResults(
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const randomDate = subDays(new Date(), _.random(5))
+    const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
+    const randomDate = date || subDays(new Date(), _.random(5))
     // Result source
     const {
       DiagnosticDevice: resultSourceDiagnosticId,
@@ -1207,7 +1225,7 @@ async function addEbolaResults(
       resultData.resultText = result.resultText
       const resultObject = {
         ...auditFields,
-        externalId: `UQEB-${format(new Date(), 'TT')}-${j}-D`,
+        externalId: `UQEB-${uid}-${j}-D`,
         assayId: assayGeneXpertEbolaId,
         partnerId: partnerOneId,
         geographyId: siteData.geographyId,

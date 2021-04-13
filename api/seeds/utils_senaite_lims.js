@@ -1,10 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  assayToId,
-  assayTypeToId,
-  resultSourceToId,
-} = require('../src/shared/dictionary')
+const { assayTypeToId, resultSourceToId } = require('../src/shared/dictionary')
 const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
 async function seedSenaiteLimsAssays(knex, assayExternalIds) {
@@ -287,7 +283,11 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
     },
   ]
 
-  const bdMgitGndAssayId = await assayToId('assayBdMgitGnd')
+  const { id: bdMgitGndAssayId } = await knex('Assay')
+    .where({
+      externalId: 'assayBdMgitGnd',
+    })
+    .first('id')
   await Promise.each(bdMgitGndResultCategories, async resultCategory => {
     let { id: resultCategoryId } =
       (await knex('ResultCategory')

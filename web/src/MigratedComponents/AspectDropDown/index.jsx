@@ -5,9 +5,10 @@ import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import Select from 'react-select'
 import get from 'lodash/get'
+import isEqual from 'lodash/isEqual'
 import sortBy from 'lodash/sortBy'
 import filter from 'lodash/filter'
-
+import useI18n from '../../Hooks/i18n/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
 import UI_CONSTS from '../../globals/consts/UI'
 
@@ -152,17 +153,20 @@ const SelectComponent = ({
   selectedValue,
   action: dispatchFromRedux,
   identifier,
-  keyMapping: { idKey, nameKey },
+  keyMapping: { idKey, nameKey = 'i18nKey' },
   isClearable,
+  isLoading,
   defaultSelectedOption,
   theme,
+  messages,
 }) => {
-  const defaultOptionValue = indexForDefaultSelected(
-    data,
-    defaultSelectedOption
-  )
+  messages = messages || {}
+  const { formatMessage } = useI18n()
+  const [busy, setBusy] = useState(true)
+  const [defaultOptionValue, setDefaultOptionValue] = useState(false)
   const [defaultOption] = useState(selectedValue)
   const [inputValue, setInputValue] = useState(false)
+  const [options, setOptions] = useState(false)
 
   useEffect(() => {
     if (inputValue) {
@@ -171,7 +175,18 @@ const SelectComponent = ({
     }
   }, [inputValue])
 
-  return (
+  useEffect(() => {
+    if (!isEqual(options, data) || !defaultOptionValue) {
+      setDefaultOptionValue(
+        indexForDefaultSelected(data, defaultSelectedOption)
+      )
+      setOptions(data)
+    } else {
+      setBusy(false)
+    }
+  }, [data, defaultSelectedOption])
+
+  return !busy ? (
     <div
       className={cssClasses('select__container', {
         [classNames.controlContainer]: !!classNames.controlContainer,
@@ -179,9 +194,12 @@ const SelectComponent = ({
     >
       <Select
         name={identifier}
-        getOptionLabel={val => val[nameKey]}
+        getOptionLabel={val =>
+          formatMessage(messages[val[nameKey]], {}, val[nameKey])
+        }
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
+        isLoading={isLoading}
         defaultValue={defaultOptionValue}
         options={data}
         placeholder={defaultOption}
@@ -191,7 +209,7 @@ const SelectComponent = ({
         }
       />
     </div>
-  )
+  ) : null
 }
 
 SelectComponent.defaultProps = {
@@ -201,7 +219,9 @@ SelectComponent.defaultProps = {
     nameKey: 'name',
   },
   isClearable: true,
+  isLoading: false,
   defaultSelectedOption: false,
+  messages: null,
 }
 
 SelectComponent.propTypes = {
@@ -212,8 +232,10 @@ SelectComponent.propTypes = {
   action: PropTypes.func.isRequired,
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
+  isLoading: PropTypes.bool,
   defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
   theme: PropTypes.string.isRequired,
+  messages: PropTypes.oneOf([PropTypes.object]),
 }
 
 const AspectDropDown = ({
@@ -228,6 +250,7 @@ const AspectDropDown = ({
     keyMapping,
     isClearable,
     defaultSelectedOption,
+    messages,
   },
   action,
   theme,
@@ -245,7 +268,7 @@ const AspectDropDown = ({
   useEffect(() => {
     if (data) {
       const dataSet = get(data, reduxStateId)
-      if (dataSet && dataSet !== selectOptions) {
+      if (dataSet && !isEqual(dataSet, selectOptions)) {
         setSelectOptions(dataSet)
       }
     }
@@ -266,6 +289,7 @@ const AspectDropDown = ({
       isClearable={isClearable}
       defaultSelectedOption={defaultSelectedOption}
       theme={theme}
+      messages={messages}
     />
   ) : null
 }
@@ -289,6 +313,7 @@ AspectDropDown.propTypes = {
     }),
     isClearable: PropTypes.bool,
     defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
+    messages: PropTypes.oneOf([PropTypes.object]),
   }).isRequired,
   action: PropTypes.func.isRequired,
   theme: PropTypes.string,
