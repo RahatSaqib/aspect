@@ -419,8 +419,8 @@ async function listInventoryItems(request) {
     .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
       builder
         .on('ficr.siteId', 's.id')
-        .on('ficr.consumableId', 'c.id')
-        .on('ficr.days', 1)
+        .andOn('ficr.consumableId', 'c.id')
+        .andOn('ficr.days', 1)
     })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
