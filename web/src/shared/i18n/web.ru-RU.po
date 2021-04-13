@@ -2062,9 +2062,9 @@ msgstr "Устройства с перебоями в обслуживании"
 
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
-#. Devices---
+#. Devices
 #: extracted_strings.json
-msgid "Devices---"
+msgid "Devices"
 msgstr "Устройства"
 
 #. [pages.DeviceDetailEdit.discard]

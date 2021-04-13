@@ -2065,9 +2065,9 @@ msgstr "Geräte mit Betriebsunterbrechung"
 
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
-#. Devices---
+#. Devices
 #: extracted_strings.json
-msgid "Devices---"
+msgid "Devices"
 msgstr "Geräte"
 
 #. [pages.DeviceDetailEdit.discard]

@@ -2059,9 +2059,9 @@ msgstr "Пристрої, що переживають переривання с�
 
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
-#. Devices---
+#. Devices
 #: extracted_strings.json
-msgid "Devices---"
+msgid "Devices"
 msgstr "Пристрої"
 
 #. [pages.DeviceDetailEdit.discard]

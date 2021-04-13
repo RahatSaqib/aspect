@@ -2073,9 +2073,9 @@ msgstr "Appareils avec interruption de service"
 
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
-#. Devices---
+#. Devices
 #: extracted_strings.json
-msgid "Devices---"
+msgid "Devices"
 msgstr "Dispositifs"
 
 #. [pages.DeviceDetailEdit.discard]

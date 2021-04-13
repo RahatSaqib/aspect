@@ -2049,9 +2049,9 @@ msgstr ""
 
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
-#. Devices---
+#. Devices
 #: extracted_strings.json
-msgid "Devices---"
+msgid "Devices"
 msgstr ""
 
 #. [pages.DeviceDetailEdit.discard]
