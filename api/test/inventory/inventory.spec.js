@@ -45,6 +45,7 @@ describe('Inventory Routes', () => {
                 assert.property(inventoryItem, 'countryName')
                 assert.property(inventoryItem, 'stateName')
                 assert.property(inventoryItem, 'lgaName')
+                assert.property(inventoryItem, 'dailyConsumptionRate')
               })
               assert.property(res.body, 'total')
               done()
