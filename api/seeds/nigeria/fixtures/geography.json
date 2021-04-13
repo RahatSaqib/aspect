@@ -1585,6 +1585,9 @@
           "name": "Lagos",
           "lgas": [
             {
+              "name": "Agege"
+            },
+            {
               "name": "Ajeromi-Ifelodun"
             },
             {
@@ -1892,6 +1895,9 @@
           "name": "Osun",
           "lgas": [
             {
+              "name": "Atakunmosa East"
+            },
+            {
               "name": "Atakunmosa West"
             },
             {
@@ -1983,6 +1989,9 @@
         {
           "name": "Oyo",
           "lgas": [
+            {
+              "name": "Afijio"
+            },
             {
               "name": "Akinyele"
             },

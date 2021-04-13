@@ -25,7 +25,28 @@ const errorPayload = Joi.object()
     code: Joi.string().allow('', null).description('Error code'),
     notes: Joi.string().allow('', null).description('Description of the error'),
   })
-
+const logItem = {
+  externalId: Joi.alternatives()
+    .try(Joi.string(), Joi.number())
+    .allow('', null)
+    .description('External unique id of the entry in remote system'),
+  occurredOn: Joi.date()
+    .required()
+    .iso()
+    .description('Date/time of when log entry happened'),
+  logFileName: Joi.string().required().description('Log file name'),
+  logLevel: Joi.string().required().description('Log Level (INFO, ERROR, etc)'),
+  details: Joi.alternatives()
+    .try(
+      Joi.object().description(
+        'Log details JSON - error code, content of the log entry, log file name, category'
+      ),
+      Joi.string().description(
+        'Log details stringified - to be parsed at run-time'
+      )
+    )
+    .required(),
+}
 const logPayload = {
   source: Joi.string()
     .allow('', null)
@@ -34,30 +55,7 @@ const logPayload = {
     .allow(null) // fallback when 'data' is missing or null - for tests et la
     .try(
       // either GeneXpert log ...
-      Joi.object().keys({
-        externalId: Joi.alternatives()
-          .try(Joi.string(), Joi.number())
-          .allow('', null)
-          .description('External unique id of the entry in remote system'),
-        occurredOn: Joi.date()
-          .required()
-          .iso()
-          .description('Date/time of when log entry happened'),
-        logFileName: Joi.string().required().description('Log file name'),
-        logLevel: Joi.string()
-          .required()
-          .description('Log Level (INFO, ERROR, etc)'),
-        details: Joi.alternatives()
-          .try(
-            Joi.object().description(
-              'Log details JSON - error code, content of the log entry, log file name, category'
-            ),
-            Joi.string().description(
-              'Log details stringified - to be parsed at run-time'
-            )
-          )
-          .required(),
-      }),
+      Joi.object().keys(logItem),
       // ... or just a string with serialized data - handler use it upon 'source' value
       Joi.string().description('Some log data, i.e. serialized json object')
     ),
@@ -413,6 +411,9 @@ const routes = [
           operation: Joi.object()
             .keys(operationPayload)
             .description('Device Operation Data'),
+          deviceConfiguration: Joi.object().description(
+            'Device Configuration is a json object for configuring the whole country/state network of gxconnect instances.'
+          ),
           result: Joi.object()
             .keys(resultPayload)
             .description('Device Result Data.'),
@@ -436,6 +437,12 @@ const routes = [
         },
         payload: Joi.object().keys({
           ...devicePayload,
+          includeDeviceConfiguration: Joi.bool()
+            .allow(null)
+            .optional()
+            .description(
+              'This flag will determine (When true) if the service is going to respond as part of the response the general configuration of the device'
+            ),
           log: Joi.object()
             .allow(null)
             .keys(logPayload)
@@ -452,6 +459,12 @@ const routes = [
             .allow(null)
             .keys(resultPayload)
             .description('Device Result Data.'),
+          getFormsDefinition: Joi.bool()
+            .optional()
+            .allow(null)
+            .description(
+              'This is a flag to tell the API if the request source is a daily details POST'
+            ),
         }),
         failAction: async (request, h, error) =>
           addDeviceLog(error)(request, h),

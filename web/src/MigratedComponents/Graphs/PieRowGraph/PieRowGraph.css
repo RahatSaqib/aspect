@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  padding: 10px;
+  padding: 10px 30px 10px 10px;
   border-radius: 15px;
 }
 
@@ -27,6 +27,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 120px;
 }
 
 .piegraphs__rowTitle {

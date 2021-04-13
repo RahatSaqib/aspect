@@ -49,7 +49,7 @@ const hivGraphs = {
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',

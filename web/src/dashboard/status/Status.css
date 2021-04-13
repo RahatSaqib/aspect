@@ -146,7 +146,7 @@
 }
 
 .Button--receive:not([disabled]) {
-  background-color: var(--aspect-color-mantis);
+  background-color: var(--aspect-color-conifer);
 }
 
 .Button--discard:not([disabled]) {

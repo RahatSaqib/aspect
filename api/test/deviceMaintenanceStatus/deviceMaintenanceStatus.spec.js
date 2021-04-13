@@ -2,7 +2,6 @@ const chai = require('chai')
 
 const { assert, expect } = chai
 const subDays = require('date-fns/subDays')
-const formatISO = require('date-fns/formatISO')
 const isValid = require('date-fns/isValid')
 const Promise = require('bluebird')
 const find = require('lodash/find')
@@ -28,9 +27,6 @@ describe('Maintenance Reports', () => {
 
   shared.checkToken(server, path)
 
-  const now = new Date()
-  const monthAgo = subDays(now, 30)
-
   afterEach(async () => {
     await context.cleanUp()
   })
@@ -51,73 +47,80 @@ describe('Maintenance Reports', () => {
     const { id, siteId } = context.device
     deviceId = id
     const statuses = await allDeviceMaintenanceStatusToId()
-    const now = new Date()
     const { id: personId } = await knex('Person')
       .where({ name: 'Admin' })
       .first()
-
     await knex('Site')
       .where({ id: siteId })
       .update({ latitude: 1, longitude: 5 })
 
+    // Inserting logs for 01/01, 01/02 and 01/03 UTC: inserting directly the string will prevent unexpected timezone conversions
     const logEntryBase = {
       deviceId,
       deviceMaintenanceStatusId: statuses.active,
       data: JSON.stringify({}),
-      day: now,
       createdOn: new Date(),
       createdBy: personId,
     }
-
     await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
-      day: subDays(now, 2),
+      day: '2020-01-01',
     })
-
     await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
-      day: subDays(now, 1),
+      day: '2020-01-02',
     })
-
     await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
       deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
-      day: now,
+      day: '2020-01-03',
     })
-
     const [deviceMaintenanceStatusLogId] = await knex(
       'DeviceMaintenanceStatusLog'
     ).insert({
       ...logEntryBase,
-      day: now,
+      day: '2020-01-03',
     })
     await knex('Device')
       .where({ id: deviceId })
       .update({ deviceMaintenanceStatusLogId })
 
+    // Inserting results for the last 30 days
+    const resultsBaseDate = new Date(2020, 1, 3, 0, 0, 0, 0)
     await Promise.each(range(1, 4), async () => {
+      // As the base date is 3rd, we subtract between 0 and 30 days: this will ensure the result will be inserted in the last 30 days
       const daysForSubstracting = random(0, 30, false)
+      const testDate = subDays(resultsBaseDate, daysForSubstracting)
       await context.createResultForThisDevice({
         resultDetails: {
-          startedOn: subDays(new Date(), daysForSubstracting),
-          endedOn: subDays(new Date(), daysForSubstracting),
+          startedOn: testDate,
+          endedOn: testDate,
         },
       })
     })
 
+    // Inserting one result out of the last 30 days
     await context.createResultForThisDevice({
       resultDetails: {
-        startedOn: subDays(new Date(), 33),
-        endedOn: subDays(new Date(), 33),
+        startedOn: subDays(resultsBaseDate, 33),
+        endedOn: subDays(resultsBaseDate, 33),
       },
     })
   })
 
-  it('should get the correct daily status', done => {
-    const minDate = formatISO(monthAgo, { representation: 'date' })
-    const maxDate = formatISO(now, { representation: 'date' })
+  const evaluateCorrectDailyStatus = (done, offset) => {
+    // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
+    const minDate = `2019-12-03T00:00:00.000${offset}`
+    const maxDate = `2020-01-03T00:00:00.000${offset}`
+
+    // Then, in the API we consider the same dates but in UTC (without conversion)
+    // The resulting date range for statuses will always be '2019-12-03T00:00:00.000Z' to '2020-01-03T00:00:00.000Z', no matter the given offset
     server
-      .get(`${path}?minDate=${minDate}&maxDate=${maxDate}`)
+      .get(
+        `${path}?minDate=${encodeURIComponent(
+          minDate
+        )}&maxDate=${encodeURIComponent(maxDate)}`
+      )
       .set('Authorization', `Bearer ${shared.token}`)
       .end((err, res) => {
         assert.equal(res.status, 200)
@@ -150,6 +153,14 @@ describe('Maintenance Reports', () => {
 
         done()
       })
+  }
+
+  it('should get the correct daily status for negative timezones', done => {
+    evaluateCorrectDailyStatus(done, '-03:00')
+  })
+
+  it('should get the correct daily status for positive timezones', done => {
+    evaluateCorrectDailyStatus(done, '+03:00')
   })
 
   it('should get the correct current status', done => {

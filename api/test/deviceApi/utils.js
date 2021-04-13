@@ -451,6 +451,7 @@ class DeviceApiTestContext {
       })
       this.deviceId = deviceId
       this.deviceIds.push(deviceId)
+      this.siteId = siteId // device is assigned to this site
       const apiKey = await this.createApiKey(knex, null, deviceId)
       // save device id for the following tests
       this.apiKey = apiKey

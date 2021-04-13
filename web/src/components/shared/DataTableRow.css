@@ -97,7 +97,7 @@
 }
 
 .ok {
-  color: var(--aspect-color-mantis);
+  color: var(--aspect-color-conifer);
 }
 
 .alert {
@@ -112,7 +112,10 @@
   color: var(--aspect-color-supernova);
 }
 
-svg.ok, svg.alert, svg.na, svg.warning {
+svg.ok,
+svg.alert,
+svg.na,
+svg.warning {
   margin-left: 18px;
   font-size: 24px;
 }
