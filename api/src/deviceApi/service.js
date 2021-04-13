@@ -276,7 +276,14 @@ async function addDeviceDataWithContext(context) {
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
-  const { name, site, result, configuration, log } = payload
+  const {
+    name,
+    site,
+    result,
+    configuration,
+    log,
+    includeDeviceConfiguration,
+  } = payload
   let { operation } = payload
   const { getFormsDefinition } = payload
 
@@ -307,6 +314,16 @@ async function addDeviceDataWithContext(context) {
       )),
     }
   }
+  if (includeDeviceConfiguration) {
+    logger.debug('executing getConnectionSettings', {
+      reLabel: 'deviceApi:getConnectionSettings',
+    })
+    response = {
+      ...response,
+      ...(await getConnectionSettings(context)),
+    }
+  }
+
   if (getFormsDefinition) {
     response = {
       ...response,
@@ -397,6 +414,50 @@ async function addDeviceDataWithContext(context) {
   }
 
   return response
+}
+
+async function getConnectionSettings(context) {
+  const {
+    knex,
+    device: { id: deviceId, partnerId },
+  } = context
+  const { data } =
+    (await knex('DeviceConfiguration as dc')
+      .join('Geography as g', 'g.id', 'dc.geographyId')
+      .join('Device as d', 'd.deviceTypeId', 'dc.deviceTypeId')
+      .join(
+        'Geography as deviceGeography',
+        'd.geographyId',
+        'deviceGeography.id'
+      )
+      .where({
+        'd.id': deviceId,
+        'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
+        'dc.partnerId': partnerId,
+        'g.countryId': knex.raw('deviceGeography.countryId'),
+      })
+      .andWhere(builder =>
+        builder
+          .whereNull('d.connectSettingsSentOn')
+          .orWhere('d.connectSettingsSentOn', '<', knex.raw('dc.updatedOn'))
+      )
+      .andWhere(builder => {
+        builder
+          .whereNull('g.stateId')
+          .orWhere(orBuilder =>
+            orBuilder
+              .whereNotNull('g.stateId')
+              .andWhere('g.stateId', knex.raw('deviceGeography.stateId'))
+          )
+      })
+      .orderBy('g.stateId', 'DESC')
+      .first('data')) || {}
+
+  if (!_.isEmpty(data))
+    await knex('Device')
+      .update({ connectSettingsSentOn: new Date() })
+      .where({ id: deviceId })
+  return { deviceConfiguration: _.isEmpty(data) ? null : JSON.parse(data) }
 }
 
 async function getDeviceDataWithContext(context) {
@@ -683,6 +744,7 @@ async function createDeviceApiContext(
       'd.serial',
       'd.macAddress',
       'd.configurationData',
+      'd.connectSettingsSentOn',
       'd.lastSeenOn',
       'd.putInService',
       'da.token as approval',
