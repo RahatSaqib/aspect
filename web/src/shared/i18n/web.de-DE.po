@@ -1,15 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-<<<<<<< HEAD
-<<<<<<< HEAD
-"POT-Creation-Date: 2021-03-29T17:52:16.485Z\n"
-=======
-"POT-Creation-Date: 2021-03-26T22:13:41.086Z\n"
->>>>>>> develop
-=======
-"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
->>>>>>> develop
+"POT-Creation-Date: 2021-04-12T18:44:41.281Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -464,6 +456,13 @@ msgstr "Benachrichtigungen"
 msgid "All"
 msgstr "Alle"
 
+#. [pages.ReportIndex.results_hiv_not_suppressed_description]
+#. defaultMessage is:
+#. All HIV results where the virus is not suppressed
+#: extracted_strings.json
+msgid "All HIV results where the virus is not suppressed"
+msgstr "Alle HIV-Ergebnisse, bei denen das Virus nicht unterdrückt ist"
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -498,6 +497,17 @@ msgstr "Alle Gerätekalibrierungen auf dem neuesten Stand"
 #: extracted_strings.json
 msgid "All device types"
 msgstr "Alle Gerätetypen"
+
+#. [pages.ReportIndex.Device_Calibration_Report_description]
+#. defaultMessage is:
+#. All devices along with the last calibration date and when next calibration is due
+#: extracted_strings.json
+msgid ""
+"All devices along with the last calibration date and when next calibration "
+"is due"
+msgstr ""
+"Alle Geräte zusammen mit dem Datum der letzten Kalibrierung und wann die "
+"nächste Kalibrierung fällig ist"
 
 #. [pages.JobAssignments.allDiseases]
 #. defaultMessage is:
@@ -811,8 +821,6 @@ msgstr "Durchschnittliche monatliche Unterdrückungsrate"
 #. defaultMessage is:
 #. Average Monthly TB Detected Rate
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average monthly TB Detected Rate"
 msgid "Average Monthly TB Detected Rate"
 msgstr "Durchschnittliche monatliche TB-Erkennungsrate"
 
@@ -1075,6 +1083,9 @@ msgid "Case ID"
 msgstr "Fall-ID"
 
 #. [pages.CaseList.title]
+#. defaultMessage is:
+#. Cases
+#. [browsePage.browseDropdown.cases]
 #. defaultMessage is:
 #. Cases
 #: extracted_strings.json
@@ -1371,6 +1382,9 @@ msgstr "Kontaktperson Name/E-Mail"
 #. [component.Widget.personTitle]
 #. defaultMessage is:
 #. Contacts
+#. [browsePage.browseDropdown.contacts]
+#. defaultMessage is:
+#. Contacts
 #. [pages.PersonList.title]
 #. defaultMessage is:
 #. Contacts
@@ -1380,6 +1394,13 @@ msgstr "Kontaktperson Name/E-Mail"
 #: extracted_strings.json
 msgid "Contacts"
 msgstr "Kontakte"
+
+#. [pages.ReportIndex.MTB_Detected_RR_Detected_description]
+#. defaultMessage is:
+#. Contains all MTB Detected/RR Detected cases
+#: extracted_strings.json
+msgid "Contains all MTB Detected/RR Detected cases"
+msgstr "MTB erkannt RIF erkannt"
 
 #. [legends.Unknown.resultCategoryContaminated]
 #. defaultMessage is:
@@ -1557,6 +1578,13 @@ msgstr "Erstellt am"
 #: extracted_strings.json
 msgid "Created On:"
 msgstr "Erstellt am:"
+
+#. [pages.ReportIndex.Critical_Errors_By_Device]
+#. defaultMessage is:
+#. Critical Errors By Device
+#: extracted_strings.json
+msgid "Critical Errors By Device"
+msgstr "Kritische Fehler nach Gerät"
 
 #. [legends.Unknown.assayGenericCulture]
 #. defaultMessage is:
@@ -1910,11 +1938,34 @@ msgstr "Geräte-API-Schlüssel"
 msgid "Device API Keys Generator"
 msgstr "Geräte-API-Schlüssel-Generator"
 
+#. [pages.ReportIndex.deviceActivityReport]
+#. defaultMessage is:
+#. Device Activity
+#: extracted_strings.json
+msgid "Device Activity"
+msgstr "Gerätetyp"
+
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device Api Key
+#: extracted_strings.json
+msgid "Device Api Key"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# Geräte-"
+"API-Schlüssel} other {# Geräte-API-Schlüsseln} }"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
 #: extracted_strings.json
 msgid "Device Calibration"
+msgstr "Gerätekalibrierung"
+
+#. [pages.ReportIndex.Device_Calibration_Report]
+#. defaultMessage is:
+#. Device Calibration Report
+#: extracted_strings.json
+msgid "Device Calibration Report"
 msgstr "Gerätekalibrierung"
 
 #. [pages.TaskList.issueCategoryDeviceHealth]
@@ -2011,6 +2062,13 @@ msgstr "Geräte, bei denen eine Betriebsunterbrechung auftritt"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Geräte mit Betriebsunterbrechung"
+
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
+#: extracted_strings.json
+msgid "Devices"
+msgstr "Geräte"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2834,6 +2892,13 @@ msgstr "GeneXpert HIV-1 Qual"
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
 
+#. [pages.ReportIndex.geneXpertIssues]
+#. defaultMessage is:
+#. GeneXpert Issues
+#: extracted_strings.json
+msgid "GeneXpert Issues"
+msgstr "GeneXpert-Geräte"
+
 #. [legends.Unknown.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -3262,6 +3327,14 @@ msgstr "Inaktiv"
 msgid "Include ALL results related to Patient ID"
 msgstr "ALLE Ergebnisse in Bezug auf die Patienten-ID einbeziehen"
 
+#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. defaultMessage is:
+#. Includes a list of devices that had at least 2 critical errors
+#: extracted_strings.json
+msgid "Includes a list of devices that had at least 2 critical errors"
+msgstr ""
+"Enthält eine Liste von Geräten, die mindestens 2 kritische Fehler hatten"
+
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
 #. Inconclusive
@@ -3633,6 +3706,16 @@ msgstr "In Behandlung"
 msgid "Lipid Panel"
 msgstr "Lipid-Panel"
 
+#. [pages.ReportIndex.RIF_Resistance_Rate_description]
+#. defaultMessage is:
+#. Listing RIF Resistance Rate for all facilities, ranked highest to lowest
+#: extracted_strings.json
+msgid ""
+"Listing RIF Resistance Rate for all facilities, ranked highest to lowest"
+msgstr ""
+"Auflistung der RIF-Widerstandsrate für alle Einrichtungen in der Reihenfolge "
+"vom höchsten zum niedrigsten Wert"
+
 #. [errorResponseMessages.fetchAccountDetails.GET.default.title]
 #. defaultMessage is:
 #. Loading Account Details Failed
@@ -3967,6 +4050,13 @@ msgstr "MTB erkannt RIF unbestimmt"
 msgid "MTB Detected RIF Not Detected"
 msgstr "MTB erkannt RIF nicht erkannt"
 
+#. [pages.ReportIndex.MTB_Detected_RR_Detected]
+#. defaultMessage is:
+#. MTB Detected RR Detected
+#: extracted_strings.json
+msgid "MTB Detected RR Detected"
+msgstr "MTB erkannt RIF erkannt"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -4101,6 +4191,9 @@ msgid "Module Serial"
 msgstr "Seriennummer des Moduls"
 
 #. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps
+#. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
@@ -4517,6 +4610,9 @@ msgstr "Notizen"
 msgid "Notification"
 msgstr "Benachrichtigung"
 
+#. [browsePage.browseDropdown.notifications]
+#. defaultMessage is:
+#. Notifications
 #. [pages.NotificationList.title]
 #. defaultMessage is:
 #. Notifications
@@ -5401,6 +5497,13 @@ msgstr "Zu übertragende Menge"
 msgid "Quarter"
 msgstr "Quartal"
 
+#. [pages.ReportIndex.RIF_Resistance_Rate]
+#. defaultMessage is:
+#. RIF Resistance Rate (%positive results)
+#: extracted_strings.json
+msgid "RIF Resistance Rate (%positive results)"
+msgstr "Die Anzahl der positiven Ergebnisse"
+
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -5562,6 +5665,9 @@ msgstr "Reporter EID"
 msgid "Reporter HIV VL"
 msgstr "Reporter HIV VL"
 
+#. [browsePage.browseDropdown.reporters]
+#. defaultMessage is:
+#. Reporters
 #. [pages.ReporterList.reportersTitle]
 #. defaultMessage is:
 #. Reporters
@@ -5580,6 +5686,9 @@ msgid "Reporting Since"
 msgstr "Berichterstattung seit"
 
 #. [pages.Status.reportsTitle]
+#. defaultMessage is:
+#. Reports
+#. [browsePage.browseDropdown.reports]
 #. defaultMessage is:
 #. Reports
 #. [pages.ReportIndex.title]
@@ -5736,6 +5845,13 @@ msgstr "Ergebnisse"
 msgid "Results Transmitted"
 msgstr "Übertragene Ergebnisse"
 
+#. [pages.ReportIndex.Results_HIV_Not_Suppressed]
+#. defaultMessage is:
+#. Results with HIV Not Suppressed
+#: extracted_strings.json
+msgid "Results with HIV Not Suppressed"
+msgstr "Ergebnisse bei nicht supprimiertem HIV"
+
 #. [pages.DeviceApiKeyList.revoked]
 #. defaultMessage is:
 #. Revoked
@@ -5763,6 +5879,9 @@ msgstr "Router"
 msgid "Router Detail"
 msgstr "Router Detail"
 
+#. [browsePage.browseDropdown.routers]
+#. defaultMessage is:
+#. Routers
 #. [pages.RouterList.routersTitle]
 #. defaultMessage is:
 #. Routers
@@ -6588,6 +6707,9 @@ msgstr "Standort Name"
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
+#. [browsePage.browseDropdown.sites]
+#. defaultMessage is:
+#. Sites
 #. [pages.SiteList.title]
 #. defaultMessage is:
 #. Sites
@@ -6704,6 +6826,13 @@ msgstr "Senden"
 #: extracted_strings.json
 msgid "Success"
 msgstr "Erfolg"
+
+#. [browsePage.browseDropdown.supplies]
+#. defaultMessage is:
+#. Supplies
+#: extracted_strings.json
+msgid "Supplies"
+msgstr "Exportieren von Lieferungen fehlgeschlagen"
 
 #. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
@@ -7471,6 +7600,37 @@ msgstr "Diese E-Mail ist nicht gültig"
 #: extracted_strings.json
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
+
+#. [pages.ReportIndex.geneXpertIssues_description]
+#. defaultMessage is:
+#. This report shows all issues that apply to GeneXpert devices
+#: extracted_strings.json
+msgid "This report shows all issues that apply to GeneXpert devices"
+msgstr "Dieser Bericht zeigt alle Probleme, die auf GeneXpert-Geräte zutreffen"
+
+#. [pages.ReportIndex.moduleSwapsReport_description]
+#. defaultMessage is:
+#. This report shows all module swaps in devices. The report will show you by default the last 12 months
+#: extracted_strings.json
+msgid ""
+"This report shows all module swaps in devices. The report will show you by "
+"default the last 12 months"
+msgstr ""
+"Dieser Bericht zeigt alle Modultauschvorgänge in Geräten an. Der Bericht "
+"zeigt Ihnen standardmäßig die letzten 12 Monate"
+
+#. [pages.ReportIndex.device_activity_description]
+#. defaultMessage is:
+#. This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#: extracted_strings.json
+msgid ""
+"This report shows the activity of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+"Dieser Bericht zeigt die Aktivität der Geräte während des ausgewählten "
+"Zeitraums, aufgeschlüsselt nach Monaten (standardmäßig die letzten 12 "
+"Monate), sowie alle im letzten Jahr durchgeführten Tests."
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
@@ -8462,6 +8622,13 @@ msgstr "Prozentsatz der gültigen Ergebnisse"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
 msgstr "Der Berichtsname enthält \"{reportName}\"."
+
+#. [browsePage.browseDropdown.results]
+#. defaultMessage is:
+#. results
+#: extracted_strings.json
+msgid "results"
+msgstr "Ergebnisse"
 
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:

@@ -411,6 +411,9 @@ const routes = [
           operation: Joi.object()
             .keys(operationPayload)
             .description('Device Operation Data'),
+          deviceConfiguration: Joi.object().description(
+            'Device Configuration is a json object for configuring the whole country/state network of gxconnect instances.'
+          ),
           result: Joi.object()
             .keys(resultPayload)
             .description('Device Result Data.'),
@@ -434,6 +437,12 @@ const routes = [
         },
         payload: Joi.object().keys({
           ...devicePayload,
+          includeDeviceConfiguration: Joi.bool()
+            .allow(null)
+            .optional()
+            .description(
+              'This flag will determine (When true) if the service is going to respond as part of the response the general configuration of the device'
+            ),
           log: Joi.object()
             .allow(null)
             .keys(logPayload)

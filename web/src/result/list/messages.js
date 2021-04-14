@@ -180,6 +180,38 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayGXCovid19',
     defaultMessage: 'GeneXpert COVID-19',
   },
+  assayLPA: {
+    id: 'pages.ResultList.assayLPA',
+    defaultMessage: 'LPA',
+  },
+  assaySmear: {
+    id: 'pages.ResultList.assaySmear',
+    defaultMessage: 'Smear',
+  },
+  assayCulture: {
+    id: 'pages.ResultList.assayCulture',
+    defaultMessage: 'Culture',
+  },
+  assayGenericDst: {
+    id: 'pages.ResultList.assayGenericDst',
+    defaultMessage: 'DST',
+  },
+  assayGenericCovid19: {
+    id: 'pages.ResultList.assayGenericCovid19',
+    defaultMessage: 'Covid 19',
+  },
+  assayMP96Covid19: {
+    id: 'pages.ResultList.assayMP96Covid19',
+    defaultMessage: 'MagNA Pure-96 COVID-19',
+  },
+  assayQS7Covid19: {
+    id: 'pages.ResultList.assayQS7Covid19',
+    defaultMessage: 'QuantStudio7 Flex COVID-19',
+  },
+  assayTbLamp: {
+    id: 'pages.ResultList.assayTbLamp',
+    defaultMessage: 'TB LAMP',
+  },
 })
 
 export default messages

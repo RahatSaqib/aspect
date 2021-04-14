@@ -21,7 +21,6 @@ async function deviceStatusOverTime(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate } = request.query
   const offset = getOffsetFromIsoDateString(minDate)
-
   // Filters for results: results should be filtered normally, just converting the received date to UTC
   const minDateResults = new Date(minDate).toISOString()
   const maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
