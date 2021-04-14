@@ -808,7 +808,7 @@ describe('Device API routes for GxConnect Devices', () => {
     const { runTest, getLastResult, basicDevicePayload } = context
     afterEach(context.afterCleanUp)
 
-    it('should append a new GxHiv1Qual result with the correct result categories', async () =>
+    it('should append a new result with the correct result categories', async () =>
     {
       const assertions = [
         // GxMtbRif
@@ -1029,7 +1029,6 @@ describe('Device API routes for GxConnect Devices', () => {
             })
           )
 
-        // / console.log(res.body, res.status)
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
