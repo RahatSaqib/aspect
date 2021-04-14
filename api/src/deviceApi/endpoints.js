@@ -55,9 +55,7 @@ const logPayload = {
     .allow(null)
     .try(
       Joi.object().keys(logItem),
-      Joi.array().items(Joi.object().keys(logItem)),
-      // ... or just a string with serialized data - handler use it upon 'source' value
-      Joi.string().description('Some log data, i.e. serialized json object')
+      Joi.array().items(Joi.object().keys(logItem))
     ),
 }
 

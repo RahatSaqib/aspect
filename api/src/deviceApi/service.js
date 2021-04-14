@@ -352,64 +352,65 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (log) {
-    let { data } = log
-    if (log.source === 'GeneXpert' && data) {
-      if (_.isString(data)) {
-        data = JSON.parse(data)
-      }
-
-      /**
-       * Notice pattern of `logPayload` in `endpoint.js` for the expected data, and for
-       * `Joi.object()` and `Joi.string()` make sure that `data` is an array of log items
-       */
-      if (_.isPlainObject(data)) {
-        data = [data]
-      } else if (!_.isArray(data)) {
-        throw Boom.expectationFailed(
-          '"log" should be either log item object or array of log items'
-        )
-      }
-
-      /**
-       * Process all log items one by one
-       * - and return array `response.logIds` with only those id's which where processed
-       * - and store in table DeviceOperation array of successfully processed items
-       */
-      const calibrationDeviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
-        'calibration'
-      )
-      const options = {
-        calibrationDeviceMaintenanceTypeId,
-        now,
-      }
-
-      let processedLogIds = []
-      await Promise.each(data, async logItem => {
-        try {
-          const logItemId = await processLogItem(context, logItem, options)
-          processedLogIds = [...processedLogIds, logItemId]
-        } catch (e) {
-          /**
-           * if error happened then we do not return this logId as processed,
-           * meaning that it will be sent again next scheduler run
-           */
-          logger.debug(
-            `execution of processLogItem for log entry with externalId=${logItem.externalId} has failed`,
-            {
-              reLabel: 'deviceApi:processLogItem',
-            }
-          )
-        }
-      })
-
+    if (log.source === 'GeneXpert' && log.data) {
       response = {
         ...response,
-        logIds: processedLogIds,
+        ...(await processGeneXpertLogs(context, log.data, now)),
       }
     }
   }
 
   return response
+}
+
+async function processGeneXpertLogs(context, data, now) {
+  if (_.isString(data)) {
+    data = JSON.parse(data)
+  }
+
+  /**
+   * Notice section of `.try` in  `logPayload` in `endpoint.js` -
+   * if single log item is posted then wrap it into the array
+   */
+  if (_.isPlainObject(data)) {
+    data = [data]
+  }
+
+  /**
+   * Process all log items one by one
+   * - and return array `response.logIds` with only those id's which where processed
+   * - and store in table DeviceOperation array of successfully processed items
+   */
+  const calibrationDeviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
+    'calibration'
+  )
+  const options = {
+    calibrationDeviceMaintenanceTypeId,
+    now,
+  }
+
+  let processedLogIds = []
+  await Promise.each(data, async logItem => {
+    try {
+      const logItemId = await processLogItem(context, logItem, options)
+      processedLogIds = [...processedLogIds, logItemId]
+    } catch (e) {
+      /**
+       * if error happened then we do not return this logId as processed,
+       * meaning that it will be sent again next scheduler run
+       */
+      logger.debug(
+        `execution of processLogItem for log entry with externalId=${logItem.externalId} has failed`,
+        {
+          reLabel: 'deviceApi:processLogItem',
+        }
+      )
+    }
+  })
+
+  return {
+    logIds: processedLogIds,
+  }
 }
 
 async function processLogItem(context, logItem, options) {
