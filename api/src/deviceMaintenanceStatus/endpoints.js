@@ -3,6 +3,8 @@ const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
 const { deviceStatusOverTime, deviceStatusLastReported } = require('./service')
 
+const { REGEX_ISODATESTRING } = require('../shared/date')
+
 const routes = [
   {
     method: 'GET',
@@ -14,12 +16,12 @@ const routes = [
       auth: { scope: ['device', 'operationalData'] },
       validate: {
         query: {
-          minDate: Joi.date()
-            .iso()
+          minDate: Joi.string()
+            .pattern(REGEX_ISODATESTRING)
             .required()
             .description('From Date, inclusive'),
-          maxDate: Joi.date()
-            .iso()
+          maxDate: Joi.string()
+            .pattern(REGEX_ISODATESTRING)
             .required()
             .description('To Date, inclusive'),
         },

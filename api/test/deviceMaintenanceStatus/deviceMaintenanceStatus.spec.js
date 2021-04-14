@@ -2,8 +2,8 @@ const chai = require('chai')
 
 const { assert, expect } = chai
 const subDays = require('date-fns/subDays')
-const formatISO = require('date-fns/formatISO')
 const isValid = require('date-fns/isValid')
+const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const find = require('lodash/find')
 const range = require('lodash/range')
@@ -28,12 +28,53 @@ describe('Maintenance Reports', () => {
 
   shared.checkToken(server, path)
 
-  const now = new Date()
-  const monthAgo = subDays(now, 30)
+  async function insertMaintenanceStatusLogs(goingBackFrom = new Date()) {
+    const statuses = await allDeviceMaintenanceStatusToId()
+    const { id: personId } = await knex('Person')
+      .where({ name: 'Admin' })
+      .first()
+    // Inserting logs for last Wednesday, Thursday and Friday UTC: inserting date formatted without time prevent unexpected timezone conversions
+    const logEntryBase = {
+      deviceId,
+      deviceMaintenanceStatusId: statuses.active,
+      data: JSON.stringify({}),
+      day: dateFormat(goingBackFrom, 'yyyy-MM-dd'),
+      createdOn: new Date(),
+      createdBy: personId,
+    }
+    await knex('DeviceMaintenanceStatusLog').insert({
+      ...logEntryBase,
+      day: dateFormat(subDays(goingBackFrom, 2), 'yyyy-MM-dd'),
+    })
+    await knex('DeviceMaintenanceStatusLog').insert({
+      ...logEntryBase,
+      day: dateFormat(subDays(goingBackFrom, 1), 'yyyy-MM-dd'),
+    })
+    await knex('DeviceMaintenanceStatusLog').insert({
+      ...logEntryBase,
+      deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
+      day: dateFormat(goingBackFrom, 'yyyy-MM-dd'),
+    })
+    const [deviceMaintenanceStatusLogId] = await knex(
+      'DeviceMaintenanceStatusLog'
+    ).insert({
+      ...logEntryBase,
+      day: dateFormat(goingBackFrom, 'yyyy-MM-dd'),
+    })
+    await knex('Device')
+      .where({ id: deviceId })
+      .update({ deviceMaintenanceStatusLogId })
+  }
 
-  afterEach(async () => {
-    await context.cleanUp()
-  })
+  function getLastFriday() {
+    let now = new Date()
+    while (now.getDay() !== 5) {
+      now = subDays(now, 1)
+    }
+    return now
+  }
+  const lastFriday = getLastFriday()
+  const monthAgo = subDays(lastFriday, 30)
 
   beforeEach(async () => {
     context = createGxConnectTestContext(server, {
@@ -50,123 +91,119 @@ describe('Maintenance Reports', () => {
 
     const { id, siteId } = context.device
     deviceId = id
-    const statuses = await allDeviceMaintenanceStatusToId()
-    const now = new Date()
-    const { id: personId } = await knex('Person')
-      .where({ name: 'Admin' })
-      .first()
-
     await knex('Site')
       .where({ id: siteId })
       .update({ latitude: 1, longitude: 5 })
-
-    const logEntryBase = {
-      deviceId,
-      deviceMaintenanceStatusId: statuses.active,
-      data: JSON.stringify({}),
-      day: now,
-      createdOn: new Date(),
-      createdBy: personId,
-    }
-
-    await knex('DeviceMaintenanceStatusLog').insert({
-      ...logEntryBase,
-      day: subDays(now, 2),
-    })
-
-    await knex('DeviceMaintenanceStatusLog').insert({
-      ...logEntryBase,
-      day: subDays(now, 1),
-    })
-
-    await knex('DeviceMaintenanceStatusLog').insert({
-      ...logEntryBase,
-      deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
-      day: now,
-    })
-
-    const [deviceMaintenanceStatusLogId] = await knex(
-      'DeviceMaintenanceStatusLog'
-    ).insert({
-      ...logEntryBase,
-      day: now,
-    })
-    await knex('Device')
-      .where({ id: deviceId })
-      .update({ deviceMaintenanceStatusLogId })
-
+    await insertMaintenanceStatusLogs(lastFriday)
+    // Inserting results for the last 30 days
+    const resultsBaseDate = new Date(
+      lastFriday.getFullYear(),
+      lastFriday.getMonth(),
+      lastFriday.getDate(),
+      0,
+      0,
+      0,
+      0
+    )
     await Promise.each(range(1, 4), async () => {
-      const daysForSubstracting = random(0, 30, false)
+      const daysForSubstracting = random(2, 30, false)
+      const testDate = subDays(resultsBaseDate, daysForSubstracting)
       await context.createResultForThisDevice({
         resultDetails: {
-          startedOn: subDays(new Date(), daysForSubstracting),
-          endedOn: subDays(new Date(), daysForSubstracting),
+          startedOn: testDate,
+          endedOn: testDate,
         },
       })
     })
 
+    // Inserting one result out of the last 30 days
     await context.createResultForThisDevice({
       resultDetails: {
-        startedOn: subDays(new Date(), 33),
-        endedOn: subDays(new Date(), 33),
+        startedOn: subDays(resultsBaseDate, 33),
+        endedOn: subDays(resultsBaseDate, 33),
       },
     })
   })
 
-  it('should get the correct daily status', done => {
-    const minDate = formatISO(monthAgo, { representation: 'date' })
-    const maxDate = formatISO(now, { representation: 'date' })
-    server
-      .get(`${path}?minDate=${minDate}&maxDate=${maxDate}`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'array')
-
-        const tamagotchi = find(res.body.data, d => d.id === deviceId)
-        assert.isNotNull(tamagotchi)
-        assert.equal(tamagotchi.latitude, 1)
-        assert.equal(tamagotchi.longitude, 5)
-        assert.isAtLeast(tamagotchi.totalResults, 1)
-        const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
-        expect(tamagotchiLastStatus).to.have.containSubset(
-          tamagotchiLastStatus.totalResults > 0
-            ? {
-                maintenanceStatusExternalId: 'active',
-                maintenanceStatusI18nKey: 'active',
-                maintenanceStatusName: 'Active',
-              }
-            : {
-                maintenanceStatusExternalId: 'inactiveNoResultsReported',
-                maintenanceStatusI18nKey: 'inactiveNoResultsReported',
-                maintenanceStatusName: 'No Results Reported',
-              }
-        )
-        assert.isBoolean(tamagotchiLastStatus.isWeekend)
-        assert.isNumber(tamagotchiLastStatus.weekNumber)
-        assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
-
-        done()
-      })
+  afterEach(async () => {
+    await context.cleanUp()
   })
 
-  it('should get the correct current status', done => {
-    server
+  const evaluateCorrectDailyStatus = async offset => {
+    // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
+    const minDate = `${dateFormat(
+      monthAgo,
+      'yyyy-MM-dd'
+    )}T00:00:00.000${offset}`
+    const maxDate = `${dateFormat(
+      lastFriday,
+      'yyyy-MM-dd'
+    )}T00:00:00.000${offset}`
+
+    // Then, in the API we consider the same dates but in UTC (without conversion)
+    const maintenanceStatusOverTime = await server
+      .get(
+        `${path}?minDate=${encodeURIComponent(
+          minDate
+        )}&maxDate=${encodeURIComponent(maxDate)}`
+      )
+      .set('Authorization', `Bearer ${shared.token}`)
+    assert.equal(maintenanceStatusOverTime.status, 200)
+    assert.typeOf(maintenanceStatusOverTime.body, 'Object')
+    assert.property(maintenanceStatusOverTime.body, 'data')
+    assert.typeOf(maintenanceStatusOverTime.body.data, 'array')
+
+    const tamagotchi = find(
+      maintenanceStatusOverTime.body.data,
+      d => d.id === deviceId
+    )
+    assert.isNotNull(tamagotchi)
+    assert.equal(tamagotchi.latitude, 1)
+    assert.equal(tamagotchi.longitude, 5)
+    assert.isAtLeast(tamagotchi.totalResults, 1)
+    const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
+    expect(tamagotchiLastStatus).to.have.containSubset(
+      tamagotchiLastStatus.totalResults > 0
+        ? {
+            maintenanceStatusExternalId: 'active',
+            maintenanceStatusI18nKey: 'active',
+            maintenanceStatusName: 'Active',
+          }
+        : {
+            maintenanceStatusExternalId: 'inactiveNoResultsReported',
+            maintenanceStatusI18nKey: 'inactiveNoResultsReported',
+            maintenanceStatusName: 'No Results Reported',
+          }
+    )
+    assert.isBoolean(tamagotchiLastStatus.isWeekend)
+    assert.isNumber(tamagotchiLastStatus.weekNumber)
+    assert.isTrue(isValid(new Date(tamagotchiLastStatus.day)))
+  }
+
+  it('should get the correct daily status for negative timezones', async () =>
+    evaluateCorrectDailyStatus('-03:00'))
+
+  it('should get the correct daily status for positive timezones', async () =>
+    evaluateCorrectDailyStatus('+03:00'))
+
+  it('should get the correct current status', async () => {
+    await knex('DeviceMaintenanceStatusLog').where({ deviceId }).del()
+    await insertMaintenanceStatusLogs()
+    const lastReportedStatus = await server
       .get(`${pathLastReported}`)
       .set('Authorization', `Bearer ${shared.token}`)
-      .end((err, res) => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'array')
-        const tamagotchi = find(res.body.data, d => d.id === deviceId)
-        assert.isNotNull(tamagotchi)
-        assert.equal(tamagotchi.latitude, 1)
-        assert.equal(tamagotchi.longitude, 5)
-        expect(tamagotchi.maintenanceStatusExternalId).equals('active')
-        done()
-      })
+
+    assert.equal(lastReportedStatus.status, 200)
+    assert.typeOf(lastReportedStatus.body, 'Object')
+    assert.property(lastReportedStatus.body, 'data')
+    assert.typeOf(lastReportedStatus.body.data, 'array')
+    const tamagotchi = find(
+      lastReportedStatus.body.data,
+      d => d.id === deviceId
+    )
+    assert.isNotNull(tamagotchi)
+    assert.equal(tamagotchi.latitude, 1)
+    assert.equal(tamagotchi.longitude, 5)
+    expect(tamagotchi.maintenanceStatusExternalId).equals('active')
   })
 })
