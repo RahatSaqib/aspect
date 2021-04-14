@@ -158,7 +158,6 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
    *
    * select errors from Result table
    */
-  const resultCategories = ['Error', 'Invalid', 'NoResult']
   const items = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -168,13 +167,6 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', minDate)
     .where('r.endedOn', '<=', maxDate)
-    .where(function () {
-      // get only errors and invalids
-      this.whereNotNull('r.errorCode').orWhereIn(
-        'rc1.externalId',
-        resultCategories
-      )
-    })
     .select(
       knex.raw('"Assay" as source'),
       /**
