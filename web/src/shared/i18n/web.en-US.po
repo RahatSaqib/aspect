@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-06T16:41:35.721Z\n"
+"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -458,6 +458,13 @@ msgstr "Alerts"
 msgid "All"
 msgstr "All"
 
+#. [pages.ReportIndex.results_hiv_not_suppressed_description]
+#. defaultMessage is:
+#. All HIV results where the virus is not suppressed
+#: extracted_strings.json
+msgid "All HIV results where the virus is not suppressed"
+msgstr "All HIV results where the virus is not suppressed"
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -492,6 +499,17 @@ msgstr "All device calibrations up to date"
 #: extracted_strings.json
 msgid "All device types"
 msgstr "All device types"
+
+#. [pages.ReportIndex.Device_Calibration_Report_description]
+#. defaultMessage is:
+#. All devices along with the last calibration date and when next calibration is due
+#: extracted_strings.json
+msgid ""
+"All devices along with the last calibration date and when next calibration "
+"is due"
+msgstr ""
+"All devices along with the last calibration date and when next calibration "
+"is due"
 
 #. [pages.JobAssignments.allDiseases]
 #. defaultMessage is:
@@ -694,6 +712,13 @@ msgstr "Assay Type"
 #: extracted_strings.json
 msgid "Assay Type:"
 msgstr "Assay Type:"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#: extracted_strings.json
+msgid "Asserted zero inventory"
+msgstr "Asserted zero inventory"
 
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
@@ -1050,6 +1075,13 @@ msgstr "Calibration Past Due"
 msgid "Cancel"
 msgstr "Cancel"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#: extracted_strings.json
+msgid "Captured"
+msgstr "Captured"
+
 #. [forms.formItem.caseId]
 #. defaultMessage is:
 #. Case ID
@@ -1061,6 +1093,9 @@ msgid "Case ID"
 msgstr "Case ID"
 
 #. [pages.CaseList.title]
+#. defaultMessage is:
+#. Cases
+#. [browsePage.browseDropdown.cases]
 #. defaultMessage is:
 #. Cases
 #: extracted_strings.json
@@ -1357,6 +1392,9 @@ msgstr "Contact name/email"
 #. [component.Widget.personTitle]
 #. defaultMessage is:
 #. Contacts
+#. [browsePage.browseDropdown.contacts]
+#. defaultMessage is:
+#. Contacts
 #. [pages.PersonList.title]
 #. defaultMessage is:
 #. Contacts
@@ -1366,6 +1404,13 @@ msgstr "Contact name/email"
 #: extracted_strings.json
 msgid "Contacts"
 msgstr "Contacts"
+
+#. [pages.ReportIndex.MTB_Detected_RR_Detected_description]
+#. defaultMessage is:
+#. Contains all MTB Detected/RR Detected cases
+#: extracted_strings.json
+msgid "Contains all MTB Detected/RR Detected cases"
+msgstr "Contains all MTB Detected/RR Detected cases"
 
 #. [legends.Unknown.resultCategoryContaminated]
 #. defaultMessage is:
@@ -1523,6 +1568,13 @@ msgstr ""
 msgid "County"
 msgstr "County"
 
+#. [pages.ResultList.assayGenericCovid19]
+#. defaultMessage is:
+#. Covid 19
+#: extracted_strings.json
+msgid "Covid 19"
+msgstr "Covid 19"
+
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
@@ -1544,10 +1596,20 @@ msgstr "Created On"
 msgid "Created On:"
 msgstr "Created On:"
 
+#. [pages.ReportIndex.Critical_Errors_By_Device]
+#. defaultMessage is:
+#. Critical Errors By Device
+#: extracted_strings.json
+msgid "Critical Errors By Device"
+msgstr "Critical Errors By Device"
+
 #. [legends.Unknown.assayGenericCulture]
 #. defaultMessage is:
 #. Culture
 #. [filter.AssaySelectField.assayCulture]
+#. defaultMessage is:
+#. Culture
+#. [pages.ResultList.assayCulture]
 #. defaultMessage is:
 #. Culture
 #: extracted_strings.json
@@ -1574,6 +1636,13 @@ msgstr "Current Password"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Custom"
+
+#. [pages.ResultList.assayGenericDst]
+#. defaultMessage is:
+#. DST
+#: extracted_strings.json
+msgid "DST"
+msgstr "DST"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -1896,12 +1965,33 @@ msgstr "Device API Keys"
 msgid "Device API Keys Generator"
 msgstr "Device API Keys Generator"
 
+#. [pages.ReportIndex.deviceActivityReport]
+#. defaultMessage is:
+#. Device Activity
+#: extracted_strings.json
+msgid "Device Activity"
+msgstr "Device Activity"
+
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device Api Keys
+#: extracted_strings.json
+msgid "Device Api Keys"
+msgstr "Device Api Keys"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
 #: extracted_strings.json
 msgid "Device Calibration"
 msgstr "Device Calibration"
+
+#. [pages.ReportIndex.Device_Calibration_Report]
+#. defaultMessage is:
+#. Device Calibration Report
+#: extracted_strings.json
+msgid "Device Calibration Report"
+msgstr "Device Calibration Report"
 
 #. [pages.TaskList.issueCategoryDeviceHealth]
 #. defaultMessage is:
@@ -1975,6 +2065,9 @@ msgstr "Device type"
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
+#. defaultMessage is:
+#. Devices
+#. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.SiteDetail.fieldDevices]
@@ -2820,6 +2913,13 @@ msgstr "GeneXpert HIV-1 Qual"
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
 
+#. [pages.ReportIndex.geneXpertIssues]
+#. defaultMessage is:
+#. GeneXpert Issues
+#: extracted_strings.json
+msgid "GeneXpert Issues"
+msgstr "GeneXpert Issues"
+
 #. [legends.Unknown.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -3208,6 +3308,13 @@ msgstr ""
 "we may assist you. You can request our help by sending an email to "
 "{supportEmail}"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
+#. defaultMessage is:
+#. Imported
+#: extracted_strings.json
+msgid "Imported"
+msgstr "Imported"
+
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -3247,6 +3354,13 @@ msgstr "Inactive"
 #: extracted_strings.json
 msgid "Include ALL results related to Patient ID"
 msgstr "Include ALL results related to Patient ID"
+
+#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. defaultMessage is:
+#. Includes a list of devices that had at least 2 critical errors
+#: extracted_strings.json
+msgid "Includes a list of devices that had at least 2 critical errors"
+msgstr "Includes a list of devices that had at least 2 critical errors"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -3444,6 +3558,13 @@ msgstr "Key"
 msgid "LGA"
 msgstr "LGA"
 
+#. [pages.ResultList.assayLPA]
+#. defaultMessage is:
+#. LPA
+#: extracted_strings.json
+msgid "LPA"
+msgstr "LPA"
+
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
 #. Lab:
@@ -3618,6 +3739,15 @@ msgstr "Linked to treatment"
 #: extracted_strings.json
 msgid "Lipid Panel"
 msgstr "Lipid Panel"
+
+#. [pages.ReportIndex.RIF_Resistance_Rate_description]
+#. defaultMessage is:
+#. Listing RIF Resistance Rate for all facilities, ranked highest to lowest
+#: extracted_strings.json
+msgid ""
+"Listing RIF Resistance Rate for all facilities, ranked highest to lowest"
+msgstr ""
+"Listing RIF Resistance Rate for all facilities, ranked highest to lowest"
 
 #. [errorResponseMessages.fetchAccountDetails.GET.default.title]
 #. defaultMessage is:
@@ -3953,6 +4083,13 @@ msgstr "MTB Detected RIF Indeterminate"
 msgid "MTB Detected RIF Not Detected"
 msgstr "MTB Detected RIF Not Detected"
 
+#. [pages.ReportIndex.MTB_Detected_RR_Detected]
+#. defaultMessage is:
+#. MTB Detected RR Detected
+#: extracted_strings.json
+msgid "MTB Detected RR Detected"
+msgstr "MTB Detected RR Detected"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -4011,6 +4148,9 @@ msgstr "MTB/Rif"
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
+#. [pages.ResultList.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #: extracted_strings.json
@@ -4087,6 +4227,9 @@ msgid "Module Serial"
 msgstr "Module Serial"
 
 #. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps
+#. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
@@ -4503,6 +4646,9 @@ msgstr "Notes"
 msgid "Notification"
 msgstr "Notification"
 
+#. [browsePage.browseDropdown.notifications]
+#. defaultMessage is:
+#. Notifications
 #. [pages.NotificationList.title]
 #. defaultMessage is:
 #. Notifications
@@ -5329,6 +5475,9 @@ msgstr "Quality Control"
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
+#. [pages.ResultList.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #: extracted_strings.json
 msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
@@ -5378,6 +5527,13 @@ msgstr "Quantity to Transfer"
 msgid "Quarter"
 msgstr "Quarter"
 
+#. [pages.ReportIndex.RIF_Resistance_Rate]
+#. defaultMessage is:
+#. RIF Resistance Rate (%positive results)
+#: extracted_strings.json
+msgid "RIF Resistance Rate (%positive results)"
+msgstr "RIF Resistance Rate (%positive results)"
+
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -5405,6 +5561,9 @@ msgstr "Reagent"
 msgid "Reagent Health"
 msgstr "Reagent Health"
 
+#. [forms.formItem.reason]
+#. defaultMessage is:
+#. Reason
 #. [pages.InventoryAdjustmentDialogForm.reason]
 #. defaultMessage is:
 #. Reason
@@ -5539,6 +5698,9 @@ msgstr "Reporter EID"
 msgid "Reporter HIV VL"
 msgstr "Reporter HIV VL"
 
+#. [browsePage.browseDropdown.reporters]
+#. defaultMessage is:
+#. Reporters
 #. [pages.ReporterList.reportersTitle]
 #. defaultMessage is:
 #. Reporters
@@ -5557,6 +5719,9 @@ msgid "Reporting Since"
 msgstr "Reporting Since"
 
 #. [pages.Status.reportsTitle]
+#. defaultMessage is:
+#. Reports
+#. [browsePage.browseDropdown.reports]
 #. defaultMessage is:
 #. Reports
 #. [pages.ReportIndex.title]
@@ -5698,6 +5863,9 @@ msgstr ""
 #. [component.Widget.resultsTitle]
 #. defaultMessage is:
 #. Results
+#. [browsePage.browseDropdown.results]
+#. defaultMessage is:
+#. Results
 #. [pages.ResultList.title]
 #. defaultMessage is:
 #. Results
@@ -5711,6 +5879,13 @@ msgstr "Results"
 #: extracted_strings.json
 msgid "Results Transmitted"
 msgstr "Results Transmitted"
+
+#. [pages.ReportIndex.Results_HIV_Not_Suppressed]
+#. defaultMessage is:
+#. Results with HIV Not Suppressed
+#: extracted_strings.json
+msgid "Results with HIV Not Suppressed"
+msgstr "Results with HIV Not Suppressed"
 
 #. [pages.DeviceApiKeyList.revoked]
 #. defaultMessage is:
@@ -5739,6 +5914,9 @@ msgstr "Router"
 msgid "Router Detail"
 msgstr "Router Detail"
 
+#. [browsePage.browseDropdown.routers]
+#. defaultMessage is:
+#. Routers
 #. [pages.RouterList.routersTitle]
 #. defaultMessage is:
 #. Routers
@@ -6564,12 +6742,22 @@ msgstr "Site Name"
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
+#. [browsePage.browseDropdown.sites]
+#. defaultMessage is:
+#. Sites
 #. [pages.SiteList.title]
 #. defaultMessage is:
 #. Sites
 #: extracted_strings.json
 msgid "Sites"
 msgstr "Sites"
+
+#. [pages.ResultList.assaySmear]
+#. defaultMessage is:
+#. Smear
+#: extracted_strings.json
+msgid "Smear"
+msgstr "Smear"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -6681,6 +6869,13 @@ msgstr "Submit"
 msgid "Success"
 msgstr "Success"
 
+#. [browsePage.browseDropdown.supplies]
+#. defaultMessage is:
+#. Supplies
+#: extracted_strings.json
+msgid "Supplies"
+msgstr "Supplies"
+
 #. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
@@ -6721,6 +6916,13 @@ msgstr "TB DST"
 #: extracted_strings.json
 msgid "TB G&D"
 msgstr "TB G&D"
+
+#. [pages.ResultList.assayTbLamp]
+#. defaultMessage is:
+#. TB LAMP
+#: extracted_strings.json
+msgid "TB LAMP"
+msgstr "TB LAMP"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7431,6 +7633,37 @@ msgstr "This email is not valid"
 msgid "This field is required"
 msgstr "This field is required"
 
+#. [pages.ReportIndex.geneXpertIssues_description]
+#. defaultMessage is:
+#. This report shows all issues that apply to GeneXpert devices
+#: extracted_strings.json
+msgid "This report shows all issues that apply to GeneXpert devices"
+msgstr "This report shows all issues that apply to GeneXpert devices"
+
+#. [pages.ReportIndex.moduleSwapsReport_description]
+#. defaultMessage is:
+#. This report shows all module swaps in devices. The report will show you by default the last 12 months
+#: extracted_strings.json
+msgid ""
+"This report shows all module swaps in devices. The report will show you by "
+"default the last 12 months"
+msgstr ""
+"This report shows all module swaps in devices. The report will show you by "
+"default the last 12 months"
+
+#. [pages.ReportIndex.device_activity_description]
+#. defaultMessage is:
+#. This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#: extracted_strings.json
+msgid ""
+"This report shows the activity of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+"This report shows the activity of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
 #. This username is unavailable
@@ -7552,6 +7785,13 @@ msgstr "Transfer"
 msgid "Transfer Inventory"
 msgstr "Transfer Inventory"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer Received
+#: extracted_strings.json
+msgid "Transfer Received"
+msgstr "Transfer Received"
+
 #. [pages.resultEdit.transferResult]
 #. defaultMessage is:
 #. Transfer Result
@@ -7568,6 +7808,13 @@ msgstr "Transfer Result"
 #: extracted_strings.json
 msgid "Transfer Result Error"
 msgstr "Transfer Result Error"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer Sent
+#: extracted_strings.json
+msgid "Transfer Sent"
+msgstr "Transfer Sent"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
