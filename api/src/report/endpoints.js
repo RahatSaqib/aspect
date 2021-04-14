@@ -68,6 +68,12 @@ function responseBaseReports() {
               .required()
               .description('Report unique externalId'),
             sortOrder: Joi.number().required().description('Report sort order'),
+            i18nKey: Joi.string()
+              .allow(null)
+              .description('the i18n key of the report title'),
+            i18nKeyDescription: Joi.string()
+              .allow(null)
+              .description('the i18n key of the report description'),
           })
         ),
     }),

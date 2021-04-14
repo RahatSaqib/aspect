@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-03-30T07:53:19.365Z\n"
+"POT-Creation-Date: 2021-04-12T18:44:41.281Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -404,6 +404,20 @@ msgstr ""
 msgid "Alere Q HIV-1/2 Detect"
 msgstr ""
 
+#. [consumable.alereHivDetectCartridge]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 Detect Cartridge
+#: extracted_strings.json
+msgid "Alere Q HIV-1/2 Detect Cartridge"
+msgstr ""
+
+#. [consumable.alereHivVlPlasmaCartridge]
+#. defaultMessage is:
+#. Alere Q HIV-1/2 VL Plasma Cartridge
+#: extracted_strings.json
+msgid "Alere Q HIV-1/2 VL Plasma Cartridge"
+msgstr ""
+
 #. [legends.Unknown.assayAlereQHiv12VLPlasma]
 #. defaultMessage is:
 #. Alere Q HIV-1/2 VL plasma
@@ -440,6 +454,13 @@ msgstr ""
 msgid "All"
 msgstr ""
 
+#. [pages.ReportIndex.results_hiv_not_suppressed_description]
+#. defaultMessage is:
+#. All HIV results where the virus is not suppressed
+#: extracted_strings.json
+msgid "All HIV results where the virus is not suppressed"
+msgstr ""
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -473,6 +494,15 @@ msgstr ""
 #. All device types
 #: extracted_strings.json
 msgid "All device types"
+msgstr ""
+
+#. [pages.ReportIndex.Device_Calibration_Report_description]
+#. defaultMessage is:
+#. All devices along with the last calibration date and when next calibration is due
+#: extracted_strings.json
+msgid ""
+"All devices along with the last calibration date and when next calibration "
+"is due"
 msgstr ""
 
 #. [pages.JobAssignments.allDiseases]
@@ -1044,6 +1074,9 @@ msgstr ""
 #. [pages.CaseList.title]
 #. defaultMessage is:
 #. Cases
+#. [browsePage.browseDropdown.cases]
+#. defaultMessage is:
+#. Cases
 #: extracted_strings.json
 msgid "Cases"
 msgstr ""
@@ -1338,6 +1371,9 @@ msgstr ""
 #. [component.Widget.personTitle]
 #. defaultMessage is:
 #. Contacts
+#. [browsePage.browseDropdown.contacts]
+#. defaultMessage is:
+#. Contacts
 #. [pages.PersonList.title]
 #. defaultMessage is:
 #. Contacts
@@ -1346,6 +1382,13 @@ msgstr ""
 #. Contacts
 #: extracted_strings.json
 msgid "Contacts"
+msgstr ""
+
+#. [pages.ReportIndex.MTB_Detected_RR_Detected_description]
+#. defaultMessage is:
+#. Contains all MTB Detected/RR Detected cases
+#: extracted_strings.json
+msgid "Contains all MTB Detected/RR Detected cases"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryContaminated]
@@ -1520,6 +1563,13 @@ msgstr ""
 #. Created On:
 #: extracted_strings.json
 msgid "Created On:"
+msgstr ""
+
+#. [pages.ReportIndex.Critical_Errors_By_Device]
+#. defaultMessage is:
+#. Critical Errors By Device
+#: extracted_strings.json
+msgid "Critical Errors By Device"
 msgstr ""
 
 #. [legends.Unknown.assayGenericCulture]
@@ -1874,11 +1924,32 @@ msgstr ""
 msgid "Device API Keys Generator"
 msgstr ""
 
+#. [pages.ReportIndex.deviceActivityReport]
+#. defaultMessage is:
+#. Device Activity
+#: extracted_strings.json
+msgid "Device Activity"
+msgstr ""
+
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device Api Key
+#: extracted_strings.json
+msgid "Device Api Key"
+msgstr ""
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
 #: extracted_strings.json
 msgid "Device Calibration"
+msgstr ""
+
+#. [pages.ReportIndex.Device_Calibration_Report]
+#. defaultMessage is:
+#. Device Calibration Report
+#: extracted_strings.json
+msgid "Device Calibration Report"
 msgstr ""
 
 #. [pages.TaskList.issueCategoryDeviceHealth]
@@ -1974,6 +2045,13 @@ msgstr ""
 #. Devices With Service Interruption
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
+msgstr ""
+
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
+#: extracted_strings.json
+msgid "Devices"
 msgstr ""
 
 #. [pages.DeviceDetailEdit.discard]
@@ -2750,6 +2828,13 @@ msgstr ""
 msgid "GeneXpert Ebola"
 msgstr ""
 
+#. [consumable.gxEbolaCartridge]
+#. defaultMessage is:
+#. GeneXpert Ebola Cartridge
+#: extracted_strings.json
+msgid "GeneXpert Ebola Cartridge"
+msgstr ""
+
 #. [legends.Unknown.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
@@ -2789,6 +2874,13 @@ msgstr ""
 msgid "GeneXpert HIV-1 VL"
 msgstr ""
 
+#. [pages.ReportIndex.geneXpertIssues]
+#. defaultMessage is:
+#. GeneXpert Issues
+#: extracted_strings.json
+msgid "GeneXpert Issues"
+msgstr ""
+
 #. [legends.Unknown.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -2813,6 +2905,20 @@ msgstr ""
 #. GeneXpert MTB/Rif Ultra
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif Ultra"
+msgstr ""
+
+#. [consumable.gxMtbRifCartridge]
+#. defaultMessage is:
+#. GeneXpert TB Cartridge
+#: extracted_strings.json
+msgid "GeneXpert TB Cartridge"
+msgstr ""
+
+#. [consumable.gxMtbRifUltraCartridge]
+#. defaultMessage is:
+#. GeneXpert TB Ultra Cartridge
+#: extracted_strings.json
+msgid "GeneXpert TB Ultra Cartridge"
 msgstr ""
 
 #. [legends.Unknown.assayGeneXpertUnknown]
@@ -2868,6 +2974,13 @@ msgstr ""
 msgid "GenoType MTBC VER 1.X"
 msgstr ""
 
+#. [consumable.genoTypeMtbcStrip]
+#. defaultMessage is:
+#. GenoType MTBC VER 1.X Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBC VER 1.X Test Strip"
+msgstr ""
+
 #. [legends.Unknown.assayGenoTypeMTBDRplusV2]
 #. defaultMessage is:
 #. GenoType MTBDRplus VER 2.0
@@ -2879,6 +2992,13 @@ msgstr ""
 #. GenoType MTBDRplus VER 2.0
 #: extracted_strings.json
 msgid "GenoType MTBDRplus VER 2.0"
+msgstr ""
+
+#. [consumable.genoTypeMtbdRplusStrip]
+#. defaultMessage is:
+#. GenoType MTBDRplus VER 2.0 Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBDRplus VER 2.0 Test Strip"
 msgstr ""
 
 #. [legends.Unknown.assayGenoTypeMTBDRslV1]
@@ -2894,6 +3014,13 @@ msgstr ""
 msgid "GenoType MTBDRsl VER 1.0"
 msgstr ""
 
+#. [consumable.genoTypeMtbdRslStrip]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 1.0 Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBDRsl VER 1.0 Test Strip"
+msgstr ""
+
 #. [legends.Unknown.assayGenoTypeMTBDRslV2]
 #. defaultMessage is:
 #. GenoType MTBDRsl VER 2.0
@@ -2905,6 +3032,13 @@ msgstr ""
 #. GenoType MTBDRsl VER 2.0
 #: extracted_strings.json
 msgid "GenoType MTBDRsl VER 2.0"
+msgstr ""
+
+#. [consumable.genoTypeMtbdRslV2Strip]
+#. defaultMessage is:
+#. GenoType MTBDRsl VER 2.0 Test Strip
+#: extracted_strings.json
+msgid "GenoType MTBDRsl VER 2.0 Test Strip"
 msgstr ""
 
 #. [filter.AssayTypeSelectField.genoTypeTestStrip]
@@ -3167,6 +3301,13 @@ msgstr ""
 #. Include ALL results related to Patient ID
 #: extracted_strings.json
 msgid "Include ALL results related to Patient ID"
+msgstr ""
+
+#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. defaultMessage is:
+#. Includes a list of devices that had at least 2 critical errors
+#: extracted_strings.json
+msgid "Includes a list of devices that had at least 2 critical errors"
 msgstr ""
 
 #. [legends.Unknown.resultCategoryInconclusive]
@@ -3540,6 +3681,14 @@ msgstr ""
 msgid "Lipid Panel"
 msgstr ""
 
+#. [pages.ReportIndex.RIF_Resistance_Rate_description]
+#. defaultMessage is:
+#. Listing RIF Resistance Rate for all facilities, ranked highest to lowest
+#: extracted_strings.json
+msgid ""
+"Listing RIF Resistance Rate for all facilities, ranked highest to lowest"
+msgstr ""
+
 #. [errorResponseMessages.fetchAccountDetails.GET.default.title]
 #. defaultMessage is:
 #. Loading Account Details Failed
@@ -3874,6 +4023,13 @@ msgstr ""
 msgid "MTB Detected RIF Not Detected"
 msgstr ""
 
+#. [pages.ReportIndex.MTB_Detected_RR_Detected]
+#. defaultMessage is:
+#. MTB Detected RR Detected
+#: extracted_strings.json
+msgid "MTB Detected RR Detected"
+msgstr ""
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -4008,6 +4164,9 @@ msgid "Module Serial"
 msgstr ""
 
 #. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps
+#. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
@@ -4424,6 +4583,9 @@ msgstr ""
 msgid "Notification"
 msgstr ""
 
+#. [browsePage.browseDropdown.notifications]
+#. defaultMessage is:
+#. Notifications
 #. [pages.NotificationList.title]
 #. defaultMessage is:
 #. Notifications
@@ -5285,6 +5447,13 @@ msgstr ""
 msgid "Quarter"
 msgstr ""
 
+#. [pages.ReportIndex.RIF_Resistance_Rate]
+#. defaultMessage is:
+#. RIF Resistance Rate (%positive results)
+#: extracted_strings.json
+msgid "RIF Resistance Rate (%positive results)"
+msgstr ""
+
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -5446,6 +5615,9 @@ msgstr ""
 msgid "Reporter HIV VL"
 msgstr ""
 
+#. [browsePage.browseDropdown.reporters]
+#. defaultMessage is:
+#. Reporters
 #. [pages.ReporterList.reportersTitle]
 #. defaultMessage is:
 #. Reporters
@@ -5464,6 +5636,9 @@ msgid "Reporting Since"
 msgstr ""
 
 #. [pages.Status.reportsTitle]
+#. defaultMessage is:
+#. Reports
+#. [browsePage.browseDropdown.reports]
 #. defaultMessage is:
 #. Reports
 #. [pages.ReportIndex.title]
@@ -5616,6 +5791,13 @@ msgstr ""
 msgid "Results Transmitted"
 msgstr ""
 
+#. [pages.ReportIndex.Results_HIV_Not_Suppressed]
+#. defaultMessage is:
+#. Results with HIV Not Suppressed
+#: extracted_strings.json
+msgid "Results with HIV Not Suppressed"
+msgstr ""
+
 #. [pages.DeviceApiKeyList.revoked]
 #. defaultMessage is:
 #. Revoked
@@ -5643,6 +5825,9 @@ msgstr ""
 msgid "Router Detail"
 msgstr ""
 
+#. [browsePage.browseDropdown.routers]
+#. defaultMessage is:
+#. Routers
 #. [pages.RouterList.routersTitle]
 #. defaultMessage is:
 #. Routers
@@ -6442,6 +6627,9 @@ msgstr ""
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
+#. [browsePage.browseDropdown.sites]
+#. defaultMessage is:
+#. Sites
 #. [pages.SiteList.title]
 #. defaultMessage is:
 #. Sites
@@ -6557,6 +6745,13 @@ msgstr ""
 #. Success
 #: extracted_strings.json
 msgid "Success"
+msgstr ""
+
+#. [browsePage.browseDropdown.supplies]
+#. defaultMessage is:
+#. Supplies
+#: extracted_strings.json
+msgid "Supplies"
 msgstr ""
 
 #. [pages.Status.inventoryGraphStatus.title]
@@ -7258,6 +7453,32 @@ msgstr ""
 msgid "This field is required"
 msgstr ""
 
+#. [pages.ReportIndex.geneXpertIssues_description]
+#. defaultMessage is:
+#. This report shows all issues that apply to GeneXpert devices
+#: extracted_strings.json
+msgid "This report shows all issues that apply to GeneXpert devices"
+msgstr ""
+
+#. [pages.ReportIndex.moduleSwapsReport_description]
+#. defaultMessage is:
+#. This report shows all module swaps in devices. The report will show you by default the last 12 months
+#: extracted_strings.json
+msgid ""
+"This report shows all module swaps in devices. The report will show you by "
+"default the last 12 months"
+msgstr ""
+
+#. [pages.ReportIndex.device_activity_description]
+#. defaultMessage is:
+#. This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#: extracted_strings.json
+msgid ""
+"This report shows the activity of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
 #. This username is unavailable
@@ -7754,6 +7975,27 @@ msgstr ""
 msgid "Workflow Status"
 msgstr ""
 
+#. [consumable.gxHcvCartridge]
+#. defaultMessage is:
+#. Xpert HCV Viral Load Cartridge
+#: extracted_strings.json
+msgid "Xpert HCV Viral Load Cartridge"
+msgstr ""
+
+#. [consumable.gxHiv1QualCartridge]
+#. defaultMessage is:
+#. Xpert HIV-1 Qual Cartridge
+#: extracted_strings.json
+msgid "Xpert HIV-1 Qual Cartridge"
+msgstr ""
+
+#. [consumable.gxHiv1VlCartridge]
+#. defaultMessage is:
+#. Xpert HIV-1 Viral Load Cartridge
+#: extracted_strings.json
+msgid "Xpert HIV-1 Viral Load Cartridge"
+msgstr ""
+
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
 #. Year
@@ -8202,6 +8444,13 @@ msgstr ""
 #. report name includes "{reportName}"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
+msgstr ""
+
+#. [browsePage.browseDropdown.results]
+#. defaultMessage is:
+#. results
+#: extracted_strings.json
+msgid "results"
 msgstr ""
 
 #. [filter.btnGroup.withRevoked]
