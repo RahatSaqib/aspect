@@ -995,7 +995,7 @@ describe('Device API routes for GxConnect Devices', () => {
         })
       }))
 
-    it.only('should append a result HIV VL and categorized it well', async () => {
+    it('should append a result HIV VL and categorized it well', async () => {
       const { deviceAuth, basicDevicePayload, now } = context
       const payloads = [
         { payload: detectedWithNoCopies, expectedCategory: 'NoResult' },
