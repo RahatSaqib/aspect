@@ -2,7 +2,7 @@ import flowRight from 'lodash/flowRight'
 import fromPairs from 'lodash/fromPairs'
 import React, { useState, useEffect } from 'react'
 
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
@@ -23,15 +23,9 @@ import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
 import { useAuthState } from '../../Providers/AuthProvider'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./ReportIndex.css'))
-
-const messages = defineMessages({
-  reportsTitle: {
-    id: 'pages.ReportIndex.title',
-    defaultMessage: 'Reports',
-  },
-})
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -125,16 +119,20 @@ const ReportIndex = () => {
         />
       )}
       <Grid container spacing={16}>
-        {items?.map(({ externalId, name, description }) => (
-          <ReportCard
-            title={name}
-            description={description}
-            onClick={fileExtension =>
-              onClickDownload(externalId, fileExtension)
-            }
-            history={history}
-          />
-        ))}
+        {items?.map(
+          ({ externalId, name, description, i18nKey, i18nKeyDescription }) => (
+            <ReportCard
+              title={name}
+              description={description}
+              i18nKey={i18nKey}
+              i18nKeyDescription={i18nKeyDescription}
+              onClick={fileExtension =>
+                onClickDownload(externalId, fileExtension)
+              }
+              history={history}
+            />
+          )
+        )}
       </Grid>
     </div>
   )

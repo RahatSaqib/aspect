@@ -3,27 +3,34 @@ const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
 const uniq = require('lodash/uniq')
-const addDays = require('date-fns/addDays')
-const parseISO = require('date-fns/parseISO')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
 const {
   getArrayOfDaysInRange,
-  getDateSubstring,
+  getOffsetFromIsoDateString,
   startOfDayUtc,
+  getDateSubstring,
+  getISODateUserTimeZoneField,
 } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 
 async function deviceStatusOverTime(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  let { minDate, maxDate } = request.query
-  minDate = startOfDayUtc(minDate).toISOString()
-  maxDate = startOfDayUtc(min([maxDate, addDays(new Date(), 1)])).toISOString()
+  const { minDate, maxDate } = request.query
+  const offset = getOffsetFromIsoDateString(minDate)
+  // Filters for results: results should be filtered normally, just converting the received date to UTC
+  const minDateResults = new Date(minDate).toISOString()
+  const maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
 
-  const days = getArrayOfDaysInRange(minDate, maxDate)
+  // Filters for statuses: statuses should be filtered differently, as they are saved as only date.
+  // If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
+  const minDateStatus = startOfDayUtc(new Date(minDate))
+  const maxDateStatus = startOfDayUtc(new Date(maxDate))
+
+  const days = getArrayOfDaysInRange(minDateStatus, maxDateStatus)
 
   // helpers
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
@@ -40,7 +47,6 @@ async function deviceStatusOverTime(request) {
       'externalId as maintenanceStatusExternalId'
     )
     .first()
-
   // generic query for devices grouped by id with counts of tests
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -51,8 +57,8 @@ async function deviceStatusOverTime(request) {
     .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
@@ -79,8 +85,8 @@ async function deviceStatusOverTime(request) {
     .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${minDate}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDate}'`))
+        .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -90,7 +96,7 @@ async function deviceStatusOverTime(request) {
     .select(
       'd.id',
       knex.raw('COUNT(r.id) as totalResults'),
-      knex.raw(`DATE_FORMAT(r.endedOn, '%Y-%m-%d') as dayDate`)
+      getISODateUserTimeZoneField(knex, 'r.endedOn', 'dayDate', offset)
     )
   devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
 
@@ -130,8 +136,8 @@ async function deviceStatusOverTime(request) {
       }
     )
     // Where maintenance status log is in range
-    .where('dmsl.day', '>=', minDate)
-    .where('dmsl.day', '<=', maxDate)
+    .where('dmsl.day', '>=', minDateStatus)
+    .where('dmsl.day', '<=', maxDateStatus)
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
@@ -141,7 +147,10 @@ async function deviceStatusOverTime(request) {
     .groupBy(['d.id', 'dmsl.day'])
     .select([
       'd.id as deviceId',
-      knex.raw(`DATE_FORMAT(dmsl.day, '%Y-%m-%d') as day`),
+      // We are going to return the dates grouped by the user's timezone, and as the days are stored as only date, then we will just transform (not convert!!!) those dates to the given offset
+      knex.raw(
+        `CONCAT(DATE_FORMAT(dmsl.day, '%Y-%m-%dT'), '00:00:00.000', '${offset}') as day`
+      ),
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
@@ -152,8 +161,11 @@ async function deviceStatusOverTime(request) {
   devices.forEach(device => {
     const maintenanceStatusHistory = []
     days.forEach(day => {
-      const onlyDate = getDateSubstring(day.toISOString())
-      const groupName = getGroupName(device.id, onlyDate)
+      // We need to transform the days to the user's offset for matching with the query results
+      const isoDay = `${getDateSubstring(
+        day.toISOString()
+      )}T00:00:00.000${offset}`
+      const groupName = getGroupName(device.id, isoDay)
 
       const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
 
@@ -177,9 +189,9 @@ async function deviceStatusOverTime(request) {
 
       maintenanceStatusHistory.push({
         ...status,
-        day: onlyDate,
-        isWeekend: isWeekend(parseISO(onlyDate)),
-        weekNumber: getISOWeek(parseISO(onlyDate)),
+        day: isoDay,
+        isWeekend: isWeekend(new Date(isoDay)),
+        weekNumber: getISOWeek(new Date(isoDay)),
         totalResults,
       })
     })

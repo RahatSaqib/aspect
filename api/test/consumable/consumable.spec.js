@@ -504,6 +504,8 @@ async function createTestConsumable(knex) {
     unit: 1,
     canExpire: 1,
     manufacturer: 'Daktari',
+    externalId: 'DaktariCartridge',
+    i18nKey: 'DaktariCartridge',
   })
 
   await knex('PartnerConsumable').insert({
