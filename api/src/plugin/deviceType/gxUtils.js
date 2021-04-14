@@ -863,6 +863,7 @@ function getResultCategories(payload) {
           .replace(/hiv-1/, '')
           .replace(/sars-cov-2/, '')
           .trim()
+
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
           'não detectado': 'NotDetected',
@@ -947,6 +948,12 @@ function getResultCategories(payload) {
           негативний: 'PresumptivePositive',
           'praduga pos': 'PresumptivePositive',
           przypuszczalnego: 'PresumptivePositive',
+
+          // TODO: add all the extra translations for the next three categories?
+          unknown: 'Unknown',
+          inconclusive: 'Inconclusive',
+          indeterminate: 'Indeterminate',
+
           'null null': 'Success',
         }
         if (assayId === 'GxMtbRifUltra') {
@@ -964,16 +971,14 @@ function getResultCategories(payload) {
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        ([
+        [
           'Detected',
           'Trace Detected',
           'Error',
           'Invalid',
           'NoResult',
           'Success',
-        ].includes(result1) ||
-          !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)) &&
-        assayId !== 'GxHiv1Vl'
+        ].includes(result1) && ['GxMtbRif', 'GxMtbRifUltra'].includes(assayId)
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
