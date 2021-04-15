@@ -926,7 +926,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -1935,7 +1935,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -2944,7 +2944,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -3953,7 +3953,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -4962,7 +4962,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -5969,7 +5969,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -6962,7 +6962,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (es)
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
