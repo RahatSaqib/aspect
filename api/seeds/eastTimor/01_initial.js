@@ -13,6 +13,7 @@ const {
   deviceLogHistoryDays,
   maxDaysDeviceOffline,
   maxDaysDeviceNoResults,
+  partnerAbbreviation,
 } = require('./fixtures/partnerData')
 const {
   commonUpserts,
@@ -49,7 +50,7 @@ async function seed(knex) {
     partnerId,
     adminId,
     geography,
-    'TL',
+    partnerAbbreviation,
     deviceApiToken,
     {
       password: lowerLevelUserPassword,
