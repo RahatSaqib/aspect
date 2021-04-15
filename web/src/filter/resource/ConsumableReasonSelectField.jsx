@@ -25,8 +25,31 @@ const messages = defineMessages({
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_Stolen',
     defaultMessage: 'Stolen',
   },
-  [testConductedReasonI18nKey]: {
-    id: `filter.ConsumableReasonSelectField.${testConductedReasonI18nKey}`,
+  ConsumableReason_AssertedZeroInventory: {
+    id:
+      'filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory',
+    defaultMessage: 'Asserted zero inventory',
+  },
+
+  ConsumableReason_TransferSent: {
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_TransferSent',
+    defaultMessage: 'Transfer Sent',
+  },
+  ConsumableReason_TransferReceived: {
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived',
+    defaultMessage: 'Transfer Received',
+  },
+
+  ConsumableReason_Imported: {
+    id: 'filter.ConsumableReasonSelectField.ConsumableReasonImported',
+    defaultMessage: 'Imported',
+  },
+  ConsumableReason_Captured: {
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_Captured',
+    defaultMessage: 'Captured',
+  },
+  ConsumableReason_TestConducted: {
+    id: `filter.ConsumableReasonSelectField.ConsumableReason_TestConducted`,
     defaultMessage: 'Test Conducted',
   },
 })

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-12T18:44:41.281Z\n"
+"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -726,6 +726,13 @@ msgstr "Type d'essai"
 msgid "Assay Type:"
 msgstr "Type d'essai :"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#: extracted_strings.json
+msgid "Asserted zero inventory"
+msgstr "Hors inventaire"
+
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
 #. Assign
@@ -1081,6 +1088,13 @@ msgstr "Étalonnage en retard"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Annuler"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#: extracted_strings.json
+msgid "Captured"
+msgstr "Capturé"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -1568,6 +1582,13 @@ msgstr ""
 msgid "County"
 msgstr "Comté"
 
+#. [pages.ResultList.assayGenericCovid19]
+#. defaultMessage is:
+#. Covid 19
+#: extracted_strings.json
+msgid "Covid 19"
+msgstr "Covid 19"
+
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
@@ -1602,6 +1623,9 @@ msgstr "Erreurs critiques par dispositif"
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
+#. [pages.ResultList.assayCulture]
+#. defaultMessage is:
+#. Culture
 #: extracted_strings.json
 msgid "Culture"
 msgstr "Culture"
@@ -1626,6 +1650,13 @@ msgstr "Mot de passe actuel"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Douane"
+
+#. [pages.ResultList.assayGenericDst]
+#. defaultMessage is:
+#. DST
+#: extracted_strings.json
+msgid "DST"
+msgstr "DESTINATION"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -1957,9 +1988,9 @@ msgstr "Type d'appareil"
 
 #. [browsePage.browseDropdown.deviceApiKey]
 #. defaultMessage is:
-#. Device Api Key
+#. Device Api Keys
 #: extracted_strings.json
-msgid "Device Api Key"
+msgid "Device Api Keys"
 msgstr "Clés de l'API de l'appareil"
 
 #. [pages.CalibrationDialog.dialogTitle]
@@ -2050,6 +2081,9 @@ msgstr "Type d'appareil"
 #. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
 #. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
@@ -2070,13 +2104,6 @@ msgstr "Appareils subissant une interruption de service"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Appareils avec interruption de service"
-
-#. [browsePage.browseDropdown.devices]
-#. defaultMessage is:
-#. Devices
-#: extracted_strings.json
-msgid "Devices"
-msgstr "Dispositifs"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -3296,6 +3323,13 @@ msgstr ""
 "veuillez nous contacter afin que nous puissions vous aider. Vous pouvez "
 "demander notre aide en envoyant un courrier électronique à {supportEmail}"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
+#. defaultMessage is:
+#. Imported
+#: extracted_strings.json
+msgid "Imported"
+msgstr "Importé"
+
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -3539,6 +3573,13 @@ msgstr "Clé"
 #: extracted_strings.json
 msgid "LGA"
 msgstr "LGA"
+
+#. [pages.ResultList.assayLPA]
+#. defaultMessage is:
+#. LPA
+#: extracted_strings.json
+msgid "LPA"
+msgstr "LPA"
 
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
@@ -4124,6 +4165,9 @@ msgstr "MTB/Rif"
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
+#. [pages.ResultList.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #: extracted_strings.json
@@ -5453,6 +5497,9 @@ msgstr "Contrôle de qualité"
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
+#. [pages.ResultList.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #: extracted_strings.json
 msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
@@ -5536,6 +5583,9 @@ msgstr "Réactif"
 msgid "Reagent Health"
 msgstr "Santé du réactif"
 
+#. [forms.formItem.reason]
+#. defaultMessage is:
+#. Reason
 #. [pages.InventoryAdjustmentDialogForm.reason]
 #. defaultMessage is:
 #. Reason
@@ -5834,6 +5884,9 @@ msgstr ""
 "\"{oldSiteName}\" à \"{newSiteName}\""
 
 #. [component.Widget.resultsTitle]
+#. defaultMessage is:
+#. Results
+#. [browsePage.browseDropdown.results]
 #. defaultMessage is:
 #. Results
 #. [pages.ResultList.title]
@@ -6722,6 +6775,13 @@ msgstr "Nom du site"
 msgid "Sites"
 msgstr "Des sites"
 
+#. [pages.ResultList.assaySmear]
+#. defaultMessage is:
+#. Smear
+#: extracted_strings.json
+msgid "Smear"
+msgstr "Frottis"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -6879,6 +6939,13 @@ msgstr "TB DST"
 #: extracted_strings.json
 msgid "TB G&D"
 msgstr "TB G&D"
+
+#. [pages.ResultList.assayTbLamp]
+#. defaultMessage is:
+#. TB LAMP
+#: extracted_strings.json
+msgid "TB LAMP"
+msgstr "LAMPE TB"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7757,6 +7824,13 @@ msgstr "Transfert"
 msgid "Transfer Inventory"
 msgstr "Transfert d'inventaire"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer Received
+#: extracted_strings.json
+msgid "Transfer Received"
+msgstr "Transfert reçu"
+
 #. [pages.resultEdit.transferResult]
 #. defaultMessage is:
 #. Transfer Result
@@ -7773,6 +7847,13 @@ msgstr "Résultat du transfert"
 #: extracted_strings.json
 msgid "Transfer Result Error"
 msgstr "Erreur de résultat de transfert"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer Sent
+#: extracted_strings.json
+msgid "Transfer Sent"
+msgstr "Transfert envoyé"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
@@ -8627,13 +8708,6 @@ msgstr "pourcentage de résultats valables"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
 msgstr "le nom du rapport inclut \"{reportName}\""
-
-#. [browsePage.browseDropdown.results]
-#. defaultMessage is:
-#. results
-#: extracted_strings.json
-msgid "results"
-msgstr "Résultats"
 
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:

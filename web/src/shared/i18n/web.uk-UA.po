@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-12T18:44:41.281Z\n"
+"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -713,6 +713,13 @@ msgstr "Тип аналізу"
 msgid "Assay Type:"
 msgstr "Тип аналізу:"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#: extracted_strings.json
+msgid "Asserted zero inventory"
+msgstr "Стверджено нульовий запас"
+
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
 #. Assign
@@ -1067,6 +1074,13 @@ msgstr "Калібрування минуло"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Відміна"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#: extracted_strings.json
+msgid "Captured"
+msgstr "Полонений"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -1554,6 +1568,13 @@ msgstr ""
 msgid "County"
 msgstr "Округ"
 
+#. [pages.ResultList.assayGenericCovid19]
+#. defaultMessage is:
+#. Covid 19
+#: extracted_strings.json
+msgid "Covid 19"
+msgstr "COVID 19"
+
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
@@ -1588,6 +1609,9 @@ msgstr "Критичні помилки за пристроєм"
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
+#. [pages.ResultList.assayCulture]
+#. defaultMessage is:
+#. Culture
 #: extracted_strings.json
 msgid "Culture"
 msgstr "Культура"
@@ -1612,6 +1636,13 @@ msgstr "Поточний пароль"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Призначений для користувача"
+
+#. [pages.ResultList.assayGenericDst]
+#. defaultMessage is:
+#. DST
+#: extracted_strings.json
+msgid "DST"
+msgstr "TB DST"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -1943,10 +1974,10 @@ msgstr "Загальний показник активності"
 
 #. [browsePage.browseDropdown.deviceApiKey]
 #. defaultMessage is:
-#. Device Api Key
+#. Device Api Keys
 #: extracted_strings.json
-msgid "Device Api Key"
-msgstr "Ключ пристрою Api"
+msgid "Device Api Keys"
+msgstr "Ключі API пристрою"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2036,6 +2067,9 @@ msgstr "Тип пристрою"
 #. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
 #. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
@@ -2056,13 +2090,6 @@ msgstr "Пристрої, що переживають переривання с�
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Пристрої, що переживають переривання служби"
-
-#. [browsePage.browseDropdown.devices]
-#. defaultMessage is:
-#. Devices
-#: extracted_strings.json
-msgid "Devices"
-msgstr "Пристрої"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -3280,6 +3307,13 @@ msgstr ""
 "щоб ми могли вам допомогти. Ви можете попросити нашої допомоги, надіславши "
 "електронний лист на адресу {supportEmail}"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
+#. defaultMessage is:
+#. Imported
+#: extracted_strings.json
+msgid "Imported"
+msgstr "Імпортується"
+
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -3521,6 +3555,13 @@ msgstr "Ключ"
 #. LGA
 #: extracted_strings.json
 msgid "LGA"
+msgstr "Район"
+
+#. [pages.ResultList.assayLPA]
+#. defaultMessage is:
+#. LPA
+#: extracted_strings.json
+msgid "LPA"
 msgstr "Район"
 
 #. [pages.Milestones.resultSiteName]
@@ -4107,6 +4148,9 @@ msgstr "MTB / Rif"
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
+#. [pages.ResultList.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #: extracted_strings.json
@@ -5433,6 +5477,9 @@ msgstr "Контроль якості"
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
+#. [pages.ResultList.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #: extracted_strings.json
 msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
@@ -5516,6 +5563,9 @@ msgstr "Реагент"
 msgid "Reagent Health"
 msgstr "Здоров’я реагенту"
 
+#. [forms.formItem.reason]
+#. defaultMessage is:
+#. Reason
 #. [pages.InventoryAdjustmentDialogForm.reason]
 #. defaultMessage is:
 #. Reason
@@ -5814,6 +5864,9 @@ msgstr ""
 "\"{newSiteName}\""
 
 #. [component.Widget.resultsTitle]
+#. defaultMessage is:
+#. Results
+#. [browsePage.browseDropdown.results]
 #. defaultMessage is:
 #. Results
 #. [pages.ResultList.title]
@@ -6702,6 +6755,13 @@ msgstr "Назва сайту"
 msgid "Sites"
 msgstr "Сайти"
 
+#. [pages.ResultList.assaySmear]
+#. defaultMessage is:
+#. Smear
+#: extracted_strings.json
+msgid "Smear"
+msgstr "Мазок"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -6859,6 +6919,13 @@ msgstr "TB DST"
 #: extracted_strings.json
 msgid "TB G&D"
 msgstr "ТБ G&D"
+
+#. [pages.ResultList.assayTbLamp]
+#. defaultMessage is:
+#. TB LAMP
+#: extracted_strings.json
+msgid "TB LAMP"
+msgstr "ЛАМПА ТБ"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7725,6 +7792,13 @@ msgstr "Передати"
 msgid "Transfer Inventory"
 msgstr "Передати запас"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer Received
+#: extracted_strings.json
+msgid "Transfer Received"
+msgstr "Переказ отримано"
+
 #. [pages.resultEdit.transferResult]
 #. defaultMessage is:
 #. Transfer Result
@@ -7741,6 +7815,13 @@ msgstr "Результат передачі"
 #: extracted_strings.json
 msgid "Transfer Result Error"
 msgstr "Помилка результату передачі"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer Sent
+#: extracted_strings.json
+msgid "Transfer Sent"
+msgstr "Передача відправлена"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
@@ -8586,13 +8667,6 @@ msgstr "відсоток дійсних результатів"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
 msgstr "назва звіту включає \"{reportName}\""
-
-#. [browsePage.browseDropdown.results]
-#. defaultMessage is:
-#. results
-#: extracted_strings.json
-msgid "results"
-msgstr "результати"
 
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:
