@@ -235,7 +235,7 @@ describe('Result download routes', () => {
       assert.isAtLeast(totalResult, res.body.length)
     })
 
-    it('should test querying different results with different optional parameters', async () => {
+    it('should be able to handle different optional filter parameters', async () => {
       const resultCategories = [
         'Detected',
         'Invalid',

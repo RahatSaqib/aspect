@@ -55,6 +55,12 @@ describe('Shared Date Utility Functions', () => {
       assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00+01:00'))
       assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000-04:00'))
       assert.isTrue(REGEX_ISODATESTRING.test('2020-08-01T22:00:00.000Z'))
+      assert.isTrue(
+        REGEX_ISODATESTRING.test('2020-08-01T22%3A00%3A00.000%2B01%3A00')
+      )
+      assert.isTrue(
+        REGEX_ISODATESTRING.test('2020-08-01T22%3A00%3A00.000-01%3A00')
+      )
 
       assert.isFalse(REGEX_ISODATESTRING.test('2020-08-01T22:00:00+3:00'))
       assert.isFalse(REGEX_ISODATESTRING.test('2020-08-01 22:00:00+03:00'))
