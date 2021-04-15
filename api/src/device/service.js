@@ -503,8 +503,13 @@ const getMaintenanceStatusesQuery = (filter = null) =>
     if (filter) q.where(filter)
   })
 
-async function listMaintenanceStatuses() {
-  const resultQuery = getMaintenanceStatusesQuery()
+async function listMaintenanceStatuses(request) {
+  const { onlyManuallySet } = request.query
+  const resultQuery = getMaintenanceStatusesQuery().where(builder => {
+    if (onlyManuallySet) {
+      builder.where({ manuallySet: onlyManuallySet })
+    }
+  })
 
   // get total count for paging
   const getCount = resultQuery.clone().count('dms.id as count').first()
