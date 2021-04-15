@@ -48,8 +48,8 @@ const messages = defineMessages({
     id: 'filter.ConsumableReasonSelectField.ConsumableReason_Captured',
     defaultMessage: 'Captured',
   },
-  [testConductedReasonI18nKey]: {
-    id: `filter.ConsumableReasonSelectField.${testConductedReasonI18nKey}`,
+  ConsumableReason_TestConducted: {
+    id: `filter.ConsumableReasonSelectField.ConsumableReason_TestConducted`,
     defaultMessage: 'Test Conducted',
   },
 })
