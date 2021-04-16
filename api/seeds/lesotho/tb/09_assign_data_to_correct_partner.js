@@ -2,7 +2,7 @@ module.exports = require('../../utils').seed(seed, __filename)
 
 const {
   partnerName,
-  adminName,
+  adminUserName,
   gxAlertDeviceApiKey,
 } = require('./fixtures/partnerVariables.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
@@ -15,7 +15,7 @@ async function seed(knex) {
   await sharedSeed(
     knex,
     partnerName,
-    adminName,
+    adminUserName,
     gxAlertDeviceApiKey,
     sitesFromGxAlert,
     contactsFromGxAlert,
