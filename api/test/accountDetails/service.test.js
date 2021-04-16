@@ -300,7 +300,7 @@ describe('account details service', () => {
         assert.deepEqual(response.data, userPreferences)
       }))
 
-    it('Should return an bad request response if the account details are not the details of the currently logged in user', () => {
+    it('Should return a bad request response if the account details are not the details of the currently logged in user', () => {
       dbSpy.query
         .for('Get account details for currently logged in user')
         .resolvesWith({ ...userPreferences, id: userPreferences.id + 5 })
