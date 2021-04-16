@@ -5,7 +5,7 @@ module.exports = {
   adminPassword: '5za9c86txu',
   partnerName: 'Timor Leste',
   deviceApiToken: 'vqzewlc2d67v5kdwa9h6',
-  serverUrl: 'https://easttimor.aspect.id',
+  serverUrl: 'https://timor.aspect.id',
   partnerAbbreviation: 'TL',
   lowerLevelUserPassword: 'TOVpMx3nHP',
   deviceLogHistoryDays: 365,
