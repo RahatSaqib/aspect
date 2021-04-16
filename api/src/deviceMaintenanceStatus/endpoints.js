@@ -94,6 +94,15 @@ const routes = [
       description: 'Last Reported Device Status By Device',
       notes: 'List of devices and their latest status',
       auth: { scope: ['device', 'operationalData'] },
+      validate: {
+        query: {
+          excludeNotLocalizableDevices: Joi.bool()
+            .description(
+              'If True, devices without latitude or longitude will be excluded'
+            )
+            .default(false),
+        },
+      },
       response: {
         options: {
           allowUnknown: false,
