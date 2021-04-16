@@ -1,23 +1,15 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2021-04-14T18:38:23.225Z\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
 "Project-Id-Version: \n"
+"POT-Creation-Date: 2021-04-16T17:56:44.050Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_PT\n"
-
-#. [pages.OperationalDataPie.assayName]
-#. defaultMessage is:
-#.
-#: extracted_strings.json
-msgctxt "./extracted_strings.json"
-msgid ""
-msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #. [pages.ReporterList.acknowledgedRatio]
 #. defaultMessage is:
@@ -50,21 +42,21 @@ msgstr "% Acompanhamento confirmado"
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
 msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
-msgstr "(Nova quantidade em mão: {próxima quantidade} {nome curto da unidade})"
+msgstr "(Nova quantidade em mão: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
 #. * in transit from {inTransitFromSiteName}
 #: extracted_strings.json
 msgid "* in transit from {inTransitFromSiteName}"
-msgstr "* em trânsito a partir de {em trânsito Do Nome do Site}"
+msgstr "* em trânsito a partir de {inTransitFromSiteName}"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{contactos, plural, um {# mais {name}} outro {# mais {name}s} }"
+msgstr "...{contactos, plural, um {# more {name}} other {# more {name}s} }"
 
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
@@ -251,10 +243,17 @@ msgstr "Acesso negado"
 #. defaultMessage is:
 #. Access denied for this resource. Please, contact your administrator for support.
 #: extracted_strings.json
-msgid "Access denied for this resource. Please, contact your administrator for support."
-msgstr "Acesso negado para este recurso. Por favor, contate seu administrador para obter suporte."
+msgid ""
+"Access denied for this resource. Please, contact your administrator for "
+"support."
+msgstr ""
+"Acesso negado para este recurso. Por favor, contate seu administrador para "
+"obter suporte."
 
 #. [pages.AccountDetails.title]
+#. defaultMessage is:
+#. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
 #. defaultMessage is:
 #. Account Details
 #: extracted_strings.json
@@ -322,6 +321,13 @@ msgstr "Ativo"
 msgid "Active cases"
 msgstr "Casos ativos"
 
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
+msgstr "Adicionar"
+
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
 #. Add Inventory
@@ -351,7 +357,7 @@ msgstr "Adicionar Registro"
 #. Add {consumableName}
 #: extracted_strings.json
 msgid "Add {consumableName}"
-msgstr "Adicionar {Nome consumível}"
+msgstr "Adicionar {consumableName}"
 
 #. [errorResponseMessages.addInventory.PUT.default.title]
 #. defaultMessage is:
@@ -388,8 +394,12 @@ msgstr "Ajuste"
 #. defaultMessage is:
 #. After clicking the OK button below, you will be redirected to the list of results.
 #: extracted_strings.json
-msgid "After clicking the OK button below, you will be redirected to the list of results."
-msgstr "Após clicar no botão OK abaixo, você será redirecionado para a lista de resultados.."
+msgid ""
+"After clicking the OK button below, you will be redirected to the list of "
+"results."
+msgstr ""
+"Após clicar no botão OK abaixo, você será redirecionado para a lista de "
+"resultados.."
 
 #. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph]
 #. defaultMessage is:
@@ -504,8 +514,12 @@ msgstr "Todos os tipos de dispositivos"
 #. defaultMessage is:
 #. All devices along with the last calibration date and when next calibration is due
 #: extracted_strings.json
-msgid "All devices along with the last calibration date and when next calibration is due"
-msgstr "Todos os dispositivos juntamente com a data da última calibração e quando a próxima calibração estiver prevista"
+msgid ""
+"All devices along with the last calibration date and when next calibration "
+"is due"
+msgstr ""
+"Todos os dispositivos juntamente com a data da última calibração e quando a "
+"próxima calibração estiver prevista"
 
 #. [pages.JobAssignments.allDiseases]
 #. defaultMessage is:
@@ -859,7 +873,9 @@ msgstr "Comprimento médio dos SMS"
 #. Average number of days each device has been active, excluding weekends.
 #: extracted_strings.json
 msgid "Average number of days each device has been active, excluding weekends."
-msgstr "Número médio de dias em que cada dispositivo esteve ativo, excluindo fins de semana."
+msgstr ""
+"Número médio de dias em que cada dispositivo esteve ativo, excluindo fins de "
+"semana."
 
 #. [component.Widget.dashboardWidgetTestsPerDayDescription]
 #. defaultMessage is:
@@ -1083,6 +1099,9 @@ msgstr "Identificação do caso"
 msgid "Cases"
 msgstr "Casos"
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1533,8 +1552,14 @@ msgstr "País Média"
 #. defaultMessage is:
 #. Counts the percentage of module bays used in the last 7 days, based on the count of all available bays in all GeneXpert devices that were active in the last 7 days.
 #: extracted_strings.json
-msgid "Counts the percentage of module bays used in the last 7 days, based on the count of all available bays in all GeneXpert devices that were active in the last 7 days."
-msgstr "Conta a porcentagem de baias de módulos utilizadas nos últimos 7 dias, com base na contagem de todas as baias disponíveis em todos os dispositivos GeneXpert que estiveram ativos nos últimos 7 dias."
+msgid ""
+"Counts the percentage of module bays used in the last 7 days, based on the "
+"count of all available bays in all GeneXpert devices that were active in the "
+"last 7 days."
+msgstr ""
+"Conta a porcentagem de baias de módulos utilizadas nos últimos 7 dias, com "
+"base na contagem de todas as baias disponíveis em todos os dispositivos "
+"GeneXpert que estiveram ativos nos últimos 7 dias."
 
 #. [pages.common.lga_US]
 #. defaultMessage is:
@@ -1575,7 +1600,6 @@ msgstr "Criado em:"
 #. defaultMessage is:
 #. Critical Errors By Device
 #: extracted_strings.json
-#, fuzzy
 msgid "Critical Errors By Device"
 msgstr "Erros Críticos por Dispositivo"
 
@@ -1930,6 +1954,9 @@ msgstr "Dispositivo"
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr "Chaves API do dispositivo"
@@ -1945,17 +1972,8 @@ msgstr "Gerador de chaves API do dispositivo"
 #. defaultMessage is:
 #. Device Activity
 #: extracted_strings.json
-#, fuzzy
 msgid "Device Activity"
 msgstr "Actividade do dispositivo"
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Keys
-#: extracted_strings.json
-#, fuzzy
-msgid "Device Api Keys"
-msgstr "Chaves API do dispositivo"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -1968,7 +1986,6 @@ msgstr "Calibração de dispositivos"
 #. defaultMessage is:
 #. Device Calibration Report
 #: extracted_strings.json
-#, fuzzy
 msgid "Device Calibration Report"
 msgstr "Relatório de calibração de dispositivos"
 
@@ -2203,8 +2220,12 @@ msgstr "Editar"
 #. defaultMessage is:
 #. Either your computer has been disconnected from the internet or our server has failed to respond.
 #: extracted_strings.json
-msgid "Either your computer has been disconnected from the internet or our server has failed to respond."
-msgstr "Ou seu computador foi desconectado da Internet ou nosso servidor falhou em responder."
+msgid ""
+"Either your computer has been disconnected from the internet or our server "
+"has failed to respond."
+msgstr ""
+"Ou seu computador foi desconectado da Internet ou nosso servidor falhou em "
+"responder."
 
 #. [pages.ContactDetails.emailHeader]
 #. defaultMessage is:
@@ -2434,7 +2455,8 @@ msgstr "Detalhes do Dispositivo de Carregamento de Erros"
 #. Error Loading Device profile performance report
 #: extracted_strings.json
 msgid "Error Loading Device profile performance report"
-msgstr "Relatório de desempenho do perfil do dispositivo de carregamento de erros"
+msgstr ""
+"Relatório de desempenho do perfil do dispositivo de carregamento de erros"
 
 #. [errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title]
 #. defaultMessage is:
@@ -2670,6 +2692,13 @@ msgstr "O campo não pode conter menos de {total} caracteres"
 msgid "Field cannot contain more than {total} characters"
 msgstr "O campo não pode conter mais de {total} caracteres"
 
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
+msgstr "Encontrar localização"
+
 #. [pages.ResetPassword.finish]
 #. defaultMessage is:
 #. Finish
@@ -2892,7 +2921,6 @@ msgstr "GeneXpert HIV-1 VL"
 #. defaultMessage is:
 #. GeneXpert Issues
 #: extracted_strings.json
-#, fuzzy
 msgid "GeneXpert Issues"
 msgstr "Questões GeneXpert"
 
@@ -3275,8 +3303,14 @@ msgstr "O ID inclui \"{externalId}\""
 #. defaultMessage is:
 #. If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}
 #: extracted_strings.json
-msgid "If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}"
-msgstr "Se precisar de ajuda para recuperar seus dados de login, entre em contato conosco para que possamos ajudá-lo. Você pode solicitar nossa ajuda enviando um e-mail para {supportEmail}"
+msgid ""
+"If you you need help to recover you login details, please contact us so that "
+"we may assist you. You can request our help by sending an email to "
+"{supportEmail}"
+msgstr ""
+"Se precisar de ajuda para recuperar seus dados de login, entre em contato "
+"conosco para que possamos ajudá-lo. Você pode solicitar nossa ajuda enviando "
+"um e-mail para {supportEmail}"
 
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
@@ -3292,8 +3326,14 @@ msgstr "Em Progresso"
 #. defaultMessage is:
 #. In the meantime, you could try to adjust the values in these filter fields, change the column that you are sorting on in the list or change the page number that you are viewing
 #: extracted_strings.json
-msgid "In the meantime, you could try to adjust the values in these filter fields, change the column that you are sorting on in the list or change the page number that you are viewing"
-msgstr "Enquanto isso, você pode tentar ajustar os valores nesses campos de filtro, alterar a coluna que está classificando na lista ou alterar o número da página que está visualizando"
+msgid ""
+"In the meantime, you could try to adjust the values in these filter fields, "
+"change the column that you are sorting on in the list or change the page "
+"number that you are viewing"
+msgstr ""
+"Enquanto isso, você pode tentar ajustar os valores nesses campos de filtro, "
+"alterar a coluna que está classificando na lista ou alterar o número da "
+"página que está visualizando"
 
 #. [legends.Unknown.devicesInactive]
 #. defaultMessage is:
@@ -3316,9 +3356,9 @@ msgstr "Incluir TODOS os resultados relacionados à identificação do paciente"
 #. defaultMessage is:
 #. Includes a list of devices that had at least 2 critical errors
 #: extracted_strings.json
-#, fuzzy
 msgid "Includes a list of devices that had at least 2 critical errors"
-msgstr "Inclui uma lista de dispositivos que tiveram pelo menos 2 erros críticos"
+msgstr ""
+"Inclui uma lista de dispositivos que tiveram pelo menos 2 erros críticos"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -3514,7 +3554,7 @@ msgstr "Chave"
 #. LGA
 #: extracted_strings.json
 msgid "LGA"
-msgstr "LGA"
+msgstr "Bairro"
 
 #. [pages.ResultList.assayLPA]
 #. defaultMessage is:
@@ -3702,9 +3742,11 @@ msgstr "Painel de lipídios"
 #. defaultMessage is:
 #. Listing RIF Resistance Rate for all facilities, ranked highest to lowest
 #: extracted_strings.json
-#, fuzzy
-msgid "Listing RIF Resistance Rate for all facilities, ranked highest to lowest"
-msgstr "Listagem da Taxa de Resistência RIF para todas as instalações, classificadas da mais alta para a mais baixa"
+msgid ""
+"Listing RIF Resistance Rate for all facilities, ranked highest to lowest"
+msgstr ""
+"Listagem da Taxa de Resistência RIF para todas as instalações, classificadas "
+"da mais alta para a mais baixa"
 
 #. [errorResponseMessages.fetchAccountDetails.GET.default.title]
 #. defaultMessage is:
@@ -3846,7 +3888,8 @@ msgstr "Carregamento de resultados Status de tratamento falhados"
 #. Loading Result Workflow Status Logs Failed
 #: extracted_strings.json
 msgid "Loading Result Workflow Status Logs Failed"
-msgstr "Carregamento de resultados Logs de status do fluxo de trabalho falhados"
+msgstr ""
+"Carregamento de resultados Logs de status do fluxo de trabalho falhados"
 
 #. [errorResponseMessages.fetchWorkflowStatuses.GET.default.title]
 #. defaultMessage is:
@@ -4659,8 +4702,12 @@ msgstr "Número de erros dividido pelo número de resultados nos Últimos 30 dia
 #. defaultMessage is:
 #. Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days
 #: extracted_strings.json
-msgid "Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days"
-msgstr "Número de resultados nos últimos 30 dias dividido pela capacidade diária do instrumento multiplicado por 30 dias"
+msgid ""
+"Number of results in the last 30 days divided by the daily capacity of the "
+"instrument multiplied by 30 days"
+msgstr ""
+"Número de resultados nos últimos 30 dias dividido pela capacidade diária do "
+"instrumento multiplicado por 30 dias"
 
 #. [pages.ResultList.ResultWorkflowStatusOK]
 #. defaultMessage is:
@@ -4770,8 +4817,12 @@ msgstr "Outras Razões"
 #. defaultMessage is:
 #. Our technical team has been notified of the problem and will attend to it as soon as possible.
 #: extracted_strings.json
-msgid "Our technical team has been notified of the problem and will attend to it as soon as possible."
-msgstr "Nossa equipe técnica foi informada do problema e estará pronta para atendê-lo o mais breve possível."
+msgid ""
+"Our technical team has been notified of the problem and will attend to it as "
+"soon as possible."
+msgstr ""
+"Nossa equipe técnica foi informada do problema e estará pronta para atendê-"
+"lo o mais breve possível."
 
 #. [pages.DeviceList.status.inactiveOutOfInventory]
 #. defaultMessage is:
@@ -4959,8 +5010,13 @@ msgstr "Porcentagem de Módulos Funcionando"
 #. defaultMessage is:
 #. Percentage of valid results reported this month. Valid results includes all results that didn't result in "Error", "No Result", or "Invalid".
 #: extracted_strings.json
-msgid "Percentage of valid results reported this month. Valid results includes all results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
-msgstr "Porcentagem de resultados válidos relatados este mês. Os resultados válidos incluem todos os resultados que não resultaram em \"Erro\", \"Nenhum resultado\" ou \"Inválido\"."
+msgid ""
+"Percentage of valid results reported this month. Valid results includes all "
+"results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
+msgstr ""
+"Porcentagem de resultados válidos relatados este mês. Os resultados válidos "
+"incluem todos os resultados que não resultaram em \"Erro\", \"Nenhum "
+"resultado\" ou \"Inválido\"."
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -5049,10 +5105,16 @@ msgstr "Por favor, digite sua nova senha?"
 #. defaultMessage is:
 #. Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone.
 #: extracted_strings.json
-msgid "Please notice that above field 'Transfer to Clinic' lists all clinics, even those which you may not have access to. In a such case - by transferring this result you won't be able to edit this result record any more, and your action cannot be undone."
+msgid ""
+"Please notice that above field 'Transfer to Clinic' lists all clinics, even "
+"those which you may not have access to. In a such case - by transferring "
+"this result you won't be able to edit this result record any more, and your "
+"action cannot be undone."
 msgstr ""
-"Observe que o campo acima 'Transferir para clínica' lista todas as clínicas, mesmo aquelas às quais você pode não ter acesso. Nesse caso - ao transferir este resultado, você não poderá mais editar este registro de resultado e sua ação não poderá ser "
-"desfeita."
+"Observe que o campo acima 'Transferir para clínica' lista todas as clínicas, "
+"mesmo aquelas às quais você pode não ter acesso. Nesse caso - ao transferir "
+"este resultado, você não poderá mais editar este registro de resultado e sua "
+"ação não poderá ser desfeita."
 
 #. [pages.ContactDetails.countryRequired]
 #. defaultMessage is:
@@ -5162,8 +5224,12 @@ msgstr "Por favor, tente outro nome de usuário"
 #. defaultMessage is:
 #. Please try re-entering your password or contact us to reset your login details
 #: extracted_strings.json
-msgid "Please try re-entering your password or contact us to reset your login details"
-msgstr "Por favor, tente digitar novamente sua senha ou entre em contato conosco para redefinir seus dados de login"
+msgid ""
+"Please try re-entering your password or contact us to reset your login "
+"details"
+msgstr ""
+"Por favor, tente digitar novamente sua senha ou entre em contato conosco "
+"para redefinir seus dados de login"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution]
 #. defaultMessage is:
@@ -5183,8 +5249,12 @@ msgstr "Por favor, digite novamente sua senha e tente novamente."
 #. defaultMessage is:
 #. Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-msgid "Please, try again in a few minutes. If the error persists, contact your administrator for support."
-msgstr "Por favor, tente novamente dentro de alguns minutos. Se o erro persistir, contate seu administrador para obter suporte."
+msgid ""
+"Please, try again in a few minutes. If the error persists, contact your "
+"administrator for support."
+msgstr ""
+"Por favor, tente novamente dentro de alguns minutos. Se o erro persistir, "
+"contate seu administrador para obter suporte."
 
 #. [legends.Unknown.resultCategoryPositive]
 #. defaultMessage is:
@@ -5765,8 +5835,11 @@ msgstr "Resultado Status do fluxo de trabalho"
 #. defaultMessage is:
 #. Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }
 #: extracted_strings.json
-msgid "Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }"
-msgstr "Resultado Log de status do fluxo de trabalho {itemCount, plural, =0 {} outros {({itemCount})} }"
+msgid ""
+"Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }"
+msgstr ""
+"Resultado Log de status do fluxo de trabalho {itemCount, plural, =0 {} "
+"outros {({itemCount})} }"
 
 #. [pages.Milestones.resultEndedOn]
 #. defaultMessage is:
@@ -5779,8 +5852,12 @@ msgstr "O resultado terminou em:"
 #. defaultMessage is:
 #. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
 #: extracted_strings.json
-msgid "Result for patient \"{patientId}\" has been transferred from \"{oldSiteName}\" to \"{newSiteName}\""
-msgstr "O resultado para o paciente \"{patientId}\" foi transferido de \"{oldSiteName}\" para \"{newSiteName}\""
+msgid ""
+"Result for patient \"{patientId}\" has been transferred from "
+"\"{oldSiteName}\" to \"{newSiteName}\""
+msgstr ""
+"O resultado para o paciente \"{patientId}\" foi transferido de "
+"\"{oldSiteName}\" para \"{newSiteName}\""
 
 #. [component.Widget.resultsTitle]
 #. defaultMessage is:
@@ -6431,7 +6508,7 @@ msgstr "Falha ao definir o status de manutenção"
 #. ShortName
 #: extracted_strings.json
 msgid "ShortName"
-msgstr "Shortname"
+msgstr "Nome Curto"
 
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
@@ -6444,50 +6521,78 @@ msgstr "Mostrar apenas resultados reportáveis"
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# caso} outro {# casos} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} "
+"other {# cases} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"caso} outro {# casos} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# contato} outro {# contatos} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"contact} other {# contacts} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"contato} outro {# contatos} }"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device API key} other {# device API keys} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device API key} other {# device API keys} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, uma {# chave API do dispositivo} outra {# chaves API do dispositivo} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device API key} other {# device API keys} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, uma {# "
+"chave API do dispositivo} outra {# chaves API do dispositivo} }"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# dispositivo} outros {# dispositivos} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device} other {# devices} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"dispositivo} outros {# dispositivos} }"
 
 #. [pages.ResultWorkflowStatusLog.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# log} outro {# logs} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
+"other {# logs} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# log} "
+"outro {# logs} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# registro} outro {# registros} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"record} other {# records} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"registro} outro {# registros} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# reporter} other {# reporters} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# reporter} other {# reporters} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# repórter} outro {# repórteres} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"reporter} other {# reporters} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"repórter} outro {# repórteres} }"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -6496,43 +6601,74 @@ msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# 
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# resultado} outro {# resultados} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"result} other {# results} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"resultado} outro {# resultados} }"
 
 #. [pages.RouterList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# roteador} outros {# roteadores} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"router} other {# routers} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"roteador} outros {# roteadores} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} other {# sites} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} other {# sites} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# site} outros {# sites} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} "
+"other {# sites} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"site} outros {# sites} }"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# suprimento} outro {# suprimentos} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"supply} other {# supplies} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"suprimento} outro {# suprimentos} }"
 
 #. [pages.TaskList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, uma {# tarefa} outra {# tarefas} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
+"other {# tasks} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, uma {# "
+"tarefa} outra {# tarefas} }"
 
 #. [pages.TablePagination.nowShowing]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# {name}} other {# {name}s} }
 #: extracted_strings.json
-msgid "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# {name}} other {# {name}s} }"
-msgstr "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# {name}}} outro {# {name}s} }"
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"{name}} other {# {name}s} }"
+msgstr ""
+"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, um {# "
+"{name}}} outro {# {name}s} }"
+
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Terminar Sessão"
 
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
@@ -6626,7 +6762,6 @@ msgstr "Sites"
 #. defaultMessage is:
 #. Smear
 #: extracted_strings.json
-#, fuzzy
 msgid "Smear"
 msgstr "Mancha"
 
@@ -6744,7 +6879,6 @@ msgstr "Sucesso"
 #. defaultMessage is:
 #. Supplies
 #: extracted_strings.json
-#, fuzzy
 msgid "Supplies"
 msgstr "Suprimentos"
 
@@ -6950,15 +7084,22 @@ msgstr "Testes realizados entre"
 #. defaultMessage is:
 #. The average daily percentage of devices sending results, excluding weekends.
 #: extracted_strings.json
-msgid "The average daily percentage of devices sending results, excluding weekends."
-msgstr "A porcentagem média diária de dispositivos enviando resultados, excluindo fins de semana."
+msgid ""
+"The average daily percentage of devices sending results, excluding weekends."
+msgstr ""
+"A porcentagem média diária de dispositivos enviando resultados, excluindo "
+"fins de semana."
 
 #. [component.Widget.avgTimeToUploadDescription]
 #. defaultMessage is:
 #. The average delay of uploading results, in hours. Only considering results where the delay was greater than two hours.
 #: extracted_strings.json
-msgid "The average delay of uploading results, in hours. Only considering results where the delay was greater than two hours."
-msgstr "O atraso médio de envio dos resultados, em horas. Considerando apenas os resultados em que o atraso foi superior a duas horas."
+msgid ""
+"The average delay of uploading results, in hours. Only considering results "
+"where the delay was greater than two hours."
+msgstr ""
+"O atraso médio de envio dos resultados, em horas. Considerando apenas os "
+"resultados em que o atraso foi superior a duas horas."
 
 #. [pages.OperationalData.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
@@ -6979,35 +7120,51 @@ msgstr "A duração média de uma interrupção de serviço, em dias."
 #. The average number of SMS recipients per positive GeneXpert result.
 #: extracted_strings.json
 msgid "The average number of SMS recipients per positive GeneXpert result."
-msgstr "O número médio de destinatários de SMS por resultado GeneXpert positivo."
+msgstr ""
+"O número médio de destinatários de SMS por resultado GeneXpert positivo."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
 #. The average number of characters in SMS messages sent about positive GeneXpert results.
 #: extracted_strings.json
-msgid "The average number of characters in SMS messages sent about positive GeneXpert results."
-msgstr "O número médio de caracteres em mensagens SMS enviadas sobre resultados positivos de GeneXpert."
+msgid ""
+"The average number of characters in SMS messages sent about positive "
+"GeneXpert results."
+msgstr ""
+"O número médio de caracteres em mensagens SMS enviadas sobre resultados "
+"positivos de GeneXpert."
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
 #. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
 #: extracted_strings.json
-msgid "The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result."
-msgstr "O número médio de dias entre o último resultado relatado em um módulo de série substituído e o novo módulo de série nesse slot de módulo relatando seu primeiro resultado."
+msgid ""
+"The average number of days between the last result reported under a replaced "
+"module serial and the new module serial in that module slot reporting its "
+"first result."
+msgstr ""
+"O número médio de dias entre o último resultado relatado em um módulo de "
+"série substituído e o novo módulo de série nesse slot de módulo relatando "
+"seu primeiro resultado."
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
 #. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.
 #: extracted_strings.json
-msgid "The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting."
-msgstr "O número médio de dias entre o último relatório de série de um instrumento de um dispositivo e um novo relatório de série de instrumento."
+msgid ""
+"The average number of days between when an instrument serial last reported "
+"from a device and a new instrument serial reporting."
+msgstr ""
+"O número médio de dias entre o último relatório de série de um instrumento "
+"de um dispositivo e um novo relatório de série de instrumento."
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
 #. The average number of email recipients per positive GeneXpert result.
 #: extracted_strings.json
 msgid "The average number of email recipients per positive GeneXpert result."
-msgstr "O número médio de destinatários de e-mail por resultado GeneXpert positivo."
+msgstr ""
+"O número médio de destinatários de e-mail por resultado GeneXpert positivo."
 
 #. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
@@ -7016,8 +7173,12 @@ msgstr "O número médio de destinatários de e-mail por resultado GeneXpert pos
 #. defaultMessage is:
 #. The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.
 #: extracted_strings.json
-msgid "The average time (in days) between when a module was disabled and a different module serial being detected in the same slot."
-msgstr "O tempo médio (em dias) entre quando um módulo foi desabilitado e um módulo serial diferente sendo detectado no mesmo slot."
+msgid ""
+"The average time (in days) between when a module was disabled and a "
+"different module serial being detected in the same slot."
+msgstr ""
+"O tempo médio (em dias) entre quando um módulo foi desabilitado e um módulo "
+"serial diferente sendo detectado no mesmo slot."
 
 #. [component.Widget.serverUptimeDescription]
 #. defaultMessage is:
@@ -7037,15 +7198,25 @@ msgstr "A senha atual que você digitou está incorreta."
 #. defaultMessage is:
 #. The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.
 #: extracted_strings.json
-msgid "The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet."
-msgstr "O dispositivo não se conecta ao Aspect há vários dias. Pode estar executando testes, mas os testes não foram carregados para Aspect ainda."
+msgid ""
+"The device hasn't connected to Aspect for several days. It may be running "
+"tests, but the tests aren't uploaded to Aspect yet."
+msgstr ""
+"O dispositivo não se conecta ao Aspect há vários dias. Pode estar executando "
+"testes, mas os testes não foram carregados para Aspect ainda."
 
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
 #. The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices.
 #: extracted_strings.json
-msgid "The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices."
-msgstr "A taxa de erro é calculada contando todos os erros nos testes realizados no mês e dividindo esse número pelo total de testes realizados em todos os aparelhos."
+msgid ""
+"The error rate is calculated by counting all errors in the tests conducted "
+"in the month and dividing that number by the total tests carried out of all "
+"devices."
+msgstr ""
+"A taxa de erro é calculada contando todos os erros nos testes realizados no "
+"mês e dividindo esse número pelo total de testes realizados em todos os "
+"aparelhos."
 
 #. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
 #. defaultMessage is:
@@ -7065,15 +7236,20 @@ msgstr "O máximo que você pode transferir é {currentQuantity}"
 #. defaultMessage is:
 #. The number of approved GeneXpert devices (excluding decommissioned devices).
 #: extracted_strings.json
-msgid "The number of approved GeneXpert devices (excluding decommissioned devices)."
-msgstr "O número de dispositivos GeneXpert aprovados (excluindo dispositivos desativados)."
+msgid ""
+"The number of approved GeneXpert devices (excluding decommissioned devices)."
+msgstr ""
+"O número de dispositivos GeneXpert aprovados (excluindo dispositivos "
+"desativados)."
 
 #. [component.Widget.devicesDescription]
 #. defaultMessage is:
 #. The number of approved lab devices (excluding decommissioned devices)
 #: extracted_strings.json
 msgid "The number of approved lab devices (excluding decommissioned devices)"
-msgstr "O número de dispositivos de laboratório aprovados (excluindo dispositivos desativados)"
+msgstr ""
+"O número de dispositivos de laboratório aprovados (excluindo dispositivos "
+"desativados)"
 
 #. [component.Widget.personDescription]
 #. defaultMessage is:
@@ -7089,15 +7265,21 @@ msgstr "O número de contatos no sistema."
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month.
 #: extracted_strings.json
-msgid "The number of devices experiencing service interruption on this and the previous month."
-msgstr "O número de dispositivos com interrupção do serviço neste e no mês anterior."
+msgid ""
+"The number of devices experiencing service interruption on this and the "
+"previous month."
+msgstr ""
+"O número de dispositivos com interrupção do serviço neste e no mês anterior."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
 #. The number of instruments that had their last calibration more than one year ago.
 #: extracted_strings.json
-msgid "The number of instruments that had their last calibration more than one year ago."
-msgstr "O número de instrumentos que tiveram sua última calibração há mais de um ano."
+msgid ""
+"The number of instruments that had their last calibration more than one year "
+"ago."
+msgstr ""
+"O número de instrumentos que tiveram sua última calibração há mais de um ano."
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
@@ -7166,8 +7348,11 @@ msgstr "A senha precisa ter pelo menos 8 caracteres"
 #. defaultMessage is:
 #. The password needs to contain at least one number or special character (%!$*...)
 #: extracted_strings.json
-msgid "The password needs to contain at least one number or special character (%!$*...)"
-msgstr "A senha deve conter pelo menos um número ou caractere especial (%! $ * ...)"
+msgid ""
+"The password needs to contain at least one number or special character (%!"
+"$*...)"
+msgstr ""
+"A senha deve conter pelo menos um número ou caractere especial (%! $ * ...)"
 
 #. [pages.UpdateLoginDetails.invalidPassword]
 #. defaultMessage is:
@@ -7190,38 +7375,59 @@ msgstr "A senha que você digitou está incorreta"
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
-msgid "The percentage of \"device-days\" that were statused as \"down for repair\", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 \"device-days\". If one device was down half of the month, this number would be 10%"
+msgid ""
+"The percentage of \"device-days\" that were statused as \"down for repair\", "
+"excluding weekends. For example, 20 weekdays in the month and 5 devices "
+"would equate 100 \"device-days\". If one device was down half of the month, "
+"this number would be 10%"
 msgstr ""
-"A porcentagem de \"dias de dispositivo\" que foram classificados como \"inativos para reparo\", excluindo fins de semana. Por exemplo, 20 dias da semana no mês e 5 dispositivos equivalem a 100 \"dias do dispositivo\". Se um dispositivo caísse na metade "
-"do mês, esse número seria de 10%"
+"A porcentagem de \"dias de dispositivo\" que foram classificados como "
+"\"inativos para reparo\", excluindo fins de semana. Por exemplo, 20 dias da "
+"semana no mês e 5 dispositivos equivalem a 100 \"dias do dispositivo\". Se "
+"um dispositivo caísse na metade do mês, esse número seria de 10%"
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
 #. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
-msgid "The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before."
-msgstr "A porcentagem de calibrações que ocorreram dentro de 30 dias da data programada. Observe que isso só conta calibrações para dispositivos que tiveram um registro de calibração antes."
+msgid ""
+"The percentage of calibrations that were within 30 days of the scheduled "
+"date. Note that this only counts calibrations for devices that had a "
+"calibration record before."
+msgstr ""
+"A porcentagem de calibrações que ocorreram dentro de 30 dias da data "
+"programada. Observe que isso só conta calibrações para dispositivos que "
+"tiveram um registro de calibração antes."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
 #. The percentage of positive GeneXpert's results that were notified via SMS or email.
 #: extracted_strings.json
-msgid "The percentage of positive GeneXpert's results that were notified via SMS or email."
-msgstr "A porcentagem de resultados positivos do GeneXpert que foram notificados via SMS ou e-mail."
+msgid ""
+"The percentage of positive GeneXpert's results that were notified via SMS or "
+"email."
+msgstr ""
+"A porcentagem de resultados positivos do GeneXpert que foram notificados via "
+"SMS ou e-mail."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
 #. The percentage of positive results that were reported via Email or SMS.
 #: extracted_strings.json
 msgid "The percentage of positive results that were reported via Email or SMS."
-msgstr "A porcentagem de resultados positivos que foram relatados via e-mail ou SMS."
+msgstr ""
+"A porcentagem de resultados positivos que foram relatados via e-mail ou SMS."
 
 #. [pages.OperationalData.percentWithin2HoursDescription]
 #. defaultMessage is:
 #. The percentage of positive results that were reported within two hours of test completion.
 #: extracted_strings.json
-msgid "The percentage of positive results that were reported within two hours of test completion."
-msgstr "A porcentagem de resultados positivos relatados em até duas horas após a conclusão do teste."
+msgid ""
+"The percentage of positive results that were reported within two hours of "
+"test completion."
+msgstr ""
+"A porcentagem de resultados positivos relatados em até duas horas após a "
+"conclusão do teste."
 
 #. [pages.OperationalData.percentViaEmailDescription]
 #. defaultMessage is:
@@ -7241,22 +7447,38 @@ msgstr "A porcentagem de resultados relatados que foram relatados via SMS."
 #. defaultMessage is:
 #. The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.
 #: extracted_strings.json
-msgid "The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible."
-msgstr "O servidor rejeitou os valores especificados nesses campos de filtro. Nossa equipe técnica foi avisada e tratará do problema o mais breve possível."
+msgid ""
+"The server rejected the values specified in these filter fields. Our "
+"technical team has been notified and will attend to the problem as soon as "
+"possible."
+msgstr ""
+"O servidor rejeitou os valores especificados nesses campos de filtro. Nossa "
+"equipe técnica foi avisada e tratará do problema o mais breve possível."
 
 #. [component.Widget.stockNotRecordedDescription]
 #. defaultMessage is:
 #. The stock not recorded is calculated by counting all sites that didn't enter any stock for any of the GeneXpert assays and dividing that number by the total number of sites.
 #: extracted_strings.json
-msgid "The stock not recorded is calculated by counting all sites that didn't enter any stock for any of the GeneXpert assays and dividing that number by the total number of sites."
-msgstr "O estoque não registrado é calculado contando todos os sites que não entraram em estoque para nenhum dos ensaios GeneXpert e dividindo esse número pelo número total de sites."
+msgid ""
+"The stock not recorded is calculated by counting all sites that didn't enter "
+"any stock for any of the GeneXpert assays and dividing that number by the "
+"total number of sites."
+msgstr ""
+"O estoque não registrado é calculado contando todos os sites que não "
+"entraram em estoque para nenhum dos ensaios GeneXpert e dividindo esse "
+"número pelo número total de sites."
 
 #. [component.Widget.stockoutsDescription]
 #. defaultMessage is:
 #. The stockout percentage is calculated by counting all sites with stockout issues during the month and dividing by all active sites.
 #: extracted_strings.json
-msgid "The stockout percentage is calculated by counting all sites with stockout issues during the month and dividing by all active sites."
-msgstr "A porcentagem de falta de estoque é calculada contando todos os sites com problemas de falta de estoque durante o mês e dividindo por todos os sites ativos."
+msgid ""
+"The stockout percentage is calculated by counting all sites with stockout "
+"issues during the month and dividing by all active sites."
+msgstr ""
+"A porcentagem de falta de estoque é calculada contando todos os sites com "
+"problemas de falta de estoque durante o mês e dividindo por todos os sites "
+"ativos."
 
 #. [component.Widget.dashboardWidgetSmsSentDescription]
 #. defaultMessage is:
@@ -7275,15 +7497,25 @@ msgstr "O número total de mensagens de texto enviadas durante o mês"
 #. defaultMessage is:
 #. The username that you have entered is already in use by another user on the system
 #: extracted_strings.json
-msgid "The username that you have entered is already in use by another user on the system"
-msgstr "O nome de usuário que você inseriu já está em uso por outro usuário no sistema"
+msgid ""
+"The username that you have entered is already in use by another user on the "
+"system"
+msgstr ""
+"O nome de usuário que você inseriu já está em uso por outro usuário no "
+"sistema"
 
 #. [component.Widget.utilizationRateDescription]
 #. defaultMessage is:
 #. The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices. This calculation excludes weekends.
 #: extracted_strings.json
-msgid "The utilization rate is calculated by counting all tests conducted in the month and dividing that number by the total capacity of all devices. This calculation excludes weekends."
-msgstr "A taxa de utilização é calculada contando todos os testes realizados no mês e dividindo esse número pela capacidade total de todos os dispositivos. Este cálculo exclui fins de semana."
+msgid ""
+"The utilization rate is calculated by counting all tests conducted in the "
+"month and dividing that number by the total capacity of all devices. This "
+"calculation excludes weekends."
+msgstr ""
+"A taxa de utilização é calculada contando todos os testes realizados no mês "
+"e dividindo esse número pela capacidade total de todos os dispositivos. Este "
+"cálculo exclui fins de semana."
 
 #. [widgetAlerts.between]
 #. defaultMessage is:
@@ -7317,8 +7549,12 @@ msgstr "O {representing} é um dos {comparedTo}"
 #. defaultMessage is:
 #. There was a conflict with your credentials. Please, contact an administrator for support.
 #: extracted_strings.json
-msgid "There was a conflict with your credentials. Please, contact an administrator for support."
-msgstr "Houve um conflito com suas credenciais. Por favor, contate um administrador para obter suporte."
+msgid ""
+"There was a conflict with your credentials. Please, contact an administrator "
+"for support."
+msgstr ""
+"Houve um conflito com suas credenciais. Por favor, contate um administrador "
+"para obter suporte."
 
 #. [pages.ResetPassword.passwordsDoNotMatch]
 #. defaultMessage is:
@@ -7410,25 +7646,34 @@ msgstr "Este campo é obrigatório"
 #. defaultMessage is:
 #. This report shows all issues that apply to GeneXpert devices
 #: extracted_strings.json
-#, fuzzy
 msgid "This report shows all issues that apply to GeneXpert devices"
-msgstr "Este relatório mostra todas as questões que se aplicam aos dispositivos GeneXpert"
+msgstr ""
+"Este relatório mostra todas as questões que se aplicam aos dispositivos "
+"GeneXpert"
 
 #. [pages.ReportIndex.moduleSwapsReport_description]
 #. defaultMessage is:
 #. This report shows all module swaps in devices. The report will show you by default the last 12 months
 #: extracted_strings.json
-#, fuzzy
-msgid "This report shows all module swaps in devices. The report will show you by default the last 12 months"
-msgstr "Este relatório mostra todas as trocas de módulos em dispositivos. O relatório mostrará, por defeito, os últimos 12 meses"
+msgid ""
+"This report shows all module swaps in devices. The report will show you by "
+"default the last 12 months"
+msgstr ""
+"Este relatório mostra todas as trocas de módulos em dispositivos. O "
+"relatório mostrará, por defeito, os últimos 12 meses"
 
 #. [pages.ReportIndex.device_activity_description]
 #. defaultMessage is:
 #. This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
 #: extracted_strings.json
-#, fuzzy
-msgid "This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year."
-msgstr "Este relatório mostra a actividade dos dispositivos durante o período de tempo seleccionado, decompondo-a por meses (Por defeito, duram 12 meses), e todos os testes realizados durante o último ano."
+msgid ""
+"This report shows the activity of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+"Este relatório mostra a actividade dos dispositivos durante o período de "
+"tempo seleccionado, decompondo-a por meses (Por defeito, duram 12 meses), e "
+"todos os testes realizados durante o último ano."
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
@@ -7696,6 +7941,9 @@ msgstr "Desconhecido"
 #. [pages.RouterDetail.update]
 #. defaultMessage is:
 #. Update
+#. [pages.SiteDetail.actionUpdate]
+#. defaultMessage is:
+#. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
 #. defaultMessage is:
 #. Update
@@ -7808,7 +8056,7 @@ msgstr "Ver registo"
 #. Viewing all devices {GEOGRAPHY} {NAME}.
 #: extracted_strings.json
 msgid "Viewing all devices {GEOGRAPHY} {NAME}."
-msgstr "Visualização de todos os dispositivos {GEOGRAPHY} {NAME} {2}."
+msgstr "Visualização de todos os dispositivos {GEOGRAPHY} {NAME}."
 
 #. [pages.DeviceDetailOperation.voltage]
 #. defaultMessage is:
@@ -7845,22 +8093,36 @@ msgstr "A Data de Vencimento da garantia é necessária"
 #. defaultMessage is:
 #. We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
 #: extracted_strings.json
-msgid "We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials."
-msgstr "Não foi possível estabelecer uma conexão com GxAlert. Se você está tentando fazer o login com um usuário Aspect, provavelmente inseriu credenciais inválidas."
+msgid ""
+"We couldn't establish a connection with GxAlert. If you are trying to login "
+"with an Aspect user, you probably entered invalid credentials."
+msgstr ""
+"Não foi possível estabelecer uma conexão com GxAlert. Se você está tentando "
+"fazer o login com um usuário Aspect, provavelmente inseriu credenciais "
+"inválidas."
 
 #. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
 #. defaultMessage is:
 #. We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
 #: extracted_strings.json
-msgid "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials."
-msgstr "Não foi possível estabelecer uma conexão com GxAlert. Se você está tentando fazer o login com um usuário Aspect, provavelmente inseriu credenciais inválidas."
+msgid ""
+"We couldn't establish connection with GxAlert. If you are trying to login "
+"with an Aspect user, you probably entered invalid credentials."
+msgstr ""
+"Não foi possível estabelecer uma conexão com GxAlert. Se você está tentando "
+"fazer o login com um usuário Aspect, provavelmente inseriu credenciais "
+"inválidas."
 
 #. [pages.ResetPassword.checkEmailContent]
 #. defaultMessage is:
 #. We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox.
 #: extracted_strings.json
-msgid "We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox."
-msgstr "Enviamos um e-mail para {emailAddress} que contém um link que permitirá redefinir sua senha. Por favor, verifique sua caixa de entrada."
+msgid ""
+"We have sent an email to {emailAddress} that contains a link which will "
+"allow you to reset your password. Please check your inbox."
+msgstr ""
+"Enviamos um e-mail para {emailAddress} que contém um link que permitirá "
+"redefinir sua senha. Por favor, verifique sua caixa de entrada."
 
 #. [pages.ResetPassword.generateTokenFailedMessage]
 #. defaultMessage is:
@@ -7969,8 +8231,11 @@ msgstr "Ontem"
 #. defaultMessage is:
 #. You can contact us to unlock your account for you by email ({supportEmail})
 #: extracted_strings.json
-msgid "You can contact us to unlock your account for you by email ({supportEmail})"
-msgstr "Você pode entrar em contato conosco para desbloquear sua conta por e-mail ({supportEmail})"
+msgid ""
+"You can contact us to unlock your account for you by email ({supportEmail})"
+msgstr ""
+"Você pode entrar em contato conosco para desbloquear sua conta por e-mail "
+"({supportEmail})"
 
 #. [pages.PersonDetails.loginDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -7987,7 +8252,8 @@ msgstr "Agora voçê pode fazer o login com estes novos detalhes"
 #. You can request further help by sending an email to {supportEmail}
 #: extracted_strings.json
 msgid "You can request further help by sending an email to {supportEmail}"
-msgstr "Voçê pode solicitar ajuda adicional enviando um e-mail para {supportEmail}"
+msgstr ""
+"Voçê pode solicitar ajuda adicional enviando um e-mail para {supportEmail}"
 
 #. [pages.ResetPassword.passwordUpdatedMessage]
 #. defaultMessage is:
@@ -8021,8 +8287,12 @@ msgstr "Voçê foi desconectado devido a falha de sessão refrescante"
 #. defaultMessage is:
 #. You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.
 #: extracted_strings.json
-msgid "You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse."
-msgstr "Você será desconectado automaticamente em um minuto devido à inatividade. Para permanecer logado, aperte qualquer botão ou mova o mouse."
+msgid ""
+"You will be logged out automatically in one minute due to inactivity. To "
+"stay logged in, hit any button or move your mouse."
+msgstr ""
+"Você será desconectado automaticamente em um minuto devido à inatividade. "
+"Para permanecer logado, aperte qualquer botão ou mova o mouse."
 
 #. [pages.Login.reasonUserRequested]
 #. defaultMessage is:
@@ -8035,8 +8305,12 @@ msgstr "Voçê foi desconectado"
 #. defaultMessage is:
 #. Your password has been changed successfully. You can now login with your new details
 #: extracted_strings.json
-msgid "Your password has been changed successfully. You can now login with your new details"
-msgstr "Sua senha foi alterada com sucesso. Agora voçê pode fazer o login com seus novos dados"
+msgid ""
+"Your password has been changed successfully. You can now login with your new "
+"details"
+msgstr ""
+"Sua senha foi alterada com sucesso. Agora voçê pode fazer o login com seus "
+"novos dados"
 
 #. [pages.ResetPassword.newPasswordTooShort]
 #. defaultMessage is:
@@ -8049,8 +8323,11 @@ msgstr "Sua senha precisa ter pelo menos 8 caracteres"
 #. defaultMessage is:
 #. Your password needs to contain at least one number or special character (%!$*...)
 #: extracted_strings.json
-msgid "Your password needs to contain at least one number or special character (%!$*...)"
-msgstr "Sua senha precisa conter pelo menos um número ou caracter especial (%!$*...)"
+msgid ""
+"Your password needs to contain at least one number or special character (%!"
+"$*...)"
+msgstr ""
+"Sua senha precisa conter pelo menos um número ou caracter especial (%!$*...)"
 
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.message]
 #. defaultMessage is:
@@ -8368,7 +8645,8 @@ msgstr "porcentagem do tempo de funcionamento do servidor"
 #. percentage of sites that never entered stock of GeneXpert assays
 #: extracted_strings.json
 msgid "percentage of sites that never entered stock of GeneXpert assays"
-msgstr "porcentagem de sites que nunca entraram em estoque de ensaios GeneXpert"
+msgstr ""
+"porcentagem de sites que nunca entraram em estoque de ensaios GeneXpert"
 
 #. [widgetAlerts.percentageOfValidResults]
 #. defaultMessage is:
@@ -8549,8 +8827,11 @@ msgstr "{count} site com problemas"
 #. defaultMessage is:
 #. {daysInSameStatus, plural, one {# day} other {# days} } since last update
 #: extracted_strings.json
-msgid "{daysInSameStatus, plural, one {# day} other {# days} } since last update"
-msgstr "{daysInSameStatus, plural, um {# dia} outro {# dias} } desde a última atualização"
+msgid ""
+"{daysInSameStatus, plural, one {# day} other {# days} } since last update"
+msgstr ""
+"{daysInSameStatus, plural, um {# dia} outro {# dias} } desde a última "
+"atualização"
 
 #. [pages.TableCell.timeClassification]
 #. defaultMessage is:
@@ -8584,15 +8865,23 @@ msgstr "{itemCount} (total)"
 #. defaultMessage is:
 #. {maintenanceStatusName} ({totalResults, plural, one {# result reported} other {# results reported} })
 #: extracted_strings.json
-msgid "{maintenanceStatusName} ({totalResults, plural, one {# result reported} other {# results reported} })"
-msgstr "{maintenanceStatusName} ({totalResultados, plural, um {# resultado reportado} outro {# resultados reportados} })"
+msgid ""
+"{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
+"other {# results reported} })"
+msgstr ""
+"{maintenanceStatusName} ({totalResultados, plural, um {# resultado "
+"reportado} outro {# resultados reportados} })"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
 #. defaultMessage is:
 #. {maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one {# day} other {# days} }
 #: extracted_strings.json
-msgid "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one {# day} other {# days} }"
-msgstr "{maintenanceStatusName} ({totalResults}) para {daysInSameStatus, plural, um {# dia} outro {# dias} }"
+msgid ""
+"{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
+"{# day} other {# days} }"
+msgstr ""
+"{maintenanceStatusName} ({totalResults}) para {daysInSameStatus, plural, um "
+"{# dia} outro {# dias} }"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:
@@ -8634,4 +8923,8 @@ msgstr "{unit} calibrações totais"
 #. {value} ({records}/{total, plural, one {# result} other {# results} })
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
-msgstr "{value} ({records}/{total, plural, um {# resultado} outro {# resultados} })"
+msgstr ""
+"{value} ({records}/{total, plural, um {# resultado} outro {# resultados} })"
+
+#~ msgid "Device Api Keys"
+#~ msgstr "Chaves API do dispositivo"

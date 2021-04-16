@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-12T18:44:41.281Z\n"
+"POT-Creation-Date: 2021-04-16T17:59:54.250Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -253,6 +253,9 @@ msgstr ""
 #. [pages.AccountDetails.title]
 #. defaultMessage is:
 #. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Kontodetails"
@@ -317,6 +320,13 @@ msgstr "Aktiv"
 #: extracted_strings.json
 msgid "Active cases"
 msgstr "Aktuelle Fälle"
+
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
+msgstr "Hinzufügen"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -1092,6 +1102,9 @@ msgstr "Fall-ID"
 msgid "Cases"
 msgstr "Fälle"
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1558,6 +1571,13 @@ msgstr ""
 msgid "County"
 msgstr "Landkreis"
 
+#. [pages.ResultList.assayGenericCovid19]
+#. defaultMessage is:
+#. Covid 19
+#: extracted_strings.json
+msgid "Covid 19"
+msgstr "COVID 19"
+
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
@@ -1592,6 +1612,9 @@ msgstr "Kritische Fehler nach Gerät"
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
+#. [pages.ResultList.assayCulture]
+#. defaultMessage is:
+#. Culture
 #: extracted_strings.json
 msgid "Culture"
 msgstr "Kultur"
@@ -1616,6 +1639,13 @@ msgstr "Aktuelles Passwort"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Benutzerdefiniert"
+
+#. [pages.ResultList.assayGenericDst]
+#. defaultMessage is:
+#. DST
+#: extracted_strings.json
+msgid "DST"
+msgstr "TB DST"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -1927,6 +1957,9 @@ msgstr "Gerät"
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr "Geräte-API-Schlüssel"
@@ -1944,15 +1977,6 @@ msgstr "Geräte-API-Schlüssel-Generator"
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Gerätetyp"
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Key
-#: extracted_strings.json
-msgid "Device Api Key"
-msgstr ""
-"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# Geräte-"
-"API-Schlüssel} other {# Geräte-API-Schlüsseln} }"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2042,6 +2066,9 @@ msgstr "Gerätetyp"
 #. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
 #. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
@@ -2062,13 +2089,6 @@ msgstr "Geräte, bei denen eine Betriebsunterbrechung auftritt"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Geräte mit Betriebsunterbrechung"
-
-#. [browsePage.browseDropdown.devices]
-#. defaultMessage is:
-#. Devices
-#: extracted_strings.json
-msgid "Devices"
-msgstr "Geräte"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2673,6 +2693,13 @@ msgstr "Feld kann nicht weniger als {total} Zeichen enthalten"
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Feld kann nicht mehr als {total} Zeichen enthalten"
+
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
+msgstr "Standort Finden"
 
 #. [pages.ResetPassword.finish]
 #. defaultMessage is:
@@ -3531,6 +3558,13 @@ msgstr "Schlüssel"
 msgid "LGA"
 msgstr "LGA"
 
+#. [pages.ResultList.assayLPA]
+#. defaultMessage is:
+#. LPA
+#: extracted_strings.json
+msgid "LPA"
+msgstr "LPA"
+
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
 #. Lab:
@@ -4115,6 +4149,9 @@ msgstr "MTB/Rif"
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
+#. [pages.ResultList.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #: extracted_strings.json
@@ -5448,6 +5485,9 @@ msgstr "Quality Control"
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
+#. [pages.ResultList.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #: extracted_strings.json
 msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
@@ -5829,6 +5869,9 @@ msgstr ""
 "\"{newSiteName}\" übertragen"
 
 #. [component.Widget.resultsTitle]
+#. defaultMessage is:
+#. Results
+#. [browsePage.browseDropdown.results]
 #. defaultMessage is:
 #. Results
 #. [pages.ResultList.title]
@@ -6629,6 +6672,13 @@ msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Ausloggen"
+
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -6716,6 +6766,13 @@ msgstr "Standort Name"
 #: extracted_strings.json
 msgid "Sites"
 msgstr "Standorte"
+
+#. [pages.ResultList.assaySmear]
+#. defaultMessage is:
+#. Smear
+#: extracted_strings.json
+msgid "Smear"
+msgstr "Schmier"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -6874,6 +6931,13 @@ msgstr "TB DST"
 #: extracted_strings.json
 msgid "TB G&D"
 msgstr "TB G&D"
+
+#. [pages.ResultList.assayTbLamp]
+#. defaultMessage is:
+#. TB LAMP
+#: extracted_strings.json
+msgid "TB LAMP"
+msgstr "TB LAMP"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7900,6 +7964,9 @@ msgstr "Unbekannt"
 #. [pages.RouterDetail.update]
 #. defaultMessage is:
 #. Update
+#. [pages.SiteDetail.actionUpdate]
+#. defaultMessage is:
+#. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
 #. defaultMessage is:
 #. Update
@@ -8623,13 +8690,6 @@ msgstr "Prozentsatz der gültigen Ergebnisse"
 msgid "report name includes \"{reportName}\""
 msgstr "Der Berichtsname enthält \"{reportName}\"."
 
-#. [browsePage.browseDropdown.results]
-#. defaultMessage is:
-#. results
-#: extracted_strings.json
-msgid "results"
-msgstr "Ergebnisse"
-
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:
 #. revoked is "{revokedStatus}"
@@ -8893,6 +8953,14 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "Device Api Key"
+#~ msgstr ""
+#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+#~ "Geräte-API-Schlüssel} other {# Geräte-API-Schlüsseln} }"
+
+#~ msgid "results"
+#~ msgstr "Ergebnisse"
 
 #~ msgid "Percentage of valid results reported the current month"
 #~ msgstr "Prozentsatz der im aktuellen Monat gemeldeten gültigen Ergebnisse"
