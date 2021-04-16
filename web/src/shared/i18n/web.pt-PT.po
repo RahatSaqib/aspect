@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-16T17:56:44.050Z\n"
+"POT-Creation-Date: 2021-04-16T18:51:54.497Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -723,6 +723,13 @@ msgstr "Tipo de ensaio"
 msgid "Assay Type:"
 msgstr "Tipo de ensaio:"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#: extracted_strings.json
+msgid "Asserted zero inventory"
+msgstr "Inventário zero atribuído"
+
 #. [pages.DeviceApiKeyList.assign]
 #. defaultMessage is:
 #. Assign
@@ -1078,6 +1085,13 @@ msgstr "Calibração passada devido"
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#: extracted_strings.json
+msgid "Captured"
+msgstr "Capturado"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -3311,6 +3325,13 @@ msgstr ""
 "Se precisar de ajuda para recuperar seus dados de login, entre em contato "
 "conosco para que possamos ajudá-lo. Você pode solicitar nossa ajuda enviando "
 "um e-mail para {supportEmail}"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
+#. defaultMessage is:
+#. Imported
+#: extracted_strings.json
+msgid "Imported"
+msgstr "Importado"
 
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
@@ -5562,6 +5583,9 @@ msgstr "Reagente"
 msgid "Reagent Health"
 msgstr "Saúde do Reagente"
 
+#. [forms.formItem.reason]
+#. defaultMessage is:
+#. Reason
 #. [pages.InventoryAdjustmentDialogForm.reason]
 #. defaultMessage is:
 #. Reason
@@ -7015,7 +7039,7 @@ msgstr "Telefone"
 msgid "Temperature"
 msgstr "Temperatura"
 
-#. [bbe12]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
 #. Test Conducted
 #: extracted_strings.json
@@ -7796,6 +7820,13 @@ msgstr "Transferir"
 msgid "Transfer Inventory"
 msgstr "Inventário de transferência"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Transfer Received
+#: extracted_strings.json
+msgid "Transfer Received"
+msgstr "Transferência Recebida"
+
 #. [pages.resultEdit.transferResult]
 #. defaultMessage is:
 #. Transfer Result
@@ -7812,6 +7843,13 @@ msgstr "Resultado da transferência"
 #: extracted_strings.json
 msgid "Transfer Result Error"
 msgstr "Erro no resultado da transferência"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Transfer Sent
+#: extracted_strings.json
+msgid "Transfer Sent"
+msgstr "Transferência Enviada"
 
 #. [pages.transferResult.titleSites]
 #. defaultMessage is:
