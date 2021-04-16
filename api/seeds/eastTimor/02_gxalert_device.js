@@ -1,7 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const _ = require('lodash')
-
 const jobFunctionsFixture = require('./fixtures/jobFunctions')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
@@ -14,10 +12,7 @@ const {
   deviceApiToken,
 } = require('./fixtures/partnerData')
 
-const {
-  baseGxAlertMigration,
-  upsertDashboardWidgets,
-} = require('../common')
+const { baseGxAlertMigration, upsertDashboardWidgets } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
