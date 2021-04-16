@@ -8,10 +8,10 @@ const {
   factDataCategoryLowCheck,
   factNewResultsAvailableCheck,
   factExternalSourceCheck,
-} = require('./fact/actions')
-const { escalateIssues, resolveIssues } = require('./issue/actions')
-const { logDeviceMaintenanceStatus } = require('./device/actions')
-const config = require('./config')
+} = require('../fact/actions')
+const { escalateIssues, resolveIssues } = require('../issue/actions')
+const { logDeviceMaintenanceStatus } = require('../device/actions')
+const config = require('../config')
 
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour

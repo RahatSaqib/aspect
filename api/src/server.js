@@ -14,7 +14,7 @@ const {
 } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
-const { startScheduler } = require('./scheduler')
+const { startScheduler } = require('./scheduler/scheduler')
 const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
 const {
