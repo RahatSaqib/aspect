@@ -918,6 +918,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -1924,6 +1936,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Deutsch (DE)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -2936,6 +2960,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -3942,6 +3978,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               withRightMargin={true}
             />
             Deutsch (DE)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
@@ -4954,6 +5002,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -5961,6 +6021,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
           key="fr-FR"
           value="fr-FR"
         >
@@ -6951,6 +7023,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               withRightMargin={true}
             />
             Deutsch (DE)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          key="es-ES"
+          value="es-ES"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="ES"
+              withRightMargin={true}
+            />
+            Spanish (ES)
           </span>
         </WithStyles(MenuItem)>
         <WithStyles(MenuItem)
