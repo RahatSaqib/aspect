@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-12T18:44:41.281Z\n"
+"POT-Creation-Date: 2021-04-16T17:59:54.250Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -251,6 +251,9 @@ msgstr ""
 #. [pages.AccountDetails.title]
 #. defaultMessage is:
 #. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #: extracted_strings.json
 msgid "Account Details"
 msgstr ""
@@ -314,6 +317,13 @@ msgstr ""
 #. Active cases
 #: extracted_strings.json
 msgid "Active cases"
+msgstr ""
+
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
 msgstr ""
 
 #. [pages.InventoryItemsList.addInventory]
@@ -1081,6 +1091,9 @@ msgstr ""
 msgid "Cases"
 msgstr ""
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1544,6 +1557,13 @@ msgstr ""
 msgid "County"
 msgstr ""
 
+#. [pages.ResultList.assayGenericCovid19]
+#. defaultMessage is:
+#. Covid 19
+#: extracted_strings.json
+msgid "Covid 19"
+msgstr ""
+
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
@@ -1578,6 +1598,9 @@ msgstr ""
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
 #. Culture
+#. [pages.ResultList.assayCulture]
+#. defaultMessage is:
+#. Culture
 #: extracted_strings.json
 msgid "Culture"
 msgstr ""
@@ -1601,6 +1624,13 @@ msgstr ""
 #. Custom
 #: extracted_strings.json
 msgid "Custom"
+msgstr ""
+
+#. [pages.ResultList.assayGenericDst]
+#. defaultMessage is:
+#. DST
+#: extracted_strings.json
+msgid "DST"
 msgstr ""
 
 #. [pages.Status.clinicalIndicatorsCovidName]
@@ -1913,6 +1943,9 @@ msgstr ""
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr ""
@@ -1929,13 +1962,6 @@ msgstr ""
 #. Device Activity
 #: extracted_strings.json
 msgid "Device Activity"
-msgstr ""
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Key
-#: extracted_strings.json
-msgid "Device Api Key"
 msgstr ""
 
 #. [pages.CalibrationDialog.dialogTitle]
@@ -2026,6 +2052,9 @@ msgstr ""
 #. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
 #. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
@@ -2045,13 +2074,6 @@ msgstr ""
 #. Devices With Service Interruption
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
-msgstr ""
-
-#. [browsePage.browseDropdown.devices]
-#. defaultMessage is:
-#. Devices
-#: extracted_strings.json
-msgid "Devices"
 msgstr ""
 
 #. [pages.DeviceDetailEdit.discard]
@@ -2654,6 +2676,13 @@ msgstr ""
 #. Field cannot contain more than {total} characters
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
+msgstr ""
+
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
 msgstr ""
 
 #. [pages.ResetPassword.finish]
@@ -3506,6 +3535,13 @@ msgstr ""
 msgid "LGA"
 msgstr ""
 
+#. [pages.ResultList.assayLPA]
+#. defaultMessage is:
+#. LPA
+#: extracted_strings.json
+msgid "LPA"
+msgstr ""
+
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
 #. Lab:
@@ -4088,6 +4124,9 @@ msgstr ""
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #. [filter.AssaySelectField.assayMP96Covid19]
+#. defaultMessage is:
+#. MagNA Pure-96 COVID-19
+#. [pages.ResultList.assayMP96Covid19]
 #. defaultMessage is:
 #. MagNA Pure-96 COVID-19
 #: extracted_strings.json
@@ -5398,6 +5437,9 @@ msgstr ""
 #. [filter.AssaySelectField.assayQS7Covid19]
 #. defaultMessage is:
 #. QuantStudio7 Flex COVID-19
+#. [pages.ResultList.assayQS7Covid19]
+#. defaultMessage is:
+#. QuantStudio7 Flex COVID-19
 #: extracted_strings.json
 msgid "QuantStudio7 Flex COVID-19"
 msgstr ""
@@ -5775,6 +5817,9 @@ msgid ""
 msgstr ""
 
 #. [component.Widget.resultsTitle]
+#. defaultMessage is:
+#. Results
+#. [browsePage.browseDropdown.results]
 #. defaultMessage is:
 #. Results
 #. [pages.ResultList.title]
@@ -6549,6 +6594,13 @@ msgid ""
 "{name}} other {# {name}s} }"
 msgstr ""
 
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr ""
+
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -6635,6 +6687,13 @@ msgstr ""
 #. Sites
 #: extracted_strings.json
 msgid "Sites"
+msgstr ""
+
+#. [pages.ResultList.assaySmear]
+#. defaultMessage is:
+#. Smear
+#: extracted_strings.json
+msgid "Smear"
 msgstr ""
 
 #. [forms.formItem.startDate]
@@ -6793,6 +6852,13 @@ msgstr ""
 #. TB G&D
 #: extracted_strings.json
 msgid "TB G&D"
+msgstr ""
+
+#. [pages.ResultList.assayTbLamp]
+#. defaultMessage is:
+#. TB LAMP
+#: extracted_strings.json
+msgid "TB LAMP"
 msgstr ""
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
@@ -7745,6 +7811,9 @@ msgstr ""
 #. [pages.RouterDetail.update]
 #. defaultMessage is:
 #. Update
+#. [pages.SiteDetail.actionUpdate]
+#. defaultMessage is:
+#. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
 #. defaultMessage is:
 #. Update
@@ -8444,13 +8513,6 @@ msgstr ""
 #. report name includes "{reportName}"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
-msgstr ""
-
-#. [browsePage.browseDropdown.results]
-#. defaultMessage is:
-#. results
-#: extracted_strings.json
-msgid "results"
 msgstr ""
 
 #. [filter.btnGroup.withRevoked]
