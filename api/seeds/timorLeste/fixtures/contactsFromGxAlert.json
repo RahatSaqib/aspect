@@ -291,7 +291,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr Debashish Kundu",

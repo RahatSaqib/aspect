@@ -6,7 +6,7 @@
     "stateName": "Dili",
     "lgaName": "Cristo Rei",
     "name": "National Health Laboratory",
-    "shortname": "NHL",
+    "shortName": "NHL",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -24,7 +24,7 @@
     "stateName": "Liquiçá",
     "lgaName": "Bazartete",
     "name": "Klibur Domin",
-    "shortname": "Klibur Domin",
+    "shortName": "Klibur Domin",
     "timeZoneId": "Korea Standard Time"
   },
   {
@@ -32,19 +32,19 @@
     "stateName": "Bobonaro",
     "lgaName": "Maliana",
     "name": "IOM GeneXpert",
-    "shortname": "IOM GeneXpert",
+    "shortName": "IOM GeneXpert",
     "timeZoneId": "Tokyo Standard Time"
   },
   {
     "externalId": "HOREX_GeneXper",
     "name": "HOREX_GeneXper",
-    "shortname": "HOREX_GeneXper",
+    "shortName": "HOREX_GeneXper",
     "timeZoneId": "Tokyo Standard Time"
   },
   {
     "externalId": "HR Maubisse",
     "name": "HR Maubisse",
-    "shortname": "HR Maubisse",
+    "shortName": "HR Maubisse",
     "timeZoneId": "Tokyo Standard Time"
   },
   {
@@ -52,7 +52,7 @@
     "stateName": "Liquiçá",
     "lgaName": "Bazartete",
     "name": "Klibur Domin",
-    "shortname": "Klibur Domin",
+    "shortName": "Klibur Domin",
     "timeZoneId": "Eastern Standard Time"
   },
   {
@@ -60,7 +60,7 @@
     "stateName": "Dili",
     "lgaName": "Cristo Rei",
     "name": "HNGV GX 4",
-    "shortname": "HNGV GX 4",
+    "shortName": "HNGV GX 4",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -78,7 +78,7 @@
     "stateName": "Dili",
     "lgaName": "Cristo Rei",
     "name": "National Tuberculosis Reference Laboratory",
-    "shortname": "NTRL GX 16",
+    "shortName": "NTRL GX 16",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -98,7 +98,7 @@
     "stateName": "Baucau",
     "lgaName": "Baucau",
     "name": "Hospital Eduardo Ximenes - Baucau",
-    "shortname": "HoREX-GX4 ",
+    "shortName": "HoREX-GX4 ",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -116,7 +116,7 @@
     "stateName": "Dili",
     "lgaName": "Cristo Rei",
     "name": "National Healht Laboratory GX16 ",
-    "shortname": "NHL GX16",
+    "shortName": "NHL GX16",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -134,7 +134,7 @@
     "stateName": "Cova Lima",
     "lgaName": "Suai",
     "name": "Hospital Referencia Suai",
-    "shortname": "HRS",
+    "shortName": "HRS",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -154,7 +154,7 @@
     "stateName": "Ainaro",
     "lgaName": "Maubisse",
     "name": "Hospital Referal Maubessi",
-    "shortname": "HR Maubessi",
+    "shortName": "HR Maubessi",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -172,7 +172,7 @@
     "stateName": "Viqueque",
     "lgaName": "Viqueque",
     "name": "Centro Saude Internamento Viqueque",
-    "shortname": "C.S.I Viqueque",
+    "shortName": "C.S.I Viqueque",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -192,7 +192,7 @@
     "stateName": "Ermera",
     "lgaName": "Ermera",
     "name": "Centro Saude Gleno",
-    "shortname": "C.S. Gleno",
+    "shortName": "C.S. Gleno",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -210,7 +210,7 @@
     "stateName": "Oecusse",
     "lgaName": "Pante Macassar",
     "name": "Hospital Referencia RAEOA",
-    "shortname": "HRO",
+    "shortName": "HRO",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
@@ -228,7 +228,7 @@
     "stateName": "Bobonaro",
     "lgaName": "Maliana",
     "name": "Hospital Referencia Maliana",
-    "shortname": "HRMAL",
+    "shortName": "HRMAL",
     "timeZoneId": "Tokyo Standard Time",
     "devices": [
       {
