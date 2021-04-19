@@ -813,175 +813,138 @@ describe('Device API routes for GxConnect Devices', () => {
     afterEach(context.afterCleanUp)
 
     it('should append a new result with the correct result categories', async () => {
+      // Define assertions
+      const getAssertionItem = (
+        assayExternalId,
+        resultText,
+        resultCategory1ExternalId,
+        resultCategory2ExternalId
+      ) => ({
+        assayExternalId,
+        resultText,
+        resultCategory1ExternalId,
+        resultCategory2ExternalId,
+      })
       const assertions = [
         // GxMtbRif
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB DETECTED',
-          resultCategory1ExternalId: 'Detected',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB DETECTED | DETECTED',
-          resultCategory1ExternalId: 'Detected',
-          resultCategory2ExternalId: 'Detected',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB DETECTED | NOT DETECTED',
-          resultCategory1ExternalId: 'Detected',
-          resultCategory2ExternalId: 'NotDetected',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB DETECTED | ERROR',
-          resultCategory1ExternalId: 'Detected',
-          resultCategory2ExternalId: 'Error',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB NOT DETECTED',
-          resultCategory1ExternalId: 'NotDetected',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB INDETERMINATE',
-          resultCategory1ExternalId: 'Indeterminate',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB INVALID',
-          resultCategory1ExternalId: 'Invalid',
-          resultCategory2ExternalId: 'Invalid',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB NO RESULT',
-          resultCategory1ExternalId: 'NoResult',
-          resultCategory2ExternalId: 'NoResult',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB ERROR',
-          resultCategory1ExternalId: 'Error',
-          resultCategory2ExternalId: 'Error',
-        },
-        {
-          assayExternalId: 'GxMtbRif',
-          resultText: 'MTB ERROR | ERROR',
-          resultCategory1ExternalId: 'Error',
-          resultCategory2ExternalId: 'Error',
-        },
+        getAssertionItem('GxMtbRif', 'MTB DETECTED', 'Detected', null),
+        getAssertionItem(
+          'GxMtbRif',
+          'MTB DETECTED | DETECTED',
+          'Detected',
+          'Detected'
+        ),
+        getAssertionItem(
+          'GxMtbRif',
+          'MTB DETECTED | NOT DETECTED',
+          'Detected',
+          'NotDetected'
+        ),
+        getAssertionItem(
+          'GxMtbRif',
+          'MTB DETECTED | ERROR',
+          'Detected',
+          'Error'
+        ),
+        getAssertionItem('GxMtbRif', 'MTB NOT DETECTED', 'NotDetected', null),
+        getAssertionItem(
+          'GxMtbRif',
+          'MTB INDETERMINATE',
+          'Indeterminate',
+          null
+        ),
+        getAssertionItem('GxMtbRif', 'MTB INVALID', 'Invalid', 'Invalid'),
+        getAssertionItem('GxMtbRif', 'MTB NO RESULT', 'NoResult', 'NoResult'),
+        getAssertionItem('GxMtbRif', 'MTB ERROR', 'Error', 'Error'),
+        getAssertionItem('GxMtbRif', 'MTB ERROR | ERROR', 'Error', 'Error'),
         // GxMtbRifUltra
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB DETECTED',
-          resultCategory1ExternalId: 'Detected',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB DETECTED | DETECTED',
-          resultCategory1ExternalId: 'Detected',
-          resultCategory2ExternalId: 'Detected',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB DETECTED | NOT DETECTED',
-          resultCategory1ExternalId: 'Detected',
-          resultCategory2ExternalId: 'NotDetected',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB DETECTED | ERROR',
-          resultCategory1ExternalId: 'Detected',
-          resultCategory2ExternalId: 'Error',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB NOT DETECTED',
-          resultCategory1ExternalId: 'NotDetected',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB INDETERMINATE',
-          resultCategory1ExternalId: 'Indeterminate',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB INVALID',
-          resultCategory1ExternalId: 'Invalid',
-          resultCategory2ExternalId: 'Invalid',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB NO RESULT',
-          resultCategory1ExternalId: 'NoResult',
-          resultCategory2ExternalId: 'NoResult',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB ERROR',
-          resultCategory1ExternalId: 'Error',
-          resultCategory2ExternalId: 'Error',
-        },
-        {
-          assayExternalId: 'GxMtbRifUltra',
-          resultText: 'MTB ERROR | ERROR',
-          resultCategory1ExternalId: 'Error',
-          resultCategory2ExternalId: 'Error',
-        },
+        getAssertionItem('GxMtbRifUltra', 'MTB DETECTED', 'Detected', null),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB DETECTED | DETECTED',
+          'Detected',
+          'Detected'
+        ),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB DETECTED | NOT DETECTED',
+          'Detected',
+          'NotDetected'
+        ),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB DETECTED | ERROR',
+          'Detected',
+          'Error'
+        ),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB NOT DETECTED',
+          'NotDetected',
+          null
+        ),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB INDETERMINATE',
+          'Indeterminate',
+          null
+        ),
+        getAssertionItem('GxMtbRifUltra', 'MTB INVALID', 'Invalid', 'Invalid'),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB NO RESULT',
+          'NoResult',
+          'NoResult'
+        ),
+        getAssertionItem('GxMtbRifUltra', 'MTB ERROR', 'Error', 'Error'),
+        getAssertionItem(
+          'GxMtbRifUltra',
+          'MTB ERROR | ERROR',
+          'Error',
+          'Error'
+        ),
         // GxHiv1Qual
-        {
-          assayExternalId: 'GxHiv1Qual',
-          resultText: 'HIV-1 NOT DETECTED',
-          resultCategory1ExternalId: 'NotDetected',
-        },
-        {
-          assayExternalId: 'GxHiv1Qual',
-          resultText: 'HIV-1 DETECTED',
-          resultCategory1ExternalId: 'Detected',
-        },
-        {
-          assayExternalId: 'GxHiv1Qual',
-          resultText: 'HIV-1 NO RESULT',
-          resultCategory1ExternalId: 'NoResult',
-        },
-        {
-          assayExternalId: 'GxHiv1Qual',
-          resultText: 'HIV-1 ERROR',
-          resultCategory1ExternalId: 'Error',
-        },
-        {
-          assayExternalId: 'GxHiv1Qual',
-          resultText: 'HIV-1 INVALID',
-          resultCategory1ExternalId: 'Invalid',
-        },
+        getAssertionItem(
+          'GxHiv1Qual',
+          'HIV-1 NOT DETECTED',
+          'NotDetected',
+          null
+        ),
+        getAssertionItem('GxHiv1Qual', 'HIV-1 DETECTED', 'Detected', null),
+        getAssertionItem('GxHiv1Qual', 'HIV-1 NO RESULT', 'NoResult', null),
+        getAssertionItem('GxHiv1Qual', 'HIV-1 ERROR', 'Error', null),
+        getAssertionItem('GxHiv1Qual', 'HIV-1 INVALID', 'Invalid', null),
         // assayGXCovid19
-        {
-          assayExternalId: 'assayGXCovid19',
-          resultText: 'SARS-CoV-2 UNKNOWN',
-          resultCategory1ExternalId: 'Unknown',
-        },
-        {
-          assayExternalId: 'assayGXCovid19',
-          resultText: 'SARS-CoV-2 NEGATIVE',
-          resultCategory1ExternalId: 'Negative',
-        },
-        {
-          assayExternalId: 'assayGXCovid19',
-          resultText: 'SARS-CoV-2 INCONCLUSIVE',
-          resultCategory1ExternalId: 'Inconclusive',
-        },
-        {
-          assayExternalId: 'assayGXCovid19',
-          resultText: 'SARS-CoV-2 POSITIVE',
-          resultCategory1ExternalId: 'Positive',
-        },
-        {
-          assayExternalId: 'assayGXCovid19',
-          resultText: 'SARS-CoV-2 PRESUMPTIVE POSITIVE',
-          resultCategory1ExternalId: 'PresumptivePositive',
-        },
+        getAssertionItem(
+          'assayGXCovid19',
+          'SARS-CoV-2 UNKNOWN',
+          'Unknown',
+          null
+        ),
+        getAssertionItem(
+          'assayGXCovid19',
+          'SARS-CoV-2 NEGATIVE',
+          'Negative',
+          null
+        ),
+        getAssertionItem(
+          'assayGXCovid19',
+          'SARS-CoV-2 INCONCLUSIVE',
+          'Inconclusive',
+          null
+        ),
+        getAssertionItem(
+          'assayGXCovid19',
+          'SARS-CoV-2 POSITIVE',
+          'Positive',
+          null
+        ),
+        getAssertionItem(
+          'assayGXCovid19',
+          'SARS-CoV-2 PRESUMPTIVE POSITIVE',
+          'PresumptivePositive',
+          null
+        ),
       ]
 
       const { deviceAuth, device } = context
