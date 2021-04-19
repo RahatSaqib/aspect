@@ -10,10 +10,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Joao Ximenes",
@@ -27,10 +24,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Endang Soares da Silva",
@@ -43,10 +37,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Ian Marr",
@@ -58,10 +49,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Lourenco da Costa Ico",
@@ -76,10 +64,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Lourenco da Costa Ico",
@@ -93,10 +78,7 @@
     "hidePatientId": true,
     "hideSampleId": true,
     "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Ismael Barreto",
@@ -295,10 +277,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "NHL Adminitrator",
@@ -313,9 +292,6 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
   },
   {
     "personName": "Dr Debashish Kundu",
@@ -327,10 +303,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Helder Maria Pereira",
@@ -345,10 +318,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Recardina Fernandes",
@@ -382,10 +352,7 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Antonio Salles",
@@ -397,9 +364,6 @@
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {}
-    ]
+    "getPasswordFromGxAlert": true
   }
 ]
