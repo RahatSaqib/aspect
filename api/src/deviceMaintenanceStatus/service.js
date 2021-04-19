@@ -207,7 +207,8 @@ async function deviceStatusOverTime(request) {
 }
 
 async function deviceStatusLastReported(request) {
-  const { auth } = request
+  const { auth, query } = request
+  const { excludeNotLocalizableDevices } = query
   const dataConstraints = await getConstraints(auth.credentials)
 
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
@@ -252,6 +253,11 @@ async function deviceStatusLastReported(request) {
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
+    .modify(query => {
+      if (excludeNotLocalizableDevices) {
+        query.whereNotNull('s.longitude').whereNotNull('s.latitude')
+      }
+    })
     .select([
       'd.id as deviceId',
       'd.name',
