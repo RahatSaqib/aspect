@@ -931,10 +931,11 @@ async function setDeviceMaintenanceStatus(
     createdOn: new Date(),
     createdBy: userId,
   })
-  const context = messageContext.bindActionCreators({
-    deviceMaintenanceStatusLogged,
-  })
-  context.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
+  if (!messageContext.deviceMaintenanceStatusLogged)
+    messageContext.bindActionCreators({
+      deviceMaintenanceStatusLogged,
+    })
+  messageContext.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
   return deviceMaintenanceStatusLogId
 }
 
