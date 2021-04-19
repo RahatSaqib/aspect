@@ -26,17 +26,14 @@ const getDaysWithNoRuns = async (knex, taskName, daysRange = 30) => {
       .distinct('processingDate')
       .where({ success: true })
       .pluck('processingDate')) || []
-  console.log('executedDates', executedDates)
   const days = _.map(_.range(daysRange), day =>
     startOfDayUtc(subDays(new Date(), day))
   )
-  console.log('days', days)
   const daysToRun = _.differenceWith(
     days,
     executedDates,
     (elem1, elem2) => elem1.toISOString() === elem2.toISOString()
   )
-  console.log('daysToRun', daysToRun)
   return daysToRun
 }
 

@@ -1581,7 +1581,6 @@ async function onDeviceMaintenanceStatusLogScheduled(
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    console.log('dayto execute', action.today, today)
     const devicesWithNoMaintenanceLogForTheDay = await getDevicesWithNoMaintenanceLogForTheDay(
       knex,
       today
