@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const { parseISO, subDays } = require('date-fns')
 const _ = require('lodash')
 const { startOfTodayUtc, startOfDayUtc } = require('../shared/date')
+const logger = require('../shared/logger')
 
 const getCustomToday = today => {
   if (today) {
@@ -29,11 +30,17 @@ const getDaysWithNoRuns = async (knex, taskName, daysRange = 30) => {
   const days = _.map(_.range(daysRange), day =>
     startOfDayUtc(subDays(new Date(), day))
   )
+  logger.debug(`Executed dates: ${executedDates}`, {
+    reLabel: 'taskTracker:getDaysWithNoRuns',
+  })
   const daysToRun = _.differenceWith(
     days,
     executedDates,
     (elem1, elem2) => elem1.toISOString() === elem2.toISOString()
   )
+  logger.debug(`Days to run task: ${daysToRun}`, {
+    reLabel: 'taskTracker:getDaysWithNoRuns',
+  })
   return daysToRun
 }
 
@@ -63,7 +70,12 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             processingDate: getCustomToday(today),
             startDate: new Date(),
           })
-
+          logger.debug(
+            `Execute Taks ${schedulerMethod.name} for dates ${getCustomToday(
+              today
+            )}`,
+            { reLabel: 'taskTracker' }
+          )
           await schedulerMethod(
             { ...action, today: today.toISOString() },
             { messageContext }
@@ -84,6 +96,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
         }
       })
     } catch (ex) {
+      logger.error(ex, { reLabel: 'taskTracker' })
       await knex('JobExecutionLog').insert({
         taskName: schedulerMethod.name,
         endDate: new Date(),
