@@ -965,7 +965,7 @@ describe('Device API routes for GxConnect Devices', () => {
             _.merge(
               {},
               basicDevicePayload,
-              { name: deviceName + Math.random() * 1000 },
+              { name: `${deviceName}${Math.random() * 1000}` },
               basicResultPayload,
               {
                 result: {
