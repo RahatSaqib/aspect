@@ -812,50 +812,188 @@ describe('Device API routes for GxConnect Devices', () => {
     const { runTest, getLastResult, basicDevicePayload } = context
     afterEach(context.afterCleanUp)
 
-    it('should append a new result with the correct result categories', async () =>
-    {
+    it('should append a new result with the correct result categories', async () => {
       const assertions = [
         // GxMtbRif
-        { assayExternalId: 'GxMtbRif', resultText: "MTB DETECTED", resultCategory1ExternalId: "Detected" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB DETECTED | DETECTED", resultCategory1ExternalId: "Detected", resultCategory2ExternalId: "Detected" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB DETECTED | NOT DETECTED", resultCategory1ExternalId: "Detected", resultCategory2ExternalId: "NotDetected" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB DETECTED | ERROR", resultCategory1ExternalId: "Detected", resultCategory2ExternalId: "Error" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB NOT DETECTED", resultCategory1ExternalId: "NotDetected" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB INDETERMINATE", resultCategory1ExternalId: "Indeterminate" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB INVALID", resultCategory1ExternalId: "Invalid", resultCategory2ExternalId: "Invalid" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB NO RESULT", resultCategory1ExternalId: "NoResult", resultCategory2ExternalId: "NoResult" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB ERROR", resultCategory1ExternalId: "Error", resultCategory2ExternalId: "Error" },
-        { assayExternalId: 'GxMtbRif', resultText: "MTB ERROR | ERROR", resultCategory1ExternalId: "Error", resultCategory2ExternalId: "Error" },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB DETECTED',
+          resultCategory1ExternalId: 'Detected',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB DETECTED | DETECTED',
+          resultCategory1ExternalId: 'Detected',
+          resultCategory2ExternalId: 'Detected',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB DETECTED | NOT DETECTED',
+          resultCategory1ExternalId: 'Detected',
+          resultCategory2ExternalId: 'NotDetected',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB DETECTED | ERROR',
+          resultCategory1ExternalId: 'Detected',
+          resultCategory2ExternalId: 'Error',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB NOT DETECTED',
+          resultCategory1ExternalId: 'NotDetected',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB INDETERMINATE',
+          resultCategory1ExternalId: 'Indeterminate',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB INVALID',
+          resultCategory1ExternalId: 'Invalid',
+          resultCategory2ExternalId: 'Invalid',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB NO RESULT',
+          resultCategory1ExternalId: 'NoResult',
+          resultCategory2ExternalId: 'NoResult',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB ERROR',
+          resultCategory1ExternalId: 'Error',
+          resultCategory2ExternalId: 'Error',
+        },
+        {
+          assayExternalId: 'GxMtbRif',
+          resultText: 'MTB ERROR | ERROR',
+          resultCategory1ExternalId: 'Error',
+          resultCategory2ExternalId: 'Error',
+        },
         // GxMtbRifUltra
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB DETECTED", resultCategory1ExternalId: "Detected" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB DETECTED | DETECTED", resultCategory1ExternalId: "Detected", resultCategory2ExternalId: "Detected" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB DETECTED | NOT DETECTED", resultCategory1ExternalId: "Detected", resultCategory2ExternalId: "NotDetected" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB DETECTED | ERROR", resultCategory1ExternalId: "Detected", resultCategory2ExternalId: "Error" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB NOT DETECTED", resultCategory1ExternalId: "NotDetected" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB INDETERMINATE", resultCategory1ExternalId: "Indeterminate" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB INVALID", resultCategory1ExternalId: "Invalid", resultCategory2ExternalId: "Invalid" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB NO RESULT", resultCategory1ExternalId: "NoResult", resultCategory2ExternalId: "NoResult" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB ERROR", resultCategory1ExternalId: "Error", resultCategory2ExternalId: "Error" },
-        { assayExternalId: 'GxMtbRifUltra', resultText: "MTB ERROR | ERROR", resultCategory1ExternalId: "Error", resultCategory2ExternalId: "Error" },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB DETECTED',
+          resultCategory1ExternalId: 'Detected',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB DETECTED | DETECTED',
+          resultCategory1ExternalId: 'Detected',
+          resultCategory2ExternalId: 'Detected',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB DETECTED | NOT DETECTED',
+          resultCategory1ExternalId: 'Detected',
+          resultCategory2ExternalId: 'NotDetected',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB DETECTED | ERROR',
+          resultCategory1ExternalId: 'Detected',
+          resultCategory2ExternalId: 'Error',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB NOT DETECTED',
+          resultCategory1ExternalId: 'NotDetected',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB INDETERMINATE',
+          resultCategory1ExternalId: 'Indeterminate',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB INVALID',
+          resultCategory1ExternalId: 'Invalid',
+          resultCategory2ExternalId: 'Invalid',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB NO RESULT',
+          resultCategory1ExternalId: 'NoResult',
+          resultCategory2ExternalId: 'NoResult',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB ERROR',
+          resultCategory1ExternalId: 'Error',
+          resultCategory2ExternalId: 'Error',
+        },
+        {
+          assayExternalId: 'GxMtbRifUltra',
+          resultText: 'MTB ERROR | ERROR',
+          resultCategory1ExternalId: 'Error',
+          resultCategory2ExternalId: 'Error',
+        },
         // GxHiv1Qual
-        { assayExternalId: 'GxHiv1Qual', resultText: "HIV-1 NOT DETECTED", resultCategory1ExternalId: "NotDetected" },
-        { assayExternalId: 'GxHiv1Qual', resultText: "HIV-1 DETECTED", resultCategory1ExternalId: "Detected" },
-        { assayExternalId: 'GxHiv1Qual', resultText: "HIV-1 NO RESULT", resultCategory1ExternalId: "NoResult" },
-        { assayExternalId: 'GxHiv1Qual', resultText: "HIV-1 ERROR", resultCategory1ExternalId: "Error" },
-        { assayExternalId: 'GxHiv1Qual', resultText: "HIV-1 INVALID", resultCategory1ExternalId: "Invalid" },
+        {
+          assayExternalId: 'GxHiv1Qual',
+          resultText: 'HIV-1 NOT DETECTED',
+          resultCategory1ExternalId: 'NotDetected',
+        },
+        {
+          assayExternalId: 'GxHiv1Qual',
+          resultText: 'HIV-1 DETECTED',
+          resultCategory1ExternalId: 'Detected',
+        },
+        {
+          assayExternalId: 'GxHiv1Qual',
+          resultText: 'HIV-1 NO RESULT',
+          resultCategory1ExternalId: 'NoResult',
+        },
+        {
+          assayExternalId: 'GxHiv1Qual',
+          resultText: 'HIV-1 ERROR',
+          resultCategory1ExternalId: 'Error',
+        },
+        {
+          assayExternalId: 'GxHiv1Qual',
+          resultText: 'HIV-1 INVALID',
+          resultCategory1ExternalId: 'Invalid',
+        },
         // assayGXCovid19
-        { assayExternalId: 'assayGXCovid19', resultText: "SARS-CoV-2 UNKNOWN", resultCategory1ExternalId: "Unknown" },
-        { assayExternalId: 'assayGXCovid19', resultText: "SARS-CoV-2 NEGATIVE", resultCategory1ExternalId: "Negative" },
-        { assayExternalId: 'assayGXCovid19', resultText: "SARS-CoV-2 INCONCLUSIVE", resultCategory1ExternalId: "Inconclusive" },
-        { assayExternalId: 'assayGXCovid19', resultText: "SARS-CoV-2 POSITIVE", resultCategory1ExternalId: "Positive" },
-        { assayExternalId: 'assayGXCovid19', resultText: "SARS-CoV-2 PRESUMPTIVE POSITIVE", resultCategory1ExternalId: "PresumptivePositive" }
+        {
+          assayExternalId: 'assayGXCovid19',
+          resultText: 'SARS-CoV-2 UNKNOWN',
+          resultCategory1ExternalId: 'Unknown',
+        },
+        {
+          assayExternalId: 'assayGXCovid19',
+          resultText: 'SARS-CoV-2 NEGATIVE',
+          resultCategory1ExternalId: 'Negative',
+        },
+        {
+          assayExternalId: 'assayGXCovid19',
+          resultText: 'SARS-CoV-2 INCONCLUSIVE',
+          resultCategory1ExternalId: 'Inconclusive',
+        },
+        {
+          assayExternalId: 'assayGXCovid19',
+          resultText: 'SARS-CoV-2 POSITIVE',
+          resultCategory1ExternalId: 'Positive',
+        },
+        {
+          assayExternalId: 'assayGXCovid19',
+          resultText: 'SARS-CoV-2 PRESUMPTIVE POSITIVE',
+          resultCategory1ExternalId: 'PresumptivePositive',
+        },
       ]
 
       const { deviceAuth, device } = context
 
-      for (const assertion of assertions) {
-        const { resultText, resultCategory1ExternalId, resultCategory2ExternalId, assayExternalId } = assertion
-        
+      await Promise.each(assertions, async assertion => {
+        const {
+          resultText,
+          resultCategory1ExternalId,
+          resultCategory2ExternalId,
+          assayExternalId,
+        } = assertion
+
         // Send a new result
         await server
           .post('/device')
@@ -869,39 +1007,51 @@ describe('Device API routes for GxConnect Devices', () => {
               {
                 result: {
                   id: `new result ${Math.floor(Math.random() * 1000)}`,
-                  startedOn: subDays(new Date(), Math.floor(Math.random() * 100)),
+                  startedOn: subDays(
+                    new Date(),
+                    Math.floor(Math.random() * 100)
+                  ),
                   data: { resultText },
                   assay: { id: assayExternalId },
                   sample: {
                     id: `new sample ${Math.floor(Math.random() * 1000)}`,
                   },
                   instrument: {
-                    serial: `new instrument ${Math.floor(Math.random() * 1000)}`,
+                    serial: `new instrument ${Math.floor(
+                      Math.random() * 1000
+                    )}`,
                   },
                 },
               }
             )
           )
         await waitForIdle()
-        
-        const lastResultId = await getLastResultId(knex, device.id)
-        const { resultCategory1, resultCategory2, assayId } = await knex('Result').where('id', lastResultId).first()
 
-        const expectedResultCategory1Id = await resultCategoryToId(resultCategory1ExternalId)
-        const expectedResultCategory2Id = (await resultCategoryToId(resultCategory2ExternalId)) || null
+        const lastResultId = await getLastResultId(knex, device.id)
+        const { resultCategory1, resultCategory2, assayId } = await knex(
+          'Result'
+        )
+          .where('id', lastResultId)
+          .first()
+
+        const expectedResultCategory1Id = await resultCategoryToId(
+          resultCategory1ExternalId
+        )
+        const expectedResultCategory2Id =
+          (await resultCategoryToId(resultCategory2ExternalId)) || null
         const expectedAssayId = await assayToId(assayExternalId)
         const expected = {
           resultCategory1Id: expectedResultCategory1Id,
           resultCategory2Id: expectedResultCategory2Id,
-          assayId: expectedAssayId
+          assayId: expectedAssayId,
         }
         const actual = {
           resultCategory1Id: resultCategory1,
           resultCategory2Id: resultCategory2,
-          assayId
+          assayId,
         }
         assert.deepEqual(expected, actual)
-      }
+      })
     })
 
     it('should reject a result without a start or end date date', () =>

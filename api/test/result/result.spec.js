@@ -11,7 +11,6 @@ const {
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
-const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
 const {
   createTestContext,
