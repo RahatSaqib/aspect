@@ -1,5 +1,4 @@
 const chai = require('chai')
-const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
