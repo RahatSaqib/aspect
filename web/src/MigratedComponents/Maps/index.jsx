@@ -24,7 +24,7 @@ const AspectMap = ({
 }) => {
   const { data } = markersConfig
 
-  const filteredData = data?.filter(d => !isNil(d.lat) && !isNil(d.lng))
+  const filteredData = data?.filter(({ lat, lng })=> !isNil(lat) && !isNil(lng))
 
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds()
