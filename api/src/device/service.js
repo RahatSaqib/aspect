@@ -176,7 +176,11 @@ async function getListDevices(query, auth) {
               'issue.issueStatusId',
               'issueStatus.id'
             )
-            .whereNotIn('issueStatus.externalId', ['Inactive', 'Resolved'])
+            .whereNotIn('issueStatus.externalId', [
+              'Inactive',
+              'Ok',
+              'Resolved',
+            ])
       }
     })
     .modify(filterParams, query, {
@@ -264,7 +268,6 @@ async function getListDevices(query, auth) {
         .as('activeDays'),
     ])
     .distinct()
-
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 

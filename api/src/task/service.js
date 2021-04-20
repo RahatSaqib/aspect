@@ -7,8 +7,8 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 setupPaginator(knex)
 
 const RESOLVED_ISSUE_STATUS = 'Resolved'
+const INACTIVE_ISSUE_STATUS = 'Inactive'
 const OK_ISSUE_STATUS = 'Ok'
-
 async function baseAlertMessagesQuery(request, query, queryBuilder) {
   const loggedUserName = request.auth.credentials.name
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
@@ -16,9 +16,10 @@ async function baseAlertMessagesQuery(request, query, queryBuilder) {
   const dataConstraints = await getConstraints(request.auth.credentials)
   const result = await knex('AlertMessage as am')
     .join('Notification as notif', 'am.id', 'notif.alertMessageId')
-    .join('Site as site', 'am.siteId', 'site.id')
-    .leftJoin('Device as d', 'am.deviceId', 'd.id')
-    .leftJoin('Issue as i', 'notif.issueId', 'i.id')
+    .join('Issue as i', 'notif.issueId', 'i.id')
+    .join('Site as site', 'i.siteId', 'site.id')
+    .leftJoin('Device as d', 'i.deviceId', 'd.id')
+
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
@@ -37,7 +38,11 @@ async function baseAlertMessagesQuery(request, query, queryBuilder) {
 
       return builder
         .where('am.personId', accountDetails.id)
-        .whereNotIn('is.externalid', [RESOLVED_ISSUE_STATUS, OK_ISSUE_STATUS])
+        .whereNotIn('is.externalid', [
+          RESOLVED_ISSUE_STATUS,
+          INACTIVE_ISSUE_STATUS,
+          OK_ISSUE_STATUS,
+        ])
     })
     .modify(addConstraints, dataConstraints, { device: 'd', site: 'site' })
     .modify(queryBuilder)
@@ -116,7 +121,6 @@ async function listTasks(request) {
         )
     }
   )
-
   const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
   return result
 }
