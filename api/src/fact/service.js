@@ -158,16 +158,14 @@ async function onFactGenerateResultCounts(action, context) {
   })
   return messageContext.run(async knex => {
     // TODO do we really need to generate result counts for every device every hour?
-    await knex('Device as d')
+    const items = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-      .then(items =>
-        items.map(({ deviceId }) =>
-          messageContext.factGenerateResultCounts(deviceId)
-        )
-      )
+    await Promise.each(items, async ({ deviceId }) =>
+      messageContext.factGenerateResultCounts(deviceId)
+    )
   })
 }
 
