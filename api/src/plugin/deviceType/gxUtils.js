@@ -979,6 +979,7 @@ function getResultCategories(payload) {
           'NoResult',
           'Success',
         ].includes(result1) && ['GxMtbRif', 'GxMtbRifUltra'].includes(assayId)
+        || ['Detected', 'NotDetected', 'NoResult'].includes(result1) && assayId === 'GxEbola'
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
