@@ -57,27 +57,31 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
   return messageContext.run(async knex => {
     try {
       const { dailyRun, today = new Date() } = action
+
       let daysToRun = [today]
+
       // If this task is daily basis it will complete the range of dates
       // we want to run the task.
       if (dailyRun)
         daysToRun = await getDaysWithNoRuns(knex, schedulerMethod.name)
-      await Promise.each(daysToRun, async today => {
+      console.log(action, today, daysToRun, getCustomToday(today))
+      await Promise.each(daysToRun, async day => {
+        console.log('customToday', getCustomToday(day))
         let jobExecutionId
         try {
           ;[jobExecutionId] = await knex('JobExecutionLog').insert({
             taskName: schedulerMethod.name,
-            processingDate: getCustomToday(today),
+            processingDate: getCustomToday(day),
             startDate: new Date(),
           })
           logger.debug(
             `Execute Taks ${schedulerMethod.name} for dates ${getCustomToday(
-              today
+              day
             )}`,
             { reLabel: 'taskTracker' }
           )
           await schedulerMethod(
-            { ...action, today: today.toISOString() },
+            { ...action, today: day.toISOString() },
             { messageContext }
           )
           await knex('JobExecutionLog')

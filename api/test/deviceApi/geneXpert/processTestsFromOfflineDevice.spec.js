@@ -26,7 +26,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Backward update db after getting tests from offline device', () => {
+describe.only('Backward update db after getting tests from offline device', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -51,7 +51,7 @@ describe('Backward update db after getting tests from offline device', () => {
           })
       })
       .where('dmsl.deviceId', deviceId)
-      .where('dmsl.day', '>=', minDate)
+      .where('dmsl.day', '>=', knex.raw('Date(?)', [minDate]))
       .whereNull('dmsl2.id')
       .select('dmsl.*')
 
@@ -83,7 +83,6 @@ describe('Backward update db after getting tests from offline device', () => {
     })
     assert.equal(response.statusCode, 200)
     const { id: deviceId, partnerId } = response.body.device
-
     // wait a bit until all MQ jobs are finished after creating a new device
     await waitForIdle()
 
@@ -109,6 +108,7 @@ describe('Backward update db after getting tests from offline device', () => {
     expect(maxDaysDeviceNoResults).to.be.above(maxDaysDeviceOffline)
     const deviceOfflineDate = subDays(now, maxDaysDeviceOffline + 1)
     const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults + 1)
+    console.log('deviceNoResultsDate', deviceNoResultsDate)
     // set device that it has been pinged or received results corresponding # days ago
     await knex('Device as d').where('d.id', deviceId).update({
       createdOn: deviceNoResultsDate,
@@ -144,26 +144,28 @@ describe('Backward update db after getting tests from offline device', () => {
     const deviceMaintenanceStatusToId = await allDeviceMaintenanceStatusToId()
     const minDate = deviceOfflineDate
     const maxDate = now
+    console.log(minDate, maxDate)
     const days = []
     for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
-      days.push(new Date(`${format(day, 'yyyy-MM-dd')}T00:00:00.000Z`))
+      days.push(`${format(day, 'yyyy-MM-dd')}T00:00:00.000Z`)
     }
-
+    console.log('days', days)
     /**
      * 4.1. set Offline status in DeviceMaintenanceStatusLog for all related days for this deviceId.
      * Notice that we dispatch in MQ same action 'logDeviceMaintenanceStatus' as in `api/src/scheduler.js`,
      * but pass there a day which is treated as 'today' to process past date.
      */
-    await Promise.each(days, async day =>
+    await Promise.each(days, day =>
       dispatchAndWaitForAction(logDeviceMaintenanceStatus(day))
     )
-
+    await waitForIdle()
     /**
      * 4.2. check that all processed days should be set to `inactiveUnknown` because
      * func onDeviceMaintenanceStatusLogScheduled (see in api/src/device/service.js)
      * uses status 'inactiveNoResultsReported' for days without results (and when current
      * device doesn't have deviceMaintenanceStatusLogId field defined)
      */
+    console.log('deviceId', deviceId)
     let logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
       expect(log.deviceMaintenanceStatusId).to.be.equal(
@@ -180,6 +182,7 @@ describe('Backward update db after getting tests from offline device', () => {
       deviceMaintenanceStatusToId.inactiveOutOfInventory,
       deviceMaintenanceStatusToId.inactiveDownForRepair,
     ]
+    console.log(logs)
     await Promise.each(
       customStatuses,
       async (deviceMaintenanceStatusId, index) =>
