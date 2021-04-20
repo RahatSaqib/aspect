@@ -11,7 +11,6 @@ const {
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
-const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
 const {
   createTestContext,
@@ -277,88 +276,6 @@ describe('Result routes', () => {
       assert.property(res.body.data.assay, 'resultDataSchema')
       assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
       assert.property(res.body.data, 'files')
-    })
-
-    const assayBdMgitGndAssayExternalId = 'assayBdMgitGnd'
-    const bdmgitGndClinicianUsername = 'mgit_gnd_clinician'
-    const bdmgitGndClinicianPassword = 'mgit-gnd-clinician-pass'
-    let bdmgitGndClinicianUserId
-    let bdmgitGndClinicianAuthAccessToken
-
-    const assayDaktariHivVlExternalId = 'DaktariHivVL'
-    const daktariHivVlClinicianUsername = 'dak_vl_clinician'
-    const daktariHivVlClinicianPassword = 'vl-vl-clinician-pass'
-    let daktariHivVlClinicianUserId
-    let daktariHivVlClinicianAuthAccessToken
-    before(async () => {
-      bdmgitGndClinicianUserId = await createUser(
-        'Partner One',
-        'US',
-        bdmgitGndClinicianUsername,
-        bdmgitGndClinicianPassword,
-        [
-          {
-            jobFunctionExternalId: 'clinician',
-            assayExternalId: assayBdMgitGndAssayExternalId,
-          },
-        ]
-      )
-      bdmgitGndClinicianAuthAccessToken = await getAccessToken(
-        bdmgitGndClinicianUsername,
-        bdmgitGndClinicianPassword
-      )
-
-      daktariHivVlClinicianUserId = await createUser(
-        'Partner One',
-        'US',
-        daktariHivVlClinicianUsername,
-        daktariHivVlClinicianPassword,
-        [
-          {
-            jobFunctionExternalId: 'clinician',
-            assayExternalId: assayDaktariHivVlExternalId,
-          },
-        ]
-      )
-      daktariHivVlClinicianAuthAccessToken = await getAccessToken(
-        daktariHivVlClinicianUsername,
-        daktariHivVlClinicianPassword
-      )
-    })
-
-    after(async () => {
-      removeUser(bdmgitGndClinicianUserId)
-      removeUser(daktariHivVlClinicianUserId)
-    })
-
-    it("should constrain results returned based on the user's job context", async () => {
-      const mgitUserResultsResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${bdmgitGndClinicianAuthAccessToken}`)
-      assert.equal(mgitUserResultsResponse.status, 200)
-      assert.typeOf(mgitUserResultsResponse.body, 'Object')
-      assert.property(mgitUserResultsResponse.body, 'data')
-      assert.typeOf(mgitUserResultsResponse.body.data, 'array')
-      assert.equal(mgitUserResultsResponse.body.data.length, 0)
-      assert.property(mgitUserResultsResponse.body, 'total')
-      assert.typeOf(mgitUserResultsResponse.body.extraColumns, 'array')
-
-      const daktariHivVlUserResultsResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${daktariHivVlClinicianAuthAccessToken}`)
-      assert.equal(daktariHivVlUserResultsResponse.status, 200)
-      assert.typeOf(daktariHivVlUserResultsResponse.body, 'Object')
-      assert.property(daktariHivVlUserResultsResponse.body, 'data')
-      assert.typeOf(daktariHivVlUserResultsResponse.body.data, 'array')
-      assert.isAtLeast(daktariHivVlUserResultsResponse.body.data.length, 5)
-      const { name: daktariHivVlAssayName } = await knex('Assay')
-        .where('externalId', assayDaktariHivVlExternalId)
-        .first()
-      daktariHivVlUserResultsResponse.body.data.forEach(result => {
-        assert.equal(result.assayName, daktariHivVlAssayName)
-      })
-      assert.property(daktariHivVlUserResultsResponse.body, 'total')
-      assert.typeOf(daktariHivVlUserResultsResponse.body.extraColumns, 'array')
     })
   })
 

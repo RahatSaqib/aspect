@@ -250,6 +250,14 @@ async function removeUser(userId) {
   await knex('LicensePerson').whereIn('personId', personIds).del()
   await knex('Person').where({ userId }).del()
   await knex('RefreshToken').where({ userId }).del()
+  await knex('Result').where({ createdBy: userId }).del()
+  await knex('Device').where({ createdBy: userId }).del()
+  const siteIds = await knex('Site')
+    .where('createdBy', userId)
+    .select('id')
+    .pluck('id')
+  await knex('Sample').whereIn('originSiteId', siteIds).del()
+  await knex('Site').where({ createdBy: userId }).del()
   await knex('User').where({ id: userId }).del()
 }
 
