@@ -12,6 +12,7 @@ const {
   isWeekend,
   parseISO,
 } = require('date-fns')
+const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
 const {
@@ -113,7 +114,8 @@ const SELECT_SHOW_FIELDS = [
 async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-
+  const loggedUserName = auth.credentials.name
+  const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
   const deviceQuery = knex('Device as d')
@@ -171,16 +173,20 @@ async function getListDevices(query, auth) {
             .whereIn('issueType.externalId', query.issueTypeId)
         if (query.onlyOpenIssues)
           queryBuilder
+
             .innerJoin(
               'IssueStatus as issueStatus',
               'issue.issueStatusId',
               'issueStatus.id'
             )
+            .innerJoin('Notification as notif', 'notif.issueId', 'issue.id')
+            .innerJoin('AlertMessage as am', 'am.id', 'notif.alertMessageId')
             .whereNotIn('issueStatus.externalId', [
               'Inactive',
               'Ok',
               'Resolved',
             ])
+            .where('am.personId', accountDetails.id)
       }
     })
     .modify(filterParams, query, {
@@ -230,12 +236,17 @@ async function getListDevices(query, auth) {
       knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
       // get csv of issue types
       knex('Issue as i1')
-        .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-        .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+        .innerJoin('Notification as notif', 'notif.issueId', 'i1.id')
+        .innerJoin('AlertMessage as am', 'am.id', 'notif.alertMessageId')
+        .join('IssueType as it', 'i1.issueTypeId', 'it.id')
+        .join('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
         .whereRaw('i1.deviceId = d.id')
         // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
+        .modify(addConstraints, dataConstraints, {})
+        .whereNotIn('ist.externalId', ['Inactive', 'Ok', 'Resolved'])
+        .where('am.personId', accountDetails.id)
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
       // Gets the count of days the device was logged
