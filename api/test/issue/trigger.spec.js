@@ -47,7 +47,7 @@ describe('Issue Trigger', () => {
       await server
         .get('/api/device')
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
+        .then(async res => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -58,9 +58,9 @@ describe('Issue Trigger', () => {
           const {
             maxDaysDeviceOffline = 7,
             maxDaysDeviceNoResults = 14,
-          } = knex('Device as d')
+          } = await knex('Device as d')
             .join('Partner as p', 'd.partnerId', 'p.id')
-            .where({ id: deviceId })
+            .where('d.id', deviceId)
             .first('p.maxDaysDeviceOffline', 'p.maxDaysDeviceNoResults')
 
           maxLastDateOffline = subDays(now, maxDaysDeviceOffline + 1)

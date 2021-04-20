@@ -37,7 +37,16 @@ async function analyzeWithQuery(
     .modify(
       (builder, moduleSerial, consumableLot, assayId) => {
         if (moduleSerial) builder.where({ moduleSerial })
-        else builder.where({ consumableLot, assayId })
+        else {
+          /**
+           * to avoid unhandled error
+           * "Undefined binding(s) detected when compiling FIRST. Undefined column(s): [consumableLot, assayId]"
+           * which happens when one of the bindings values is `undefined` - make sure params are
+           * not `undefined`
+           */
+          if (consumableLot !== undefined) builder.where({ consumableLot })
+          if (assayId !== undefined) builder.where({ assayId })
+        }
       },
       moduleSerial,
       consumableLot,

@@ -294,13 +294,9 @@ async function onFactGenerateResultCountsForDevice(
     await Promise.each(daysToCalculate, async days => {
       const endedOn = startOfDayUtc(subDays(now, days))
       // query for selecting data for the device
-      const query = knex('Result as r').whereRaw(
-        'r.deviceId = :deviceId and r.endedOn > :endedOn',
-        {
-          deviceId,
-          endedOn,
-        }
-      )
+      const query = knex('Result as r')
+        .where('r.deviceId', deviceId)
+        .where('r.endedOn', '>', endedOn)
       const factResultsDevice = {
         calculatedOn: now,
       }
