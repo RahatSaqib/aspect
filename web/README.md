@@ -104,6 +104,15 @@ Updating `.po` files means updating existing translations with newly added messa
 6. Update translations for each items inside the window
 7. When done, click `File > Save`
 
+### Creating a CSV file based on a po file
+
+This is useful for sharing a CSV with a translator so they can easily edit it.
+To create a CSV of all Portuguese translations:
+
+```bash
+po2csv src/shared/i18n/web.pt-PT.po portuguese.csv
+```
+
 #### Using existing GxAlert translations when adding a new new language
 
 A lot of the strings in GxAlert and Aspect are the same. The translations on GxAlert have already been reviewed by our clients and adjusted by us over the years, so it makes sense to use them as a foundation.

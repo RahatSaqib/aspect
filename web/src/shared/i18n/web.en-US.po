@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
+"POT-Creation-Date: 2021-04-16T18:51:54.497Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -253,6 +253,9 @@ msgstr ""
 #. [pages.AccountDetails.title]
 #. defaultMessage is:
 #. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Account Details"
@@ -317,6 +320,13 @@ msgstr "Active"
 #: extracted_strings.json
 msgid "Active cases"
 msgstr "Active cases"
+
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
+msgstr "Add"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -1102,6 +1112,9 @@ msgstr "Case ID"
 msgid "Cases"
 msgstr "Cases"
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1954,6 +1967,9 @@ msgstr "Device"
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr "Device API Keys"
@@ -1971,13 +1987,6 @@ msgstr "Device API Keys Generator"
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Device Activity"
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Keys
-#: extracted_strings.json
-msgid "Device Api Keys"
-msgstr "Device Api Keys"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2694,6 +2703,13 @@ msgstr "Field cannot contain less than {total} characters"
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Field cannot contain more than {total} characters"
+
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
+msgstr "Finding Location"
 
 #. [pages.ResetPassword.finish]
 #. defaultMessage is:
@@ -6664,6 +6680,13 @@ msgstr ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Sign Out"
+
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -7009,7 +7032,7 @@ msgstr "Telephone"
 msgid "Temperature"
 msgstr "Temperature"
 
-#. [bbe12]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
 #. Test Conducted
 #: extracted_strings.json
@@ -7944,6 +7967,9 @@ msgstr "Unknown"
 #. [pages.RouterDetail.update]
 #. defaultMessage is:
 #. Update
+#. [pages.SiteDetail.actionUpdate]
+#. defaultMessage is:
+#. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
 #. defaultMessage is:
 #. Update
@@ -8656,7 +8682,7 @@ msgstr "percentage of valid results"
 #. report name includes "{reportName}"
 #: extracted_strings.json
 msgid "report name includes \"{reportName}\""
-msgstr "report name includes \"{reportName}\""
+msgstr "report name includes “{reportName}”"
 
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:
