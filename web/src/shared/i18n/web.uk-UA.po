@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
+"POT-Creation-Date: 2021-04-16T18:51:54.497Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -253,6 +253,9 @@ msgstr ""
 #. [pages.AccountDetails.title]
 #. defaultMessage is:
 #. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Деталі облікового запису"
@@ -317,6 +320,13 @@ msgstr "Активний"
 #: extracted_strings.json
 msgid "Active cases"
 msgstr "Активні випадки"
+
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
+msgstr "Додати"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -1102,6 +1112,9 @@ msgstr "Ідентифікатор справи"
 msgid "Cases"
 msgstr "Справ"
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1642,7 +1655,7 @@ msgstr "Призначений для користувача"
 #. DST
 #: extracted_strings.json
 msgid "DST"
-msgstr "TB DST"
+msgstr "DST"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -1954,6 +1967,9 @@ msgstr "Пристрій"
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr "Ключі API пристрою"
@@ -1971,13 +1987,6 @@ msgstr "Генератор ключів API пристрою"
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Загальний показник активності"
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Keys
-#: extracted_strings.json
-msgid "Device Api Keys"
-msgstr "Ключі API пристрою"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2693,6 +2702,13 @@ msgstr "Поле не може містити менше {total} символі�
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Поле не може містити більше {total} символів"
+
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
+msgstr "Пошук місця"
 
 #. [pages.ResetPassword.finish]
 #. defaultMessage is:
@@ -3562,7 +3578,7 @@ msgstr "Район"
 #. LPA
 #: extracted_strings.json
 msgid "LPA"
-msgstr "Район"
+msgstr "LPA"
 
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
@@ -6667,6 +6683,13 @@ msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
 "{name}} інша {# {name} s}}"
 
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Вийти"
+
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -6925,7 +6948,7 @@ msgstr "ТБ G&D"
 #. TB LAMP
 #: extracted_strings.json
 msgid "TB LAMP"
-msgstr "ЛАМПА ТБ"
+msgstr "TB LAMP"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7012,7 +7035,7 @@ msgstr "Телефон"
 msgid "Temperature"
 msgstr "Температура"
 
-#. [bbe12]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
 #. Test Conducted
 #: extracted_strings.json
@@ -7949,6 +7972,9 @@ msgid "Unknown"
 msgstr "Невідомо"
 
 #. [pages.RouterDetail.update]
+#. defaultMessage is:
+#. Update
+#. [pages.SiteDetail.actionUpdate]
 #. defaultMessage is:
 #. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
@@ -8931,6 +8957,12 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# result} other {# results}})"
+
+#~ msgid "Device Api Key"
+#~ msgstr "Ключ пристрою Api"
+
+#~ msgid "results"
+#~ msgstr "результати"
 
 #~ msgid "Percentage of valid results reported the current month"
 #~ msgstr "Відсоток дійсних результатів за поточний місяць"

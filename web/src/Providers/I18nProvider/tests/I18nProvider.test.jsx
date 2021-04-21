@@ -49,6 +49,21 @@ const ComponentWrapper = ({
 }
 
 describe('I18nProvider', () => {
+  it('should format values for pt-PT correctly', () => {
+    render(<ComponentWrapper locale="pt-PT" timezone="Europe/Lisbon" />)
+    expect(screen.getByTestId('culture')).toHaveTextContent('pt')
+    expect(screen.getByTestId('timezone')).toHaveTextContent('Europe/Lisbon')
+    expect(screen.getByTestId('number-display')).toHaveTextContent('33 902 837')
+    expect(screen.getByTestId('number-display2')).toHaveTextContent('1 230')
+    expect(screen.getByTestId('date-display')).toHaveTextContent('25/02/2021')
+    expect(screen.getByTestId('date-display2')).toHaveTextContent(
+      'quinta-feira fevereiro 25º'
+    )
+    expect(screen.getByTestId('date-display3')).toHaveTextContent(
+      'aproximadamente 2 meses'
+    )
+  })
+
   it('should format values for ru-RU correctly', () => {
     render(<ComponentWrapper locale="ru-RU" timezone="Europe/Moscow" />)
     expect(screen.getByTestId('culture')).toHaveTextContent('ru')

@@ -43,7 +43,7 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
             )}
           />
           <Button variant="contained" onClick={editContacts}>
-            Change
+            {formatMessage(messages.actionChange)}
           </Button>
         </div>
       ) : (
@@ -69,7 +69,9 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
               onClick={saveContacts}
               disabled={disabled}
             >
-              {contacts.length ? 'Update' : 'Add'}
+              {contacts.length
+                ? formatMessage(messages.actionUpdate)
+                : formatMessage(messages.actionAdd)}
             </Button>
           </span>
         </div>

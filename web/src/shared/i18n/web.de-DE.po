@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
+"POT-Creation-Date: 2021-04-16T18:51:54.497Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -253,6 +253,9 @@ msgstr ""
 #. [pages.AccountDetails.title]
 #. defaultMessage is:
 #. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Kontodetails"
@@ -317,6 +320,13 @@ msgstr "Aktiv"
 #: extracted_strings.json
 msgid "Active cases"
 msgstr "Aktuelle Fälle"
+
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
+msgstr "Hinzufügen"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -1106,6 +1116,9 @@ msgstr "Fall-ID"
 msgid "Cases"
 msgstr "Fälle"
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1577,7 +1590,7 @@ msgstr "Landkreis"
 #. Covid 19
 #: extracted_strings.json
 msgid "Covid 19"
-msgstr "Covid 19"
+msgstr "COVID 19"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -1958,6 +1971,9 @@ msgstr "Gerät"
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr "Geräte-API-Schlüssel"
@@ -1975,13 +1991,6 @@ msgstr "Geräte-API-Schlüssel-Generator"
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Gerätetyp"
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Keys
-#: extracted_strings.json
-msgid "Device Api Keys"
-msgstr "Geräte-API-Schlüssel"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2698,6 +2707,13 @@ msgstr "Feld kann nicht weniger als {total} Zeichen enthalten"
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Feld kann nicht mehr als {total} Zeichen enthalten"
+
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
+msgstr "Standort Finden"
 
 #. [pages.ResetPassword.finish]
 #. defaultMessage is:
@@ -6680,6 +6696,13 @@ msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "{name}} other {# {name}s} }"
 
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Ausloggen"
+
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -6773,7 +6796,7 @@ msgstr "Standorte"
 #. Smear
 #: extracted_strings.json
 msgid "Smear"
-msgstr "Abstrich"
+msgstr "Schmier"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -6938,7 +6961,7 @@ msgstr "TB G&D"
 #. TB LAMP
 #: extracted_strings.json
 msgid "TB LAMP"
-msgstr "TB-LAMPE"
+msgstr "TB LAMP"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7025,7 +7048,7 @@ msgstr "Telefon"
 msgid "Temperature"
 msgstr "Temperatur"
 
-#. [bbe12]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
 #. Test Conducted
 #: extracted_strings.json
@@ -7977,6 +8000,9 @@ msgid "Unknown"
 msgstr "Unbekannt"
 
 #. [pages.RouterDetail.update]
+#. defaultMessage is:
+#. Update
+#. [pages.SiteDetail.actionUpdate]
 #. defaultMessage is:
 #. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
@@ -8965,6 +8991,14 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "Device Api Key"
+#~ msgstr ""
+#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+#~ "Geräte-API-Schlüssel} other {# Geräte-API-Schlüsseln} }"
+
+#~ msgid "results"
+#~ msgstr "Ergebnisse"
 
 #~ msgid "Percentage of valid results reported the current month"
 #~ msgstr "Prozentsatz der im aktuellen Monat gemeldeten gültigen Ergebnisse"

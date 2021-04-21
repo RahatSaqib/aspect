@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-14T16:34:45.818Z\n"
+"POT-Creation-Date: 2021-04-16T18:51:54.497Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -254,6 +254,9 @@ msgstr ""
 #. [pages.AccountDetails.title]
 #. defaultMessage is:
 #. Account Details
+#. [pages.HorizontalAppBar.accountDetails]
+#. defaultMessage is:
+#. Account Details
 #: extracted_strings.json
 msgid "Account Details"
 msgstr "Details du compte"
@@ -318,6 +321,13 @@ msgstr "Actif"
 #: extracted_strings.json
 msgid "Active cases"
 msgstr "Cas actifs"
+
+#. [pages.SiteDetail.actionAdd]
+#. defaultMessage is:
+#. Add
+#: extracted_strings.json
+msgid "Add"
+msgstr "Ajouter"
 
 #. [pages.InventoryItemsList.addInventory]
 #. defaultMessage is:
@@ -1116,6 +1126,9 @@ msgstr "ID de cas"
 msgid "Cases"
 msgstr "Cas"
 
+#. [pages.SiteDetail.actionChange]
+#. defaultMessage is:
+#. Change
 #. [pages.DeviceDetailProfile.buttonChange]
 #. defaultMessage is:
 #. Change
@@ -1587,7 +1600,7 @@ msgstr "Comté"
 #. Covid 19
 #: extracted_strings.json
 msgid "Covid 19"
-msgstr "Covid 19"
+msgstr "COVID 19"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -1656,7 +1669,7 @@ msgstr "Douane"
 #. DST
 #: extracted_strings.json
 msgid "DST"
-msgstr "DESTINATION"
+msgstr "TB DST"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -1968,6 +1981,9 @@ msgstr "Dispositif"
 #. [pages.DeviceApiKeyList.title]
 #. defaultMessage is:
 #. Device API Keys
+#. [browsePage.browseDropdown.deviceApiKey]
+#. defaultMessage is:
+#. Device API Keys
 #: extracted_strings.json
 msgid "Device API Keys"
 msgstr "Clés de l'API de l'appareil"
@@ -1985,13 +2001,6 @@ msgstr "Générateur de clés d'API de périphérique"
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Type d'appareil"
-
-#. [browsePage.browseDropdown.deviceApiKey]
-#. defaultMessage is:
-#. Device Api Keys
-#: extracted_strings.json
-msgid "Device Api Keys"
-msgstr "Clés de l'API de l'appareil"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2709,6 +2718,13 @@ msgstr "Le champ ne peut pas contenir moins de {total} caractères"
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Le champ ne peut pas contenir plus de {total} caractères"
+
+#. [pages.SiteLocationFormMap.findingLocation]
+#. defaultMessage is:
+#. Finding Location
+#: extracted_strings.json
+msgid "Finding Location"
+msgstr "Trouver l'emplacement"
 
 #. [pages.ResetPassword.finish]
 #. defaultMessage is:
@@ -6687,6 +6703,13 @@ msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
 "{# {nom}} other {# {nom}s} }"
 
+#. [pages.HorizontalAppBar.signOut]
+#. defaultMessage is:
+#. Sign Out
+#: extracted_strings.json
+msgid "Sign Out"
+msgstr "Se déconnecter"
+
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -6945,7 +6968,7 @@ msgstr "TB G&D"
 #. TB LAMP
 #: extracted_strings.json
 msgid "TB LAMP"
-msgstr "LAMPE TB"
+msgstr "TB LAMP"
 
 #. [pages.Status.clinicalIndicatorsTBDetected.title]
 #. defaultMessage is:
@@ -7032,7 +7055,7 @@ msgstr "Téléphone"
 msgid "Temperature"
 msgstr "Température"
 
-#. [bbe12]
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
 #. defaultMessage is:
 #. Test Conducted
 #: extracted_strings.json
@@ -7981,6 +8004,9 @@ msgid "Unknown"
 msgstr "Inconnu"
 
 #. [pages.RouterDetail.update]
+#. defaultMessage is:
+#. Update
+#. [pages.SiteDetail.actionUpdate]
 #. defaultMessage is:
 #. Update
 #. [pages.DeviceDetailProfile.buttonUpdate]
@@ -8973,6 +8999,12 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, un {# résultat} autre {# résultats} })"
+
+#~ msgid "Device Api Key"
+#~ msgstr "Clés de l'API de l'appareil"
+
+#~ msgid "results"
+#~ msgstr "Résultats"
 
 #~ msgid "Percentage of valid results reported the current month"
 #~ msgstr "Pourcentage de résultats valides communiqués le mois en cours"
