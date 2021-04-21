@@ -41,6 +41,13 @@ const {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
 } = require('../../../src/shared/date')
+const {
+  gxEbola: gxEbolaMappings,
+  gxHiv1Qual: gxHiv1QualMappings,
+  gxMtbRif: gxMtbRifMappings,
+  gxMtbRifUltra: gxMtbRifUltraMappings,
+  assayGxCovid19: assayGxCovid19Mappings,
+} = require('./notVLResultTextMappings')
 const { knex } = require('../../../src/db')
 
 const server = require('../../utils/testUtils')
@@ -812,151 +819,16 @@ describe('Device API routes for GxConnect Devices', () => {
     const { runTest, getLastResult, basicDevicePayload } = context
     afterEach(context.afterCleanUp)
 
-    it('should append a new result with the correct result categories', async () => {
-      // Define assertions
-      const getAssertionItem = (
-        assayExternalId,
-        resultText,
-        resultCategory1ExternalId,
-        resultCategory2ExternalId
-      ) => ({
-        assayExternalId,
-        resultText,
-        resultCategory1ExternalId,
-        resultCategory2ExternalId,
-      })
-      const assertions = [
-        // GxMtbRif
-        getAssertionItem('GxMtbRif', 'MTB DETECTED', 'Detected', null),
-        getAssertionItem(
-          'GxMtbRif',
-          'MTB DETECTED | DETECTED',
-          'Detected',
-          'Detected'
-        ),
-        getAssertionItem(
-          'GxMtbRif',
-          'MTB DETECTED | NOT DETECTED',
-          'Detected',
-          'NotDetected'
-        ),
-        getAssertionItem(
-          'GxMtbRif',
-          'MTB DETECTED | ERROR',
-          'Detected',
-          'Error'
-        ),
-        getAssertionItem('GxMtbRif', 'MTB NOT DETECTED', 'NotDetected', null),
-        getAssertionItem(
-          'GxMtbRif',
-          'MTB INDETERMINATE',
-          'Indeterminate',
-          null
-        ),
-        getAssertionItem('GxMtbRif', 'MTB INVALID', 'Invalid', 'Invalid'),
-        getAssertionItem('GxMtbRif', 'MTB NO RESULT', 'NoResult', 'NoResult'),
-        getAssertionItem('GxMtbRif', 'MTB ERROR', 'Error', 'Error'),
-        getAssertionItem('GxMtbRif', 'MTB ERROR | ERROR', 'Error', 'Error'),
-        // GxMtbRifUltra
-        getAssertionItem('GxMtbRifUltra', 'MTB DETECTED', 'Detected', null),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB DETECTED | DETECTED',
-          'Detected',
-          'Detected'
-        ),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB DETECTED | NOT DETECTED',
-          'Detected',
-          'NotDetected'
-        ),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB DETECTED | ERROR',
-          'Detected',
-          'Error'
-        ),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB NOT DETECTED',
-          'NotDetected',
-          null
-        ),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB INDETERMINATE',
-          'Indeterminate',
-          null
-        ),
-        getAssertionItem('GxMtbRifUltra', 'MTB INVALID', 'Invalid', 'Invalid'),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB NO RESULT',
-          'NoResult',
-          'NoResult'
-        ),
-        getAssertionItem('GxMtbRifUltra', 'MTB ERROR', 'Error', 'Error'),
-        getAssertionItem(
-          'GxMtbRifUltra',
-          'MTB ERROR | ERROR',
-          'Error',
-          'Error'
-        ),
-        // GxHiv1Qual
-        getAssertionItem(
-          'GxHiv1Qual',
-          'HIV-1 NOT DETECTED',
-          'NotDetected',
-          null
-        ),
-        getAssertionItem('GxHiv1Qual', 'HIV-1 DETECTED', 'Detected', null),
-        getAssertionItem('GxHiv1Qual', 'HIV-1 NO RESULT', 'NoResult', null),
-        getAssertionItem('GxHiv1Qual', 'HIV-1 ERROR', 'Error', null),
-        getAssertionItem('GxHiv1Qual', 'HIV-1 INVALID', 'Invalid', null),
-        // assayGXCovid19
-        getAssertionItem(
-          'assayGXCovid19',
-          'SARS-CoV-2 UNKNOWN',
-          'Unknown',
-          null
-        ),
-        getAssertionItem(
-          'assayGXCovid19',
-          'SARS-CoV-2 NEGATIVE',
-          'Negative',
-          null
-        ),
-        getAssertionItem(
-          'assayGXCovid19',
-          'SARS-CoV-2 INCONCLUSIVE',
-          'Inconclusive',
-          null
-        ),
-        getAssertionItem(
-          'assayGXCovid19',
-          'SARS-CoV-2 POSITIVE',
-          'Positive',
-          null
-        ),
-        getAssertionItem(
-          'assayGXCovid19',
-          'SARS-CoV-2 PRESUMPTIVE POSITIVE',
-          'PresumptivePositive',
-          null
-        ),
-      ]
-
+    const getResultCategoriesTestCallback = trackedResults => async () => {
       const { deviceAuth, device } = context
 
-      await Promise.each(assertions, async assertion => {
+      await Promise.each(trackedResults, async assertion => {
         const {
           resultText,
           resultCategory1ExternalId,
           resultCategory2ExternalId,
           assayExternalId,
         } = assertion
-
         // Send a new result
         await server
           .post('/device')
@@ -1015,7 +887,28 @@ describe('Device API routes for GxConnect Devices', () => {
         }
         assert.deepEqual(expected, actual)
       })
-    })
+    }
+
+    it(
+      'should append a new GxEbola result with the correct result categories',
+      getResultCategoriesTestCallback(gxEbolaMappings)
+    )
+    it(
+      'should append a new GxHiv1Qual result with the correct result categories',
+      getResultCategoriesTestCallback(gxHiv1QualMappings)
+    )
+    it(
+      'should append a new GxMtbRifUltra result with the correct result categories',
+      getResultCategoriesTestCallback(gxMtbRifUltraMappings)
+    )
+    it(
+      'should append a new assayGxCovid19 result with the correct result categories',
+      getResultCategoriesTestCallback(assayGxCovid19Mappings)
+    )
+    it(
+      'should append a new GxMtbRif result with the correct result categories',
+      getResultCategoriesTestCallback(gxMtbRifMappings)
+    ).timeout(120000)
 
     it('should reject a result without a start or end date date', () =>
       runTest(async () => {
