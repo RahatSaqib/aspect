@@ -17,7 +17,7 @@ const getCustomToday = today => {
 }
 const getDaysWithNoRuns = async (knex, taskName, daysRange = 30) => {
   const executedDates =
-    (await knex('JobExecutionLog')
+    (await knex('SchedulerTaskExecutionLog')
       .where({ taskName })
       .andWhere(
         'processingDate',
@@ -30,17 +30,19 @@ const getDaysWithNoRuns = async (knex, taskName, daysRange = 30) => {
   const days = _.map(_.range(daysRange), day =>
     startOfDayUtc(subDays(new Date(), day))
   )
-  logger.debug(`Executed dates: ${executedDates}`, {
-    reLabel: 'taskTracker:getDaysWithNoRuns',
-  })
   const daysToRun = _.differenceWith(
     days,
     executedDates,
     (elem1, elem2) => elem1.toISOString() === elem2.toISOString()
   )
-  logger.debug(`Days to run task: ${daysToRun}`, {
-    reLabel: 'taskTracker:getDaysWithNoRuns',
-  })
+  logger.debug(
+    `Days to run task: ${
+      daysToRun.length === 0 ? 'No dates to run' : daysToRun
+    }`,
+    {
+      reLabel: 'aspect:taskTracker:getDaysWithNoRuns',
+    }
+  )
   return daysToRun
 }
 
@@ -64,47 +66,44 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       // we want to run the task.
       if (dailyRun)
         daysToRun = await getDaysWithNoRuns(knex, schedulerMethod.name)
-      console.log(action, today, daysToRun, getCustomToday(today))
+
       await Promise.each(daysToRun, async day => {
-        console.log('customToday', getCustomToday(day))
         let jobExecutionId
         try {
-          ;[jobExecutionId] = await knex('JobExecutionLog').insert({
+          ;[jobExecutionId] = await knex('SchedulerTaskExecutionLog').insert({
             taskName: schedulerMethod.name,
             processingDate: getCustomToday(day),
             startDate: new Date(),
           })
           logger.debug(
-            `Execute Taks ${schedulerMethod.name} for dates ${getCustomToday(
+            `Execute Task ${schedulerMethod.name} for dates ${getCustomToday(
               day
             )}`,
-            { reLabel: 'taskTracker' }
+            { reLabel: 'aspect:taskTracker' }
           )
-          await schedulerMethod(
-            { ...action, today: day.toISOString() },
-            { messageContext }
-          )
-          await knex('JobExecutionLog')
+          await schedulerMethod({ ...action, today: day }, { messageContext })
+          await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
               success: true,
             })
             .where('id', jobExecutionId)
         } catch (dailyException) {
-          await knex('JobExecutionLog')
+          logger.error(dailyException, { reLabel: 'aspect:taskTracker' })
+          await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
-              errorMessage: JSON.stringify(dailyException),
+              errorMessage: dailyException,
             })
             .where('id', jobExecutionId)
         }
       })
     } catch (ex) {
-      logger.error(ex, { reLabel: 'taskTracker' })
-      await knex('JobExecutionLog').insert({
+      logger.error(ex, { reLabel: 'aspect:taskTracker' })
+      await knex('SchedulerTaskExecutionLog').insert({
         taskName: schedulerMethod.name,
         endDate: new Date(),
-        errorMessage: JSON.stringify(ex),
+        errorMessage: ex,
       })
     }
   })

@@ -1035,7 +1035,7 @@ describe('Device routes', () => {
   })
 
   describe('Message Queue', () => {
-    describe.skip('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
+    describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
       it('should log the maintenance status of each un-logged device', async () => {
         const startOfTodayUtc = getLocalDateInUtc(startOfToday())
         const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(

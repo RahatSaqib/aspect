@@ -1585,6 +1585,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       knex,
       today
     )
+
     await Promise.each(devicesWithNoMaintenanceLogForTheDay, async device => {
       const {
         id,
