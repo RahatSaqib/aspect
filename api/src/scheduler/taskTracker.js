@@ -93,7 +93,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
-              errorMessage: dailyException,
+              errorMessage: JSON.stringify(dailyException),
             })
             .where('id', jobExecutionId)
         }
@@ -103,7 +103,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       await knex('SchedulerTaskExecutionLog').insert({
         taskName: schedulerMethod.name,
         endDate: new Date(),
-        errorMessage: ex,
+        errorMessage: JSON.stringify(ex),
       })
     }
   })
