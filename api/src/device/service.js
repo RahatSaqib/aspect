@@ -179,14 +179,11 @@ async function getListDevices(query, auth) {
               'issue.issueStatusId',
               'issueStatus.id'
             )
-            .innerJoin('Notification as notif', 'notif.issueId', 'issue.id')
-            .innerJoin('AlertMessage as am', 'am.id', 'notif.alertMessageId')
             .whereNotIn('issueStatus.externalId', [
               'Inactive',
               'Ok',
               'Resolved',
             ])
-            .where('am.personId', accountDetails.id)
       }
     })
     .modify(filterParams, query, {
@@ -245,7 +242,18 @@ async function getListDevices(query, auth) {
         // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
         .modify(addConstraints, dataConstraints, {})
-        .whereNotIn('ist.externalId', ['Inactive', 'Ok', 'Resolved'])
+        .modify(queryBuilder => {
+          if (query.onlyOpenIssues || query.issueTypeId) {
+            if (query.issueTypeId)
+              queryBuilder.whereIn('it.externalId', query.issueTypeId)
+            if (query.onlyOpenIssues)
+              queryBuilder.whereNotIn('ist.externalId', [
+                'Inactive',
+                'Ok',
+                'Resolved',
+              ])
+          }
+        })
         .where('am.personId', accountDetails.id)
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
