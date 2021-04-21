@@ -173,7 +173,6 @@ async function getListDevices(query, auth) {
             .whereIn('issueType.externalId', query.issueTypeId)
         if (query.onlyOpenIssues)
           queryBuilder
-
             .innerJoin(
               'IssueStatus as issueStatus',
               'issue.issueStatusId',

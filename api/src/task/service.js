@@ -19,7 +19,6 @@ async function baseAlertMessagesQuery(request, query, queryBuilder) {
     .join('Issue as i', 'notif.issueId', 'i.id')
     .join('Site as site', 'i.siteId', 'site.id')
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
-
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
