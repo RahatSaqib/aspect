@@ -7,16 +7,12 @@ const addHours = require('date-fns/addHours')
 const subHours = require('date-fns/subHours')
 const addMinutes = require('date-fns/addMinutes')
 const subMinutes = require('date-fns/subMinutes')
-const addSeconds = require('date-fns/addSeconds')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { getLastResultId, postToDeviceApi } = require('../utils')
-const {
-  resultTextToResultCategoryMapping,
-  basicResultPayload,
-} = require('./geneXpertConstants')
+const { basicResultPayload } = require('./geneXpertConstants')
 const {
   detectedLess1000,
   detectedMoreThan1000,
@@ -1666,102 +1662,6 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.notEqual(firstResultId, secondResultId)
       }))
 
-    it('should map result categories based on result text', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
-
-        const sendResult = async (
-          resultId,
-          assay,
-          sampleId,
-          resultText,
-          expectedResultCategory1,
-          expectedResultCategory2,
-          runNumber
-        ) => {
-          const testStartedOn = setMilliseconds(
-            addSeconds(subDays(context.now, 3), runNumber),
-            0
-          )
-          const testEndedOn = setMilliseconds(
-            addSeconds(addHours(testStartedOn, 2), runNumber),
-            0
-          )
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign(
-                {},
-                _.assign({}, basicDevicePayload, basicResultPayload),
-                {
-                  result: _.assign({}, basicResultPayload.result, {
-                    id: resultId,
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                    assay: _.assign({}, basicResultPayload.result.assay, {
-                      id: assay,
-                    }),
-                    sample: { id: sampleId },
-                    data: _.assign({}, basicResultPayload.result.data, {
-                      resultText,
-                    }),
-                  }),
-                }
-              )
-            )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const resultDetails = await getLastResult()
-
-          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
-          assert.equal(
-            resultDetails.resultCategory1,
-            expectedResultCategory1,
-            `Result 1 in ${resultText}`
-          )
-          assert.equal(
-            resultDetails.resultCategory2,
-            expectedResultCategory2,
-            `Result 2 in ${resultText}`
-          )
-        }
-
-        let runNumber = 1
-        await Promise.each(
-          Object.keys(resultTextToResultCategoryMapping),
-          async (resultText, index) => {
-            if (
-              resultText &&
-              !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-            ) {
-              const {
-                resultId,
-                assay,
-                resultCategory1,
-                resultCategory2,
-              } = resultTextToResultCategoryMapping[resultText]
-              runNumber += 1
-              await sendResult(
-                resultId,
-                assay,
-                `PKM0833243689-${index}`,
-                resultText,
-                resultCategory1,
-                resultCategory2,
-                runNumber
-              )
-            } else {
-              await Promise.resolve()
-            }
-          }
-        )
-      }))
-
     it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
       runTest(async () => {
         const { basicDevicePayload, deviceAuth } = context
@@ -2605,7 +2505,7 @@ describe('Device API routes for GxConnect Devices', () => {
               const incompleteResult = await getLastResult()
               expect(incompleteResult).to.containSubset({
                 resultCategory1: 'NoResult',
-                resultCategory2: 'NoResult',
+                resultCategory2: null,
                 startedOn: startedOnDateInUtc,
                 endedOn: null,
                 resultData: {
