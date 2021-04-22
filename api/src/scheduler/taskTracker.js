@@ -4,13 +4,13 @@ const _ = require('lodash')
 const { startOfTodayUtc, startOfDayUtc } = require('../shared/date')
 const logger = require('../shared/logger')
 
-const getCustomToday = today => {
-  if (today) {
-    if (_.isDate(today)) {
-      return startOfDayUtc(today)
+const getCustomToday = day => {
+  if (day) {
+    if (_.isDate(day)) {
+      return startOfDayUtc(day)
     }
-    if (_.isString(today)) {
-      return parseISO(today)
+    if (_.isString(day)) {
+      return startOfDayUtc(parseISO(day))
     }
   }
   return startOfTodayUtc()
