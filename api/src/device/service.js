@@ -524,8 +524,13 @@ const getMaintenanceStatusesQuery = (filter = null) =>
     if (filter) q.where(filter)
   })
 
-async function listMaintenanceStatuses() {
-  const resultQuery = getMaintenanceStatusesQuery()
+async function listMaintenanceStatuses(request) {
+  const { onlyManuallySet } = request.query
+  const resultQuery = getMaintenanceStatusesQuery().where(builder => {
+    if (onlyManuallySet) {
+      builder.where({ manuallySet: onlyManuallySet })
+    }
+  })
 
   // get total count for paging
   const getCount = resultQuery.clone().count('dms.id as count').first()
@@ -947,10 +952,11 @@ async function setDeviceMaintenanceStatus(
     createdOn: new Date(),
     createdBy: userId,
   })
-  const context = messageContext.bindActionCreators({
-    deviceMaintenanceStatusLogged,
-  })
-  context.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
+  if (!messageContext.deviceMaintenanceStatusLogged)
+    messageContext.bindActionCreators({
+      deviceMaintenanceStatusLogged,
+    })
+  messageContext.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
   return deviceMaintenanceStatusLogId
 }
 
