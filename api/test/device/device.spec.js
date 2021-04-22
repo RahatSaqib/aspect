@@ -87,12 +87,42 @@ describe('Device routes', () => {
 
       const device = await knex('Device as d')
         .join('Partner as p', 'd.partnerId', 'p.id')
+        .join('Geography as g', 'g.id', 'd.geographyId')
+        .join('Country as c', 'c.id', 'g.countryId')
         .where('p.name', 'Partner One')
+        .where('c.abbreviation', 'US')
         .first('d.*')
+      const { id: personId } = await knex('Person')
+        .where({ lastPartnerId: device.partnerId })
+        .first()
+      const { id: messageStatusSentId } = await knex('MessageStatus')
+        .where('externalId', 'Sent')
+        .first('id')
+      const luAlertMessages = {
+        [issueTypes.DeviceOffline.id]: 'Cannot reach network for 12 days',
+        [issueTypes.DeviceNoResults.id]: 'No testing for 9 days',
+        [issueTypes.ModuleFailureError.id]:
+          'Module A1: Critical errors; notify R.O.',
+        [issueTypes.ModuleTemperatureError.id]:
+          'Temperature errors on Module A2; notify R.O.',
+        [issueTypes.ModulePowerError.id]:
+          'Power errors on Module A3; notify RO',
+        [issueTypes.MachineTemperatureError.id]:
+          'Temperature errors across machine, conduct troubleshooting',
+        [issueTypes.MachinePowerError.id]:
+          'Power errors across machine, conduct troubleshooting',
+        [issueTypes.ModuleProceduralError.id]:
+          'Module A2 errors, conduct troubleshooting',
+        [issueTypes.MachineProceduralError.id]:
+          'Procedural errors across machine, conduct troubleshooting',
+        [issueTypes.StockLevelUpdate.id]: 'Stock Level',
+        [issueTypes.ReagentHealthError.id]:
+          'Cartridge-specific errors exceed 5%',
+      }
       issuesToDelete = await Promise.map(
         [issueTypes.ModuleReplaced, issueTypes.ModuleDisabled],
-        issueTypeId =>
-          knex('Issue').insert({
+        async issueTypeId => {
+          const issueId = await knex('Issue').insert({
             issueTypeId,
             issueStatusId:
               issueTypeId === issueTypes.ModuleDisabled
@@ -105,7 +135,34 @@ describe('Device routes', () => {
             createdOn: new Date(),
             updatedOn: new Date(),
           })
+
+          const { id: alertTemplateId } = await knex('AlertTemplate').first()
+          const [alertMessageId] = await knex('AlertMessage').insert({
+            messageStatusId: messageStatusSentId,
+            message: luAlertMessages[issueTypeId],
+            createdOn: new Date(),
+            updatedOn: new Date(),
+            siteId: device.siteId,
+            personId,
+            deviceId: device.id,
+            alertTemplateId,
+          })
+          const { id: notificationTypeId } = await knex('NotificationType')
+            .where({ partnerId: device.partnerId })
+            .first()
+
+          await knex('Notification').insert({
+            createdOn: new Date(),
+            alertMessageId,
+            issueId,
+            personId,
+            notificationTypeId,
+          })
+
+          return issueId
+        }
       )
+
       // Status test
       statusesToTest = [
         // [approval status, maintenance status, expected status]

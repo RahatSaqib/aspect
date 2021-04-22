@@ -15,7 +15,6 @@ const AspectSelect = props => {
     id,
     label,
   } = props
-
   return (
     <FormControl className={className}>
       <div className={classNames.controlLabel}>{label}</div>

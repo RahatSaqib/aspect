@@ -19,6 +19,7 @@ import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import isNil from 'lodash/isNil'
 import map from 'lodash/map'
+import { dateFNSLocales } from '../../../Providers/I18nProvider'
 
 const mockedDataNames = [
   'Amherst',
@@ -139,12 +140,14 @@ function totalItemCount(vals) {
   return vals.reduce((acc, curr) => acc + curr.length, 0)
 }
 
-function timeSinceFromUTC(val) {
+function timeSinceFromUTC(val, locale) {
   const date = parseISO(val)
+  const dateFNSLocale = dateFNSLocales[locale]
   return {
     isPast: isPast(date),
     timeSince: formatDistance(date, new Date(), {
       addSuffix: true,
+      locale: dateFNSLocale,
     }),
   }
 }

@@ -71,7 +71,7 @@ describe('patient/service', () => {
   })
 
   describe('remove', () => {
-    it('Should remove ptient', async () => {
+    it('Should remove patient', async () => {
       const objPatient = mockPatient(
         `non existent externalId ${Math.floor(Math.random() * 10000)}`
       )

@@ -2,7 +2,6 @@ const _ = require('lodash')
 const chai = require('chai')
 const {
   setMilliseconds,
-  addSeconds,
   addMinutes,
   subMinutes,
   addHours,
@@ -14,14 +13,10 @@ const {
   format: dateFormat,
 } = require('date-fns')
 
-const Promise = require('bluebird')
 const { startOfDayUtc } = require('../../../src/shared/date')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const { postToDeviceApi, getDeviceType } = require('../utils')
-const {
-  resultTextToResultCategoryMapping,
-  basicResultPayload,
-} = require('./geneXpertConstants')
+const { basicResultPayload } = require('./geneXpertConstants')
 const { knex } = require('../../../src/db')
 const {
   allDeviceMaintenanceStatusToId,
@@ -877,89 +872,6 @@ describe('Device API routes for GxAlert Device', () => {
       assert.notEqual(
         secondResponse.body.result.id,
         firstResponse.body.result.id
-      )
-    })
-
-    it('should map result categories based on result text', async () => {
-      const sendResult = async (
-        resultId,
-        assay,
-        sampleId,
-        resultText,
-        expectedResultCategory1,
-        expectedResultCategory2,
-        runNumber
-      ) => {
-        const now = new Date()
-        const testStartedOn = setMilliseconds(
-          addSeconds(subDays(now, 3), runNumber),
-          0
-        )
-        const testEndedOn = setMilliseconds(
-          addSeconds(addHours(testStartedOn, 2), runNumber),
-          0
-        )
-        const response = await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: resultId,
-                startedOn: testStartedOn,
-                endedOn: testEndedOn,
-                assay: { id: assay },
-                sample: { id: sampleId },
-                data: { resultText },
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        assert.typeOf(response.body, 'Object')
-
-        const resultDetails = await getLastResult()
-
-        expect(resultDetails).to.containSubset({
-          resultData: {
-            geneXpertTestId: resultId,
-          },
-          resultCategory1: expectedResultCategory1,
-          resultCategory2: expectedResultCategory2,
-        })
-      }
-
-      let runNumber = 1
-      await Promise.each(
-        Object.keys(resultTextToResultCategoryMapping),
-        async (resultText, index) => {
-          if (
-            resultText &&
-            !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-          ) {
-            const {
-              resultId,
-              assay,
-              resultCategory1,
-              resultCategory2,
-            } = resultTextToResultCategoryMapping[resultText]
-            runNumber += 1
-            await sendResult(
-              resultId,
-              assay,
-              `PJM0833243682-${index}`,
-              resultText,
-              resultCategory1,
-              resultCategory2,
-              runNumber
-            )
-          } else {
-            await Promise.resolve()
-          }
-        }
       )
     })
 
@@ -2006,7 +1918,7 @@ describe('Device API routes for GxAlert Device', () => {
             expect(incompleteResult).to.containSubset({
               externalId: incompleteResultExternalId,
               resultCategory1: 'NoResult',
-              resultCategory2: 'NoResult',
+              resultCategory2: null,
               startedOn: startedOnDateInUtc,
               endedOn: null,
               resultData: {

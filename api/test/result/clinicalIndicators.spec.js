@@ -17,7 +17,6 @@ describe('/result/clinical-indicator-aggregations', () => {
   let resultsForUser = null
   let reportableResultCategories = null
   let assays = null
-  shared.checkToken(server, path)
 
   const getResultsForUser = () =>
     server

@@ -11,7 +11,7 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device API Raw routes for Senaite LIMS', () => {
+describe.skip('Device API Raw routes for Senaite LIMS', () => {
   const deviceApiRawPath = '/device/raw'
   const validApiKeyToken = randomToken()
   let senaiteLimsDeviceId

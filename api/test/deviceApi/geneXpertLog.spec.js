@@ -37,6 +37,17 @@ const logDataWithCalibration = {
   details:
     '{"RawText":"<XpertCalServiceProvider>Activation valid days: 45","Errors":[],"Calibrations":[{"Source":"XpertCalServiceProvider","Site":"","Message":"Activation valid days: 45"}]}',
 }
+const logDatasWithCalibration = [
+  logDataWithCalibration,
+  {
+    externalId: 139,
+    occurredOn: new Date('2018-11-24 14:13:56'),
+    logFileName: 'C:\\GeneXpert\\log\\XpertCal-2015.11.03_15.27.28.028-0.log',
+    logLevel: 'INFO',
+    details:
+      '{"RawText":"<XpertCalServiceProvider>Activation valid days: 45","Errors":[],"Calibrations":[{"Source":"XpertCalServiceProvider","Site":"","Message":"Activation valid days: 45"}]}',
+  },
+]
 const logDataWithErrors = {
   externalId: 139, // some unique Id in Logs table in SQLite db on device side
   occurredOn: new Date('2018-12-02 09:56:56'),
@@ -117,6 +128,33 @@ describe('Process GeneXpert Logs', () => {
     )
     const { details: detailsStored } = JSON.parse(deviceOperation.data)
     const detailsSent = JSON.parse(logData.details)
+    expect(detailsStored).to.containSubset(detailsSent)
+  })
+
+  it('should create 2 entries in table DeviceOperation for log array', async () => {
+    const { apiKey, deviceAuth, deviceId } = context
+    assert.isOk(apiKey)
+    // initial count of deviceOperation entries
+    const totals1 = await getTotalsOfDeviceOperation()
+
+    const logData = logDatasWithCalibration
+    const res = await postLog(deviceAuth, logSource, logData)
+    assert.equal(res.status, 200)
+
+    const totals2 = await getTotalsOfDeviceOperation()
+    assert.equal(totals1 + 2, totals2)
+
+    // get stored deviceOperation entry and compare with sent data
+    const deviceOperation = await knex('DeviceOperation')
+      .orderBy('CreatedOn', 'desc')
+      .first()
+    assert.equal(deviceOperation.deviceId, deviceId)
+    assert.equal(
+      format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
+      format(logData[0].occurredOn, 'yyyy-MM-dd HH:mm:ss')
+    )
+    const { details: detailsStored } = JSON.parse(deviceOperation.data)
+    const detailsSent = JSON.parse(logData[0].details)
     expect(detailsStored).to.containSubset(detailsSent)
   })
 

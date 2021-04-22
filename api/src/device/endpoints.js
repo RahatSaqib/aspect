@@ -513,6 +513,13 @@ const routes = [
       description: 'Device Maintenance Status List',
       notes: 'Set of Device Maintenance Status options',
       auth: { scope: ['device:view', 'operationalData:view'] },
+      validate: {
+        query: {
+          onlyManuallySet: Joi.bool()
+            .optional()
+            .description('Only the manually set statuses'),
+        },
+      },
     },
   },
   {
