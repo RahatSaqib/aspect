@@ -153,11 +153,11 @@ export const ReporterListWithProps = ({
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
 
-      {/* <AspectExportListButton
+      <AspectExportListButton
         onExport={onExportClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="Reporters"
-      /> */}
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
