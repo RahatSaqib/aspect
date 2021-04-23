@@ -30,7 +30,6 @@ import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import {
   getExportableFile,
   REPORTERS_LIST,
-  REPORTERS_LIST_NEW,
   REPORTERS_LIST_REVOKE_ONE,
 } from '../ReporterQueries'
 import {
@@ -154,11 +153,11 @@ export const ReporterListWithProps = ({
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
 
-      <AspectExportListButton
+      {/* <AspectExportListButton
         onExport={onExportClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="Reporters"
-      />
+      /> */}
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
@@ -247,10 +246,10 @@ const ReporterList = () => {
   )
 
   const { isLoading, isError, data, error } = useQuery(
-    [REPORTERS_LIST_NEW.KEY, { params }],
+    [REPORTERS_LIST.KEY, { params }],
     async () =>
       fetchWrapperForQueries({
-        endpoint: REPORTERS_LIST_NEW.ENDPOINT,
+        endpoint: REPORTERS_LIST.ENDPOINT,
         params,
       })
   )
