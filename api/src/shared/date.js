@@ -175,6 +175,7 @@ const startOfMonthUTC = dateString => {
   )
 }
 function startOfDayUtc(date) {
+  if (date.toISOString().split('T')[1] === '00:00:00.000Z') return date
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
 

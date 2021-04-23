@@ -2722,10 +2722,7 @@ function getLinkedResultDate(previousResult) {
     previousResult.endedOn
   )
 
-  const nowUTCMillis = format(
-    addMinutes(new Date(), now.getTimezoneOffset()),
-    'T'
-  )
+  const nowUTCMillis = new Date()
 
   if (previousResultDateMillis > nowUTCMillis)
     throw new Error("Previous result's date can't be greater than today")

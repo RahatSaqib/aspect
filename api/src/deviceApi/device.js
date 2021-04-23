@@ -285,11 +285,13 @@ async function getDeviceConfiguration(knex, deviceId) {
 }
 
 async function getDeviceConfigurationFromDeviceLog(knex, deviceLogId) {
-  const deviceQuery = knex('Device as d').first('d.configurationData')
-  deviceQuery.innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id').where({
-    'dl.id': deviceLogId,
-    'dl.deviceConfigurationUpdated': true,
-  })
+  const deviceQuery = knex('Device as d')
+    .innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id')
+    .where({
+      'dl.id': deviceLogId,
+      'dl.deviceConfigurationUpdated': true,
+    })
+    .first('d.configurationData')
   const deviceConfiguration = await getDeviceConfigurationFromQuery(deviceQuery)
   return deviceConfiguration
 }
