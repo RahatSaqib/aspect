@@ -42,7 +42,7 @@ const messages = defineMessages({
   },
   deviceApiKey: {
     id: 'browsePage.browseDropdown.deviceApiKey',
-    defaultMessage: 'Device Api Keys',
+    defaultMessage: 'Device API Keys',
   },
   cases: {
     id: 'browsePage.browseDropdown.cases',

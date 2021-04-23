@@ -155,6 +155,12 @@ describe('This test suite is for testing different triggers conditions', async (
   const deviceName = 'New GeneXpert Laboratory'
   const deviceSerialNumber = 'Cepheid-PC-BLH'
   const hostId = 'BLH-Expert'
+  let resultCategoryPositive
+
+  before(async () => {
+    resultCategoryPositive = await resultCategoryToId('Positive')
+  })
+
   const getPayload = async (
     thecontext,
     errorCode,
@@ -214,6 +220,16 @@ describe('This test suite is for testing different triggers conditions', async (
     describe(`${issueName} issue creation (Module and lot),${
       errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
     }`, () => {
+      let issueTypeModuleId
+      let resultCategoryId
+
+      before(async () => {
+        issueTypeModuleId = await issueTypeToId(issueTypeModule)
+        resultCategoryId = resultCategoryExternalId
+          ? await resultCategoryToId(resultCategoryExternalId)
+          : null
+      })
+
       describe('With previous results older than 30 days', () => {
         let context
 
@@ -244,9 +260,7 @@ describe('This test suite is for testing different triggers conditions', async (
                 startedOn: subDays(new Date(), daysForSubstracting),
                 endedOn: subDays(new Date(), daysForSubstracting),
                 errorNotes: errorCode ? 'Some notes' : null,
-                resultCategory1: resultCategoryExternalId
-                  ? await resultCategoryToId(resultCategoryExternalId)
-                  : null,
+                resultCategory1: resultCategoryId,
               },
             })
           })
@@ -316,19 +330,20 @@ describe('This test suite is for testing different triggers conditions', async (
         let anotherDeviceContext
 
         beforeEach(async () => {
-          context = createGxConnectTestContext(server, {
+          const contextBaseProps = {
             countryCode,
             adminUsername,
             adminPassword,
+          }
+          context = createGxConnectTestContext(server, {
+            ...contextBaseProps,
             deviceName: `2nd${deviceName}`,
             macAddress: `2nd${macAddress}`,
             hostId: `2nd${hostId}`,
             deviceSerialNumber: `2nd${deviceSerialNumber}`,
           })
           anotherDeviceContext = createGxConnectTestContext(server, {
-            countryCode,
-            adminUsername,
-            adminPassword,
+            ...contextBaseProps,
             deviceName: `3nd${deviceName}`,
             macAddress: `3nd${macAddress}`,
             hostId: `3nd${hostId}`,
@@ -339,6 +354,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await anotherDeviceContext.beforeRegisterAndSetDevice()
 
           await Promise.each(_.range(0, 7), async i => {
+            const resultCategory1 = i % 2 === 0 ? resultCategoryId : null
             const resultDetails = {
               consumableLot: 'Lot 0',
               moduleName: 'Module A',
@@ -347,27 +363,16 @@ describe('This test suite is for testing different triggers conditions', async (
               endedOn: subDays(new Date(), i),
               errorCode: i % 2 === 0 ? errorCode : null,
               errorNotes: i % 2 === 0 ? 'Some notes' : null,
-              resultCategory1:
-                i % 2 === 0 && resultCategoryExternalId
-                  ? await resultCategoryToId(resultCategoryExternalId)
-                  : null,
+              resultCategory1,
             }
             await context.createResultForThisDevice({
               resultDetails,
             })
             await anotherDeviceContext.createResultForThisDevice({
               resultDetails: {
-                consumableLot: 'Lot 0',
-                moduleName: 'Module A',
+                ...resultDetails,
                 moduleSerial: 'M-ANOTHERSERIAL-0',
-                endedOn: subDays(new Date(), i),
                 instrumentSerial: 'S-ANOTHERSERIAL-0',
-                errorCode: i % 2 === 0 ? errorCode : null,
-                errorNotes: i % 2 === 0 ? 'Some notes' : null,
-                resultCategory1:
-                  i % 2 === 0 && resultCategoryExternalId
-                    ? await resultCategoryToId(resultCategoryExternalId)
-                    : null,
               },
             })
           })
@@ -412,11 +417,7 @@ describe('This test suite is for testing different triggers conditions', async (
             payload: firstPayload,
           })
           await waitForIdle(1000)
-          await evaluateIssues(
-            response,
-            await issueTypeToId(issueTypeModule),
-            errorCode
-          )
+          await evaluateIssues(response, issueTypeModuleId, errorCode)
 
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
           await Promise.each(_.range(0, 8), async i => {
@@ -440,11 +441,7 @@ describe('This test suite is for testing different triggers conditions', async (
               }),
             })
             await waitForIdle()
-            await evaluateIssues(
-              resp,
-              await issueTypeToId(issueTypeModule),
-              errorCode
-            )
+            await evaluateIssues(resp, issueTypeModuleId, errorCode)
           })
 
           /**
@@ -457,7 +454,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await waitForIdle(1000)
           await evaluateIssues(
             anotherDeviceResponse,
-            await issueTypeToId(issueTypeModule),
+            issueTypeModuleId,
             errorCode
           )
           await evaluateIssues(
@@ -469,8 +466,8 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe('Invalid results', async () => {
-    await testCategoriesAndErrorCodes(
+  describe('Invalid results', () => {
+    testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
       'TooManyInvalidResultsModule',
@@ -479,24 +476,24 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('error 5006 issue', async () => {
-    await testCategoriesAndErrorCodes(
+  describe('error 5006 issue', () => {
+    testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
       'ProbeCheckTooHighModule',
       'ProbeCheckTooHighLot'
     )
   })
-  describe('error 5016 issue', async () => {
-    await testCategoriesAndErrorCodes(
+  describe('error 5016 issue', () => {
+    testCategoriesAndErrorCodes(
       'Failed To Verify Valid Background Error For Analyte',
       5016,
       'TooManyInvalidResultsModule',
       'TooManyInvalidResultsLot'
     )
   })
-  describe('error 5007 issue', async () => {
-    await testCategoriesAndErrorCodes(
+  describe('error 5007 issue', () => {
+    testCategoriesAndErrorCodes(
       'Probes check Too Low',
       5007,
       'ProbeCheckFailedModule',
@@ -504,16 +501,16 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('error 5017 issue', async () => {
-    await testCategoriesAndErrorCodes(
+  describe('error 5017 issue', () => {
+    testCategoriesAndErrorCodes(
       'Probes Check Failed',
       5017,
       'ProbeCheckFailedModule',
       'ProbeCheckFailedLot'
     )
   })
-  describe('error 5011 issue', async () => {
-    await testCategoriesAndErrorCodes(
+  describe('error 5011 issue', () => {
+    testCategoriesAndErrorCodes(
       'Signal Loss Detected in the Amplification Curve',
       5011,
       'SignalLossDetectedInAmplificationCurveModule',
@@ -552,7 +549,7 @@ describe('This test suite is for testing different triggers conditions', async (
           endedOn: subDays(new Date(), i),
           errorCode: null,
           errorNotes: null,
-          resultCategory1: await resultCategoryToId('Positive'),
+          resultCategory1: resultCategoryPositive,
         }
         await deviceContextForUnusedModules.createResultForThisDevice({
           resultDetails,
@@ -614,7 +611,7 @@ describe('This test suite is for testing different triggers conditions', async (
         endedOn: subDays(new Date(), 5),
         errorCode: null,
         errorNotes: null,
-        resultCategory1: await resultCategoryToId('Positive'),
+        resultCategory1: resultCategoryPositive,
       }
       await deviceContextForUnusedModules.createResultForThisDevice({
         resultDetails: { ...resultDetails, moduleName: 'A great module' },

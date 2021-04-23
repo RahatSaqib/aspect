@@ -24,7 +24,7 @@ describe('geography endpoints', () => {
         })
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
@@ -49,7 +49,7 @@ describe('geography endpoints', () => {
         })
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with({ params: {} })
@@ -79,7 +79,7 @@ describe('geography endpoints', () => {
         )
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with({ params: {} })
@@ -109,7 +109,7 @@ describe('geography endpoints', () => {
         )
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with({ params: {} })
@@ -139,7 +139,7 @@ describe('geography endpoints', () => {
         )
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
@@ -164,7 +164,7 @@ describe('geography endpoints', () => {
         })
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {

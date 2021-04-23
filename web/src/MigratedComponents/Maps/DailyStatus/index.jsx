@@ -30,7 +30,9 @@ const DailyStatusMap = () => {
       deviceStatusesError,
     },
     actions: { toggleAll, toggleStatusVisibility },
-  } = useDailyStatus(false, false, DEVICE_STATUS_LAST_REPORTED.ENDPOINT)
+  } = useDailyStatus(false, false, DEVICE_STATUS_LAST_REPORTED.ENDPOINT, {
+    excludeNotLocalizableDevices: true,
+  })
 
   if (devicesIsError) {
     throw new Error(devicesError)

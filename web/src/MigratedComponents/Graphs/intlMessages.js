@@ -383,6 +383,18 @@ export const messages = defineMessages({
     id: 'legends.Unknown.device',
     defaultMessage: 'Device',
   },
+  assayTbLamp: {
+    id: 'legends.Unknown.assayTbLamp',
+    defaultMessage: 'TB LAMP',
+  },
+  assaySmear: {
+    id: 'legends.Unknown.assaySmear',
+    defaultMessage: 'Smear',
+  },
+  assayLPA: {
+    id: 'legends.Unknown.assayLPA',
+    defaultMessage: 'LPA',
+  },
 })
 
 export default messages

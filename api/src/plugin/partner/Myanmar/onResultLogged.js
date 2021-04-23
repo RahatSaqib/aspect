@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
+const Promise = require('bluebird')
 
 const {
   resultModuleTemperatureError,
@@ -224,22 +225,24 @@ async function onResultLogged({ resultId }, { messageContext }) {
           messageContext.resultMachineProceduralError(deviceId)
         } else {
           // Check for module procedural issue
-          _.map(modules, async module => {
-            const [{ moduleResultCount }] = await knex('Result as r')
-              .where('r.endedOn', '>=', last30day)
-              .where('r.moduleSerial', module.moduleSerial)
-              .whereNotIn('r.moduleSerial', replacedModuleSerials)
-              .count('r.id as moduleResultCount')
-            const prcntModuleError =
-              (module.errorCount / moduleResultCount) * 100
-            if (
-              prcntModuleError > maxPrcntErrors &&
-              // LU Generic Module: Minimum of 6 errors
-              module.errorCount >= minErrorsForLUGenericModuleIssue
-            ) {
-              messageContext.resultModuleProceduralError(deviceId, module)
-            }
-          })
+          await Promise.all(
+            _.map(modules, async module => {
+              const [{ moduleResultCount }] = await knex('Result as r')
+                .where('r.endedOn', '>=', last30day)
+                .where('r.moduleSerial', module.moduleSerial)
+                .whereNotIn('r.moduleSerial', replacedModuleSerials)
+                .count('r.id as moduleResultCount')
+              const prcntModuleError =
+                (module.errorCount / moduleResultCount) * 100
+              if (
+                prcntModuleError > maxPrcntErrors &&
+                // LU Generic Module: Minimum of 6 errors
+                module.errorCount >= minErrorsForLUGenericModuleIssue
+              ) {
+                messageContext.resultModuleProceduralError(deviceId, module)
+              }
+            })
+          )
         }
       } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
         const reagentErrorQuery = knex('Result as r')
@@ -336,7 +339,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           messageContext.resultMachineUnknownError(deviceId)
         } else {
           // Check for module issue
-          _.map(modules, async module => {
+          await Promise.each(modules, async module => {
             const moduleResultCount = totalResults[module.moduleSerial]
             const prcntModuleError =
               (module.errorCount / moduleResultCount) * 100
@@ -345,7 +348,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
               // LU Module Unknown Error: Minimum of 6 errors
               module.errorCount >= moduleMaxUnknownErrors
             ) {
-              messageContext.resultModuleUnknownError(deviceId, module)
+              return messageContext.resultModuleUnknownError(deviceId, module)
             }
           })
         }
@@ -418,9 +421,10 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })()
         )
         .groupBy(['r.consumableLot', 'r.assayId'])
-      _.forEach(invalidResultBatchRatios, ratio => {
+
+      await Promise.each(invalidResultBatchRatios, async ratio => {
         if (ratio.invalidResultRatio > invalidResultBatchRatio) {
-          createInventoryReagentHealthIssue(
+          await createInventoryReagentHealthIssue(
             knex,
             result.deviceId,
             result.partnerId,
@@ -436,7 +440,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         invalidReagentErrorRatio > maxInvalidReagentErrorRatio) &&
       invalidReagentErrorCount >= minErrorsInvalidsForReagentHealthIssue
     ) {
-      createInventoryReagentHealthIssue(
+      await createInventoryReagentHealthIssue(
         knex,
         result.deviceId,
         result.partnerId,
@@ -459,9 +463,9 @@ async function createInventoryReagentHealthIssue(
     { partner: { id: partnerId } },
     assayId
   )
-  _.map(assayConsumables, async assayConsumable => {
-    dispatchAction(deviceId, assayConsumable.consumableId)
-  })
+  await Promise.each(assayConsumables, async ({ consumableId }) =>
+    dispatchAction(deviceId, consumableId)
+  )
 }
 
 module.exports = onResultLogged

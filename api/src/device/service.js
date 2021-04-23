@@ -12,6 +12,7 @@ const {
   isWeekend,
   parseJSON,
 } = require('date-fns')
+const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
 const {
@@ -113,7 +114,8 @@ const SELECT_SHOW_FIELDS = [
 async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-
+  const loggedUserName = auth.credentials.name
+  const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
   const deviceQuery = knex('Device as d')
@@ -176,7 +178,11 @@ async function getListDevices(query, auth) {
               'issue.issueStatusId',
               'issueStatus.id'
             )
-            .whereNotIn('issueStatus.externalId', ['Inactive', 'Resolved'])
+            .whereNotIn('issueStatus.externalId', [
+              'Inactive',
+              'Ok',
+              'Resolved',
+            ])
       }
     })
     .modify(filterParams, query, {
@@ -226,12 +232,28 @@ async function getListDevices(query, auth) {
       knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
       // get csv of issue types
       knex('Issue as i1')
-        .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-        .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+        .innerJoin('Notification as notif', 'notif.issueId', 'i1.id')
+        .innerJoin('AlertMessage as am', 'am.id', 'notif.alertMessageId')
+        .join('IssueType as it', 'i1.issueTypeId', 'it.id')
+        .join('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
         .whereRaw('i1.deviceId = d.id')
         // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
+        .modify(addConstraints, dataConstraints, {})
+        .modify(queryBuilder => {
+          if (query.onlyOpenIssues || query.issueTypeId) {
+            if (query.issueTypeId)
+              queryBuilder.whereIn('it.externalId', query.issueTypeId)
+            if (query.onlyOpenIssues)
+              queryBuilder.whereNotIn('ist.externalId', [
+                'Inactive',
+                'Ok',
+                'Resolved',
+              ])
+          }
+        })
+        .where('am.personId', accountDetails.id)
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
         .as('issueCategories'),
       // Gets the count of days the device was logged
@@ -264,7 +286,6 @@ async function getListDevices(query, auth) {
         .as('activeDays'),
     ])
     .distinct()
-
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -503,8 +524,13 @@ const getMaintenanceStatusesQuery = (filter = null) =>
     if (filter) q.where(filter)
   })
 
-async function listMaintenanceStatuses() {
-  const resultQuery = getMaintenanceStatusesQuery()
+async function listMaintenanceStatuses(request) {
+  const { onlyManuallySet } = request.query
+  const resultQuery = getMaintenanceStatusesQuery().where(builder => {
+    if (onlyManuallySet) {
+      builder.where({ manuallySet: onlyManuallySet })
+    }
+  })
 
   // get total count for paging
   const getCount = resultQuery.clone().count('dms.id as count').first()
@@ -926,10 +952,11 @@ async function setDeviceMaintenanceStatus(
     createdOn: new Date(),
     createdBy: userId,
   })
-  const context = messageContext.bindActionCreators({
-    deviceMaintenanceStatusLogged,
-  })
-  context.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
+  if (!messageContext.deviceMaintenanceStatusLogged)
+    messageContext.bindActionCreators({
+      deviceMaintenanceStatusLogged,
+    })
+  messageContext.deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId)
   return deviceMaintenanceStatusLogId
 }
 
