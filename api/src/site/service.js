@@ -433,6 +433,7 @@ async function listSitesWithReporters(request) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
       siteId: 's.id',
+      id: 's.id',
       partnerId: 's.partnerId',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -500,6 +501,7 @@ async function listSitesWithReporters(request) {
       'l.name as lgaName',
       's.partnerId',
       's.id as siteId',
+      's.id as id',
       's.name as siteName',
       's.shortName as siteShortName'
     )
