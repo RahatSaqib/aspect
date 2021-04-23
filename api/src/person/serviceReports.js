@@ -12,6 +12,7 @@ async function exportContacts(request, reply) {
     replacements: getBaseReplacements(),
   })
 }
+
 module.exports = {
   exportContacts,
 }

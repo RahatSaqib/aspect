@@ -19,9 +19,9 @@ const {
   assignContact,
   unAssignContact,
 } = require('./service')
+
 const { exportContacts } = require('./serviceReports')
 const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
-const { exportReporters } = require('./reporterServiceReports')
 
 function listContactBaseConfig() {
   return {
@@ -200,15 +200,6 @@ const routes = [
             ),
         }),
       },
-      ...listReporterBaseConfig(),
-    },
-  },
-  {
-    method: 'GET',
-    path: '/reporter/export',
-    handler: exportReporters,
-    config: {
-      description: 'Export Reporter List into Excel or CSV',
       ...listReporterBaseConfig(),
     },
   },
