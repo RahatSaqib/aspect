@@ -15,18 +15,7 @@ const getCustomToday = day => {
   }
   return startOfTodayUtc()
 }
-const getDaysWithNoRuns = async (knex, taskName, daysRange = 30) => {
-  const executedDates =
-    (await knex('SchedulerTaskExecutionLog')
-      .where({ taskName })
-      .andWhere(
-        'processingDate',
-        '>=',
-        startOfDayUtc(subDays(new Date(), daysRange))
-      )
-      .distinct('processingDate')
-      .where({ success: true })
-      .pluck('processingDate')) || []
+const getDaysWithNoRuns = (executedDates, daysRange = 30) => {
   const days = _.map(_.range(daysRange), day =>
     startOfDayUtc(subDays(new Date(), day))
   )
@@ -46,6 +35,22 @@ const getDaysWithNoRuns = async (knex, taskName, daysRange = 30) => {
   return daysToRun
 }
 
+const getDaysWithExecution = async (knex, taskName, daysRange = 30) => {
+  const executedDates =
+    (await knex('SchedulerTaskExecutionLog')
+      .where({ taskName })
+      .andWhere(
+        'processingDate',
+        '>=',
+        startOfDayUtc(subDays(new Date(), daysRange))
+      )
+      .distinct('processingDate')
+      .where({ success: true })
+      .pluck('processingDate')) || []
+
+  return executedDates
+}
+
 /**
  *This is a wrapper function which compose any scheduler task.
  For those task which are daily basis we should pass as part of the action parameter
@@ -62,10 +67,13 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
 
       let daysToRun = [today]
 
+      const executedDates = await getDaysWithExecution(
+        knex,
+        schedulerMethod.name
+      )
       // If this task is daily basis it will complete the range of dates
       // we want to run the task.
-      if (dailyRun)
-        daysToRun = await getDaysWithNoRuns(knex, schedulerMethod.name)
+      if (dailyRun) daysToRun = getDaysWithNoRuns(executedDates)
 
       await Promise.each(daysToRun, async day => {
         let jobExecutionId
@@ -109,4 +117,4 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
   })
 }
 
-module.exports = { taskTracker }
+module.exports = { taskTracker, getDaysWithNoRuns }
