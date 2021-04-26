@@ -10,7 +10,7 @@ async function seed(knex) {
   // Get all the states including " State" in their name
   const currentStates = await knex('State as s')
     .innerJoin('Geography as g', 's.id', 'g.stateId')
-    .where(knex.raw("s.name LIKE '% State%'"))
+    .where(knex.raw("s.name LIKE '% State'"))
     .andWhere('g.countryId', countryId)
     .select(['s.name', 'id'])
     .distinct()
