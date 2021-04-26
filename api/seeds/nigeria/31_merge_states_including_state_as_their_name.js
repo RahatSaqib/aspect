@@ -18,9 +18,11 @@ async function seed(knex) {
   await Promise.each(currentStates, async currState => {
     const actualStateName = currState.name.replace(' State', '')
     // Get the correct state, if exists
-    const actualState = await knex('State')
+    const actualState = await knex('State as s')
+      .leftJoin('Geography as g', 's.id', 'g.stateId')
       .where('name', actualStateName)
-      .first()
+      .andWhere('g.countryId', countryId)
+      .first('s.*')
 
     if (actualState) {
       // If actual state exists, then iterate over all the geographies for the current state
