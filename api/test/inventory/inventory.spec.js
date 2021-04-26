@@ -26,7 +26,7 @@ describe('Inventory Routes', () => {
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
-              assert.equal(res.body.data.length, 2)
+              assert.isAtLeast(res.body.data.length, 2)
               res.body.data.forEach(inventoryItem => {
                 assert.property(inventoryItem, 'id')
                 assert.property(inventoryItem, 'consumableId')
@@ -90,7 +90,7 @@ describe('Inventory Routes', () => {
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
-              assert.equal(res.body.data.length, 2)
+              assert.isAtLeast(res.body.data.length, 2)
               res.body.data.forEach(site => {
                 assert.property(site, 'siteId')
                 assert.property(site, 'siteName')
