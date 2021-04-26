@@ -73,8 +73,8 @@ describe('Device route Job constraints', () => {
     })
 
     after(async () => {
-      removeUser(gxClinicianUserId)
-      removeUser(bothDeviceTypesClinicianUserId)
+      await removeUser(gxClinicianUserId)
+      await removeUser(bothDeviceTypesClinicianUserId)
     })
 
     it("should constrain devices returned based on the user's job context", async () => {
