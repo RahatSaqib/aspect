@@ -86,6 +86,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'quantityOnHand',
     'expiresOn',
     'stockLeft',
+    'dailyConsumptionRate',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)

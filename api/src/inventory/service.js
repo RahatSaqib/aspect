@@ -23,19 +23,20 @@ const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
 } = require('../shared/utilsInventory')
+const { splitCsvWithTrim } = require('../shared/string')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
-  'ii.consumableId',
-  'ii.siteId',
   'ii.inTransitFromSiteId',
   'ii.expiresOn',
   'ii.lotNumber',
   'ii.quantityOnHand',
+  'c.id as consumableId',
   'c.name as consumableName',
   'c.manufacturer',
   'c.canExpire',
   'u.shortName as unitShortName',
+  's.id as siteId',
   's.name as siteName',
   'g.countryId',
   'g.stateId',
@@ -58,6 +59,7 @@ const INVENTORY_ITEM_SORT_FIELDS = {
   expiresOn: 'ii.expiresOn',
   lotNumber: 'ii.lotNumber',
   stockLeft: 'stock.stockLeft',
+  dailyConsumptionRate: 'ficr.rate',
 }
 
 const INVENTORY_ITEM_FILTER_FIELDS = {
@@ -73,6 +75,7 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
 const STOCK_LEFT_FILTER_FIELDS = {
   stockLeft: (queryBuilder, filterValue) => {
     queryBuilder.where(builder => {
+      builder.whereNotNull(`stock.${filterValue}`)
       builder.where(`stock.${filterValue}`, '>', 0)
     })
   },
@@ -412,10 +415,10 @@ async function listInventoryItems(request) {
   )
 
   const inventoryItemsQuery = query('Search Inventory Items')
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .from(supplyInStockBase.as('stock'))
+    .innerJoin('Site as s', 'stock.siteId', 's.id')
+    .innerJoin('Consumable as c', 'stock.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
     .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
       builder
         .on('ficr.siteId', 's.id')
@@ -426,11 +429,10 @@ async function listInventoryItems(request) {
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .leftOuterJoin(supplyInStockBase.as('stock'), function () {
-      this.on('s.id', 'stock.siteId').andOn('c.id', 'stock.consumableId')
+    .leftJoin('InventoryItem as ii', function () {
+      this.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
     })
-    .where('ii.quantityOnHand', '<>', 0)
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,
@@ -442,17 +444,42 @@ async function listInventoryItems(request) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
 
-  const getCount = inventoryItemsQuery.clone().count('ii.id as count').first()
+  const getCount = inventoryItemsQuery
+    .clone()
+    .count({
+      count: knex.raw(`concat(s.id, '_', c.id, '_', ifnull(ii.id,0))`),
+    })
+    .first()
+
+  /**
+   * Make sure list of supplies is always sorted by min 2 fields - siteName and consumableName.
+   * If other columns are clicked in UI - then sort first by that column,
+   * and then by siteName and consumableName.
+   */
+  const requestQuery = request.query
+  if (requestQuery.sortCol) {
+    let sortCols = splitCsvWithTrim(requestQuery.sortCol)
+    if (!sortCols.includes('siteName')) {
+      sortCols = [...sortCols, 'siteName']
+    }
+    if (!sortCols.includes('consumableName')) {
+      sortCols = [...sortCols, 'consumableName']
+    }
+    requestQuery.sortCol = sortCols.join(',')
+  }
 
   const getItems = inventoryItemsQuery
     .modify(
       sortPageParams,
-      request.query,
+      requestQuery,
       INVENTORY_ITEM_SORT_FIELDS.siteName,
       INVENTORY_ITEM_SORT_FIELDS
     )
     .select([
-      ...INVENTORY_ITEM_SELECT_LIST_FIELDS,
+      // except 'ii.id'
+      ...INVENTORY_ITEM_SELECT_LIST_FIELDS.filter(x => x !== 'ii.id'),
+      // add alias 'id' for combo of siteId, consumableId and inventoryItemId
+      knex.raw(`concat(s.id, '_', c.id, '_', ifnull(ii.id,0)) as id`),
       'stock.stockLeft',
       'ficr.rate as dailyConsumptionRate',
     ])
@@ -504,10 +531,10 @@ async function listInventoryItemsGroupedBySite(request) {
   const inventoryItemsSiteByGeographyQuery = query(
     'Join Inventory Items, Site Details, and Geography Details'
   )
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .from(supplyInStockBase.as('stock'))
+    .innerJoin('Site as s', 'stock.siteId', 's.id')
+    .innerJoin('Consumable as c', 'stock.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
     .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
       builder
         .on('ficr.siteId', 's.id')
@@ -518,11 +545,10 @@ async function listInventoryItemsGroupedBySite(request) {
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .leftOuterJoin(supplyInStockBase.as('stock'), function () {
-      this.on('s.id', 'stock.siteId').andOn('c.id', 'stock.consumableId')
+    .leftJoin('InventoryItem as ii', function () {
+      this.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
     })
-    .where('ii.quantityOnHand', '<>', 0)
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
 
   const sitesQuery = inventoryItemsSiteByGeographyQuery
@@ -537,10 +563,7 @@ async function listInventoryItemsGroupedBySite(request) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
 
-  const getSiteCount = sitesQuery
-    .clone()
-    .countDistinct('ii.siteId as count')
-    .first()
+  const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
 
   const sortAggregate = request.query.sortDir === 'desc' ? 'MAX' : 'MIN'
   const sortColumnName = request.query.sortCol || 'siteName'
@@ -554,8 +577,8 @@ async function listInventoryItemsGroupedBySite(request) {
   }
   const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
   const getSiteIds = sitesQuery
-    .groupBy('ii.siteId')
-    .select('ii.siteId', knex.raw(aggregateColumn))
+    .groupBy('s.id')
+    .select('s.id as siteId', knex.raw(aggregateColumn))
     .modify(sortPageParams, request.query, sortColumnName)
 
   const [{ count: total }, sitesData] = await Promise.all([
@@ -578,7 +601,10 @@ async function listInventoryItemsGroupedBySite(request) {
     )
     .orderBy('sortBy', sortDirection)
     .select([
-      ...INVENTORY_ITEM_SELECT_LIST_FIELDS,
+      // except 'ii.id'
+      ...INVENTORY_ITEM_SELECT_LIST_FIELDS.filter(x => x !== 'ii.id'),
+      // add alias 'id' for combo of siteId, consumableId and inventoryItemId
+      knex.raw(`concat(s.id, '_', c.id, '_', ifnull(ii.id,0)) as id`),
       knex.raw(`${sortColumnField} as sortBy`),
       'stock.stockLeft',
       'ficr.rate as dailyConsumptionRate',
