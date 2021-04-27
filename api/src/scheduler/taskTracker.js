@@ -97,21 +97,23 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             })
             .where('id', jobExecutionId)
         } catch (dailyException) {
+          const errorMessage = JSON.stringify(dailyException)
           logger.error(dailyException, { reLabel: 'aspect:taskTracker' })
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
-              errorMessage: JSON.stringify(dailyException),
+              errorMessage,
             })
             .where('id', jobExecutionId)
         }
       })
     } catch (ex) {
+      const errorMessage = JSON.stringify(ex)
       logger.error(ex, { reLabel: 'aspect:taskTracker' })
       await knex('SchedulerTaskExecutionLog').insert({
         taskName: schedulerMethod.name,
         endDate: new Date(),
-        errorMessage: JSON.stringify(ex),
+        errorMessage,
       })
     }
   })
