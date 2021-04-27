@@ -13,7 +13,7 @@ async function getForms(request) {
   // eslint-disable-next-line no-return-assign
   _.each(await formQuery, form => {
     forms[form.externalId] = {
-      ...formDictionary[form.externalId],
+      ...formDictionary[form.jsonSchemaFileName],
       assayId: form.assayId,
       diseaseId: form.diseaseId,
       formTypeId: form.formTypeId,
@@ -37,29 +37,34 @@ const getCustomFields = async (partnerId, deviceId) => {
       knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
     )
     .groupBy('fd.id', 'd.customFieldsSentOn')
-  const maxDateUpdated = _.maxBy(formQuery, elem => elem.customFieldsSentOn)
+  const { customFieldsSentOn } = _.maxBy(formQuery, elem => elem.customFieldsSentOn) || {}
 
   const hasAnyUpdate =
-    !maxDateUpdated ||
+    !customFieldsSentOn ||
     !!formQuery.find(
-      ({ externalId }) => formDictionary[externalId].updatedOn > maxDateUpdated
+      ({ jsonSchemaFileName }) => formDictionary[jsonSchemaFileName].updatedOn > customFieldsSentOn
     )
-  let forms = {}
+
+  let forms = { fields: [] }
   if (hasAnyUpdate) {
     _.each(formQuery, form => {
-      const fields = _.map(formDictionary[form.externalId].fields, field => ({
+      const fields = _.map(formDictionary[form.jsonSchemaFileName].fields, field => ({
         ...field,
         assayExternalId: form.assayExternalId
           ? form.assayExternalId.split(',')
           : [],
         diseaseId: form.diseaseId,
       }))
-      forms = _.merge(forms, { fields })
+      forms = { fields: _.concat(forms.fields, fields) }
     })
   }
+
+  console.log(forms)
+
   return forms
 }
 function getFormsBaseQuery(partnerId, query) {
+  console.log(partnerId)
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
     .join(
@@ -78,7 +83,8 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.externalId',
       'fd.assayId',
       'fd.diseaseId',
-      'ft.externalId as formTypeId'
+      'ft.externalId as formTypeId',
+      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
   return queryForm
 }
