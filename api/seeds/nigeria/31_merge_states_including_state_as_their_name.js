@@ -32,7 +32,14 @@ async function seed(knex) {
       await Promise.each(currGeographies, async currGeography => {
         // Get the equivalent actual geography
         const actualGeography = await knex('Geography')
-          .where({ stateId: actualState.id, lgaId: currGeography.lgaId })
+          .where('stateId', actualState.id)
+          .andWhere(qb => {
+            if (!currGeography.lgaId) {
+               qb.whereNull('lgaId')
+             } else {
+               qb.where('lgaId', currGeography.lgaId)
+             }
+          })
           .first()
 
         if (actualGeography) {
