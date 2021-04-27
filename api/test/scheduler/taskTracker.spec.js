@@ -148,6 +148,7 @@ describe('Scheduler task tracker', () => {
       await messageContext.dispatch(action2)
       await waitForAction(action1)
       await waitForAction(action2)
+      await waitForIdle(2000)
       const errorRecords = await knex(
         'SchedulerTaskExecutionLog'
       ).whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
