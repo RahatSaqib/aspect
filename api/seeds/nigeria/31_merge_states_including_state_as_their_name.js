@@ -35,10 +35,10 @@ async function seed(knex) {
           .where('stateId', actualState.id)
           .andWhere(qb => {
             if (!currGeography.lgaId) {
-               qb.whereNull('lgaId')
-             } else {
-               qb.where('lgaId', currGeography.lgaId)
-             }
+              qb.whereNull('lgaId')
+            } else {
+              qb.where('lgaId', currGeography.lgaId)
+            }
           })
           .first()
 
