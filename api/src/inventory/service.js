@@ -8,6 +8,8 @@ const {
   query,
   filterParams,
   filterDateRangeParams,
+  pageParams,
+  sortParams,
   sortPageParams,
 } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -404,11 +406,7 @@ function findInventoryItemMatchingConsumableInResultData(
   return items[0].inventoryItem
 }
 
-async function listInventoryItems(request) {
-  const { auth } = request
-
-  const dataConstraints = await getConstraints(auth.credentials)
-
+function filteredInventoryItemsBase(request, dataConstraints) {
   const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(
     request,
     dataConstraints
@@ -443,6 +441,19 @@ async function listInventoryItems(request) {
       dataConstraints,
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
+
+  return inventoryItemsQuery
+}
+
+async function listInventoryItems(request) {
+  const { auth } = request
+
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const inventoryItemsQuery = filteredInventoryItemsBase(
+    request,
+    dataConstraints
+  )
 
   const getCount = inventoryItemsQuery
     .clone()
@@ -520,92 +531,58 @@ async function listInventoryItemsGroupedBySite(request) {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(
+  /**
+   * Make sure list of supplies is always sorted by min 2 fields - siteName and consumableName.
+   * If other columns are clicked in UI - then sort first by that column,
+   * and then by siteName and consumableName.
+   */
+  const requestQuery = _.cloneDeep(request.query)
+  if (requestQuery.sortCol) {
+    let sortCols = splitCsvWithTrim(requestQuery.sortCol)
+    if (!sortCols.includes('siteName')) {
+      sortCols = [...sortCols, 'siteName']
+    }
+    if (!sortCols.includes('consumableName')) {
+      sortCols = [...sortCols, 'consumableName']
+    }
+    requestQuery.sortCol = sortCols.join(',')
+  }
+
+  const inventoryItemsQuery = filteredInventoryItemsBase(
     request,
     dataConstraints
+  ).modify(
+    sortParams,
+    requestQuery,
+    INVENTORY_ITEM_SORT_FIELDS.siteName,
+    INVENTORY_ITEM_SORT_FIELDS
   )
 
-  /* TODO: Add inventory item <--> site bridging table and fix this query so that
-     user can view items that are out of stock */
-  /* TODO: Add option to break out by expiration date */
-  const inventoryItemsSiteByGeographyQuery = query(
-    'Join Inventory Items, Site Details, and Geography Details'
-  )
-    .from(supplyInStockBase.as('stock'))
-    .innerJoin('Site as s', 'stock.siteId', 's.id')
-    .innerJoin('Consumable as c', 'stock.consumableId', 'c.id')
-    .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
-      builder
-        .on('ficr.siteId', 's.id')
-        .andOn('ficr.consumableId', 'c.id')
-        .andOn('ficr.days', 1)
-    })
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as co', 'g.countryId', 'co.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('InventoryItem as ii', builder => {
-      builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
-    })
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-
-  const sitesQuery = inventoryItemsSiteByGeographyQuery
+  const getSiteCount = inventoryItemsQuery
     .clone()
-    .modify(filterParams, request.query, {
-      ...INVENTORY_ITEM_FILTER_FIELDS,
-      ...STOCK_LEFT_FILTER_FIELDS,
-    })
-    .modify(
-      addConstraints,
-      dataConstraints,
-      INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-    )
+    .countDistinct('s.id as count')
+    .first()
 
-  const getSiteCount = sitesQuery.clone().countDistinct('s.id as count').first()
-
-  const sortAggregate = request.query.sortDir === 'desc' ? 'MAX' : 'MIN'
-  const sortColumnName = request.query.sortCol || 'siteName'
-  let sortColumnField = INVENTORY_ITEM_SORT_FIELDS[sortColumnName]
-  if (sortColumnName === 'expiresOn') {
-    const defaultDateOrderBy =
-      request.query.sortDir === 'desc'
-        ? '1000-01-01 00:00:00'
-        : '9999-12-31 23:59:59'
-    sortColumnField = `COALESCE(${INVENTORY_ITEM_SORT_FIELDS[sortColumnName]}, '${defaultDateOrderBy}')`
-  }
-  const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
-  const getSiteIds = sitesQuery
+  const getSiteIds = inventoryItemsQuery
+    .clone()
     .groupBy('s.id')
-    .select('s.id as siteId', knex.raw(aggregateColumn))
-    .modify(sortPageParams, request.query, sortColumnName)
+    .select('s.id as siteId')
+    .modify(pageParams, requestQuery)
 
   const [{ count: total }, sitesData] = await Promise.all([
     getSiteCount,
     getSiteIds,
   ])
+  const siteIdsOnPage = sitesData.map(({ siteId }) => siteId)
 
-  const inventoryItemFilters = {
-    ...request.query,
-    siteId: _.map(sitesData, 'siteId'),
-  }
-
-  const sortDirection = request.query.sortDir === 'desc' ? 'desc' : 'asc'
-  const inventoryItems = await inventoryItemsSiteByGeographyQuery
-    .modify(filterParams, inventoryItemFilters, INVENTORY_ITEM_FILTER_FIELDS)
-    .modify(
-      addConstraints,
-      dataConstraints,
-      INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-    )
-    .orderBy('sortBy', sortDirection)
+  const inventoryItems = await inventoryItemsQuery
+    .whereIn('s.id', siteIdsOnPage)
     .select([
       // except 'ii.id'
       ...INVENTORY_ITEM_SELECT_LIST_FIELDS.filter(x => x !== 'ii.id'),
       // add alias 'id' for combo of siteId, consumableId and inventoryItemId
       knex.raw(`concat(s.id, '_', c.id, '_', ifnull(ii.id,0)) as id`),
-      knex.raw(`${sortColumnField} as sortBy`),
+      // knex.raw(`${sortColumnField} as sortBy`),
       'stock.stockLeft',
       'ficr.rate as dailyConsumptionRate',
     ])
