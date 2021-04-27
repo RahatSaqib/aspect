@@ -429,8 +429,8 @@ async function listInventoryItems(request) {
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('InventoryItem as ii', function () {
-      this.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
+    .leftJoin('InventoryItem as ii', builder => {
+      builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
     })
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
@@ -545,8 +545,8 @@ async function listInventoryItemsGroupedBySite(request) {
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('InventoryItem as ii', function () {
-      this.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
+    .leftJoin('InventoryItem as ii', builder => {
+      builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId')
     })
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
