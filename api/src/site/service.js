@@ -500,6 +500,7 @@ async function listSitesWithReporters(request) {
       'l.name as lgaName',
       's.partnerId',
       's.id as siteId',
+      's.id as id',
       's.name as siteName',
       's.shortName as siteShortName'
     )
