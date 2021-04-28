@@ -111,7 +111,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
@@ -958,7 +957,10 @@ async function listTreatmentStatusTypes() {
   const getCount = resultQuery.clone().count('rsl.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'i18nKey', 'name', 'externalId')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -1459,7 +1461,10 @@ async function listWorkflowStatusTypes() {
   const getCount = resultQuery.clone().count('rs.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name', 'i18nKey')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -1941,6 +1946,7 @@ async function transferResult(request) {
       data: JSON.stringify({
         siteId: result.siteId,
         reportableSiteId: siteId,
+        previousReportableSiteId: result.reportableSiteId,
         sampleOriginSiteId: result.sampleOriginSiteId,
         comment,
       }),
@@ -2173,6 +2179,17 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
       }
+      if (params.treatmentStatus === 'AwaitingTreatment') {
+        queryBuilder
+          .where(builder =>
+            builder
+              .where('rts.externalId', params.treatmentStatus)
+              .orWhereNull('rts.externalId')
+          )
+          .where('rca.requiresTreatment', 1)
+      } else if (params.treatmentStatus) {
+        queryBuilder.where('rts.externalId', params.treatmentStatus)
+      }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
     .modify(addConstraints, dataConstraints, {
@@ -2282,16 +2299,21 @@ async function clinicalIndicatorAggregations(request) {
     .count('r.id as cnt')
 
   const data = await processGroupedQuery(resultQuery, groupBy)
-
   return { data }
 }
 
 async function processGroupedQuery(resultQuery, groupBy) {
   // handle possible groups:
   const paramToDb = {
-    resultCategory1: 'rc1.externalId as resultCategory1',
-    resultCategory2: 'rc2.externalId as resultCategory2',
-    assay: 'a.name as assay',
+    resultCategory1: [
+      'rc1.externalId as resultCategory1',
+      'rc1.i18nKey as resultCategory1I18nKey ',
+    ],
+    resultCategory2: [
+      'rc2.externalId as resultCategory2',
+      'rc2.i18nKey as resultCategory2I18nKey ',
+    ],
+    assay: ['a.externalId as assay', 'a.i18nKey as assayI18nKey'],
 
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),
@@ -2303,7 +2325,7 @@ async function processGroupedQuery(resultQuery, groupBy) {
     ),
     age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
-    followUp: `fu.externalId as followUp`,
+    followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
   }
 
   const reservedWords = ['day', 'month', 'week', 'year']
@@ -2600,8 +2622,7 @@ async function updateOrCreateResult(request, result = {}) {
   result.endedOn = payload.endedOn
   result.updatedOn = now
   result.updatedBy = userId
-  result.reportableSiteId =
-    payload.sampleOriginSiteId || device.defaultReportableSiteId || site.id
+  result.reportableSiteId = payload.sampleOriginSiteId || site.id
 
   // create sample-entry or update it
   result.sampleId = await updateOrCreateSample(
@@ -2786,4 +2807,5 @@ module.exports = {
   createResult,
   updateResult,
   addPartnerQueryConstraints,
+  getBaseQueryForResults,
 }

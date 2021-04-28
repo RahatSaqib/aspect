@@ -2,21 +2,22 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import { defineMessages, injectIntl, useIntl } from 'react-intl'
+import { injectIntl, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { connect, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 import { ResponsiveBar } from '@nivo/bar'
-
+import resultMessages from '../../../../result/list/messages.js'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../../shared/selectors/searchParams'
+import { useAuthState } from '../../../../Providers/AuthProvider'
 import { formatDate, formatRelative } from '../../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../../filter/utils'
 import Results from '../../../../result/historyResults/HistoryResults'
@@ -35,156 +36,11 @@ import requirePermissions from '../../../../components/shared/requirePermissions
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
-const messages = defineMessages({
-  deviceType: {
-    id: 'pages.DeviceDetailProfile.deviceType',
-    defaultMessage: 'Device type',
-  },
-  approval: {
-    id: 'pages.DeviceDetailProfile.approval',
-    defaultMessage: 'Approval',
-  },
-  calibration: {
-    id: 'pages.DeviceDetailProfile.calibration',
-    defaultMessage: 'Calibration',
-  },
-  site: {
-    id: 'pages.DeviceDetailProfile.site',
-    defaultMessage: 'Site',
-  },
-  connectivity: {
-    id: 'pages.DeviceDetailProfile.connectivity',
-    defaultMessage: 'Connectivity',
-  },
-  lastSeen: {
-    id: 'pages.DeviceDetailProfile.lastSeenOn',
-    defaultMessage: 'Last seen {lastSeen}',
-  },
-  warranty: {
-    id: 'pages.DeviceDetailProfile.warranty',
-    defaultMessage: 'Warranty',
-  },
-  utilizationRate: {
-    id: 'pages.DeviceDetailProfile.utilizationRate',
-    defaultMessage: 'Utilization Rate',
-  },
-  utilizationRateExplain: {
-    id: 'pages.DeviceDetailProfile.utilizationRateExplain',
-    defaultMessage:
-      'Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days',
-  },
-  errorRate: {
-    id: 'pages.DeviceDetailProfile.errorRate',
-    defaultMessage: 'Error Rate',
-  },
-  errorRateExplain: {
-    id: 'pages.DeviceDetailProfile.errorRateExplain',
-    defaultMessage:
-      'Number of errors divided by number of results in the last 30 days',
-  },
-  endedOn: {
-    id: 'pages.DeviceDetailProfile.endedOn',
-    defaultMessage: 'Test Date',
-  },
-  sampleOriginSiteName: {
-    id: 'pages.DeviceDetailProfile.sampleOriginSiteName',
-    defaultMessage: 'Sample Collection Site',
-  },
-  sampleId: {
-    id: 'pages.DeviceDetailProfile.sampleId',
-    defaultMessage: 'Sample ID',
-  },
-  errorCode: {
-    id: 'pages.DeviceDetailProfile.errorCode',
-    defaultMessage: 'Error Code',
-  },
-  resultText: {
-    id: 'pages.DeviceDetailProfile.resultText',
-    defaultMessage: 'Result Text',
-  },
-  resultWorkflowStatus: {
-    id: 'pages.DeviceDetailProfile.resultWorkflowStatus',
-    defaultMessage: 'Result Workflow Status',
-  },
-  patientId: {
-    id: 'pages.DeviceDetailProfile.patientId',
-    defaultMessage: 'Patient ID',
-  },
-  paginatorStatus: {
-    id: 'pages.DeviceDetailProfile.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# result}
-      other {# results}
-    }`,
-  },
-  maintenance: {
-    id: 'pages.DeviceDetailProfile.maintenance',
-    defaultMessage: 'Maintenance Status',
-  },
-  undefinedValue: {
-    id: 'pages.DeviceDetailProfile.undefinedValue',
-    defaultMessage: 'n/a',
-  },
-  notes: {
-    id: 'pages.DeviceDetailProfile.notes',
-    defaultMessage: 'notes',
-  },
-  buttonAddRecord: {
-    id: 'pages.DeviceDetailProfile.buttonAddRecord',
-    defaultMessage: 'Add Record',
-  },
-  buttonUpdate: {
-    id: 'pages.DeviceDetailProfile.buttonUpdate',
-    defaultMessage: 'Update',
-  },
-  buttonChange: {
-    id: 'pages.DeviceDetailProfile.buttonChange',
-    defaultMessage: 'Change',
-  },
-  testHistory: {
-    id: 'pages.DeviceDetailProfile.testHistory',
-    defaultMessage: 'Test history',
-  },
-
-  active: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.active',
-    defaultMessage: 'Active',
-  },
-  inactiveConnectivity: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity',
-    defaultMessage: 'Connectivity',
-  },
-  inactiveDecommissioned: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned',
-    defaultMessage: 'Decommissioned',
-  },
-  inactiveDownForRepair: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair',
-    defaultMessage: 'Down For Repair',
-  },
-  inactiveNoResultsReported: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoResultsReported',
-    defaultMessage: 'No Results Reported',
-  },
-  inactiveOutOfInventory: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory',
-    defaultMessage: 'Out Of Inventory',
-  },
-  inactiveUnknown: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown',
-    defaultMessage: 'Unknown',
-  },
-  reportedActive: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.reportedActive',
-    defaultMessage: 'Active',
-  },
-})
-
 const FILTERS_CONFIG = {
-  assayAndResultCategory: true,
   geography: true,
   state: true,
   lga: true,
@@ -303,11 +159,14 @@ const enhance = compose(
       // TODO: correct path?
     }) => history.push(`/browse/result/${resultId}`),
     onToggleDeviceApproval: ({ device, updateSingleDevice }) => () =>
-      updateSingleDevice(device.get('id'), {
-        approvalToken:
-          device.get('approvalToken') !== tokens.APPROVED
-            ? tokens.APPROVED
-            : tokens.ASSIGNED,
+      updateSingleDevice({
+        deviceId: device.get('id'),
+        data: {
+          approvalToken:
+            device.get('approvalToken') !== tokens.APPROVED
+              ? tokens.APPROVED
+              : tokens.ASSIGNED,
+        },
       }),
     onShowCalibrationDialog: ({ showDialog, device }) => () => {
       showDialog('calibration', device)
@@ -454,6 +313,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
+  const { formatMessage } = useIntl()
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
@@ -539,24 +399,25 @@ const PerformanceReport = ({ performanceReport, culture }) => {
             >
               {data && (
                 <div>
-                  <p>Utilization Rate</p>
+                  <p>{formatMessage(messages.utilizationRate)}</p>
                   <PerformanceBarChart
                     data={data}
                     series={utilizationRateSeries}
                     color="--aspect-color-shakespeare"
                     avgValue={avgUtilizationRate}
                     maxValue={maxUtilizationRate}
-                    info="Utilization Rate"
+                    info={formatMessage(messages.utilizationRate)}
                   />
                   <div className={cssClasses('Graph_Legend')}>
                     <div data-utilization-rate-legend>
-                      <div /> <span> Utilization Rate</span>
+                      <div />
+                      <span>{formatMessage(messages.utilizationRate)}</span>
                     </div>
                     <div data-utilization-rate-average-legend>
-                      <div /> <span> Target </span>
+                      <div /> <span> {formatMessage(messages.target)} </span>
                     </div>
                     <div data-utilization-rate-above-average-legend>
-                      <div /> <span> Above Target </span>
+                      <div /> <span>{formatMessage(messages.aboveTarget)}</span>
                     </div>
                   </div>
                 </div>
@@ -577,13 +438,14 @@ const PerformanceReport = ({ performanceReport, culture }) => {
                 />
                 <div className={cssClasses('Graph_Legend')}>
                   <div data-error-rate-legend>
-                    <div /> <span> Error Rate</span>
+                    <div /> <span>{formatMessage(messages.errorRate)} </span>
                   </div>
                   <div data-error-rate-average-legend>
-                    <div /> <span> Country Average </span>
+                    <div />
+                    <span> {formatMessage(messages.countryAverage)}</span>
                   </div>
                   <div data-error-rate-above-average-legend>
-                    <div /> <span> Above Average</span>
+                    <div /> <span>{formatMessage(messages.aboveAverage)}</span>
                   </div>
                 </div>
               </div>
@@ -627,7 +489,11 @@ const DeviceDetailProfile = ({
   onExportClick,
 }) => {
   const intl = useIntl()
-  const user = useSelector(state => state.user)
+  const {
+    culture,
+    displayPreferences: { utilizationRateThreshold, errorRateThreshold },
+  } = useAuthState()
+
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')
@@ -635,8 +501,6 @@ const DeviceDetailProfile = ({
   const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
-
-  const { displayPreferences } = user
 
   const maintenanceStatusNotes =
     !device.get('maintenanceStatusNotes') ||
@@ -671,7 +535,8 @@ const DeviceDetailProfile = ({
       sortable: true,
     },
     {
-      key: 'resultWorkflowStatus',
+      key: 'resultWorkflowStatusI18nkey',
+      formatter: value => intl.formatMessage(resultMessages[value]),
       label: intl.formatMessage(messages.resultWorkflowStatus),
       sortable: true,
     },
@@ -821,10 +686,7 @@ const DeviceDetailProfile = ({
                     number={utilizationRateThisMonth}
                     intl={intl}
                     formatNumberStyle="percent"
-                    error={
-                      utilizationRateThisMonth <
-                      displayPreferences.get('utilizationRateThreshold')
-                    }
+                    error={utilizationRateThisMonth < utilizationRateThreshold}
                   />
                 }
               />
@@ -856,10 +718,7 @@ const DeviceDetailProfile = ({
                     number={errorRateThisMonth}
                     intl={intl}
                     formatNumberStyle="percent"
-                    error={
-                      errorRateThisMonth >
-                      displayPreferences.get('errorRateThreshold')
-                    }
+                    error={errorRateThisMonth > errorRateThreshold}
                   />
                 ) : (
                   intl.formatMessage(messages.undefinedValue)
@@ -869,7 +728,9 @@ const DeviceDetailProfile = ({
             {/* Approval Status Summary */}
             <Summary
               title={intl.formatMessage(messages.approval)}
-              description={device.get('approval')}
+              description={intl.formatMessage(
+                messages[device.get('approvalStatusI18nKey')]
+              )}
               action={
                 <Button
                   variant="contained"
@@ -909,7 +770,7 @@ const DeviceDetailProfile = ({
         performanceReport={devicePerformance}
         match={match}
         location={location}
-        culture={user?.culture}
+        culture={culture}
       />
 
       <AuthenticatedResults

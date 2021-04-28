@@ -119,7 +119,7 @@ async function authenticate(request) {
   }
 
   if (user.lockedOut === 1) {
-    return Boom.unauthorized('Your account is locked.')
+    return Boom.forbidden('Your account is locked.')
   }
 
   // if password isn't a bcrypt hash, user was migrated from

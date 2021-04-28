@@ -14,7 +14,7 @@ const {
     avgTimeToUpload,
     moduleSwaps,
     instrumentsReplaced,
-    unusedModules,
+    percentageOfModulesFunctioning,
     averageRecipientsOfEmail,
     averageRecipientsOfSms,
     averageLengthOfSms,
@@ -33,6 +33,8 @@ const {
     dashboardWidgetTitleTotalActiveCases,
     dashboardWidgetTitleTotalRecoveredCases,
     dashboardWidgetTitleConfirmedCases,
+    deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   },
 } = dashboardWidgetsBase
 
@@ -59,7 +61,7 @@ module.exports = {
     avgTimeToUpload,
     moduleSwaps,
     instrumentsReplaced,
-    unusedModules,
+    percentageOfModulesFunctioning,
     averageRecipientsOfEmail,
     averageRecipientsOfSms,
     averageLengthOfSms,
@@ -84,5 +86,7 @@ module.exports = {
       ...dashboardWidgetTitleTotalRecoveredCases,
       partnerNames: ['Wakanda'],
     },
+    deviceCalibrationPastDue,
+    deviceCalibratedWhenDue,
   ],
 }

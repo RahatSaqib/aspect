@@ -50,17 +50,17 @@ export function validate({ maintenanceStatus }, { intl }) {
 }
 
 const deviceMaintenanceStatusDialog = WrappedComponent => props => {
-  const [values, setValues] = useState({})
+  const [values, setValues] = useState(false)
   const { device, intl } = props
 
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (!values) {
       setValues({
         maintenanceStatus: device.get('maintenanceStatus') || null,
         notes: device.get('maintenanceStatusNotes') || null,
-      }),
-    [device]
-  )
+      })
+    }
+  }, [device, values])
 
   const allProps = {
     ...props,
@@ -114,7 +114,7 @@ const FormDialog = ({
           <div>
             <DeviceMaintenanceStatusSelectField
               value={values.maintenanceStatus || ''}
-              onMaintenanceStatusChange={onMaintenanceStatusChange}
+              onDeviceMaintenanceStatusChange={onMaintenanceStatusChange}
               floatingLabelText={intl.formatMessage(messages.maintenanceStatus)}
               fullWidth
               helperText={

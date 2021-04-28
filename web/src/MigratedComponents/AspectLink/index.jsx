@@ -3,7 +3,7 @@ import { string, object, oneOfType } from 'prop-types'
 import { Link } from 'react-router-dom'
 import isObject from 'lodash/isObject'
 
-import { useUserIsPermitted } from '../../Hooks/RoutePermissions/index.jsx'
+import { useUserIsPermitted } from '../../Providers/RoutePermissions'
 
 /**
  * The AspectLink component provides
@@ -18,7 +18,8 @@ const isURL = to => {
   return to.match(regex)
 }
 
-const AspectLink = ({ to = '#', children, className, ...restProps }) => {
+const AspectLink = ({ to, children, className, ...restProps }) => {
+  to = to || '#'
   let linkClassName
   const { isPermitted } = useUserIsPermitted(to)
   if (isObject(className)) {

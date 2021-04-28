@@ -9,6 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const timezone = require('./fixtures/TimeZone.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
 const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
 const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
@@ -33,6 +34,7 @@ const {
   unitToId,
   partnerTypeToId,
 } = require('../src/shared/dictionary')
+const getConsumables = require('./fixtures/Consumable')
 
 /**
  *
@@ -1606,11 +1608,16 @@ async function baseGxAlertMigration(
         }
       })
       .first()
+    const personTimeZone =
+      _.get(
+        _.find(timezone.data, tz => tz.id === person.timezone),
+        'id'
+      ) || countries[0].timezone
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
         existingPerson.partnerId !== partnerId ||
-        existingPerson.timezone !== person.timezone ||
+        existingPerson.timezone !== personTimeZone ||
         existingPerson.title !== person.title ||
         existingPerson.geographyId !== geographyId ||
         existingPerson.email !== person.personEmailAddress ||
@@ -1626,7 +1633,7 @@ async function baseGxAlertMigration(
             ...existingPerson,
             name: person.personName,
             partnerId,
-            timezone: person.timezone,
+            timezone: personTimeZone,
             title: person.title,
             geographyId,
             email: person.personEmailAddress,
@@ -1644,7 +1651,7 @@ async function baseGxAlertMigration(
       ;[personId] = await knex('Person').insert({
         name: person.personName,
         partnerId,
-        timezone: person.timezone || countries[0].timezone,
+        timezone: personTimeZone,
         geographyId,
         title: person.title,
         email: person.personEmailAddress,
@@ -2121,12 +2128,17 @@ async function upsertConsumables(
   const [assayId] = await knex('Assay')
     .where('externalId', assayExternalId)
     .pluck('id')
-
+  const consumableFromFixture = _.find(
+    await getConsumables(),
+    ({ name }) => name === consumableName
+  )
   const propsConsumables = {
     name: consumableName,
     unit,
     canExpire,
     manufacturer,
+    externalId: consumableFromFixture.externalId,
+    i18nKey: consumableFromFixture.i18nKey,
   }
   let { id: consumableId } =
     (await knex('Consumable').where(propsConsumables).first()) || {}

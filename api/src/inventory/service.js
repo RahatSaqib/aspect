@@ -65,6 +65,7 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   stateId: 'g.stateId',
   lgaId: 'g.lgaId',
   consumableId: 'c.id',
+  consumableExternalId: 'c.externalId',
   siteName: 's.name',
   siteId: 's.id',
 }

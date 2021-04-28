@@ -9,7 +9,6 @@ async function up(knex) {
     x.string('name').notNullable()
     x.string('externalId').notNullable()
     x.string('i18nKey')
-    x.charset('utf8')
   })
   await seedDeviceMaintenanceType(knex)
 
@@ -44,7 +43,6 @@ async function up(knex) {
       .notNullable()
       .references('id')
       .inTable('User')
-    x.charset('utf8')
   })
 }
 

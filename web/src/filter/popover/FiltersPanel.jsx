@@ -34,6 +34,7 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
+import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -45,14 +46,12 @@ const enhance = compose(
   withState('isShown', 'setIsShown', false),
   withHandlers({
     onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
-
-    onAssayChange: ({ onChangeFilters }) => assayId => {
+    onAssayChange: ({ onChangeFilters }) => assayId =>
       onChangeFilters({
         assayId,
         resultCategoryId: null,
         resultCategoryGroupId: null,
-      })
-    },
+      }),
     onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
       onChangeFilters({ diseaseId }),
     onDateChange: ({ onChangeFilters }) => dateValues =>
@@ -125,9 +124,9 @@ const enhance = compose(
         workflowStatusId,
       }),
 
-    onTreatmentStatusIdChange: ({ onChangeFilters }) => treatmentStatusId =>
+    onTreatmentStatusChange: ({ onChangeFilters }) => treatmentStatus =>
       onChangeFilters({
-        treatmentStatusId,
+        treatmentStatus,
       }),
 
     onDeviceApprovalIdChange: ({ onChangeFilters }) => deviceApprovalId =>
@@ -174,6 +173,11 @@ const enhance = compose(
       onChangeFilters({
         stockLeft,
       }),
+
+    onReportNameChange: ({ onChangeFilters }) => reportName =>
+      onChangeFilters({
+        reportName,
+      }),
   })
 )
 
@@ -194,238 +198,247 @@ const clickExport = (
   }
 }
 
-const messages = defineMessages({
+const messages = {
   ...commonDefinitions,
-  moreFilters: {
-    id: 'filter.popover.moreFilters',
-    defaultMessage: 'More filters',
-  },
-  close: {
-    id: 'filter.popover.close',
-    defaultMessage: 'Close',
-  },
-  all: {
-    id: 'filter.popover.all',
-    defaultMessage: 'All',
-  },
-  none: {
-    id: 'filter.popover.none',
-    defaultMessage: 'None',
-  },
-  contactNameEmail: {
-    id: 'filter.popover.contactNameEmail',
-    defaultMessage: 'Contact name/email',
-  },
-  setContactNameEmail: {
-    id: 'filter.popover.setContactNameEmail',
-    defaultMessage: 'Enter contact name/email...',
-  },
-  site: {
-    id: 'filter.popover.site',
-    defaultMessage: 'Site',
-  },
-  siteId: {
-    id: 'filter.popover.siteId',
-    defaultMessage: 'Site Id',
-  },
-  enterSiteName: {
-    id: 'filter.popover.enterSiteName',
-    defaultMessage: 'Enter site name...',
-  },
-  enterSiteId: {
-    id: 'filter.popover.enterSiteId',
-    defaultMessage: 'Enter site ID...',
-  },
-  sampleOriginSite: {
-    id: 'filter.popover.sampleOriginSite',
-    defaultMessage: 'Sample collection site',
-  },
-  enterSampleOriginSite: {
-    id: 'filter.popover.enterSampleOriginSite',
-    defaultMessage: 'Enter sample origin site name...',
-  },
-  date: {
-    id: 'filter.popover.date',
-    defaultMessage: 'Date',
-  },
-  deviceName: {
-    id: 'filter.popover.deviceName',
-    defaultMessage: 'Device',
-  },
-  enterDeviceName: {
-    id: 'filter.popover.enterDeviceName',
-    defaultMessage: 'Enter device name...',
-  },
-  consumable: {
-    id: 'filter.popover.consumable',
-    defaultMessage: 'Consumable',
-  },
-  selectConsumable: {
-    id: 'filter.popover.selectConsumable',
-    defaultMessage: 'Select consumable...',
-  },
-  partner: {
-    id: 'filter.popover.partner',
-    defaultMessage: 'Partner',
-  },
-  selectPartner: {
-    id: 'filter.popover.selectPartner',
-    defaultMessage: 'Select partner...',
-  },
-  patientOrResearchId: {
-    id: 'filter.popover.patientOrResearchId',
-    defaultMessage: 'Patient ID',
-  },
-  enterPatientOrResearchId: {
-    id: 'filter.popover.enterPatientOrResearchId',
-    defaultMessage: 'Enter patient ID...',
-  },
-  patientOrCaseId: {
-    id: 'filter.popover.patientOrCaseId',
-    defaultMessage: 'Patient/Case ID',
-  },
-  enterPatientOrCaseId: {
-    id: 'filter.popover.enterPatientOrCaseId',
-    defaultMessage: 'Enter patient/case ID...',
-  },
-  sampleId: {
-    id: 'filter.popover.sampleId',
-    defaultMessage: 'Sample ID',
-  },
-  enterSampleId: {
-    id: 'filter.popover.enterSampleId',
-    defaultMessage: 'Enter sample ID...',
-  },
-  errorCode: {
-    id: 'filter.popover.errorCode',
-    defaultMessage: 'Error Code',
-  },
-  enterErrorCode: {
-    id: 'filter.popover.enterErrorCode',
-    defaultMessage: 'Enter error code...',
-  },
-  result: {
-    id: 'filter.popover.result',
-    defaultMessage: 'Result',
-  },
-  selectResult: {
-    id: 'filter.popover.selectResult',
-    defaultMessage: 'Select result...',
-  },
-  assay: {
-    id: 'filter.popover.assay',
-    defaultMessage: 'Assay',
-  },
-  selectAssay: {
-    id: 'filter.popover.selectAssay',
-    defaultMessage: 'Select assay...',
-  },
-  disease: {
-    id: 'filter.popover.disease',
-    defaultMessage: 'Disease',
-  },
-  selectDisease: {
-    id: 'filter.popover.selectDisease',
-    defaultMessage: 'Select Disease...',
-  },
-  country: {
-    id: 'filter.popover.country',
-    defaultMessage: 'Country',
-  },
-  selectCountry: {
-    id: 'filter.popover.selectCountry',
-    defaultMessage: 'Select country...',
-  },
-  setFilters: {
-    id: 'filter.popover.setFilters',
-    defaultMessage: 'Set Filters',
-  },
-
-  exportExcel: {
-    id: 'pages.ListExport.exportExcel',
-    defaultMessage: 'Excel',
-  },
-  exportCsv: {
-    id: 'pages.ListExport.exportCsv',
-    defaultMessage: 'CSV',
-  },
-  workflowStatus: {
-    id: 'filter.popover.workflowStatus',
-    defaultMessage: 'Workflow Status',
-  },
-  selectWorkflowStatus: {
-    id: 'filter.popover.selectWorkflowStatus',
-    defaultMessage: 'Select status...',
-  },
-  treatmentStatus: {
-    id: 'filter.popover.treatmentStatus',
-    defaultMessage: 'Treatment Status',
-  },
-  selectTreatmentStatus: {
-    id: 'filter.popover.selectTreatmentStatus',
-    defaultMessage: 'Select status...',
-  },
-  deviceApproval: {
-    id: 'filter.popover.deviceApproval',
-    defaultMessage: 'Approval',
-  },
-  selectDeviceApproval: {
-    id: 'filter.popover.selectDeviceApproval',
-    defaultMessage: 'Select approval status...',
-  },
-  deviceType: {
-    id: 'filter.popover.deviceType',
-    defaultMessage: 'Device Type',
-  },
-  selectDeviceType: {
-    id: 'filter.popover.selectDeviceType',
-    defaultMessage: 'Select type...',
-  },
-  externalId: {
-    id: 'filter.popover.externalId',
-    defaultMessage: 'Site ID',
-  },
-  enterExternalId: {
-    id: 'filter.popover.enterExternalId',
-    defaultMessage: 'Enter site ID...',
-  },
-  notificationName: {
-    id: 'filter.popover.notificationName',
-    defaultMessage: 'Notification',
-  },
-  selectNotificationName: {
-    id: 'filter.popover.selectNotificationName',
-    defaultMessage: 'Enter notification name...',
-  },
-  revoked: {
-    id: 'filter.popover.revoked',
-    defaultMessage: 'Revoked',
-  },
-  selectRevoked: {
-    id: 'filter.popover.selectRevoked',
-    defaultMessage: 'Select revoked status...',
-  },
-  onlyReportableResults: {
-    id: 'filter.popover.onlyReportableResults',
-    defaultMessage: 'Only Reportable Results',
-  },
-  deviceMaintenanceStatus: {
-    id: 'filter.popover.deviceMaintenanceStatus',
-    defaultMessage: 'Maintenance Status',
-  },
-  selectDeviceMaintenanceStatus: {
-    id: 'filter.popover.selectDeviceMaintenanceStatus',
-    defaultMessage: 'Select maintenance status...',
-  },
-  selectStockLeft: {
-    id: 'filter.popover.selectStockLeft',
-    defaultMessage: 'Select stock left...',
-  },
-  stockLeft: {
-    id: 'filter.popover.stockLeft',
-    defaultMessage: 'Days Stock Left',
-  },
-})
+  ...defineMessages({
+    moreFilters: {
+      id: 'filter.popover.moreFilters',
+      defaultMessage: 'More filters',
+    },
+    close: {
+      id: 'filter.popover.close',
+      defaultMessage: 'Close',
+    },
+    all: {
+      id: 'filter.popover.all',
+      defaultMessage: 'All',
+    },
+    none: {
+      id: 'filter.popover.none',
+      defaultMessage: 'None',
+    },
+    contactNameEmail: {
+      id: 'filter.popover.contactNameEmail',
+      defaultMessage: 'Contact name/email',
+    },
+    setContactNameEmail: {
+      id: 'filter.popover.setContactNameEmail',
+      defaultMessage: 'Enter contact name/email...',
+    },
+    site: {
+      id: 'filter.popover.site',
+      defaultMessage: 'Site',
+    },
+    siteId: {
+      id: 'filter.popover.siteId',
+      defaultMessage: 'Site Id',
+    },
+    enterSiteName: {
+      id: 'filter.popover.enterSiteName',
+      defaultMessage: 'Enter site name...',
+    },
+    enterSiteId: {
+      id: 'filter.popover.enterSiteId',
+      defaultMessage: 'Enter site ID...',
+    },
+    sampleOriginSite: {
+      id: 'filter.popover.sampleOriginSite',
+      defaultMessage: 'Sample collection site',
+    },
+    enterSampleOriginSite: {
+      id: 'filter.popover.enterSampleOriginSite',
+      defaultMessage: 'Enter sample origin site name...',
+    },
+    date: {
+      id: 'filter.popover.date',
+      defaultMessage: 'Date',
+    },
+    deviceName: {
+      id: 'filter.popover.deviceName',
+      defaultMessage: 'Device',
+    },
+    enterDeviceName: {
+      id: 'filter.popover.enterDeviceName',
+      defaultMessage: 'Enter device name...',
+    },
+    consumable: {
+      id: 'filter.popover.consumable',
+      defaultMessage: 'Consumable',
+    },
+    selectConsumable: {
+      id: 'filter.popover.selectConsumable',
+      defaultMessage: 'Select consumable...',
+    },
+    partner: {
+      id: 'filter.popover.partner',
+      defaultMessage: 'Partner',
+    },
+    selectPartner: {
+      id: 'filter.popover.selectPartner',
+      defaultMessage: 'Select partner...',
+    },
+    patientOrResearchId: {
+      id: 'filter.popover.patientOrResearchId',
+      defaultMessage: 'Patient ID',
+    },
+    enterPatientOrResearchId: {
+      id: 'filter.popover.enterPatientOrResearchId',
+      defaultMessage: 'Enter patient ID...',
+    },
+    patientOrCaseId: {
+      id: 'filter.popover.patientOrCaseId',
+      defaultMessage: 'Patient/Case ID',
+    },
+    enterPatientOrCaseId: {
+      id: 'filter.popover.enterPatientOrCaseId',
+      defaultMessage: 'Enter patient/case ID...',
+    },
+    sampleId: {
+      id: 'filter.popover.sampleId',
+      defaultMessage: 'Sample ID',
+    },
+    enterSampleId: {
+      id: 'filter.popover.enterSampleId',
+      defaultMessage: 'Enter sample ID...',
+    },
+    errorCode: {
+      id: 'filter.popover.errorCode',
+      defaultMessage: 'Error Code',
+    },
+    enterErrorCode: {
+      id: 'filter.popover.enterErrorCode',
+      defaultMessage: 'Enter error code...',
+    },
+    result: {
+      id: 'filter.popover.result',
+      defaultMessage: 'Result',
+    },
+    selectResult: {
+      id: 'filter.popover.selectResult',
+      defaultMessage: 'Select result...',
+    },
+    assay: {
+      id: 'filter.popover.assay',
+      defaultMessage: 'Assay',
+    },
+    selectAssay: {
+      id: 'filter.popover.selectAssay',
+      defaultMessage: 'Select assay...',
+    },
+    disease: {
+      id: 'filter.popover.disease',
+      defaultMessage: 'Disease',
+    },
+    selectDisease: {
+      id: 'filter.popover.selectDisease',
+      defaultMessage: 'Select Disease...',
+    },
+    country: {
+      id: 'filter.popover.country',
+      defaultMessage: 'Country',
+    },
+    selectCountry: {
+      id: 'filter.popover.selectCountry',
+      defaultMessage: 'Select country...',
+    },
+    setFilters: {
+      id: 'filter.popover.setFilters',
+      defaultMessage: 'Set Filters',
+    },
+    exportExcel: {
+      id: 'pages.ListExport.exportExcel',
+      defaultMessage: 'Excel',
+    },
+    exportCsv: {
+      id: 'pages.ListExport.exportCsv',
+      defaultMessage: 'CSV',
+    },
+    workflowStatus: {
+      id: 'filter.popover.workflowStatus',
+      defaultMessage: 'Workflow Status',
+    },
+    selectWorkflowStatus: {
+      id: 'filter.popover.selectWorkflowStatus',
+      defaultMessage: 'Select status...',
+    },
+    treatmentStatus: {
+      id: 'filter.popover.treatmentStatus',
+      defaultMessage: 'Treatment Status',
+    },
+    selectTreatmentStatus: {
+      id: 'filter.popover.selectTreatmentStatus',
+      defaultMessage: 'Select status...',
+    },
+    deviceApproval: {
+      id: 'filter.popover.deviceApproval',
+      defaultMessage: 'Approval',
+    },
+    selectDeviceApproval: {
+      id: 'filter.popover.selectDeviceApproval',
+      defaultMessage: 'Select approval status...',
+    },
+    deviceType: {
+      id: 'filter.popover.deviceType',
+      defaultMessage: 'Device Type',
+    },
+    selectDeviceType: {
+      id: 'filter.popover.selectDeviceType',
+      defaultMessage: 'Select type...',
+    },
+    externalId: {
+      id: 'filter.popover.externalId',
+      defaultMessage: 'Site ID',
+    },
+    enterExternalId: {
+      id: 'filter.popover.enterExternalId',
+      defaultMessage: 'Enter site ID...',
+    },
+    notificationName: {
+      id: 'filter.popover.notificationName',
+      defaultMessage: 'Notification',
+    },
+    selectNotificationName: {
+      id: 'filter.popover.selectNotificationName',
+      defaultMessage: 'Enter notification name...',
+    },
+    revoked: {
+      id: 'filter.popover.revoked',
+      defaultMessage: 'Revoked',
+    },
+    selectRevoked: {
+      id: 'filter.popover.selectRevoked',
+      defaultMessage: 'Select revoked status...',
+    },
+    onlyReportableResults: {
+      id: 'filter.popover.onlyReportableResults',
+      defaultMessage: 'Only Reportable Results',
+    },
+    deviceMaintenanceStatus: {
+      id: 'filter.popover.deviceMaintenanceStatus',
+      defaultMessage: 'Maintenance Status',
+    },
+    selectDeviceMaintenanceStatus: {
+      id: 'filter.popover.selectDeviceMaintenanceStatus',
+      defaultMessage: 'Select maintenance status...',
+    },
+    selectStockLeft: {
+      id: 'filter.popover.selectStockLeft',
+      defaultMessage: 'Select stock left...',
+    },
+    stockLeft: {
+      id: 'filter.popover.stockLeft',
+      defaultMessage: 'Days Stock Left',
+    },
+    reportName: {
+      id: 'filter.popover.reportName',
+      defaultMessage: 'Report',
+    },
+    enterReportName: {
+      id: 'filter.popover.enterReportName',
+      defaultMessage: 'Enter report name...',
+    },
+  }),
+}
 
 export const FiltersPanel = ({
   intl,
@@ -453,7 +466,7 @@ export const FiltersPanel = ({
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
-  onTreatmentStatusIdChange,
+  onTreatmentStatusChange,
   onDeviceApprovalIdChange,
   onResultCategoryGroupChange,
   onDeviceMaintenanceStatusIdChange,
@@ -461,6 +474,7 @@ export const FiltersPanel = ({
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
   onStockLeftChange,
+  onReportNameChange,
   user,
   assays,
 }) => {
@@ -477,7 +491,6 @@ export const FiltersPanel = ({
       assayResultCategory2Label = resultCategory2Label
     }
   }
-
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -610,7 +623,7 @@ export const FiltersPanel = ({
               />
             </div>
           )}
-          {config.assayAndResultCategory && (
+          {config.disease && (
             <div className={cssClasses('Control')}>
               <DiseaseSelectField
                 allItemText={intl.formatMessage(messages.all)}
@@ -620,13 +633,12 @@ export const FiltersPanel = ({
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectDisease)}
                 floatingLabelText={intl.formatMessage(messages.disease)}
-                intl={intl}
                 style={{ verticalAlign: 'bottom' }}
               />
             </div>
           )}
 
-          {config.assayAndResultCategory && !config.onlyDisease && (
+          {config.assayId && !config.onlyDisease && (
             <div className={cssClasses('Control')}>
               <AssaySelectField
                 allItemText={intl.formatMessage(messages.all)}
@@ -643,7 +655,7 @@ export const FiltersPanel = ({
           )}
 
           {!assayResultCategory2Label &&
-            config.assayAndResultCategory &&
+            config.resultCategory &&
             !config.onlyDisease && (
               <div className={cssClasses('Control')}>
                 <ResultCategorySelectField
@@ -656,12 +668,13 @@ export const FiltersPanel = ({
                   hintText={intl.formatMessage(messages.selectResult)}
                   floatingLabelText={intl.formatMessage(messages.result)}
                   style={{ verticalAlign: 'bottom' }}
+                  intl={intl}
                 />
               </div>
             )}
 
           {assayResultCategory2Label &&
-            config.assayAndResultCategory &&
+            config.resultCategoryGroup &&
             !config.onlyDisease && (
               <div className={cssClasses('Control', 'Control--wide')}>
                 <ResultCategoryGroupSelectField
@@ -674,6 +687,7 @@ export const FiltersPanel = ({
                   hintText={intl.formatMessage(messages.selectResult)}
                   floatingLabelText={intl.formatMessage(messages.result)}
                   style={{ verticalAlign: 'bottom' }}
+                  intl={intl}
                 />
               </div>
             )}
@@ -850,6 +864,7 @@ export const FiltersPanel = ({
                 hintText={intl.formatMessage(messages.selectWorkflowStatus)}
                 floatingLabelText={intl.formatMessage(messages.workflowStatus)}
                 style={{ verticalAlign: 'bottom' }}
+                intl={intl}
                 autoWidth
               />
             </div>
@@ -880,6 +895,7 @@ export const FiltersPanel = ({
                 floatingLabelText={intl.formatMessage(messages.deviceType)}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
+                intl={intl}
               />
             </div>
           )}
@@ -950,8 +966,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <ResultTreatmentStatusSelectField
                 allItemText={intl.formatMessage(messages.all)}
-                value={filters.treatmentStatusId}
-                onTreatmentStatusChange={onTreatmentStatusIdChange}
+                value={filters.treatmentStatus}
+                onTreatmentStatusChange={onTreatmentStatusChange}
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.selectTreatmentStatus)}
                 floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
@@ -997,6 +1013,18 @@ export const FiltersPanel = ({
                 hintText={intl.formatMessage(messages.selectStockLeft)}
                 floatingLabelText={intl.formatMessage(messages.stockLeft)}
                 style={{ verticalAlign: 'bottom' }}
+              />
+            </div>
+          )}
+          {config.reportName && (
+            <div className={cssClasses('Control')}>
+              <ReportAutoCompleteField
+                name="reportName"
+                value={filters.reportName || ''}
+                onReportNameChange={onReportNameChange}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.enterReportName)}
+                floatingLabelText={intl.formatMessage(messages.reportName)}
               />
             </div>
           )}

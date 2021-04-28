@@ -7,7 +7,7 @@ module.exports = async function (
   contactsFromGxAlert,
   customFieldsFromGxAlert,
   sitesFromGxAlert,
-  adminName,
+  adminUserName,
   adminPassword,
   partnerName,
   gxAlertDeviceApiKey
@@ -15,7 +15,7 @@ module.exports = async function (
   await baseGxAlertMigration(
     {
       admin: {
-        name: adminName,
+        name: adminUserName,
         password: adminPassword,
       },
       partner: {

@@ -50,7 +50,6 @@ async function up(knex) {
       ['partnerId', 'issueTypeId', 'issueEventStatusId'],
       'issueEventTrigger_unique'
     )
-    issueEventTrigger.charset('utf8')
   })
 }
 

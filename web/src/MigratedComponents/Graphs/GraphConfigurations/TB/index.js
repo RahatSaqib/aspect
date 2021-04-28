@@ -32,6 +32,7 @@ const tbGraphs = {
             [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
+        i18nKey: 'resultCategory1I18nKey',
         indexBy: 'month',
         keyToConsume: 'resultCategory1',
         filterBy: {},
@@ -39,7 +40,7 @@ const tbGraphs = {
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
@@ -62,6 +63,7 @@ const tbGraphs = {
           },
         },
         indexBy: 'cnt',
+        i18nKey: 'resultCategory1I18nKey',
         keyToConsume: 'resultCategory1',
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
@@ -96,6 +98,7 @@ const tbGraphs = {
             [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
           },
         },
+        i18nKey: 'resultCategory2I18nKey',
         indexBy: 'month',
         keyToConsume: 'resultCategory2',
         filterBy: {
@@ -105,7 +108,7 @@ const tbGraphs = {
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
@@ -128,6 +131,7 @@ const tbGraphs = {
           },
         },
         indexBy: 'cnt',
+        i18nKey: 'resultCategory2I18nKey',
         keyToConsume: 'resultCategory2',
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
@@ -137,7 +141,7 @@ const tbGraphs = {
         averages: {
           showTotal: false,
           title: 'clinicalIndicatorsTBPieLegend',
-          key: ['Detected', 'Indeterminate'],
+          key: ['Detected'],
           subTitle: 'clinicalIndicatorsPieSubLegend',
         },
       },

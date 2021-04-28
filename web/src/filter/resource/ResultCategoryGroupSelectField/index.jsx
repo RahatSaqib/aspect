@@ -1,22 +1,25 @@
-import { useQuery } from 'react-query'
 import React, { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 import classnames from 'classnames/bind'
 
+import messages from './messages'
 import SelectField from '../../../components/shared/SelectField'
 import fetchWrapperForQueries from '../../../MigratedComponents/QueryFetch'
 import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../MigratedComponents/QueryFetch/ResultCategoryGroup'
 import { types } from './ResultCategoryGroupSelectFieldRedux'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('../../popover/FiltersPanel.css'))
 
-export default ({
+const ResultCategoryGroupSelectField = ({
   onResultCategoryGroupChange,
   value,
   assayId,
   ...restProps
 }) => {
+  const { formatMessage } = useI18n()
   const { data, isError } = useQuery(
     [RESULT_CATEGORY_GROUP_SELECT_LIST.KEY, assayId],
     async () =>
@@ -28,7 +31,6 @@ export default ({
 
   const [resultCategoryGroups, setResultCategoryGroups] = useState(false)
   const dispatch = useDispatch()
-
   useEffect(() => {
     if (data && !isError) {
       const items = data.data
@@ -50,12 +52,16 @@ export default ({
       }}
     >
       {resultCategoryGroups
-        ? resultCategoryGroups.map(({ externalId, name }) => (
+        ? resultCategoryGroups.map(({ externalId, name, i18nKey }) => (
             <MenuItem key={externalId} value={externalId}>
-              <div className={cssClasses('Control__inner')}>{name}</div>
+              <div className={cssClasses('Control__inner')}>
+                {formatMessage(messages[i18nKey], name)}
+              </div>
             </MenuItem>
           ))
         : null}
     </SelectField>
   )
 }
+
+export default ResultCategoryGroupSelectField

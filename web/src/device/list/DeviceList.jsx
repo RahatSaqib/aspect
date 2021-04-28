@@ -1,50 +1,52 @@
-import fromPairs from 'lodash/fromPairs'
 import flowRight from 'lodash/flowRight'
+import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
-import React from 'react'
-import {
-  compose,
-  withProps,
-  withState,
-  withHandlers,
-  lifecycle,
-} from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { useIntl } from 'react-intl'
+import React, { useEffect, useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
+import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
-import { injectIntl } from 'react-intl'
 import TableBody from '@material-ui/core/TableBody'
+import { useQuery } from 'react-query'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
+
 import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
 
+import { useAuthState } from '../../Providers/AuthProvider'
+import { receiveTableItems, Table } from '../../shared/metaReducers/table'
+import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
-import ExportListButton from '../../globals/components/ExportListButton'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { fetchDevices, exportDevices } from '../DeviceRedux'
+import getExportableFile from '../DeviceQueries'
+import ExportListButton from '../../MigratedComponents/AspectExportListButton'
 import {
   DeviceDataTable,
   DeviceDataTableHead,
   DeviceDataTableRow,
 } from './DeviceDataTable'
+import { DEVICE_LIST } from '../../MigratedComponents/QueryFetch/Device/index'
 import messages from './messages'
+
+import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
 
 const FILTERS_CONFIG = [
   {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view'],
+    assayId: true,
+    requiredPermissions: [],
   },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
@@ -88,7 +90,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'resultCountThisMonth',
   ],
 })
-
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
@@ -98,151 +99,70 @@ const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
-const enhance = compose(
-  injectIntl,
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'name',
-    }),
-    ({ location }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-      return {
-        filters: fromPairs([...filtersParams.entries()]),
-      }
-    }
-  ),
-  connect(
-    state => ({
-      items: state.device.items,
-      table: state.device.table,
-      userPermissions: state.user.jwt.permissions,
-      displayPreferences: state.user.displayPreferences,
-    }),
-    bindActionCreators.bind(null, {
-      fetchDevices,
-      exportDevices,
-    })
-  ),
-  withState('anchorEl', 'setAnchorEl', false),
-  withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchDevices,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchDevices(
-          filtersParams,
-          { hasResults: 1 },
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
-    onExcelClick: ({
-      location,
-      exportDevices,
-      sortCol,
-      sortDir,
-      table,
-      pageAt,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportDevices(
-          filtersParams,
-          { hasResults: 1 },
-          formatType,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'devices'
-        )
-      }
-    },
+const getColumns = intl => [
+  {
+    key: 'name',
+    label: intl.formatMessage(messages.device),
+    sortable: true,
+  },
+  {
+    key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
+    label: intl.formatMessage(messages.status),
+    sortable: true,
+  },
+  {
+    key: 'availabilityRate',
+    label: intl.formatMessage(messages.availabilityRate),
+    sortable: false,
+  },
+  {
+    key: 'errorRate',
+    label: intl.formatMessage(messages.errorRate),
+    sortable: false,
+  },
+  {
+    key: 'issueCategory',
+    label: intl.formatMessage(messages.issueCategory),
+  },
+  {
+    key: 'createdOn',
+    sortable: true,
+    label: intl.formatMessage(messages.reportingFor),
+  },
+  {
+    key: 'lastSeen',
+    sortable: true,
+    label: intl.formatMessage(messages.lastSeen),
+  },
+  {
+    key: 'resultCountLastMonth',
+    sortable: true,
+    label: intl.formatMessage(messages.lastMonth),
+  },
+  {
+    key: 'resultCountThisMonth',
+    sortable: true,
+    label: intl.formatMessage(messages.thisMonth),
+  },
+]
 
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { deviceId },
-      },
-    }) => history.push(`/browse/device/${deviceId}`),
-    onAlertClick: ({ history }) => event => {
-      event.stopPropagation()
-      const {
-        currentTarget: {
-          dataset: { deviceId },
-        },
-      } = event
-      history.push(`/browse/device/${deviceId}/alerts`)
-    },
-  }),
-  lifecycle({
-    componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
-
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
-      }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
-      this.setState({
-        reducedFilters,
-      })
-    },
-
-    componentDidMount() {
-      this.props.onInitialLoad()
-    },
-
-    componentWillReceiveProps(nextProps) {
-      if (this.props.location.search !== nextProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
-  })
-)
-
-export const DeviceList = ({
+export const DeviceListWithProps = ({
   intl,
   history,
   location,
-  table,
+  isLoading,
   items,
-  displayPreferences,
-  // --- injected by recompose ---
-  onExcelClick,
   sortCol,
   sortDir,
+  reducedFilters,
+  onExportClick,
+  columns,
+  total,
   pageAt,
   pageSize,
-  onExportClick,
+  displayPreferences,
   onRowClick,
   onAlertClick,
-  reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -252,106 +172,43 @@ export const DeviceList = ({
       location={location}
       intl={intl}
       config={reducedFilters}
-      onClickExport={onExportClick}
-      askConfirmationForExport={table.total > 1000}
     />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
+      <DataTableProgressBar disabled={!isLoading} />
+      <ExportListButton
+        onExport={onExportClick}
+        visible={!items.currentIdList.isEmpty()}
+      />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Devices"
-      />
-
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable
           selectable={false}
           className={cssClasses('DeviceDataTable')}
         >
           <DeviceDataTableHead
-            compact
-            columns={[
-              {
-                key: 'empty',
-                colSpan: 7,
-              },
-              {
-                key: 'tests',
-                colSpan: 2,
-                label: intl.formatMessage(messages.numberOfTests),
-              },
-            ]}
-          />
-          <DeviceDataTableHead
             history={history}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'name',
-                label: intl.formatMessage(messages.device),
-                sortable: true,
-              },
-              {
-                key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
-                label: intl.formatMessage(messages.status),
-                sortable: true,
-              },
-              {
-                key: 'availabilityRate',
-                label: intl.formatMessage(messages.availabilityRate),
-                sortable: false,
-              },
-              {
-                key: 'errorRate',
-                label: intl.formatMessage(messages.errorRate),
-                sortable: false,
-              },
-              {
-                key: 'issueCategory',
-                label: intl.formatMessage(messages.issueCategory),
-              },
-              {
-                key: 'createdOn',
-                sortable: true,
-                label: intl.formatMessage(messages.reportingFor),
-              },
-              {
-                key: 'lastSeen',
-                sortable: true,
-                label: intl.formatMessage(messages.lastSeen),
-              },
-              {
-                key: 'resultCountLastMonth',
-                sortable: true,
-                label: intl.formatMessage(messages.lastMonth),
-              },
-              {
-                key: 'resultCountThisMonth',
-                sortable: true,
-                label: intl.formatMessage(messages.thisMonth),
-              },
-            ]}
+            columns={columns}
           />
           <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(device => (
-                <DeviceDataTableRow
-                  key={device.get('id')}
-                  intl={intl}
-                  device={device}
-                  onClick={onRowClick}
-                  onAlertClick={onAlertClick}
-                  displayPreferences={displayPreferences}
-                  data-device-id={device.get('id')}
-                />
-              ))}
+            {!items.currentIdList.isEmpty() &&
+              items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(device => (
+                  <DeviceDataTableRow
+                    key={device.get('id')}
+                    intl={intl}
+                    device={device}
+                    onClick={onRowClick}
+                    onAlertClick={onAlertClick}
+                    displayPreferences={displayPreferences}
+                    data-device-id={device.get('id')}
+                  />
+                ))}
           </TableBody>
         </DeviceDataTable>
       )}
@@ -361,7 +218,7 @@ export const DeviceList = ({
           location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
-          total={table.total}
+          total={total}
           pageAt={pageAt}
           pageSize={pageSize}
         />
@@ -370,4 +227,131 @@ export const DeviceList = ({
   </div>
 )
 
-export default enhance(DeviceList)
+export const DeviceList = () => {
+  // >>>>>> Hooks <<<<<<
+  const intl = useIntl()
+  const history = useHistory()
+  const {
+    jwt: { permissions: userPermissions },
+    displayPreferences,
+  } = useAuthState()
+  const location = useLocation()
+
+  // >>>>>> Local state <<<<<<
+  const [items, setItems] = useState(new Items())
+  const [table, setTable] = useState(new Table())
+  const [total, setTotal] = useState()
+  const [filters, setFilters] = useState()
+  const [pagination, setPagination] = useState({})
+
+  // >>>>>> Constants <<<<<<
+  const { sortCol, sortDir, page, size } = pagination
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+  const params = { ...pagination, ...filters }
+
+  const onRowClick = ({
+    currentTarget: {
+      dataset: { deviceId },
+    },
+  }) => history.push(`/browse/device/${deviceId}`)
+
+  const onAlertClick = event => {
+    event.stopPropagation()
+    const {
+      currentTarget: {
+        dataset: { deviceId },
+      },
+    } = event
+    history.push(`/browse/device/${deviceId}/alerts`)
+  }
+
+  // >>>>>> Queries <<<<<<
+  const { data = false, isError, error, isLoading } = useQuery(
+    [DEVICE_LIST.KEY, { params }],
+    async () =>
+      fetchWrapperForQueries({
+        endpoint: DEVICE_LIST.ENDPOINT,
+        params: { ...params, onlyOpenIssues: 1 },
+      })
+  )
+
+  // >>>>>> Lifecycles <<<<<<
+  useEffect(() => {
+    if (!isLoading && data) {
+      const { data: list, total: totalItems } = data
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
+      setTotal(totalItems)
+      setTable(receiveTableItems(table, totalItems))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const {
+      sanitized: filtersSanitized,
+      value: filtersParams,
+    } = filtersSanitizer(searchParams.get('filters') || '')
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
+      history.replace({
+        ...location,
+        search: searchParams.toString(),
+      })
+    }
+
+    const sortPage = makeSortPageSelector({
+      sortCol: 'name',
+    })
+    const urlSearchParams = new URLSearchParams(location.search)
+    const urlFilters = urlSearchParams.get('filters')
+      ? new URLSearchParams(urlSearchParams.get('filters'))
+      : []
+    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+    setFilters(fromPairs([...urlFilters.entries()]))
+    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
+
+  // >>>>>> Callbacks <<<<<<
+  const onExportClick = formatType => {
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    if (!sanitized) {
+      return getExportableFile(
+        filtersParams,
+        formatType,
+        sortCol,
+        sortDir,
+        0,
+        total,
+        'devices'
+      )
+    }
+  }
+
+  if (isError) {
+    throw new Error(error)
+  }
+
+  const baseProps = {
+    intl,
+    history,
+    location,
+    isLoading,
+    items,
+    sortCol,
+    sortDir,
+    columns: getColumns(intl),
+    reducedFilters,
+    onExportClick,
+    table,
+    total,
+    pageAt: page,
+    pageSize: size,
+    displayPreferences,
+    onRowClick,
+    onAlertClick,
+  }
+  return <DeviceListWithProps {...baseProps} />
+}
+
+export default DeviceList

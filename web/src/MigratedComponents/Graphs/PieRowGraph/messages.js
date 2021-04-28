@@ -6,7 +6,7 @@ export const messages = defineMessages({
     defaultMessage: 'Positive Test Results Transmitted',
   },
   assayName: {
-    id: 'pages.OperationalData.assayName',
+    id: 'pages.OperationalDataPie.assayName',
     defaultMessage: ' ',
   },
   cntAll: {

@@ -8,7 +8,7 @@ import {
   PieInnerLegendSolid,
   PieInnerLegendDoughNut,
 } from '../GraphLegend'
-
+import messages from '../intlMessages'
 import {
   generateColorForValue,
   generateToolTip,
@@ -28,8 +28,9 @@ const AspectResponsivePie = ({
   keys,
   type = false,
   link,
+  i18nKeys,
 }) => {
-  const { formatNumber: intlFormatNumber } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
   const config = (type, data, displayMethod) => {
     switch (true) {
       case type === 'doughnut':
@@ -97,7 +98,10 @@ const AspectResponsivePie = ({
               displayMethod,
               assaysFromState,
               intlFormatNumber,
-              type
+              type,
+              formatMessage,
+              messages,
+              i18nKeys
             )}
           />
         )}
@@ -128,6 +132,7 @@ AspectResponsivePie.propTypes = {
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  i18nKeys: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectResponsivePie

@@ -73,6 +73,9 @@ const routes = [
                 diseaseName: Joi.string().description(
                   "The disease name of the case's last result"
                 ),
+                diseaseI18nKey: Joi.string().description(
+                  "The disease i18n key of the case's last result"
+                ),
                 diseaseId: Joi.number().description(
                   "The disease id of the case's last result"
                 ),

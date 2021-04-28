@@ -27,7 +27,7 @@ async function getExportableFile(
 }
 
 const REPORTERS_LIST = {
-  ENDPOINT: '/person/refresh-token',
+  ENDPOINT: '/site/reporters',
   KEY: 'REPORTERS_LIST',
 }
 

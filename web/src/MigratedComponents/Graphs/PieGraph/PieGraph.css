@@ -9,6 +9,12 @@
   height: 83%;
 }
 
+@media screen and (max-width: 959px) {
+  .piegraph__container {
+    background: none;
+  }
+}
+
 .piegraph__container--nobg {
   position: relative;
   width: 100%;

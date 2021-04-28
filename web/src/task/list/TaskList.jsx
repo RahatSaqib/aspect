@@ -13,7 +13,7 @@ import {
   setPropTypes,
   defaultProps,
 } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
@@ -34,41 +34,9 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from './TaskDataTable'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./TaskList.css'))
-
-const messages = defineMessages({
-  tasksTitle: {
-    id: 'pages.TaskList.title',
-    defaultMessage: 'Tasks',
-  },
-  topic: {
-    id: 'pages.TaskList.topic',
-    defaultMessage: 'Topic',
-  },
-  site: {
-    id: 'pages.TaskList.site',
-    defaultMessage: 'Site',
-  },
-  time: {
-    id: 'pages.TaskList.time',
-    defaultMessage: 'Time',
-  },
-  alertCount: {
-    id: 'pages.TaskList.alertCount',
-    defaultMessage: `{alertCount, plural,
-      one {# alert}
-      other {# alerts}
-    }`,
-  },
-  paginatorStatus: {
-    id: 'pages.TaskList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
-    }`,
-  },
-})
 
 const FILTERS_CONFIG = {
   contactNameOrEmail: true,

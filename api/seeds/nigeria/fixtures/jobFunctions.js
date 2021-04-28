@@ -253,6 +253,7 @@ module.exports = [
       'critical_errors_by_device',
       'rif_resistance_rate',
       'results_hiv_not_suppressed',
+      'device_calibration_report',
     ],
     permissions: [
       {

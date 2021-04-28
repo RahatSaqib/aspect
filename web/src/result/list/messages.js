@@ -49,8 +49,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayId',
     defaultMessage: 'Assay',
   },
-  patiendId: {
-    id: 'pages.ResultList.patiendId',
+  patientId: {
+    id: 'pages.ResultList.patientId',
     defaultMessage: 'Patient ID',
   },
   resultCategoryCopiesMl: {
@@ -63,6 +63,154 @@ const messages = defineMessages({
         one {# result}
         other {# results}
       }`,
+  },
+  ResultWorkflowStatusOK: {
+    id: 'pages.ResultList.ResultWorkflowStatusOK',
+    defaultMessage: 'OK',
+  },
+  ResultWorkflowStatusError: {
+    id: 'pages.ResultList.ResultWorkflowStatusError',
+    defaultMessage: 'Error',
+  },
+  ResultWorkflowStatusOrdered: {
+    id: 'pages.ResultList.ResultWorkflowStatusOrdered',
+    defaultMessage: 'Ordered',
+  },
+  ResultWorkflowStatusInProgress: {
+    id: 'pages.ResultList.ResultWorkflowStatusInProgress',
+    defaultMessage: 'In Progress',
+  },
+  ResultWorkflowStatusFlagged: {
+    id: 'pages.ResultList.ResultWorkflowStatusFlagged',
+    defaultMessage: 'Flagged',
+  },
+  ResultWorkflowStatusAcknowledged: {
+    id: 'pages.ResultList.ResultWorkflowStatusAcknowledged',
+    defaultMessage: 'Acknowledged',
+  },
+  ResultWorkflowStatusDelivered: {
+    id: 'pages.ResultList.ResultWorkflowStatusDelivered',
+    defaultMessage: 'Delivered',
+  },
+  ResultWorkflowStatusDeliverable: {
+    id: 'pages.ResultList.ResultWorkflowStatusDeliverable',
+    defaultMessage: 'Ready for delivery',
+  },
+  Validated: {
+    id: 'pages.ResultList.ResultWorkflowStatusValidated',
+    defaultMessage: 'OK',
+  },
+  ResultWorkflowStatusProcessed: {
+    id: 'pages.ResultList.ResultWorkflowStatusProcessed',
+    defaultMessage: 'Processed',
+  },
+  ResultWorkflowStatusPurged: {
+    id: 'pages.ResultList.ResultWorkflowStatusPurged',
+    defaultMessage: 'Purged',
+  },
+  ResultWorkflowStatusValidated: {
+    id: 'pages.ResultList.ResultWorkflowStatusValidated',
+    defaultMessage: 'Validated',
+  },
+  assayBdMgitAst: {
+    id: 'pages.ResultList.assayBdMgitAst',
+    defaultMessage: 'BD MGIT AST',
+  },
+  assayBdMgitGnd: {
+    id: 'pages.ResultList.assayBdMgitGnd',
+    defaultMessage: 'BD MGIT GND',
+  },
+  assayGenoTypeMTBCV1: {
+    id: 'pages.ResultList.assayGenoTypeMTBCV1',
+    defaultMessage: 'GenoType MTBC VER 1.X',
+  },
+  assayGenoTypeMTBDRplusV2: {
+    id: 'pages.ResultList.assayGenoTypeMTBDRplusV2',
+    defaultMessage: 'GenoType MTBDRplus VER 2.0',
+  },
+  assayGenoTypeMTBDRslV1: {
+    id: 'pages.ResultList.assayGenoTypeMTBDRslV1',
+    defaultMessage: 'GenoType MTBDRsl VER 1.0',
+  },
+  assayGenoTypeMTBDRslV2: {
+    id: 'pages.ResultList.assayGenoTypeMTBDRslV2',
+    defaultMessage: 'GenoType MTBDRsl VER 2.0',
+  },
+  assaySenaiteLIMSSmearMicroscopy: {
+    id: 'pages.ResultList.assaySenaiteLIMSSmearMicroscopy',
+    defaultMessage: 'Senaite LIMS Smear Microscopy',
+  },
+  assaySenaiteLIMSTbCulture: {
+    id: 'pages.ResultList.assaySenaiteLIMSTbCulture',
+    defaultMessage: 'Senaite LIMS TB Culture',
+  },
+  assaySenaiteLIMSUnknown: {
+    id: 'pages.ResultList.assaySenaiteLIMSUnknown',
+    defaultMessage: 'Senaite LIMS Unknown',
+  },
+  assayGeneXpertUnknown: {
+    id: 'pages.ResultList.assayGeneXpertUnknown',
+    defaultMessage: 'GeneXpert Unknown',
+  },
+  assayGeneXpertHcv: {
+    id: 'pages.ResultList.assayGeneXpertHcv',
+    defaultMessage: 'GeneXpert HCV',
+  },
+  assayGeneXpertMtbRif: {
+    id: 'pages.ResultList.assayGeneXpertMtbRif',
+    defaultMessage: 'GeneXpert MTB/Rif',
+  },
+  assayGeneXpertMtbRifUltra: {
+    id: 'pages.ResultList.assayGeneXpertMtbRifUltra',
+    defaultMessage: 'GeneXpert MTB/Rif Ultra',
+  },
+  assayGeneXpertHiv1Vl: {
+    id: 'pages.ResultList.assayGeneXpertHiv1Vl',
+    defaultMessage: 'GeneXpert HIV-1 VL',
+  },
+  assayGeneXpertHiv1Qual: {
+    id: 'pages.ResultList.assayGeneXpertHiv1Qual',
+    defaultMessage: 'GeneXpert HIV-1 Qual',
+  },
+  assayGeneXpertEbola: {
+    id: 'pages.ResultList.assayGeneXpertEbola',
+    defaultMessage: 'GeneXpert Ebola',
+  },
+  assayGXCovid19: {
+    id: 'pages.ResultList.assayGXCovid19',
+    defaultMessage: 'GeneXpert COVID-19',
+  },
+  assayLPA: {
+    id: 'pages.ResultList.assayLPA',
+    defaultMessage: 'LPA',
+  },
+  assaySmear: {
+    id: 'pages.ResultList.assaySmear',
+    defaultMessage: 'Smear',
+  },
+  assayCulture: {
+    id: 'pages.ResultList.assayCulture',
+    defaultMessage: 'Culture',
+  },
+  assayGenericDst: {
+    id: 'pages.ResultList.assayGenericDst',
+    defaultMessage: 'DST',
+  },
+  assayGenericCovid19: {
+    id: 'pages.ResultList.assayGenericCovid19',
+    defaultMessage: 'Covid 19',
+  },
+  assayMP96Covid19: {
+    id: 'pages.ResultList.assayMP96Covid19',
+    defaultMessage: 'MagNA Pure-96 COVID-19',
+  },
+  assayQS7Covid19: {
+    id: 'pages.ResultList.assayQS7Covid19',
+    defaultMessage: 'QuantStudio7 Flex COVID-19',
+  },
+  assayTbLamp: {
+    id: 'pages.ResultList.assayTbLamp',
+    defaultMessage: 'TB LAMP',
   },
 })
 

@@ -43,12 +43,13 @@ const hivGraphs = {
           },
         },
         indexBy: 'month',
+        i18nKey: 'resultCategory1I18nKey',
         keyToConsume: 'resultCategory1',
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
@@ -73,6 +74,7 @@ const hivGraphs = {
         indexBy: 'cnt',
         keyToConsume: 'resultCategory1',
         displayMethod: 'percentage',
+        i18nKey: 'resultCategory1I18nKey',
         formatDate: 'MMM yy',
         averages: {
           showTotal: false,

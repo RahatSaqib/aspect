@@ -82,63 +82,42 @@ exports.customPropertiesVariables = {
   '--web-orange': '#FEA500',
   '--web-orange-2': '#FFD970',
 
-  // Assay hues Abbot
-  '--selective-yellow-2': '#3a0000',
-  '--lightning-yellow': '#4c2000',
-  '--saffron2': '#633800',
-  '--saffron-mango': '#7e5000',
-  '--goldenrod': '#9b6900',
-  '--sweet-corn': '#c98f00',
-  '--cherokee': '#ffc928',
-  '--cape-honey': '#fff155',
+  // Assay hues Abbott
+  '--abbott-orange-1': '#fff155',
+  '--abbott-orange-2': '#ffc928',
+  '--abbott-orange-3': '#633800',
+  '--abbott-orange-4': '#3a0000',
+  '--abbott-orange-5': '#9b6900',
 
   // Assay hues BD
-  '--pirate-gold': '#2e3b3f',
-  '--chelsea-gem': '#97a6ab',
+  '--bd-gray-1': '#2e3b3f',
+  '--bd-gray-2': '#b0c0c4',
 
   // Assay hues GenoType
   '--geno-lavender1': '#380039',
-  '--geno-lavender2': '#580057',
-  '--geno-lavender3': '#780f74',
-  '--geno-lavender4': '#902e8b',
-  '--geno-lavender5': '#aa48a4',
-  '--geno-lavender6': '#c460bc',
-  '--geno-lavender7': '#de79d6',
-  '--geno-lavender8': '#f792f1',
-  '--geno-lavender9': '#ffb8ff',
+  '--geno-lavender2': '#723971',
+  '--geno-lavender3': '#b173ae',
+  '--geno-lavender4': '#f3b1ef',
 
   // Assay hues GeneXpert
-  '--genex-blue1': '#00142b',
-  '--genex-blue2': '#102239',
-  '--genex-blue3': '#203049',
-  '--genex-blue4': '#2f3f59',
-  '--genex-blue5': '#3f4e69',
-  '--genex-blue6': '#505e7a',
-  '--genex-blue7': '#606e8b',
-  '--genex-blue8': '#717f9d',
-  '--genex-blue9': '#8291af',
-  '--genex-blue10': '#94a2c1',
-  '--genex-blue11': '#a6b4d4',
-  '--genex-blue12': '#b8c7e7',
-  '--genex-blue13': '#cbdafa',
-  '--genex-blue14': '#dfeeff,',
+  '--genex-blue1': '#1f2f48',
+  '--genex-blue2': '#5c6b88',
+  '--genex-blue3': '#9fadcd',
+  '--genex-blue4': '#a1b0b4',
+  '--genex-blue5': '#5f6d71',
+  '--genex-blue6': '#243034',
+  '--genex-blue7': '#e0e0e0',
 
   // Assay hues COVID
-  '--sea-nymph': '#0f3328',
-  '--summer-green': '#33574b',
-  '--summer-green2': '#597e70',
-  '--opal': '#81a799',
-  '--opal2': '#aad3c3',
-  '--conch': '#d7fff0',
-
-  // Assay hues reporter
-  '--hot-pink': '#73004b',
-  '--carnation-pink': '#ce2099',
-  '--cotton-candy': '#ffb5ff',
+  '--covid-green1': '#0f3328',
+  '--covid-green2': '#d7fff0',
+  '--covid-green3': '#81a799',
+  '--covid-green4': '#aad3c3',
+  '--covid-green5': '#597e70',
 
   // Assay hues Alere
-  '--anakiwa': '#004759',
-  '--oyster-bay': '#40c1d4',
+  '--alere-green1': '#004759',
+  '--alere-green2': '#40c1d4',
 
   // Assay hues Senaite
   '--texas-rose': '#723800',
@@ -160,7 +139,7 @@ exports.customPropertiesVariables = {
   '--aspect-color-chill-blue-1': 'var(--ming, #34717c)',
   '--aspect-color-chill-blue-2': 'var(--paradiso, #3e8f98)',
   '--aspect-color-chill-blue-3': 'var(--tradewind, #67abb4)',
-  '--aspect-color-conifer': 'var(--conifer, #99D25E)',
+  '--aspect-color-conifer': 'var(--conifer, #99D25D)',
   '--aspect-color-feijoa': 'var(--feijoa, #aed581)',
   '--aspect-color-grey-1': 'var(--tuna, #363844)',
   '--aspect-color-grey-2': 'var(--mako, #444853)',
@@ -174,7 +153,6 @@ exports.customPropertiesVariables = {
   '--aspect-color-mandy': 'var(--guardsman-red, #d60000)',
   '--aspect-color-mandy-2': 'var(--carnation, #EB6562)',
   '--aspect-color-mandy-3': 'var(--mandy-3,  #e85164)',
-  '--aspect-color-mantis': 'var(--malachite, #00ca1c)',
   '--aspect-color-mountain': 'var(--purple-mountains-majesty, #9874b2)',
   '--aspect-color-pink': 'var(--your-pink, #ffc9c4)',
   '--aspect-color-scooter-blue-1': 'var(--robins-egg-blue, #00c4e0)',
@@ -193,21 +171,25 @@ exports.customPropertiesVariables = {
 
   // Operational Data screen
   '--aspect-device-active': '#99D25D',
+  '--aspect-device-reportedActive': '#99D25D',
   '--aspect-device-inactive': '#D8D8D8',
   '--aspect-device-no-samples': '#CCDCE1',
   '--aspect-device-stockout': '#72ECFF',
-  '--aspect-device-no-staff': '#F7B500',
-  '--aspect-device-needs-repair': '#DB3018',
-  '--aspect-device-connectivity': '#EB6562',
-  '--aspect-device-inactiveDecommissioned': '#7d96bb',
-  '--aspect-device-inactiveOutOfInventory': '#004759',
-  '--aspect-device-inactiveNoResultsReported': '#6d6f7d',
   '--aspect-device-error': '#FF2000',
-  '--aspect-device-unknown': '#454545',
   '--aspect-device-transfer-time': '#99D7EF',
   '--aspect-device-weekend': '#F4F4F4',
   '--aspect-device-aspect': '#20A1B3',
   '--aspect-device-titles': '#06C4E3',
+  // for `inactive*` device statuses
+  '--aspect-device-inactiveUnknown': '#454545',
+  '--aspect-device-inactiveConnectivity': '#EB6562',
+  '--aspect-device-inactiveDecommissioned': '#7d96bb',
+  '--aspect-device-inactiveDownForRepair': '#DB3018',
+  '--aspect-device-inactiveNoResultsReported': '#6d6f7d',
+  '--aspect-device-inactiveOutOfInventory': '#0088aa',
+  '--aspect-device-inactiveNoStaff': '#F7B500',
+  '--aspect-device-inactiveNoPower': '#ffbe7d',
+  '--aspect-device-inactiveOther': '#bf01c5',
 
   // commenting 'var(--white, #ffffff)' for now because after upgrade Chip component
   // in web/src/components/shared/TagInput.jsx crashes page and shows error in console

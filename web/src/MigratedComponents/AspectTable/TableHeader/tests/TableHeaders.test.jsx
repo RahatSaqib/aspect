@@ -12,10 +12,10 @@ describe('test headers and sortable states', () => {
     const columnHeaders = within(table).getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(4)
     expect(columnHeaders.map(d => d.textContent)).toEqual([
-      'NameFaSquareFaSquare',
-      'Last TriggeredFaSquareFaSquare',
-      'Total TriggersFaSquareFaSquare',
-      'ContactsFaSquareFaSquareFaSquare',
+      'Name',
+      'Last Triggered',
+      'Total Triggers',
+      'Contacts',
     ])
   })
   it('contacts column is not sortable', () => {
@@ -67,12 +67,7 @@ describe('test headers and sortable states', () => {
       within(table)
         .getAllByRole('columnheader')
         .map(d => d.textContent)
-    ).toEqual([
-      'Last TriggeredFaSquareFaSquare',
-      'NameFaSquareFaSquare',
-      'Total TriggersFaSquareFaSquare',
-      'ContactsFaSquareFaSquareFaSquare',
-    ])
+    ).toEqual(['Last Triggered', 'Name', 'Total Triggers', 'Contacts'])
   })
   it('check allowed hide-column states, hide column, and test headers', () => {
     const { getByRole, getByTestId, queryByTestId } = render(

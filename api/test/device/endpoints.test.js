@@ -3,7 +3,7 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
-describe('auth endpoints', () => {
+describe('device endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/device/endpoints', {
       './service': serviceStub,

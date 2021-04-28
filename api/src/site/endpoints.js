@@ -12,9 +12,10 @@ const {
   showSite,
   updateSite,
   listSitesForSelectList,
+  listSitesWithReporters,
 } = require('./service')
 
-const { exportSites } = require('./serviceReports')
+const { exportSites, exportReporters } = require('./serviceReports')
 
 function listSitesBaseConfig() {
   return {
@@ -48,6 +49,118 @@ function listSitesBaseConfig() {
     },
   }
 }
+
+function reportersBaseConfig() {
+  return {
+    query: {
+      query: {
+        ...validateAllGeographyFilterParams(), // countryId, stateId, lgaId
+        ...validateDateRangeParams(), // minDate, maxDate
+        ...validateSortPageParams(
+          'stateName',
+          'lgaName',
+          'partnerId',
+          'siteId',
+          'siteName',
+          'siteShortName',
+          'totalResults',
+          'delivered',
+          'requiresTreatment',
+          'onTreatment',
+          'notPossible',
+          'notOnTreatment',
+          'transferred'
+        ),
+        deviceName: Joi.string().allow('').description('Device name'),
+        deviceType: Joi.string()
+          .optional()
+          .description('Filter by device type externalId'),
+        siteName: Joi.string().allow('').description('Filter by site name'),
+        siteIds: Joi.string().allow('').description('Filter by site ids'),
+        siteId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('Filter by site Id'),
+        partnerId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('Filter by Partner Id'),
+        assayId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('Filter by Assay Id'),
+        diseaseId: Joi.number()
+          .integer()
+          .positive()
+          .optional()
+          .description('Filter by disease Id'),
+        format: Joi.string()
+          .allow('')
+          .description('File format for exporting data'),
+      },
+    },
+    response: {
+      options: {
+        allowUnknown: false,
+      },
+      schema: Joi.object().keys({
+        ok: Joi.bool()
+          .required()
+          .description('False if there was some sort of error'),
+        total: Joi.number()
+          .required()
+          .description(
+            'The total number of items that match the given filters'
+          ),
+        length: Joi.number()
+          .required()
+          .description('The number of items included in this response'),
+        data: Joi.array()
+          .required()
+          .description('List of sites with statistics of reporters')
+          .items(
+            Joi.object().keys({
+              id: Joi.number().description('ID of the site'),
+              siteId: Joi.number().description('ID of the site'),
+              siteName: Joi.string().description('Site name'),
+              siteShortName: Joi.string().description('Site short name'),
+              partnerId: Joi.number().description('Partner Id'),
+              countryId: Joi.number().description('Country Id'),
+              stateId: Joi.number().allow(null).description('State Id'),
+              stateName: Joi.string().allow('', null).description('State name'),
+              lgaId: Joi.number().allow(null).description('Lga Id'),
+              lgaName: Joi.string().allow('', null).description('Lga name'),
+              totalResults: Joi.number().description(
+                'The number of results where the reportable site is the clinic'
+              ),
+              delivered: Joi.number().description(
+                'The number of those results that were delivered to any Reporter'
+              ),
+              requiresTreatment: Joi.number().description(
+                'The number of delivered results that require treatment'
+              ),
+              onTreatment: Joi.number().description(
+                'The number of delivered results on treatment'
+              ),
+              notPossible: Joi.number().description(
+                'The number of results where "Not Possible" was selected for treatment'
+              ),
+              notOnTreatment: Joi.number().description(
+                `The number of results that require treatment, but that weren't put on treatment yet (not including "Not Possible" in this count)`
+              ),
+              transferred: Joi.number().description(
+                'The number of delivered results that were transferred to another clinic'
+              ),
+            })
+          ),
+      }),
+    },
+  }
+}
+
 const routes = [
   {
     method: 'GET',
@@ -215,6 +328,28 @@ const routes = [
             ),
         }),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/site/reporters',
+    handler: asyncHandler(listSitesWithReporters),
+    config: {
+      description: 'Sites for Reporter Dashboard',
+      notes: `List of sites with some aggregations about reporters`,
+      auth: { scope: ['reporter'] },
+      validate: reportersBaseConfig().query,
+      response: reportersBaseConfig().response,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reporter/export',
+    handler: exportReporters,
+    config: {
+      description: 'Export Reporter List into Excel or CSV',
+      auth: { scope: ['reporter'] },
+      validate: reportersBaseConfig().query,
     },
   },
 ]

@@ -7,6 +7,10 @@ const admin = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
+    'genexpert_issues',
   ],
   permissions: [
     {
@@ -131,6 +135,9 @@ const manager = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -211,6 +218,9 @@ const regionalOfficer = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -295,6 +305,9 @@ const labUser = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -379,6 +392,9 @@ const clinician = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -474,11 +490,24 @@ const clinician = {
 
 const deviceMaker = {
   name: 'Device Maker',
-  reports: ['critical_errors_by_device'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+    'genexpert_issues',
+  ],
   permissions: [
     {
       module: 'account',
       activity: 'edit',
+    },
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
+      activity: 'view',
     },
     {
       module: 'operationalData',
@@ -486,6 +515,10 @@ const deviceMaker = {
     },
     {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'site',
       activity: 'view',
     },
   ],
@@ -498,6 +531,9 @@ const ntp = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -517,7 +553,11 @@ const ntp = {
 
 const ntpNoResults = {
   name: 'NTP - No Results',
-  reports: ['critical_errors_by_device'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
@@ -536,7 +576,11 @@ const ntpNoResults = {
 
 const technician = {
   name: 'Technician',
-  reports: ['critical_errors_by_device'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
@@ -555,14 +599,22 @@ const technician = {
 
 const donor = {
   name: 'Donor',
-  reports: ['critical_errors_by_device'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'account',
       activity: 'edit',
     },
     {
-      module: 'site',
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
       activity: 'view',
     },
     {
@@ -574,7 +626,7 @@ const donor = {
       activity: 'view',
     },
     {
-      module: 'task',
+      module: 'site',
       activity: 'view',
     },
   ],
@@ -582,7 +634,11 @@ const donor = {
 
 const resultViewerNo = {
   name: 'Result Viewer - No',
-  reports: ['critical_errors_by_device'],
+  reports: [
+    'critical_errors_by_device',
+    'device_calibration_report',
+    'device_activity',
+  ],
   permissions: [
     {
       module: 'assay',
@@ -618,6 +674,9 @@ const resultViewerYes = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -658,6 +717,7 @@ const remoteHealthWorker = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
   ],
   permissions: [
     {
@@ -730,6 +790,9 @@ const labManager = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -798,6 +861,9 @@ const labSupervisor = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -866,6 +932,9 @@ const medTech = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -934,6 +1003,9 @@ const dataViewer = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {
@@ -1003,6 +1075,9 @@ const labAdmin = {
     'critical_errors_by_device',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'module_swaps',
   ],
   permissions: [
     {

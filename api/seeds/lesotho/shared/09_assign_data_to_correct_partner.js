@@ -7,7 +7,7 @@ const { diseaseToId } = require('../../../src/shared/dictionary')
 module.exports = async function (
   knex,
   partnerName,
-  adminName,
+  adminUserName,
   gxAlertDeviceApiKey,
   sitesFromGxAlert,
   contactsFromGxAlert,
@@ -31,7 +31,7 @@ module.exports = async function (
     ...contactsFromGxAlert
       .filter(contact => !!contact.username)
       .map(contact => contact.username),
-    adminName,
+    adminUserName,
   ])
   const personIds = await knex('User as u')
     .join('Person as p', 'u.id', 'p.userId')
@@ -49,7 +49,7 @@ module.exports = async function (
   await baseGxAlertMigration(
     {
       admin: {
-        name: adminName,
+        name: adminUserName,
       },
       partner: {
         name: partnerName,

@@ -13,7 +13,7 @@ const currentMonth =
   dateRanges[Object.keys(dateRanges)][DATE_RANGE_OPTIONS.LAST_MONTH].value
     .minDate
 
-const resultsTransmittedGraphs = {
+const resultsTransmittedGraphs = () => ({
   resultsTransmitted: {
     id: 'resultsTransmitted',
     title: 'resultsTransmittedTitle',
@@ -55,6 +55,6 @@ const resultsTransmittedGraphs = {
       },
     ],
   },
-}
+})
 
 export default resultsTransmittedGraphs

@@ -13,7 +13,7 @@ const {
   listDevicesForSelectList,
   updateDeviceMaintenance,
   getDevicePerformance,
-  manuallySetDeviceMaintenanceStatus,
+  setStatusForDateRange,
   onDeviceMaintenanceStatusLogged,
   onResultLogged,
   onDeviceUpdateMaintenanceStatus,
@@ -32,7 +32,7 @@ function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
 }
 
-function listDevicesBaseRequest() {
+function listDevicesBaseRequest(isoDateFormatExpected = false) {
   return {
     auth: { scope: ['device:view', 'operationalData:view'] },
     validate: {
@@ -68,14 +68,6 @@ function listDevicesBaseRequest() {
           .positive()
           .optional()
           .description('The disease ID'),
-        resultCategoryId: Joi.number()
-          .allow('')
-          .description('Result Category ID'),
-        resultCategoryGroupId: Joi.string()
-          .allow('')
-          .description(
-            'Result Category Group external id for assays with multiple results'
-          ),
         deviceName: Joi.string()
           .allow('')
           .description('Filter for device name'),
@@ -106,7 +98,7 @@ function listDevicesBaseRequest() {
           .allow('')
           .description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(),
+        ...validateDateRangeParams(isoDateFormatExpected),
         ...validateSortPageParams(
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
@@ -369,6 +361,9 @@ const deviceDetailsResponseFields = Joi.object()
     approvalToken: Joi.string()
       .required()
       .description('The external ID of the approval'),
+    approvalStatusI18nKey: Joi.string()
+      .required()
+      .description('The i18nkey  of the device approval status'),
     category: Joi.string().required().description('The device category'),
     hasResults: Joi.number()
       .required()
@@ -518,6 +513,13 @@ const routes = [
       description: 'Device Maintenance Status List',
       notes: 'Set of Device Maintenance Status options',
       auth: { scope: ['device:view', 'operationalData:view'] },
+      validate: {
+        query: {
+          onlyManuallySet: Joi.bool()
+            .optional()
+            .description('Only the manually set statuses'),
+        },
+      },
     },
   },
   {
@@ -645,14 +647,14 @@ const routes = [
   {
     method: 'POST',
     path: '/device/maintenance-status/{deviceId}',
-    handler: asyncHandler(manuallySetDeviceMaintenanceStatus),
+    handler: asyncHandler(setStatusForDateRange),
     config: {
       description: 'Set Device Maintenance',
       notes: 'Update maintenance status of a device',
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string().description('Device ID').required(),
+          deviceId: Joi.number().description('Device ID').required(),
         },
         payload: {
           externalId: Joi.string().description(
@@ -716,6 +718,83 @@ const routes = [
     },
   },
   {
+    method: 'POST',
+    path: '/device/maintenance-status-by-period/{deviceId}',
+    handler: asyncHandler(setStatusForDateRange),
+    config: {
+      description: 'Set Device Maintenance for a date range',
+      // notes: 'Update maintenance status of a device',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.number().description('Device ID').required(),
+        },
+        payload: {
+          externalId: Joi.string()
+            .required()
+            .description(
+              'The external ID of the maintenance status (active, reportedActive, inactiveOutOfInventory...)'
+            ),
+          dateFrom: Joi.date()
+            .iso()
+            .required()
+            .description(
+              'Specified initial date for the maintenance status so that it can be updated as an historical snapshot'
+            ),
+          dateTo: Joi.date()
+            .iso()
+            .required()
+            .description(
+              'Specified end date for the maintenance status so that it can be updated as an historical snapshot'
+            ),
+          notes: Joi.string()
+            .allow('', null)
+            .description(
+              'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'
+            ),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('Device maintenance status details fields')
+            .keys({
+              deviceMaintenanceStatusLogIds: Joi.array().description(
+                'The list of ids of the inserted DeviceMaintenanceStatusLog'
+              ),
+              maintenanceStatus: Joi.string()
+                .allow('', null)
+                .description('The maintenance status of the device'),
+              maintenanceStatusI18nKey: Joi.string()
+                .allow('', null)
+                .description(
+                  'The i18n key for the name of the maintenance status'
+                ),
+              maintenanceStatusName: Joi.string()
+                .allow('', null)
+                .description('The default name of the maintenance status'),
+              maintenanceStatusNotes: Joi.string()
+                .allow('', null)
+                .description('The notes of the last the maintenance status'),
+              maintenanceStatusActive: Joi.number()
+                .allow(null)
+                .description('Whether the device was active or not'),
+              maintenanceStatusManuallySet: Joi.number()
+                .allow(null)
+                .description('Whether the device status was manually set'),
+            }),
+        }),
+      },
+    },
+  },
+  {
     method: 'GET',
     path: '/device/maintenance-status',
     handler: asyncHandler(deviceMaintenanceStatusHistory),
@@ -723,7 +802,7 @@ const routes = [
       description: 'Device list with maintenance status history for each day',
       notes:
         'Used as a data source for the device status calendar on the operational dashboard',
-      ...listDevicesBaseRequest(),
+      ...listDevicesBaseRequest(true),
       response: {
         options: {
           allowUnknown: false,

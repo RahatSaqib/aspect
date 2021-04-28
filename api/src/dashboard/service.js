@@ -319,10 +319,12 @@ async function getConsumablesList(auth, dataConstraints) {
       device: 'd',
       assay: 'a',
     })
-    .groupBy('c.id', 's.id')
+    .groupBy('c.id', 'c.externalId', 's.id')
     .select(
       's.id as siteId',
       'c.id as consumableId',
+      'c.externalId as consumableExternalId',
+      'c.i18nKey as i18nKey',
       'c.name as consumableName',
       knex.raw(
         "sum(it.externalId = 'InventoryStockout' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntStockout"
@@ -383,10 +385,17 @@ async function inventoryItemDashboard(request) {
           _.isObject
         )
         if (!_.isEmpty(result)) {
-          const { consumableId, consumableName } = list[0]
-          acc.push({
+          const {
             consumableId,
             consumableName,
+            consumableExternalId,
+            i18nKey,
+          } = list[0]
+          acc.push({
+            consumableId,
+            consumableExternalId,
+            consumableName,
+            i18nKey,
             data: result,
             affectedSiteIds,
           })

@@ -7,6 +7,7 @@ const {
   setTreatmentStatusToResults,
 } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
+const { getBaseQueryForResults } = require('../../src/result/service')
 
 const { knex } = require('../../src/db')
 
@@ -32,6 +33,7 @@ describe('Result download routes', () => {
 
   let clinicianAccessToken = ''
   let results = []
+  let totalResults
 
   before(async () => {
     clinicianAccessToken = await getClinicianAccessToken()
@@ -51,7 +53,7 @@ describe('Result download routes', () => {
       [],
       'US',
       false,
-      5,
+      30,
       0,
       0,
       0
@@ -70,6 +72,37 @@ describe('Result download routes', () => {
     await knex('Result')
       .whereIn('id', _.map(results, 'id'))
       .update('resultCategory1', resultCategoryId)
+
+    /**
+     * notice that query in 'api/src/result/service.js' func 'getDownloadResultsList'
+     * applies constraints which, by default, deal with only approved devices.
+     * And because above func 'generateResults' generates also results for non-approved
+     * devices (for randomly used sites) - we need to narrow obtained `results` for only approved devices.
+     * So, use for that same base query as in func 'getDownloadResultsList' with WHERE
+     * for 'approved' device or NULL
+     */
+    const reportableResultIds = await getBaseQueryForResults()
+      .clone()
+      .leftOuterJoin(
+        `DeviceApproval as deviceApproval`,
+        `d.deviceApprovalId`,
+        `deviceApproval.id`
+      )
+      .where(function () {
+        this.where({ [`deviceApproval.token`]: 'approved' }).orWhere(
+          knex.raw('isnull(`deviceApproval`.`token`)')
+        )
+      })
+      .whereIn(
+        'r.id',
+        results.map(({ id }) => id)
+      )
+      .pluck('r.id')
+    /**
+     * leave only valid results
+     */
+    results = results.filter(({ id }) => reportableResultIds.includes(id))
+    totalResults = results.length
   })
 
   afterEach(async () => {
@@ -111,7 +144,7 @@ describe('Result download routes', () => {
 
     function assertReporterResultDownloadResponseContainingResults(
       response,
-      numberOfResults = 5
+      numberOfResults
     ) {
       assertReporterResultDownloadResponse(response)
 
@@ -176,9 +209,9 @@ describe('Result download routes', () => {
 
     it('should return a paged list of results and update them to delivered', async () => {
       const res = await server
-        .get(`${path}?size=10&deviceType=CepheidGeneXpert`)
+        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
-      assertReporterResultDownloadResponseContainingResults(res)
+      assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
@@ -204,7 +237,7 @@ describe('Result download routes', () => {
       assert.isAtLeast(totalResult, res.body.length)
     })
 
-    it('should test querying different results with different optional parameters', async () => {
+    it('should be able to handle different optional filter parameters', async () => {
       const resultCategories = [
         'Detected',
         'Invalid',
@@ -214,50 +247,56 @@ describe('Result download routes', () => {
       ]
       let res = await server
         .get(
-          `${path}?size=20&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(
+          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(
             ','
           )}`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-      assertReporterResultDownloadResponseContainingResults(res)
+      assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
+      /**
+       * see 'api/seeds/commonGenerateResults.js' func 'addTBResults()' - we insert results for
+       * assays 'elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra''
+       */
       res = await server
         .get(
-          `${path}?size=20&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxEbola,GxHiv1Vl,GxHcv`
+          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-      assertReporterResultDownloadResponseContainingResults(res)
+      assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(
-          `${path}?size=20&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`
+          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`
         )
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(
-          `${path}?size=20&deviceType=CepheidGeneXpert&treatmentStatus=OnTreatment`
+          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&treatmentStatus=OnTreatment`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-      // assertReporterResultDownloadResponseContainingResults(res)
+      // assertReporterResultDownloadResponseContainingResults(res, results.length)
 
       res = await server
-        .get(`${path}?size=20&patientSample=-&deviceType=CepheidGeneXpert`)
+        .get(
+          `${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`
+        )
         .set('Authorization', `Bearer ${shared.token}`)
-      assertReporterResultDownloadResponseContainingResults(res)
+      assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
     it('should return a paged list of results filtered by disease external id', async () => {
       const res = await server
         .get(path)
         .query({
-          size: 10,
+          size: totalResults,
           deviceType: 'CepheidGeneXpert',
           diseaseExternalIds: 'tb,ebola,hiv',
         })
         .set('Authorization', `Bearer ${shared.token}`)
-      assertReporterResultDownloadResponseContainingResults(res)
+      assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
     it('should return a paged list of results, including all result details, that the clinician has access to', async () => {

@@ -1347,6 +1347,12 @@ const routes = [
                 followUp: Joi.string()
                   .allow(null)
                   .description('The followUp that the count is grouped by'),
+                followUpI18nKey: Joi.string()
+                  .allow('', null)
+                  .description('Follow up 18n key'),
+                resultCategory1I18nKey: Joi.string()
+                  .allow('', null)
+                  .description('Result Category 1 18n key'),
               })
             ),
         }),

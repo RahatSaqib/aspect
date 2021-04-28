@@ -16,6 +16,7 @@ const AspectDialog = ({
   actions,
   autoScrollBodyContent,
   children,
+  dialogContentClasses,
   maxWidth,
   modal,
   onRequestClose,
@@ -53,7 +54,13 @@ const AspectDialog = ({
     >
       {title && renderTitle()}
 
-      <DialogContent>{children}</DialogContent>
+      <DialogContent
+        classes={{
+          ...dialogContentClasses,
+        }}
+      >
+        {children}
+      </DialogContent>
 
       {React.Children.count(actions) > 0 && (
         <DialogActions>{React.Children.toArray(actions)}</DialogActions>
@@ -66,6 +73,7 @@ AspectDialog.propTypes = {
   actions: PropTypes.node, // eslint-disable-line
   autoScrollBodyContent: PropTypes.bool,
   children: PropTypes.node.isRequired,
+  dialogContentClasses: PropTypes.objectOf(PropTypes.shape),
   maxWidth: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', false]),
   modal: PropTypes.bool,
   onRequestClose: PropTypes.func, // eslint-disable-line
@@ -74,6 +82,7 @@ AspectDialog.propTypes = {
 }
 AspectDialog.defaultProps = {
   autoScrollBodyContent: false,
+  dialogContentClasses: {},
   maxWidth: 'md',
   modal: false,
   title: '',

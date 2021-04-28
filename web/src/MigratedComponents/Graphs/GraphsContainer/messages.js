@@ -6,7 +6,7 @@ export const messages = defineMessages({
     defaultMessage: 'Average Monthly Suppression Rate',
   },
   clinicalIndicatorsPieSubLegend: {
-    id: 'pages.Status.clinicalIndicatorsPieLegend',
+    id: 'pages.Status.clinicalIndicatorsPieSubLegend',
     defaultMessage: 'Total Cases',
   },
   clinicalIndicatorsCovidName: {
@@ -43,7 +43,7 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsTBDetectedPie: {
     id: 'pages.Status.clinicalIndicatorsTBDetectedPie.title',
-    defaultMessage: 'Average monthly TB Detected Rate',
+    defaultMessage: 'Average Monthly TB Detected Rate',
   },
   clinicalIndicatorsTBPieLegend: {
     id: 'pages.Status.clinicalIndicatorsTB.pie',

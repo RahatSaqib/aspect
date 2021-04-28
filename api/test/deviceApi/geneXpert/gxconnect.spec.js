@@ -7,16 +7,12 @@ const addHours = require('date-fns/addHours')
 const subHours = require('date-fns/subHours')
 const addMinutes = require('date-fns/addMinutes')
 const subMinutes = require('date-fns/subMinutes')
-const addSeconds = require('date-fns/addSeconds')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { getLastResultId, postToDeviceApi } = require('../utils')
-const {
-  resultTextToResultCategoryMapping,
-  basicResultPayload,
-} = require('./geneXpertConstants')
+const { basicResultPayload } = require('./geneXpertConstants')
 const {
   detectedLess1000,
   detectedMoreThan1000,
@@ -28,14 +24,27 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { run } = require('../../../src/db')
+const { run, knex: knexDb } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
 const {
+  resultCategoryToId,
+  deviceTypeToId,
+  assayToId,
+} = require('../../../src/shared/dictionary')
+const {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
 } = require('../../../src/shared/date')
+const {
+  gxEbola: gxEbolaMappings,
+  gxHiv1Qual: gxHiv1QualMappings,
+  gxMtbRif: gxMtbRifMappings,
+  gxMtbRifUltra: gxMtbRifUltraMappings,
+  assayGxCovid19: assayGxCovid19Mappings,
+} = require('./notVLResultTextMappings')
+const { knex } = require('../../../src/db')
 
 const server = require('../../utils/testUtils')
 
@@ -177,6 +186,54 @@ describe('Device API routes for GxConnect Devices', () => {
                 },
               ])
             }))
+
+          it('should update timezone', async () => {
+            const { basicDevicePayload, deviceAuth, device } = context
+
+            assert.equal(device.timezone, 'Eastern Standard Time')
+            const timezone = 'South Africa Standard Time'
+
+            const devicePath = '/device'
+            // add device
+            let res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: { data: { timezone } },
+              })
+
+              .catch(assert.fail)
+
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            let newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'South Africa Standard Time')
+
+            // update device
+            res = await server
+              .post(devicePath)
+              .set('Authorization', deviceAuth)
+              .send({
+                ...basicDevicePayload,
+                configuration: {
+                  data: {
+                    timezone: 'not existing  Standard Time',
+                  },
+                },
+              })
+
+            newDevice = await knexDb('Device as d')
+              .where('d.id', device.id)
+              .first('d.*')
+            assert.isOk(newDevice)
+            assert.equal(newDevice.timezone, 'Eastern Standard Time')
+            assert.equal(newDevice.serial, null)
+          })
         })
       })
     })
@@ -634,6 +691,41 @@ describe('Device API routes for GxConnect Devices', () => {
     })
   })
 
+  describe('Device Daily details', () => {
+    const macAddress = 'MAC00000321PING'
+
+    const context = createGxConnectTestContext(server, {
+      countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      deviceSerialNumber,
+    })
+    beforeEach(context.beforeRegisterAndSetDevice)
+    afterEach(context.afterCleanUp)
+
+    it('Download the custom fields', async () => {
+      const { basicDevicePayload, deviceAuth } = context
+
+      const res = await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send({ getFormsDefinition: true, ...basicDevicePayload })
+        .catch(assert.fail)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'CustomFields')
+      assert.typeOf(res.body.CustomFields, 'Object')
+      assert.typeOf(res.body.CustomFields.Fields, 'Array')
+      assert.isAtLeast(res.body.CustomFields.Fields.length, 1)
+      const customFieldProperties = ['Label', 'Control', 'Type', 'DisplayOrder']
+      _.each(customFieldProperties, fieldName => {
+        assert.property(res.body.CustomFields.Fields[0], fieldName)
+      })
+    })
+  })
+
   describe('ping', () => {
     const macAddress = 'MAC00000321PING'
 
@@ -722,6 +814,97 @@ describe('Device API routes for GxConnect Devices', () => {
     beforeEach(context.beforeRegisterAndSetDevice)
     const { runTest, getLastResult, basicDevicePayload } = context
     afterEach(context.afterCleanUp)
+
+    const getResultCategoriesTestCallback = trackedResults => async () => {
+      const { deviceAuth, device } = context
+
+      await Promise.each(trackedResults, async assertion => {
+        const {
+          resultText,
+          resultCategory1ExternalId,
+          resultCategory2ExternalId,
+          assayExternalId,
+        } = assertion
+        // Send a new result
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.merge(
+              {},
+              basicDevicePayload,
+              { name: `${deviceName}${Math.random() * 1000}` },
+              basicResultPayload,
+              {
+                result: {
+                  id: `new result ${Math.floor(Math.random() * 1000)}`,
+                  startedOn: subDays(
+                    new Date(),
+                    Math.floor(Math.random() * 100)
+                  ),
+                  data: { resultText },
+                  assay: { id: assayExternalId },
+                  sample: {
+                    id: `new sample ${Math.floor(Math.random() * 1000)}`,
+                  },
+                  instrument: {
+                    serial: `new instrument ${Math.floor(
+                      Math.random() * 1000
+                    )}`,
+                  },
+                },
+              }
+            )
+          )
+        await waitForIdle()
+
+        const lastResultId = await getLastResultId(knex, device.id)
+        const { resultCategory1, resultCategory2, assayId } = await knex(
+          'Result'
+        )
+          .where('id', lastResultId)
+          .first()
+
+        const expectedResultCategory1Id = await resultCategoryToId(
+          resultCategory1ExternalId
+        )
+        const expectedResultCategory2Id =
+          (await resultCategoryToId(resultCategory2ExternalId)) || null
+        const expectedAssayId = await assayToId(assayExternalId)
+        const expected = {
+          resultCategory1Id: expectedResultCategory1Id,
+          resultCategory2Id: expectedResultCategory2Id,
+          assayId: expectedAssayId,
+        }
+        const actual = {
+          resultCategory1Id: resultCategory1,
+          resultCategory2Id: resultCategory2,
+          assayId,
+        }
+        assert.deepEqual(expected, actual)
+      })
+    }
+
+    it(
+      'should append a new GxEbola result with the correct result categories',
+      getResultCategoriesTestCallback(gxEbolaMappings)
+    )
+    it(
+      'should append a new GxHiv1Qual result with the correct result categories',
+      getResultCategoriesTestCallback(gxHiv1QualMappings)
+    )
+    it(
+      'should append a new GxMtbRifUltra result with the correct result categories',
+      getResultCategoriesTestCallback(gxMtbRifUltraMappings)
+    )
+    it(
+      'should append a new assayGxCovid19 result with the correct result categories',
+      getResultCategoriesTestCallback(assayGxCovid19Mappings)
+    )
+    it(
+      'should append a new GxMtbRif result with the correct result categories',
+      getResultCategoriesTestCallback(gxMtbRifMappings)
+    ).timeout(120000)
 
     it('should reject a result without a start or end date date', () =>
       runTest(async () => {
@@ -852,7 +1035,6 @@ describe('Device API routes for GxConnect Devices', () => {
             })
           )
 
-        // / console.log(res.body, res.status)
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
@@ -1352,6 +1534,76 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(firstResultId, secondResultId)
       }))
 
+    it('should update a result and set result category 2 correctly if it was previously set and is now null', () =>
+      runTest(async knex => {
+        const { deviceAuth, device, now } = context
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'dupe'
+        const instrumentSerial = 'Tested on the same instrument'
+
+        // Send a new result
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_1',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+                data: { resultText: 'NO RESULT' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        const firstResultId = await getLastResultId(knex, device.id)
+
+        // Send another result with the same sample ID, but different start date
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: 'unique_id_2',
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+                data: { resultText: 'NOT DETECTED' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+
+        const secondResultId = await getLastResultId(knex, device.id)
+        assert.equal(firstResultId, secondResultId)
+
+        const [result] = await knex('Result')
+          .select('resultCategory1', 'resultCategory2')
+          .where('id', firstResultId)
+
+        assert.equal(
+          result.resultCategory1,
+          await resultCategoryToId('NotDetected')
+        )
+        assert.equal(result.resultCategory2, null)
+      }))
+
     it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', () =>
       runTest(async knex => {
         const { deviceAuth, device, now } = context
@@ -1410,102 +1662,6 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.notEqual(firstResultId, secondResultId)
       }))
 
-    it('should map result categories based on result text', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
-
-        const sendResult = async (
-          resultId,
-          assay,
-          sampleId,
-          resultText,
-          expectedResultCategory1,
-          expectedResultCategory2,
-          runNumber
-        ) => {
-          const testStartedOn = setMilliseconds(
-            addSeconds(subDays(context.now, 3), runNumber),
-            0
-          )
-          const testEndedOn = setMilliseconds(
-            addSeconds(addHours(testStartedOn, 2), runNumber),
-            0
-          )
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign(
-                {},
-                _.assign({}, basicDevicePayload, basicResultPayload),
-                {
-                  result: _.assign({}, basicResultPayload.result, {
-                    id: resultId,
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                    assay: _.assign({}, basicResultPayload.result.assay, {
-                      id: assay,
-                    }),
-                    sample: { id: sampleId },
-                    data: _.assign({}, basicResultPayload.result.data, {
-                      resultText,
-                    }),
-                  }),
-                }
-              )
-            )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const resultDetails = await getLastResult()
-
-          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
-          assert.equal(
-            resultDetails.resultCategory1,
-            expectedResultCategory1,
-            `Result 1 in ${resultText}`
-          )
-          assert.equal(
-            resultDetails.resultCategory2,
-            expectedResultCategory2,
-            `Result 2 in ${resultText}`
-          )
-        }
-
-        let runNumber = 1
-        await Promise.each(
-          Object.keys(resultTextToResultCategoryMapping),
-          async (resultText, index) => {
-            if (
-              resultText &&
-              !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-            ) {
-              const {
-                resultId,
-                assay,
-                resultCategory1,
-                resultCategory2,
-              } = resultTextToResultCategoryMapping[resultText]
-              runNumber += 1
-              await sendResult(
-                resultId,
-                assay,
-                `PKM0833243689-${index}`,
-                resultText,
-                resultCategory1,
-                resultCategory2,
-                runNumber
-              )
-            } else {
-              await Promise.resolve()
-            }
-          }
-        )
-      }))
-
     it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
       runTest(async () => {
         const { basicDevicePayload, deviceAuth } = context
@@ -1561,6 +1717,81 @@ describe('Device API routes for GxConnect Devices', () => {
           Date.now(),
           2000
         )
+      }))
+
+    it('should get the module name from a previous result on the same module serial if it is not included in the payload', () =>
+      runTest(async () => {
+        const { basicDevicePayload, deviceAuth } = context
+        const testStartedOn = '2020-08-10T14:00:00Z'
+
+        // Send a new result
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                startedOn: testStartedOn,
+                assay: _.assign({}, basicResultPayload.result.assay, {
+                  id: 'GxMtbRif',
+                }),
+                id: 'unique_id_1',
+                sample: { id: 'sample_id_1' },
+                instrument: {
+                  serial: '820799',
+                  module: {
+                    serial: '724158',
+                    name: 'A3',
+                  },
+                },
+                consumable: {
+                  serial: '12345',
+                },
+                data: basicResultPayload.result.data,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        // Send another result with missing module name
+        _.unset(basicResultPayload, 'result.instrument.module.name')
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                startedOn: testStartedOn,
+                assay: _.assign({}, basicResultPayload.result.assay, {
+                  id: 'GxMtbRif',
+                }),
+                id: 'unique_id_2',
+                sample: { id: 'sample_id_2' },
+                instrument: {
+                  serial: '820799',
+                  module: {
+                    serial: '724158',
+                  },
+                },
+                consumable: {
+                  serial: '12345',
+                },
+                data: basicResultPayload.result.data,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const afterResultDetails = await getLastResult()
+        expect(afterResultDetails.moduleName).to.equal('A3')
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
@@ -2274,7 +2505,7 @@ describe('Device API routes for GxConnect Devices', () => {
               const incompleteResult = await getLastResult()
               expect(incompleteResult).to.containSubset({
                 resultCategory1: 'NoResult',
-                resultCategory2: 'NoResult',
+                resultCategory2: null,
                 startedOn: startedOnDateInUtc,
                 endedOn: null,
                 resultData: {
@@ -3891,6 +4122,123 @@ describe('Device API routes for GxConnect Devices', () => {
             ]
           )
         }))
+    })
+  })
+  describe('Daily details', () => {
+    describe('whole country same settings', () => {
+      const context = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName,
+        macAddress,
+      })
+      let insertedConfiguration = null
+      beforeEach(async () => {
+        await context.beforeRegisterAndSetDevice()
+        const { partnerId } = context.device
+        const { geographyId } = await knexDb('Site as s')
+          .where({ externalId: 'Ohio_Wayne' })
+          .first('s.geographyId')
+        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
+          deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+          geographyId,
+          partnerId,
+          data: JSON.stringify({
+            EnableInventoryModule: true,
+            AspectUploadExcludePatientId: true,
+            GxAlertUploadExcludePatientId: true,
+          }),
+          updatedOn: new Date(),
+        })
+      })
+      afterEach(async () => {
+        await context.afterCleanUp()
+        await knexDb('DeviceConfiguration')
+          .where({ id: insertedConfiguration })
+          .delete()
+      })
+
+      it('should receive deviceConfiguration for the whole country', async () => {
+        const { deviceAuth, basicDevicePayload } = context
+        let res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .catch(assert.fail)
+
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(res.body.deviceConfiguration, {
+          EnableInventoryModule: false,
+          AspectUploadExcludePatientId: false,
+          GxAlertUploadExcludePatientId: false,
+        })
+        // the second time, device configuration it will be null because was already responded
+
+        res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .catch(assert.fail)
+
+        assert.equal(res.statusCode, 200)
+        assert.isNull(res.body.deviceConfiguration)
+      })
+    })
+    describe('different configurations depending the state', () => {
+      const context = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName: 'Dayton Ohio 2',
+        macAddress,
+      })
+      let insertedConfiguration = null
+      beforeEach(async () => {
+        const siteOhio = await knexDb('Site as s')
+          .where({ externalId: 'OH_Dayton' })
+          .first()
+        await knexDb('Site').insert({
+          ..._.omit(siteOhio, ['name', 'id', 'externalId']),
+          name: 'Dayton Ohio 2',
+          externalId: 'OH_Dayton_2',
+        })
+        await context.beforeRegisterAndSetDevice()
+        const { partnerId } = context.device
+
+        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
+          deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+          geographyId: siteOhio.geographyId,
+          partnerId,
+          data: JSON.stringify({
+            EnableInventoryModule: true,
+            AspectUploadExcludePatientId: true,
+            GxAlertUploadExcludePatientId: true,
+          }),
+          updatedOn: new Date(),
+        })
+      })
+      afterEach(async () => {
+        await context.afterCleanUp()
+        await knexDb('DeviceConfiguration')
+          .where({ id: insertedConfiguration })
+          .delete()
+      })
+      it('should receive deviceConfiguration for that specific state', async () => {
+        const { deviceAuth, basicDevicePayload } = context
+        const res = await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send({ includeDeviceConfiguration: true, ...basicDevicePayload })
+          .catch(assert.fail)
+
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(res.body.deviceConfiguration, {
+          EnableInventoryModule: true,
+          AspectUploadExcludePatientId: true,
+          GxAlertUploadExcludePatientId: true,
+        })
+      })
     })
   })
 })

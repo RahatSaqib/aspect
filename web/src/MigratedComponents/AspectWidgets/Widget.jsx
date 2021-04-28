@@ -1,15 +1,16 @@
 import React from 'react'
 import { func, object, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import AspectLink from '../AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
-import { buildMessagesFromI18nKeys, buildWidgetToLinkParams } from './Helpers'
+import { buildWidgetToLinkParams, translate } from './Helpers'
 import WidgetAlert from './Alerts'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Widgets.css'))
 
@@ -25,26 +26,29 @@ const EmptyWidget = () => (
 )
 
 const AspectWidget = ({
-  data,
   data: {
     link,
     linkParams,
     icon,
     description,
+    descriptionI18nKey,
     count,
     extra,
     title,
+    titleI18nKey,
     unit,
     subTitle,
+    subTitleI18nKey,
     statStatus,
     extraLabel,
     statUnitI18nKey,
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
-  const messages = defineMessage(buildMessagesFromI18nKeys(data))
-  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : false
+  const { formatMessage } = useIntl()
+  const translator = { formatMessage, messages }
+  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
+  const titleText = translate(titleI18nKey, title, translator)
   return (
     <AspectLink
       to={linkParam}
@@ -58,17 +62,20 @@ const AspectWidget = ({
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
             <AspectTooltip
-              title={title}
+              title={titleText}
               toolTipContainerClass="inline__tooltip"
             >
-              {title}
+              {titleText}
             </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
-              {subTitle}
+              {translate(subTitleI18nKey, subTitle, translator)}
             </span>
           </span>
           {description ? (
-            <AspectTooltip showHelpIcon title={description} />
+            <AspectTooltip
+              showHelpIcon
+              title={translate(descriptionI18nKey, description, translator)}
+            />
           ) : null}
         </div>
         <div className={cssClasses('Summary__Card__Content')}>
@@ -82,7 +89,7 @@ const AspectWidget = ({
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
                 {statUnitI18nKey !== null &&
-                  intlFormatMessage(messages.statUnitI18nKey, { unit })}
+                  formatMessage(messages[statUnitI18nKey], { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
                 {statStatus}

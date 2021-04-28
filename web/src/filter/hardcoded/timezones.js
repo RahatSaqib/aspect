@@ -169,7 +169,16 @@ export default [
     name: 'Casablanca (UTC)',
     timeZone: 'Africa/Casablanca',
   },
-  { id: 'UTC', name: 'Coordinated Universal Time (UTC)', timeZone: 'UTC' },
+  {
+    id: 'Coordinated Universal Time',
+    name: 'Coordinated Universal Time',
+    timeZone: 'UTC',
+  },
+  {
+    id: 'UTC',
+    name: 'Coordinated Universal Time (UTC)',
+    timeZone: 'UTC',
+  },
   {
     id: 'GMT Standard Time',
     name: 'Dublin, Edinburgh, Lisbon, London (UTC)',
@@ -499,5 +508,10 @@ export default [
     id: 'Samoa Standard Time',
     name: 'Samoa (UTC+13:00)',
     timeZone: 'Pacific/Samoa',
+  },
+  {
+    id: 'Malay Peninsula Standard Time',
+    name: 'Malaysian Time (UTC+08:00)',
+    timeZone: 'Asia/Kuala_Lumpur',
   },
 ]

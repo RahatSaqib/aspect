@@ -1,7 +1,6 @@
 [
   {
     "personName": "SH IWO",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "iwo_dots",
@@ -21,7 +20,6 @@
   },
   {
     "personName": "AGBOGBO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "agbogbo_dots",
@@ -41,7 +39,6 @@
   },
   {
     "personName": "FEESU PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "feesu_dots",
@@ -61,7 +58,6 @@
   },
   {
     "personName": "KARA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "kara_dots",
@@ -81,7 +77,6 @@
   },
   {
     "personName": "SH EDE",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ede_dots",
@@ -101,7 +96,6 @@
   },
   {
     "personName": "JAGUNJAGUN PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "jagunjagun_dots",
@@ -121,7 +115,6 @@
   },
   {
     "personName": "OJA TIMI PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "oja_dots",
@@ -141,7 +134,6 @@
   },
   {
     "personName": "MASIFA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "masifa_dots",
@@ -161,7 +153,6 @@
   },
   {
     "personName": "SH OKE OGBO",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "oke_ogbo_dots",
@@ -181,7 +172,6 @@
   },
   {
     "personName": "OLORUNSHINDARA HOSPITAL",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "olorunindara_dots",
@@ -201,7 +191,6 @@
   },
   {
     "personName": "SAKO IGBALA HOSPITAL",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "sako_dots",
@@ -221,7 +210,6 @@
   },
   {
     "personName": "ALAFIA HOSPITAL",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "alafia_dots",
@@ -241,7 +229,6 @@
   },
   {
     "personName": "ONIGBODOGI PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "onigbodogi_dots",
@@ -255,13 +242,12 @@
     ],
     "sites": [
       {
-        "shortName": "ONIGBODOGI"
+        "shortName": "ONIGBODOGI PHC"
       }
     ]
   },
   {
     "personName": "ENUWA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "enuwa_dots",
@@ -281,7 +267,6 @@
   },
   {
     "personName": "ELEYELE",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "eleyele_dots",
@@ -301,7 +286,6 @@
   },
   {
     "personName": "ARUBIEWE CHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "arubiewe_dots",
@@ -321,7 +305,6 @@
   },
   {
     "personName": "OKOOKO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "okooko_dots",
@@ -341,7 +324,6 @@
   },
   {
     "personName": "MORO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "moro_dots",
@@ -361,7 +343,6 @@
   },
   {
     "personName": "SH ILESA",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ilesa_dots",
@@ -381,7 +362,6 @@
   },
   {
     "personName": "ADETI PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "adeti_dots",
@@ -401,7 +381,6 @@
   },
   {
     "personName": "ISOKUN PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "isokun_dots",
@@ -421,7 +400,6 @@
   },
   {
     "personName": "SH IKIRE",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ikire_dots",
@@ -441,7 +419,6 @@
   },
   {
     "personName": "SH ASUBIARO",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "asubiaro_dots",
@@ -461,7 +438,6 @@
   },
   {
     "personName": "ODI OLOWO PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "odi_dots",
@@ -481,7 +457,6 @@
   },
   {
     "personName": "ISALE AGBARA PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "isale_dots",
@@ -501,7 +476,6 @@
   },
   {
     "personName": "OKE BAALE PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "oke_baale_dots",
@@ -521,7 +495,6 @@
   },
   {
     "personName": "IFON PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "ifon_dots",
@@ -541,7 +514,6 @@
   },
   {
     "personName": "ALGON PHC",
-    "personEmailAddress": "",
     "timezone": "W. Central Africa Standard Time",
     "jobFunctions": ["Clinician"],
     "username": "algon_dots",
@@ -556,6 +528,1742 @@
     "sites": [
       {
         "shortName": "ALGON"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Moniya",
+    "personEmailAddress": "tunrayoakingbeyin@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghmoniya_dots",
+    "password": "n2BtRG",
+    "personCell": "07067176150",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Moniya"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Igboho",
+    "personEmailAddress": "serifat90@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghigboho_dots",
+    "password": "fyLSU9",
+    "personCell": "08051686730",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Orelope"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Igboho"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Agbongbon",
+    "personEmailAddress": "serifatoladimeji007@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "agbongbon_dots",
+    "password": "dcuT5P",
+    "personCell": "08035632096",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Agbongbon"
+      }
+    ]
+  },
+  {
+    "personName": "Idi Ogungun Primary Health Center",
+    "personEmailAddress": "bilaukehinde@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "idi_dots",
+    "password": "qsMSK8",
+    "personCell": "08054033411",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Idi Ogungun Primary Health Center"
+      }
+    ]
+  },
+  {
+    "personName": "St Peter General Hospital",
+    "personEmailAddress": "oyindamolaagoola@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "stpeter_dots",
+    "password": "qhhahg",
+    "personCell": "08051192859",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "St Peter General Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Omi Adio Primary Health Center",
+    "personEmailAddress": "omolaraadesiyan1@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "omi_dots",
+    "password": "mjjrpq",
+    "personCell": "08034646586",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Omi Adio Primary Health Center"
+      }
+    ]
+  },
+  {
+    "personName": "Alegongo Primary Health Center",
+    "personEmailAddress": "oyindamolaomowumi46@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "alegongo_dots",
+    "password": "adyxfs",
+    "personCell": "08052344809",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Lagelu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Alegongo Primary Health Center"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Iwo Road",
+    "personEmailAddress": "ajokeade0518@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iworoad_dots",
+    "password": "8yTLnk",
+    "personCell": "08053444331",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Iwo Road"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Molete",
+    "personEmailAddress": "dammyjacob374@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "molete_dots",
+    "password": "UrH4v4",
+    "personCell": "08035772255",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Molete"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Adeoyo",
+    "personEmailAddress": "seunadebola@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghadeoyo_dots",
+    "password": "Y5sBPB",
+    "personCell": "08038012049",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Adeoyo"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Odo Ona Elewe",
+    "personEmailAddress": "jusuyeomolara@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "phcodo_dots",
+    "password": "NUkj6p",
+    "personCell": "0810 176 6026",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Odo Ona Elewe"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Eruwa",
+    "personEmailAddress": "aworindeoluwaseun31@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "gheruwa_dots",
+    "password": "kPpdgW",
+    "personCell": "0806 633 4593",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Eruwa"
+      }
+    ]
+  },
+  {
+    "personName": "Gh Igbo Ora",
+    "personEmailAddress": "okegbemuakinlolu1@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghigbo_dots",
+    "password": "QVXtJR",
+    "personCell": "09035348084",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Gh Igbo Ora"
+      }
+    ]
+  },
+  {
+    "personName": "Chest Hospital Jericho",
+    "personEmailAddress": "christieadebimpe@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "jericho_dots",
+    "password": "VmAVGW",
+    "personCell": "08036976413",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GCH Jericho Ibadan"
+      }
+    ]
+  },
+  {
+    "personName": "Ring Road State Hospital",
+    "personEmailAddress": "kunle222@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ring_dots",
+    "password": "X2agjs",
+    "personCell": "07055012111",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ring-Road State Hosp. Ibadan"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Adaramagbo",
+    "personEmailAddress": "oluyinkaajayi74@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "adaramagbo_dots",
+    "password": "27Qc7G",
+    "personCell": "08033935325",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Adaramagbo"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Ojoo",
+    "personEmailAddress": "doyinsticojo@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ojoo_dots",
+    "password": "t9Nemk",
+    "personCell": "09037406685",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Ojoo"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Saki",
+    "personEmailAddress": "alarapeserifatarike@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghsaki_dots",
+    "password": "YYy76K",
+    "personCell": "08077800387",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Saki West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Saki"
+      }
+    ]
+  },
+  {
+    "personName": "2nd Division Hospital",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "nddivision_dots",
+    "password": "4hdut3",
+    "personCell": "08106397600",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "2 Division Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Apete",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "apete_dots",
+    "password": "YabfmA",
+    "personCell": "08034080021",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Apete"
+      }
+    ]
+  },
+  {
+    "personName": "Sh Oyo",
+    "personEmailAddress": "olojedechristiannah@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oyo_dots",
+    "password": "pSVa8Y",
+    "personCell": "08057209991",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oyo East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, OYO"
+      }
+    ]
+  },
+  {
+    "personName": "Sh Ogbomosho",
+    "personEmailAddress": "oyetundeeo9@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ogbomoo_dots",
+    "password": "xjwZu6",
+    "personCell": "08066443117",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sh Ogbomosho"
+      }
+    ]
+  },
+  {
+    "personName": "Odo Oba Phc",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "odo_dots",
+    "password": "sQKvhU",
+    "personCell": "08162180175",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogo Oluwa"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Odo Oba Phc"
+      }
+    ]
+  },
+  {
+    "personName": "Iseyin Gh",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iseyin_dots",
+    "password": "TFD5Pc",
+    "personCell": "08038094176",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Iseyin"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Iseyin Gh"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Ajibode",
+    "personEmailAddress": "oluwakayodemaryoluwafunke@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ajibode_dots",
+    "password": "bKGBy8",
+    "personCell": "08110806093",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Ajibode"
+      }
+    ]
+  },
+  {
+    "personName": "Lautech Teaching Hospital",
+    "personEmailAddress": "olaniyijohn95@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "lautechth_dots",
+    "password": "SjU66k",
+    "personCell": "08033597979",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "LAUTECH Teaching Hosp., Osogbo"
+      }
+    ]
+  },
+  {
+    "personName": "Lad Medical Centre",
+    "personEmailAddress": "naimotatanda@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ladmedical_dots",
+    "password": "LvdkTh",
+    "personCell": "08032512206",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Lad Medical Centre"
+      }
+    ]
+  },
+  {
+    "personName": "Durojaiye Hospital",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "durojaiye_dots",
+    "password": "YvtpMt",
+    "personCell": "08020823557",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Durojaiye Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Alafara",
+    "personEmailAddress": "oluyemiagboola1972@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "alafara_dots",
+    "password": "FJ8yPT",
+    "personCell": "08163630211",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Alafara"
+      }
+    ]
+  },
+  {
+    "personName": "Hansens Disease Centre",
+    "personEmailAddress": "debbygrace5@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "hansens_dots",
+    "password": "2LFBhc",
+    "personCell": "8034240090",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Hansens Disease Centre"
+      }
+    ]
+  },
+  {
+    "personName": "Chest Clinic, State Hospital Ijaye",
+    "personEmailAddress": "adelokikib@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ijaye_dots",
+    "password": "ukUSj8",
+    "personCell": "8066570063",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital Ijaye, Abeokuta"
+      }
+    ]
+  },
+  {
+    "personName": "Sacred Heart Hospital, Lantoro",
+    "personEmailAddress": "victordawodu247@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "lantoro_dots",
+    "password": "pLa6Xt",
+    "personCell": "8038271484",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sacred Heart Hosp."
+      }
+    ]
+  },
+  {
+    "personName": "Federal Medical Centre, Abeokuta",
+    "personEmailAddress": " adetona.tolulope@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "abeokuta_dots",
+    "password": "529Cbc",
+    "personCell": "0803 577 8186",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "FMC Abeokuta"
+      }
+    ]
+  },
+  {
+    "personName": "Ota",
+    "personEmailAddress": "adesinabankefadaini@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "phcota_dots",
+    "password": "vQjaaH",
+    "personCell": "08029548439",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ota"
+      }
+    ]
+  },
+  {
+    "personName": "Atan Health Centre",
+    "personEmailAddress": "aderiyemmanuel@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "atan_dots",
+    "password": "DJys9g",
+    "personCell": "07082430295",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Atan Health Centre"
+      }
+    ]
+  },
+  {
+    "personName": "State Hospital Ota",
+    "personEmailAddress": "makujoy1972@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shota_dots",
+    "password": "gk2ZSk",
+    "personCell": "08139691019",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Ota"
+      }
+    ]
+  },
+  {
+    "personName": "Oluwalogbon Medical Centre",
+    "personEmailAddress": "olurindeiyabo@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oluwalogbon_dots",
+    "password": "PPSPaa",
+    "personCell": "08130158362",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Oluwalogbon Medical Centre"
+      }
+    ]
+  },
+  {
+    "personName": "State Hospital, Ilaro",
+    "personEmailAddress": "hungeot2010@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shilaro_dots",
+    "password": "B6VYcH",
+    "personCell": "08030153839",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Ilaro"
+      }
+    ]
+  },
+  {
+    "personName": "Health Centre, Isaga Owode",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "isaga_dots",
+    "password": "H6LBzm",
+    "personCell": "07065439693",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Health Centre, Isaga Owode"
+      }
+    ]
+  },
+  {
+    "personName": "Olose",
+    "personEmailAddress": "olajideelizabeth337@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olose_dots",
+    "password": "kj52vP",
+    "personCell": "08037019490",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Olose"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Ifo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ifo_dots",
+    "password": "xwjCYW",
+    "personCell": "08062542570",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ifo, Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "HC Agbado",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "agbado_dots",
+    "password": "8TVe4r",
+    "personCell": "09063926072",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "HC Agbado"
+      }
+    ]
+  },
+  {
+    "personName": "Obada Prim Health Centre",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "obada_dots",
+    "password": "pwGmf2",
+    "personCell": "08050595049",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Obada Prim Health Centre"
+      }
+    ]
+  },
+  {
+    "personName": "State Hospital Ijebu Ode",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shijebu_dots",
+    "password": "7dGQHs",
+    "personCell": "08034495998",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu Ode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "SH Ijebu-Ode"
+      }
+    ]
+  },
+  {
+    "personName": "Health Centre, Idobi(Oke Oyinbo)",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "idobi_dots",
+    "password": "ejfuuE",
+    "personCell": "08033601131",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu Ode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Health Centre, Idobi(Oke Oyinbo)"
+      }
+    ]
+  },
+  {
+    "personName": "General Hosp Iperu",
+    "personEmailAddress": "mutiyatotemoye@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iperu_dots",
+    "password": "9N2ruc",
+    "personCell": "8029526349",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ikenne"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hosp Iperu"
+      }
+    ]
+  },
+  {
+    "personName": "General Hosp Idiroko",
+    "personEmailAddress": "joke-agelusi2015@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "idiroko_dots",
+    "password": "xjSLes",
+    "personCell": "08060401313",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ipokia"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Idiroko Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Isara",
+    "personEmailAddress": "nil",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "isara_dots",
+    "password": "FAch8b",
+    "personCell": "8075893041",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Remo North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital Isara Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "CMPC OOUTH Sagamu",
+    "personEmailAddress": "gogunkoya@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "cmpc_dots",
+    "password": "aC7hVs",
+    "personCell": "8033525790",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Sagamu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OOUTH Sagamu"
+      }
+    ]
+  },
+  {
+    "personName": "Itori",
+    "personEmailAddress": "164adeola@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "itori_dots",
+    "password": "VpV4qC",
+    "personCell": "08169413908",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ewekoro"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Itori"
+      }
+    ]
+  },
+  {
+    "personName": "GH Ijebu Ife",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghijebu_dots",
+    "password": "d9mcwW",
+    "personCell": "8163459112",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ijebu Ife"
+      }
+    ]
+  },
+  {
+    "personName": "GH Owode",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "owode_dots",
+    "password": "wS7jhZ",
+    "personCell": "8035144894",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Obafemi Owode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Owode-Egba Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "Obantoko",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "obantoko_dots",
+    "password": "XUwz3F",
+    "personCell": "8094684263",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Odeda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Obantoko"
+      }
+    ]
+  },
+  {
+    "personName": "GH Imeko",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "imeko_dots",
+    "password": "2LFBhc",
+    "personCell": "8032160453",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Imeko Afon"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Imeko"
+      }
+    ]
+  },
+  {
+    "personName": "GH Ayetoro",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ayetoro_dots",
+    "password": "d6Fsvy",
+    "personCell": "8062753960",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ayetoro"
+      }
+    ]
+  },
+  {
+    "personName": "Abigi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "abigi_dots",
+    "password": "pLa6Xt",
+    "personCell": "8072321414",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ogun Waterside"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Abigi"
+      }
+    ]
+  },
+  {
+    "personName": "M IJARI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ijari_dots",
+    "password": "SL6xh6",
+    "personCell": "8055231265",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu North East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "M IJARI"
+      }
+    ]
+  },
+  {
+    "personName": "Odogbolu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "odogbolu_dots",
+    "password": "DJys9g",
+    "personCell": "8162380547",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Odogbolu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Odogbolu"
+      }
+    ]
+  },
+  {
+    "personName": "NIMR",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "nimr_dots",
+    "password": "cgKg77",
+    "personCell": "08060077387",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "NIMR3"
+      }
+    ]
+  },
+  {
+    "personName": "Orthopedic National Hospital Igbobi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "orthopedic_dots",
+    "password": "4dFr3R",
+    "personCell": "07055067933",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Orthopedic National Hospital Igbobi"
+      }
+    ]
+  },
+  {
+    "personName": "Mainland GH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "mainland_dots",
+    "password": "hG5R6d",
+    "personCell": "08034743512",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Mainland Hospital Yaba"
+      }
+    ]
+  },
+  {
+    "personName": "Ori Okuta",
+    "personEmailAddress": "alukoronke@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ori_dots",
+    "password": "XGFLyr",
+    "personCell": "08082139998",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ori Okuta"
+      }
+    ]
+  },
+  {
+    "personName": "Tolu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "tolu_dots",
+    "password": "ZaMmcY",
+    "personCell": "08037481325",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Tolu"
+      }
+    ]
+  },
+  {
+    "personName": "Akerele",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "akerele_dots",
+    "password": "SX2qZ5",
+    "personCell": "08028586778",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Akerele"
+      }
+    ]
+  },
+  {
+    "personName": "LUTH",
+    "personEmailAddress": "adetunjiolutope@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "luth_dots",
+    "password": "TRyeKX",
+    "personCell": "08034299611",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "LUTH Idi-Araba"
+      }
+    ]
+  },
+  {
+    "personName": "Emmanuel (EOOCC)",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "emmanuel_dots",
+    "password": "yczAFz",
+    "personCell": "08164852080",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Emmanuel (EOOCC)"
+      }
+    ]
+  },
+  {
+    "personName": "Olowogbowo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olowogbowo_dots",
+    "password": "rTL8k3",
+    "personCell": "08023676330",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Olowogbowo"
+      }
+    ]
+  },
+  {
+    "personName": "Oloja",
+    "personEmailAddress": "jodedina@gymail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oloja_dots",
+    "password": "d7rSRz",
+    "personCell": "08130607886",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Oloja"
+      }
+    ]
+  },
+  {
+    "personName": "Ebute Metta HC",
+    "personEmailAddress": "morokejulianah@gmil.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ebute_dots",
+    "password": "Fha76y",
+    "personCell": "008034967718",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ebute Metta HC"
+      }
+    ]
+  },
+  {
+    "personName": "Fed Med Centre",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "fedmed_dots",
+    "password": "99gf82",
+    "personCell": "08091339773",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Fed Med Centre"
+      }
+    ]
+  },
+  {
+    "personName": "Harvey Road HC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "harvey_dots",
+    "password": "jBjRyC",
+    "personCell": "08062926550",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Harvey Road HC"
+      }
+    ]
+  },
+  {
+    "personName": "Ijede GH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ijede_dots",
+    "password": "LmHYeQ",
+    "personCell": "08034992944",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ijede GH"
+      }
+    ]
+  },
+  {
+    "personName": "Onikan HC",
+    "personEmailAddress": "ologun.omowumi@lagosstate.gov.ng",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "onikan_dots",
+    "password": "hPFTw6",
+    "personCell": "080166157417",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Onikan HC"
+      }
+    ]
+  },
+  {
+    "personName": "Shomolu GH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shomolu_dots",
+    "password": "7az3Hu",
+    "personCell": "08023295676",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH, Shomolu"
+      }
+    ]
+  },
+  {
+    "personName": "Ita Elewa",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ita_dots",
+    "password": "LSNDqw",
+    "personCell": "08164852080",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ita Elewa"
+      }
+    ]
+  },
+  {
+    "personName": "Ajegunle ilo",
+    "personEmailAddress": "modinatadefunke2015@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ajegunle_dots",
+    "password": "MLrJqj",
+    "personCell": "08083170701",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ajegunle ilo"
+      }
+    ]
+  },
+  {
+    "personName": "Mowo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "mowo_dots",
+    "password": "egXxm6",
+    "personCell": "08029317409",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Mowo"
+      }
+    ]
+  },
+  {
+    "personName": "Aderemi PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "aderemi_dots",
+    "password": "wdralech1",
+    "personCell": "8036364944",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Aderemi PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Total PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "total_dots",
+    "password": "kuhastax3",
+    "personCell": "7061346654",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Isokan"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Total PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Sabo Owoope",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "sabo_owoope_dots",
+    "password": "matyptia4",
+    "personCell": "8035876308",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Olorunda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sabo Owoope"
+      }
+    ]
+  },
+  {
+    "personName": "Lautech Hospital",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "lautech_dots",
+    "password": "J8s2zPep",
+    "personCell": "8038002539",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Olorunda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Lautech Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Popo Olupona PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olupona_dots",
+    "password": "xhouneth2",
+    "personCell": "8068331019",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Aiyedire"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Popo Olupona PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Wesley Guild",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "wesley_dots",
+    "password": "iplainsy8",
+    "personCell": "8033567435",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Wesley Guild"
+      }
+    ]
+  },
+  {
+    "personName": "Irojo PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "irojo_dots",
+    "password": "kayeampt6",
+    "personCell": "7031845823",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Irojo PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Imo PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "imo_dots",
+    "password": "chestalr5",
+    "personCell": "7038184897",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Imo PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Ayedaade PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ayedaade_dots",
+    "password": "orymperi3",
+    "personCell": "8166682737",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Irewole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ayedaade PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Popo PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "popo_dots",
+    "password": "hashonya3",
+    "personCell": "7055539528",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ejigbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Popo PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Ikoyi PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ikoyi_dots",
+    "password": "dupticiv8",
+    "personCell": "7069768332",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Isokan"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ikoyi PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Ifelodun PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ifelodun_dots",
+    "password": "odhomewi6",
+    "personCell": "8039339216",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ifelodun PHC"
       }
     ]
   }

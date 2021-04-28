@@ -6,44 +6,100 @@
       "a3": "MWI",
       "culture": "ny-MW",
       "countryCode": "265",
-      "timezone": "Central Africa Time",
+      "timezone": "South Africa Standard Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
       "states": [
-        { "name": "Dedza" },
-        { "name": "Dowa" },
-        { "name": "Kasungu" },
-        { "name": "Lilongwe" },
-        { "name": "Mchinji" },
-        { "name": "Nkhotakota" },
-        { "name": "Ntcheu" },
-        { "name": "Ntchisi" },
-        { "name": "Salima" },
-        { "name": "Chitipa" },
-        { "name": "Karonga" },
-        { "name": "Likoma" },
-        { "name": "Mzimba" },
-        { "name": "Nkhata Bay" },
-        { "name": "Rumphi" },
-        { "name": "Balaka" },
-        { "name": "Blantyre" },
-        { "name": "Chikwawa" },
-        { "name": "Chiradzulu" },
-        { "name": "Machinga" },
-        { "name": "Mangochi" },
-        { "name": "Mulanje" },
-        { "name": "Mwanza" },
-        { "name": "Nsanje" },
-        { "name": "Thyolo" },
-        { "name": "Phalombe" },
-        { "name": "Zomba" },
-        { "name": "Neno" }
+        {
+          "name": "Dedza"
+        },
+        {
+          "name": "Dowa"
+        },
+        {
+          "name": "Kasungu"
+        },
+        {
+          "name": "Lilongwe"
+        },
+        {
+          "name": "Mchinji"
+        },
+        {
+          "name": "Nkhotakota"
+        },
+        {
+          "name": "Ntcheu"
+        },
+        {
+          "name": "Ntchisi"
+        },
+        {
+          "name": "Salima"
+        },
+        {
+          "name": "Chitipa"
+        },
+        {
+          "name": "Karonga"
+        },
+        {
+          "name": "Likoma"
+        },
+        {
+          "name": "Mzimba"
+        },
+        {
+          "name": "Nkhata Bay"
+        },
+        {
+          "name": "Rumphi"
+        },
+        {
+          "name": "Balaka"
+        },
+        {
+          "name": "Blantyre"
+        },
+        {
+          "name": "Chikwawa"
+        },
+        {
+          "name": "Chiradzulu"
+        },
+        {
+          "name": "Machinga"
+        },
+        {
+          "name": "Mangochi"
+        },
+        {
+          "name": "Mulanje"
+        },
+        {
+          "name": "Mwanza"
+        },
+        {
+          "name": "Nsanje"
+        },
+        {
+          "name": "Thyolo"
+        },
+        {
+          "name": "Phalombe"
+        },
+        {
+          "name": "Zomba"
+        },
+        {
+          "name": "Neno"
+        }
       ],
-      "tagRegexSampleId":"-([A-Z]){3}$",
-      "tagRegexPatientId":"-([A-Z]){3}$",
-      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
+      "tagRegexSampleId": "-([A-Z]){3}$",
+      "tagRegexPatientId": "-([A-Z]){3}$",
+      "tagRegexNotes": ",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "NG",
@@ -59,16 +115,33 @@
       "states": [
         {
           "name": "Lagos",
-          "lgas": [{ "name": "Apapa" }, { "name": "Mushin" }, { "name": "Ojo" }]
+          "lgas": [
+            {
+              "name": "Apapa"
+            },
+            {
+              "name": "Mushin"
+            },
+            {
+              "name": "Ojo"
+            }
+          ]
         },
         {
           "name": "Ogun",
-          "lgas": [{ "name": "Ifo" }, { "name": "Ipokia" }]
+          "lgas": [
+            {
+              "name": "Ifo"
+            },
+            {
+              "name": "Ipokia"
+            }
+          ]
         }
       ],
-      "tagRegexSampleId":"-(A-Z){3}$",
-      "tagRegexPatientId":"-(A-Z){3}$",
-      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
+      "tagRegexSampleId": "-(A-Z){3}$",
+      "tagRegexPatientId": "-(A-Z){3}$",
+      "tagRegexNotes": ",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "US",
@@ -419,9 +492,9 @@
           "lng": -107.30249
         }
       ],
-      "tagRegexSampleId":"-([A-Z]){3}$",
-      "tagRegexPatientId":"-([0-9]){3}$",
-      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
+      "tagRegexSampleId": "-([A-Z]){3}$",
+      "tagRegexPatientId": "-([0-9]){3}$",
+      "tagRegexNotes": ",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "MM",
@@ -439,222 +512,450 @@
           "name": "Ayeyarwady",
           "abbreviation": "AYY",
           "lgas": [
-            { "name": "Hinthada" },
-            { "name": "Labutta" },
-            { "name": "Maubin" },
-            { "name": "Myaungmya" },
-            { "name": "Pathein" },
-            { "name": "Pyapon" }
+            {
+              "name": "Hinthada"
+            },
+            {
+              "name": "Labutta"
+            },
+            {
+              "name": "Maubin"
+            },
+            {
+              "name": "Myaungmya"
+            },
+            {
+              "name": "Pathein"
+            },
+            {
+              "name": "Pyapon"
+            }
           ]
         },
         {
           "name": "Bago",
           "abbreviation": "BGO",
           "lgas": [
-            { "name": "Bago" },
-            { "name": "Pyay" },
-            { "name": "Taungoo" },
-            { "name": "Thayarwady" }
+            {
+              "name": "Bago"
+            },
+            {
+              "name": "Pyay"
+            },
+            {
+              "name": "Taungoo"
+            },
+            {
+              "name": "Thayarwady"
+            }
           ]
         },
         {
           "name": "Chin",
           "abbreviation": "CHN",
           "lgas": [
-            { "name": "Falam" },
-            { "name": "Hakha" },
-            { "name": "Mindat" }
+            {
+              "name": "Falam"
+            },
+            {
+              "name": "Hakha"
+            },
+            {
+              "name": "Mindat"
+            }
           ]
         },
         {
           "name": "Kachin",
           "abbreviation": "KCN",
           "lgas": [
-            { "name": "Bhamo" },
-            { "name": "Mohnyin" },
-            { "name": "Myitkyina" },
-            { "name": "Puta-O" }
+            {
+              "name": "Bhamo"
+            },
+            {
+              "name": "Mohnyin"
+            },
+            {
+              "name": "Myitkyina"
+            },
+            {
+              "name": "Puta-O"
+            }
           ]
         },
         {
           "name": "Kayah",
           "abbreviation": "KYH",
           "lgas": [
-            { "name": "Bawlake" },
-            { "name": "Loikaw" }
+            {
+              "name": "Bawlake"
+            },
+            {
+              "name": "Loikaw"
+            }
           ]
         },
         {
           "name": "Kayin",
           "abbreviation": "KYN",
           "lgas": [
-            { "name": "Hpa-An" },
-            { "name": "Hpapun" },
-            { "name": "Kawkareik" },
-            { "name": "Myawaddy" }
+            {
+              "name": "Hpa-An"
+            },
+            {
+              "name": "Hpapun"
+            },
+            {
+              "name": "Kawkareik"
+            },
+            {
+              "name": "Myawaddy"
+            }
           ]
         },
         {
           "name": "Magway",
           "abbreviation": "MGY",
           "lgas": [
-            { "name": "Gangaw" },
-            { "name": "Magway" },
-            { "name": "Minbu" },
-            { "name": "Pakokku" },
-            { "name": "Thayet" }
+            {
+              "name": "Gangaw"
+            },
+            {
+              "name": "Magway"
+            },
+            {
+              "name": "Minbu"
+            },
+            {
+              "name": "Pakokku"
+            },
+            {
+              "name": "Thayet"
+            }
           ]
         },
         {
           "name": "Mandalay",
           "abbreviation": "MDY",
           "lgas": [
-            { "name": "Kyaukse" },
-            { "name": "Mandalay" },
-            { "name": "Meiktila" },
-            { "name": "Myingyan" },
-            { "name": "Nyaung-U" },
-            { "name": "Pyinoolwin" },
-            { "name": "Yamethin" }
+            {
+              "name": "Kyaukse"
+            },
+            {
+              "name": "Mandalay"
+            },
+            {
+              "name": "Meiktila"
+            },
+            {
+              "name": "Myingyan"
+            },
+            {
+              "name": "Nyaung-U"
+            },
+            {
+              "name": "Pyinoolwin"
+            },
+            {
+              "name": "Yamethin"
+            }
           ]
         },
         {
           "name": "Mon",
           "abbreviation": "MON",
           "lgas": [
-            { "name": "Mawlamyine" },
-            { "name": "Thaton" }
+            {
+              "name": "Mawlamyine"
+            },
+            {
+              "name": "Thaton"
+            }
           ]
         },
         {
           "name": "Naypyitaw Union Territoriality",
           "abbreviation": "NPW",
           "lgas": [
-            { "name": "Detkhina" },
-            { "name": "Oketara" }
+            {
+              "name": "Detkhina"
+            },
+            {
+              "name": "Oketara"
+            }
           ]
         },
         {
           "name": "Rakhine",
           "abbreviation": "RKE",
           "lgas": [
-            { "name": "Kyaukpyu" },
-            { "name": "Maungdaw" },
-            { "name": "Mrauk-U" },
-            { "name": "Sittwe" },
-            { "name": "Thandwe" }
+            {
+              "name": "Kyaukpyu"
+            },
+            {
+              "name": "Maungdaw"
+            },
+            {
+              "name": "Mrauk-U"
+            },
+            {
+              "name": "Sittwe"
+            },
+            {
+              "name": "Thandwe"
+            }
           ]
         },
         {
           "name": "Sagaing",
           "abbreviation": "SGG",
           "lgas": [
-            { "name": "Hkamti" },
-            { "name": "Kale" },
-            { "name": "Katha" },
-            { "name": "Mawlaik" },
-            { "name": "Monywa" },
-            { "name": "Sagaing" },
-            { "name": "Shwebo" },
-            { "name": "Tamu" },
-            { "name": "Yinmarbin" }
+            {
+              "name": "Hkamti"
+            },
+            {
+              "name": "Kale"
+            },
+            {
+              "name": "Katha"
+            },
+            {
+              "name": "Mawlaik"
+            },
+            {
+              "name": "Monywa"
+            },
+            {
+              "name": "Sagaing"
+            },
+            {
+              "name": "Shwebo"
+            },
+            {
+              "name": "Tamu"
+            },
+            {
+              "name": "Yinmarbin"
+            }
           ]
         },
         {
           "name": "Shan (East)",
           "abbreviation": "SHN",
           "lgas": [
-            { "name": "Hopang" },
-            { "name": "Kengtung" },
-            { "name": "Kunlong" },
-            { "name": "Kyaukme" },
-            { "name": "Langkho" },
-            { "name": "Lashio" },
-            { "name": "Laukkaing" },
-            { "name": "Laukkaing (Kokang SAZ)" },
-            { "name": "Loilen" },
-            { "name": "Matman" },
-            { "name": "Mong Maw (Wa SAD)" },
-            { "name": "Mong Pawk (Wa SAD)" },
-            { "name": "Monghpyak" },
-            { "name": "Monghsat" },
-            { "name": "Muse" },
-            { "name": "Tachileik" },
-            { "name": "Taunggyi" },
-            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+            {
+              "name": "Hopang"
+            },
+            {
+              "name": "Kengtung"
+            },
+            {
+              "name": "Kunlong"
+            },
+            {
+              "name": "Kyaukme"
+            },
+            {
+              "name": "Langkho"
+            },
+            {
+              "name": "Lashio"
+            },
+            {
+              "name": "Laukkaing"
+            },
+            {
+              "name": "Laukkaing (Kokang SAZ)"
+            },
+            {
+              "name": "Loilen"
+            },
+            {
+              "name": "Matman"
+            },
+            {
+              "name": "Mong Maw (Wa SAD)"
+            },
+            {
+              "name": "Mong Pawk (Wa SAD)"
+            },
+            {
+              "name": "Monghpyak"
+            },
+            {
+              "name": "Monghsat"
+            },
+            {
+              "name": "Muse"
+            },
+            {
+              "name": "Tachileik"
+            },
+            {
+              "name": "Taunggyi"
+            },
+            {
+              "name": "Wein Kawng (Wein Kao) (Wa SAD)"
+            }
           ]
         },
         {
           "name": "Shan (North)",
           "abbreviation": "SHN",
           "lgas": [
-            { "name": "Hopang" },
-            { "name": "Kengtung" },
-            { "name": "Kunlong" },
-            { "name": "Kyaukme" },
-            { "name": "Langkho" },
-            { "name": "Lashio" },
-            { "name": "Laukkaing" },
-            { "name": "Laukkaing (Kokang SAZ)" },
-            { "name": "Loilen" },
-            { "name": "Matman" },
-            { "name": "Mong Maw (Wa SAD)" },
-            { "name": "Mong Pawk (Wa SAD)" },
-            { "name": "Monghpyak" },
-            { "name": "Monghsat" },
-            { "name": "Muse" },
-            { "name": "Tachileik" },
-            { "name": "Taunggyi" },
-            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+            {
+              "name": "Hopang"
+            },
+            {
+              "name": "Kengtung"
+            },
+            {
+              "name": "Kunlong"
+            },
+            {
+              "name": "Kyaukme"
+            },
+            {
+              "name": "Langkho"
+            },
+            {
+              "name": "Lashio"
+            },
+            {
+              "name": "Laukkaing"
+            },
+            {
+              "name": "Laukkaing (Kokang SAZ)"
+            },
+            {
+              "name": "Loilen"
+            },
+            {
+              "name": "Matman"
+            },
+            {
+              "name": "Mong Maw (Wa SAD)"
+            },
+            {
+              "name": "Mong Pawk (Wa SAD)"
+            },
+            {
+              "name": "Monghpyak"
+            },
+            {
+              "name": "Monghsat"
+            },
+            {
+              "name": "Muse"
+            },
+            {
+              "name": "Tachileik"
+            },
+            {
+              "name": "Taunggyi"
+            },
+            {
+              "name": "Wein Kawng (Wein Kao) (Wa SAD)"
+            }
           ]
         },
         {
           "name": "Shan (South)",
           "abbreviation": "SHN",
           "lgas": [
-            { "name": "Hopang" },
-            { "name": "Kengtung" },
-            { "name": "Kunlong" },
-            { "name": "Kyaukme" },
-            { "name": "Langkho" },
-            { "name": "Lashio" },
-            { "name": "Laukkaing" },
-            { "name": "Laukkaing (Kokang SAZ)" },
-            { "name": "Loilen" },
-            { "name": "Matman" },
-            { "name": "Mong Maw (Wa SAD)" },
-            { "name": "Mong Pawk (Wa SAD)" },
-            { "name": "Monghpyak" },
-            { "name": "Monghsat" },
-            { "name": "Muse" },
-            { "name": "Tachileik" },
-            { "name": "Taunggyi" },
-            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+            {
+              "name": "Hopang"
+            },
+            {
+              "name": "Kengtung"
+            },
+            {
+              "name": "Kunlong"
+            },
+            {
+              "name": "Kyaukme"
+            },
+            {
+              "name": "Langkho"
+            },
+            {
+              "name": "Lashio"
+            },
+            {
+              "name": "Laukkaing"
+            },
+            {
+              "name": "Laukkaing (Kokang SAZ)"
+            },
+            {
+              "name": "Loilen"
+            },
+            {
+              "name": "Matman"
+            },
+            {
+              "name": "Mong Maw (Wa SAD)"
+            },
+            {
+              "name": "Mong Pawk (Wa SAD)"
+            },
+            {
+              "name": "Monghpyak"
+            },
+            {
+              "name": "Monghsat"
+            },
+            {
+              "name": "Muse"
+            },
+            {
+              "name": "Tachileik"
+            },
+            {
+              "name": "Taunggyi"
+            },
+            {
+              "name": "Wein Kawng (Wein Kao) (Wa SAD)"
+            }
           ]
         },
         {
           "name": "Tanintharyi",
           "abbreviation": "TNI",
           "lgas": [
-            { "name": "Dawei" },
-            { "name": "Kawthoung" },
-            { "name": "Myeik" }
+            {
+              "name": "Dawei"
+            },
+            {
+              "name": "Kawthoung"
+            },
+            {
+              "name": "Myeik"
+            }
           ]
         },
         {
           "name": "Yangon",
           "abbreviation": "YGN",
           "lgas": [
-            { "name": "Yangon (East)" },
-            { "name": "Yangon (North)" },
-            { "name": "Yangon (South)" },
-            { "name": "Yangon (West)" }
+            {
+              "name": "Yangon (East)"
+            },
+            {
+              "name": "Yangon (North)"
+            },
+            {
+              "name": "Yangon (South)"
+            },
+            {
+              "name": "Yangon (West)"
+            }
           ]
         }
       ]
     }
   ],
-  "tagRegexSampleId":"-([A-Z]){3}$",
-  "tagRegexPatientId":"-([A-Z]){3}$",
-  "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
+  "tagRegexSampleId": "-([A-Z]){3}$",
+  "tagRegexPatientId": "-([A-Z]){3}$",
+  "tagRegexNotes": ",\\s?([0-9]{3}-[0-9]{2})"
 }

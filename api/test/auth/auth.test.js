@@ -295,7 +295,7 @@ describe('auth endpoints', () => {
         })
       })
 
-      it('Should respond with 401 and "Your account is locked."', done => {
+      it('Should respond with 403 and "Your account is locked."', done => {
         const requestData = {
           payload: {
             name: 'lockedaccount',
@@ -307,7 +307,7 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(responseData => {
-            assert.equal(responseData.output.statusCode, 401)
+            assert.equal(responseData.output.statusCode, 403)
             assert.equal(
               responseData.output.payload.message,
               'Your account is locked.'

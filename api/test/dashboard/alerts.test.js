@@ -24,7 +24,7 @@ describe('dashboard widgets alerts', () => {
       options: {},
       icon: 'MdDesktopWindows',
       statUnit: '{unit} last month',
-      statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
+      statUnitI18nKey: 'lastMonth',
       statStatus: null,
       statStatusI18nKey: null,
       extraUnit: null,

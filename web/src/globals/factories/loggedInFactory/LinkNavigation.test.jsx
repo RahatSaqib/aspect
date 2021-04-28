@@ -1,38 +1,59 @@
-import Immutable from 'immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
+import Immutable from 'immutable'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import { IntlProvider } from 'react-intl'
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
+import { MemoryRouter } from 'react-router-dom'
+
+import { AuthProvider } from '../../../Providers/AuthProvider'
 import { LinkNavigation } from './LinkNavigation'
 
-const defaultProps = {
-  onClick: () => false,
+const initialState = {
+  permissions: null,
 }
 
-describe('LinkNavigation component', () => {
-  const intl = createIntl({ locale: 'en' })
+function reducer(state = initialState, action) {
+  switch (action.type) {
+    default:
+      return state
+  }
+}
 
-  it('should shallow render without crash', () => {
-    const props = {
-      intl,
-      ...defaultProps,
-      userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
-    }
-    shallow(<LinkNavigation {...props} />)
+describe('LinkNavigation', () => {
+  const User = Immutable.Record({
+    jwt: { permissions: ['browse:view', 'dashboard:summary'] },
   })
+  const reduxState = { user: new User() }
+  const store = createStore(reducer, reduxState || initialState)
+  const defaultProps = {
+    onClick: () => false,
+  }
+
+  const Wrapper = ({ children }) => (
+    <Provider store={store}>
+      <AuthProvider>
+        <MemoryRouter>
+          <IntlProvider locale="en">{children}</IntlProvider>
+        </MemoryRouter>
+      </AuthProvider>
+    </Provider>
+  )
 
   it('should change the direction of Nav with different `type` prop', () => {
-    const props = {
-      intl,
-      ...defaultProps,
-      userPermissions: Immutable.Set(['browse:view', 'dashboard:summary']),
-    }
-    const wrapper = shallow(<LinkNavigation {...props} />)
-    expect(wrapper.prop('className')).toEqual('Navigation')
+    const { rerender } = render(
+      <Wrapper>
+        <LinkNavigation {...defaultProps} type="horizontal" />
+      </Wrapper>
+    )
+    expect(screen.getByRole('navigation')).toHaveClass('Navigation--horizontal')
 
-    wrapper.setProps({ type: 'vertical' })
-    expect(wrapper.hasClass('Navigation--vertical')).toBe(true)
-
-    wrapper.setProps({ type: 'horizontal' })
-    expect(wrapper.hasClass('Navigation--horizontal')).toBe(true)
+    rerender(
+      <Wrapper>
+        <LinkNavigation {...defaultProps} type="vertical" />
+      </Wrapper>
+    )
+    expect(screen.getByRole('navigation')).toHaveClass('Navigation--vertical')
   })
 })

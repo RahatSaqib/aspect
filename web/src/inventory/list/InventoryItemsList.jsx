@@ -11,6 +11,7 @@ import { useQuery, useMutation, queryCache } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
+import { useAuthState } from '../../Providers/AuthProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import {
   makeSortPageSelector,
@@ -301,10 +302,12 @@ export const InventoryItemsList = () => {
   const history = useHistory()
   const location = useLocation()
   const intl = useIntl()
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
 
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
   const consumableReasons = useSelector(
     state => state.consumable.consumableReasons
   )

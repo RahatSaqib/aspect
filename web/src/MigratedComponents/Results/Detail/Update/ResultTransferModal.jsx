@@ -16,79 +16,9 @@ import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
 import { aspectFetch } from '../../../../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
 import { SitesAllErrors } from './errors'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(require('../Detail.css'))
-
-const messages = defineMessages({
-  header: {
-    id: 'pages.transferResult.header',
-    defaultMessage: 'Transfer Result',
-  },
-  titleSites: {
-    id: 'pages.transferResult.titleSites',
-    defaultMessage: 'Transfer to Clinic',
-  },
-  hint: {
-    id: 'pages.transferResult.hint',
-    defaultMessage: 'Enter clinic name',
-  },
-  buttonCancel: {
-    id: 'pages.transferResult.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-  buttonTransfer: {
-    id: 'pages.transferResult.buttonTransfer',
-    defaultMessage: 'Transfer',
-  },
-  includeAllResults: {
-    id: 'pages.transferResult.includeAllResults',
-    defaultMessage: 'Include ALL results related to Patient ID',
-  },
-  processing: {
-    id: 'pages.transferResult.processing',
-    defaultMessage: 'Processing...',
-  },
-  note: {
-    id: 'pages.transferResult.note',
-    defaultMessage: `
-      Please notice that above field 'Transfer to Clinic' lists all clinics, even those
-      which you may not have access to.
-      In a such case - by transferring this result you won't
-      be able to edit this result record any more, and your
-      action cannot be undone.
-    `,
-  },
-  successOk: {
-    id: 'pages.transferResult.successOk',
-    defaultMessage: `Ok`,
-  },
-  successHeader: {
-    id: 'pages.transferResult.successHeader',
-    defaultMessage: `
-      Result Transfer Completed
-    `,
-  },
-  successMessage: {
-    id: 'pages.transferResult.successMessage',
-    defaultMessage: `
-      <p>
-        Result for patient <strong>"{{patientId}}"</strong> has been transferred from
-        <strong>
-          "{{oldSiteName}}"
-        </strong>
-        to
-        <strong>
-          "{{newSiteName}}"
-        </strong>
-      </p>
-      <br />
-      <p>
-        After clicking below button <strong>{{buttonOk}}</strong>
-        you will be redirected to the list of results.
-      </p>
-    `,
-  },
-})
 
 const ResultTransferModal = ({
   intl: { formatMessage },
@@ -197,11 +127,6 @@ const ResultTransferModal = ({
   )
 
   const renderSuccessAlert = useCallback(() => {
-    const html = formatMessage(messages.successMessage)
-      .replace('{{patientId}}', patientId)
-      .replace('{{oldSiteName}}', sourceSite && sourceSite.name)
-      .replace('{{newSiteName}}', selectedSite && selectedSite.text)
-      .replace('{{buttonOk}}', formatMessage(messages.successOk))
     return (
       <AspectDialog
         actions={[
@@ -221,15 +146,20 @@ const ResultTransferModal = ({
         disableBackdropClick
         disableEscapeKeyDown
       >
-        <div
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{
-            __html: html,
-          }}
-        />
+        <div>
+          <p>
+            {formatMessage(messages.successMessagePatient, {
+              patientId: <strong>{patientId}</strong>,
+              oldSiteName: <strong>{sourceSite?.name}</strong>,
+              newSiteName: <strong>{selectedSite?.text}</strong>,
+            })}
+          </p>
+          <br />
+          <p>{formatMessage(messages.successMessageButton)}</p>
+        </div>
       </AspectDialog>
     )
-  }, [history, patientId, formatMessage, sourceSite, selectedSite])
+  }, [history, patientId, formatMessage, sourceSite?.name, selectedSite?.text])
 
   return (
     <AspectDialog
@@ -273,7 +203,7 @@ const ResultTransferModal = ({
           fullWidth
           multiline
           rowsMax="5"
-          placeholder="Enter comment"
+          placeholder={formatMessage(messages.enterComment)}
           onChange={event => setComment(event.target.value)}
           margin="normal"
           value={comment}

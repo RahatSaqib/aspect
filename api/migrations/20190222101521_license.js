@@ -11,7 +11,6 @@ async function up(knex) {
       .inTable('Partner')
     license.dateTime('createdOn').notNullable()
     license.mediumtext('content').notNullable()
-    license.charset('utf8')
   })
 
   await knex.schema.createTable('LicensePerson', licensePerson => {
@@ -32,7 +31,6 @@ async function up(knex) {
     licensePerson.dateTime('acceptedOn').notNullable()
     licensePerson.string('ip', 100).notNullable()
     licensePerson.primary(['licenseId', 'personId'])
-    licensePerson.charset('utf8')
   })
 
   await knex.schema.table('Person', person => {

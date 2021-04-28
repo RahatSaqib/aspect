@@ -186,7 +186,7 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     ).join(',')
   }
 
-  const attachmentProps = JSON.parse(data.attachments || '[]')
+  const attachmentProps = JSON.parse((data && data.attachments) || '[]')
 
   if (!_.isEmpty(attachmentProps)) {
     processedTemplateFields.attachments = await generateAttachments(

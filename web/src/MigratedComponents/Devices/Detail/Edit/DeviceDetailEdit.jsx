@@ -81,8 +81,11 @@ const enhance = compose(
     },
 
     onSubmit: ({ device, updateSingleDevice }) => values =>
-      updateSingleDevice(device.get('id'), {
-        siteId: values.siteId,
+      updateSingleDevice({
+        deviceId: device.get('id'),
+        data: {
+          siteId: values.siteId,
+        },
       }),
 
     onDeviceTagChange: ({ updateTags }) => (qryId, qryType, tags) => {

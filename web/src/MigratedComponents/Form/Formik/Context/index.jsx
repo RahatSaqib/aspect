@@ -18,6 +18,7 @@ const FormikProvider = ({ config, children }) => {
   const fieldTypes = pickKeys(config.sections, ['type'])
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues,
     validateOnMount: false,
     onSubmit: values =>

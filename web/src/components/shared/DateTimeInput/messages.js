@@ -26,4 +26,16 @@ export default defineMessages({
     id: 'component.DateTimeInput.button.now',
     defaultMessage: 'Now',
   },
+  last30Days: {
+    id: 'component.DateTimeInput.Last30Days',
+    defaultMessage: 'Last 30 Days',
+  },
+  thisMonth: {
+    id: 'component.DateTimeInput.ThisMonth',
+    defaultMessage: 'This Month ({minDate} - {maxDate})',
+  },
+  lastMonth: {
+    id: 'component.DateTimeInput.LastMonth',
+    defaultMessage: 'Last Month ({minDate} - {maxDate})',
+  },
 })

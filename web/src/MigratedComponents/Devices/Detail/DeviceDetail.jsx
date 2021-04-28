@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
 import {
@@ -14,6 +14,8 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { useQuery, useMutation, queryCache } from 'react-query'
+
+import { useAuthState } from '../../../Providers/AuthProvider'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -31,6 +33,7 @@ import {
   DEVICE_PERFORMANCE,
 } from '../../QueryFetch/Device/index'
 import {
+  updateSingleDevice,
   updateDeviceMaintenanceStatus,
   updateDeviceMaintenance,
 } from '../../../device/DeviceRedux'
@@ -58,7 +61,7 @@ const messages = defineMessages({
 
 export const DeviceDetail = ({ match }) => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const user = useAuthState()
   const editable = isEditable(user, 'device')
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
@@ -80,20 +83,16 @@ export const DeviceDetail = ({ match }) => {
     return { device, devicePerformance }
   })
 
-  const [updateSingleDevice] = useMutation(data =>
-    fetchWrapperForQueries({
-      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-      method: 'PUT',
-      params: data,
-    })
-  )
-
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
     queryCache.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
   }, [deviceId])
 
-  //
+  const [updateDevice] = useMutation(
+    ({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)),
+    { onSuccess }
+  )
+
   const [onMaintenanceSubmit] = useMutation(
     values =>
       dispatch(
@@ -194,7 +193,7 @@ export const DeviceDetail = ({ match }) => {
                   device={Immutable.fromJS(device)}
                   devicePerformance={Immutable.fromJS(devicePerformance)}
                   disabled={!editable}
-                  updateSingleDevice={updateSingleDevice}
+                  updateSingleDevice={updateDevice}
                   onMaintenanceSubmit={onMaintenanceSubmit}
                   onCalibrationSubmit={onCalibrationSubmit}
                   onWarrantySubmit={onWarrantySubmit}
@@ -234,7 +233,7 @@ export const DeviceDetail = ({ match }) => {
                     {...props}
                     device={Immutable.fromJS(device)}
                     editable={editable}
-                    updateSingleDevice={updateSingleDevice}
+                    updateSingleDevice={updateDevice}
                   />
                 ) : (
                   <Redirect to={match.url} />

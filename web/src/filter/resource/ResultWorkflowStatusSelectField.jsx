@@ -1,16 +1,15 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
+import messages from './i18n/generalMessages'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -24,6 +23,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     ).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {
@@ -40,7 +40,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, workflowStatusItems, value } = this.props
+    const { allItemText, workflowStatusItems, value, intl } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchWorkflowStatuses',
@@ -48,13 +48,17 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
       'onWorkflowStatusChange',
       'value',
     ])
-
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {workflowStatusItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {formatI18nMessage(
+              messages,
+              intl.formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

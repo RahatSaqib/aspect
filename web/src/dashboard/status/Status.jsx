@@ -5,12 +5,14 @@ import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
+
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import { useAuthState } from '../../Providers/AuthProvider'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
@@ -22,31 +24,19 @@ import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigur
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
 
-import ColorDemo from './ColorDemo/ColorDemo'
-
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const Status = ({ history, location, colorDemo }) => {
+const Status = ({ history, location }) => {
   const intl = useIntl()
-  const { hivResults } = hivGraphs
-  const { tbDetected, tbResults } = tbGraphs
-  const { treatmentStatus } = treatmentStatusGraphs
-  const { inventoryStatus } = inventoryStatusGraphs
-  const { deviceStatus } = deviceStatusGraphs
-  const { testsOverTime } = testsPerFormedGraphs
-  const {
-    covidResults,
-    covidDailyConfirmed,
-    covidCasesByAgeAndGender,
-    covidMortalityAndRecoveryConfig,
-    covidMortalityAndRecoveryByGender,
-  } = covidGraphs
+  const [graphs, setGraphs] = useState(false)
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
-  const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2CodeIgnored = useSelector(
-    ({ user }) => user.countryAbbreviation
-  )
+  const {
+    countryAbbreviation: countryIsoAlpha2CodeIgnored,
+    jwt: { name: userName },
+    culture,
+  } = useAuthState()
+
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
   )
@@ -67,6 +57,38 @@ const Status = ({ history, location, colorDemo }) => {
     }
   }, [userName, location])
 
+  useEffect(() => {
+    if (culture) {
+      const { hivResults } = hivGraphs
+      const { tbDetected, tbResults } = tbGraphs
+      const {
+        covidResults,
+        covidDailyConfirmed,
+        covidCasesByAgeAndGender,
+        covidMortalityAndRecoveryConfig,
+        covidMortalityAndRecoveryByGender,
+      } = covidGraphs
+      const { treatmentStatus } = treatmentStatusGraphs
+      const { inventoryStatus } = inventoryStatusGraphs
+      const { deviceStatus } = deviceStatusGraphs()
+      const { testsOverTime } = testsPerFormedGraphs
+      setGraphs([
+        testsOverTime,
+        hivResults,
+        tbDetected,
+        tbResults,
+        covidResults,
+        treatmentStatus,
+        deviceStatus,
+        covidDailyConfirmed,
+        covidMortalityAndRecoveryConfig,
+        covidMortalityAndRecoveryByGender,
+        covidCasesByAgeAndGender,
+        inventoryStatus,
+      ])
+    }
+  }, [culture])
+
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
@@ -85,128 +107,17 @@ const Status = ({ history, location, colorDemo }) => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
-        <PermissionsProvider permissions={testsOverTime.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={testsOverTime} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={hivResults} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={tbDetected.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={tbDetected} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={tbResults} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={covidResults.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={covidResults} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={treatmentStatus.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={treatmentStatus}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={deviceStatus} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidDailyConfirmed.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidDailyConfirmed}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidMortalityAndRecoveryConfig.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidMortalityAndRecoveryConfig}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidMortalityAndRecoveryByGender.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidMortalityAndRecoveryByGender}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidCasesByAgeAndGender.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidCasesByAgeAndGender}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      {colorDemo && <ColorDemo vars={process.env} />}
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={inventoryStatus.graphRenderPermissions}
-        >
-          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
-        </PermissionsProvider>
-      </ErrorBoundary>
+      {graphs
+        ? graphs.map(graph => (
+            <ErrorBoundary>
+              <PermissionsProvider permissions={graph.graphRenderPermissions}>
+                {assays?.length ? (
+                  <GraphsContainer assaysFromState={assays} config={graph} />
+                ) : null}
+              </PermissionsProvider>
+            </ErrorBoundary>
+          ))
+        : null}
 
       <Reports
         intl={intl}
@@ -218,12 +129,7 @@ const Status = ({ history, location, colorDemo }) => {
   )
 }
 
-Status.defaultProps = {
-  colorDemo: false,
-}
-
 Status.propTypes = {
-  colorDemo: PropTypes.bool,
   history: PropTypes.oneOfType([PropTypes.object]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
