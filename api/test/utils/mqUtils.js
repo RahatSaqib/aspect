@@ -20,6 +20,11 @@ async function queuePurge() {
   await queue.purge()
 }
 
+async function subscribe(subscriptionName, subscription) {
+  const queue = await queueConnect()
+  queue.subscribe(subscriptionName, subscription)
+}
+
 async function createMessageContext() {
   const queue = await queueConnect()
   return queue.createMessageContext()
@@ -50,4 +55,5 @@ module.exports = {
   waitForAction,
   waitForIdle,
   dispatchAndWaitForAction,
+  subscribe,
 }

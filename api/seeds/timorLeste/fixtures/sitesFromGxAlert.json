@@ -1,8 +1,8 @@
 [
   {
     "externalId": "National Health Laboratory",
-    "latitude": 125.584000,
-    "longitude": -8.562000,
+    "latitude": 125.584,
+    "longitude": -8.562,
     "stateName": "Dili",
     "lgaName": "Cristo Rei",
     "name": "National Health Laboratory",
@@ -93,7 +93,7 @@
   },
   {
     "externalId": "Hospital Eduardo Ximenes - Baucau",
-    "latitude": -11.786310,
+    "latitude": -11.78631,
     "longitude": -76.626678,
     "stateName": "Baucau",
     "lgaName": "Baucau",
@@ -187,7 +187,7 @@
   },
   {
     "externalId": "Centro Saude Gleno",
-    "latitude": -8.753750,
+    "latitude": -8.75375,
     "longitude": 125.402252,
     "stateName": "Ermera",
     "lgaName": "Ermera",
