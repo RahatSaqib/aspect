@@ -433,7 +433,6 @@ async function listSitesWithReporters(request) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
       siteId: 's.id',
-      id: 's.id',
       partnerId: 's.partnerId',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
