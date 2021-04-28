@@ -582,7 +582,6 @@ async function listInventoryItemsGroupedBySite(request) {
       ...INVENTORY_ITEM_SELECT_LIST_FIELDS.filter(x => x !== 'ii.id'),
       // add alias 'id' for combo of siteId, consumableId and inventoryItemId
       knex.raw(`concat(s.id, '_', c.id, '_', ifnull(ii.id,0)) as id`),
-      // knex.raw(`${sortColumnField} as sortBy`),
       'stock.stockLeft',
       'ficr.rate as dailyConsumptionRate',
     ])
