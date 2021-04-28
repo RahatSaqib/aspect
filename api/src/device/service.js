@@ -765,26 +765,23 @@ function getDeviceBaseQuery(
       this.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (!query.assayId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-        .where('a.id', query.assayId)
+      if (query.assayId)
+        queryBuilder
+          .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+          .where('a.id', query.assayId)
+      if (query.assayExternalId)
+        queryBuilder
+          .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+          .where('a.externalId', query.assayExternalId)
+      if (query.resultCategoryId)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .where('rca.resultCategoryId', query.resultCategoryId)
 
-      if (!query.resultCategoryId) {
-        return
-      }
-      queryBuilder
-        .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-        .where('rca.resultCategoryId', query.resultCategoryId)
-
-      if (!query.resultCategory2Id) {
-        return
-      }
-      queryBuilder
-        .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
-        .where('rca2.resultCategoryId', query.resultCategory2Id)
+      if (query.resultCategory2Id)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
+          .where('rca2.resultCategoryId', query.resultCategory2Id)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
