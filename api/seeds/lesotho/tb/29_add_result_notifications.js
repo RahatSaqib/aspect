@@ -12,7 +12,7 @@ const {
 
 const { addIssueTypes } = require('../../relativeObjectsSeeds')
 
-const { partnerName, adminName } = require('./fixtures/partnerVariables')
+const { partnerName, adminUserName } = require('./fixtures/partnerVariables')
 
 const fixture = require('../shared/fixtures/jobFunctions')
 
@@ -48,7 +48,7 @@ async function seed(knex) {
   })
 
   const { id: adminId } = await knex('User')
-    .where('name', adminName)
+    .where('name', adminUserName)
     .first('id')
 
   const issueTypeExternalId = 'ResultReceived'

@@ -28,6 +28,10 @@ import {
   UserPreferences,
 } from '../../person/PersonRedux'
 import AccountDetailsBackBar from './AccountDetailsBackBar'
+import {
+  setTimezoneId,
+  setCurrentCulture,
+} from '../../globals/sideEffects/LocalStorage'
 
 const enhance = compose(
   injectIntl,
@@ -124,6 +128,9 @@ export class AccountDetails extends PureComponent {
       timezone: values.timezone,
       culture: values.culture,
     }
+
+    setTimezoneId(value.timezone)
+    setCurrentCulture(values.culture)
 
     return this.handleSaveUserPreferences(value)
   }

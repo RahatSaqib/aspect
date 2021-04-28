@@ -48,7 +48,7 @@ async function getReplacedModuleSerials(knex, deviceId) {
     .where('it.externalId', 'ModuleReplaced')
     .where('i.deviceId', deviceId)
     .select(knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial'))
-    .pluck('replacedModuleSerial')
+    .then(rows => rows.map(({ replacedModuleSerial }) => replacedModuleSerial))
 }
 
 async function shouldTriggerResultErrorAnalysis(

@@ -1628,6 +1628,7 @@ async function getRandomResults(
       onlyRequiresTreatment
     )
     .modify(queryBuilder)
+    .where('r.endedOn', '<', new Date())
     .select('rts.externalid as treatmentStatusExternalId', 'r.*')
     .orderByRaw('RAND()')
     .limit(queryLimit)

@@ -19,6 +19,7 @@ export default {
           items: [
             {
               id: 'startedOn',
+              labelI18nKey: 'startDate',
               controlType: {
                 component: 'datePicker',
                 format: 'dd MMM yyyy',
@@ -38,6 +39,7 @@ export default {
             },
             {
               id: 'endedOn',
+              labelI18nKey: 'endDate',
               controlType: {
                 component: 'datePicker',
                 format: 'dd MMM yyyy',
@@ -62,6 +64,7 @@ export default {
           items: [
             {
               id: 'reason',
+              labelI18nKey: 'reason',
               controlType: {
                 component: 'select',
               },
@@ -80,6 +83,7 @@ export default {
           items: [
             {
               id: 'note',
+              labelI18nKey: 'notes',
               controlType: {
                 component: 'textArea',
                 rowsMax: 4,

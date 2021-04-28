@@ -149,7 +149,6 @@ const graphColorMap = [
   },
 
   { id: 121, externalId: 'QHivVl', color: assayLobLolly },
-  { id: 107, externalId: 'assayGenericDst', color: assayHitGray },
   { id: 108, externalId: 'assayGenericCulture', color: assayrecentGray },
   { id: 129, externalId: 'assayCobasHivVl', color: assayRollingStone },
 
@@ -192,6 +191,12 @@ const graphColorMap = [
   { id: 133, externalId: 'assayGXCovid19', color: covid4 },
   { id: 134, externalId: 'assayGenericCovid19', color: covid5 },
   { id: 135, externalId: 'value', color: geneSanMarino },
+
+  { id: 200, externalId: 'assayGeneXpertMtbRif', color: assayLobLolly },
+  { id: 201, externalId: 'assaySmear', color: assayrecentGray },
+  { id: 202, externalId: 'assayLPA', color: assayHitGray },
+  { id: 204, externalId: 'assayTbLamp', color: assayRollingStone },
+
   { id: 999, externalId: 'Cases', color: colorConifer },
 ]
 

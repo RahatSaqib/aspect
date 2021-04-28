@@ -21,6 +21,15 @@ const { allTimeZoneToId } = require('../../shared/dictionary')
 
 const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
+const {
+  result1CategoryMapping,
+  result2CategoryMapping,
+} = require('./GxConnect/resultCategories/resultCategoriesMapping')
+const {
+  splitResultTextValues,
+  sanitizeResultTextValue,
+  isResultCategory2Allowed,
+} = require('./GxConnect/resultCategories/utils')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -852,106 +861,12 @@ function getResultCategories(payload) {
     payloadCategory = []
     const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
-      const resultTextValues = _.compact(payloadResultText.split('|'))
+      const resultTextValues = splitResultTextValues(payloadResultText)
       const assayId = _.get(payload, 'assay.id')
 
       if (resultTextValues.length > 0) {
-        const result1Text = resultTextValues[0]
-          .toLowerCase()
-          .replace(/mtb/, '')
-          .replace(/ebola gp/, '')
-          .replace(/hiv-1/, '')
-          .replace(/sars-cov-2/, '')
-          .trim()
-        const result1CategoryMapping = {
-          'not detected': 'NotDetected',
-          'não detectado': 'NotDetected',
-          'не обнаружен': 'NotDetected',
-          'non détecté': 'NotDetected',
-          'no detectado': 'NotDetected',
-          detected: 'Detected',
-          'detected very low': 'Detected',
-          'detected low': 'Detected',
-          'detected medium': 'Detected',
-          'detected high': 'Detected',
-          detectado: 'Detected',
-          'detectado alto': 'Detected',
-          'detectado médio': 'Detected',
-          'detectado baixo': 'Detected',
-          'detectado muito baixo': 'Detected',
-          обнаружен: 'Detected',
-          'обнаружен очень низкий': 'Detected',
-          'обнаружен низкий': 'Detected',
-          'обнаружен средний': 'Detected',
-          'обнаружен высокий': 'Detected',
-          détecté: 'Detected',
-          'détecté très bas': 'Detected',
-          'détecté bas': 'Detected',
-          'détecté moyen': 'Detected',
-          'détecté élevé': 'Detected',
-          'detectado muy bajo': 'Detected',
-          'detectado bajo': 'Detected',
-          'detectado medio': 'Detected',
-          invalid: 'Invalid',
-          inválido: 'Invalid',
-          недействительный: 'Invalid',
-          'non valide': 'Invalid',
-          ungültig: 'Invalid',
-          'no válido': 'Invalid',
-          'non valido': 'Invalid',
-          'tidak valid': 'Invalid',
-          nieważny: 'Invalid',
-          'no result': 'NoResult',
-          'sem resultado': 'NoResult',
-          безрезультатно: 'NoResult',
-          'sans résultat': 'NoResult',
-          'sin resultado': 'NoResult',
-          'pas de résultat': 'NoResult',
-          'kein ergebnis': 'NoResult',
-          'nessun risultato': 'NoResult',
-          'нет результата': 'NoResult',
-          'немає результату': 'NoResult',
-          'tanpa hasil': 'NoResult',
-          'brak wyniku': 'NoResult',
-          error: 'Error',
-          erro: 'Error',
-          ошибка: 'Error',
-          erreur: 'Error',
-          fehler: 'Error',
-          errore: 'Error',
-          недійсний: 'Error',
-          kesalahan: 'Error',
-          błąd: 'Error',
-          negative: 'Negative',
-          négatif: 'Negative',
-          отрицательный: 'Negative',
-          negativo: 'Negative',
-          negativ: 'Negative',
-          помилка: 'Negative',
-          negatif: 'Negative',
-          ujemny: 'Negative',
-          positive: 'Positive',
-          positivo: 'Positive',
-          положительный: 'Positive',
-          positif: 'Positive',
-          positiv: 'Positive',
-          позитивний: 'Positive',
-          dodatni: 'Positive',
-          'presumptive positive': 'PresumptivePositive',
-          'presumptive pos': 'PresumptivePositive',
-          'presumptive posit': 'PresumptivePositive',
-          'presuntivo positivo': 'PresumptivePositive',
-          'предположительный положительный': 'PresumptivePositive',
-          'présomptif positif': 'PresumptivePositive',
-          'предположительно пол': 'PresumptivePositive',
-          негативний: 'PresumptivePositive',
-          'praduga pos': 'PresumptivePositive',
-          przypuszczalnego: 'PresumptivePositive',
-          'null null': 'Success',
-        }
-        if (assayId === 'GxMtbRifUltra') {
-          result1CategoryMapping['trace detected'] = 'Trace Detected'
-        }
+        const result1Text = sanitizeResultTextValue(resultTextValues[0])
+
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
         }
@@ -963,43 +878,14 @@ function getResultCategories(payload) {
         }
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
-      const canHaveSecondResult =
-        ([
-          'Detected',
-          'Trace Detected',
-          'Error',
-          'Invalid',
-          'NoResult',
-          'Success',
-        ].includes(result1) ||
-          !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)) &&
-        assayId !== 'GxHiv1Vl'
+      const canHaveSecondResult = isResultCategory2Allowed(
+        assayId,
+        resultTextValues
+      )
 
       if (resultTextValues.length > 1) {
-        const result2Text = resultTextValues[1]
-          .toLowerCase()
-          .replace(/rif resistance/, '')
-          .replace(/ebola np/, '')
-          .trim()
+        const result2Text = sanitizeResultTextValue(resultTextValues[1])
         if (canHaveSecondResult) {
-          const result2CategoryMapping = {
-            'not detected': 'NotDetected',
-            'não detectado': 'NotDetected',
-            'не обнаружен': 'NotDetected',
-            'non détecté': 'NotDetected',
-            'no detectado': 'NotDetected',
-            detected: 'Detected',
-            detectado: 'Detected',
-            обнаружен: 'Detected',
-            détecté: 'Detected',
-            indeterminate: 'Indeterminate',
-            indeterminado: 'Indeterminate',
-            неопределенный: 'Indeterminate',
-            indéterminé: 'Indeterminate',
-            error: 'Error',
-            invalid: 'Invalid',
-            'no result': 'NoResult',
-          }
           if (result2CategoryMapping[result2Text]) {
             payloadCategory = [
               ...payloadCategory,

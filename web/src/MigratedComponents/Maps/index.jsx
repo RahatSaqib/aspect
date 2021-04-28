@@ -1,4 +1,5 @@
 import React from 'react'
+import isNil from 'lodash/isNil'
 import {
   array,
   bool,
@@ -22,9 +23,14 @@ const AspectMap = ({
   config: { containerStyle, fitMarkers, markers: markersConfig, options, zoom },
 }) => {
   const { data } = markersConfig
+
+  const filteredData = data?.filter(
+    ({ lat, lng }) => !isNil(lat) && !isNil(lng)
+  )
+
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds()
-    data.map(({ lat, lng }) => bounds.extend({ lat, lng }))
+    filteredData.map(({ lat, lng }) => bounds.extend({ lat, lng }))
     map.fitBounds(bounds)
   }
 
@@ -34,22 +40,24 @@ const AspectMap = ({
 
   return (
     <GoogleMap
-      center={data[0]}
+      center={filteredData[0]}
       onLoad={fitMarkers ? loadHandler : noop}
       options={options}
       mapContainerStyle={containerStyle}
       zoom={zoom}
     >
-      {data?.map(({ lat, lng, color, id, maintenanceStatusName, name }) => (
-        <GooglePin
-          id={id}
-          key={id}
-          position={{ lat, lng }}
-          config={markersConfig}
-          color={color}
-          info={{ maintenanceStatusName, name }}
-        />
-      ))}
+      {filteredData?.map(
+        ({ lat, lng, color, id, maintenanceStatusName, name }) => (
+          <GooglePin
+            id={id}
+            key={id}
+            position={{ lat, lng }}
+            config={markersConfig}
+            color={color}
+            info={{ maintenanceStatusName, name }}
+          />
+        )
+      )}
     </GoogleMap>
   )
 }

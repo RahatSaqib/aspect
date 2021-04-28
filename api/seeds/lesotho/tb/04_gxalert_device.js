@@ -5,7 +5,7 @@ const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
 const {
-  adminName,
+  adminUserName,
   adminPassword,
   partnerName,
   gxAlertDeviceApiKey,
@@ -17,7 +17,7 @@ async function seed(knex) {
     contactsFromGxAlert,
     customFieldsFromGxAlert,
     sitesFromGxAlert,
-    adminName,
+    adminUserName,
     adminPassword,
     partnerName,
     gxAlertDeviceApiKey

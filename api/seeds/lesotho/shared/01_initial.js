@@ -70,12 +70,12 @@ async function seed(knex) {
   }
   let { id: hivAdminId } =
     (await knex('User')
-      .where('name', hivPartnerVariables.adminName)
+      .where('name', hivPartnerVariables.adminUserName)
       .first('id')) || {}
   if (!hivAdminId) {
     ;[hivAdminId] = await knex('User').insert({
       ...adminDetails,
-      name: hivPartnerVariables.adminName,
+      name: hivPartnerVariables.adminUserName,
       password: bcrypt.hashSync(hivPartnerVariables.adminPassword, saltRounds),
     })
   }
@@ -95,12 +95,12 @@ async function seed(knex) {
 
   let { id: tbAdminId } =
     (await knex('User')
-      .where('name', tbPartnerVariables.adminName)
+      .where('name', tbPartnerVariables.adminUserName)
       .first('id')) || {}
   if (!tbAdminId) {
     ;[tbAdminId] = await knex('User').insert({
       ...adminDetails,
-      name: tbPartnerVariables.adminName,
+      name: tbPartnerVariables.adminUserName,
       password: bcrypt.hashSync(tbPartnerVariables.adminPassword, saltRounds),
     })
   }

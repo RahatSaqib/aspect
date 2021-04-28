@@ -271,7 +271,7 @@ export const DeviceList = () => {
     async () =>
       fetchWrapperForQueries({
         endpoint: DEVICE_LIST.ENDPOINT,
-        params,
+        params: { ...params, onlyOpenIssues: 1 },
       })
   )
 

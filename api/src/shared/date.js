@@ -135,11 +135,12 @@ function getTimeZoneById(allTimeZones, timeZoneId) {
 These are the different patterns of date format this regular expression validate.
 for further information check the unit test api/test/shared/date.test.js:65
 
-2020-11-26T15:00:24.000-11:00
-2020-11-26T15:00:24.000Z
-2020-11-26T15:00:24-11:00
+2020-11-26T15:00:24.000-11:00 (Milliseconds + Timezone Offset)
+2020-11-26T15:00:24.000Z (Milliseconds Only)
+2020-11-26T15:00:24-11:00 (Timezone Offset Only)
+2020-11-26T15%3A00%3A24.000%2B11%3A00 (URI encoded)
 */
-const REGEX_ISODATESTRING = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+const REGEX_ISODATESTRING = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d(:|%3A)[0-5]\d(:|%3A)[0-5]\d(\.\d{3})?(Z|[-+]|%2B)?(([0-2]\d)(:|%3A)([0-5]\d))?$/
 
 function getOffsetFromIsoDateString(time) {
   return time.slice(-1) !== 'Z' && REGEX_ISODATESTRING.test(time)
@@ -174,6 +175,7 @@ const startOfMonthUTC = dateString => {
   )
 }
 function startOfDayUtc(date) {
+  if (date.toISOString().split('T')[1] === '00:00:00.000Z') return date
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
 
