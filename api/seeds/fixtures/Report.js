@@ -118,14 +118,14 @@ const deviceActivity = {
 }
 
 const deviceActivityPerAssay = {
-  name: 'Device Activity',
+  name: 'Device Activity per assay',
   description:
-    'This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+    'This report shows the activity of the devices during the selected period of time, breaking it down by months and assays (By default last 12 months), and all the tests performed during the last year.',
   i18nKey: 'deviceActivityReport',
   externalId: 'device_activity_per_assay',
-  i18nKeyDescription: 'device_activity_description',
-  fileName: 'deviceActivity',
-  sortOrder: 5,
+  i18nKeyDescription: 'device_activity_per_assay_description',
+  fileName: 'deviceActivityPerAssay',
+  sortOrder: 10,
   sheets: [
     {
       sortOrder: 0,
