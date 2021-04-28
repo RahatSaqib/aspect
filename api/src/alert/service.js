@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const { alertMessageSent } = require('./actions')
 const { messageStatusToId, issueTypeToId } = require('../shared/dictionary')
 const {
@@ -40,28 +41,23 @@ async function onAlertMessageUpdateAfterIssueDataChanged(
 
     const messageStatusId = await messageStatusToId('Sent')
 
-    await knex('Notification as n')
+    const items = await knex('Notification as n')
       .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
       .where('nt.issueTypeId', issueTypeId)
       .where('n.issueId', issueId)
       .select('n.alertMessageId')
-      .then(async items =>
-        items.map(async ({ alertMessageId }) => {
-          // generate actual message
-          const message = await createAlertMessageFromTemplate(
-            knex,
-            alertMessageId
-          )
-          // update
-          await knex('AlertMessage')
-            .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
-            .whereNot('message', message) // update only if message text changed
-            .update({
-              message,
-              updatedOn: new Date(),
-            })
+    await Promise.each(items, async ({ alertMessageId }) => {
+      // generate actual message
+      const message = await createAlertMessageFromTemplate(knex, alertMessageId)
+      // update
+      await knex('AlertMessage')
+        .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
+        .whereNot('message', message) // update only if message text changed
+        .update({
+          message,
+          updatedOn: new Date(),
         })
-      )
+    })
   })
 }
 

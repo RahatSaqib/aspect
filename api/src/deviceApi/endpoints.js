@@ -52,12 +52,10 @@ const logPayload = {
     .allow('', null)
     .description('The source of the log, determined by client'),
   data: Joi.alternatives()
-    .allow(null) // fallback when 'data' is missing or null - for tests et la
+    .allow(null)
     .try(
-      // either GeneXpert log ...
       Joi.object().keys(logItem),
-      // ... or just a string with serialized data - handler use it upon 'source' value
-      Joi.string().description('Some log data, i.e. serialized json object')
+      Joi.array().items(Joi.object().keys(logItem))
     ),
 }
 

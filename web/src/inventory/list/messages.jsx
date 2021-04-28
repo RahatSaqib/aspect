@@ -21,6 +21,18 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.quantityOnHand',
     defaultMessage: 'Quantity on Hand',
   },
+  dailyConsumptionRate: {
+    id: 'pages.InventoryItemsList.dailyConsumptionRate',
+    defaultMessage: 'Daily Consumption',
+  },
+  notRecorded: {
+    id: 'pages.InventoryItemsList.notRecorded',
+    defaultMessage: 'Not Recorded',
+  },
+  noConsumption: {
+    id: 'pages.InventoryItemsList.noConsumption',
+    defaultMessage: 'No Consumption',
+  },
   expiresOn: {
     id: 'pages.InventoryItemsList.expiresOn',
     defaultMessage: 'Expires On',

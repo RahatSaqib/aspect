@@ -21,7 +21,6 @@ async function deviceStatusOverTime(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate } = request.query
   const offset = getOffsetFromIsoDateString(minDate)
-
   // Filters for results: results should be filtered normally, just converting the received date to UTC
   const minDateResults = new Date(minDate).toISOString()
   const maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
@@ -208,7 +207,8 @@ async function deviceStatusOverTime(request) {
 }
 
 async function deviceStatusLastReported(request) {
-  const { auth } = request
+  const { auth, query } = request
+  const { excludeNotLocalizableDevices } = query
   const dataConstraints = await getConstraints(auth.credentials)
 
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
@@ -230,36 +230,45 @@ async function deviceStatusLastReported(request) {
       device: 'd',
     })
     // Join with DMSL only if it's not on weekend, unless it was reported something different than NO RESULT or UNKNOWN
-    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', dmslJoin => {
-      dmslJoin
-        .on('d.id', 'dmsl.deviceId')
-        .andOn(
-          knex.raw('DAYOFWEEK(dmsl.day) != 7 AND DAYOFWEEK(dmsl.day) != 1')
-        )
-        .orOn(w => {
-          w.on(
-            knex.raw(
-              `dmsl.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoResultsReported}`
-            )
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmslInner', dmslJoin => {
+      dmslJoin.on('d.id', 'dmslInner.deviceId').andOn(builder => {
+        builder
+          .on(
+            knex.raw(`
+              (
+                DAYOFWEEK(dmslInner.day) != 7
+                AND 
+                DAYOFWEEK(dmslInner.day) != 1
+              )
+            `)
           )
-          w.andOn(
-            knex.raw(
-              `dmsl.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}`
-            )
+          .orOn(
+            knex.raw(`
+              (
+                dmslInner.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoResultsReported}
+                AND 
+                dmslInner.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}
+              )
+            `)
           )
-        })
+      })
     })
-    .groupBy('d.id', 's.id')
+    .groupBy('d.id')
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
+    .modify(query => {
+      if (excludeNotLocalizableDevices) {
+        query.whereNotNull('s.longitude').whereNotNull('s.latitude')
+      }
+    })
     .select([
       'd.id as deviceId',
       'd.name',
       'd.shortName',
       's.longitude',
       's.latitude',
-      knex.raw('MAX(dmsl.day) as lastReportedOn'),
+      knex.raw('MAX(dmslInner.day) as lastReportedOn'),
     ])
     .as('devices')
 

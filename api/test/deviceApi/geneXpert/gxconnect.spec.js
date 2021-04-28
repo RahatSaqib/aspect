@@ -7,16 +7,12 @@ const addHours = require('date-fns/addHours')
 const subHours = require('date-fns/subHours')
 const addMinutes = require('date-fns/addMinutes')
 const subMinutes = require('date-fns/subMinutes')
-const addSeconds = require('date-fns/addSeconds')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { getLastResultId, postToDeviceApi } = require('../utils')
-const {
-  resultTextToResultCategoryMapping,
-  basicResultPayload,
-} = require('./geneXpertConstants')
+const { basicResultPayload } = require('./geneXpertConstants')
 const {
   detectedLess1000,
   detectedMoreThan1000,
@@ -35,11 +31,20 @@ const { deviceSeen } = require('../../../src/device/actions')
 const {
   resultCategoryToId,
   deviceTypeToId,
+  assayToId,
 } = require('../../../src/shared/dictionary')
 const {
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
 } = require('../../../src/shared/date')
+const {
+  gxEbola: gxEbolaMappings,
+  gxHiv1Qual: gxHiv1QualMappings,
+  gxMtbRif: gxMtbRifMappings,
+  gxMtbRifUltra: gxMtbRifUltraMappings,
+  assayGxCovid19: assayGxCovid19Mappings,
+} = require('./notVLResultTextMappings')
+const { knex } = require('../../../src/db')
 
 const server = require('../../utils/testUtils')
 
@@ -810,6 +815,97 @@ describe('Device API routes for GxConnect Devices', () => {
     const { runTest, getLastResult, basicDevicePayload } = context
     afterEach(context.afterCleanUp)
 
+    const getResultCategoriesTestCallback = trackedResults => async () => {
+      const { deviceAuth, device } = context
+
+      await Promise.each(trackedResults, async assertion => {
+        const {
+          resultText,
+          resultCategory1ExternalId,
+          resultCategory2ExternalId,
+          assayExternalId,
+        } = assertion
+        // Send a new result
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.merge(
+              {},
+              basicDevicePayload,
+              { name: `${deviceName}${Math.random() * 1000}` },
+              basicResultPayload,
+              {
+                result: {
+                  id: `new result ${Math.floor(Math.random() * 1000)}`,
+                  startedOn: subDays(
+                    new Date(),
+                    Math.floor(Math.random() * 100)
+                  ),
+                  data: { resultText },
+                  assay: { id: assayExternalId },
+                  sample: {
+                    id: `new sample ${Math.floor(Math.random() * 1000)}`,
+                  },
+                  instrument: {
+                    serial: `new instrument ${Math.floor(
+                      Math.random() * 1000
+                    )}`,
+                  },
+                },
+              }
+            )
+          )
+        await waitForIdle()
+
+        const lastResultId = await getLastResultId(knex, device.id)
+        const { resultCategory1, resultCategory2, assayId } = await knex(
+          'Result'
+        )
+          .where('id', lastResultId)
+          .first()
+
+        const expectedResultCategory1Id = await resultCategoryToId(
+          resultCategory1ExternalId
+        )
+        const expectedResultCategory2Id =
+          (await resultCategoryToId(resultCategory2ExternalId)) || null
+        const expectedAssayId = await assayToId(assayExternalId)
+        const expected = {
+          resultCategory1Id: expectedResultCategory1Id,
+          resultCategory2Id: expectedResultCategory2Id,
+          assayId: expectedAssayId,
+        }
+        const actual = {
+          resultCategory1Id: resultCategory1,
+          resultCategory2Id: resultCategory2,
+          assayId,
+        }
+        assert.deepEqual(expected, actual)
+      })
+    }
+
+    it(
+      'should append a new GxEbola result with the correct result categories',
+      getResultCategoriesTestCallback(gxEbolaMappings)
+    )
+    it(
+      'should append a new GxHiv1Qual result with the correct result categories',
+      getResultCategoriesTestCallback(gxHiv1QualMappings)
+    )
+    it(
+      'should append a new GxMtbRifUltra result with the correct result categories',
+      getResultCategoriesTestCallback(gxMtbRifUltraMappings)
+    )
+    it(
+      'should append a new assayGxCovid19 result with the correct result categories',
+      getResultCategoriesTestCallback(assayGxCovid19Mappings)
+    )
+    it(
+      'should append a new GxMtbRif result with the correct result categories',
+      getResultCategoriesTestCallback(gxMtbRifMappings)
+    ).timeout(120000)
+
     it('should reject a result without a start or end date date', () =>
       runTest(async () => {
         const { basicDevicePayload, deviceAuth } = context
@@ -939,7 +1035,6 @@ describe('Device API routes for GxConnect Devices', () => {
             })
           )
 
-        // / console.log(res.body, res.status)
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
 
@@ -1565,102 +1660,6 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const secondResultId = await getLastResultId(knex, device.id)
         assert.notEqual(firstResultId, secondResultId)
-      }))
-
-    it('should map result categories based on result text', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
-
-        const sendResult = async (
-          resultId,
-          assay,
-          sampleId,
-          resultText,
-          expectedResultCategory1,
-          expectedResultCategory2,
-          runNumber
-        ) => {
-          const testStartedOn = setMilliseconds(
-            addSeconds(subDays(context.now, 3), runNumber),
-            0
-          )
-          const testEndedOn = setMilliseconds(
-            addSeconds(addHours(testStartedOn, 2), runNumber),
-            0
-          )
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign(
-                {},
-                _.assign({}, basicDevicePayload, basicResultPayload),
-                {
-                  result: _.assign({}, basicResultPayload.result, {
-                    id: resultId,
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                    assay: _.assign({}, basicResultPayload.result.assay, {
-                      id: assay,
-                    }),
-                    sample: { id: sampleId },
-                    data: _.assign({}, basicResultPayload.result.data, {
-                      resultText,
-                    }),
-                  }),
-                }
-              )
-            )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const resultDetails = await getLastResult()
-
-          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
-          assert.equal(
-            resultDetails.resultCategory1,
-            expectedResultCategory1,
-            `Result 1 in ${resultText}`
-          )
-          assert.equal(
-            resultDetails.resultCategory2,
-            expectedResultCategory2,
-            `Result 2 in ${resultText}`
-          )
-        }
-
-        let runNumber = 1
-        await Promise.each(
-          Object.keys(resultTextToResultCategoryMapping),
-          async (resultText, index) => {
-            if (
-              resultText &&
-              !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-            ) {
-              const {
-                resultId,
-                assay,
-                resultCategory1,
-                resultCategory2,
-              } = resultTextToResultCategoryMapping[resultText]
-              runNumber += 1
-              await sendResult(
-                resultId,
-                assay,
-                `PKM0833243689-${index}`,
-                resultText,
-                resultCategory1,
-                resultCategory2,
-                runNumber
-              )
-            } else {
-              await Promise.resolve()
-            }
-          }
-        )
       }))
 
     it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
@@ -2506,7 +2505,7 @@ describe('Device API routes for GxConnect Devices', () => {
               const incompleteResult = await getLastResult()
               expect(incompleteResult).to.containSubset({
                 resultCategory1: 'NoResult',
-                resultCategory2: 'NoResult',
+                resultCategory2: null,
                 startedOn: startedOnDateInUtc,
                 endedOn: null,
                 resultData: {

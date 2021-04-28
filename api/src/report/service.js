@@ -37,7 +37,14 @@ async function getReports(request) {
       },
     })
     .orderBy('r.sortOrder', 'asc')
-    .select('r.name', 'r.description', 'r.externalId', 'r.sortOrder')
+    .select(
+      'r.name',
+      'r.description',
+      'r.externalId',
+      'r.sortOrder',
+      'r.i18nKey',
+      'r.i18nKeyDescription'
+    )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 

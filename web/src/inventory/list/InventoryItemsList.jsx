@@ -86,6 +86,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'quantityOnHand',
     'expiresOn',
     'stockLeft',
+    'dailyConsumptionRate',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -189,6 +190,11 @@ export const InventoryItemsListWithProps = ({
                 {
                   key: 'quantityOnHand',
                   label: intl.formatMessage(messages.quantityOnHand),
+                  sortable: true,
+                },
+                {
+                  key: 'dailyConsumptionRate',
+                  label: intl.formatMessage(messages.dailyConsumptionRate),
                   sortable: true,
                 },
                 {

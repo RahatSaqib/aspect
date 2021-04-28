@@ -151,6 +151,7 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
         result.push({
           value: source.value,
           label: source.label,
+          i18nKey: source.i18nKey,
         })
       else if (isPermitted && source.href) {
         if (source.href === '/browse') {
@@ -159,12 +160,14 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
             result.push({
               href: filteredSource.value,
               label: source.label,
+              i18nKey: source.i18nKey,
             })
           }
         } else
           result.push({
             href: source.href,
             label: source.label,
+            i18nKey: source.i18nKey,
           })
       }
       return result
@@ -270,6 +273,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'stockLeft':
               result.stockLeft = true
+              break
+            case 'consumable':
+              result.consumable = true
               break
             case 'assayId':
               result.assayId = true

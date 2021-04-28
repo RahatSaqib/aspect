@@ -1,5 +1,6 @@
 /* global google */
 // Imports from packages
+import { defineMessages, injectIntl } from 'react-intl'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
@@ -15,6 +16,14 @@ import {
 } from '../../../site/utils/address'
 import SiteMap from './SiteMap'
 import styles from './SiteLocationFormMap.css'
+import PropTypeOf from '../../../shared/types'
+
+const messages = defineMessages({
+  findingLocation: {
+    id: 'pages.SiteLocationFormMap.findingLocation',
+    defaultMessage: 'Finding Location',
+  },
+})
 
 /*
  * This component deals with four location values:
@@ -43,6 +52,7 @@ export class SiteLocationFormMap extends PureComponent {
       address2: PropTypes.string,
     }).isRequired, // connect
     editable: PropTypes.bool.isRequired,
+    intl: PropTypeOf.intl.isRequired,
   }
 
   constructor(props) {
@@ -110,14 +120,14 @@ export class SiteLocationFormMap extends PureComponent {
 
   render() {
     const latLng = this.getValidLatLng(this.props)
-
+    const { intl } = this.props
     return (
       <div className={styles.Container}>
         {latLng ? (
           <SiteMap position={latLng} />
         ) : (
           <div>
-            <p>Finding location</p>
+            <p>{intl.formatMessage(messages.findingLocation)}</p>
             <CircularProgress />
           </div>
         )}
@@ -156,6 +166,7 @@ function mapStateToProps(state, props) {
 }
 
 export const SiteLocationFormMapContainer = flowRight(
+  injectIntl,
   reduxForm({
     form: 'siteDetail',
     validate,

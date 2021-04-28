@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'forms.formItem.resultText',
     defaultMessage: 'Result Text',
   },
+  reason: {
+    id: 'forms.formItem.reason',
+    defaultMessage: 'Reason',
+  },
   errorCode: {
     id: 'forms.formItem.errorCode',
     defaultMessage: 'Error Code',

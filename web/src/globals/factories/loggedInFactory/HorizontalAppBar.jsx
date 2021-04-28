@@ -1,5 +1,6 @@
 import classnames from 'classnames/bind'
 import React from 'react'
+import { defineMessages, injectIntl } from 'react-intl'
 import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -16,9 +17,21 @@ import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import IconMenu from '../../../components/shared/IconMenu'
 
+const messages = defineMessages({
+  accountDetails: {
+    id: 'pages.HorizontalAppBar.accountDetails',
+    defaultMessage: 'Account Details',
+  },
+  signOut: {
+    id: 'pages.HorizontalAppBar.signOut',
+    defaultMessage: 'Sign Out',
+  },
+})
+
 const cssClasses = classnames.bind(require('./index.css'))
 
 const enhance = compose(
+  injectIntl,
   withHandlers({
     navigateRoot: ({ history }) => () => history.push('/'),
 
@@ -37,16 +50,18 @@ const enhance = compose(
 const HorizontalAppBar = ({
   history,
   location,
-
   navigateRoot,
   closeDrawer,
   navigateCurrentAccountDetails,
   userRequestedLogout,
+  intl,
 }) => {
   const Account = requirePermissions({
     permissions: ['account:edit'],
   })(() => (
-    <MenuItem onClick={navigateCurrentAccountDetails}>Account Details</MenuItem>
+    <MenuItem onClick={navigateCurrentAccountDetails}>
+      {intl.formatMessage(messages.accountDetails)}
+    </MenuItem>
   ))
   return (
     <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}>
@@ -67,7 +82,9 @@ const HorizontalAppBar = ({
         />
         <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
           <Account />
-          <MenuItem onClick={userRequestedLogout}>Sign out</MenuItem>
+          <MenuItem onClick={userRequestedLogout}>
+            {intl.formatMessage(messages.signOut)}
+          </MenuItem>
         </IconMenu>
       </Toolbar>
     </AppBar>
