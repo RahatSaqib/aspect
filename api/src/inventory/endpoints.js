@@ -72,7 +72,8 @@ function listSuppliesBaseConfig() {
           'lgaName',
           'quantityOnHand',
           'expiresOn',
-          'stockLeft'
+          'stockLeft',
+          'dailyConsumptionRate'
         ),
       },
     },
@@ -102,7 +103,8 @@ const routes = [
             'lgaName',
             'quantityOnHand',
             'expiresOn',
-            'stockLeft'
+            'stockLeft',
+            'dailyConsumptionRate'
           ),
         },
       },

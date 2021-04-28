@@ -274,6 +274,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'stockLeft':
               result.stockLeft = true
               break
+            case 'consumable':
+              result.consumable = true
+              break
             case 'assayId':
               result.assayId = true
               break
