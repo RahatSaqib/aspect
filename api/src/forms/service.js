@@ -37,34 +37,36 @@ const getCustomFields = async (partnerId, deviceId) => {
       knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
     )
     .groupBy('fd.id', 'd.customFieldsSentOn')
-  const { customFieldsSentOn } = _.maxBy(formQuery, elem => elem.customFieldsSentOn) || {}
+  const { customFieldsSentOn } =
+    _.maxBy(formQuery, elem => elem.customFieldsSentOn) || {}
 
   const hasAnyUpdate =
     !customFieldsSentOn ||
     !!formQuery.find(
-      ({ jsonSchemaFileName }) => formDictionary[jsonSchemaFileName].updatedOn > customFieldsSentOn
+      ({ jsonSchemaFileName }) =>
+        formDictionary[jsonSchemaFileName].updatedOn > customFieldsSentOn
     )
 
   let forms = { fields: [] }
   if (hasAnyUpdate) {
     _.each(formQuery, form => {
-      const fields = _.map(formDictionary[form.jsonSchemaFileName].fields, field => ({
-        ...field,
-        assayExternalId: form.assayExternalId
-          ? form.assayExternalId.split(',')
-          : [],
-        diseaseId: form.diseaseId,
-      }))
+      const fields = _.map(
+        formDictionary[form.jsonSchemaFileName].fields,
+        field => ({
+          ...field,
+          assayExternalId: form.assayExternalId
+            ? form.assayExternalId.split(',')
+            : [],
+          diseaseId: form.diseaseId,
+        })
+      )
       forms = { fields: _.concat(forms.fields, fields) }
     })
   }
 
-  console.log(forms)
-
   return forms
 }
 function getFormsBaseQuery(partnerId, query) {
-  console.log(partnerId)
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
     .join(
@@ -84,7 +86,9 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
+      knex.raw(
+        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
+      )
     )
   return queryForm
 }

@@ -21,7 +21,6 @@
       "minItems": 1,
       "title": "The list of form Fields",
       "description": "The list of form Fields for filling the clinical response",
-      "additionalItems": true,
       "items": {
         "$id": "#/properties/fields/items",
         "type": "object",
@@ -29,6 +28,7 @@
         "title": "Field metadata",
         "description": "All the properties needed for this field to be rendered",
         "required": ["name", "i18nKey", "fieldType", "order"],
+        "additionalProperties": true,
         "properties": {
           "id": {
             "$id": "#/properties/fields/items/properties/id",
@@ -320,7 +320,7 @@
                   "enum": ["AND", "OR"]
                 },
                 "conjunctionGroup": {
-                  "$id": "#/properties/fields/items/properties/condition/items/properties/conjunction",
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/conjunctionGroup",
                   "type": "string",
                   "title": "Conjuction Group",
                   "description": "Under the same group all the prepositions they are going to be enclosed by ()"
@@ -355,7 +355,7 @@
               }
             },
             "items": {
-              "$id": "#/properties/fields/items/properties/condition/items",
+              "$id": "#/properties/fields/items/properties/filters/items",
               "type": "object",
               "title": "The condition preposition",
               "description": "One part of the condition preposition",
@@ -369,7 +369,7 @@
               "required": ["operator"],
               "properties": {
                 "propToCompare": {
-                  "$id": "#/properties/fields/items/properties/condition/items/properties/propToCompare",
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/propToCompare",
                   "type": "string",
                   "title": "The name of the property for comparing the value",
                   "description": "We are going to use this as a key for obtaining the property value for compearing the condition",
@@ -377,7 +377,7 @@
                   "examples": ["propName"]
                 },
                 "operator": {
-                  "$id": "#/properties/fields/items/properties/condition/items/properties/operator",
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/operator",
                   "type": "string",
                   "title": "The Operator Schema",
                   "description": "An explanation about the purpose of this instance.",
@@ -385,14 +385,14 @@
                   "enum": ["===", "!==", ">=", "<=", "not-selected"]
                 },
                 "fieldToCompare": {
-                  "$id": "#/properties/fields/items/properties/condition/items/properties/fieldToCompare",
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/fieldToCompare",
                   "type": "string",
                   "title": "The field name to compare",
                   "description": "The name of the field into the tableNameToCompare table for doing the comparission",
                   "examples": ["fieldName"]
                 },
                 "valueToCompare": {
-                  "$id": "#/properties/fields/items/properties/condition/items/properties/valueToCompare",
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/valueToCompare",
                   "type": ["number", "string"],
                   "title": "The value of the property to be compared",
                   "description": "this is the right side of the condition value",
