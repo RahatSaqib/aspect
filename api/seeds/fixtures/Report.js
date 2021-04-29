@@ -114,47 +114,13 @@ const deviceActivity = {
         hasResults: 1,
       },
     },
-  ],
-}
-
-const deviceActivityPerAssay = {
-  name: 'Device Activity per assay',
-  description:
-    'This report shows the activity of the devices during the selected period of time, breaking it down by months and assays (By default last 12 months), and all the tests performed during the last year.',
-  i18nKey: 'deviceActivityReport',
-  externalId: 'device_activity_per_assay',
-  i18nKeyDescription: 'device_activity_per_assay_description',
-  fileName: 'deviceActivityPerAssay',
-  sortOrder: 10,
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'device/serviceReports',
-      functionName: 'getDeviceActivityReport',
-      query: {
-        assayExternalId: 'GxMtbRif',
-        sortCol: 'name',
-        sortDir: 'asc',
-        hasResults: 1,
-      },
-    },
     {
       sortOrder: 1,
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
       query: {
-        assayExternalId: 'GxMtbRifUltra',
-        sortCol: 'name',
-        sortDir: 'asc',
-        hasResults: 1,
-      },
-    },
-    {
-      sortOrder: 2,
-      moduleName: 'device/serviceReports',
-      functionName: 'getDeviceActivityReport',
-      query: {
-        assayExternalId: 'GxHiv1Vl',
+        groupBy: 'r.assayId',
+        select: 'a.name as assayName',
         sortCol: 'name',
         sortDir: 'asc',
         hasResults: 1,
@@ -238,7 +204,6 @@ module.exports = {
   deviceActivity,
   moduleSwaps,
   deviceCalibrationReport,
-  deviceActivityPerAssay,
   geneXpertIssues,
   fixture: [
     mtbDetectedRRDetected,
@@ -246,7 +211,6 @@ module.exports = {
     rifResistanceRate,
     criticalErrorsByDevice,
     deviceActivity,
-    deviceActivityPerAssay,
     moduleSwaps,
     deviceCalibrationReport,
     geneXpertIssues,

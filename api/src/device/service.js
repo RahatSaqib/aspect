@@ -755,6 +755,7 @@ function getDeviceBaseQuery(
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
@@ -765,10 +766,7 @@ function getDeviceBaseQuery(
       this.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayId)
-        queryBuilder
-          .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-          .where('a.id', query.assayId)
+      if (query.assayId) queryBuilder.where('a.id', query.assayId)
       if (query.assayExternalId)
         queryBuilder
           .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
