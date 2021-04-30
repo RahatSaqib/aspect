@@ -1,7 +1,7 @@
 {
   "fields": [
     {
-      "id": 1,
+      "id": 101,
       "name": "Gender",
       "title": "Gender",
       "i18nKey": "Genderi18nKey",
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": 102,
       "name": "Age",
       "title": "Age",
       "i18nKey": "AgeFieldi18nKey",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": 103,
       "name": "Retreatment Case",
       "i18nKey": "RetreatCaseFieldi18nKey",
       "fieldType": "number",
@@ -70,36 +70,7 @@
       ]
     },
     {
-      "id": 4,
-      "name": "HIV Status",
-      "i18nKey": "HIVStatusi18nKey",
-      "fieldType": "number",
-      "order": 6,
-      "title": "HIV Status",
-      "caption": "HIV Status",
-      "gxAlertDbColumn": "HivStatus",
-      "i18nKeyCaption": "HIVStatusi18nCaptionKey",
-      "controlType": "comboBox",
-      "items": [
-        {
-          "key": 1,
-          "value": "HIV Positive",
-          "order": 0
-        },
-        {
-          "key": 0,
-          "value": "HIV Negative",
-          "order": 10
-        },
-        {
-          "key": 2,
-          "value": "HIV Unknown",
-          "order": 20
-        }
-      ]
-    },
-    {
-      "id": 5,
+      "id": 104,
       "name": "Referring Facility",
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
@@ -117,7 +88,7 @@
       }
     },
     {
-      "id": 6,
+      "id": 105,
       "name": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKey": "ReferringClinicianI18nkey",
       "fieldType": "text",
@@ -129,7 +100,7 @@
       "controlType": "textBox"
     },
     {
-      "id": 7,
+      "id": 106,
       "name": "Repeat Test",
       "i18nKey": "RepeatTesti18nKey",
       "fieldType": "number",

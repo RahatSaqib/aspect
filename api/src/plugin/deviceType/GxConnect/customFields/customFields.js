@@ -4,8 +4,9 @@ const {
 const {
   mapGxConnectCustomFieldsWithDataSources,
 } = require('./customFieldsMappingTemplates')
-// const gxConnectSchema = require('../../../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
-// const validate = require('../../../../../jsonSchemas/validate')
+const gxConnectSchema = require('../../../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
+const validate = require('../../../../../jsonSchemas/validate')
+const logger = require('../../../../shared/logger')
 
 const getCustomFields = async (knex, partnerId, deviceId) => {
   const customFields = await getCustomFieldsService(partnerId, deviceId)
@@ -17,12 +18,17 @@ const getCustomFields = async (knex, partnerId, deviceId) => {
       .join('Geography as g', 'g.id', 'd.geographyId')
       .first('g.countryId', 'g.stateId')
 
-    const mappedFields = mapGxConnectCustomFieldsWithDataSources(
+    const mappedFields = await mapGxConnectCustomFieldsWithDataSources(
       customFields,
       countryId,
       stateId
     )
-    // const isValid = validate(gxConnectSchema, mappedFields)
+    if (!validate(gxConnectSchema, mappedFields)) {
+      logger.error(
+        `Schema validation failed for deviceId ${deviceId}. Custom fields won't be returned to GxConnect and the test details form won't be updated.`
+      )
+      mappedFields.CustomFields = null
+    }
 
     return mappedFields
   }
