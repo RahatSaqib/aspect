@@ -459,4 +459,40 @@ describe('Custom field mapper', () => {
     })
     assert.isTrue(validate(gxConnectSchema, mappingOutput))
   })
+
+  it('should validate the GxConnect form to have unique ids', () => {
+    const form = {
+      CustomFields: {
+        Fields: [
+          {
+            Id: 1,
+            Name: 'PlainField',
+            Help: 'PlainField value',
+            InputControlData: {
+              optional: true,
+            },
+            Control: 'TextBox',
+            Type: 'string',
+            DisplayOrder: 1,
+          },
+          {
+            Id: 1,
+            Name: 'calculatedField',
+            Help: 'calculatedField value',
+            Control: 'Label',
+            Type: 'datetime',
+            DisplayOrder: 0,
+            InputControlData: {
+              calculated: true,
+              fieldId1: 2,
+              fixedValue: 'now',
+              function: 'datediff',
+              format: 'week',
+            },
+          },
+        ],
+      },
+    }
+    assert.isFalse(validate(gxConnectSchema, form))
+  })
 })
