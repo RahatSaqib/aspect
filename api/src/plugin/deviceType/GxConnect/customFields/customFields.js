@@ -25,7 +25,7 @@ const getCustomFields = async (knex, partnerId, deviceId) => {
     )
     if (!validate(gxConnectSchema, mappedFields)) {
       logger.error(
-        `Schema validation failed for deviceId ${deviceId}. Custom fields won't be returned to GxConnect and the test details form won't be updated.`
+        `Schema validation failed for deviceId ${deviceId}. Custom fields won't be returned to GxConnect and the test details form won't be updated. Please, ensure the collection of forms are not repeating ids.`
       )
       mappedFields.CustomFields = null
     }
